@@ -164,20 +164,30 @@ class NodeManager:
                 return key
         return None
 
-    def find_best_node(self, region: str = None) -> Node | None:
+    def find_best_node(
+        self,
+        region: str = None,
+        not_region: str = None,
+    ) -> Node | None:
         """
         Finds the best (least used) node in the given region, if applicable.
         Parameters
         ----------
         region: Optional[:class:`str`]
             The region to find a node in. Defaults to `None`.
+        not_region: Optional[:class:`str`]
+            The region to exclude from the search. Defaults to `None`.
         Returns
         -------
         Optional[:class:`Node`]
         """
         nodes = None
-        if region:
+        if region and not_region:
+            nodes = [n for n in self.available_nodes if n.region == region and n.region != not_region]
+        elif region:
             nodes = [n for n in self.available_nodes if n.region == region]
+        else:
+            nodes = [n for n in self.available_nodes if n.region != not_region]
 
         if not nodes:  # If there are no regional nodes available, or a region wasn't specified.
             nodes = self.available_nodes

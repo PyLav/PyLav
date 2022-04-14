@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import asyncio
 import collections
+import contextlib
 import heapq
 import time
 from typing import TYPE_CHECKING, Any, Literal
 
 import discord
 from discord import VoiceProtocol
+from red_commons.logging import getLogger
 
 from pylav.events import (
     NodeChangedEvent,
@@ -18,21 +20,32 @@ from pylav.events import (
     TrackStartEvent,
     TrackStuckEvent,
 )
+from pylav.player_manager import PlayerManager
 from pylav.tracks import AudioTrack
 
 if TYPE_CHECKING:
     from pylav.node import Node
 
+LOGGER = getLogger("red.PyLink.Player")
+
 
 class Player(VoiceProtocol):
-    def __init__(self, client: discord.Client, channel: discord.VoiceChannel, node: Node = None):
+    def __init__(
+        self,
+        client: discord.Client,
+        channel: discord.VoiceChannel,
+        *,
+        node: Node = None,
+        player_manager: PlayerManager = None,
+    ):
         self.bot = client
         self.guild_id = str(channel.guild.id)
+        self.channel = channel
         self.channel_id = channel.id
-        self.node = node
-        self._original_node = None  # This is used internally for fail-over.
+        self.node: Node = node
+        self.player_manager: PlayerManager = None
+        self._original_node: Node = None  # This is used internally for fail-over.
         self._voice_state = {}
-        self.channel_id = None
         self.region = channel.rtc_region
 
         self._user_data = {}
@@ -48,14 +61,15 @@ class Player(VoiceProtocol):
         self.queue = asyncio.PriorityQueue()
         self.history = collections.deque(maxlen=100)
         self.current: AudioTrack | None = None
+        self._post_init_completed = False
 
-    def add_node(self, node: Node) -> None:
-        if self.node is None:
-            self.node = node
-        else:
-            raise RuntimeError("Cannot add more than one node to a player")
+    def post_init(self, node: Node, player_manager: PlayerManager) -> None:
+        if self._post_init_completed:
+            raise RuntimeError("Post init already completed for this player")
+        self.player_manager = player_manager
+        self.node = node
 
-    def change_to_best_node(self) -> Node:
+    def change_to_best_node(self) -> Node | None:
         """
         Returns the best node to play the current track.
         Returns
@@ -63,8 +77,25 @@ class Player(VoiceProtocol):
         :class:`Node`
         """
         node = self.node.node_manager.find_best_node(region=self.region)
-        await self.change_node(node)
-        return node
+        if node != self.node:
+            await self.change_node(node)
+            return node
+
+    def change_to_best_node_diff_region(self) -> Node | None:
+        """
+        Returns the best node to play the current track in a different region.
+        Returns
+        -------
+        :class:`Node`
+        """
+        node = self.node.node_manager.find_best_node(not_region=self.region)
+        if node != self.node:
+            await self.change_node(node)
+            return node
+
+    @property
+    def guild(self) -> discord.Guild:
+        return self.channel.guild
 
     @property
     def is_playing(self) -> bool:
@@ -435,4 +466,36 @@ class Player(VoiceProtocol):
         }
 
     async def save(self) -> None:
-        self.node.node_manager.client.player_state_manager.upsert_players(self)
+        await self.node.node_manager.client.player_state_manager.upsert_players([self.to_dict()])
+
+    async def connect(self, *, timeout: float, reconnect: bool) -> None:
+        await self.guild.change_voice_state(channel=self.channel)
+        self._connected = True
+
+        LOGGER.info("[Player-%s] Connected to voice channel", self.channel.id)
+
+    async def disconnect(self, *, force: bool = False) -> None:
+        try:
+            LOGGER.info("[Player-%s] Disconnected from voice channel", self.channel.id)
+
+            await self.guild.change_voice_state(channel=None)
+            self._connected = False
+        finally:
+            with contextlib.suppress(ValueError):
+                self.player_manager.players.pop(self.channel.guild.id)
+
+            await self.node.send(op="destroy", guildId=self.guild_id)
+
+            self.cleanup()
+
+    async def move_to(self, channel: discord.VoiceChannel) -> None:
+        """|coro|
+        Moves the player to a different voice channel.
+        Parameters
+        -----------
+        channel: :class:`discord.VoiceChannel`
+            The channel to move to. Must be a voice channel.
+        """
+        LOGGER.info("[Player-%s] Moving to voice channel: %s", self.channel.id, channel.id)
+        await self.guild.change_voice_state(channel=channel)
+        self.channel = channel
