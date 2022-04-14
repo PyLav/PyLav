@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import collections
 import heapq
 import time
 from typing import TYPE_CHECKING, Any, Literal
@@ -17,7 +18,6 @@ from pylav.events import (
     TrackStartEvent,
     TrackStuckEvent,
 )
-from pylav.node_manager import NodeManager
 from pylav.tracks import AudioTrack
 
 if TYPE_CHECKING:
@@ -28,10 +28,12 @@ class Player(VoiceProtocol):
     def __init__(self, client: discord.Client, channel: discord.VoiceChannel, node: Node = None):
         self.bot = client
         self.guild_id = str(channel.guild.id)
+        self.channel_id = channel.id
         self.node = node
         self._original_node = None  # This is used internally for fail-over.
         self._voice_state = {}
         self.channel_id = None
+        self.region = channel.rtc_region
 
         self._user_data = {}
 
@@ -44,21 +46,25 @@ class Player(VoiceProtocol):
         self.repeat_current = False
         self.repeat_queue = False
         self.queue = asyncio.PriorityQueue()
+        self.history = collections.deque(maxlen=100)
         self.current: AudioTrack | None = None
 
-    def get_best_node(self, node_manager: NodeManager) -> Node:
+    def add_node(self, node: Node) -> None:
+        if self.node is None:
+            self.node = node
+        else:
+            raise RuntimeError("Cannot add more than one node to a player")
+
+    def change_to_best_node(self) -> Node:
         """
         Returns the best node to play the current track.
         Returns
         -------
         :class:`Node`
         """
-        node = node_manager.find_best_node()
-        if self.node is None:
-            self.node = node
-        else:
-            await self.change_node(node)
-        return self.node
+        node = self.node.node_manager.find_best_node(region=self.region)
+        await self.change_node(node)
+        return node
 
     @property
     def is_playing(self) -> bool:
@@ -166,6 +172,20 @@ class Player(VoiceProtocol):
         else:
             heapq.heappush(self.queue._queue, (priority, at))
 
+    async def previous(self) -> None:
+        if not self.history:
+            raise TrackNotFound("There are no tracks currently in the player history.")
+
+        track = self.history.pop()
+        if track.is_partial and not track.track:
+            await track.search()
+        if self.current:
+            self.history.appendleft(self.current)
+        options = {"noReplace": False}
+        self.current = track
+        await self.node.send(op="play", guildId=self.guild_id, track=track.track, **options)
+        await self.node.dispatch_event(TrackStartEvent(self, track))
+
     async def play(
         self,
         track: AudioTrack | dict | str = None,
@@ -211,15 +231,17 @@ class Player(VoiceProtocol):
         self._last_position = 0
         self.position_timestamp = 0
         self.paused = False
-
+        if self.current:
+            self.history.appendleft(self.current)
         if not track:
             if not self.queue:
                 await self.stop()  # Also sets current to None.
+                self.history.clear()
                 await self.node.dispatch_event(QueueEndEvent(self))
                 return
             track = await self.queue.get()
 
-        if track.is_partial:
+        if track.is_partial and not track.track:
             await track.search()
 
         options = {}
@@ -377,3 +399,40 @@ class Player(VoiceProtocol):
             await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
 
         await self.node.dispatch_event(NodeChangedEvent(self, old_node, node))
+
+    def to_dict(self) -> dict:
+        """
+        Returns a dict representation of the player.
+        """
+
+        return {
+            "guild_id": int(self.guild_id),
+            "channel_id": self.channel_id,
+            "current": self.current.to_json() if self.current else None,
+            "paused": self.paused,
+            "repeat_queue": self.repeat_queue,
+            "repeat_current": self.repeat_current,
+            "shuffle": self.shuffle,
+            "auto_playing": self._is_autoplaying,
+            "volume": self.volume,
+            "position": self.position,
+            "playing": self.is_playing,
+            "queue": [t[-1].to_json() for t in self.queue._queue] if self.queue else [],
+            "history": [t.to_json() for t in self.history] if self.history else [],
+            "effect_enabled": self._effect_enabled,
+            "effects": {
+                "volume": self._volume.to_dict(),
+                "equalizer": self._equalizer.to_dict(),
+                "karaoke": self._karaoke.to_dict(),
+                "timescale": self._timescale.to_dict(),
+                "tremolo": self._tremolo.to_dict(),
+                "vibrato": self._vibrato.to_dict(),
+                "rotation": self._rotation.to_dict(),
+                "distortion": self._distortion.to_dict(),
+                "low_pass": self._low_pass.to_dict(),
+                "channel_mix": self._channel_mix.to_dict(),
+            },
+        }
+
+    async def save(self) -> None:
+        self.node.node_manager.client.player_state_manager.upsert_players(self)

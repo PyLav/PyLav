@@ -13,7 +13,8 @@ import ujson
 from red_commons.logging import getLogger
 from redbot.core.bot import Red
 
-from pylav._config import __VERSION__, LIB_CONFIG_FOLDER
+from pylav._config import __VERSION__, CONFIG_DIR
+from pylav._lib_config import LibConfigManager
 from pylav.cache import CacheManager
 from pylav.config import ConfigManager
 from pylav.equalizers import EqualizerManager
@@ -77,22 +78,87 @@ class Client:
     """
 
     _event_hooks = defaultdict(list)
+    _cache_manager: CacheManager
+    _config_manager: ConfigManager
+    _equalizer_manager: EqualizerManager
+    _player_state_manager: PlayerStateManager
+    _playlist_manager: PlaylistManager
 
-    def __init__(self, bot: Red | discord.Client, player=Player, regions: dict = None, connect_back: bool = False):
-
+    def __init__(
+        self,
+        bot: Red | discord.Client,
+        player=Player,
+        regions: dict = None,
+        connect_back: bool = False,
+        config_folder: Path = CONFIG_DIR,
+    ):
+        self._config_folder = Path(config_folder)
         self._bot = bot
         self._user_id = str(bot.user.id)
         self._node_manager = NodeManager(self, regions)
         self._player_manager = PlayerManager(self, player)
-        self._cache_manager = CacheManager()
-        self._config_manager = ConfigManager()
-        self._equalizer_manager = EqualizerManager()
-        self._player_state_manager = PlayerStateManager()
-        self._playlist_manager = PlaylistManager()
+        self._lib_config_manager = LibConfigManager(self)
+
         self._connect_back = connect_back
         self._warned_about_no_search_nodes = False
-
         self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
+
+    async def init(self):
+        config_data = await self._lib_config_manager.get_config()
+        if not config_data:
+            config_data = await self.set_lib_config(
+                config_folder=self._config_folder, db_connection_string="sqlite+aiosqlite:///"
+            )
+
+        connection_string = config_data.get("db_connection_string")
+        self._config_folder = Path(config_data.get("config_folder"))
+        self._cache_manager = CacheManager(
+            self, config_folder=self._config_folder, sql_connection_string=connection_string
+        )
+        self._config_manager = ConfigManager(
+            self, config_folder=self._config_folder, sql_connection_string=connection_string
+        )
+        self._equalizer_manager = EqualizerManager(
+            self, config_folder=self._config_folder, sql_connection_string=connection_string
+        )
+        self._player_state_manager = PlayerStateManager(
+            self, config_folder=self._config_folder, sql_connection_string=connection_string
+        )
+        self._playlist_manager = PlaylistManager(
+            self, config_folder=self._config_folder, sql_connection_string=connection_string
+        )
+
+    async def set_lib_config(self, config_folder: Path | str, db_connection_string: str):
+        config_folder = Path(config_folder)
+        if config_folder.is_file():
+            raise ValueError("The config folder must be a directory.")
+        if config_folder.is_dir() and not config_folder.exists():
+            config_folder.mkdir(parents=True)
+
+        if db_connection_string.startswith("sqlite"):
+            db_connection_string = "sqlite+aiosqlite:///"
+        elif db_connection_string.startswith("mysql"):
+            if db_connection_string.startswith("mysql") and not db_connection_string.startswith("mysql+asyncmy://"):
+                raise ValueError(
+                    "MySQL connection string must be formatted like `mysql+asyncmy://user:password@host:port/dbname`."
+                )
+            else:
+                LOGGER.debug("MySQL connection string set to %s.", db_connection_string)
+        elif db_connection_string.startswith("postgresql"):
+            if not db_connection_string.startswith("postgresql+asyncpg://"):
+                raise ValueError(
+                    "Postgresql connection string must be formatted like "
+                    "`postgresql+asyncpg://user:password@host:port/dbname`."
+                )
+            else:
+                LOGGER.debug("Postgresql connection string set to %s.", db_connection_string)
+        else:
+            raise ValueError("Invalid connection string, SQL, MySQL, or Postgresql connection string required.")
+
+        self._config_folder = config_folder
+        return await self._lib_config_manager.upsert_config(
+            {"id": 1, "db_connection_string": db_connection_string, "config_folder": str(config_folder)}
+        )
 
     @property
     def node_manager(self) -> NodeManager:
@@ -124,7 +190,7 @@ class Client:
 
     @property
     def config_folder(self) -> Path:
-        return LIB_CONFIG_FOLDER
+        return self._config_folder
 
     @property
     def bot(self) -> Red | discord.Client:
@@ -200,7 +266,7 @@ class Client:
 
     async def get_tracks(
         self, query: str, node: Node = None, search_only_nodes: bool = False, first: bool = False
-    ) -> list[dict]:
+    ) -> dict | list[dict]:
         """|coro|
         Gets all tracks associated with the given query.
 

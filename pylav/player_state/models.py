@@ -9,6 +9,7 @@ Base = declarative_base()
 class PlayerEntry(Base):
     __tablename__ = "player"
     guild_id = Column(BigInteger, primary_key=True)
+    channel_id = Column(BigInteger)
     current = Column(TEXT, nullable=True)
     paused = Column(BOOLEAN, nullable=False, default=False)
     repeat_current = Column(BOOLEAN, nullable=False, default=False)
@@ -21,6 +22,7 @@ class PlayerEntry(Base):
     volume = Column(Integer, nullable=False, default=100)
 
     queue = Column(JSON, nullable=False, default=[])
+    history = Column(JSON, nullable=False, default=[])
     metadata = Column(JSON, nullable=False, default={})
     effects = Column(JSON, nullable=False, default={})
     extras = Column(JSON, nullable=False, default={})

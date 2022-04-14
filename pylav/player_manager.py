@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Iterator
 
+import discord
 from red_commons.logging import getLogger
 
 from pylav.exceptions import NodeException
@@ -115,7 +116,9 @@ class PlayerManager:
         """
         return self.players.get(guild_id)
 
-    def create(self, guild_id: int, region: str = "eu", endpoint: str = None, node: Node = None) -> Player:
+    def create(
+        self, channel: discord.VoiceChannel, region: str = "eu", endpoint: str = None, node: Node = None
+    ) -> Player:
         """
         Creates a player if one doesn't exist with the given information.
         If node is provided, a player will be created on that node.
@@ -127,8 +130,8 @@ class PlayerManager:
         Region can be omitted if node is specified and vice-versa.
         Parameters
         ----------
-        guild_id: :class:`int`
-            The guild_id to associate with the player.
+        channel: :class:`discord.VoiceChannel`
+            The voice channel to connect to.
         region: :class:`str`
             The region to use when selecting a Lavalink node. Defaults to `eu`.
         endpoint: :class:`str`
@@ -139,17 +142,19 @@ class PlayerManager:
         -------
         :class:`DefaultPlayer`
         """
-        if guild_id in self.players:
-            return self.players[guild_id]
+        if p := self.players.get(channel.guild.id):
+            return p
 
         if endpoint:  # Prioritise endpoint over region parameter
             region = self.client.node_manager.get_region(endpoint)
 
-        best_node = node or self.client.node_manager.find_ideal_node(region)
+        best_node = node or self.client.node_manager.find_best_node(region)
 
         if not best_node:
             raise NodeException("No available nodes!")
+        player: Player = await channel.connect(cls=Player)
+        player.add_node(best_node)
 
-        self.players[guild_id] = player = self.default_player_class(guild_id, best_node)
-        LOGGER.debug("[NODE-%s] Successfully created player for %s", best_node.name, guild_id)
+        self.players[channel.guild.id] = player
+        LOGGER.debug("[NODE-%s] Successfully created player for %s", best_node.name, channel.guild.id)
         return player

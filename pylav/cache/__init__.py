@@ -10,19 +10,23 @@ from sqlalchemy import event, insert, select
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from pylav._config import LIB_CONFIG_FOLDER
+from pylav._config import CONFIG_DIR
 from pylav.cache.models import Base, QueryDBEntry, QueryTrackDBEntry, TrackDBEntry
+from pylav.client import Client
 
 
 class CacheManager:
-    __database_folder: pathlib.Path = LIB_CONFIG_FOLDER
-    __default_db_name: pathlib.Path = __database_folder / "queries.db"
+    def __init__(self, client: Client, config_folder: pathlib.Path = CONFIG_DIR, sql_connection_string: str = None):
+        __database_folder: pathlib.Path = config_folder
+        __default_db_name: pathlib.Path = __database_folder / "queries.db"
+        if not sql_connection_string or "sqlite+aiosqlite:///" in sql_connection_string:
+            sql_connection_string = f"sqlite+aiosqlite:///{__default_db_name}"
 
-    def __init__(self):
         self._engine = create_async_engine(
-            f"sqlite+aiosqlite:///{self.__default_db_name}", json_deserializer=ujson.loads, json_serializer=ujson.dumps
+            sql_connection_string, json_deserializer=ujson.loads, json_serializer=ujson.dumps
         )
         self._session = sessionmaker(self._engine, expire_on_commit=False, class_=AsyncSession)
+        self._client = client
 
         event.listen(self._engine.sync_engine, "connect", self.on_db_connect)
 
@@ -37,6 +41,10 @@ class CacheManager:
 
     async def init(self):
         await self.create_tables()
+
+    @property
+    def client(self) -> Client:
+        return self._client
 
     @property
     def engine(self) -> AsyncEngine:
@@ -54,7 +62,7 @@ class CacheManager:
             await conn.run_sync(Base.metadata.create_all)
             await conn.commit()
 
-    async def add_queries(self, queries: list[dict]):
+    async def upsert_queries(self, queries: list[dict]):
         async with self.session as session:
             async with session.begin():
                 async for query in AsyncIter(queries):

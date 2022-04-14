@@ -355,7 +355,7 @@ class Node:
     def __repr__(self):
         return f"<Node name={self.name} region={self.region} SSL: {self.ssl}>"
 
-    async def get_tracks(self, query: str, first: bool = False) -> list[dict]:
+    async def get_tracks(self, query: str, first: bool = False) -> dict | list[dict]:
         """|coro|
         Gets all tracks associated with the given query.
 
@@ -377,7 +377,7 @@ class Node:
             if res.status == 200:
                 result = await res.json(loads=ujson.loads)
                 if first:
-                    return result.get("tracks", [])[0]
+                    return next(result.get("tracks", []), {})
                 return result
             if res.status == 401 or res.status == 403:
                 raise Unauthorized

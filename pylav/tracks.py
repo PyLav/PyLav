@@ -11,6 +11,7 @@ from cached_property import cached_property_with_ttl
 
 from pylav.exceptions import InvalidTrack
 from pylav.node import Node
+from pylav.utils import MISSING
 
 
 def read_utfm(utf_len: int, utf_bytes: bytes) -> str:
@@ -181,7 +182,7 @@ class AudioTrack:
         self.__clear_cache_task: asyncio.Task | None = None
         self._is_partial = False
         self._query = extra.pop("query", None)
-        if data is None:
+        if data is None or (isinstance(data, str) and data == MISSING):
             self.track = None
             self._is_partial = True
             self.extra = {}
@@ -195,8 +196,10 @@ class AudioTrack:
                 raise InvalidTrack(f"Cannot build a track from partial data! (Missing key: {missing_key})") from None
         elif isinstance(data, AudioTrack):
             self.track = data.track
+            self._is_partial = data._is_partial
             self.extra = {**data.extra, **extra}
             self._raw_data = data._raw_data
+            self._query = data._query or self._query
         else:
             self.track = data
             self.extra = extra
@@ -214,42 +217,58 @@ class AudioTrack:
 
     @property
     def is_partial(self) -> bool:
-        return self._is_partial
+        return self._is_partial and not self.track
 
     @property
     def query(self) -> str | None:
         return self._query
 
     @property
-    def identifier(self) -> str:
+    def identifier(self) -> str | None:
+        if self.is_partial:
+            return MISSING
         return self.full_track["info"]["identifier"]
 
     @property
     def is_seekable(self) -> bool:
+        if self.is_partial:
+            return MISSING
         return self.full_track["info"]["isSeekable"]
 
     @property
     def duration(self) -> int:
+        if self.is_partial:
+            return MISSING
         return self.full_track["info"]["length"]
 
     @property
     def stream(self) -> bool:
+        if self.is_partial:
+            return MISSING
         return self.full_track["info"]["isStream"]
 
     @property
     def title(self) -> str:
+        if self.is_partial:
+            return MISSING
         return self.full_track["info"]["title"]
 
     @property
     def uri(self) -> str:
+        if self.is_partial:
+            return MISSING
         return self.full_track["info"]["uri"]
 
     @property
     def author(self) -> str:
+        if self.is_partial:
+            return MISSING
         return self.full_track["info"]["author"]
 
     @property
     def source(self) -> str:
+        if self.is_partial:
+            return MISSING
         return self.full_track["info"]["source"]
 
     @property
@@ -300,6 +319,7 @@ class AudioTrack:
         """
         return {
             "track": self.track,
+            "query": self.query,
             "extra": {
                 "requester": self.requester,
                 "timestamp": self.timestamp,
@@ -313,4 +333,4 @@ class AudioTrack:
 
     async def search(self):
         response = await self._node.node_manager.client.get_tracks(self.query, first=True)
-        self.track = response["tracks"][0]["track"]
+        self.track = response["track"]
