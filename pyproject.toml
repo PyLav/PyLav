@@ -2,8 +2,8 @@
 profile = "black"
 line_length = 120
 py_version = 39
-known_third_party=["aiohttp", "ujson", "redbot", "red_commons"]
-known_local_folder=["pylink"]
+known_third_party=["aiohttp", "ujson", "redbot", "red_commons", "discord", "sqlalchemy", "cached_property"]
+known_local_folder=["pylav"]
 
 [tool.black]
 line-length = 120
