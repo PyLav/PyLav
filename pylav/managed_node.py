@@ -40,6 +40,7 @@ from pylav.exceptions import (
     UnsupportedJavaError,
     WebsocketNotConnectedError,
 )
+from pylav.node import Node
 
 LOGGER = getLogger("red.PyLink.ManagedNode")
 
@@ -97,8 +98,12 @@ LAVALINK_JAVA_LINE: Final[Pattern] = re.compile(rb"JVM:\s+(?P<jvm>\d+[.\d+]*)")
 LAVALINK_LAVAPLAYER_LINE: Final[Pattern] = re.compile(rb"Lavaplayer\s+(?P<lavaplayer>\d+[.\d+]*)")
 LAVALINK_BUILD_TIME_LINE: Final[Pattern] = re.compile(rb"Build time:\s+(?P<build_time>\d+[.\d+]*)")
 JAR_SERVER = "https://ci.fredboat.com"
-JAR_SERVER_BUILD_INFO = "/guestAuth/app/rest/buildTypes/id:Lavalink_Build/builds/running:false,status:success"
+JAR_SERVER_BUILD_INFO = (
+    "/guestAuth/app/rest/builds?locator=branch:refs/heads/dev,buildType:Lavalink_Build,status:SUCCESS,count:1"
+)
 BUILD_META_KEYS = ("number", "branchName", "finishDate", "artifacts__href")
+# This is a fallback URL for when the above doesn't return a valid input
+#   This will download from the Master branch which is behind dev
 LAVALINK_JAR_ENDPOINT: Final[
     str
 ] = "https://ci.fredboat.com/repository/download/Lavalink_Build/.lastSuccessful/Lavalink.jar"
@@ -159,6 +164,11 @@ class LocalNodeManager:
         self._args = []
         self._session = aiohttp.ClientSession(json_serialize=ujson.dumps)
         self._node_id: str = str(uuid.uuid4())
+        self._node: Node | None = None
+
+    @property
+    def node(self) -> Node | None:
+        return self._node
 
     @property
     def path(self) -> str | None:
@@ -379,7 +389,7 @@ class LocalNodeManager:
             jar_url = JAR_SERVER + jar_url
         else:
             jar_url = LAVALINK_JAR_ENDPOINT
-        async with self._session.get(JAR_SERVER + jar_url) as response:
+        async with self._session.get(JAR_SERVER + jar_url, timeout=600) as response:
             if 400 <= response.status < 600:
                 raise LavalinkDownloadFailed(response=response, should_retry=True)
             fd, path = tempfile.mkstemp()
@@ -449,7 +459,7 @@ class LocalNodeManager:
         self._buildtime = date
         if self._auto_update:
             self._ci_info = await self.get_ci_latest_info()
-            self._up_to_date = build == (self._ci_info.get("number") or -1)
+            self._up_to_date = build == self._ci_info.get("number")
         else:
             self._ci_info["number"] = build
             self._up_to_date = True
@@ -573,3 +583,18 @@ class LocalNodeManager:
         if self.start_monitor_task is not None:
             await self.shutdown()
         self.start_monitor_task = asyncio.create_task(self.start_monitor(java_path))
+
+    async def connect_node(self):
+        self._node = self._client.add_node(
+            host=...,
+            port=...,
+            password=...,
+            region=...,
+            resume_key=f"ManagedNode-{self._node_pid}-{self._node_id}",
+            resume_timeout=600,
+            name=f"Managed: {self._node_pid}",
+            ssl=False,
+            search_only=False,
+            unique_identifier=self._node_id,
+        )
+        self._node = self._client.node_manager.get_node_by_id(self._node_id)

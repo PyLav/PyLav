@@ -175,13 +175,14 @@ class AudioTrack:
         Any extra properties given to this AudioTrack will be stored here.
     """
 
-    __slots__ = ("track", "extra", "_raw_data", "_node", "__clear_cache_task", "_is_partial", "_query")
+    __slots__ = ("track", "extra", "_raw_data", "_node", "__clear_cache_task", "_is_partial", "_query", "skip_segments")
 
     def __init__(self, node: Node, data: AudioTrack | dict | str | None, **extra: Any):
         self._node = node
         self.__clear_cache_task: asyncio.Task | None = None
         self._is_partial = False
         self._query = extra.pop("query", None)
+        self.skip_segments = extra.pop("skip_segments", [])
         if data is None or (isinstance(data, str) and data == MISSING):
             self.track = None
             self._is_partial = True

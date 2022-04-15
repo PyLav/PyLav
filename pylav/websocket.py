@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any
 
 import aiohttp
 import ujson
+from mycog import get_closest_discord_region
 from red_commons.logging import getLogger
 
 from pylav.events import TrackEndEvent, TrackExceptionEvent, TrackStartEvent, TrackStuckEvent, WebSocketClosedEvent
@@ -107,7 +108,8 @@ class WebSocket:
 
         if self._resuming_configured and self._resume_key:
             headers["Resume-Key"] = self._resume_key
-
+        await self._node.update_features()
+        self._node._region = await get_closest_discord_region(self._host)
         is_finite_retry = self._max_reconnect_attempts != -1
         max_attempts_str = "inf" if is_finite_retry else self._max_reconnect_attempts
         attempt = 0

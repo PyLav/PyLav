@@ -199,6 +199,7 @@ class Node:
         self._resume_timeout = resume_timeout
         self._reconnect_attempts = reconnect_attempts
         self._search_only = search_only
+        self._capabilities = set()
 
         self._stats = None
 
@@ -368,7 +369,10 @@ class Node:
         await self.websocket.send(**data)
 
     def __repr__(self):
-        return f"<Node name={self.name} region={self.region} SSL: {self.ssl}>"
+        return (
+            f"<Node id={self.identifier} name={self.name} "
+            f"region={self.region} ssl={self.ssl} search_only={self.search_only}>"
+        )
 
     async def get_tracks(self, query: str, first: bool = False) -> dict | list[dict]:
         """|coro|
@@ -454,11 +458,13 @@ class Node:
         :class:`bool`
             True if the address was freed, False otherwise.
         """
-        destination = f"{self.connection_protocol}://{self.host}:{self.port}/route planner/free/address"
+        destination = f"{self.connection_protocol}://{self.host}:{self.port}/routeplanner/free/address"
 
         async with self._session.post(
             destination, headers={"Authorization": self.password}, json={"address": address}
         ) as res:
+            if res.status == 401 or res.status == 403:
+                raise Unauthorized
             return res.status == 204
 
     async def routeplanner_free_all_failing(self) -> bool:
@@ -470,10 +476,30 @@ class Node:
         :class:`bool`
             True if all failing addresses were freed, False otherwise.
         """
-        destination = f"{self.connection_protocol}://{self.host}:{self.port}/route planner/free/all"
+        destination = f"{self.connection_protocol}://{self.host}:{self.port}/routeplanner/free/all"
 
         async with self._session.post(destination, headers={"Authorization": self.password}) as res:
+            if res.status == 401 or res.status == 403:
+                raise Unauthorized
             return res.status == 204
+
+    async def plugins(self) -> list[dict]:
+        """|coro|
+        Gets the plugins of the target node.
+
+        Returns
+        -------
+        :class:`list` of :class:`dict`
+            A dict representing the plugins.
+        """
+        destination = f"{self.connection_protocol}://{self.host}:{self.port}/plugins"
+        async with self._session.get(destination, headers={"Authorization": self.password}) as res:
+            if res.status == 200:
+                return await res.json(loads=ujson.loads)
+
+            if res.status == 401 or res.status == 403:
+                raise Unauthorized
+        return []
 
     async def filters(
         self,
@@ -516,3 +542,163 @@ class Node:
             op["channelMix"] = channel_mix.get()
 
         await self.send(**op)
+
+    async def update_features(self):
+        """|coro|
+        Updates the features of the target node.
+        """
+        for feature in await self.plugins():
+            if feature["name"] == "Topis-Source-Managers-Plugin":
+                self._capabilities.update("spotify", "applemusic")
+            elif feature["name"] == "DuncteBot-plugin":
+                self._capabilities.update("getyarn", "clypit", "tts", "pornhub", "reddit", "ocremix", "mixcloud")
+            elif feature["name"] == "sponsorblock":
+                self._capabilities.add("sponsorblock")
+
+    def has_capability(self, capability: str) -> bool:
+        """
+        Checks if the target node has the specified capability.
+
+        Parameters
+        ----------
+        capability: :class:`str`
+            The capability to check.
+
+        Returns
+        -------
+        :class:`bool`
+            True if the target node has the specified capability, False otherwise.
+        """
+        return capability.lower() in self.capabilities
+
+    @property
+    def capabilities(self) -> set:
+        """
+        Returns the capabilities of the target node.
+
+        Returns
+        -------
+        :class:`set`
+            The capabilities of the target node.
+        """
+        return self._capabilities.copy()
+
+    @property
+    def supports_spotify(self) -> bool:
+        """
+        Checks if the target node supports Spotify.
+
+        Returns
+        -------
+        :class:`bool`
+            True if the target node supports Spotify, False otherwise.
+        """
+        return self.has_capability("spotify")
+
+    @property
+    def supports_apple_music(self) -> bool:
+        """
+        Checks if the target node supports Apple Music.
+
+        Returns
+        -------
+        :class:`bool`
+            True if the target node supports Apple Music, False otherwise.
+        """
+        return self.has_capability("applemusic")
+
+    @property
+    def supports_getyarn(self) -> bool:
+        """
+        Checks if the target node supports GetYarn.
+
+        Returns
+        -------
+        :class:`bool`
+            True if the target node supports GetYarn, False otherwise.
+        """
+        return self.has_capability("getyarn")
+
+    @property
+    def supports_clypit(self) -> bool:
+        """
+        Checks if the target node supports ClypIt.
+
+        Returns
+        -------
+        :class:`bool`
+            True if the target node supports ClypIt, False otherwise.
+        """
+        return self.has_capability("clypit")
+
+    @property
+    def supports_tts(self) -> bool:
+        """
+        Checks if the target node supports TTS.
+
+        Returns
+        -------
+        :class:`bool`
+            True if the target node supports TTS, False otherwise.
+        """
+        return self.has_capability("tts")
+
+    @property
+    def supports_pornhub(self) -> bool:
+        """
+        Checks if the target node supports PornHub.
+
+        Returns
+        -------
+        :class:`bool`
+            True if the target node supports PornHub, False otherwise.
+        """
+        return self.has_capability("pornhub")
+
+    @property
+    def supports_reddit(self) -> bool:
+        """
+        Checks if the target node supports Reddit.
+
+        Returns
+        -------
+        :class:`bool`
+            True if the target node supports Reddit, False otherwise.
+        """
+        return self.has_capability("reddit")
+
+    @property
+    def supports_ocremix(self) -> bool:
+        """
+        Checks if the target node supports OCRemix.
+
+        Returns
+        -------
+        :class:`bool`
+            True if the target node supports OCRemix, False otherwise.
+        """
+        return self.has_capability("ocremix")
+
+    @property
+    def supports_mixcloud(self) -> bool:
+        """
+        Checks if the target node supports Mixcloud.
+
+        Returns
+        -------
+        :class:`bool`
+            True if the target node supports Mixcloud, False otherwise.
+        """
+        return self.has_capability("mixcloud")
+
+    @property
+    def supports_sponsorblock(self) -> bool:
+        """
+        Checks if the target node supports SponsorBlock.
+
+        Returns
+        -------
+        :class:`bool`
+            True if the target node supports SponsorBlock, False otherwise.
+        """
+        return self.has_capability("sponsorblock")

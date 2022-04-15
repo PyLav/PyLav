@@ -19,14 +19,12 @@ LOGGER = getLogger("red.PyLink.NodeManager")
 
 
 class NodeManager:
-    def __init__(self, client: Client, supported_regions: dict[str, tuple[str]] = None):
+    def __init__(self, client: Client):
         self._client = client
         self._session = client.session
         self._player_queue = []
 
         self._nodes = []
-
-        self.regions = supported_regions or DEFAULT_REGIONS
 
     def __iter__(self):
         yield from self._nodes
@@ -81,6 +79,8 @@ class NodeManager:
         name: str = None,
         reconnect_attempts: int = 3,
         ssl: bool = False,
+        search_only: bool = False,
+        unique_identifier: str | None = None,
     ) -> Node:
         """
         Adds a node to PyLink's node manager.
@@ -107,6 +107,10 @@ class NodeManager:
             Set to `-1` for infinite. Defaults to `3`.
         ssl: Optional[:class:`bool`]
             Whether to use a ssl connection. Defaults to `False`.
+        search_only: :class:`bool`
+            Whether the node is search only. Defaults to `False`.
+        unique_identifier: Optional[:class:`str`]
+            A unique identifier for the node. Defaults to `None`.
         """
         node = Node(
             manager=self,
@@ -119,6 +123,8 @@ class NodeManager:
             name=name,
             reconnect_attempts=reconnect_attempts,
             ssl=ssl,
+            search_only=search_only,
+            unique_identifier=unique_identifier,
         )
         self._nodes.append(node)
 
@@ -154,13 +160,13 @@ class NodeManager:
 
         endpoint = endpoint.replace("vip-", "")
 
-        for key in self.regions:
+        for key in DEFAULT_REGIONS:
             nodes = [n for n in self.available_nodes if n.region == key]
 
             if not nodes:
                 continue
 
-            if endpoint.startswith(self.regions[key]):
+            if endpoint.startswith(key):
                 return key
         return None
 

@@ -44,7 +44,7 @@ class Client:
         The class that should be used for the player. Defaults to ``Player``.
         Do not change this unless you know what you are doing!
     regions: Optional[:class:`dict`]
-        A dictionary representing region -> discord endpoint. You should only
+        A list representing region -> discord endpoint. You should only
         change this if you know what you're doing and want more control over
         which regions handle specific locations. Defaults to `None`.
     connect_back: Optional[:class:`bool`]
@@ -251,7 +251,9 @@ class Client:
         name: str = None,
         reconnect_attempts: int = 3,
         ssl: bool = False,
-    ):
+        search_only: bool = False,
+        unique_identifier: str | None = None,
+    ) -> Node:
         """
         Adds a node to Lavalink's node manager.
 
@@ -278,9 +280,13 @@ class Client:
             Set to `-1` for infinite. Defaults to `3`.
         ssl: Optional[:class:`bool`]
             Whether to use SSL for the connection. Defaults to `False`.
+        search_only: :class:`bool`
+            Whether the node should only be used for searching. Defaults to `False`.
+        unique_identifier: Optional[:class:`str`]
+            A unique identifier for the node. Defaults to `None`.
         """
 
-        self.node_manager.add_node(
+        return self.node_manager.add_node(
             host=host,
             port=port,
             password=password,
@@ -290,6 +296,8 @@ class Client:
             name=name,
             reconnect_attempts=reconnect_attempts,
             ssl=ssl,
+            search_only=search_only,
+            unique_identifier=unique_identifier,
         )
 
     async def get_tracks(

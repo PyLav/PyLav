@@ -60,7 +60,7 @@ class Player(VoiceProtocol):
         self.repeat_current = False
         self.repeat_queue = False
         self.queue = asyncio.PriorityQueue()
-        self.history = collections.deque(maxlen=100)
+        self.history: collections.deque[AudioTrack] = collections.deque(maxlen=100)
         self.current: AudioTrack | None = None
         self._post_init_completed = False
 
@@ -293,6 +293,8 @@ class Player(VoiceProtocol):
             self.history.appendleft(self.current)
         options = {"noReplace": False}
         self.current = track
+        if track.skip_segments:
+            options["skipSegments"] = track.skip_segments
         await self.node.send(op="play", guildId=self.guild_id, track=track.track, **options)
         await self.node.dispatch_event(TrackStartEvent(self, track))
 
@@ -303,6 +305,7 @@ class Player(VoiceProtocol):
         end_time: int = 0,
         no_replace: bool = False,
         query: str = None,
+        skip_segments: list[str] | str = None,
     ) -> None:
         """
         Plays the given track.
@@ -326,11 +329,17 @@ class Player(VoiceProtocol):
             Defaults to `False`
         query: Optional[:class:`str`]
             The query that was used to search for the track.
+        skip_segments: Optional[:class:`list`]
+            A list of segments to skip.
         """
+        options = {}
+        skip_segments = self._process_skip_segments(skip_segments)
         if track is not None and isinstance(track, dict):
-            track = AudioTrack(self.node, track, requester=self.client.user.id, query=query)
+            track = AudioTrack(
+                self.node, track, requester=self.client.user.id, query=query, skip_segments=skip_segments
+            )
         elif track is None and query is not None:
-            track = AudioTrack(self.node, None, requester=self.client.user.id, query=query)
+            track = AudioTrack(self.node, None, requester=self.client.user.id, query=query, skip_segments=skip_segments)
 
         if self.repeat_queue and self.current:
             await self.add(self.current.requester_id, self.current)
@@ -353,9 +362,8 @@ class Player(VoiceProtocol):
 
         if track.is_partial and not track.track:
             await track.search()
-
-        options = {}
-
+        if skip_segments:
+            options["skipSegments"] = skip_segments
         if start_time is not None:
             if not isinstance(start_time, int) or not 0 <= start_time <= track.duration:
                 raise ValueError(
@@ -507,7 +515,12 @@ class Player(VoiceProtocol):
             await self._dispatch_voice_update()
 
         if self.current:
-            await self.node.send(op="play", guildId=self.guild_id, track=self.current.track, startTime=self.position)
+            options = {}
+            if self.current.skip_segments:
+                options["skipSegments"] = self.current.skip_segments
+            await self.node.send(
+                op="play", guildId=self.guild_id, track=self.current.track, startTime=self.position, **options
+            )
             self._last_update = time.time() * 1000
 
             if self.paused:
@@ -867,3 +880,37 @@ class Player(VoiceProtocol):
                 channel_mix=channel_mix or (self.channel_mix if self.channel_mix.changed else None),
             )
         await self.seek(self.position, with_filter=True)
+
+    def _process_skip_segments(self, skip_segments: list[str] | str | None):
+        if skip_segments is not None and self.node.supports_sponsorblock:
+            if type(skip_segments) is str and skip_segments == "all":
+                skip_segments = [
+                    "sponsor",
+                    "selfpromo",
+                    "interaction",
+                    "intro",
+                    "outro",
+                    "preview",
+                    "music_offtopic",
+                    "filler",
+                ]
+            else:
+                skip_segments = list(
+                    filter(
+                        lambda x: x
+                        in [
+                            "sponsor",
+                            "selfpromo",
+                            "interaction",
+                            "intro",
+                            "outro",
+                            "preview",
+                            "music_offtopic",
+                            "filler",
+                        ],
+                        map(lambda x: x.lower(), skip_segments),
+                    )
+                )
+        else:
+            skip_segments = []
+        return skip_segments
