@@ -43,10 +43,6 @@ class Client:
     player: Optional[:class:`Player`]
         The class that should be used for the player. Defaults to ``Player``.
         Do not change this unless you know what you are doing!
-    regions: Optional[:class:`dict`]
-        A list representing region -> discord endpoint. You should only
-        change this if you know what you're doing and want more control over
-        which regions handle specific locations. Defaults to `None`.
     connect_back: Optional[:class:`bool`]
         A boolean that determines if a player will connect back to the
         node it was originally connected to. This is not recommended doing since
@@ -89,14 +85,13 @@ class Client:
         self,
         bot: discord.Client,
         player=Player,
-        regions: dict = None,
         connect_back: bool = False,
         config_folder: Path = CONFIG_DIR,
     ):
         self._config_folder = Path(config_folder)
         self._bot = bot
         self._user_id = str(bot.user.id)
-        self._node_manager = NodeManager(self, regions)
+        self._node_manager = NodeManager(self)
         self._player_manager = PlayerManager(self, player)
         self._lib_config_manager = LibConfigManager(self)
 
@@ -245,7 +240,6 @@ class Client:
         host: str,
         port: int,
         password: str,
-        region: str,
         resume_key: str = None,
         resume_timeout: int = 60,
         name: str = None,
@@ -265,8 +259,6 @@ class Client:
             The port to use for websocket and REST connections.
         password: :class:`str`
             The password used for authentication.
-        region: :class:`str`
-            The region to assign this node to.
         resume_key: Optional[:class:`str`]
             A resume key used for resuming a session upon re-establishing a WebSocket connection to Lavalink.
             Defaults to `None`.
@@ -290,7 +282,6 @@ class Client:
             host=host,
             port=port,
             password=password,
-            region=region,
             resume_key=resume_key,
             resume_timeout=resume_timeout,
             name=name,

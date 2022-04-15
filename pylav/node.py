@@ -180,6 +180,8 @@ class Node:
         self._session = manager.session
         if unique_identifier is None:
             unique_identifier = str(uuid4())
+        else:
+            self._name = name or f"{self.region}-{self.host}-{unique_identifier}"
         if self._manager.get_node_by_id(unique_identifier) is not None:
             raise ValueError("A Node with identifier:%s already exists.")
         self._identifier = unique_identifier
@@ -194,7 +196,7 @@ class Node:
         self._host = host
         self._password = password
         self._region = region
-        self._name = name or f"{self.region}-{self.host}:{self.port}"
+
         self._resume_key = resume_key
         self._resume_timeout = resume_timeout
         self._reconnect_attempts = reconnect_attempts

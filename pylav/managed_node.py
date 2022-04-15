@@ -35,12 +35,14 @@ from pylav.exceptions import (
     ManagedLavalinkStartFailure,
     NodeUnhealthy,
     NoProcessFound,
+    PortAlreadyInUseError,
     TooManyProcessFound,
     UnexpectedJavaResponseError,
     UnsupportedJavaError,
     WebsocketNotConnectedError,
 )
 from pylav.node import Node
+from pylav.utils import AsyncIter
 
 LOGGER = getLogger("red.PyLink.ManagedNode")
 
@@ -165,6 +167,9 @@ class LocalNodeManager:
         self._session = aiohttp.ClientSession(json_serialize=ujson.dumps)
         self._node_id: str = str(uuid.uuid4())
         self._node: Node | None = None
+        self._current_config = {}
+        self.abort_for_unmanaged: asyncio.Event = asyncio.Event()
+        self._args = []
 
     @property
     def node(self) -> Node | None:
@@ -237,9 +242,8 @@ class LocalNodeManager:
         command_string = shlex.join(args)
         LOGGER.info("Managed Lavalink node startup command: %s", command_string)
         if "-Xmx" not in command_string and msg is None:
-            LOGGER.warning(
-                "Managed Lavalink node maximum allowed RAM not set or higher than available RAM."
-            )  # TODO: Add API endpoint to change this
+            LOGGER.warning("Managed Lavalink node maximum allowed RAM not set or higher than available RAM")
+            # TODO: Add instruction for user to set max RAM
         try:
             self._proc = await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
                 *args,
@@ -262,6 +266,21 @@ class LocalNodeManager:
 
     async def process_settings(self):
         data = change_dict_naming_convention(await self._config.yaml.all())
+        # The reason this is here is to completely remove these keys from the application.yml
+        # if they are set to empty values
+        if not all(
+            (
+                data["lavalink"]["server"]["youtubeConfig"]["PAPISID"],
+                data["lavalink"]["server"]["youtubeConfig"]["PSID"],
+            )
+        ):
+            del data["lavalink"]["server"]["youtubeConfig"]
+        if not data["lavalink"]["server"]["ratelimit"]["ipBlocks"]:
+            del data["lavalink"]["server"]["ratelimit"]
+        if data["sentry"]["dsn"]:
+            data["sentry"]["tags"]["ID"] = self._client.bot.user.id
+            data["sentry"]["tags"]["pylav_version"] = self._client.lib_version
+        self._current_config = data
         with open(LAVALINK_APP_YML, "w") as f:
             yaml.safe_dump(data, f)
 
@@ -349,6 +368,11 @@ class LocalNodeManager:
                 LOGGER.info("Managed Lavalink node is ready to receive requests.")
                 break
             if _FAILED_TO_START.search(line):
+                if f"Port {self._current_config['server']['port']} was already in use".encode() in line:
+                    raise PortAlreadyInUseError(
+                        f"Port {self._current_config['server']['port']} already in use. "
+                        "Managed Lavalink startup aborted."
+                    )
                 raise ManagedLavalinkStartFailure(f"Lavalink failed to start: {line.decode().strip()}")
             if self._proc.returncode is not None:
                 # Avoid Console spam only print once every 2 seconds
@@ -360,6 +384,7 @@ class LocalNodeManager:
     async def shutdown(self) -> None:
         if self.start_monitor_task is not None:
             self.start_monitor_task.cancel()
+        self.abort_for_unmanaged.clear()
         await self._partial_shutdown()
 
     async def _partial_shutdown(self) -> None:
@@ -470,7 +495,16 @@ class LocalNodeManager:
             await self._download_jar()
 
     async def wait_until_ready(self, timeout: float | None = None):
-        await asyncio.wait_for(self.ready.wait(), timeout=timeout or self.timeout)
+        tasks = [asyncio.create_task(c) for c in [self.ready.wait(), self.abort_for_unmanaged.wait()]]
+        done, pending = await asyncio.wait(tasks, timeout=timeout or self.timeout, return_when=asyncio.FIRST_COMPLETED)
+        for task in pending:
+            task.cancel()
+        if done:
+            done.pop().result()
+        if self.abort_for_unmanaged.is_set():
+            raise asyncio.TimeoutError
+        if not self.ready.is_set():
+            raise asyncio.TimeoutError
 
     async def start_monitor(self, java_path: str):
         retry_count = 0
@@ -586,10 +620,9 @@ class LocalNodeManager:
 
     async def connect_node(self):
         self._node = self._client.add_node(
-            host=...,
-            port=...,
-            password=...,
-            region=...,
+            host=self._current_config["server"]["address"],
+            port=self._current_config["server"]["port"],
+            password=self._current_config["lavalink"]["server"]["password"],
             resume_key=f"ManagedNode-{self._node_pid}-{self._node_id}",
             resume_timeout=600,
             name=f"Managed: {self._node_pid}",
@@ -598,3 +631,23 @@ class LocalNodeManager:
             unique_identifier=self._node_id,
         )
         self._node = self._client.node_manager.get_node_by_id(self._node_id)
+
+    @staticmethod
+    async def get_lavalink_process(*matches: str, cwd: Optional[str] = None, lazy_match: bool = False):
+        process_list = []
+        filter = [cwd] if cwd else []
+        async for proc in AsyncIter(psutil.process_iter()):
+            try:
+                if cwd and not (await asyncio.to_thread(proc.cwd) in filter):
+                    continue
+                cmdline = await asyncio.to_thread(proc.cmdline)
+                if (matches and all(a in cmdline for a in matches)) or (
+                    lazy_match and any("lavalink" in arg.lower() for arg in cmdline)
+                ):
+                    proc_as_dict = await asyncio.to_thread(
+                        proc.as_dict, attrs=["pid", "name", "create_time", "status", "cmdline", "cwd"]
+                    )
+                    process_list.append(proc_as_dict)
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                pass
+        return process_list

@@ -47,6 +47,10 @@ class ManagedLavalinkAlreadyRunningError(ManagedLavalinkNodeError):
     """Exception thrown when a managed Lavalink node is already running"""
 
 
+class PortAlreadyInUseError(ManagedLavalinkNodeError):
+    """Exception thrown when the port is already in use"""
+
+
 class ManagedLavalinkStartFailure(ManagedLavalinkNodeError):
     """Exception thrown when a managed Lavalink node fails to start"""
 

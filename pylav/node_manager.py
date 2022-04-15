@@ -73,7 +73,6 @@ class NodeManager:
         host: str,
         port: int,
         password: str,
-        region: str,
         resume_key: str = None,
         resume_timeout: int = 60,
         name: str = None,
@@ -92,8 +91,6 @@ class NodeManager:
             The port to use for websocket and REST connections.
         password: :class:`str`
             The password used for authentication.
-        region: :class:`str`
-            The region to assign this node to.
         resume_key: Optional[:class:`str`]
             A resume key used for resuming a session upon re-establishing a WebSocket connection to Lavalink.
             Defaults to `None`.
@@ -117,7 +114,6 @@ class NodeManager:
             host=host,
             port=port,
             password=password,
-            region=region,
             resume_key=resume_key,
             resume_timeout=resume_timeout,
             name=name,
