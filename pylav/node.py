@@ -7,6 +7,8 @@ import ujson
 
 from pylav.events import Event
 from pylav.exceptions import Unauthorized
+from pylav.filters import ChannelMix, Distortion, Equalizer, Karaoke, LowPass, Rotation, Timescale, Vibrato, Volume
+from pylav.filters.tremolo import Tremolo
 from pylav.player import Player
 from pylav.websocket import WebSocket
 
@@ -459,3 +461,45 @@ class Node:
 
         async with self._session.post(destination, headers={"Authorization": self.password}) as res:
             return res.status == 204
+
+    async def filters(
+        self,
+        *,
+        guild_id: int,
+        volume: Volume = None,
+        equalizer: Equalizer = None,
+        karaoke: Karaoke = None,
+        timescale: Timescale = None,
+        tremolo: Tremolo = None,
+        vibrato: Vibrato = None,
+        rotation: Rotation = None,
+        distortion: Distortion = None,
+        low_pass: LowPass = None,
+        channel_mix: ChannelMix = None,
+    ):
+        op = {
+            "op": "filters",
+            "guildId": str(guild_id),
+        }
+        if volume and volume.changed:
+            op["volume"] = volume.get()
+        if equalizer and equalizer.changed:
+            op["equalizer"] = equalizer.get()
+        if karaoke and karaoke.changed:
+            op["karaoke"] = karaoke.get()
+        if timescale and timescale.changed:
+            op["timescale"] = timescale.get()
+        if tremolo and tremolo.changed:
+            op["tremolo"] = tremolo.get()
+        if vibrato and vibrato.changed:
+            op["vibrato"] = vibrato.get()
+        if rotation and rotation.changed:
+            op["rotation"] = rotation.get()
+        if distortion and distortion.changed:
+            op["distortion"] = distortion.get()
+        if low_pass and low_pass.changed:
+            op["lowPass"] = low_pass.get()
+        if channel_mix and channel_mix.changed:
+            op["channelMix"] = channel_mix.get()
+
+        await self.send(**op)

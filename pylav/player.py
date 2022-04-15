@@ -20,6 +20,8 @@ from pylav.events import (
     TrackStartEvent,
     TrackStuckEvent,
 )
+from pylav.filters import ChannelMix, Distortion, Equalizer, Karaoke, LowPass, Rotation, Timescale, Vibrato, Volume
+from pylav.filters.tremolo import Tremolo
 from pylav.player_manager import PlayerManager
 from pylav.tracks import AudioTrack
 
@@ -47,6 +49,7 @@ class Player(VoiceProtocol):
         self._original_node: Node = None  # This is used internally for fail-over.
         self._voice_state = {}
         self.region = channel.rtc_region
+        self._connected = False
 
         self._user_data = {}
 
@@ -54,7 +57,6 @@ class Player(VoiceProtocol):
         self._last_update = 0
         self._last_position = 0
         self.position_timestamp = 0
-        self.volume = 100
         self.shuffle = False
         self.repeat_current = False
         self.repeat_queue = False
@@ -62,6 +64,80 @@ class Player(VoiceProtocol):
         self.history = collections.deque(maxlen=100)
         self.current: AudioTrack | None = None
         self._post_init_completed = False
+
+        # Filters
+        self._effect_enabled: bool = False
+        self._volume: Volume = Volume.default()
+        self._equalizer: Equalizer = Equalizer.default()
+        self._karaoke: Karaoke = Karaoke.default()
+        self._timescale: Timescale = Timescale.default()
+        self._tremolo: Tremolo = Tremolo.default()
+        self._vibrato: Vibrato = Vibrato.default()
+        self._rotation: Rotation = Rotation.default()
+        self._distortion: Distortion = Distortion.default()
+        self._low_pass: LowPass = LowPass.default()
+        self._channel_mix: ChannelMix = ChannelMix.default()
+
+    @property
+    def volume(self) -> int:
+        """
+        The current volume.
+        """
+        return self._volume.get_int_value()
+
+    @volume.setter
+    def volume(self, value: int | float | Volume) -> None:
+        self._volume = Volume(value)
+
+    @property
+    def volume_filter(self) -> Volume:
+        """The currently applied Volume filter."""
+        return self._volume
+
+    @property
+    def equalizer(self) -> Equalizer:
+        """The currently applied Equalizer filter."""
+        return self._equalizer
+
+    @property
+    def karaoke(self) -> Karaoke:
+        """The currently applied Karaoke filter."""
+        return self._karaoke
+
+    @property
+    def timescale(self) -> Timescale:
+        """The currently applied Timescale filter."""
+        return self._timescale
+
+    @property
+    def tremolo(self) -> Tremolo:
+        """The currently applied Tremolo filter."""
+        return self._tremolo
+
+    @property
+    def vibrato(self) -> Vibrato:
+        """The currently applied Vibrato filter."""
+        return self._vibrato
+
+    @property
+    def rotation(self) -> Rotation:
+        """The currently applied Rotation filter."""
+        return self._rotation
+
+    @property
+    def distortion(self) -> Distortion:
+        """The currently applied Distortion filter."""
+        return self._distortion
+
+    @property
+    def low_pass(self) -> LowPass:
+        """The currently applied Low Pass filter."""
+        return self._low_pass
+
+    @property
+    def channel_mix(self) -> ChannelMix:
+        """The currently applied Channel Mix filter."""
+        return self._channel_mix
 
     def post_init(self, node: Node, player_manager: PlayerManager) -> None:
         if self._post_init_completed:
@@ -92,6 +168,10 @@ class Player(VoiceProtocol):
         if node != self.node:
             await self.change_node(node)
             return node
+
+    @property
+    def has_effects(self):
+        return self._effect_enabled
 
     @property
     def guild(self) -> discord.Guild:
@@ -348,7 +428,7 @@ class Player(VoiceProtocol):
         await self.node.send(op="pause", guildId=self.guild_id, pause=pause)
         self.paused = pause
 
-    async def set_volume(self, vol: int) -> None:
+    async def set_volume(self, vol: int | float | Volume) -> None:
         """
         Sets the player's volume
         Note
@@ -359,18 +439,25 @@ class Player(VoiceProtocol):
         vol: :class:`int`
             The new volume level.
         """
+
         self.volume = max(min(vol, 1000), 0)
         await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
 
-    async def seek(self, position: int) -> None:
+    async def seek(self, position: float, with_filter: bool = False) -> None:
         """
         Seeks to a given position in the track.
         Parameters
         ----------
         position: :class:`int`
             The new position to seek to in milliseconds.
+        with_filter: :class:`bool`
+            Whether to apply the filter or not.
         """
-        await self.node.send(op="seek", guildId=self.guild_id, position=position)
+        if self.current and self.current.is_seekable:
+            if with_filter:
+                position = self.position
+            position = max(min(position, self.current.duration), 0)
+            await self.node.send(op="seek", guildId=self.guild_id, position=position)
 
     async def _handle_event(self, event) -> None:
         """
@@ -468,8 +555,28 @@ class Player(VoiceProtocol):
     async def save(self) -> None:
         await self.node.node_manager.client.player_state_manager.upsert_players([self.to_dict()])
 
-    async def connect(self, *, timeout: float, reconnect: bool) -> None:
-        await self.guild.change_voice_state(channel=self.channel)
+    async def connect(
+        self,
+        *,
+        timeout: float = 2.0,
+        reconnect: bool = False,
+        self_mute: bool = False,
+        self_deaf: bool = False,
+    ) -> None:
+        """
+        Connects the player to the voice channel.
+        Parameters
+        ----------
+        timeout: :class:`float`
+            The timeout for the connection.
+        reconnect: :class:`bool`
+            Whether the player should reconnect if the connection is lost.
+        self_mute: :class:`bool`
+            Whether the player should be muted.
+        self_deaf: :class:`bool`
+            Whether the player should be deafened.
+        """
+        await self.guild.change_voice_state(channel=self.channel, self_mute=self_mute, self_deaf=self_deaf)
         self._connected = True
 
         LOGGER.info("[Player-%s] Connected to voice channel", self.channel.id)
@@ -488,14 +595,230 @@ class Player(VoiceProtocol):
 
             self.cleanup()
 
-    async def move_to(self, channel: discord.VoiceChannel) -> None:
+    async def move_to(
+        self,
+        channel: discord.VoiceChannel,
+        self_mute: bool = False,
+        self_deaf: bool = False,
+    ) -> None:
         """|coro|
         Moves the player to a different voice channel.
         Parameters
         -----------
         channel: :class:`discord.VoiceChannel`
             The channel to move to. Must be a voice channel.
+        self_mute: :class:`bool`
+            Indicates if the player should be self-muted on move.
+        self_deaf: :class:`bool`
+            Indicates if the player should be self-deafened on move.
         """
         LOGGER.info("[Player-%s] Moving to voice channel: %s", self.channel.id, channel.id)
-        await self.guild.change_voice_state(channel=channel)
         self.channel = channel
+        await self.connect(self_mute=self_mute, self_deaf=self_deaf)
+
+    async def set_volume_filter(self, volume: Volume) -> None:
+        """
+        Sets the volume of Lavalink.
+        Parameters
+        ----------
+        volume : Volume
+            Volume to set
+        """
+        await self.set_filters(
+            volume=volume,
+        )
+
+    async def set_equalizer(self, equalizer: Equalizer, forced: bool = False) -> None:
+        """
+        Sets the Equalizer of Lavalink.
+        Parameters
+        ----------
+        equalizer : Equalizer
+            Equalizer to set
+        """
+        await self.set_filters(
+            equalizer=equalizer,
+            reset_not_set=forced,
+        )
+
+    async def set_karaoke(self, karaoke: Karaoke, forced: bool = False) -> None:
+        """
+        Sets the Karaoke of Lavalink.
+        Parameters
+        ----------
+        karaoke : Karaoke
+            Karaoke to set
+        """
+        await self.set_filters(
+            karaoke=karaoke,
+            reset_not_set=forced,
+        )
+
+    async def set_timescale(self, timescale: Timescale, forced: bool = False) -> None:
+        """
+        Sets the Timescale of Lavalink.
+        Parameters
+        ----------
+        timescale : Timescale
+            Timescale to set
+        """
+        await self.set_filters(
+            timescale=timescale,
+            reset_not_set=forced,
+        )
+
+    async def set_tremolo(self, tremolo: Tremolo, forced: bool = False) -> None:
+        """
+        Sets the Tremolo of Lavalink.
+        Parameters
+        ----------
+        tremolo : Tremolo
+            Tremolo to set
+        """
+        await self.set_filters(
+            tremolo=tremolo,
+            reset_not_set=forced,
+        )
+
+    async def set_vibrato(self, vibrato: Vibrato, forced: bool = False) -> None:
+        """
+        Sets the Vibrato of Lavalink.
+        Parameters
+        ----------
+        vibrato : Vibrato
+            Vibrato to set
+        """
+        await self.set_filters(
+            vibrato=vibrato,
+            reset_not_set=forced,
+        )
+
+    async def set_rotation(self, rotation: Rotation, forced: bool = False) -> None:
+        """
+        Sets the Rotation of Lavalink.
+        Parameters
+        ----------
+        rotation : Rotation
+            Rotation to set
+        """
+        await self.set_filters(
+            rotation=rotation,
+            reset_not_set=forced,
+        )
+
+    async def set_distortion(self, distortion: Distortion, forced: bool = False) -> None:
+        """
+        Sets the Distortion of Lavalink.
+        Parameters
+        ----------
+        distortion : Distortion
+            Distortion to set
+        """
+        await self.set_filters(
+            distortion=distortion,
+            reset_not_set=forced,
+        )
+
+    async def set_low_pass(self, low_pass: LowPass, forced: bool = False) -> None:
+        """
+        Sets the LowPass of Lavalink.
+        Parameters
+        ----------
+        low_pass : LowPass
+            LowPass to set
+        """
+        await self.set_filters(
+            low_pass=low_pass,
+            reset_not_set=forced,
+        )
+
+    async def set_channel_mix(self, channel_mix: ChannelMix, forced: bool = False) -> None:
+        """
+        Sets the ChannelMix of Lavalink.
+        Parameters
+        ----------
+        channel_mix : ChannelMix
+            ChannelMix to set
+        """
+        await self.set_filters(
+            channel_mix=channel_mix,
+            reset_not_set=forced,
+        )
+
+    async def set_filters(
+        self,
+        *,
+        volume: Volume = None,
+        equalizer: Equalizer = None,
+        karaoke: Karaoke = None,
+        timescale: Timescale = None,
+        tremolo: Tremolo = None,
+        vibrato: Vibrato = None,
+        rotation: Rotation = None,
+        distortion: Distortion = None,
+        low_pass: LowPass = None,
+        channel_mix: ChannelMix = None,
+        reset_not_set: bool = False,
+    ):
+        if reset_not_set:
+            await self.node.filters(
+                guild_id=self.channel.guild.id,
+                volume=volume or self.volume,
+                equalizer=equalizer,
+                karaoke=karaoke,
+                timescale=timescale,
+                tremolo=tremolo,
+                vibrato=vibrato,
+                rotation=rotation,
+                distortion=distortion,
+                low_pass=low_pass,
+                channel_mix=channel_mix,
+            )
+        else:
+            await self.node.filters(
+                guild_id=self.channel.guild.id,
+                volume=volume or self.volume,
+                equalizer=equalizer or (self.equalizer if self.equalizer.changed else None),
+                karaoke=karaoke or (self.karaoke if self.karaoke.changed else None),
+                timescale=timescale or (self.timescale if self.timescale.changed else None),
+                tremolo=tremolo or (self.tremolo if self.tremolo.changed else None),
+                vibrato=vibrato or (self.vibrato if self.vibrato.changed else None),
+                rotation=rotation or (self.rotation if self.rotation.changed else None),
+                distortion=distortion or (self.distortion if self.distortion.changed else None),
+                low_pass=low_pass or (self.low_pass if self.low_pass.changed else None),
+                channel_mix=channel_mix or (self.channel_mix if self.channel_mix.changed else None),
+            )
+        changed = False
+        if volume and volume.changed:
+            self._volume = volume
+            changed = True
+        if equalizer and equalizer.changed:
+            self._equalizer = equalizer
+            changed = True
+        if karaoke and karaoke.changed:
+            self._karaoke = karaoke
+            changed = True
+        if timescale and timescale.changed:
+            self._timescale = timescale
+            changed = True
+        if tremolo and tremolo.changed:
+            self._tremolo = tremolo
+            changed = True
+        if vibrato and vibrato.changed:
+            self._vibrato = vibrato
+            changed = True
+        if rotation and rotation.changed:
+            self._rotation = rotation
+            changed = True
+        if distortion and distortion.changed:
+            self._distortion = distortion
+            changed = True
+        if low_pass and low_pass.changed:
+            self._low_pass = low_pass
+            changed = True
+        if channel_mix and channel_mix.changed:
+            self._channel_mix = channel_mix
+            changed = True
+
+        self._effect_enabled = changed
+        await self.seek(self.position, with_filter=True)

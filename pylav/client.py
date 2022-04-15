@@ -41,7 +41,7 @@ class Client:
     bot : :class:`discord.Client`
         The bot instance.
     player: Optional[:class:`Player`]
-        The class that should be used for the player. Defaults to ``DefaultPlayer``.
+        The class that should be used for the player. Defaults to ``Player``.
         Do not change this unless you know what you are doing!
     regions: Optional[:class:`dict`]
         A dictionary representing region -> discord endpoint. You should only

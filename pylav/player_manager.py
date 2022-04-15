@@ -33,7 +33,7 @@ class PlayerManager:
 
     def __init__(self, lavalink: Client, player: Player):
         if not issubclass(player, Player):
-            raise ValueError("Player must implement BasePlayer or DefaultPlayer.")
+            raise ValueError("Player must implement Player.")
 
         self.client = lavalink
         self.players = {}
@@ -84,7 +84,7 @@ class PlayerManager:
             A predicate to return specific players. Defaults to `None`.
         Returns
         -------
-        List[:class:`DefaultPlayer`]
+        List[:class:`Player`]
         """
         if not predicate:
             return list(self.players.values())
@@ -112,12 +112,17 @@ class PlayerManager:
             The guild_id associated with the player to get.
         Returns
         -------
-        Optional[:class:`DefaultPlayer`]
+        Optional[:class:`Player`]
         """
         return self.players.get(guild_id)
 
     def create(
-        self, channel: discord.VoiceChannel, region: str = "eu", endpoint: str = None, node: Node = None
+        self,
+        channel: discord.VoiceChannel,
+        region: str = "eu",
+        endpoint: str = None,
+        node: Node = None,
+        self_deaf: bool = False,
     ) -> Player:
         """
         Creates a player if one doesn't exist with the given information.
@@ -138,11 +143,15 @@ class PlayerManager:
             The address of the Discord voice server. Defaults to `None`.
         node: :class:`Node`
             The node to put the player on. Defaults to `None` and a node with the lowest penalty is chosen.
+        self_deaf: :class:`bool`
+            Whether the player should deafen themselves. Defaults to `False`.
         Returns
         -------
-        :class:`DefaultPlayer`
+        :class:`Player`
         """
         if p := self.players.get(channel.guild.id):
+            if channel.id != p.channel_id:
+                await p.move_to(channel, self_deaf=self_deaf)
             return p
 
         if endpoint:  # Prioritise endpoint over region parameter
@@ -152,7 +161,7 @@ class PlayerManager:
 
         if not best_node:
             raise NodeException("No available nodes!")
-        player: Player = await channel.connect(cls=Player)
+        player: Player = await channel.connect(cls=Player, self_deaf=self_deaf)  # type: ignore
         player.post_init(node=best_node, player_manager=self)
 
         self.players[channel.guild.id] = player
