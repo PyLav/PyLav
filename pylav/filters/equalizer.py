@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import collections
+from typing import Final
 
 from pylav.filters.utils import FilterMixin
 
@@ -13,12 +14,6 @@ class Equalizer(FilterMixin):
         A list of tuple pairs containing a band int and gain float.
     name: str
         An Optional string to name this Equalizer. Defaults to 'CustomEqualizer'
-    Attributes
-    ------------
-    eq: list
-        A list of {'band': int, 'gain': float}
-    raw: list
-        A list of tuple pairs containing a band int and gain float.
     """
 
     def __init__(self, *, levels: list, name: str = "CustomEqualizer"):
@@ -91,23 +86,26 @@ class Equalizer(FilterMixin):
         """Flat Equalizer.
         Resets your EQ to Flat.
         """
-        levels = [
-            {"band": 0, "gain": 0.0},
-            {"band": 1, "gain": 0.0},
-            {"band": 2, "gain": 0.0},
-            {"band": 3, "gain": 0.0},
-            {"band": 4, "gain": 0.0},
-            {"band": 5, "gain": 0.0},
-            {"band": 6, "gain": 0.0},
-            {"band": 7, "gain": 0.0},
-            {"band": 8, "gain": 0.0},
-            {"band": 9, "gain": 0.0},
-            {"band": 10, "gain": 0.0},
-            {"band": 11, "gain": 0.0},
-            {"band": 12, "gain": 0.0},
-            {"band": 13, "gain": 0.0},
-            {"band": 14, "gain": 0.0},
-        ]
+        return cls(
+            levels=[
+                {"band": 0, "gain": 0.0},
+                {"band": 1, "gain": 0.0},
+                {"band": 2, "gain": 0.0},
+                {"band": 3, "gain": 0.0},
+                {"band": 4, "gain": 0.0},
+                {"band": 5, "gain": 0.0},
+                {"band": 6, "gain": 0.0},
+                {"band": 7, "gain": 0.0},
+                {"band": 8, "gain": 0.0},
+                {"band": 9, "gain": 0.0},
+                {"band": 10, "gain": 0.0},
+                {"band": 11, "gain": 0.0},
+                {"band": 12, "gain": 0.0},
+                {"band": 13, "gain": 0.0},
+                {"band": 14, "gain": 0.0},
+            ],
+            name="Default",
+        )
 
     @classmethod
     def default(cls) -> Equalizer:

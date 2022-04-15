@@ -38,15 +38,14 @@ class Player(VoiceProtocol):
         channel: discord.VoiceChannel,
         *,
         node: Node = None,
-        player_manager: PlayerManager = None,
     ):
         self.bot = client
         self.guild_id = str(channel.guild.id)
         self.channel = channel
         self.channel_id = channel.id
         self.node: Node = node
-        self.player_manager: PlayerManager = None
-        self._original_node: Node = None  # This is used internally for fail-over.
+        self.player_manager: PlayerManager = None  # noqa
+        self._original_node: Node = None  # noqa
         self._voice_state = {}
         self.region = channel.rtc_region
         self._connected = False
@@ -281,7 +280,7 @@ class Player(VoiceProtocol):
         if index is None:
             await self.queue.put((priority, at))
         else:
-            heapq.heappush(self.queue._queue, (priority, at))
+            heapq.heappush(self.queue._queue, (priority, at))  # noqa
 
     async def previous(self) -> None:
         if not self.history:
@@ -360,7 +359,8 @@ class Player(VoiceProtocol):
         if start_time is not None:
             if not isinstance(start_time, int) or not 0 <= start_time <= track.duration:
                 raise ValueError(
-                    "start_time must be an int with a value equal to, or greater than 0, and less than the track duration"
+                    "start_time must be an int with a value equal to, "
+                    "or greater than 0, and less than the track duration"
                 )
             options["startTime"] = start_time
 
@@ -535,7 +535,7 @@ class Player(VoiceProtocol):
             "volume": self.volume,
             "position": self.position,
             "playing": self.is_playing,
-            "queue": [t[-1].to_json() for t in self.queue._queue] if self.queue else [],
+            "queue": [t[-1].to_json() for t in self.queue._queue] if self.queue else [],  # noqa
             "history": [t.to_json() for t in self.history] if self.history else [],
             "effect_enabled": self._effect_enabled,
             "effects": {
@@ -635,6 +635,8 @@ class Player(VoiceProtocol):
         ----------
         equalizer : Equalizer
             Equalizer to set
+        forced : bool
+            Whether to force the equalizer to be set resetting any other filters currently applied
         """
         await self.set_filters(
             equalizer=equalizer,
@@ -648,6 +650,8 @@ class Player(VoiceProtocol):
         ----------
         karaoke : Karaoke
             Karaoke to set
+        forced : bool
+            Whether to force the karaoke to be set resetting any other filters currently applied
         """
         await self.set_filters(
             karaoke=karaoke,
@@ -661,6 +665,8 @@ class Player(VoiceProtocol):
         ----------
         timescale : Timescale
             Timescale to set
+        forced : bool
+            Whether to force the timescale to be set resetting any other filters currently applied
         """
         await self.set_filters(
             timescale=timescale,
@@ -674,6 +680,8 @@ class Player(VoiceProtocol):
         ----------
         tremolo : Tremolo
             Tremolo to set
+        forced : bool
+            Whether to force the tremolo to be set resetting any other filters currently applied
         """
         await self.set_filters(
             tremolo=tremolo,
@@ -687,6 +695,8 @@ class Player(VoiceProtocol):
         ----------
         vibrato : Vibrato
             Vibrato to set
+        forced : bool
+            Whether to force the vibrato to be set resetting any other filters currently applied
         """
         await self.set_filters(
             vibrato=vibrato,
@@ -700,6 +710,8 @@ class Player(VoiceProtocol):
         ----------
         rotation : Rotation
             Rotation to set
+        forced : bool
+            Whether to force the rotation to be set resetting any other filters currently applied
         """
         await self.set_filters(
             rotation=rotation,
@@ -713,6 +725,8 @@ class Player(VoiceProtocol):
         ----------
         distortion : Distortion
             Distortion to set
+        forced : bool
+            Whether to force the distortion to be set resetting any other filters currently applied
         """
         await self.set_filters(
             distortion=distortion,
@@ -726,6 +740,8 @@ class Player(VoiceProtocol):
         ----------
         low_pass : LowPass
             LowPass to set
+        forced : bool
+            Whether to force the low_pass to be set resetting any other filters currently applied
         """
         await self.set_filters(
             low_pass=low_pass,
@@ -739,6 +755,8 @@ class Player(VoiceProtocol):
         ----------
         channel_mix : ChannelMix
             ChannelMix to set
+        forced : bool
+            Whether to force the channel_mix to be set resetting any other filters currently applied
         """
         await self.set_filters(
             channel_mix=channel_mix,
@@ -760,34 +778,33 @@ class Player(VoiceProtocol):
         channel_mix: ChannelMix = None,
         reset_not_set: bool = False,
     ):
-        if reset_not_set:
-            await self.node.filters(
-                guild_id=self.channel.guild.id,
-                volume=volume or self.volume,
-                equalizer=equalizer,
-                karaoke=karaoke,
-                timescale=timescale,
-                tremolo=tremolo,
-                vibrato=vibrato,
-                rotation=rotation,
-                distortion=distortion,
-                low_pass=low_pass,
-                channel_mix=channel_mix,
-            )
-        else:
-            await self.node.filters(
-                guild_id=self.channel.guild.id,
-                volume=volume or self.volume,
-                equalizer=equalizer or (self.equalizer if self.equalizer.changed else None),
-                karaoke=karaoke or (self.karaoke if self.karaoke.changed else None),
-                timescale=timescale or (self.timescale if self.timescale.changed else None),
-                tremolo=tremolo or (self.tremolo if self.tremolo.changed else None),
-                vibrato=vibrato or (self.vibrato if self.vibrato.changed else None),
-                rotation=rotation or (self.rotation if self.rotation.changed else None),
-                distortion=distortion or (self.distortion if self.distortion.changed else None),
-                low_pass=low_pass or (self.low_pass if self.low_pass.changed else None),
-                channel_mix=channel_mix or (self.channel_mix if self.channel_mix.changed else None),
-            )
+        """
+        Sets the filters of Lavalink.
+        Parameters
+        ----------
+        volume : Volume
+            Volume to set
+        equalizer : Equalizer
+            Equalizer to set
+        karaoke : Karaoke
+            Karaoke to set
+        timescale : Timescale
+            Timescale to set
+        tremolo : Tremolo
+            Tremolo to set
+        vibrato : Vibrato
+            Vibrato to set
+        rotation : Rotation
+            Rotation to set
+        distortion : Distortion
+            Distortion to set
+        low_pass : LowPass
+            LowPass to set
+        channel_mix : ChannelMix
+            ChannelMix to set
+        reset_not_set : bool
+            Whether to reset any filters that are not set
+        """
         changed = False
         if volume and volume.changed:
             self._volume = volume
@@ -821,4 +838,32 @@ class Player(VoiceProtocol):
             changed = True
 
         self._effect_enabled = changed
+        if reset_not_set:
+            await self.node.filters(
+                guild_id=self.channel.guild.id,
+                volume=volume or self.volume,
+                equalizer=equalizer,
+                karaoke=karaoke,
+                timescale=timescale,
+                tremolo=tremolo,
+                vibrato=vibrato,
+                rotation=rotation,
+                distortion=distortion,
+                low_pass=low_pass,
+                channel_mix=channel_mix,
+            )
+        else:
+            await self.node.filters(
+                guild_id=self.channel.guild.id,
+                volume=volume or self.volume,
+                equalizer=equalizer or (self.equalizer if self.equalizer.changed else None),
+                karaoke=karaoke or (self.karaoke if self.karaoke.changed else None),
+                timescale=timescale or (self.timescale if self.timescale.changed else None),
+                tremolo=tremolo or (self.tremolo if self.tremolo.changed else None),
+                vibrato=vibrato or (self.vibrato if self.vibrato.changed else None),
+                rotation=rotation or (self.rotation if self.rotation.changed else None),
+                distortion=distortion or (self.distortion if self.distortion.changed else None),
+                low_pass=low_pass or (self.low_pass if self.low_pass.changed else None),
+                channel_mix=channel_mix or (self.channel_mix if self.channel_mix.changed else None),
+            )
         await self.seek(self.position, with_filter=True)

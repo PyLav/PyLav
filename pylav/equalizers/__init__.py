@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-import contextlib
 import datetime
 import pathlib
 
@@ -77,8 +76,7 @@ class EqualizerManager:
             await conn.commit()
 
     async def _create_built_ins(self, bot_id: int):
-        eq_list = []
-        eq_list.append(
+        eq_list = [
             dict(
                 name="Default",
                 description="Default (no equalizer)",
@@ -101,9 +99,7 @@ class EqualizerManager:
                 band_6300=0.0,
                 band_10000=0.0,
                 band_16000=0.0,
-            )
-        )
-        eq_list.append(
+            ),
             dict(
                 name="Boost",
                 description=(
@@ -129,10 +125,7 @@ class EqualizerManager:
                 band_6300=0.125,
                 band_10000=0.15,
                 band_16000=0.05,
-            )
-        )
-
-        eq_list.append(
+            ),
             dict(
                 name="Metal/Rock",
                 description="Experimental Metal/Rock Equalizer. Expect clipping on Bassy songs.",
@@ -155,10 +148,7 @@ class EqualizerManager:
                 band_6300=0.1,
                 band_10000=0.075,
                 band_16000=0.0,
-            )
-        )
-
-        eq_list.append(
+            ),
             dict(
                 name="Piano",
                 description=(
@@ -184,10 +174,7 @@ class EqualizerManager:
                 band_6300=0.25,
                 band_10000=-0.025,
                 band_16000=0.0,
-            )
-        )
-
-        eq_list.append(
+            ),
             dict(
                 name="Nightcore",
                 description="Experimental to be used with the Nightcore preset.",
@@ -210,10 +197,7 @@ class EqualizerManager:
                 band_6300=0.0,
                 band_10000=0.0,
                 band_16000=0.0,
-            )
-        )
-
-        eq_list.append(
+            ),
             dict(
                 name="Vaporwave",
                 description="Experimental to be used with the Vaporwave preset.",
@@ -236,9 +220,7 @@ class EqualizerManager:
                 band_6300=0.0,
                 band_10000=0.0,
                 band_16000=0.0,
-            )
-        )
-        eq_list.append(
+            ),
             dict(
                 name="Synth",
                 description="Experimental to be used with the Synth preset.",
@@ -261,8 +243,9 @@ class EqualizerManager:
                 band_6300=0.45,
                 band_10000=-0.025,
                 band_16000=0.0,
-            )
-        )
+            ),
+        ]
+
         await self.upsert_equalizers(eq_list)
 
     async def upsert_equalizers(self, equalizers: list[dict[str, float | str | int | None]]):

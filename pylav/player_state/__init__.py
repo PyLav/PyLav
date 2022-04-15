@@ -1,9 +1,7 @@
 from __future__ import annotations
 
 import asyncio
-import datetime
 import pathlib
-from operator import and_
 
 import ujson
 from sqlalchemy import event, insert, select

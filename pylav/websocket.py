@@ -249,7 +249,7 @@ class WebSocket:
             if not player:
                 return
 
-            await player._update_state(data["state"])
+            await player._update_state(data["state"])  # noqa
         elif op == "event":
             await self.handle_event(data)
         else:
@@ -291,10 +291,10 @@ class WebSocket:
             LOGGER.warning("[NODE-%s] Unknown event received: %s", self.node.name, event_type)
             return
 
-        await self.client._dispatch_event(event)
+        await self.client._dispatch_event(event)  # noqa
 
         if player:
-            await player.handle_event(event)
+            await player._handle_event(event)  # noqa
 
     async def send(self, **data: Any):
         """

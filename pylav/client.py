@@ -14,7 +14,7 @@ from red_commons.logging import getLogger
 from redbot.core.bot import Red
 
 from pylav._config import __VERSION__, CONFIG_DIR
-from pylav._lib_config import LibConfigManager
+from pylav._lib_config import LibConfigManager  # noqa
 from pylav.cache import CacheManager
 from pylav.config import ConfigManager
 from pylav.equalizers import EqualizerManager
@@ -61,7 +61,7 @@ class Client:
 
     Attributes
     ----------
-    node_manager: :class:`NodeManager`
+    node_manager: :class:`NodeManager` # noqa
         Represents the node manager that contains all lavalink nodes.
     player_manager: :class:`PlayerManager`
         Represents the player manager that contains all the players.
@@ -346,7 +346,8 @@ class Client:
         node = node or random.choice(list(self.node_manager.available_nodes))
         return await node.decode_tracks(tracks)
 
-    async def routeplanner_status(self, node: Node) -> dict | None:
+    @staticmethod
+    async def routeplanner_status(node: Node) -> dict | None:
         """|coro|
         Gets the route-planner status of the target node.
 
@@ -362,7 +363,8 @@ class Client:
         """
         return await node.routeplanner_status()
 
-    async def routeplanner_free_address(self, node: Node, address: str) -> bool:
+    @staticmethod
+    async def routeplanner_free_address(node: Node, address: str) -> bool:
         """|coro|
         Gets the route-planner status of the target node.
 
@@ -380,7 +382,8 @@ class Client:
         """
         return await node.routeplanner_free_address(address)
 
-    async def routeplanner_free_all_failing(self, node: Node) -> bool:
+    @staticmethod
+    async def routeplanner_free_all_failing(node: Node) -> bool:
         """|coro|
         Gets the route-planner status of the target node.
 
@@ -396,7 +399,8 @@ class Client:
         """
         return await node.routeplanner_free_all_failing()
 
-    async def _dispatch_event(self, event: Event):
+    @staticmethod
+    async def _dispatch_event(event: Event):
         """|coro|
         Dispatches the given event to all registered hooks.
 
@@ -414,7 +418,7 @@ class Client:
         async def _hook_wrapper(hook, event_):
             try:
                 await hook(event_)
-            except Exception as exc:  # noqa: E722 pylint: disable=bare-except
+            except Exception as exc:
                 LOGGER.warning("Event hook %s encountered an exception!", hook.__name__)
                 LOGGER.debug("Event hook %s encountered an exception!", hook.__name__, exc_info=exc)
 

@@ -181,7 +181,6 @@ class NodeManager:
         -------
         Optional[:class:`Node`]
         """
-        nodes = None
         if region and not_region:
             nodes = [n for n in self.available_nodes if n.region == region and n.region != not_region]
         elif region:
@@ -211,13 +210,13 @@ class NodeManager:
             await player.change_node(node)
             LOGGER.debug("[NODE-%s] Successfully moved %s", node.name, player.guild_id)
 
-        if self.client._connect_back:
-            for player in node._original_players:
+        if self.client._connect_back:  # noqa
+            for player in node._original_players:  # noqa
                 await player.change_node(node)
                 player._original_node = None
 
         del self.player_queue
-        await self.client._dispatch_event(NodeConnectedEvent(node))
+        await self.client._dispatch_event(NodeConnectedEvent(node))  # noqa
 
     async def node_disconnect(self, node: Node, code: int, reason: str) -> None:
         """
@@ -239,7 +238,7 @@ class NodeManager:
             reason,
             node,
         )
-        await self.client._dispatch_event(NodeDisconnectedEvent(node, code, reason))
+        await self.client._dispatch_event(NodeDisconnectedEvent(node, code, reason))  # noqa
 
         best_node = self.find_best_node(node.region)
 
@@ -251,5 +250,5 @@ class NodeManager:
         for player in node.players:
             await player.change_node(best_node)
 
-            if self.client._connect_back:
+            if self.client._connect_back:  # noqa
                 player._original_node = node

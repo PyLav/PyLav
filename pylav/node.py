@@ -294,12 +294,12 @@ class Node:
     @property
     def _original_players(self) -> list[Player]:
         """Returns a list of players that were assigned to this node, but were moved due to failover etc."""
-        return [p for p in self._manager.client.player_manager.values() if p._original_node == self]
+        return [p for p in self._manager.client.player_manager.players.values() if p._original_node == self]  # noqa
 
     @property
     def players(self) -> list[Player]:
         """Returns a list of all players on this node."""
-        return [p for p in self._manager.client.player_manager.values() if p.node == self]
+        return [p for p in self._manager.client.player_manager.players.values() if p.node == self]
 
     @property
     def playing_players(self) -> list[Player]:
@@ -342,7 +342,7 @@ class Node:
         event: :class:`Event`
             The event to dispatch to the hooks.
         """
-        await self.node_manager.client._dispatch_event(event)
+        await self.node_manager.client._dispatch_event(event)  # noqa
 
     async def send(self, **data: Any) -> None:
         """|coro|
