@@ -8,6 +8,7 @@ import ujson
 from red_commons.logging import getLogger
 
 from pylav.events import TrackEndEvent, TrackExceptionEvent, TrackStartEvent, TrackStuckEvent, WebSocketClosedEvent
+from pylav.exceptions import WebsocketNotConnectedError
 from pylav.node import Node, Stats
 from pylav.tracks import AudioTrack
 
@@ -88,6 +89,13 @@ class WebSocket:
     def connected(self):
         """Returns whether the websocket is connected to Lavalink."""
         return self._ws is not None and not self._ws.closed
+
+    async def ping(self) -> None:
+        """Pings the websocket."""
+        if self.connected:
+            await self._ws.ping()
+        else:
+            raise WebsocketNotConnectedError
 
     async def connect(self):
         """Attempts to establish a connection to Lavalink."""

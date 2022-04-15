@@ -196,6 +196,19 @@ class NodeManager:
         best_node = min(nodes, key=operator.attrgetter("connected_count", "penalty"))
         return best_node
 
+    def get_node_by_id(self, unique_identifier: str) -> Node | None:
+        """
+        Returns a node by its unique identifier.
+        Parameters
+        ----------
+        unique_identifier: :class:`str`
+            The unique identifier of the node.
+        Returns
+        -------
+        Optional[:class:`Node`]
+        """
+        return next((n for n in self.nodes if n.identifier == unique_identifier), None)
+
     async def node_connect(self, node: Node) -> None:
         """
         Called when a node is connected from Lavalink.

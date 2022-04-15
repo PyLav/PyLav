@@ -19,7 +19,8 @@ from pylav.cache import CacheManager
 from pylav.config import ConfigManager
 from pylav.equalizers import EqualizerManager
 from pylav.events import Event
-from pylav.exceptions import NodeException
+from pylav.exceptions import NodeError
+from pylav.managed_node import LocalNodeManager
 from pylav.node import Node
 from pylav.node_manager import NodeManager
 from pylav.player import Player
@@ -83,6 +84,7 @@ class Client:
     _equalizer_manager: EqualizerManager
     _player_state_manager: PlayerStateManager
     _playlist_manager: PlaylistManager
+    _local_node_manager: LocalNodeManager
 
     def __init__(
         self,
@@ -107,10 +109,16 @@ class Client:
         config_data = await self._lib_config_manager.get_config()
         if not config_data:
             config_data = await self.set_lib_config(
-                config_folder=self._config_folder, db_connection_string="sqlite+aiosqlite:///"
+                config_folder=self._config_folder,
+                db_connection_string="sqlite+aiosqlite:///",
+                java_path="java",
+                enable_managed_node=True,
+                auto_update_managed_nodes=True,
             )
 
         connection_string = config_data.get("db_connection_string")
+        auto_update_managed_nodes = config_data.get("auto_update_managed_nodes", False)
+        enable_managed_node = config_data.get("enable_managed_node", False)
         self._config_folder = Path(config_data.get("config_folder"))
         self._cache_manager = CacheManager(
             self, config_folder=self._config_folder, sql_connection_string=connection_string
@@ -127,8 +135,18 @@ class Client:
         self._playlist_manager = PlaylistManager(
             self, config_folder=self._config_folder, sql_connection_string=connection_string
         )
+        self._local_node_manager = LocalNodeManager(self, auto_update=auto_update_managed_nodes)
+        if enable_managed_node:
+            await self._local_node_manager.start(java_path=config_data.get("java_path"))
 
-    async def set_lib_config(self, config_folder: Path | str, db_connection_string: str):
+    async def set_lib_config(
+        self,
+        config_folder: Path | str,
+        db_connection_string: str,
+        java_path: str,
+        enable_managed_node: bool,
+        auto_update_managed_nodes: bool,
+    ):
         config_folder = Path(config_folder)
         if config_folder.is_file():
             raise ValueError("The config folder must be a directory.")
@@ -157,8 +175,19 @@ class Client:
 
         self._config_folder = config_folder
         return await self._lib_config_manager.upsert_config(
-            {"id": 1, "db_connection_string": db_connection_string, "config_folder": str(config_folder)}
+            {
+                "id": 1,
+                "db_connection_string": db_connection_string,
+                "config_folder": str(config_folder),
+                "java_path": java_path,
+                "enable_managed_node": enable_managed_node,
+                "auto_update_managed_nodes": auto_update_managed_nodes,
+            }
         )
+
+    @property
+    def managed_node_controller(self) -> LocalNodeManager:
+        return self._local_node_manager
 
     @property
     def node_manager(self) -> NodeManager:
@@ -300,7 +329,7 @@ class Client:
             nodes = self.node_manager.available_nodes
 
         if not nodes:
-            raise NodeException("No available nodes!")
+            raise NodeError("No available nodes!")
         node = node or random.choice(list(nodes))
         return await node.get_tracks(query, first=first)
 
@@ -321,7 +350,7 @@ class Client:
             A dict representing the track's information.
         """
         if not self.node_manager.available_nodes:
-            raise NodeException("No available nodes!")
+            raise NodeError("No available nodes!")
         node = node or random.choice(list(self.node_manager.available_nodes))
         return await node.decode_track(track)
 
@@ -342,7 +371,7 @@ class Client:
             A list of dicts representing track information.
         """
         if not self.node_manager.available_nodes:
-            raise NodeException("No available nodes!")
+            raise NodeError("No available nodes!")
         node = node or random.choice(list(self.node_manager.available_nodes))
         return await node.decode_tracks(tracks)
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
+from uuid import uuid4
 
 import aiohttp
 import ujson
@@ -173,10 +174,15 @@ class Node:
         reconnect_attempts: int = 3,
         ssl: bool = False,
         search_only: bool = False,
+        unique_identifier: str = None,
     ):
         self._manager = manager
         self._session = manager.session
-
+        if unique_identifier is None:
+            unique_identifier = str(uuid4())
+        if self._manager.get_node_by_id(unique_identifier) is not None:
+            raise ValueError("A Node with identifier:%s already exists.")
+        self._identifier = unique_identifier
         self._ssl = ssl
         if port is None:
             if self._ssl:
@@ -206,6 +212,13 @@ class Node:
             reconnect_attempts=self.reconnect_attempts,
             ssl=self.ssl,
         )
+
+    @property
+    def identifier(self) -> str:
+        """
+        The identifier of the :class:`Node`.
+        """
+        return self._identifier
 
     @property
     def search_only(self) -> bool:
