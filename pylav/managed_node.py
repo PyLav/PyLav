@@ -477,23 +477,25 @@ class LocalNodeManager:
                         raise NoProcessFound
                     try:
                         node = self._client.node_manager.get_node_by_id(self._node_id)
-                        if node is None:
-                            await asyncio.sleep(5)
-                            continue
-                        try:
-                            # Hoping this throws an exception which will then trigger a restart
-                            await node.websocket.ping()
-                            backoff = ExponentialBackoff(base=7)  # Reassign Backoff to reset it on successful ping.
-                            # ExponentialBackoff.reset() would be a nice method to have
-                            await asyncio.sleep(1)
-                        except WebsocketNotConnectedError:
-                            await asyncio.sleep(5)
+                        if node.websocket.connected:
+                            try:
+                                # Hoping this throws an exception which will then trigger a restart
+                                await node.websocket.ping()
+                                backoff = ExponentialBackoff(base=7)  # Reassign Backoff to reset it on successful ping.
+                                # ExponentialBackoff.reset() would be a nice method to have
+                                await asyncio.sleep(1)
+                            except WebsocketNotConnectedError:
+                                await asyncio.sleep(5)
+                        else:
+                            raise IndexError
                     except IndexError:
-                        # In case lavalink.get_all_nodes() returns 0 Nodes
-                        #  (During a connect or multiple connect failures)
                         try:
                             LOGGER.debug("Managed node monitor detected RLL is not connected to any nodes")
-                            await lavalink.wait_until_ready(timeout=60, wait_if_no_node=60)
+                            while True:
+                                node = self._client.node_manager.get_node_by_id(self._node_id)
+                                if node and node.websocket.connected:
+                                    break
+                                await asyncio.sleep(1)
                         except asyncio.TimeoutError:
                             self.cog.lavalink_restart_connect(manual=True)
                             return  # lavalink_restart_connect will cause a new monitor task to be created.
