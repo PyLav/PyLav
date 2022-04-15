@@ -5,7 +5,6 @@ import datetime
 import pathlib
 
 import ujson
-from redbot.core.utils import AsyncIter
 from sqlalchemy import event, insert, select
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
@@ -13,6 +12,7 @@ from sqlalchemy.orm import sessionmaker
 from pylav._config import CONFIG_DIR
 from pylav.cache.models import Base, QueryDBEntry, QueryTrackDBEntry, TrackDBEntry
 from pylav.client import Client
+from pylav.utils import AsyncIter
 
 
 class CacheManager:

@@ -6,7 +6,6 @@ import datetime
 import pathlib
 
 import ujson
-from redbot.core.utils import AsyncIter
 from sqlalchemy import and_, event, insert, or_, select
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
@@ -14,6 +13,7 @@ from sqlalchemy.orm import sessionmaker
 from pylav._config import CONFIG_DIR
 from pylav.client import Client
 from pylav.playlists.models import Base, PlaylistDBEntry, PlaylistTrackDBEntry, TrackDBEntry
+from pylav.utils import AsyncIter
 
 
 class PlaylistManager:

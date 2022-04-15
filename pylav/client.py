@@ -11,7 +11,6 @@ import aiohttp
 import discord
 import ujson
 from red_commons.logging import getLogger
-from redbot.core.bot import Red
 
 from pylav._config import __VERSION__, CONFIG_DIR
 from pylav._lib_config import LibConfigManager  # noqa
@@ -88,7 +87,7 @@ class Client:
 
     def __init__(
         self,
-        bot: Red | discord.Client,
+        bot: discord.Client,
         player=Player,
         regions: dict = None,
         connect_back: bool = False,
@@ -222,7 +221,7 @@ class Client:
         return self._config_folder
 
     @property
-    def bot(self) -> Red | discord.Client:
+    def bot(self) -> discord.Client:
         return self._bot
 
     @property
