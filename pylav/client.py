@@ -10,6 +10,7 @@ from typing import Callable
 import aiohttp
 import discord
 import ujson
+from discord.ext.commands import Cog
 from red_commons.logging import getLogger
 
 from pylav._config import __VERSION__, CONFIG_DIR
@@ -18,7 +19,7 @@ from pylav.cache import CacheManager
 from pylav.config import ConfigManager
 from pylav.equalizers import EqualizerManager
 from pylav.events import Event
-from pylav.exceptions import NodeError
+from pylav.exceptions import CogHasBeenRegistered, NodeError
 from pylav.managed_node import LocalNodeManager
 from pylav.node import Node
 from pylav.node_manager import NodeManager
@@ -28,6 +29,8 @@ from pylav.player_state import PlayerStateManager
 from pylav.playlists import PlaylistManager
 
 LOGGER = getLogger("red.PyLink.Client")
+
+_COGS_REGISTERED = set()
 
 
 class Client:
@@ -84,22 +87,31 @@ class Client:
     def __init__(
         self,
         bot: discord.Client,
+        cog: Cog,
         player=Player,
         connect_back: bool = False,
         config_folder: Path = CONFIG_DIR,
     ):
+        global _COGS_REGISTERED
+        if cog.__cog_name__ in _COGS_REGISTERED:
+            raise ValueError(f"{cog.__cog_name__} has already been registered!")
+        elif cog.__cog_name__ not in _COGS_REGISTERED and _COGS_REGISTERED and getattr(self.bot, "pylav", None):
+            _COGS_REGISTERED.add(cog.__cog_name__)
+            raise CogHasBeenRegistered(f"Pylav is already loaded - {cog.__cog_name__} has been registered!")
+        _COGS_REGISTERED.add(cog.__cog_name__)
         self._config_folder = Path(config_folder)
         self._bot = bot
         self._user_id = str(bot.user.id)
+        self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
         self._node_manager = NodeManager(self)
         self._player_manager = PlayerManager(self, player)
         self._lib_config_manager = LibConfigManager(self)
-
         self._connect_back = connect_back
         self._warned_about_no_search_nodes = False
-        self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
+        setattr(self.bot, "pylav", self)
 
-    async def init(self):
+    async def initialize(self):
+        await self._lib_config_manager.initialize()
         config_data = await self._lib_config_manager.get_config()
         if not config_data:
             config_data = await self.set_lib_config(
@@ -112,26 +124,36 @@ class Client:
 
         connection_string = config_data.get("db_connection_string")
         auto_update_managed_nodes = config_data.get("auto_update_managed_nodes", False)
-        enable_managed_node = config_data.get("enable_managed_node", False)
+        config_data.get("enable_managed_node", False)
         self._config_folder = Path(config_data.get("config_folder"))
         self._cache_manager = CacheManager(
             self, config_folder=self._config_folder, sql_connection_string=connection_string
         )
+        await self._cache_manager.initialize()
         self._config_manager = ConfigManager(
             self, config_folder=self._config_folder, sql_connection_string=connection_string
         )
+        await self._config_manager.initialize()
+
         self._equalizer_manager = EqualizerManager(
             self, config_folder=self._config_folder, sql_connection_string=connection_string
         )
+        await self._equalizer_manager.initialize()
+
         self._player_state_manager = PlayerStateManager(
             self, config_folder=self._config_folder, sql_connection_string=connection_string
         )
+        await self._player_state_manager.initialize()
+
         self._playlist_manager = PlaylistManager(
             self, config_folder=self._config_folder, sql_connection_string=connection_string
         )
+        await self._playlist_manager.initialize()
+
         self._local_node_manager = LocalNodeManager(self, auto_update=auto_update_managed_nodes)
-        if enable_managed_node:
-            await self._local_node_manager.start(java_path=config_data.get("java_path"))
+
+        # if enable_managed_node:
+        #     await self._local_node_manager.start(java_path=config_data.get("java_path"))
 
     async def set_lib_config(
         self,
@@ -446,3 +468,25 @@ class Client:
         await asyncio.wait(tasks)
 
         LOGGER.debug("Dispatched %s to all registered hooks", type(event).__name__)
+
+    async def unregister(self, cog: discord.ext.commands.Cog):
+        """|coro|
+        Unregister the specified Cog and if no cogs are left closes the client.
+
+        Parameters
+        ----------
+        cog: :class:`discord.ext.commands.Cog`
+            The cog to unregister.
+        """
+        global _COGS_REGISTERED
+        _COGS_REGISTERED.discard(cog.__cog_name__)
+        if not _COGS_REGISTERED:
+            await self._cache_manager.close()
+            await self._config_manager.close()
+            await self._equalizer_manager.close()
+            await self._player_state_manager.close()
+            await self._playlist_manager.close()
+            await self._local_node_manager.shutdown()
+            await self._lib_config_manager.close()
+            await self._session.close()
+            setattr(self.bot, "pylav", None)

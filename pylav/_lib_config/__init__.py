@@ -43,7 +43,7 @@ class LibConfigManager:
         cursor.execute("PRAGMA optimize")
         cursor.close()
 
-    async def init(self):
+    async def initialize(self):
         await self.create_tables()
 
     @property
@@ -59,7 +59,7 @@ class LibConfigManager:
         return self._session()
 
     async def close(self):
-        self._engine.dispose()
+        await self._engine.dispose()
 
     async def create_tables(self):
         async with self.engine.begin() as conn:

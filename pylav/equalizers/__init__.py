@@ -42,7 +42,6 @@ class EqualizerManager:
         event.listen(EqualizerDBEntry.band_63, "set", EqualizerDBEntry.before_set_band)
         event.listen(EqualizerDBEntry.band_100, "set", EqualizerDBEntry.before_set_band)
         event.listen(EqualizerDBEntry.band_160, "set", EqualizerDBEntry.before_set_band)
-        event.listen(EqualizerDBEntry.band_200, "set", EqualizerDBEntry.before_set_band)
         event.listen(EqualizerDBEntry.band_250, "set", EqualizerDBEntry.before_set_band)
         event.listen(EqualizerDBEntry.band_400, "set", EqualizerDBEntry.before_set_band)
         event.listen(EqualizerDBEntry.band_630, "set", EqualizerDBEntry.before_set_band)
@@ -63,7 +62,7 @@ class EqualizerManager:
         cursor.execute("PRAGMA optimize")
         cursor.close()
 
-    async def init(self):
+    async def initialize(self):
         await self.create_tables()
 
     @property
@@ -79,7 +78,7 @@ class EqualizerManager:
         return self._session()
 
     async def close(self):
-        self._engine.dispose()
+        await self._engine.dispose()
 
     async def create_tables(self):
         async with self.engine.begin() as conn:

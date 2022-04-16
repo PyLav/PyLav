@@ -2,6 +2,33 @@ from __future__ import annotations
 
 import aiohttp
 
+__all__ = (
+    "PyLavError",
+    "NodeError",
+    "WebsocketNotConnectedError",
+    "TrackError",
+    "ManagedLavalinkNodeError",
+    "HTTPError",
+    "Unauthorized",
+    "InvalidTrack",
+    "NodeUnhealthy",
+    "InvalidArchitectureError",
+    "ManagedLavalinkAlreadyRunningError",
+    "PortAlreadyInUseError",
+    "ManagedLavalinkStartFailure",
+    "ManagedLavalinkPreviouslyShutdownError",
+    "EarlyExitError",
+    "UnsupportedJavaError",
+    "UnexpectedJavaResponseError",
+    "NoProcessFound",
+    "IncorrectProcessFound",
+    "TooManyProcessFound",
+    "LavalinkDownloadFailed",
+    "TrackNotFound",
+    "CogAlreadyRegistered",
+    "CogHasBeenRegistered",
+)
+
 
 class PyLavError(Exception):
     """Base exception for errors in the library."""
@@ -112,3 +139,11 @@ class LavalinkDownloadFailed(ManagedLavalinkNodeError, RuntimeError):
 
 class TrackNotFound(TrackError):
     """Raised when a track is not found."""
+
+
+class CogAlreadyRegistered(PyLavError):
+    """Raised when a cog is already registered."""
+
+
+class CogHasBeenRegistered(PyLavError):
+    """Raised when a cog is registered."""
