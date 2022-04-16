@@ -17,7 +17,7 @@ from typing import (
 
 from discord.utils import maybe_coroutine
 
-__all__ = ("MISSING", "AsyncIter")
+__all__ = ("MISSING", "AsyncIter", "add_property")
 
 
 class MissingSentinel(str):
@@ -396,3 +396,12 @@ class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=dupl
             raise TypeError("Mapping must be a callable.")
         self._map = func
         return self
+
+
+def add_property(inst: object, name: str, method: Callable) -> None:
+    cls = type(inst)
+    if not hasattr(cls, "__perinstance"):
+        cls = type(cls.__name__, (cls,), {})
+        cls.__perinstance = True
+        inst.__class__ = cls
+    setattr(cls, name, property(method))

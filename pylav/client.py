@@ -27,6 +27,7 @@ from pylav.player import Player
 from pylav.player_manager import PlayerManager
 from pylav.player_state import PlayerStateManager
 from pylav.playlists import PlaylistManager
+from pylav.utils import add_property
 
 LOGGER = getLogger("red.PyLink.Client")
 
@@ -93,12 +94,14 @@ class Client:
         config_folder: Path = CONFIG_DIR,
     ):
         global _COGS_REGISTERED
-        if getattr(bot, "pylav", None):
+        if getattr(bot, "_pylav_client", None):
             if cog.__cog_name__ in _COGS_REGISTERED:
                 raise CogAlreadyRegistered(f"{cog.__cog_name__} has already been registered!")
             elif cog.__cog_name__ not in _COGS_REGISTERED and _COGS_REGISTERED and getattr(self.bot, "pylav", None):
                 _COGS_REGISTERED.add(cog.__cog_name__)
                 raise CogHasBeenRegistered(f"Pylav is already loaded - {cog.__cog_name__} has been registered!")
+        setattr(bot, "_pylav_client", self)
+        add_property(bot, "pylav", lambda self_: self_._pylav_client)  # noqa
         _COGS_REGISTERED.add(cog.__cog_name__)
         self._config_folder = Path(config_folder)
         self._bot = bot
@@ -110,7 +113,6 @@ class Client:
         self._connect_back = connect_back
         self._warned_about_no_search_nodes = False
         self._ready = False
-        setattr(self.bot, "pylav", self)
 
     async def initialize(self):
         if self._ready:
@@ -497,7 +499,7 @@ class Client:
             await self._lib_config_manager.close()
             await self._node_manager.close()
             await self._session.close()
-            delattr(self.bot, "pylav")
+            del self.bot._pylav_client  # noqa
 
     def get_player(self, guild: discord.Guild | int) -> Player:
         """|coro|
