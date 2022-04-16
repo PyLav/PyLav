@@ -219,12 +219,9 @@ class Query(str):
                 return f"tts:{self._query}"
             else:
                 return f"ytsearch:{self._query}"
-        else:
-            if self.is_local:
-                return f"{self._query}"
-            return self._query
+        return self._query
 
-    @classmethod
+    @classmethods
     def from_query(cls, query: str) -> Query:
         if re.match(YOUTUBE_REGEX, query):
             return process_youtube(cls, query)
