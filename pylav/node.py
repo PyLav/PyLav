@@ -392,7 +392,7 @@ class Node:
         if not self.available:
             return []
         query = f"ytmsearch:{query}"
-        return await self.get_tracks(query)
+        return await self.get_tracks(Query.from_query(query))
 
     async def get_query_youtube(self, query: str) -> list[dict]:
         """|coro|
@@ -409,7 +409,7 @@ class Node:
         if not self.available:
             return []
         query = f"ytsearch:{query}"
-        return await self.get_tracks(query)
+        return await self.get_tracks(Query.from_query(query))
 
     async def get_query_soundcloud(self, query: str) -> list[dict]:
         """|coro|
@@ -426,7 +426,7 @@ class Node:
         if not self.available:
             return []
         query = f"scsearch:{query}"
-        return await self.get_tracks(query)
+        return await self.get_tracks(Query.from_query(query))
 
     async def get_query_tts(self, query: str) -> list[dict]:
         """|coro|
@@ -442,8 +442,8 @@ class Node:
         """
         if not self.available:
             return []
-        query = f"tts:{query}"
-        return await self.get_tracks(query)
+        query = f"speak:{query}"
+        return await self.get_tracks(Query.from_query(query))
 
     async def get_query_spotify(self, query: str) -> list[dict]:
         """|coro|
@@ -460,7 +460,7 @@ class Node:
         if not self.available:
             return []
         query = f"spsearch:{query}"
-        return await self.get_tracks(query)
+        return await self.get_tracks(Query.from_query(query))
 
     async def get_query_apple_music(self, query: str) -> list[dict]:
         """|coro|
@@ -477,7 +477,7 @@ class Node:
         if not self.available:
             return []
         query = f"amsearch:{query}"
-        return await self.get_tracks(query)
+        return await self.get_tracks(Query.from_query(query))
 
     async def get_tracks(self, query: Query, first: bool = False) -> dict | list[dict]:
         """|coro|

@@ -199,6 +199,10 @@ class Query(str):
         return self.source == "niconico"
 
     @property
+    def is_vimeo(self) -> bool:
+        return self.source == "vimeo"
+
+    @property
     def is_search(self) -> bool:
         return self._search
 
@@ -230,7 +234,7 @@ class Query(str):
             elif self.is_soundcloud:
                 return f"scsearch:{self._query}"
             elif self.is_tts:
-                return f"tts:{self._query}"
+                return f"speak:{self._query}"
             else:
                 return f"ytsearch:{self._query}"
         return self._query
@@ -300,7 +304,11 @@ class Query(str):
             raise ValueError
 
     @classmethod
-    def from_query(cls, query: str) -> Query:
+    def from_query(cls, query: Query | str) -> Query:
+        if isinstance(query, Query):
+            return query
+        elif query is None:
+            raise ValueError("Query cannot be None")
         if output := cls.__process_urls(query):
             return output
         elif output := cls.__process_search(query):

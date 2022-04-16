@@ -4,7 +4,7 @@ import asyncio
 import struct
 from base64 import b64decode
 from io import BytesIO
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 import discord
 from cached_property import cached_property_with_ttl
@@ -13,6 +13,9 @@ from pylav.exceptions import InvalidTrack
 from pylav.node import Node
 from pylav.query import Query
 from pylav.utils import MISSING
+
+if TYPE_CHECKING:
+    from pylav.player import Player
 
 
 def read_utfm(utf_len: int, utf_bytes: bytes) -> str:
@@ -341,6 +344,7 @@ class AudioTrack:
         await asyncio.sleep(timer)
         del self.__dict__["full_track"]
 
-    async def search(self):
-        response = await self._node.node_manager.client.get_tracks(self.query, first=True)
+    async def search(self, player: Player) -> None:
+        self._query = Query.from_query(self.query)
+        response = await player.node.get_tracks(self.query, first=True)
         self.track = response["track"]
