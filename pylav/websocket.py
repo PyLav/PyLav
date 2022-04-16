@@ -38,7 +38,7 @@ class WebSocket:
         self._node = node
         self._client = self._node.node_manager.client
 
-        self._session = self._client.session
+        self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
         self._ws = None
         self._message_queue = []
 

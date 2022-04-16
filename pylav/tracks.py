@@ -175,8 +175,6 @@ class AudioTrack:
         Any extra properties given to this AudioTrack will be stored here.
     """
 
-    __slots__ = ("track", "extra", "_raw_data", "_node", "__clear_cache_task", "_is_partial", "_query", "skip_segments")
-
     def __init__(self, node: Node, data: AudioTrack | dict | str | None, **extra: Any):
         self._node = node
         self.__clear_cache_task: asyncio.Task | None = None
@@ -205,6 +203,7 @@ class AudioTrack:
             self.track = data
             self.extra = extra
             self._raw_data = {}
+        self.extra["requester"] = self.extra.get("requester", self._node.node_manager.client.bot.user.id)
 
     @cached_property_with_ttl(ttl=60)
     def full_track(
@@ -212,7 +211,10 @@ class AudioTrack:
     ) -> dict[str, str | dict[str, str | bool | int | None]]:
         if self.__clear_cache_task is not None and not self.__clear_cache_task.cancelled():
             self.__clear_cache_task.cancel()
-        response = self._raw_data or decode_track(self.track)
+        response, _ = (self._raw_data, None)
+        if not response:
+            response, _ = decode_track(self.track)
+        print(response)
         self.__clear_cache_task = asyncio.create_task(self.clear_cache(65))
         return response
 
@@ -322,7 +324,7 @@ class AudioTrack:
             "track": self.track,
             "query": self.query,
             "extra": {
-                "requester": self.requester,
+                "requester": self.requester_id,
                 "timestamp": self.timestamp,
             },
             "raw_data": self._raw_data,
@@ -330,7 +332,7 @@ class AudioTrack:
 
     async def clear_cache(self, timer: int) -> None:
         await asyncio.sleep(timer)
-        del self.full_track.__dict__[self.full_track.__name__]
+        del self.__dict__["full_track"]
 
     async def search(self):
         response = await self._node.node_manager.client.get_tracks(self.query, first=True)

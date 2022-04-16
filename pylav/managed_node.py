@@ -13,6 +13,7 @@ import tempfile
 import uuid
 from typing import TYPE_CHECKING, ClassVar, Final, Pattern
 
+import aiohttp
 import dateutil.parser
 import psutil
 import rich.progress
@@ -165,7 +166,7 @@ class LocalNodeManager:
         self.start_monitor_task = None
         self.timeout = timeout
         self._args = []
-        self._session = self._client.session
+        self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
         self._node_id: str = str(uuid.uuid4())
         self._node: Node | None = None
         self._current_config = {}
@@ -387,6 +388,7 @@ class LocalNodeManager:
             self.start_monitor_task.cancel()
         self.abort_for_unmanaged.clear()
         await self._partial_shutdown()
+        await self._session.close()
 
     async def _partial_shutdown(self) -> None:
         self.ready.clear()

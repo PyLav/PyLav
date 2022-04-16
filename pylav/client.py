@@ -19,7 +19,7 @@ from pylav.cache import CacheManager
 from pylav.config import ConfigManager
 from pylav.equalizers import EqualizerManager
 from pylav.events import Event
-from pylav.exceptions import CogHasBeenRegistered, NodeError
+from pylav.exceptions import CogAlreadyRegistered, CogHasBeenRegistered, NodeError
 from pylav.managed_node import LocalNodeManager
 from pylav.node import Node
 from pylav.node_manager import NodeManager
@@ -93,11 +93,12 @@ class Client:
         config_folder: Path = CONFIG_DIR,
     ):
         global _COGS_REGISTERED
-        if cog.__cog_name__ in _COGS_REGISTERED:
-            raise ValueError(f"{cog.__cog_name__} has already been registered!")
-        elif cog.__cog_name__ not in _COGS_REGISTERED and _COGS_REGISTERED and getattr(self.bot, "pylav", None):
-            _COGS_REGISTERED.add(cog.__cog_name__)
-            raise CogHasBeenRegistered(f"Pylav is already loaded - {cog.__cog_name__} has been registered!")
+        if getattr(bot, "pylav", None):
+            if cog.__cog_name__ in _COGS_REGISTERED:
+                raise CogAlreadyRegistered(f"{cog.__cog_name__} has already been registered!")
+            elif cog.__cog_name__ not in _COGS_REGISTERED and _COGS_REGISTERED and getattr(self.bot, "pylav", None):
+                _COGS_REGISTERED.add(cog.__cog_name__)
+                raise CogHasBeenRegistered(f"Pylav is already loaded - {cog.__cog_name__} has been registered!")
         _COGS_REGISTERED.add(cog.__cog_name__)
         self._config_folder = Path(config_folder)
         self._bot = bot
@@ -108,9 +109,12 @@ class Client:
         self._lib_config_manager = LibConfigManager(self)
         self._connect_back = connect_back
         self._warned_about_no_search_nodes = False
+        self._ready = False
         setattr(self.bot, "pylav", self)
 
     async def initialize(self):
+        if self._ready:
+            return
         await self._lib_config_manager.initialize()
         config_data = await self._lib_config_manager.get_config()
         if not config_data:
@@ -152,8 +156,12 @@ class Client:
 
         self._local_node_manager = LocalNodeManager(self, auto_update=auto_update_managed_nodes)
 
+        # TODO: Uncomment and test
+
         # if enable_managed_node:
         #     await self._local_node_manager.start(java_path=config_data.get("java_path"))
+
+        self._ready = True
 
     async def set_lib_config(
         self,
@@ -340,7 +348,6 @@ class Client:
                 nodes = self.node_manager.available_nodes
         else:
             nodes = self.node_manager.available_nodes
-
         if not nodes:
             raise NodeError("No available nodes!")
         node = node or random.choice(list(nodes))
@@ -364,7 +371,7 @@ class Client:
         """
         if not self.node_manager.available_nodes:
             raise NodeError("No available nodes!")
-        node = node or random.choice(list(self.node_manager.available_nodes))
+        node = node or random.choice(self.node_manager.available_nodes)
         return await node.decode_track(track)
 
     async def decode_tracks(self, tracks: list, node: Node = None) -> list[dict]:
@@ -385,7 +392,7 @@ class Client:
         """
         if not self.node_manager.available_nodes:
             raise NodeError("No available nodes!")
-        node = node or random.choice(list(self.node_manager.available_nodes))
+        node = node or random.choice(self.node_manager.available_nodes)
         return await node.decode_tracks(tracks)
 
     @staticmethod
@@ -488,5 +495,24 @@ class Client:
             await self._playlist_manager.close()
             await self._local_node_manager.shutdown()
             await self._lib_config_manager.close()
+            await self._node_manager.close()
             await self._session.close()
-            setattr(self.bot, "pylav", None)
+            delattr(self.bot, "pylav")
+
+    def get_player(self, guild: discord.Guild | int) -> Player:
+        """|coro|
+        Gets the player for the target guild.
+
+        Parameters
+        ----------
+        guild: :class:`discord.Guild`
+            The guild to get the player for.
+
+        Returns
+        -------
+        :class:`Player`
+            The player for the target guild.
+        """
+        if not isinstance(guild, int):
+            guild = guild.id
+        return self.player_manager.get(guild)

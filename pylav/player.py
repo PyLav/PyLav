@@ -335,12 +335,8 @@ class Player(VoiceProtocol):
         """
         options = {}
         skip_segments = self._process_skip_segments(skip_segments)
-        if track is not None and isinstance(track, dict):
-            track = AudioTrack(
-                self.node, track, requester=self.client.user.id, query=query, skip_segments=skip_segments
-            )
-        elif track is None and query is not None:
-            track = AudioTrack(self.node, None, requester=self.client.user.id, query=query, skip_segments=skip_segments)
+        if track is not None and isinstance(track, (AudioTrack, dict, str, type(None))):
+            track = AudioTrack(self.node, track, query=query, skip_segments=skip_segments)
 
         if self.repeat_queue and self.current:
             await self.add(self.current.requester_id, self.current)
@@ -359,7 +355,7 @@ class Player(VoiceProtocol):
                 self.history.clear()
                 await self.node.dispatch_event(QueueEndEvent(self))
                 return
-            track = await self.queue.get()
+            _, track = await self.queue.get()
 
         if track.is_partial and not track.track:
             await track.search()

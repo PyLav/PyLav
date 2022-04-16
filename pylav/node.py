@@ -166,7 +166,6 @@ class Node:
         manager: NodeManager,
         host: str,
         password: str,
-        region: str,
         resume_key: str,
         resume_timeout: int,
         port: int | None = None,
@@ -177,7 +176,7 @@ class Node:
         unique_identifier: str = None,
     ):
         self._manager = manager
-        self._session = manager.session
+        self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
         if unique_identifier is None:
             unique_identifier = str(uuid4())
         else:
@@ -195,7 +194,7 @@ class Node:
             self._port = port
         self._host = host
         self._password = password
-        self._region = region
+        self._region = None
 
         self._resume_key = resume_key
         self._resume_timeout = resume_timeout
@@ -705,3 +704,9 @@ class Node:
             True if the target node supports SponsorBlock, False otherwise.
         """
         return self.has_capability("sponsorblock")
+
+    async def close(self) -> None:
+        """
+        Closes the target node.
+        """
+        await self.session.close()

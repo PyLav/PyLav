@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import operator
-from collections.abc import Iterator
 from typing import TYPE_CHECKING
 
 import aiohttp
+import ujson
 from red_commons.logging import getLogger
 
 from pylav.constants import DEFAULT_REGIONS
@@ -21,7 +21,7 @@ LOGGER = getLogger("red.PyLink.NodeManager")
 class NodeManager:
     def __init__(self, client: Client):
         self._client = client
-        self._session = client.session
+        self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
         self._player_queue = []
 
         self._nodes = []
@@ -44,14 +44,14 @@ class NodeManager:
         return self._nodes
 
     @property
-    def available_nodes(self) -> Iterator[Node]:
+    def available_nodes(self) -> list[Node]:
         """Returns a list of available nodes."""
-        return filter(operator.attrgetter("available"), self.nodes)
+        return list(filter(operator.attrgetter("available"), self.nodes))
 
     @property
-    def search_only_nodes(self) -> Iterator[Node]:
+    def search_only_nodes(self) -> list[Node]:
         """Returns a list of nodes that are search only."""
-        return filter(operator.attrgetter("available", "search_only"), self.nodes)
+        return list(filter(operator.attrgetter("available", "search_only"), self.nodes))
 
     @property
     def player_queue(self) -> list[Player]:
@@ -128,7 +128,7 @@ class NodeManager:
         LOGGER.verbose("[NODE-%s] Successfully added to Node Manager -- %r", node.name, node)
         return node
 
-    def remove_node(self, node: Node) -> None:
+    async def remove_node(self, node: Node) -> None:
         """
         Removes a node.
         Parameters
@@ -136,6 +136,7 @@ class NodeManager:
         node: :class:`Node`
             The node to remove from the list.
         """
+        await node.close()
         self.nodes.remove(node)
         LOGGER.info("[NODE-%s] Successfully removed Node", node.name)
         LOGGER.info("[NODE-%s] Successfully removed Node -- %r", node.name, node)
@@ -273,3 +274,6 @@ class NodeManager:
 
             if self.client._connect_back:  # noqa
                 player._original_node = node
+
+    async def close(self) -> None:
+        await self.session.close()
