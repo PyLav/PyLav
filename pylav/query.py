@@ -40,11 +40,13 @@ VIMEO_REGEX = re.compile(r"^https://vimeo.com/\d+(?:\?.*|)$")
 SOUND_CLOUD_REGEX = re.compile(
     r"^(?:http://|https://|)soundcloud\.app\.goo\.gl/([a-zA-Z\d-_]+)/?(?:\?.*|)$|"
     r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/([a-zA-Z\d-_]+)/([a-zA-Z\d-_]+)/?(?:\?.*|)$|"
-    r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/([a-zA-Z\d-_]+)/([a-zA-Z\d-_]+)/s-([a-zA-Z\d-_]+)(?:\?.*|)$|"
-    r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/([a-zA-Z\d-_]+)/likes/?(?:\?.*|)$")
+    r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/([a-zA-Z\d-_]+)/"
+    r"([a-zA-Z\d-_]+)/s-([a-zA-Z\d-_]+)(?:\?.*|)$|"
+    r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/([a-zA-Z\d-_]+)/likes/?(?:\?.*|)$"
+)
 
 YOUTUBE_REGEX = re.compile(r"(?:http://|https://|)(?:www\.|)(?P<music>music\.)?youtu(be\.com|\.be)")
-TTS_REGEX = re.compile(r"^(tts|speak):(.*)$")
+TTS_REGEX = re.compile(r"^(tts|sapeak):(.*)$")
 SEARCH_REGEX = re.compile(r"^(?P<source>yt|ytm|sp|sc|am)search:(.*)$")
 HTTP_REGEX = re.compile(r"^http(s)?://")
 
