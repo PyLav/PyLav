@@ -4,7 +4,7 @@ import asyncio
 import struct
 from base64 import b64decode
 from io import BytesIO
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import discord
 from cached_property import cached_property_with_ttl
