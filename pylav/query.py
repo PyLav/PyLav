@@ -49,7 +49,8 @@ SOUND_CLOUD_REGEX = re.compile(
 )
 
 YOUTUBE_REGEX = re.compile(r"(?:http://|https://|)(?:www\.|)(?P<music>music\.)?youtu(be\.com|\.be)")
-TTS_REGEX = re.compile(r"^(tts|sapeak):(.*)$")
+TTS_REGEX = re.compile(r"^(speak|tts):(.*)$")
+GCTSS_REGEX = re.compile(r"^(tts://)(.*)$")
 SEARCH_REGEX = re.compile(r"^(?P<source>yt|ytm|sp|sc|am)search:(.*)$")
 HTTP_REGEX = re.compile(r"^http(s)?://")
 
@@ -220,7 +221,11 @@ class Query(str):
 
     @property
     def is_tts(self) -> bool:
-        return self.source == "tts"
+        return self.source == "tts" or self.is_gctts
+
+    @property
+    def is_gctts(self) -> bool:
+        return self.source == "gctts"
 
     @property
     def query_string(self) -> str:
@@ -234,6 +239,8 @@ class Query(str):
             elif self.is_soundcloud:
                 return f"scsearch:{self._query}"
             elif self.is_tts:
+                if self.is_gctts:
+                    return f"tts://{self._query}"
                 return f"speak:{self._query}"
             else:
                 return f"ytsearch:{self._query}"
@@ -251,7 +258,11 @@ class Query(str):
             return process_soundcloud(cls, query)
         elif re.match(TWITCH_REGEX, query):
             return cls(query, "twitch")
+        elif re.match(GCTSS_REGEX, query):
+            query = query.replace("tts://", "")
+            return cls(query, "gctts")
         elif re.match(TTS_REGEX, query):
+            query = query.replace("tts:", "").replace("speak:", "")
             return cls(query, "tts", search=True)
         elif re.match(CLYPIT_REGEX, query):
             return cls(query, "clypit")

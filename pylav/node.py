@@ -678,6 +678,8 @@ class Node:
                 self._capabilities.update(
                     "getyarn", "clypit", "tts", "pornhub", "reddit", "ocremix", "tiktok", "mixcloud"
                 )
+            elif feature["name"] == "Google Cloud TTS":
+                self._capabilities.update("gctts")
             elif feature["name"] == "sponsorblock":
                 self._capabilities.add("sponsorblock")
         for source_origin, source_data in (await self.get_sources()).items():
@@ -806,6 +808,18 @@ class Node:
             True if the target node supports TTS, False otherwise.
         """
         return self.has_capability("tts") and self.has_source("tts")
+
+    @property
+    def supports_gctts(self) -> bool:
+        """
+        Checks if the target node supports Google Cloud TTS.
+
+        Returns
+        -------
+        :class:`bool`
+            True if the target node supports Google Cloud TTS, False otherwise.
+        """
+        return self.has_capability("gctts")
 
     @property
     def supports_pornhub(self) -> bool:
