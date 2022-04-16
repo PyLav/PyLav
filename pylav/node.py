@@ -10,11 +10,11 @@ from pylav.events import Event
 from pylav.exceptions import Unauthorized
 from pylav.filters import ChannelMix, Distortion, Equalizer, Karaoke, LowPass, Rotation, Timescale, Vibrato, Volume
 from pylav.filters.tremolo import Tremolo
-from pylav.player import Player
-from pylav.websocket import WebSocket
 
 if TYPE_CHECKING:
     from pylav.node_manager import NodeManager
+    from pylav.player import Player
+    from pylav.websocket import WebSocket
 
 
 class Penalty:
@@ -204,6 +204,7 @@ class Node:
         self._capabilities = set()
 
         self._stats = None
+        from pylav.websocket import WebSocket
 
         self._ws = WebSocket(
             node=self,

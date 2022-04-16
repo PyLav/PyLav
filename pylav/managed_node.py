@@ -11,7 +11,7 @@ import shlex
 import shutil
 import tempfile
 import uuid
-from typing import ClassVar, Final, Pattern
+from typing import TYPE_CHECKING, ClassVar, Final, Pattern
 
 import aiohttp
 import dateutil.parser
@@ -23,7 +23,6 @@ from discord.backoff import ExponentialBackoff
 from red_commons.logging import getLogger
 
 from pylav._config import CONFIG_DIR
-from pylav.client import Client
 from pylav.exceptions import (
     EarlyExitError,
     IncorrectProcessFound,
@@ -43,6 +42,9 @@ from pylav.exceptions import (
 )
 from pylav.node import Node
 from pylav.utils import AsyncIter
+
+if TYPE_CHECKING:
+    from pylav.client import Client
 
 LOGGER = getLogger("red.PyLink.ManagedNode")
 
@@ -633,7 +635,7 @@ class LocalNodeManager:
         self._node = self._client.node_manager.get_node_by_id(self._node_id)
 
     @staticmethod
-    async def get_lavalink_process(*matches: str, cwd: Optional[str] = None, lazy_match: bool = False):
+    async def get_lavalink_process(*matches: str, cwd: str | None = None, lazy_match: bool = False):
         process_list = []
         filter = [cwd] if cwd else []
         async for proc in AsyncIter(psutil.process_iter()):

@@ -116,7 +116,7 @@ class PlayerManager:
         """
         return self.players.get(guild_id)
 
-    def create(
+    async def create(
         self,
         channel: discord.VoiceChannel,
         region: str = "eu",

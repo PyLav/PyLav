@@ -108,3 +108,7 @@ class LavalinkDownloadFailed(ManagedLavalinkNodeError, RuntimeError):
 
     def _response_repr(self) -> str:
         return f"[{self.response.status} {self.response.reason}]"
+
+
+class TrackNotFound(TrackError):
+    """Raised when a track is not found."""

@@ -5,18 +5,19 @@ from typing import TYPE_CHECKING, Any
 
 import aiohttp
 import ujson
-from mycog import get_closest_discord_region
 from red_commons.logging import getLogger
 
 from pylav.events import TrackEndEvent, TrackExceptionEvent, TrackStartEvent, TrackStuckEvent, WebSocketClosedEvent
 from pylav.exceptions import WebsocketNotConnectedError
-from pylav.node import Node, Stats
+from pylav.location import get_closest_discord_region
+from pylav.node import Stats
 from pylav.tracks import AudioTrack
-
-LOGGER = getLogger("red.PyLink.WebSocket")
 
 if TYPE_CHECKING:
     from pylav.client import Client
+    from pylav.node import Node
+
+LOGGER = getLogger("red.PyLink.WebSocket")
 
 
 class WebSocket:

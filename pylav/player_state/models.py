@@ -23,7 +23,7 @@ class PlayerEntry(Base):
 
     queue = Column(JSON, nullable=False, default=[])
     history = Column(JSON, nullable=False, default=[])
-    metadata = Column(JSON, nullable=False, default={})
+    metadata_ = Column(JSON, nullable=False, default={}, name="metadata")
     effects = Column(JSON, nullable=False, default={})
     extras = Column(JSON, nullable=False, default={})
 

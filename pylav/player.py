@@ -20,13 +20,14 @@ from pylav.events import (
     TrackStartEvent,
     TrackStuckEvent,
 )
+from pylav.exceptions import TrackNotFound
 from pylav.filters import ChannelMix, Distortion, Equalizer, Karaoke, LowPass, Rotation, Timescale, Vibrato, Volume
 from pylav.filters.tremolo import Tremolo
-from pylav.player_manager import PlayerManager
 from pylav.tracks import AudioTrack
 
 if TYPE_CHECKING:
     from pylav.node import Node
+    from pylav.player_manager import PlayerManager
 
 LOGGER = getLogger("red.PyLink.Player")
 
@@ -144,26 +145,26 @@ class Player(VoiceProtocol):
         self.player_manager = player_manager
         self.node = node
 
-    def change_to_best_node(self) -> Node | None:
+    async def change_to_best_node(self, feature: str = None) -> Node | None:
         """
         Returns the best node to play the current track.
         Returns
         -------
         :class:`Node`
         """
-        node = self.node.node_manager.find_best_node(region=self.region)
+        node = self.node.node_manager.find_best_node(region=self.region, feature=feature)
         if node != self.node:
             await self.change_node(node)
             return node
 
-    def change_to_best_node_diff_region(self) -> Node | None:
+    async def change_to_best_node_diff_region(self, feature: str = None) -> Node | None:
         """
         Returns the best node to play the current track in a different region.
         Returns
         -------
         :class:`Node`
         """
-        node = self.node.node_manager.find_best_node(not_region=self.region)
+        node = self.node.node_manager.find_best_node(not_region=self.region, feature=feature)
         if node != self.node:
             await self.change_node(node)
             return node
@@ -883,7 +884,7 @@ class Player(VoiceProtocol):
 
     def _process_skip_segments(self, skip_segments: list[str] | str | None):
         if skip_segments is not None and self.node.supports_sponsorblock:
-            if type(skip_segments) is str and skip_segments == "all":
+            if isinstance(skip_segments, str) and skip_segments == "all":
                 skip_segments = [
                     "sponsor",
                     "selfpromo",

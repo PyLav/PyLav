@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import pathlib
+from typing import TYPE_CHECKING
 
 import ujson
 from sqlalchemy import event
@@ -8,8 +9,10 @@ from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engin
 from sqlalchemy.orm import sessionmaker
 
 from pylav._config import CONFIG_DIR
-from pylav.client import Client
 from pylav.config.models import Base
+
+if TYPE_CHECKING:
+    from pylav.client import Client
 
 
 class ConfigManager:
@@ -18,6 +21,14 @@ class ConfigManager:
         __default_db_name: pathlib.Path = __database_folder / "config.db"
         if not sql_connection_string or "sqlite+aiosqlite:///" in sql_connection_string:
             sql_connection_string = f"sqlite+aiosqlite:///{__default_db_name}"
+        if "sqlite" in sql_connection_string:
+            from sqlalchemy.dialects.sqlite import Insert
+
+            self._insert = Insert
+        else:
+            from sqlalchemy.dialects.postgresql import Insert
+
+            self._insert = Insert
         self._engine = create_async_engine(
             sql_connection_string, json_deserializer=ujson.loads, json_serializer=ujson.dumps
         )

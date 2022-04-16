@@ -2,15 +2,21 @@ from __future__ import annotations
 
 import asyncio
 import pathlib
+from logging import getLogger
+from typing import TYPE_CHECKING
 
 import ujson
-from sqlalchemy import event, insert, select
+from sqlalchemy import event, select
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
 from pylav._config import CONFIG_DIR
 from pylav._lib_config.models import Base, LibConfigEntry
-from pylav.client import Client
+
+if TYPE_CHECKING:
+    from pylav.client import Client
+
+LOGGER = getLogger("red.PyLink.LibConfigManager")
 
 
 class LibConfigManager:
@@ -20,9 +26,12 @@ class LibConfigManager:
         self._engine = create_async_engine(
             f"sqlite+aiosqlite:///{__default_db_name}", json_deserializer=ujson.loads, json_serializer=ujson.dumps
         )
+        from sqlalchemy.dialects.sqlite import Insert
+
+        self._insert = Insert
         self._session = sessionmaker(self._engine, expire_on_commit=False, class_=AsyncSession)
         self._client = client
-
+        self._config_folder = CONFIG_DIR
         event.listen(self._engine.sync_engine, "connect", self.on_db_connect)
 
     @staticmethod
@@ -67,7 +76,7 @@ class LibConfigManager:
     async def upsert_config(self, config: dict) -> dict:
         async with self.session as session:
             async with session.begin():
-                insert_op = await asyncio.to_thread(insert(LibConfigEntry).values, [config])
+                insert_op = await asyncio.to_thread(self._insert(LibConfigEntry).values, [config])
                 new_values = config.copy()
                 del new_values["id"]
                 upset_op = insert_op.on_conflict_do_update(index_elements=["id"], set_=new_values)

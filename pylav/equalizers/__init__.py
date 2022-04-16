@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import datetime
 import pathlib
+from typing import TYPE_CHECKING
 
 import ujson
 from sqlalchemy import and_, event, insert, select
@@ -10,8 +11,10 @@ from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engin
 from sqlalchemy.orm import sessionmaker
 
 from pylav._config import CONFIG_DIR
-from pylav.client import Client
 from pylav.equalizers.models import Base, EqualizerDBEntry
+
+if TYPE_CHECKING:
+    from pylav.client import Client
 
 
 class EqualizerManager:
@@ -20,6 +23,14 @@ class EqualizerManager:
         __default_db_name: pathlib.Path = __database_folder / "equalizers.db"
         if not sql_connection_string or "sqlite+aiosqlite:///" in sql_connection_string:
             sql_connection_string = f"sqlite+aiosqlite:///{__default_db_name}"
+        if "sqlite" in sql_connection_string:
+            from sqlalchemy.dialects.sqlite import Insert
+
+            self._insert = Insert
+        else:
+            from sqlalchemy.dialects.postgresql import Insert
+
+            self._insert = Insert
         self._engine = create_async_engine(
             sql_connection_string, json_deserializer=ujson.loads, json_serializer=ujson.dumps
         )
@@ -253,31 +264,11 @@ class EqualizerManager:
             async with session.begin():
                 equalizer_values = equalizers
                 equalizer_op = await asyncio.to_thread(insert(EqualizerDBEntry).values, equalizer_values)
+                equalizer_update_values = {c.name: c for c in equalizer_op.excluded if not c.primary_key}
+                equalizer_update_values["last_updated"] = datetime.datetime.utcnow()
                 equalizer_on_conflict = equalizer_op.on_conflict_do_update(
                     index_elements=["id"],
-                    set_=dict(
-                        scope=equalizer_op.excluded.scope,
-                        scope_id=equalizer_op.excluded.scope_id,
-                        name=equalizer_op.excluded.name,
-                        description=equalizer_op.excluded.description,
-                        author=equalizer_op.excluded.author,
-                        band_25=equalizer_op.excluded.band_25,
-                        band_40=equalizer_op.excluded.band_40,
-                        band_63=equalizer_op.excluded.band_63,
-                        band_100=equalizer_op.excluded.band_100,
-                        band_160=equalizer_op.excluded.band_160,
-                        band_250=equalizer_op.excluded.band_250,
-                        band_400=equalizer_op.excluded.band_400,
-                        band_630=equalizer_op.excluded.band_630,
-                        band_1000=equalizer_op.excluded.band_1000,
-                        band_1600=equalizer_op.excluded.band_1600,
-                        band_2500=equalizer_op.excluded.band_2500,
-                        band_4000=equalizer_op.excluded.band_4000,
-                        band_6300=equalizer_op.excluded.band_6300,
-                        band_10000=equalizer_op.excluded.band_10000,
-                        band_16000=equalizer_op.excluded.band_16000,
-                        last_updated=datetime.datetime.utcnow(),
-                    ),
+                    set_=equalizer_update_values,
                 )
                 await session.execute(equalizer_on_conflict)
 

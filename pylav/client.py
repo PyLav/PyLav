@@ -149,13 +149,6 @@ class Client:
 
         if db_connection_string.startswith("sqlite"):
             db_connection_string = "sqlite+aiosqlite:///"
-        elif db_connection_string.startswith("mysql"):
-            if db_connection_string.startswith("mysql") and not db_connection_string.startswith("mysql+asyncmy://"):
-                raise ValueError(
-                    "MySQL connection string must be formatted like `mysql+asyncmy://user:password@host:port/dbname`."
-                )
-            else:
-                LOGGER.debug("MySQL connection string set to %s.", db_connection_string)
         elif db_connection_string.startswith("postgresql"):
             if not db_connection_string.startswith("postgresql+asyncpg://"):
                 raise ValueError(
@@ -165,7 +158,7 @@ class Client:
             else:
                 LOGGER.debug("Postgresql connection string set to %s.", db_connection_string)
         else:
-            raise ValueError("Invalid connection string, SQL, MySQL, or Postgresql connection string required.")
+            raise ValueError("Invalid connection string, SQL or Postgresql connection string required.")
 
         self._config_folder = config_folder
         return await self._lib_config_manager.upsert_config(

@@ -10,7 +10,7 @@ basic_config: dict = {}
 instance_name = None
 
 appdir = appdirs.AppDirs("PyLav")
-CONFIG_DIR = Path(appdir.user_config_dir)
+CONFIG_DIR = Path(appdir.user_data_dir)
 _system_user = sys.platform == "linux" and 0 < os.getuid() < 1000
 if _system_user:
     CONFIG_DIR = Path(appdir.site_data_dir)

@@ -1,8 +1,11 @@
 from __future__ import annotations
 
-from pylav.node import Node
-from pylav.player import Player
-from pylav.tracks import AudioTrack
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from pylav.node import Node
+    from pylav.player import Player
+    from pylav.tracks import AudioTrack
 
 
 class Event:

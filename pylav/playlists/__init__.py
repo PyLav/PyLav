@@ -4,16 +4,19 @@ import asyncio
 import contextlib
 import datetime
 import pathlib
+from typing import TYPE_CHECKING
 
 import ujson
-from sqlalchemy import and_, event, insert, or_, select
+from sqlalchemy import and_, event, or_, select
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
 from pylav._config import CONFIG_DIR
-from pylav.client import Client
 from pylav.playlists.models import Base, PlaylistDBEntry, PlaylistTrackDBEntry, TrackDBEntry
 from pylav.utils import AsyncIter
+
+if TYPE_CHECKING:
+    from pylav.client import Client
 
 
 class PlaylistManager:
@@ -22,6 +25,14 @@ class PlaylistManager:
         __default_db_name: pathlib.Path = __database_folder / "players.db"
         if not sql_connection_string or "sqlite+aiosqlite:///" in sql_connection_string:
             sql_connection_string = f"sqlite+aiosqlite:///{__default_db_name}"
+        if "sqlite" in sql_connection_string:
+            from sqlalchemy.dialects.sqlite import Insert
+
+            self._insert = Insert
+        else:
+            from sqlalchemy.dialects.postgresql import Insert
+
+            self._insert = Insert
         self._engine = create_async_engine(
             sql_connection_string, json_deserializer=ujson.loads, json_serializer=ujson.dumps
         )
@@ -76,21 +87,16 @@ class PlaylistManager:
                             url=playlist["url"],
                         )
                     ]
-                    playlist_op = await asyncio.to_thread(insert(PlaylistDBEntry).values, playlist_values)
+                    playlist_op = await asyncio.to_thread(self._insert(PlaylistDBEntry).values, playlist_values)
+                    playlist_update_values = {c.name: c for c in playlist_op.excluded if not c.primary_key}
+                    playlist_update_values["last_updated"] = datetime.datetime.utcnow()
                     playlist_op_on_conflict = playlist_op.on_conflict_do_update(
                         index_elements=["id"],
-                        set_=dict(
-                            scope=playlist_op.excluded.scope,
-                            scope_id=playlist_op.excluded.scope_id,
-                            author=playlist_op.excluded.author,
-                            name=playlist_op.excluded.name,
-                            url=playlist_op.excluded.url,
-                            last_updated=datetime.datetime.utcnow(),
-                        ),
+                        set_=playlist_update_values,
                     )
                     await session.execute(playlist_op_on_conflict)
                     track_values = [dict(base64=entry) async for entry in AsyncIter(tracks)]
-                    track_op = await asyncio.to_thread(insert(TrackDBEntry).values, track_values)
+                    track_op = await asyncio.to_thread(self._insert(TrackDBEntry).values, track_values)
                     track_op_on_conflict = track_op.on_conflict_do_nothing(index_elements=["base64"])
                     await session.execute(track_op_on_conflict)
                     playlist_tracks_values = [
@@ -98,7 +104,7 @@ class PlaylistManager:
                         async for track in AsyncIter(track_values, steps=1000)
                     ]
                     playlist_tracks_op = await asyncio.to_thread(
-                        insert(PlaylistTrackDBEntry).values, playlist_tracks_values
+                        self._insert(PlaylistTrackDBEntry).values, playlist_tracks_values
                     )
                     playlist_tracks_op_on_conflict = playlist_tracks_op.on_conflict_do_update(
                         index_elements=["id", "base64"], set_=dict(base64=playlist_tracks_op.excluded.base64)

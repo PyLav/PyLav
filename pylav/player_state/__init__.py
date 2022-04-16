@@ -2,15 +2,18 @@ from __future__ import annotations
 
 import asyncio
 import pathlib
+from typing import TYPE_CHECKING
 
 import ujson
-from sqlalchemy import event, insert, select
+from sqlalchemy import event, select
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
 from pylav._config import CONFIG_DIR
-from pylav.client import Client
 from pylav.player_state.models import Base, PlayerEntry
+
+if TYPE_CHECKING:
+    from pylav.client import Client
 
 
 class PlayerStateManager:
@@ -19,6 +22,14 @@ class PlayerStateManager:
         __default_db_name: pathlib.Path = __database_folder / "players.db"
         if not sql_connection_string or "sqlite+aiosqlite:///" in sql_connection_string:
             sql_connection_string = f"sqlite+aiosqlite:///{__default_db_name}"
+        if "sqlite" in sql_connection_string:
+            from sqlalchemy.dialects.sqlite import Insert
+
+            self._insert = Insert
+        else:
+            from sqlalchemy.dialects.postgresql import Insert
+
+            self._insert = Insert
         self._engine = create_async_engine(
             sql_connection_string, json_deserializer=ujson.loads, json_serializer=ujson.dumps
         )
@@ -62,26 +73,11 @@ class PlayerStateManager:
     async def upsert_players(self, players: list[dict[str, float | str | int | None]]):
         async with self.session as session:
             async with session.begin():
-                insert_op = await asyncio.to_thread(insert(PlayerEntry).values, players)
+                insert_op = await asyncio.to_thread(self._insert(PlayerEntry).values, players)
+                update_op = {c.name: c for c in insert_op.excluded if not c.primary_key}
                 upsert_op = insert_op.on_conflict_do_update(
                     index_elements=["guild_id"],
-                    set_=dict(
-                        channel_id=insert_op.excluded.channel_id,
-                        current=insert_op.excluded.current,
-                        paused=insert_op.excluded.paused,
-                        repeat_current=insert_op.excluded.repeat_current,
-                        repeat_queue=insert_op.excluded.repeat_queue,
-                        shuffle=insert_op.excluded.shuffle,
-                        auto_playing=insert_op.excluded.auto_playing,
-                        playing=insert_op.excluded.playing,
-                        position=insert_op.excluded.position,
-                        effect_enabled=insert_op.excluded.effect_enabled,
-                        volume=insert_op.excluded.volume,
-                        queue=insert_op.excluded.queue,
-                        metadata=insert_op.excluded.metadata,
-                        effects=insert_op.excluded.effects,
-                        extras=insert_op.excluded.extras,
-                    ),
+                    set_=update_op,
                 )
                 await session.execute(upsert_op)
 
