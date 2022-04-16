@@ -202,6 +202,7 @@ class Node:
         self._reconnect_attempts = reconnect_attempts
         self._search_only = search_only
         self._capabilities = set()
+        self._sources = set()
 
         self._stats = None
         from pylav.websocket import WebSocket
@@ -588,7 +589,7 @@ class Node:
                 raise Unauthorized
             return res.status == 204
 
-    async def plugins(self) -> list[dict]:
+    async def get_plugins(self) -> list[dict]:
         """|coro|
         Gets the plugins of the target node.
 
@@ -605,6 +606,24 @@ class Node:
             if res.status == 401 or res.status == 403:
                 raise Unauthorized
         return []
+
+    async def get_sources(self) -> dict:
+        """|coro|
+        Gets the sources of the target node.
+
+        Returns
+        -------
+        :class:`dict`
+            A dict representing the sources.
+        """
+        destination = f"{self.connection_protocol}://{self.host}:{self.port}/sources"
+        async with self._session.get(destination, headers={"Authorization": self.password}) as res:
+            if res.status == 200:
+                return await res.json(loads=ujson.loads)
+
+            if res.status == 401 or res.status == 403:
+                raise Unauthorized
+        return {}
 
     async def filters(
         self,
@@ -652,13 +671,25 @@ class Node:
         """|coro|
         Updates the features of the target node.
         """
-        for feature in await self.plugins():
+        for feature in await self.get_plugins():
             if feature["name"] == "Topis-Source-Managers-Plugin":
                 self._capabilities.update("spotify", "applemusic")
             elif feature["name"] == "DuncteBot-plugin":
-                self._capabilities.update("getyarn", "clypit", "tts", "pornhub", "reddit", "ocremix", "mixcloud")
+                self._capabilities.update(
+                    "getyarn", "clypit", "tts", "pornhub", "reddit", "ocremix", "tiktok", "mixcloud"
+                )
             elif feature["name"] == "sponsorblock":
                 self._capabilities.add("sponsorblock")
+        for source_origin, source_data in (await self.get_sources()).items():
+            if source_origin == "defaults":
+                for source_name, source_state in source_data.items():
+                    if source_state:
+                        self._sources.add(source_name)
+            elif source_origin == "plugins":
+                for _, plugin_data in source_data.items():
+                    for source_name, source_state in plugin_data.items():
+                        if source_state:
+                            self._sources.add(source_name)
 
     def has_capability(self, capability: str) -> bool:
         """
@@ -676,6 +707,22 @@ class Node:
         """
         return capability.lower() in self.capabilities
 
+    def has_source(self, source: str) -> bool:
+        """
+        Checks if the target node has the specified source.
+
+        Parameters
+        ----------
+        source: :class:`str`
+            The source to check.
+
+        Returns
+        -------
+        :class:`bool`
+            True if the target node has the specified source, False otherwise.
+        """
+        return source.lower() in self.sources
+
     @property
     def capabilities(self) -> set:
         """
@@ -689,6 +736,18 @@ class Node:
         return self._capabilities.copy()
 
     @property
+    def sources(self) -> set:
+        """
+        Returns the sources of the target node.
+
+        Returns
+        -------
+        :class:`set`
+            The sources of the target node.
+        """
+        return self._sources.copy()
+
+    @property
     def supports_spotify(self) -> bool:
         """
         Checks if the target node supports Spotify.
@@ -698,7 +757,7 @@ class Node:
         :class:`bool`
             True if the target node supports Spotify, False otherwise.
         """
-        return self.has_capability("spotify")
+        return self.has_capability("spotify") and self.has_source("spotify")
 
     @property
     def supports_apple_music(self) -> bool:
@@ -710,7 +769,7 @@ class Node:
         :class:`bool`
             True if the target node supports Apple Music, False otherwise.
         """
-        return self.has_capability("applemusic")
+        return self.has_capability("applemusic") and self.has_source("applemusic")
 
     @property
     def supports_getyarn(self) -> bool:
@@ -722,7 +781,7 @@ class Node:
         :class:`bool`
             True if the target node supports GetYarn, False otherwise.
         """
-        return self.has_capability("getyarn")
+        return self.has_capability("getyarn") and self.has_source("getyarn")
 
     @property
     def supports_clypit(self) -> bool:
@@ -734,7 +793,7 @@ class Node:
         :class:`bool`
             True if the target node supports ClypIt, False otherwise.
         """
-        return self.has_capability("clypit")
+        return self.has_capability("clypit") and self.has_source("clypit")
 
     @property
     def supports_tts(self) -> bool:
@@ -746,7 +805,7 @@ class Node:
         :class:`bool`
             True if the target node supports TTS, False otherwise.
         """
-        return self.has_capability("tts")
+        return self.has_capability("tts") and self.has_source("tts")
 
     @property
     def supports_pornhub(self) -> bool:
@@ -758,7 +817,7 @@ class Node:
         :class:`bool`
             True if the target node supports PornHub, False otherwise.
         """
-        return self.has_capability("pornhub")
+        return self.has_capability("pornhub") and self.has_source("pornhub")
 
     @property
     def supports_reddit(self) -> bool:
@@ -770,7 +829,7 @@ class Node:
         :class:`bool`
             True if the target node supports Reddit, False otherwise.
         """
-        return self.has_capability("reddit")
+        return self.has_capability("reddit") and self.has_source("reddit")
 
     @property
     def supports_ocremix(self) -> bool:
@@ -782,7 +841,7 @@ class Node:
         :class:`bool`
             True if the target node supports OCRemix, False otherwise.
         """
-        return self.has_capability("ocremix")
+        return self.has_capability("ocremix") and self.has_source("ocremix")
 
     @property
     def supports_mixcloud(self) -> bool:
@@ -794,7 +853,103 @@ class Node:
         :class:`bool`
             True if the target node supports Mixcloud, False otherwise.
         """
-        return self.has_capability("mixcloud")
+        return self.has_capability("mixcloud") and self.has_source("mixcloud")
+
+    @property
+    def supports_tiktok(self) -> bool:
+        """
+        Checks if the target node supports TikTok.
+
+        Returns
+        -------
+        :class:`bool`
+            True if the target node supports TikTok, False otherwise.
+        """
+        return self.has_capability("tiktok") and self.has_source("tiktok")
+
+    @property
+    def supports_youtube(self) -> bool:
+        """
+        Checks if the target node supports YouTube.
+
+        Returns
+        -------
+        :class:`bool`
+            True if the target node supports YouTube, False otherwise.
+        """
+        return self.has_source("youtube")
+
+    @property
+    def supports_bandcamp(self) -> bool:
+        """
+        Checks if the target node supports Bandcamp.
+
+        Returns
+        -------
+        :class:`bool`
+            True if the target node supports Bandcamp, False otherwise.
+        """
+        return self.has_source("bandcamp")
+
+    @property
+    def supports_soundcloud(self) -> bool:
+        """
+        Checks if the target node supports SoundCloud.
+
+        Returns
+        -------
+        :class:`bool`
+            True if the target node supports SoundCloud, False otherwise.
+        """
+        return self.has_source("soundcloud")
+
+    @property
+    def supports_twitch(self) -> bool:
+        """
+        Checks if the target node supports Twitch.
+
+        Returns
+        -------
+        :class:`bool`
+            True if the target node supports Twitch, False otherwise.
+        """
+        return self.has_source("twitch")
+
+    @property
+    def supports_vimeo(self) -> bool:
+        """
+        Checks if the target node supports Vimeo.
+
+        Returns
+        -------
+        :class:`bool`
+            True if the target node supports Vimeo, False otherwise.
+        """
+        return self.has_source("vimeo")
+
+    @property
+    def supports_http(self) -> bool:
+        """
+        Checks if the target node supports HTTP.
+
+        Returns
+        -------
+        :class:`bool`
+            True if the target node supports HTTP, False otherwise.
+        """
+        return self.has_source("http")
+
+    @property
+    def supports_local(self) -> bool:
+        """
+        Checks if the target node supports local files.
+
+        Returns
+        -------
+        :class:`bool`
+            True if the target node supports local files, False otherwise.
+        """
+        return self.has_source("local")
 
     @property
     def supports_sponsorblock(self) -> bool:
@@ -806,7 +961,7 @@ class Node:
         :class:`bool`
             True if the target node supports SponsorBlock, False otherwise.
         """
-        return self.has_capability("sponsorblock")
+        return self.has_capability("sponsorblock") and self.has_source("sponsorblock")
 
     async def close(self) -> None:
         """
