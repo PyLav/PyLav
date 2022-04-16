@@ -10,6 +10,7 @@ from pylav.events import Event
 from pylav.exceptions import Unauthorized
 from pylav.filters import ChannelMix, Distortion, Equalizer, Karaoke, LowPass, Rotation, Timescale, Vibrato, Volume
 from pylav.filters.tremolo import Tremolo
+from pylav.query import Query
 
 if TYPE_CHECKING:
     from pylav.node_manager import NodeManager
@@ -478,13 +479,13 @@ class Node:
         query = f"amsearch:{query}"
         return await self.get_tracks(query)
 
-    async def get_tracks(self, query: str, first: bool = False) -> dict | list[dict]:
+    async def get_tracks(self, query: Query, first: bool = False) -> dict | list[dict]:
         """|coro|
         Gets all tracks associated with the given query.
 
         Parameters
         ----------
-        query: :class:`str`
+        query: :class:`Query`
             The query to perform a search for.
         first: :class:`bool`
             Whether to return the first result or all results.
@@ -495,7 +496,7 @@ class Node:
         """
         destination = f"{self.connection_protocol}://{self.host}:{self.port}/loadtracks"
         async with self._session.get(
-            destination, headers={"Authorization": self.password}, params={"identifier": query}
+            destination, headers={"Authorization": self.password}, params={"identifier": query.query_string}
         ) as res:
             if res.status == 200:
                 result = await res.json(loads=ujson.loads)

@@ -27,6 +27,7 @@ from pylav.player import Player
 from pylav.player_manager import PlayerManager
 from pylav.player_state import PlayerStateManager
 from pylav.playlists import PlaylistManager
+from pylav.query import Query
 from pylav.utils import add_property
 
 LOGGER = getLogger("red.PyLink.Client")
@@ -317,14 +318,14 @@ class Client:
         )
 
     async def get_tracks(
-        self, query: str, node: Node = None, search_only_nodes: bool = False, first: bool = False
+        self, query: Query, node: Node = None, search_only_nodes: bool = False, first: bool = False
     ) -> dict | list[dict]:
         """|coro|
         Gets all tracks associated with the given query.
 
         Parameters
         ----------
-        query: :class:`str`
+        query: :class:`Query`
             The query to perform a search for.
         node: Optional[:class:`Node`]
             The node to use for track lookup. Leave this blank to use a random node.

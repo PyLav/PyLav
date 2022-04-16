@@ -11,6 +11,7 @@ from cached_property import cached_property_with_ttl
 
 from pylav.exceptions import InvalidTrack
 from pylav.node import Node
+from pylav.query import Query
 from pylav.utils import MISSING
 
 
@@ -175,12 +176,19 @@ class AudioTrack:
         Any extra properties given to this AudioTrack will be stored here.
     """
 
-    def __init__(self, node: Node, data: AudioTrack | dict | str | None, **extra: Any):
+    def __init__(
+        self,
+        node: Node,
+        data: AudioTrack | dict | str | None,
+        query: Query | None = None,
+        skip_segments: list | None = None,
+        **extra: Any,
+    ):
         self._node = node
         self.__clear_cache_task: asyncio.Task | None = None
         self._is_partial = False
-        self._query = extra.pop("query", None)
-        self.skip_segments = extra.pop("skip_segments", [])
+        self._query = query
+        self.skip_segments = skip_segments or []
         if data is None or (isinstance(data, str) and data == MISSING):
             self.track = None
             self._is_partial = True
@@ -222,7 +230,7 @@ class AudioTrack:
         return self._is_partial and not self.track
 
     @property
-    def query(self) -> str | None:
+    def query(self) -> Query | None:
         return self._query
 
     @property

@@ -23,6 +23,7 @@ from pylav.events import (
 from pylav.exceptions import TrackNotFound
 from pylav.filters import ChannelMix, Distortion, Equalizer, Karaoke, LowPass, Rotation, Timescale, Vibrato, Volume
 from pylav.filters.tremolo import Tremolo
+from pylav.query import Query
 from pylav.tracks import AudioTrack
 
 if TYPE_CHECKING:
@@ -253,7 +254,7 @@ class Player(VoiceProtocol):
         track: AudioTrack | dict | str | None,
         index: int = None,
         priority: int = 1000,
-        query: str = None,
+        query: Query = None,
     ) -> None:
         """
         Adds a track to the queue.
@@ -269,7 +270,7 @@ class Player(VoiceProtocol):
             If index is left unspecified, the default behaviour is to append the track. Defaults to `None`.
         priority: Optional[:class:`int`]
             The priority of the track. Defaults to `1`, higher numbers will be played first.
-        query: Optional[:class:`str`]
+        query: Optional[:class:`Query`]
             The query that was used to search for the track.
         """
         at = (
@@ -326,7 +327,7 @@ class Player(VoiceProtocol):
         start_time: int = 0,
         end_time: int = 0,
         no_replace: bool = False,
-        query: str = None,
+        query: Query = None,
         skip_segments: list[str] | str = None,
     ) -> None:
         """
@@ -349,7 +350,7 @@ class Player(VoiceProtocol):
         no_replace: Optional[:class:`bool`]
             If set to true, operation will be ignored if a track is already playing or paused.
             Defaults to `False`
-        query: Optional[:class:`str`]
+        query: Optional[:class:`Query`]
             The query that was used to search for the track.
         skip_segments: Optional[:class:`list`]
             A list of segments to skip.
