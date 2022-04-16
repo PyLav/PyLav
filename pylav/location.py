@@ -5,6 +5,7 @@ import socket
 from math import asin, cos, sqrt
 
 import aiohttp
+import ujson
 
 from pylav.constants import REGION_TO_COUNTRY_COORDINATE_MAPPING
 
@@ -29,9 +30,9 @@ async def get_coordinates(ip: str | None = None):
     if ip:
         url = f"http://ipinfo.io/{ip}/json"
 
-    async with aiohttp.ClientSession() as session:
+    async with aiohttp.ClientSession(json_serialize=ujson.dumps) as session:
         async with session.get(url) as response:
-            data = await response.json()
+            data = await response.json(loads=ujson.loads)
             return tuple(map(float, data["loc"].split(",")))
 
 

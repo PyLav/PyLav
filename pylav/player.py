@@ -283,6 +283,27 @@ class Player(VoiceProtocol):
         else:
             heapq.heappush(self.queue._queue, (priority, at))  # noqa
 
+    async def bulk_add(
+        self,
+        tracks_and_queries: list[AudioTrack | dict | str | tuple[AudioTrack | dict | str | None, str, None]],
+        requester: int,
+    ) -> None:
+        """
+        Adds multiple tracks to the queue.
+        Parameters
+        ----------
+        tracks_and_queries: List[Union[Union[Optional[:class:`AudioTrack`, :class:`dict`, :class:`str`]], Tuple[Union[Optional[:class:`AudioTrack`, :class:`dict`, :class:`str`]], Optional[:class:`str`]]]]
+            A list of tuples containing the track and query.
+        requester: :class:`int`
+            The ID of the user who requested the tracks.
+        """
+        for entry in tracks_and_queries:
+            if len(entry) == 2:
+                track, query = entry
+            else:
+                track, query = entry, None
+            await self.add(requester, track, query=query)
+
     async def previous(self) -> None:
         if not self.history:
             raise TrackNotFound("There are no tracks currently in the player history.")

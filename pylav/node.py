@@ -376,6 +376,108 @@ class Node:
             f"region={self.region} ssl={self.ssl} search_only={self.search_only}>"
         )
 
+    async def get_query_youtube_music(self, query: str) -> list[dict]:
+        """|coro|
+        Gets the query from YouTube music.
+        Parameters
+        ----------
+        query: :class:`str`
+            The query to search for.
+        Returns
+        -------
+        list[dict]
+            The list of results.
+        """
+        if not self.available:
+            return []
+        query = f"ytmsearch:{query}"
+        return await self.get_tracks(query)
+
+    async def get_query_youtube(self, query: str) -> list[dict]:
+        """|coro|
+        Gets the query from YouTube music.
+        Parameters
+        ----------
+        query: :class:`str`
+            The query to search for.
+        Returns
+        -------
+        list[dict]
+            The list of results.
+        """
+        if not self.available:
+            return []
+        query = f"ytsearch:{query}"
+        return await self.get_tracks(query)
+
+    async def get_query_soundcloud(self, query: str) -> list[dict]:
+        """|coro|
+        Gets the query from Soundcloud.
+        Parameters
+        ----------
+        query: :class:`str`
+            The query to search for.
+        Returns
+        -------
+        list[dict]
+            The list of results.
+        """
+        if not self.available:
+            return []
+        query = f"scsearch:{query}"
+        return await self.get_tracks(query)
+
+    async def get_query_tts(self, query: str) -> list[dict]:
+        """|coro|
+        Gets the query for TTS.
+        Parameters
+        ----------
+        query: :class:`str`
+            The query to search for.
+        Returns
+        -------
+        list[dict]
+            The list of results.
+        """
+        if not self.available:
+            return []
+        query = f"tts:{query}"
+        return await self.get_tracks(query)
+
+    async def get_query_spotify(self, query: str) -> list[dict]:
+        """|coro|
+        Gets the query from Spotify.
+        Parameters
+        ----------
+        query: :class:`str`
+            The query to search for.
+        Returns
+        -------
+        list[dict]
+            The list of results.
+        """
+        if not self.available:
+            return []
+        query = f"spsearch:{query}"
+        return await self.get_tracks(query)
+
+    async def get_query_apple_music(self, query: str) -> list[dict]:
+        """|coro|
+        Gets the query from Apple Music.
+        Parameters
+        ----------
+        query: :class:`str`
+            The query to search for.
+        Returns
+        -------
+        list[dict]
+            The list of results.
+        """
+        if not self.available:
+            return []
+        query = f"amsearch:{query}"
+        return await self.get_tracks(query)
+
     async def get_tracks(self, query: str, first: bool = False) -> dict | list[dict]:
         """|coro|
         Gets all tracks associated with the given query.
