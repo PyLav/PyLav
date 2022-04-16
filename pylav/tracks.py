@@ -214,7 +214,6 @@ class AudioTrack:
         response, _ = (self._raw_data, None)
         if not response:
             response, _ = decode_track(self.track)
-        print(response)
         self.__clear_cache_task = asyncio.create_task(self.clear_cache(65))
         return response
 
