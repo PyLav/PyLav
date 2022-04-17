@@ -327,9 +327,8 @@ class LocalNodeManager:
         ):
             command_args.append(f"-Xmx{java_xmx}")
         elif meta[0] is not None:
-            invalid = (
-                "Managed Lavalink node RAM allocation ignored due to system limitations, please fix this.",
-            )  # TODO: Add API endpoint to change this
+            # TODO: Add API endpoint to change this
+            invalid = "Managed Lavalink node RAM allocation ignored due to system limitations, please fix this."
 
         command_args.extend(["-jar", str(LAVALINK_JAR_FILE)])
         self._args = command_args
@@ -534,7 +533,7 @@ class LocalNodeManager:
                 while True:
                     await self.wait_until_ready(timeout=self.timeout)
                     if self._node is None:
-                        await self.connect_node()
+                        await self.connect_node(wait_for=5)
                     if not psutil.pid_exists(self._node_pid):
                         raise NoProcessFound
                     try:
@@ -637,7 +636,8 @@ class LocalNodeManager:
             await self.shutdown()
         self.start_monitor_task = asyncio.create_task(self.start_monitor(java_path))
 
-    async def connect_node(self):
+    async def connect_node(self, wait_for: float = 0.0):
+        await asyncio.sleep(wait_for)
         if node := self._client.node_manager.get_node_by_id(self._node_id) is None:
             self._node = self._client.add_node(
                 host=self._current_config["server"]["address"],

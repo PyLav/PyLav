@@ -647,7 +647,8 @@ class Player(VoiceProtocol):
         """
         LOGGER.info("[Player-%s] Moving to voice channel: %s", self.channel.id, channel.id)
         self.channel = channel
-        await self.connect(self_mute=self_mute, self_deaf=self_deaf)
+        await self.guild.change_voice_state(channel=self.channel, self_mute=self_mute, self_deaf=self_deaf)
+        self._connected = True
 
     async def set_volume_filter(self, volume: Volume) -> None:
         """
