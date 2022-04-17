@@ -19,7 +19,7 @@ from pylav.cache import CacheManager
 from pylav.config import ConfigManager
 from pylav.equalizers import EqualizerManager
 from pylav.events import Event
-from pylav.exceptions import CogAlreadyRegistered, CogHasBeenRegistered, NodeError
+from pylav.exceptions import AnotherClientAlreadyRegistered, CogAlreadyRegistered, CogHasBeenRegistered, NodeError
 from pylav.managed_node import LocalNodeManager
 from pylav.node import Node
 from pylav.node_manager import NodeManager
@@ -95,6 +95,10 @@ class Client:
         config_folder: Path = CONFIG_DIR,
     ):
         global _COGS_REGISTERED
+        if (istance := getattr(bot, "lavalink", None)) and not isinstance(istance, Client):
+            raise AnotherClientAlreadyRegistered(
+                f"Another client instance has already been registered to bot.lavalink with type: {type(istance)}"
+            )
         if getattr(bot, "_pylav_client", None):
             if cog.__cog_name__ in _COGS_REGISTERED:
                 raise CogAlreadyRegistered(f"{cog.__cog_name__} has already been registered!")
@@ -102,7 +106,7 @@ class Client:
                 _COGS_REGISTERED.add(cog.__cog_name__)
                 raise CogHasBeenRegistered(f"Pylav is already loaded - {cog.__cog_name__} has been registered!")
         setattr(bot, "_pylav_client", self)
-        add_property(bot, "pylav", lambda self_: self_._pylav_client)  # noqa
+        add_property(bot, "lavalink", lambda self_: self_._pylav_client)  # noqa
         _COGS_REGISTERED.add(cog.__cog_name__)
         self._config_folder = Path(config_folder)
         self._bot = bot

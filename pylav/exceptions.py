@@ -27,11 +27,16 @@ __all__ = (
     "TrackNotFound",
     "CogAlreadyRegistered",
     "CogHasBeenRegistered",
+    "AnotherClientAlreadyRegistered",
 )
 
 
 class PyLavError(Exception):
     """Base exception for errors in the library."""
+
+
+class AnotherClientAlreadyRegistered(PyLavError):
+    """Another client has already been registered."""
 
 
 class NodeError(PyLavError):

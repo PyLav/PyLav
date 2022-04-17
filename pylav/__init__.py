@@ -29,6 +29,7 @@ __all__ = (
     "TrackNotFound",
     "CogAlreadyRegistered",
     "CogHasBeenRegistered",
+    "AnotherClientAlreadyRegistered",
     "Track",
     "Player",
     "Client",
