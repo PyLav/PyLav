@@ -334,7 +334,7 @@ class AudioTrack:
         """
         return {
             "track": self.track,
-            "query": self.query,
+            "query": self.query.query_string if self.query else None,
             "extra": {
                 "requester": self.requester_id,
                 "timestamp": self.timestamp,
