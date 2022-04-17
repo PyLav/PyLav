@@ -4,6 +4,7 @@ import asyncio
 import asyncio.subprocess  # disables for # https://github.com/PyCQA/pylint/issues/1469
 import contextlib
 import itertools
+import pathlib
 import platform
 import re
 import shlex
@@ -48,8 +49,10 @@ if TYPE_CHECKING:
 
 LOGGER = getLogger("red.PyLink.ManagedNode")
 
-LAVALINK_DOWNLOAD_DIR: Final[aiopath.AsyncPath] = CONFIG_DIR / "lavalink"
+LAVALINK_DOWNLOAD_DIR = CONFIG_DIR / "lavalink"
+LAVALINK_DOWNLOAD_DIR = pathlib.Path(LAVALINK_DOWNLOAD_DIR)  # type: ignore
 LAVALINK_DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
+LAVALINK_DOWNLOAD_DIR: aiopath.AsyncPath = aiopath.AsyncPath(LAVALINK_DOWNLOAD_DIR)
 LAVALINK_JAR_FILE: Final[aiopath.AsyncPath] = LAVALINK_DOWNLOAD_DIR / "Lavalink.jar"
 LAVALINK_APP_YML: Final[aiopath.AsyncPath] = LAVALINK_DOWNLOAD_DIR / "application.yml"
 
