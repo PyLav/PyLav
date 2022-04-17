@@ -129,20 +129,25 @@ class LocalFile:
 
     async def files_in_folder(self):
         if not await self.path.is_dir():
-            return []
+            parent = self.path.parent
+        else:
+            parent = self.path
         files = []
-        async for path in self.path.glob(*_ALL_EXTENSIONS):
+        async for path in parent.glob(*_ALL_EXTENSIONS):
             with contextlib.suppress(ValueError):
-                if path.relative_to(self.path):
+                if path.relative_to(parent):
                     files.append(await Query.from_string(path))
         return sorted(files, key=lambda x: str(x).lower())
 
     async def files_in_tree(self):
         if not await self.path.is_dir():
-            return []
+            parent = self.path.parent
+        else:
+            parent = self.path
+
         files = []
-        async for path in self.path.rglob(*_ALL_EXTENSIONS):
+        async for path in parent.rglob(*_ALL_EXTENSIONS):
             with contextlib.suppress(ValueError):
-                if path.relative_to(self.path):
+                if path.relative_to(parent):
                     files.append(await Query.from_string(path))
         return sorted(files, key=lambda x: str(x).lower())
