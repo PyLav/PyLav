@@ -612,11 +612,11 @@ class Player(VoiceProtocol):
         await self.guild.change_voice_state(channel=self.channel, self_mute=self_mute, self_deaf=self_deaf)
         self._connected = True
 
-        LOGGER.info("[Player-%s] Connected to voice channel", self.channel.id)
+        LOGGER.info("[Player-%s] Connected to voice channel", self.channel.guild.id)
 
     async def disconnect(self, *, force: bool = False) -> None:
         try:
-            LOGGER.info("[Player-%s] Disconnected from voice channel", self.channel.id)
+            LOGGER.info("[Player-%s] Disconnected from voice channel", self.channel.guild.id)
 
             await self.guild.change_voice_state(channel=None)
             self._connected = False
@@ -645,7 +645,9 @@ class Player(VoiceProtocol):
         self_deaf: :class:`bool`
             Indicates if the player should be self-deafened on move.
         """
-        LOGGER.info("[Player-%s] Moving to voice channel: %s", self.channel.id, channel.id)
+        LOGGER.info(
+            "[Player-%s] Moving from %s to voice channel: %s", self.channel.guild.id, self.channel.id, channel.id
+        )
         self.channel = channel
         await self.guild.change_voice_state(channel=self.channel, self_mute=self_mute, self_deaf=self_deaf)
         self._connected = True
