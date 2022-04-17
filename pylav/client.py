@@ -16,7 +16,6 @@ from red_commons.logging import getLogger
 
 from pylav._config import __VERSION__, CONFIG_DIR
 from pylav._lib_config import LibConfigManager  # noqa
-from pylav.cache import CacheManager
 from pylav.config import ConfigManager
 from pylav.equalizers import EqualizerManager
 from pylav.events import Event
@@ -73,14 +72,11 @@ class Client:
         Represents the config manager that is used to save/load configs.
     equalizer_manager: :class:`EqualizerManager`
         Represents the equalizer manager that is used to save/load equalizers.
-    cache_manager: :class:`CacheManager`
-        Represents the cache manager that is used to save/load cache data.
     playlists: :class:`PlaylistManager`
         Represents the playlist manager that is used to save/load playlists.
     """
 
     _event_hooks = defaultdict(list)
-    _cache_manager: CacheManager
     _config_manager: ConfigManager
     _equalizer_manager: EqualizerManager
     _player_state_manager: PlayerStateManager
@@ -143,10 +139,6 @@ class Client:
         auto_update_managed_nodes = config_data.get("auto_update_managed_nodes", False)
         enable_managed_node = config_data.get("enable_managed_node", False)
         self._config_folder = aiopath.AsyncPath(config_data.get("config_folder"))
-        self._cache_manager = CacheManager(
-            self, config_folder=self._config_folder, sql_connection_string=connection_string
-        )
-        await self._cache_manager.initialize()
         self._config_manager = ConfigManager(
             self, config_folder=self._config_folder, sql_connection_string=connection_string
         )
@@ -223,10 +215,6 @@ class Client:
     @property
     def player_manager(self) -> PlayerManager:
         return self._player_manager
-
-    @property
-    def cache_manager(self) -> CacheManager:
-        return self._cache_manager
 
     @property
     def config_manager(self) -> ConfigManager:
@@ -498,7 +486,6 @@ class Client:
         global _COGS_REGISTERED
         _COGS_REGISTERED.discard(cog.__cog_name__)
         if not _COGS_REGISTERED:
-            await self._cache_manager.close()
             await self._config_manager.close()
             await self._equalizer_manager.close()
             await self._player_state_manager.close()
