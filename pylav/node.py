@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
@@ -11,6 +12,7 @@ from pylav.exceptions import Unauthorized
 from pylav.filters import ChannelMix, Distortion, Equalizer, Karaoke, LowPass, Rotation, Timescale, Vibrato, Volume
 from pylav.filters.tremolo import Tremolo
 from pylav.query import Query
+from pylav.utils import AsyncIter
 
 if TYPE_CHECKING:
     from pylav.node_manager import NodeManager
@@ -491,18 +493,23 @@ class Node:
         :class:`dict`
             A dict representing tracks.
         """
+        if cached_response := await self.get_query_cache(query):
+            if first:
+                return next(iter(cached_response.get("tracks", [])), {})
+            return cached_response
+
         destination = f"{self.connection_protocol}://{self.host}:{self.port}/loadtracks"
         async with self._session.get(
             destination, headers={"Authorization": self.password}, params={"identifier": query.query_string}
         ) as res:
             if res.status == 200:
                 result = await res.json(loads=ujson.loads)
+                asyncio.create_task(self.update_cache(result, query))
                 if first:
                     return next(iter(result.get("tracks", [])), {})
                 return result
             if res.status == 401 or res.status == 403:
                 raise Unauthorized
-
             return {}
 
     async def decode_track(self, track: str) -> dict | None:
@@ -978,3 +985,65 @@ class Node:
         Closes the target node.
         """
         await self.session.close()
+
+    async def update_cache(self, query_response: dict, query: Query) -> None:
+        """
+        Updates the cache with the query.
+        """
+        # Do we want to cache more?
+        if not query.is_youtube:
+            return
+        if any(True for t in ["NO_MATCHES", "NO_RESULTS", None] if t == query_response.get("loadType", None)):
+            # Do not save errors to cache
+            return
+        tracks = query_response.get("tracks", [])
+        if not tracks:
+            # Do not save queries without tracks to cache
+            # the above check should ensure this doesn't happen but let's be extra safe
+            return
+        name = query_response.get("playlistInfo", {}).get("name", None)
+        await self.node_manager.client.cache_manager.upsert_queries(
+            [
+                {
+                    "id": query.query_string,
+                    "tracks": [track["track"] async for track in AsyncIter(tracks, steps=100)],
+                    "name": name,
+                }
+            ]
+        )
+
+    async def get_query_cache(self, query: Query) -> dict | None:
+        """
+        Gets the query cache.
+
+        Returns
+        -------
+        :class:`dict`
+            The query cache.
+        """
+
+        if not query.is_youtube:
+            return None
+        response = await self.node_manager.client.cache_manager.get_query(query.query_string)
+        if not response:
+            return None
+        if query.is_playlist:
+            load_type = "SEARCH_RESULT"
+        elif query.is_search:
+            load_type = "SEARCH_RESULT"
+        else:
+            load_type = "TRACK_LOADED"
+        if name := response.get("name", None):
+            extra = {
+                "playlistInfo": {
+                    "name": name,
+                    "selectedTrack": -1,
+                }
+            }
+        else:
+            extra = {}
+        return {
+            **extra,
+            "loadType": load_type,
+            "tracks": [{"track": track} async for track in AsyncIter(response["tracks"], steps=100)],
+        }

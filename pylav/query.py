@@ -54,7 +54,7 @@ SOUND_CLOUD_REGEX = re.compile(
 YOUTUBE_REGEX = re.compile(r"(?:http://|https://|)(?:www\.|)(?P<music>music\.)?youtu(be\.com|\.be)")
 TTS_REGEX = re.compile(r"^(speak|tts):(.*)$")
 GCTSS_REGEX = re.compile(r"^(tts://)(.*)$")
-SEARCH_REGEX = re.compile(r"^(?P<source>yt|ytm|sp|sc|am)search:(.*)$")
+SEARCH_REGEX = re.compile(r"^(?P<source>yt|ytm|sp|sc|am)search:(?P<query>.*)$")
 HTTP_REGEX = re.compile(r"^http(s)?://")
 
 YOUTUBE_TIMESTAMP = re.compile(r"[&|?]t=(\d+)s?")
@@ -297,6 +297,7 @@ class Query:
     @classmethod
     def __process_search(cls, query: str) -> Query | None:
         if match := re.match(SEARCH_REGEX, query):
+            query = match.group("query")
             if match.group("source") == "ytm":
                 return cls(query, "youtube", search=True)
             elif match.group("source") == "sp":

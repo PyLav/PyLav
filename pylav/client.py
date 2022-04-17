@@ -183,12 +183,12 @@ class Client:
         java_path: str,
         enable_managed_node: bool,
         auto_update_managed_nodes: bool,
-    ):
-        config_folder = aiopath.AsyncPath(config_folder)
-        if config_folder.is_file():
+    ) -> dict:
+        config_folder: aiopath.AsyncPath = aiopath.AsyncPath(config_folder)
+        if await config_folder.is_file():
             raise ValueError("The config folder must be a directory.")
-        if config_folder.is_dir() and not config_folder.exists():
-            config_folder.mkdir(parents=True)
+        if await config_folder.is_dir() and not await config_folder.exists():
+            await config_folder.mkdir(parents=True, exist_ok=True)
 
         if db_connection_string.startswith("sqlite"):
             db_connection_string = "sqlite+aiosqlite:///"
@@ -204,15 +204,12 @@ class Client:
             raise ValueError("Invalid connection string, SQL or Postgresql connection string required.")
 
         self._config_folder = config_folder
-        return await self._lib_config_manager.upsert_config(
-            {
-                "id": 1,
-                "db_connection_string": db_connection_string,
-                "config_folder": str(config_folder),
-                "java_path": java_path,
-                "enable_managed_node": enable_managed_node,
-                "auto_update_managed_nodes": auto_update_managed_nodes,
-            }
+        return await self._lib_config_manager.update_config(
+            config_folder=str(config_folder),
+            db_connection_string=db_connection_string,
+            java_path=java_path,
+            enable_managed_node=enable_managed_node,
+            auto_update_managed_nodes=auto_update_managed_nodes,
         )
 
     @property

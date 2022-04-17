@@ -35,7 +35,7 @@ class LibConfigManager:
         event.listen(self._engine.sync_engine, "connect", self.on_db_connect)
 
     @staticmethod
-    def on_db_connect(dbapi_connection, connection_record):
+    def on_db_connect(dbapi_connection, connection_record) -> None:
         cursor = dbapi_connection.cursor()
         cursor.execute("PRAGMA journal_mode=WAL")
         cursor.execute("PRAGMA temp_store=2")
@@ -43,7 +43,7 @@ class LibConfigManager:
         cursor.execute("PRAGMA optimize")
         cursor.close()
 
-    async def initialize(self):
+    async def initialize(self) -> None:
         await self.create_tables()
 
     @property
@@ -58,10 +58,10 @@ class LibConfigManager:
     def session(self) -> AsyncSession:
         return self._session()
 
-    async def close(self):
+    async def close(self) -> None:
         await self._engine.dispose()
 
-    async def create_tables(self):
+    async def create_tables(self) -> None:
         async with self.engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
             await conn.commit()
@@ -82,3 +82,24 @@ class LibConfigManager:
                 upset_op = insert_op.on_conflict_do_update(index_elements=["id"], set_=new_values)
                 await session.execute(upset_op)
         return config
+
+    async def update_config(
+        self,
+        db_connection_string: str = None,
+        config_folder: str = None,
+        java_path: str = None,
+        enable_managed_node: bool = None,
+        auto_update_managed_nodes: bool = None,
+    ) -> dict:
+        data = {"id": 1}
+        if db_connection_string:
+            data["db_connection_string"] = db_connection_string
+        if config_folder:
+            data["config_folder"] = config_folder
+        if java_path:
+            data["java_path"] = java_path
+        if enable_managed_node:
+            data["enable_managed_node"] = enable_managed_node
+        if auto_update_managed_nodes:
+            data["auto_update_managed_nodes"] = auto_update_managed_nodes
+        return await self.upsert_config(data)

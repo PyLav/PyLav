@@ -81,7 +81,7 @@ class ConfigManager:
             if result:
                 return result.as_dict()
 
-    async def create_bundled_node(self):
+    async def create_bundled_node(self) -> dict:
         if node := await self.get_managed_node_config():
             return node
         async with self.session as session:

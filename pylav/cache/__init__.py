@@ -80,9 +80,8 @@ class CacheManager:
             async with session.begin():
                 async for query in AsyncIter(queries):
                     query_id = query["id"]
-                    query_name = query["name"]
                     tracks = query["tracks"]
-                    query_values = [dict(id=query_id, name=query_name)]
+                    query_values = [dict(id=query_id)]
                     query_insert_op = await asyncio.to_thread(self._insert(QueryDBEntry).values, query_values)
                     query_update_values = {c.name: c for c in query_insert_op.excluded if not c.primary_key}
                     query_update_values["last_updated"] = datetime.datetime.utcnow()
@@ -109,10 +108,7 @@ class CacheManager:
     async def get_query(self, query_id: str) -> dict | None:
         async with self.session as session:
             result = await session.execute(
-                select(QueryDBEntry)
-                .select_from(QueryDBEntry)
-                .join(QueryTrackDBEntry)
-                .where(QueryDBEntry.id == query_id)
+                select(QueryDBEntry).join(QueryTrackDBEntry).where(QueryDBEntry.id == query_id)
             )
             result = result.scalars().first()
             if result:

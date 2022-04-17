@@ -11,11 +11,11 @@ import discord
 from cached_property import cached_property_with_ttl
 
 from pylav.exceptions import InvalidTrack
-from pylav.node import Node
 from pylav.query import Query
 from pylav.utils import MISSING
 
 if TYPE_CHECKING:
+    from pylav.node import Node
     from pylav.player import Player
 
 

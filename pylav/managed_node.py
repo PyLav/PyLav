@@ -509,7 +509,7 @@ class LocalNodeManager:
     async def maybe_download_jar(self):
         if self._auto_update:
             self._ci_info = await self.get_ci_latest_info()
-        if not (LAVALINK_JAR_FILE.exists() and await self._is_up_to_date()):
+        if not (await LAVALINK_JAR_FILE.exists() and await self._is_up_to_date()):
             await self._download_jar()
 
     async def wait_until_ready(self, timeout: float | None = None):
