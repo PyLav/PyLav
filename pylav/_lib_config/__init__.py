@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import asyncio
-import pathlib
 from logging import getLogger
 from typing import TYPE_CHECKING
 
+import aiopath
 import ujson
 from sqlalchemy import event, select
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
@@ -21,8 +21,8 @@ LOGGER = getLogger("red.PyLink.LibConfigManager")
 
 class LibConfigManager:
     def __init__(self, client: Client):
-        __database_folder: pathlib.Path = CONFIG_DIR
-        __default_db_name: pathlib.Path = __database_folder / "config.db"
+        __database_folder: aiopath.AsyncPath = CONFIG_DIR
+        __default_db_name: aiopath.AsyncPath = __database_folder / "config.db"
         self._engine = create_async_engine(
             f"sqlite+aiosqlite:///{__default_db_name}", json_deserializer=ujson.loads, json_serializer=ujson.dumps
         )

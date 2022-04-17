@@ -152,12 +152,8 @@ class Node:
         The port to use for websocket and REST connections.
     password: :class:`str`
         The password used for authentication.
-    region: :class:`str`
-        The region to assign this node to.
     name: :class:`str`
         The name the :class:`Node` is identified by.
-    stats: :class:`Stats`
-        The statistics of how the :class:`Node` is performing.
     ssl: :class:`bool`
         Whether to use a ssl connection.
     """
@@ -378,7 +374,7 @@ class Node:
             f"region={self.region} ssl={self.ssl} search_only={self.search_only}>"
         )
 
-    async def get_query_youtube_music(self, query: str) -> list[dict]:
+    async def get_query_youtube_music(self, query: str) -> dict:
         """|coro|
         Gets the query from YouTube music.
         Parameters
@@ -393,9 +389,9 @@ class Node:
         if not self.available:
             return []
         query = f"ytmsearch:{query}"
-        return await self.get_tracks(Query.from_query(query))
+        return await self.get_tracks(await Query.from_string(query))
 
-    async def get_query_youtube(self, query: str) -> list[dict]:
+    async def get_query_youtube(self, query: str) -> dict:
         """|coro|
         Gets the query from YouTube music.
         Parameters
@@ -410,9 +406,9 @@ class Node:
         if not self.available:
             return []
         query = f"ytsearch:{query}"
-        return await self.get_tracks(Query.from_query(query))
+        return await self.get_tracks(await Query.from_string(query))
 
-    async def get_query_soundcloud(self, query: str) -> list[dict]:
+    async def get_query_soundcloud(self, query: str) -> dict:
         """|coro|
         Gets the query from Soundcloud.
         Parameters
@@ -427,9 +423,9 @@ class Node:
         if not self.available:
             return []
         query = f"scsearch:{query}"
-        return await self.get_tracks(Query.from_query(query))
+        return await self.get_tracks(await Query.from_string(query))
 
-    async def get_query_tts(self, query: str) -> list[dict]:
+    async def get_query_tts(self, query: str) -> dict:
         """|coro|
         Gets the query for TTS.
         Parameters
@@ -444,9 +440,9 @@ class Node:
         if not self.available:
             return []
         query = f"speak:{query}"
-        return await self.get_tracks(Query.from_query(query))
+        return await self.get_tracks(await Query.from_string(query))
 
-    async def get_query_spotify(self, query: str) -> list[dict]:
+    async def get_query_spotify(self, query: str) -> dict:
         """|coro|
         Gets the query from Spotify.
         Parameters
@@ -461,9 +457,9 @@ class Node:
         if not self.available:
             return []
         query = f"spsearch:{query}"
-        return await self.get_tracks(Query.from_query(query))
+        return await self.get_tracks(await Query.from_string(query))
 
-    async def get_query_apple_music(self, query: str) -> list[dict]:
+    async def get_query_apple_music(self, query: str) -> dict:
         """|coro|
         Gets the query from Apple Music.
         Parameters
@@ -478,9 +474,9 @@ class Node:
         if not self.available:
             return []
         query = f"amsearch:{query}"
-        return await self.get_tracks(Query.from_query(query))
+        return await self.get_tracks(await Query.from_string(query))
 
-    async def get_tracks(self, query: Query, first: bool = False) -> dict | list[dict]:
+    async def get_tracks(self, query: Query, first: bool = False) -> dict:
         """|coro|
         Gets all tracks associated with the given query.
 
@@ -492,7 +488,7 @@ class Node:
             Whether to return the first result or all results.
         Returns
         -------
-        :class:`list` of :class:`dict`
+        :class:`dict`
             A dict representing tracks.
         """
         destination = f"{self.connection_protocol}://{self.host}:{self.port}/loadtracks"
@@ -507,7 +503,7 @@ class Node:
             if res.status == 401 or res.status == 403:
                 raise Unauthorized
 
-            return []
+            return {}
 
     async def decode_track(self, track: str) -> dict | None:
         destination = f"{self.connection_protocol}://{self.host}:{self.port}/decodetrack"

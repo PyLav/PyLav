@@ -25,6 +25,7 @@ from pylav.filters import ChannelMix, Distortion, Equalizer, Karaoke, LowPass, R
 from pylav.filters.tremolo import Tremolo
 from pylav.query import Query
 from pylav.tracks import AudioTrack
+from pylav.utils import AsyncIter
 
 if TYPE_CHECKING:
     from pylav.node import Node
@@ -287,19 +288,19 @@ class Player(VoiceProtocol):
 
     async def bulk_add(
         self,
-        tracks_and_queries: list[AudioTrack | dict | str | tuple[AudioTrack | dict | str | None, str, None]],
+        tracks_and_queries: list[AudioTrack | dict | str | list[tuple[AudioTrack | dict | str, Query]]],
         requester: int,
     ) -> None:
         """
         Adds multiple tracks to the queue.
         Parameters
         ----------
-        tracks_and_queries: List[Union[Union[Optional[:class:`AudioTrack`, :class:`dict`, :class:`str`]], Tuple[Union[Optional[:class:`AudioTrack`, :class:`dict`, :class:`str`]], Optional[:class:`str`]]]]
+        tracks_and_queries: list[AudioTrack | dict | str | list[tuple[AudioTrack | dict | str, Query]]]
             A list of tuples containing the track and query.
         requester: :class:`int`
             The ID of the user who requested the tracks.
         """
-        for entry in tracks_and_queries:
+        async for entry in AsyncIter(tracks_and_queries):
             if len(entry) == 2:
                 track, query = entry
             else:
@@ -312,7 +313,7 @@ class Player(VoiceProtocol):
 
         track = self.history.pop()
         if track.is_partial and not track.track:
-            await track.search()
+            await track.search(self)
         if self.current:
             self.history.appendleft(self.current)
         options = {"noReplace": False}

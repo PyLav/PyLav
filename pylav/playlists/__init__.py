@@ -3,9 +3,9 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import datetime
-import pathlib
 from typing import TYPE_CHECKING
 
+import aiopath
 import ujson
 from sqlalchemy import and_, event, or_, select
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
@@ -20,9 +20,11 @@ if TYPE_CHECKING:
 
 
 class PlaylistManager:
-    def __init__(self, client: Client, config_folder: pathlib.Path = CONFIG_DIR, sql_connection_string: str = None):
-        __database_folder: pathlib.Path = config_folder
-        __default_db_name: pathlib.Path = __database_folder / "players.db"
+    def __init__(
+        self, client: Client, config_folder: aiopath.AsyncPath = CONFIG_DIR, sql_connection_string: str = None
+    ):
+        __database_folder: aiopath.AsyncPath = config_folder
+        __default_db_name: aiopath.AsyncPath = __database_folder / "players.db"
         if not sql_connection_string or "sqlite+aiosqlite:///" in sql_connection_string:
             sql_connection_string = f"sqlite+aiosqlite:///{__default_db_name}"
         if "sqlite" in sql_connection_string:

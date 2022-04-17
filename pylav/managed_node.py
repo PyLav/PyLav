@@ -4,7 +4,6 @@ import asyncio
 import asyncio.subprocess  # disables for # https://github.com/PyCQA/pylint/issues/1469
 import contextlib
 import itertools
-import pathlib
 import platform
 import re
 import shlex
@@ -14,6 +13,7 @@ import uuid
 from typing import TYPE_CHECKING, ClassVar, Final, Pattern
 
 import aiohttp
+import aiopath
 import dateutil.parser
 import psutil
 import rich.progress
@@ -48,10 +48,10 @@ if TYPE_CHECKING:
 
 LOGGER = getLogger("red.PyLink.ManagedNode")
 
-LAVALINK_DOWNLOAD_DIR: Final[pathlib.Path] = CONFIG_DIR / "lavalink"
+LAVALINK_DOWNLOAD_DIR: Final[aiopath.AsyncPath] = CONFIG_DIR / "lavalink"
 LAVALINK_DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
-LAVALINK_JAR_FILE: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / "Lavalink.jar"
-LAVALINK_APP_YML: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / "application.yml"
+LAVALINK_JAR_FILE: Final[aiopath.AsyncPath] = LAVALINK_DOWNLOAD_DIR / "Lavalink.jar"
+LAVALINK_APP_YML: Final[aiopath.AsyncPath] = LAVALINK_DOWNLOAD_DIR / "application.yml"
 
 _RE_READY_LINE: Final[Pattern] = re.compile(rb"Started Launcher in \S+ seconds")
 _FAILED_TO_START: Final[Pattern] = re.compile(rb"Web server failed to start\. (.*)")
@@ -126,7 +126,7 @@ def change_dict_naming_convention(data: dict) -> dict:
         elif isinstance(v, list):
             new_v = list()
             for x in v:
-                if type(x) == dict:
+                if isinstance(x, dict):
                     new_v.append(change_dict_naming_convention(x))
                 else:
                     new_v.append(x)
@@ -134,8 +134,8 @@ def change_dict_naming_convention(data: dict) -> dict:
     return new
 
 
-def get_max_allocation_size(exec: str) -> tuple[int, bool]:
-    if platform.architecture(exec)[0] == "64bit":
+def get_max_allocation_size(executable: str) -> tuple[int, bool]:
+    if platform.architecture(executable)[0] == "64bit":
         max_heap_allowed = psutil.virtual_memory().total
         thinks_is_64_bit = True
     else:
@@ -656,10 +656,10 @@ class LocalNodeManager:
     @staticmethod
     async def get_lavalink_process(*matches: str, cwd: str | None = None, lazy_match: bool = False):
         process_list = []
-        filter = [cwd] if cwd else []
+        filter_ = [cwd] if cwd else []
         async for proc in AsyncIter(psutil.process_iter()):
             try:
-                if cwd and not (await asyncio.to_thread(proc.cwd) in filter):
+                if cwd and not (await asyncio.to_thread(proc.cwd) in filter_):
                     continue
                 cmdline = await asyncio.to_thread(proc.cmdline)
                 if (matches and all(a in cmdline for a in matches)) or (

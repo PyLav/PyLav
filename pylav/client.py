@@ -2,12 +2,13 @@ from __future__ import annotations
 
 import asyncio
 import itertools
+import pathlib
 import random
 from collections import defaultdict
-from pathlib import Path
 from typing import Callable
 
 import aiohttp
+import aiopath
 import discord
 import ujson
 from discord.ext.commands import Cog
@@ -92,7 +93,7 @@ class Client:
         cog: Cog,
         player=Player,
         connect_back: bool = False,
-        config_folder: Path = CONFIG_DIR,
+        config_folder: aiopath.AsyncPath | pathlib.Path = CONFIG_DIR,
     ):
         global _COGS_REGISTERED
         if (istance := getattr(bot, "lavalink", None)) and not isinstance(istance, Client):
@@ -108,7 +109,7 @@ class Client:
         setattr(bot, "_pylav_client", self)
         add_property(bot, "lavalink", lambda self_: self_._pylav_client)  # noqa
         _COGS_REGISTERED.add(cog.__cog_name__)
-        self._config_folder = Path(config_folder)
+        self._config_folder = aiopath.AsyncPath(config_folder)
         self._bot = bot
         self._user_id = str(bot.user.id)
         self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
@@ -141,7 +142,7 @@ class Client:
         connection_string = config_data.get("db_connection_string")
         auto_update_managed_nodes = config_data.get("auto_update_managed_nodes", False)
         enable_managed_node = config_data.get("enable_managed_node", False)
-        self._config_folder = Path(config_data.get("config_folder"))
+        self._config_folder = aiopath.AsyncPath(config_data.get("config_folder"))
         self._cache_manager = CacheManager(
             self, config_folder=self._config_folder, sql_connection_string=connection_string
         )
@@ -177,13 +178,13 @@ class Client:
 
     async def set_lib_config(
         self,
-        config_folder: Path | str,
+        config_folder: aiopath.AsyncPath | str,
         db_connection_string: str,
         java_path: str,
         enable_managed_node: bool,
         auto_update_managed_nodes: bool,
     ):
-        config_folder = Path(config_folder)
+        config_folder = aiopath.AsyncPath(config_folder)
         if config_folder.is_file():
             raise ValueError("The config folder must be a directory.")
         if config_folder.is_dir() and not config_folder.exists():
@@ -247,7 +248,7 @@ class Client:
         return self._playlist_manager
 
     @property
-    def config_folder(self) -> Path:
+    def config_folder(self) -> aiopath.AsyncPath:
         return self._config_folder
 
     @property
@@ -328,7 +329,7 @@ class Client:
 
     async def get_tracks(
         self, query: Query, node: Node = None, search_only_nodes: bool = False, first: bool = False
-    ) -> dict | list[dict]:
+    ) -> dict:
         """|coro|
         Gets all tracks associated with the given query.
 
@@ -348,7 +349,7 @@ class Client:
 
         Returns
         -------
-        :class:`list` of :class:`dict`
+        :class:`dict`
             A dict representing tracks.
         """
         if search_only_nodes:

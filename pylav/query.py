@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import pathlib
 import re
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
+import aiopath
 from discord.ext import commands
 
 CLYPIT_REGEX = re.compile(r"(http://|https://(www.)?)?clyp\.it/(.*)")
@@ -116,7 +117,7 @@ def process_bandcamp(cls: type[Query], query: str) -> Query:
 class Query:
     def __init__(
         self,
-        query: str,
+        query: str | aiopath.AsyncPath,
         source: str,
         search: bool = False,
         start_time=0,
@@ -129,6 +130,9 @@ class Query:
         self.start_time = start_time
         self.index = index
         self._type = query_type
+
+    def __str__(self) -> str:
+        return self.query_string
 
     @property
     def is_clypit(self) -> bool:
@@ -243,6 +247,8 @@ class Query:
                 return f"speak:{self._query}"
             else:
                 return f"ytsearch:{self._query}"
+        elif self.is_local:
+            return f"{self._query}"
         return self._query
 
     @classmethod
@@ -303,18 +309,39 @@ class Query:
                 return cls(query, "youtube", search=True)  # Fallback to YouTube
 
     @classmethod
-    def __process_local(cls, query: str) -> Query | None:
-        path = pathlib.Path(query).resolve()
+    async def __process_local(cls, query: str | pathlib.Path | aiopath.AsyncPath) -> Query:
+        path: aiopath.AsyncPath = aiopath.AsyncPath(query)
+        path = await path.resolve()
         query_type = "single"
-        if path.is_dir():
+        if await path.is_dir():
             query_type = "album"
-        if path.exists():
-            return cls(str(path.absolute()), "local", query_type=query_type)  # type: ignore
-        else:
-            raise ValueError
+        if await path.exists():
+            return cls(path.absolute(), "local", query_type=query_type)  # type: ignore
+        raise ValueError
 
     @classmethod
-    def from_query(cls, query: Query | str) -> Query:
+    async def from_string(cls, query: Query | str | pathlib.Path | aiopath.AsyncPath) -> Query:
+        if isinstance(query, Query):
+            return query
+        if isinstance(query, pathlib.Path):
+            return await cls.__process_local(query)
+        elif query is None:
+            raise ValueError("Query cannot be None")
+        if output := cls.__process_urls(query):
+            return output
+        elif output := cls.__process_search(query):
+            return output
+        else:
+            try:
+                return await cls.__process_local(query)
+            except Exception:
+                return cls(query, "youtube", search=True)  # Fallback to YouTube
+
+    @classmethod
+    def from_string_noawait(cls, query: Query | str) -> Query:
+        """
+        Same as from_string but without but non-awaitable - which makes it unable to process localtracks.
+        """
         if isinstance(query, Query):
             return query
         elif query is None:
@@ -324,12 +351,15 @@ class Query:
         elif output := cls.__process_search(query):
             return output
         else:
-            try:
-                return cls.__process_local(query)
-            except Exception:
-                return cls(query, "youtube", search=True)  # Fallback to YouTube
+            return cls(query, "youtube", search=True)  # Fallback to YouTube
 
 
 class QueryConverter(commands.Converter):
     async def convert(self, ctx: commands.Context, arg: str) -> Query:
-        return Query.from_query(arg)
+        return await Query.from_string(arg)
+
+
+if TYPE_CHECKING:
+    QueryConverter = Query
+else:
+    QueryConverter = QueryConverter

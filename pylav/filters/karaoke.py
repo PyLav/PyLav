@@ -32,7 +32,10 @@ class Karaoke(FilterMixin):
         return c
 
     def __repr__(self):
-        return f"<Karaoke: level={self.level}, mono_level={self.mono_level}, filter_band={self.filter_band}, filter_width={self.filter_width}>"
+        return (
+            f"<Karaoke: level={self.level}, mono_level={self.mono_level}, "
+            f"filter_band={self.filter_band}, filter_width={self.filter_width}>"
+        )
 
     @property
     def level(self) -> float:

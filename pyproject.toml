@@ -2,7 +2,7 @@
 profile = "black"
 line_length = 120
 py_version = 39
-known_third_party=["aiohttp", "ujson", "red_commons", "discord", "sqlalchemy", "cached_property", "dateutils", "appdirs", "yaml"]
+known_third_party=["aiohttp", "ujson", "red_commons", "discord", "sqlalchemy", "cached_property", "dateutils", "appdirs", "yaml", "aiopath"]
 known_local_folder=["pylav"]
 
 [tool.black]

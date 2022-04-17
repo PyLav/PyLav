@@ -12,6 +12,7 @@ from pylav.exceptions import WebsocketNotConnectedError
 from pylav.location import get_closest_discord_region
 from pylav.node import Stats
 from pylav.tracks import AudioTrack
+from pylav.utils import AsyncIter
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -183,7 +184,7 @@ class WebSocket:
                     self._resuming_configured = True
 
                 if self._message_queue:
-                    for message in self._message_queue:
+                    async for message in AsyncIter(self._message_queue):
                         await self.send(**message)
 
                     self._message_queue.clear()

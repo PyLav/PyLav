@@ -32,7 +32,7 @@ class PlayerManager:
     """
 
     def __init__(self, lavalink: Client, player: Player):
-        if not issubclass(player, Player):
+        if not issubclass(player, Player):  # noqa
             raise ValueError("Player must implement Player.")
 
         self.client = lavalink

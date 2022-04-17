@@ -347,7 +347,7 @@ class AudioTrack:
         del self.__dict__["full_track"]
 
     async def search(self, player: Player) -> None:
-        self._query = Query.from_query(self.query)
+        self._query = Query.from_string(self.query)
         response = await player.node.get_tracks(self.query, first=True)
         self.track = response["track"]
 
