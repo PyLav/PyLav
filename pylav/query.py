@@ -4,6 +4,8 @@ import pathlib
 import re
 from typing import Literal
 
+from discord.ext import commands
+
 CLYPIT_REGEX = re.compile(r"(http://|https://(www.)?)?clyp\.it/(.*)")
 GETYARN_REGEX = re.compile(r"(?:http://|https://(?:www.)?)?getyarn.io/yarn-clip/(.*)")
 MIXCLOUD_REGEX = re.compile(
@@ -111,10 +113,7 @@ def process_bandcamp(cls: type[Query], query: str) -> Query:
     return cls(query, "bandcamp", query_type=query_type)  # type: ignore
 
 
-class Query(str):
-    def __new__(cls, *args, **kwargs):
-        return cls(*args, **kwargs)
-
+class Query:
     def __init__(
         self,
         query: str,
@@ -329,3 +328,8 @@ class Query(str):
                 return cls.__process_local(query)
             except Exception:
                 return cls(query, "youtube", search=True)  # Fallback to YouTube
+
+
+class QueryConverter(commands.Converter):
+    async def convert(self, ctx: commands.Context, arg: str) -> Query:
+        return Query.from_query(arg)

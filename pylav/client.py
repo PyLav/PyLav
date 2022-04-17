@@ -115,6 +115,11 @@ class Client:
         self._warned_about_no_search_nodes = False
         self._ready = False
 
+    @property
+    def initialized(self) -> bool:
+        """Returns whether the client has been initialized."""
+        return self._ready
+
     async def initialize(self):
         if self._ready:
             return
@@ -131,7 +136,7 @@ class Client:
 
         connection_string = config_data.get("db_connection_string")
         auto_update_managed_nodes = config_data.get("auto_update_managed_nodes", False)
-        config_data.get("enable_managed_node", False)
+        enable_managed_node = config_data.get("enable_managed_node", False)
         self._config_folder = Path(config_data.get("config_folder"))
         self._cache_manager = CacheManager(
             self, config_folder=self._config_folder, sql_connection_string=connection_string
@@ -161,8 +166,8 @@ class Client:
 
         # TODO: Uncomment and test
 
-        # if enable_managed_node:
-        #     await self._local_node_manager.start(java_path=config_data.get("java_path"))
+        if enable_managed_node:
+            await self._local_node_manager.start(java_path=config_data.get("java_path"))
 
         self._ready = True
 
@@ -519,3 +524,28 @@ class Client:
         if not isinstance(guild, int):
             guild = guild.id
         return self.player_manager.get(guild)
+
+    async def connect_player(
+        self,
+        channel: discord.VoiceChannel,
+        region: str = "eu",
+        endpoint: str = None,
+        node: Node = None,
+        self_deaf: bool = True,
+    ) -> Player:
+        """|coro|
+        Connects the player for the target guild.
+
+        Parameters
+        ----------
+        guild: :class:`discord.Guild`
+            The guild to connect the player for.
+
+        Returns
+        -------
+        :class:`Player`
+            The player for the target guild.
+        """
+        if endpoint is None:
+            endpoint = channel.rtc_region
+        return await self.player_manager.create(channel, region, endpoint, node, self_deaf)

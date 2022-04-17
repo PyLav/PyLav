@@ -180,8 +180,8 @@ class Node:
         self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
         if unique_identifier is None:
             unique_identifier = str(uuid4())
-        else:
-            self._name = name or f"{self.region}-{self.host}-{unique_identifier}"
+
+        self._name = name or f"{self.region}-{self.host}-{unique_identifier}"
         if self._manager.get_node_by_id(unique_identifier) is not None:
             raise ValueError("A Node with identifier:%s already exists.")
         self._identifier = unique_identifier
@@ -502,7 +502,7 @@ class Node:
             if res.status == 200:
                 result = await res.json(loads=ujson.loads)
                 if first:
-                    return next(result.get("tracks", []), {})
+                    return next(iter(result.get("tracks", [])), {})
                 return result
             if res.status == 401 or res.status == 403:
                 raise Unauthorized

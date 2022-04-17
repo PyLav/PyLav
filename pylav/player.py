@@ -62,6 +62,7 @@ class Player(VoiceProtocol):
         self.repeat_current = False
         self.repeat_queue = False
         self.queue = asyncio.PriorityQueue()
+        self.queue.qsize()
         self.history: collections.deque[AudioTrack] = collections.deque(maxlen=100)
         self.current: AudioTrack | None = None
         self._post_init_completed = False

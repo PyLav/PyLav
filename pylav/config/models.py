@@ -32,10 +32,6 @@ class UserConfigEntry(ConfigBase, Base):
 class NodeConfigEntry(ConfigBase, Base):
     __tablename__ = "node_config"
     node_id = Column(BigInteger, primary_key=True)
-    host = Column(TEXT, nullable=False)
-    password = Column(TEXT, nullable=False)
-    region = Column(TEXT, nullable=False)
-    port = Column(BigInteger, nullable=True)
     name = Column(TEXT, nullable=False)
     ssl = Column(Boolean, nullable=False, default=False)
     reconnect_attempts = Column(Integer, nullable=False)

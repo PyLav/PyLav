@@ -1,15 +1,17 @@
 from __future__ import annotations
 
+import asyncio
 import pathlib
 from typing import TYPE_CHECKING
 
 import ujson
-from sqlalchemy import event
+from sqlalchemy import event, select
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
 from pylav._config import CONFIG_DIR
-from pylav.config.models import Base
+from pylav.config.built_in_node import NODE_DEFAULT_SETTINGS
+from pylav.config.models import Base, NodeConfigEntry
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -68,3 +70,35 @@ class ConfigManager:
         async with self.engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
             await conn.commit()
+
+    async def get_managed_node_config(self) -> dict | None:
+        query = select(NodeConfigEntry).where(NodeConfigEntry.node_id == 0)
+        async with self.session as session:
+            result = await session.execute(query)
+            result = result.scalars().first()
+            if result:
+                return result.as_dict()
+
+    async def create_bundled_node(self):
+        if node := await self.get_managed_node_config():
+            return node
+        async with self.session as session:
+            async with session.begin():
+                node_values = [
+                    dict(
+                        node_id=0,
+                        ssl=False,
+                        reconnect_attempts=3,
+                        search_only=False,
+                        extras=NODE_DEFAULT_SETTINGS,
+                        name="PyLavManagedNode",
+                    )
+                ]
+                insert_op = await asyncio.to_thread(self._insert(NodeConfigEntry).values, node_values)
+                update_update_values = {c.name: c for c in insert_op.excluded if not c.primary_key}
+                node_op_on_conflict = insert_op.on_conflict_do_update(
+                    index_elements=["node_id"],
+                    set_=update_update_values,
+                )
+                await session.execute(node_op_on_conflict)
+        return node_values[0]

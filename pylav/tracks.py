@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import struct
 from base64 import b64decode
+from functools import total_ordering
 from io import BytesIO
 from typing import TYPE_CHECKING, Any
 
@@ -146,6 +147,7 @@ def decode_track(track: str) -> tuple[dict[str, str | dict[str, str | bool | int
     return track_object, version
 
 
+@total_ordering
 class AudioTrack:
     """
     Represents the AudioTrack sent to Lavalink.
@@ -348,3 +350,18 @@ class AudioTrack:
         self._query = Query.from_query(self.query)
         response = await player.node.get_tracks(self.query, first=True)
         self.track = response["track"]
+
+    def __int__(self):
+        return 0
+
+    def __gt__(self, other):
+        return False
+
+    def __lt__(self, other):
+        return False
+
+    def __ge__(self, other):
+        return True
+
+    def __le__(self, other):
+        return True

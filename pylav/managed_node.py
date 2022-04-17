@@ -80,7 +80,7 @@ _RE_BUILD_LINE: Final[Pattern] = re.compile(rb"Build:\s+(?P<build>\d+)")
 # Implementation based on J2SE SDK/JRE Version String Naming Convention document:
 # https://www.oracle.com/java/technologies/javase/versioning-naming.html
 _RE_JAVA_VERSION_LINE_PRE223: Final[Pattern] = re.compile(
-    r'version "1\.(?P<major>[0-8])\.(?P<minor>0)(?:_(?:\d+))?(?:-.*)?"'
+    r'version "1\.(?P<major>[0-8])\.(?P<minor>0)(?:_\d+)?(?:-.*)?"'
 )
 # - Version scheme introduced by JEP 223 - used by Java 9 and newer
 #
@@ -94,7 +94,7 @@ _RE_JAVA_VERSION_LINE_PRE223: Final[Pattern] = re.compile(
 # Implementation based on JEP 223 document:
 # https://openjdk.java.net/jeps/223
 _RE_JAVA_VERSION_LINE_223: Final[Pattern] = re.compile(
-    r'version "(?P<major>\d+)(?:\.(?P<minor>\d+))?(?:\.\d+)*(-[a-zA-Z0-9]+)?"'
+    r'version "(?P<major>\d+)(?:\.(?P<minor>\d+))?(?:\.\d+)*(-[a-zA-Z\d]+)?"'
 )
 
 LAVALINK_BRANCH_LINE: Final[Pattern] = re.compile(rb"Branch\s+(?P<branch>[\w\-\d_.]+)")
@@ -105,7 +105,7 @@ JAR_SERVER = "https://ci.fredboat.com"
 JAR_SERVER_BUILD_INFO = (
     "/guestAuth/app/rest/builds?locator=branch:refs/heads/dev,buildType:Lavalink_Build,status:SUCCESS,count:1"
 )
-BUILD_META_KEYS = ("number", "branchName", "finishDate", "artifacts__href")
+BUILD_META_KEYS = ("number", "branchName", "finishDate", "href")
 # This is a fallback URL for when the above doesn't return a valid input
 #   This will download from the Master branch which is behind dev
 LAVALINK_JAR_ENDPOINT: Final[
@@ -117,7 +117,7 @@ def convert_function(key: str) -> str:
     return key.replace("_", "-")
 
 
-def change_dict_naming_convention(data) -> dict:
+def change_dict_naming_convention(data: dict) -> dict:
     new = {}
     for k, v in data.items():
         new_v = v
@@ -126,7 +126,10 @@ def change_dict_naming_convention(data) -> dict:
         elif isinstance(v, list):
             new_v = list()
             for x in v:
-                new_v.append(change_dict_naming_convention(x))
+                if type(x) == dict:
+                    new_v.append(change_dict_naming_convention(x))
+                else:
+                    new_v.append(x)
         new[convert_function(k)] = new_v
     return new
 
@@ -158,7 +161,7 @@ class LocalNodeManager:
     def __init__(self, client: Client, timeout: int | None = None, auto_update: bool = True) -> None:
         self._auto_update = auto_update
         self.ready: asyncio.Event = asyncio.Event()
-        self._ci_info: dict = {"number": 0, "branchName": "", "finishDate": "", "artifacts__href": ""}
+        self._ci_info: dict = {"number": 0, "branchName": "", "finishDate": "", "href": "", "jar_url": ""}
         self._client = client
         self._proc: asyncio.subprocess.Process | None = None  # pylint:disable=no-member
         self._node_pid: int | None = None
@@ -170,6 +173,7 @@ class LocalNodeManager:
         self._node_id: str = str(uuid.uuid4())
         self._node: Node | None = None
         self._current_config = {}
+        self._full_data = {}
         self.abort_for_unmanaged: asyncio.Event = asyncio.Event()
         self._args = []
 
@@ -208,17 +212,28 @@ class LocalNodeManager:
             if response.status != 200:
                 return {"number": -1}
             data = await response.json(loads=ujson.loads)
+            data = data["build"][0]
             returning_data = {}
             for k in BUILD_META_KEYS:
-                if "__" in k:
-                    ks = k.split("__")
-                    returning_data[k] = data[ks[0]][ks[1]]
-                elif "finishDate" == k:
-                    returning_data[k] = dateutil.parser.parse(data[k])
+                if "finishDate" == k:
+                    returning_data[k] = dateutil.parser.parse(data["finishOnAgentDate"])
                 elif "number" == k:
                     returning_data[k] = int(data[k])
                 else:
                     returning_data[k] = data[k]
+        async with self._session.get(
+            f"{JAR_SERVER}{returning_data['href']}", headers={"Accept": "application/json"}
+        ) as response:
+            data = await response.json(loads=ujson.loads)
+            returning_data["href"] = data["artifacts"]["href"]
+
+        async with self._session.get(
+            f"{JAR_SERVER}{returning_data['href']}", headers={"Accept": "application/json"}
+        ) as response:
+            data = await response.json(loads=ujson.loads)
+            jar_meta = filter(lambda x: x["name"] == "Lavalink.jar", data["file"])
+            jar_url = next(jar_meta).get("content", {}).get("href")
+            returning_data["jar_url"] = jar_url
         return returning_data
 
     async def _start(self, java_path: str) -> None:
@@ -267,7 +282,9 @@ class LocalNodeManager:
             raise
 
     async def process_settings(self):
-        data = change_dict_naming_convention(await self._config.yaml.all())
+        data = await self._client.config_manager.create_bundled_node()
+        self._full_data = data
+        data = change_dict_naming_convention(data["extras"])
         # The reason this is here is to completely remove these keys from the application.yml
         # if they are set to empty values
         if not all(
@@ -295,7 +312,7 @@ class LocalNodeManager:
             else:
                 extras = f" however you have version {self._java_version} (executable: {self._java_exc})"
             raise UnsupportedJavaError()  # TODO: Add API endpoint to change this
-        java_xms, java_xmx = list((await self._config.java.all()).values())
+        java_xms, java_xmx = "64M", "32GB"  # FIXME: Get from db
         match = re.match(r"^(\d+)([MG])$", java_xmx, flags=re.IGNORECASE)
         command_args = [
             self._java_exc,
@@ -408,16 +425,11 @@ class LocalNodeManager:
 
     async def _download_jar(self) -> None:
         LOGGER.info("Downloading Lavalink.jar...")
-        async with self._session.get(JAR_SERVER + self._ci_info.get("artifacts__href")) as response:
-            child_meta = await response.json(loads=ujson.loads)
-            jar_meta = filter(lambda x: x["name"] == "Lavalink.jar", child_meta["file"])
-            jar_url = next(jar_meta).get("content", {}).get("href")
-
-        if jar_url:
-            jar_url = JAR_SERVER + jar_url
+        if self._ci_info["jar_url"]:
+            jar_url = JAR_SERVER + self._ci_info["jar_url"]
         else:
             jar_url = LAVALINK_JAR_ENDPOINT
-        async with self._session.get(JAR_SERVER + jar_url, timeout=600) as response:
+        async with self._session.get(jar_url, timeout=600) as response:
             if 400 <= response.status < 600:
                 raise LavalinkDownloadFailed(response=response, should_retry=True)
             fd, path = tempfile.mkstemp()
@@ -486,7 +498,6 @@ class LocalNodeManager:
         self._lavaplayer = lavaplayer["lavaplayer"].decode()
         self._buildtime = date
         if self._auto_update:
-            self._ci_info = await self.get_ci_latest_info()
             self._up_to_date = build == self._ci_info.get("number")
         else:
             self._ci_info["number"] = build
@@ -494,6 +505,8 @@ class LocalNodeManager:
         return self._up_to_date
 
     async def maybe_download_jar(self):
+        if self._auto_update:
+            self._ci_info = await self.get_ci_latest_info()
         if not (LAVALINK_JAR_FILE.exists() and await self._is_up_to_date()):
             await self._download_jar()
 
@@ -520,6 +533,8 @@ class LocalNodeManager:
                     await self._start(java_path=java_path)
                 while True:
                     await self.wait_until_ready(timeout=self.timeout)
+                    if self._node is None:
+                        await self.connect_node()
                     if not psutil.pid_exists(self._node_pid):
                         raise NoProcessFound
                     try:
@@ -534,20 +549,21 @@ class LocalNodeManager:
                             except WebsocketNotConnectedError:
                                 await asyncio.sleep(5)
                         else:
-                            raise IndexError
-                    except IndexError:
+                            raise AttributeError
+                    except AttributeError:
                         try:
                             LOGGER.debug("Managed node monitor detected RLL is not connected to any nodes")
                             while True:
                                 node = self._client.node_manager.get_node_by_id(self._node_id)
                                 if node and node.websocket.connected:
                                     break
+                                elif node is None:
+                                    await self.connect_node()
                                 await asyncio.sleep(1)
                         except asyncio.TimeoutError:
-                            self.cog.lavalink_restart_connect(manual=True)
                             return  # lavalink_restart_connect will cause a new monitor task to be created.
                     except Exception as exc:
-                        LOGGER.debug(exc, exc_info=exc)
+                        LOGGER.info(exc, exc_info=exc)
                         raise NodeUnhealthy(str(exc))
             except (TooManyProcessFound, IncorrectProcessFound, NoProcessFound):
                 await self._partial_shutdown()
@@ -583,15 +599,15 @@ class LocalNodeManager:
                         "Fatal exception whilst starting managed Lavalink node, aborting...\n%s",
                         exc.response,
                     )
-                    self.cog.lavalink_connection_aborted = True
+                    # lavalink_connection_aborted
                     return await self.shutdown()
             except InvalidArchitectureError:
                 LOGGER.critical("Invalid machine architecture, cannot run a managed Lavalink node.")
-                self.cog.lavalink_connection_aborted = True
+                # lavalink_connection_aborted
                 return await self.shutdown()
             except (UnsupportedJavaError, UnexpectedJavaResponseError) as exc:
                 LOGGER.critical(exc)
-                self.cog.lavalink_connection_aborted = True
+                # lavalink_connection_aborted
                 return await self.shutdown()
             except ManagedLavalinkNodeError as exc:
                 delay = backoff.delay()
@@ -612,7 +628,7 @@ class LocalNodeManager:
                     "Lavalink Managed node startup failed retrying in %s seconds",
                     delay,
                 )
-                LOGGER.debug(exc, exc_info=exc)
+                LOGGER.info(exc, exc_info=exc)
                 await self._partial_shutdown()
                 await asyncio.sleep(delay)
 
@@ -622,18 +638,20 @@ class LocalNodeManager:
         self.start_monitor_task = asyncio.create_task(self.start_monitor(java_path))
 
     async def connect_node(self):
-        self._node = self._client.add_node(
-            host=self._current_config["server"]["address"],
-            port=self._current_config["server"]["port"],
-            password=self._current_config["lavalink"]["server"]["password"],
-            resume_key=f"ManagedNode-{self._node_pid}-{self._node_id}",
-            resume_timeout=600,
-            name=f"Managed: {self._node_pid}",
-            ssl=False,
-            search_only=False,
-            unique_identifier=self._node_id,
-        )
-        self._node = self._client.node_manager.get_node_by_id(self._node_id)
+        if node := self._client.node_manager.get_node_by_id(self._node_id) is None:
+            self._node = self._client.add_node(
+                host=self._current_config["server"]["address"],
+                port=self._current_config["server"]["port"],
+                password=self._current_config["lavalink"]["server"]["password"],
+                resume_key=f"ManagedNode-{self._node_pid}-{self._node_id}",
+                resume_timeout=600,
+                name=f"Managed: {self._node_pid}",
+                ssl=False,
+                search_only=False,
+                unique_identifier=self._node_id,
+            )
+        else:
+            self._node = node
 
     @staticmethod
     async def get_lavalink_process(*matches: str, cwd: str | None = None, lazy_match: bool = False):
