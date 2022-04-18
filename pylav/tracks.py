@@ -433,7 +433,7 @@ class AudioTrack:
                     else:
                         return f"{maybe_bold}{url_start}{base}{url_end}{maybe_bold}"
             else:
-                if self.stream:
+                if self.stream and self.query.is_stream:
                     icy = await self._icyparser(self.uri)
                     if icy:
                         title = icy

@@ -78,7 +78,7 @@ SOUNDCLOUD_TIMESTAMP = re.compile(r"#t=(\d+):(\d+)s?")
 TWITCH_TIMESTAMP = re.compile(r"\?t=(\d+)h(\d+)m(\d+)s")
 
 
-def process_youtube(cls: type[Query], query: str, music:bool):
+def process_youtube(cls: type[Query], query: str, music: bool):
     index = 0
     if match := re.search(YOUTUBE_TIMESTAMP, query):
         start_time = int(match.group(1))
@@ -97,7 +97,12 @@ def process_youtube(cls: type[Query], query: str, music:bool):
         query_type = "single" if _has_index else "playlist"
     else:
         query_type = "single"
-    return cls(query, "YouTube Music" if music else "YouTube", start_time=start_time, query_type=query_type, index=index)  # type: ignore
+    return cls(
+        query,
+        "YouTube Music" if music else "YouTube",
+        start_time=start_time,
+        query_type=query_type,
+        index=index)  # type: ignore
 
 
 def process_spotify(cls: type[Query], query: str) -> Query:
@@ -276,8 +281,9 @@ class Query:
 
     @classmethod
     def __process_urls(cls, query: str) -> Query | None:
-        if re.match(YOUTUBE_REGEX, query):
-            return process_youtube(cls, query)
+        if match := re.match(YOUTUBE_REGEX, query):
+            music = match.group("music")
+            return process_youtube(cls, query, music=bool(music))
         elif re.match(SPOTIFY_REGEX, query):
             return process_spotify(cls, query)
         elif re.match(APPLE_MUSIC_REGEX, query):
@@ -408,7 +414,7 @@ class Query:
             raise ValueError("Source can only be set for search queries")
 
         source = source.lower()
-        if not sorce in (allowed := {"ytm", "yt", "sp", "sc", "am", "local", "tts", "tts://"}):
+        if sorce not in (allowed := {"ytm", "yt", "sp", "sc", "am", "local", "tts", "tts://"}):
             raise ValueError(f"Invalid source: {source} - Allowed: {allowed}")
         if source == "ytm":
             source = "YouTube Music"
