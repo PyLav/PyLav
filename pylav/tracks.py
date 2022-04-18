@@ -314,20 +314,18 @@ class AudioTrack:
     def timestamp(self) -> int:
         return self.extra.get("timestamp", 0)
 
-    @cached_property_with_ttl(ttl=60)
     async def thumbnail(self) -> str | None:
         """Optional[str]: Returns a thumbnail URL for YouTube and Spotify tracks."""
-        if self.__clear_thumbnail_cache_task is not None and not self.__clear_thumbnail_cache_task.cancelled():
-            self.__clear_thumbnail_cache_task.cancel()
-        if "youtube" in self.uri and self.identifier:
+        if not self.identifier:
+            return
+        if self.source == "youtube":
             return f"https://img.youtube.com/vi/{self.identifier}/mqdefault.jpg"
-        elif "spotify" in self.uri:
+        elif self.source == "spotify":
             async with self._node.node_manager.client.spotify_client as sp_client:
                 track = await sp_client.get_track(self.identifier)
                 images = track.album.images
                 image = max(images, key=operator.attrgetter("width"))
                 return image.url
-        self.__clear_thumbnail_cache_task = asyncio.create_task(self.clear_cache(120, "thumbnail"))
 
     def __getitem__(self, name) -> Any:
         return super().__getattribute__(name)
@@ -372,7 +370,7 @@ class AudioTrack:
         del self.__dict__[function_name]
 
     async def search(self, player: Player) -> None:
-        self._query = Query.from_string(self.query)
+        self._query = await Query.from_string(self.query)
         response = await player.node.get_tracks(self.query, first=True)
         self.track = response["track"]
 
@@ -395,7 +393,7 @@ class AudioTrack:
         self, max_length: int = None, author: bool = True, unformatted: bool = False, with_url: bool = False
     ) -> str:
         if self.is_partial:
-            return discord.utils.escape_markdown(await self.query.query_to_string(max_length))
+            return discord.utils.escape_markdown(await self.query.query_to_queue(max_length, partial=True))
         else:
             url_start = "[" if with_url else ""
             url_end = f"]({self.uri})" if with_url and self.uri else ""

@@ -5,31 +5,39 @@ import re
 from typing import TYPE_CHECKING, Literal
 
 import aiopath
+from red_commons.logging import getLogger
 
 if TYPE_CHECKING:
     from pylav.localfiles import LocalFile
 
-CLYPIT_REGEX = re.compile(r"(http://|https://(www.)?)?clyp\.it/(.*)")
-GETYARN_REGEX = re.compile(r"(?:http://|https://(?:www.)?)?getyarn.io/yarn-clip/(.*)")
+LOGGER = getLogger("red.PyLink.Query")
+
+CLYPIT_REGEX = re.compile(r"(http://|https://(www.)?)?clyp\.it/(.*)", re.IGNORECASE)
+GETYARN_REGEX = re.compile(r"(?:http://|https://(?:www.)?)?getyarn.io/yarn-clip/(.*)", re.IGNORECASE)
 MIXCLOUD_REGEX = re.compile(
-    r"https?://(?:(?:www|beta|m)\.)?mixcloud.com/([^/]+)/(?!stream|uploads|favorites|listens|playlists)([^/]+)/?"
+    r"https?://(?:(?:www|beta|m)\.)?mixcloud.com/([^/]+)/(?!stream|uploads|favorites|listens|playlists)([^/]+)/?",
+    re.IGNORECASE,
 )
-OCRREMIX_PATTERN = re.compile(r"(?:https?://(?:www\.)?ocremix\.org/remix/)?(?P<id>OCR\d+)(?:.*)?")
-PORNHUB_REGEX = re.compile(r"^https?://([a-z]+.)?pornhub\.(com|net)/view_video\.php\?viewkey=([a-zA-Z\d]+).*$")
+OCRREMIX_PATTERN = re.compile(r"(?:https?://(?:www\.)?ocremix\.org/remix/)?(?P<id>OCR\d+)(?:.*)?", re.IGNORECASE)
+PORNHUB_REGEX = re.compile(
+    r"^https?://([a-z]+.)?pornhub\.(com|net)/view_video\.php\?viewkey=([a-zA-Z\d]+).*$", re.IGNORECASE
+)
 REDDIT_REGEX = re.compile(
     r"https://(?:www|old)\.reddit\.com/"
     r"r/[^/]+/[^/]+/([^/]+)"
     r"(?:/?(?:[^/]+)?/?)?|"
-    r"https://v\.redd\.it/([^/]+)(?:.*)?"
+    r"https://v\.redd\.it/([^/]+)(?:.*)?",
+    re.IGNORECASE,
 )
-SOUNDGASM_REGEX = re.compile(r"https?://soundgasm\.net/u/(?P<path>(?P<author>[^/]+)/[^/]+)")
-TIKTOK_REGEX = re.compile(r"^https://(?:www\.|m\.)?tiktok\.com/@(?P<user>[^/]+)/video/(?P<video>\d+).*$")
+SOUNDGASM_REGEX = re.compile(r"https?://soundgasm\.net/u/(?P<path>(?P<author>[^/]+)/[^/]+)", re.IGNORECASE)
+TIKTOK_REGEX = re.compile(r"^https://(?:www\.|m\.)?tiktok\.com/@(?P<user>[^/]+)/video/(?P<video>\d+).*$", re.IGNORECASE)
 
 
 SPOTIFY_REGEX = re.compile(
     r"(https?://)?(www\.)?open\.spotify\.com/(user/[a-zA-Z\d\\-_]+/)?"
     r"(?P<type>track|album|playlist|artist)/"
-    r"(?P<identifier>[a-zA-Z\d\\-_]+)"
+    r"(?P<identifier>[a-zA-Z\d\\-_]+)",
+    re.IGNORECASE,
 )
 
 APPLE_MUSIC_REGEX = re.compile(
@@ -37,27 +45,31 @@ APPLE_MUSIC_REGEX = re.compile(
     r"(?P<countrycode>[a-zA-Z]{2}/)?"
     r"(?P<type>album|playlist|artist)(/[a-zA-Z\d\\-]+)?/"
     r"(?P<identifier>[a-zA-Z\d.]+)"
-    r"(\?i=(?P<identifier2>\d+))?"
+    r"(\?i=(?P<identifier2>\d+))?",
+    re.IGNORECASE,
 )
 
-BANDCAMP_REGEX = re.compile(r"^(https?://(?:[^.]+\.|)bandcamp\.com)/(track|album)/([a-zA-Z\d\\-_]+)/?(?:\?.*|)$")
-NICONICO_REGEX = re.compile(r"(?:http://|https://|)(?:www\.|)nicovideo\.jp/watch/(sm\d+)(?:\?.*|)$")
-TWITCH_REGEX = re.compile(r"^https://(?:www\.|go\.)?twitch\.tv/([^/]+)$")
-VIMEO_REGEX = re.compile(r"^https://vimeo.com/\d+(?:\?.*|)$")
+BANDCAMP_REGEX = re.compile(
+    r"^(https?://(?:[^.]+\.|)bandcamp\.com)/(track|album)/([a-zA-Z\d\\-_]+)/?(?:\?.*|)$", re.IGNORECASE
+)
+NICONICO_REGEX = re.compile(r"(?:http://|https://|)(?:www\.|)nicovideo\.jp/watch/(sm\d+)(?:\?.*|)$", re.IGNORECASE)
+TWITCH_REGEX = re.compile(r"^https://(?:www\.|go\.)?twitch\.tv/([^/]+)$", re.IGNORECASE)
+VIMEO_REGEX = re.compile(r"^https://vimeo.com/\d+(?:\?.*|)$", re.IGNORECASE)
 
 SOUND_CLOUD_REGEX = re.compile(
     r"^(?:http://|https://|)soundcloud\.app\.goo\.gl/([a-zA-Z\d\\-_]+)/?(?:\?.*|)$|"
     r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/([a-zA-Z\d\\-_]+)/([a-zA-Z\d\\-_]+)/?(?:\?.*|)$|"
     r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/([a-zA-Z\d\\-_]+)/"
     r"([a-zA-Z\d\\-_]+)/s-([a-zA-Z\d\\-_]+)(?:\?.*|)$|"
-    r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/([a-zA-Z\d\\-_]+)/likes/?(?:\?.*|)$"
+    r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/([a-zA-Z\d\\-_]+)/likes/?(?:\?.*|)$",
+    re.IGNORECASE,
 )
 
-YOUTUBE_REGEX = re.compile(r"(?:http://|https://|)(?:www\.|)(?P<music>music\.)?youtu(be\.com|\.be)")
-TTS_REGEX = re.compile(r"^(speak|tts):(.*)$")
-GCTSS_REGEX = re.compile(r"^(tts://)(.*)$")
-SEARCH_REGEX = re.compile(r"^(?P<source>yt|ytm|sp|sc|am)search:(?P<query>.*)$")
-HTTP_REGEX = re.compile(r"^http(s)?://")
+YOUTUBE_REGEX = re.compile(r"(?:http://|https://|)(?:www\.|)(?P<music>music\.)?youtu(be\.com|\.be)", re.IGNORECASE)
+TTS_REGEX = re.compile(r"^(speak|tts):(.*)$", re.IGNORECASE)
+GCTSS_REGEX = re.compile(r"^(tts://)(.*)$", re.IGNORECASE)
+SEARCH_REGEX = re.compile(r"^(?P<source>yt|ytm|sp|sc|am)search:(?P<query>.*)$", re.IGNORECASE)
+HTTP_REGEX = re.compile(r"^http(s)?://", re.IGNORECASE)
 
 YOUTUBE_TIMESTAMP = re.compile(r"[&|?]t=(\d+)s?")
 YOUTUBE_INDEX = re.compile(r"&index=(\d+)")
@@ -85,7 +97,7 @@ def process_youtube(cls: type[Query], query: str):
         query_type = "single" if _has_index else "playlist"
     else:
         query_type = "single"
-    return cls(query, "youtube", start_time=start_time, query_type=query_type, index=index)  # type: ignore
+    return cls(query, "YouTube", start_time=start_time, query_type=query_type, index=index)  # type: ignore
 
 
 def process_spotify(cls: type[Query], query: str) -> Query:
@@ -94,7 +106,7 @@ def process_spotify(cls: type[Query], query: str) -> Query:
         query_type = "playlist"
     elif "/album/" in query:
         query_type = "album"
-    return cls(query, "spotify", query_type=query_type)  # type: ignore
+    return cls(query, "Spotify", query_type=query_type)  # type: ignore
 
 
 def process_soundcloud(cls: type[Query], query: str):
@@ -105,7 +117,7 @@ def process_soundcloud(cls: type[Query], query: str):
             query_type = "playlist"
     else:
         query_type = "single"
-    return cls(query, "soundcloud", query_type=query_type)  # type: ignore
+    return cls(query, "SoundCloud", query_type=query_type)  # type: ignore
 
 
 def process_bandcamp(cls: type[Query], query: str) -> Query:
@@ -113,7 +125,7 @@ def process_bandcamp(cls: type[Query], query: str) -> Query:
         query_type = "album"
     else:
         query_type = "single"
-    return cls(query, "bandcamp", query_type=query_type)  # type: ignore
+    return cls(query, "Bandcamp", query_type=query_type)  # type: ignore
 
 
 class Query:
@@ -141,75 +153,75 @@ class Query:
 
     @property
     def is_clypit(self) -> bool:
-        return self.source == "clypit"
+        return self.source == "Clyp"
 
     @property
     def is_getyarn(self) -> bool:
-        return self.source == "getyarn"
+        return self.source == "GetYarn"
 
     @property
     def is_mixcloud(self) -> bool:
-        return self.source == "mixcloud"
+        return self.source == "Mixcloud"
 
     @property
     def is_ocremix(self) -> bool:
-        return self.source == "ocremix"
+        return self.source == "OverClocked ReMix"
 
     @property
     def is_pornhub(self) -> bool:
-        return self.source == "pornhub"
+        return self.source == "Pornhub"
 
     @property
     def is_reddit(self) -> bool:
-        return self.source == "reddit"
+        return self.source == "Reddit"
 
     @property
     def is_soundgasm(self) -> bool:
-        return self.source == "soundgasm"
+        return self.source == "Soundgasm"
 
     @property
     def is_tiktok(self) -> bool:
-        return self.source == "tiktok"
+        return self.source == "TikTok"
 
     @property
     def is_spotify(self) -> bool:
-        return self.source == "spotify"
+        return self.source == "Spotify"
 
     @property
     def is_apple_music(self) -> bool:
-        return self.source == "applemusic"
+        return self.source == "Apple Music"
 
     @property
     def is_bandcamp(self) -> bool:
-        return self.source == "bandcamp"
+        return self.source == "Bandcamp"
 
     @property
     def is_youtube(self) -> bool:
-        return self.source == "youtube"
+        return self.source == "YouTube"
 
     @property
     def is_soundcloud(self) -> bool:
-        return self.source == "soundcloud"
+        return self.source == "SoundCloud"
 
     @property
     def is_twitch(self) -> bool:
-        return self.source == "twitch"
+        return self.source == "Twitch"
 
     @property
     def is_http(self) -> bool:
-        return self.source == "http"
+        return self.source == "HTTP"
 
     @property
     def is_local(self) -> bool:
-        return self.source == "local"
+        return self.source == "Local Files"
 
     @property
     def is_niconico(self) -> bool:
-        return self.source == "niconico"
+        return self.source == "Niconico"
 
     @property
     def is_vimeo(self) -> bool:
-        return self.source == "vimeo"
+        return self.source == "Vimeo"
 
     @property
     def is_search(self) -> bool:
@@ -229,11 +241,11 @@ class Query:
 
     @property
     def is_tts(self) -> bool:
-        return self.source == "tts" or self.is_gctts
+        return self.source == "TTS" or self.is_gctts
 
     @property
     def is_gctts(self) -> bool:
-        return self.source == "gctts"
+        return self.source == "Google TTS"
 
     @property
     def query_identifier(self) -> str:
@@ -263,56 +275,57 @@ class Query:
         elif re.match(SPOTIFY_REGEX, query):
             return process_spotify(cls, query)
         elif re.match(APPLE_MUSIC_REGEX, query):
-            return cls(query, "applemusic")
+            return cls(query, "Apple Music")
         elif re.match(SOUND_CLOUD_REGEX, query):
             return process_soundcloud(cls, query)
         elif re.match(TWITCH_REGEX, query):
-            return cls(query, "twitch")
+            return cls(query, "Twitch")
         elif re.match(GCTSS_REGEX, query):
             query = query.replace("tts://", "")
-            return cls(query, "gctts")
+            return cls(query, "Google TTS")
         elif re.match(TTS_REGEX, query):
             query = query.replace("tts:", "").replace("speak:", "")
-            return cls(query, "tts", search=True)
+            return cls(query, "TTS", search=True)
         elif re.match(CLYPIT_REGEX, query):
-            return cls(query, "clypit")
+            return cls(query, "Clyp")
         elif re.match(GETYARN_REGEX, query):
-            return cls(query, "getyarn")
+            return cls(query, "GetYarn")
         elif re.match(MIXCLOUD_REGEX, query):
-            return cls(query, "mixcloud")
+            return cls(query, "Mixcloud")
         elif re.match(OCRREMIX_PATTERN, query):
-            return cls(query, "ocremix")
+            return cls(query, "OverClocked ReMix")
         elif re.match(PORNHUB_REGEX, query):
-            return cls(query, "pornhub")
+            return cls(query, "Pornhub")
         elif re.match(REDDIT_REGEX, query):
-            return cls(query, "reddit")
+            return cls(query, "Reddit")
         elif re.match(SOUNDGASM_REGEX, query):
-            return cls(query, "soundgasm")
+            return cls(query, "Soundgasm")
         elif re.match(TIKTOK_REGEX, query):
-            return cls(query, "tiktok")
+            return cls(query, "TikTok")
         elif re.match(BANDCAMP_REGEX, query):
             return process_bandcamp(cls, query)
         elif re.match(NICONICO_REGEX, query):
-            return cls(query, "niconico")
+            return cls(query, "Niconico")
         elif re.match(VIMEO_REGEX, query):
-            return cls(query, "vimeo")
+            return cls(query, "Vimeo")
         elif re.match(HTTP_REGEX, query):
-            return cls(query, "http")
+            return cls(query, "HTTP")
 
     @classmethod
     def __process_search(cls, query: str) -> Query | None:
         if match := re.match(SEARCH_REGEX, query):
             query = match.group("query")
+            LOGGER.warning("%s", match.groups())
             if match.group("source") == "ytm":
-                return cls(query, "youtube", search=True)
+                return cls(query, "YouTube", search=True)
             elif match.group("source") == "sp":
-                return cls(query, "spotify", search=True)
+                return cls(query, "Spotify", search=True)
             elif match.group("source") == "sc":
-                return cls(query, "soundcloud", search=True)
+                return cls(query, "SoundCloud", search=True)
             elif match.group("source") == "am":
-                return cls(query, "applemusic", search=True)
+                return cls(query, "Apple Music", search=True)
             else:
-                return cls(query, "youtube", search=True)  # Fallback to YouTube
+                return cls(query, "YouTube", search=True)  # Fallback to YouTube
 
     @classmethod
     async def __process_local(cls, query: str | pathlib.Path | aiopath.AsyncPath) -> Query:
@@ -322,7 +335,7 @@ class Query:
         if await path.is_dir():
             query_type = "album"
         if await path.exists():
-            return cls(path.absolute(), "local", query_type=query_type)  # type: ignore
+            return cls(path.absolute(), "Local Files", query_type=query_type)  # type: ignore
         raise ValueError
 
     @classmethod
@@ -341,7 +354,7 @@ class Query:
             try:
                 return await cls.__process_local(query)
             except Exception:
-                return cls(query, "youtube", search=True)  # Fallback to YouTube
+                return cls(query, "YouTube", search=True)  # Fallback to YouTube
 
     @classmethod
     def from_string_noawait(cls, query: Query | str) -> Query:
@@ -357,14 +370,24 @@ class Query:
         elif output := cls.__process_search(query):
             return output
         else:
-            return cls(query, "youtube", search=True)  # Fallback to YouTube
+            return cls(query, "YouTube", search=True)  # Fallback to YouTube
 
     async def query_to_string(self, max_length: int = None) -> str:
         if self.is_local:
             self._query: LocalFile = self.__localfile_cls(self._query)
             return await self._query.to_string_user(max_length)
 
-        if len(self._query) > max_length:
+        if max_length and len(self._query) > max_length:
             return self._query[: max_length - 3] + "..."
 
         return self._query
+
+    async def query_to_queue(self, max_length: int = None, partial: bool = False) -> str:
+        if partial:
+            source = len(self.source) + 3
+            if max_length:
+                max_length -= source
+            query_to_string = await self.query_to_string(max_length)
+            return f"({self.source}) {query_to_string}"
+        else:
+            return await self.query_to_string(max_length)

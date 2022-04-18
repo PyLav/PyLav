@@ -389,7 +389,7 @@ class Player(VoiceProtocol):
             _, track = await self.queue.get()
 
         if track.is_partial and not track.track:
-            await track.search()
+            await track.search(self)
         if skip_segments:
             options["skipSegments"] = skip_segments
         if start_time is not None:
@@ -1007,7 +1007,7 @@ class Player(VoiceProtocol):
             else:
                 repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS WITH CIRCLED ONE OVERLAY}"
 
-            text += "Repeat" + ": " + repeat_emoji
+            text += "Repeating" + ": " + repeat_emoji
             text += (" | " if text else "") + "Volume" + ": " + f"{self.volume}%"
             page.set_footer(text=text)
             return page
@@ -1063,7 +1063,7 @@ class Player(VoiceProtocol):
             else:
                 repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS WITH CIRCLED ONE OVERLAY}"
 
-            text += "Repeat" + ": " + repeat_emoji
+            text += "Repeating" + ": " + repeat_emoji
             text += (" | " if text else "") + "Volume" + ": " + f"{self.volume}%"
             page.set_footer(text=text)
             return page
