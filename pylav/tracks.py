@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import asyncio
+import hashlib
+import operator
 import re
 import struct
+import uuid
 from base64 import b64decode
 from functools import total_ordering
 from io import BytesIO
@@ -195,6 +198,7 @@ class AudioTrack:
     ):
         self._node = node
         self.__clear_cache_task: asyncio.Task | None = None
+        self.__clear_thumbnail_cache_task: asyncio.Task | None = None
         self._is_partial = False
         self._query = query
         self.skip_segments = skip_segments or []
@@ -221,6 +225,7 @@ class AudioTrack:
             self.extra = extra
             self._raw_data = {}
         self.extra["requester"] = self.extra.get("requester", self._node.node_manager.client.bot.user.id)
+        self._id = None
 
     @cached_property_with_ttl(ttl=60)
     def full_track(
@@ -231,8 +236,15 @@ class AudioTrack:
         response, _ = (self._raw_data, None)
         if not response:
             response, _ = decode_track(self.track)
-        self.__clear_cache_task = asyncio.create_task(self.clear_cache(65))
+        self.__clear_cache_task = asyncio.create_task(self.clear_cache(65, "full_track"))
         return response
+
+    @property
+    def unique_identifier(self) -> str:
+        if not self.is_partial:
+            return hashlib.md5(self.track.encode()).hexdigest()
+        else:
+            return hashlib.md5(uuid.uuid4().bytes).hexdigest()
 
     @property
     def is_partial(self) -> bool:
@@ -302,11 +314,20 @@ class AudioTrack:
     def timestamp(self) -> int:
         return self.extra.get("timestamp", 0)
 
-    @property
-    def thumbnail(self) -> str | None:
-        """Optional[str]: Returns a thumbnail URL for YouTube tracks."""
+    @cached_property_with_ttl(ttl=60)
+    async def thumbnail(self) -> str | None:
+        """Optional[str]: Returns a thumbnail URL for YouTube and Spotify tracks."""
+        if self.__clear_thumbnail_cache_task is not None and not self.__clear_thumbnail_cache_task.cancelled():
+            self.__clear_thumbnail_cache_task.cancel()
         if "youtube" in self.uri and self.identifier:
             return f"https://img.youtube.com/vi/{self.identifier}/mqdefault.jpg"
+        elif "spotify" in self.uri:
+            async with self._node.node_manager.client.spotify_client as sp_client:
+                track = await sp_client.get_track(self.identifier)
+                images = track.album.images
+                image = max(images, key=operator.attrgetter("width"))
+                return image.url
+        self.__clear_thumbnail_cache_task = asyncio.create_task(self.clear_cache(120, "thumbnail"))
 
     def __getitem__(self, name) -> Any:
         return super().__getattribute__(name)
@@ -346,9 +367,9 @@ class AudioTrack:
             "raw_data": self._raw_data,
         }
 
-    async def clear_cache(self, timer: int) -> None:
+    async def clear_cache(self, timer: int, function_name: str) -> None:
         await asyncio.sleep(timer)
-        del self.__dict__["full_track"]
+        del self.__dict__[function_name]
 
     async def search(self, player: Player) -> None:
         self._query = Query.from_string(self.query)
@@ -370,48 +391,65 @@ class AudioTrack:
     def __le__(self, other):
         return True
 
-    async def get_track_display_name(self, max_length: int = None) -> str:
+    async def get_track_display_name(
+        self, max_length: int = None, author: bool = True, unformatted: bool = False, with_url: bool = False
+    ) -> str:
         if self.is_partial:
             return discord.utils.escape_markdown(await self.query.query_to_string(max_length))
         else:
-
+            url_start = "[" if with_url else ""
+            url_end = f"]({self.uri})" if with_url and self.uri else ""
+            if unformatted:
+                maybe_bold = ""
+                url_start = url_end = ""
+            else:
+                maybe_bold = "**"
             unknown_author = self.author != "Unknown artist"
             unknown_title = self.title != "Unknown title"
+            if not author:
+                author_string = ""
+            else:
+                author_string = f" - {self.author}"
+
             if self.query and self.query.is_local:
                 if not (unknown_title and unknown_author):
-                    base = discord.utils.escape_markdown(f"{self.author} - {self.title}")
+                    base = discord.utils.escape_markdown(f"{self.title}{author_string}")
                     if max_length:
-                        return f"**{base[:max_length-7]}...**"
+                        return f"{maybe_bold}{url_start}{base[:max_length-7]}...{url_end}{maybe_bold}"
                     else:
-                        return f"**{base}**" + discord.utils.escape_markdown(f"\n{await self.query.query_to_string()} ")
+                        return f"{maybe_bold}{url_start}{base}{url_end}{maybe_bold}" + discord.utils.escape_markdown(
+                            f"\n{await self.query.query_to_string()} "
+                        )
                 elif not unknown_title:
                     base = discord.utils.escape_markdown(f"{self.title}")
                     if max_length:
-                        return f"**{base[:max_length-7]}...**"
+                        return f"{maybe_bold}{url_start}{base[:max_length-7]}...{url_end}{maybe_bold}"
                     else:
-                        return f"**{base}**" + discord.utils.escape_markdown(f"\n{await self.query.query_to_string()} ")
+                        return f"{maybe_bold}{url_start}{base}{url_end}{maybe_bold}" + discord.utils.escape_markdown(
+                            f"\n{await self.query.query_to_string()} "
+                        )
                 else:
                     base = discord.utils.escape_markdown(await self.query.query_to_string(max_length))
                     if max_length:
-                        return f"**{base[:max_length-7]}...**"
+                        return f"{maybe_bold}{url_start}{base[:max_length-7]}...{url_end}{maybe_bold}"
                     else:
-                        return f"**{base}**"
+                        return f"{maybe_bold}{url_start}{base}{url_end}{maybe_bold}"
             else:
                 if self.stream:
                     icy = await self.icyparser(self.uri)
                     if icy:
                         title = icy
                     else:
-                        title = f"{self.title} - {self.author}"
+                        title = f"{self.title}{author_string}"
                 elif self.author.lower() not in self.title.lower():
-                    title = f"{self.title} - {self.author}"
+                    title = f"{self.title}{author_string}"
                 else:
                     title = self.title
                 title = discord.utils.escape_markdown(title)
                 if max_length:
-                    return f"**{title[:max_length-7]}...**"
+                    return f"{maybe_bold}{url_start}{title[:max_length-7]}...{url_end}{maybe_bold}"
                 else:
-                    return f"**{title}**"
+                    return f"{maybe_bold}{url_start}{title}{url_end}{maybe_bold}"
 
     async def icyparser(self, url: str) -> str | None:
         try:

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import datetime
 import itertools
 import pathlib
 import random
@@ -11,7 +12,11 @@ import aiohttp
 import aiopath
 import discord
 import ujson
+from asyncspotify import Client as SpotifyClient
+from asyncspotify import ClientCredentialsFlow
+from discord.abc import Messageable
 from discord.ext.commands import Cog
+from discord.types.embed import EmbedType
 from red_commons.logging import getLogger
 
 from pylav._config import __VERSION__, CONFIG_DIR
@@ -82,6 +87,8 @@ class Client:
     _player_state_manager: PlayerStateManager
     _playlist_manager: PlaylistManager
     _local_node_manager: LocalNodeManager
+    _spotify_client_auth: ClientCredentialsFlow
+    _spotify_client: SpotifyClient
 
     def __init__(
         self,
@@ -120,6 +127,11 @@ class Client:
     def initialized(self) -> bool:
         """Returns whether the client has been initialized."""
         return self._ready
+
+    @property
+    def spotify_client(self) -> SpotifyClient:
+        """Returns the spotify client."""
+        return SpotifyClient(self._spotify_client_auth)
 
     async def initialize(self):
         if self._ready:
@@ -165,7 +177,14 @@ class Client:
 
         if enable_managed_node:
             await self._local_node_manager.start(java_path=config_data.get("java_path"))
+        from pylav.localfiles import LocalFile
 
+        await LocalFile.add_root_folder(path=self._config_folder / "music", create=True)
+        data = await self.config_manager.get_managed_node_config()
+        spotify_data = data["extras"]["plugins"]["topissourcemanagers"]["spotify"]
+        self._spotify_client_auth = ClientCredentialsFlow(
+            client_id=spotify_data["clientId"], client_secret=spotify_data["clientSecret"]
+        )
         self._ready = True
 
     async def set_lib_config(
@@ -538,3 +557,52 @@ class Client:
         if endpoint is None:
             endpoint = channel.rtc_region
         return await self.player_manager.create(channel, region, endpoint, node, self_deaf)
+
+    async def construct_embed(
+        self,
+        *,
+        embed: discord.Embed = None,
+        colour: discord.Colour | int | None = None,
+        color: discord.Colour | int | None = None,
+        title: str = None,
+        type: EmbedType = "rich",
+        url: str = None,
+        description: str = None,
+        timestamp: datetime.datetime = None,
+        author_name: str = None,
+        author_url: str = None,
+        thumbnail: str = None,
+        footer: str = None,
+        footer_url: str = None,
+        messageable: Messageable = None,
+    ) -> discord.Embed:
+
+        if messageable and not (colour or color) and hasattr(self._bot, "get_embed_color"):
+            colour = await self._bot.get_embed_color(messageable)
+        elif colour or color:
+            colour = colour or color
+
+        contents = dict(title=title, type=type, url=url, description=description)
+        if embed is not None:
+            embed = embed.to_dict()
+        else:
+            embed = {}
+        contents.update(embed)
+        new_embed = discord.Embed.from_dict(contents)
+        new_embed.color = colour
+        if timestamp and isinstance(timestamp, datetime.datetime):
+            new_embed.timestamp = timestamp
+        else:
+            new_embed.timestamp = datetime.datetime.now(tz=datetime.timezone.utc)
+
+        if footer:
+            new_embed.set_footer(text=footer, icon_url=footer_url)
+        if thumbnail:
+            new_embed.set_thumbnail(url=thumbnail)
+        if author_url or author_name:
+            if author_url and author_name:
+                new_embed.set_author(name=author_name, icon_url=author_url)
+            elif author_name:
+                new_embed.set_author(name=author_name)
+
+        return new_embed

@@ -4,6 +4,8 @@ import asyncio
 import collections
 import contextlib
 import heapq
+import itertools
+import random
 import time
 from typing import TYPE_CHECKING, Any, Literal
 
@@ -973,7 +975,7 @@ class Player(VoiceProtocol):
                 dur = "LIVE"
             else:
                 dur = format_time(current.duration)
-            current_track_description = await current.get_track_display_name()
+            current_track_description = await current.get_track_display_name(with_url=True)
             if current.stream:
                 queue_list += "**Currently livestreaming:**\n"
                 queue_list += f"{current_track_description}\n"
@@ -985,16 +987,72 @@ class Player(VoiceProtocol):
                 queue_list += f"Requester: **{current.requester.mention}**"
                 queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
 
-            page = discord.Embed(
+            page = await self.node.node_manager.client.construct_embed(
                 title=f"Now Playing in __{self.guild.name}__",
                 description=queue_list,
             )
-            if current.thumbnail:
-                page.set_thumbnail(url=current.thumbnail)
+            if url := await current.thumbnail():
+                page.set_thumbnail(url=url)
 
             queue_dur = await self.queue_duration()
             queue_total_duration = format_time(queue_dur)
             text = "{num_tracks} tracks, {num_remaining} remaining\n".format(
+                num_tracks=self.queue.qsize(),
+                num_remaining=queue_total_duration,
+            )
+            if not self.is_repeating:
+                repeat_emoji = "\N{CROSS MARK}"
+            elif self.repeat_queue:
+                repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS}"
+            else:
+                repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS WITH CIRCLED ONE OVERLAY}"
+
+            text += "Repeat" + ": " + repeat_emoji
+            text += (" | " if text else "") + "Volume" + ": " + f"{self.volume}%"
+            page.set_footer(text=text)
+            return page
+
+    async def get_queue_page(
+        self, page_index: int, per_page: int, total_pages: int, embed: bool = True
+    ) -> discord.Embed | str:
+        start_index = page_index * per_page
+        end_index = start_index + per_page
+        tracks = list(itertools.islice(self.queue._queue, start_index, end_index))
+        if embed:
+            queue_list = ""
+            arrow = self.draw_time()
+            pos = format_time(self.position)
+            current = self.current
+            if current.stream:
+                dur = "LIVE"
+            else:
+                dur = format_time(current.duration)
+            current_track_description = await current.get_track_display_name(with_url=True)
+            if current.stream:
+                queue_list += "**Currently livestreaming:**\n"
+                queue_list += f"{current_track_description}\n"
+                queue_list += f"Requester: **{current.requester.mention}**"
+                queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
+            else:
+                queue_list += "Playing: "
+                queue_list += f"{current_track_description}\n"
+                queue_list += f"Requester: **{current.requester.mention}**"
+                queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
+            if tracks:
+                async for track_idx, (_, track) in AsyncIter(tracks).enumerate(start=start_index + 1):
+                    track_description = await track.get_track_display_name(max_length=50, with_url=True)
+                    queue_list += f"`{track_idx}.` {track_description}\n"
+            page = await self.node.node_manager.client.construct_embed(
+                title=f"Queue for __{self.guild.name}__",
+                description=queue_list,
+            )
+            if url := await current.thumbnail():
+                page.set_thumbnail(url=url)
+            queue_dur = await self.queue_duration()
+            queue_total_duration = format_time(queue_dur)
+            text = "Page {page_num}/{total_pages} | {num_tracks} tracks, {num_remaining} remaining\n".format(
+                page_num=page_index + 1,
+                total_pages=total_pages,
                 num_tracks=self.queue.qsize(),
                 num_remaining=queue_total_duration,
             )
@@ -1018,7 +1076,7 @@ class Player(VoiceProtocol):
             )
         ]
         queue_dur = sum(dur)
-        if not self.queue.qsize():
+        if self.queue.empty():
             queue_dur = 0
         try:
             if not self.current.stream:
@@ -1029,3 +1087,8 @@ class Player(VoiceProtocol):
             remain = 0
         queue_total_duration = remain + queue_dur
         return queue_total_duration
+
+    async def shuffle_queue(self) -> None:
+        if self.queue.empty():
+            return
+        await asyncio.to_thread(random.shuffle, self.queue._queue)
