@@ -436,7 +436,7 @@ class AudioTrack:
                         return f"{maybe_bold}{url_start}{base}{url_end}{maybe_bold}"
             else:
                 if self.stream:
-                    icy = await self.icyparser(self.uri)
+                    icy = await self._icyparser(self.uri)
                     if icy:
                         title = icy
                     else:
@@ -451,7 +451,7 @@ class AudioTrack:
                 else:
                     return f"{maybe_bold}{url_start}{title}{url_end}{maybe_bold}"
 
-    async def icyparser(self, url: str) -> str | None:
+    async def _icyparser(self, url: str) -> str | None:
         try:
             async with self._node.session.get(url, headers={"Icy-MetaData": "1"}) as resp:
                 metaint = int(resp.headers["icy-metaint"])
