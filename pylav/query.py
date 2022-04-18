@@ -78,7 +78,7 @@ SOUNDCLOUD_TIMESTAMP = re.compile(r"#t=(\d+):(\d+)s?")
 TWITCH_TIMESTAMP = re.compile(r"\?t=(\d+)h(\d+)m(\d+)s")
 
 
-def process_youtube(cls: type[Query], query: str):
+def process_youtube(cls: type[Query], query: str, music:bool):
     index = 0
     if match := re.search(YOUTUBE_TIMESTAMP, query):
         start_time = int(match.group(1))
@@ -97,7 +97,7 @@ def process_youtube(cls: type[Query], query: str):
         query_type = "single" if _has_index else "playlist"
     else:
         query_type = "single"
-    return cls(query, "YouTube", start_time=start_time, query_type=query_type, index=index)  # type: ignore
+    return cls(query, "YouTube Music" if music else "YouTube", start_time=start_time, query_type=query_type, index=index)  # type: ignore
 
 
 def process_spotify(cls: type[Query], query: str) -> Query:
@@ -139,7 +139,7 @@ class Query:
         query_type: Literal["single", "playlist", "album"] = None,
     ):
         self._query = query
-        self.source = source
+        self._source = source
         self._search = search
         self.start_time = start_time
         self.index = index
@@ -197,7 +197,11 @@ class Query:
 
     @property
     def is_youtube(self) -> bool:
-        return self.source == "YouTube"
+        return self.source == "YouTube" or self.is_youtube_music
+
+    @property
+    def is_youtube_music(self) -> bool:
+        return self.source == "YouTube Music"
 
     @property
     def is_soundcloud(self) -> bool:
@@ -250,8 +254,10 @@ class Query:
     @property
     def query_identifier(self) -> str:
         if self.is_search:
-            if self.is_youtube:
+            if self.is_youtube_music:
                 return f"ytmsearch:{self._query}"
+            elif self.is_youtube:
+                return f"ytsearch:{self._query}"
             elif self.is_spotify:
                 return f"spsearch:{self._query}"
             elif self.is_apple_music:
@@ -282,7 +288,7 @@ class Query:
             return cls(query, "Twitch")
         elif re.match(GCTSS_REGEX, query):
             query = query.replace("tts://", "")
-            return cls(query, "Google TTS")
+            return cls(query, "Google TTS", search=True)
         elif re.match(TTS_REGEX, query):
             query = query.replace("tts:", "").replace("speak:", "")
             return cls(query, "TTS", search=True)
@@ -317,7 +323,7 @@ class Query:
             query = match.group("query")
             LOGGER.warning("%s", match.groups())
             if match.group("source") == "ytm":
-                return cls(query, "YouTube", search=True)
+                return cls(query, "YouTube Music", search=True)
             elif match.group("source") == "sp":
                 return cls(query, "Spotify", search=True)
             elif match.group("source") == "sc":
@@ -354,7 +360,7 @@ class Query:
             try:
                 return await cls.__process_local(query)
             except Exception:
-                return cls(query, "YouTube", search=True)  # Fallback to YouTube
+                return cls(query, "YouTube Music", search=True)  # Fallback to YouTube
 
     @classmethod
     def from_string_noawait(cls, query: Query | str) -> Query:
@@ -370,7 +376,7 @@ class Query:
         elif output := cls.__process_search(query):
             return output
         else:
-            return cls(query, "YouTube", search=True)  # Fallback to YouTube
+            return cls(query, "YouTube Music", search=True)  # Fallback to YouTube
 
     async def query_to_string(self, max_length: int = None) -> str:
         if self.is_local:
@@ -391,3 +397,33 @@ class Query:
             return f"({self.source}) {query_to_string}"
         else:
             return await self.query_to_string(max_length)
+
+    @property
+    def source(self) -> str:
+        return self._source
+
+    @source.setter
+    def source(self, source: str):
+        if not self.is_search:
+            raise ValueError("Source can only be set for search queries")
+
+        source = source.lower()
+        if not sorce in (allowed := {"ytm", "yt", "sp", "sc", "am", "local", "tts", "tts://"}):
+            raise ValueError(f"Invalid source: {source} - Allowed: {allowed}")
+        if source == "ytm":
+            source = "YouTube Music"
+        if source == "yt":
+            source = "YouTube"
+        elif source == "sp":
+            source = "Spotify"
+        elif source == "sc":
+            source = "SoundCloud"
+        elif source == "am":
+            source = "Apple Music"
+        elif source == "local":
+            source = "Local Files"
+        elif source == "tts":
+            source = "TTS"
+        elif source == "tts://":
+            source = "Google TTS"
+        self._source = source
