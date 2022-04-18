@@ -110,17 +110,20 @@ class LocalFile:
     def initialized(self) -> bool:
         return self.__init
 
-    async def to_string_user(self, length: int = None) -> str:
+    async def to_string_user(self, length: int = None, name_only: bool = False) -> str:
         path = self.path.absolute()
-        root = self.root_folder.absolute()
-        string = str(path).replace(str(root), "")
+        if name_only:
+            string = path.name
+        else:
+            root = self.root_folder.absolute()
+            string = str(path).replace(str(root), "")
         if string.startswith(os.sep):
             string = string[1:]
         if not string:
             return self.path.name
         chunked = False
         if length is not None:
-            while len(string) > length and os.sep in string:
+            while len(string) > length - 4 and os.sep in string:
                 string = string.split(os.sep, 1)[-1]
                 chunked = True
         if chunked:

@@ -5,7 +5,9 @@ import re
 from typing import TYPE_CHECKING, Literal
 
 import aiopath
-from discord.ext import commands
+
+if TYPE_CHECKING:
+    from pylav.localfiles import LocalFile
 
 CLYPIT_REGEX = re.compile(r"(http://|https://(www.)?)?clyp\.it/(.*)")
 GETYARN_REGEX = re.compile(r"(?:http://|https://(?:www.)?)?getyarn.io/yarn-clip/(.*)")
@@ -130,9 +132,12 @@ class Query:
         self.start_time = start_time
         self.index = index
         self._type = query_type
+        from pylav.localfiles import LocalFile
+
+        self.__localfile_cls = LocalFile
 
     def __str__(self) -> str:
-        return self.query_string
+        return self.query_identifier
 
     @property
     def is_clypit(self) -> bool:
@@ -231,7 +236,7 @@ class Query:
         return self.source == "gctts"
 
     @property
-    def query_string(self) -> str:
+    def query_identifier(self) -> str:
         if self.is_search:
             if self.is_youtube:
                 return f"ytmsearch:{self._query}"
@@ -354,13 +359,12 @@ class Query:
         else:
             return cls(query, "youtube", search=True)  # Fallback to YouTube
 
+    async def query_to_string(self, max_length: int = None) -> str:
+        if self.is_local:
+            self._query: LocalFile = self.__localfile_cls(self._query)
+            return await self._query.to_string_user(max_length)
 
-class QueryConverter(commands.Converter):
-    async def convert(self, ctx: commands.Context, arg: str) -> Query:
-        return await Query.from_string(arg)
+        if len(self._query) > max_length:
+            return self._query[: max_length - 3] + "..."
 
-
-if TYPE_CHECKING:
-    QueryConverter = Query
-else:
-    QueryConverter = QueryConverter
+        return self._query

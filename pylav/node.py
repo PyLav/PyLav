@@ -10,11 +10,11 @@ from pylav.events import Event
 from pylav.exceptions import Unauthorized
 from pylav.filters import ChannelMix, Distortion, Equalizer, Karaoke, LowPass, Rotation, Timescale, Vibrato, Volume
 from pylav.filters.tremolo import Tremolo
-from pylav.query import Query
 
 if TYPE_CHECKING:
     from pylav.node_manager import NodeManager
     from pylav.player import Player
+    from pylav.query import Query
     from pylav.websocket import WebSocket
 
 
@@ -172,6 +172,9 @@ class Node:
         search_only: bool = False,
         unique_identifier: str = None,
     ):
+        from pylav.query import Query
+
+        self._query_cls: Query = Query
         self._manager = manager
         self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
         if unique_identifier is None:
@@ -389,7 +392,7 @@ class Node:
         if not self.available:
             return []
         query = f"ytmsearch:{query}"
-        return await self.get_tracks(await Query.from_string(query))
+        return await self.get_tracks(await self._query_cls.from_string(query))
 
     async def get_query_youtube(self, query: str) -> dict:
         """|coro|
@@ -406,7 +409,7 @@ class Node:
         if not self.available:
             return []
         query = f"ytsearch:{query}"
-        return await self.get_tracks(await Query.from_string(query))
+        return await self.get_tracks(await self._query_cls.from_string(query))
 
     async def get_query_soundcloud(self, query: str) -> dict:
         """|coro|
@@ -423,7 +426,7 @@ class Node:
         if not self.available:
             return []
         query = f"scsearch:{query}"
-        return await self.get_tracks(await Query.from_string(query))
+        return await self.get_tracks(await self._query_cls.from_string(query))
 
     async def get_query_tts(self, query: str) -> dict:
         """|coro|
@@ -440,7 +443,7 @@ class Node:
         if not self.available:
             return []
         query = f"speak:{query}"
-        return await self.get_tracks(await Query.from_string(query))
+        return await self.get_tracks(await self._query_cls.from_string(query))
 
     async def get_query_spotify(self, query: str) -> dict:
         """|coro|
@@ -457,7 +460,7 @@ class Node:
         if not self.available:
             return []
         query = f"spsearch:{query}"
-        return await self.get_tracks(await Query.from_string(query))
+        return await self.get_tracks(await self._query_cls.from_string(query))
 
     async def get_query_apple_music(self, query: str) -> dict:
         """|coro|
@@ -474,7 +477,7 @@ class Node:
         if not self.available:
             return []
         query = f"amsearch:{query}"
-        return await self.get_tracks(await Query.from_string(query))
+        return await self.get_tracks(await self._query_cls.from_string(query))
 
     async def get_tracks(self, query: Query, first: bool = False) -> dict:
         """|coro|
@@ -493,7 +496,7 @@ class Node:
         """
         destination = f"{self.connection_protocol}://{self.host}:{self.port}/loadtracks"
         async with self._session.get(
-            destination, headers={"Authorization": self.password}, params={"identifier": query.query_string}
+            destination, headers={"Authorization": self.password}, params={"identifier": query.query_identifier}
         ) as res:
             if res.status == 200:
                 result = await res.json(loads=ujson.loads)
@@ -668,15 +671,19 @@ class Node:
         """
         for feature in await self.get_plugins():
             if feature["name"] == "Topis-Source-Managers-Plugin":
-                self._capabilities.update("spotify", "applemusic")
+                self._capabilities.update(["spotify", "applemusic"])
             elif feature["name"] == "DuncteBot-plugin":
                 self._capabilities.update(
-                    "getyarn", "clypit", "tts", "pornhub", "reddit", "ocremix", "tiktok", "mixcloud"
+                    ["getyarn", "clypit", "tts", "pornhub", "reddit", "ocremix", "tiktok", "mixcloud"]
                 )
             elif feature["name"] == "Google Cloud TTS":
-                self._capabilities.update("gctts")
+                self._capabilities.update(
+                    "gctts",
+                )
             elif feature["name"] == "sponsorblock":
-                self._capabilities.add("sponsorblock")
+                self._capabilities.add(
+                    "sponsorblock",
+                )
         for source_origin, source_data in (await self.get_sources()).items():
             if source_origin == "defaults":
                 for source_name, source_state in source_data.items():

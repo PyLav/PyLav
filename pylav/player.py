@@ -25,7 +25,7 @@ from pylav.filters import ChannelMix, Distortion, Equalizer, Karaoke, LowPass, R
 from pylav.filters.tremolo import Tremolo
 from pylav.query import Query
 from pylav.tracks import AudioTrack
-from pylav.utils import AsyncIter
+from pylav.utils import AsyncIter, format_time
 
 if TYPE_CHECKING:
     from pylav.node import Node
@@ -80,6 +80,11 @@ class Player(VoiceProtocol):
         self._distortion: Distortion = Distortion.default()
         self._low_pass: LowPass = LowPass.default()
         self._channel_mix: ChannelMix = ChannelMix.default()
+
+    @property
+    def is_repeating(self) -> bool:
+        """Whether the player is repeating tracks."""
+        return self.repeat_current or self.repeat_queue
 
     @property
     def volume(self) -> int:
@@ -938,3 +943,89 @@ class Player(VoiceProtocol):
         else:
             skip_segments = []
         return skip_segments
+
+    def draw_time(self) -> str:
+        paused = self.paused
+        pos = self.position
+        dur = getattr(self.current, "length", pos)
+        sections = 12
+        loc_time = round((pos / dur if dur != 0 else pos) * sections)
+        bar = "\N{BOX DRAWINGS HEAVY HORIZONTAL}"
+        seek = "\N{RADIO BUTTON}"
+        if paused:
+            msg = "\N{DOUBLE VERTICAL BAR}\N{VARIATION SELECTOR-16}"
+        else:
+            msg = "\N{BLACK RIGHT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}"
+        for i in range(sections):
+            if i == loc_time:
+                msg += seek
+            else:
+                msg += bar
+        return msg
+
+    async def get_currently_playing_message(self, embed: bool = True) -> discord.Embed | str:
+        if embed:
+            queue_list = ""
+            arrow = self.draw_time()
+            pos = format_time(self.position)
+            current = self.current
+            if current.stream:
+                dur = "LIVE"
+            else:
+                dur = format_time(current.duration)
+            current_track_description = await current.get_track_display_name()
+            if current.stream:
+                queue_list += "**Currently livestreaming:**\n"
+                queue_list += f"{current_track_description}\n"
+                queue_list += f"Requester: **{current.requester.mention}**"
+                queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
+            else:
+                queue_list += "Playing: "
+                queue_list += f"{current_track_description}\n"
+                queue_list += f"Requester: **{current.requester.mention}**"
+                queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
+
+            page = discord.Embed(
+                title=f"Now Playing in __{self.guild.name}__",
+                description=queue_list,
+            )
+            if current.thumbnail:
+                page.set_thumbnail(url=current.thumbnail)
+
+            queue_dur = await self.queue_duration()
+            queue_total_duration = format_time(queue_dur)
+            text = "{num_tracks} tracks, {num_remaining} remaining\n".format(
+                num_tracks=self.queue.qsize(),
+                num_remaining=queue_total_duration,
+            )
+            if not self.is_repeating:
+                repeat_emoji = "\N{CROSS MARK}"
+            elif self.repeat_queue:
+                repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS}"
+            else:
+                repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS WITH CIRCLED ONE OVERLAY}"
+
+            text += "Repeat" + ": " + repeat_emoji
+            text += (" | " if text else "") + "Volume" + ": " + f"{self.volume}%"
+            page.set_footer(text=text)
+            return page
+
+    async def queue_duration(self) -> int:
+        dur = [
+            track.duration
+            async for _, track in AsyncIter(self.queue._queue, steps=50).filter(
+                lambda x: not (x[1].stream or x[1].is_partial)
+            )
+        ]
+        queue_dur = sum(dur)
+        if not self.queue.qsize():
+            queue_dur = 0
+        try:
+            if not self.current.stream:
+                remain = self.current.duration - self.position
+            else:
+                remain = 0
+        except AttributeError:
+            remain = 0
+        queue_total_duration = remain + queue_dur
+        return queue_total_duration

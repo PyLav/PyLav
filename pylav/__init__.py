@@ -1,7 +1,8 @@
+from pylav import converters
 from pylav.client import Client
 from pylav.exceptions import *
 from pylav.player import Player
-from pylav.query import Query, QueryConverter
+from pylav.query import Query
 from pylav.tracks import AudioTrack as Track
 
 __all__ = (
@@ -34,5 +35,5 @@ __all__ = (
     "Player",
     "Client",
     "Query",
-    "QueryConverter",
+    "converters",
 )

@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import asyncio
+import re
 import struct
 from base64 import b64decode
 from functools import total_ordering
 from io import BytesIO
 from typing import TYPE_CHECKING, Any
 
+import aiohttp
 import discord
 from cached_property import cached_property_with_ttl
 
@@ -17,6 +19,8 @@ from pylav.utils import MISSING
 if TYPE_CHECKING:
     from pylav.node import Node
     from pylav.player import Player
+
+STREAM_TITLE: re.Pattern = re.compile(rb"StreamTitle='([^']*)';")
 
 
 def read_utfm(utf_len: int, utf_bytes: bytes) -> str:
@@ -334,7 +338,7 @@ class AudioTrack:
         """
         return {
             "track": self.track,
-            "query": self.query.query_string if self.query else None,
+            "query": self.query.query_identifier if self.query else None,
             "extra": {
                 "requester": self.requester_id,
                 "timestamp": self.timestamp,
@@ -365,3 +369,65 @@ class AudioTrack:
 
     def __le__(self, other):
         return True
+
+    async def get_track_display_name(self, max_length: int = None) -> str:
+        if self.is_partial:
+            return discord.utils.escape_markdown(await self.query.query_to_string(max_length))
+        else:
+
+            unknown_author = self.author != "Unknown artist"
+            unknown_title = self.title != "Unknown title"
+            if self.query and self.query.is_local:
+                if not (unknown_title and unknown_author):
+                    base = discord.utils.escape_markdown(f"{self.author} - {self.title}")
+                    if max_length:
+                        return f"**{base[:max_length-7]}...**"
+                    else:
+                        return f"**{base}**" + discord.utils.escape_markdown(f"\n{await self.query.query_to_string()} ")
+                elif not unknown_title:
+                    base = discord.utils.escape_markdown(f"{self.title}")
+                    if max_length:
+                        return f"**{base[:max_length-7]}...**"
+                    else:
+                        return f"**{base}**" + discord.utils.escape_markdown(f"\n{await self.query.query_to_string()} ")
+                else:
+                    base = discord.utils.escape_markdown(await self.query.query_to_string(max_length))
+                    if max_length:
+                        return f"**{base[:max_length-7]}...**"
+                    else:
+                        return f"**{base}**"
+            else:
+                if self.stream:
+                    icy = await self.icyparser(self.uri)
+                    if icy:
+                        title = icy
+                    else:
+                        title = f"{self.title} - {self.author}"
+                elif self.author.lower() not in self.title.lower():
+                    title = f"{self.title} - {self.author}"
+                else:
+                    title = self.title
+                title = discord.utils.escape_markdown(title)
+                if max_length:
+                    return f"**{title[:max_length-7]}...**"
+                else:
+                    return f"**{title}**"
+
+    async def icyparser(self, url: str) -> str | None:
+        try:
+            async with self._node.session.get(url, headers={"Icy-MetaData": "1"}) as resp:
+                metaint = int(resp.headers["icy-metaint"])
+                for _ in range(5):
+                    await resp.content.readexactly(metaint)
+                    metadata_length = struct.unpack("B", await resp.content.readexactly(1))[0] * 16
+                    metadata = await resp.content.readexactly(metadata_length)
+                    m = re.search(STREAM_TITLE, metadata.rstrip(b"\0"))
+                    if m:
+                        title = m.group(1)
+                        if title:
+                            title = title.decode("utf-8", errors="replace")
+                            return title
+                    else:
+                        return None
+        except (KeyError, aiohttp.ClientConnectionError, aiohttp.ClientResponseError):
+            return None

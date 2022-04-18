@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+from itertools import chain
 from typing import (
     Any,
     AsyncIterable,
@@ -9,6 +10,8 @@ from typing import (
     Callable,
     Generator,
     Iterable,
+    Iterator,
+    List,
     Optional,
     Tuple,
     TypeVar,
@@ -17,7 +20,7 @@ from typing import (
 
 from discord.utils import maybe_coroutine
 
-__all__ = ("MISSING", "AsyncIter", "add_property")
+__all__ = ("MISSING", "AsyncIter", "add_property", "format_time", "get_time_string")
 
 
 class MissingSentinel(str):
@@ -43,6 +46,17 @@ _S = TypeVar("_S")
 # https://github.com/PyCQA/pylint/issues/2717
 
 
+# Benchmarked to be the fastest method.
+def deduplicate_iterables(*iterables):
+    """
+    Returns a list of all unique items in ``iterables``, in the order they
+    were first encountered.
+    """
+    # dict insertion order is guaranteed to be preserved in 3.6+
+    return list(dict.fromkeys(chain.from_iterable(iterables)))
+
+
+# https://github.com/PyCQA/pylint/issues/2717
 class AsyncFilter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=duplicate-bases
     """Class returned by `async_filter`. See that function for details.
 
@@ -60,7 +74,7 @@ class AsyncFilter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=du
         # We assign the generator strategy based on the arguments' types
         if isinstance(iterable, AsyncIterable):
             if asyncio.iscoroutinefunction(func):
-                self.__generator_instance = self.__async_generator_async_pred()  # noqa
+                self.__generator_instance = self.__async_generator_async_pred()
             else:
                 self.__generator_instance = self.__async_generator_sync_pred()
         elif asyncio.iscoroutinefunction(func):
@@ -82,6 +96,20 @@ class AsyncFilter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=du
         async for item in self.__iterable:
             if await self.__func(item):
                 yield item
+
+    async def __flatten(self) -> list[_T]:
+        return [item async for item in self]
+
+    def __aiter__(self):
+        return self
+
+    def __await__(self):
+        # Simply return the generator filled into a list
+        return self.__flatten().__await__()
+
+    def __anext__(self) -> Awaitable[_T]:
+        # This will use the generator strategy set in __init__
+        return self.__generator_instance.__anext__()
 
 
 def async_filter(
@@ -136,6 +164,94 @@ async def async_enumerate(async_iterable: AsyncIterable[_T], start: int = 0) -> 
         start += 1
 
 
+async def _sem_wrapper(sem, task):
+    async with sem:
+        return await task
+
+
+def bounded_gather_iter(
+    *coros_or_futures, limit: int = 4, semaphore: asyncio.Semaphore | None = None
+) -> Iterator[Awaitable[Any]]:
+    """
+    An iterator that returns tasks as they are ready, but limits the
+    number of tasks running at a time.
+
+    Parameters
+    ----------
+    *coros_or_futures
+        The awaitables to run in a bounded concurrent fashion.
+    limit : Optional[`int`]
+        The maximum number of concurrent tasks. Used when no ``semaphore``
+        is passed.
+    semaphore : Optional[:class:`asyncio.Semaphore`]
+        The semaphore to use for bounding tasks. If `None`, create one
+        using ``loop`` and ``limit``.
+
+    Raises
+    ------
+    TypeError
+        When invalid parameters are passed
+    """
+    loop = asyncio.get_running_loop()
+
+    if semaphore is None:
+        if not isinstance(limit, int) or limit <= 0:
+            raise TypeError("limit must be an int > 0")
+
+        semaphore = asyncio.Semaphore(limit)
+
+    pending = []
+
+    for cof in coros_or_futures:
+        if asyncio.isfuture(cof) and cof._loop is not loop:
+            raise ValueError("futures are tied to different event loops")
+
+        cof = _sem_wrapper(semaphore, cof)
+        pending.append(cof)
+
+    return asyncio.as_completed(pending)
+
+
+def bounded_gather(
+    *coros_or_futures,
+    return_exceptions: bool = False,
+    limit: int = 4,
+    semaphore: asyncio.Semaphore | None = None,
+) -> Awaitable[list[Any]]:
+    """
+    A semaphore-bounded wrapper to :meth:`asyncio.gather`.
+
+    Parameters
+    ----------
+    *coros_or_futures
+        The awaitables to run in a bounded concurrent fashion.
+    return_exceptions : bool
+        If true, gather exceptions in the result list instead of raising.
+    limit : Optional[`int`]
+        The maximum number of concurrent tasks. Used when no ``semaphore``
+        is passed.
+    semaphore : Optional[:class:`asyncio.Semaphore`]
+        The semaphore to use for bounding tasks. If `None`, create one
+        using ``loop`` and ``limit``.
+
+    Raises
+    ------
+    TypeError
+        When invalid parameters are passed
+    """
+    asyncio.get_running_loop()
+
+    if semaphore is None:
+        if not isinstance(limit, int) or limit <= 0:
+            raise TypeError("limit must be an int > 0")
+
+        semaphore = asyncio.Semaphore(limit)
+
+    tasks = (_sem_wrapper(semaphore, task) for task in coros_or_futures)
+
+    return asyncio.gather(*tasks, return_exceptions=return_exceptions)
+
+
 class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=duplicate-bases
     """Asynchronous iterator yielding items from ``iterable``
     that sleeps for ``delay`` seconds every ``steps`` items.
@@ -156,7 +272,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=dupl
 
     Examples
     --------
-    >>> from pylav.utils import AsyncIter
+    >>> from redbot.core.utils import AsyncIter
     >>> async for value in AsyncIter(range(3)):
     ...     print(value)
     0
@@ -193,7 +309,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=dupl
 
         Examples
         --------
-        >>> from pylav.utils import AsyncIter
+        >>> from redbot.core.utils import AsyncIter
         >>> iterator = AsyncIter(range(5))
         >>> await iterator
         [0, 1, 2, 3, 4]
@@ -216,7 +332,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=dupl
 
         Examples
         --------
-        >>> from pylav.utils import AsyncIter
+        >>> from redbot.core.utils import AsyncIter
         >>> iterator = AsyncIter(range(5))
         >>> await iterator.next()
         0
@@ -237,7 +353,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=dupl
 
         Examples
         --------
-        >>> from pylav.utils import AsyncIter
+        >>> from redbot.core.utils import AsyncIter
         >>> iterator = AsyncIter(range(5))
         >>> await iterator.flatten()
         [0, 1, 2, 3, 4]
@@ -262,7 +378,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=dupl
 
         Examples
         --------
-        >>> from pylav.utils import AsyncIter
+        >>> from redbot.core.utils import AsyncIter
         >>> def predicate(value):
         ...     return value <= 5
         >>> iterator = AsyncIter([1, 10, 5, 100])
@@ -271,7 +387,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=dupl
         1
         5
 
-        >>> from pylav.utils import AsyncIter
+        >>> from redbot.core.utils import AsyncIter
         >>> def predicate(value):
         ...     return value <= 5
         >>> iterator = AsyncIter([1, 10, 5, 100])
@@ -296,7 +412,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=dupl
 
         Examples
         --------
-        >>> from pylav.utils import AsyncIter
+        >>> from redbot.core.utils import AsyncIter
         >>> iterator = AsyncIter(['one', 'two', 'three'])
         >>> async for i in iterator.enumerate(start=10):
         ...     print(i)
@@ -313,7 +429,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=dupl
 
         Examples
         --------
-        >>> from pylav.utils import AsyncIter
+        >>> from redbot.core.utils import AsyncIter
         >>> iterator = AsyncIter([1,2,3,3,4,4,5])
         >>> async for i in iterator.without_duplicates():
         ...     print(i)
@@ -352,7 +468,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=dupl
 
         Examples
         --------
-        >>> from pylav.utils import AsyncIter
+        >>> from redbot.core.utils import AsyncIter
         >>> await AsyncIter(range(3)).find(lambda x: x == 1)
         1
         """
@@ -383,7 +499,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=dupl
 
         Examples
         --------
-        >>> from pylav.utils import AsyncIter
+        >>> from redbot.core.utils import AsyncIter
         >>> async for value in AsyncIter(range(3)).map(bool):
         ...     print(value)
         False
@@ -405,3 +521,39 @@ def add_property(inst: object, name: str, method: Callable) -> None:
         cls.__perinstance = True
         inst.__class__ = cls
     setattr(cls, name, property(method))
+
+
+def get_time_string(seconds: int | float) -> str:
+    seconds = int(seconds)
+    m, s = divmod(seconds, 60)
+    h, m = divmod(m, 60)
+    d, h = divmod(h, 24)
+
+    if d > 0:
+        msg = "{0}d {1}h"
+    elif d == 0 and h > 0:
+        msg = "{1}h {2}m"
+    elif d == 0 and h == 0 and m > 0:
+        msg = "{2}m {3}s"
+    elif d == 0 and h == 0 and m == 0 and s > 0:
+        msg = "{3}s"
+    else:
+        msg = ""
+    return msg.format(d, h, m, s)
+
+
+def format_time(time: int | float) -> str:
+    """Formats the given time into DD:HH:MM:SS"""
+    seconds = int(time // 1000)
+    days, seconds = divmod(seconds, 24 * 60 * 60)
+    hours, seconds = divmod(seconds, 60 * 60)
+    minutes, seconds = divmod(seconds, 60)
+    day = ""
+    hour = ""
+    if days:
+        day = f"{days:02d}:"
+    if hours or day:
+        hour = f"{hours:02d}:"
+    minutes = f"{minutes:02d}:"
+    sec = f"{seconds:02d}"
+    return f"{day}{hour}{minutes}{sec}"
