@@ -1006,7 +1006,7 @@ class Player(VoiceProtocol):
             page = await self.node.node_manager.client.construct_embed(
                 title=f"Now Playing in __{self.guild.name}__",
                 description=queue_list,
-                colour=messageable,
+                messageable=messageable,
             )
             if url := await current.thumbnail():
                 page.set_thumbnail(url=url)
@@ -1061,7 +1061,7 @@ class Player(VoiceProtocol):
                 queue_list += f"Requester: **{current.requester.mention}**"
                 queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
             if tracks:
-                async for track_idx, (_, track) in AsyncIter(tracks).enumerate(start=start_index + 1):
+                async for track_idx, track in AsyncIter(tracks).enumerate(start=start_index + 1):
                     track_description = await track.get_track_display_name(max_length=50, with_url=True)
                     queue_list += f"`{track_idx}.` {track_description}\n"
             page = await self.node.node_manager.client.construct_embed(
@@ -1095,7 +1095,7 @@ class Player(VoiceProtocol):
         dur = [
             track.duration
             async for track in AsyncIter(self.queue.raw_queue, steps=50).filter(
-                lambda x: not (x[1].stream or x[1].is_partial)
+                lambda x: not (x.stream or x.is_partial)
             )
         ]
         queue_dur = sum(dur)
