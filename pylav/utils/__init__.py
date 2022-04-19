@@ -579,13 +579,15 @@ class Queue:
     interrupted between calling qsize() and doing an operation on the Queue.
     """
 
+    _queue: collections.deque[T]
+
     def __init__(self, maxsize=0, *, loop=None):
         if loop is None:
             self._loop = events.get_event_loop()
         else:
             self._loop = loop
             warnings.warn(
-                "The loop argument is deprecated since Python 3.8, " "and scheduled for removal in Python 3.10.",
+                "The loop argument is deprecated since Python 3.8, and scheduled for removal in Python 3.10.",
                 DeprecationWarning,
                 stacklevel=2,
             )
@@ -599,7 +601,6 @@ class Queue:
         self._finished = locks.Event(loop=loop)
         self._finished.set()
         self._init(maxsize)
-        self._queue = collections.deque(maxlen=maxsize)
 
     @property
     def raw_queue(self):
@@ -622,7 +623,7 @@ class Queue:
         try:
             self._queue.remove(value)
             with contextlib.suppress(ValueError):
-                while True:
+                while value in self:
                     self._queue.remove(value)
         except ValueError:
             raise IndexError("Value not in queue")
@@ -638,11 +639,13 @@ class Queue:
         else:
             return self._queue.popleft()
 
-    def _put(self, item: T, index: int = None):
+    def _put(self, items: list[T], index: int = None):
         if index is not None:
-            self._queue.insert(index, item)
+            for i in items:
+                self._queue.insert(index, i)
+                index += 1
         else:
-            self._queue.append(item)
+            self._queue.extendleft(items)
 
     # End of the overridable methods.
 
@@ -698,7 +701,7 @@ class Queue:
         else:
             return self.qsize() >= self._maxsize
 
-    async def put(self, item: T, index: int = None) -> None:
+    async def put(self, items: list[T], index: int = None) -> None:
         """Put an item into the queue.
 
         Put an item into the queue. If the queue is full, wait until a free
@@ -723,16 +726,16 @@ class Queue:
                     # the call.  Wake up the next in line.
                     self._wakeup_next(self._putters)
                 raise
-        return self.put_nowait(item, index)
+        return self.put_nowait(items, index)
 
-    def put_nowait(self, item: T, index: int = None) -> None:
+    def put_nowait(self, items: list[T], index: int = None) -> None:
         """Put an item into the queue without blocking.
 
         If no free slot is immediately available, raise QueueFull.
         """
         if self.full():
             raise QueueFull
-        self._put(item, index=index)
+        self._put(items, index=index)
         self._unfinished_tasks += 1
         self._finished.clear()
         self._wakeup_next(self._getters)
@@ -817,18 +820,28 @@ class Queue:
             return
         await asyncio.to_thread(random.shuffle, self._queue)
 
+    def __contains__(self, obj: T) -> bool:
+        return obj in self._queue
+
+    def __len__(self):
+        return self.qsize()
+
 
 class LifoQueue(Queue[T]):
     def __int__(self, maxsize: int = 0) -> None:
         super().__init__(maxsize=maxsize)
 
-    def _put(self, item: T, index: int = None):
+    def _put(self, items: list[T], index: int = None):
         if self.full():
-            self._queue.popleft()
+            for i in range(len(items)):
+                self._queue.popleft()
+
         if index is not None:
-            self._queue.insert(index, item)
+            for i in items:
+                self._queue.insert(index, i)
+                index += 1
         else:
-            self._queue.append(item)
+            self._queue.extend(items)
 
     def _get(self, index: int = None) -> T:
         if index is not None:
@@ -836,12 +849,12 @@ class LifoQueue(Queue[T]):
         else:
             return self._queue.pop()
 
-    def put_nowait(self, item, index: int = None):
+    def put_nowait(self, items: list[T], index: int = None):
         """Put an item into the queue without blocking.
 
         If no free slot is immediately available, raise QueueFull.
         """
-        self._put(item, index=index)
+        self._put(items, index=index)
         self._unfinished_tasks += 1
         self._finished.clear()
         self._wakeup_next(self._getters)
