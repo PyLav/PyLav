@@ -119,7 +119,6 @@ class PlayerManager:
     async def create(
         self,
         channel: discord.VoiceChannel,
-        region: str = "eu",
         endpoint: str = None,
         node: Node = None,
         self_deaf: bool = False,
@@ -127,7 +126,6 @@ class PlayerManager:
         """
         Creates a player if one doesn't exist with the given information.
         If node is provided, a player will be created on that node.
-        If region is provided, a player will be created on a node in the given region.
         If endpoint is provided, Lavalink.py will attempt to parse the region from the endpoint
         and return a node in the parsed region.
         If node, region and endpoint are left unspecified, or region/endpoint selection fails,
@@ -137,8 +135,6 @@ class PlayerManager:
         ----------
         channel: :class:`discord.VoiceChannel`
             The voice channel to connect to.
-        region: :class:`str`
-            The region to use when selecting a Lavalink node. Defaults to `eu`.
         endpoint: :class:`str`
             The address of the Discord voice server. Defaults to `None`.
         node: :class:`Node`

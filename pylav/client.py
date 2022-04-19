@@ -538,8 +538,6 @@ class Client:
     async def connect_player(
         self,
         channel: discord.VoiceChannel,
-        region: str = "eu",
-        endpoint: str = None,
         node: Node = None,
         self_deaf: bool = True,
     ) -> Player:
@@ -548,17 +546,19 @@ class Client:
 
         Parameters
         ----------
-        guild: :class:`discord.Guild`
-            The guild to connect the player for.
+        channel: :class:`discord.VoiceChannel`
+            The channel to connect to.
+        node: :class:`Node`
+            The node to use for the connection.
+        self_deaf: :class:`bool`
+            Whether the bot should be deafened.
 
         Returns
         -------
         :class:`Player`
             The player for the target guild.
         """
-        if endpoint is None:
-            endpoint = channel.rtc_region
-        return await self.player_manager.create(channel, region, endpoint, node, self_deaf)
+        return await self.player_manager.create(channel, channel.rtc_region, node, self_deaf)
 
     async def construct_embed(
         self,

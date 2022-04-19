@@ -413,7 +413,7 @@ class Query:
             raise ValueError("Source can only be set for search queries")
 
         source = source.lower()
-        if sorce not in (allowed := {"ytm", "yt", "sp", "sc", "am", "local", "tts", "tts://"}):
+        if source not in (allowed := {"ytm", "yt", "sp", "sc", "am", "local", "tts", "tts://"}):
             raise ValueError(f"Invalid source: {source} - Allowed: {allowed}")
         if source == "ytm":
             source = "YouTube Music"
