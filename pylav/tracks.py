@@ -209,7 +209,8 @@ class AudioTrack:
                 raise InvalidTrack("Cannot create a partial Track without a query.")
             self._unique_id.update(query.query_identifier.encode())
             self.extra = {}
-        if isinstance(data, dict):
+            self._raw_data = {}
+        elif isinstance(data, dict):
             try:
                 self.track = data["track"]
                 self._raw_data = data.get("raw_data", {})

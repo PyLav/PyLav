@@ -980,7 +980,9 @@ class Player(VoiceProtocol):
                 msg += bar
         return msg
 
-    async def get_currently_playing_message(self, embed: bool = True) -> discord.Embed | str:
+    async def get_currently_playing_message(
+        self, embed: bool = True, messageable: discord.abc.Messageable = None
+    ) -> discord.Embed | str:
         if embed:
             queue_list = ""
             arrow = self.draw_time()
@@ -1001,10 +1003,10 @@ class Player(VoiceProtocol):
                 queue_list += f"{current_track_description}\n"
                 queue_list += f"Requester: **{current.requester.mention}**"
                 queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
-
             page = await self.node.node_manager.client.construct_embed(
                 title=f"Now Playing in __{self.guild.name}__",
                 description=queue_list,
+                colour=messageable,
             )
             if url := await current.thumbnail():
                 page.set_thumbnail(url=url)
@@ -1028,7 +1030,12 @@ class Player(VoiceProtocol):
             return page
 
     async def get_queue_page(
-        self, page_index: int, per_page: int, total_pages: int, embed: bool = True
+        self,
+        page_index: int,
+        per_page: int,
+        total_pages: int,
+        embed: bool = True,
+        messageable: discord.abc.Messageable = None,
     ) -> discord.Embed | str:
         start_index = page_index * per_page
         end_index = start_index + per_page
@@ -1060,6 +1067,7 @@ class Player(VoiceProtocol):
             page = await self.node.node_manager.client.construct_embed(
                 title=f"Queue for __{self.guild.name}__",
                 description=queue_list,
+                messageable=messageable,
             )
             if url := await current.thumbnail():
                 page.set_thumbnail(url=url)
