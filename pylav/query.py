@@ -365,7 +365,7 @@ class Query:
             try:
                 return await cls.__process_local(query)
             except Exception:
-                return cls(query, "YouTube Music", search=True)  # Fallback to YouTube
+                return cls(query, "YouTube Music", search=True)  # Fallback to YouTube Music
 
     @classmethod
     def from_string_noawait(cls, query: Query | str) -> Query:
@@ -381,7 +381,7 @@ class Query:
         elif output := cls.__process_search(query):
             return output
         else:
-            return cls(query, "YouTube Music", search=True)  # Fallback to YouTube
+            return cls(query, "YouTube Music", search=True)  # Fallback to YouTube Music
 
     async def query_to_string(self, max_length: int = None) -> str:
         if self.is_local:

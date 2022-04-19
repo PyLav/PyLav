@@ -171,3 +171,6 @@ class PlayerManager:
 
     async def save_all_players(self) -> None:
         await self.client.player_state_manager.upsert_players([p.to_dict() for p in self])
+
+    async def restore_player_states(self) -> None:
+        pass

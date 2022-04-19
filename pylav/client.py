@@ -185,6 +185,7 @@ class Client:
         self._spotify_client_auth = ClientCredentialsFlow(
             client_id=spotify_data["clientId"], client_secret=spotify_data["clientSecret"]
         )
+        await self.player_manager.restore_player_states()
         self._ready = True
 
     async def set_lib_config(
@@ -505,6 +506,7 @@ class Client:
         global _COGS_REGISTERED
         _COGS_REGISTERED.discard(cog.__cog_name__)
         if not _COGS_REGISTERED:
+            await self.player_manager.save_all_players()
             await self._config_manager.close()
             await self._equalizer_manager.close()
             await self._player_state_manager.close()

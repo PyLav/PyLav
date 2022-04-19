@@ -69,6 +69,7 @@ class Player(VoiceProtocol):
         self.history: collections.deque[AudioTrack] = collections.deque(maxlen=100)
         self.current: AudioTrack | None = None
         self._post_init_completed = False
+        self._is_autoplaying = False
 
         # Filters
         self._effect_enabled: bool = False
@@ -87,6 +88,11 @@ class Player(VoiceProtocol):
     def is_repeating(self) -> bool:
         """Whether the player is repeating tracks."""
         return self.repeat_current or self.repeat_queue
+
+    @property
+    def is_auto_playing(self) -> bool:
+        """Whether the player is auto-playing."""
+        return self._is_autoplaying
 
     @property
     def volume(self) -> int:
