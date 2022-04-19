@@ -42,7 +42,7 @@ class Player(VoiceProtocol):
         *,
         node: Node = None,
     ):
-        self.bot = client
+        self.bot = self.client = client
         self.guild_id = str(channel.guild.id)
         self.channel = channel
         self.channel_id = channel.id
@@ -261,6 +261,18 @@ class Player(VoiceProtocol):
         if {"sessionId", "event"} == self._voice_state.keys():
             await self.node.send(op="voiceUpdate", guildId=self.guild_id, **self._voice_state)
 
+    async def _query_to_track(
+        self,
+        requester: int,
+        track: AudioTrack | dict | str | None,
+        query: Query = None,
+    ) -> AudioTrack:
+        return (
+            AudioTrack(self.node, track, requester=requester, query=query)
+            if not isinstance(track, AudioTrack)
+            else track
+        )
+
     async def add(
         self,
         requester: int,
@@ -283,17 +295,15 @@ class Player(VoiceProtocol):
         query: Optional[:class:`Query`]
             The query that was used to search for the track.
         """
-        at = (
-            AudioTrack(self.node, track, requester=requester, query=query)
-            if not isinstance(track, AudioTrack)
-            else track
-        )
-        await self.queue.put(at, index=index)
+
+        at = await self._query_to_track(requester, track, query)
+        await self.queue.put([at], index=index)
 
     async def bulk_add(
         self,
         tracks_and_queries: list[AudioTrack | dict | str | list[tuple[AudioTrack | dict | str, Query]]],
         requester: int,
+        index: int = None,
     ) -> None:
         """
         Adds multiple tracks to the queue.
@@ -303,13 +313,20 @@ class Player(VoiceProtocol):
             A list of tuples containing the track and query.
         requester: :class:`int`
             The ID of the user who requested the tracks.
+        index: Optional[:class:`int`]
+            The index at which to add the tracks.
         """
+        output = []
+        is_list = isinstance(tracks_and_queries[0], (list, tuple))
         async for entry in AsyncIter(tracks_and_queries):
-            if len(entry) == 2:
+            if is_list:
                 track, query = entry
+                track = await self._query_to_track(requester, track, query)
             else:
                 track, query = entry, None
-            await self.add(requester, track, query=query)
+                track = await self._query_to_track(requester, track, query)
+            output.append(track)
+        await self.queue.put(output, index=index)
 
     async def previous(self) -> None:
         if self.history.empty():
@@ -319,7 +336,7 @@ class Player(VoiceProtocol):
         if track.is_partial and not track.track:
             await track.search(self)
         if self.current:
-            await self.history.put(self.current)
+            await self.history.put([self.current])
         options = {"noReplace": False}
         self.current = track
         if track.skip_segments:
@@ -374,7 +391,7 @@ class Player(VoiceProtocol):
         self.position_timestamp = 0
         self.paused = False
         if self.current:
-            await self.history.put(self.current)
+            await self.history.put([self.current])
         if not track:
             if self.queue.empty():
                 await self.stop()  # Also sets current to None.
@@ -382,7 +399,6 @@ class Player(VoiceProtocol):
                 await self.node.dispatch_event(QueueEndEvent(self))
                 return
             track = await self.queue.get()
-
         if track.is_partial and not track.track:
             await track.search(self)
         if skip_segments:
@@ -1103,10 +1119,8 @@ class Player(VoiceProtocol):
         if self.queue.empty():
             return False
         index = next(i for i, t in enumerate(self.queue.raw_queue) if t == track)
-        if index < 0 or index > self.queue.qsize():
-            return False
         track = await self.queue.get(index)
-        await self.queue.put(track, new_index)
+        await self.queue.put([track], new_index)
         return True
 
     async def shuffle_queue(self) -> None:

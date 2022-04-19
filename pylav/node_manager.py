@@ -141,7 +141,7 @@ class NodeManager:
         LOGGER.info("[NODE-%s] Successfully removed Node", node.name)
         LOGGER.info("[NODE-%s] Successfully removed Node -- %r", node.name, node)
 
-    def get_region(self, endpoint: str) -> str | None:
+    def get_region(self, endpoint: str | None) -> str | None:
         """
         Returns a Lavalink.py-friendly region from a Discord voice server address.
         Parameters

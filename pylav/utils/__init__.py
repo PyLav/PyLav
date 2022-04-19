@@ -17,7 +17,6 @@ from typing import (
     Generator,
     Iterable,
     Iterator,
-    List,
     Optional,
     Tuple,
     TypeVar,
@@ -26,9 +25,13 @@ from typing import (
 
 from discord.utils import maybe_coroutine
 
-__all__ = ("MISSING", "AsyncIter", "add_property", "format_time", "get_time_string")
+__all__ = ("MISSING", "AsyncIter", "add_property", "format_time", "get_time_string", "Queue", "LifoQueue")
+
+from red_commons.logging import getLogger
 
 T = TypeVar("T")
+
+LOGGER = getLogger("red.PyLink.utils")
 
 
 class MissingSentinel(str):
@@ -610,7 +613,7 @@ class Queue:
     def raw_queue(self, value: collections.deque[T]):
         if not isinstance(value, collections.deque):
             raise TypeError("Queue value must be a collections.deque[AudioTrack]")
-        if len(value) > self._maxsize:
+        if len(value) >= self._maxsize:
             raise ValueError(f"Queue value cannot be longer than maxsize: {self._maxsize}")
         self._queue = value
 
@@ -631,7 +634,7 @@ class Queue:
     # These three are overridable in subclasses.
 
     def _init(self, maxsize: int):
-        self._queue = collections.deque(maxlen=maxsize)
+        self._queue = collections.deque(maxlen=maxsize or None)
 
     def _get(self, index: int = None) -> T:
         if index is not None:

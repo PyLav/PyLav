@@ -5,12 +5,12 @@ import hashlib
 import operator
 import re
 import struct
+import uuid
 from base64 import b64decode
 from functools import total_ordering
 from io import BytesIO
 from typing import TYPE_CHECKING, Any
 
-import aiohttp
 import discord
 from cached_property import cached_property, cached_property_with_ttl
 
@@ -231,6 +231,7 @@ class AudioTrack:
             self._raw_data = {}
             self._unique_id.update(self.track.encode())
         self.extra["requester"] = self.extra.get("requester", self._node.node_manager.client.bot.user.id)
+        self._id = str(uuid.uuid4())
 
     @cached_property_with_ttl(ttl=60)
     def full_track(
@@ -243,6 +244,10 @@ class AudioTrack:
             response, _ = decode_track(self.track)
         self.__clear_cache_task = asyncio.create_task(self.clear_cache(65, "full_track"))
         return response
+
+    @property
+    def id(self) -> str:
+        return self._id
 
     @cached_property
     def unique_identifier(self) -> str:
@@ -445,7 +450,7 @@ class AudioTrack:
                     else:
                         return f"{maybe_bold}{url_start}{base}{url_end}{maybe_bold}"
             else:
-                if self.stream and self.query.is_stream:
+                if self.stream:
                     icy = await self._icyparser(self.uri)
                     if icy:
                         title = icy
@@ -477,5 +482,5 @@ class AudioTrack:
                             return title
                     else:
                         return None
-        except (KeyError, aiohttp.ClientConnectionError, aiohttp.ClientResponseError):
+        except Exception:
             return None

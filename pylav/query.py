@@ -432,3 +432,13 @@ class Query:
         elif source == "tts://":
             source = "Google TTS"
         self._source = source
+
+    def with_index(self, index: int) -> Query:
+        return type(self)(
+            query=self._query,
+            source=self._source,
+            search=self._search,
+            start_time=self.start_time,
+            index=index,
+            query_type=self._type,
+        )

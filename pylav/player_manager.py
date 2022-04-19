@@ -150,8 +150,7 @@ class PlayerManager:
                 await p.move_to(channel, self_deaf=self_deaf)
             return p
 
-        if endpoint:  # Prioritise endpoint over region parameter
-            region = self.client.node_manager.get_region(endpoint)
+        region = self.client.node_manager.get_region(endpoint)
 
         best_node = node or self.client.node_manager.find_best_node(region)
 
