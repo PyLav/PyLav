@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-import asyncio
 import collections
 import contextlib
-import heapq
 import itertools
-import random
 import time
+from copy import copy
 from typing import TYPE_CHECKING, Any, Literal
 
 import discord
@@ -27,7 +25,7 @@ from pylav.filters import ChannelMix, Distortion, Equalizer, Karaoke, LowPass, R
 from pylav.filters.tremolo import Tremolo
 from pylav.query import Query
 from pylav.tracks import AudioTrack
-from pylav.utils import AsyncIter, format_time
+from pylav.utils import AsyncIter, LifoQueue, Queue, format_time
 
 if TYPE_CHECKING:
     from pylav.node import Node
@@ -64,12 +62,12 @@ class Player(VoiceProtocol):
         self.shuffle = False
         self.repeat_current = False
         self.repeat_queue = False
-        self.queue = asyncio.PriorityQueue()
-        self.queue.qsize()
-        self.history: collections.deque[AudioTrack] = collections.deque(maxlen=100)
+        self.queue: Queue[AudioTrack] = Queue()
+        self.history: LifoQueue[AudioTrack] = LifoQueue(maxsize=100)
         self.current: AudioTrack | None = None
         self._post_init_completed = False
         self._is_autoplaying = False
+        self._queue_length = 0
 
         # Filters
         self._effect_enabled: bool = False
@@ -268,7 +266,6 @@ class Player(VoiceProtocol):
         requester: int,
         track: AudioTrack | dict | str | None,
         index: int = None,
-        priority: int = 1000,
         query: Query = None,
     ) -> None:
         """
@@ -283,8 +280,6 @@ class Player(VoiceProtocol):
         index: Optional[:class:`int`]
             The index at which to add the track.
             If index is left unspecified, the default behaviour is to append the track. Defaults to `None`.
-        priority: Optional[:class:`int`]
-            The priority of the track. Defaults to `1`, higher numbers will be played first.
         query: Optional[:class:`Query`]
             The query that was used to search for the track.
         """
@@ -293,11 +288,7 @@ class Player(VoiceProtocol):
             if not isinstance(track, AudioTrack)
             else track
         )
-
-        if index is None:
-            await self.queue.put((priority, at))
-        else:
-            heapq.heappush(self.queue._queue, (priority, at))  # noqa
+        await self.queue.put(at, index=index)
 
     async def bulk_add(
         self,
@@ -321,14 +312,14 @@ class Player(VoiceProtocol):
             await self.add(requester, track, query=query)
 
     async def previous(self) -> None:
-        if not self.history:
+        if self.history.empty():
             raise TrackNotFound("There are no tracks currently in the player history.")
 
-        track = self.history.pop()
+        track = await self.history.get()
         if track.is_partial and not track.track:
             await track.search(self)
         if self.current:
-            self.history.appendleft(self.current)
+            await self.history.put(self.current)
         options = {"noReplace": False}
         self.current = track
         if track.skip_segments:
@@ -375,24 +366,22 @@ class Player(VoiceProtocol):
         if track is not None and isinstance(track, (AudioTrack, dict, str, type(None))):
             track = AudioTrack(self.node, track, query=query, skip_segments=skip_segments)
 
-        if self.repeat_queue and self.current:
+        if self.current and (self.repeat_queue or self.repeat_current):
             await self.add(self.current.requester_id, self.current)
-        elif self.repeat_current and self.current:
-            await self.add(self.current.requester_id, self.current, priority=100)
 
         self._last_update = 0
         self._last_position = 0
         self.position_timestamp = 0
         self.paused = False
         if self.current:
-            self.history.appendleft(self.current)
+            await self.history.put(self.current)
         if not track:
-            if not self.queue:
+            if self.queue.empty():
                 await self.stop()  # Also sets current to None.
                 self.history.clear()
                 await self.node.dispatch_event(QueueEndEvent(self))
                 return
-            _, track = await self.queue.get()
+            track = await self.queue.get()
 
         if track.is_partial and not track.track:
             await track.search(self)
@@ -582,8 +571,8 @@ class Player(VoiceProtocol):
             "volume": self.volume,
             "position": self.position,
             "playing": self.is_playing,
-            "queue": [t[-1].to_json() for t in self.queue._queue] if self.queue else [],  # noqa
-            "history": [t.to_json() for t in self.history] if self.history else [],
+            "queue": [t.to_json() for t in self.queue.raw_queue] if not self.queue.empty() else [],  # noqa
+            "history": [t.to_json() for t in self.history.raw_queue] if not self.history.empty() else [],
             "effect_enabled": self._effect_enabled,
             "effects": {
                 "volume": self._volume.to_dict(),
@@ -635,6 +624,8 @@ class Player(VoiceProtocol):
             await self.guild.change_voice_state(channel=None)
             self._connected = False
         finally:
+            self.queue.clear()
+            self.history.clear()
             with contextlib.suppress(ValueError):
                 self.player_manager.players.pop(self.channel.guild.id)
 
@@ -1025,7 +1016,7 @@ class Player(VoiceProtocol):
     ) -> discord.Embed | str:
         start_index = page_index * per_page
         end_index = start_index + per_page
-        tracks = list(itertools.islice(self.queue._queue, start_index, end_index))
+        tracks = list(itertools.islice(self.queue.raw_queue, start_index, end_index))
         if embed:
             queue_list = ""
             arrow = self.draw_time()
@@ -1079,7 +1070,7 @@ class Player(VoiceProtocol):
     async def queue_duration(self) -> int:
         dur = [
             track.duration
-            async for _, track in AsyncIter(self.queue._queue, steps=50).filter(
+            async for track in AsyncIter(self.queue.raw_queue, steps=50).filter(
                 lambda x: not (x[1].stream or x[1].is_partial)
             )
         ]
@@ -1096,7 +1087,27 @@ class Player(VoiceProtocol):
         queue_total_duration = remain + queue_dur
         return queue_total_duration
 
-    async def shuffle_queue(self) -> None:
+    async def remove_from_queue(self, track: AudioTrack) -> int:
         if self.queue.empty():
-            return
-        await asyncio.to_thread(random.shuffle, self.queue._queue)
+            return 0
+        unique_id = track.unique_identifier
+        start_count = self.queue.qsize()
+        counter = itertools.count(1)
+        queue = filter(lambda x: x.unique_identifier != unique_id and next(counter), self.queue.raw_queue)
+        valid = next(copy(counter)) - 1
+        diff = start_count - valid
+        self.queue.raw_queue = collections.deque(queue)
+        return diff
+
+    async def move_track(self, track: AudioTrack, new_index: int = None) -> bool:
+        if self.queue.empty():
+            return False
+        index = next(i for i, t in enumerate(self.queue.raw_queue) if t == track)
+        if index < 0 or index > self.queue.qsize():
+            return False
+        track = await self.queue.get(index)
+        await self.queue.put(track, new_index)
+        return True
+
+    async def shuffle_queue(self) -> None:
+        await self.queue.shuffle()

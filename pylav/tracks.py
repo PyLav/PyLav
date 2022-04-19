@@ -5,7 +5,6 @@ import hashlib
 import operator
 import re
 import struct
-import uuid
 from base64 import b64decode
 from functools import total_ordering
 from io import BytesIO
@@ -13,7 +12,7 @@ from typing import TYPE_CHECKING, Any
 
 import aiohttp
 import discord
-from cached_property import cached_property_with_ttl
+from cached_property import cached_property, cached_property_with_ttl
 
 from pylav.exceptions import InvalidTrack
 from pylav.query import Query
@@ -202,15 +201,20 @@ class AudioTrack:
         self._is_partial = False
         self._query = query
         self.skip_segments = skip_segments or []
+        self._unique_id = hashlib.md5()
         if data is None or (isinstance(data, str) and data == MISSING):
             self.track = None
             self._is_partial = True
+            if query is None:
+                raise InvalidTrack("Cannot create a partial Track without a query.")
+            self._unique_id.update(query.query_identifier.encode())
             self.extra = {}
         if isinstance(data, dict):
             try:
                 self.track = data["track"]
                 self._raw_data = data.get("raw_data", {})
                 self.extra = extra
+                self._unique_id.update(self.track.encode())
             except KeyError as ke:
                 (missing_key,) = ke.args
                 raise InvalidTrack(f"Cannot build a track from partial data! (Missing key: {missing_key})") from None
@@ -220,12 +224,13 @@ class AudioTrack:
             self.extra = {**data.extra, **extra}
             self._raw_data = data._raw_data
             self._query = data._query or self._query
+            self._unique_id = data._unique_id
         else:
             self.track = data
             self.extra = extra
             self._raw_data = {}
+            self._unique_id.update(self.track.encode())
         self.extra["requester"] = self.extra.get("requester", self._node.node_manager.client.bot.user.id)
-        self._id = None
 
     @cached_property_with_ttl(ttl=60)
     def full_track(
@@ -239,12 +244,9 @@ class AudioTrack:
         self.__clear_cache_task = asyncio.create_task(self.clear_cache(65, "full_track"))
         return response
 
-    @property
+    @cached_property
     def unique_identifier(self) -> str:
-        if not self.is_partial:
-            return hashlib.md5(self.track.encode()).hexdigest()
-        else:
-            return hashlib.md5(uuid.uuid4().bytes).hexdigest()
+        return self._unique_id.hexdigest()
 
     @property
     def is_partial(self) -> bool:
@@ -331,18 +333,10 @@ class AudioTrack:
         return super().__getattribute__(name)
 
     def __repr__(self) -> str:
-        return f"<AudioTrack title={self.title} identifier={self.identifier}>"
-
-    def __eq__(self, other) -> bool:
-        if isinstance(other, AudioTrack):
-            return self.track == other.track
-        return NotImplemented
-
-    def __ne__(self, other) -> bool:
-        x = self.__eq__(other)
-        if x is not NotImplemented:
-            return not x
-        return NotImplemented
+        return (
+            f"<AudioTrack title={self.title} identifier={self.identifier} "
+            f"query={self.query.query_identifier if self.query else 'N/A'}>"
+        )
 
     def __hash__(self) -> hash:
         return hash(tuple(sorted([self.track, self.title, self.identifier, self.uri])))
@@ -373,6 +367,10 @@ class AudioTrack:
         self._query = await Query.from_string(self.query)
         response = await player.node.get_tracks(self.query, first=True)
         self.track = response["track"]
+        self._unique_id = hashlib.md5()
+        self._unique_id.update(self.track.encode())
+        if "unique_identifier" in self.__dict__:
+            del self.__dict__["unique_identifier"]
 
     def __int__(self):
         return 0
@@ -388,6 +386,20 @@ class AudioTrack:
 
     def __le__(self, other):
         return True
+
+    def __eq__(self, other):
+        if isinstance(other, AudioTrack):
+            return self.unique_identifier == other.unique_identifier
+        return NotImplemented
+
+    def __ne__(self, other):
+        x = self.__eq__(other)
+        if x is not NotImplemented:
+            return not x
+        return NotImplemented
+
+    def __hash__(self):
+        return hash((self.unique_identifier,))
 
     async def get_track_display_name(
         self, max_length: int = None, author: bool = True, unformatted: bool = False, with_url: bool = False
