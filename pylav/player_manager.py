@@ -163,7 +163,7 @@ class PlayerManager:
             raise NodeError("No available nodes!")
         player: Player = await channel.connect(cls=Player)  # type: ignore
         player.post_init(node=best_node, player_manager=self)
-        await player.connect(self_deaf=self_deaf)
+        await player.move_to(channel=player.channel, self_deaf=self_deaf)
 
         self.players[channel.guild.id] = player
         LOGGER.debug("[NODE-%s] Successfully created player for %s", best_node.name, channel.guild.id)

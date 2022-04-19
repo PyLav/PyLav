@@ -653,6 +653,8 @@ class Player(VoiceProtocol):
         self_deaf: :class:`bool`
             Indicates if the player should be self-deafened on move.
         """
+        if channel == self.channel:
+            return
         LOGGER.info(
             "[Player-%s] Moving from %s to voice channel: %s", self.channel.guild.id, self.channel.id, channel.id
         )

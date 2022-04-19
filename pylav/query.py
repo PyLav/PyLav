@@ -68,7 +68,7 @@ SOUND_CLOUD_REGEX = re.compile(
 YOUTUBE_REGEX = re.compile(r"(?:http://|https://|)(?:www\.|)(?P<music>music\.)?youtu(be\.com|\.be)", re.IGNORECASE)
 TTS_REGEX = re.compile(r"^(speak|tts):(.*)$", re.IGNORECASE)
 GCTSS_REGEX = re.compile(r"^(tts://)(.*)$", re.IGNORECASE)
-SEARCH_REGEX = re.compile(r"^(?P<source>yt|ytm|sp|sc|am)search:(?P<query>.*)$", re.IGNORECASE)
+SEARCH_REGEX = re.compile(r"^(?P<source>ytm|yt|sp|sc|am)search:(?P<query>.*)$", re.IGNORECASE)
 HTTP_REGEX = re.compile(r"^http(s)?://", re.IGNORECASE)
 
 YOUTUBE_TIMESTAMP = re.compile(r"[&|?]t=(\d+)s?")
@@ -98,11 +98,8 @@ def process_youtube(cls: type[Query], query: str, music: bool):
     else:
         query_type = "single"
     return cls(
-        query,
-        "YouTube Music" if music else "YouTube",
-        start_time=start_time,
-        query_type=query_type,
-        index=index)  # type: ignore
+        query, "YouTube Music" if music else "YouTube", start_time=start_time, query_type=query_type, index=index
+    )  # type: ignore
 
 
 def process_spotify(cls: type[Query], query: str) -> Query:
@@ -330,6 +327,8 @@ class Query:
             LOGGER.warning("%s", match.groups())
             if match.group("source") == "ytm":
                 return cls(query, "YouTube Music", search=True)
+            elif match.group("source") == "yt":
+                return cls(query, "YouTube Music", search=True)
             elif match.group("source") == "sp":
                 return cls(query, "Spotify", search=True)
             elif match.group("source") == "sc":
@@ -337,7 +336,7 @@ class Query:
             elif match.group("source") == "am":
                 return cls(query, "Apple Music", search=True)
             else:
-                return cls(query, "YouTube", search=True)  # Fallback to YouTube
+                return cls(query, "YouTube Music", search=True)  # Fallback to YouTube
 
     @classmethod
     async def __process_local(cls, query: str | pathlib.Path | aiopath.AsyncPath) -> Query:
