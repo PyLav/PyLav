@@ -957,7 +957,7 @@ class Player(VoiceProtocol):
     def draw_time(self) -> str:
         paused = self.paused
         pos = self.position
-        dur = getattr(self.current, "length", pos)
+        dur = getattr(self.current, "duration", pos)
         sections = 12
         loc_time = round((pos / dur if dur != 0 else pos) * sections)
         bar = "\N{BOX DRAWINGS HEAVY HORIZONTAL}"
