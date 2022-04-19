@@ -644,9 +644,13 @@ class Queue:
 
     def _put(self, items: list[T], index: int = None):
         if index is not None:
-            for i in items:
-                self._queue.insert(index, i)
-                index += 1
+            if index < 0:
+                for i in items:
+                    self._queue.append(i)
+            else:
+                for i in items:
+                    self._queue.insert(index, i)
+                    index += 1
         else:
             self._queue.extendleft(items)
 
@@ -838,11 +842,14 @@ class LifoQueue(Queue[T]):
         if self.full():
             for i in range(len(items)):
                 self._queue.popleft()
-
         if index is not None:
-            for i in items:
-                self._queue.insert(index, i)
-                index += 1
+            if index < 0:
+                for i in items:
+                    self._queue.appendleft(i)
+            else:
+                for i in items:
+                    self._queue.insert(index, i)
+                    index += 1
         else:
             self._queue.extend(items)
 

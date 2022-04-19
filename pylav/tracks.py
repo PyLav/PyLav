@@ -193,6 +193,7 @@ class AudioTrack:
         data: AudioTrack | dict | str | None,
         query: Query | None = None,
         skip_segments: list | None = None,
+        requester: int = None,
         **extra: Any,
     ):
         self._node = node
@@ -202,6 +203,7 @@ class AudioTrack:
         self._query = query
         self.skip_segments = skip_segments or []
         self._unique_id = hashlib.md5()
+        self._extra = extra
         if data is None or (isinstance(data, str) and data == MISSING):
             self.track = None
             self._is_partial = True
@@ -231,7 +233,7 @@ class AudioTrack:
             self.extra = extra
             self._raw_data = {}
             self._unique_id.update(self.track.encode())
-        self.extra["requester"] = self.extra.get("requester", self._node.node_manager.client.bot.user.id)
+        self._requester = requester or self._node.node_manager.client.bot.user.id
         self._id = str(uuid.uuid4())
 
     @cached_property_with_ttl(ttl=60)
@@ -312,7 +314,7 @@ class AudioTrack:
 
     @property
     def requester_id(self) -> int:
-        return self.extra.get("requester", None)
+        return self._requester
 
     @property
     def requester(self) -> discord.User | None:

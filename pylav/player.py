@@ -267,11 +267,11 @@ class Player(VoiceProtocol):
         track: AudioTrack | dict | str | None,
         query: Query = None,
     ) -> AudioTrack:
-        return (
-            AudioTrack(self.node, track, requester=requester, query=query)
-            if not isinstance(track, AudioTrack)
-            else track
-        )
+        if not isinstance(track, AudioTrack):
+            track = AudioTrack(self.node, track, requester=requester, query=query)
+        else:
+            track._requester = requester
+        return track
 
     async def add(
         self,
@@ -383,8 +383,10 @@ class Player(VoiceProtocol):
         if track is not None and isinstance(track, (AudioTrack, dict, str, type(None))):
             track = AudioTrack(self.node, track, query=query, skip_segments=skip_segments)
 
-        if self.current and (self.repeat_queue or self.repeat_current):
+        if self.current and self.repeat_current:
             await self.add(self.current.requester_id, self.current)
+        elif self.current and not self.repeat_queue:
+            await self.add(self.current.requester_id, self.current, index=-1)
 
         self._last_update = 0
         self._last_position = 0
