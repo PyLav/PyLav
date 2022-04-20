@@ -1063,9 +1063,11 @@ class Player(VoiceProtocol):
                 queue_list += f"Requester: **{current.requester.mention}**"
                 queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
             if tracks:
+                padding = len(str(start_index + len(tracks)))
                 async for track_idx, track in AsyncIter(tracks).enumerate(start=start_index + 1):
                     track_description = await track.get_track_display_name(max_length=50, with_url=True)
-                    queue_list += f"`{track_idx}.` {track_description}\n"
+                    diff = padding - len(str(track_idx))
+                    queue_list += f"`{track_idx}.{' '*diff}` {track_description}\n"
             page = await self.node.node_manager.client.construct_embed(
                 title=f"Queue for __{self.guild.name}__",
                 description=queue_list,

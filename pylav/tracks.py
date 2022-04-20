@@ -417,13 +417,16 @@ class AudioTrack:
                 base = base[: max_length + subbed - 7] + "..."
             return discord.utils.escape_markdown(base)
         else:
-            url_start = "[" if with_url else ""
-            url_end = f"]({self.uri})" if with_url and self.uri else ""
             if unformatted:
-                maybe_bold = ""
+                bold = ""
                 url_start = url_end = ""
+            elif with_url:
+                bold = "**"
+                url_start = "["
+                url_end = f"]({self.uri})"
             else:
-                maybe_bold = "**"
+                bold = "**"
+                url_start = url_end = ""
             unknown_author = self.author != "Unknown artist"
             unknown_title = self.title != "Unknown title"
             if not author:
@@ -440,7 +443,7 @@ class AudioTrack:
                     else:
                         base += f"\n{await self.query.query_to_string()} "
                     base = discord.utils.escape_markdown(base)
-                    return f"{maybe_bold}{url_start}{base}{url_end}{maybe_bold}"
+                    return f"{bold}{url_start}{base}{url_end}{bold}"
                 elif not unknown_title:
                     base = self.title
                     base, subbed = SQUARE_BRACKETS.subn("", base)
@@ -449,14 +452,14 @@ class AudioTrack:
                     else:
                         base += f"\n{await self.query.query_to_string()} "
                     base = discord.utils.escape_markdown(base)
-                    return f"{maybe_bold}{url_start}{base}{url_end}{maybe_bold}"
+                    return f"{bold}{url_start}{base}{url_end}{bold}"
                 else:
                     base = await self.query.query_to_string(max_length)
                     base, subbed = SQUARE_BRACKETS.subn("", base)
                     if max_length:
                         base = base[: max_length + subbed - 7] + "..."
                     base = discord.utils.escape_markdown(base)
-                    return f"{maybe_bold}{url_start}{base}{url_end}{maybe_bold}"
+                    return f"{bold}{url_start}{base}{url_end}{bold}"
             else:
                 if self.stream:
                     icy = await self._icyparser(self.uri)
@@ -472,7 +475,7 @@ class AudioTrack:
                 if max_length:
                     base = base[: max_length + subbed - 7] + "..."
                 base = discord.utils.escape_markdown(base)
-                return f"{maybe_bold}{url_start}{base}{url_end}{maybe_bold}"
+                return f"{bold}{url_start}{base}{url_end}{bold}"
 
     async def _icyparser(self, url: str) -> str | None:
         try:
