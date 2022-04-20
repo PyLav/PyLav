@@ -292,7 +292,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=dupl
 
     """
 
-    def __init__(self, iterable: Iterable[_T], delay: float | int = 0, steps: int = 1) -> None:
+    def __init__(self, iterable: Iterable[_T], delay: float | int = 0, steps: int = 100) -> None:
         if steps < 1:
             raise ValueError("Steps must be higher than or equals to 1")
         self._delay = delay
@@ -652,7 +652,7 @@ class Queue:
                     self._queue.insert(index, i)
                     index += 1
         else:
-            self._queue.extendleft(items)
+            self._queue.extend(items)
 
     # End of the overridable methods.
 
@@ -841,23 +841,23 @@ class LifoQueue(Queue[T]):
     def _put(self, items: list[T], index: int = None):
         if self.full():
             for i in range(len(items)):
-                self._queue.popleft()
+                self._queue.pop()
         if index is not None:
             if index < 0:
                 for i in items:
-                    self._queue.appendleft(i)
+                    self._queue.append(i)
             else:
                 for i in items:
                     self._queue.insert(index, i)
                     index += 1
         else:
-            self._queue.extend(items)
+            self._queue.extendleft(items)
 
     def _get(self, index: int = None) -> T:
         if index is not None:
             return self.popindex(index)
         else:
-            return self._queue.pop()
+            return self._queue.popleft()
 
     def put_nowait(self, items: list[T], index: int = None):
         """Put an item into the queue without blocking.

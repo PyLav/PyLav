@@ -103,7 +103,7 @@ class PlaylistManager:
                     await session.execute(track_op_on_conflict)
                     playlist_tracks_values = [
                         dict(id=playlist_values[0]["id"], base64=track["base64"])
-                        async for track in AsyncIter(track_values, steps=1000)
+                        async for track in AsyncIter(track_values)
                     ]
                     playlist_tracks_op = await asyncio.to_thread(
                         self._insert(PlaylistTrackDBEntry).values, playlist_tracks_values

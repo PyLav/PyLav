@@ -360,8 +360,8 @@ class AudioTrack:
         return {
             "track": self.track,
             "query": self.query.query_identifier if self.query else None,
+            "requester": self.requester_id,
             "extra": {
-                "requester": self.requester_id,
                 "timestamp": self.timestamp,
             },
             "raw_data": self._raw_data,

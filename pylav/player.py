@@ -1096,9 +1096,7 @@ class Player(VoiceProtocol):
     async def queue_duration(self) -> int:
         dur = [
             track.duration
-            async for track in AsyncIter(self.queue.raw_queue, steps=50).filter(
-                lambda x: not (x.stream or x.is_partial)
-            )
+            async for track in AsyncIter(self.queue.raw_queue).filter(lambda x: not (x.stream or x.is_partial))
         ]
         queue_dur = sum(dur)
         if self.queue.empty():
