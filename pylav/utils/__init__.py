@@ -605,6 +605,7 @@ class Queue:
         self._finished.set()
         self._init(maxsize)
 
+    # These do not exist in asyncio.Queue
     @property
     def raw_queue(self):
         return self._queue.copy()
@@ -630,6 +631,43 @@ class Queue:
                     self._queue.remove(value)
         except ValueError:
             raise IndexError("Value not in queue")
+
+    def clear(self):
+        """Remove all items from the queue."""
+        self._queue.clear()
+        for i in self._getters:
+            i.cancel()
+        self._getters.clear()
+        for i in self._putters:
+            i.cancel()
+        self._putters.clear()
+
+    async def shuffle(self):
+        """Shuffle the queue."""
+        if self.empty():
+            return
+        await asyncio.to_thread(random.shuffle, self._queue)
+
+    def index(self, value: T) -> int:
+        """Return first index of value."""
+        return self._queue.index(value)
+
+    def __contains__(self, obj: T) -> bool:
+        return obj in self._queue
+
+    def __len__(self):
+        return len(self._queue)
+
+    def __index__(self):
+        return len(self._queue)
+
+    def __getitem__(self, key: int | slice) -> T | list[T]:
+        if not isinstance(key, int):
+            return NotImplemented
+        return self.popindex(key)
+
+    def __length_hint__(self):
+        return len(self._queue)
 
     # These three are overridable in subclasses.
 
@@ -816,28 +854,6 @@ class Queue:
         """
         if self._unfinished_tasks > 0:
             await self._finished.wait()
-
-    def clear(self):
-        """Remove all items from the queue."""
-        self._queue.clear()
-        for i in self._getters:
-            i.cancel()
-        self._getters.clear()
-        for i in self._putters:
-            i.cancel()
-        self._putters.clear()
-
-    async def shuffle(self):
-        """Shuffle the queue."""
-        if self.empty():
-            return
-        await asyncio.to_thread(random.shuffle, self._queue)
-
-    def __contains__(self, obj: T) -> bool:
-        return obj in self._queue
-
-    def __len__(self):
-        return self.qsize()
 
 
 class LifoQueue(Queue[T]):
