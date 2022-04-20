@@ -413,7 +413,9 @@ class AudioTrack:
         self, max_length: int = None, author: bool = True, unformatted: bool = False, with_url: bool = False
     ) -> str:
         if self.is_partial:
-            return discord.utils.escape_markdown(await self.query.query_to_queue(max_length, partial=True))
+            base = await self.query.query_to_queue(max_length, partial=True)
+            base = re.sub(r"[\[\]]", base, "")
+            return discord.utils.escape_markdown(base)
         else:
             url_start = "[" if with_url else ""
             url_end = f"]({self.uri})" if with_url and self.uri else ""
@@ -436,6 +438,7 @@ class AudioTrack:
                         base = base[: max_length - 7] + "..."
                     else:
                         base += f"\n{await self.query.query_to_string()} "
+                    base = re.sub(r"\[[^()]*]", base, "")
                     base = discord.utils.escape_markdown(base)
                     return f"{maybe_bold}{url_start}{base}{url_end}{maybe_bold}"
                 elif not unknown_title:
@@ -444,12 +447,14 @@ class AudioTrack:
                         base = base[: max_length - 7] + "..."
                     else:
                         base += f"\n{await self.query.query_to_string()} "
+                    base = re.sub(r"\[[^()]*]", base, "")
                     base = discord.utils.escape_markdown(base)
                     return f"{maybe_bold}{url_start}{base}{url_end}{maybe_bold}"
                 else:
                     base = await self.query.query_to_string(max_length)
                     if max_length:
                         base = base[: max_length - 7] + "..."
+                    base = re.sub(r"\[[^()]*]", base, "")
                     base = discord.utils.escape_markdown(base)
                     return f"{maybe_bold}{url_start}{base}{url_end}{maybe_bold}"
             else:
@@ -465,6 +470,7 @@ class AudioTrack:
                     base = self.title
                 if max_length:
                     base = base[: max_length - 7] + "..."
+                base = re.sub(r"\[[^()]*]", base, "")
                 base = discord.utils.escape_markdown(base)
                 return f"{maybe_bold}{url_start}{base}{url_end}{maybe_bold}"
 
