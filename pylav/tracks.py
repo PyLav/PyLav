@@ -372,6 +372,8 @@ class AudioTrack:
     async def search(self, player: Player) -> None:
         self._query = await Query.from_string(self.query)
         response = await player.node.get_tracks(self.query, first=True)
+        if not response or "track" not in response:
+            raise TrackNotFound(f"No tracks found for query {self.query}")
         self.track = response["track"]
         self._unique_id = hashlib.md5()
         self._unique_id.update(self.track.encode())

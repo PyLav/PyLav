@@ -402,8 +402,15 @@ class Player(VoiceProtocol):
                 return
             track = await self.queue.get()
         if track.is_partial and not track.track:
-            await track.search(self)
-        if skip_segments:
+            try:
+                await track.search(self)
+            except TrackNotFound as exc:
+                # If track was passed to `.play()` raise here
+                if not track:
+                    raise TrackNotFound
+                # Otherwise dispatch Track Exception Event
+                await self.node.dispatch_event(TrackExceptionEvent(self, track, exc))
+                return
             options["skipSegments"] = skip_segments
         if start_time is not None:
             if not isinstance(start_time, int) or not 0 <= start_time <= track.duration:
