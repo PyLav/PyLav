@@ -324,7 +324,6 @@ class Query:
     def __process_search(cls, query: str) -> Query | None:
         if match := SEARCH_REGEX.match(query):
             query = match.group("query")
-            LOGGER.warning("%s", match.groups())
             if match.group("source") == "ytm":
                 return cls(query, "YouTube Music", search=True)
             elif match.group("source") == "yt":

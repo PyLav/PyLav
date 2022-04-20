@@ -9,12 +9,13 @@ import uuid
 from base64 import b64decode
 from functools import total_ordering
 from io import BytesIO
+from logging import getLogger
 from typing import TYPE_CHECKING, Any
 
 import discord
 from cached_property import cached_property, cached_property_with_ttl
 
-from pylav.exceptions import InvalidTrack
+from pylav.exceptions import InvalidTrack, TrackNotFound
 from pylav.query import Query
 from pylav.utils import MISSING
 
@@ -24,6 +25,8 @@ if TYPE_CHECKING:
 
 STREAM_TITLE: re.Pattern = re.compile(rb"StreamTitle='([^']*)';")
 SQUARE_BRACKETS: re.Pattern = re.compile(r"[\[\]]")
+
+LOGGER = getLogger("red.PyLink.tracks")
 
 
 def read_utfm(utf_len: int, utf_bytes: bytes) -> str:
@@ -414,14 +417,16 @@ class AudioTrack:
     ) -> str:
         if self.is_partial:
             base = await self.query.query_to_queue(max_length, partial=True)
-            base, subbed = SQUARE_BRACKETS.subn("", base)
-            if max_length:
-                base = base[: max_length + subbed - 7] + "..."
+            base = SQUARE_BRACKETS.sub("", base).strip()
+            if max_length and len(base) > (actual_length := max_length - 3):
+                base = base[:actual_length] + "..."
             return discord.utils.escape_markdown(base)
         else:
+            length_to_trim = 7
             if unformatted:
                 bold = ""
                 url_start = url_end = ""
+                length_to_trim = 3
             elif with_url:
                 bold = "**"
                 url_start = "["
@@ -429,6 +434,8 @@ class AudioTrack:
             else:
                 bold = "**"
                 url_start = url_end = ""
+            if max_length:
+                max_length -= length_to_trim
             unknown_author = self.author != "Unknown artist"
             unknown_title = self.title != "Unknown title"
             if not author:
@@ -439,27 +446,27 @@ class AudioTrack:
             if self.query and self.query.is_local:
                 if not (unknown_title and unknown_author):
                     base = f"{self.title}{author_string}"
-                    base, subbed = SQUARE_BRACKETS.subn("", base)
-                    if max_length:
-                        base = base[: max_length + subbed - 7] + "..."
-                    else:
+                    base = SQUARE_BRACKETS.sub("", base).strip()
+                    if max_length and len(base) > max_length:
+                        base = base[:max_length] + "..."
+                    elif not max_length:
                         base += f"\n{await self.query.query_to_string()} "
                     base = discord.utils.escape_markdown(base)
                     return f"{bold}{url_start}{base}{url_end}{bold}"
                 elif not unknown_title:
                     base = self.title
-                    base, subbed = SQUARE_BRACKETS.subn("", base)
-                    if max_length:
-                        base = base[: max_length + subbed - 7] + "..."
-                    else:
+                    base = SQUARE_BRACKETS.sub("", base).strip()
+                    if max_length and len(base) > max_length:
+                        base = base[:max_length] + "..."
+                    elif not max_length:
                         base += f"\n{await self.query.query_to_string()} "
                     base = discord.utils.escape_markdown(base)
                     return f"{bold}{url_start}{base}{url_end}{bold}"
                 else:
                     base = await self.query.query_to_string(max_length)
-                    base, subbed = SQUARE_BRACKETS.subn("", base)
-                    if max_length:
-                        base = base[: max_length + subbed - 7] + "..."
+                    base = SQUARE_BRACKETS.sub("", base).strip()
+                    if max_length and len(base) > max_length:
+                        base = base[:max_length] + "..."
                     base = discord.utils.escape_markdown(base)
                     return f"{bold}{url_start}{base}{url_end}{bold}"
             else:
@@ -473,9 +480,9 @@ class AudioTrack:
                     base = f"{self.title}{author_string}"
                 else:
                     base = self.title
-                base, subbed = SQUARE_BRACKETS.subn("", base)
-                if max_length:
-                    base = base[: max_length + subbed - 7] + "..."
+                base = SQUARE_BRACKETS.sub("", base).strip()
+                if max_length and len(base) > max_length:
+                    base = base[:max_length] + "..."
                 base = discord.utils.escape_markdown(base)
                 return f"{bold}{url_start}{base}{url_end}{bold}"
 

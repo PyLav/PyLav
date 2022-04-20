@@ -623,12 +623,22 @@ class Queue:
         del self._queue[index]
         return value
 
-    async def remove(self, value: T) -> None:
+    async def remove(self, value: T, duplicates: bool = False) -> int:
+        """Removes the first occurrence of a value from the queue.
+
+        If duplicates is True, all occurrences of the value are removed.
+        Returns the number of occurrences removed.
+        """
+        count = 0
         try:
             self._queue.remove(value)
-            with contextlib.suppress(ValueError):
-                while value in self:
-                    self._queue.remove(value)
+            count += 1
+            if duplicates:
+                with contextlib.suppress(ValueError):
+                    while value in self:
+                        self._queue.remove(value)
+                        count += 1
+            return count
         except ValueError:
             raise IndexError("Value not in queue")
 
