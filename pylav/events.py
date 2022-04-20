@@ -18,6 +18,7 @@ if TYPE_CHECKING:
 class Event:
     """The base for all Lavalink events."""
 
+
 class QueueEndEvent(Event):
     """
     This event is dispatched when there are no more songs in the queue.
@@ -31,6 +32,7 @@ class QueueEndEvent(Event):
 
     def __init__(self, player: Player):
         self.player = player
+
 
 class TrackStuckEvent(Event):
     """
@@ -54,6 +56,7 @@ class TrackStuckEvent(Event):
         self.track = track
         self.threshold = threshold
 
+
 class TrackExceptionEvent(Event):
     """
     This event is dispatched when an exception occurs while playing a track.
@@ -73,6 +76,7 @@ class TrackExceptionEvent(Event):
         self.player = player
         self.track = track
         self.exception = exception
+
 
 class TrackEndEvent(Event):
     """
@@ -94,6 +98,7 @@ class TrackEndEvent(Event):
         self.track = track
         self.reason = reason
 
+
 class TrackStartEvent(Event):
     """
     This event is dispatched when the player starts to play a track.
@@ -110,6 +115,7 @@ class TrackStartEvent(Event):
     def __init__(self, player: Player, track: AudioTrack):
         self.player = player
         self.track = track
+
 
 class PlayerUpdateEvent(Event):
     """
@@ -131,6 +137,7 @@ class PlayerUpdateEvent(Event):
         self.position = position
         self.timestamp = timestamp
 
+
 class NodeDisconnectedEvent(Event):
     """
     This event is dispatched when a node disconnects and becomes unavailable.
@@ -151,6 +158,7 @@ class NodeDisconnectedEvent(Event):
         self.code = code
         self.reason = reason
 
+
 class NodeConnectedEvent(Event):
     """
     This event is dispatched when Lavalink.py successfully connects to a node.
@@ -164,6 +172,7 @@ class NodeConnectedEvent(Event):
 
     def __init__(self, node: Node):
         self.node = node
+
 
 class NodeChangedEvent(Event):
     """
@@ -186,6 +195,7 @@ class NodeChangedEvent(Event):
         self.player = player
         self.old_node = old_node
         self.new_node = new_node
+
 
 class WebSocketClosedEvent(Event):
     """
@@ -212,6 +222,7 @@ class WebSocketClosedEvent(Event):
         self.reason = reason
         self.by_remote = by_remote
 
+
 class SegmentSkippedEvent(Event):
     """
     This event is dispatched when a segment is skipped.
@@ -226,6 +237,7 @@ class SegmentSkippedEvent(Event):
     def __init__(self, player: Player, category: str, start: float, end: float):
         self.player = player
         self.segment = Segment(category=category, start=start, end=end)
+
 
 class SegmentsLoadedEvent(Event):
     """
@@ -243,6 +255,7 @@ class SegmentsLoadedEvent(Event):
     def __init__(self, player: Player, segments: list[dict]):
         self.player = player
         self.segments = [Segment(**segment) for segment in segments]
+
 
 class PlayerPausedEvent(Event):
     """
@@ -263,6 +276,7 @@ class PlayerPausedEvent(Event):
         self.player = player
         self.user = requester
 
+
 class PlayerStoppedEvent(Event):
     """
     This event is dispatched when a player is stopped.
@@ -279,6 +293,7 @@ class PlayerStoppedEvent(Event):
     def __init__(self, player: Player, requester: discord.Member):
         self.player = player
         self.requester = requester
+
 
 class PlayerResumedEvent(Event):
     """
@@ -298,6 +313,7 @@ class PlayerResumedEvent(Event):
     def __init__(self, player: Player, requester: discord.Member):
         self.player = player
         self.requester = requester
+
 
 class TrackQueuePositionChangedEvent(Event):
     """
@@ -325,6 +341,7 @@ class TrackQueuePositionChangedEvent(Event):
         self.after = after
         self.track = track
 
+
 class TrackSkippedEvent(Event):
     """
     This event is dispatched when a track is skipped.
@@ -348,6 +365,7 @@ class TrackSkippedEvent(Event):
         self.requester = requester
         self.position = position
 
+
 class QueueShuffledEvent(Event):
     """
     This event is dispatched when the queue is shuffled.
@@ -364,6 +382,7 @@ class QueueShuffledEvent(Event):
     def __init__(self, player: Player, requester: discord.Member):
         self.player = player
         self.requester = requester
+
 
 class TracksRemovedFromQueueEvent(Event):
     """
@@ -382,6 +401,8 @@ class TracksRemovedFromQueueEvent(Event):
         self.player = player
         self.requester = requester
         self.tracks = tracks
+
+
 class FiltersAppliedEvent(Event):
     """
     This event is dispatched when filters are applied.
@@ -437,6 +458,8 @@ class FiltersAppliedEvent(Event):
         self.distortion = distortion
         self.low_pass = low_pass
         self.channel_mix = channel_mix
+
+
 class PlayerMovedEvent(Event):
     """
     This event is dispatched when the player is moved.
@@ -458,6 +481,8 @@ class PlayerMovedEvent(Event):
         self.requester = requester
         self.before = before
         self.after = after
+
+
 class PlayerDisconnectedEvent(Event):
     """
     This event is dispatched when the player is moved.
@@ -479,6 +504,8 @@ class PlayerDisconnectedEvent(Event):
         self.current_track: AudioTrack | None = player.current
         self.position: float = player.position
         self.queue: collections.deque = player.queue.raw_queue
+
+
 class PlayerConnectedEvent(Event):
     """
     This event is dispatched when the player is moved.
@@ -497,6 +524,8 @@ class PlayerConnectedEvent(Event):
     def __init__(self, player: Player, requester: discord.Member | None):
         self.player = player
         self.requester = requester
+
+
 class TrackSeekEvent(Event):
     """
     This event is dispatched when the player is moved.
@@ -523,6 +552,8 @@ class TrackSeekEvent(Event):
         self.track = track
         self.before = before
         self.after = after
+
+
 class PlayerVolumeChangeEvent(Event):
     """
     This event is dispatched when the player is moved.
@@ -546,6 +577,8 @@ class PlayerVolumeChangeEvent(Event):
         self.requester = requester
         self.before = before
         self.after = after
+
+
 class PlayerRepeatEvent(Event):
     """
     This event is dispatched when the player is moved.
@@ -587,6 +620,8 @@ class PlayerRepeatEvent(Event):
         self.current_before = current_before
         self.current_after = current_after
         self.type = op_type
+
+
 class PreviousTrackRequestedEvent(Event):
     """
     This event is dispatched when a history track is requested.
@@ -606,6 +641,8 @@ class PreviousTrackRequestedEvent(Event):
         self.player = player
         self.requester = requester
         self.track = track
+
+
 class TracksRequestedEvent(Event):
     """
     This event is dispatched when a track in added to the queue.
