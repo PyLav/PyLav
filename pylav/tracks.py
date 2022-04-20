@@ -434,8 +434,7 @@ class AudioTrack:
             if self.query and self.query.is_local:
                 if not (unknown_title and unknown_author):
                     base = f"{self.title}{author_string}"
-                    base, subbed = re.subn(SQUARE_BRACKETS, base, "")
-                    base = re.sub(SQUARE_BRACKETS, base, "")
+                    base, subbed = SQUARE_BRACKETS.subn("", base)
                     if max_length:
                         base = base[: max_length + subbed - 7] + "..."
                     else:
@@ -444,8 +443,7 @@ class AudioTrack:
                     return f"{maybe_bold}{url_start}{base}{url_end}{maybe_bold}"
                 elif not unknown_title:
                     base = self.title
-                    base, subbed = re.subn(SQUARE_BRACKETS, base, "")
-                    base = re.sub(SQUARE_BRACKETS, base, "")
+                    base, subbed = SQUARE_BRACKETS.subn("", base)
                     if max_length:
                         base = base[: max_length + subbed - 7] + "..."
                     else:
@@ -454,7 +452,7 @@ class AudioTrack:
                     return f"{maybe_bold}{url_start}{base}{url_end}{maybe_bold}"
                 else:
                     base = await self.query.query_to_string(max_length)
-                    base, subbed = re.subn(SQUARE_BRACKETS, base, "")
+                    base, subbed = SQUARE_BRACKETS.subn("", base)
                     if max_length:
                         base = base[: max_length + subbed - 7] + "..."
                     base = discord.utils.escape_markdown(base)
@@ -484,7 +482,7 @@ class AudioTrack:
                     await resp.content.readexactly(metaint)
                     metadata_length = struct.unpack("B", await resp.content.readexactly(1))[0] * 16
                     metadata = await resp.content.readexactly(metadata_length)
-                    m = re.search(STREAM_TITLE, metadata.rstrip(b"\0"))
+                    m = STREAM_TITLE.search(metadata.rstrip(b"\0"))
                     if m:
                         title = m.group(1)
                         if title:

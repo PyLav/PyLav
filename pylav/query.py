@@ -80,12 +80,12 @@ TWITCH_TIMESTAMP = re.compile(r"\?t=(\d+)h(\d+)m(\d+)s")
 
 def process_youtube(cls: type[Query], query: str, music: bool):
     index = 0
-    if match := re.search(YOUTUBE_TIMESTAMP, query):
+    if match := YOUTUBE_TIMESTAMP.search(query):
         start_time = int(match.group(1))
     else:
         start_time = 0
     _has_index = "&index=" in query
-    if _has_index and (match := re.search(YOUTUBE_INDEX, query)):
+    if _has_index and (match := YOUTUBE_INDEX.search(query)):
         index = int(match.group(1)) - 1
     if all(k in query for k in ["&list=", "watch?"]):
         query_type = "playlist"
@@ -278,51 +278,51 @@ class Query:
 
     @classmethod
     def __process_urls(cls, query: str) -> Query | None:
-        if match := re.match(YOUTUBE_REGEX, query):
+        if match := YOUTUBE_REGEX.match(query):
             music = match.group("music")
             return process_youtube(cls, query, music=bool(music))
-        elif re.match(SPOTIFY_REGEX, query):
+        elif SPOTIFY_REGEX.match(query):
             return process_spotify(cls, query)
-        elif re.match(APPLE_MUSIC_REGEX, query):
+        elif APPLE_MUSIC_REGEX.match(query):
             return cls(query, "Apple Music")
-        elif re.match(SOUND_CLOUD_REGEX, query):
+        elif SOUND_CLOUD_REGEX.match(query):
             return process_soundcloud(cls, query)
-        elif re.match(TWITCH_REGEX, query):
+        elif TWITCH_REGEX.match(query):
             return cls(query, "Twitch")
-        elif re.match(GCTSS_REGEX, query):
+        elif GCTSS_REGEX.match(query):
             query = query.replace("tts://", "")
             return cls(query, "Google TTS", search=True)
-        elif re.match(TTS_REGEX, query):
+        elif TTS_REGEX.match(query):
             query = query.replace("tts:", "").replace("speak:", "")
             return cls(query, "TTS", search=True)
-        elif re.match(CLYPIT_REGEX, query):
+        elif CLYPIT_REGEX.match(query):
             return cls(query, "Clyp")
-        elif re.match(GETYARN_REGEX, query):
+        elif GETYARN_REGEX.match(query):
             return cls(query, "GetYarn")
-        elif re.match(MIXCLOUD_REGEX, query):
+        elif MIXCLOUD_REGEX.match(query):
             return cls(query, "Mixcloud")
-        elif re.match(OCRREMIX_PATTERN, query):
+        elif OCRREMIX_PATTERN.match(query):
             return cls(query, "OverClocked ReMix")
-        elif re.match(PORNHUB_REGEX, query):
+        elif PORNHUB_REGEX.match(query):
             return cls(query, "Pornhub")
-        elif re.match(REDDIT_REGEX, query):
+        elif REDDIT_REGEX.match(query):
             return cls(query, "Reddit")
-        elif re.match(SOUNDGASM_REGEX, query):
+        elif SOUNDGASM_REGEX.match(query):
             return cls(query, "Soundgasm")
-        elif re.match(TIKTOK_REGEX, query):
+        elif TIKTOK_REGEX.match(query):
             return cls(query, "TikTok")
-        elif re.match(BANDCAMP_REGEX, query):
+        elif BANDCAMP_REGEX.match(query):
             return process_bandcamp(cls, query)
-        elif re.match(NICONICO_REGEX, query):
+        elif NICONICO_REGEX.match(query):
             return cls(query, "Niconico")
-        elif re.match(VIMEO_REGEX, query):
+        elif VIMEO_REGEX.match(query):
             return cls(query, "Vimeo")
-        elif re.match(HTTP_REGEX, query):
+        elif HTTP_REGEX.match(query):
             return cls(query, "HTTP")
 
     @classmethod
     def __process_search(cls, query: str) -> Query | None:
-        if match := re.match(SEARCH_REGEX, query):
+        if match := SEARCH_REGEX.match(query):
             query = match.group("query")
             LOGGER.warning("%s", match.groups())
             if match.group("source") == "ytm":
