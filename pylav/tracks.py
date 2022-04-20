@@ -23,6 +23,7 @@ if TYPE_CHECKING:
     from pylav.player import Player
 
 STREAM_TITLE: re.Pattern = re.compile(rb"StreamTitle='([^']*)';")
+SQUARE_BRACKETS: re.Pattern = re.compile(r"[\[\]]")
 
 
 def read_utfm(utf_len: int, utf_bytes: bytes) -> str:
@@ -232,7 +233,7 @@ class AudioTrack:
             self.track = data
             self.extra = extra
             self._raw_data = {}
-            self._unique_id.update(self.track.encode())
+            self._unique_id.update(self.track.encode())  # type: ignore
         self._requester = requester or self._node.node_manager.client.bot.user.id
         self._id = str(uuid.uuid4())
 
@@ -346,9 +347,6 @@ class AudioTrack:
             f"query={self.query.query_identifier if self.query else 'N/A'}>"
         )
 
-    def __hash__(self) -> hash:
-        return hash(tuple(sorted([self.track, self.title, self.identifier, self.uri])))
-
     def to_json(self) -> dict:
         """
         Returns a dict representation of this AudioTrack.
@@ -414,7 +412,9 @@ class AudioTrack:
     ) -> str:
         if self.is_partial:
             base = await self.query.query_to_queue(max_length, partial=True)
-            base = re.sub(r"[\[\]]", base, "")
+            base, subbed = SQUARE_BRACKETS.subn("", base)
+            if max_length:
+                base = base[: max_length + subbed - 7] + "..."
             return discord.utils.escape_markdown(base)
         else:
             url_start = "[" if with_url else ""
@@ -434,27 +434,29 @@ class AudioTrack:
             if self.query and self.query.is_local:
                 if not (unknown_title and unknown_author):
                     base = f"{self.title}{author_string}"
+                    base, subbed = re.subn(SQUARE_BRACKETS, base, "")
+                    base = re.sub(SQUARE_BRACKETS, base, "")
                     if max_length:
-                        base = base[: max_length - 7] + "..."
+                        base = base[: max_length + subbed - 7] + "..."
                     else:
                         base += f"\n{await self.query.query_to_string()} "
-                    base = re.sub(r"\[[^()]*]", base, "")
                     base = discord.utils.escape_markdown(base)
                     return f"{maybe_bold}{url_start}{base}{url_end}{maybe_bold}"
                 elif not unknown_title:
                     base = self.title
+                    base, subbed = re.subn(SQUARE_BRACKETS, base, "")
+                    base = re.sub(SQUARE_BRACKETS, base, "")
                     if max_length:
-                        base = base[: max_length - 7] + "..."
+                        base = base[: max_length + subbed - 7] + "..."
                     else:
                         base += f"\n{await self.query.query_to_string()} "
-                    base = re.sub(r"\[[^()]*]", base, "")
                     base = discord.utils.escape_markdown(base)
                     return f"{maybe_bold}{url_start}{base}{url_end}{maybe_bold}"
                 else:
                     base = await self.query.query_to_string(max_length)
+                    base, subbed = re.subn(SQUARE_BRACKETS, base, "")
                     if max_length:
-                        base = base[: max_length - 7] + "..."
-                    base = re.sub(r"\[[^()]*]", base, "")
+                        base = base[: max_length + subbed - 7] + "..."
                     base = discord.utils.escape_markdown(base)
                     return f"{maybe_bold}{url_start}{base}{url_end}{maybe_bold}"
             else:
@@ -468,9 +470,9 @@ class AudioTrack:
                     base = f"{self.title}{author_string}"
                 else:
                     base = self.title
+                base, subbed = SQUARE_BRACKETS.subn("", base)
                 if max_length:
-                    base = base[: max_length - 7] + "..."
-                base = re.sub(r"\[[^()]*]", base, "")
+                    base = base[: max_length + subbed - 7] + "..."
                 base = discord.utils.escape_markdown(base)
                 return f"{maybe_bold}{url_start}{base}{url_end}{maybe_bold}"
 
