@@ -7,7 +7,15 @@ import aiohttp
 import ujson
 from red_commons.logging import getLogger
 
-from pylav.events import TrackEndEvent, TrackExceptionEvent, TrackStartEvent, TrackStuckEvent, WebSocketClosedEvent
+from pylav.events import (
+    SegmentSkippedEvent,
+    SegmentsLoadedEvent,
+    TrackEndEvent,
+    TrackExceptionEvent,
+    TrackStartEvent,
+    TrackStuckEvent,
+    WebSocketClosedEvent,
+)
 from pylav.exceptions import WebsocketNotConnectedError
 from pylav.location import get_closest_discord_region
 from pylav.node import Stats
@@ -299,6 +307,10 @@ class WebSocket:
             event = TrackStuckEvent(player, player.current, data["thresholdMs"])
         elif event_type == "WebSocketClosedEvent":
             event = WebSocketClosedEvent(player, data["code"], data["reason"], data["byRemote"])
+        elif event_type == "SegmentsLoaded":
+            event = SegmentsLoadedEvent(player, data["segments"])
+        elif event_type == "SegmentSkipped":
+            event = SegmentSkippedEvent(player, **data["segment"])
         else:
             LOGGER.warning("[NODE-%s] Unknown event received: %s", self.node.name, event_type)
             return

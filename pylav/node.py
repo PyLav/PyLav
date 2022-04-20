@@ -821,7 +821,7 @@ class Node:
         :class:`bool`
             True if the target node supports Google Cloud TTS, False otherwise.
         """
-        return self.has_capability("gctts")
+        return self.has_capability("gctts")  # TODO: Check source name
 
     @property
     def supports_pornhub(self) -> bool:
@@ -893,7 +893,7 @@ class Node:
         :class:`bool`
             True if the target node supports YouTube, False otherwise.
         """
-        return self.has_source("youtube")
+        return self.has_source("youtube") and self.has_source("youtube")
 
     @property
     def supports_bandcamp(self) -> bool:
@@ -905,7 +905,7 @@ class Node:
         :class:`bool`
             True if the target node supports Bandcamp, False otherwise.
         """
-        return self.has_source("bandcamp")
+        return self.has_source("bandcamp") and self.has_source("bandcamp")
 
     @property
     def supports_soundcloud(self) -> bool:
@@ -917,7 +917,7 @@ class Node:
         :class:`bool`
             True if the target node supports SoundCloud, False otherwise.
         """
-        return self.has_source("soundcloud")
+        return self.has_source("soundcloud") and self.has_source("soundcloud")
 
     @property
     def supports_twitch(self) -> bool:
@@ -929,7 +929,7 @@ class Node:
         :class:`bool`
             True if the target node supports Twitch, False otherwise.
         """
-        return self.has_source("twitch")
+        return self.has_source("twitch") and self.has_source("twitch")
 
     @property
     def supports_vimeo(self) -> bool:
@@ -941,7 +941,7 @@ class Node:
         :class:`bool`
             True if the target node supports Vimeo, False otherwise.
         """
-        return self.has_source("vimeo")
+        return self.has_source("vimeo") and self.has_source("vimeo")
 
     @property
     def supports_http(self) -> bool:
@@ -953,7 +953,7 @@ class Node:
         :class:`bool`
             True if the target node supports HTTP, False otherwise.
         """
-        return self.has_source("http")
+        return self.has_source("http") and self.has_source("http")
 
     @property
     def supports_local(self) -> bool:
@@ -965,7 +965,7 @@ class Node:
         :class:`bool`
             True if the target node supports local files, False otherwise.
         """
-        return self.has_source("local")
+        return self.has_source("local") and self.has_source("local")
 
     @property
     def supports_sponsorblock(self) -> bool:
@@ -977,7 +977,7 @@ class Node:
         :class:`bool`
             True if the target node supports SponsorBlock, False otherwise.
         """
-        return self.has_capability("sponsorblock") and self.has_source("sponsorblock")
+        return self.has_capability("sponsorblock")
 
     async def close(self) -> None:
         """

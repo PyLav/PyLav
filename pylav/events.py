@@ -214,3 +214,37 @@ class WebSocketClosedEvent(Event):
         self.code = code
         self.reason = reason
         self.by_remote = by_remote
+
+
+class SegmentSkippedEvent(Event):
+    """
+    This event is dispatched when a segment is skipped.
+    Attributes
+    ----------
+    player: :class:`BasePlayer`
+        The player whose segment was skipped.
+    """
+
+    __slots__ = ("player",)
+
+    def __init__(self, player: Player, category: str, start: float, end: float):
+        self.player = player
+        self.category = category
+        self.start = start
+        self.end = end
+
+
+class SegmentsLoadedEvent(Event):
+    """
+    This event is dispatched when segments are loaded.
+    Attributes
+    ----------
+    player: :class:`BasePlayer`
+        The player whose segments were loaded.
+    """
+
+    __slots__ = ("player",)
+
+    def __init__(self, player: Player, segments: list[dict]):
+        self.player = player
+        self.segments = segments
