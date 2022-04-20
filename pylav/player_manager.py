@@ -5,12 +5,12 @@ from typing import TYPE_CHECKING, Iterator
 import discord
 from red_commons.logging import getLogger
 
-from pylav import NoNodeAvailable
 from pylav.player import Player
 
 if TYPE_CHECKING:
     from pylav.client import Client
 
+from pylav.exceptions import NoNodeAvailable
 from pylav.node import Node
 
 LOGGER = getLogger("red.PyLink.PlayerManager")

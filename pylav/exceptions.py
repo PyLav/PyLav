@@ -31,8 +31,10 @@ __all__ = (
     "NoNodeAvailable",
 )
 
+from discord.ext.commands import CommandError
 
-class PyLavError(Exception):
+
+class PyLavError(CommandError):
     """Base exception for errors in the library."""
 
 
