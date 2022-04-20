@@ -331,14 +331,13 @@ class Player(VoiceProtocol):
     async def previous(self) -> None:
         if self.history.empty():
             raise TrackNotFound("There are no tracks currently in the player history.")
-
         track = await self.history.get()
         if track.is_partial and not track.track:
             await track.search(self)
         if self.current:
             await self.history.put([self.current])
-        options = {"noReplace": False}
         self.current = track
+        options = {"noReplace": False}
         if track.skip_segments:
             options["skipSegments"] = track.skip_segments
         await self.node.send(op="play", guildId=self.guild_id, track=track.track, **options)
@@ -967,7 +966,16 @@ class Player(VoiceProtocol):
                     )
                 )
         else:
-            skip_segments = []
+            skip_segments = [
+                "sponsor",
+                "selfpromo",
+                "interaction",
+                "intro",
+                "outro",
+                "preview",
+                "music_offtopic",
+                "filler",
+            ]
         return skip_segments
 
     def draw_time(self) -> str:
