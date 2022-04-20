@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-import collections
 import contextlib
 import itertools
 import time
-from copy import copy
 from typing import TYPE_CHECKING, Any, Literal
 
 import discord
@@ -12,11 +10,26 @@ from discord import VoiceProtocol
 from red_commons.logging import getLogger
 
 from pylav.events import (
+    FiltersAppliedEvent,
     NodeChangedEvent,
+    PlayerDisconnectedEvent,
+    PlayerMovedEvent,
+    PlayerPausedEvent,
+    PlayerRepeatEvent,
+    PlayerResumedEvent,
+    PlayerStoppedEvent,
     PlayerUpdateEvent,
+    PlayerVolumeChangeEvent,
+    PreviousTrackRequestedEvent,
     QueueEndEvent,
+    QueueShuffledEvent,
     TrackEndEvent,
     TrackExceptionEvent,
+    TrackQueuePositionChangedEvent,
+    TrackSeekEvent,
+    TrackSkippedEvent,
+    TracksRemovedFromQueueEvent,
+    TracksRequestedEvent,
     TrackStartEvent,
     TrackStuckEvent,
 )
@@ -298,6 +311,7 @@ class Player(VoiceProtocol):
 
         at = await self._query_to_track(requester, track, query)
         await self.queue.put([at], index=index)
+        await self.node.dispatch_event(TracksRequestedEvent(self, self.guild.get_member(requester), [at]))
 
     async def bulk_add(
         self,
@@ -327,8 +341,9 @@ class Player(VoiceProtocol):
                 track = await self._query_to_track(requester, track, query)
             output.append(track)
         await self.queue.put(output, index=index)
+        await self.node.dispatch_event(TracksRequestedEvent(self, self.guild.get_member(requester), output))
 
-    async def previous(self) -> None:
+    async def previous(self, requester: discord.Member) -> None:
         if self.history.empty():
             raise TrackNotFound("There are no tracks currently in the player history.")
         track = await self.history.get()
@@ -342,6 +357,7 @@ class Player(VoiceProtocol):
             options["skipSegments"] = track.skip_segments
         await self.node.send(op="play", guildId=self.guild_id, track=track.track, **options)
         await self.node.dispatch_event(TrackStartEvent(self, track))
+        await self.node.dispatch_event(PreviousTrackRequestedEvent(self, requester, track))
 
     async def play(
         self,
@@ -351,6 +367,7 @@ class Player(VoiceProtocol):
         no_replace: bool = False,
         query: Query = None,
         skip_segments: list[str] | str = None,
+        requester: discord.Member = None,
     ) -> None:
         """
         Plays the given track.
@@ -376,6 +393,8 @@ class Player(VoiceProtocol):
             The query that was used to search for the track.
         skip_segments: Optional[:class:`list`]
             A list of segments to skip.
+        requester: Optional[:class:`discord.Member`]
+            The member that requested the track.
         """
         options = {}
         skip_segments = self._process_skip_segments(skip_segments)
@@ -394,7 +413,9 @@ class Player(VoiceProtocol):
             await self.history.put([self.current])
         if not track:
             if self.queue.empty():
-                await self.stop()  # Also sets current to None.
+                await self.stop(
+                    requester=self.guild.get_member(self.node.node_manager.client.bot_id)
+                )  # Also sets current to None.
                 self.history.clear()
                 await self.node.dispatch_event(QueueEndEvent(self))
                 return
@@ -436,16 +457,22 @@ class Player(VoiceProtocol):
         await self.node.send(op="play", guildId=self.guild_id, track=track.track, **options)
         await self.node.dispatch_event(TrackStartEvent(self, track))
 
-    async def stop(self) -> None:
+    async def stop(self, requester: discord.Member) -> None:
         """Stops the player."""
         await self.node.send(op="stop", guildId=self.guild_id)
+        await self.node.dispatch_event(PlayerStoppedEvent(self, requester))
         self.current = None
 
-    async def skip(self) -> None:
+    async def skip(self, requester: discord.Member) -> None:
         """Plays the next track in the queue, if any."""
-        await self.play()
+        previous_track = self.current
+        previous_position = self.position
+        await self.play(requester=requester)
+        await self.node.dispatch_event(TrackSkippedEvent(self, requester, previous_track, previous_position))
 
-    def set_repeat(self, op_type: Literal["current", "queue"], repeat: bool) -> None:
+    async def set_repeat(
+        self, op_type: Literal["current", "queue", "disable"], repeat: bool, requester: discord.Member
+    ) -> None:
         """
         Sets the player's repeat state.
         Parameters
@@ -453,14 +480,27 @@ class Player(VoiceProtocol):
         repeat: :class:`bool`
             Whether to repeat the player or not.
         op_type: :class:`str`
-            The type of repeat to set. Can be either ``"current"`` or ``"queue"``.
+            The type of repeat to set. Can be either ``"current"`` or ``"queue"`` or ``disable``.
+        requester: :class:`discord.Member`
+            The member who requested the repeat change.
         """
+        current_after = current_before = self.repeat_current
+        queue_after = queue_before = self.repeat_queue
+
+        if op_type == "disable":
+            queue_after = self.repeat_queue = False
+            current_after = self.repeat_current = False
         if op_type == "current":
-            self.repeat_current = repeat
+            self.repeat_current = queue_after = repeat
             self.repeat_queue = False
         elif op_type == "queue":
-            self.repeat_queue = repeat
+            self.repeat_queue = queue_after = repeat
             self.repeat_current = False
+        else:
+            raise ValueError("op_type must be either 'current' or 'queue' or `disable`")
+        await self.node.dispatch_event(
+            PlayerRepeatEvent(self, requester, op_type, queue_before, queue_after, current_before, current_after)
+        )
 
     def set_shuffle(self, shuffle: bool) -> None:
         """
@@ -472,18 +512,25 @@ class Player(VoiceProtocol):
         """
         self.shuffle = shuffle
 
-    async def set_pause(self, pause: bool) -> None:
+    async def set_pause(self, pause: bool, requester: discord.Member) -> None:
         """
         Sets the player's paused state.
         Parameters
         ----------
         pause: :class:`bool`
             Whether to pause the player or not.
+        requester: :class:`discord.Member`
+            The member who requested the pause.
         """
         await self.node.send(op="pause", guildId=self.guild_id, pause=pause)
-        self.paused = pause
 
-    async def set_volume(self, vol: int | float | Volume) -> None:
+        self.paused = pause
+        if self.paused:
+            await self.node.dispatch_event(PlayerPausedEvent(self, requester))
+        else:
+            await self.node.dispatch_event(PlayerResumedEvent(self, requester))
+
+    async def set_volume(self, vol: int | float | Volume, requester: discord.Member) -> None:
         """
         Sets the player's volume
         Note
@@ -493,12 +540,16 @@ class Player(VoiceProtocol):
         ----------
         vol: :class:`int`
             The new volume level.
+        requester: :class:`discord.Member`
+            The member who requested the volume change.
         """
 
-        self.volume = max(min(vol, 1000), 0)
+        volume = max(min(vol, 1000), 0)
+        await self.node.dispatch_event(PlayerVolumeChangeEvent(self, requester, self.volume, volume))
+        self.volume = volume
         await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
 
-    async def seek(self, position: float, with_filter: bool = False) -> None:
+    async def seek(self, position: float, requester: discord.Member, with_filter: bool = False) -> None:
         """
         Seeks to a given position in the track.
         Parameters
@@ -507,11 +558,16 @@ class Player(VoiceProtocol):
             The new position to seek to in milliseconds.
         with_filter: :class:`bool`
             Whether to apply the filter or not.
+        requester: :class:`discord.Member`
+            The member who requested the seek.
         """
         if self.current and self.current.is_seekable:
             if with_filter:
                 position = self.position
             position = max(min(position, self.current.duration), 0)
+            await self.node.dispatch_event(
+                TrackSeekEvent(self, requester, self.current, before=self.position, after=position)
+            )
             await self.node.send(op="seek", guildId=self.guild_id, position=position)
 
     async def _handle_event(self, event) -> None:
@@ -622,6 +678,7 @@ class Player(VoiceProtocol):
         reconnect: bool = False,
         self_mute: bool = False,
         self_deaf: bool = False,
+        requester: discord.Member = None,
     ) -> None:
         """
         Connects the player to the voice channel.
@@ -635,16 +692,17 @@ class Player(VoiceProtocol):
             Whether the player should be muted.
         self_deaf: :class:`bool`
             Whether the player should be deafened.
+        requester: :class:`discord.Member`
+            The member requesting the connection.
         """
         await self.guild.change_voice_state(channel=self.channel, self_mute=self_mute, self_deaf=self_deaf)
         self._connected = True
-
         LOGGER.info("[Player-%s] Connected to voice channel", self.channel.guild.id)
 
-    async def disconnect(self, *, force: bool = False) -> None:
+    async def disconnect(self, *, force: bool = False, requester: discord.Member | None) -> None:
         try:
             LOGGER.info("[Player-%s] Disconnected from voice channel", self.channel.guild.id)
-
+            await self.node.dispatch_event(PlayerDisconnectedEvent(self, requester))
             await self.guild.change_voice_state(channel=None)
             self._connected = False
         finally:
@@ -659,6 +717,7 @@ class Player(VoiceProtocol):
 
     async def move_to(
         self,
+        requester: discord.Member,
         channel: discord.VoiceChannel,
         self_mute: bool = False,
         self_deaf: bool = False,
@@ -673,29 +732,35 @@ class Player(VoiceProtocol):
             Indicates if the player should be self-muted on move.
         self_deaf: :class:`bool`
             Indicates if the player should be self-deafened on move.
+        requester: :class:`discord.Member`
+            The member requesting to move the player.
         """
         if channel == self.channel:
             return
+        old_channel = self.channel
         LOGGER.info(
             "[Player-%s] Moving from %s to voice channel: %s", self.channel.guild.id, self.channel.id, channel.id
         )
         self.channel = channel
         await self.guild.change_voice_state(channel=self.channel, self_mute=self_mute, self_deaf=self_deaf)
         self._connected = True
+        await self.node.dispatch_event(PlayerMovedEvent(self, requester, old_channel, self.channel))
 
-    async def set_volume_filter(self, volume: Volume) -> None:
+    async def set_volume_filter(self, requester: discord.Member, volume: Volume) -> None:
         """
         Sets the volume of Lavalink.
         Parameters
         ----------
         volume : Volume
             Volume to set
+        requester : discord.Member
         """
         await self.set_filters(
             volume=volume,
+            requester=requester,
         )
 
-    async def set_equalizer(self, equalizer: Equalizer, forced: bool = False) -> None:
+    async def set_equalizer(self, requester: discord.Member, equalizer: Equalizer, forced: bool = False) -> None:
         """
         Sets the Equalizer of Lavalink.
         Parameters
@@ -704,13 +769,16 @@ class Player(VoiceProtocol):
             Equalizer to set
         forced : bool
             Whether to force the equalizer to be set resetting any other filters currently applied
+        requester : discord.Member
+            The member who requested the equalizer to be set
         """
         await self.set_filters(
             equalizer=equalizer,
             reset_not_set=forced,
+            requester=requester,
         )
 
-    async def set_karaoke(self, karaoke: Karaoke, forced: bool = False) -> None:
+    async def set_karaoke(self, requester: discord.Member, karaoke: Karaoke, forced: bool = False) -> None:
         """
         Sets the Karaoke of Lavalink.
         Parameters
@@ -719,13 +787,16 @@ class Player(VoiceProtocol):
             Karaoke to set
         forced : bool
             Whether to force the karaoke to be set resetting any other filters currently applied
+        requester: discord.Member
+            The member who requested the karaoke
         """
         await self.set_filters(
             karaoke=karaoke,
             reset_not_set=forced,
+            requester=requester,
         )
 
-    async def set_timescale(self, timescale: Timescale, forced: bool = False) -> None:
+    async def set_timescale(self, requester: discord.Member, timescale: Timescale, forced: bool = False) -> None:
         """
         Sets the Timescale of Lavalink.
         Parameters
@@ -734,13 +805,16 @@ class Player(VoiceProtocol):
             Timescale to set
         forced : bool
             Whether to force the timescale to be set resetting any other filters currently applied
+        requester: discord.Member
+            The member who requested the timescale
         """
         await self.set_filters(
             timescale=timescale,
             reset_not_set=forced,
+            requester=requester,
         )
 
-    async def set_tremolo(self, tremolo: Tremolo, forced: bool = False) -> None:
+    async def set_tremolo(self, requester: discord.Member, tremolo: Tremolo, forced: bool = False) -> None:
         """
         Sets the Tremolo of Lavalink.
         Parameters
@@ -749,13 +823,16 @@ class Player(VoiceProtocol):
             Tremolo to set
         forced : bool
             Whether to force the tremolo to be set resetting any other filters currently applied
+        requester: discord.Member
+            The member who requested the tremolo
         """
         await self.set_filters(
             tremolo=tremolo,
             reset_not_set=forced,
+            requester=requester,
         )
 
-    async def set_vibrato(self, vibrato: Vibrato, forced: bool = False) -> None:
+    async def set_vibrato(self, requester: discord.Member, vibrato: Vibrato, forced: bool = False) -> None:
         """
         Sets the Vibrato of Lavalink.
         Parameters
@@ -764,13 +841,16 @@ class Player(VoiceProtocol):
             Vibrato to set
         forced : bool
             Whether to force the vibrato to be set resetting any other filters currently applied
+        requester: discord.Member
+            The member who requested the vibrato
         """
         await self.set_filters(
             vibrato=vibrato,
             reset_not_set=forced,
+            requester=requester,
         )
 
-    async def set_rotation(self, rotation: Rotation, forced: bool = False) -> None:
+    async def set_rotation(self, requester: discord.Member, rotation: Rotation, forced: bool = False) -> None:
         """
         Sets the Rotation of Lavalink.
         Parameters
@@ -779,13 +859,16 @@ class Player(VoiceProtocol):
             Rotation to set
         forced : bool
             Whether to force the rotation to be set resetting any other filters currently applied
+        requester: discord.Member
+            The member who requested the rotation
         """
         await self.set_filters(
             rotation=rotation,
             reset_not_set=forced,
+            requester=requester,
         )
 
-    async def set_distortion(self, distortion: Distortion, forced: bool = False) -> None:
+    async def set_distortion(self, requester: discord.Member, distortion: Distortion, forced: bool = False) -> None:
         """
         Sets the Distortion of Lavalink.
         Parameters
@@ -794,13 +877,16 @@ class Player(VoiceProtocol):
             Distortion to set
         forced : bool
             Whether to force the distortion to be set resetting any other filters currently applied
+        requester: discord.Member
+            The member who requested the distortion
         """
         await self.set_filters(
             distortion=distortion,
             reset_not_set=forced,
+            requester=requester,
         )
 
-    async def set_low_pass(self, low_pass: LowPass, forced: bool = False) -> None:
+    async def set_low_pass(self, requester: discord.Member, low_pass: LowPass, forced: bool = False) -> None:
         """
         Sets the LowPass of Lavalink.
         Parameters
@@ -809,13 +895,16 @@ class Player(VoiceProtocol):
             LowPass to set
         forced : bool
             Whether to force the low_pass to be set resetting any other filters currently applied
+        requester : discord.Member
+            Member who requested the filter change
         """
         await self.set_filters(
             low_pass=low_pass,
             reset_not_set=forced,
+            requester=requester,
         )
 
-    async def set_channel_mix(self, channel_mix: ChannelMix, forced: bool = False) -> None:
+    async def set_channel_mix(self, requester: discord.Member, channel_mix: ChannelMix, forced: bool = False) -> None:
         """
         Sets the ChannelMix of Lavalink.
         Parameters
@@ -824,15 +913,19 @@ class Player(VoiceProtocol):
             ChannelMix to set
         forced : bool
             Whether to force the channel_mix to be set resetting any other filters currently applied
+        requester : discord.Member
+            The member who requested the channel_mix
         """
         await self.set_filters(
             channel_mix=channel_mix,
             reset_not_set=forced,
+            requester=requester,
         )
 
     async def set_filters(
         self,
         *,
+        requester: discord.Member,
         volume: Volume = None,
         equalizer: Equalizer = None,
         karaoke: Karaoke = None,
@@ -871,6 +964,8 @@ class Player(VoiceProtocol):
             ChannelMix to set
         reset_not_set : bool
             Whether to reset any filters that are not set
+        requester : discord.Member
+            Member who requested the filters to be set
         """
         changed = False
         if volume and volume.changed:
@@ -906,34 +1001,40 @@ class Player(VoiceProtocol):
 
         self._effect_enabled = changed
         if reset_not_set:
-            await self.node.filters(
-                guild_id=self.channel.guild.id,
-                volume=volume or self.volume,
-                equalizer=equalizer,
-                karaoke=karaoke,
-                timescale=timescale,
-                tremolo=tremolo,
-                vibrato=vibrato,
-                rotation=rotation,
-                distortion=distortion,
-                low_pass=low_pass,
-                channel_mix=channel_mix,
-            )
+            kwargs = {
+                "volume": volume or self.volume,
+                "equalizer": equalizer,
+                "karaoke": karaoke,
+                "timescale": timescale,
+                "tremolo": tremolo,
+                "vibrato": vibrato,
+                "rotation": rotation,
+                "distortion": distortion,
+                "low_pass": low_pass,
+                "channel_mix": channel_mix,
+            }
+
+            await self.node.filters(guild_id=self.channel.guild.id, **kwargs)
         else:
+            kwargs = {
+                "volume": volume or self.volume,
+                "equalizer": equalizer or (self.equalizer if self.equalizer.changed else None),
+                "karaoke": karaoke or (self.karaoke if self.karaoke.changed else None),
+                "timescale": timescale or (self.timescale if self.timescale.changed else None),
+                "tremolo": tremolo or (self.tremolo if self.tremolo.changed else None),
+                "vibrato": vibrato or (self.vibrato if self.vibrato.changed else None),
+                "rotation": rotation or (self.rotation if self.rotation.changed else None),
+                "distortion": distortion or (self.distortion if self.distortion.changed else None),
+                "low_pass": low_pass or (self.low_pass if self.low_pass.changed else None),
+                "channel_mix": channel_mix or (self.channel_mix if self.channel_mix.changed else None),
+            }
+
             await self.node.filters(
                 guild_id=self.channel.guild.id,
-                volume=volume or self.volume,
-                equalizer=equalizer or (self.equalizer if self.equalizer.changed else None),
-                karaoke=karaoke or (self.karaoke if self.karaoke.changed else None),
-                timescale=timescale or (self.timescale if self.timescale.changed else None),
-                tremolo=tremolo or (self.tremolo if self.tremolo.changed else None),
-                vibrato=vibrato or (self.vibrato if self.vibrato.changed else None),
-                rotation=rotation or (self.rotation if self.rotation.changed else None),
-                distortion=distortion or (self.distortion if self.distortion.changed else None),
-                low_pass=low_pass or (self.low_pass if self.low_pass.changed else None),
-                channel_mix=channel_mix or (self.channel_mix if self.channel_mix.changed else None),
+                **kwargs,
             )
-        await self.seek(self.position, with_filter=True)
+        await self.seek(self.position, with_filter=True, requester=requester)
+        await self.node.dispatch_event(FiltersAppliedEvent(player=self, requester=requester, **kwargs))
 
     def _process_skip_segments(self, skip_segments: list[str] | str | None):
         if skip_segments is not None and self.node.supports_sponsorblock:
@@ -1086,7 +1187,7 @@ class Player(VoiceProtocol):
 
     async def queue_duration(self) -> int:
         dur = [
-            track.duration
+            track.duration  # type: ignore
             async for track in AsyncIter(self.queue.raw_queue).filter(lambda x: not (x.stream or x.is_partial))
         ]
         queue_dur = sum(dur)
@@ -1102,25 +1203,34 @@ class Player(VoiceProtocol):
         queue_total_duration = remain + queue_dur
         return queue_total_duration
 
-    async def remove_from_queue(self, track: AudioTrack) -> int:
+    async def remove_from_queue(
+        self,
+        track: AudioTrack,
+        requester: discord.Member,
+        duplicates: bool = False,
+    ) -> int:
         if self.queue.empty():
             return 0
-        unique_id = track.unique_identifier
-        start_count = self.queue.qsize()
-        counter = itertools.count(1)
-        queue = filter(lambda x: x.unique_identifier != unique_id and next(counter), self.queue.raw_queue)
-        valid = next(copy(counter)) - 1
-        diff = start_count - valid
-        self.queue.raw_queue = collections.deque(queue)
-        return diff
+        tracks, count = await self.queue.remove(track, duplicates=duplicates)
+        await self.node.dispatch_event(TracksRemovedFromQueueEvent(player=self, requester=requester, tracks=tracks))
+        return count
 
-    async def move_track(self, track: AudioTrack, new_index: int = None) -> bool:
+    async def move_track(
+        self,
+        track: AudioTrack,
+        requester: discord.Member,
+        new_index: int = None,
+    ) -> bool:
         if self.queue.empty():
             return False
-        index = next(i for i, t in enumerate(self.queue.raw_queue) if t == track)
+        index = self.queue.index(track)
         track = await self.queue.get(index)
         await self.queue.put([track], new_index)
+        await self.node.dispatch_event(
+            TrackQueuePositionChangedEvent(before=index, after=new_index, track=track, player=self, requester=requester)
+        )
         return True
 
-    async def shuffle_queue(self) -> None:
+    async def shuffle_queue(self, requester: discord.Member) -> None:
+        await self.node.dispatch_event(QueueShuffledEvent(player=self, requester=requester))
         await self.queue.shuffle()

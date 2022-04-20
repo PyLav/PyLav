@@ -537,6 +537,7 @@ class Client:
 
     async def connect_player(
         self,
+        requester: discord.Member,
         channel: discord.VoiceChannel,
         node: Node = None,
         self_deaf: bool = True,
@@ -552,13 +553,14 @@ class Client:
             The node to use for the connection.
         self_deaf: :class:`bool`
             Whether the bot should be deafened.
-
+        requester: :class:`discord.Member`
+            The member requesting the connection.
         Returns
         -------
         :class:`Player`
             The player for the target guild.
         """
-        return await self.player_manager.create(channel, channel.rtc_region, node, self_deaf)
+        return await self.player_manager.create(channel, channel.rtc_region, node, self_deaf, requester)
 
     async def construct_embed(
         self,

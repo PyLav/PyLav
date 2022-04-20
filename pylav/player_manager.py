@@ -46,7 +46,7 @@ class PlayerManager:
         """Returns an iterator that yields a tuple of (guild_id, player)."""
         yield from self.players.items()
 
-    async def destroy(self, guild_id: int):
+    async def destroy(self, guild_id: int, requester: discord.Member | None):
         """
         Removes a player from cache, and also Lavalink if applicable.
         Ensure you have disconnected the given guild_id from the voicechannel
@@ -67,7 +67,7 @@ class PlayerManager:
 
         if player.node and player.node.available:
             await player.node.send(op="destroy", guildId=player.guild_id)
-            player.cleanup()
+            player.disconnect(requester=requester)
 
         LOGGER.debug("[NODE-%s] Successfully destroyed player %s", player.node.name, guild_id)
 
@@ -122,6 +122,7 @@ class PlayerManager:
         endpoint: str = None,
         node: Node = None,
         self_deaf: bool = False,
+        requester: discord.Member = None,
     ) -> Player:
         """
         Creates a player if one doesn't exist with the given information.
@@ -141,13 +142,15 @@ class PlayerManager:
             The node to put the player on. Defaults to `None` and a node with the lowest penalty is chosen.
         self_deaf: :class:`bool`
             Whether the player should deafen themselves. Defaults to `False`.
+        requester: :class:`discord.Member`
+            The member requesting the player. Defaults to `None`.
         Returns
         -------
         :class:`Player`
         """
         if p := self.players.get(channel.guild.id):
             if channel.id != p.channel_id:
-                await p.move_to(channel, self_deaf=self_deaf)
+                await p.move_to(requester, channel, self_deaf=self_deaf)
             return p
 
         region = self.client.node_manager.get_region(endpoint)
@@ -158,7 +161,7 @@ class PlayerManager:
             raise NoNodeAvailable("No available nodes!")
         player: Player = await channel.connect(cls=Player)  # type: ignore
         player.post_init(node=best_node, player_manager=self)
-        await player.move_to(channel=player.channel, self_deaf=self_deaf)
+        await player.move_to(requester, channel=player.channel, self_deaf=self_deaf)
 
         self.players[channel.guild.id] = player
         LOGGER.debug("[NODE-%s] Successfully created player for %s", best_node.name, channel.guild.id)

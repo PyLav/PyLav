@@ -35,6 +35,7 @@ __all__ = (
     "Queue",
     "LifoQueue",
     "SegmentCategory",
+    "Segment",
 )
 
 from red_commons.logging import getLogger
@@ -633,22 +634,25 @@ class Queue:
         del self._queue[index]
         return value
 
-    async def remove(self, value: T, duplicates: bool = False) -> int:
+    async def remove(self, value: T, duplicates: bool = False) -> tuple[list[T], int]:
         """Removes the first occurrence of a value from the queue.
 
         If duplicates is True, all occurrences of the value are removed.
         Returns the number of occurrences removed.
         """
         count = 0
+        removed = []
         try:
-            self._queue.remove(value)
+            i = self._queue.index(value)
+            removed.append(await self.popindex(i))
             count += 1
             if duplicates:
                 with contextlib.suppress(ValueError):
                     while value in self:
-                        self._queue.remove(value)
+                        i = self._queue.index(value)
+                        removed.append(await self.popindex(i))
                         count += 1
-            return count
+            return removed, count
         except ValueError:
             raise IndexError("Value not in queue")
 
@@ -995,3 +999,12 @@ class SegmentCategory(Enum):
         Get segment category list value
         """
         return [category.value for category in cls]
+
+
+class Segment:
+    __slots__ = ("category", "start", "end")
+
+    def __init__(self, /, category: str, start: float, end: float):
+        self.category = category
+        self.start = start
+        self.end = end
