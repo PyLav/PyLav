@@ -54,7 +54,7 @@ class Volume(FilterMixin):
         return self.value
 
     def get_int_value(self) -> int:
-        return min(int(round(self.value * 100)), 150)
+        return min(int(round(self.value * 100)), 1000)
 
     def __repr__(self):
         return str(self.value)

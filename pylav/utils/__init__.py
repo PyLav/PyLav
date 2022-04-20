@@ -688,6 +688,8 @@ class Queue:
         """Number of items in the queue."""
         return len(self._queue)
 
+    size = qsize
+
     @property
     def maxsize(self) -> int:
         """Number of items allowed in the queue."""
@@ -817,9 +819,13 @@ class Queue:
 
     def clear(self):
         """Remove all items from the queue."""
-        self._getters.clear()
-        self._putters.clear()
         self._queue.clear()
+        for i in self._getters:
+            i.cancel()
+        self._getters.clear()
+        for i in self._putters:
+            i.cancel()
+        self._putters.clear()
 
     async def shuffle(self):
         """Shuffle the queue."""
