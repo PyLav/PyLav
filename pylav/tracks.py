@@ -431,43 +431,42 @@ class AudioTrack:
 
             if self.query and self.query.is_local:
                 if not (unknown_title and unknown_author):
-                    base = discord.utils.escape_markdown(f"{self.title}{author_string}")
+                    base = f"{self.title}{author_string}"
                     if max_length:
-                        return f"{maybe_bold}{url_start}{base[:max_length-7]}...{url_end}{maybe_bold}"
+                        base = base[: max_length - 7] + "..."
                     else:
-                        return f"{maybe_bold}{url_start}{base}{url_end}{maybe_bold}" + discord.utils.escape_markdown(
-                            f"\n{await self.query.query_to_string()} "
-                        )
+                        base += f"\n{await self.query.query_to_string()} "
+                    base = discord.utils.escape_markdown(base)
+                    return f"{maybe_bold}{url_start}{base}{url_end}{maybe_bold}"
                 elif not unknown_title:
-                    base = discord.utils.escape_markdown(f"{self.title}")
+                    base = self.title
                     if max_length:
-                        return f"{maybe_bold}{url_start}{base[:max_length-7]}...{url_end}{maybe_bold}"
+                        base = base[: max_length - 7] + "..."
                     else:
-                        return f"{maybe_bold}{url_start}{base}{url_end}{maybe_bold}" + discord.utils.escape_markdown(
-                            f"\n{await self.query.query_to_string()} "
-                        )
+                        base += f"\n{await self.query.query_to_string()} "
+                    base = discord.utils.escape_markdown(base)
+                    return f"{maybe_bold}{url_start}{base}{url_end}{maybe_bold}"
                 else:
-                    base = discord.utils.escape_markdown(await self.query.query_to_string(max_length))
+                    base = await self.query.query_to_string(max_length)
                     if max_length:
-                        return f"{maybe_bold}{url_start}{base[:max_length-7]}...{url_end}{maybe_bold}"
-                    else:
-                        return f"{maybe_bold}{url_start}{base}{url_end}{maybe_bold}"
+                        base = base[: max_length - 7] + "..."
+                    base = discord.utils.escape_markdown(base)
+                    return f"{maybe_bold}{url_start}{base}{url_end}{maybe_bold}"
             else:
                 if self.stream:
                     icy = await self._icyparser(self.uri)
                     if icy:
-                        title = icy
+                        base = icy
                     else:
-                        title = f"{self.title}{author_string}"
+                        base = f"{self.title}{author_string}"
                 elif self.author.lower() not in self.title.lower():
-                    title = f"{self.title}{author_string}"
+                    base = f"{self.title}{author_string}"
                 else:
-                    title = self.title
-                title = discord.utils.escape_markdown(title)
+                    base = self.title
                 if max_length:
-                    return f"{maybe_bold}{url_start}{title[:max_length-7]}...{url_end}{maybe_bold}"
-                else:
-                    return f"{maybe_bold}{url_start}{title}{url_end}{maybe_bold}"
+                    base = base[: max_length - 7] + "..."
+                base = discord.utils.escape_markdown(base)
+                return f"{maybe_bold}{url_start}{base}{url_end}{maybe_bold}"
 
     async def _icyparser(self, url: str) -> str | None:
         try:
