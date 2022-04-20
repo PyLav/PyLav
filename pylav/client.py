@@ -24,7 +24,7 @@ from pylav._lib_config import LibConfigManager  # noqa
 from pylav.config import ConfigManager
 from pylav.equalizers import EqualizerManager
 from pylav.events import Event
-from pylav.exceptions import AnotherClientAlreadyRegistered, CogAlreadyRegistered, CogHasBeenRegistered, NodeError
+from pylav.exceptions import AnotherClientAlreadyRegistered, CogAlreadyRegistered, CogHasBeenRegistered, NoNodeAvailable
 from pylav.managed_node import LocalNodeManager
 from pylav.node import Node
 from pylav.node_manager import NodeManager
@@ -367,7 +367,7 @@ class Client:
         else:
             nodes = self.node_manager.available_nodes
         if not nodes:
-            raise NodeError("No available nodes!")
+            raise NoNodeAvailable("No available nodes!")
         node = node or random.choice(list(nodes))
         return await node.get_tracks(query, first=first)
 
@@ -388,7 +388,7 @@ class Client:
             A dict representing the track's information.
         """
         if not self.node_manager.available_nodes:
-            raise NodeError("No available nodes!")
+            raise NoNodeAvailable("No available nodes!")
         node = node or random.choice(self.node_manager.available_nodes)
         return await node.decode_track(track)
 
@@ -409,7 +409,7 @@ class Client:
             A list of dicts representing track information.
         """
         if not self.node_manager.available_nodes:
-            raise NodeError("No available nodes!")
+            raise NoNodeAvailable("No available nodes!")
         node = node or random.choice(self.node_manager.available_nodes)
         return await node.decode_tracks(tracks)
 

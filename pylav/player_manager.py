@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Iterator
 import discord
 from red_commons.logging import getLogger
 
-from pylav.exceptions import NodeError
+from pylav import NoNodeAvailable
 from pylav.player import Player
 
 if TYPE_CHECKING:
@@ -155,7 +155,7 @@ class PlayerManager:
         best_node = node or self.client.node_manager.find_best_node(region)
 
         if not best_node:
-            raise NodeError("No available nodes!")
+            raise NoNodeAvailable("No available nodes!")
         player: Player = await channel.connect(cls=Player)  # type: ignore
         player.post_init(node=best_node, player_manager=self)
         await player.move_to(channel=player.channel, self_deaf=self_deaf)

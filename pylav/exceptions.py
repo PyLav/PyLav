@@ -28,6 +28,7 @@ __all__ = (
     "CogAlreadyRegistered",
     "CogHasBeenRegistered",
     "AnotherClientAlreadyRegistered",
+    "NoNodeAvailable",
 )
 
 
@@ -152,3 +153,7 @@ class CogAlreadyRegistered(PyLavError):
 
 class CogHasBeenRegistered(PyLavError):
     """Raised when a cog is registered."""
+
+
+class NoNodeAvailable(NodeError):
+    """Raised when no node is available."""

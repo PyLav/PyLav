@@ -31,6 +31,7 @@ __all__ = (
     "CogAlreadyRegistered",
     "CogHasBeenRegistered",
     "AnotherClientAlreadyRegistered",
+    "NoNodeAvailable",
     "Track",
     "Player",
     "Client",
