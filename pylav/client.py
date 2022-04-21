@@ -111,6 +111,7 @@ class Client:
         self._ready = False
         self._spotify_client_id = None
         self._spotify_client_secret = None
+        self._spotify_auth = None
 
     @property
     def initialized(self) -> bool:
@@ -124,9 +125,7 @@ class Client:
             raise PyLavNotInitialized(
                 "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
             )
-
-        auth = ClientCredentialsFlow(client_id=self._spotify_client_id, client_secret=self._spotify_client_secret)
-        return SpotifyClient(self.auth)
+        return SpotifyClient(self._spotify_auth)
 
     async def initialize(self, client_id: str | None = None, client_secret: str | None = None) -> None:
         if self._ready:
@@ -142,27 +141,41 @@ class Client:
         enable_managed_node = config_data.enable_managed_node
         self._config_folder = aiopath.AsyncPath(config_data.config_folder)
         data = await self._node_config_manager.get_bundled_node_config()
+        if not all([client_id, client_secret]):
+            spotify_data = data.extras["plugins"]["topissourcemanagers"]["spotify"]
+            client_id = spotify_data["clientId"]
+            client_secret = spotify_data["clientSecret"]
+        elif all([client_id, client_secret]):
+            data.extras["plugins"]["topissourcemanagers"]["spotify"]["clientId"] = client_id
+            data.extras["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"] = client_secret
+            data.save()
+        self._spotify_client_id = client_id
+        self._spotify_client_secret = client_secret
+        self._spotify_auth = ClientCredentialsFlow(
+            client_id=self._spotify_client_id, client_secret=self._spotify_client_secret
+        )
+        from pylav.localfiles import LocalFile
+
+        await LocalFile.add_root_folder(path=self._config_folder / "music", create=True)
         self._ready = True
         self._local_node_manager = LocalNodeManager(self, auto_update=auto_update_managed_nodes)
         if enable_managed_node:
             await self._local_node_manager.start(java_path=config_data.java_path)
-        from pylav.localfiles import LocalFile
-
-        await LocalFile.add_root_folder(path=self._config_folder / "music", create=True)
-
         await self.node_manager.connect_to_all_nodes()
-        if not all([client_id, client_secret]):
-            spotify_data = data.extras["plugins"]["topissourcemanagers"]["spotify"]
-            client_id = spotify_data.client_id
-            client_secret = spotify_data.client_secret
-
         await self.player_manager.restore_player_states()
-        self._ready = True
 
     async def update_spotify_tokens(self, client_id: str, client_secret: str) -> None:
         self._spotify_client_id = client_id
         self._spotify_client_secret = client_secret
-        await self.node_db_manager.bundled_node_config
+        self._spotify_auth = ClientCredentialsFlow(
+            client_id=self._spotify_client_id, client_secret=self._spotify_client_secret
+        )
+        self.node_db_manager.bundled_node_config.extras["plugins"]["topissourcemanagers"]["spotify"][
+            "clientId"
+        ] = client_id
+        self.node_db_manager.bundled_node_config.extras["plugins"]["topissourcemanagers"]["spotify"][
+            "clientSecret"
+        ] = client_secret
 
     @property
     def node_db_manager(self) -> NodeConfigManager:

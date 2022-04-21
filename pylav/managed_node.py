@@ -407,6 +407,8 @@ class LocalNodeManager:
         self.abort_for_unmanaged.clear()
         await self._partial_shutdown()
         await self._session.close()
+        if self.node:
+            await self._client.node_manager.remove_node(self.node)
 
     async def _partial_shutdown(self) -> None:
         self.ready.clear()
