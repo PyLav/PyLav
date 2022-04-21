@@ -4,29 +4,24 @@ from typing import TYPE_CHECKING
 
 from discord.ext import commands
 
-QUERY_CLS = None
-
-
-class QueryConverter(commands.Converter):
-    async def convert(self, ctx: commands.Context, arg: str) -> Query:
-        return await QUERY_CLS.from_string(arg)
-
-
 if TYPE_CHECKING:
     from pylav.query import Query
 
     QueryConverter = Query
-    QUERY_CLS = Query
+    QueryPlaylistConverter = Query
 else:
-    QueryConverter = QueryConverter
 
+    class QueryConverter(commands.Converter):
+        async def convert(self, ctx: commands.Context, arg: str) -> Query:
+            from pylav.query import Query
 
-def __init_import():
-    global QUERY_CLS
-    from pylav.query import Query as _Query
+            return await Query.from_string(arg)
 
-    QUERY_CLS = _Query
+    class QueryPlaylistConverter(commands.Converter):
+        async def convert(self, ctx: commands.Context, arg: str) -> Query:
+            from pylav.query import Query
 
-
-# Stops circular import
-__init_import()
+            query = await Query.from_string(arg)
+            if not (query.is_playlist or query.is_album):
+                raise commands.BadArgument("Query must be a playlist or album.")
+            return query

@@ -29,6 +29,8 @@ __all__ = (
     "CogHasBeenRegistered",
     "AnotherClientAlreadyRegistered",
     "NoNodeAvailable",
+    "SQLError",
+    "EntryNotFoundError",
 )
 
 from discord.ext.commands import CommandError
@@ -36,6 +38,18 @@ from discord.ext.commands import CommandError
 
 class PyLavError(CommandError):
     """Base exception for errors in the library."""
+
+
+class PyLavNotInitialized(PyLavError):
+    """Raised when the library is not initialized."""
+
+
+class SQLError(PyLavError):
+    """Base exception for errors in SQL."""
+
+
+class EntryNotFoundError(SQLError):
+    """Raised when an entry is not found."""
 
 
 class AnotherClientAlreadyRegistered(PyLavError):

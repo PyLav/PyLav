@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Iterator
 import discord
 from red_commons.logging import getLogger
 
+from pylav.events import PlayerConnectedEvent
 from pylav.player import Player
 
 if TYPE_CHECKING:
@@ -59,6 +60,8 @@ class PlayerManager:
         ----------
         guild_id: int
             The guild_id associated with the player to remove.
+        requester: :class:`discord.Member`
+            The member requesting the player to be removed.
         """
         if guild_id not in self.players:
             return
@@ -168,7 +171,7 @@ class PlayerManager:
         return player
 
     async def save_all_players(self) -> None:
-        await self.client.player_state_manager.upsert_players([p.to_dict() for p in self])
+        pass
 
     async def restore_player_states(self) -> None:
         pass

@@ -20,19 +20,24 @@ from discord.types.embed import EmbedType
 from red_commons.logging import getLogger
 
 from pylav._config import __VERSION__, CONFIG_DIR
-from pylav._lib_config import LibConfigManager  # noqa
-from pylav.config import ConfigManager
-from pylav.equalizers import EqualizerManager
 from pylav.events import Event
-from pylav.exceptions import AnotherClientAlreadyRegistered, CogAlreadyRegistered, CogHasBeenRegistered, NoNodeAvailable
+from pylav.exceptions import (
+    AnotherClientAlreadyRegistered,
+    CogAlreadyRegistered,
+    CogHasBeenRegistered,
+    NoNodeAvailable,
+    PyLavNotInitialized,
+)
 from pylav.managed_node import LocalNodeManager
 from pylav.node import Node
 from pylav.node_manager import NodeManager
 from pylav.player import Player
 from pylav.player_manager import PlayerManager
-from pylav.player_state import PlayerStateManager
-from pylav.playlists import PlaylistManager
 from pylav.query import Query
+from pylav.sql.clients.lib import LibConfigManager  # noqa
+from pylav.sql.clients.nodes import NodeConfigManager
+from pylav.sql.clients.playlist_manager import PlaylistConfigManager
+from pylav.sql.clients.query_manager import QueryCacheManager
 from pylav.utils import add_property
 
 LOGGER = getLogger("red.PyLink.Client")
@@ -64,28 +69,9 @@ class Client:
         the player was moved via the fail-over mechanism, the player will still move back to the original
         node when it becomes available. This behaviour can be avoided in custom player implementations by
         setting `self._original_node` to `None` in the `change_node` function.
-
-    Attributes
-    ----------
-    node_manager: :class:`NodeManager` # noqa
-        Represents the node manager that contains all lavalink nodes.
-    player_manager: :class:`PlayerManager`
-        Represents the player manager that contains all the players.
-    player_state_manager: :class:`PlayerStateManager`
-        Represents the player state manager that is used to save/ready player states.
-    config_manager: :class:`ConfigManager`
-        Represents the config manager that is used to save/load configs.
-    equalizer_manager: :class:`EqualizerManager`
-        Represents the equalizer manager that is used to save/load equalizers.
-    playlists: :class:`PlaylistManager`
-        Represents the playlist manager that is used to save/load playlists.
     """
 
     _event_hooks = defaultdict(list)
-    _config_manager: ConfigManager
-    _equalizer_manager: EqualizerManager
-    _player_state_manager: PlayerStateManager
-    _playlist_manager: PlaylistManager
     _local_node_manager: LocalNodeManager
     _spotify_client_auth: ClientCredentialsFlow
     _spotify_client: SpotifyClient
@@ -119,6 +105,9 @@ class Client:
         self._node_manager = NodeManager(self)
         self._player_manager = PlayerManager(self, player)
         self._lib_config_manager = LibConfigManager(self)
+        self._node_config_manager = NodeConfigManager(self)
+        self._playlist_config_manager = PlaylistConfigManager(self)
+        self._query_cache_manager = QueryCacheManager(self)
         self._connect_back = connect_back
         self._warned_about_no_search_nodes = False
         self._ready = False
@@ -131,148 +120,145 @@ class Client:
     @property
     def spotify_client(self) -> SpotifyClient:
         """Returns the spotify client."""
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
         return SpotifyClient(self._spotify_client_auth)
 
     async def initialize(self):
         if self._ready:
             return
         await self._lib_config_manager.initialize()
-        config_data = await self._lib_config_manager.get_config()
-        if not config_data:
-            config_data = await self.set_lib_config(
-                config_folder=self._config_folder,
-                db_connection_string="sqlite+aiosqlite:///",
-                java_path="java",
-                enable_managed_node=True,
-                auto_update_managed_nodes=True,
-            )
-
-        connection_string = config_data.get("db_connection_string")
-        auto_update_managed_nodes = config_data.get("auto_update_managed_nodes", False)
-        enable_managed_node = config_data.get("enable_managed_node", False)
-        self._config_folder = aiopath.AsyncPath(config_data.get("config_folder"))
-        self._config_manager = ConfigManager(
-            self, config_folder=self._config_folder, sql_connection_string=connection_string
+        config_data = await self._lib_config_manager.get_config(
+            config_folder=self._config_folder,
+            java_path="java",
+            enable_managed_node=True,
+            auto_update_managed_nodes=True,
         )
-        await self._config_manager.initialize()
-
-        self._equalizer_manager = EqualizerManager(
-            self, config_folder=self._config_folder, sql_connection_string=connection_string
-        )
-        await self._equalizer_manager.initialize()
-
-        self._player_state_manager = PlayerStateManager(
-            self, config_folder=self._config_folder, sql_connection_string=connection_string
-        )
-        await self._player_state_manager.initialize()
-
-        self._playlist_manager = PlaylistManager(
-            self, config_folder=self._config_folder, sql_connection_string=connection_string
-        )
-        await self._playlist_manager.initialize()
-
+        auto_update_managed_nodes = config_data.auto_update_managed_nodes
+        enable_managed_node = config_data.enable_managed_node
+        self._config_folder = aiopath.AsyncPath(config_data.config_folder)
+        data = await self._node_config_manager.get_bundled_node_config()
+        self._ready = True
         self._local_node_manager = LocalNodeManager(self, auto_update=auto_update_managed_nodes)
-
-        # TODO: Uncomment and test
-
         if enable_managed_node:
-            await self._local_node_manager.start(java_path=config_data.get("java_path"))
+            await self._local_node_manager.start(java_path=config_data.java_path)
         from pylav.localfiles import LocalFile
 
         await LocalFile.add_root_folder(path=self._config_folder / "music", create=True)
-        data = await self.config_manager.get_managed_node_config()
-        spotify_data = data["extras"]["plugins"]["topissourcemanagers"]["spotify"]
+        spotify_data = data.extras["plugins"]["topissourcemanagers"]["spotify"]
         self._spotify_client_auth = ClientCredentialsFlow(
             client_id=spotify_data["clientId"], client_secret=spotify_data["clientSecret"]
         )
         await self.player_manager.restore_player_states()
         self._ready = True
 
-    async def set_lib_config(
-        self,
-        config_folder: aiopath.AsyncPath | str,
-        db_connection_string: str,
-        java_path: str,
-        enable_managed_node: bool,
-        auto_update_managed_nodes: bool,
-    ) -> dict:
-        config_folder: aiopath.AsyncPath = aiopath.AsyncPath(config_folder)
-        if await config_folder.is_file():
-            raise ValueError("The config folder must be a directory.")
-        if await config_folder.is_dir() and not await config_folder.exists():
-            await config_folder.mkdir(parents=True, exist_ok=True)
+    @property
+    def node_db_manager(self) -> NodeConfigManager:
+        """Returns the sql node config manager."""
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
+        return self._node_config_manager
 
-        if db_connection_string.startswith("sqlite"):
-            db_connection_string = "sqlite+aiosqlite:///"
-        elif db_connection_string.startswith("postgresql"):
-            if not db_connection_string.startswith("postgresql+asyncpg://"):
-                raise ValueError(
-                    "Postgresql connection string must be formatted like "
-                    "`postgresql+asyncpg://user:password@host:port/dbname`."
-                )
-            else:
-                LOGGER.debug("Postgresql connection string set to %s.", db_connection_string)
-        else:
-            raise ValueError("Invalid connection string, SQL or Postgresql connection string required.")
+    @property
+    def playlist_db_manager(self) -> PlaylistConfigManager:
+        """Returns the sql playlist config manager."""
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
+        return self._playlist_config_manager
 
-        self._config_folder = config_folder
-        return await self._lib_config_manager.update_config(
-            config_folder=str(config_folder),
-            db_connection_string=db_connection_string,
-            java_path=java_path,
-            enable_managed_node=enable_managed_node,
-            auto_update_managed_nodes=auto_update_managed_nodes,
-        )
+    @property
+    def lib_db_manager(self) -> LibConfigManager:
+        """Returns the sql lib config manager."""
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
+        return self._lib_config_manager
+
+    @property
+    def query_cache_manager(self) -> QueryCacheManager:
+        """Returns the query cache manager."""
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
+        return self._query_cache_manager
 
     @property
     def managed_node_controller(self) -> LocalNodeManager:
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
         return self._local_node_manager
 
     @property
     def node_manager(self) -> NodeManager:
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
         return self._node_manager
 
     @property
     def player_manager(self) -> PlayerManager:
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
         return self._player_manager
 
     @property
-    def config_manager(self) -> ConfigManager:
-        return self._config_manager
-
-    @property
-    def equalizer_manager(self) -> EqualizerManager:
-        return self._equalizer_manager
-
-    @property
-    def player_state_manager(self) -> PlayerStateManager:
-        return self._player_state_manager
-
-    @property
-    def playlist_manager(self) -> PlaylistManager:
-        return self._playlist_manager
-
-    @property
     def config_folder(self) -> aiopath.AsyncPath:
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
         return self._config_folder
 
     @property
     def bot(self) -> discord.Client:
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
         return self._bot
 
     @property
     def session(self) -> aiohttp.ClientSession:
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
         return self._session
 
     @property
     def lib_version(self) -> str:
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
         return __VERSION__
 
     @property
     def bot_id(self) -> str:
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
         return self._user_id
 
     def add_event_hook(self, hook: Callable):
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
         if hook not in self._event_hooks["Generic"]:
             self._event_hooks["Generic"].append(hook)
 
@@ -318,6 +304,10 @@ class Client:
         unique_identifier: Optional[:class:`str`]
             A unique identifier for the node. Defaults to `None`.
         """
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
 
         return self.node_manager.add_node(
             host=host,
@@ -357,6 +347,10 @@ class Client:
         :class:`dict`
             A dict representing tracks.
         """
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
         if search_only_nodes:
             nodes = self.node_manager.search_only_nodes
             if not nodes:
@@ -387,6 +381,10 @@ class Client:
         :class:`dict`
             A dict representing the track's information.
         """
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
         if not self.node_manager.available_nodes:
             raise NoNodeAvailable("No available nodes!")
         node = node or random.choice(self.node_manager.available_nodes)
@@ -408,13 +406,16 @@ class Client:
         List[:class:`dict`]
             A list of dicts representing track information.
         """
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
         if not self.node_manager.available_nodes:
             raise NoNodeAvailable("No available nodes!")
         node = node or random.choice(self.node_manager.available_nodes)
         return await node.decode_tracks(tracks)
 
-    @staticmethod
-    async def routeplanner_status(node: Node) -> dict | None:
+    async def routeplanner_status(self, node: Node) -> dict | None:
         """|coro|
         Gets the route-planner status of the target node.
 
@@ -428,10 +429,13 @@ class Client:
         :class:`dict`
             A dict representing the route-planner information.
         """
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
         return await node.routeplanner_status()
 
-    @staticmethod
-    async def routeplanner_free_address(node: Node, address: str) -> bool:
+    async def routeplanner_free_address(self, node: Node, address: str) -> bool:
         """|coro|
         Gets the route-planner status of the target node.
 
@@ -447,10 +451,13 @@ class Client:
         :class:`bool`
             True if the address was freed, False otherwise.
         """
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
         return await node.routeplanner_free_address(address)
 
-    @staticmethod
-    async def routeplanner_free_all_failing(node: Node) -> bool:
+    async def routeplanner_free_all_failing(self, node: Node) -> bool:
         """|coro|
         Gets the route-planner status of the target node.
 
@@ -464,10 +471,13 @@ class Client:
         :class:`bool`
             True if all failing addresses were freed, False otherwise.
         """
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
         return await node.routeplanner_free_all_failing()
 
-    @staticmethod
-    async def _dispatch_event(event: Event):
+    async def _dispatch_event(self, event: Event):
         """|coro|
         Dispatches the given event to all registered hooks.
 
@@ -476,6 +486,10 @@ class Client:
         event: :class:`Event`
             The event to dispatch to the hooks.
         """
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
         generic_hooks = Client._event_hooks["Generic"]
         targeted_hooks = Client._event_hooks[type(event).__name__]
 
@@ -507,12 +521,7 @@ class Client:
         _COGS_REGISTERED.discard(cog.__cog_name__)
         if not _COGS_REGISTERED:
             await self.player_manager.save_all_players()
-            await self._config_manager.close()
-            await self._equalizer_manager.close()
-            await self._player_state_manager.close()
-            await self._playlist_manager.close()
             await self._local_node_manager.shutdown()
-            await self._lib_config_manager.close()
             await self._node_manager.close()
             await self._session.close()
             del self.bot._pylav_client  # noqa
@@ -531,6 +540,10 @@ class Client:
         :class:`Player`
             The player for the target guild.
         """
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
         if not isinstance(guild, int):
             guild = guild.id
         return self.player_manager.get(guild)
@@ -560,6 +573,10 @@ class Client:
         :class:`Player`
             The player for the target guild.
         """
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
         return await self.player_manager.create(channel, channel.rtc_region, node, self_deaf, requester)
 
     async def construct_embed(
@@ -580,6 +597,10 @@ class Client:
         footer_url: str = None,
         messageable: Messageable = None,
     ) -> discord.Embed:
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
 
         if messageable and not (colour or color) and hasattr(self._bot, "get_embed_color"):
             colour = await self._bot.get_embed_color(messageable)

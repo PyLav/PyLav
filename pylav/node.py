@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
@@ -10,6 +11,7 @@ from pylav.events import Event
 from pylav.exceptions import Unauthorized
 from pylav.filters import ChannelMix, Distortion, Equalizer, Karaoke, LowPass, Rotation, Timescale, Vibrato, Volume
 from pylav.filters.tremolo import Tremolo
+from pylav.utils import AsyncIter
 
 if TYPE_CHECKING:
     from pylav.node_manager import NodeManager
@@ -494,12 +496,29 @@ class Node:
         :class:`dict`
             A dict representing tracks.
         """
+        if response := await self.node_manager.client.query_cache_manager.get_query(query):
+            # Note this is a partial return
+            #   (the tracks are only B64 encoded, to get the decoded tracks like the api returns
+            #   you'd need to call `pylava.utils.decode_tracks`)
+            return {
+                "playlistInfo:": {
+                    "name": response.name,
+                },
+                "loadType':": "PlaylistLoaded"
+                if query.is_playlist or query.is_album
+                else "TrackLoaded"
+                if not query.is_search
+                else "SearchLoaded",
+                "tracks": [{"track": track} async for track in AsyncIter(response.tracks)],
+            }
+
         destination = f"{self.connection_protocol}://{self.host}:{self.port}/loadtracks"
         async with self._session.get(
             destination, headers={"Authorization": self.password}, params={"identifier": query.query_identifier}
         ) as res:
             if res.status == 200:
                 result = await res.json(loads=ujson.loads)
+                asyncio.create_task(self.node_manager.client.query_cache_manager.add_query(query, result))
                 if first:
                     return next(iter(result.get("tracks", [])), {})
                 return result

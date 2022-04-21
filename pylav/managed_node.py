@@ -285,9 +285,9 @@ class LocalNodeManager:
             raise
 
     async def process_settings(self):
-        data = await self._client.config_manager.create_bundled_node()
+        data = await self._client.node_db_manager.get_bundled_node_config()
         self._full_data = data
-        data = change_dict_naming_convention(data["extras"])
+        data = change_dict_naming_convention(data.extras)
         # The reason this is here is to completely remove these keys from the application.yml
         # if they are set to empty values
         if not all(

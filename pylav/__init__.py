@@ -32,6 +32,8 @@ __all__ = (
     "CogHasBeenRegistered",
     "AnotherClientAlreadyRegistered",
     "NoNodeAvailable",
+    "SQLError",
+    "EntryNotFoundError",
     "Track",
     "Player",
     "Client",
