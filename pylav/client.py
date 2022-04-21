@@ -73,8 +73,6 @@ class Client:
 
     _event_hooks = defaultdict(list)
     _local_node_manager: LocalNodeManager
-    _spotify_client_auth: ClientCredentialsFlow
-    _spotify_client: SpotifyClient
 
     def __init__(
         self,
@@ -111,6 +109,8 @@ class Client:
         self._connect_back = connect_back
         self._warned_about_no_search_nodes = False
         self._ready = False
+        self._spotify_client_id = None
+        self._spotify_client_secret = None
 
     @property
     def initialized(self) -> bool:
@@ -124,9 +124,11 @@ class Client:
             raise PyLavNotInitialized(
                 "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
             )
-        return SpotifyClient(self._spotify_client_auth)
 
-    async def initialize(self):
+        auth = ClientCredentialsFlow(client_id=self._spotify_client_id, client_secret=self._spotify_client_secret)
+        return SpotifyClient(self.auth)
+
+    async def initialize(self, client_id: str | None = None, client_secret: str | None = None) -> None:
         if self._ready:
             return
         await self._lib_config_manager.initialize()
@@ -147,12 +149,20 @@ class Client:
         from pylav.localfiles import LocalFile
 
         await LocalFile.add_root_folder(path=self._config_folder / "music", create=True)
-        spotify_data = data.extras["plugins"]["topissourcemanagers"]["spotify"]
-        self._spotify_client_auth = ClientCredentialsFlow(
-            client_id=spotify_data["clientId"], client_secret=spotify_data["clientSecret"]
-        )
+
+        await self.node_manager.connect_to_all_nodes()
+        if not all([client_id, client_secret]):
+            spotify_data = data.extras["plugins"]["topissourcemanagers"]["spotify"]
+            client_id = spotify_data.client_id
+            client_secret = spotify_data.client_secret
+
         await self.player_manager.restore_player_states()
         self._ready = True
+
+    async def update_spotify_tokens(self, client_id: str, client_secret: str) -> None:
+        self._spotify_client_id = client_id
+        self._spotify_client_secret = client_secret
+        await self.node_db_manager.bundled_node_config
 
     @property
     def node_db_manager(self) -> NodeConfigManager:
@@ -262,8 +272,10 @@ class Client:
         if hook not in self._event_hooks["Generic"]:
             self._event_hooks["Generic"].append(hook)
 
-    def add_node(
+    async def add_node(
         self,
+        *,
+        unique_identifier: int,
         host: str,
         port: int,
         password: str,
@@ -273,7 +285,7 @@ class Client:
         reconnect_attempts: int = 3,
         ssl: bool = False,
         search_only: bool = False,
-        unique_identifier: str | None = None,
+        skip_db: bool = False,
     ) -> Node:
         """
         Adds a node to Lavalink's node manager.
@@ -301,15 +313,14 @@ class Client:
             Whether to use SSL for the connection. Defaults to `False`.
         search_only: :class:`bool`
             Whether the node should only be used for searching. Defaults to `False`.
-        unique_identifier: Optional[:class:`str`]
+        unique_identifier: :class:`in`
             A unique identifier for the node. Defaults to `None`.
         """
         if not self.initialized:
             raise PyLavNotInitialized(
                 "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
             )
-
-        return self.node_manager.add_node(
+        return await self.node_manager.add_node(
             host=host,
             port=port,
             password=password,

@@ -172,7 +172,7 @@ class Node:
         reconnect_attempts: int = 3,
         ssl: bool = False,
         search_only: bool = False,
-        unique_identifier: str = None,
+        unique_identifier: int = None,
     ):
         from pylav.query import Query
 
@@ -183,8 +183,12 @@ class Node:
             unique_identifier = str(uuid4())
 
         self._name = name or f"{self.region}-{self.host}-{unique_identifier}"
+        self._region = None
+        self._host = host
+
+        print(f"{self.region}-{self.host}-{unique_identifier}")
         if self._manager.get_node_by_id(unique_identifier) is not None:
-            raise ValueError("A Node with identifier:%s already exists.")
+            raise ValueError(f"A Node with identifier:{unique_identifier} already exists.")
         self._identifier = unique_identifier
         self._ssl = ssl
         if port is None:
@@ -194,11 +198,9 @@ class Node:
                 self._port = 80
         else:
             self._port = port
-        self._host = host
         self._password = password
-        self._region = None
 
-        self._resume_key = resume_key
+        self._resume_key = resume_key or self._identifier
         self._resume_timeout = resume_timeout
         self._reconnect_attempts = reconnect_attempts
         self._search_only = search_only

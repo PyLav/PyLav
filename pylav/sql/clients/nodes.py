@@ -27,17 +27,35 @@ class NodeConfigManager:
                 "name": "PyLavManagedNode",
             }
         )
+        self.currently_in_db = {
+            0,
+        }
 
     @property
     def client(self) -> Client:
         return self._client
 
-    @staticmethod
-    async def get_node_config(node_id: str) -> NodeModel:
+    @property
+    def bundled_node_config(self) -> NodeModel:
+        return self._bundled
+
+    async def get_node_config(self, node_id: str) -> NodeModel:
         node = await NodeRow.select().output(load_json=True).where(NodeRow.id == node_id).first()
         if not node:
             raise EntryNotFoundError(f"Node with id {node_id} not found")
-        return NodeModel(**node)
+        model = NodeModel(**node)
+        self.currently_in_db.add(model.id)
+        return model
+
+    async def get_all_unamanaged_nodes(self) -> list[NodeModel]:
+        model_list = [
+            NodeModel(**node.to_dict())
+            for node in await NodeRow.objects().output(load_json=True).where(NodeRow.id != 0)
+        ]
+        for n in model_list:
+            self.currently_in_db.add(n.id)
+
+        return model_list
 
     async def get_bundled_node_config(self) -> NodeModel:
         node = (
@@ -47,3 +65,72 @@ class NodeConfigManager:
         )
         self._bundled = NodeModel(**node.to_dict())
         return self._bundled
+
+    async def add_node(
+        self,
+        host: str,
+        port: int,
+        password: str,
+        unique_identifier: int,
+        resume_key: str = None,
+        resume_timeout: int = 60,
+        name: str = None,
+        reconnect_attempts: int = 3,
+        ssl: bool = False,
+        search_only: bool = False,
+    ) -> NodeModel:
+        if unique_identifier in self.currently_in_db:
+            return await self.get_node_config(unique_identifier)
+
+        data = {"extras": {"server": {}, "lavalink": {"server": {}}}}
+        data["id"] = unique_identifier
+        data["ssl"] = ssl
+        data["reconnect_attempts"] = reconnect_attempts
+        data["search_only"] = search_only
+        data["name"] = name
+        data["extras"]["server"]["host"] = host
+        data["extras"]["server"]["host"] = port
+        data["extras"]["lavalink"]["server"]["password"] = password
+        data["extras"]["resume_timeout"] = resume_timeout
+        data["extras"]["resume_key"] = resume_key
+        node = NodeModel(**data)
+        await node.save()
+        self.currently_in_db.add(node.id)
+        return node
+
+    async def update_node(
+        self,
+        host: str,
+        port: int,
+        password: str,
+        unique_identifier: int,
+        resume_key: str = None,
+        resume_timeout: int = 60,
+        name: str = None,
+        reconnect_attempts: int = 3,
+        ssl: bool = False,
+        search_only: bool = False,
+        extras: dict = None,
+    ) -> NodeModel:
+        data = {"extras": {"server": {}, "lavalink": {"server": {}}}}
+        data["id"] = unique_identifier
+        data["ssl"] = ssl
+        data["reconnect_attempts"] = reconnect_attempts
+        data["search_only"] = search_only
+        data["name"] = name
+        if extras:
+            data["extras"] = extras
+        data["extras"]["server"]["host"] = host
+        data["extras"]["server"]["host"] = port
+        data["extras"]["lavalink"]["server"]["password"] = password
+        if unique_identifier != 0:
+            data["extras"]["resume_timeout"] = resume_timeout
+            data["extras"]["resume_key"] = resume_key
+        node = NodeModel(**data)
+        await node.save()
+        self.currently_in_db.add(node.id)
+        return node
+
+    async def delete(self, node_id: int) -> None:
+        await NodeRow.delete().where(NodeRow.id == node_id).execute()
+        self.currently_in_db.discard(node_id)

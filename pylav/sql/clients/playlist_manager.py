@@ -23,15 +23,17 @@ class PlaylistConfigManager:
 
     async def get_playlist_by_name(self, playlist_name: str, limit: int = None) -> list[PlaylistModel]:
         if limit is None:
-            playlist = await PlaylistRow.select().where(PlaylistRow.name == playlist_name).first()
-            if not playlist:
-                raise EntryNotFoundError(f"Playlist with name {playlist_name} not found")
-            return [PlaylistModel(**playlist)]
-        else:
-            playlists = await PlaylistRow.select().where(PlaylistRow.name == playlist_name).limit(limit)
+            playlists = await PlaylistRow.select().where(PlaylistRow.name.ilike(f"{playlist_name.lower()}"))
             if not playlists:
                 raise EntryNotFoundError(f"Playlist with name {playlist_name} not found")
-            return [PlaylistModel(**playlist.to_dict()) for playlist in playlists]
+            return [PlaylistModel(**playlist) for playlist in playlists]
+        else:
+            playlists = (
+                await PlaylistRow.select().where(PlaylistRow.name.ilike(f"{playlist_name.lower()}")).limit(limit)
+            )
+            if not playlists:
+                raise EntryNotFoundError(f"Playlist with name {playlist_name} not found")
+            return [PlaylistModel(**playlist) for playlist in playlists]
 
     @staticmethod
     async def get_playlist_by_id(playlist_id: int) -> PlaylistModel:
@@ -57,14 +59,14 @@ class PlaylistConfigManager:
         playlists = await PlaylistRow.select().where(PlaylistRow.author == author)
         if not playlists:
             raise EntryNotFoundError(f"Playlist with author {author} not found")
-        return [PlaylistModel(**playlist.to_dict()) for playlist in playlists]
+        return [PlaylistModel(**playlist) for playlist in playlists]
 
     @staticmethod
     async def get_playlists_by_scope(scope: int) -> list[PlaylistModel]:
         playlists = await PlaylistRow.select().where(PlaylistRow.scope == scope)
         if not playlists:
             raise EntryNotFoundError(f"Playlist with scope {scope} not found")
-        return [PlaylistModel(**playlist.to_dict()) for playlist in playlists]
+        return [PlaylistModel(**playlist) for playlist in playlists]
 
     @staticmethod
     async def get_all_playlists() -> AsyncIterator[PlaylistModel]:

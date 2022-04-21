@@ -10,7 +10,6 @@ import re
 import shlex
 import shutil
 import tempfile
-import uuid
 from typing import TYPE_CHECKING, ClassVar, Final, Pattern
 
 import aiohttp
@@ -173,7 +172,7 @@ class LocalNodeManager:
         self.timeout = timeout
         self._args = []
         self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
-        self._node_id: str = str(uuid.uuid4())
+        self._node_id: int = 0
         self._node: Node | None = None
         self._current_config = {}
         self._full_data = {}
@@ -642,7 +641,7 @@ class LocalNodeManager:
     async def connect_node(self, wait_for: float = 0.0):
         await asyncio.sleep(wait_for)
         if node := self._client.node_manager.get_node_by_id(self._node_id) is None:
-            self._node = self._client.add_node(
+            self._node = await self._client.add_node(
                 host=self._current_config["server"]["address"],
                 port=self._current_config["server"]["port"],
                 password=self._current_config["lavalink"]["server"]["password"],
@@ -651,7 +650,8 @@ class LocalNodeManager:
                 name=f"Managed: {self._node_pid}",
                 ssl=False,
                 search_only=False,
-                unique_identifier=self._node_id,
+                unique_identifier=0,
+                skip_db=True,
             )
         else:
             self._node = node

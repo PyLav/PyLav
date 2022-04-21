@@ -3,6 +3,8 @@ from __future__ import annotations
 import datetime
 from dataclasses import dataclass, field
 
+import discord
+
 from pylav._config import CONFIG_DIR
 from pylav.sql.tables import LibConfigRow, NodeRow, PlaylistRow, QueryRow
 
@@ -46,6 +48,23 @@ class PlaylistModel:
 
     async def delete(self):
         await PlaylistRow.delete().where(PlaylistRow.id == self.id)
+
+    async def can_manage(self, bot: discord.Client, requester: discord.abc.User) -> bool:
+        if requester.id in bot.owner_ids:  # noqa
+            return True
+        elif self.scope == bot.user.id:
+            return False
+        if guild := bot.get_guild(self.scope):
+            if guild.owner_id == requester.id:
+                return True
+            if hasattr(bot, "is_mod"):
+                if not isinstance(requester, discord.Member):
+                    requester = guild.get_member(requester.id)
+                    if not requester:
+                        return False
+                return await bot.is_mod(requester)
+            return False
+        return self.author == requester.id
 
 
 @dataclass(eq=True)
@@ -164,7 +183,7 @@ class NodeModel:
     @classmethod
     async def from_id(cls, id: int) -> NodeModel:
         response = await NodeRow.select().where(NodeRow.id == id).first()
-        return cls(**response.to_dict())
+        return cls(**response)
 
     def to_dict(self) -> dict:
         return {
@@ -176,10 +195,11 @@ class NodeModel:
             "name": self.name,
         }
 
-    async def get_connection_args(self) -> dict:
+    def get_connection_args(self) -> dict:
         if self.extras is None:
             raise ValueError("Node Connection config set")
         return {
+            "unique_identifier": self.id,
             "host": self.extras["server"]["address"],
             "port": self.extras["server"]["port"],
             "password": self.extras["lavalink"]["server"]["password"],
@@ -187,6 +207,8 @@ class NodeModel:
             "ssl": self.ssl,
             "reconnect_attempts": self.reconnect_attempts,
             "search_only": self.search_only,
+            "resume_timeout": self.extras.get("resume_timeout"),
+            "resume_key": self.extras.get("resume_key"),
         }
 
     async def save(self) -> None:
@@ -206,6 +228,9 @@ class NodeModel:
         node = await NodeRow.objects().output(load_json=True).get_or_create(NodeRow.id == self.id, defaults=values)
         if not node._was_created:  # noqa
             await NodeRow.update(values).where(NodeRow.id == self.id)
+
+    async def get_or_create(self) -> None:
+        await NodeRow.objects().output(load_json=True).get_or_create(NodeRow.id == self.id, defaults=values)
 
 
 @dataclass(eq=True)

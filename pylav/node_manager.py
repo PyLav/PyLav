@@ -68,18 +68,20 @@ class NodeManager:
         """Clears the player queue."""
         self._player_queue.clear()
 
-    def add_node(
+    async def add_node(
         self,
+        *,
         host: str,
         port: int,
         password: str,
+        unique_identifier: int,
         resume_key: str = None,
         resume_timeout: int = 60,
         name: str = None,
         reconnect_attempts: int = 3,
         ssl: bool = False,
         search_only: bool = False,
-        unique_identifier: str | None = None,
+        skip_db: bool = False,
     ) -> Node:
         """
         Adds a node to PyLink's node manager.
@@ -108,6 +110,8 @@ class NodeManager:
             Whether the node is search only. Defaults to `False`.
         unique_identifier: Optional[:class:`str`]
             A unique identifier for the node. Defaults to `None`.
+        skip_db: Optional[:class:`bool`]
+            Whether to skip the database creation op. Defaults to `False`.
         """
         node = Node(
             manager=self,
@@ -126,6 +130,18 @@ class NodeManager:
 
         LOGGER.info("[NODE-%s] Successfully added to Node Manager", node.name)
         LOGGER.verbose("[NODE-%s] Successfully added to Node Manager -- %r", node.name, node)
+        await self.client.node_db_manager.add_node(
+            host=host,
+            port=port,
+            password=password,
+            resume_key=resume_key,
+            resume_timeout=resume_timeout,
+            name=name,
+            reconnect_attempts=reconnect_attempts,
+            ssl=ssl,
+            search_only=search_only,
+            unique_identifier=unique_identifier,
+        )
         return node
 
     async def remove_node(self, node: Node) -> None:
@@ -140,6 +156,9 @@ class NodeManager:
         self.nodes.remove(node)
         LOGGER.info("[NODE-%s] Successfully removed Node", node.name)
         LOGGER.info("[NODE-%s] Successfully removed Node -- %r", node.name, node)
+        if node.identifier:
+            await self.client.node_db_manager.remove_node(node.identifier)
+            LOGGER.debug("[NODE-%s] Successfully deleted Node from database", node.name)
 
     def get_region(self, endpoint: str | None) -> str | None:
         """
@@ -205,12 +224,12 @@ class NodeManager:
         best_node = min(nodes, key=operator.attrgetter("connected_count", "penalty"))
         return best_node
 
-    def get_node_by_id(self, unique_identifier: str) -> Node | None:
+    def get_node_by_id(self, unique_identifier: int) -> Node | None:
         """
         Returns a node by its unique identifier.
         Parameters
         ----------
-        unique_identifier: :class:`str`
+        unique_identifier: :class:`int`
             The unique identifier of the node.
         Returns
         -------
@@ -277,3 +296,14 @@ class NodeManager:
 
     async def close(self) -> None:
         await self.session.close()
+
+    async def connect_to_all_nodes(self) -> None:
+        for node in await self.client.node_db_manager.get_all_unamanaged_nodes():
+            try:
+                connection_arguments = node.get_connection_args()
+                await self.add_node(**connection_arguments, skip_db=True)
+            except (ValueError, KeyError) as exc:
+                LOGGER.warning(
+                    "[NODE-%s] Invalid node, skipping ... id: %s - Original error: %s", node.name, node.identifier, exc
+                )
+                continue
