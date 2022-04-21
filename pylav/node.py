@@ -503,10 +503,10 @@ class Node:
             #   (the tracks are only B64 encoded, to get the decoded tracks like the api returns
             #   you'd need to call `pylava.utils.decode_tracks`)
             return {
-                "playlistInfo:": {
+                "playlistInfo": {
                     "name": response.name,
                 },
-                "loadType':": "PlaylistLoaded"
+                "loadType": "PlaylistLoaded"
                 if query.is_playlist or query.is_album
                 else "TrackLoaded"
                 if not query.is_search
