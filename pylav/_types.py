@@ -30,9 +30,9 @@ if TYPE_CHECKING:
     MaybeAwaitableFunc = Callable[P, "MaybeAwaitable[T]"]
 else:
     try:
-        from redbot.core.bot import Red
+        from redbot.core.bot import Red as BotClient
     except ImportError:
-        from discord.ext.commands.bot import AutoShardedBot as Red
+        from discord.ext.commands.bot import AutoShardedBot as BotClient
 
     P = TypeVar("P")
     MaybeAwaitableFunc = tuple[P, T]
@@ -40,8 +40,9 @@ else:
 _Bot = Union["BotClientWithLavalink", "Red", "Bot", "AutoShardedBot"]
 
 
-class BotClientWithLavalink(Red):
+class BotClientWithLavalink(BotClient):
     lavalink: Client
+    _pylav_client: Client
 
 
 Coro = Coroutine[Any, Any, T]
