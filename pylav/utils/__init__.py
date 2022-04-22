@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import collections
 import contextlib
+import datetime
 import random
 import time
 import warnings
@@ -28,9 +29,11 @@ from typing import (
 
 import discord
 from discord import Interaction, Message
+from discord.abc import Messageable
 from discord.backoff import ExponentialBackoff
 from discord.ext.commands import Parameter
 from discord.ext.commands.view import StringView
+from discord.types.embed import EmbedType
 from discord.utils import maybe_coroutine  # noqa
 
 from pylav._types import BotT, ContextT
@@ -626,13 +629,13 @@ class PyLavContext(_OriginalContextClass):
         """
         return self.lavalink.get_player(self.guild)
 
-    async def connect_player(self, channel: discord.VoiceChannel = None, self_deafen: bool = False) -> None:
+    async def connect_player(self, channel: discord.VoiceChannel = None, self_deaf: bool = False) -> None:
         """
         Connect player
         """
         requester = self.author
         channel = channel or self.author.voice.channel
-        await self.lavalink.connect_player(requester=requester, channel=channel, self_deaf=self_deafen)
+        await self.lavalink.connect_player(requester=requester, channel=channel, self_deaf=self_deaf)
 
     @property
     def original_ctx_or_interaction(self) -> ContextT | Interaction | None:
@@ -640,6 +643,44 @@ class PyLavContext(_OriginalContextClass):
         Get original ctx or interaction
         """
         return self._original_ctx_or_interaction
+
+    async def construct_embed(
+        self,
+        *,
+        embed: discord.Embed = None,
+        colour: discord.Colour | int | None = None,
+        color: discord.Colour | int | None = None,
+        title: str = None,
+        type: EmbedType = "rich",
+        url: str = None,
+        description: str = None,
+        timestamp: datetime.datetime = None,
+        author_name: str = None,
+        author_url: str = None,
+        thumbnail: str = None,
+        footer: str = None,
+        footer_url: str = None,
+        messageable: Messageable = None,
+    ) -> discord.Embed:
+        """
+        Construct embed
+        """
+        return await self.lavalink.construct_embed(
+            embed=embed,
+            colour=colour,
+            color=color,
+            title=title,
+            type=type,
+            url=url,
+            description=description,
+            timestamp=timestamp,
+            author_name=author_name,
+            author_url=author_url,
+            thumbnail=thumbnail,
+            footer=footer,
+            footer_url=footer_url,
+            messageable=messageable or self,
+        )
 
 
 async def _process_commands(self, message: discord.Message, /):

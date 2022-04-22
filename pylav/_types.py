@@ -3,18 +3,14 @@ from __future__ import annotations
 
 from typing import Any, Awaitable, Callable, Coroutine, Literal, Optional, TYPE_CHECKING, TypeVar, Union
 
-import discord
 from typing_extensions import TypedDict
 
 T = TypeVar("T")
 
 if TYPE_CHECKING:
-    from typing_extensions import ParamSpec
-
     from discord.ext.commands.bot import AutoShardedBot, Bot
     from discord.ext.commands.cog import Cog
     from discord.ext.commands.context import Context
-    from discord.ext.commands.errors import CommandError
 
     try:
         from redbot.core.bot import Red
@@ -28,16 +24,12 @@ if TYPE_CHECKING:
     from pylav.utils import PyLavContext
     from pylav.client import Client
 
-    P = ParamSpec("P")
-    MaybeAwaitableFunc = Callable[P, "MaybeAwaitable[T]"]
 else:
     try:
         from redbot.core.bot import Red as BotClient
     except ImportError:
         from discord.ext.commands.bot import AutoShardedBot as BotClient
 
-    P = TypeVar("P")
-    MaybeAwaitableFunc = tuple[P, T]
 
 _Bot = Union["BotClientWithLavalink", "Red", "Bot", "AutoShardedBot"]
 
@@ -46,7 +38,7 @@ class BotClientWithLavalink(BotClient):
     lavalink: Client
     _pylav_client: Client
 
-    get_context: Callable[[discord.Message | discord.Interaction], Awaitable[PyLavContext]]
+    get_context: Callable[..., Coro[PyLavContext]]
 
 
 Coro = Coroutine[Any, Any, T]
