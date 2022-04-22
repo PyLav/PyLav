@@ -40,13 +40,14 @@ from pylav.sql.clients.lib import LibConfigManager  # noqa
 from pylav.sql.clients.nodes import NodeConfigManager
 from pylav.sql.clients.playlist_manager import PlaylistConfigManager
 from pylav.sql.clients.query_manager import QueryCacheManager
-from pylav.utils import PyLavContext, _process_commands, add_property
+from pylav.utils import PyLavContext, _get_context, _process_commands, add_property
 
 LOGGER = getLogger("red.PyLink.Client")
 
 _COGS_REGISTERED = set()
 
 _OLD_PROCESS_COMMAND_METHOD: Callable = None  # type: ignore
+_OLD_GET_CONTEXT: Callable = None  # type: ignore
 
 
 class Client:
@@ -86,7 +87,7 @@ class Client:
         connect_back: bool = False,
         config_folder: aiopath.AsyncPath | pathlib.Path = CONFIG_DIR,
     ):
-        global _COGS_REGISTERED, _OLD_PROCESS_COMMAND_METHOD
+        global _COGS_REGISTERED, _OLD_PROCESS_COMMAND_METHOD, _OLD_GET_CONTEXT
         if (istance := getattr(bot, "lavalink", None)) and not isinstance(istance, Client):
             raise AnotherClientAlreadyRegistered(
                 f"Another client instance has already been registered to bot.lavalink with type: {type(istance)}"
@@ -99,8 +100,12 @@ class Client:
                 raise CogHasBeenRegistered(f"Pylav is already loaded - {cog.__cog_name__} has been registered!")
         setattr(bot, "_pylav_client", self)
         add_property(bot, "lavalink", lambda self_: self_._pylav_client)  # noqa
-        _OLD_PROCESS_COMMAND_METHOD = bot.process_commands
+        if _OLD_PROCESS_COMMAND_METHOD is None:
+            _OLD_PROCESS_COMMAND_METHOD = bot.process_commands
+        if _OLD_GET_CONTEXT is None:
+            _OLD_GET_CONTEXT = bot.get_context
         bot.process_commands = MethodType(_process_commands, bot)
+        bot.get_context = MethodType(_get_context, bot)
         _COGS_REGISTERED.add(cog.__cog_name__)
         self._config_folder = aiopath.AsyncPath(config_folder)
         self._bot = bot
@@ -563,6 +568,8 @@ class Client:
             await self._session.close()
             if _OLD_PROCESS_COMMAND_METHOD is not None:
                 self.bot.process_commands = MethodType(_OLD_PROCESS_COMMAND_METHOD, self.bot)
+            if _OLD_GET_CONTEXT is not None:
+                self.bot.get_context = MethodType(_OLD_GET_CONTEXT, self.bot)
             del self.bot._pylav_client  # noqa
 
     def get_player(self, guild: discord.Guild | int | None) -> Player | None:
