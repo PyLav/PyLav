@@ -7,7 +7,6 @@ from red_commons.logging import getLogger
 from pylav.exceptions import EntryNotFoundError
 from pylav.sql.models import NodeModel
 from pylav.sql.tables import NodeRow
-from pylav.utils.built_in_node import NODE_DEFAULT_SETTINGS
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -18,16 +17,6 @@ LOGGER = getLogger("red.PyLink.LibConfigManager")
 class NodeConfigManager:
     def __init__(self, client: Client):
         self._client = client
-        self._bundled = NodeModel(
-            **{
-                "id": 0,
-                "ssl": False,
-                "reconnect_attempts": 3,
-                "search_only": False,
-                "extras": NODE_DEFAULT_SETTINGS,
-                "name": "PyLavManagedNode",
-            }
-        )
         self.currently_in_db = {
             0,
         }
@@ -37,8 +26,8 @@ class NodeConfigManager:
         return self._client
 
     @property
-    def bundled_node_config(self) -> NodeModel:
-        return self._bundled
+    async def bundled_node_config(self) -> NodeModel:
+        return await self.get_bundled_node_config()
 
     async def get_node_config(self, node_id: int) -> NodeModel:
         node = await NodeRow.select().output(load_json=True).where(NodeRow.id == node_id).first()
@@ -62,10 +51,18 @@ class NodeConfigManager:
         node = (
             await NodeRow.objects()
             .output(load_json=True)
-            .get_or_create(NodeRow.id == 0, defaults=self._bundled.to_dict())
+            .get_or_create(
+                NodeRow.id == 0,
+                defaults={
+                    NodeRow.ssl: False,
+                    NodeRow.reconnect_attempts: 3,
+                    NodeRow.search_only: False,
+                    NodeRow.extras: NODE_DEFAULT_SETTINGS,
+                    NodeRow.name: "PyLavManagedNode",
+                },
+            )
         )
-        self._bundled = NodeModel(**node.to_dict())
-        return self._bundled
+        return NodeModel(**node.to_dict())
 
     async def add_node(
         self,

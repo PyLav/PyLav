@@ -192,12 +192,10 @@ class Client:
         self._spotify_auth = ClientCredentialsFlow(
             client_id=self._spotify_client_id, client_secret=self._spotify_client_secret
         )
-        self.node_db_manager.bundled_node_config.extras["plugins"]["topissourcemanagers"]["spotify"][
-            "clientId"
-        ] = client_id
-        self.node_db_manager.bundled_node_config.extras["plugins"]["topissourcemanagers"]["spotify"][
-            "clientSecret"
-        ] = client_secret
+        bundled_node_config = await self._node_config_manager.get_bundled_node_config()
+        bundled_node_config.extras["plugins"]["topissourcemanagers"]["spotify"]["clientId"] = client_id
+        bundled_node_config.extras["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"] = client_secret
+        await bundled_node_config.save()
 
     @property
     def node_db_manager(self) -> NodeConfigManager:
