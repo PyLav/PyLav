@@ -39,7 +39,7 @@ class NodeConfigManager:
     def bundled_node_config(self) -> NodeModel:
         return self._bundled
 
-    async def get_node_config(self, node_id: str) -> NodeModel:
+    async def get_node_config(self, node_id: int) -> NodeModel:
         node = await NodeRow.select().output(load_json=True).where(NodeRow.id == node_id).first()
         if not node:
             raise EntryNotFoundError(f"Node with id {node_id} not found")
@@ -82,12 +82,14 @@ class NodeConfigManager:
         if unique_identifier in self.currently_in_db:
             return await self.get_node_config(unique_identifier)
 
-        data = {"extras": {"server": {}, "lavalink": {"server": {}}}}
-        data["id"] = unique_identifier
-        data["ssl"] = ssl
-        data["reconnect_attempts"] = reconnect_attempts
-        data["search_only"] = search_only
-        data["name"] = name
+        data = {
+            "extras": {"server": {}, "lavalink": {"server": {}}},
+            "id": unique_identifier,
+            "ssl": ssl,
+            "reconnect_attempts": reconnect_attempts,
+            "search_only": search_only,
+            "name": name,
+        }
         data["extras"]["server"]["host"] = host
         data["extras"]["server"]["host"] = port
         data["extras"]["lavalink"]["server"]["password"] = password
@@ -112,25 +114,29 @@ class NodeConfigManager:
         search_only: bool = False,
         extras: dict = None,
     ) -> NodeModel:
-        data = {"extras": {"server": {}, "lavalink": {"server": {}}}}
-        data["id"] = unique_identifier
-        data["ssl"] = ssl
-        data["reconnect_attempts"] = reconnect_attempts
-        data["search_only"] = search_only
-        data["name"] = name
+        data = {
+            "extras": {"server": {}, "lavalink": {"server": {}}},
+            "id": unique_identifier,
+            "ssl": ssl,
+            "reconnect_attempts": reconnect_attempts,
+            "search_only": search_only,
+            "name": name,
+        }
         if extras:
             data["extras"] = extras
-        data["extras"]["server"]["host"] = host
-        data["extras"]["server"]["host"] = port
+        data["extras"]["server"]["host"] = host  # type: ignore
+        data["extras"]["server"]["port"] = port  # type: ignore
         data["extras"]["lavalink"]["server"]["password"] = password
         if unique_identifier != 0:
-            data["extras"]["resume_timeout"] = resume_timeout
-            data["extras"]["resume_key"] = resume_key
+            data["extras"]["resume_timeout"] = resume_timeout  # type: ignore
+            data["extras"]["resume_key"] = resume_key  # type: ignore
         node = NodeModel(**data)
         await node.save()
         self.currently_in_db.add(node.id)
         return node
 
     async def delete(self, node_id: int) -> None:
-        await NodeRow.delete().where(NodeRow.id == node_id).execute()
+        if node_id == 0:
+            raise ValueError("Cannot delete bundled node")
+        await NodeRow.delete().where(NodeRow.id == node_id)
         self.currently_in_db.discard(node_id)

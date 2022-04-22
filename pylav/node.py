@@ -7,6 +7,7 @@ from uuid import uuid4
 import aiohttp
 import ujson
 
+from pylav._types import LavalinkResponseT, TrackT
 from pylav.events import Event
 from pylav.exceptions import Unauthorized
 from pylav.filters import ChannelMix, Distortion, Equalizer, Karaoke, LowPass, Rotation, Timescale, Vibrato, Volume
@@ -389,7 +390,7 @@ class Node:
             f"region={self.region} ssl={self.ssl} search_only={self.search_only}>"
         )
 
-    async def get_query_youtube_music(self, query: str) -> dict:
+    async def get_query_youtube_music(self, query: str) -> LavalinkResponseT:
         """|coro|
         Gets the query from YouTube music.
         Parameters
@@ -402,11 +403,11 @@ class Node:
             The list of results.
         """
         if not self.available:
-            return []
+            return {}
         query = f"ytmsearch:{query}"
         return await self.get_tracks(await self._query_cls.from_string(query))
 
-    async def get_query_youtube(self, query: str) -> dict:
+    async def get_query_youtube(self, query: str) -> LavalinkResponseT:
         """|coro|
         Gets the query from YouTube music.
         Parameters
@@ -419,11 +420,11 @@ class Node:
             The list of results.
         """
         if not self.available:
-            return []
+            return {}
         query = f"ytsearch:{query}"
         return await self.get_tracks(await self._query_cls.from_string(query))
 
-    async def get_query_soundcloud(self, query: str) -> dict:
+    async def get_query_soundcloud(self, query: str) -> LavalinkResponseT:
         """|coro|
         Gets the query from Soundcloud.
         Parameters
@@ -436,11 +437,11 @@ class Node:
             The list of results.
         """
         if not self.available:
-            return []
+            return {}
         query = f"scsearch:{query}"
         return await self.get_tracks(await self._query_cls.from_string(query))
 
-    async def get_query_tts(self, query: str) -> dict:
+    async def get_query_tts(self, query: str) -> LavalinkResponseT:
         """|coro|
         Gets the query for TTS.
         Parameters
@@ -453,11 +454,11 @@ class Node:
             The list of results.
         """
         if not self.available:
-            return []
+            return {}
         query = f"speak:{query}"
         return await self.get_tracks(await self._query_cls.from_string(query))
 
-    async def get_query_spotify(self, query: str) -> dict:
+    async def get_query_spotify(self, query: str) -> LavalinkResponseT:
         """|coro|
         Gets the query from Spotify.
         Parameters
@@ -470,11 +471,11 @@ class Node:
             The list of results.
         """
         if not self.available:
-            return []
+            return {}
         query = f"spsearch:{query}"
         return await self.get_tracks(await self._query_cls.from_string(query))
 
-    async def get_query_apple_music(self, query: str) -> dict:
+    async def get_query_apple_music(self, query: str) -> LavalinkResponseT:
         """|coro|
         Gets the query from Apple Music.
         Parameters
@@ -487,11 +488,11 @@ class Node:
             The list of results.
         """
         if not self.available:
-            return []
+            return {}
         query = f"amsearch:{query}"
         return await self.get_tracks(await self._query_cls.from_string(query))
 
-    async def get_tracks(self, query: Query, first: bool = False) -> dict:
+    async def get_tracks(self, query: Query, first: bool = False) -> LavalinkResponseT | TrackT:
         """|coro|
         Gets all tracks associated with the given query.
 
@@ -536,7 +537,7 @@ class Node:
                 raise Unauthorized
             return {}
 
-    async def decode_track(self, track: str) -> dict | None:
+    async def decode_track(self, track: str) -> TrackT | None:
         destination = f"{self.connection_protocol}://{self.host}:{self.port}/decodetrack"
         async with self.session.get(
             destination, headers={"Authorization": self.password}, params={"track": track}
@@ -549,7 +550,7 @@ class Node:
 
             return None
 
-    async def decode_tracks(self, tracks: list[str]) -> list[dict]:
+    async def decode_tracks(self, tracks: list[str]) -> list[TrackT]:
         destination = f"{self.connection_protocol}://{self.host}:{self.port}/decodetracks"
         async with self.session.get(destination, headers={"Authorization": self.password}, json=tracks) as res:
             if res.status == 200:
@@ -850,7 +851,7 @@ class Node:
         :class:`bool`
             True if the target node supports Google Cloud TTS, False otherwise.
         """
-        return self.has_capability("gctts")  # TODO: Check source name
+        return self.has_capability("gcloud-tts")
 
     @property
     def supports_pornhub(self) -> bool:

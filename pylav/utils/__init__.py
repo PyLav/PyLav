@@ -11,6 +11,7 @@ from enum import Enum
 from itertools import chain
 from types import GenericAlias
 from typing import (
+    TYPE_CHECKING,
     Any,
     AsyncIterable,
     AsyncIterator,
@@ -25,8 +26,25 @@ from typing import (
     Union,
 )
 
+import discord
+from discord import Interaction, Message
 from discord.backoff import ExponentialBackoff
-from discord.utils import maybe_coroutine
+from discord.ext.commands import Parameter
+from discord.ext.commands.view import StringView
+from discord.utils import maybe_coroutine  # noqa
+
+from pylav._types import BotT, ContextT
+
+try:
+    from redbot.core.commands import Command
+    from redbot.core.commands import Context as _OriginalContextClass
+except ImportError:
+    from discord.ext.commands import Command
+    from discord.ext.commands import Context as _OriginalContextClass
+
+
+if TYPE_CHECKING:
+    from pylav import Player
 
 __all__ = (
     "MISSING",
@@ -38,6 +56,8 @@ __all__ = (
     "LifoQueue",
     "SegmentCategory",
     "Segment",
+    "_process_commands",
+    "PyLavContext",
 )
 
 from red_commons.logging import getLogger
@@ -45,6 +65,7 @@ from red_commons.logging import getLogger
 T = TypeVar("T")
 
 LOGGER = getLogger("red.PyLink.utils")
+_RED_LOGGER = getLogger("red")
 
 
 class MissingSentinel(str):
@@ -227,7 +248,7 @@ def bounded_gather_iter(
     pending = []
 
     for cof in coros_or_futures:
-        if asyncio.isfuture(cof) and cof._loop is not loop:
+        if asyncio.isfuture(cof) and cof._loop is not loop:  # noqa
             raise ValueError("futures are tied to different event loops")
 
         cof = _sem_wrapper(semaphore, cof)
@@ -566,9 +587,9 @@ def get_time_string(seconds: int | float) -> str:
     return msg.format(d, h, m, s)
 
 
-def format_time(time: int | float) -> str:
+def format_time(duration: int | float) -> str:
     """Formats the given time into DD:HH:MM:SS"""
-    seconds = int(time // 1000)
+    seconds = int(duration // 1000)
     days, seconds = divmod(seconds, 24 * 60 * 60)
     hours, seconds = divmod(seconds, 60 * 60)
     minutes, seconds = divmod(seconds, 60)
@@ -720,7 +741,8 @@ class Queue:
 
     # End of the overridable methods.
 
-    def _wakeup_next(self, waiters):
+    @staticmethod
+    def _wakeup_next(waiters):
         # Wake up the next waiter (if any) that isn't cancelled.
         while waiters:
             waiter = waiters.popleft()
@@ -1026,3 +1048,95 @@ class ExponentialBackoffWithReset(ExponentialBackoff):
         """
         self._last_invocation: float = time.monotonic()
         self._exp = 0
+
+
+class PyLavContext(_OriginalContextClass):
+    _original_ctx_or_interaction: ContextT | Interaction | None
+    bot: BotT
+
+    def __init__(
+        self,
+        *,
+        message: Message,
+        bot: BotT,
+        view: StringView,
+        args: list[Any] = MISSING,
+        kwargs: dict[str, Any] = MISSING,
+        prefix: str | None = None,
+        command: Command[Any, ..., Any] | None = None,  # noqa
+        invoked_with: str | None = None,
+        invoked_parents: list[str] = MISSING,
+        invoked_subcommand: Command[Any, ..., Any] | None = None,  # noqa
+        subcommand_passed: str | None = None,
+        command_failed: bool = False,
+        current_parameter: Parameter | None = None,
+        current_argument: str | None = None,
+        interaction: Interaction | None = None,
+    ):
+        super().__init__(
+            message=message,
+            bot=bot,
+            view=view,
+            args=args,
+            kwargs=kwargs,
+            prefix=prefix,
+            command=command,
+            invoked_with=invoked_with,
+            invoked_parents=invoked_parents,
+            invoked_subcommand=invoked_subcommand,
+            subcommand_passed=subcommand_passed,
+            command_failed=command_failed,
+            current_parameter=current_parameter,
+            current_argument=current_argument,
+            interaction=interaction,
+        )
+
+        self._player = None
+        self._original_ctx_or_interaction = None
+        self.lavalink = bot.lavalink
+
+    @property
+    def player(self) -> Player | None:
+        """
+        Get player
+        """
+        return self.lavalink.get_player(self.guild)
+
+    async def connect_player(self, channel: discord.VoiceChannel = None, self_deafen: bool = False) -> None:
+        """
+        Connect player
+        """
+        requester = self.author
+        channel = channel or self.author.voice.channel
+        await self.lavalink.connect_player(requester=requester, channel=channel, self_deaf=self_deafen)
+
+    @property
+    def original_ctx_or_interaction(self) -> ContextT | Interaction | None:
+        """
+        Get original ctx or interaction
+        """
+        return self._original_ctx_or_interaction
+
+
+async def _process_commands(self, message: discord.Message, /):
+    """
+    Same as base method, but dispatches an additional event for cogs
+    which want to handle normal messages differently to command
+    messages,  without the overhead of additional get_context calls
+    per cog.
+    """
+    if not message.author.bot:
+        ctx = await self.get_context(message, cls=PyLavContext)
+        if ctx.invoked_with and isinstance(message.channel, discord.PartialMessageable):
+            _RED_LOGGER.warning(
+                "Discarded a command message (ID: %s) with PartialMessageable channel: %r",
+                message.id,
+                message.channel,
+            )
+        else:
+            await self.invoke(ctx)
+    else:
+        ctx = None
+
+    if ctx is None or ctx.valid is False:
+        self.dispatch("message_without_command", message)

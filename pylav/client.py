@@ -6,6 +6,7 @@ import itertools
 import pathlib
 import random
 from collections import defaultdict
+from types import MethodType
 from typing import Callable
 
 import aiohttp
@@ -15,11 +16,12 @@ import ujson
 from asyncspotify import Client as SpotifyClient
 from asyncspotify import ClientCredentialsFlow
 from discord.abc import Messageable
-from discord.ext.commands import Cog
+from discord.ext.commands import Context
 from discord.types.embed import EmbedType
 from red_commons.logging import getLogger
 
 from pylav._config import __VERSION__, CONFIG_DIR
+from pylav._types import BotT, CogT, ContextT
 from pylav.events import Event
 from pylav.exceptions import (
     AnotherClientAlreadyRegistered,
@@ -38,11 +40,13 @@ from pylav.sql.clients.lib import LibConfigManager  # noqa
 from pylav.sql.clients.nodes import NodeConfigManager
 from pylav.sql.clients.playlist_manager import PlaylistConfigManager
 from pylav.sql.clients.query_manager import QueryCacheManager
-from pylav.utils import add_property
+from pylav.utils import PyLavContext, _process_commands, add_property
 
 LOGGER = getLogger("red.PyLink.Client")
 
 _COGS_REGISTERED = set()
+
+_OLD_PROCESS_COMMAND_METHOD: Callable = None  # type: ignore
 
 
 class Client:
@@ -76,13 +80,13 @@ class Client:
 
     def __init__(
         self,
-        bot: discord.Client,
-        cog: Cog,
+        bot: BotT,
+        cog: CogT,
         player=Player,
         connect_back: bool = False,
         config_folder: aiopath.AsyncPath | pathlib.Path = CONFIG_DIR,
     ):
-        global _COGS_REGISTERED
+        global _COGS_REGISTERED, _OLD_PROCESS_COMMAND_METHOD
         if (istance := getattr(bot, "lavalink", None)) and not isinstance(istance, Client):
             raise AnotherClientAlreadyRegistered(
                 f"Another client instance has already been registered to bot.lavalink with type: {type(istance)}"
@@ -95,6 +99,8 @@ class Client:
                 raise CogHasBeenRegistered(f"Pylav is already loaded - {cog.__cog_name__} has been registered!")
         setattr(bot, "_pylav_client", self)
         add_property(bot, "lavalink", lambda self_: self_._pylav_client)  # noqa
+        _OLD_PROCESS_COMMAND_METHOD = bot.process_commands
+        bot.process_commands = MethodType(_process_commands, bot)
         _COGS_REGISTERED.add(cog.__cog_name__)
         self._config_folder = aiopath.AsyncPath(config_folder)
         self._bot = bot
@@ -332,6 +338,8 @@ class Client:
             Whether the node should only be used for searching. Defaults to `False`.
         unique_identifier: :class:`in`
             A unique identifier for the node. Defaults to `None`.
+        skip_db: :class:`bool`
+            Whether the node should skip the database. Defaults to `False`.
         """
         if not self.initialized:
             raise PyLavNotInitialized(
@@ -348,6 +356,7 @@ class Client:
             ssl=ssl,
             search_only=search_only,
             unique_identifier=unique_identifier,
+            skip_db=skip_db,
         )
 
     async def get_tracks(
@@ -552,9 +561,11 @@ class Client:
             await self._local_node_manager.shutdown()
             await self._node_manager.close()
             await self._session.close()
+            if _OLD_PROCESS_COMMAND_METHOD is not None:
+                self.bot.process_commands = MethodType(_OLD_PROCESS_COMMAND_METHOD, self.bot)
             del self.bot._pylav_client  # noqa
 
-    def get_player(self, guild: discord.Guild | int) -> Player:
+    def get_player(self, guild: discord.Guild | int | None) -> Player | None:
         """|coro|
         Gets the player for the target guild.
 
@@ -568,6 +579,8 @@ class Client:
         :class:`Player`
             The player for the target guild.
         """
+        if not guild:
+            return None
         if not self.initialized:
             raise PyLavNotInitialized(
                 "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
@@ -659,3 +672,14 @@ class Client:
                 new_embed.set_author(name=author_name)
 
         return new_embed
+
+    async def get_context(self, what: discord.Message | ContextT | discord.Interaction) -> PyLavContext:
+        if isinstance(what, PyLavContext):
+            return what
+        elif isinstance(what, Context):
+            ctx_ = what.interaction or what.message
+            ctx: PyLavContext = await self._bot.get_context(ctx_, cls=PyLavContext)  # type: ignore
+            ctx._original_ctx_or_interaction = what
+        else:
+            ctx: PyLavContext = await self._bot.get_context(what, cls=PyLavContext)  # type: ignore
+        return ctx

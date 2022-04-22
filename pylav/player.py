@@ -9,6 +9,7 @@ import discord
 from discord import VoiceProtocol
 from red_commons.logging import getLogger
 
+from pylav._types import BotT
 from pylav.events import (
     FiltersAppliedEvent,
     NodeChangedEvent,
@@ -50,7 +51,7 @@ LOGGER = getLogger("red.PyLink.Player")
 class Player(VoiceProtocol):
     def __init__(
         self,
-        client: discord.Client,
+        client: BotT,
         channel: discord.VoiceChannel,
         *,
         node: Node = None,
@@ -414,7 +415,7 @@ class Player(VoiceProtocol):
         if not track:
             if self.queue.empty():
                 await self.stop(
-                    requester=self.guild.get_member(self.node.node_manager.client.bot_id)
+                    requester=self.guild.get_member(self.node.node_manager.client.bot.user.id)
                 )  # Also sets current to None.
                 self.history.clear()
                 await self.node.dispatch_event(QueueEndEvent(self))
@@ -669,7 +670,8 @@ class Player(VoiceProtocol):
         }
 
     async def save(self) -> None:
-        await self.node.node_manager.client.player_state_manager.upsert_players([self.to_dict()])
+        await self.node.node_manager.client.player_db_manager.upsert_players([self.to_dict()])
+        # FIXME:
 
     async def connect(
         self,

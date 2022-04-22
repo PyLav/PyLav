@@ -230,7 +230,20 @@ class NodeModel:
             await NodeRow.update(values).where(NodeRow.id == self.id)
 
     async def get_or_create(self) -> None:
-        await NodeRow.objects().output(load_json=True).get_or_create(NodeRow.id == self.id, defaults=values)
+        values = {
+            NodeRow.name: self.name,
+            NodeRow.ssl: self.ssl,
+            NodeRow.reconnect_attempts: self.reconnect_attempts,
+            NodeRow.search_only: self.search_only,
+            NodeRow.extras: self.extras,
+        }
+        output = await NodeRow.objects().output(load_json=True).get_or_create(NodeRow.id == self.id, defaults=values)
+        if not output._was_created:  # noqa
+            self.name = output.name
+            self.ssl = output.ssl
+            self.reconnect_attempts = output.reconnect_attempts
+            self.search_only = output.search_only
+            self.extras = output.extras
 
 
 @dataclass(eq=True)
