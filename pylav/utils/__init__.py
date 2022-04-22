@@ -620,7 +620,6 @@ class PyLavContext(_OriginalContextClass):
             interaction=interaction,
         )
 
-        self._player = None
         self._original_ctx_or_interaction = None
         self.lavalink = bot.lavalink
 
@@ -629,15 +628,16 @@ class PyLavContext(_OriginalContextClass):
         """
         Get player
         """
-        return self.lavalink.get_player(self.guild)
+        p = self.lavalink.get_player(self.guild)
+        return p
 
-    async def connect_player(self, channel: discord.VoiceChannel = None, self_deaf: bool = False) -> None:
+    async def connect_player(self, channel: discord.VoiceChannel = None, self_deaf: bool = False) -> Player:
         """
         Connect player
         """
         requester = self.author
         channel = channel or self.author.voice.channel
-        await self.lavalink.connect_player(requester=requester, channel=channel, self_deaf=self_deaf)
+        return await self.lavalink.connect_player(requester=requester, channel=channel, self_deaf=self_deaf)
 
     @property
     def original_ctx_or_interaction(self) -> ContextT | Interaction | None:

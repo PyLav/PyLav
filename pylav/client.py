@@ -637,7 +637,8 @@ class Client:
             raise PyLavNotInitialized(
                 "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
             )
-        return await self.player_manager.create(channel, channel.rtc_region, node, self_deaf, requester)
+        p = await self.player_manager.create(channel, channel.rtc_region, node, self_deaf, requester)
+        return p
 
     async def construct_embed(
         self,

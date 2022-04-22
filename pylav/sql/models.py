@@ -4,6 +4,7 @@ import datetime
 from dataclasses import dataclass, field
 
 import discord
+import ujson
 
 from pylav._config import CONFIG_DIR
 from pylav.sql.tables import LibConfigRow, NodeRow, PlaylistRow, QueryRow
@@ -18,6 +19,10 @@ class PlaylistModel:
     name: str
     tracks: list[str] = field(default_factory=list)
     url: str | None = None
+
+    def __post_init__(self):
+        if isinstance(self.tracks, str):
+            self.tracks = ujson.loads(self.tracks)
 
     async def save(self):
         """
@@ -96,42 +101,26 @@ class LibConfigModel:
     auto_update_managed_nodes: bool | None = None
 
     async def get_config_folder(self) -> str:
-        if self.config_folder is None:
-            response = await LibConfigRow.select(LibConfigRow.config_folder).where(LibConfigRow.id == self.id).first()
-            self.config_folder = response["config_folder"]
-        return self.config_folder
+        response = await LibConfigRow.select(LibConfigRow.config_folder).where(LibConfigRow.id == self.id).first()
+        return response["config_folder"]
 
     async def get_java_path(self) -> str:
-        if self.java_path is None:
-            response = await LibConfigRow.select(LibConfigRow.java_path).where(LibConfigRow.id == self.id).first()
-            self.java_path = response["java_path"]
-        return self.java_path
+        response = await LibConfigRow.select(LibConfigRow.java_path).where(LibConfigRow.id == self.id).first()
+        return response["java_path"]
 
     async def get_enable_managed_node(self) -> bool:
-        if self.enable_managed_node is None:
-            response = (
-                await LibConfigRow.select(LibConfigRow.enable_managed_node).where(LibConfigRow.id == self.id).first()
-            )
-            self.enable_managed_node = response["enable_managed_node"]
-        return self.enable_managed_node
+        response = await LibConfigRow.select(LibConfigRow.enable_managed_node).where(LibConfigRow.id == self.id).first()
+        return response["enable_managed_node"]
 
     async def get_auto_update_managed_nodes(self) -> bool:
-        if self.auto_update_managed_nodes is None:
-            response = (
-                await LibConfigRow.select(LibConfigRow.auto_update_managed_nodes)
-                .where(LibConfigRow.id == self.id)
-                .first()
-            )
-            self.auto_update_managed_nodes = response["auto_update_managed_nodes"]
-        return self.auto_update_managed_nodes
+        response = (
+            await LibConfigRow.select(LibConfigRow.auto_update_managed_nodes).where(LibConfigRow.id == self.id).first()
+        )
+        return response["auto_update_managed_nodes"]
 
     async def get_localtrack_folder(self) -> str:
-        if self.localtrack_folder is None:
-            response = (
-                await LibConfigRow.select(LibConfigRow.localtrack_folder).where(LibConfigRow.id == self.id).first()
-            )
-            self.localtrack_folder = response["localtrack_folder"]
-        return self.localtrack_folder
+        response = await LibConfigRow.select(LibConfigRow.localtrack_folder).where(LibConfigRow.id == self.id).first()
+        return response["localtrack_folder"]
 
     async def set_config_folder(self, value: str) -> None:
         self.config_folder = value
@@ -217,6 +206,10 @@ class NodeModel:
     search_only: bool
     extras: dict
 
+    def __post_init__(self):
+        if isinstance(self.extras, str):
+            self.extras = ujson.loads(self.extras)
+
     @classmethod
     async def from_id(cls, id: int) -> NodeModel:
         response = await NodeRow.select().where(NodeRow.id == id).first()
@@ -290,14 +283,19 @@ class QueryModel:
     last_updated: datetime.datetime = None
     tracks: list[str] = field(default_factory=list)
 
+    def __post_init__(self):
+        if isinstance(self.tracks, str):
+            self.tracks = ujson.loads(self.tracks)
+
     @classmethod
     async def get(cls, identifier: str) -> QueryModel | None:
         query = await QueryRow.select().where(
             (QueryRow.identifier == identifier)
             & (QueryRow.last_updated > datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=30))
         )
+        data = query.to_dict()
         if query:
-            return QueryModel(**query.to_dict())
+            return QueryModel(**data)
         return None
 
     async def delete(self):

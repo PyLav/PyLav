@@ -7,6 +7,7 @@ from red_commons.logging import getLogger
 from pylav.exceptions import EntryNotFoundError
 from pylav.sql.models import NodeModel
 from pylav.sql.tables import NodeRow
+from pylav.utils.built_in_node import NODE_DEFAULT_SETTINGS
 
 if TYPE_CHECKING:
     from pylav.client import Client

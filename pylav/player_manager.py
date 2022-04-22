@@ -184,7 +184,6 @@ class PlayerManager:
         region = self.client.node_manager.get_region(endpoint)
 
         best_node = node or self.client.node_manager.find_best_node(region)
-
         if not best_node:
             raise NoNodeAvailable("No available nodes!")
         player: Player = await channel.connect(cls=Player)  # type: ignore
@@ -192,7 +191,7 @@ class PlayerManager:
         await player.move_to(requester, channel=player.channel, self_deaf=self_deaf)
         await best_node.dispatch_event(PlayerConnectedEvent(player, requester))
         self.players[channel.guild.id] = player
-        LOGGER.debug("[NODE-%s] Successfully created player for %s", best_node.name, channel.guild.id)
+        LOGGER.info("[NODE-%s] Successfully created player for %s", best_node.name, channel.guild.id)
         return player
 
     async def save_all_players(self) -> None:

@@ -32,6 +32,7 @@ class QueryCacheManager:
             return None
         query = (
             await QueryRow.select()
+            .output(as_json=True)
             .where(
                 (QueryRow.identifier == query.query_identifier)
                 & (

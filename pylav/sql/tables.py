@@ -3,7 +3,7 @@ from __future__ import annotations
 import getpass
 import os
 
-from piccolo.columns import JSON, Array, BigInt, Boolean, Float, Integer, Text, Timestamptz
+from piccolo.columns import JSONB, BigInt, Boolean, Float, Integer, Text, Timestamptz
 from piccolo.engine import PostgresEngine
 from piccolo.table import Table
 
@@ -29,7 +29,7 @@ class PlaylistRow(Table, db=DB, tablename="playlist"):
     author = BigInt(null=False, index=True)
     name = Text(null=False, index=True)
     url = Text(null=True)
-    tracks = Array(base_column=Text())
+    tracks = JSONB(null=False, default=[])
 
 
 class LibConfigRow(Table, db=DB, tablename="lib_config"):
@@ -78,11 +78,11 @@ class PlayerRow(Table, db=DB, tablename="player"):
     playing = Boolean(null=False, default=False)
     effect_enabled = Boolean(null=False, default=False)
 
-    current = JSON(null=True)
-    queue = JSON(null=False, default=[])
-    history = JSON(null=False, default=[])
-    effects = JSON(null=False, default={})
-    extras = JSON(null=False, default={})
+    current = JSONB(null=True)
+    queue = JSONB(null=False, default=[])
+    history = JSONB(null=False, default=[])
+    effects = JSONB(null=False, default={})
+    extras = JSONB(null=False, default={})
 
 
 class NodeRow(Table, db=DB, tablename="node"):
@@ -91,11 +91,11 @@ class NodeRow(Table, db=DB, tablename="node"):
     ssl = Boolean(null=False, default=False)
     reconnect_attempts = Integer(null=False)
     search_only = Boolean(null=False, default=False)
-    extras = JSON(null=True)
+    extras = JSONB(null=True)
 
 
 class QueryRow(Table, db=DB, tablename="query"):
     identifier = Text(null=False, index=True, primary_key=True)
     name = Text(null=True)
-    tracks = Array(base_column=Text())
+    tracks = JSONB(null=False, default=[])
     last_updated = Timestamptz(null=False, index=True)
