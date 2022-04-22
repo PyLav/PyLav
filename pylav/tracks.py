@@ -328,6 +328,10 @@ class AudioTrack:
     def timestamp(self) -> int:
         return self.extra.get("timestamp", 0)
 
+    @timestamp.setter
+    def timestamp(self, value: int):
+        self.extra["timestamp"] = value
+
     async def thumbnail(self) -> str | None:
         """Optional[str]: Returns a thumbnail URL for YouTube and Spotify tracks."""
         if not self.identifier:

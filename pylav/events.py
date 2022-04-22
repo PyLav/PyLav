@@ -658,3 +658,24 @@ class TracksRequestedEvent(Event):
         self.player = player
         self.requester = requester
         self.tracks = tracks
+
+
+class QuickPlayEvent(Event):
+    """
+    This event is dispatched when a track is played with higher priority than the current track.
+    Attributes
+    ----------
+    player: :class:`BasePlayer`
+        The player whose queue was shuffled.
+    requester: :class:`discord.Member`
+        The user who requested the change.
+    tracks: List[:class:`AudioTrack`]
+        The track that was seeked.
+    """
+
+    __slots__ = ("player", "requester", "track")
+
+    def __init__(self, player: Player, requester: discord.Member, tracks: AudioTrack):
+        self.player = player
+        self.requester = requester
+        self.tracks = tracks

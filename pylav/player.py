@@ -23,6 +23,7 @@ from pylav.events import (
     PreviousTrackRequestedEvent,
     QueueEndEvent,
     QueueShuffledEvent,
+    QuickPlayEvent,
     TrackEndEvent,
     TrackExceptionEvent,
     TrackQueuePositionChangedEvent,
@@ -348,7 +349,7 @@ class Player(VoiceProtocol):
         if self.history.empty():
             raise TrackNotFound("There are no tracks currently in the player history.")
         track = await self.history.get()
-        if track.is_partial and not track.track:
+        if track.is_partial:
             await track.search(self)
         if self.current:
             await self.history.put([self.current])
@@ -359,6 +360,38 @@ class Player(VoiceProtocol):
         await self.node.send(op="play", guildId=self.guild_id, track=track.track, **options)
         await self.node.dispatch_event(TrackStartEvent(self, track))
         await self.node.dispatch_event(PreviousTrackRequestedEvent(self, requester, track))
+
+    async def quick_play(
+        self,
+        requester: discord.Member,
+        track: AudioTrack | dict | str | None,
+        query: Query,
+        no_replace: bool = False,
+        skip_segments: list[str] | str = None,
+    ) -> None:
+        skip_segments = self._process_skip_segments(skip_segments)
+        track = AudioTrack(self.node, track, query=query, skip_segments=skip_segments)
+        if self.current:
+            self.current.timestamp = self.position
+            self.queue.put_nowait([self.current], 0)
+        if track.is_partial:
+            try:
+                await track.search(self)
+            except TrackNotFound as exc:
+                # If track was passed to `.play()` raise here
+                if not track:
+                    raise TrackNotFound
+                # Otherwise dispatch Track Exception Event
+                await self.node.dispatch_event(TrackExceptionEvent(self, track, exc))
+                return
+
+        self.current = track
+        options = {"noReplace": no_replace}
+        if track.skip_segments and self.node.supports_sponsorblock:
+            options["skipSegments"] = track.skip_segments
+        await self.node.send(op="play", guildId=self.guild_id, track=track.track, **options)
+        await self.node.dispatch_event(TrackStartEvent(self, track))
+        await self.node.dispatch_event(QuickPlayEvent(self, requester, track))
 
     async def play(
         self,
@@ -421,7 +454,7 @@ class Player(VoiceProtocol):
                 await self.node.dispatch_event(QueueEndEvent(self))
                 return
             track = await self.queue.get()
-        if track.is_partial and not track.track:
+        if track.is_partial:
             try:
                 await track.search(self)
             except TrackNotFound as exc:
