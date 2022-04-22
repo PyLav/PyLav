@@ -34,6 +34,7 @@ from discord.backoff import ExponentialBackoff
 from discord.ext.commands import Parameter
 from discord.ext.commands.view import StringView
 from discord.types.embed import EmbedType
+from discord.utils import MISSING as D_MISSING  # noqa
 from discord.utils import maybe_coroutine  # noqa
 
 from pylav.types import BotT, ContextT
@@ -588,12 +589,12 @@ class PyLavContext(_OriginalContextClass):
         message: Message,
         bot: BotT,
         view: StringView,
-        args: list[Any] = MISSING,
-        kwargs: dict[str, Any] = MISSING,
+        args: list[Any] = D_MISSING,
+        kwargs: dict[str, Any] = D_MISSING,
         prefix: str | None = None,
         command: Command[Any, ..., Any] | None = None,  # noqa
         invoked_with: str | None = None,
-        invoked_parents: list[str] = MISSING,
+        invoked_parents: list[str] = D_MISSING,
         invoked_subcommand: Command[Any, ..., Any] | None = None,  # noqa
         subcommand_passed: str | None = None,
         command_failed: bool = False,
