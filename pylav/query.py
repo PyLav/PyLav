@@ -369,7 +369,7 @@ class Query:
         else:
             try:
                 return await cls.__process_local(query)
-            except Exception:  # noqa
+            except Exception:
                 return cls(query, "YouTube Music", search=True)  # Fallback to YouTube Music
 
     @classmethod

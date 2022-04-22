@@ -7,6 +7,7 @@ import discord
 
 from pylav._config import CONFIG_DIR
 from pylav.sql.tables import LibConfigRow, NodeRow, PlaylistRow, QueryRow
+from pylav.types import BotT
 
 
 @dataclass(eq=True)
@@ -32,12 +33,12 @@ class PlaylistModel:
         playlist = (
             await PlaylistRow.objects().output(load_json=True).get_or_create(PlaylistRow.id == self.id, defaults=values)
         )
-        if not playlist._was_created:  # noqa
+        if not playlist._was_created:
             await PlaylistRow.update(values).where(PlaylistRow.id == self.id)
         return PlaylistModel(**playlist.to_dict())
 
     @classmethod
-    async def get(cls, id: int) -> PlaylistModel | None:  # noqa
+    async def get(cls, id: int) -> PlaylistModel | None:
         """
         Get a playlist from the database.
         """
@@ -50,7 +51,7 @@ class PlaylistModel:
         await PlaylistRow.delete().where(PlaylistRow.id == self.id)
 
     async def can_manage(self, bot: discord.Client, requester: discord.abc.User) -> bool:
-        if requester.id in bot.owner_ids:  # noqa
+        if requester.id in getattr(bot, "owner_ids", ()):  # noqa
             return True
         elif self.scope == bot.user.id:
             return False
@@ -66,11 +67,30 @@ class PlaylistModel:
             return False
         return self.author == requester.id
 
+    async def get_scope_name(self, bot: BotT) -> str:
+        if guild := bot.get_guild(self.scope):
+            scope_name = f"{guild.name}"
+        elif (guild and (author := guild.get_member(self.scope))) or (author := bot.get_user(self.author)):
+            scope_name = f"{author.mention}"
+        elif guild and (channel := guild.get_channel(self.scope)):
+            scope_name = f"{channel.mention}"
+        elif bot.user.id == self.scope:
+            scope_name = f"{bot.user.mention}"
+        else:
+            scope_name = f"{self.scope}"
+        return scope_name
+
+    async def get_author_name(self, bot: BotT) -> str | None:
+        if user := bot.get_user(self.author):
+            return f"{user.mention}"
+        return None
+
 
 @dataclass(eq=True)
 class LibConfigModel:
     id: int = 1
     config_folder: str | None = None
+    localtrack_folder: str | None = None
     java_path: str | None = None
     enable_managed_node: bool | None = None
     auto_update_managed_nodes: bool | None = None
@@ -105,6 +125,14 @@ class LibConfigModel:
             self.auto_update_managed_nodes = response["auto_update_managed_nodes"]
         return self.auto_update_managed_nodes
 
+    async def get_localtrack_folder(self) -> str:
+        if self.localtrack_folder is None:
+            response = (
+                await LibConfigRow.select(LibConfigRow.localtrack_folder).where(LibConfigRow.id == self.id).first()
+            )
+            self.localtrack_folder = response["localtrack_folder"]
+        return self.localtrack_folder
+
     async def set_config_folder(self, value: str) -> None:
         self.config_folder = value
         await LibConfigRow.update({LibConfigRow.config_folder: value}).where(LibConfigRow.id == self.id)
@@ -121,6 +149,10 @@ class LibConfigModel:
         self.auto_update_managed_nodes = value
         await LibConfigRow.update({LibConfigRow.auto_update_managed_nodes: value}).where(LibConfigRow.id == self.id)
 
+    async def set_localtrack_folder(self, value: str) -> None:
+        self.localtrack_folder = value
+        await LibConfigRow.update({LibConfigRow.localtrack_folder: value}).where(LibConfigRow.id == self.id)
+
     async def save(self) -> LibConfigModel:
         data = {}
         if self.config_folder:
@@ -131,6 +163,8 @@ class LibConfigModel:
             data["enable_managed_node"] = self.enable_managed_node
         if self.auto_update_managed_nodes:
             data["auto_update_managed_nodes"] = self.auto_update_managed_nodes
+        if self.localtrack_folder:
+            data["localtrack_folder"] = self.localtrack_folder
         if data:
             await LibConfigRow.update(**data).where(LibConfigRow.id == self.id)
         return self
@@ -144,13 +178,15 @@ class LibConfigModel:
         self.java_path = response["java_path"]
         self.enable_managed_node = response["enable_managed_node"]
         self.auto_update_managed_nodes = response["auto_update_managed_nodes"]
+        self.localtrack_folder = response["localtrack_folder"]
         return self
 
     @classmethod
     async def get_or_create(
         cls,
-        id: int,  # noqa
+        id: int,
         config_folder=str(CONFIG_DIR),
+        localtrack_folder=str(CONFIG_DIR / "music"),
         java_path="java",
         enable_managed_node=True,
         auto_update_managed_nodes=True,
@@ -163,6 +199,7 @@ class LibConfigModel:
                 defaults=dict(
                     config_folder=config_folder,
                     java_path=java_path,
+                    localtrack_folder=localtrack_folder,
                     enable_managed_node=enable_managed_node,
                     auto_update_managed_nodes=auto_update_managed_nodes,
                 ),
@@ -181,7 +218,7 @@ class NodeModel:
     extras: dict
 
     @classmethod
-    async def from_id(cls, id: int) -> NodeModel:  # noqa
+    async def from_id(cls, id: int) -> NodeModel:
         response = await NodeRow.select().where(NodeRow.id == id).first()
         return cls(**response)
 
@@ -226,7 +263,7 @@ class NodeModel:
             NodeRow.extras: self.extras,
         }
         node = await NodeRow.objects().output(load_json=True).get_or_create(NodeRow.id == self.id, defaults=values)
-        if not node._was_created:  # noqa
+        if not node._was_created:
             await NodeRow.update(values).where(NodeRow.id == self.id)
 
     async def get_or_create(self) -> None:
@@ -238,7 +275,7 @@ class NodeModel:
             NodeRow.extras: self.extras,
         }
         output = await NodeRow.objects().output(load_json=True).get_or_create(NodeRow.id == self.id, defaults=values)
-        if not output._was_created:  # noqa
+        if not output._was_created:
             self.name = output.name
             self.ssl = output.ssl
             self.reconnect_attempts = output.reconnect_attempts
@@ -282,7 +319,7 @@ class QueryModel:
                 defaults=values,
             )
         )
-        if not query._was_created:  # noqa
+        if not query._was_created:
             await QueryRow.update(values).where(QueryRow.identifier == self.identifier)
 
     async def save(self):

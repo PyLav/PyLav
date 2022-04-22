@@ -653,7 +653,7 @@ class PyLavContext(_OriginalContextClass):
         colour: discord.Colour | int | None = None,
         color: discord.Colour | int | None = None,
         title: str = None,
-        type: EmbedType = "rich",  # noqa
+        type: EmbedType = "rich",
         url: str = None,
         description: str = None,
         timestamp: datetime.datetime = None,
@@ -662,7 +662,7 @@ class PyLavContext(_OriginalContextClass):
         thumbnail: str = None,
         footer: str = None,
         footer_url: str = None,
-        messageable: Messageable = None,
+        messageable: Messageable | discord.Interaction = None,
     ) -> discord.Embed:
         """
         Construct embed
@@ -786,7 +786,7 @@ class AsyncFilter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=du
         # Simply return the generator filled into a list
         return self.__flatten().__await__()
 
-    def __anext__(self) -> Awaitable[_T]:  # noqa
+    def __anext__(self) -> Awaitable[_T]:
         # This will use the generator strategy set in __init__
         return self.__generator_instance.__anext__()
 
@@ -882,7 +882,7 @@ def bounded_gather_iter(
     pending = []
 
     for cof in coros_or_futures:
-        if asyncio.isfuture(cof) and cof._loop is not loop:  # noqa
+        if asyncio.isfuture(cof) and cof._loop is not loop:
             raise ValueError("futures are tied to different event loops")
 
         cof = _sem_wrapper(semaphore, cof)

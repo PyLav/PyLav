@@ -62,8 +62,7 @@ class LocalFile:
     def __init__(self, path: str | pathlib.Path | aiopath.AsyncPath):
         if self.__ROOT_FOLDER is None:
             raise RuntimeError(
-                "Root folder not initialized, "
-                "call LocalFile.add_root_folder(folder: str | pathlib.Path, create:bool=True)"
+                "Root folder not initialized, " "call Client.update_localtracks_folder(folder: str | pathlib.Path)"
             )
         self._path: aiopath.AsyncPath = aiopath.AsyncPath(path)
         self._parent = self._path.parent

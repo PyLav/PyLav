@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import contextlib
+import datetime
 import itertools
 import time
 from typing import TYPE_CHECKING, Any, Literal
 
 import discord
 from discord import VoiceProtocol
+from discord.abc import Messageable
 from red_commons.logging import getLogger
 
 from pylav.events import (
@@ -50,7 +52,7 @@ LOGGER = getLogger("red.PyLink.Player")
 
 
 class Player(VoiceProtocol):
-    def __init__(  # noqa
+    def __init__(
         self,
         client: BotT,
         channel: discord.VoiceChannel,
@@ -62,11 +64,12 @@ class Player(VoiceProtocol):
         self.channel = channel
         self.channel_id = channel.id
         self.node: Node = node
-        self.player_manager: PlayerManager = None  # noqa
-        self._original_node: Node = None  # noqa
+        self.player_manager: PlayerManager = None  # type: ignore
+        self._original_node: Node = None  # type: ignore
         self._voice_state = {}
         self.region = channel.rtc_region
         self._connected = False
+        self.connected_at = datetime.datetime.now(tz=datetime.timezone.utc)
 
         self._user_data = {}
 
@@ -217,6 +220,11 @@ class Player(VoiceProtocol):
         return self.channel_id is not None
 
     @property
+    def is_empty(self) -> bool:
+        """Returns whether the player is empty or not."""
+        return sum(1 for i in self.channel.members if not i.bot) == 0
+
+    @property
     def position(self) -> float:
         """Returns the position in the track, adjusted for Lavalink's 5-second stats' interval."""
         if not self.is_playing:
@@ -345,12 +353,12 @@ class Player(VoiceProtocol):
         await self.queue.put(output, index=index)
         await self.node.dispatch_event(TracksRequestedEvent(self, self.guild.get_member(requester), output))
 
-    async def previous(self, requester: discord.Member) -> None:
+    async def previous(self, requester: discord.Member, bypass_cache: bool = False) -> None:
         if self.history.empty():
             raise TrackNotFound("There are no tracks currently in the player history.")
         track = await self.history.get()
         if track.is_partial:
-            await track.search(self)
+            await track.search(self, bypass_cache=bypass_cache)
         if self.current:
             await self.history.put([self.current])
         self.current = track
@@ -368,6 +376,7 @@ class Player(VoiceProtocol):
         query: Query,
         no_replace: bool = False,
         skip_segments: list[str] | str = None,
+        bypass_cache: bool = False,
     ) -> None:
         skip_segments = self._process_skip_segments(skip_segments)
         track = AudioTrack(self.node, track, query=query, skip_segments=skip_segments)
@@ -376,7 +385,7 @@ class Player(VoiceProtocol):
             self.queue.put_nowait([self.current], 0)
         if track.is_partial:
             try:
-                await track.search(self)
+                await track.search(self, bypass_cache=bypass_cache)
             except TrackNotFound as exc:
                 # If track was passed to `.play()` raise here
                 if not track:
@@ -401,7 +410,8 @@ class Player(VoiceProtocol):
         no_replace: bool = False,
         query: Query = None,
         skip_segments: list[str] | str = None,
-        requester: discord.Member = None,  # noqa
+        requester: discord.Member = None,
+        bypass_cache: bool = False,
     ) -> None:
         """
         Plays the given track.
@@ -429,6 +439,8 @@ class Player(VoiceProtocol):
             A list of segments to skip.
         requester: Optional[:class:`discord.Member`]
             The member that requested the track.
+        bypass_cache: Optional[:class:`bool`]
+            If set to true, the track will not be looked up in the cache. Defaults to `False`.
         """
         options = {}
         skip_segments = self._process_skip_segments(skip_segments)
@@ -456,7 +468,7 @@ class Player(VoiceProtocol):
             track = await self.queue.get()
         if track.is_partial:
             try:
-                await track.search(self)
+                await track.search(self, bypass_cache=bypass_cache)
             except TrackNotFound as exc:
                 # If track was passed to `.play()` raise here
                 if not track:
@@ -519,10 +531,10 @@ class Player(VoiceProtocol):
             The member who requested the repeat change.
         """
         current_after = current_before = self.repeat_current
-        queue_after = queue_before = self.repeat_queue  # noqa: F841
+        queue_after = queue_before = self.repeat_queue
 
         if op_type == "disable":
-            queue_after = self.repeat_queue = False  # noqa: F841
+            queue_after = self.repeat_queue = False
             current_after = self.repeat_current = False
         if op_type == "current":
             self.repeat_current = queue_after = repeat
@@ -1108,7 +1120,7 @@ class Player(VoiceProtocol):
         return msg
 
     async def get_currently_playing_message(
-        self, embed: bool = True, messageable: discord.abc.Messageable = None
+        self, embed: bool = True, messageable: Messageable | discord.Interaction = None
     ) -> discord.Embed | str:
         if embed:
             queue_list = ""
@@ -1162,7 +1174,7 @@ class Player(VoiceProtocol):
         per_page: int,
         total_pages: int,
         embed: bool = True,
-        messageable: discord.abc.Messageable = None,
+        messageable: Messageable | discord.Interaction = None,
     ) -> discord.Embed | str:
         start_index = page_index * per_page
         end_index = start_index + per_page

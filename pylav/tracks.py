@@ -9,11 +9,11 @@ import uuid
 from base64 import b64decode
 from functools import total_ordering
 from io import BytesIO
-from logging import getLogger
 from typing import TYPE_CHECKING, Any
 
 import discord
 from cached_property import cached_property, cached_property_with_ttl
+from red_commons.logging import getLogger
 
 from pylav.exceptions import InvalidTrack, TrackNotFound
 from pylav.query import Query
@@ -376,9 +376,9 @@ class AudioTrack:
         await asyncio.sleep(timer)
         del self.__dict__[function_name]
 
-    async def search(self, player: Player) -> None:
+    async def search(self, player: Player, bypass_cache: bool = False) -> None:
         self._query = await Query.from_string(self.query)
-        response = await player.node.get_tracks(self.query, first=True)
+        response = await player.node.get_tracks(self.query, first=True, bypass_cache=bypass_cache)
         if not response or "track" not in response:
             raise TrackNotFound(f"No tracks found for query {self.query}")
         self.track = response["track"]
@@ -506,5 +506,5 @@ class AudioTrack:
                             return title
                     else:
                         return None
-        except Exception:  # noqa
+        except Exception:
             return None

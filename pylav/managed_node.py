@@ -309,9 +309,9 @@ class LocalNodeManager:
 
         if not java_available:
             if self._java_version is None:
-                extras = ""  # noqa
+                extras = ""
             else:
-                extras = f" however you have version {self._java_version} (executable: {self._java_exc})"  # noqa
+                extras = f" however you have version {self._java_version} (executable: {self._java_exc})"
             raise UnsupportedJavaError()  # TODO: Add API endpoint to change this
         java_xms, java_xmx = "64M", "32GB"  # FIXME: Get from db
         match = re.match(r"^(\d+)([MG])$", java_xmx, flags=re.IGNORECASE)

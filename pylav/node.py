@@ -324,7 +324,7 @@ class Node:
     @property
     def _original_players(self) -> list[Player]:
         """Returns a list of players that were assigned to this node, but were moved due to failover etc."""
-        return [p for p in self._manager.client.player_manager.players.values() if p._original_node == self]  # noqa
+        return [p for p in self._manager.client.player_manager.players.values() if p._original_node == self]
 
     @property
     def players(self) -> list[Player]:
@@ -372,7 +372,7 @@ class Node:
         event: :class:`Event`
             The event to dispatch to the hooks.
         """
-        await self.node_manager.client._dispatch_event(event)  # noqa
+        await self.node_manager.client._dispatch_event(event)
 
     async def send(self, **data: Any) -> None:
         """|coro|
@@ -390,13 +390,15 @@ class Node:
             f"region={self.region} ssl={self.ssl} search_only={self.search_only}>"
         )
 
-    async def get_query_youtube_music(self, query: str) -> LavalinkResponseT:
+    async def get_query_youtube_music(self, query: str, bypass_cache: bool = False) -> LavalinkResponseT:
         """|coro|
         Gets the query from YouTube music.
         Parameters
         ----------
         query: :class:`str`
             The query to search for.
+        bypass_cache: :class:`bool`
+            Whether to bypass the cache.
         Returns
         -------
         list[dict]
@@ -409,15 +411,17 @@ class Node:
                 "tracks": [],
             }
         query = f"ytmsearch:{query}"
-        return await self.get_tracks(await self._query_cls.from_string(query))
+        return await self.get_tracks(await self._query_cls.from_string(query), bypass_cache=bypass_cache)
 
-    async def get_query_youtube(self, query: str) -> LavalinkResponseT:
+    async def get_query_youtube(self, query: str, bypass_cache: bool = False) -> LavalinkResponseT:
         """|coro|
         Gets the query from YouTube music.
         Parameters
         ----------
         query: :class:`str`
             The query to search for.
+        bypass_cache: :class:`bool`
+            Whether to bypass the cache.
         Returns
         -------
         list[dict]
@@ -430,15 +434,17 @@ class Node:
                 "tracks": [],
             }
         query = f"ytsearch:{query}"
-        return await self.get_tracks(await self._query_cls.from_string(query))
+        return await self.get_tracks(await self._query_cls.from_string(query), bypass_cache=bypass_cache)
 
-    async def get_query_soundcloud(self, query: str) -> LavalinkResponseT:
+    async def get_query_soundcloud(self, query: str, bypass_cache: bool = False) -> LavalinkResponseT:
         """|coro|
         Gets the query from Soundcloud.
         Parameters
         ----------
         query: :class:`str`
             The query to search for.
+        bypass_cache: :class:`bool`
+            Whether to bypass the cache.
         Returns
         -------
         list[dict]
@@ -451,15 +457,17 @@ class Node:
                 "tracks": [],
             }
         query = f"scsearch:{query}"
-        return await self.get_tracks(await self._query_cls.from_string(query))
+        return await self.get_tracks(await self._query_cls.from_string(query), bypass_cache=bypass_cache)
 
-    async def get_query_tts(self, query: str) -> LavalinkResponseT:
+    async def get_query_tts(self, query: str, bypass_cache: bool = False) -> LavalinkResponseT:
         """|coro|
         Gets the query for TTS.
         Parameters
         ----------
         query: :class:`str`
             The query to search for.
+        bypass_cache: :class:`bool`
+            Whether to bypass the cache.
         Returns
         -------
         list[dict]
@@ -472,15 +480,18 @@ class Node:
                 "tracks": [],
             }
         query = f"speak:{query}"
-        return await self.get_tracks(await self._query_cls.from_string(query))
+        return await self.get_tracks(await self._query_cls.from_string(query), bypass_cache=bypass_cache)
 
-    async def get_query_spotify(self, query: str) -> LavalinkResponseT:
+    async def get_query_spotify(self, query: str, bypass_cache: bool = False) -> LavalinkResponseT:
         """|coro|
         Gets the query from Spotify.
         Parameters
         ----------
         query: :class:`str`
             The query to search for.
+        bypass_cache: :class:`bool`
+            Whether to bypass the cache.
+
         Returns
         -------
         list[dict]
@@ -493,15 +504,17 @@ class Node:
                 "tracks": [],
             }
         query = f"spsearch:{query}"
-        return await self.get_tracks(await self._query_cls.from_string(query))
+        return await self.get_tracks(await self._query_cls.from_string(query), bypass_cache=bypass_cache)
 
-    async def get_query_apple_music(self, query: str) -> LavalinkResponseT:
+    async def get_query_apple_music(self, query: str, bypass_cache: bool = False) -> LavalinkResponseT:
         """|coro|
         Gets the query from Apple Music.
         Parameters
         ----------
         query: :class:`str`
             The query to search for.
+        bypass_cache: :class:`bool`
+            Whether to bypass the cache.
         Returns
         -------
         list[dict]
@@ -514,9 +527,11 @@ class Node:
                 "tracks": [],
             }
         query = f"amsearch:{query}"
-        return await self.get_tracks(await self._query_cls.from_string(query))
+        return await self.get_tracks(await self._query_cls.from_string(query), bypass_cache=bypass_cache)
 
-    async def get_tracks(self, query: Query, first: bool = False) -> LavalinkResponseT | TrackT:
+    async def get_tracks(
+        self, query: Query, first: bool = False, bypass_cache: bool = False
+    ) -> LavalinkResponseT | TrackT:
         """|coro|
         Gets all tracks associated with the given query.
 
@@ -526,12 +541,14 @@ class Node:
             The query to perform a search for.
         first: :class:`bool`
             Whether to return the first result or all results.
+        bypass_cache: :class:`bool`
+            Whether to bypass the cache.
         Returns
         -------
         :class:`dict`
             A dict representing tracks.
         """
-        if response := await self.node_manager.client.query_cache_manager.get_query(query):
+        if not bypass_cache and (response := await self.node_manager.client.query_cache_manager.get_query(query)):
             # Note this is a partial return
             #   (the tracks are only B64 encoded, to get the decoded tracks like the api returns
             #   you'd need to call `pylava.utils.decode_tracks`)

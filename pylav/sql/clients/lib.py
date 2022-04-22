@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from logging import getLogger
 from typing import TYPE_CHECKING
 
 import aiopath
 from piccolo.table import create_tables
+from red_commons.logging import getLogger
 
 from pylav._config import CONFIG_DIR
 from pylav.sql.models import LibConfigModel
@@ -36,10 +36,13 @@ class LibConfigManager:
         create_tables(PlaylistRow, LibConfigRow, PlayerRow, NodeRow, QueryRow, if_not_exists=True)
 
     @staticmethod
-    async def get_config(config_folder, java_path, enable_managed_node, auto_update_managed_nodes) -> LibConfigModel:
+    async def get_config(
+        config_folder, localtrack_folder, java_path, enable_managed_node, auto_update_managed_nodes
+    ) -> LibConfigModel:
         return await LibConfigModel.get_or_create(
             id=1,
             config_folder=f"{config_folder}",
+            localtrack_folder=f"{localtrack_folder}",
             java_path=java_path,
             enable_managed_node=enable_managed_node,
             auto_update_managed_nodes=auto_update_managed_nodes,
@@ -49,10 +52,12 @@ class LibConfigManager:
         self,
         config_folder: aiopath.AsyncPath | str,
         java_path: str,
+        localtrack_folder: aiopath.AsyncPath | str,
         enable_managed_node: bool,
         auto_update_managed_nodes: bool,
     ) -> LibConfigModel:
         config_folder: aiopath.AsyncPath = aiopath.AsyncPath(config_folder)
+        localtrack_folder: aiopath.AsyncPath = aiopath.AsyncPath(localtrack_folder)
         if await config_folder.is_file():
             raise ValueError("The config folder must be a directory.")
         if await config_folder.is_dir() and not await config_folder.exists():
@@ -65,4 +70,5 @@ class LibConfigManager:
             java_path=java_path,
             enable_managed_node=enable_managed_node,
             auto_update_managed_nodes=auto_update_managed_nodes,
+            localtrack_folder=str(localtrack_folder),
         ).save()

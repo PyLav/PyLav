@@ -119,7 +119,7 @@ class WebSocket:
     async def connect(self):
         """Attempts to establish a connection to Lavalink."""
         self.ready.clear()
-        self.node._ready.clear()  # noqa
+        self.node._ready.clear()
         headers = {
             "Authorization": self._password,
             "User-Id": str(self.bot_id),
@@ -151,7 +151,7 @@ class WebSocket:
                 )
                 await self._node.update_features()
                 self.ready.set()
-                self.node._ready.set()  # noqa
+                self.node._ready.set()
                 backoff.reset()
             except (
                 aiohttp.ClientConnectorError,
@@ -282,7 +282,7 @@ class WebSocket:
             if not player:
                 return
 
-            await player._update_state(data["state"])  # noqa
+            await player._update_state(data["state"])
         elif op == "event":
             await self.handle_event(data)
         else:
@@ -328,10 +328,10 @@ class WebSocket:
             LOGGER.warning("[NODE-%s] Unknown event received: %s", self.node.name, event_type)
             return
 
-        await self.client._dispatch_event(event)  # noqa
+        await self.client._dispatch_event(event)
 
         if player:
-            await player._handle_event(event)  # noqa
+            await player._handle_event(event)
 
     async def send(self, **data: Any):
         """

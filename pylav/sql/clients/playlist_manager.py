@@ -1,7 +1,9 @@
 from __future__ import annotations
 
-from logging import getLogger
 from typing import TYPE_CHECKING, AsyncIterator
+
+import discord
+from red_commons.logging import getLogger
 
 from pylav.exceptions import EntryNotFoundError
 from pylav.sql.models import PlaylistModel
@@ -80,7 +82,7 @@ class PlaylistConfigManager:
 
     @staticmethod
     async def create_or_update_playlist(
-        id: int, scope: int, author: int, name: str, url: str | None = None, tracks: list[str] = None  # noqa
+        id: int, scope: int, author: int, name: str, url: str | None = None, tracks: list[str] = None
     ) -> PlaylistModel:
         values = {
             PlaylistRow.scope: scope,
@@ -92,10 +94,91 @@ class PlaylistConfigManager:
         playlist = (
             await PlaylistRow.objects().output(load_json=True).get_or_create(PlaylistRow.id == id, defaults=values)
         )
-        if not playlist._was_created:  # noqa
+        if not playlist._was_created:
             await PlaylistRow.update(values).where(PlaylistRow.id == id)
         return PlaylistModel(**playlist.to_dict())
 
     @staticmethod
     async def delete_playlist(playlist_id: int) -> None:
         await PlaylistRow.delete().where(PlaylistRow.id == playlist_id)
+
+    @staticmethod
+    async def get_all_playlists_by_author(author: int) -> AsyncIterator[PlaylistModel]:
+        for entry in await PlaylistRow.select().where(PlaylistRow.author == author):
+            yield PlaylistModel(**entry)
+
+    @staticmethod
+    async def get_all_playlists_by_scope(scope: int) -> AsyncIterator[PlaylistModel]:
+        for entry in await PlaylistRow.select().where(PlaylistRow.scope == scope):
+            yield PlaylistModel(**entry)
+
+    @staticmethod
+    async def get_all_playlists_by_scope_and_author(scope: int, author: int) -> AsyncIterator[PlaylistModel]:
+        for entry in await PlaylistRow.select().where(PlaylistRow.scope == scope, PlaylistRow.author == author):
+            yield PlaylistModel(**entry)
+
+    async def get_global_playlists(self) -> AsyncIterator[PlaylistModel]:
+        for entry in await PlaylistRow.select().where(PlaylistRow.scope == self._client.bot.user.id):
+            yield PlaylistModel(**entry)
+
+    async def create_or_update_global_playlist(
+        self, id: int, author: int, name: str, url: str | None = None, tracks: list[str] = None
+    ) -> PlaylistModel:
+        return await self.create_or_update_playlist(
+            id=id, scope=self._client.bot.user.id, author=author, name=name, url=url, tracks=tracks
+        )
+
+    async def create_or_update_user_playlist(
+        self, id: int, author: int, name: str, url: str | None = None, tracks: list[str] = None
+    ) -> PlaylistModel:
+        return await self.create_or_update_playlist(
+            id=id, scope=author, author=author, name=name, url=url, tracks=tracks
+        )
+
+    async def create_or_update_channel_playlist(
+        self, channel: discord.TextChannel, author: int, name: str, url: str | None = None, tracks: list[str] = None
+    ) -> PlaylistModel:
+        return await self.create_or_update_playlist(
+            id=channel.id, scope=channel.id, author=author, name=name, url=url, tracks=tracks
+        )
+
+    async def create_or_update_guild_playlist(
+        self, guild: discord.Guild, author: int, name: str, url: str | None = None, tracks: list[str] = None
+    ) -> PlaylistModel:
+        return await self.create_or_update_playlist(
+            id=guild.id, scope=guild.id, author=author, name=name, url=url, tracks=tracks
+        )
+
+    async def create_or_update_vc_playlist(
+        self, vc: discord.VoiceChannel, author: int, name: str, url: str | None = None, tracks: list[str] = None
+    ) -> PlaylistModel:
+        return await self.create_or_update_playlist(
+            id=vc.id, scope=vc.id, author=author, name=name, url=url, tracks=tracks
+        )
+
+    async def get_all_for_user(
+        self,
+        requester: int,
+        *,
+        vc: discord.VoiceChannel | discord.StageChannel = None,
+        guild: discord.Guild = None,
+        channel: discord.TextChannel | discord.ForumChannel = None,
+    ) -> tuple[list[PlaylistModel], list[PlaylistModel], list[PlaylistModel], list[PlaylistModel], list[PlaylistModel]]:
+        """
+        Gets all playlists a user has access to in a given context.
+
+        Globals, User specific, Guild specific, Channel specific, VC specific.
+
+        """
+        global_playlists = [p async for p in self.get_all_playlists_by_scope(scope=self._client.bot.user.id)]
+        user_playlists = [p async for p in self.get_all_playlists_by_scope(scope=requester)]
+        vc_playlists = []
+        guild_playlists = []
+        channel_playlists = []
+        if vc is not None:
+            vc_playlists = [p async for p in self.get_all_playlists_by_scope(scope=vc.id)]
+        if guild is not None:
+            guild_playlists = [p async for p in self.get_all_playlists_by_scope(scope=guild.id)]
+        if channel is not None:
+            channel_playlists = [p async for p in self.get_all_playlists_by_scope(scope=channel.id)]
+        return global_playlists, user_playlists, guild_playlists, channel_playlists, vc_playlists

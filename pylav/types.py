@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from typing import Any, Awaitable, Callable, Coroutine, Literal, TYPE_CHECKING, TypeVar, Union, Type  # noqa: F401
 
+import discord
 from typing_extensions import TypedDict
 
 T = TypeVar("T")
@@ -32,14 +33,7 @@ else:
         from discord.ext.commands.bot import AutoShardedBot as BotClient
 
 
-_Bot = Union["BotClientWithLavalink", "Red", "Bot", "AutoShardedBot"]
-
-
-class BotClientWithLavalink(BotClient):
-    lavalink: Client
-    _pylav_client: Client
-
-    get_context: Callable[..., Coro[PyLavContext]]
+_Bot = Union["Red", "Bot", "AutoShardedBot"]
 
 
 Coro = Coroutine[Any, Any, T]
@@ -56,7 +50,20 @@ Error = Union[
 ]
 
 ContextT = TypeVar("ContextT", bound="Union[PyLavContext[Any], RedContext[Any], Context[Any]]")
-BotT = TypeVar("BotT", bound=Union[BotClientWithLavalink, _Bot], covariant=True)
+
+
+class BotClientWithLavalink(BotClient):
+    _pylav_client: Client
+    lavalink: Client
+    guild: discord.Guild | None
+
+    async def get_context(
+        self, message: discord.abc.Message | discord.Interaction, *, cls: type[PyLavContext] = None
+    ) -> PyLavContext[Any]:
+        ...
+
+
+BotT = TypeVar("BotT", bound=BotClientWithLavalink, covariant=True)
 QueryT = TypeVar("QueryT", bound="Type[Query]")
 
 

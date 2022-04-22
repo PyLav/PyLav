@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from logging import getLogger
 from typing import TYPE_CHECKING
+
+from red_commons.logging import getLogger
 
 from pylav.exceptions import EntryNotFoundError
 from pylav.sql.models import NodeModel

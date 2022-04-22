@@ -35,6 +35,7 @@ class PlaylistRow(Table, db=DB, tablename="playlist"):
 class LibConfigRow(Table, db=DB, tablename="lib_config"):
     id = BigInt(primary_key=True)
     config_folder = Text(null=False)
+    localtrack_folder = Text(null=True)
     java_path = Text(null=False, default="java")
     enable_managed_node = Boolean(null=False, default=True)
     auto_update_managed_nodes = Boolean(null=False, default=True)

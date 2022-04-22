@@ -26,9 +26,9 @@ def get_closest_region_name(lat, lon):
 
 
 async def get_coordinates(ip: str | None = None):
-    url = "http://ipinfo.io/json"
+    url = "https://ipinfo.io/json"
     if ip:
-        url = f"http://ipinfo.io/{ip}/json"
+        url = f"https://ipinfo.io/{ip}/json"
 
     async with aiohttp.ClientSession(json_serialize=ujson.dumps) as session:
         async with session.get(url) as response:
@@ -39,10 +39,10 @@ async def get_coordinates(ip: str | None = None):
 async def get_closest_discord_region(host: str | None = None):
     try:
         host_ip = await asyncio.to_thread(socket.gethostbyname, host)
-    except Exception:  # noqa
+    except Exception:
         host_ip = None  # If there's any issues getting the ip from the hostname, just use the host ip
     try:
         loc = await get_coordinates(host_ip)
         return get_closest_region_name(*loc)
-    except Exception:  # noqa
+    except Exception:
         return "london"

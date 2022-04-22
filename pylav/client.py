@@ -7,7 +7,7 @@ import pathlib
 import random
 from collections import defaultdict
 from types import MethodType
-from typing import Callable
+from typing import Callable, Iterator
 
 import aiohttp
 import aiopath
@@ -40,7 +40,7 @@ from pylav.sql.clients.nodes import NodeConfigManager
 from pylav.sql.clients.playlist_manager import PlaylistConfigManager
 from pylav.sql.clients.query_manager import QueryCacheManager
 from pylav.types import BotT, CogT, ContextT
-from pylav.utils import PyLavContext, _get_context, _process_commands, add_property  # noqa
+from pylav.utils import PyLavContext, _get_context, _process_commands, add_property
 
 LOGGER = getLogger("red.PyLink.Client")
 
@@ -99,7 +99,7 @@ class Client:
                 _COGS_REGISTERED.add(cog.__cog_name__)
                 raise CogHasBeenRegistered(f"Pylav is already loaded - {cog.__cog_name__} has been registered!")
         setattr(bot, "_pylav_client", self)
-        add_property(bot, "lavalink", lambda self_: self_._pylav_client)  # noqa
+        add_property(bot, "lavalink", lambda self_: self_._pylav_client)
         if _OLD_PROCESS_COMMAND_METHOD is None:
             _OLD_PROCESS_COMMAND_METHOD = bot.process_commands
         if _OLD_GET_CONTEXT is None:
@@ -138,7 +138,9 @@ class Client:
             )
         return SpotifyClient(self._spotify_auth)
 
-    async def initialize(self, client_id: str | None = None, client_secret: str | None = None) -> None:
+    async def initialize(
+        self, client_id: str | None = None, client_secret: str | None = None, localtrack_folder: str | None = None
+    ) -> None:
         if self._ready:
             return
         await self._lib_config_manager.initialize()
@@ -147,6 +149,7 @@ class Client:
             java_path="java",
             enable_managed_node=True,
             auto_update_managed_nodes=True,
+            localtrack_folder=localtrack_folder or self._config_folder,
         )
         auto_update_managed_nodes = config_data.auto_update_managed_nodes
         enable_managed_node = config_data.enable_managed_node
@@ -171,7 +174,11 @@ class Client:
         )
         from pylav.localfiles import LocalFile
 
-        await LocalFile.add_root_folder(path=self._config_folder / "music", create=True)
+        if not localtrack_folder:
+            localtrack_folder = self._config_folder / "music"
+        else:
+            localtrack_folder = aiopath.AsyncPath(localtrack_folder)
+        await LocalFile.add_root_folder(path=localtrack_folder, create=True)
         self._ready = True
         self._local_node_manager = LocalNodeManager(self, auto_update=auto_update_managed_nodes)
         if enable_managed_node:
@@ -365,7 +372,12 @@ class Client:
         )
 
     async def get_tracks(
-        self, query: Query, node: Node = None, search_only_nodes: bool = False, first: bool = False
+        self,
+        query: Query,
+        node: Node = None,
+        search_only_nodes: bool = False,
+        first: bool = False,
+        bypass_cache: bool = False,
     ) -> dict:
         """|coro|
         Gets all tracks associated with the given query.
@@ -383,6 +395,8 @@ class Client:
             Whether to only search for tracks using nodes flagged as search only.
         first: Optional[:class:`bool`]
             Whether to only return the first track. Defaults to `False`.
+        bypass_cache: Optional[:class:`bool`]
+            Whether to bypass the cache. Defaults to `False`.
 
         Returns
         -------
@@ -405,7 +419,7 @@ class Client:
         if not nodes:
             raise NoNodeAvailable("No available nodes!")
         node = node or random.choice(list(nodes))
-        return await node.get_tracks(query, first=first)
+        return await node.get_tracks(query, first=first, bypass_cache=bypass_cache)
 
     async def decode_track(self, track: str, node: Node = None) -> dict | None:
         """|coro|
@@ -634,7 +648,7 @@ class Client:
         colour: discord.Colour | int | None = None,
         color: discord.Colour | int | None = None,
         title: str = None,
-        type: EmbedType = "rich",  # noqa
+        type: EmbedType = "rich",
         url: str = None,
         description: str = None,
         timestamp: datetime.datetime = None,
@@ -643,7 +657,7 @@ class Client:
         thumbnail: str = None,
         footer: str = None,
         footer_url: str = None,
-        messageable: Messageable = None,
+        messageable: Messageable | discord.Interaction = None,
     ) -> discord.Embed:
         if not self.initialized:
             raise PyLavNotInitialized(
@@ -690,3 +704,24 @@ class Client:
         else:
             ctx: PyLavContext = await self._bot.get_context(what, cls=PyLavContext)  # type: ignore
         return ctx
+
+    async def update_localtracks_folder(self, folder: str | None) -> None:
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
+        from pylav.localfiles import LocalFile
+
+        if not folder:
+            localtrack_folder = self._config_folder / "music"
+        else:
+            localtrack_folder = aiopath.AsyncPath(folder)
+        await LocalFile.add_root_folder(path=localtrack_folder, create=True)
+
+    async def get_all_players(self) -> Iterator[Player]:
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
+
+        return iter(self.player_manager)
