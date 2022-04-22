@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 from typing import Any, Awaitable, Callable, Coroutine, Literal, Optional, TYPE_CHECKING, TypeVar, Union
+
+import discord
 from typing_extensions import TypedDict
 
 T = TypeVar("T")
@@ -43,6 +45,8 @@ _Bot = Union["BotClientWithLavalink", "Red", "Bot", "AutoShardedBot"]
 class BotClientWithLavalink(BotClient):
     lavalink: Client
     _pylav_client: Client
+
+    get_context: Callable[[discord.Message | discord.Interaction], Awaitable[PyLavContext]]
 
 
 Coro = Coroutine[Any, Any, T]

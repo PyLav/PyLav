@@ -666,7 +666,9 @@ async def _process_commands(self, message: discord.Message, /):
         self.dispatch("message_without_command", message)
 
 
-async def _get_context(self: BotT, message: discord.Message | discord.Interaction, /, *, cls=PyLavContext):  # noqa
+async def _get_context(
+    self: BotT, message: discord.Message | discord.Interaction, /, *, cls=PyLavContext
+) -> PyLavContext:  # noqa
     return await super(self.__class__, self).get_context(message, cls=cls)
 
 
