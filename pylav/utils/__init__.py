@@ -27,7 +27,7 @@ from typing import (
     Union,
 )
 
-import discord
+import discord  # type: ignore
 from discord import Interaction, Message
 from discord.abc import Messageable
 from discord.backoff import ExponentialBackoff
@@ -36,7 +36,7 @@ from discord.ext.commands.view import StringView
 from discord.types.embed import EmbedType
 from discord.utils import maybe_coroutine  # noqa
 
-from pylav._types import BotT, ContextT
+from pylav.types import BotT, ContextT
 
 try:
     from redbot.core.commands import Command
@@ -62,6 +62,7 @@ __all__ = (
     "_process_commands",
     "_get_context",
     "PyLavContext",
+    "ExponentialBackoffWithReset",
 )
 
 from red_commons.logging import getLogger
@@ -651,7 +652,7 @@ class PyLavContext(_OriginalContextClass):
         colour: discord.Colour | int | None = None,
         color: discord.Colour | int | None = None,
         title: str = None,
-        type: EmbedType = "rich",
+        type: EmbedType = "rich",  # noqa
         url: str = None,
         description: str = None,
         timestamp: datetime.datetime = None,
@@ -709,8 +710,8 @@ async def _process_commands(self, message: discord.Message, /):
 
 async def _get_context(
     self: BotT, message: discord.Message | discord.Interaction, /, *, cls=PyLavContext
-) -> PyLavContext:  # noqa
-    return await super(self.__class__, self).get_context(message, cls=cls)
+) -> PyLavContext:
+    return await super(self.__class__, self).get_context(message, cls=cls)  # noqa
 
 
 # Everything under here is taken from
@@ -784,7 +785,7 @@ class AsyncFilter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=du
         # Simply return the generator filled into a list
         return self.__flatten().__await__()
 
-    def __anext__(self) -> Awaitable[_T]:
+    def __anext__(self) -> Awaitable[_T]:  # noqa
         # This will use the generator strategy set in __init__
         return self.__generator_instance.__anext__()
 

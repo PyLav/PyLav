@@ -21,7 +21,6 @@ from discord.types.embed import EmbedType
 from red_commons.logging import getLogger
 
 from pylav._config import __VERSION__, CONFIG_DIR
-from pylav._types import BotT, CogT, ContextT
 from pylav.events import Event
 from pylav.exceptions import (
     AnotherClientAlreadyRegistered,
@@ -36,11 +35,12 @@ from pylav.node_manager import NodeManager
 from pylav.player import Player
 from pylav.player_manager import PlayerManager
 from pylav.query import Query
-from pylav.sql.clients.lib import LibConfigManager  # noqa
+from pylav.sql.clients.lib import LibConfigManager
 from pylav.sql.clients.nodes import NodeConfigManager
 from pylav.sql.clients.playlist_manager import PlaylistConfigManager
 from pylav.sql.clients.query_manager import QueryCacheManager
-from pylav.utils import PyLavContext, _get_context, _process_commands, add_property
+from pylav.types import BotT, CogT, ContextT
+from pylav.utils import PyLavContext, _get_context, _process_commands, add_property  # noqa
 
 LOGGER = getLogger("red.PyLink.Client")
 
@@ -634,7 +634,7 @@ class Client:
         colour: discord.Colour | int | None = None,
         color: discord.Colour | int | None = None,
         title: str = None,
-        type: EmbedType = "rich",
+        type: EmbedType = "rich",  # noqa
         url: str = None,
         description: str = None,
         timestamp: datetime.datetime = None,

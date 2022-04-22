@@ -130,18 +130,19 @@ class NodeManager:
 
         LOGGER.info("[NODE-%s] Successfully added to Node Manager", node.name)
         LOGGER.verbose("[NODE-%s] Successfully added to Node Manager -- %r", node.name, node)
-        await self.client.node_db_manager.add_node(
-            host=host,
-            port=port,
-            password=password,
-            resume_key=resume_key,
-            resume_timeout=resume_timeout,
-            name=name,
-            reconnect_attempts=reconnect_attempts,
-            ssl=ssl,
-            search_only=search_only,
-            unique_identifier=unique_identifier,
-        )
+        if not skip_db:
+            await self.client.node_db_manager.add_node(
+                host=host,
+                port=port,
+                password=password,
+                resume_key=resume_key,
+                resume_timeout=resume_timeout,
+                name=name,
+                reconnect_attempts=reconnect_attempts,
+                ssl=ssl,
+                search_only=search_only,
+                unique_identifier=unique_identifier,
+            )
         return node
 
     async def remove_node(self, node: Node) -> None:
@@ -157,7 +158,7 @@ class NodeManager:
         LOGGER.info("[NODE-%s] Successfully removed Node", node.name)
         LOGGER.info("[NODE-%s] Successfully removed Node -- %r", node.name, node)
         if node.identifier:
-            await self.client.node_db_manager.remove_node(node.identifier)
+            await self.client.node_db_manager.delete(node.identifier)
             LOGGER.debug("[NODE-%s] Successfully deleted Node from database", node.name)
 
     def get_region(self, endpoint: str | None) -> str | None:
@@ -304,6 +305,6 @@ class NodeManager:
                 await self.add_node(**connection_arguments, skip_db=True)
             except (ValueError, KeyError) as exc:
                 LOGGER.warning(
-                    "[NODE-%s] Invalid node, skipping ... id: %s - Original error: %s", node.name, node.identifier, exc
+                    "[NODE-%s] Invalid node, skipping ... id: %s - Original error: %s", node.name, node.id, exc
                 )
                 continue

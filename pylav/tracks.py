@@ -232,7 +232,7 @@ class AudioTrack:
             self._raw_data = data._raw_data
             self._query = data._query or self._query
             self._unique_id = data._unique_id
-        else:
+        elif isinstance(data, str):
             self.track = data
             self.extra = extra
             self._raw_data = {}
@@ -502,5 +502,5 @@ class AudioTrack:
                             return title
                     else:
                         return None
-        except Exception:
+        except Exception:  # noqa
             return None

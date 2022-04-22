@@ -9,7 +9,6 @@ import discord
 from discord import VoiceProtocol
 from red_commons.logging import getLogger
 
-from pylav._types import BotT
 from pylav.events import (
     FiltersAppliedEvent,
     NodeChangedEvent,
@@ -39,6 +38,7 @@ from pylav.filters import ChannelMix, Distortion, Equalizer, Karaoke, LowPass, R
 from pylav.filters.tremolo import Tremolo
 from pylav.query import Query
 from pylav.tracks import AudioTrack
+from pylav.types import BotT
 from pylav.utils import AsyncIter, LifoQueue, Queue, SegmentCategory, format_time
 
 if TYPE_CHECKING:
@@ -49,7 +49,7 @@ LOGGER = getLogger("red.PyLink.Player")
 
 
 class Player(VoiceProtocol):
-    def __init__(
+    def __init__(  # noqa
         self,
         client: BotT,
         channel: discord.VoiceChannel,
@@ -368,7 +368,7 @@ class Player(VoiceProtocol):
         no_replace: bool = False,
         query: Query = None,
         skip_segments: list[str] | str = None,
-        requester: discord.Member = None,
+        requester: discord.Member = None,  # noqa
     ) -> None:
         """
         Plays the given track.
@@ -486,10 +486,10 @@ class Player(VoiceProtocol):
             The member who requested the repeat change.
         """
         current_after = current_before = self.repeat_current
-        queue_after = queue_before = self.repeat_queue
+        queue_after = queue_before = self.repeat_queue  # noqa: F841
 
         if op_type == "disable":
-            queue_after = self.repeat_queue = False
+            queue_after = self.repeat_queue = False  # noqa: F841
             current_after = self.repeat_current = False
         if op_type == "current":
             self.repeat_current = queue_after = repeat
@@ -652,7 +652,7 @@ class Player(VoiceProtocol):
             "volume": self.volume,
             "position": self.position,
             "playing": self.is_playing,
-            "queue": [t.to_json() for t in self.queue.raw_queue] if not self.queue.empty() else [],  # noqa
+            "queue": [t.to_json() for t in self.queue.raw_queue] if not self.queue.empty() else [],
             "history": [t.to_json() for t in self.history.raw_queue] if not self.history.empty() else [],
             "effect_enabled": self._effect_enabled,
             "effects": {

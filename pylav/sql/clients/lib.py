@@ -31,7 +31,8 @@ class LibConfigManager:
     def client(self) -> Client:
         return self._client
 
-    async def create_tables(self) -> None:
+    @staticmethod
+    async def create_tables() -> None:
         create_tables(PlaylistRow, LibConfigRow, PlayerRow, NodeRow, QueryRow, if_not_exists=True)
 
     @staticmethod

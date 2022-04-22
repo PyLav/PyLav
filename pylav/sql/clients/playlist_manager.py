@@ -21,7 +21,8 @@ class PlaylistConfigManager:
     def client(self) -> Client:
         return self._client
 
-    async def get_playlist_by_name(self, playlist_name: str, limit: int = None) -> list[PlaylistModel]:
+    @staticmethod
+    async def get_playlist_by_name(playlist_name: str, limit: int = None) -> list[PlaylistModel]:
         if limit is None:
             playlists = await PlaylistRow.select().where(PlaylistRow.name.ilike(f"{playlist_name.lower()}"))
             if not playlists:
@@ -79,7 +80,7 @@ class PlaylistConfigManager:
 
     @staticmethod
     async def create_or_update_playlist(
-        id: int, scope: int, author: int, name: str, url: str | None = None, tracks: list[str] = None
+        id: int, scope: int, author: int, name: str, url: str | None = None, tracks: list[str] = None  # noqa
     ) -> PlaylistModel:
         values = {
             PlaylistRow.scope: scope,

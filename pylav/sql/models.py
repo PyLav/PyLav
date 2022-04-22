@@ -37,7 +37,7 @@ class PlaylistModel:
         return PlaylistModel(**playlist.to_dict())
 
     @classmethod
-    async def get(cls, id: int) -> PlaylistModel | None:
+    async def get(cls, id: int) -> PlaylistModel | None:  # noqa
         """
         Get a playlist from the database.
         """
@@ -149,7 +149,7 @@ class LibConfigModel:
     @classmethod
     async def get_or_create(
         cls,
-        id: int,
+        id: int,  # noqa
         config_folder=str(CONFIG_DIR),
         java_path="java",
         enable_managed_node=True,
@@ -181,7 +181,7 @@ class NodeModel:
     extras: dict
 
     @classmethod
-    async def from_id(cls, id: int) -> NodeModel:
+    async def from_id(cls, id: int) -> NodeModel:  # noqa
         response = await NodeRow.select().where(NodeRow.id == id).first()
         return cls(**response)
 

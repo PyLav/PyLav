@@ -31,6 +31,7 @@ __all__ = (
     "NoNodeAvailable",
     "SQLError",
     "EntryNotFoundError",
+    "PyLavNotInitialized",
 )
 
 from discord.ext.commands import CommandError

@@ -7,6 +7,8 @@ from typing import TYPE_CHECKING, Literal
 import aiopath
 from red_commons.logging import getLogger
 
+from pylav.types import QueryT
+
 if TYPE_CHECKING:
     from pylav.localfiles import LocalFile
 
@@ -78,7 +80,7 @@ SOUNDCLOUD_TIMESTAMP = re.compile(r"#t=(\d+):(\d+)s?")
 TWITCH_TIMESTAMP = re.compile(r"\?t=(\d+)h(\d+)m(\d+)s")
 
 
-def process_youtube(cls: type[Query], query: str, music: bool):
+def process_youtube(cls: QueryT, query: str, music: bool):
     index = 0
     if match := YOUTUBE_TIMESTAMP.search(query):
         start_time = int(match.group(1))
@@ -98,20 +100,24 @@ def process_youtube(cls: type[Query], query: str, music: bool):
     else:
         query_type = "single"
     return cls(
-        query, "YouTube Music" if music else "YouTube", start_time=start_time, query_type=query_type, index=index
-    )  # type: ignore
+        query,
+        "YouTube Music" if music else "YouTube",
+        start_time=start_time,
+        query_type=query_type,  # type: ignore
+        index=index,
+    )
 
 
-def process_spotify(cls: type[Query], query: str) -> Query:
+def process_spotify(cls: QueryT, query: str) -> Query:
     query_type = "single"
     if "/playlist/" in query:
         query_type = "playlist"
     elif "/album/" in query:
         query_type = "album"
-    return cls(query, "Spotify", query_type=query_type)  # type: ignore
+    return cls(query, "Spotify", query_type=query_type)
 
 
-def process_soundcloud(cls: type[Query], query: str):
+def process_soundcloud(cls: QueryT, query: str):
     if "/sets/" in query:
         if "?in=" in query:
             query_type = "single"
@@ -119,15 +125,15 @@ def process_soundcloud(cls: type[Query], query: str):
             query_type = "playlist"
     else:
         query_type = "single"
-    return cls(query, "SoundCloud", query_type=query_type)  # type: ignore
+    return cls(query, "SoundCloud", query_type=query_type)
 
 
-def process_bandcamp(cls: type[Query], query: str) -> Query:
+def process_bandcamp(cls: QueryT, query: str) -> Query:
     if "/album/" in query:
         query_type = "album"
     else:
         query_type = "single"
-    return cls(query, "Bandcamp", query_type=query_type)  # type: ignore
+    return cls(query, "Bandcamp", query_type=query_type)
 
 
 class Query:
@@ -363,7 +369,7 @@ class Query:
         else:
             try:
                 return await cls.__process_local(query)
-            except Exception:
+            except Exception:  # noqa
                 return cls(query, "YouTube Music", search=True)  # Fallback to YouTube Music
 
     @classmethod

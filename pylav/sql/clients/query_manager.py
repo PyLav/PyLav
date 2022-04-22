@@ -43,7 +43,8 @@ class QueryCacheManager:
         if query:
             return QueryModel(**query)
 
-    async def add_query(self, query: Query, result: dict):
+    @staticmethod
+    async def add_query(query: Query, result: dict):
         if query.is_local or query.is_single or query.is_http:
             # Do not cache local queries and single track urls or http source entries
             return

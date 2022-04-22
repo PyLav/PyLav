@@ -264,8 +264,6 @@ class PlayerPausedEvent(Event):
     ----------
     player: :class:`BasePlayer`
         The player whose track was paused.
-    track: :class:`AudioTrack`
-        The track that was paused.
     requester: :class:`discord.Member`
         The user who requested the change.
     """
@@ -302,8 +300,6 @@ class PlayerResumedEvent(Event):
     ----------
     player: :class:`BasePlayer`
         The player whose track was resumed.
-    track: :class:`AudioTrack`
-        The track that was resumed.
     requester: :class:`discord.Member`
         The user who requested the change.
     """
@@ -652,7 +648,7 @@ class TracksRequestedEvent(Event):
         The player whose queue was shuffled.
     requester: :class:`discord.Member`
         The user who requested the change.
-    track: :class:`AudioTrack`
+    tracks: List[:class:`AudioTrack`]
         The track that was seeked.
     """
 

@@ -7,11 +7,11 @@ from uuid import uuid4
 import aiohttp
 import ujson
 
-from pylav._types import LavalinkResponseT, TrackT
 from pylav.events import Event
 from pylav.exceptions import Unauthorized
 from pylav.filters import ChannelMix, Distortion, Equalizer, Karaoke, LowPass, Rotation, Timescale, Vibrato, Volume
 from pylav.filters.tremolo import Tremolo
+from pylav.types import LavalinkResponseT, TrackT
 from pylav.utils import AsyncIter
 
 if TYPE_CHECKING:
@@ -177,7 +177,7 @@ class Node:
     ):
         from pylav.query import Query
 
-        self._query_cls: Query = Query
+        self._query_cls: Query = Query  # type: ignore
         self._manager = manager
         self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
         if unique_identifier is None:
@@ -403,7 +403,11 @@ class Node:
             The list of results.
         """
         if not self.available:
-            return {}
+            return {
+                "loadType": "LOAD_FAILED",
+                "playlistInfo": {"name": "", "selectedTrack": -1},
+                "tracks": [],
+            }
         query = f"ytmsearch:{query}"
         return await self.get_tracks(await self._query_cls.from_string(query))
 
@@ -420,7 +424,11 @@ class Node:
             The list of results.
         """
         if not self.available:
-            return {}
+            return {
+                "loadType": "LOAD_FAILED",
+                "playlistInfo": {"name": "", "selectedTrack": -1},
+                "tracks": [],
+            }
         query = f"ytsearch:{query}"
         return await self.get_tracks(await self._query_cls.from_string(query))
 
@@ -437,7 +445,11 @@ class Node:
             The list of results.
         """
         if not self.available:
-            return {}
+            return {
+                "loadType": "LOAD_FAILED",
+                "playlistInfo": {"name": "", "selectedTrack": -1},
+                "tracks": [],
+            }
         query = f"scsearch:{query}"
         return await self.get_tracks(await self._query_cls.from_string(query))
 
@@ -454,7 +466,11 @@ class Node:
             The list of results.
         """
         if not self.available:
-            return {}
+            return {
+                "loadType": "LOAD_FAILED",
+                "playlistInfo": {"name": "", "selectedTrack": -1},
+                "tracks": [],
+            }
         query = f"speak:{query}"
         return await self.get_tracks(await self._query_cls.from_string(query))
 
@@ -471,7 +487,11 @@ class Node:
             The list of results.
         """
         if not self.available:
-            return {}
+            return {
+                "loadType": "LOAD_FAILED",
+                "playlistInfo": {"name": "", "selectedTrack": -1},
+                "tracks": [],
+            }
         query = f"spsearch:{query}"
         return await self.get_tracks(await self._query_cls.from_string(query))
 
@@ -488,7 +508,11 @@ class Node:
             The list of results.
         """
         if not self.available:
-            return {}
+            return {
+                "loadType": "LOAD_FAILED",
+                "playlistInfo": {"name": "", "selectedTrack": -1},
+                "tracks": [],
+            }
         query = f"amsearch:{query}"
         return await self.get_tracks(await self._query_cls.from_string(query))
 

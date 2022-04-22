@@ -1,14 +1,14 @@
 # isort: skip_file
 from __future__ import annotations
 
-from typing import Any, Awaitable, Callable, Coroutine, Literal, Optional, TYPE_CHECKING, TypeVar, Union
+from typing import Any, Awaitable, Callable, Coroutine, Literal, TYPE_CHECKING, TypeVar, Union, Type  # noqa: F401
 
 from typing_extensions import TypedDict
 
 T = TypeVar("T")
 
 if TYPE_CHECKING:
-    from discord.ext.commands.bot import AutoShardedBot, Bot
+    from discord.ext.commands.bot import AutoShardedBot, Bot  # noqa: F401
     from discord.ext.commands.cog import Cog
     from discord.ext.commands.context import Context
 
@@ -21,6 +21,7 @@ if TYPE_CHECKING:
         RedCog = Cog
         RedContext = Context
 
+    from pylav.query import Query  # noqa: F401
     from pylav.utils import PyLavContext
     from pylav.client import Client
 
@@ -56,9 +57,10 @@ Error = Union[
 
 ContextT = TypeVar("ContextT", bound="Union[PyLavContext[Any], RedContext[Any], Context[Any]]")
 BotT = TypeVar("BotT", bound=Union[BotClientWithLavalink, _Bot], covariant=True)
+QueryT = TypeVar("QueryT", bound="Type[Query]")
 
 
-class playlistInfoT(TypedDict):
+class playlistInfoT(TypedDict):  # noqa
     name: str
     selectedTrack: int
 

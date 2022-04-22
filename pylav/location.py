@@ -39,10 +39,10 @@ async def get_coordinates(ip: str | None = None):
 async def get_closest_discord_region(host: str | None = None):
     try:
         host_ip = await asyncio.to_thread(socket.gethostbyname, host)
-    except Exception:
+    except Exception:  # noqa
         host_ip = None  # If there's any issues getting the ip from the hostname, just use the host ip
     try:
         loc = await get_coordinates(host_ip)
         return get_closest_region_name(*loc)
-    except Exception:
+    except Exception:  # noqa
         return "london"
