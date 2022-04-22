@@ -4,6 +4,7 @@ import asyncio
 import collections
 import contextlib
 import random
+import time
 import warnings
 from asyncio import QueueFull, events, locks
 from enum import Enum
@@ -24,6 +25,7 @@ from typing import (
     Union,
 )
 
+from discord.backoff import ExponentialBackoff
 from discord.utils import maybe_coroutine
 
 __all__ = (
@@ -1008,3 +1010,19 @@ class Segment:
         self.category = category
         self.start = start
         self.end = end
+
+
+class ExponentialBackoffWithReset(ExponentialBackoff):
+    """
+    Exponential backoff with reset
+    """
+
+    def __init__(self, base: int = 1, *, integral: T = False):
+        super().__init__(base=base, integral=integral)
+
+    def reset(self):
+        """
+        Reset
+        """
+        self._last_invocation: float = time.monotonic()
+        self._exp = 0

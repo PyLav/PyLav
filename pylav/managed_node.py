@@ -19,7 +19,6 @@ import psutil
 import rich.progress
 import ujson
 import yaml
-from discord.backoff import ExponentialBackoff
 from red_commons.logging import getLogger
 
 from pylav._config import CONFIG_DIR
@@ -41,7 +40,7 @@ from pylav.exceptions import (
     WebsocketNotConnectedError,
 )
 from pylav.node import Node
-from pylav.utils import AsyncIter
+from pylav.utils import AsyncIter, ExponentialBackoffWithReset
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -527,7 +526,7 @@ class LocalNodeManager:
 
     async def start_monitor(self, java_path: str):
         retry_count = 0
-        backoff = ExponentialBackoff(base=7)
+        backoff = ExponentialBackoffWithReset(base=3)
         while True:
             try:
                 self._shutdown = False
@@ -537,17 +536,18 @@ class LocalNodeManager:
                 while True:
                     await self.wait_until_ready(timeout=self.timeout)
                     if self._node is None:
-                        await self.connect_node(wait_for=5)
+                        await self.connect_node(reconnect=retry_count != 0, wait_for=3)
                     if not psutil.pid_exists(self._node_pid):
                         raise NoProcessFound
                     try:
                         node = self._client.node_manager.get_node_by_id(self._node_id)
+                        if node is not None:
+                            await node.wait_until_ready(timeout=120)
                         if node.websocket.connected:
                             try:
                                 # Hoping this throws an exception which will then trigger a restart
                                 await node.websocket.ping()
-                                backoff = ExponentialBackoff(base=7)  # Reassign Backoff to reset it on successful ping.
-                                # ExponentialBackoff.reset() would be a nice method to have
+                                backoff.reset()
                                 await asyncio.sleep(1)
                             except WebsocketNotConnectedError:
                                 await asyncio.sleep(5)
@@ -558,10 +558,10 @@ class LocalNodeManager:
                             LOGGER.debug("Managed node monitor detected RLL is not connected to any nodes")
                             while True:
                                 node = self._client.node_manager.get_node_by_id(self._node_id)
+                                if node is not None:
+                                    await node.wait_until_ready(timeout=120)
                                 if node and node.websocket.connected:
                                     break
-                                elif node is None:
-                                    await self.connect_node()
                                 await asyncio.sleep(1)
                         except asyncio.TimeoutError:
                             return  # lavalink_restart_connect will cause a new monitor task to be created.
@@ -640,8 +640,13 @@ class LocalNodeManager:
             await self.shutdown()
         self.start_monitor_task = asyncio.create_task(self.start_monitor(java_path))
 
-    async def connect_node(self, wait_for: float = 0.0):
+    async def connect_node(self, reconnect: bool, wait_for: float = 0.0):
         await asyncio.sleep(wait_for)
+        if reconnect is True:
+            node = self._client.node_manager.get_node_by_id(self._node_id)
+            if node is not None:
+                await node.wait_until_ready(timeout=120)
+                return
         if node := self._client.node_manager.get_node_by_id(self._node_id) is None:
             self._node = await self._client.add_node(
                 host=self._current_config["server"]["address"],

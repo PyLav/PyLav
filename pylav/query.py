@@ -392,6 +392,11 @@ class Query:
 
         return self._query
 
+    async def folder(self) -> str | None:
+        if self.is_local:
+            return self._query.parent.name if await self._query.is_file() else self._query.name
+        return None
+
     async def query_to_queue(self, max_length: int = None, partial: bool = False) -> str:
         if partial:
             source = len(self.source) + 3

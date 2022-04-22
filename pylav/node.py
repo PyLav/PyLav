@@ -181,12 +181,11 @@ class Node:
         self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
         if unique_identifier is None:
             unique_identifier = str(uuid4())
-
+        self._managed = "ManagedNode-" in name
         self._name = name or f"{self.region}-{self.host}-{unique_identifier}"
         self._region = None
         self._host = host
 
-        print(f"{self.region}-{self.host}-{unique_identifier}")
         if self._manager.get_node_by_id(unique_identifier) is not None:
             raise ValueError(f"A Node with identifier:{unique_identifier} already exists.")
         self._identifier = unique_identifier
@@ -210,6 +209,7 @@ class Node:
         self._stats = None
         from pylav.websocket import WebSocket
 
+        self._ready = asyncio.Event()
         self._ws = WebSocket(
             node=self,
             host=self.host,
@@ -222,7 +222,15 @@ class Node:
         )
 
     @property
-    def identifier(self) -> str:
+    def is_ready(self):
+        return self._ready.is_set() and self._ws.connected
+
+    @property
+    def managed(self) -> bool:
+        return self._managed
+
+    @property
+    def identifier(self) -> int:
         """
         The identifier of the :class:`Node`.
         """
@@ -1005,3 +1013,6 @@ class Node:
         Closes the target node.
         """
         await self.session.close()
+
+    async def wait_until_ready(self, timeout: float | None = None):
+        await asyncio.wait_for(self._ready.wait(), timeout=timeout)

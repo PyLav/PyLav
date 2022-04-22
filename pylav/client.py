@@ -146,9 +146,13 @@ class Client:
             client_id = spotify_data["clientId"]
             client_secret = spotify_data["clientSecret"]
         elif all([client_id, client_secret]):
-            data.extras["plugins"]["topissourcemanagers"]["spotify"]["clientId"] = client_id
-            data.extras["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"] = client_secret
-            data.save()
+            if (
+                data.extras["plugins"]["topissourcemanagers"]["spotify"]["clientId"] != client_id
+                or data.extras["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"] != client_secret
+            ):
+                data.extras["plugins"]["topissourcemanagers"]["spotify"]["clientId"] = client_id
+                data.extras["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"] = client_secret
+            await data.save()
         self._spotify_client_id = client_id
         self._spotify_client_secret = client_secret
         self._spotify_auth = ClientCredentialsFlow(

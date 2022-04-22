@@ -20,7 +20,7 @@ from pylav.exceptions import WebsocketNotConnectedError
 from pylav.location import get_closest_discord_region
 from pylav.node import Stats
 from pylav.tracks import AudioTrack
-from pylav.utils import AsyncIter
+from pylav.utils import AsyncIter, ExponentialBackoffWithReset
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -68,8 +68,13 @@ class WebSocket:
             aiohttp.WSMsgType.CLOSING,
             aiohttp.WSMsgType.CLOSED,
         )
-
+        self.ready = asyncio.Event()
         asyncio.ensure_future(self.connect())
+
+    @property
+    def is_ready(self) -> bool:
+        """Returns whether the websocket is ready."""
+        return self.ready.is_set() and self.connected
 
     @property
     def socket_protocol(self) -> str:
@@ -108,8 +113,13 @@ class WebSocket:
         else:
             raise WebsocketNotConnectedError
 
+    async def wait_until_ready(self, timeout: float | None = None):
+        await asyncio.wait_for(self.ready.wait(), timeout=timeout)
+
     async def connect(self):
         """Attempts to establish a connection to Lavalink."""
+        self.ready.clear()
+        self.node._ready.clear()  # noqa
         headers = {
             "Authorization": self._password,
             "User-Id": str(self.bot_id),
@@ -122,6 +132,7 @@ class WebSocket:
         is_finite_retry = self._max_reconnect_attempts != -1
         max_attempts_str = "inf" if is_finite_retry else self._max_reconnect_attempts
         attempt = 0
+        backoff = ExponentialBackoffWithReset(base=3)
 
         while not self.connected and (not is_finite_retry or attempt < self._max_reconnect_attempts):
             attempt += 1
@@ -139,6 +150,9 @@ class WebSocket:
                     heartbeat=60,
                 )
                 await self._node.update_features()
+                self.ready.set()
+                self.node._ready.set()  # noqa
+                backoff.reset()
             except (
                 aiohttp.ClientConnectorError,
                 aiohttp.WSServerHandshakeError,
@@ -173,8 +187,7 @@ class WebSocket:
                         self.node.name,
                         ce.status,
                     )
-                backoff = min(10 * attempt, 60)
-                await asyncio.sleep(backoff)
+                await asyncio.sleep(backoff.delay())
             else:
                 await self.node.node_manager.node_connect(self.node)
                 #  asyncio.ensure_future(self._listen())
