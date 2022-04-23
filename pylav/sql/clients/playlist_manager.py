@@ -8,6 +8,8 @@ from red_commons.logging import getLogger
 from pylav.exceptions import EntryNotFoundError
 from pylav.sql.models import PlaylistModel
 from pylav.sql.tables import PlaylistRow
+from pylav.types import BotT
+from pylav.utils import AsyncIter
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -196,7 +198,7 @@ class PlaylistConfigManager:
                 playlists = []
         else:
             try:
-                playlists = await self.get_all_playlists()
+                playlists = [p async for p in self.get_all_playlists()]
             except EntryNotFoundError:
                 playlists = []
         returning_list = []
