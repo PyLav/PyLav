@@ -55,12 +55,12 @@ class PlaylistModel:
     async def delete(self):
         await PlaylistRow.delete().where(PlaylistRow.id == self.id)
 
-    async def can_manage(self, bot: discord.Client, requester: discord.abc.User) -> bool:
-        if requester.id in getattr(bot, "owner_ids", ()):  # noqa
+    async def can_manage(self, bot: BotT, requester: discord.abc.User, guild: discord.Guild = None) -> bool:
+        if requester.id in ((ids := getattr(bot, "owner_ids")) or ()) or requester.id == bot.owner_id:  # noqa
             return True
         elif self.scope == bot.user.id:
             return False
-        if guild := bot.get_guild(self.scope):
+        if (guild := bot.get_guild(self.scope)) or (guild and (channel := guild.get_channel(self.scope))):
             if guild.owner_id == requester.id:
                 return True
             if hasattr(bot, "is_mod"):
@@ -72,7 +72,7 @@ class PlaylistModel:
             return False
         return self.author == requester.id
 
-    async def get_scope_name(self, bot: BotT, mention: bool = True) -> str:
+    async def get_scope_name(self, bot: BotT, mention: bool = True, guild: discord.Guild = None) -> str:
         if guild := bot.get_guild(self.scope):
             scope_name = f"(Server) {guild.name}"
         elif (guild and (author := guild.get_member(self.scope))) or (author := bot.get_user(self.author)):

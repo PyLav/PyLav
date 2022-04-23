@@ -266,7 +266,7 @@ class Client:
         return self._config_folder
 
     @property
-    def bot(self) -> discord.Client:
+    def bot(self) -> BotT:
         if not self.initialized:
             raise PyLavNotInitialized(
                 "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
