@@ -26,13 +26,13 @@ class PlaylistConfigManager:
     @staticmethod
     async def get_playlist_by_name(playlist_name: str, limit: int = None) -> list[PlaylistModel]:
         if limit is None:
-            playlists = await PlaylistRow.select().where(PlaylistRow.name.ilike(f"{playlist_name.lower()}"))
+            playlists = await PlaylistRow.select().where(PlaylistRow.name.ilike(f"%{playlist_name.lower()}%"))
             if not playlists:
                 raise EntryNotFoundError(f"Playlist with name {playlist_name} not found")
             return [PlaylistModel(**playlist) for playlist in playlists]
         else:
             playlists = (
-                await PlaylistRow.select().where(PlaylistRow.name.ilike(f"{playlist_name.lower()}")).limit(limit)
+                await PlaylistRow.select().where(PlaylistRow.name.ilike(f"%{playlist_name.lower()}%")).limit(limit)
             )
             if not playlists:
                 raise EntryNotFoundError(f"Playlist with name {playlist_name} not found")
@@ -75,10 +75,6 @@ class PlaylistConfigManager:
     async def get_all_playlists() -> AsyncIterator[PlaylistModel]:
         for entry in await PlaylistRow.select():
             yield PlaylistModel(**entry)
-
-    # async with await PlaylistRow.select().batch(batch_size=10) as batch:
-    #     async for entry in batch:
-    #         yield PlaylistModel(**entry.to_dict())
 
     @staticmethod
     async def create_or_update_playlist(
@@ -159,6 +155,7 @@ class PlaylistConfigManager:
     async def get_all_for_user(
         self,
         requester: int,
+        empty: bool = False,
         *,
         vc: discord.VoiceChannel | discord.StageChannel = None,
         guild: discord.Guild = None,
@@ -170,15 +167,41 @@ class PlaylistConfigManager:
         Globals, User specific, Guild specific, Channel specific, VC specific.
 
         """
-        global_playlists = [p async for p in self.get_all_playlists_by_scope(scope=self._client.bot.user.id)]
-        user_playlists = [p async for p in self.get_all_playlists_by_scope(scope=requester)]
+        global_playlists = [
+            p async for p in self.get_all_playlists_by_scope(scope=self._client.bot.user.id) if (not empty or p.tracks)
+        ]
+        user_playlists = [p async for p in self.get_all_playlists_by_scope(scope=requester) if (not empty or p.tracks)]
         vc_playlists = []
         guild_playlists = []
         channel_playlists = []
         if vc is not None:
-            vc_playlists = [p async for p in self.get_all_playlists_by_scope(scope=vc.id)]
+            vc_playlists = [p async for p in self.get_all_playlists_by_scope(scope=vc.id) if (not empty or p.tracks)]
         if guild is not None:
-            guild_playlists = [p async for p in self.get_all_playlists_by_scope(scope=guild.id)]
+            guild_playlists = [
+                p async for p in self.get_all_playlists_by_scope(scope=guild.id) if (not empty or p.tracks)
+            ]
         if channel is not None:
-            channel_playlists = [p async for p in self.get_all_playlists_by_scope(scope=channel.id)]
+            channel_playlists = [
+                p async for p in self.get_all_playlists_by_scope(scope=channel.id) if (not empty or p.tracks)
+            ]
         return global_playlists, user_playlists, guild_playlists, channel_playlists, vc_playlists
+
+    async def get_manageable_playlists(
+        self, requester: discord.abc.User, bot: BotT, *, name_or_id: str | None = None
+    ) -> list[PlaylistModel]:
+        if name_or_id:
+            try:
+                playlists = await self.get_playlist_by_name_or_id(name_or_id)
+            except EntryNotFoundError:
+                playlists = []
+        else:
+            try:
+                playlists = await self.get_all_playlists()
+            except EntryNotFoundError:
+                playlists = []
+        returning_list = []
+        if playlists:
+            async for playlist in AsyncIter(playlists):
+                if await playlist.can_manage(requester=requester, bot=bot):
+                    returning_list.append(playlist)
+        return returning_list

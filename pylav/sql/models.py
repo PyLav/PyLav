@@ -74,21 +74,23 @@ class PlaylistModel:
 
     async def get_scope_name(self, bot: BotT) -> str:
         if guild := bot.get_guild(self.scope):
-            scope_name = f"{guild.name}"
+            scope_name = f"(Server) {guild.name}"
         elif (guild and (author := guild.get_member(self.scope))) or (author := bot.get_user(self.author)):
-            scope_name = f"{author.mention}"
+            scope_name = f"(User) {author.mention}"
         elif guild and (channel := guild.get_channel(self.scope)):
-            scope_name = f"{channel.mention}"
+            scope_name = f"(Channel) {channel.mention}"
         elif bot.user.id == self.scope:
-            scope_name = f"{bot.user.mention}"
+            scope_name = f"(Global) {bot.user.mention}"
         else:
-            scope_name = f"{self.scope}"
+            scope_name = f"(Invalid) {self.scope}"
         return scope_name
 
-    async def get_author_name(self, bot: BotT) -> str | None:
+    async def get_author_name(self, bot: BotT, mention: bool = True) -> str | None:
         if user := bot.get_user(self.author):
+            if not mention:
+                return f"{user}"
             return f"{user.mention}"
-        return None
+        return f"{self.author}"
 
 
 @dataclass(eq=True)
