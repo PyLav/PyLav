@@ -695,7 +695,7 @@ class Client:
         elif isinstance(what, Context):
             ctx_ = what.interaction or what.message
             ctx: PyLavContext = await self._bot.get_context(ctx_, cls=PyLavContext)  # type: ignore
-            ctx._original_ctx_or_interaction = what
+
         else:
             ctx: PyLavContext = await self._bot.get_context(what, cls=PyLavContext)  # type: ignore
         return ctx
