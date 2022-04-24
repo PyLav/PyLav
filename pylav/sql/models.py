@@ -115,6 +115,12 @@ class PlaylistModel:
             return f"{user.mention}"
         return f"{self.author}"
 
+    async def get_name_formatted(self, with_url: bool = True) -> str:
+        if with_url and self.url:
+            return f"**({discord.utils.escape_markdown(self.name)})[{self.url}]**"
+        else:
+            return f"**({discord.utils.escape_markdown(self.name)})**"
+
     @asynccontextmanager
     async def to_yaml(self, guild: discord.Guild) -> Iterator[io.BytesIO]:
         """
