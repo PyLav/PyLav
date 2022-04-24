@@ -577,17 +577,19 @@ class Node:
             # Note this is a partial return
             #   (the tracks are only B64 encoded, to get the decoded tracks like the api returns
             #   you'd need to call `pylava.utils.decode_tracks`)
-            return {
-                "playlistInfo": {
-                    "name": response.name,
-                },
-                "loadType": "PlaylistLoaded"
-                if query.is_playlist or query.is_album
-                else "TrackLoaded"
-                if not query.is_search
-                else "SearchLoaded",
-                "tracks": [{"track": track} async for track in AsyncIter(response.tracks)],
-            }
+            if not first:
+                return {
+                    "playlistInfo": {
+                        "name": response.name,
+                    },
+                    "loadType": "PlaylistLoaded"
+                    if query.is_playlist or query.is_album
+                    else "TrackLoaded"
+                    if not query.is_search
+                    else "SearchLoaded",
+                    "tracks": [{"track": track} async for track in AsyncIter(response.tracks)],
+                }
+            return {"track": response.tracks[0]}
 
         destination = f"{self.connection_protocol}://{self.host}:{self.port}/loadtracks"
         async with self._session.get(
