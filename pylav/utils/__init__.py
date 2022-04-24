@@ -742,6 +742,19 @@ class PyLavContext(_OriginalContextClass):
         instance._original_ctx_or_interaction = interaction
         return instance
 
+    def dispatch_command(
+        self, message: discord.Message, command: Command, prefix: str, author: discord.abc.User, *args: str
+    ) -> None:
+        """
+        Dispatch command
+        """
+        command_str = f"{prefix}{command.qualified_name} {' '.join(args)}"
+
+        msg = copy(message)
+        msg.author = user
+        msg.content = command_str
+        self.bot.dispatch("message", msg)
+
 
 async def _process_commands(self, message: discord.Message, /):
     """
