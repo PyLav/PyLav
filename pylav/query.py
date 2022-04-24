@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Literal
 import aiopath
 from red_commons.logging import getLogger
 
+from pylav.track_encoding import decode_track
 from pylav.types import QueryT
 
 if TYPE_CHECKING:
@@ -68,7 +69,7 @@ SOUND_CLOUD_REGEX = re.compile(
 )
 
 YOUTUBE_REGEX = re.compile(r"(?:http://|https://|)(?:www\.|)(?P<music>music\.)?youtu(be\.com|\.be)", re.IGNORECASE)
-TTS_REGEX = re.compile(r"^(speak|tts):(.*)$", re.IGNORECASE)
+SPEAK_REGEX = re.compile(r"^(speak):(.*)$", re.IGNORECASE)
 GCTSS_REGEX = re.compile(r"^(tts://)(.*)$", re.IGNORECASE)
 SEARCH_REGEX = re.compile(r"^(?P<source>ytm|yt|sp|sc|am)search:(?P<query>.*)$", re.IGNORECASE)
 HTTP_REGEX = re.compile(r"^http(s)?://", re.IGNORECASE)
@@ -137,6 +138,8 @@ def process_bandcamp(cls: QueryT, query: str) -> Query:
 
 
 class Query:
+    __localfile_cls: Type[LocalFile] = None
+
     def __init__(
         self,
         query: str | aiopath.AsyncPath,
@@ -161,7 +164,7 @@ class Query:
 
     @property
     def is_clypit(self) -> bool:
-        return self.source == "Clyp"
+        return self.source == "Clyp.it"
 
     @property
     def is_getyarn(self) -> bool:
@@ -185,7 +188,7 @@ class Query:
 
     @property
     def is_soundgasm(self) -> bool:
-        return self.source == "Soundgasm"
+        return self.source == "SoundGasm"
 
     @property
     def is_tiktok(self) -> bool:
@@ -252,8 +255,8 @@ class Query:
         return self._type == "single"
 
     @property
-    def is_tts(self) -> bool:
-        return self.source == "TTS" or self.is_gctts
+    def is_speak(self) -> bool:
+        return self.source == "speak"
 
     @property
     def is_gctts(self) -> bool:
@@ -272,10 +275,10 @@ class Query:
                 return f"amsearch:{self._query}"
             elif self.is_soundcloud:
                 return f"scsearch:{self._query}"
-            elif self.is_tts:
-                if self.is_gctts:
-                    return f"tts://{self._query}"
+            elif self.is_speak:
                 return f"speak:{self._query}"
+            elif self.is_gctts:
+                return f"tts://{self._query}"
             else:
                 return f"ytsearch:{self._query}"
         elif self.is_local:
@@ -298,11 +301,11 @@ class Query:
         elif GCTSS_REGEX.match(query):
             query = query.replace("tts://", "")
             return cls(query, "Google TTS", search=True)
-        elif TTS_REGEX.match(query):
-            query = query.replace("tts:", "").replace("speak:", "")
-            return cls(query, "TTS", search=True)
+        elif SPEAK_REGEX.match(query):
+            query = query.replace("speak:", "")
+            return cls(query, "speak", search=True)
         elif CLYPIT_REGEX.match(query):
-            return cls(query, "Clyp")
+            return cls(query, "Clyp.it")
         elif GETYARN_REGEX.match(query):
             return cls(query, "GetYarn")
         elif MIXCLOUD_REGEX.match(query):
@@ -314,7 +317,7 @@ class Query:
         elif REDDIT_REGEX.match(query):
             return cls(query, "Reddit")
         elif SOUNDGASM_REGEX.match(query):
-            return cls(query, "Soundgasm")
+            return cls(query, "SoundGasm")
         elif TIKTOK_REGEX.match(query):
             return cls(query, "TikTok")
         elif BANDCAMP_REGEX.match(query):
@@ -398,6 +401,24 @@ class Query:
 
         return self._query
 
+    async def get_all_tracks_in_folder(self) -> List[Query]:
+        if self.is_local:
+            if self.is_album:
+                query: LocalFile = self.__localfile_cls(self._query)
+                return await query.files_in_folder()
+            elif self.is_single:
+                return [self]
+        return []
+
+    async def get_all_tracks_in_tree(self) -> List[Query]:
+        if self.is_local:
+            if self.is_album:
+                query: LocalFile = self.__localfile_cls(self._query)
+                return await query.files_in_tree()
+            elif self.is_single:
+                return [self]
+        return []
+
     async def folder(self) -> str | None:
         if self.is_local:
             return self._query.parent.name if await self._query.is_file() else self._query.name
@@ -423,7 +444,7 @@ class Query:
             raise ValueError("Source can only be set for search queries")
 
         source = source.lower()
-        if source not in (allowed := {"ytm", "yt", "sp", "sc", "am", "local", "tts", "tts://"}):
+        if source not in (allowed := {"ytm", "yt", "sp", "sc", "am", "local", "speak", "tts://"}):
             raise ValueError(f"Invalid source: {source} - Allowed: {allowed}")
         if source == "ytm":
             source = "YouTube Music"
@@ -437,8 +458,8 @@ class Query:
             source = "Apple Music"
         elif source == "local":
             source = "Local Files"
-        elif source == "tts":
-            source = "TTS"
+        elif source == "speak":
+            source = "speak"
         elif source == "tts://":
             source = "Google TTS"
         self._source = source
@@ -452,3 +473,100 @@ class Query:
             index=index,
             query_type=self._type,
         )
+
+    @classmethod
+    async def from_base64(cls, base64_string: str) -> Query:
+        data, _ = decode_track(base64_string)
+        source = data["info"]["source"]
+        url = data["info"]["uri"]
+        response = await cls.from_string(url)
+        response._source = cls.__get_source_from_str(source)
+        return response
+
+    @classmethod
+    def __get_source_from_str(cls, source: str) -> str:
+        if source == "spotify":
+            return "Spotify"
+        elif source == "youtube":
+            return "YouTube Music"
+        elif source == "soundcloud":
+            return "SoundCloud"
+        elif source == "apple":
+            return "Apple Music"
+        elif source == "local":
+            return "Local Files"
+        elif source == "speak":
+            return "speak"
+        elif source == "gcloud-tts":
+            return "Google TTS"
+        elif source == "http":
+            return "HTTP"
+        elif source == "twitch":
+            return "Twitch"
+        elif source == "vimeo":
+            return "Vimeo"
+        elif source == "bandcamp":
+            return "Bandcamp"
+        elif source == "mixcloud":
+            return "Mixcloud"
+        elif source == "getyarn":
+            return "GetYarn"
+        elif source == "ocremix":
+            return "OverClocked ReMix"
+        elif source == "reddit":
+            return "Reddit"
+        elif source == "clypit":
+            return "Clyp.it"
+        elif source == "pornhub":
+            return "PornHub"
+        elif sourse == "soundgasm":
+            return "SoundGasm"
+        elif source == "tiktok":
+            return "TikTok"
+        elif source == "niconico":
+            return "Niconico"
+        else:
+            return "YouTube"
+
+    @property
+    def requires_capability(self) -> str:
+        if self.is_spotify:
+            return "spotify"
+        elif self.is_apple_music:
+            return "applemusic"
+        elif self.is_youtube:
+            return "youtube"
+        elif self.is_soundcloud:
+            return "soundcloud"
+        elif self.is_local:
+            return "local"
+        elif self.is_twitch:
+            return "twitch"
+        elif self.is_bandcamp:
+            return "bandcamp"
+        elif self.is_http:
+            return "http"
+        elif self.is_speak:
+            return "speak"
+        elif self.is_tts:
+            return "gcloud-tts"
+        elif self.is_getyarn:
+            return "getyarn"
+        elif self.is_clypit:
+            return "clypit"
+        elif self.is_pornhub:
+            return "pornhub"
+        elif self.is_reddit:
+            return "reddit"
+        elif self.is_ocremix:
+            return "ocremix"
+        elif self.is_tiktok:
+            return "tiktok"
+        elif self.is_mixcloud:
+            return "mixcloud"
+        elif self.is_soundgasm:
+            return "soundgasm"
+        elif self.is_vimeo:
+            return "vimeo"
+        else:
+            return "youtube"

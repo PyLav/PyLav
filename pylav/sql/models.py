@@ -56,6 +56,8 @@ class PlaylistModel:
         await PlaylistRow.delete().where(PlaylistRow.id == self.id)
 
     async def can_manage(self, bot: BotT, requester: discord.abc.User, guild: discord.Guild = None) -> bool:
+        if self.scope < 1000:
+            return False
         if requester.id in ((ids := getattr(bot, "owner_ids")) or ()) or requester.id == bot.owner_id:  # noqa
             return True
         elif self.scope == bot.user.id:

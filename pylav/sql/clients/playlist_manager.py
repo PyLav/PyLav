@@ -41,7 +41,7 @@ class PlaylistConfigManager:
             return [PlaylistModel(**playlist) for playlist in playlists]
 
     @staticmethod
-    async def get_playlist_by_id(playlist_id: int) -> PlaylistModel:
+    async def get_playlist_by_id(playlist_id: int | str) -> PlaylistModel:
         try:
             playlist_id = int(playlist_id)
         except ValueError:
@@ -116,7 +116,7 @@ class PlaylistConfigManager:
             yield PlaylistModel(**entry)
 
     async def get_global_playlists(self) -> AsyncIterator[PlaylistModel]:
-        for entry in await PlaylistRow.select().where(PlaylistRow.scope == self._client.bot.user.id):
+        for entry in await PlaylistRow.select().where(PlaylistRow.scope == self._client.bot.user.id):  # type: ignore
             yield PlaylistModel(**entry)
 
     async def create_or_update_global_playlist(

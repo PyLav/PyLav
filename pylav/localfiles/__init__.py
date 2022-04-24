@@ -129,7 +129,7 @@ class LocalFile:
             string = f"...{os.sep}{string}"
         return string
 
-    async def files_in_folder(self):
+    async def files_in_folder(self) -> list[Query]:
         if not await self.path.is_dir():
             parent = self.path.parent
         else:
@@ -141,7 +141,7 @@ class LocalFile:
                     files.append(await Query.from_string(path))
         return sorted(files, key=lambda x: str(x).lower())
 
-    async def files_in_tree(self):
+    async def files_in_tree(self) -> list[Query]:
         if not await self.path.is_dir():
             parent = self.path.parent
         else:

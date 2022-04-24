@@ -185,6 +185,11 @@ class Player(VoiceProtocol):
         :class:`Node`
         """
         node = self.node.node_manager.find_best_node(region=self.region, feature=feature)
+        if feature and not node:
+            raise NoNodeWithRequestFunctionalityAvailable(
+                f"No node with {query.requires_capability} functionality available!"
+            )
+
         if node != self.node:
             await self.change_node(node)
             return node
@@ -197,6 +202,10 @@ class Player(VoiceProtocol):
         :class:`Node`
         """
         node = self.node.node_manager.find_best_node(not_region=self.region, feature=feature)
+        if feature and not node:
+            raise NoNodeWithRequestFunctionalityAvailable(
+                f"No node with {query.requires_capability} functionality available!"
+            )
         if node != self.node:
             await self.change_node(node)
             return node
@@ -361,6 +370,11 @@ class Player(VoiceProtocol):
             await track.search(self, bypass_cache=bypass_cache)
         if self.current:
             await self.history.put([self.current])
+
+        if track.query and not self.node.has_source(track.query.requires_capability):
+            self.current = None
+            await self.change_to_best_node(track.query.requires_capability)
+
         self.current = track
         options = {"noReplace": False}
         if track.skip_segments and self.node.supports_sponsorblock:
@@ -383,6 +397,11 @@ class Player(VoiceProtocol):
         if self.current:
             self.current.timestamp = self.position
             self.queue.put_nowait([self.current], 0)
+
+        if track.query and not self.node.has_source(track.query.requires_capability):
+            self.current = None
+            await self.change_to_best_node(track.query.requires_capability)
+
         if track.is_partial:
             try:
                 await track.search(self, bypass_cache=bypass_cache)
@@ -393,7 +412,6 @@ class Player(VoiceProtocol):
                 # Otherwise dispatch Track Exception Event
                 await self.node.dispatch_event(TrackExceptionEvent(self, track, exc))
                 return
-
         self.current = track
         options = {"noReplace": no_replace}
         if track.skip_segments and self.node.supports_sponsorblock:
@@ -402,15 +420,18 @@ class Player(VoiceProtocol):
         await self.node.dispatch_event(TrackStartEvent(self, track))
         await self.node.dispatch_event(QuickPlayEvent(self, requester, track))
 
+    async def next(self, requester: discord.Member = None):
+        await self.play(None, None, requester or self.bot.user)  # type: ignore
+
     async def play(
         self,
-        track: AudioTrack | dict | str = None,
+        track: AudioTrack | dict | str,
+        query: Query,
+        requester: discord.Member,
         start_time: int = 0,
         end_time: int = 0,
         no_replace: bool = False,
-        query: Query = None,
         skip_segments: list[str] | str = None,
-        requester: discord.Member = None,
         bypass_cache: bool = False,
     ) -> None:
         """
@@ -466,6 +487,13 @@ class Player(VoiceProtocol):
                 await self.node.dispatch_event(QueueEndEvent(self))
                 return
             track = await self.queue.get()
+
+        if track.query is None:
+            track._query = await Query.from_base64(track.track)
+        if track.query and not self.node.has_source(track.query.requires_capability):
+            self.current = None
+            await self.change_to_best_node(track.query.requires_capability)
+        track._node = self.node
         if track.is_partial:
             try:
                 await track.search(self, bypass_cache=bypass_cache)
@@ -476,6 +504,7 @@ class Player(VoiceProtocol):
                 # Otherwise dispatch Track Exception Event
                 await self.node.dispatch_event(TrackExceptionEvent(self, track, exc))
                 return
+
         if self.node.supports_sponsorblock:
             options["skipSegments"] = skip_segments or track.skip_segments
         if start_time is not None:
@@ -513,7 +542,7 @@ class Player(VoiceProtocol):
         """Plays the next track in the queue, if any."""
         previous_track = self.current
         previous_position = self.position
-        await self.play(requester=requester)
+        await self.next(requester=requester)
         await self.node.dispatch_event(TrackSkippedEvent(self, requester, previous_track, previous_position))
 
     async def set_repeat(
@@ -629,7 +658,7 @@ class Player(VoiceProtocol):
             or isinstance(event, TrackEndEvent)
             and event.reason == "FINISHED"
         ):
-            await self.play()
+            await self.next()
 
     async def _update_state(self, state: dict) -> None:
         """
@@ -646,7 +675,7 @@ class Player(VoiceProtocol):
         event = PlayerUpdateEvent(self, self._last_position, self.position_timestamp)
         await self.node.dispatch_event(event)
 
-    async def change_node(self, node) -> None:
+    async def change_node(self, node: Node) -> None:
         """
         Changes the player's node
         Parameters

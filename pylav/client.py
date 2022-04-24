@@ -372,7 +372,6 @@ class Client:
     async def get_tracks(
         self,
         query: Query,
-        node: Node = None,
         search_only_nodes: bool = False,
         first: bool = False,
         bypass_cache: bool = False,
@@ -416,10 +415,14 @@ class Client:
             nodes = self.node_manager.available_nodes
         if not nodes:
             raise NoNodeAvailable("No available nodes!")
-        node = node or random.choice(list(nodes))
+        node = self.node_manager.find_best_node(feature=query.requires_capability)
+        if node is None:
+            raise NoNodeWithRequestFunctionalityAvailable(
+                f"No node with {query.requires_capability} functionality available!"
+            )
         return await node.get_tracks(query, first=first, bypass_cache=bypass_cache)
 
-    async def decode_track(self, track: str, node: Node = None) -> dict | None:
+    async def decode_track(self, track: str, feature: str = None) -> dict | None:
         """|coro|
         Decodes a base64-encoded track string into a dict.
 
@@ -441,10 +444,14 @@ class Client:
             )
         if not self.node_manager.available_nodes:
             raise NoNodeAvailable("No available nodes!")
-        node = node or random.choice(self.node_manager.available_nodes)
+        node = self.node_manager.find_best_node(feature=feature)
+        if node is None:
+            raise NoNodeWithRequestFunctionalityAvailable(
+                f"No node with {query.requires_capability} functionality available!"
+            )
         return await node.decode_track(track)
 
-    async def decode_tracks(self, tracks: list, node: Node = None) -> list[dict]:
+    async def decode_tracks(self, tracks: list, feature: str = None) -> list[dict]:
         """|coro|
         Decodes a list of base64-encoded track strings into a dict.
 
@@ -466,7 +473,11 @@ class Client:
             )
         if not self.node_manager.available_nodes:
             raise NoNodeAvailable("No available nodes!")
-        node = node or random.choice(self.node_manager.available_nodes)
+        node = self.node_manager.find_best_node(feature=feature)
+        if node is None:
+            raise NoNodeWithRequestFunctionalityAvailable(
+                f"No node with {query.requires_capability} functionality available!"
+            )
         return await node.decode_tracks(tracks)
 
     async def routeplanner_status(self, node: Node) -> dict | None:
@@ -724,3 +735,14 @@ class Client:
             )
 
         return iter(self.player_manager)
+
+    async def get_managed_node(self) -> Optional[Node]:
+        if not self.initialized:
+            raise PyLavNotInitialized(
+                "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
+            )
+        available_nodes = list(filter(operator.attrgetter("available"), self.node_manager.managed_nodes))
+
+        if not available_nodes:
+            return None
+        return random.choice(available_nodes)

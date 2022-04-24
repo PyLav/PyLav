@@ -204,8 +204,7 @@ class Node:
         self._resume_timeout = resume_timeout
         self._reconnect_attempts = reconnect_attempts
         self._search_only = search_only
-        self._capabilities = set()
-        self._sources = set()
+        self._sources = self._capabilities = set()
 
         self._stats = None
         from pylav.websocket import WebSocket
@@ -459,9 +458,9 @@ class Node:
         query = f"scsearch:{query}"
         return await self.get_tracks(await self._query_cls.from_string(query), bypass_cache=bypass_cache)
 
-    async def get_query_tts(self, query: str, bypass_cache: bool = False) -> LavalinkResponseT:
+    async def get_query_speak(self, query: str, bypass_cache: bool = False) -> str | None:
         """|coro|
-        Gets the query for TTS.
+        Gets the query for speak.
         Parameters
         ----------
         query: :class:`str`
@@ -480,7 +479,8 @@ class Node:
                 "tracks": [],
             }
         query = f"speak:{query}"
-        return await self.get_tracks(await self._query_cls.from_string(query), bypass_cache=bypass_cache)
+        reponse = await self.get_tracks(await self._query_cls.from_string(query), bypass_cache=bypass_cache, first=True)
+        return response.get("tracks")
 
     async def get_query_spotify(self, query: str, bypass_cache: bool = False) -> LavalinkResponseT:
         """|coro|
@@ -528,6 +528,31 @@ class Node:
             }
         query = f"amsearch:{query}"
         return await self.get_tracks(await self._query_cls.from_string(query), bypass_cache=bypass_cache)
+
+    async def get_query_localfiles(
+        self, query: str, bypass_cache: bool = True, first: bool = True
+    ) -> LavalinkResponseT | TrackT:
+        """|coro|
+        Gets the query from Localfiles.
+        Parameters
+        ----------
+        query: :class:`str`
+            The query to search for.
+        bypass_cache: :class:`bool`
+            Whether to bypass the cache.
+
+        Returns
+        -------
+        list[dict]
+            The list of results.
+        """
+        if not self.available:
+            return {
+                "loadType": "LOAD_FAILED",
+                "playlistInfo": {"name": "", "selectedTrack": -1},
+                "tracks": [],
+            }
+        return await self.get_tracks(await self._query_cls.from_string(query), bypass_cache=bypass_cache, first=first)
 
     async def get_tracks(
         self, query: Query, first: bool = False, bypass_cache: bool = False
@@ -740,21 +765,9 @@ class Node:
         """|coro|
         Updates the features of the target node.
         """
-        for feature in await self.get_plugins():
-            if feature["name"] == "Topis-Source-Managers-Plugin":
-                self._capabilities.update(["spotify", "applemusic"])
-            elif feature["name"] == "DuncteBot-plugin":
-                self._capabilities.update(
-                    ["getyarn", "clypit", "tts", "pornhub", "reddit", "ocremix", "tiktok", "mixcloud"]
-                )
-            elif feature["name"] == "Google Cloud TTS":
-                self._capabilities.update(
-                    "gctts",
-                )
-            elif feature["name"] == "sponsorblock":
-                self._capabilities.add(
-                    "sponsorblock",
-                )
+        # This is pending a pr being merged until it is it will not provide any useful info
+        #    However once it is merged this should be the only method to get capabilities
+        #    from the node.
         for source_origin, source_data in (await self.get_sources()).items():
             if source_origin == "defaults":
                 for source_name, source_state in source_data.items():
@@ -765,22 +778,47 @@ class Node:
                     for source_name, source_state in plugin_data.items():
                         if source_state:
                             self._sources.add(source_name)
+        if not self._sources:
+            if self.managed:
+                self._capabilities.add("local")
+            # FIXME: Remove me when the PR upstream is merged
+            # This only exists as the above does not provide any useful info currently.
+            #    However once it is merged this should be removed as it is not a good way to assess capabilities.
+            #    As even though a plugin may be enable the source it adds may be disabled.
 
-    def has_capability(self, capability: str) -> bool:
-        """
-        Checks if the target node has the specified capability.
-
-        Parameters
-        ----------
-        capability: :class:`str`
-            The capability to check.
-
-        Returns
-        -------
-        :class:`bool`
-            True if the target node has the specified capability, False otherwise.
-        """
-        return capability.lower() in self.capabilities
+            #   Since this assumes everything is enable is is bound to cause track exceptions to be thrown when
+            #   a source required but assumed enabled is in actuality disabled.
+            for feature in await self.get_plugins():
+                if feature["name"] == "Topis-Source-Managers-Plugin":
+                    self._capabilities.update(["spotify", "applemusic"])
+                elif feature["name"] == "DuncteBot-plugin":
+                    self._capabilities.update(
+                        [
+                            "getyarn",
+                            "clypit",
+                            "speak",
+                            "pornhub",
+                            "reddit",
+                            "ocremix",
+                            "tiktok",
+                            "mixcloud",
+                            "soundgasm",
+                        ]
+                    )
+                elif feature["name"] == "Google Cloud TTS":
+                    self._capabilities.update(
+                        "gcloud-tts",
+                    )
+                elif feature["name"] == "sponsorblock":
+                    self._capabilities.add(
+                        "sponsorblock",
+                    )
+            self._capabilities.update(["youtube", "soundcloud", "twitch", "bandcamp", "vimeo", "http"])
+        # Give that remove files will not play nice with local files lets disable it for all but the managed node
+        #    While this locks out some remove nodes with the correct setup it ensures that we are consistently
+        #    using the correct node which will support local files instead of trying and failing most of the time.
+        if not self.managed:
+            self._capabilities.discard("local")
 
     def has_source(self, source: str) -> bool:
         """
@@ -797,6 +835,8 @@ class Node:
             True if the target node has the specified source, False otherwise.
         """
         return source.lower() in self.sources
+
+    has_capability = has_source
 
     @property
     def capabilities(self) -> set:
@@ -832,7 +872,7 @@ class Node:
         :class:`bool`
             True if the target node supports Spotify, False otherwise.
         """
-        return self.has_capability("spotify") and self.has_source("spotify")
+        return self.has_source("spotify")
 
     @property
     def supports_apple_music(self) -> bool:
@@ -844,7 +884,7 @@ class Node:
         :class:`bool`
             True if the target node supports Apple Music, False otherwise.
         """
-        return self.has_capability("applemusic") and self.has_source("applemusic")
+        return self.has_source("applemusic")
 
     @property
     def supports_getyarn(self) -> bool:
@@ -856,7 +896,7 @@ class Node:
         :class:`bool`
             True if the target node supports GetYarn, False otherwise.
         """
-        return self.has_capability("getyarn") and self.has_source("getyarn")
+        return self.has_source("getyarn")
 
     @property
     def supports_clypit(self) -> bool:
@@ -868,22 +908,22 @@ class Node:
         :class:`bool`
             True if the target node supports ClypIt, False otherwise.
         """
-        return self.has_capability("clypit") and self.has_source("clypit")
+        return self.has_source("clypit")
 
     @property
-    def supports_tts(self) -> bool:
+    def supports_speak(self) -> bool:
         """
-        Checks if the target node supports TTS.
+        Checks if the target node supports speak source.
 
         Returns
         -------
         :class:`bool`
-            True if the target node supports TTS, False otherwise.
+            True if the target node supports speak, False otherwise.
         """
-        return self.has_capability("tts") and self.has_source("tts")
+        return self.has_source("speak")
 
     @property
-    def supports_gctts(self) -> bool:
+    def supports_tts(self) -> bool:
         """
         Checks if the target node supports Google Cloud TTS.
 
@@ -904,7 +944,7 @@ class Node:
         :class:`bool`
             True if the target node supports PornHub, False otherwise.
         """
-        return self.has_capability("pornhub") and self.has_source("pornhub")
+        return self.has_source("pornhub")
 
     @property
     def supports_reddit(self) -> bool:
@@ -916,7 +956,7 @@ class Node:
         :class:`bool`
             True if the target node supports Reddit, False otherwise.
         """
-        return self.has_capability("reddit") and self.has_source("reddit")
+        return self.has_source("reddit")
 
     @property
     def supports_ocremix(self) -> bool:
@@ -928,7 +968,7 @@ class Node:
         :class:`bool`
             True if the target node supports OCRemix, False otherwise.
         """
-        return self.has_capability("ocremix") and self.has_source("ocremix")
+        return self.has_source("ocremix")
 
     @property
     def supports_mixcloud(self) -> bool:
@@ -940,7 +980,7 @@ class Node:
         :class:`bool`
             True if the target node supports Mixcloud, False otherwise.
         """
-        return self.has_capability("mixcloud") and self.has_source("mixcloud")
+        return self.has_source("mixcloud")
 
     @property
     def supports_tiktok(self) -> bool:
@@ -952,7 +992,7 @@ class Node:
         :class:`bool`
             True if the target node supports TikTok, False otherwise.
         """
-        return self.has_capability("tiktok") and self.has_source("tiktok")
+        return self.has_source("tiktok")
 
     @property
     def supports_youtube(self) -> bool:
@@ -964,7 +1004,7 @@ class Node:
         :class:`bool`
             True if the target node supports YouTube, False otherwise.
         """
-        return self.has_source("youtube") and self.has_source("youtube")
+        return self.has_source("youtube")
 
     @property
     def supports_bandcamp(self) -> bool:
@@ -976,7 +1016,7 @@ class Node:
         :class:`bool`
             True if the target node supports Bandcamp, False otherwise.
         """
-        return self.has_source("bandcamp") and self.has_source("bandcamp")
+        return self.has_source("bandcamp")
 
     @property
     def supports_soundcloud(self) -> bool:
@@ -988,7 +1028,7 @@ class Node:
         :class:`bool`
             True if the target node supports SoundCloud, False otherwise.
         """
-        return self.has_source("soundcloud") and self.has_source("soundcloud")
+        return self.has_source("soundcloud")
 
     @property
     def supports_twitch(self) -> bool:
@@ -1000,7 +1040,7 @@ class Node:
         :class:`bool`
             True if the target node supports Twitch, False otherwise.
         """
-        return self.has_source("twitch") and self.has_source("twitch")
+        return self.has_source("twitch")
 
     @property
     def supports_vimeo(self) -> bool:
@@ -1012,7 +1052,7 @@ class Node:
         :class:`bool`
             True if the target node supports Vimeo, False otherwise.
         """
-        return self.has_source("vimeo") and self.has_source("vimeo")
+        return self.has_source("vimeo")
 
     @property
     def supports_http(self) -> bool:
@@ -1024,7 +1064,7 @@ class Node:
         :class:`bool`
             True if the target node supports HTTP, False otherwise.
         """
-        return self.has_source("http") and self.has_source("http")
+        return self.has_source("http")
 
     @property
     def supports_local(self) -> bool:

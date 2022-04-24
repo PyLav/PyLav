@@ -49,6 +49,11 @@ class NodeManager:
         return list(filter(operator.attrgetter("available"), self.nodes))
 
     @property
+    def managed_nodes(self) -> list[Node]:
+        """Returns a list of nodes that are managed by the client."""
+        return list(filter(operator.attrgetter("managed"), self.nodes))
+
+    @property
     def search_only_nodes(self) -> list[Node]:
         """Returns a list of nodes that are search only."""
         return list(filter(operator.attrgetter("available", "search_only"), self.nodes))
@@ -198,6 +203,32 @@ class NodeManager:
             The region to exclude from the search. Defaults to `None`.
         feature: Optional[:class:`str`]
             The feature to check for. Defaults to `None`.
+
+            Supported capabilities:
+                Built-in:
+                    youtube
+                    soundcloud
+                    twitch
+                    bandcamp
+                    vimeo
+                    http
+                    local
+                With Topis-Source-Managers-Plugin:
+                    spotify
+                    applemusic
+                With DuncteBot-plugin:
+                    getyarn
+                    clypit
+                    tts
+                    pornhub
+                    reddit
+                    ocremix
+                    tiktok
+                    mixcloud
+                With Google Cloud TTS:
+                    gcloud-tts
+                With sponsorblock:
+                    sponsorblock
         Returns
         -------
         Optional[:class:`Node`]

@@ -174,3 +174,7 @@ class CogHasBeenRegistered(PyLavError):
 
 class NoNodeAvailable(NodeError):
     """Raised when no node is available."""
+
+
+class NoNodeWithRequestFunctionalityAvailable(NodeError):
+    """Raised when no node with request functionality is available."""
