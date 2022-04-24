@@ -372,7 +372,6 @@ class Client:
     async def get_tracks(
         self,
         query: Query,
-        search_only_nodes: bool = False,
         first: bool = False,
         bypass_cache: bool = False,
     ) -> dict:
@@ -404,15 +403,6 @@ class Client:
             raise PyLavNotInitialized(
                 "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
             )
-        if search_only_nodes:
-            nodes = self.node_manager.search_only_nodes
-            if not nodes:
-                if not self._warned_about_no_search_nodes:
-                    LOGGER.warning("No search only nodes available, defaulting to all available nodes.")
-                    self._warned_about_no_search_nodes = True
-                nodes = self.node_manager.available_nodes
-        else:
-            nodes = self.node_manager.available_nodes
         if not nodes:
             raise NoNodeAvailable("No available nodes!")
         node = self.node_manager.find_best_node(feature=query.requires_capability)
