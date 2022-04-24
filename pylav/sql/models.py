@@ -3,6 +3,7 @@ from __future__ import annotations
 import datetime
 import gzip
 import io
+import re
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
 from typing import Iterator
@@ -17,6 +18,8 @@ from pylav.exceptions import InvalidPlaylist
 from pylav.sql.tables import LibConfigRow, NodeRow, PlaylistRow, QueryRow
 from pylav.types import BotT
 from pylav.utils import PyLavContext
+
+BRACKETS: re.Pattern = re.compile(r"[\[\]]")
 
 
 @dataclass(eq=True)
@@ -116,10 +119,11 @@ class PlaylistModel:
         return f"{self.author}"
 
     async def get_name_formatted(self, with_url: bool = True) -> str:
+        name = BRACKETS.sub("", self.name).strip()
         if with_url and self.url:
-            return f"**({discord.utils.escape_markdown(self.name)})[{self.url}]**"
+            return f"**[{discord.utils.escape_markdown(name)}]({self.url})**"
         else:
-            return f"**({discord.utils.escape_markdown(self.name)})**"
+            return f"**({discord.utils.escape_markdown(name)})**"
 
     @asynccontextmanager
     async def to_yaml(self, guild: discord.Guild) -> Iterator[io.BytesIO]:
