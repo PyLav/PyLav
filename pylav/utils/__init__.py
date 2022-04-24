@@ -29,7 +29,7 @@ from typing import (
 
 import discord  # type: ignore
 from discord import Guild, Interaction, Member, Message
-from discord.abc import Messageable, MessageableChannel, User
+from discord.abc import Messageable, User
 from discord.backoff import ExponentialBackoff
 from discord.ext import commands
 from discord.ext.commands import Parameter
@@ -655,7 +655,7 @@ class PyLavContext(_OriginalContextClass):
         return self.author.guild
 
     @discord.utils.cached_property
-    def channel(self) -> MessageableChannel:
+    def channel(self) -> discord.abc.MessageableChannel:
         """Union[:class:`.abc.Messageable`]: Returns the channel associated with this context's command.
         Shorthand for :attr:`.Message.channel`.
         """
