@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import datetime
 import itertools
+import operator
 import pathlib
 import random
 from collections import defaultdict
@@ -27,6 +28,7 @@ from pylav.exceptions import (
     CogAlreadyRegistered,
     CogHasBeenRegistered,
     NoNodeAvailable,
+    NoNodeWithRequestFunctionalityAvailable,
     PyLavNotInitialized,
 )
 from pylav.managed_node import LocalNodeManager
@@ -83,7 +85,7 @@ class Client:
         self,
         bot: BotT,
         cog: CogT,
-        player=Player,
+        player: type[Player] = Player,
         connect_back: bool = False,
         config_folder: aiopath.AsyncPath | pathlib.Path = CONFIG_DIR,
     ):
@@ -381,14 +383,7 @@ class Client:
         Parameters
         ----------
         query: :class:`Query`
-            The query to perform a search for.
-        node: Optional[:class:`Node`]
-            The node to use for track lookup. Leave this blank to use a random node.
-            Defaults to `None` which is a random node.
-                search_only_nodes: Optional[:class:`bool`]
-            Whether to only search for tracks using nodes flagged as search only.
-        search_only_nodes: Optional[:class:`bool`]
-            Whether to only search for tracks using nodes flagged as search only.
+            The query to perform a search for
         first: Optional[:class:`bool`]
             Whether to only return the first track. Defaults to `False`.
         bypass_cache: Optional[:class:`bool`]
@@ -403,12 +398,12 @@ class Client:
             raise PyLavNotInitialized(
                 "PyLav is not initialized - call `await Client.initialize()` before starting any operation."
             )
-        if not nodes:
+        if not self.node_manager.available_nodes:
             raise NoNodeAvailable("No available nodes!")
         node = self.node_manager.find_best_node(feature=query.requires_capability)
         if node is None:
             raise NoNodeWithRequestFunctionalityAvailable(
-                f"No node with {query.requires_capability} functionality available!"
+                f"No node with {query.requires_capability} functionality available!", query.requires_capability
             )
         return await node.get_tracks(query, first=first, bypass_cache=bypass_cache)
 
@@ -420,8 +415,8 @@ class Client:
         ----------
         track: :class:`str`
             The base64-encoded `track` string.
-        node: Optional[:class:`Node`]
-            The node to use for the query. Defaults to `None` which is a random node.
+        feature: Optional[:class:`str`]
+            The feature to decode the track for. Defaults to `None`.
 
         Returns
         -------
@@ -435,9 +430,9 @@ class Client:
         if not self.node_manager.available_nodes:
             raise NoNodeAvailable("No available nodes!")
         node = self.node_manager.find_best_node(feature=feature)
-        if node is None:
+        if node is None and feature:
             raise NoNodeWithRequestFunctionalityAvailable(
-                f"No node with {query.requires_capability} functionality available!"
+                f"No node with {feature} functionality available!", feature=feature
             )
         return await node.decode_track(track)
 
@@ -449,8 +444,8 @@ class Client:
         ----------
         tracks: list[:class:`str`]
             A list of base64-encoded `track` strings.
-        node: Optional[:class:`Node`]
-            The node to use for the query. Defaults to `None` which is a random node.
+        feature: Optional[:class:`str`]
+            The feature to decode the tracks for. Defaults to `None`.
 
         Returns
         -------
@@ -464,9 +459,9 @@ class Client:
         if not self.node_manager.available_nodes:
             raise NoNodeAvailable("No available nodes!")
         node = self.node_manager.find_best_node(feature=feature)
-        if node is None:
+        if node is None and feature:
             raise NoNodeWithRequestFunctionalityAvailable(
-                f"No node with {query.requires_capability} functionality available!"
+                f"No node with {feature} functionality available!", feature=feature
             )
         return await node.decode_tracks(tracks)
 
@@ -726,7 +721,7 @@ class Client:
 
         return iter(self.player_manager)
 
-    async def get_managed_node(self) -> Optional[Node]:
+    async def get_managed_node(self) -> Node | None:
         if not self.initialized:
             raise PyLavNotInitialized(
                 "PyLav is not initialized - call `await Client.initialize()` before starting any operation."

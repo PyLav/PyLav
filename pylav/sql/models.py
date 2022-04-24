@@ -1,14 +1,22 @@
 from __future__ import annotations
 
 import datetime
+import gzip
+import io
+from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
+from typing import Iterator
 
+import aiohttp
 import discord
 import ujson
+import yaml
 
 from pylav._config import CONFIG_DIR
+from pylav.exceptions import InvalidPlaylist
 from pylav.sql.tables import LibConfigRow, NodeRow, PlaylistRow, QueryRow
 from pylav.types import BotT
+from pylav.utils import PyLavContext
 
 
 @dataclass(eq=True)
@@ -62,7 +70,12 @@ class PlaylistModel:
             return True
         elif self.scope == bot.user.id:
             return False
-        if (guild := bot.get_guild(self.scope)) or (guild and (channel := guild.get_channel(self.scope))):
+        channel = None
+        if (guild_ := bot.get_guild(self.scope)) or (
+            (guild := guild_ or guild) and (channel := guild.get_channel(self.scope))
+        ):
+            if guild_:
+                guild = guild_
             if guild.owner_id == requester.id:
                 return True
             if hasattr(bot, "is_mod"):
@@ -71,16 +84,24 @@ class PlaylistModel:
                     if not requester:
                         return False
                 return await bot.is_mod(requester)
+            if channel and channel.permissions_for(guild.me).manage_guild:
+                return True
             return False
         return self.author == requester.id
 
     async def get_scope_name(self, bot: BotT, mention: bool = True, guild: discord.Guild = None) -> str:
-        if guild := bot.get_guild(self.scope):
+        if guild_ := bot.get_guild(self.scope):
+            if guild_:
+                guild = guild_
             scope_name = f"(Server) {guild.name}"
-        elif (guild and (author := guild.get_member(self.scope))) or (author := bot.get_user(self.author)):
+        elif (
+            (guild := guild_ or guild)
+            and (guild and (author := guild.get_member(self.scope)))
+            or (author := bot.get_user(self.author))
+        ):
             scope_name = f"(User) {author.mention}" if mention else f"(User) {author}"
         elif guild and (channel := guild.get_channel(self.scope)):
-            scope_name = f"(Channel) {channel.mention}" if mention else f"(Channel) {channel}"
+            scope_name = f"(Channel) {channel.mention}" if mention else f"(Channel) {channel.name}"
         elif bot.user.id == self.scope:
             scope_name = f"(Global) {bot.user.mention}" if mention else f"(Global) {bot.user}"
         else:
@@ -93,6 +114,48 @@ class PlaylistModel:
                 return f"{user}"
             return f"{user.mention}"
         return f"{self.author}"
+
+    @asynccontextmanager
+    async def to_yaml(self, guild: discord.Guild) -> Iterator[io.BytesIO]:
+        """
+        Serialize the playlist to a YAML file.
+
+        yields a tuple of (io.BytesIO, bool) where the bool is whether the playlist file was compressed using Gzip
+        """
+        data = {
+            "name": self.name,
+            "author": self.author,
+            "url": self.url,
+            "tracks": self.tracks,
+        }
+
+        with io.BytesIO() as bio:
+            with gzip.GzipFile(fileobj=bio, mode="wb", compresslevel=9) as gfile:
+                yaml.safe_dump(data, gfile, default_flow_style=False, sort_keys=False, encoding="utf-8")
+            bio.seek(0)
+            yield bio
+
+    @classmethod
+    async def from_yaml(cls, context: PyLavContext, scope: int, url: str) -> PlaylistModel:
+        """
+        Deserialize a playlist from a YAML file.
+        """
+        try:
+            async with aiohttp.ClientSession(auto_decompress=False) as session:
+                async with session.get(url) as response:
+                    data = await response.read()
+                    data = gzip.decompress(data)
+                    data = yaml.safe_load(data)
+        except Exception as e:
+            raise InvalidPlaylist(f"Invalid playlist file - {e}")
+        return cls(
+            id=context.message.id,
+            scope=scope,
+            author=data["author"],
+            name=data["name"],
+            url=data["url"],
+            tracks=data["tracks"],
+        )
 
 
 @dataclass(eq=True)

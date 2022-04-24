@@ -36,7 +36,7 @@ from pylav.events import (
     TrackStartEvent,
     TrackStuckEvent,
 )
-from pylav.exceptions import TrackNotFound
+from pylav.exceptions import NoNodeWithRequestFunctionalityAvailable, TrackNotFound
 from pylav.filters import ChannelMix, Distortion, Equalizer, Karaoke, LowPass, Rotation, Timescale, Vibrato, Volume
 from pylav.filters.tremolo import Tremolo
 from pylav.query import Query
@@ -187,7 +187,7 @@ class Player(VoiceProtocol):
         node = self.node.node_manager.find_best_node(region=self.region, feature=feature)
         if feature and not node:
             raise NoNodeWithRequestFunctionalityAvailable(
-                f"No node with {query.requires_capability} functionality available!"
+                f"No node with {feature} functionality available!", feature=feature
             )
 
         if node != self.node:
@@ -204,7 +204,7 @@ class Player(VoiceProtocol):
         node = self.node.node_manager.find_best_node(not_region=self.region, feature=feature)
         if feature and not node:
             raise NoNodeWithRequestFunctionalityAvailable(
-                f"No node with {query.requires_capability} functionality available!"
+                f"No node with {feature} functionality available!", feature=feature
             )
         if node != self.node:
             await self.change_node(node)

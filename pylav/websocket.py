@@ -233,7 +233,7 @@ class WebSocket:
                 LOGGER.error("[NODE-%s] Exception in WebSocket! %s.", self.node.name, exc)
                 break
             elif msg.type in self._closers:
-                LOGGER.debug(
+                LOGGER.info(
                     "[NODE-%s] Received close frame with code %s.",
                     self.node.name,
                     msg.data,
@@ -253,7 +253,7 @@ class WebSocket:
         reason: :class:`str`
             Reason why the websocket was closed. Defaults to `None`
         """
-        LOGGER.debug(
+        LOGGER.info(
             "[NODE-%s] WebSocket disconnected with the following: code=%s reason=%s",
             self.node.name,
             code,

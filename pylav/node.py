@@ -458,7 +458,7 @@ class Node:
         query = f"scsearch:{query}"
         return await self.get_tracks(await self._query_cls.from_string(query), bypass_cache=bypass_cache)
 
-    async def get_query_speak(self, query: str, bypass_cache: bool = False) -> str | None:
+    async def get_query_speak(self, query: str, bypass_cache: bool = False) -> list | None:
         """|coro|
         Gets the query for speak.
         Parameters
@@ -473,13 +473,11 @@ class Node:
             The list of results.
         """
         if not self.available:
-            return {
-                "loadType": "LOAD_FAILED",
-                "playlistInfo": {"name": "", "selectedTrack": -1},
-                "tracks": [],
-            }
+            return []
         query = f"speak:{query}"
-        reponse = await self.get_tracks(await self._query_cls.from_string(query), bypass_cache=bypass_cache, first=True)
+        response = await self.get_tracks(
+            await self._query_cls.from_string(query), bypass_cache=bypass_cache, first=True
+        )
         return response.get("tracks")
 
     async def get_query_spotify(self, query: str, bypass_cache: bool = False) -> LavalinkResponseT:
@@ -540,6 +538,8 @@ class Node:
             The query to search for.
         bypass_cache: :class:`bool`
             Whether to bypass the cache.
+        first: :class:`bool`
+            Whether to return the first result only.
 
         Returns
         -------

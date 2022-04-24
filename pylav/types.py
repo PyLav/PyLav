@@ -58,7 +58,7 @@ class BotClientWithLavalink(BotClient):
     guild: discord.Guild | None
 
     async def get_context(
-        self, message: discord.abc.Message | discord.Interaction, *, cls: type[PyLavContext] = None
+        self, message: discord.abc.Message | discord.Interaction, *, cls: type[PyLavContext] = None  # noqa: F821
     ) -> PyLavContext[Any]:
         ...
 

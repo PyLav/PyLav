@@ -48,7 +48,8 @@ class NodeConfigManager:
 
         return model_list
 
-    async def get_bundled_node_config(self) -> NodeModel:
+    @staticmethod
+    async def get_bundled_node_config() -> NodeModel:
         node = (
             await NodeRow.objects()
             .output(load_json=True)

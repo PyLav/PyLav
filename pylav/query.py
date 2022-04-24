@@ -138,7 +138,7 @@ def process_bandcamp(cls: QueryT, query: str) -> Query:
 
 
 class Query:
-    __localfile_cls: Type[LocalFile] = None
+    __localfile_cls: type[LocalFile] = None
 
     def __init__(
         self,
@@ -401,7 +401,7 @@ class Query:
 
         return self._query
 
-    async def get_all_tracks_in_folder(self) -> List[Query]:
+    async def get_all_tracks_in_folder(self) -> list[Query]:
         if self.is_local:
             if self.is_album:
                 query: LocalFile = self.__localfile_cls(self._query)
@@ -410,7 +410,7 @@ class Query:
                 return [self]
         return []
 
-    async def get_all_tracks_in_tree(self) -> List[Query]:
+    async def get_all_tracks_in_tree(self) -> list[Query]:
         if self.is_local:
             if self.is_album:
                 query: LocalFile = self.__localfile_cls(self._query)
@@ -519,7 +519,7 @@ class Query:
             return "Clyp.it"
         elif source == "pornhub":
             return "PornHub"
-        elif sourse == "soundgasm":
+        elif source == "soundgasm":
             return "SoundGasm"
         elif source == "tiktok":
             return "TikTok"
@@ -548,7 +548,7 @@ class Query:
             return "http"
         elif self.is_speak:
             return "speak"
-        elif self.is_tts:
+        elif self.is_gctts:
             return "gcloud-tts"
         elif self.is_getyarn:
             return "getyarn"

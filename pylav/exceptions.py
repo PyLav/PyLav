@@ -32,6 +32,8 @@ __all__ = (
     "SQLError",
     "EntryNotFoundError",
     "PyLavNotInitialized",
+    "PlaylistError",
+    "InvalidPlaylist",
 )
 
 from discord.ext.commands import CommandError
@@ -178,3 +180,17 @@ class NoNodeAvailable(NodeError):
 
 class NoNodeWithRequestFunctionalityAvailable(NodeError):
     """Raised when no node with request functionality is available."""
+
+    def __init__(self, message: str, feature: str, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.message = message
+        self.feature = feature
+
+
+class PlaylistError(PyLavError):
+    """Base class for playlist related errors."""
+
+
+class InvalidPlaylist(PlaylistError):
+    """Raised when a playlist is invalid."""
