@@ -120,7 +120,7 @@ class PlaylistModel:
 
     async def get_name_formatted(self, with_url: bool = True) -> str:
         name = BRACKETS.sub("", self.name).strip()
-        if with_url and self.url:
+        if with_url and self.url and self.url.startswith("http"):
             return f"**[{discord.utils.escape_markdown(name)}]({self.url})**"
         else:
             return f"**({discord.utils.escape_markdown(name)})**"
