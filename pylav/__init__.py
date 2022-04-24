@@ -3,7 +3,7 @@ from pylav.client import Client
 from pylav.exceptions import *
 from pylav.player import Player
 from pylav.query import Query
-from pylav.tracks import AudioTrack as Track
+from pylav.tracks import AudioTrack
 
 __all__ = (
     "PyLavError",
@@ -38,8 +38,11 @@ __all__ = (
     "PlaylistError",
     "InvalidPlaylist",
     "Track",
+    "AudioTrack",
     "Player",
     "Client",
     "Query",
     "converters",
 )
+
+Track = AudioTrack
