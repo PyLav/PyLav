@@ -644,7 +644,7 @@ class PyLavContext(_OriginalContextClass):
         """Optional[:class:`.Cog`]: Returns the cog associated with this context's command. None if it does not
         exist."""
 
-        if self.command is None or self.command == dummy_command:
+        if self.command is None:
             return None
         return self.command.cog
 
@@ -770,8 +770,7 @@ async def _process_commands(self, message: discord.Message, /):
 async def _get_context(
     self: BotT, message: discord.Message | discord.Interaction, /, *, cls=PyLavContext
 ) -> PyLavContext:
-    instance = await super(self.__class__, self).get_context(message, cls=cls)  # noqa
-    return instance
+    return await super(self.__class__, self).get_context(message, cls=cls)  # noqa
 
 
 @commands.command(name="__dummy_command", hidden=True, disabled=True)
