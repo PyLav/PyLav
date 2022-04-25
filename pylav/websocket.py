@@ -69,7 +69,7 @@ class WebSocket:
             aiohttp.WSMsgType.CLOSED,
         )
         self.ready = asyncio.Event()
-        asyncio.ensure_future(self.connect())
+        self._connect_task = asyncio.ensure_future(self.connect())
 
     @property
     def is_ready(self) -> bool:
@@ -118,129 +118,139 @@ class WebSocket:
 
     async def connect(self):
         """Attempts to establish a connection to Lavalink."""
-        self.ready.clear()
-        self.node._ready.clear()
-        headers = {
-            "Authorization": self._password,
-            "User-Id": str(self.bot_id),
-            "Client-Name": f"Py-Link/{self.lib_version}",
-        }
+        try:
+            self.ready.clear()
+            self.node._ready.clear()
+            headers = {
+                "Authorization": self._password,
+                "User-Id": str(self.bot_id),
+                "Client-Name": f"Py-Link/{self.lib_version}",
+            }
 
-        if self._resuming_configured and self._resume_key:
-            headers["Resume-Key"] = self._resume_key
-        self._node._region = await get_closest_discord_region(self._host)
-        is_finite_retry = self._max_reconnect_attempts != -1
-        max_attempts_str = "inf" if is_finite_retry else self._max_reconnect_attempts
-        attempt = 0
-        backoff = ExponentialBackoffWithReset(base=3)
+            if self._resuming_configured and self._resume_key:
+                headers["Resume-Key"] = self._resume_key
+            self._node._region = await get_closest_discord_region(self._host)
+            is_finite_retry = self._max_reconnect_attempts != -1
+            max_attempts_str = "inf" if is_finite_retry else self._max_reconnect_attempts
+            attempt = 0
+            backoff = ExponentialBackoffWithReset(base=3)
 
-        while not self.connected and (not is_finite_retry or attempt < self._max_reconnect_attempts):
-            attempt += 1
-            LOGGER.info(
-                "[NODE-%s] Attempting to establish WebSocket connection (%s/%s)...",
-                self._node.name,
-                attempt,
-                max_attempts_str,
-            )
-
-            try:
-                self._ws = await self._session.ws_connect(
-                    url=self._ws_uri,
-                    headers=headers,
-                    heartbeat=60,
+            while not self.connected and (not is_finite_retry or attempt < self._max_reconnect_attempts):
+                attempt += 1
+                LOGGER.info(
+                    "[NODE-%s] Attempting to establish WebSocket connection (%s/%s)...",
+                    self._node.name,
+                    attempt,
+                    max_attempts_str,
                 )
-                await self._node.update_features()
-                self.ready.set()
-                self.node._ready.set()
-                backoff.reset()
-            except (
-                aiohttp.ClientConnectorError,
-                aiohttp.WSServerHandshakeError,
-                aiohttp.ServerDisconnectedError,
-            ) as ce:
-                if isinstance(ce, aiohttp.ClientConnectorError):
-                    LOGGER.warning(
-                        "[NODE-%s] Invalid response received; this may indicate that "
-                        "Lavalink is not running, or is running on a port different "
-                        "to the one you passed to `add_node`.",
-                        self.node.name,
+
+                try:
+                    self._ws = await self._session.ws_connect(
+                        url=self._ws_uri,
+                        headers=headers,
+                        heartbeat=60,
                     )
-                elif isinstance(ce, aiohttp.WSServerHandshakeError):
-                    if ce.status in (
-                        401,
-                        403,
-                    ):  # Special handling for 401/403 (Unauthorized/Forbidden).
+                    await self._node.update_features()
+                    self.ready.set()
+                    self.node._ready.set()
+                    backoff.reset()
+                except (
+                    aiohttp.ClientConnectorError,
+                    aiohttp.WSServerHandshakeError,
+                    aiohttp.ServerDisconnectedError,
+                ) as ce:
+                    if isinstance(ce, aiohttp.ClientConnectorError):
                         LOGGER.warning(
-                            "[NODE-%s] Authentication failed while trying to establish a connection to the node.",
+                            "[NODE-%s] Invalid response received; this may indicate that "
+                            "Lavalink is not running, or is running on a port different "
+                            "to the one you passed to `add_node`.",
                             self.node.name,
                         )
-                        # We shouldn't try to establish any more connections as correcting this particular error
-                        # would require the cog to be reloaded (or the bot to be rebooted), so further attempts
-                        # would be futile, and a waste of resources.
-                        return
+                    elif isinstance(ce, aiohttp.WSServerHandshakeError):
+                        if ce.status in (
+                            401,
+                            403,
+                        ):  # Special handling for 401/403 (Unauthorized/Forbidden).
+                            LOGGER.warning(
+                                "[NODE-%s] Authentication failed while trying to establish a connection to the node.",
+                                self.node.name,
+                            )
+                            # We shouldn't try to establish any more connections as correcting this particular error
+                            # would require the cog to be reloaded (or the bot to be rebooted), so further attempts
+                            # would be futile, and a waste of resources.
+                            return
 
-                    LOGGER.warning(
-                        "[NODE-%s] The remote server returned code %s, "
-                        "the expected code was 101. This usually "
-                        "indicates that the remote server is a webserver "
-                        "and not Lavalink. Check your ports, and try again.",
-                        self.node.name,
-                        ce.status,
-                    )
-                await asyncio.sleep(backoff.delay())
-            else:
-                await self.node.node_manager.node_connect(self.node)
-                #  asyncio.ensure_future(self._listen())
+                        LOGGER.warning(
+                            "[NODE-%s] The remote server returned code %s, "
+                            "the expected code was 101. This usually "
+                            "indicates that the remote server is a webserver "
+                            "and not Lavalink. Check your ports, and try again.",
+                            self.node.name,
+                            ce.status,
+                        )
+                    await asyncio.sleep(backoff.delay())
+                else:
+                    await self.node.node_manager.node_connect(self.node)
+                    #  asyncio.ensure_future(self._listen())
 
-                if (
-                    not self._resuming_configured
-                    and self._resume_key
-                    and (self._resume_timeout and self._resume_timeout > 0)
-                ):
-                    await self.send(
-                        op="configureResuming",
-                        key=self._resume_key,
-                        timeout=self._resume_timeout,
-                    )
-                    self._resuming_configured = True
+                    if (
+                        not self._resuming_configured
+                        and self._resume_key
+                        and (self._resume_timeout and self._resume_timeout > 0)
+                    ):
+                        await self.send(
+                            op="configureResuming",
+                            key=self._resume_key,
+                            timeout=self._resume_timeout,
+                        )
+                        self._resuming_configured = True
 
-                if self._message_queue:
-                    async for message in AsyncIter(self._message_queue):
-                        await self.send(**message)
+                    if self._message_queue:
+                        async for message in AsyncIter(self._message_queue):
+                            await self.send(**message)
 
-                    self._message_queue.clear()
+                        self._message_queue.clear()
 
-                await self._listen()
-                # Ensure this loop doesn't proceed if _listen returns control back to this
-                # function.
-                return
+                    await self._listen()
+                    # Ensure this loop doesn't proceed if _listen returns control back to this
+                    # function.
+                    return
 
-        LOGGER.warning(
-            "[NODE-%s] A WebSocket connection could not be established within %s attempts.",
-            self.node.name,
-            attempt,
-        )
+            LOGGER.warning(
+                "[NODE-%s] A WebSocket connection could not be established within %s attempts.",
+                self.node.name,
+                attempt,
+            )
+        except Exception:
+            LOGGER.exception(
+                "[NODE-%s] An exception occurred while attempting to connect to the node.",
+                self.node.name,
+            )
 
     async def _listen(self):
         """Listens for websocket messages."""
-        async for msg in self._ws:
-            LOGGER.debug("[NODE-%s] Received WebSocket message: %s", self.node.name, msg.data)
+        try:
+            async for msg in self._ws:
+                LOGGER.debug("[NODE-%s] Received WebSocket message: %s", self.node.name, msg.data)
 
-            if msg.type == aiohttp.WSMsgType.TEXT:
-                await self.handle_message(msg.json(loads=ujson.loads))
-            elif msg.type == aiohttp.WSMsgType.ERROR:
-                exc = self._ws.exception()
-                LOGGER.error("[NODE-%s] Exception in WebSocket! %s.", self.node.name, exc)
-                break
-            elif msg.type in self._closers:
-                LOGGER.info(
-                    "[NODE-%s] Received close frame with code %s.",
-                    self.node.name,
-                    msg.data,
-                )
-                await self._websocket_closed(msg.data, msg.extra)
-                return
-        await self._websocket_closed()
+                if msg.type == aiohttp.WSMsgType.TEXT:
+                    await self.handle_message(msg.json(loads=ujson.loads))
+                elif msg.type == aiohttp.WSMsgType.ERROR:
+                    exc = self._ws.exception()
+                    LOGGER.error("[NODE-%s] Exception in WebSocket! %s.", self.node.name, exc)
+                    break
+                elif msg.type in self._closers:
+                    LOGGER.info(
+                        "[NODE-%s] Received close frame with code %s.",
+                        self.node.name,
+                        msg.data,
+                    )
+                    await self._websocket_closed(msg.data, msg.extra)
+                    return
+            await self._websocket_closed()
+        except Exception:
+            LOGGER.exception("[NODE-%s] Exception in WebSocket!", self.node.name)
+            await self._websocket_closed()
 
     async def _websocket_closed(self, code: int = None, reason: str = None):
         """
@@ -261,7 +271,7 @@ class WebSocket:
         )
         self._ws = None
         await self.node.node_manager.node_disconnect(self.node, code, reason)
-        await self.connect()
+        self._connect_task = asyncio.ensure_future(self.connect())
 
     async def handle_message(self, data: dict):
         """

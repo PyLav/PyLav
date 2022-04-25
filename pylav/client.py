@@ -181,6 +181,8 @@ class Client:
         else:
             localtrack_folder = aiopath.AsyncPath(localtrack_folder)
         await LocalFile.add_root_folder(path=localtrack_folder, create=True)
+        await self._bot.wait_until_ready()
+        self._user_id = str(self._bot.user.id)
         self._ready = True
         self._local_node_manager = LocalNodeManager(self, auto_update=auto_update_managed_nodes)
         if enable_managed_node:
