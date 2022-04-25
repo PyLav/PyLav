@@ -12,6 +12,8 @@ import aiohttp
 import discord
 import ujson
 import yaml
+from packaging.version import LegacyVersion, Version
+from packaging.version import parse as parse_version
 from red_commons.logging import getLogger
 
 from pylav._config import CONFIG_DIR
@@ -469,28 +471,36 @@ class QueryModel:
 @dataclass(eq=True)
 class BotVersion:
     bot: int
-    version: str
+    version: str | LegacyVersion | Version
+
+    def __post_init__(self):
+        if isinstance(self.version, str):
+            self.version = parse_version(self.version)  # type: ignore
 
     async def get_or_create(self) -> BotVersion:
         values = {
-            BotVersionRow.version: self.version,
+            BotVersionRow.version: f"{self.version}",
         }
         output = (
-            await NodeRow.objects().output(load_json=True).get_or_create(BotVersionRow.bot == self.bot, defaults=values)
+            await BotVersionRow.objects()
+            .output(load_json=True)
+            .get_or_create(BotVersionRow.bot == self.bot, defaults=values)
         )
         if not output._was_created:
-            self.version = output.version
+            self.version = parse_version(output.version)
         return self
 
     async def upsert(self) -> None:
         values = {
-            BotVersionRow.version: self.version,
+            BotVersionRow.version: f"{self.version}",
         }
         node = (
-            await NodeRow.objects().output(load_json=True).get_or_create(BotVersionRow.bot == self.bot, defaults=values)
+            await BotVersionRow.objects()
+            .output(load_json=True)
+            .get_or_create(BotVersionRow.bot == self.bot, defaults=values)
         )
         if not node._was_created:
-            await NodeRow.update(values).where(BotVersionRow.bot == self.bot)
+            await BotVersionRow.update(values).where(BotVersionRow.bot == self.bot)
 
     async def save(self) -> None:
         await self.upsert()

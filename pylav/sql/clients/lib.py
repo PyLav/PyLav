@@ -84,7 +84,7 @@ class LibConfigManager:
         ).save()
 
     async def get_bot_db_version(self) -> BotVersion:
-        bv = BotVersion(bot=self._client.bot.user.id, version=self._client.lib_version)
+        bv = BotVersion(bot=self._client.bot.user.id, version="0.0.0.0")
         await bv.get_or_create()
         return bv
 
