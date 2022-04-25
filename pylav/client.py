@@ -177,6 +177,7 @@ class Client:
             client_id=self._spotify_client_id, client_secret=self._spotify_client_secret
         )
         from pylav.localfiles import LocalFile
+
         # FIXME: This is a hack, remove it when we have a proper way to set the localtrack folder
         localtrack_folder = "/data/media/Music"
         if not localtrack_folder:
@@ -738,7 +739,12 @@ class Client:
         return random.choice(available_nodes)
 
     async def get_all_tracks_for_queries(
-        self, *queries: Query, requester: discord.Member, player: Player | None = None, bypass_cache: bool = False
+        self,
+        *queries: Query,
+        requester: discord.Member,
+        player: Player | None = None,
+        bypass_cache: bool = False,
+        enqueue: bool = True,
     ) -> tuple[list[Track], int, list[Query]]:
         """High level interface to get and return all tracks for a list of queries.
 
@@ -755,6 +761,10 @@ class Client:
             The user who requested the op.
         player : `Player`
             The player requesting the op.
+        enqueue : `bool`, optional
+            Whether to enqueue the tracks as needed
+            while try are processed so users dont sit waiting for the bot to finish.
+
         Returns
         -------
         tracks : `List[AudioTrack]`
@@ -774,7 +784,7 @@ class Client:
             if node is None:
                 queries_failed.append(query)
             # Query tracks as the queue builds as this may be a slow operation
-            if player and successful_tracks:
+            if enqueue and not (player.is_playing or player.paused):
                 if not (player.is_playing or player.paused):
                     track = successful_tracks.pop()
                     await player.play(track, track.query, requester)
@@ -815,7 +825,7 @@ class Client:
                                 )
                             )
                             # Query tracks as the queue builds as this may be a slow operation
-                            if not (player.is_playing or player.paused):
+                            if enqueue and not (player.is_playing or player.paused):
                                 if not player.is_playing and player.paused:
                                     track = successful_tracks.pop()
                                     await player.play(track, track.query, requester)
@@ -839,7 +849,7 @@ class Client:
                                 )
                             )
                             # Query tracks as the queue builds as this may be a slow operation
-                            if player and successful_tracks:
+                            if enqueue and not (player.is_playing or player.paused):
                                 if not (player.is_playing or player.paused):
                                     track = successful_tracks.pop()
                                     await player.play(track, track.query, requester)
