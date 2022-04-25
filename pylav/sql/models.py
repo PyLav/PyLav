@@ -123,7 +123,7 @@ class PlaylistModel:
         if with_url and self.url and self.url.startswith("http"):
             return f"**[{discord.utils.escape_markdown(name)}]({self.url})**"
         else:
-            return f"**({discord.utils.escape_markdown(name)})**"
+            return f"**{discord.utils.escape_markdown(name)}**"
 
     @asynccontextmanager
     async def to_yaml(self, guild: discord.Guild) -> Iterator[io.BytesIO]:
