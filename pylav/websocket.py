@@ -319,8 +319,7 @@ class WebSocket:
         event_type = data["type"]
 
         if event_type == "TrackEndEvent":
-            track = player.history.raw_queue.popleft()  # TODO: Check if this is correct
-            event = TrackEndEvent(player, track, data["reason"])
+            event = TrackEndEvent(player, player.current, data["reason"])
         elif event_type == "TrackExceptionEvent":
             event = TrackExceptionEvent(player, player.current, data["error"])
         elif event_type == "TrackStartEvent":

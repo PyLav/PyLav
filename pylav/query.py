@@ -80,6 +80,8 @@ SPOTIFY_TIMESTAMP = re.compile(r"#(\d+):(\d+)")
 SOUNDCLOUD_TIMESTAMP = re.compile(r"#t=(\d+):(\d+)s?")
 TWITCH_TIMESTAMP = re.compile(r"\?t=(\d+)h(\d+)m(\d+)s")
 
+LOCAL_TRACK_NESTED = re.compile(r"^(?P<recursive>all|nested|recursive|tree):(?P<query>.*)$", re.IGNORECASE)
+
 
 def process_youtube(cls: QueryT, query: str, music: bool):
     index = 0
@@ -148,6 +150,7 @@ class Query:
         start_time=0,
         index=0,
         query_type: Literal["single", "playlist", "album"] = None,
+        recursive: bool = False,
     ):
         self._query = query
         self._source = source
@@ -155,6 +158,7 @@ class Query:
         self.start_time = start_time
         self.index = index
         self._type = query_type
+        self._recursive = recursive
         from pylav.localfiles import LocalFile
 
         self.__localfile_cls = LocalFile
@@ -352,6 +356,11 @@ class Query:
             from pylav.localfiles import LocalFile
 
             cls.__localfile_cls = LocalFile
+        recursively = False
+        query = f"{query}"
+        if match := LOCAL_TRACK_NESTED.match(query):
+            recursively = bool(match.group("recursive"))
+            query = match.group("query")
         path: aiopath.AsyncPath = aiopath.AsyncPath(query)
         if not await path.exists():
             if path.is_absolute():
@@ -370,7 +379,7 @@ class Query:
         query_type = "single"
         if await local_path.path.is_dir():
             query_type = "album"
-        return cls(local_path, "Local Files", query_type=query_type)  # type: ignore
+        return cls(local_path, "Local Files", query_type=query_type, recursive=recursively)  # type: ignore
 
     @classmethod
     async def from_string(cls, query: Query | str | pathlib.Path | aiopath.AsyncPath) -> Query:
@@ -438,7 +447,11 @@ class Query:
     async def get_all_tracks_in_folder(self) -> AsyncIterator[Query]:
         if self.is_local:
             if self.is_album:
-                async for entry in self._query.files_in_folder():
+                if self._recursive:
+                    op = self._query.files_in_tree
+                else:
+                    op = self._query.files_in_folder
+                async for entry in op():
                     yield entry
             elif self.is_single:
                 yield self

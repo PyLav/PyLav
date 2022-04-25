@@ -86,7 +86,7 @@ class Client:
         self,
         bot: BotT,
         cog: CogT,
-        player: type[Player] = Player,
+        player: type[Player] = Player,  # type: ignore
         connect_back: bool = False,
         config_folder: aiopath.AsyncPath | pathlib.Path = CONFIG_DIR,
     ):
@@ -738,7 +738,7 @@ class Client:
         return random.choice(available_nodes)
 
     async def get_all_tracks_for_queries(
-        self, *queries: Query, requester: int, bypass_cache: bool = False
+        self, *queries: Query, requester: discord.Member, player: Player | None = None, bypass_cache: bool = False
     ) -> tuple[list[Track], int, list[Query]]:
         """High level interface to get and return all tracks for a list of queries.
 
@@ -751,9 +751,10 @@ class Client:
         bypass_cache : `bool`, optional
             Whether to bypass the cache and force a new search.
             Local files will always be bypassed.
-        requester : `int`
-            The user id of the requester.
-
+        requester : `discord.Nember`
+            The user who requested the op.
+        player : `Player`
+            The player requesting the op.
         Returns
         -------
         tracks : `List[AudioTrack]`
@@ -772,6 +773,11 @@ class Client:
             node = self.node_manager.find_best_node(query.requires_capability)
             if node is None:
                 queries_failed.append(query)
+            # Query tracks as the queue builds as this may be a slow operation
+            if player and successful_tracks:
+                if not (player.is_playing or player.paused):
+                    track = successful_tracks.pop()
+                    await player.play(track, track.query, requester)
             if query.is_search or query.is_single:
                 try:
                     track = await self.get_tracks(query=query, first=True, bypass_cache=bypass_cache)
@@ -782,7 +788,10 @@ class Client:
                         track_count += 1
                         successful_tracks.append(
                             Track(
-                                data=track_b64, node=node, query=await Query.from_base64(track_b64), requester=requester
+                                data=track_b64,
+                                node=node,
+                                query=await Query.from_base64(track_b64),
+                                requester=requester.id,
                             )
                         )
                 except NoNodeWithRequestFunctionalityAvailable:
@@ -802,9 +811,14 @@ class Client:
                                     data=track_b64,
                                     node=node,
                                     query=await Query.from_base64(track_b64),
-                                    requester=requester,
+                                    requester=requester.id,
                                 )
                             )
+                            # Query tracks as the queue builds as this may be a slow operation
+                            if not (player.is_playing or player.paused):
+                                if not player.is_playing and player.paused:
+                                    track = successful_tracks.pop()
+                                    await player.play(track, track.query, requester)
                 except NoNodeWithRequestFunctionalityAvailable:
                     queries_failed.append(query)
             elif query.is_album and query.is_local:
@@ -821,9 +835,14 @@ class Client:
                                     data=track_b64,
                                     node=node,
                                     query=await Query.from_base64(track_b64),
-                                    requester=requester,
+                                    requester=requester.id,
                                 )
                             )
+                            # Query tracks as the queue builds as this may be a slow operation
+                            if player and successful_tracks:
+                                if not (player.is_playing or player.paused):
+                                    track = successful_tracks.pop()
+                                    await player.play(track, track.query, requester)
                     if not yielded:
                         queries_failed.append(query)
                 except NoNodeWithRequestFunctionalityAvailable:
