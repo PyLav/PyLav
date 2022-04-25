@@ -69,9 +69,9 @@ SOUND_CLOUD_REGEX = re.compile(
 )
 
 YOUTUBE_REGEX = re.compile(r"(?:http://|https://|)(?:www\.|)(?P<music>music\.)?youtu(be\.com|\.be)", re.IGNORECASE)
-SPEAK_REGEX = re.compile(r"^(speak):(.*)$", re.IGNORECASE)
-GCTSS_REGEX = re.compile(r"^(tts://)(.*)$", re.IGNORECASE)
-SEARCH_REGEX = re.compile(r"^(?P<source>ytm|yt|sp|sc|am)search:(?P<query>.*)$", re.IGNORECASE)
+SPEAK_REGEX = re.compile(r"^(?P<source>speak):\s*?(?P<query>.*)$", re.IGNORECASE)
+GCTSS_REGEX = re.compile(r"^(?P<source>tts://)\s*?(?P<query>.*)$", re.IGNORECASE)
+SEARCH_REGEX = re.compile(r"^(?P<source>ytm|yt|sp|sc|am)search:\s*?(?P<query>.*)$", re.IGNORECASE)
 HTTP_REGEX = re.compile(r"^http(s)?://", re.IGNORECASE)
 
 YOUTUBE_TIMESTAMP = re.compile(r"[&|?]t=(\d+)s?")
@@ -80,7 +80,7 @@ SPOTIFY_TIMESTAMP = re.compile(r"#(\d+):(\d+)")
 SOUNDCLOUD_TIMESTAMP = re.compile(r"#t=(\d+):(\d+)s?")
 TWITCH_TIMESTAMP = re.compile(r"\?t=(\d+)h(\d+)m(\d+)s")
 
-LOCAL_TRACK_NESTED = re.compile(r"^(?P<recursive>all|nested|recursive|tree):(?P<query>.*)$", re.IGNORECASE)
+LOCAL_TRACK_NESTED = re.compile(r"^(?P<recursive>all|nested|recursive|tree):\s*?(?P<query>.*)$", re.IGNORECASE)
 
 
 def process_youtube(cls: QueryT, query: str, music: bool):
@@ -302,11 +302,11 @@ class Query:
             return process_soundcloud(cls, query)
         elif TWITCH_REGEX.match(query):
             return cls(query, "Twitch")
-        elif GCTSS_REGEX.match(query):
-            query = query.replace("tts://", "")
+        elif match := GCTSS_REGEX.match(query):
+            query = match.group("query").strip()
             return cls(query, "Google TTS", search=True)
-        elif SPEAK_REGEX.match(query):
-            query = query.replace("speak:", "")
+        elif match := SPEAK_REGEX.match(query):
+            query = match.group("query").strip()
             return cls(query, "speak", search=True)
         elif CLYPIT_REGEX.match(query):
             return cls(query, "Clyp.it")
@@ -360,7 +360,7 @@ class Query:
         query = f"{query}"
         if match := LOCAL_TRACK_NESTED.match(query):
             recursively = bool(match.group("recursive"))
-            query = match.group("query")
+            query = match.group("query").strip()
         path: aiopath.AsyncPath = aiopath.AsyncPath(query)
         if not await path.exists():
             if path.is_absolute():
