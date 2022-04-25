@@ -474,6 +474,8 @@ class Node:
         """
         if not self.available:
             return []
+        if len(query) > 200:
+            query = query[:200]
         query = f"speak:{query}"
         response = await self.get_tracks(
             await self._query_cls.from_string(query), bypass_cache=bypass_cache, first=True

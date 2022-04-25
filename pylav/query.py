@@ -280,7 +280,7 @@ class Query:
             elif self.is_soundcloud:
                 return f"scsearch:{self._query}"
             elif self.is_speak:
-                return f"speak:{self._query}"
+                return f"speak:{self._query[:200]}"
             elif self.is_gctts:
                 return f"tts://{self._query}"
             else:
@@ -336,7 +336,7 @@ class Query:
     @classmethod
     def __process_search(cls, query: str) -> Query | None:
         if match := SEARCH_REGEX.match(query):
-            query = match.group("query")
+            query = match.group("query").strip()
             if match.group("source") == "ytm":
                 return cls(query, "YouTube Music", search=True)
             elif match.group("source") == "yt":
