@@ -565,14 +565,14 @@ class Player(VoiceProtocol):
         if op_type == "disable":
             queue_after = self.repeat_queue = False
             current_after = self.repeat_current = False
-        if op_type == "current":
+        elif op_type == "current":
             self.repeat_current = queue_after = repeat
             self.repeat_queue = False
         elif op_type == "queue":
             self.repeat_queue = queue_after = repeat
             self.repeat_current = False
         else:
-            raise ValueError("op_type must be either 'current' or 'queue' or `disable`")
+            raise ValueError(f"op_type must be either 'current' or 'queue' or `disable` not `{op_type}`")
         await self.node.dispatch_event(
             PlayerRepeatEvent(self, requester, op_type, queue_before, queue_after, current_before, current_after)
         )
