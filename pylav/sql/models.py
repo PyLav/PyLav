@@ -12,6 +12,7 @@ import aiohttp
 import discord
 import ujson
 import yaml
+from red_commons.logging import getLogger
 
 from pylav._config import CONFIG_DIR
 from pylav.constants import SUPPORTED_SOURCES
@@ -21,6 +22,9 @@ from pylav.types import BotT
 from pylav.utils import PyLavContext
 
 BRACKETS: re.Pattern = re.compile(r"[\[\]]")
+
+
+LOGGER = getLogger("red.PyLink.DBModels")
 
 
 @dataclass(eq=True)
@@ -158,6 +162,7 @@ class PlaylistModel:
                     data = gzip.decompress(data)
                     data = yaml.safe_load(data)
         except Exception as e:
+            LOGGER.error(f"Failed to load playlist from {url}", exc_info=e)
             raise InvalidPlaylist(f"Invalid playlist file - {e}")
         return cls(
             id=context.message.id,

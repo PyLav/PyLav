@@ -19,7 +19,7 @@ class NodeConfigManager:
     def __init__(self, client: Client):
         self._client = client
         self.currently_in_db = {
-            0,
+            self._client.bot.user.id,
         }
 
     @property
@@ -41,20 +41,19 @@ class NodeConfigManager:
     async def get_all_unamanaged_nodes(self) -> list[NodeModel]:
         model_list = [
             NodeModel(**node.to_dict())
-            for node in await NodeRow.objects().output(load_json=True).where(NodeRow.id != 0)
+            for node in await NodeRow.objects().output(load_json=True).where(NodeRow.id != self._client.bot.user.id)
         ]
         for n in model_list:
             self.currently_in_db.add(n.id)
 
         return model_list
 
-    @staticmethod
-    async def get_bundled_node_config() -> NodeModel:
+    async def get_bundled_node_config(self) -> NodeModel:
         node = (
             await NodeRow.objects()
             .output(load_json=True)
             .get_or_create(
-                NodeRow.id == 0,
+                NodeRow.id == self._client.bot.user.id,
                 defaults={
                     NodeRow.ssl: False,
                     NodeRow.reconnect_attempts: 3,
@@ -127,7 +126,7 @@ class NodeConfigManager:
         data["extras"]["server"]["host"] = host  # type: ignore
         data["extras"]["server"]["port"] = port  # type: ignore
         data["extras"]["lavalink"]["server"]["password"] = password
-        if unique_identifier != 0:
+        if unique_identifier != self._client.bot.user.id:
             data["extras"]["resume_timeout"] = resume_timeout  # type: ignore
             data["extras"]["resume_key"] = resume_key  # type: ignore
         node = NodeModel(**data)
@@ -136,7 +135,7 @@ class NodeConfigManager:
         return node
 
     async def delete(self, node_id: int) -> None:
-        if node_id == 0:
+        if node_id == self._client.bot.user.id:
             raise ValueError("Cannot delete bundled node")
         await NodeRow.delete().where(NodeRow.id == node_id)
         self.currently_in_db.discard(node_id)

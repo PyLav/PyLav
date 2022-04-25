@@ -171,7 +171,7 @@ class LocalNodeManager:
         self.timeout = timeout
         self._args = []
         self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
-        self._node_id: int = 0
+        self._node_id: int = self._client.bot.user.id
         self._node: Node | None = None
         self._current_config = {}
         self._full_data = {}

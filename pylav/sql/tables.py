@@ -34,7 +34,7 @@ class PlaylistRow(Table, db=DB, tablename="playlist"):
 
 class LibConfigRow(Table, db=DB, tablename="lib_config"):
     bot = BigInt(primary_key=True, index=True)
-    id = BigInt(primary_key=True, index=True)
+    id = BigInt(index=True)
     config_folder = Text(null=False)
     localtrack_folder = Text(null=True)
     java_path = Text(null=False, default="java")
@@ -68,7 +68,7 @@ class EqualizerRow(Table, db=DB, tablename="equalizer"):
 
 class PlayerRow(Table, db=DB, tablename="player"):
     id = BigInt(primary_key=True, index=True)
-    bot = BigInt(primary_key=True, index=True)
+    bot = BigInt(unique=True, index=True)
     channel_id = BigInt(null=False)
     volume = Integer(null=False, default=100)
     position = Float(null=False, default=0.0)

@@ -115,6 +115,263 @@ class TrackStartEvent(Event):
     def __init__(self, player: Player, track: Track):
         self.player = player
         self.track = track
+        self.url = track.uri
+        self.identifier = track.identifier
+        self.duration = track.duration
+        self.title = track.title
+        self.author = track.author
+
+
+class TrackStartYouTubeEvent(TrackStartEvent):
+    """
+    This event is dispatched when the player starts to play a YouTube track.
+    Attributes
+    ----------
+    player: :class:`BasePlayer`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    """
+
+
+class TrackStartClypitEvent(TrackStartEvent):
+    """
+    This event is dispatched when the player starts to play a Clyp.it track.
+    Attributes
+    ----------
+    player: :class:`BasePlayer`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    """
+
+
+class TrackStartGetYarnEvent(TrackStartEvent):
+    """
+    This event is dispatched when the player starts to play a GetYarn track.
+    Attributes
+    ----------
+    player: :class:`BasePlayer`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    """
+
+
+class TrackStartMixCloudEvent(TrackStartEvent):
+    """
+    This event is dispatched when the player starts to play a MixCloud track.
+    Attributes
+    ----------
+    player: :class:`BasePlayer`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    """
+
+
+class TrackStartOCRMixEvent(TrackStartEvent):
+    """
+    This event is dispatched when the player starts to play a OCR Mix track.
+    Attributes
+    ----------
+    player: :class:`BasePlayer`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    """
+
+
+class TrackStartPornHubEvent(TrackStartEvent):
+    """
+    This event is dispatched when the player starts to play a Pornhub track.
+    Attributes
+    ----------
+    player: :class:`BasePlayer`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    """
+
+
+class TrackStartRedditEvent(TrackStartEvent):
+    """
+    This event is dispatched when the player starts to play a Reddit track.
+    Attributes
+    ----------
+    player: :class:`BasePlayer`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    """
+
+
+class TrackStartSoundgasmEvent(TrackStartEvent):
+    """
+    This event is dispatched when the player starts to play a Soundgasm track.
+    Attributes
+    ----------
+    player: :class:`BasePlayer`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    """
+
+
+class TrackStartTikTokEvent(TrackStartEvent):
+    """
+    This event is dispatched when the player starts to play a TikTok track.
+    Attributes
+    ----------
+    player: :class:`BasePlayer`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    """
+
+
+class TrackStartSpotifyEvent(TrackStartEvent):
+    """
+    This event is dispatched when the player starts to play a Spotify track.
+    Attributes
+    ----------
+    player: :class:`BasePlayer`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    """
+
+
+class TrackStartAppleMusicEvent(TrackStartEvent):
+    """
+    This event is dispatched when the player starts to play a Apple Music track.
+    Attributes
+    ----------
+    player: :class:`BasePlayer`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    """
+
+
+class TrackStartBandcampEvent(TrackStartEvent):
+    """
+    This event is dispatched when the player starts to play a Bandcamp track.
+    Attributes
+    ----------
+    player: :class:`BasePlayer`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    """
+
+
+class TrackStartYouTubeMusicEvent(TrackStartEvent):
+    """
+    This event is dispatched when the player starts to play a YouTube Music track.
+    Attributes
+    ----------
+    player: :class:`BasePlayer`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    """
+
+
+class TrackStartSoundCloudEvent(TrackStartEvent):
+    """
+    This event is dispatched when the player starts to play a SoundCloud track.
+    Attributes
+    ----------
+    player: :class:`BasePlayer`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    """
+
+
+class TrackStartTwitchEvent(TrackStartEvent):
+    """
+    This event is dispatched when the player starts to play a Twitch track.
+    Attributes
+    ----------
+    player: :class:`BasePlayer`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    """
+
+
+class TrackStartHTTPEvent(TrackStartEvent):
+    """
+    This event is dispatched when the player starts to play a HTTP track.
+    Attributes
+    ----------
+    player: :class:`BasePlayer`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    """
+
+
+class TrackStartLocalFileEvent(TrackStartEvent):
+    """
+    This event is dispatched when the player starts to play a local file track.
+    Attributes
+    ----------
+    player: :class:`BasePlayer`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    """
+
+
+class TrackStartNicoNicoEvent(TrackStartEvent):
+    """
+    This event is dispatched when the player starts to play a NicoNico track.
+    Attributes
+    ----------
+    player: :class:`BasePlayer`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    """
+
+
+class TrackStartVimeoEvent(TrackStartEvent):
+    """
+    This event is dispatched when the player starts to play a Vimeo track.
+    Attributes
+    ----------
+    player: :class:`BasePlayer`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    """
+
+
+class TrackStartSpeakEvent(TrackStartEvent):
+    """
+    This event is dispatched when t he player starts to play a Speak track.
+    Attributes
+    ----------
+    player: :class:`BasePlayer`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    """
+
+
+class TrackStartGCTTSEvent(TrackStartEvent):
+    """
+    This event is dispatched when the player starts to play a Google Cloud TTS track.
+    Attributes
+    ----------
+    player: :class:`BasePlayer`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    """
 
 
 class PlayerUpdateEvent(Event):
@@ -311,7 +568,7 @@ class PlayerResumedEvent(Event):
         self.requester = requester
 
 
-class TrackQueuePositionChangedEvent(Event):
+class QueueTrackPositionChangedEvent(Event):
     """
     This event is dispatched when the position of a track is changed.
     Attributes
@@ -380,7 +637,7 @@ class QueueShuffledEvent(Event):
         self.requester = requester
 
 
-class TracksRemovedFromQueueEvent(Event):
+class QueueTracksRemovedEvent(Event):
     """
     This event is dispatched when tracks are removed from the queue.
     Attributes
@@ -550,7 +807,7 @@ class TrackSeekEvent(Event):
         self.after = after
 
 
-class PlayerVolumeChangeEvent(Event):
+class PlayerVolumeChangedEvent(Event):
     """
     This event is dispatched when the player is moved.
     Attributes
@@ -618,7 +875,7 @@ class PlayerRepeatEvent(Event):
         self.type = op_type
 
 
-class PreviousTrackRequestedEvent(Event):
+class TrackPreviousRequestedEvent(Event):
     """
     This event is dispatched when a history track is requested.
     Attributes

@@ -12,7 +12,28 @@ from pylav.events import (
     SegmentsLoadedEvent,
     TrackEndEvent,
     TrackExceptionEvent,
+    TrackStartAppleMusicEvent,
+    TrackStartBandcampEvent,
+    TrackStartClypitEvent,
     TrackStartEvent,
+    TrackStartGCTTSEvent,
+    TrackStartGetYarnEvent,
+    TrackStartHTTPEvent,
+    TrackStartLocalFileEvent,
+    TrackStartMixCloudEvent,
+    TrackStartNicoNicoEvent,
+    TrackStartOCRMixEvent,
+    TrackStartPornHubEvent,
+    TrackStartRedditEvent,
+    TrackStartSoundCloudEvent,
+    TrackStartSoundgasmEvent,
+    TrackStartSpeakEvent,
+    TrackStartSpotifyEvent,
+    TrackStartTikTokEvent,
+    TrackStartTwitchEvent,
+    TrackStartVimeoEvent,
+    TrackStartYouTubeEvent,
+    TrackStartYouTubeMusicEvent,
     TrackStuckEvent,
     WebSocketClosedEvent,
 )
@@ -24,6 +45,8 @@ from pylav.utils import AsyncIter, ExponentialBackoffWithReset
 if TYPE_CHECKING:
     from pylav.client import Client
     from pylav.node import Node
+    from pylav.player import Player
+    from pylav.tracks import Track
 
 LOGGER = getLogger("red.PyLink.WebSocket")
 
@@ -323,7 +346,9 @@ class WebSocket:
         elif event_type == "TrackExceptionEvent":
             event = TrackExceptionEvent(player, player.current, data["error"])
         elif event_type == "TrackStartEvent":
-            event = TrackStartEvent(player, player.current)  # TODO: Check if this is correct
+            track = player.current
+            event = TrackStartEvent(player, track)  # TODO: Check if this is correct
+
         elif event_type == "TrackStuckEvent":
             event = TrackStuckEvent(player, player.current, data["thresholdMs"])
         elif event_type == "WebSocketClosedEvent":
@@ -356,3 +381,54 @@ class WebSocket:
         else:
             LOGGER.debug("[NODE-%s] Send called before WebSocket ready!", self.node.name)
             self._message_queue.append(data)
+
+    def _process_track_event(self, player: Player, track: Track) -> None:
+        if track.is_youtube_music:
+            event = TrackStartYouTubeMusicEvent(player, track)
+        elif track.is_spotify:
+            event = TrackStartSpotifyEvent(player, track)
+        elif track.is_apple_music:
+            event = TrackStartAppleMusicEvent(player, track)
+        elif track.is_local:
+            event = TrackStartLocalFileEvent(player, track)
+        elif track.is_http:
+            event = TrackStartHTTPEvent(player, track)
+        elif track.is_speak:
+            event = TrackStartSpeakEvent(player, track)
+        elif track.is_youtube:
+            event = TrackStartYouTubeEvent(player, track)
+        elif track.is_clypit:
+            event = TrackStartClypitEvent(player, track)
+        elif track.is_getyarn:
+            event = TrackStartGetYarnEvent(player, track)
+        elif track.is_twitch:
+            event = TrackStartTwitchEvent(player, track)
+        elif track.is_vimeo:
+            event = TrackStartVimeoEvent(player, track)
+        elif track.is_mixcloud:
+            event = TrackStartMixCloudEvent(player, track)
+        elif track.is_ocremix:
+            event = TrackStartOCRMixEvent(player, track)
+        elif track.is_pornhub:
+            event = TrackStartPornHubEvent(player, track)
+        elif track.is_reddit:
+            event = TrackStartRedditEvent(player, track)
+        elif track.is_soundgasm:
+            event = TrackStartSoundgasmEvent(player, track)
+        elif track.is_tiktok:
+            event = TrackStartTikTokEvent(player, track)
+        elif track.is_bandcamp:
+            event = TrackStartBandcampEvent(player, track)
+        elif track.is_soundcloud:
+            event = TrackStartSoundCloudEvent(player, track)
+        elif track.is_twitch:
+            event = TrackStartTwitchEvent(player, track)
+        elif track.is_vimeo:
+            event = TrackStartVimeoEvent(player, track)
+        elif track.is_gctts:
+            event = TrackStartGCTTSEvent(player, track)
+        elif track.is_niconico:
+            event = TrackStartNicoNicoEvent(player, track)
+        else:  # This should never happen
+            event = TrackStartEvent(player, track)
+        asyncio.create_task(self.client._dispatch_event(event))

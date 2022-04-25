@@ -21,17 +21,17 @@ from pylav.events import (
     PlayerResumedEvent,
     PlayerStoppedEvent,
     PlayerUpdateEvent,
-    PlayerVolumeChangeEvent,
-    PreviousTrackRequestedEvent,
+    PlayerVolumeChangedEvent,
     QueueEndEvent,
     QueueShuffledEvent,
+    QueueTrackPositionChangedEvent,
+    QueueTracksRemovedEvent,
     QuickPlayEvent,
     TrackEndEvent,
     TrackExceptionEvent,
-    TrackQueuePositionChangedEvent,
+    TrackPreviousRequestedEvent,
     TrackSeekEvent,
     TrackSkippedEvent,
-    TracksRemovedFromQueueEvent,
     TracksRequestedEvent,
     TrackStartEvent,
     TrackStuckEvent,
@@ -381,7 +381,7 @@ class Player(VoiceProtocol):
             options["skipSegments"] = track.skip_segments
         await self.node.send(op="play", guildId=self.guild_id, track=track.track, **options)
         await self.node.dispatch_event(TrackStartEvent(self, track))
-        await self.node.dispatch_event(PreviousTrackRequestedEvent(self, requester, track))
+        await self.node.dispatch_event(TrackPreviousRequestedEvent(self, requester, track))
 
     async def quick_play(
         self,
@@ -620,7 +620,7 @@ class Player(VoiceProtocol):
         """
 
         volume = max(min(vol, 1000), 0)
-        await self.node.dispatch_event(PlayerVolumeChangeEvent(self, requester, self.volume, volume))
+        await self.node.dispatch_event(PlayerVolumeChangedEvent(self, requester, self.volume, volume))
         self.volume = volume
         await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
 
@@ -1288,7 +1288,7 @@ class Player(VoiceProtocol):
         if self.queue.empty():
             return 0
         tracks, count = await self.queue.remove(track, duplicates=duplicates)
-        await self.node.dispatch_event(TracksRemovedFromQueueEvent(player=self, requester=requester, tracks=tracks))
+        await self.node.dispatch_event(QueueTracksRemovedEvent(player=self, requester=requester, tracks=tracks))
         return count
 
     async def move_track(
@@ -1303,7 +1303,7 @@ class Player(VoiceProtocol):
         track = await self.queue.get(index)
         await self.queue.put([track], new_index)
         await self.node.dispatch_event(
-            TrackQueuePositionChangedEvent(before=index, after=new_index, track=track, player=self, requester=requester)
+            QueueTrackPositionChangedEvent(before=index, after=new_index, track=track, player=self, requester=requester)
         )
         return True
 
