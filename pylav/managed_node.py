@@ -300,6 +300,8 @@ class LocalNodeManager:
         if data["sentry"]["dsn"]:
             data["sentry"]["tags"]["ID"] = self._client.bot.user.id
             data["sentry"]["tags"]["pylav_version"] = self._client.lib_version
+        if not data["lavalink"]["server"]["httpConfig"] and not data["lavalink"]["server"]["httpConfig"]["proxyHost"]:
+            del data["lavalink"]["server"]["httpConfig"]
         self._current_config = data
         with open(LAVALINK_APP_YML, "w") as f:
             yaml.safe_dump(data, f)
