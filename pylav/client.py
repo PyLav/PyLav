@@ -177,7 +177,7 @@ class Client:
             client_id=self._spotify_client_id, client_secret=self._spotify_client_secret
         )
         from pylav.localfiles import LocalFile
-
+        # FIXME: This is a hack, remove it when we have a proper way to set the localtrack folder
         localtrack_folder = "/data/media/Music"
         if not localtrack_folder:
             localtrack_folder = self._config_folder / "music"
