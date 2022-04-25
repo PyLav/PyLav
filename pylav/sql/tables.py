@@ -40,6 +40,7 @@ class LibConfigRow(Table, db=DB, tablename="lib_config"):
     java_path = Text(null=False, default="java")
     enable_managed_node = Boolean(null=False, default=True)
     auto_update_managed_nodes = Boolean(null=False, default=True)
+    extras: JSONB = JSONB(null=False, default={})
 
 
 class EqualizerRow(Table, db=DB, tablename="equalizer"):
