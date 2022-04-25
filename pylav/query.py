@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pathlib
 import re
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, AsyncIterator, Literal
 
 import aiopath
 from red_commons.logging import getLogger
@@ -138,11 +138,11 @@ def process_bandcamp(cls: QueryT, query: str) -> Query:
 
 
 class Query:
-    __localfile_cls: type[LocalFile] = None
+    __localfile_cls: type[LocalFile] = None  # type: ignore
 
     def __init__(
         self,
-        query: str | aiopath.AsyncPath,
+        query: str | LocalFile,
         source: str,
         search: bool = False,
         start_time=0,
@@ -282,7 +282,7 @@ class Query:
             else:
                 return f"ytsearch:{self._query}"
         elif self.is_local:
-            return f"{self._query}"
+            return f"{self._query.path}"
         return self._query
 
     @classmethod
@@ -348,21 +348,39 @@ class Query:
 
     @classmethod
     async def __process_local(cls, query: str | pathlib.Path | aiopath.AsyncPath) -> Query:
+        if cls.__localfile_cls is None:
+            from pylav.localfiles import LocalFile
+
+            cls.__localfile_cls = LocalFile
         path: aiopath.AsyncPath = aiopath.AsyncPath(query)
-        path = await path.resolve()
+        if not await path.exists():
+            if path.is_absolute():
+                path_paths = path.parts[1:]
+            else:
+                path_paths = path.parts
+            path = cls.__localfile_cls._ROOT_FOLDER.joinpath(*path_paths)
+            if not await path.exists():
+                raise ValueError(f"{path} does not exist")
+        try:
+            path = await path.resolve()
+            local_path = cls.__localfile_cls(path.absolute())
+            await local_path.initialize()
+        except Exception as e:
+            raise ValueError(f"{e}")
         query_type = "single"
-        if await path.is_dir():
+        if await local_path.path.is_dir():
             query_type = "album"
-        if await path.exists():
-            return cls(path.absolute(), "Local Files", query_type=query_type)  # type: ignore
-        raise ValueError
+        return cls(local_path, "Local Files", query_type=query_type)  # type: ignore
 
     @classmethod
     async def from_string(cls, query: Query | str | pathlib.Path | aiopath.AsyncPath) -> Query:
         if isinstance(query, Query):
             return query
         if isinstance(query, pathlib.Path):
-            return await cls.__process_local(query)
+            try:
+                return await cls.__process_local(query)
+            except Exception:
+                return cls(aiopath.AsyncPath(query), "YouTube Music", search=True)
         elif query is None:
             raise ValueError("Query cannot be None")
         if output := cls.__process_urls(query):
@@ -391,48 +409,62 @@ class Query:
         else:
             return cls(query, "YouTube Music", search=True)  # Fallback to YouTube Music
 
-    async def query_to_string(self, max_length: int = None) -> str:
+    async def query_to_string(self, max_length: int = None, name_only: bool = False, ellipsis: bool = True) -> str:
+        """
+        Returns a string representation of the query.
+
+        Parameters
+        ----------
+        max_length : int
+            The maximum length of the string.
+        name_only : bool
+            If True, only the name of the query will be returned
+            Only used for local tracks.
+        ellipsis : bool
+            Whether to format the string with ellipsis if it exceeds the max_length
+        """
+
         if self.is_local:
-            self._query: LocalFile = self.__localfile_cls(self._query)
-            return await self._query.to_string_user(max_length)
+            return await self._query.to_string_user(max_length, name_only=name_only, ellipsis=ellipsis)
 
         if max_length and len(self._query) > max_length:
-            return self._query[: max_length - 3] + "..."
+            if ellipsis:
+                return self._query[: max_length - 3].strip() + "..."
+            else:
+                return self._query[:max_length].strip()
 
         return self._query
 
-    async def get_all_tracks_in_folder(self) -> list[Query]:
+    async def get_all_tracks_in_folder(self) -> AsyncIterator[Query]:
         if self.is_local:
             if self.is_album:
-                query: LocalFile = self.__localfile_cls(self._query)
-                return await query.files_in_folder()
+                async for entry in self._query.files_in_folder():
+                    yield entry
             elif self.is_single:
-                return [self]
-        return []
+                yield self
 
-    async def get_all_tracks_in_tree(self) -> list[Query]:
+    async def get_all_tracks_in_tree(self) -> AsyncIterator[Query]:
         if self.is_local:
             if self.is_album:
-                query: LocalFile = self.__localfile_cls(self._query)
-                return await query.files_in_tree()
+                async for entry in self._query.files_in_folder():
+                    yield entry
             elif self.is_single:
-                return [self]
-        return []
+                yield self
 
     async def folder(self) -> str | None:
         if self.is_local:
-            return self._query.parent.name if await self._query.is_file() else self._query.name
+            return self._query.parent.stem if await self._query.path.is_file() else self._query.name
         return None
 
-    async def query_to_queue(self, max_length: int = None, partial: bool = False) -> str:
+    async def query_to_queue(self, max_length: int = None, partial: bool = False, name_only: bool = False) -> str:
         if partial:
             source = len(self.source) + 3
             if max_length:
                 max_length -= source
-            query_to_string = await self.query_to_string(max_length)
+            query_to_string = await self.query_to_string(max_length, name_only=name_only)
             return f"({self.source}) {query_to_string}"
         else:
-            return await self.query_to_string(max_length)
+            return await self.query_to_string(max_length, name_only=name_only)
 
     @property
     def source(self) -> str:

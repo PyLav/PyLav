@@ -19,7 +19,6 @@ from pylav.events import (
 from pylav.exceptions import WebsocketNotConnectedError
 from pylav.location import get_closest_discord_region
 from pylav.node import Stats
-from pylav.tracks import AudioTrack
 from pylav.utils import AsyncIter, ExponentialBackoffWithReset
 
 if TYPE_CHECKING:
@@ -320,12 +319,12 @@ class WebSocket:
         event_type = data["type"]
 
         if event_type == "TrackEndEvent":
-            track = AudioTrack(self.node, data["track"])
+            track = player.history.raw_queue.popleft()  # TODO: Check if this is correct
             event = TrackEndEvent(player, track, data["reason"])
         elif event_type == "TrackExceptionEvent":
             event = TrackExceptionEvent(player, player.current, data["error"])
         elif event_type == "TrackStartEvent":
-            event = TrackStartEvent(player, player.current)
+            event = TrackStartEvent(player, player.current)  # TODO: Check if this is correct
         elif event_type == "TrackStuckEvent":
             event = TrackStuckEvent(player, player.current, data["thresholdMs"])
         elif event_type == "WebSocketClosedEvent":

@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING, Any
 
 import discord
 from cached_property import cached_property, cached_property_with_ttl
+from piccolo.utils.sync import run_sync
 from red_commons.logging import getLogger
 
 from pylav.exceptions import InvalidTrack, TrackNotFound
@@ -29,7 +30,7 @@ LOGGER = getLogger("red.PyLink.tracks")
 
 
 @total_ordering
-class AudioTrack:
+class Track:
     """
     Represents the AudioTrack sent to Lavalink.
     Parameters
@@ -64,9 +65,10 @@ class AudioTrack:
 
     def __init__(
         self,
+        *,
         node: Node,
-        data: AudioTrack | dict | str | None,
-        query: Query | None = None,
+        data: Track | dict | str | None,
+        query: Query,
         skip_segments: list | None = None,
         requester: int = None,
         **extra: Any,
@@ -96,7 +98,7 @@ class AudioTrack:
             except KeyError as ke:
                 (missing_key,) = ke.args
                 raise InvalidTrack(f"Cannot build a track from partial data! (Missing key: {missing_key})") from None
-        elif isinstance(data, AudioTrack):
+        elif isinstance(data, Track):
             self.track = data.track
             self._is_partial = data._is_partial
             self.extra = {**data.extra, **extra}
@@ -110,6 +112,7 @@ class AudioTrack:
             self._unique_id.update(self.track.encode())  # type: ignore
         self._requester = requester or self._node.node_manager.client.bot.user.id
         self._id = str(uuid.uuid4())
+        self._updated_query = None
 
     @cached_property_with_ttl(ttl=60)
     def full_track(
@@ -136,7 +139,9 @@ class AudioTrack:
         return self._is_partial and not self.track
 
     @property
-    def query(self) -> Query | None:
+    def query(self) -> Query:
+        if self.track and self._updated_query is None:
+            self._updated_query = self._query = run_sync(Query.from_base64(self.track))
         return self._query
 
     @property
@@ -248,10 +253,10 @@ class AudioTrack:
         del self.__dict__[function_name]
 
     async def search(self, player: Player, bypass_cache: bool = False) -> None:
-        self._query = await Query.from_string(self.query)
+        self._query = await Query.from_string(self._query)
         response = await player.node.get_tracks(self.query, first=True, bypass_cache=bypass_cache)
         if not response or "track" not in response:
-            raise TrackNotFound(f"No tracks found for query {self.query}")
+            raise TrackNotFound(f"No tracks found for query {self.query.query_identifier}")
         self.track = response["track"]
         self._unique_id = hashlib.md5()
         self._unique_id.update(self.track.encode())
@@ -274,7 +279,7 @@ class AudioTrack:
         return True
 
     def __eq__(self, other):
-        if isinstance(other, AudioTrack):
+        if isinstance(other, Track):
             return self.unique_identifier == other.unique_identifier
         return NotImplemented
 
@@ -319,29 +324,28 @@ class AudioTrack:
                 author_string = f" - {self.author}"
 
             if self.query and self.query.is_local:
+                url_start = url_end = ""
                 if not (unknown_title and unknown_author):
                     base = f"{self.title}{author_string}"
                     base = SQUARE_BRACKETS.sub("", base).strip()
                     if max_length and len(base) > max_length:
-                        base = base[:max_length] + "..."
+                        base = base = "..." + base[-max_length:]
                     elif not max_length:
-                        base += f"\n{await self.query.query_to_string()} "
+                        base += f"\n{await self.query.query_to_string(ellipsis=False)} "
                     base = discord.utils.escape_markdown(base)
                     return f"{bold}{url_start}{base}{url_end}{bold}"
                 elif not unknown_title:
                     base = self.title
                     base = SQUARE_BRACKETS.sub("", base).strip()
                     if max_length and len(base) > max_length:
-                        base = base[:max_length] + "..."
+                        base = base = "..." + base[-max_length:]
                     elif not max_length:
-                        base += f"\n{await self.query.query_to_string()} "
+                        base += f"\n{await self.query.query_to_string(ellipsis=False)} "
                     base = discord.utils.escape_markdown(base)
                     return f"{bold}{url_start}{base}{url_end}{bold}"
                 else:
-                    base = await self.query.query_to_string(max_length)
+                    base = await self.query.query_to_string(max_length, name_only=True)
                     base = SQUARE_BRACKETS.sub("", base).strip()
-                    if max_length and len(base) > max_length:
-                        base = base[:max_length] + "..."
                     base = discord.utils.escape_markdown(base)
                     return f"{bold}{url_start}{base}{url_end}{bold}"
             else:

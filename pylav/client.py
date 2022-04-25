@@ -41,6 +41,7 @@ from pylav.sql.clients.lib import LibConfigManager
 from pylav.sql.clients.nodes import NodeConfigManager
 from pylav.sql.clients.playlist_manager import PlaylistConfigManager
 from pylav.sql.clients.query_manager import QueryCacheManager
+from pylav.tracks import Track
 from pylav.types import BotT, CogT, ContextT
 from pylav.utils import PyLavContext, _get_context, _process_commands, add_property
 
@@ -156,6 +157,7 @@ class Client:
         auto_update_managed_nodes = config_data.auto_update_managed_nodes
         enable_managed_node = config_data.enable_managed_node
         self._config_folder = aiopath.AsyncPath(config_data.config_folder)
+        localtrack_folder = localtrack_folder or config_data.localtrack_folder
         data = await self._node_config_manager.get_bundled_node_config()
         if not all([client_id, client_secret]):
             spotify_data = data.extras["plugins"]["topissourcemanagers"]["spotify"]
@@ -176,12 +178,13 @@ class Client:
         )
         from pylav.localfiles import LocalFile
 
+        localtrack_folder = "/data/media/Music"
         if not localtrack_folder:
             localtrack_folder = self._config_folder / "music"
         else:
             localtrack_folder = aiopath.AsyncPath(localtrack_folder)
         await LocalFile.add_root_folder(path=localtrack_folder, create=True)
-        await self._bot.wait_until_ready()
+        # await self._bot.wait_until_ready()
         self._user_id = str(self._bot.user.id)
         self._ready = True
         self._local_node_manager = LocalNodeManager(self, auto_update=auto_update_managed_nodes)
@@ -733,3 +736,100 @@ class Client:
         if not available_nodes:
             return None
         return random.choice(available_nodes)
+
+    async def get_all_tracks_for_queries(
+        self, *queries: Query, requester: int, bypass_cache: bool = False
+    ) -> tuple[list[Track], int, list[Query]]:
+        """High level interface to get and return all tracks for a list of queries.
+
+        This will automatically handle playlists, albums, searches and local files.
+
+        Parameters
+        ----------
+        queries : `Query`
+            The list of queries to search for.
+        bypass_cache : `bool`, optional
+            Whether to bypass the cache and force a new search.
+            Local files will always be bypassed.
+        requester : `int`
+            The user id of the requester.
+
+        Returns
+        -------
+        tracks : `List[AudioTrack]`
+            The list of tracks found.
+        total_tracks : `int`
+            The total number of tracks found.
+        queries : `List[Query]`
+            The list of queries that were not found.
+
+        """
+        successful_tracks = []
+        queries_failed = []
+        track_count = 0
+
+        for query in queries:
+            node = self.node_manager.find_best_node(query.requires_capability)
+            if node is None:
+                queries_failed.append(query)
+            if query.is_search or query.is_single:
+                try:
+                    track = await self.get_tracks(query=query, first=True, bypass_cache=bypass_cache)
+                    track_b64 = track.get("track")
+                    if not track_b64:
+                        queries_failed.append(query)
+                    if track_b64:
+                        track_count += 1
+                        successful_tracks.append(
+                            Track(
+                                data=track_b64, node=node, query=await Query.from_base64(track_b64), requester=requester
+                            )
+                        )
+                except NoNodeWithRequestFunctionalityAvailable:
+                    queries_failed.append(query)
+            elif (query.is_playlist or query.is_album) and not query.is_local:
+                try:
+                    tracks: dict = await self.get_tracks(query=query, bypass_cache=bypass_cache)
+                    track_list = tracks.get("tracks", [])
+                    if not track_list:
+                        queries_failed.append(query)
+                    for track in track_list:
+                        track_b64 = track.get("track")
+                        if track_b64:
+                            track_count += 1
+                            successful_tracks.append(
+                                Track(
+                                    data=track_b64,
+                                    node=node,
+                                    query=await Query.from_base64(track_b64),
+                                    requester=requester,
+                                )
+                            )
+                except NoNodeWithRequestFunctionalityAvailable:
+                    queries_failed.append(query)
+            elif query.is_album and query.is_local:
+                try:
+                    yielded = False
+                    async for local_track in query.get_all_tracks_in_folder():
+                        yielded = True
+                        track = await self.get_tracks(query=local_track, first=True, bypass_cache=True)
+                        track_b64 = track.get("track")
+                        if track_b64:
+                            track_count += 1
+                            successful_tracks.append(
+                                Track(
+                                    data=track_b64,
+                                    node=node,
+                                    query=await Query.from_base64(track_b64),
+                                    requester=requester,
+                                )
+                            )
+                    if not yielded:
+                        queries_failed.append(query)
+                except NoNodeWithRequestFunctionalityAvailable:
+                    queries_failed.append(query)
+            else:
+                queries_failed.append(query)
+                LOGGER.warning("Unhandled query: %s", query.query_identifier)
+
+        return successful_tracks, track_count, queries_failed

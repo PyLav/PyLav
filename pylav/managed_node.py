@@ -654,7 +654,7 @@ class LocalNodeManager:
                 password=self._current_config["lavalink"]["server"]["password"],
                 resume_key=f"ManagedNode-{self._node_pid}-{self._node_id}",
                 resume_timeout=600,
-                name=f"Managed: {self._node_pid}",
+                name=f"ManagedNode: {self._node_pid}",
                 ssl=False,
                 search_only=False,
                 unique_identifier=0,

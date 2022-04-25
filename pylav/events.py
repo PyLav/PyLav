@@ -12,7 +12,7 @@ from pylav.utils import Segment
 if TYPE_CHECKING:
     from pylav.node import Node
     from pylav.player import Player
-    from pylav.tracks import AudioTrack
+    from pylav.tracks import Track
 
 
 class Event:
@@ -43,7 +43,7 @@ class TrackStuckEvent(Event):
     ----------
     player: :class:`BasePlayer`
         The player that has the playing track being stuck.
-    track: :class:`AudioTrack`
+    track: :class:`Track`
         The track is stuck from playing.
     threshold: :class:`int`
         The amount of time the track had while being stuck.
@@ -51,7 +51,7 @@ class TrackStuckEvent(Event):
 
     __slots__ = ("player", "track", "threshold")
 
-    def __init__(self, player: Player, track: AudioTrack, threshold: float):
+    def __init__(self, player: Player, track: Track, threshold: float):
         self.player = player
         self.track = track
         self.threshold = threshold
@@ -64,7 +64,7 @@ class TrackExceptionEvent(Event):
     ----------
     player: :class:`BasePlayer`
         The player that had the exception occur while playing a track.
-    track: :class:`AudioTrack`
+    track: :class:`Track`
         The track that had the exception while playing.
     exception: :class:`Exception`
         The type of exception that the track had while playing.
@@ -72,7 +72,7 @@ class TrackExceptionEvent(Event):
 
     __slots__ = ("player", "track", "exception")
 
-    def __init__(self, player: Player, track: AudioTrack, exception: Exception):
+    def __init__(self, player: Player, track: Track, exception: Exception):
         self.player = player
         self.track = track
         self.exception = exception
@@ -85,7 +85,7 @@ class TrackEndEvent(Event):
     ----------
     player: :class:`BasePlayer`
         The player that finished playing a track.
-    track: :class:`AudioTrack`
+    track: :class:`Track`
         The track that finished playing.
     reason: :class:`str`
         The reason why the track stopped playing.
@@ -93,7 +93,7 @@ class TrackEndEvent(Event):
 
     __slots__ = ("player", "track", "reason")
 
-    def __init__(self, player: Player, track: AudioTrack, reason: str):
+    def __init__(self, player: Player, track: Track, reason: str):
         self.player = player
         self.track = track
         self.reason = reason
@@ -106,13 +106,13 @@ class TrackStartEvent(Event):
     ----------
     player: :class:`BasePlayer`
         The player that started to play a track.
-    track: :class:`AudioTrack`
+    track: :class:`Track`
         The track that started playing.
     """
 
     __slots__ = ("player", "track")
 
-    def __init__(self, player: Player, track: AudioTrack):
+    def __init__(self, player: Player, track: Track):
         self.player = player
         self.track = track
 
@@ -324,13 +324,13 @@ class TrackQueuePositionChangedEvent(Event):
         The position of the track after the change.
     requester: :class:`discord.Member`
         The user who requested the change.
-    track: :class:`AudioTrack`
+    track: :class:`Track`
         The track whose position was changed.
     """
 
     __slots__ = ("player", "before", "after", "requester", "track")
 
-    def __init__(self, player: Player, before: int, after: int, requester: discord.Member, track: AudioTrack):
+    def __init__(self, player: Player, before: int, after: int, requester: discord.Member, track: Track):
         self.player = player
         self.requester = requester
         self.before = before
@@ -345,7 +345,7 @@ class TrackSkippedEvent(Event):
     ----------
     player: :class:`BasePlayer`
         The player whose track was skipped.
-    track: :class:`AudioTrack`
+    track: :class:`Track`
         The track that was skipped.
     requester: :class:`discord.Member`
         The user who requested the change.
@@ -355,7 +355,7 @@ class TrackSkippedEvent(Event):
 
     __slots__ = ("player", "track", "requester")
 
-    def __init__(self, player: Player, requester: discord.Member, track: AudioTrack, position: float):
+    def __init__(self, player: Player, requester: discord.Member, track: Track, position: float):
         self.player = player
         self.track = track
         self.requester = requester
@@ -393,7 +393,7 @@ class TracksRemovedFromQueueEvent(Event):
 
     __slots__ = ("player", "requester", "tracks")
 
-    def __init__(self, player: Player, requester: discord.Member, tracks: list[AudioTrack]):
+    def __init__(self, player: Player, requester: discord.Member, tracks: list[Track]):
         self.player = player
         self.requester = requester
         self.tracks = tracks
@@ -497,7 +497,7 @@ class PlayerDisconnectedEvent(Event):
     def __init__(self, player: Player, requester: discord.Member):
         self.player = player
         self.requester = requester
-        self.current_track: AudioTrack | None = player.current
+        self.current_track: Track | None = player.current
         self.position: float = player.position
         self.queue: collections.deque = player.queue.raw_queue
 
@@ -531,7 +531,7 @@ class TrackSeekEvent(Event):
         The player whose queue was shuffled.
     requester: :class:`discord.Member`
         The user who requested the change.
-    track: :class:`AudioTrack`
+    track: :class:`Track`
         The track that was seeked.
     after: float
         The position in the track that was seeked to.
@@ -542,7 +542,7 @@ class TrackSeekEvent(Event):
 
     __slots__ = ("player", "requester", "track", "position")
 
-    def __init__(self, player: Player, requester: discord.Member, track: AudioTrack, before: float, after: float):
+    def __init__(self, player: Player, requester: discord.Member, track: Track, before: float, after: float):
         self.player = player
         self.requester = requester
         self.track = track
@@ -627,13 +627,13 @@ class PreviousTrackRequestedEvent(Event):
         The player whose queue was shuffled.
     requester: :class:`discord.Member`
         The user who requested the change.
-    track: :class:`AudioTrack`
+    track: :class:`Track`
         The track that was seeked.
     """
 
     __slots__ = ("player", "requester")
 
-    def __init__(self, player: Player, requester: discord.Member, track: AudioTrack):
+    def __init__(self, player: Player, requester: discord.Member, track: Track):
         self.player = player
         self.requester = requester
         self.track = track
@@ -654,7 +654,7 @@ class TracksRequestedEvent(Event):
 
     __slots__ = ("player", "requester", "tracks")
 
-    def __init__(self, player: Player, requester: discord.Member, tracks: list[AudioTrack]):
+    def __init__(self, player: Player, requester: discord.Member, tracks: list[Track]):
         self.player = player
         self.requester = requester
         self.tracks = tracks
@@ -675,7 +675,7 @@ class QuickPlayEvent(Event):
 
     __slots__ = ("player", "requester", "track")
 
-    def __init__(self, player: Player, requester: discord.Member, tracks: AudioTrack):
+    def __init__(self, player: Player, requester: discord.Member, tracks: Track):
         self.player = player
         self.requester = requester
         self.tracks = tracks

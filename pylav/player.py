@@ -40,7 +40,7 @@ from pylav.exceptions import NoNodeWithRequestFunctionalityAvailable, TrackNotFo
 from pylav.filters import ChannelMix, Distortion, Equalizer, Karaoke, LowPass, Rotation, Timescale, Vibrato, Volume
 from pylav.filters.tremolo import Tremolo
 from pylav.query import Query
-from pylav.tracks import AudioTrack
+from pylav.tracks import Track
 from pylav.types import BotT
 from pylav.utils import AsyncIter, LifoQueue, Queue, SegmentCategory, format_time
 
@@ -80,9 +80,9 @@ class Player(VoiceProtocol):
         self.shuffle = False
         self.repeat_current = False
         self.repeat_queue = False
-        self.queue: Queue[AudioTrack] = Queue()
-        self.history: LifoQueue[AudioTrack] = LifoQueue(maxsize=100)
-        self.current: AudioTrack | None = None
+        self.queue: Queue[Track] = Queue()
+        self.history: LifoQueue[Track] = LifoQueue(maxsize=100)
+        self.current: Track | None = None
         self._post_init_completed = False
         self._is_autoplaying = False
         self._queue_length = 0
@@ -296,11 +296,11 @@ class Player(VoiceProtocol):
     async def _query_to_track(
         self,
         requester: int,
-        track: AudioTrack | dict | str | None,
+        track: Track | dict | str | None,
         query: Query = None,
-    ) -> AudioTrack:
-        if not isinstance(track, AudioTrack):
-            track = AudioTrack(self.node, track, requester=requester, query=query)
+    ) -> Track:
+        if not isinstance(track, Track):
+            track = Track(node=self.node, data=track, query=query, requester=requester)
         else:
             track._requester = requester
         return track
@@ -308,7 +308,7 @@ class Player(VoiceProtocol):
     async def add(
         self,
         requester: int,
-        track: AudioTrack | dict | str | None,
+        track: Track | dict | str | None,
         index: int = None,
         query: Query = None,
     ) -> None:
@@ -334,7 +334,7 @@ class Player(VoiceProtocol):
 
     async def bulk_add(
         self,
-        tracks_and_queries: list[AudioTrack | dict | str | list[tuple[AudioTrack | dict | str, Query]]],
+        tracks_and_queries: list[Track | dict | str | list[tuple[Track | dict | str, Query]]],
         requester: int,
         index: int = None,
     ) -> None:
@@ -342,7 +342,7 @@ class Player(VoiceProtocol):
         Adds multiple tracks to the queue.
         Parameters
         ----------
-        tracks_and_queries: list[AudioTrack | dict | str | list[tuple[AudioTrack | dict | str, Query]]]
+        tracks_and_queries: list[Track | dict | str | list[tuple[AudioTrack | dict | str, Query]]]
             A list of tuples containing the track and query.
         requester: :class:`int`
             The ID of the user who requested the tracks.
@@ -386,14 +386,14 @@ class Player(VoiceProtocol):
     async def quick_play(
         self,
         requester: discord.Member,
-        track: AudioTrack | dict | str | None,
+        track: Track | dict | str | None,
         query: Query,
         no_replace: bool = False,
         skip_segments: list[str] | str = None,
         bypass_cache: bool = False,
     ) -> None:
         skip_segments = self._process_skip_segments(skip_segments)
-        track = AudioTrack(self.node, track, query=query, skip_segments=skip_segments)
+        track = Track(node=self.node, data=track, query=query, skip_segments=skip_segments, requester=requester.id)
         if self.current:
             self.current.timestamp = self.position
             self.queue.put_nowait([self.current], 0)
@@ -425,7 +425,7 @@ class Player(VoiceProtocol):
 
     async def play(
         self,
-        track: AudioTrack | dict | str,
+        track: Track | dict | str,
         query: Query,
         requester: discord.Member,
         start_time: int = 0,
@@ -465,8 +465,8 @@ class Player(VoiceProtocol):
         """
         options = {}
         skip_segments = self._process_skip_segments(skip_segments)
-        if track is not None and isinstance(track, (AudioTrack, dict, str, type(None))):
-            track = AudioTrack(self.node, track, query=query, skip_segments=skip_segments)
+        if track is not None and isinstance(track, (Track, dict, str, type(None))):
+            track = Track(node=self.node, data=track, query=query, skip_segments=skip_segments, requester=requester.id)
         if self.current and self.repeat_current:
             await self.add(self.current.requester_id, self.current)
         elif self.current and not self.repeat_queue:
@@ -1281,7 +1281,7 @@ class Player(VoiceProtocol):
 
     async def remove_from_queue(
         self,
-        track: AudioTrack,
+        track: Track,
         requester: discord.Member,
         duplicates: bool = False,
     ) -> int:
@@ -1293,7 +1293,7 @@ class Player(VoiceProtocol):
 
     async def move_track(
         self,
-        track: AudioTrack,
+        track: Track,
         requester: discord.Member,
         new_index: int = None,
     ) -> bool:
