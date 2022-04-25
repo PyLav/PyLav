@@ -14,8 +14,9 @@ import ujson
 import yaml
 
 from pylav._config import CONFIG_DIR
+from pylav.constants import SUPPORTED_SOURCES
 from pylav.exceptions import InvalidPlaylist
-from pylav.sql.tables import LibConfigRow, NodeRow, PlaylistRow, QueryRow
+from pylav.sql.tables import BotVersionRow, LibConfigRow, NodeRow, PlaylistRow, QueryRow
 from pylav.types import BotT
 from pylav.utils import PyLavContext
 
@@ -170,6 +171,7 @@ class PlaylistModel:
 
 @dataclass(eq=True)
 class LibConfigModel:
+    bot: int
     id: int = 1
     config_folder: str | None = None
     localtrack_folder: str | None = None
@@ -178,46 +180,74 @@ class LibConfigModel:
     auto_update_managed_nodes: bool | None = None
 
     async def get_config_folder(self) -> str:
-        response = await LibConfigRow.select(LibConfigRow.config_folder).where(LibConfigRow.id == self.id).first()
+        response = (
+            await LibConfigRow.select(LibConfigRow.config_folder)
+            .where((LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot))
+            .first()
+        )
         return response["config_folder"]
 
     async def get_java_path(self) -> str:
-        response = await LibConfigRow.select(LibConfigRow.java_path).where(LibConfigRow.id == self.id).first()
+        response = (
+            await LibConfigRow.select(LibConfigRow.java_path)
+            .where((LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot))
+            .first()
+        )
         return response["java_path"]
 
     async def get_enable_managed_node(self) -> bool:
-        response = await LibConfigRow.select(LibConfigRow.enable_managed_node).where(LibConfigRow.id == self.id).first()
+        response = (
+            await LibConfigRow.select(LibConfigRow.enable_managed_node)
+            .where((LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot))
+            .first()
+        )
         return response["enable_managed_node"]
 
     async def get_auto_update_managed_nodes(self) -> bool:
         response = (
-            await LibConfigRow.select(LibConfigRow.auto_update_managed_nodes).where(LibConfigRow.id == self.id).first()
+            await LibConfigRow.select(LibConfigRow.auto_update_managed_nodes)
+            .where((LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot))
+            .first()
         )
         return response["auto_update_managed_nodes"]
 
     async def get_localtrack_folder(self) -> str:
-        response = await LibConfigRow.select(LibConfigRow.localtrack_folder).where(LibConfigRow.id == self.id).first()
+        response = (
+            await LibConfigRow.select(LibConfigRow.localtrack_folder)
+            .where((LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot))
+            .first()
+        )
         return response["localtrack_folder"]
 
     async def set_config_folder(self, value: str) -> None:
         self.config_folder = value
-        await LibConfigRow.update({LibConfigRow.config_folder: value}).where(LibConfigRow.id == self.id)
+        await LibConfigRow.update({LibConfigRow.config_folder: value}).where(
+            (LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot)
+        )
 
     async def set_java_path(self, value: str) -> None:
         self.java_path = value
-        await LibConfigRow.update({LibConfigRow.java_path: value}).where(LibConfigRow.id == self.id)
+        await LibConfigRow.update({LibConfigRow.java_path: value}).where(
+            (LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot)
+        )
 
     async def set_enable_managed_node(self, value: bool) -> None:
         self.enable_managed_node = value
-        await LibConfigRow.update({LibConfigRow.enable_managed_node: value}).where(LibConfigRow.id == self.id)
+        await LibConfigRow.update({LibConfigRow.enable_managed_node: value}).where(
+            (LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot)
+        )
 
     async def set_auto_update_managed_nodes(self, value: bool) -> None:
         self.auto_update_managed_nodes = value
-        await LibConfigRow.update({LibConfigRow.auto_update_managed_nodes: value}).where(LibConfigRow.id == self.id)
+        await LibConfigRow.update({LibConfigRow.auto_update_managed_nodes: value}).where(
+            (LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot)
+        )
 
     async def set_localtrack_folder(self, value: str) -> None:
         self.localtrack_folder = value
-        await LibConfigRow.update({LibConfigRow.localtrack_folder: value}).where(LibConfigRow.id == self.id)
+        await LibConfigRow.update({LibConfigRow.localtrack_folder: value}).where(
+            (LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot)
+        )
 
     async def save(self) -> LibConfigModel:
         data = {}
@@ -232,14 +262,16 @@ class LibConfigModel:
         if self.localtrack_folder:
             data["localtrack_folder"] = self.localtrack_folder
         if data:
-            await LibConfigRow.update(**data).where(LibConfigRow.id == self.id)
+            await LibConfigRow.update(**data).where((LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot))
         return self
 
     async def delete(self) -> None:
-        await LibConfigRow.delete().where(LibConfigRow.id == self.id)
+        await LibConfigRow.delete().where((LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot))
 
     async def get_all(self) -> LibConfigModel:
-        response = await LibConfigRow.select().where(LibConfigRow.id == self.id).first()
+        response = (
+            await LibConfigRow.select().where((LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot)).first()
+        )
         self.config_folder = response["config_folder"]
         self.java_path = response["java_path"]
         self.enable_managed_node = response["enable_managed_node"]
@@ -251,6 +283,7 @@ class LibConfigModel:
     async def get_or_create(
         cls,
         id: int,
+        bot: int,
         config_folder=str(CONFIG_DIR),
         localtrack_folder=str(CONFIG_DIR / "music"),
         java_path="java",
@@ -261,7 +294,7 @@ class LibConfigModel:
             await LibConfigRow.objects()
             .output(load_json=True)
             .get_or_create(
-                LibConfigRow.id == id,
+                (LibConfigRow.id == id) & (LibConfigRow.bot == bot),
                 defaults=dict(
                     config_folder=config_folder,
                     java_path=java_path,
@@ -316,7 +349,25 @@ class NodeModel:
             "search_only": self.search_only,
             "resume_timeout": self.extras.get("resume_timeout"),
             "resume_key": self.extras.get("resume_key"),
+            "disabled_sources": list(self.extras.get("disabled_sources", [])),
         }
+
+    async def add_bulk_source_to_exclusion_list(self, *source: str):
+        source = set(map(str.strip, map(str.lower, source)))
+        unsupported = source - SUPPORTED_SOURCES
+        if unsupported:
+            raise ValueError(f"Unsupported sources: {unsupported}\nSupported sources: {SUPPORTED_SOURCES}")
+        intersection = source & SUPPORTED_SOURCES
+        intersection |= set(self.extras.get("disabled_sources", []))
+        self.extras["disabled_sources"] = list(intersection)
+        await self.save()
+
+    async def add_source_to_exclusion_list(self, source: str):
+        source = source.lower().strip()
+        if source in SUPPORTED_SOURCES and source not in self.extras["disabled_sources"]:
+            self.extras["disabled_sources"].append(source)
+            await self.save()
+        raise ValueError(f"Source {source} is not supported")
 
     async def save(self) -> None:
         await self.upsert()
@@ -398,4 +449,34 @@ class QueryModel:
             await QueryRow.update(values).where(QueryRow.identifier == self.identifier)
 
     async def save(self):
+        await self.upsert()
+
+
+@dataclass(eq=True)
+class BotVersion:
+    bot: int
+    version: str
+
+    async def get_or_create(self) -> BotVersion:
+        values = {
+            BotVersionRow.version: self.version,
+        }
+        output = (
+            await NodeRow.objects().output(load_json=True).get_or_create(BotVersionRow.bot == self.bot, defaults=values)
+        )
+        if not output._was_created:
+            self.version = output.version
+        return self
+
+    async def upsert(self) -> None:
+        values = {
+            BotVersionRow.version: self.version,
+        }
+        node = (
+            await NodeRow.objects().output(load_json=True).get_or_create(BotVersionRow.bot == self.bot, defaults=values)
+        )
+        if not node._was_created:
+            await NodeRow.update(values).where(BotVersionRow.bot == self.bot)
+
+    async def save(self) -> None:
         await self.upsert()

@@ -46,6 +46,7 @@ NODE_DEFAULT_SETTINGS = {
                 "PAPISID": "",
                 "PSID": "",
             },
+            "httpConfig": {"proxyHost": "", "proxyPort": 0, "proxyUser": "", "proxyPassword": ""},
         },
     },
     "plugins": {

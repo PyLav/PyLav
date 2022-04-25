@@ -33,7 +33,8 @@ class PlaylistRow(Table, db=DB, tablename="playlist"):
 
 
 class LibConfigRow(Table, db=DB, tablename="lib_config"):
-    id = BigInt(primary_key=True)
+    bot = BigInt(primary_key=True, index=True)
+    id = BigInt(primary_key=True, index=True)
     config_folder = Text(null=False)
     localtrack_folder = Text(null=True)
     java_path = Text(null=False, default="java")
@@ -42,7 +43,7 @@ class LibConfigRow(Table, db=DB, tablename="lib_config"):
 
 
 class EqualizerRow(Table, db=DB, tablename="equalizer"):
-    id = BigInt(primary_key=True)
+    id = BigInt(primary_key=True, index=True)
     scope = BigInt(null=False, index=True)
     name = Text(null=True, index=True)
     description = Text(null=True)
@@ -66,6 +67,7 @@ class EqualizerRow(Table, db=DB, tablename="equalizer"):
 
 class PlayerRow(Table, db=DB, tablename="player"):
     id = BigInt(primary_key=True, index=True)
+    bot = BigInt(primary_key=True, index=True)
     channel_id = BigInt(null=False)
     volume = Integer(null=False, default=100)
     position = Float(null=False, default=0.0)
@@ -99,3 +101,8 @@ class QueryRow(Table, db=DB, tablename="query"):
     name = Text(null=True)
     tracks = JSONB(null=False, default=[])
     last_updated = Timestamptz(null=False, index=True)
+
+
+class BotVersionRow(Table, db=DB, tablename="version"):
+    bot = BigInt(primary_key=True, index=True)
+    version = Text(null=False)

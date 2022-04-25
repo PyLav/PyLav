@@ -371,9 +371,9 @@ class Player(VoiceProtocol):
         if self.current:
             await self.history.put([self.current])
 
-        if track.query and not self.node.has_source(track.query.requires_capability):
+        if track.query and not self.node.has_source(track.requires_capability):
             self.current = None
-            await self.change_to_best_node(track.query.requires_capability)
+            await self.change_to_best_node(track.requires_capability)
 
         self.current = track
         options = {"noReplace": False}
@@ -398,9 +398,9 @@ class Player(VoiceProtocol):
             self.current.timestamp = self.position
             self.queue.put_nowait([self.current], 0)
 
-        if track.query and not self.node.has_source(track.query.requires_capability):
+        if track.query and not self.node.has_source(track.requires_capability):
             self.current = None
-            await self.change_to_best_node(track.query.requires_capability)
+            await self.change_to_best_node(track.requires_capability)
 
         if track.is_partial:
             try:
@@ -490,9 +490,9 @@ class Player(VoiceProtocol):
 
         if track.query is None:
             track._query = await Query.from_base64(track.track)
-        if track.query and not self.node.has_source(track.query.requires_capability):
+        if track.query and not self.node.has_source(track.requires_capability):
             self.current = None
-            await self.change_to_best_node(track.query.requires_capability)
+            await self.change_to_best_node(track.requires_capability)
         track._node = self.node
         if track.is_partial:
             try:

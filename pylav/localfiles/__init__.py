@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import contextlib
 import os
 import pathlib
 from typing import AsyncIterator, Final

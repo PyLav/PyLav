@@ -41,6 +41,7 @@ from pylav.sql.clients.lib import LibConfigManager
 from pylav.sql.clients.nodes import NodeConfigManager
 from pylav.sql.clients.playlist_manager import PlaylistConfigManager
 from pylav.sql.clients.query_manager import QueryCacheManager
+from pylav.sql.clients.updater import UpdateSchemaManager
 from pylav.tracks import Track
 from pylav.types import BotT, CogT, ContextT
 from pylav.utils import PyLavContext, _get_context, _process_commands, add_property
@@ -113,6 +114,7 @@ class Client:
         self._config_folder = aiopath.AsyncPath(config_folder)
         self._bot = bot
         self._user_id = str(bot.user.id)
+        print(f"Lavalink client initialized for user {self._user_id}")
         self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
         self._node_manager = NodeManager(self)
         self._player_manager = PlayerManager(self, player)
@@ -120,6 +122,7 @@ class Client:
         self._node_config_manager = NodeConfigManager(self)
         self._playlist_config_manager = PlaylistConfigManager(self)
         self._query_cache_manager = QueryCacheManager(self)
+        self._update_schema_manager = UpdateSchemaManager(self)
         self._connect_back = connect_back
         self._warned_about_no_search_nodes = False
         self._ready = False
@@ -146,7 +149,10 @@ class Client:
     ) -> None:
         if self._ready:
             return
+        await asyncio.sleep(120)  # TODO: Remove this sleep
         await self._lib_config_manager.initialize()
+        await self._update_schema_manager.run_updates()
+
         config_data = await self._lib_config_manager.get_config(
             config_folder=self._config_folder,
             java_path="java",

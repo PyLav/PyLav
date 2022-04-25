@@ -87,6 +87,7 @@ class NodeManager:
         ssl: bool = False,
         search_only: bool = False,
         skip_db: bool = False,
+        disabled_sources: list[str] = None,
     ) -> Node:
         """
         Adds a node to PyLink's node manager.
@@ -117,6 +118,8 @@ class NodeManager:
             A unique identifier for the node. Defaults to `None`.
         skip_db: Optional[:class:`bool`]
             Whether to skip the database creation op. Defaults to `False`.
+        disabled_sources: Optional[:class:`list`[:class:`str`]]
+            A list of sources to disable. Defaults to `None`.
         """
         node = Node(
             manager=self,
@@ -130,6 +133,7 @@ class NodeManager:
             ssl=ssl,
             search_only=search_only,
             unique_identifier=unique_identifier,
+            disabled_sources=disabled_sources,
         )
         self._nodes.append(node)
 

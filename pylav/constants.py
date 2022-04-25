@@ -21,3 +21,23 @@ REGION_TO_COUNTRY_COORDINATE_MAPPING = {
 }
 
 DEFAULT_REGIONS = list(REGION_TO_COUNTRY_COORDINATE_MAPPING.keys())
+
+SUPPORTED_SOURCES = {
+    "youtube",
+    "soundcloud",
+    "twitch",
+    "bandcamp",
+    "vimeo",
+    "http",
+    "getyarn",
+    "clypit",
+    "speak",
+    "pornhub",
+    "reddit",
+    "ocremix",
+    "tiktok",
+    "mixcloud",
+    "soundgasm",
+    "gcloud-tts",
+    "sponsorblock",
+}

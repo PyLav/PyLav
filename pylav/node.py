@@ -174,6 +174,7 @@ class Node:
         ssl: bool = False,
         search_only: bool = False,
         unique_identifier: int = None,
+        disabled_sources: list[str] = None,
     ):
         from pylav.query import Query
 
@@ -186,6 +187,7 @@ class Node:
         self._name = name or f"{self.region}-{self.host}-{unique_identifier}"
         self._region = None
         self._host = host
+        self._disabled_sources = set(disabled_sources or [])
 
         if self._manager.get_node_by_id(unique_identifier) is not None:
             raise ValueError(f"A Node with identifier:{unique_identifier} already exists.")
@@ -823,6 +825,9 @@ class Node:
         #    using the correct node which will support local files instead of trying and failing most of the time.
         if not self.managed:
             self._capabilities.discard("local")
+        # If not setup says these should be disabled remove them to trick the node to think they are disabled
+        if self._sources:
+            self._sources.difference_update(self._disabled_sources)
 
     def has_source(self, source: str) -> bool:
         """
@@ -853,6 +858,18 @@ class Node:
             The capabilities of the target node.
         """
         return self._capabilities.copy()
+
+    @property
+    def disabled_sources(self) -> set:
+        """
+        Returns the disabled sources of the target node.
+
+        Returns
+        -------
+        :class:`set`
+            The disabled sources of the target node.
+        """
+        return self._disabled_sources.copy()
 
     @property
     def sources(self) -> set:

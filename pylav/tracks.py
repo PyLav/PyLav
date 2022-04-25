@@ -208,6 +208,114 @@ class Track:
     def timestamp(self, value: int):
         self.extra["timestamp"] = value
 
+    @property
+    def is_clypit(self) -> bool:
+        return self.query.is_clypit
+
+    @property
+    def is_getyarn(self) -> bool:
+        return self.query.is_getyarn
+
+    @property
+    def is_mixcloud(self) -> bool:
+        return self.query.is_mixcloud
+
+    @property
+    def is_ocremix(self) -> bool:
+        return self.query.is_ocremix
+
+    @property
+    def is_pornhub(self) -> bool:
+        return self.query.is_pornhub
+
+    @property
+    def is_reddit(self) -> bool:
+        return self.query.is_reddit
+
+    @property
+    def is_soundgasm(self) -> bool:
+        return self.query.is_soundgasm
+
+    @property
+    def is_tiktok(self) -> bool:
+        return self.query.is_tiktok
+
+    @property
+    def is_spotify(self) -> bool:
+        return self.query.is_spotify
+
+    @property
+    def is_apple_music(self) -> bool:
+        return self.query.is_apple_music
+
+    @property
+    def is_bandcamp(self) -> bool:
+        return self.query.is_bandcamp
+
+    @property
+    def is_youtube(self) -> bool:
+        return self.query.is_youtube
+
+    @property
+    def is_youtube_music(self) -> bool:
+        return self.query.is_youtube_music
+
+    @property
+    def is_soundcloud(self) -> bool:
+        return self.query.is_soundcloud
+
+    @property
+    def is_twitch(self) -> bool:
+        return self.query.is_twitch
+
+    @property
+    def is_http(self) -> bool:
+        return self.query.is_http
+
+    @property
+    def is_local(self) -> bool:
+        return self.query.is_local
+
+    @property
+    def is_niconico(self) -> bool:
+        return self.query.is_niconico
+
+    @property
+    def is_vimeo(self) -> bool:
+        return self.query.is_vimeo
+
+    @property
+    def is_search(self) -> bool:
+        return self.query.is_search
+
+    @property
+    def is_album(self) -> bool:
+        return self.query.is_album
+
+    @property
+    def is_playlist(self) -> bool:
+        return self.query.is_playlist
+
+    @property
+    def is_single(self) -> bool:
+        return self.query.is_single
+
+    @property
+    def is_speak(self) -> bool:
+        return self.query.is_speak
+
+    @property
+    def is_gctts(self) -> bool:
+        return self.query.is_gctts
+
+    @property
+    def requires_capability(self) -> str:
+        return self.query.requires_capability
+
+    @property
+    def query_identifier(self) -> str:
+        return self.query.query_identifier
+
     async def thumbnail(self) -> str | None:
         """Optional[str]: Returns a thumbnail URL for YouTube and Spotify tracks."""
         if not self.identifier:
@@ -227,7 +335,7 @@ class Track:
     def __repr__(self) -> str:
         return (
             f"<AudioTrack title={self.title} identifier={self.identifier} "
-            f"query={self.query.query_identifier if self.query else 'N/A'}>"
+            f"query={self.query_identifier if self.query else 'N/A'}>"
         )
 
     def to_json(self) -> dict:
@@ -240,7 +348,7 @@ class Track:
         """
         return {
             "track": self.track,
-            "query": self.query.query_identifier if self.query else None,
+            "query": self.query_identifier if self.query else None,
             "requester": self.requester_id,
             "extra": {
                 "timestamp": self.timestamp,
@@ -256,7 +364,7 @@ class Track:
         self._query = await Query.from_string(self._query)
         response = await player.node.get_tracks(self.query, first=True, bypass_cache=bypass_cache)
         if not response or "track" not in response:
-            raise TrackNotFound(f"No tracks found for query {self.query.query_identifier}")
+            raise TrackNotFound(f"No tracks found for query {self.query_identifier}")
         self.track = response["track"]
         self._unique_id = hashlib.md5()
         self._unique_id.update(self.track.encode())
@@ -323,7 +431,7 @@ class Track:
             else:
                 author_string = f" - {self.author}"
 
-            if self.query and self.query.is_local:
+            if self.query and self.is_local:
                 url_start = url_end = ""
                 if not (unknown_title and unknown_author):
                     base = f"{self.title}{author_string}"

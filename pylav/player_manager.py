@@ -32,7 +32,7 @@ class PlayerManager:
         The player that the player manager is initialized with.
     """
 
-    def __init__(self, lavalink: Client, player: type[Player] = Player):
+    def __init__(self, lavalink: Client, player: type[Player] = Player):  # type: ignore
         if not issubclass(player, Player):
             raise ValueError("Player must implement Player.")
 

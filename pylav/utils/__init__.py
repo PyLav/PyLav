@@ -8,6 +8,7 @@ import random
 import time
 import warnings
 from asyncio import QueueFull, events, locks
+from copy import copy
 from enum import Enum
 from itertools import chain
 from types import GenericAlias
@@ -751,7 +752,7 @@ class PyLavContext(_OriginalContextClass):
         command_str = f"{prefix}{command.qualified_name} {' '.join(args)}"
 
         msg = copy(message)
-        msg.author = user
+        msg.author = author
         msg.content = command_str
         self.bot.dispatch("message", msg)
 
