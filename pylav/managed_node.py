@@ -27,9 +27,7 @@ from pylav.exceptions import (
     IncorrectProcessFound,
     InvalidArchitectureError,
     LavalinkDownloadFailed,
-    ManagedLavalinkAlreadyRunningError,
     ManagedLavalinkNodeError,
-    ManagedLavalinkPreviouslyShutdownError,
     ManagedLavalinkStartFailure,
     NodeUnhealthy,
     NoProcessFound,
@@ -245,14 +243,18 @@ class LocalNodeManager:
             raise InvalidArchitectureError(
                 "You are attempting to run the managed Lavalink node on an unsupported machine architecture."
             )
-
+        for process in await self.get_lavalink_process(
+            "-Djdk.tls.client.protocols=TLSv1.2", "-Xms64M", "-jar", cwd=str(LAVALINK_DOWNLOAD_DIR)
+        ):
+            with contextlib.suppress(psutil.Error):
+                pid = process["pid"]
+                p = psutil.Process(pid)
+                p.terminate()
+                p.kill()
         if self._proc is not None:
             if self._proc.returncode is None:
-                raise ManagedLavalinkAlreadyRunningError("Managed Lavalink node is already running")
-            elif self._shutdown:
-                raise ManagedLavalinkPreviouslyShutdownError(
-                    "Server manager has already been used - create another one"
-                )
+                self._proc.terminate()
+                self._proc.kill()
         await self.process_settings()
         await self.maybe_download_jar()
         args, msg = await self._get_jar_args()
@@ -423,6 +425,10 @@ class LocalNodeManager:
                 p = psutil.Process(self._node_pid)
                 p.terminate()
                 p.kill()
+        if self._proc is not None:
+            if self._proc.returncode is None:
+                self._proc.terminate()
+                self._proc.kill()
         self._proc = None
         self._shutdown = True
         self._node_pid = None
@@ -583,7 +589,9 @@ class LocalNodeManager:
             except ManagedLavalinkStartFailure:
                 LOGGER.warning("Lavalink Managed node failed to start, restarting")
                 await self._partial_shutdown()
-                for process in await self.get_lavalink_process(cwd=str(LAVALINK_DOWNLOAD_DIR)):
+                for process in await self.get_lavalink_process(
+                    "-Djdk.tls.client.protocols=TLSv1.2", "-Xms64M", "-jar", cwd=str(LAVALINK_DOWNLOAD_DIR)
+                ):
                     with contextlib.suppress(psutil.Error):
                         pid = process["pid"]
                         p = psutil.Process(pid)
