@@ -461,7 +461,12 @@ class Query:
             if self.is_album:
                 m3u8 = await load_m3u8(None, uri=self._query)
                 for track in m3u8.files:
-                    yield await Query.from_string(track)
+                    q = await Query.from_string(track)
+                    if q.is_m3u:
+                        async for track_ in q.get_all_tracks_in_folder():
+                            yield track_
+                    else:
+                        yield q
         elif self.is_local:
             if self.is_album:
                 if self._recursive:
@@ -476,9 +481,8 @@ class Query:
     async def get_all_tracks_in_tree(self) -> AsyncIterator[Query]:
         if self.is_m3u:
             if self.is_album:
-                m3u8 = await load_m3u8(None, uri=self._query)
-                for track in m3u8.files:
-                    yield await Query.from_string(track)
+                async for entry in self.get_all_tracks_in_folder():
+                    yield entry
         elif self.is_local:
             if self.is_album:
                 async for entry in self._query.files_in_folder():
