@@ -333,10 +333,11 @@ class WebSocket:
         data: :class:`dict`
             The data given from Lavalink.
         """
+        if self.client.is_shutting_down:
+            return
         player = self.client.player_manager.get(int(data["guildId"]))
-
         if not player:
-            LOGGER.warning(
+            LOGGER.debug(
                 "[NODE-%s] Received event for non-existent player! Guild ID: %s",
                 self.node.name,
                 data["guildId"],
