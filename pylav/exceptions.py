@@ -34,6 +34,7 @@ __all__ = (
     "PyLavNotInitialized",
     "PlaylistError",
     "InvalidPlaylist",
+    "ManagedLinkStartAbortedUseExternal",
 )
 
 from discord.ext.commands import CommandError
@@ -101,6 +102,10 @@ class ManagedLavalinkAlreadyRunningError(ManagedLavalinkNodeError):
 
 class PortAlreadyInUseError(ManagedLavalinkNodeError):
     """Exception thrown when the port is already in use"""
+
+
+class ManagedLinkStartAbortedUseExternal(ManagedLavalinkNodeError):
+    """Exception thrown when the managed lavalink node is started but aborted"""
 
 
 class ManagedLavalinkStartFailure(ManagedLavalinkNodeError):

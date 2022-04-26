@@ -299,7 +299,7 @@ class Client:
         managed: bool = False,
         skip_db: bool = False,
         yaml: dict | None = None,
-        extras: dict = {},
+        extras: dict = None,
     ) -> Node:
         """
         Adds a node to Lavalink's node manager.
@@ -346,7 +346,7 @@ class Client:
             skip_db=skip_db,
             managed=managed,
             yaml=yaml,
-            extras=extras,
+            extras=extras or {},
         )
 
     async def get_tracks(
@@ -431,6 +431,7 @@ class Client:
             )
         return await node.decode_tracks(tracks)
 
+    @staticmethod
     async def routeplanner_status(self, node: Node) -> dict | None:
         """|coro|
         Gets the route-planner status of the target node.
@@ -447,6 +448,7 @@ class Client:
         """
         return await node.routeplanner_status()
 
+    @staticmethod
     async def routeplanner_free_address(self, node: Node, address: str) -> bool:
         """|coro|
         Gets the route-planner status of the target node.
@@ -465,6 +467,7 @@ class Client:
         """
         return await node.routeplanner_free_address(address)
 
+    @staticmethod
     async def routeplanner_free_all_failing(self, node: Node) -> bool:
         """|coro|
         Gets the route-planner status of the target node.

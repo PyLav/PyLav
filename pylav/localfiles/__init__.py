@@ -119,11 +119,11 @@ class LocalFile:
         if not string:
             return path.name if await self.path.is_dir() else path.stem
 
-        temp_path = pathlib.Path(string)
+        temp_path = aiopath.AsyncPath(string)
         if length is not None:
             parts = list(temp_path.parts)
             parts_reversed = list(parts[::-1])
-            if temp_path.is_file():
+            if await temp_path.is_file():
                 parts_reversed[0] = temp_path.name
             count = 0
             usable_parts = []

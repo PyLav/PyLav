@@ -35,7 +35,7 @@ class PlayerConfigManager:
         return await PlayerModel.get(bot_id=self._client.bot.user.id, guild_id=guild_id)
 
     async def get_all_players(self) -> AsyncIterator[PlayerModel]:
-        for entry in await PlayerRow.select().where(PlayerRow.bot == self.client.bot.user.id):
+        for entry in await PlayerRow.select().where(PlayerRow.bot == self.client.bot.user.id):  # type: ignore
             yield PlayerModel(**entry)
 
     async def delete_player(self, guild_id: int):

@@ -31,6 +31,7 @@ __all__ = (
     "CogAlreadyRegistered",
     "CogHasBeenRegistered",
     "AnotherClientAlreadyRegistered",
+    "ManagedLinkStartAbortedUseExternal",
     "NoNodeAvailable",
     "SQLError",
     "EntryNotFoundError",

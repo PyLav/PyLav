@@ -90,7 +90,7 @@ class NodeManager:
         disabled_sources: list[str] = None,
         managed: bool = False,
         yaml: dict | None = None,
-        extras: dict = {},
+        extras: dict = None,
     ) -> Node:
         """
         Adds a node to PyLink's node manager.
@@ -123,6 +123,12 @@ class NodeManager:
             Whether to skip the database creation op. Defaults to `False`.
         disabled_sources: Optional[:class:`list`[:class:`str`]]
             A list of sources to disable. Defaults to `None`.
+        managed: Optional[:class:`bool`]
+            Whether the node is managed by the client. Defaults to `False`.
+        yaml: Optional[:class:`dict`]
+            A dictionary of node settings. Defaults to `None`.
+        extras: Optional[:class:`dict`]
+            A dictionary of extra settings. Defaults to `{}`.
         """
         node = Node(
             manager=self,
@@ -138,7 +144,7 @@ class NodeManager:
             unique_identifier=unique_identifier,
             disabled_sources=disabled_sources,
             managed=managed,
-            extras=extras,
+            extras=extras or {},
         )
         self._nodes.append(node)
 
@@ -158,7 +164,7 @@ class NodeManager:
                 unique_identifier=unique_identifier,
                 managed=managed,
                 yaml=yaml,
-                extras=extras,
+                extras=extras or {},
             )
         return node
 

@@ -29,6 +29,7 @@ from pylav.exceptions import (
     LavalinkDownloadFailed,
     ManagedLavalinkNodeError,
     ManagedLavalinkStartFailure,
+    ManagedLinkStartAbortedUseExternal,
     NodeUnhealthy,
     NoProcessFound,
     PortAlreadyInUseError,
@@ -243,19 +244,39 @@ class LocalNodeManager:
             raise InvalidArchitectureError(
                 "You are attempting to run the managed Lavalink node on an unsupported machine architecture."
             )
-        for process in await self.get_lavalink_process(
-            "-Djdk.tls.client.protocols=TLSv1.2", "-Xms64M", "-jar", cwd=str(LAVALINK_DOWNLOAD_DIR)
-        ):
-            with contextlib.suppress(psutil.Error):
-                pid = process["pid"]
-                p = psutil.Process(pid)
-                p.terminate()
-                p.kill()
-        if self._proc is not None:
-            if self._proc.returncode is None:
-                self._proc.terminate()
-                self._proc.kill()
         await self.process_settings()
+        possible_lavalink_processes = await self.get_lavalink_process(lazy_match=True)
+        if possible_Lavalink_processes:
+            LOGGER.info(
+                "Found %s processes that match potential unnamaged Lavalink nodes.",
+                len(possible_Lavalink_processes),
+            )
+            valid_working_dirs = [
+                cwd for d in possible_Lavalink_processes if d.get("name") == "java" and (cwd := d.get("cwd"))
+            ]
+            LOGGER.debug("Found %s java processed with a cwd set.", len(valid_working_dirs))
+            for cwd in valid_working_dirs:
+                config = aiopath.AsyncPath(cwd) / "application.yml"
+                if await config.exists() and await config.is_file():
+                    LOGGER.debug(
+                        "The following config file exists for an unmanaged Lavalink node %s",
+                        config,
+                    )
+                    try:
+                        async with config.open(mode="r") as config_data:
+                            data = yaml.safe_load(await config_data.read())
+                            data["server"]["address"]  # noqa
+                            data["server"]["port"]  # noqa
+                            data["lavalink"]["server"]["password"]  # noqa
+                            self._node_pid = 0
+                            self._current_config = data
+                            raise ManagedLinkStartAbortedUseExternal
+                    except ManagedLinkStartAbortedUseExternal:
+                        raise
+                    except Exception:
+                        LOGGER.exception("Failed to read contents of %s", config)
+                        continue
+
         await self.maybe_download_jar()
         args, msg = await self._get_jar_args()
         if msg is not None:
@@ -305,8 +326,8 @@ class LocalNodeManager:
         if not data["lavalink"]["server"]["httpConfig"] and not data["lavalink"]["server"]["httpConfig"]["proxyHost"]:
             del data["lavalink"]["server"]["httpConfig"]
         self._current_config = data
-        with open(LAVALINK_APP_YML, "w") as f:
-            yaml.safe_dump(data, f)
+        async with LAVALINK_APP_YML.open("w") as f:
+            await f.write(yaml.safe_dump(data))
 
     async def _get_jar_args(self) -> tuple[list[str], str | None]:
         (java_available, java_version) = await self._has_java()
@@ -632,6 +653,10 @@ class LocalNodeManager:
                 LOGGER.critical(exc)
                 # lavalink_connection_aborted
                 return await self.shutdown()
+            except ManagedLinkStartAbortedUseExternal:
+                LOGGER.warning("Lavalink Managed node start aborted, using the detected external Lavalink node.")
+                await self.connect_node(reconnect=False, wait_for=0, external_fallback=True)
+                return
             except ManagedLavalinkNodeError as exc:
                 delay = backoff.delay()
                 LOGGER.critical(
@@ -660,7 +685,7 @@ class LocalNodeManager:
             await self.shutdown()
         self.start_monitor_task = asyncio.create_task(self.start_monitor(java_path))
 
-    async def connect_node(self, reconnect: bool, wait_for: float = 0.0):
+    async def connect_node(self, reconnect: bool, wait_for: float = 0.0, external_fallback: bool = False):
         await asyncio.sleep(wait_for)
         if reconnect is True:
             node = self._client.node_manager.get_node_by_id(self._node_id)
@@ -674,7 +699,9 @@ class LocalNodeManager:
                 password=self._current_config["lavalink"]["server"]["password"],
                 resume_key=f"ManagedNode-{self._node_pid}-{self._node_id}",
                 resume_timeout=self._full_data.resume_timeout,
-                name=f"{self._full_data.name}: {self._node_pid}",
+                name=f"{self._full_data.name}: {self._node_pid}"
+                if not external_fallback
+                else f"PyLavPortConflictRecovery: {self._node_pid}",
                 yaml=self._full_data.yaml,
                 extras=self._full_data.extras,
                 managed=True,
