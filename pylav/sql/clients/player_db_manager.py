@@ -25,7 +25,8 @@ class PlayerConfigManager:
         for player in players:
             p = PlayerModel(bot=self.client.bot.user.id, **player)
             await p.save()
-            LOGGER.debug("Saved player %s", p)
+            LOGGER.trace("Saved player %s", p)
+        LOGGER.debug("Saved %s players", len(players))
 
     async def save_player(self, player: dict):
         await PlayerModel(bot=self.client.bot.user.id, **player).save()

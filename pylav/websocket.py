@@ -256,7 +256,7 @@ class WebSocket:
         """Listens for websocket messages."""
         try:
             async for msg in self._ws:
-                LOGGER.debug("[NODE-%s] Received WebSocket message: %s", self.node.name, msg.data)
+                LOGGER.trace("[NODE-%s] Received WebSocket message: %s", self.node.name, msg.data)
 
                 if msg.type == aiohttp.WSMsgType.TEXT:
                     await self.handle_message(msg.json(loads=ujson.loads))
@@ -297,6 +297,8 @@ class WebSocket:
         )
         self._ws = None
         await self.node.node_manager.node_disconnect(self.node, code, reason)
+        if not self._connect_task.cancelled():
+            self._connect_task.cancel()
         self._connect_task = asyncio.ensure_future(self.connect())
 
     async def handle_message(self, data: dict):
@@ -436,3 +438,7 @@ class WebSocket:
         else:  # This should never happen
             event = TrackStartEvent(player, track)
         asyncio.create_task(self.client._dispatch_event(event))
+
+    async def close(self):
+        self._connect_task.cancel()
+        await self._session.close()

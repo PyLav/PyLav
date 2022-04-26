@@ -502,7 +502,7 @@ class Client:
             task_list.append(task)
         await asyncio.gather(*task_list)
 
-        LOGGER.debug("Dispatched %s to all registered hooks", type(event).__name__)
+        LOGGER.trace("Dispatched %s to all registered hooks", type(event).__name__)
 
     @staticmethod
     def __done_callback(task: asyncio.Task):
@@ -526,11 +526,14 @@ class Client:
         LOGGER.info("%s has been unregistered", cog.__cog_name__)
         if not _COGS_REGISTERED:
             self._shutting_down = True
-            await self.player_manager.save_all_players()
-            await self.player_manager.shutdown()
-            await self._node_manager.close()
-            await self._local_node_manager.shutdown()
-            await self._session.close()
+            try:
+                await self.player_manager.save_all_players()
+                await self.player_manager.shutdown()
+                await self._node_manager.close()
+                await self._local_node_manager.shutdown()
+                await self._session.close()
+            except Exception as e:
+                LOGGER.critical("Failed to shutdown the client", exc_info=e)
             if _OLD_PROCESS_COMMAND_METHOD is not None:
                 self.bot.process_commands = MethodType(_OLD_PROCESS_COMMAND_METHOD, self.bot)
             if _OLD_GET_CONTEXT is not None:

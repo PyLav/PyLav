@@ -1118,6 +1118,8 @@ class Node:
         """
         Closes the target node.
         """
+        if self._ws is not None:
+            await self._ws.close()
         await self.session.close()
 
     async def wait_until_ready(self, timeout: float | None = None):

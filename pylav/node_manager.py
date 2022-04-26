@@ -174,7 +174,7 @@ class NodeManager:
         self.nodes.remove(node)
         LOGGER.info("[NODE-%s] Successfully removed Node", node.name)
         LOGGER.info("[NODE-%s] Successfully removed Node -- %r", node.name, node)
-        if node.identifier:
+        if node.identifier and not node.managed:
             await self.client.node_db_manager.delete(node.identifier)
             LOGGER.debug("[NODE-%s] Successfully deleted Node from database", node.name)
 
@@ -315,6 +315,8 @@ class NodeManager:
         reason: :class:`str`
             The reason why the node was disconnected.
         """
+        if self.client.is_shutting_down:
+            return
         LOGGER.warning("[NODE-%s] Disconnected with code %s and reason %s", node.name, code, reason)
         LOGGER.verbose(
             "[NODE-%s] Disconnected with code %s and reason %s -- %r",
@@ -324,8 +326,6 @@ class NodeManager:
             node,
         )
         await self.client._dispatch_event(NodeDisconnectedEvent(node, code, reason))
-        if self.client.is_shutting_down:
-            return
         best_node = self.find_best_node(node.region)
 
         if not best_node:

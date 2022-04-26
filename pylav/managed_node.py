@@ -429,6 +429,7 @@ class LocalNodeManager:
             if self._proc.returncode is None:
                 self._proc.terminate()
                 self._proc.kill()
+                await self._proc.wait()
         self._proc = None
         self._shutdown = True
         self._node_pid = None

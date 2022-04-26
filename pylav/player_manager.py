@@ -8,6 +8,7 @@ from red_commons.logging import getLogger
 
 from pylav.events import PlayerConnectedEvent
 from pylav.player import Player
+from pylav.sql.models import PlayerModel
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -202,18 +203,27 @@ class PlayerManager:
         LOGGER.info("Restoring player states...")
         while not self.client.node_manager.available_nodes:
             await asyncio.sleep(1)
-        async for player_state in self.client.player_config_manager.get_all_players():
-            player = self.players.get(player_state.id)
-            if player is not None:
-                # Player was started before restore
-                continue
-            channel = self.client.bot.get_channel(player_state.channel_id)
-            requester = self.client.bot.user
-            self_deaf = player_state.self_deaf
-            discord_player = await self.create(channel=channel, requester=requester, self_deaf=self_deaf)
-            await discord_player.restore(player_state, requester)
+        tasks = [
+            asyncio.create_task(self._restore_player(p))
+            async for p in self.client.player_config_manager.get_all_players()
+        ]
+        await asyncio.gather(*tasks)
+
+    async def _restore_player(self, player_state: PlayerModel) -> None:
+        player = self.players.get(player_state.id)
+        if player is not None:
+            # Player was started before restore
+            return
+        channel = self.client.bot.get_channel(player_state.channel_id)
+        requester = self.client.bot.user
+        self_deaf = player_state.self_deaf
+        discord_player = await self.create(channel=channel, requester=requester, self_deaf=self_deaf)
+        await discord_player.restore(player_state, requester)
 
     async def shutdown(self) -> None:
         LOGGER.info("Shutting down all players...")
-        for guild_id, player in self:
-            await self.destroy(guild_id=guild_id, requester=self.client.bot.user)
+        tasks = [
+            asyncio.create_task(self.destroy(guild_id=guild_id, requester=self.client.bot.user))
+            for guild_id in self.players
+        ]
+        await asyncio.gather(*tasks)
