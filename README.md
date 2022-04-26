@@ -59,6 +59,7 @@ Features
 - Player state persistence
     - Upon library state being shutdown all player states are saved and restored on library startup
 - History of played tracks available for players
+- M3U8 parser to convert user input into a playlist
 
 
 Installation
@@ -75,3 +76,8 @@ $ sudo apt install libaio1 libaio-dev
 
 Getting Started
 -------------------------------------
+
+Credits
+---------------------------
+- [Devoxin- Lavalink.py](https://github.com/Devoxin/Lavalink.py) for ideas for implementation.
+- [globocom/m3u8](https://github.com/globocom/m3u8) for the M3U8 parser which I compatible with AsyncIO.

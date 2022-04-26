@@ -246,13 +246,13 @@ class LocalNodeManager:
             )
         await self.process_settings()
         possible_lavalink_processes = await self.get_lavalink_process(lazy_match=True)
-        if possible_Lavalink_processes:
+        if possible_lavalink_processes:
             LOGGER.info(
                 "Found %s processes that match potential unnamaged Lavalink nodes.",
-                len(possible_Lavalink_processes),
+                len(possible_lavalink_processes),
             )
             valid_working_dirs = [
-                cwd for d in possible_Lavalink_processes if d.get("name") == "java" and (cwd := d.get("cwd"))
+                cwd for d in possible_lavalink_processes if d.get("name") == "java" and (cwd := d.get("cwd"))
             ]
             LOGGER.debug("Found %s java processed with a cwd set.", len(valid_working_dirs))
             for cwd in valid_working_dirs:

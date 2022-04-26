@@ -31,6 +31,7 @@ from pylav.exceptions import (
     NoNodeAvailable,
     NoNodeWithRequestFunctionalityAvailable,
 )
+from pylav.m3u8_parser import M3U8Parser
 from pylav.managed_node import LocalNodeManager
 from pylav.node import Node
 from pylav.node_manager import NodeManager
@@ -125,6 +126,7 @@ class Client:
         self._update_schema_manager = UpdateSchemaManager(self)
         self._dispatch_manager = DispatchManager(self)
         self._player_config_manager = PlayerConfigManager(self)
+        self._m3u8parser = M3U8Parser(self)
         self._connect_back = connect_back
         self._warned_about_no_search_nodes = False
         self._ready = False
@@ -739,7 +741,7 @@ class Client:
                         )
                 except NoNodeWithRequestFunctionalityAvailable:
                     queries_failed.append(query)
-            elif (query.is_playlist or query.is_album) and not query.is_local:
+            elif (query.is_playlist or query.is_album) and not (query.is_local or query.is_m3u):
                 try:
                     tracks: dict = await self.get_tracks(query=query, bypass_cache=bypass_cache)
                     track_list = tracks.get("tracks", [])
@@ -763,7 +765,7 @@ class Client:
                                 await player.play(track, track.query, requester)
                 except NoNodeWithRequestFunctionalityAvailable:
                     queries_failed.append(query)
-            elif query.is_album and query.is_local:
+            elif (query.is_local or query.is_m3u) and query.is_album:
                 try:
                     yielded = False
                     async for local_track in query.get_all_tracks_in_folder():

@@ -27,7 +27,7 @@ class QueryCacheManager:
 
     @staticmethod
     async def get_query(query: Query) -> QueryModel | None:
-        if query.is_local or query.is_single or query.is_http:
+        if query.is_local or query.is_m3u or query.is_single or query.is_http:
             # Do not cache local queries and single track urls or http source entries
             return None
         query = (
@@ -47,7 +47,7 @@ class QueryCacheManager:
 
     @staticmethod
     async def add_query(query: Query, result: dict):
-        if query.is_local or query.is_single or query.is_http:
+        if query.is_local or query.is_m3u or query.is_single or query.is_http:
             # Do not cache local queries and single track urls or http source entries
             return
         if result.get("loadType") in ["NO_MATCHES", "LOAD_FAILED", None]:

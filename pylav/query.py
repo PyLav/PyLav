@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, AsyncIterator, Literal
 import aiopath
 from red_commons.logging import getLogger
 
+from pylav.m3u8_parser._init__ import load as load_m3u8
 from pylav.track_encoding import decode_track
 from pylav.types import QueryT
 
@@ -69,6 +70,7 @@ SOUND_CLOUD_REGEX = re.compile(
     #  https://github.com/Walkyst/lavaplayer-fork/blob/67bfdc4757947db61105c73628f2e4c2a7e4e992/main/src/main/java/com/sedmelluq/discord/lavaplayer/source/soundcloud/SoundCloudAudioSourceManager.java#L48
     re.IGNORECASE,
 )
+M3U_REGEX = re.compile(r"^.*\.m3u8?$", re.IGNORECASE)
 
 YOUTUBE_REGEX = re.compile(r"(?:http://|https://|)(?:www\.|)(?P<music>music\.)?youtu(be\.com|\.be)", re.IGNORECASE)
 SPEAK_REGEX = re.compile(r"^(?P<source>speak):\s*?(?P<query>.*)$", re.IGNORECASE)
@@ -269,6 +271,10 @@ class Query:
         return self.source == "Google TTS"
 
     @property
+    def is_m3u(self) -> bool:
+        return self.source == "M3U"
+
+    @property
     def query_identifier(self) -> str:
         if self.is_search:
             if self.is_youtube_music:
@@ -293,7 +299,9 @@ class Query:
 
     @classmethod
     def __process_urls(cls, query: str) -> Query | None:
-        if match := YOUTUBE_REGEX.match(query):
+        if __ := M3U_REGEX.match(query):
+            return cls(query, "M3U", query_type="album")
+        elif match := YOUTUBE_REGEX.match(query):
             music = match.group("music")
             return process_youtube(cls, query, music=bool(music))
         elif SPOTIFY_REGEX.match(query):
@@ -360,6 +368,8 @@ class Query:
             cls.__localfile_cls = LocalFile
         recursively = False
         query = f"{query}"
+        if match := M3U_REGEX.match(query):
+            return cls(query, "M3U", query_type="album")
         if match := LOCAL_TRACK_NESTED.match(query):
             recursively = bool(match.group("recursive"))
             query = match.group("query").strip()
@@ -447,7 +457,12 @@ class Query:
         return self._query
 
     async def get_all_tracks_in_folder(self) -> AsyncIterator[Query]:
-        if self.is_local:
+        if self.is_m3u:
+            if self.is_album:
+                m3u8 = await load_m3u8(None, uri=self._query)
+                for track in m3u8.files:
+                    yield await Query.from_string(track)
+        elif self.is_local:
             if self.is_album:
                 if self._recursive:
                     op = self._query.files_in_tree
@@ -459,7 +474,12 @@ class Query:
                 yield self
 
     async def get_all_tracks_in_tree(self) -> AsyncIterator[Query]:
-        if self.is_local:
+        if self.is_m3u:
+            if self.is_album:
+                m3u8 = await load_m3u8(None, uri=self._query)
+                for track in m3u8.files:
+                    yield await Query.from_string(track)
+        elif self.is_local:
             if self.is_album:
                 async for entry in self._query.files_in_folder():
                     yield entry
