@@ -149,6 +149,8 @@ class WebSocket:
                 "Client-Name": f"Py-Link/{self.lib_version}",
             }
 
+            if self.client.is_shutting_down:
+                return
             if self._resuming_configured and self._resume_key:
                 headers["Resume-Key"] = self._resume_key
             self._node._region = await get_closest_discord_region(self._host)
@@ -156,7 +158,6 @@ class WebSocket:
             max_attempts_str = "inf" if is_finite_retry else self._max_reconnect_attempts
             attempt = 0
             backoff = ExponentialBackoffWithReset(base=3)
-
             while not self.connected and (not is_finite_retry or attempt < self._max_reconnect_attempts):
                 attempt += 1
                 LOGGER.info(
@@ -181,6 +182,8 @@ class WebSocket:
                     aiohttp.WSServerHandshakeError,
                     aiohttp.ServerDisconnectedError,
                 ) as ce:
+                    if self.client.is_shutting_down:
+                        return
                     if isinstance(ce, aiohttp.ClientConnectorError):
                         LOGGER.warning(
                             "[NODE-%s] Invalid response received; this may indicate that "
@@ -347,8 +350,7 @@ class WebSocket:
             event = TrackExceptionEvent(player, player.current, data["error"])
         elif event_type == "TrackStartEvent":
             track = player.current
-            event = TrackStartEvent(player, track)  # TODO: Check if this is correct
-
+            event = TrackStartEvent(player, track)  # FIXME: Check if this is correct
         elif event_type == "TrackStuckEvent":
             event = TrackStuckEvent(player, player.current, data["thresholdMs"])
         elif event_type == "WebSocketClosedEvent":

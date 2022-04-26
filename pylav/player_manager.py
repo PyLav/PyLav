@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from typing import TYPE_CHECKING, Iterator
 
 import discord
@@ -37,7 +38,7 @@ class PlayerManager:
             raise ValueError("Player must implement Player.")
 
         self.client = lavalink
-        self.players = {}
+        self.players: dict[int, Player] = {}
         self.default_player_class = player
 
     def __len__(self):
@@ -119,7 +120,7 @@ class PlayerManager:
         """Returns a list of all the empty players."""
         return [p for p in self.players.values() if p.is_empty]
 
-    def remove(self, guild_id: int) -> None:
+    async def remove(self, guild_id: int) -> None:
         """
         Removes a player from the internal cache.
         Parameters
@@ -187,7 +188,7 @@ class PlayerManager:
         if not best_node:
             raise NoNodeAvailable("No available nodes!")
         player: Player = await channel.connect(cls=Player)  # type: ignore
-        player.post_init(node=best_node, player_manager=self)
+        await player.post_init(node=best_node, player_manager=self)
         await player.move_to(requester, channel=player.channel, self_deaf=self_deaf)
         await best_node.dispatch_event(PlayerConnectedEvent(player, requester))
         self.players[channel.guild.id] = player
@@ -195,7 +196,20 @@ class PlayerManager:
         return player
 
     async def save_all_players(self) -> None:
-        pass
+        LOGGER.info("Saving player states...")
+        await self.client.player_config_manager.save_players([p.to_dict() for p in self.players.values()])
 
     async def restore_player_states(self) -> None:
-        pass
+        LOGGER.info("Restoring player states...")
+        while not self.client.node_manager.available_nodes:
+            await asyncio.sleep(1)
+        async for player_state in self.client.player_config_manager.get_all_players():
+            player = self.players.get(player_state.id)
+            if player is not None:
+                # Player was started before restore
+                continue
+            channel = self.client.bot.get_channel(player_state.channel_id)
+            requester = self.client.bot.user
+            self_deaf = player_state.self_deaf
+            discord_player = await self.create(channel=channel, requester=requester, self_deaf=self_deaf)
+            await discord_player.restore(player_state, requester)

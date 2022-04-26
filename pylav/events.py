@@ -110,7 +110,7 @@ class TrackStartEvent(Event):
         The track that started playing.
     """
 
-    __slots__ = ("player", "track")
+    __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author")
 
     def __init__(self, player: Player, track: Track):
         self.player = player
@@ -120,6 +120,43 @@ class TrackStartEvent(Event):
         self.duration = track.duration
         self.title = track.title
         self.author = track.author
+
+
+class TrackAutoPlayEvent(Event):
+    """
+    This event is dispatched when the player starts to play a track.
+    Attributes
+    ----------
+    player: :class:`BasePlayer`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    """
+
+    __slots__ = ("player", "track")
+
+    def __init__(self, player: Player, track: Track):
+        self.player = player
+        self.track = track
+
+
+class TrackResumedEvent(Event):
+    """
+    This event is dispatched when the player resumes playing a track.
+    Attributes
+    ----------
+    player: :class:`BasePlayer`
+        The player that resumed playing a track.
+    track: :class:`Track`
+        The track that resumed playing.
+    """
+
+    __slots__ = ("player", "track", "requester")
+
+    def __init__(self, player: Player, track: Track, requester: discord.abc.User):
+        self.player = player
+        self.track = track
+        self.requester = requester
 
 
 class TrackStartYouTubeEvent(TrackStartEvent):
@@ -561,9 +598,27 @@ class PlayerResumedEvent(Event):
         The user who requested the change.
     """
 
-    __slots__ = ("player", "track", "requester")
+    __slots__ = ("player", "requester")
 
     def __init__(self, player: Player, requester: discord.Member):
+        self.player = player
+        self.requester = requester
+
+
+class PlayerRestoredEvent(Event):
+    """
+    This event is dispatched when a player is restored.
+    Attributes
+    ----------
+    player: :class:`BasePlayer`
+        The player whose track was restored.
+    requester: :class:`discord.Member`
+        The user who requested the change.
+    """
+
+    __slots__ = ("player", "requester")
+
+    def __init__(self, player: Player, requester: discord.abc.User):
         self.player = player
         self.requester = requester
 
@@ -610,7 +665,7 @@ class TrackSkippedEvent(Event):
         The position of the track before the skip.
     """
 
-    __slots__ = ("player", "track", "requester")
+    __slots__ = ("player", "track", "requester", "position")
 
     def __init__(self, player: Player, requester: discord.Member, track: Track, position: float):
         self.player = player
@@ -797,7 +852,7 @@ class TrackSeekEvent(Event):
 
     """
 
-    __slots__ = ("player", "requester", "track", "position")
+    __slots__ = ("player", "requester", "track", "before", "after")
 
     def __init__(self, player: Player, requester: discord.Member, track: Track, before: float, after: float):
         self.player = player
@@ -888,7 +943,7 @@ class TrackPreviousRequestedEvent(Event):
         The track that was seeked.
     """
 
-    __slots__ = ("player", "requester")
+    __slots__ = ("player", "requester", "track")
 
     def __init__(self, player: Player, requester: discord.Member, track: Track):
         self.player = player

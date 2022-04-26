@@ -41,7 +41,7 @@ class NodeConfigManager:
     async def get_all_unamanaged_nodes(self) -> list[NodeModel]:
         model_list = [
             NodeModel(**node.to_dict())
-            for node in await NodeRow.objects().output(load_json=True).where(NodeRow.id != self._client.bot.user.id)
+            for node in await NodeRow.objects().output(load_json=True).where(NodeRow.managed == False)  # noqa: E712
         ]
         for n in model_list:
             self.currently_in_db.add(n.id)
@@ -53,13 +53,17 @@ class NodeConfigManager:
             await NodeRow.objects()
             .output(load_json=True)
             .get_or_create(
-                NodeRow.id == self._client.bot.user.id,
+                (NodeRow.id == self._client.bot.user.id) & (NodeRow.managed == True),  # noqa: E712
                 defaults={
                     NodeRow.ssl: False,
                     NodeRow.reconnect_attempts: 3,
                     NodeRow.search_only: False,
-                    NodeRow.extras: NODE_DEFAULT_SETTINGS,
+                    NodeRow.yaml: NODE_DEFAULT_SETTINGS,
                     NodeRow.name: "PyLavManagedNode",
+                    NodeRow.managed: True,
+                    NodeRow.resume_key: None,
+                    NodeRow.resume_timeout: 600,
+                    NodeRow.extras: {},
                 },
             )
         )
@@ -77,23 +81,29 @@ class NodeConfigManager:
         reconnect_attempts: int = 3,
         ssl: bool = False,
         search_only: bool = False,
+        managed: bool = False,
+        extras: dict = None,
+        yaml: dict = None,
     ) -> NodeModel:
         if unique_identifier in self.currently_in_db:
             return await self.get_node_config(unique_identifier)
 
-        data = {
-            "extras": {"server": {}, "lavalink": {"server": {}}},
-            "id": unique_identifier,
-            "ssl": ssl,
-            "reconnect_attempts": reconnect_attempts,
-            "search_only": search_only,
-            "name": name,
-        }
-        data["extras"]["server"]["host"] = host
-        data["extras"]["server"]["host"] = port
-        data["extras"]["lavalink"]["server"]["password"] = password
-        data["extras"]["resume_timeout"] = resume_timeout
-        data["extras"]["resume_key"] = resume_key
+        data = dict(
+            yaml=yaml or {"server": {}, "lavalink": {"server": {}}},
+            id=unique_identifier,
+            ssl=ssl,
+            reconnect_attempts=reconnect_attempts,
+            search_only=search_only,
+            resume_key=resume_key,
+            resume_timeout=resume_timeout,
+            managed=managed,
+            name=name,
+            extras=extras or {},
+        )
+        data["yaml"]["server"]["host"] = host  # type: ignore
+        data["yaml"]["server"]["host"] = port  # type: ignore
+        data["yaml"]["lavalink"]["server"]["password"] = password
+
         node = NodeModel(**data)
         await node.save()
         self.currently_in_db.add(node.id)
@@ -111,24 +121,25 @@ class NodeConfigManager:
         reconnect_attempts: int = 3,
         ssl: bool = False,
         search_only: bool = False,
+        managed: bool = False,
         extras: dict = None,
+        yaml: dict = None,
     ) -> NodeModel:
-        data = {
-            "extras": {"server": {}, "lavalink": {"server": {}}},
-            "id": unique_identifier,
-            "ssl": ssl,
-            "reconnect_attempts": reconnect_attempts,
-            "search_only": search_only,
-            "name": name,
-        }
-        if extras:
-            data["extras"] = extras
-        data["extras"]["server"]["host"] = host  # type: ignore
-        data["extras"]["server"]["port"] = port  # type: ignore
-        data["extras"]["lavalink"]["server"]["password"] = password
-        if unique_identifier != self._client.bot.user.id:
-            data["extras"]["resume_timeout"] = resume_timeout  # type: ignore
-            data["extras"]["resume_key"] = resume_key  # type: ignore
+        data = dict(
+            yaml=yaml or {"server": {}, "lavalink": {"server": {}}},
+            id=unique_identifier,
+            ssl=ssl,
+            reconnect_attempts=reconnect_attempts,
+            search_only=search_only,
+            resume_key=resume_key,
+            resume_timeout=resume_timeout,
+            managed=managed,
+            name=name,
+            extras=extras or {},
+        )
+        data["yaml"]["server"]["host"] = host  # type: ignore
+        data["yaml"]["server"]["host"] = port  # type: ignore
+        data["yaml"]["lavalink"]["server"]["password"] = password
         node = NodeModel(**data)
         await node.save()
         self.currently_in_db.add(node.id)
@@ -137,5 +148,5 @@ class NodeConfigManager:
     async def delete(self, node_id: int) -> None:
         if node_id == self._client.bot.user.id:
             raise ValueError("Cannot delete bundled node")
-        await NodeRow.delete().where(NodeRow.id == node_id)
+        await NodeRow.delete().where((NodeRow.id == node_id) & (NodeRow.managed != True))  # noqa: E712
         self.currently_in_db.discard(node_id)

@@ -59,8 +59,8 @@ __all__ = (
     "add_property",
     "format_time",
     "get_time_string",
-    "Queue",
-    "LifoQueue",
+    "PlayerQueue",
+    "TrackHistoryQueue",
     "SegmentCategory",
     "Segment",
     "_process_commands",
@@ -136,7 +136,7 @@ def format_time(duration: int | float) -> str:
     return f"{day}{hour}{minutes}{sec}"
 
 
-class Queue:
+class PlayerQueue(asyncio.Queue[T]):
     """A queue, useful for coordinating producer and consumer coroutines.
 
     If maxsize is less than or equal to zero, the queue size is infinite. If it
@@ -180,11 +180,11 @@ class Queue:
     def raw_queue(self, value: collections.deque[T]):
         if not isinstance(value, collections.deque):
             raise TypeError("Queue value must be a collections.deque[AudioTrack]")
-        if len(value) >= self._maxsize:
+        if self._maxsize and len(value) >= self._maxsize:
             raise ValueError(f"Queue value cannot be longer than maxsize: {self._maxsize}")
         self._queue = value
 
-    async def popindex(self, index: int) -> T:
+    def popindex(self, index: int) -> T:
         value = self._queue[index]
         del self._queue[index]
         return value
@@ -199,13 +199,13 @@ class Queue:
         removed = []
         try:
             i = self._queue.index(value)
-            removed.append(await self.popindex(i))
+            removed.append(self.popindex(i))
             count += 1
             if duplicates:
                 with contextlib.suppress(ValueError):
                     while value in self:
                         i = self._queue.index(value)
-                        removed.append(await self.popindex(i))
+                        removed.append(self.popindex(i))
                         count += 1
             return removed, count
         except ValueError:
@@ -315,7 +315,7 @@ class Queue:
 
     def empty(self) -> bool:
         """Return True if the queue is empty, False otherwise."""
-        return not self._queue
+        return not len(self._queue)
 
     def full(self) -> bool:
         """Return True if there are maxsize items in the queue.
@@ -436,30 +436,41 @@ class Queue:
             await self._finished.wait()
 
 
-class LifoQueue(Queue[T]):
+class TrackHistoryQueue(PlayerQueue[T]):
     def __int__(self, maxsize: int = 0) -> None:
         super().__init__(maxsize=maxsize)
 
+    def _init(self, maxsize: int):
+        self.raw_b64s = list()
+        super()._init(maxsize)
+
     def _put(self, items: list[T], index: int = None):
-        if self.full():
-            for i in range(len(items)):
-                self._queue.pop()
+        if len(items) + self.qsize() > self.maxsize:
+            diff = len(items) + self.qsize() - self.maxsize
+            for i in range(diff):
+                t = self._queue.pop()
+                self.raw_b64s.remove(t.track)
         if index is not None:
             if index < 0:
                 for i in items:
                     self._queue.append(i)
+                    self.raw_b64s.append(i.track)
             else:
                 for i in items:
                     self._queue.insert(index, i)
+                    self.raw_b64s.append(i.track)
                     index += 1
         else:
             self._queue.extendleft(items)
+            self.raw_b64s.extend([i.track for i in items])
 
     def _get(self, index: int = None) -> T:
         if index is not None:
-            return self.popindex(index)
+            r = self.popindex(index)
         else:
-            return self._queue.popleft()
+            r = self._queue.popleft()
+        self.raw_b64s.remove(r.track)
+        return r
 
     def put_nowait(self, items: list[T], index: int = None):
         """Put an item into the queue without blocking.

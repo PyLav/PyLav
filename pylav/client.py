@@ -38,7 +38,8 @@ from pylav.player import Player
 from pylav.player_manager import PlayerManager
 from pylav.query import Query
 from pylav.sql.clients.lib import LibConfigManager
-from pylav.sql.clients.nodes import NodeConfigManager
+from pylav.sql.clients.nodes_db_manager import NodeConfigManager
+from pylav.sql.clients.player_db_manager import PlayerConfigManager
 from pylav.sql.clients.playlist_manager import PlaylistConfigManager
 from pylav.sql.clients.query_manager import QueryCacheManager
 from pylav.sql.clients.updater import UpdateSchemaManager
@@ -123,12 +124,14 @@ class Client:
         self._query_cache_manager = QueryCacheManager(self)
         self._update_schema_manager = UpdateSchemaManager(self)
         self._dispatch_manager = DispatchManager(self)
+        self._player_config_manager = PlayerConfigManager(self)
         self._connect_back = connect_back
         self._warned_about_no_search_nodes = False
         self._ready = False
         self._spotify_client_id = None
         self._spotify_client_secret = None
         self._spotify_auth = None
+        self._shutting_down = False
 
     @property
     def initialized(self) -> bool:
@@ -139,6 +142,11 @@ class Client:
     def spotify_client(self) -> SpotifyClient:
         """Returns the spotify client."""
         return SpotifyClient(self._spotify_auth)
+
+    @property
+    def is_shutting_down(self) -> bool:
+        """Returns whether the client is shutting down."""
+        return self._shutting_down
 
     async def initialize(
         self,
@@ -166,16 +174,16 @@ class Client:
         localtrack_folder = localtrack_folder or config_data.localtrack_folder
         data = await self._node_config_manager.get_bundled_node_config()
         if not all([client_id, client_secret]):
-            spotify_data = data.extras["plugins"]["topissourcemanagers"]["spotify"]
+            spotify_data = data.yaml["plugins"]["topissourcemanagers"]["spotify"]
             client_id = spotify_data["clientId"]
             client_secret = spotify_data["clientSecret"]
         elif all([client_id, client_secret]):
             if (
-                data.extras["plugins"]["topissourcemanagers"]["spotify"]["clientId"] != client_id
-                or data.extras["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"] != client_secret
+                data.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientId"] != client_id
+                or data.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"] != client_secret
             ):
-                data.extras["plugins"]["topissourcemanagers"]["spotify"]["clientId"] = client_id
-                data.extras["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"] = client_secret
+                data.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientId"] = client_id
+                data.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"] = client_secret
             await data.save()
         self._spotify_client_id = client_id
         self._spotify_client_secret = client_secret
@@ -197,8 +205,12 @@ class Client:
         self._local_node_manager = LocalNodeManager(self, auto_update=auto_update_managed_nodes)
         if enable_managed_node:
             await self._local_node_manager.start(java_path=config_data.java_path)
-        await self.node_manager.connect_to_all_nodes()
-        await self.player_manager.restore_player_states()
+        try:
+            await self.node_manager.connect_to_all_nodes()
+            await self.player_manager.restore_player_states()
+        except Exception as exc:
+            LOGGER.critical("Failed start up", exc_info=exc)
+            raise
 
     async def update_spotify_tokens(self, client_id: str, client_secret: str) -> None:
         self._spotify_client_id = client_id
@@ -215,6 +227,10 @@ class Client:
     def node_db_manager(self) -> NodeConfigManager:
         """Returns the sql node config manager."""
         return self._node_config_manager
+
+    @property
+    def player_config_manager(self) -> PlayerConfigManager:
+        return self._player_config_manager
 
     @property
     def playlist_db_manager(self) -> PlaylistConfigManager:
@@ -280,7 +296,10 @@ class Client:
         reconnect_attempts: int = 3,
         ssl: bool = False,
         search_only: bool = False,
+        managed: bool = False,
         skip_db: bool = False,
+        yaml: dict | None = None,
+        extras: dict = {},
     ) -> Node:
         """
         Adds a node to Lavalink's node manager.
@@ -325,6 +344,9 @@ class Client:
             search_only=search_only,
             unique_identifier=unique_identifier,
             skip_db=skip_db,
+            managed=managed,
+            yaml=yaml,
+            extras=extras,
         )
 
     async def get_tracks(
@@ -501,16 +523,19 @@ class Client:
         """
         global _COGS_REGISTERED
         _COGS_REGISTERED.discard(cog.__cog_name__)
+        LOGGER.info("%s has been unregistered", cog.__cog_name__)
         if not _COGS_REGISTERED:
+            self._shutting_down = True
             await self.player_manager.save_all_players()
-            await self._local_node_manager.shutdown()
             await self._node_manager.close()
+            await self._local_node_manager.shutdown()
             await self._session.close()
             if _OLD_PROCESS_COMMAND_METHOD is not None:
                 self.bot.process_commands = MethodType(_OLD_PROCESS_COMMAND_METHOD, self.bot)
             if _OLD_GET_CONTEXT is not None:
                 self.bot.get_context = MethodType(_OLD_GET_CONTEXT, self.bot)
             del self.bot._pylav_client  # noqa
+            LOGGER.info("All cogs have been unregistered, Pylink client has been shutdown.")
 
     def get_player(self, guild: discord.Guild | int | None) -> Player | None:
         """|coro|

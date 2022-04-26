@@ -13,6 +13,7 @@ from pylav.events import (
     PlayerMovedEvent,
     PlayerPausedEvent,
     PlayerRepeatEvent,
+    PlayerRestoredEvent,
     PlayerResumedEvent,
     PlayerStoppedEvent,
     PlayerUpdateEvent,
@@ -23,9 +24,11 @@ from pylav.events import (
     QueueTracksRemovedEvent,
     SegmentSkippedEvent,
     SegmentsLoadedEvent,
+    TrackAutoPlayEvent,
     TrackEndEvent,
     TrackExceptionEvent,
     TrackPreviousRequestedEvent,
+    TrackResumedEvent,
     TrackSeekEvent,
     TrackSkippedEvent,
     TracksRequestedEvent,
@@ -152,6 +155,10 @@ class DispatchManager:
             self.pylav_track_previous_requested(event)
         elif isinstance(event, TracksRequestedEvent):
             self.pylav_track_requested(event)
+        elif isinstance(event, TrackAutoPlayEvent):
+            self.pylav_track_autoplay(event)
+        elif isinstance(event, TrackResumedEvent):
+            self.pylav_track_resumed(event)
         # Queue events
         elif isinstance(event, QueueShuffledEvent):
             self.pylav_queue_shuffled(event)
@@ -180,6 +187,8 @@ class DispatchManager:
             self.pylav_player_volume_changed(event)
         elif isinstance(event, PlayerRepeatEvent):
             self.pylav_player_repeat(event)
+        elif isinstance(event, PlayerRestoredEvent):
+            self.pylav_player_restored(event)
         # Sponsorblock events
         elif isinstance(event, SegmentSkippedEvent):
             self.pylav_segment_skipped(event)
@@ -287,6 +296,12 @@ class DispatchManager:
     def pylav_track_start_niconico(self, event: TrackStartNicoNicoEvent):
         self.dispatcher(self.pylav_track_start_niconico.__name__, event)
 
+    def pylav_track_autoplay(self, event: TrackAutoPlayEvent):
+        self.dispatcher(self.pylav_track_autoplay.__name__, event)
+
+    def pylav_track_resumed(self, event: TrackResumedEvent):
+        self.dispatcher(self.pylav_track_resumed.__name__, event)
+
     # Queue events
 
     def pylav_queue_shuffled(self, event: QueueShuffledEvent):
@@ -329,6 +344,9 @@ class DispatchManager:
 
     def pylav_player_repeat(self, event: PlayerRepeatEvent):
         self.dispatcher(self.pylav_player_repeat.__name__, event)
+
+    def pylav_player_restored(self, event: PlayerRestoredEvent):
+        self.dispatcher(self.pylav_player_restored.__name__, event)
 
     # Sponsorblock events
 

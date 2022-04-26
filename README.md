@@ -57,6 +57,7 @@ Features
 - Support for multiple cogs to access the library at once
 - Playlists and EQ saved at a library level to be shared with cogs
 - Player state persistence
+    - Upon library state being shutdown all player states are saved and restored on library startup
 - History of played tracks available for players
 
 

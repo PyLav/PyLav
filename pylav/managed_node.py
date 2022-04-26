@@ -40,6 +40,7 @@ from pylav.exceptions import (
     WebsocketNotConnectedError,
 )
 from pylav.node import Node
+from pylav.sql.models import NodeModel
 from pylav.utils import AsyncIter, ExponentialBackoffWithReset
 
 if TYPE_CHECKING:
@@ -174,7 +175,7 @@ class LocalNodeManager:
         self._node_id: int = self._client.bot.user.id
         self._node: Node | None = None
         self._current_config = {}
-        self._full_data = {}
+        self._full_data: NodeModel = None  # type: ignore
         self.abort_for_unmanaged: asyncio.Event = asyncio.Event()
         self._args = []
 
@@ -261,7 +262,7 @@ class LocalNodeManager:
         LOGGER.info("Managed Lavalink node startup command: %s", command_string)
         if "-Xmx" not in command_string and msg is None:
             LOGGER.warning("Managed Lavalink node maximum allowed RAM not set or higher than available RAM")
-            # TODO: Add instruction for user to set max RAM
+            # FIXME: Add instruction for user to set max RAM
         try:
             self._proc = await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
                 *args,
@@ -283,9 +284,8 @@ class LocalNodeManager:
             raise
 
     async def process_settings(self):
-        data = await self._client.node_db_manager.get_bundled_node_config()
-        self._full_data = data
-        data = change_dict_naming_convention(data.extras)
+        self._full_data = await self._client.node_db_manager.get_bundled_node_config()
+        data = change_dict_naming_convention(self._full_data.yaml)
         # The reason this is here is to completely remove these keys from the application.yml
         # if they are set to empty values
         if not all(
@@ -314,8 +314,8 @@ class LocalNodeManager:
                 extras = ""
             else:
                 extras = f" however you have version {self._java_version} (executable: {self._java_exc})"
-            raise UnsupportedJavaError()  # TODO: Add API endpoint to change this
-        java_xms, java_xmx = "64M", "32GB"  # FIXME: Get from db
+            raise UnsupportedJavaError()  # FIXME: Add API endpoint to change this
+        java_xms, java_xmx = "64M", "32G"  # FIXME: Get from db
         match = re.match(r"^(\d+)([MG])$", java_xmx, flags=re.IGNORECASE)
         command_args = [
             self._java_exc,
@@ -330,7 +330,7 @@ class LocalNodeManager:
         ):
             command_args.append(f"-Xmx{java_xmx}")
         elif meta[0] is not None:
-            # TODO: Add API endpoint to change this
+            # FIXME: Add API endpoint to change this
             invalid = "Managed Lavalink node RAM allocation ignored due to system limitations, please fix this."
 
         command_args.extend(["-jar", str(LAVALINK_JAR_FILE)])
@@ -655,11 +655,14 @@ class LocalNodeManager:
                 port=self._current_config["server"]["port"],
                 password=self._current_config["lavalink"]["server"]["password"],
                 resume_key=f"ManagedNode-{self._node_pid}-{self._node_id}",
-                resume_timeout=600,
-                name=f"ManagedNode: {self._node_pid}",
+                resume_timeout=self._full_data.resume_timeout,
+                name=f"{self._full_data.name}: {self._node_pid}",
+                yaml=self._full_data.yaml,
+                extras=self._full_data.extras,
+                managed=True,
                 ssl=False,
                 search_only=False,
-                unique_identifier=0,
+                unique_identifier=self._full_data.id,
                 skip_db=True,
             )
         else:

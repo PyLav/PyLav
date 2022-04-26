@@ -19,7 +19,7 @@ from red_commons.logging import getLogger
 from pylav._config import CONFIG_DIR
 from pylav.constants import SUPPORTED_SOURCES
 from pylav.exceptions import InvalidPlaylist
-from pylav.sql.tables import BotVersionRow, LibConfigRow, NodeRow, PlaylistRow, QueryRow
+from pylav.sql.tables import BotVersionRow, LibConfigRow, NodeRow, PlayerRow, PlaylistRow, QueryRow
 from pylav.types import BotT
 from pylav.utils import PyLavContext
 
@@ -328,13 +328,19 @@ class NodeModel:
     id: int
     name: str
     ssl: bool
+    resume_key: str | None
+    resume_timeout: int
     reconnect_attempts: int
     search_only: bool
+    managed: bool
     extras: dict
+    yaml: dict
 
     def __post_init__(self):
         if isinstance(self.extras, str):
             self.extras = ujson.loads(self.extras)
+        if isinstance(self.yaml, str):
+            self.yaml = ujson.loads(self.yaml)
 
     @classmethod
     async def from_id(cls, id: int) -> NodeModel:
@@ -344,28 +350,33 @@ class NodeModel:
     def to_dict(self) -> dict:
         return {
             "id": self.id,
+            "name": self.name,
             "ssl": self.ssl,
+            "resume_key": self.resume_key,
+            "resume_timeout": self.resume_timeout,
             "reconnect_attempts": self.reconnect_attempts,
             "search_only": self.search_only,
+            "managed": self.managed,
             "extras": self.extras,
-            "name": self.name,
+            "yaml": self.yaml,
         }
 
     def get_connection_args(self) -> dict:
-        if self.extras is None:
+        if self.yaml is None:
             raise ValueError("Node Connection config set")
         return {
             "unique_identifier": self.id,
-            "host": self.extras["server"]["address"],
-            "port": self.extras["server"]["port"],
-            "password": self.extras["lavalink"]["server"]["password"],
+            "host": self.yaml["server"]["address"],
+            "port": self.yaml["server"]["port"],
+            "password": self.yaml["lavalink"]["server"]["password"],
             "name": self.name,
             "ssl": self.ssl,
             "reconnect_attempts": self.reconnect_attempts,
             "search_only": self.search_only,
-            "resume_timeout": self.extras.get("resume_timeout"),
-            "resume_key": self.extras.get("resume_key"),
+            "resume_timeout": self.resume_timeout,
+            "resume_key": self.resume_key,
             "disabled_sources": list(self.extras.get("disabled_sources", [])),
+            "managed": self.managed,
         }
 
     async def add_bulk_source_to_exclusion_list(self, *source: str):
@@ -395,9 +406,13 @@ class NodeModel:
         values = {
             NodeRow.name: self.name,
             NodeRow.ssl: self.ssl,
+            NodeRow.resume_key: self.resume_key,
             NodeRow.reconnect_attempts: self.reconnect_attempts,
+            NodeRow.resume_timeout: self.resume_timeout,
             NodeRow.search_only: self.search_only,
+            NodeRow.managed: self.managed,
             NodeRow.extras: self.extras,
+            NodeRow.yaml: self.yaml,
         }
         node = await NodeRow.objects().output(load_json=True).get_or_create(NodeRow.id == self.id, defaults=values)
         if not node._was_created:
@@ -407,9 +422,13 @@ class NodeModel:
         values = {
             NodeRow.name: self.name,
             NodeRow.ssl: self.ssl,
+            NodeRow.resume_key: self.resume_key,
             NodeRow.reconnect_attempts: self.reconnect_attempts,
+            NodeRow.resume_timeout: self.resume_timeout,
             NodeRow.search_only: self.search_only,
+            NodeRow.managed: self.managed,
             NodeRow.extras: self.extras,
+            NodeRow.yaml: self.yaml,
         }
         output = await NodeRow.objects().output(load_json=True).get_or_create(NodeRow.id == self.id, defaults=values)
         if not output._was_created:
@@ -418,6 +437,10 @@ class NodeModel:
             self.reconnect_attempts = output.reconnect_attempts
             self.search_only = output.search_only
             self.extras = output.extras
+            self.managed = output.managed
+            self.yaml = output.yaml
+            self.resume_key = output.resume_key
+            self.resume_timeout = output.resume_timeout
 
 
 @dataclass(eq=True)
@@ -504,3 +527,123 @@ class BotVersion:
 
     async def save(self) -> None:
         await self.upsert()
+
+
+@dataclass(eq=True)
+class PlayerModel:
+    id: int
+    bot: int
+    channel_id: int
+    volume: int
+    position: float
+    auto_play_playlist_id: int | None
+    text_channel_id: int | None
+    notify_channel_id: int | None
+
+    paused: bool
+    repeat_current: bool
+    repeat_queue: bool
+    shuffle: bool
+    auto_play: bool
+    playing: bool
+    effect_enabled: bool
+    self_deaf: bool
+
+    current: dict | None
+    queue: dict
+    history: dict
+    effects: dict
+    extras: dict
+
+    def __post_init__(self):
+        if isinstance(self.current, str):
+            self.current = ujson.loads(self.current)
+        if isinstance(self.queue, str):
+            self.queue = ujson.loads(self.queue)
+        if isinstance(self.history, str):
+            self.history = ujson.loads(self.history)
+        if isinstance(self.effects, str):
+            self.effects = ujson.loads(self.effects)
+        if isinstance(self.extras, str):
+            self.extras = ujson.loads(self.extras)
+
+    async def delete(self) -> None:
+        await PlayerRow.delete().where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+
+    async def upsert(self) -> None:
+        values = {
+            PlayerRow.channel_id: self.channel_id,
+            PlayerRow.volume: self.volume,
+            PlayerRow.position: self.position,
+            PlayerRow.paused: self.paused,
+            PlayerRow.repeat_current: self.repeat_current,
+            PlayerRow.repeat_queue: self.repeat_queue,
+            PlayerRow.shuffle: self.shuffle,
+            PlayerRow.auto_play: self.auto_play,
+            PlayerRow.playing: self.playing,
+            PlayerRow.effect_enabled: self.effect_enabled,
+            PlayerRow.current: self.current,
+            PlayerRow.queue: self.queue,
+            PlayerRow.history: self.history,
+            PlayerRow.effects: self.effects,
+            PlayerRow.extras: self.extras,
+            PlayerRow.self_deaf: self.self_deaf,
+        }
+        player = (
+            await PlayerRow.objects()
+            .output(load_json=True)
+            .get_or_create((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot), defaults=values)
+        )
+        if not player._was_created:
+            await PlayerRow.update(values).where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+
+    def upsert_sync(self) -> None:
+        values = {
+            PlayerRow.channel_id: self.channel_id,
+            PlayerRow.volume: self.volume,
+            PlayerRow.position: self.position,
+            PlayerRow.paused: self.paused,
+            PlayerRow.repeat_current: self.repeat_current,
+            PlayerRow.repeat_queue: self.repeat_queue,
+            PlayerRow.shuffle: self.shuffle,
+            PlayerRow.auto_play: self.auto_play,
+            PlayerRow.playing: self.playing,
+            PlayerRow.effect_enabled: self.effect_enabled,
+            PlayerRow.current: self.current,
+            PlayerRow.queue: self.queue,
+            PlayerRow.history: self.history,
+            PlayerRow.effects: self.effects,
+            PlayerRow.extras: self.extras,
+            PlayerRow.self_deaf: self.self_deaf,
+        }
+        player = (
+            PlayerRow.objects()
+            .output(load_json=True)
+            .get_or_create((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot), defaults=values)
+            .run_sync()
+        )
+        if not player._was_created:
+            PlayerRow.update(values).where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot)).run_sync()
+
+    async def save(self) -> None:
+        await self.upsert()
+
+    def save_sync(self) -> None:
+        LOGGER.critical("Saving player sync")
+        try:
+            self.upsert_sync()
+        except Exception as e:
+            LOGGER.critical(f"Error saving player sync: {e}")
+
+    @classmethod
+    async def get(cls, bot_id: int, guild_id: int) -> PlayerModel | None:
+        player = (
+            await PlayerRow.select()
+            .output(load_json=True)
+            .where((PlayerRow.channel_id == guild_id) & (PlayerRow.bot == bot_id))
+        ).first()
+
+        if player:
+            return cls(**player.to_dict())
+
+        return None

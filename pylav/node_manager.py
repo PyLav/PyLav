@@ -88,6 +88,9 @@ class NodeManager:
         search_only: bool = False,
         skip_db: bool = False,
         disabled_sources: list[str] = None,
+        managed: bool = False,
+        yaml: dict | None = None,
+        extras: dict = {},
     ) -> Node:
         """
         Adds a node to PyLink's node manager.
@@ -134,6 +137,8 @@ class NodeManager:
             search_only=search_only,
             unique_identifier=unique_identifier,
             disabled_sources=disabled_sources,
+            managed=managed,
+            extras=extras,
         )
         self._nodes.append(node)
 
@@ -151,6 +156,9 @@ class NodeManager:
                 ssl=ssl,
                 search_only=search_only,
                 unique_identifier=unique_identifier,
+                managed=managed,
+                yaml=yaml,
+                extras=extras,
             )
         return node
 

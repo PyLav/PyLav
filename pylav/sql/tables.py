@@ -72,14 +72,18 @@ class PlayerRow(Table, db=DB, tablename="player"):
     channel_id = BigInt(null=False)
     volume = Integer(null=False, default=100)
     position = Float(null=False, default=0.0)
+    auto_play_playlist_id = BigInt(null=True)
+    text_channel_id = BigInt(null=True)
+    notify_channel_id = BigInt(null=True)
 
     paused = Boolean(null=False, default=False)
     repeat_current = Boolean(null=False, default=False)
     repeat_queue = Boolean(null=False, default=False)
     shuffle = Boolean(null=False, default=False)
-    auto_playing = Boolean(null=False, default=False)
+    auto_play = Boolean(null=False, default=False)
     playing = Boolean(null=False, default=False)
     effect_enabled = Boolean(null=False, default=False)
+    self_deaf = Boolean(null=False, default=False)
 
     current = JSONB(null=True)
     queue = JSONB(null=False, default=[])
@@ -92,9 +96,13 @@ class NodeRow(Table, db=DB, tablename="node"):
     id = BigInt(primary_key=True, index=True)
     name = Text(null=False)
     ssl = Boolean(null=False, default=False)
+    resume_key = Text(null=True)
+    resume_timeout = Integer(null=False, default=600)
     reconnect_attempts = Integer(null=False)
     search_only = Boolean(null=False, default=False)
+    managed = Boolean(null=False, default=False)
     extras = JSONB(null=True)
+    yaml = JSONB(null=True)
 
 
 class QueryRow(Table, db=DB, tablename="query"):

@@ -88,11 +88,11 @@ class Track:
                 raise InvalidTrack("Cannot create a partial Track without a query.")
             self._unique_id.update(query.query_identifier.encode())
             self.extra = {}
-            self._raw_data = {}
+            self._raw_data = extra.get("raw_data", {})
         elif isinstance(data, dict):
             try:
                 self.track = data["track"]
-                self._raw_data = data.get("raw_data", {})
+                self._raw_data = data.get("raw_data", {}) or extra.get("raw_data", {})
                 self.extra = extra
                 self._unique_id.update(self.track.encode())
             except KeyError as ke:
@@ -108,7 +108,7 @@ class Track:
         elif isinstance(data, str):
             self.track = data
             self.extra = extra
-            self._raw_data = {}
+            self._raw_data = extra.get("raw_data", {})
             self._unique_id.update(self.track.encode())  # type: ignore
         self._requester = requester or self._node.node_manager.client.bot.user.id
         self._id = str(uuid.uuid4())
@@ -350,6 +350,7 @@ class Track:
             "track": self.track,
             "query": self.query_identifier if self.query else None,
             "requester": self.requester_id,
+            "skip_segments": self.skip_segments,
             "extra": {
                 "timestamp": self.timestamp,
             },

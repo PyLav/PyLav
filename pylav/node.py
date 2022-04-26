@@ -175,6 +175,8 @@ class Node:
         search_only: bool = False,
         unique_identifier: int = None,
         disabled_sources: list[str] = None,
+        managed: bool = False,
+        extras: dict = None,
     ):
         from pylav.query import Query
 
@@ -183,10 +185,11 @@ class Node:
         self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
         if unique_identifier is None:
             unique_identifier = str(uuid4())
-        self._managed = "ManagedNode: " in name
+        self._managed = managed
         self._name = name or f"{self.region}-{self.host}-{unique_identifier}"
         self._region = None
         self._host = host
+        self._extras = extras or {}
         self._disabled_sources = set(disabled_sources or [])
 
         if self._manager.get_node_by_id(unique_identifier) is not None:
