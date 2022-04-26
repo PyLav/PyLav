@@ -65,7 +65,7 @@ SOUND_CLOUD_REGEX = re.compile(
     "^(?:http://|https://|)(?:www\\.|)(?:m\\.|)soundcloud\\.com/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/s-([a-zA-Z0-9-_]+)(?:\\?.*|)$|"
     "^(?:http://|https://|)(?:www\\.|)(?:m\\.|)soundcloud\\.com/([a-zA-Z0-9-_]+)/likes/?(?:\\?.*|)$|"
     # This last line was manually added and does not exist in  in lavaplayer...
-    #  https://github.com/Walkyst/lavaplayer-fork/blob/original/main/src/main/java/com/sedmelluq/discord/lavaplayer/source/soundcloud/SoundCloudAudioSourceManager.java#L48
+    #  https://github.com/Walkyst/lavaplayer-fork/blob/67bfdc4757947db61105c73628f2e4c2a7e4e992/main/src/main/java/com/sedmelluq/discord/lavaplayer/source/soundcloud/SoundCloudAudioSourceManager.java#L48
     "^(?:http://|https://|)(?:www\\.|)(?:m\\.|)soundcloud\\.com/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)(?:\\?.*|)$|",
     re.IGNORECASE,
 )
