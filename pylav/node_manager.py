@@ -324,7 +324,8 @@ class NodeManager:
             node,
         )
         await self.client._dispatch_event(NodeDisconnectedEvent(node, code, reason))
-
+        if self.client.is_shutting_down:
+            return
         best_node = self.find_best_node(node.region)
 
         if not best_node:

@@ -149,6 +149,7 @@ class PlayerQueue(asyncio.Queue[T]):
     """
 
     _queue: collections.deque[T]
+    raw_b64s: list[str]
 
     def __init__(self, maxsize=0, *, loop=None):
         if loop is None:
@@ -252,24 +253,33 @@ class PlayerQueue(asyncio.Queue[T]):
 
     def _init(self, maxsize: int):
         self._queue = collections.deque(maxlen=maxsize or None)
+        self.raw_b64s = list()
 
     def _get(self, index: int = None) -> T:
         if index is not None:
-            return self.popindex(index)
+            r = self.popindex(index)
         else:
-            return self._queue.popleft()
+            r = self._queue.popleft()
+        if r.track:
+            self.raw_b64s.remove(r.track)
+        return r
 
     def _put(self, items: list[T], index: int = None):
         if index is not None:
             if index < 0:
                 for i in items:
                     self._queue.append(i)
+                    if i.track:
+                        self.raw_b64s.append(i.track)
             else:
                 for i in items:
                     self._queue.insert(index, i)
+                    if i.track:
+                        self.raw_b64s.append(i.track)
                     index += 1
         else:
             self._queue.extend(items)
+            self.raw_b64s.extend([i.track for i in items if i.track])
 
     # End of the overridable methods.
 
@@ -441,7 +451,6 @@ class TrackHistoryQueue(PlayerQueue[T]):
         super().__init__(maxsize=maxsize)
 
     def _init(self, maxsize: int):
-        self.raw_b64s = list()
         super()._init(maxsize)
 
     def _put(self, items: list[T], index: int = None):

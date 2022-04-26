@@ -527,6 +527,7 @@ class Client:
         if not _COGS_REGISTERED:
             self._shutting_down = True
             await self.player_manager.save_all_players()
+            await self.player_manager.shutdown()
             await self._node_manager.close()
             await self._local_node_manager.shutdown()
             await self._session.close()

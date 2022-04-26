@@ -571,10 +571,14 @@ class PlayerModel:
         await PlayerRow.delete().where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
 
     async def upsert(self) -> None:
+
         values = {
             PlayerRow.channel_id: self.channel_id,
             PlayerRow.volume: self.volume,
             PlayerRow.position: self.position,
+            PlayerRow.auto_play_playlist_id: self.auto_play_playlist_id,
+            PlayerRow.text_channel_id: self.text_channel_id,
+            PlayerRow.notify_channel_id: self.notify_channel_id,
             PlayerRow.paused: self.paused,
             PlayerRow.repeat_current: self.repeat_current,
             PlayerRow.repeat_queue: self.repeat_queue,
@@ -582,12 +586,12 @@ class PlayerModel:
             PlayerRow.auto_play: self.auto_play,
             PlayerRow.playing: self.playing,
             PlayerRow.effect_enabled: self.effect_enabled,
+            PlayerRow.self_deaf: self.self_deaf,
             PlayerRow.current: self.current,
             PlayerRow.queue: self.queue,
             PlayerRow.history: self.history,
             PlayerRow.effects: self.effects,
             PlayerRow.extras: self.extras,
-            PlayerRow.self_deaf: self.self_deaf,
         }
         player = (
             await PlayerRow.objects()
@@ -602,6 +606,9 @@ class PlayerModel:
             PlayerRow.channel_id: self.channel_id,
             PlayerRow.volume: self.volume,
             PlayerRow.position: self.position,
+            PlayerRow.auto_play_playlist_id: self.auto_play_playlist_id,
+            PlayerRow.text_channel_id: self.text_channel_id,
+            PlayerRow.notify_channel_id: self.notify_channel_id,
             PlayerRow.paused: self.paused,
             PlayerRow.repeat_current: self.repeat_current,
             PlayerRow.repeat_queue: self.repeat_queue,
@@ -609,12 +616,12 @@ class PlayerModel:
             PlayerRow.auto_play: self.auto_play,
             PlayerRow.playing: self.playing,
             PlayerRow.effect_enabled: self.effect_enabled,
+            PlayerRow.self_deaf: self.self_deaf,
             PlayerRow.current: self.current,
             PlayerRow.queue: self.queue,
             PlayerRow.history: self.history,
             PlayerRow.effects: self.effects,
             PlayerRow.extras: self.extras,
-            PlayerRow.self_deaf: self.self_deaf,
         }
         player = (
             PlayerRow.objects()
@@ -629,11 +636,7 @@ class PlayerModel:
         await self.upsert()
 
     def save_sync(self) -> None:
-        LOGGER.critical("Saving player sync")
-        try:
-            self.upsert_sync()
-        except Exception as e:
-            LOGGER.critical(f"Error saving player sync: {e}")
+        self.upsert_sync()
 
     @classmethod
     async def get(cls, bot_id: int, guild_id: int) -> PlayerModel | None:

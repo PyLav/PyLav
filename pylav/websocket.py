@@ -260,7 +260,7 @@ class WebSocket:
 
                 if msg.type == aiohttp.WSMsgType.TEXT:
                     await self.handle_message(msg.json(loads=ujson.loads))
-                elif msg.type == aiohttp.WSMsgType.ERROR:
+                elif msg.type == aiohttp.WSMsgType.ERROR and not self.client.is_shutting_down:
                     exc = self._ws.exception()
                     LOGGER.error("[NODE-%s] Exception in WebSocket! %s.", self.node.name, exc)
                     break
@@ -274,8 +274,9 @@ class WebSocket:
                     return
             await self._websocket_closed()
         except Exception:
-            LOGGER.exception("[NODE-%s] Exception in WebSocket!", self.node.name)
-            await self._websocket_closed()
+            if not self.client.is_shutting_down:
+                LOGGER.exception("[NODE-%s] Exception in WebSocket!", self.node.name)
+                await self._websocket_closed()
 
     async def _websocket_closed(self, code: int = None, reason: str = None):
         """
@@ -378,7 +379,7 @@ class WebSocket:
             The data sent to Lavalink.
         """
         if self.connected:
-            LOGGER.debug("[NODE-%s] Sending payload %s", self.node.name, data)
+            LOGGER.trace("[NODE-%s] Sending payload %s", self.node.name, data)
             await self._ws.send_json(data)
         else:
             LOGGER.debug("[NODE-%s] Send called before WebSocket ready!", self.node.name)

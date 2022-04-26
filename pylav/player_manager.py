@@ -71,8 +71,7 @@ class PlayerManager:
 
         if player.node and player.node.available:
             await player.node.send(op="destroy", guildId=player.guild_id)
-            player.disconnect(requester=requester)
-
+        await player.disconnect(requester=requester)
         LOGGER.debug("[NODE-%s] Successfully destroyed player %s", player.node.name, guild_id)
 
     def players(self) -> Iterator[Player]:
@@ -196,7 +195,7 @@ class PlayerManager:
         return player
 
     async def save_all_players(self) -> None:
-        LOGGER.info("Saving player states...")
+        LOGGER.debug("Saving player states...")
         await self.client.player_config_manager.save_players([p.to_dict() for p in self.players.values()])
 
     async def restore_player_states(self) -> None:
@@ -213,3 +212,8 @@ class PlayerManager:
             self_deaf = player_state.self_deaf
             discord_player = await self.create(channel=channel, requester=requester, self_deaf=self_deaf)
             await discord_player.restore(player_state, requester)
+
+    async def shutdown(self) -> None:
+        LOGGER.info("Shutting down all players...")
+        for guild_id, player in self:
+            await self.destroy(guild_id=guild_id, requester=self.client.bot.user)

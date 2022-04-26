@@ -93,7 +93,7 @@ class Player(VoiceProtocol):
         self.history: TrackHistoryQueue[Track] = TrackHistoryQueue(maxsize=100)
         self.current: Track | None = None
         self._post_init_completed = False
-        self._autoplay_enabled = False
+        self._autoplay_enabled = True
         self._queue_length = 0
         self._autoplay_playlist: PlaylistModel = None  # type: ignore
         self._restored = False
@@ -521,19 +521,16 @@ class Player(VoiceProtocol):
                 if self.autoplay_enabled:
                     available_tracks = self._autoplay_playlist.tracks
                     if available_tracks:
-                        track = None
-                        for b64 in random.sample(available_tracks, 5):
-                            # Attempts to play a track that does not exist in the history
-                            if b64 not in self.history.raw_b64s:
-                                track = Track(
-                                    node=self.node,
-                                    data=b64,
-                                    query=await Query.from_base64(b64),
-                                    skip_segments=skip_segments,
-                                    requester=self.client.user.id,
-                                )
-                                break
-                        if track is None:
+                        tracks_not_in_history = list(set(available_tracks) - set(self.history.raw_b64s))
+                        if tracks_not_in_history:
+                            track = Track(
+                                node=self.node,
+                                data=(b64 := random.choice(tracks_not_in_history)),
+                                query=await Query.from_base64(b64),
+                                skip_segments=skip_segments,
+                                requester=self.client.user.id,
+                            )
+                        else:
                             track = Track(
                                 node=self.node,
                                 data=(b64 := random.choice(available_tracks)),
@@ -614,7 +611,9 @@ class Player(VoiceProtocol):
         options["startTime"] = self.position
         options["noReplace"] = False
         await self.node.send(op="play", guildId=self.guild_id, track=self.current.track, **options)
-        await self.node.dispatch_event(TrackResumedEvent(player=self, requester=requester or self.client.user.id))
+        await self.node.dispatch_event(
+            TrackResumedEvent(player=self, track=self.current, requester=requester or self.client.user.id)
+        )
 
     async def stop(self, requester: discord.Member) -> None:
         """Stops the player."""
@@ -1373,7 +1372,6 @@ class Player(VoiceProtocol):
         """
         Returns a dict representation of the player.
         """
-
         return {
             "id": int(self.guild.id),
             "channel_id": self.channel.id,
@@ -1470,8 +1468,12 @@ class Player(VoiceProtocol):
             else []
         )
         self.queue.raw_queue = collections.deque(queue)
+        self.queue.raw_b64s = list(t.track for t in queue if t.track)
         self.history.raw_queue = collections.deque(history)
-        self.history.raw_b64s = [t.track for t in history]
+        self.history.raw_b64s = list(t.track for t in history)
+        self.current.timestamp = player.position
+        if self.current:
+            await self.queue.put([self.current], index=0)
         self._effect_enabled = player.effect_enabled
         effects = player.effects
         self._volume = Volume.from_dict(effects.pop("volume"))
@@ -1501,7 +1503,7 @@ class Player(VoiceProtocol):
                 channel_mix=self._channel_mix,
             )
         if player.playing:
-            await self.next(requester)  # type: ignore
+            await self.resume(requester)  # type: ignore
         self._restored = True
         await self.player_manager.client.player_config_manager.delete_player(guild_id=self.guild.id)
         await self.node.dispatch_event(PlayerRestoredEvent(self, requester))

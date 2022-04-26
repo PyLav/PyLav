@@ -580,6 +580,15 @@ class LocalNodeManager:
                     delay,
                 )
                 await asyncio.sleep(delay)
+            except ManagedLavalinkStartFailure:
+                LOGGER.warning("Lavalink Managed node failed to start, restarting")
+                await self._partial_shutdown()
+                for process in await self.get_lavalink_process(cwd=str(LAVALINK_DOWNLOAD_DIR)):
+                    with contextlib.suppress(psutil.Error):
+                        pid = process["pid"]
+                        p = psutil.Process(pid)
+                        p.terminate()
+                        p.kill()
             except NodeUnhealthy:
                 delay = backoff.delay()
                 await self._partial_shutdown()
