@@ -60,11 +60,13 @@ TWITCH_REGEX = re.compile(r"^https://(?:www\.|go\.)?twitch\.tv/([^/]+)$", re.IGN
 VIMEO_REGEX = re.compile(r"^https://vimeo.com/\d+(?:\?.*|)$", re.IGNORECASE)
 
 SOUND_CLOUD_REGEX = re.compile(
-    r"^(?:http://|https://|)soundcloud\.app\.goo\.gl/([a-zA-Z\d\\-_]+)/?(?:\?.*|)$|"
-    r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/([a-zA-Z\d\\-_]+)/([a-zA-Z\d\\-_]+)/?(?:\?.*|)$|"
-    r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/([a-zA-Z\d\\-_]+)/"
-    r"([a-zA-Z\d\\-_]+)/s-([a-zA-Z\d\\-_]+)(?:\?.*|)$|"
-    r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/([a-zA-Z\d\\-_]+)/likes/?(?:\?.*|)$",
+    "^(?:http://|https://|)soundcloud\\.app\\.goo\\.gl/([a-zA-Z0-9-_]+)/?(?:\\?.*|)$|"
+    "^(?:http://|https://|)(?:www\\.|)(?:m\\.|)soundcloud\\.com/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/?(?:\\?.*|)$|"
+    "^(?:http://|https://|)(?:www\\.|)(?:m\\.|)soundcloud\\.com/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/s-([a-zA-Z0-9-_]+)(?:\\?.*|)$|"
+    "^(?:http://|https://|)(?:www\\.|)(?:m\\.|)soundcloud\\.com/([a-zA-Z0-9-_]+)/likes/?(?:\\?.*|)$|"
+    # This last line was manually added and does not exist in  in lavaplayer...
+    #  https://github.com/Walkyst/lavaplayer-fork/blob/original/main/src/main/java/com/sedmelluq/discord/lavaplayer/source/soundcloud/SoundCloudAudioSourceManager.java#L48
+    "^(?:http://|https://|)(?:www\\.|)(?:m\\.|)soundcloud\\.com/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)(?:\\?.*|)$|",
     re.IGNORECASE,
 )
 
@@ -157,7 +159,7 @@ class Query:
         self._search = search
         self.start_time = start_time
         self.index = index
-        self._type = query_type
+        self._type = query_type or "single"
         self._recursive = recursive
         from pylav.localfiles import LocalFile
 
