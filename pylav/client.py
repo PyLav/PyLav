@@ -24,13 +24,7 @@ from red_commons.logging import getLogger
 from pylav._config import __VERSION__, CONFIG_DIR
 from pylav.dispatcher import DispatchManager
 from pylav.events import Event
-from pylav.exceptions import (
-    AnotherClientAlreadyRegistered,
-    CogAlreadyRegistered,
-    CogHasBeenRegistered,
-    NoNodeAvailable,
-    NoNodeWithRequestFunctionalityAvailable,
-)
+from pylav.exceptions import AnotherClientAlreadyRegistered, NoNodeAvailable, NoNodeWithRequestFunctionalityAvailable
 from pylav.m3u8_parser import M3U8Parser
 from pylav.managed_node import LocalNodeManager
 from pylav.node import Node
@@ -47,7 +41,7 @@ from pylav.sql.clients.query_manager import QueryCacheManager
 from pylav.sql.clients.updater import UpdateSchemaManager
 from pylav.tracks import Track
 from pylav.types import BotT, CogT, ContextT
-from pylav.utils import PyLavContext, _get_context, _process_commands, add_property
+from pylav.utils import PyLavContext, _get_context, _process_commands, _run_once, _Singleton, add_property
 
 LOGGER = getLogger("red.PyLink.Client")
 
@@ -57,7 +51,7 @@ _OLD_PROCESS_COMMAND_METHOD: Callable = None  # type: ignore
 _OLD_GET_CONTEXT: Callable = None  # type: ignore
 
 
-class Client:
+class Client(metaclass=_Singleton):
     """
     Represents a Lavalink client used to manage nodes and connections.
 
@@ -86,6 +80,9 @@ class Client:
     _event_hooks = defaultdict(list)
     _local_node_manager: LocalNodeManager
 
+    _asyncio_lock = asyncio.Lock()
+    _initiated = False
+
     def __init__(
         self,
         bot: BotT,
@@ -95,18 +92,8 @@ class Client:
         config_folder: aiopath.AsyncPath | pathlib.Path = CONFIG_DIR,
     ):
         global _COGS_REGISTERED, _OLD_PROCESS_COMMAND_METHOD, _OLD_GET_CONTEXT
-        if (istance := getattr(bot, "lavalink", None)) and not isinstance(istance, Client):
-            raise AnotherClientAlreadyRegistered(
-                f"Another client instance has already been registered to bot.lavalink with type: {type(istance)}"
-            )
-        if getattr(bot, "_pylav_client", None):
-            if cog.__cog_name__ in _COGS_REGISTERED:
-                raise CogAlreadyRegistered(f"{cog.__cog_name__} has already been registered!")
-            elif cog.__cog_name__ not in _COGS_REGISTERED and _COGS_REGISTERED and getattr(self.bot, "pylav", None):
-                _COGS_REGISTERED.add(cog.__cog_name__)
-                raise CogHasBeenRegistered(f"Pylav is already loaded - {cog.__cog_name__} has been registered!")
         setattr(bot, "_pylav_client", self)
-        add_property(bot, "lavalink", lambda self_: self_._pylav_client)
+        add_property(bot, "lavalink", lambda b: b._pylav_client)
         if _OLD_PROCESS_COMMAND_METHOD is None:
             _OLD_PROCESS_COMMAND_METHOD = bot.process_commands
         if _OLD_GET_CONTEXT is None:
@@ -131,16 +118,24 @@ class Client:
         self._m3u8parser = M3U8Parser(self)
         self._connect_back = connect_back
         self._warned_about_no_search_nodes = False
-        self._ready = False
         self._spotify_client_id = None
         self._spotify_client_secret = None
         self._spotify_auth = None
         self._shutting_down = False
 
+    async def register(self, cog: CogT) -> None:
+        global _COGS_REGISTERED
+        LOGGER.debug("Registering cog %s", cog.__cog_name__)
+        if (isntance := getattr(self.bot, "lavalink", None)) and not isinstance(isntance, Client):
+            raise AnotherClientAlreadyRegistered(
+                f"Another client instance has already been registered to bot.lavalink with type: {type(isntance)}"
+            )
+        _COGS_REGISTERED.add(cog.__cog_name__)
+
     @property
     def initialized(self) -> bool:
         """Returns whether the client has been initialized."""
-        return self._ready
+        return self._initiated
 
     @property
     def player_config_manager(self) -> PlayerConfigManager:
@@ -157,6 +152,7 @@ class Client:
         """Returns whether the client is shutting down."""
         return self._shutting_down
 
+    @_run_once
     async def initialize(
         self,
         client_id: str | None = None,
@@ -164,61 +160,62 @@ class Client:
         localtrack_folder: str | None = None,
         disabled_sources: list[str] = None,
     ) -> None:
-        if self._ready:
-            return
-        await self.bot.wait_until_ready()
-        await self._lib_config_manager.initialize()
-        await self._update_schema_manager.run_updates()
+        if not self._initiated:
+            async with self._asyncio_lock:
+                if not self._initiated:
+                    self._initiated = True
+                    await self.bot.wait_until_ready()
+                    await self._lib_config_manager.initialize()
+                    await self._update_schema_manager.run_updates()
 
-        config_data = await self._lib_config_manager.get_config(
-            config_folder=self._config_folder,
-            java_path="java",
-            enable_managed_node=True,
-            auto_update_managed_nodes=True,
-            localtrack_folder=localtrack_folder or self._config_folder,
-            disabled_sources=disabled_sources or [],
-        )
-        auto_update_managed_nodes = config_data.auto_update_managed_nodes
-        enable_managed_node = config_data.enable_managed_node
-        self._config_folder = aiopath.AsyncPath(config_data.config_folder)
-        localtrack_folder = localtrack_folder or config_data.localtrack_folder
-        data = await self._node_config_manager.get_bundled_node_config()
-        if not all([client_id, client_secret]):
-            spotify_data = data.yaml["plugins"]["topissourcemanagers"]["spotify"]
-            client_id = spotify_data["clientId"]
-            client_secret = spotify_data["clientSecret"]
-        elif all([client_id, client_secret]):
-            if (
-                data.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientId"] != client_id
-                or data.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"] != client_secret
-            ):
-                data.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientId"] = client_id
-                data.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"] = client_secret
-            await data.save()
-        self._spotify_client_id = client_id
-        self._spotify_client_secret = client_secret
-        self._spotify_auth = ClientCredentialsFlow(
-            client_id=self._spotify_client_id, client_secret=self._spotify_client_secret
-        )
-        from pylav.localfiles import LocalFile
+                    config_data = await self._lib_config_manager.get_config(
+                        config_folder=self._config_folder,
+                        java_path="java",
+                        enable_managed_node=True,
+                        auto_update_managed_nodes=True,
+                        localtrack_folder=localtrack_folder or self._config_folder,
+                        disabled_sources=disabled_sources or [],
+                    )
+                    auto_update_managed_nodes = config_data.auto_update_managed_nodes
+                    enable_managed_node = config_data.enable_managed_node
+                    self._config_folder = aiopath.AsyncPath(config_data.config_folder)
+                    localtrack_folder = localtrack_folder or config_data.localtrack_folder
+                    data = await self._node_config_manager.get_bundled_node_config()
+                    if not all([client_id, client_secret]):
+                        spotify_data = data.yaml["plugins"]["topissourcemanagers"]["spotify"]
+                        client_id = spotify_data["clientId"]
+                        client_secret = spotify_data["clientSecret"]
+                    elif all([client_id, client_secret]):
+                        if (
+                            data.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientId"] != client_id
+                            or data.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"] != client_secret
+                        ):
+                            data.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientId"] = client_id
+                            data.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"] = client_secret
+                        await data.save()
+                    self._spotify_client_id = client_id
+                    self._spotify_client_secret = client_secret
+                    self._spotify_auth = ClientCredentialsFlow(
+                        client_id=self._spotify_client_id, client_secret=self._spotify_client_secret
+                    )
+                    from pylav.localfiles import LocalFile
 
-        if not localtrack_folder:
-            localtrack_folder = self._config_folder / "music"
-        else:
-            localtrack_folder = aiopath.AsyncPath(localtrack_folder)
-        await LocalFile.add_root_folder(path=localtrack_folder, create=True)
-        self._user_id = str(self._bot.user.id)
-        self._ready = True
-        self._local_node_manager = LocalNodeManager(self, auto_update=auto_update_managed_nodes)
-        if enable_managed_node:
-            await self._local_node_manager.start(java_path=config_data.java_path)
-        try:
-            await self.playlist_db_manager.update_bundled_playlists()
-            await self.node_manager.connect_to_all_nodes()
-            await self.player_manager.restore_player_states()
-        except Exception as exc:
-            LOGGER.critical("Failed start up", exc_info=exc)
-            raise
+                    if not localtrack_folder:
+                        localtrack_folder = self._config_folder / "music"
+                    else:
+                        localtrack_folder = aiopath.AsyncPath(localtrack_folder)
+                    await LocalFile.add_root_folder(path=localtrack_folder, create=True)
+                    self._user_id = str(self._bot.user.id)
+                    self._local_node_manager = LocalNodeManager(self, auto_update=auto_update_managed_nodes)
+                    if enable_managed_node:
+                        await self._local_node_manager.start(java_path=config_data.java_path)
+                    try:
+                        await self.playlist_db_manager.update_bundled_playlists()
+                        await self.node_manager.connect_to_all_nodes()
+                        await self.player_manager.restore_player_states()
+                    except Exception as exc:
+                        LOGGER.critical("Failed start up", exc_info=exc)
+                        raise
 
     async def update_spotify_tokens(self, client_id: str, client_secret: str) -> None:
         self._spotify_client_id = client_id
@@ -552,9 +549,9 @@ class Client:
             except Exception as e:
                 LOGGER.critical("Failed to shutdown the client", exc_info=e)
             if _OLD_PROCESS_COMMAND_METHOD is not None:
-                self.bot.process_commands = MethodType(_OLD_PROCESS_COMMAND_METHOD, self.bot)
+                self.bot.process_commands = _OLD_PROCESS_COMMAND_METHOD
             if _OLD_GET_CONTEXT is not None:
-                self.bot.get_context = MethodType(_OLD_GET_CONTEXT, self.bot)
+                self.bot.get_context = _OLD_GET_CONTEXT
             del self.bot._pylav_client  # noqa
             LOGGER.info("All cogs have been unregistered, Pylink client has been shutdown.")
 

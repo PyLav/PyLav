@@ -4,7 +4,9 @@ import asyncio
 import collections
 import contextlib
 import datetime
+import functools
 import random
+import threading
 import time
 import warnings
 from asyncio import QueueFull, events, locks
@@ -37,7 +39,7 @@ from discord.ext.commands import Parameter
 from discord.ext.commands.view import StringView
 from discord.types.embed import EmbedType
 from discord.utils import MISSING as D_MISSING  # noqa
-from discord.utils import maybe_coroutine  # noqa
+from discord.utils import maybe_coroutine
 
 from pylav.types import BotT, CogT, ContextT
 
@@ -75,6 +77,46 @@ T = TypeVar("T")
 
 LOGGER = getLogger("red.PyLink.utils")
 _RED_LOGGER = getLogger("red")
+
+_LOCK = threading.Lock()
+
+
+def _run_once(f):
+    def wrapper(*args, **kwargs):
+        if not wrapper.has_run:
+            wrapper.has_run = True
+            return f(*args, **kwargs)
+
+    wrapper.has_run = False
+    return wrapper
+
+
+def _synchronized(lock):
+    """Synchronization decorator"""
+
+    def wrapper(f):
+        @functools.wraps(f)
+        def inner_wrapper(*args, **kw):
+            with lock:
+                return f(*args, **kw)
+
+        return inner_wrapper
+
+    return wrapper
+
+
+class _Singleton(type):
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._locked_call(*args, **kwargs)
+        return cls._instances[cls]
+
+    @_synchronized(_LOCK)
+    def _locked_call(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super().__call__(*args, **kwargs)
 
 
 class MissingSentinel(str):
