@@ -103,20 +103,20 @@ class PlaylistModel:
         return self.author == requester.id
 
     async def get_scope_name(self, bot: BotT, mention: bool = True, guild: discord.Guild = None) -> str:
-        if guild_ := bot.get_guild(self.scope):
+        if bot.user.id == self.scope:
+            scope_name = f"(Global) {bot.user.mention}" if mention else f"(Global) {bot.user}"
+        elif guild_ := bot.get_guild(self.scope):
             if guild_:
                 guild = guild_
             scope_name = f"(Server) {guild.name}"
+        elif guild and (channel := guild.get_channel_or_thread(self.scope)):
+            scope_name = f"(Channel) {channel.mention}" if mention else f"(Channel) {channel.name}"
         elif (
             (guild := guild_ or guild)
             and (guild and (author := guild.get_member(self.scope)))
             or (author := bot.get_user(self.author))
         ):
             scope_name = f"(User) {author.mention}" if mention else f"(User) {author}"
-        elif guild and (channel := guild.get_channel_or_thread(self.scope)):
-            scope_name = f"(Channel) {channel.mention}" if mention else f"(Channel) {channel.name}"
-        elif bot.user.id == self.scope:
-            scope_name = f"(Global) {bot.user.mention}" if mention else f"(Global) {bot.user}"
         else:
             scope_name = f"(Invalid) {self.scope}"
         return scope_name
