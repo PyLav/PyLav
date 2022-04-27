@@ -715,3 +715,115 @@ class PlayerModel:
             self.self_deaf = output.self_deaf
             self.extras = output.extras
         return self
+
+    async def update_volume(self) -> PlayerModel:
+        player = (
+            await PlayerRow.select(PlayerRow.volume)
+            .output(load_json=True)
+            .where((PlayerRow.id == self.id) & (PlayerRow.bot == bot_id))
+        ).first()
+        if player:
+            self.volume = player["volume"]
+
+    async def update_auto_play_playlist_id(self) -> PlayerModel:
+        player = (
+            await PlayerRow.select(PlayerRow.auto_play_playlist_id)
+            .output(load_json=True)
+            .where((PlayerRow.id == self.id) & (PlayerRow.bot == bot_id))
+        ).first()
+        if player:
+            self.auto_play_playlist_id = player["auto_play_playlist_id"]
+        return self
+
+    async def update_text_channel_id(self) -> PlayerModel:
+        player = (
+            await PlayerRow.select(PlayerRow.text_channel_id)
+            .output(load_json=True)
+            .where((PlayerRow.id == self.id) & (PlayerRow.bot == bot_id))
+        ).first()
+        if player:
+            self.text_channel_id = player["text_channel_id"]
+        return self
+
+    async def update_notify_channel_id(self) -> PlayerModel:
+        player = (
+            await PlayerRow.select(PlayerRow.notify_channel_id)
+            .output(load_json=True)
+            .where((PlayerRow.id == self.id) & (PlayerRow.bot == bot_id))
+        ).first()
+        if player:
+            self.notify_channel_id = player["notify_channel_id"]
+        return self
+
+    async def update_forced_channel_id(self) -> PlayerModel:
+        player = (
+            await PlayerRow.select(PlayerRow.forced_channel_id)
+            .output(load_json=True)
+            .where((PlayerRow.id == self.id) & (PlayerRow.bot == bot_id))
+        ).first()
+        if player:
+            self.forced_channel_id = player["forced_channel_id"]
+        return self
+
+    async def update_repeat_current(self) -> PlayerModel:
+        player = (
+            await PlayerRow.select(PlayerRow.repeat_current)
+            .output(load_json=True)
+            .where((PlayerRow.id == self.id) & (PlayerRow.bot == bot_id))
+        ).first()
+        if player:
+            self.repeat_current = player["repeat_current"]
+        return self
+
+    async def update_repeat_queue(self) -> PlayerModel:
+        player = (
+            await PlayerRow.select(PlayerRow.repeat_queue)
+            .output(load_json=True)
+            .where((PlayerRow.id == self.id) & (PlayerRow.bot == bot_id))
+        ).first()
+        if player:
+            self.repeat_queue = player["repeat_queue"]
+        return self
+
+    async def update_shuffle(self) -> PlayerModel:
+        player = (
+            await PlayerRow.select(PlayerRow.shuffle)
+            .output(load_json=True)
+            .where((PlayerRow.id == self.id) & (PlayerRow.bot == bot_id))
+        ).first()
+        if player:
+            self.shuffle = player["shuffle"]
+        return self
+
+    async def update_auto_play(self) -> PlayerModel:
+        player = (
+            await PlayerRow.select(PlayerRow.auto_play)
+            .output(load_json=True)
+            .where((PlayerRow.id == self.id) & (PlayerRow.bot == bot_id))
+        ).first()
+        if player:
+            self.auto_play = player["auto_play"]
+        return self
+
+    async def update_self_deaf(self) -> PlayerModel:
+        player = (
+            await PlayerRow.select(PlayerRow.self_deaf)
+            .output(load_json=True)
+            .where((PlayerRow.id == self.id) & (PlayerRow.bot == bot_id))
+        ).first()
+        if player:
+            self.self_deaf = player["self_deaf"]
+        return self
+
+    async def update_extras(self) -> PlayerModel:
+        player = (
+            await PlayerRow.select(PlayerRow.extras)
+            .output(load_json=True)
+            .where((PlayerRow.id == self.id) & (PlayerRow.bot == bot_id))
+        ).first()
+        if player:
+            if isinstance(self.extras, str):
+                self.extras = ujson.loads(player["extras"])
+            else:
+                self.extras = player["extras"]
+        return self
