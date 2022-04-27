@@ -759,6 +759,8 @@ class Player(VoiceProtocol):
         self._last_update = time.time() * 1000
         self._last_position = state.get("position", 0)
         self.position_timestamp = state.get("time", 0)
+        if self.current:
+            self.current.timestamp = self._last_position
 
         event = PlayerUpdateEvent(self, self._last_position, self.position_timestamp)
         await self.node.dispatch_event(event)
@@ -1485,7 +1487,7 @@ class Player(VoiceProtocol):
         self.history.raw_queue = collections.deque(history)
         self.history.raw_b64s = list(t.track for t in history)
         if self.current:
-            self.current.timestamp = player.position
+            self.current.timestamp = self.current.timestamp or player.position
             await self.queue.put([self.current], index=0)
         self._effect_enabled = player.effect_enabled
         effects = player.effects
