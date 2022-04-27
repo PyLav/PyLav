@@ -609,8 +609,8 @@ class Player(VoiceProtocol):
         self._last_update = 0
         self._last_position = 0
         if self.node.supports_sponsorblock:
-            options["skipSegments"] = self.current.skip_segments
-        options["startTime"] = self.position
+            options["skipSegments"] = self.current.skip_segments if self.current else []
+        options["startTime"] = self.current.timestamp if self.current else self.position
         options["noReplace"] = False
         await self.node.send(op="play", guildId=self.guild_id, track=self.current.track, **options)
         await self.node.dispatch_event(
@@ -1491,7 +1491,7 @@ class Player(VoiceProtocol):
         self.history.raw_queue = collections.deque(history)
         self.history.raw_b64s = list(t.track for t in history)
         if self.current:
-            self.current.timestamp = self.current.timestamp or player.position
+            self.current.timestamp = int(player.position)
             await self.queue.put([self.current], index=0)
         self._effect_enabled = player.effect_enabled
         effects = player.effects

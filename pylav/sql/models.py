@@ -319,7 +319,8 @@ class LibConfigModel:
                     localtrack_folder=localtrack_folder,
                     enable_managed_node=enable_managed_node,
                     auto_update_managed_nodes=auto_update_managed_nodes,
-                    extras={"disabled_sources": disabled_sources or []},
+                    disabled_sources=disabled_sources or [],
+                    extras={},
                 ),
             )
         )
@@ -338,12 +339,15 @@ class NodeModel:
     managed: bool
     extras: dict
     yaml: dict
+    disabled_sources: field(default_factory=list)
 
     def __post_init__(self):
         if isinstance(self.extras, str):
             self.extras = ujson.loads(self.extras)
         if isinstance(self.yaml, str):
             self.yaml = ujson.loads(self.yaml)
+        if isinstance(self.disabled_sources, str):
+            self.disabled_sources = ujson.loads(self.disabled_sources)
 
     @classmethod
     async def from_id(cls, id: int) -> NodeModel:
@@ -362,6 +366,7 @@ class NodeModel:
             "managed": self.managed,
             "extras": self.extras,
             "yaml": self.yaml,
+            "disabled_sources": self.disabled_sources,
         }
 
     def get_connection_args(self) -> dict:
@@ -378,7 +383,7 @@ class NodeModel:
             "search_only": self.search_only,
             "resume_timeout": self.resume_timeout,
             "resume_key": self.resume_key,
-            "disabled_sources": list(self.extras.get("disabled_sources", [])),
+            "disabled_sources": self.disabled_sources,
             "managed": self.managed,
         }
 
@@ -388,14 +393,14 @@ class NodeModel:
         if unsupported:
             raise ValueError(f"Unsupported sources: {unsupported}\nSupported sources: {SUPPORTED_SOURCES}")
         intersection = source & SUPPORTED_SOURCES
-        intersection |= set(self.extras.get("disabled_sources", []))
-        self.extras["disabled_sources"] = list(intersection)
+        intersection |= set(self.disabled_sources)
+        self.disabled_sources = list(intersection)
         await self.save()
 
     async def add_source_to_exclusion_list(self, source: str):
         source = source.lower().strip()
-        if source in SUPPORTED_SOURCES and source not in self.extras["disabled_sources"]:
-            self.extras["disabled_sources"].append(source)
+        if source in SUPPORTED_SOURCES and source not in self.disabled_sources:
+            self.disabled_sources.append(source)
             await self.save()
         raise ValueError(f"Source {source} is not supported")
 
@@ -416,6 +421,7 @@ class NodeModel:
             NodeRow.managed: self.managed,
             NodeRow.extras: self.extras,
             NodeRow.yaml: self.yaml,
+            NodeRow.disabled_sources: self.disabled_sources,
         }
         node = await NodeRow.objects().output(load_json=True).get_or_create(NodeRow.id == self.id, defaults=values)
         if not node._was_created:
@@ -432,6 +438,7 @@ class NodeModel:
             NodeRow.managed: self.managed,
             NodeRow.extras: self.extras,
             NodeRow.yaml: self.yaml,
+            NodeRow.disabled_sources: self.disabled_sources,
         }
         output = await NodeRow.objects().output(load_json=True).get_or_create(NodeRow.id == self.id, defaults=values)
         if not output._was_created:
@@ -444,6 +451,7 @@ class NodeModel:
             self.yaml = output.yaml
             self.resume_key = output.resume_key
             self.resume_timeout = output.resume_timeout
+            self.disabled_sources = output.disabled_sources
 
 
 @dataclass(eq=True)

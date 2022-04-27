@@ -1,13 +1,16 @@
 from __future__ import annotations
 
+import contextlib
 import pathlib
 import re
 from typing import TYPE_CHECKING, AsyncIterator, Literal
 
+import aiohttp
 import aiopath
 from red_commons.logging import getLogger
 
 from pylav.m3u8_parser._init__ import load as load_m3u8
+from pylav.m3u8_parser.parser import is_url
 from pylav.track_encoding import decode_track
 from pylav.types import QueryT
 
@@ -71,6 +74,10 @@ SOUND_CLOUD_REGEX = re.compile(
     re.IGNORECASE,
 )
 M3U_REGEX = re.compile(r"^.*\.m3u8?$", re.IGNORECASE)
+PLS_REGEX = re.compile(r"^.*\.pls$", re.IGNORECASE)
+PLS_TRACK_REGEX = re.compile(r"^File\d+=(?P<query>.+)$", re.IGNORECASE)
+XSPF_REGEX = re.compile(r"^.*\.xspf$", re.IGNORECASE)
+PYLAV_REGEX = re.compile(r"^.*\.pylav$", re.IGNORECASE)
 
 YOUTUBE_REGEX = re.compile(r"(?:http://|https://|)(?:www\.|)(?P<music>music\.)?youtu(be\.com|\.be)", re.IGNORECASE)
 SPEAK_REGEX = re.compile(r"^(?P<source>speak):\s*?(?P<query>.*)$", re.IGNORECASE)
@@ -85,6 +92,8 @@ SOUNDCLOUD_TIMESTAMP = re.compile(r"#t=(\d+):(\d+)s?")
 TWITCH_TIMESTAMP = re.compile(r"\?t=(\d+)h(\d+)m(\d+)s")
 
 LOCAL_TRACK_NESTED = re.compile(r"^(?P<recursive>all|nested|recursive|tree):\s*?(?P<query>.*)$", re.IGNORECASE)
+LOCAL_TRACK_URI_REGEX = re.compile(r"^file://(?P<file>.*)$", re.IGNORECASE)
+MAX_RECURSION_DEPTH = 5  # Maximum depth of recursive searches for custom playlists (pls, m3u, xspf, pylav)
 
 
 def process_youtube(cls: QueryT, query: str, music: bool):
@@ -275,6 +284,26 @@ class Query:
         return self.source == "M3U"
 
     @property
+    def is_pls(self) -> bool:
+        return self.source == "PLS"
+
+    @property
+    def is_xspf(self) -> bool:
+        return self.source == "XSPF"
+
+    @property
+    def is_pylav(self) -> bool:
+        return self.source == "PyLav"
+
+    @property
+    def is_custom_playlist(self) -> bool:
+        return any([self.is_pylav, self.is_m3u, self.is_pls, self.is_xspf])
+
+    @property
+    def invalid(self) -> bool:
+        return self._query == "invalid" and self.source == "invalid"
+
+    @property
     def query_identifier(self) -> str:
         if self.is_search:
             if self.is_youtube_music:
@@ -299,9 +328,7 @@ class Query:
 
     @classmethod
     def __process_urls(cls, query: str) -> Query | None:
-        if __ := M3U_REGEX.match(query):
-            return cls(query, "M3U", query_type="album")
-        elif match := YOUTUBE_REGEX.match(query):
+        if match := YOUTUBE_REGEX.match(query):
             music = match.group("music")
             return process_youtube(cls, query, music=bool(music))
         elif SPOTIFY_REGEX.match(query):
@@ -370,7 +397,9 @@ class Query:
         query = f"{query}"
         if match := M3U_REGEX.match(query):
             return cls(query, "M3U", query_type="album")
-        if match := LOCAL_TRACK_NESTED.match(query):
+        if match := LOCAL_TRACK_URI_REGEX.match(query):
+            query = match.group("file").strip()
+        elif match := LOCAL_TRACK_NESTED.match(query):
             recursively = bool(match.group("recursive"))
             query = match.group("query").strip()
         path: aiopath.AsyncPath = aiopath.AsyncPath(query)
@@ -394,16 +423,33 @@ class Query:
         return cls(local_path, "Local Files", query_type=query_type, recursive=recursively)  # type: ignore
 
     @classmethod
-    async def from_string(cls, query: Query | str | pathlib.Path | aiopath.AsyncPath) -> Query:
+    async def __process_playlist(cls, query: str) -> Query:
+        if __ := M3U_REGEX.match(query):
+            return cls(query, "M3U", query_type="album")
+        elif __ := PLS_REGEX.match(query):
+            return cls(query, "PLS", query_type="album")
+        # elif __ := XSPF_REGEX.match(query):
+        #     return cls(query, "XSPF", query_type="album")
+        elif __ := PYLAV_REGEX.match(query):
+            return cls(query, "PyLav", query_type="album")
+
+    @classmethod
+    async def from_string(
+        cls, query: Query | str | pathlib.Path | aiopath.AsyncPath, dont_search: bool = False
+    ) -> Query:
         if isinstance(query, Query):
             return query
         if isinstance(query, pathlib.Path):
             try:
                 return await cls.__process_local(query)
             except Exception:
+                if dont_search:
+                    return cls("invalid", "invalid")
                 return cls(aiopath.AsyncPath(query), "YouTube Music", search=True)
         elif query is None:
             raise ValueError("Query cannot be None")
+        if output := await cls.__process_playlist(query):
+            return output
         if output := cls.__process_urls(query):
             return output
         elif output := cls.__process_search(query):
@@ -412,6 +458,8 @@ class Query:
             try:
                 return await cls.__process_local(query)
             except Exception:
+                if dont_search:
+                    return cls("invalid", "invalid")
                 return cls(query, "YouTube Music", search=True)  # Fallback to YouTube Music
 
     @classmethod
@@ -456,18 +504,23 @@ class Query:
 
         return self._query
 
-    async def get_all_tracks_in_folder(self) -> AsyncIterator[Query]:
-        if self.is_m3u:
-            if self.is_album:
-                m3u8 = await load_m3u8(None, uri=self._query)
-                for track in m3u8.files:
-                    q = await Query.from_string(track)
-                    if q.is_m3u:
-                        async for track_ in q.get_all_tracks_in_folder():
-                            yield track_
-                    else:
-                        yield q
-        elif self.is_local:
+    async def _yield_pylav_file_tracks(self) -> AsyncIterator[Query]:
+        if self.is_pylav and self.is_album:
+            file = aiopath.AsyncPath(self._query)
+            if await file.exists():
+                async with file.open("r") as f:
+                    contents = await f.read()
+                    for line in contents.splitlines():
+                        yield await Query.from_string(line.strip(), dont_search=True)
+            elif is_url(self._query):
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(self._query) as resp:
+                        contents = await resp.text()
+                        for line in contents.splitlines():
+                            yield await Query.from_string(line.strip(), dont_search=True)
+
+    async def _yield_local_tracks(self) -> AsyncIterator[Query]:
+        if self.is_local:
             if self.is_album:
                 if self._recursive:
                     op = self._query.files_in_tree
@@ -478,17 +531,69 @@ class Query:
             elif self.is_single:
                 yield self
 
-    async def get_all_tracks_in_tree(self) -> AsyncIterator[Query]:
-        if self.is_m3u:
-            if self.is_album:
-                async for entry in self.get_all_tracks_in_folder():
-                    yield entry
-        elif self.is_local:
-            if self.is_album:
-                async for entry in self._query.files_in_folder():
-                    yield entry
-            elif self.is_single:
-                yield self
+    async def _yield_m3u_tracks(self) -> AsyncIterator[Query]:
+        if self.is_m3u and self.is_album:
+            m3u8 = await load_m3u8(None, uri=self._query)
+            for track in m3u8.files:
+                yield await Query.from_string(track, dont_search=True)
+
+    async def _yield_pls_tracks(self) -> AsyncIterator[Query]:
+        if self.is_pls and self.is_album:
+            file = aiopath.AsyncPath(self._query)
+            if await file.exists():
+                async with file.open("r") as f:
+                    contents = await f.read()
+                    for line in contents.splitlines():
+                        if match := PLS_TRACK_REGEX.match(line):
+                            yield await Query.from_string(match.group("query").strip(), dont_search=True)
+            elif is_url(self._query):
+                async with session.get(self._query) as resp:
+                    contents = await resp.text()
+                    for line in contents.splitlines():
+                        with contextlib.suppress(Exception):
+                            if match := PLS_TRACK_REGEX.match(line):
+                                yield await Query.from_string(match.group("query").strip(), dont_search=True)
+
+    async def _yield_xspf_tracks(self) -> AsyncIterator[Query]:
+        if self.is_xspf:
+            raise StopAsyncIteration
+
+    async def _yield_tracks_recursively(self, query: Query, recursion_depth: int = 0) -> AsyncIterator[Query]:
+        if query.invalid or recursion_depth > MAX_RECURSION_DEPTH:
+            return
+        recursion_depth += 1
+        if query.is_m3u:
+            async for m3u in query._yield_m3u_tracks():
+                with contextlib.suppress(Exception):
+                    async for q in self._yield_tracks_recursively(m3u, recursion_depth):
+                        yield q
+        elif query.is_pylav:
+            async for pylav in query._yield_pylav_file_tracks():
+                with contextlib.suppress(Exception):
+                    async for q in self._yield_tracks_recursively(pylav, recursion_depth):
+                        yield q
+        elif query.is_pls:
+            async for pls in query._yield_pls_tracks():
+                with contextlib.suppress(Exception):
+                    async for q in self._yield_tracks_recursively(pls, recursion_depth):
+                        yield q
+        elif query.is_xspf:  # TODO: Implement
+            async for xspf in query._yield_xspf_tracks():
+                with contextlib.suppress(Exception):
+                    async for q in self._yield_tracks_recursively(xspf, recursion_depth):
+                        yield q
+        elif query.is_local and query.is_album:
+            async for local in query._yield_local_tracks():
+                yield local
+        else:
+            yield query
+
+    async def get_all_tracks_in_folder(self) -> AsyncIterator[Query]:
+        if self.is_custom_playlist or self.is_local:
+            async for track in self._yield_tracks_recursively(self, 0):
+                if track.invalid:
+                    continue
+                yield track
 
     async def folder(self) -> str | None:
         if self.is_local:

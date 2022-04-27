@@ -753,7 +753,7 @@ class Client:
                         )
                 except NoNodeWithRequestFunctionalityAvailable:
                     queries_failed.append(query)
-            elif (query.is_playlist or query.is_album) and not (query.is_local or query.is_m3u):
+            elif (query.is_playlist or query.is_album) and not (query.is_local or query.is_custom_playlist):
                 try:
                     tracks: dict = await self.get_tracks(query=query, bypass_cache=bypass_cache)
                     track_list = tracks.get("tracks", [])
@@ -777,7 +777,7 @@ class Client:
                                 await player.play(track, track.query, requester)
                 except NoNodeWithRequestFunctionalityAvailable:
                     queries_failed.append(query)
-            elif (query.is_local or query.is_m3u) and query.is_album:
+            elif (query.is_local or query.is_custom_playlist) and query.is_album:
                 try:
                     yielded = False
                     async for local_track in query.get_all_tracks_in_folder():

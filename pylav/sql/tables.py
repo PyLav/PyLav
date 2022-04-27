@@ -119,6 +119,7 @@ class NodeRow(Table, db=DB, tablename="node"):
     reconnect_attempts = Integer(null=False)
     search_only = Boolean(null=False, default=False)
     managed = Boolean(null=False, default=False)
+    disabled_sources = JSONB(null=False, default=[])
     extras = JSONB(null=True)
     yaml = JSONB(null=True)
 
