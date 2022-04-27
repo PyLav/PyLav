@@ -708,9 +708,11 @@ class Player(VoiceProtocol):
         """
 
         volume = max(min(vol, 1000), 0)
-        await self.node.dispatch_event(PlayerVolumeChangedEvent(self, requester, self.volume, volume))
+        self._config.volume = volume
         self._volume = Volume(volume)
         await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
+        await self._config.save()
+        await self.node.dispatch_event(PlayerVolumeChangedEvent(self, requester, self.volume, volume))
 
     async def seek(self, position: float, requester: discord.Member, with_filter: bool = False) -> None:
         """
@@ -1380,6 +1382,8 @@ class Player(VoiceProtocol):
             self._autoplay_playlist = await self.player_manager.client.playlist_db_manager.get_playlist_by_id(playlist)
         else:
             self._autoplay_playlist = playlist
+        self.config.auto_play_playlist_id = self._autoplay_playlist.id
+        await self.config.save()
 
     async def set_autoplay(self, autoplay: bool) -> None:
         self._config.auto_play = autoplay
