@@ -536,24 +536,27 @@ class Client(metaclass=_Singleton):
             The cog to unregister.
         """
         global _COGS_REGISTERED
-        _COGS_REGISTERED.discard(cog.__cog_name__)
-        LOGGER.info("%s has been unregistered", cog.__cog_name__)
-        if not _COGS_REGISTERED:
-            self._shutting_down = True
-            try:
-                await self.player_manager.save_all_players()
-                await self.player_manager.shutdown()
-                await self._node_manager.close()
-                await self._local_node_manager.shutdown()
-                await self._session.close()
-            except Exception as e:
-                LOGGER.critical("Failed to shutdown the client", exc_info=e)
-            if _OLD_PROCESS_COMMAND_METHOD is not None:
-                self.bot.process_commands = _OLD_PROCESS_COMMAND_METHOD
-            if _OLD_GET_CONTEXT is not None:
-                self.bot.get_context = _OLD_GET_CONTEXT
-            del self.bot._pylav_client  # noqa
-            LOGGER.info("All cogs have been unregistered, Pylink client has been shutdown.")
+        if not self._shutting_down:
+            async with self._asyncio_lock:
+                if not self._shutting_down:
+                    _COGS_REGISTERED.discard(cog.__cog_name__)
+                    LOGGER.info("%s has been unregistered", cog.__cog_name__)
+                    if not _COGS_REGISTERED:
+                        self._shutting_down = True
+                        try:
+                            await self.player_manager.save_all_players()
+                            await self.player_manager.shutdown()
+                            await self._node_manager.close()
+                            await self._local_node_manager.shutdown()
+                            await self._session.close()
+                        except Exception as e:
+                            LOGGER.critical("Failed to shutdown the client", exc_info=e)
+                        if _OLD_PROCESS_COMMAND_METHOD is not None:
+                            self.bot.process_commands = _OLD_PROCESS_COMMAND_METHOD
+                        if _OLD_GET_CONTEXT is not None:
+                            self.bot.get_context = _OLD_GET_CONTEXT
+                        del self.bot._pylav_client  # noqa
+                        LOGGER.info("All cogs have been unregistered, Pylink client has been shutdown.")
 
     def get_player(self, guild: discord.Guild | int | None) -> Player | None:
         """|coro|
