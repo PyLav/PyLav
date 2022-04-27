@@ -83,7 +83,7 @@ class NodeManager:
         resume_key: str = None,
         resume_timeout: int = 60,
         name: str = None,
-        reconnect_attempts: int = 3,
+        reconnect_attempts: int = -1,
         ssl: bool = False,
         search_only: bool = False,
         skip_db: bool = False,
@@ -179,7 +179,7 @@ class NodeManager:
         await node.close()
         self.nodes.remove(node)
         LOGGER.info("[NODE-%s] Successfully removed Node", node.name)
-        LOGGER.info("[NODE-%s] Successfully removed Node -- %r", node.name, node)
+        LOGGER.verbose("[NODE-%s] Successfully removed Node -- %r", node.name, node)
         if node.identifier and not node.managed:
             await self.client.node_db_manager.delete(node.identifier)
             LOGGER.debug("[NODE-%s] Successfully deleted Node from database", node.name)

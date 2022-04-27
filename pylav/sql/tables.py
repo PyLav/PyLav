@@ -66,9 +66,9 @@ class EqualizerRow(Table, db=DB, tablename="equalizer"):
     band_16000 = Float(null=False, default=0.0)
 
 
-class PlayerRow(Table, db=DB, tablename="player"):
+class PlayerStateRow(Table, db=DB, tablename="player_state"):
     id = BigInt(primary_key=True, index=True)
-    bot = BigInt(unique=True, index=True)
+    bot = BigInt(index=True, null=False)
     channel_id = BigInt(null=False)
     volume = Integer(null=False, default=100)
     position = Float(null=False, default=0.0)
@@ -89,6 +89,24 @@ class PlayerRow(Table, db=DB, tablename="player"):
     queue = JSONB(null=False, default=[])
     history = JSONB(null=False, default=[])
     effects = JSONB(null=False, default={})
+    extras = JSONB(null=False, default={})
+
+
+class PlayerRow(Table, db=DB, tablename="player"):
+    id = BigInt(primary_key=True, index=True)
+    bot = BigInt(index=True, null=False)
+    volume = Integer(null=False, default=100)
+    auto_play_playlist_id = BigInt(null=False, default=1)
+
+    text_channel_id = BigInt(null=True)
+    notify_channel_id = BigInt(null=True)
+    forced_channel_id = BigInt(null=True)
+
+    repeat_current = Boolean(null=False, default=False)
+    repeat_queue = Boolean(null=False, default=False)
+    shuffle = Boolean(null=False, default=False)
+    auto_play = Boolean(null=False, default=True)
+    self_deaf = Boolean(null=False, default=True)
     extras = JSONB(null=False, default={})
 
 

@@ -9,7 +9,7 @@ from red_commons.logging import getLogger
 
 from pylav._config import CONFIG_DIR
 from pylav.sql.models import BotVersion, LibConfigModel
-from pylav.sql.tables import BotVersionRow, LibConfigRow, NodeRow, PlayerRow, PlaylistRow, QueryRow
+from pylav.sql.tables import BotVersionRow, LibConfigRow, NodeRow, PlayerRow, PlayerStateRow, PlaylistRow, QueryRow
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -34,7 +34,15 @@ class LibConfigManager:
     @staticmethod
     async def create_tables() -> None:
         await asyncio.to_thread(
-            create_tables, PlaylistRow, LibConfigRow, PlayerRow, NodeRow, QueryRow, BotVersionRow, if_not_exists=True
+            create_tables,
+            PlaylistRow,
+            LibConfigRow,
+            PlayerStateRow,
+            NodeRow,
+            QueryRow,
+            BotVersionRow,
+            PlayerRow,
+            if_not_exists=True,
         )
 
     async def get_config(

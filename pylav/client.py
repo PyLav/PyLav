@@ -40,7 +40,8 @@ from pylav.player_manager import PlayerManager
 from pylav.query import Query
 from pylav.sql.clients.lib import LibConfigManager
 from pylav.sql.clients.nodes_db_manager import NodeConfigManager
-from pylav.sql.clients.player_db_manager import PlayerConfigManager
+from pylav.sql.clients.player_config_manager import PlayerConfigManager
+from pylav.sql.clients.player_state_db_manager import PlayerStateDBManager
 from pylav.sql.clients.playlist_manager import PlaylistConfigManager
 from pylav.sql.clients.query_manager import QueryCacheManager
 from pylav.sql.clients.updater import UpdateSchemaManager
@@ -125,6 +126,7 @@ class Client:
         self._query_cache_manager = QueryCacheManager(self)
         self._update_schema_manager = UpdateSchemaManager(self)
         self._dispatch_manager = DispatchManager(self)
+        self._player_state_db_manager = PlayerStateDBManager(self)
         self._player_config_manager = PlayerConfigManager(self)
         self._m3u8parser = M3U8Parser(self)
         self._connect_back = connect_back
@@ -139,6 +141,11 @@ class Client:
     def initialized(self) -> bool:
         """Returns whether the client has been initialized."""
         return self._ready
+
+    @property
+    def player_config_manager(self) -> PlayerConfigManager:
+        """Returns the player config manager."""
+        return self._player_config_manager
 
     @property
     def spotify_client(self) -> SpotifyClient:
@@ -159,6 +166,7 @@ class Client:
     ) -> None:
         if self._ready:
             return
+        await self.bot.wait_until_ready()
         await self._lib_config_manager.initialize()
         await self._update_schema_manager.run_updates()
 
@@ -194,20 +202,18 @@ class Client:
         )
         from pylav.localfiles import LocalFile
 
-        # FIXME: This is a hack, remove it when we have a proper way to set the localtrack folder
-        localtrack_folder = "/data/media/Music"
         if not localtrack_folder:
             localtrack_folder = self._config_folder / "music"
         else:
             localtrack_folder = aiopath.AsyncPath(localtrack_folder)
         await LocalFile.add_root_folder(path=localtrack_folder, create=True)
-        # await self._bot.wait_until_ready()
         self._user_id = str(self._bot.user.id)
         self._ready = True
         self._local_node_manager = LocalNodeManager(self, auto_update=auto_update_managed_nodes)
         if enable_managed_node:
             await self._local_node_manager.start(java_path=config_data.java_path)
         try:
+            await self.playlist_db_manager.update_bundled_playlists()
             await self.node_manager.connect_to_all_nodes()
             await self.player_manager.restore_player_states()
         except Exception as exc:
@@ -231,8 +237,8 @@ class Client:
         return self._node_config_manager
 
     @property
-    def player_config_manager(self) -> PlayerConfigManager:
-        return self._player_config_manager
+    def player_state_db_manager(self) -> PlayerStateDBManager:
+        return self._player_state_db_manager
 
     @property
     def playlist_db_manager(self) -> PlaylistConfigManager:
@@ -295,7 +301,7 @@ class Client:
         resume_key: str = None,
         resume_timeout: int = 60,
         name: str = None,
-        reconnect_attempts: int = 3,
+        reconnect_attempts: int = -1,
         ssl: bool = False,
         search_only: bool = False,
         managed: bool = False,
@@ -333,6 +339,12 @@ class Client:
             A unique identifier for the node. Defaults to `None`.
         skip_db: :class:`bool`
             Whether the node should skip the database. Defaults to `False`.
+        yaml: Optional[:class:`dict`]
+            A dictionary of extra information to be stored in the node. Defaults to `None`.
+        extras: Optional[:class:`dict`]
+            A dictionary of extra information to be stored in the node. Defaults to `None`.
+        managed: :class:`bool`
+            Whether the node is managed by the client. Defaults to `False`.
         """
         return await self.node_manager.add_node(
             host=host,
@@ -434,7 +446,7 @@ class Client:
         return await node.decode_tracks(tracks)
 
     @staticmethod
-    async def routeplanner_status(self, node: Node) -> dict | None:
+    async def routeplanner_status(node: Node) -> dict | None:
         """|coro|
         Gets the route-planner status of the target node.
 
@@ -451,7 +463,7 @@ class Client:
         return await node.routeplanner_status()
 
     @staticmethod
-    async def routeplanner_free_address(self, node: Node, address: str) -> bool:
+    async def routeplanner_free_address(node: Node, address: str) -> bool:
         """|coro|
         Gets the route-planner status of the target node.
 
@@ -470,7 +482,7 @@ class Client:
         return await node.routeplanner_free_address(address)
 
     @staticmethod
-    async def routeplanner_free_all_failing(self, node: Node) -> bool:
+    async def routeplanner_free_all_failing(node: Node) -> bool:
         """|coro|
         Gets the route-planner status of the target node.
 

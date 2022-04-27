@@ -56,7 +56,7 @@ class NodeConfigManager:
                 (NodeRow.id == self._client.bot.user.id) & (NodeRow.managed == True),  # noqa: E712
                 defaults={
                     NodeRow.ssl: False,
-                    NodeRow.reconnect_attempts: 3,
+                    NodeRow.reconnect_attempts: -1,
                     NodeRow.search_only: False,
                     NodeRow.yaml: NODE_DEFAULT_SETTINGS,
                     NodeRow.name: "PyLavManagedNode",
@@ -78,7 +78,7 @@ class NodeConfigManager:
         resume_key: str = None,
         resume_timeout: int = 60,
         name: str = None,
-        reconnect_attempts: int = 3,
+        reconnect_attempts: int = -1,
         ssl: bool = False,
         search_only: bool = False,
         managed: bool = False,
@@ -118,7 +118,7 @@ class NodeConfigManager:
         resume_key: str = None,
         resume_timeout: int = 60,
         name: str = None,
-        reconnect_attempts: int = 3,
+        reconnect_attempts: int = -1,
         ssl: bool = False,
         search_only: bool = False,
         managed: bool = False,

@@ -170,7 +170,7 @@ class Node:
         resume_timeout: int,
         port: int | None = None,
         name: str | None = None,
-        reconnect_attempts: int = 3,
+        reconnect_attempts: int = -1,
         ssl: bool = False,
         search_only: bool = False,
         unique_identifier: int = None,

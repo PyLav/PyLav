@@ -19,11 +19,14 @@ from red_commons.logging import getLogger
 from pylav._config import CONFIG_DIR
 from pylav.constants import SUPPORTED_SOURCES
 from pylav.exceptions import InvalidPlaylist
-from pylav.sql.tables import BotVersionRow, LibConfigRow, NodeRow, PlayerRow, PlaylistRow, QueryRow
+from pylav.sql.tables import BotVersionRow, LibConfigRow, NodeRow, PlayerRow, PlayerStateRow, PlaylistRow, QueryRow
 from pylav.types import BotT
 from pylav.utils import PyLavContext
 
 BRACKETS: re.Pattern = re.compile(r"[\[\]]")
+BUNDLED_PLAYLIST_IDS = {
+    1,
+}
 
 
 LOGGER = getLogger("red.PyLink.DBModels")
@@ -74,7 +77,7 @@ class PlaylistModel:
         await PlaylistRow.delete().where(PlaylistRow.id == self.id)
 
     async def can_manage(self, bot: BotT, requester: discord.abc.User, guild: discord.Guild = None) -> bool:
-        if self.scope < 1000:
+        if self.scope in BUNDLED_PLAYLIST_IDS:
             return False
         if requester.id in ((ids := getattr(bot, "owner_ids")) or ()) or requester.id == bot.owner_id:  # noqa
             return True
@@ -82,7 +85,7 @@ class PlaylistModel:
             return False
         channel = None
         if (guild_ := bot.get_guild(self.scope)) or (
-            (guild := guild_ or guild) and (channel := guild.get_channel(self.scope))
+            (guild := guild_ or guild) and (channel := guild.get_channel_or_thread(self.scope))
         ):
             if guild_:
                 guild = guild_
@@ -110,7 +113,7 @@ class PlaylistModel:
             or (author := bot.get_user(self.author))
         ):
             scope_name = f"(User) {author.mention}" if mention else f"(User) {author}"
-        elif guild and (channel := guild.get_channel(self.scope)):
+        elif guild and (channel := guild.get_channel_or_thread(self.scope)):
             scope_name = f"(Channel) {channel.mention}" if mention else f"(Channel) {channel.name}"
         elif bot.user.id == self.scope:
             scope_name = f"(Global) {bot.user.mention}" if mention else f"(Global) {bot.user}"
@@ -530,7 +533,7 @@ class BotVersion:
 
 
 @dataclass(eq=True)
-class PlayerModel:
+class PlayerStateModel:
     id: int
     bot: int
     channel_id: int
@@ -568,29 +571,92 @@ class PlayerModel:
             self.extras = ujson.loads(self.extras)
 
     async def delete(self) -> None:
+        await PlayerStateRow.delete().where((PlayerStateRow.id == self.id) & (PlayerStateRow.bot == self.bot))
+
+    async def upsert(self) -> None:
+
+        values = {
+            PlayerStateRow.channel_id: self.channel_id,
+            PlayerStateRow.volume: self.volume,
+            PlayerStateRow.position: self.position,
+            PlayerStateRow.auto_play_playlist_id: self.auto_play_playlist_id,
+            PlayerStateRow.text_channel_id: self.text_channel_id,
+            PlayerStateRow.notify_channel_id: self.notify_channel_id,
+            PlayerStateRow.paused: self.paused,
+            PlayerStateRow.repeat_current: self.repeat_current,
+            PlayerStateRow.repeat_queue: self.repeat_queue,
+            PlayerStateRow.shuffle: self.shuffle,
+            PlayerStateRow.auto_play: self.auto_play,
+            PlayerStateRow.playing: self.playing,
+            PlayerStateRow.effect_enabled: self.effect_enabled,
+            PlayerStateRow.self_deaf: self.self_deaf,
+            PlayerStateRow.current: self.current,
+            PlayerStateRow.queue: self.queue,
+            PlayerStateRow.history: self.history,
+            PlayerStateRow.effects: self.effects,
+            PlayerStateRow.extras: self.extras,
+        }
+        player = (
+            await PlayerStateRow.objects()
+            .output(load_json=True)
+            .get_or_create((PlayerStateRow.id == self.id) & (PlayerStateRow.bot == self.bot), defaults=values)
+        )
+        if not player._was_created:
+            await PlayerStateRow.update(values).where((PlayerStateRow.id == self.id) & (PlayerStateRow.bot == self.bot))
+
+    async def save(self) -> None:
+        await self.upsert()
+
+    @classmethod
+    async def get(cls, bot_id: int, guild_id: int) -> PlayerStateModel | None:
+        player = (
+            await PlayerStateRow.select()
+            .output(load_json=True)
+            .where((PlayerStateRow.channel_id == guild_id) & (PlayerStateRow.bot == bot_id))
+        ).first()
+
+        if player:
+            return cls(**player.to_dict())
+
+        return None
+
+
+@dataclass(eq=True)
+class PlayerModel:
+    id: int
+    bot: int
+    forced_channel_id: int | None = None
+    volume: int = 100
+    auto_play_playlist_id: int = 1
+    text_channel_id: int | None = None
+    notify_channel_id: int | None = None
+    repeat_current: bool = False
+    repeat_queue: bool = False
+    shuffle: bool = False
+    auto_play: bool = True
+    self_deaf: bool = False
+    extras: dict = field(default_factory=dict)
+
+    def __post_init__(self):
+        if isinstance(self.extras, str):
+            self.extras = ujson.loads(self.extras)
+
+    async def delete(self) -> None:
         await PlayerRow.delete().where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
 
     async def upsert(self) -> None:
 
         values = {
-            PlayerRow.channel_id: self.channel_id,
+            PlayerRow.forced_channel_id: self.forced_channel_id,
             PlayerRow.volume: self.volume,
-            PlayerRow.position: self.position,
             PlayerRow.auto_play_playlist_id: self.auto_play_playlist_id,
             PlayerRow.text_channel_id: self.text_channel_id,
             PlayerRow.notify_channel_id: self.notify_channel_id,
-            PlayerRow.paused: self.paused,
             PlayerRow.repeat_current: self.repeat_current,
             PlayerRow.repeat_queue: self.repeat_queue,
             PlayerRow.shuffle: self.shuffle,
             PlayerRow.auto_play: self.auto_play,
-            PlayerRow.playing: self.playing,
-            PlayerRow.effect_enabled: self.effect_enabled,
             PlayerRow.self_deaf: self.self_deaf,
-            PlayerRow.current: self.current,
-            PlayerRow.queue: self.queue,
-            PlayerRow.history: self.history,
-            PlayerRow.effects: self.effects,
             PlayerRow.extras: self.extras,
         }
         player = (
@@ -601,52 +667,51 @@ class PlayerModel:
         if not player._was_created:
             await PlayerRow.update(values).where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
 
-    def upsert_sync(self) -> None:
-        values = {
-            PlayerRow.channel_id: self.channel_id,
-            PlayerRow.volume: self.volume,
-            PlayerRow.position: self.position,
-            PlayerRow.auto_play_playlist_id: self.auto_play_playlist_id,
-            PlayerRow.text_channel_id: self.text_channel_id,
-            PlayerRow.notify_channel_id: self.notify_channel_id,
-            PlayerRow.paused: self.paused,
-            PlayerRow.repeat_current: self.repeat_current,
-            PlayerRow.repeat_queue: self.repeat_queue,
-            PlayerRow.shuffle: self.shuffle,
-            PlayerRow.auto_play: self.auto_play,
-            PlayerRow.playing: self.playing,
-            PlayerRow.effect_enabled: self.effect_enabled,
-            PlayerRow.self_deaf: self.self_deaf,
-            PlayerRow.current: self.current,
-            PlayerRow.queue: self.queue,
-            PlayerRow.history: self.history,
-            PlayerRow.effects: self.effects,
-            PlayerRow.extras: self.extras,
-        }
-        player = (
-            PlayerRow.objects()
-            .output(load_json=True)
-            .get_or_create((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot), defaults=values)
-            .run_sync()
-        )
-        if not player._was_created:
-            PlayerRow.update(values).where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot)).run_sync()
-
     async def save(self) -> None:
         await self.upsert()
-
-    def save_sync(self) -> None:
-        self.upsert_sync()
 
     @classmethod
     async def get(cls, bot_id: int, guild_id: int) -> PlayerModel | None:
         player = (
             await PlayerRow.select()
             .output(load_json=True)
-            .where((PlayerRow.channel_id == guild_id) & (PlayerRow.bot == bot_id))
+            .where((PlayerRow.forced_channel_id == guild_id) & (PlayerRow.bot == bot_id))
         ).first()
 
         if player:
             return cls(**player.to_dict())
 
         return None
+
+    async def get_or_create(self) -> PlayerModel:
+        values = {
+            PlayerRow.forced_channel_id: self.forced_channel_id,
+            PlayerRow.volume: self.volume,
+            PlayerRow.auto_play_playlist_id: self.auto_play_playlist_id,
+            PlayerRow.text_channel_id: self.text_channel_id,
+            PlayerRow.notify_channel_id: self.notify_channel_id,
+            PlayerRow.repeat_current: self.repeat_current,
+            PlayerRow.repeat_queue: self.repeat_queue,
+            PlayerRow.shuffle: self.shuffle,
+            PlayerRow.auto_play: self.auto_play,
+            PlayerRow.self_deaf: self.self_deaf,
+            PlayerRow.extras: self.extras,
+        }
+        output = (
+            await PlayerRow.objects()
+            .output(load_json=True)
+            .get_or_create((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot), defaults=values)
+        )
+        if not output._was_created:
+            self.forced_channel_id = output.forced_channel_id
+            self.volume = output.volume
+            self.auto_play_playlist_id = output.auto_play_playlist_id
+            self.text_channel_id = output.text_channel_id
+            self.notify_channel_id = output.notify_channel_id
+            self.repeat_current = output.repeat_current
+            self.repeat_queue = output.repeat_queue
+            self.shuffle = output.shuffle
+            self.auto_play = output.auto_play
+            self.self_deaf = output.self_deaf
+            self.extras = output.extras
+        return self

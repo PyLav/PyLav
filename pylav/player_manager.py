@@ -8,7 +8,7 @@ from red_commons.logging import getLogger
 
 from pylav.events import PlayerConnectedEvent
 from pylav.player import Player
-from pylav.sql.models import PlayerModel
+from pylav.sql.models import PlayerStateModel
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -169,17 +169,18 @@ class PlayerManager:
             The address of the Discord voice server. Defaults to `None`.
         node: :class:`Node`
             The node to put the player on. Defaults to `None` and a node with the lowest penalty is chosen.
-        self_deaf: :class:`bool`
-            Whether the player should deafen themselves. Defaults to `False`.
         requester: :class:`discord.Member`
             The member requesting the player. Defaults to `None`.
+        restoring: :class:`bool`
+            Whether the player is being restored from a database. Defaults to `False`.
+            If set to True the player config will not be applied as it expects to be restored from the saved state.
         Returns
         -------
         :class:`Player`
         """
         if p := self.players.get(channel.guild.id):
             if channel.id != p.channel_id:
-                await p.move_to(requester, channel, self_deaf=self_deaf)
+                await p.move_to(requester, channel)
             return p
 
         region = self.client.node_manager.get_region(endpoint)
@@ -187,17 +188,22 @@ class PlayerManager:
         best_node = node or self.client.node_manager.find_best_node(region)
         if not best_node:
             raise NoNodeAvailable("No available nodes!")
-        player: Player = await channel.connect(cls=Player)  # type: ignore
-        await player.post_init(node=best_node, player_manager=self)
-        await player.move_to(requester, channel=player.channel, self_deaf=self_deaf)
-        await best_node.dispatch_event(PlayerConnectedEvent(player, requester))
+        player_config = await self.client.player_config_manager.get_config(channel.guild.id)
+        if player_config.forced_channel_id is not None:
+            act_channel = channel.guild.get_channel_or_thread(player_config.forced_channel_id)
+        else:
+            act_channel = channel
+        player: Player = await act_channel.connect(cls=Player, self_deaf=self_deaf or player_config.self_deaf)  # type: ignore
+        await player.post_init(node=best_node, player_manager=self, config=player_config)
+        await player.move_to(requester, channel=player.channel, self_deaf=self_deaf or player_config.self_deaf)
+        await best_node.dispatch_event(PlayerConnectedEvent(player, requester or self.client.bot.user))
         self.players[channel.guild.id] = player
         LOGGER.info("[NODE-%s] Successfully created player for %s", best_node.name, channel.guild.id)
         return player
 
     async def save_all_players(self) -> None:
         LOGGER.debug("Saving player states...")
-        await self.client.player_config_manager.save_players([p.to_dict() for p in self.players.values()])
+        await self.client.player_state_db_manager.save_players([p.to_dict() for p in self.players.values()])
 
     async def restore_player_states(self) -> None:
         LOGGER.info("Restoring player states...")
@@ -205,19 +211,19 @@ class PlayerManager:
             await asyncio.sleep(1)
         tasks = [
             asyncio.create_task(self._restore_player(p))
-            async for p in self.client.player_config_manager.get_all_players()
+            async for p in self.client.player_state_db_manager.get_all_players()
         ]
         await asyncio.gather(*tasks)
+        LOGGER.info("Restored %s player states", len(self.players))
 
-    async def _restore_player(self, player_state: PlayerModel) -> None:
+    async def _restore_player(self, player_state: PlayerStateModel) -> None:
         player = self.players.get(player_state.id)
         if player is not None:
             # Player was started before restore
             return
         channel = self.client.bot.get_channel(player_state.channel_id)
         requester = self.client.bot.user
-        self_deaf = player_state.self_deaf
-        discord_player = await self.create(channel=channel, requester=requester, self_deaf=self_deaf)
+        discord_player = await self.create(channel=channel, requester=requester)
         await discord_player.restore(player_state, requester)
 
     async def shutdown(self) -> None:

@@ -155,7 +155,7 @@ class WebSocket:
                 headers["Resume-Key"] = self._resume_key
             self._node._region = await get_closest_discord_region(self._host)
             is_finite_retry = self._max_reconnect_attempts != -1
-            max_attempts_str = "inf" if is_finite_retry else self._max_reconnect_attempts
+            max_attempts_str = "inf" if not is_finite_retry else self._max_reconnect_attempts
             attempt = 0
             backoff = ExponentialBackoffWithReset(base=3)
             while not self.connected and (not is_finite_retry or attempt < self._max_reconnect_attempts):
@@ -217,7 +217,6 @@ class WebSocket:
                 else:
                     await self.node.node_manager.node_connect(self.node)
                     #  asyncio.ensure_future(self._listen())
-
                     if (
                         not self._resuming_configured
                         and self._resume_key

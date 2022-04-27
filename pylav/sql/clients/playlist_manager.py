@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import time
 from typing import TYPE_CHECKING, AsyncIterator
 
 import discord
@@ -207,3 +208,33 @@ class PlaylistConfigManager:
                 if await playlist.can_manage(requester=requester, bot=bot):
                     returning_list.append(playlist)
         return returning_list
+
+    async def update_bundled_playlists(self):
+        curated_data = {
+            1: (
+                "Aikaterna's curated tracks",
+                "https://gist.githubusercontent.com/Drapersniper/cbe10d7053c844f8c69637bb4fd9c5c3/raw/playlist.txt",
+            ),
+            2: (
+                "Anime OPs/EDs",
+                "https://gist.githubusercontent.com/Drapersniper/2ad7c4cdd4519d9707f1a65d685fb95f/raw/anime_pl.txt",
+            ),
+        }
+        for id, (name, url) in curated_data.items():
+            async with self._client.session.get(
+                url, params={"timestamp": int(time.time())}, headers={"content-type": "application/json"}
+            ) as response:
+                try:
+                    data = await response.text()
+                except Exception as exc:
+                    LOGGER.error("Built-in playlist couldn't be parsed - %s, report this error.", name, exc_info=exc)
+                    data = None
+                if not data:
+                    continue
+                tracks = [t for t in map(str.strip, data.splitlines()) if t]
+                if tracks:
+                    await self.create_or_update_global_playlist(
+                        id=id, name=name, tracks=tracks, author=self._client.bot.user.id
+                    )
+                else:
+                    await self.delete_playlist(playlist_id=id)
