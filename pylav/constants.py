@@ -41,3 +41,5 @@ SUPPORTED_SOURCES = {
     "gcloud-tts",
     "sponsorblock",
 }
+
+BUNDLED_PLAYLIST_IDS = {1, 2}

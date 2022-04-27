@@ -17,17 +17,13 @@ from packaging.version import parse as parse_version
 from red_commons.logging import getLogger
 
 from pylav._config import CONFIG_DIR
-from pylav.constants import SUPPORTED_SOURCES
+from pylav.constants import BUNDLED_PLAYLIST_IDS, SUPPORTED_SOURCES
 from pylav.exceptions import InvalidPlaylist
 from pylav.sql.tables import BotVersionRow, LibConfigRow, NodeRow, PlayerRow, PlayerStateRow, PlaylistRow, QueryRow
 from pylav.types import BotT
 from pylav.utils import PyLavContext
 
 BRACKETS: re.Pattern = re.compile(r"[\[\]]")
-BUNDLED_PLAYLIST_IDS = {
-    1,
-}
-
 
 LOGGER = getLogger("red.PyLink.DBModels")
 

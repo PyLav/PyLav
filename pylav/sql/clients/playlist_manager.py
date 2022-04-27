@@ -209,7 +209,7 @@ class PlaylistConfigManager:
                     returning_list.append(playlist)
         return returning_list
 
-    async def update_bundled_playlists(self):
+    async def update_bundled_playlists(self, *ids: int) -> None:
         curated_data = {
             1: (
                 "Aikaterna's curated tracks",
@@ -220,7 +220,10 @@ class PlaylistConfigManager:
                 "https://gist.githubusercontent.com/Drapersniper/2ad7c4cdd4519d9707f1a65d685fb95f/raw/anime_pl.txt",
             ),
         }
-        for id, (name, url) in curated_data.items():
+        id_filtered = {id: curated_data[id] for id in ids}
+        if not id_filtered:
+            id_filtered = curated_data
+        for id, (name, url) in id_filtered.items():
             async with self._client.session.get(
                 url, params={"timestamp": int(time.time())}, headers={"content-type": "application/json"}
             ) as response:
