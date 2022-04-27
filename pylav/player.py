@@ -626,7 +626,8 @@ class Player(VoiceProtocol):
         previous_track = self.current
         previous_position = self.position
         await self.next(requester=requester)
-        await self.node.dispatch_event(TrackSkippedEvent(self, requester, previous_track, previous_position))
+        if previous_track:
+            await self.node.dispatch_event(TrackSkippedEvent(self, requester, previous_track, previous_position))
 
     async def set_repeat(
         self, op_type: Literal["current", "queue", "disable"], repeat: bool, requester: discord.Member
@@ -1471,8 +1472,8 @@ class Player(VoiceProtocol):
         self.queue.raw_b64s = list(t.track for t in queue if t.track)
         self.history.raw_queue = collections.deque(history)
         self.history.raw_b64s = list(t.track for t in history)
-        self.current.timestamp = player.position
         if self.current:
+            self.current.timestamp = player.position
             await self.queue.put([self.current], index=0)
         self._effect_enabled = player.effect_enabled
         effects = player.effects
