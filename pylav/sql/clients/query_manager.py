@@ -70,6 +70,8 @@ class QueryCacheManager:
 
     @staticmethod
     async def delete_old() -> None:
+        LOGGER.trace("Deleting old queries")
         await QueryRow.delete().where(
-            QueryRow.last_updated <= datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=30)
+            QueryRow.last_updated <= (datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=30))
         )
+        LOGGER.trace("Deleted old queries")

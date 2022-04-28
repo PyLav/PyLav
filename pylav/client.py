@@ -16,6 +16,7 @@ import aiohttp_client_cache
 import aiopath
 import discord
 import ujson
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from asyncspotify import Client as SpotifyClient
 from asyncspotify import ClientCredentialsFlow
 from discord.abc import Messageable
@@ -139,16 +140,17 @@ class Client(metaclass=_Singleton):
             self._spotify_client_secret = None
             self._spotify_auth = None
             self._shutting_down = False
+            self._scheduler = AsyncIOScheduler()
         except Exception:
             LOGGER.exception("Failed to initialize Lavalink")
             raise
 
     async def register(self, cog: CogT) -> None:
         global _COGS_REGISTERED
-        LOGGER.debug("Registering cog %s", cog.__cog_name__)
-        if (isntance := getattr(self.bot, "lavalink", None)) and not isinstance(isntance, Client):
+        LOGGER.info("Registering cog %s", cog.__cog_name__)
+        if (instance := getattr(self.bot, "lavalink", None)) and not isinstance(instance, Client):
             raise AnotherClientAlreadyRegistered(
-                f"Another client instance has already been registered to bot.lavalink with type: {type(isntance)}"
+                f"Another client instance has already been registered to bot.lavalink with type: {type(instance)}"
             )
         _COGS_REGISTERED.add(cog.__cog_name__)
 
@@ -156,6 +158,11 @@ class Client(metaclass=_Singleton):
     def initialized(self) -> bool:
         """Returns whether the client has been initialized."""
         return self._initiated
+
+    @property
+    def scheduler(self) -> AsyncIOScheduler:
+        """Returns the scheduler."""
+        return self._scheduler
 
     @property
     def radio_browser(self) -> RadioBrowser:
@@ -180,10 +187,6 @@ class Client(metaclass=_Singleton):
     @_run_once
     async def initialize(
         self,
-        client_id: str | None = None,
-        client_secret: str | None = None,
-        localtrack_folder: str | None = None,
-        disabled_sources: list[str] = None,
     ) -> None:
         try:
             if not self._initiated:
@@ -191,6 +194,13 @@ class Client(metaclass=_Singleton):
                     if not self._initiated:
                         self._initiated = True
                         await self.bot.wait_until_ready()
+                        if hasattr(self.bot, "get_shared_api_token"):
+                            spotify = await self.bot.get_shared_api_tokens("spotify")
+                            client_id = spotify.get("client_id")
+                            client_secret = spotify.get("client_secret")
+                        else:
+                            client_id = None
+                            client_secret = None
                         await self._lib_config_manager.initialize()
                         await self._update_schema_manager.run_updates()
                         await self._radio_manager.initialize()
@@ -200,13 +210,13 @@ class Client(metaclass=_Singleton):
                             java_path="java",
                             enable_managed_node=True,
                             auto_update_managed_nodes=True,
-                            localtrack_folder=localtrack_folder or self._config_folder,
-                            disabled_sources=disabled_sources or [],
+                            localtrack_folder=self._config_folder / "music",
+                            disabled_sources=[],
                         )
                         auto_update_managed_nodes = config_data.auto_update_managed_nodes
                         enable_managed_node = config_data.enable_managed_node
                         self._config_folder = aiopath.AsyncPath(config_data.config_folder)
-                        localtrack_folder = localtrack_folder or config_data.localtrack_folder
+                        localtrack_folder = aiopath.AsyncPath(config_data.localtrack_folder)
                         data = await self._node_config_manager.get_bundled_node_config()
                         if not all([client_id, client_secret]):
                             spotify_data = data.yaml["plugins"]["topissourcemanagers"]["spotify"]
@@ -228,10 +238,6 @@ class Client(metaclass=_Singleton):
                         )
                         from pylav.localfiles import LocalFile
 
-                        if not localtrack_folder:
-                            localtrack_folder = self._config_folder / "music"
-                        else:
-                            localtrack_folder = aiopath.AsyncPath(localtrack_folder)
                         await LocalFile.add_root_folder(path=localtrack_folder, create=True)
                         self._user_id = str(self._bot.user.id)
                         self._local_node_manager = LocalNodeManager(self, auto_update=auto_update_managed_nodes)
@@ -240,6 +246,13 @@ class Client(metaclass=_Singleton):
                         await self.playlist_db_manager.update_bundled_playlists()
                         await self.node_manager.connect_to_all_nodes()
                         await self.player_manager.restore_player_states()
+                        self._scheduler.add_job(
+                            self._query_cache_manager.delete_old,
+                            trigger="interval",
+                            seconds=600,
+                            max_instances=1,
+                        )
+                        self._scheduler.start()
         except Exception as exc:
             LOGGER.critical("Failed start up", exc_info=exc)
             raise exc
@@ -549,6 +562,7 @@ class Client(metaclass=_Singleton):
                             await self._local_node_manager.shutdown()
                             await self._session.close()
                             await self._cached_session.close()
+                            await self._scheduler.shutdown(wait=True)
                         except Exception as e:
                             LOGGER.critical("Failed to shutdown the client", exc_info=e)
                         if _OLD_PROCESS_COMMAND_METHOD is not None:
