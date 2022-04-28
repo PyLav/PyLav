@@ -448,19 +448,39 @@ class Query:
                 return cls(aiopath.AsyncPath(query), "YouTube Music", search=True)
         elif query is None:
             raise ValueError("Query cannot be None")
+        source = None
+        try:
+            data, _ = decode_track(query)
+            source = data["info"]["source"]
+            query = data["info"]["uri"]
+        except Exception:
+            pass
+
         if output := await cls.__process_playlist(query):
+            if source:
+                output._source = cls.__get_source_from_str(source)
             return output
         if output := cls.__process_urls(query):
+            if source:
+                output._source = cls.__get_source_from_str(source)
             return output
         elif output := cls.__process_search(query):
+            if source:
+                output._source = cls.__get_source_from_str(source)
             return output
         else:
             try:
-                return await cls.__process_local(query)
+                output = await cls.__process_local(query)
+                if source:
+                    output._source = cls.__get_source_from_str(source)
+                return output
             except Exception:
                 if dont_search:
                     return cls("invalid", "invalid")
-                return cls(query, "YouTube Music", search=True)  # Fallback to YouTube Music
+                output = cls(query, "YouTube Music", search=True)
+                if source:
+                    output._source = cls.__get_source_from_str(source)
+                return output  # Fallback to YouTube Music
 
     @classmethod
     def from_string_noawait(cls, query: Query | str) -> Query:
@@ -536,6 +556,8 @@ class Query:
             m3u8 = await load_m3u8(None, uri=self._query)
             for track in m3u8.files:
                 yield await Query.from_string(track, dont_search=True)
+            for playlist in m3u8.playlists:
+                yield await Query.from_string(playlist.uri, dont_search=True)
 
     async def _yield_pls_tracks(self) -> AsyncIterator[Query]:
         if self.is_pls and self.is_album:
@@ -547,12 +569,13 @@ class Query:
                         if match := PLS_TRACK_REGEX.match(line):
                             yield await Query.from_string(match.group("query").strip(), dont_search=True)
             elif is_url(self._query):
-                async with session.get(self._query) as resp:
-                    contents = await resp.text()
-                    for line in contents.splitlines():
-                        with contextlib.suppress(Exception):
-                            if match := PLS_TRACK_REGEX.match(line):
-                                yield await Query.from_string(match.group("query").strip(), dont_search=True)
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(self._query) as resp:
+                        contents = await resp.text()
+                        for line in contents.splitlines():
+                            with contextlib.suppress(Exception):
+                                if match := PLS_TRACK_REGEX.match(line):
+                                    yield await Query.from_string(match.group("query").strip(), dont_search=True)
 
     async def _yield_xspf_tracks(self) -> AsyncIterator[Query]:
         if self.is_xspf:
@@ -563,10 +586,14 @@ class Query:
             return
         recursion_depth += 1
         if query.is_m3u:
+            LOGGER.critical("Recursing into m3u playlist 999 %s", query.__dict__)
             async for m3u in query._yield_m3u_tracks():
-                with contextlib.suppress(Exception):
+                LOGGER.critical("Recursing into m3u playlist 2331 %s", m3u.__dict__)
+                try:
                     async for q in self._yield_tracks_recursively(m3u, recursion_depth):
                         yield q
+                except Exception:
+                    LOGGER.exception("Failed to recurse into m3u file111: %s", m3u)
         elif query.is_pylav:
             async for pylav in query._yield_pylav_file_tracks():
                 with contextlib.suppress(Exception):
@@ -576,11 +603,6 @@ class Query:
             async for pls in query._yield_pls_tracks():
                 with contextlib.suppress(Exception):
                     async for q in self._yield_tracks_recursively(pls, recursion_depth):
-                        yield q
-        elif query.is_xspf:  # TODO: Implement
-            async for xspf in query._yield_xspf_tracks():
-                with contextlib.suppress(Exception):
-                    async for q in self._yield_tracks_recursively(xspf, recursion_depth):
                         yield q
         elif query.is_local and query.is_album:
             async for local in query._yield_local_tracks():

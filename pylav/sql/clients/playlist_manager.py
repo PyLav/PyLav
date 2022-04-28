@@ -213,11 +213,11 @@ class PlaylistConfigManager:
         curated_data = {
             1: (
                 "Aikaterna's curated tracks",
-                "https://gist.githubusercontent.com/Drapersniper/cbe10d7053c844f8c69637bb4fd9c5c3/raw/playlist.txt",
+                "https://gist.githubusercontent.com/Drapersniper/cbe10d7053c844f8c69637bb4fd9c5c3/raw/playlist.pylav",
             ),
             2: (
                 "Anime OPs/EDs",
-                "https://gist.githubusercontent.com/Drapersniper/2ad7c4cdd4519d9707f1a65d685fb95f/raw/anime_pl.txt",
+                "https://gist.githubusercontent.com/Drapersniper/2ad7c4cdd4519d9707f1a65d685fb95f/raw/anime_pl.pylav",
             ),
         }
         id_filtered = {id: curated_data[id] for id in ids}

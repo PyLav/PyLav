@@ -223,7 +223,7 @@ class PlayerQueue(asyncio.Queue[T]):
     def raw_queue(self, value: collections.deque[T]):
         if not isinstance(value, collections.deque):
             raise TypeError("Queue value must be a collections.deque[AudioTrack]")
-        if self._maxsize and len(value) >= self._maxsize:
+        if self._maxsize and len(value) > self._maxsize:
             raise ValueError(f"Queue value cannot be longer than maxsize: {self._maxsize}")
         self._queue = value
 

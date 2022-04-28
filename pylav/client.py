@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import datetime
 import itertools
 import operator
@@ -8,7 +9,7 @@ import pathlib
 import random
 from collections import defaultdict
 from types import MethodType
-from typing import Callable, Iterator
+from typing import AsyncIterator, Callable, Iterator
 
 import aiohttp
 import aiohttp_client_cache
@@ -32,7 +33,7 @@ from pylav.node import Node
 from pylav.node_manager import NodeManager
 from pylav.player import Player
 from pylav.player_manager import PlayerManager
-from pylav.query import Query
+from pylav.query import MAX_RECURSION_DEPTH, Query
 from pylav.radio import RadioBrowser
 from pylav.sql.clients.lib import LibConfigManager
 from pylav.sql.clients.nodes_db_manager import NodeConfigManager
@@ -42,7 +43,7 @@ from pylav.sql.clients.playlist_manager import PlaylistConfigManager
 from pylav.sql.clients.query_manager import QueryCacheManager
 from pylav.sql.clients.updater import UpdateSchemaManager
 from pylav.tracks import Track
-from pylav.types import BotT, CogT, ContextT
+from pylav.types import BotT, CogT, ContextT, LavalinkResponseT
 from pylav.utils import PyLavContext, _get_context, _process_commands, _run_once, _Singleton, add_property
 
 LOGGER = getLogger("red.PyLink.Client")
@@ -390,38 +391,6 @@ class Client(metaclass=_Singleton):
             extras=extras or {},
         )
 
-    async def get_tracks(
-        self,
-        query: Query,
-        first: bool = False,
-        bypass_cache: bool = False,
-    ) -> dict:
-        """|coro|
-        Gets all tracks associated with the given query.
-
-        Parameters
-        ----------
-        query: :class:`Query`
-            The query to perform a search for
-        first: Optional[:class:`bool`]
-            Whether to only return the first track. Defaults to `False`.
-        bypass_cache: Optional[:class:`bool`]
-            Whether to bypass the cache. Defaults to `False`.
-
-        Returns
-        -------
-        :class:`dict`
-            A dict representing tracks.
-        """
-        if not self.node_manager.available_nodes:
-            raise NoNodeAvailable("No available nodes!")
-        node = self.node_manager.find_best_node(feature=query.requires_capability)
-        if node is None:
-            raise NoNodeWithRequestFunctionalityAvailable(
-                f"No node with {query.requires_capability} functionality available!", query.requires_capability
-            )
-        return await node.get_tracks(query, first=first, bypass_cache=bypass_cache)
-
     async def decode_track(self, track: str, feature: str = None) -> dict | None:
         """|coro|
         Decodes a base64-encoded track string into a dict.
@@ -717,6 +686,38 @@ class Client(metaclass=_Singleton):
             return None
         return random.choice(available_nodes)
 
+    async def _get_tracks(
+        self,
+        query: Query,
+        first: bool = False,
+        bypass_cache: bool = False,
+    ) -> dict:
+        """|coro|
+        Gets all tracks associated with the given query.
+
+        Parameters
+        ----------
+        query: :class:`Query`
+            The query to perform a search for
+        first: Optional[:class:`bool`]
+            Whether to only return the first track. Defaults to `False`.
+        bypass_cache: Optional[:class:`bool`]
+            Whether to bypass the cache. Defaults to `False`.
+
+        Returns
+        -------
+        :class:`dict`
+            A dict representing tracks.
+        """
+        if not self.node_manager.available_nodes:
+            raise NoNodeAvailable("No available nodes!")
+        node = self.node_manager.find_best_node(feature=query.requires_capability)
+        if node is None:
+            raise NoNodeWithRequestFunctionalityAvailable(
+                f"No node with {query.requires_capability} functionality available!", query.requires_capability
+            )
+        return await node.get_tracks(query, first=first, bypass_cache=bypass_cache)
+
     async def get_all_tracks_for_queries(
         self,
         *queries: Query,
@@ -768,7 +769,7 @@ class Client(metaclass=_Singleton):
                 await player.play(track, track.query, requester)
             if query.is_search or query.is_single:
                 try:
-                    track = await self.get_tracks(query=query, first=True, bypass_cache=bypass_cache)
+                    track = await self._get_tracks(query=query, first=True, bypass_cache=bypass_cache)
                     track_b64 = track.get("track")
                     if not track_b64:
                         queries_failed.append(query)
@@ -786,7 +787,7 @@ class Client(metaclass=_Singleton):
                     queries_failed.append(query)
             elif (query.is_playlist or query.is_album) and not (query.is_local or query.is_custom_playlist):
                 try:
-                    tracks: dict = await self.get_tracks(query=query, bypass_cache=bypass_cache)
+                    tracks: dict = await self._get_tracks(query=query, bypass_cache=bypass_cache)
                     track_list = tracks.get("tracks", [])
                     if not track_list:
                         queries_failed.append(query)
@@ -813,7 +814,7 @@ class Client(metaclass=_Singleton):
                     yielded = False
                     async for local_track in query.get_all_tracks_in_folder():
                         yielded = True
-                        track = await self.get_tracks(query=local_track, first=True, bypass_cache=True)
+                        track = await self._get_tracks(query=local_track, first=True, bypass_cache=True)
                         track_b64 = track.get("track")
                         if track_b64:
                             track_count += 1
@@ -837,3 +838,80 @@ class Client(metaclass=_Singleton):
                 queries_failed.append(query)
                 LOGGER.warning("Unhandled query: %s, %s", query.__dict__, query.query_identifier)
         return successful_tracks, track_count, queries_failed
+
+    @staticmethod
+    async def _yield_recursive_queries(query: Query, recursion_depth: int = 0) -> AsyncIterator[Query]:
+        """|coro|
+        Gets all queries associated with the given query.
+        Parameters
+        ----------
+        query: :class:`Query`
+            The query to perform a search for
+        """
+        if query.invalid or recursion_depth > MAX_RECURSION_DEPTH:
+            return
+        recursion_depth += 1
+        if query.is_m3u:
+            async for m3u in query._yield_m3u_tracks():
+                with contextlib.suppress(Exception):
+                    async for q in query._yield_tracks_recursively(m3u, recursion_depth):
+                        LOGGER.warning("Yielding m3u..2. tracks: %s", q.__dict__)
+                        yield q
+        elif query.is_pylav:
+            async for pylav in query._yield_pylav_file_tracks():
+                with contextlib.suppress(Exception):
+                    async for q in query._yield_tracks_recursively(pylav, recursion_depth):
+                        yield q
+        elif query.is_pls:
+            async for pls in query._yield_pls_tracks():
+                with contextlib.suppress(Exception):
+                    async for q in query._yield_tracks_recursively(pls, recursion_depth):
+                        yield q
+        elif query.is_local and query.is_album:
+            async for local in query._yield_local_tracks():
+                yield local
+        else:
+            yield query
+
+    async def get_tracks(
+        self,
+        *queries: Query,
+        bypass_cache: bool = False,
+    ) -> LavalinkResponseT:
+        """This method can be rather slow as it recursibly queries all queries and their associated entries.
+
+        Thus if you are processing user input  you may be interested in using
+        the :meth:`get_all_tracks_for_queries` where it can enqueue tracks as needed to the player.
+
+
+        Parameters
+        ----------
+        queries : `Query`
+            The list of queries to search for.
+        bypass_cache : `bool`, optional
+            Whether to bypass the cache and force a new search.
+            Local files will always be bypassed.
+        """
+        output_tracks = []
+
+        for query in queries:
+            async for response in self._yield_recursive_queries(query):
+                with contextlib.suppress(NoNodeWithRequestFunctionalityAvailable):
+                    node = self.node_manager.find_best_node(response.requires_capability)
+                    if node is None or response.is_custom_playlist:
+                        continue
+                    if response.is_playlist or response.is_album:
+                        _response = await node.get_tracks(response, bypass_cache=bypass_cache)
+                        output_tracks.extend(_response["tracks"])
+                    elif response.is_single:
+                        _response = await node.get_tracks(response, first=True, bypass_cache=bypass_cache)
+                        output_tracks.append(_response)
+                    else:
+                        LOGGER.critical("Unknown query type: %s", response)
+
+        output = {
+            "playlistInfo": {"name": "", "selectedTrack": -1},
+            "loadType": "SearchLoaded" if output_tracks else "LOAD_FAILED",
+            "tracks": output_tracks,
+        }
+        return output  # type: ignore
