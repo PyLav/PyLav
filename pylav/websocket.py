@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 from typing import TYPE_CHECKING, Any
 
 import aiohttp
@@ -52,9 +53,10 @@ LOGGER = getLogger("red.PyLink.WebSocket")
 
 
 def _done_callback(task: asyncio.Task) -> None:
-    exc = task.exception()
-    if exc is not None:
-        LOGGER.error("Error in connect task", exc_info=exc)
+    with contextlib.suppress(asyncio.CancelledError):
+        exc = task.exception()
+        if exc is not None:
+            LOGGER.error("Error in connect task", exc_info=exc)
 
 
 class WebSocket:

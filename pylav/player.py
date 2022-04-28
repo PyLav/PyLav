@@ -51,14 +51,17 @@ from pylav.types import BotT
 from pylav.utils import AsyncIter, PlayerQueue, SegmentCategory, TrackHistoryQueue, format_time
 
 if TYPE_CHECKING:
+    from pylav import Client
     from pylav.node import Node
     from pylav.player_manager import PlayerManager
+    from pylav.radio import RadioBrowser
 
 LOGGER = getLogger("red.PyLink.Player")
 
 
 class Player(VoiceProtocol):
     _config: PlayerModel
+    _lavalink: Client
 
     def __init__(
         self,
@@ -115,9 +118,10 @@ class Player(VoiceProtocol):
     def __str__(self):
         return f"Player(id={self.guild.id}, channel={self.channel.id})"
 
-    async def post_init(self, node: Node, player_manager: PlayerManager, config: PlayerModel) -> None:
+    async def post_init(self, node: Node, player_manager: PlayerManager, config: PlayerModel, pylav: Client) -> None:
         if self._post_init_completed:
             return
+        self._lavalink = pylav
         self.player_manager = player_manager
         self.node = node
         self._config = config
@@ -132,6 +136,14 @@ class Player(VoiceProtocol):
     @property
     def config(self) -> PlayerModel:
         return self._config
+
+    @property
+    def lavalink(self) -> Client:
+        return self._lavalink
+
+    @property
+    def radio(self) -> RadioBrowser:
+        return self.lavalink.radio_browser
 
     @property
     def text_channel(self) -> discord.TextChannel:

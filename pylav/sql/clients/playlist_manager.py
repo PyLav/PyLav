@@ -224,7 +224,7 @@ class PlaylistConfigManager:
         if not id_filtered:
             id_filtered = curated_data
         for id, (name, url) in id_filtered.items():
-            async with self._client.session.get(
+            async with self._client.cached_session.get(
                 url, params={"timestamp": int(time.time())}, headers={"content-type": "application/json"}
             ) as response:
                 try:

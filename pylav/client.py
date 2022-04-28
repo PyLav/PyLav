@@ -11,6 +11,7 @@ from types import MethodType
 from typing import Callable, Iterator
 
 import aiohttp
+import aiohttp_client_cache
 import aiopath
 import discord
 import ujson
@@ -32,6 +33,7 @@ from pylav.node_manager import NodeManager
 from pylav.player import Player
 from pylav.player_manager import PlayerManager
 from pylav.query import Query
+from pylav.radio import RadioBrowser
 from pylav.sql.clients.lib import LibConfigManager
 from pylav.sql.clients.nodes_db_manager import NodeConfigManager
 from pylav.sql.clients.player_config_manager import PlayerConfigManager
@@ -91,37 +93,54 @@ class Client(metaclass=_Singleton):
         connect_back: bool = False,
         config_folder: aiopath.AsyncPath | pathlib.Path = CONFIG_DIR,
     ):
-        global _COGS_REGISTERED, _OLD_PROCESS_COMMAND_METHOD, _OLD_GET_CONTEXT
-        setattr(bot, "_pylav_client", self)
-        add_property(bot, "lavalink", lambda b: b._pylav_client)
-        if _OLD_PROCESS_COMMAND_METHOD is None:
-            _OLD_PROCESS_COMMAND_METHOD = bot.process_commands
-        if _OLD_GET_CONTEXT is None:
-            _OLD_GET_CONTEXT = bot.get_context
-        bot.process_commands = MethodType(_process_commands, bot)
-        bot.get_context = MethodType(_get_context, bot)
-        _COGS_REGISTERED.add(cog.__cog_name__)
-        self._config_folder = aiopath.AsyncPath(config_folder)
-        self._bot = bot
-        self._user_id = str(bot.user.id)
-        self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
-        self._node_manager = NodeManager(self)
-        self._player_manager = PlayerManager(self, player)
-        self._lib_config_manager = LibConfigManager(self)
-        self._node_config_manager = NodeConfigManager(self)
-        self._playlist_config_manager = PlaylistConfigManager(self)
-        self._query_cache_manager = QueryCacheManager(self)
-        self._update_schema_manager = UpdateSchemaManager(self)
-        self._dispatch_manager = DispatchManager(self)
-        self._player_state_db_manager = PlayerStateDBManager(self)
-        self._player_config_manager = PlayerConfigManager(self)
-        self._m3u8parser = M3U8Parser(self)
-        self._connect_back = connect_back
-        self._warned_about_no_search_nodes = False
-        self._spotify_client_id = None
-        self._spotify_client_secret = None
-        self._spotify_auth = None
-        self._shutting_down = False
+        try:
+            global _COGS_REGISTERED, _OLD_PROCESS_COMMAND_METHOD, _OLD_GET_CONTEXT
+            setattr(bot, "_pylav_client", self)
+            add_property(bot, "lavalink", lambda b: b._pylav_client)
+            if _OLD_PROCESS_COMMAND_METHOD is None:
+                _OLD_PROCESS_COMMAND_METHOD = bot.process_commands
+            if _OLD_GET_CONTEXT is None:
+                _OLD_GET_CONTEXT = bot.get_context
+            bot.process_commands = MethodType(_process_commands, bot)
+            bot.get_context = MethodType(_get_context, bot)
+            _COGS_REGISTERED.add(cog.__cog_name__)
+            self._config_folder = aiopath.AsyncPath(config_folder)
+            self._bot = bot
+            self._user_id = str(bot.user.id)
+            self._aiohttp_client_cache = aiohttp_client_cache.SQLiteBackend(
+                cache_name=str(config_folder / ".cache" / "aiohttp-requests.db"),
+                cache_control=True,
+                allowed_codes=(200,),
+                allowed_methods=("GET",),
+                ignored_parameters=["timestamp"],
+                include_headers=True,
+                expire_after=datetime.timedelta(days=1),
+            )
+            self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
+            self._cached_session = aiohttp_client_cache.CachedSession(
+                timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps, cache=self._aiohttp_client_cache
+            )
+            self._node_manager = NodeManager(self)
+            self._player_manager = PlayerManager(self, player)
+            self._lib_config_manager = LibConfigManager(self)
+            self._node_config_manager = NodeConfigManager(self)
+            self._playlist_config_manager = PlaylistConfigManager(self)
+            self._query_cache_manager = QueryCacheManager(self)
+            self._update_schema_manager = UpdateSchemaManager(self)
+            self._dispatch_manager = DispatchManager(self)
+            self._player_state_db_manager = PlayerStateDBManager(self)
+            self._player_config_manager = PlayerConfigManager(self)
+            self._radio_manager = RadioBrowser(self)
+            self._m3u8parser = M3U8Parser(self)
+            self._connect_back = connect_back
+            self._warned_about_no_search_nodes = False
+            self._spotify_client_id = None
+            self._spotify_client_secret = None
+            self._spotify_auth = None
+            self._shutting_down = False
+        except Exception:
+            LOGGER.exception("Failed to initialize Lavalink")
+            raise
 
     async def register(self, cog: CogT) -> None:
         global _COGS_REGISTERED
@@ -136,6 +155,11 @@ class Client(metaclass=_Singleton):
     def initialized(self) -> bool:
         """Returns whether the client has been initialized."""
         return self._initiated
+
+    @property
+    def radio_browser(self) -> RadioBrowser:
+        """Returns the radio browser instance."""
+        return self._radio_manager
 
     @property
     def player_config_manager(self) -> PlayerConfigManager:
@@ -160,62 +184,64 @@ class Client(metaclass=_Singleton):
         localtrack_folder: str | None = None,
         disabled_sources: list[str] = None,
     ) -> None:
-        if not self._initiated:
-            async with self._asyncio_lock:
-                if not self._initiated:
-                    self._initiated = True
-                    await self.bot.wait_until_ready()
-                    await self._lib_config_manager.initialize()
-                    await self._update_schema_manager.run_updates()
+        try:
+            if not self._initiated:
+                async with self._asyncio_lock:
+                    if not self._initiated:
+                        self._initiated = True
+                        await self.bot.wait_until_ready()
+                        await self._lib_config_manager.initialize()
+                        await self._update_schema_manager.run_updates()
+                        await self._radio_manager.initialize()
 
-                    config_data = await self._lib_config_manager.get_config(
-                        config_folder=self._config_folder,
-                        java_path="java",
-                        enable_managed_node=True,
-                        auto_update_managed_nodes=True,
-                        localtrack_folder=localtrack_folder or self._config_folder,
-                        disabled_sources=disabled_sources or [],
-                    )
-                    auto_update_managed_nodes = config_data.auto_update_managed_nodes
-                    enable_managed_node = config_data.enable_managed_node
-                    self._config_folder = aiopath.AsyncPath(config_data.config_folder)
-                    localtrack_folder = localtrack_folder or config_data.localtrack_folder
-                    data = await self._node_config_manager.get_bundled_node_config()
-                    if not all([client_id, client_secret]):
-                        spotify_data = data.yaml["plugins"]["topissourcemanagers"]["spotify"]
-                        client_id = spotify_data["clientId"]
-                        client_secret = spotify_data["clientSecret"]
-                    elif all([client_id, client_secret]):
-                        if (
-                            data.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientId"] != client_id
-                            or data.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"] != client_secret
-                        ):
-                            data.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientId"] = client_id
-                            data.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"] = client_secret
-                        await data.save()
-                    self._spotify_client_id = client_id
-                    self._spotify_client_secret = client_secret
-                    self._spotify_auth = ClientCredentialsFlow(
-                        client_id=self._spotify_client_id, client_secret=self._spotify_client_secret
-                    )
-                    from pylav.localfiles import LocalFile
+                        config_data = await self._lib_config_manager.get_config(
+                            config_folder=self._config_folder,
+                            java_path="java",
+                            enable_managed_node=True,
+                            auto_update_managed_nodes=True,
+                            localtrack_folder=localtrack_folder or self._config_folder,
+                            disabled_sources=disabled_sources or [],
+                        )
+                        auto_update_managed_nodes = config_data.auto_update_managed_nodes
+                        enable_managed_node = config_data.enable_managed_node
+                        self._config_folder = aiopath.AsyncPath(config_data.config_folder)
+                        localtrack_folder = localtrack_folder or config_data.localtrack_folder
+                        data = await self._node_config_manager.get_bundled_node_config()
+                        if not all([client_id, client_secret]):
+                            spotify_data = data.yaml["plugins"]["topissourcemanagers"]["spotify"]
+                            client_id = spotify_data["clientId"]
+                            client_secret = spotify_data["clientSecret"]
+                        elif all([client_id, client_secret]):
+                            if (
+                                data.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientId"] != client_id
+                                or data.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"]
+                                != client_secret
+                            ):
+                                data.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientId"] = client_id
+                                data.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"] = client_secret
+                            await data.save()
+                        self._spotify_client_id = client_id
+                        self._spotify_client_secret = client_secret
+                        self._spotify_auth = ClientCredentialsFlow(
+                            client_id=self._spotify_client_id, client_secret=self._spotify_client_secret
+                        )
+                        from pylav.localfiles import LocalFile
 
-                    if not localtrack_folder:
-                        localtrack_folder = self._config_folder / "music"
-                    else:
-                        localtrack_folder = aiopath.AsyncPath(localtrack_folder)
-                    await LocalFile.add_root_folder(path=localtrack_folder, create=True)
-                    self._user_id = str(self._bot.user.id)
-                    self._local_node_manager = LocalNodeManager(self, auto_update=auto_update_managed_nodes)
-                    if enable_managed_node:
-                        await self._local_node_manager.start(java_path=config_data.java_path)
-                    try:
+                        if not localtrack_folder:
+                            localtrack_folder = self._config_folder / "music"
+                        else:
+                            localtrack_folder = aiopath.AsyncPath(localtrack_folder)
+                        await LocalFile.add_root_folder(path=localtrack_folder, create=True)
+                        self._user_id = str(self._bot.user.id)
+                        self._local_node_manager = LocalNodeManager(self, auto_update=auto_update_managed_nodes)
+                        if enable_managed_node:
+                            await self._local_node_manager.start(java_path=config_data.java_path)
                         await self.playlist_db_manager.update_bundled_playlists()
                         await self.node_manager.connect_to_all_nodes()
                         await self.player_manager.restore_player_states()
-                    except Exception as exc:
-                        LOGGER.critical("Failed start up", exc_info=exc)
-                        raise
+        except Exception as exc:
+            LOGGER.critical("Failed start up", exc_info=exc)
+            raise exc
 
     async def update_spotify_tokens(self, client_id: str, client_secret: str) -> None:
         self._spotify_client_id = client_id
@@ -275,6 +301,10 @@ class Client(metaclass=_Singleton):
     @property
     def session(self) -> aiohttp.ClientSession:
         return self._session
+
+    @property
+    def cached_session(self) -> aiohttp_client_cache.CachedSession:
+        return self._cached_session
 
     @property
     def lib_version(self) -> str:
@@ -549,6 +579,7 @@ class Client(metaclass=_Singleton):
                             await self._node_manager.close()
                             await self._local_node_manager.shutdown()
                             await self._session.close()
+                            await self._cached_session.close()
                         except Exception as e:
                             LOGGER.critical("Failed to shutdown the client", exc_info=e)
                         if _OLD_PROCESS_COMMAND_METHOD is not None:

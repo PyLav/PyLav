@@ -80,4 +80,5 @@ Getting Started
 Credits
 ---------------------------
 - [Devoxin- Lavalink.py](https://github.com/Devoxin/Lavalink.py) for ideas for implementation.
-- [globocom/m3u8](https://github.com/globocom/m3u8) for the M3U8 parser which I compatible with AsyncIO.
+- [globocom/m3u8](https://github.com/globocom/m3u8) for the M3U8 parser which I made asynchronous found in [m3u8_parser](./pylav/m3u8_parser).
+- [andreztz/pyradios](https://github.com/andreztz/pyradios) for the radio parser which I made asynchronous found in [radio](./pylav/radio).

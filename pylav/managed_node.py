@@ -207,7 +207,7 @@ class LocalNodeManager:
         return self._buildtime
 
     async def get_ci_latest_info(self) -> dict:
-        async with self._session.get(
+        async with self._client.cached_session.get(
             f"{JAR_SERVER}{JAR_SERVER_BUILD_INFO}", headers={"Accept": "application/json"}
         ) as response:
             if response.status != 200:
@@ -222,13 +222,13 @@ class LocalNodeManager:
                     returning_data[k] = int(data[k])
                 else:
                     returning_data[k] = data[k]
-        async with self._session.get(
+        async with self._client.cached_session.get(
             f"{JAR_SERVER}{returning_data['href']}", headers={"Accept": "application/json"}
         ) as response:
             data = await response.json(loads=ujson.loads)
             returning_data["href"] = data["artifacts"]["href"]
 
-        async with self._session.get(
+        async with self._client.cached_session.get(
             f"{JAR_SERVER}{returning_data['href']}", headers={"Accept": "application/json"}
         ) as response:
             data = await response.json(loads=ujson.loads)
