@@ -456,6 +456,8 @@ class LocalNodeManager:
         self._node_pid = None
 
     async def _download_jar(self) -> None:
+        if not self._auto_update:
+            return
         LOGGER.info("Downloading Lavalink.jar...")
         if self._ci_info["jar_url"]:
             jar_url = JAR_SERVER + self._ci_info["jar_url"]
