@@ -51,6 +51,12 @@ if TYPE_CHECKING:
 LOGGER = getLogger("red.PyLink.WebSocket")
 
 
+def _done_callback(task: asyncio.Task) -> None:
+    exc = task.exception()
+    if exc is not None:
+        LOGGER.error("Error in connect task", exc_info=exc)
+
+
 class WebSocket:
     """Represents the WebSocket connection with Lavalink."""
 
@@ -92,6 +98,7 @@ class WebSocket:
         )
         self.ready = asyncio.Event()
         self._connect_task = asyncio.ensure_future(self.connect())
+        self._connect_task.add_done_callback(_done_callback)
 
     @property
     def is_ready(self) -> bool:
@@ -299,6 +306,7 @@ class WebSocket:
         if not self._connect_task.cancelled():
             self._connect_task.cancel()
         self._connect_task = asyncio.ensure_future(self.connect())
+        self._connect_task.add_done_callback(_done_callback)
 
     async def handle_message(self, data: dict):
         """
