@@ -7,7 +7,6 @@ import itertools
 import operator
 import pathlib
 import random
-from collections import defaultdict
 from types import MethodType
 from typing import AsyncIterator, Callable, Iterator
 
@@ -81,7 +80,6 @@ class Client(metaclass=_Singleton):
         setting `self._original_node` to `None` in the `change_node` function.
     """
 
-    _event_hooks = defaultdict(list)
     _local_node_manager: LocalNodeManager
 
     _asyncio_lock = asyncio.Lock()
@@ -328,10 +326,6 @@ class Client(metaclass=_Singleton):
     def bot_id(self) -> str:
         return self._user_id
 
-    def add_event_hook(self, hook: Callable):
-        if hook not in self._event_hooks["Generic"]:
-            self._event_hooks["Generic"].append(hook)
-
     async def add_node(
         self,
         *,
@@ -516,12 +510,12 @@ class Client(metaclass=_Singleton):
         event: :class:`Event`
             The event to dispatch to the hooks.
         """
-        generic_hooks = Client._event_hooks["Generic"]
-        targeted_hooks = Client._event_hooks[type(event).__name__]
         event_dispatcher = [self._dispatch_manager.dispatch]
 
         task_list = []
-        for hook in itertools.chain(event_dispatcher, generic_hooks, targeted_hooks):
+        for hook in itertools.chain(
+            event_dispatcher,
+        ):
             task = asyncio.create_task(hook(event))  # type: ignore
             task.set_name(f"Event hook {hook.__name__}")
             task.add_done_callback(self.__done_callback)
