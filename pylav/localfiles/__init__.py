@@ -74,7 +74,7 @@ class LocalFile:
     async def initialize(self) -> None:
         if self.__init:
             return
-        self._path = (await self._path.resolve()).absolute()
+        self._path = self._path.absolute()
         self._path.relative_to(self.root_folder)
         self.__init = True
 

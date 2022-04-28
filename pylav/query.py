@@ -93,6 +93,7 @@ TWITCH_TIMESTAMP = re.compile(r"\?t=(\d+)h(\d+)m(\d+)s")
 
 LOCAL_TRACK_NESTED = re.compile(r"^(?P<recursive>all|nested|recursive|tree):\s*?(?P<query>.*)$", re.IGNORECASE)
 LOCAL_TRACK_URI_REGEX = re.compile(r"^file://(?P<file>.*)$", re.IGNORECASE)
+BASE64_TEST_REGEX = re.compile(r"^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$")
 MAX_RECURSION_DEPTH = 5  # Maximum depth of recursive searches for custom playlists (pls, m3u, xspf, pylav)
 
 
@@ -412,7 +413,6 @@ class Query:
             if not await path.exists():
                 raise ValueError(f"{path} does not exist")
         try:
-            path = await path.resolve()
             local_path = cls.__localfile_cls(path.absolute())
             await local_path.initialize()
         except Exception as e:
@@ -449,13 +449,11 @@ class Query:
         elif query is None:
             raise ValueError("Query cannot be None")
         source = None
-        try:
-            data, _ = decode_track(query)
-            source = data["info"]["source"]
-            query = data["info"]["uri"]
-        except Exception:
-            pass
-
+        if BASE64_TEST_REGEX.match(query):
+            with contextlib.suppress(Exception):
+                data, _ = decode_track(query)
+                source = data["info"]["source"]
+                query = data["info"]["uri"]
         if output := await cls.__process_playlist(query):
             if source:
                 output._source = cls.__get_source_from_str(source)

@@ -893,7 +893,7 @@ class Client(metaclass=_Singleton):
             Local files will always be bypassed.
         """
         output_tracks = []
-
+        playlist_name = ""
         for query in queries:
             async for response in self._yield_recursive_queries(query):
                 with contextlib.suppress(NoNodeWithRequestFunctionalityAvailable):
@@ -902,6 +902,7 @@ class Client(metaclass=_Singleton):
                         continue
                     if response.is_playlist or response.is_album:
                         _response = await node.get_tracks(response, bypass_cache=bypass_cache)
+                        playlist_name = _response.get("playlistInfo", {}).get("name", "")
                         output_tracks.extend(_response["tracks"])
                     elif response.is_single:
                         _response = await node.get_tracks(response, first=True, bypass_cache=bypass_cache)
@@ -910,7 +911,7 @@ class Client(metaclass=_Singleton):
                         LOGGER.critical("Unknown query type: %s", response)
 
         output = {
-            "playlistInfo": {"name": "", "selectedTrack": -1},
+            "playlistInfo": {"name": playlist_name if len(queries) == 1 else "", "selectedTrack": -1},
             "loadType": "SearchLoaded" if output_tracks else "LOAD_FAILED",
             "tracks": output_tracks,
         }
