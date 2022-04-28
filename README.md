@@ -30,18 +30,18 @@ Documentation
   - spotify
   - applemusic
 ### With [DuncteBot-plugin](https://github.com/DuncteBot/skybot-lavalink-plugin):
-  - lgetyarn
-  - lclypit
-  - ltts
-  - lpornhub
-  - lreddit
-  - locremix
-  - ltiktok
-  - lmixcloud
+  - getyarn
+  - clypit
+  - tts
+  - pornhub
+  - reddit
+  - ocremix
+  - tiktok
+  - mixcloud
 ### With [Google Cloud TTS](https://github.com/DuncteBot/tts-plugin):
-  - lgcloud-tts
+  - gcloud-tts
 ### With [Sponsorblock-Plugin](https://github.com/Topis-Lavalink-Plugins/Sponsorblock-Plugin):
-  - lsponsorblock
+  - sponsorblock
 
 ## Supported Lavalink features
   - Supports all features of [Lavalink](https://github.com/freyacodes/Lavalink)
@@ -59,7 +59,7 @@ Features
 - Player state persistence
     - Upon library state being shutdown all player states are saved and restored on library startup
 - History of played tracks available for players
-- M3U8 parser to convert user input into a playlist
+- M3U, PLS and PYLAV text file parser to convert contents into a playlist
 
 
 Installation
