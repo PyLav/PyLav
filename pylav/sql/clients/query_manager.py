@@ -7,7 +7,7 @@ from red_commons.logging import getLogger
 
 from pylav.exceptions import EntryNotFoundError
 from pylav.sql.models import QueryModel
-from pylav.sql.tables import PlaylistRow, QueryRow
+from pylav.sql.tables import QueryRow
 from pylav.utils import AsyncIter
 
 if TYPE_CHECKING:
@@ -65,13 +65,29 @@ class QueryCacheManager:
         ).save()
 
     @staticmethod
-    async def delete_query(playlist_id: int) -> None:
-        await PlaylistRow.delete().where(PlaylistRow.id == playlist_id)
-
-    @staticmethod
     async def delete_old() -> None:
         LOGGER.trace("Deleting old queries")
         await QueryRow.delete().where(
             QueryRow.last_updated <= (datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=30))
         )
         LOGGER.trace("Deleted old queries")
+
+    @staticmethod
+    async def wipe() -> None:
+        LOGGER.trace("Wiping query cache")
+        await QueryRow.delete(force=True)
+        LOGGER.trace("Wiped query cache")
+
+    @staticmethod
+    async def delete_older_than(days: int) -> None:
+        await QueryRow.delete().where(
+            QueryRow.last_updated <= (datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=days))
+        )
+
+    @staticmethod
+    async def delete_query(query: Query) -> None:
+        await QueryRow.delete().where(QueryRow.identifier == query.query_identifier)
+
+    @staticmethod
+    async def size() -> int:
+        return await QueryRow.count()

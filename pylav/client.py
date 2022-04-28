@@ -143,15 +143,6 @@ class Client(metaclass=_Singleton):
             LOGGER.exception("Failed to initialize Lavalink")
             raise
 
-    async def register(self, cog: CogT) -> None:
-        global _COGS_REGISTERED
-        LOGGER.info("Registering cog %s", cog.__cog_name__)
-        if (instance := getattr(self.bot, "lavalink", None)) and not isinstance(instance, Client):
-            raise AnotherClientAlreadyRegistered(
-                f"Another client instance has already been registered to bot.lavalink with type: {type(instance)}"
-            )
-        _COGS_REGISTERED.add(cog.__cog_name__)
-
     @property
     def initialized(self) -> bool:
         """Returns whether the client has been initialized."""
@@ -181,6 +172,66 @@ class Client(metaclass=_Singleton):
     def is_shutting_down(self) -> bool:
         """Returns whether the client is shutting down."""
         return self._shutting_down
+
+    @property
+    def node_db_manager(self) -> NodeConfigManager:
+        """Returns the sql node config manager."""
+        return self._node_config_manager
+
+    @property
+    def player_state_db_manager(self) -> PlayerStateDBManager:
+        return self._player_state_db_manager
+
+    @property
+    def playlist_db_manager(self) -> PlaylistConfigManager:
+        """Returns the sql playlist config manager."""
+        return self._playlist_config_manager
+
+    @property
+    def lib_db_manager(self) -> LibConfigManager:
+        """Returns the sql lib config manager."""
+        return self._lib_config_manager
+
+    @property
+    def query_cache_manager(self) -> QueryCacheManager:
+        """Returns the query cache manager."""
+        return self._query_cache_manager
+
+    @property
+    def managed_node_controller(self) -> LocalNodeManager:
+        return self._local_node_manager
+
+    @property
+    def node_manager(self) -> NodeManager:
+        return self._node_manager
+
+    @property
+    def player_manager(self) -> PlayerManager:
+        return self._player_manager
+
+    @property
+    def config_folder(self) -> aiopath.AsyncPath:
+        return self._config_folder
+
+    @property
+    def bot(self) -> BotT:
+        return self._bot
+
+    @property
+    def session(self) -> aiohttp.ClientSession:
+        return self._session
+
+    @property
+    def cached_session(self) -> aiohttp_client_cache.CachedSession:
+        return self._cached_session
+
+    @property
+    def lib_version(self) -> str:
+        return __VERSION__
+
+    @property
+    def bot_id(self) -> str:
+        return self._user_id
 
     @_run_once
     async def initialize(
@@ -255,6 +306,15 @@ class Client(metaclass=_Singleton):
             LOGGER.critical("Failed start up", exc_info=exc)
             raise exc
 
+    async def register(self, cog: CogT) -> None:
+        global _COGS_REGISTERED
+        LOGGER.info("Registering cog %s", cog.__cog_name__)
+        if (instance := getattr(self.bot, "lavalink", None)) and not isinstance(instance, Client):
+            raise AnotherClientAlreadyRegistered(
+                f"Another client instance has already been registered to bot.lavalink with type: {type(instance)}"
+            )
+        _COGS_REGISTERED.add(cog.__cog_name__)
+
     async def update_spotify_tokens(self, client_id: str, client_secret: str) -> None:
         self._spotify_client_id = client_id
         self._spotify_client_secret = client_secret
@@ -265,66 +325,6 @@ class Client(metaclass=_Singleton):
         bundled_node_config.extras["plugins"]["topissourcemanagers"]["spotify"]["clientId"] = client_id
         bundled_node_config.extras["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"] = client_secret
         await bundled_node_config.save()
-
-    @property
-    def node_db_manager(self) -> NodeConfigManager:
-        """Returns the sql node config manager."""
-        return self._node_config_manager
-
-    @property
-    def player_state_db_manager(self) -> PlayerStateDBManager:
-        return self._player_state_db_manager
-
-    @property
-    def playlist_db_manager(self) -> PlaylistConfigManager:
-        """Returns the sql playlist config manager."""
-        return self._playlist_config_manager
-
-    @property
-    def lib_db_manager(self) -> LibConfigManager:
-        """Returns the sql lib config manager."""
-        return self._lib_config_manager
-
-    @property
-    def query_cache_manager(self) -> QueryCacheManager:
-        """Returns the query cache manager."""
-        return self._query_cache_manager
-
-    @property
-    def managed_node_controller(self) -> LocalNodeManager:
-        return self._local_node_manager
-
-    @property
-    def node_manager(self) -> NodeManager:
-        return self._node_manager
-
-    @property
-    def player_manager(self) -> PlayerManager:
-        return self._player_manager
-
-    @property
-    def config_folder(self) -> aiopath.AsyncPath:
-        return self._config_folder
-
-    @property
-    def bot(self) -> BotT:
-        return self._bot
-
-    @property
-    def session(self) -> aiohttp.ClientSession:
-        return self._session
-
-    @property
-    def cached_session(self) -> aiohttp_client_cache.CachedSession:
-        return self._cached_session
-
-    @property
-    def lib_version(self) -> str:
-        return __VERSION__
-
-    @property
-    def bot_id(self) -> str:
-        return self._user_id
 
     async def add_node(
         self,
