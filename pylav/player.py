@@ -387,7 +387,7 @@ class Player(VoiceProtocol):
 
         at = await self._query_to_track(requester, track, query)
         await self.queue.put([at], index=index)
-        await self.node.dispatch_event(TracksRequestedEvent(self, self.guild.get_member(requester), [at]))
+        self.node.dispatch_event(TracksRequestedEvent(self, self.guild.get_member(requester), [at]))
 
     async def bulk_add(
         self,
@@ -417,7 +417,7 @@ class Player(VoiceProtocol):
                 track = await self._query_to_track(requester, track, query)
             output.append(track)
         await self.queue.put(output, index=index)
-        await self.node.dispatch_event(TracksRequestedEvent(self, self.guild.get_member(requester), output))
+        self.node.dispatch_event(TracksRequestedEvent(self, self.guild.get_member(requester), output))
 
     async def previous(self, requester: discord.Member, bypass_cache: bool = False) -> None:
         if self.history.empty():
@@ -437,7 +437,7 @@ class Player(VoiceProtocol):
         if track.skip_segments and self.node.supports_sponsorblock:
             options["skipSegments"] = track.skip_segments
         await self.node.send(op="play", guildId=self.guild_id, track=track.track, **options)
-        await self.node.dispatch_event(TrackPreviousRequestedEvent(self, requester, track))
+        self.node.dispatch_event(TrackPreviousRequestedEvent(self, requester, track))
 
     async def quick_play(
         self,
@@ -466,14 +466,14 @@ class Player(VoiceProtocol):
                 if not track:
                     raise TrackNotFound
                 # Otherwise dispatch Track Exception Event
-                await self.node.dispatch_event(TrackExceptionEvent(self, track, exc))
+                self.node.dispatch_event(TrackExceptionEvent(self, track, exc))
                 return
         self.current = track
         options = {"noReplace": no_replace}
         if track.skip_segments and self.node.supports_sponsorblock:
             options["skipSegments"] = track.skip_segments
         await self.node.send(op="play", guildId=self.guild_id, track=track.track, **options)
-        await self.node.dispatch_event(QuickPlayEvent(self, requester, track))
+        self.node.dispatch_event(QuickPlayEvent(self, requester, track))
 
     async def next(self, requester: discord.Member = None):
         await self.play(None, None, requester or self.bot.user)  # type: ignore
@@ -562,14 +562,14 @@ class Player(VoiceProtocol):
                             requester=self.guild.get_member(self.node.node_manager.client.bot.user.id)
                         )  # Also sets current to None.
                         self.history.clear()
-                        await self.node.dispatch_event(QueueEndEvent(self))
+                        self.node.dispatch_event(QueueEndEvent(self))
                         return
                 else:
                     await self.stop(
                         requester=self.guild.get_member(self.node.node_manager.client.bot.user.id)
                     )  # Also sets current to None.
                     self.history.clear()
-                    await self.node.dispatch_event(QueueEndEvent(self))
+                    self.node.dispatch_event(QueueEndEvent(self))
                     return
             else:
                 track = await self.queue.get()
@@ -588,7 +588,7 @@ class Player(VoiceProtocol):
                 if not track:
                     raise TrackNotFound
                 # Otherwise dispatch Track Exception Event
-                await self.node.dispatch_event(TrackExceptionEvent(self, track, exc))
+                self.node.dispatch_event(TrackExceptionEvent(self, track, exc))
                 return
 
         if self.node.supports_sponsorblock:
@@ -617,7 +617,7 @@ class Player(VoiceProtocol):
         self.current = track
         await self.node.send(op="play", guildId=self.guild_id, track=track.track, **options)
         if auto_play:
-            await self.node.dispatch_event(TrackAutoPlayEvent(player=self, track=track))
+            self.node.dispatch_event(TrackAutoPlayEvent(player=self, track=track))
 
     async def resume(self, requester: discord.Member = None):
         options = {}
@@ -628,12 +628,12 @@ class Player(VoiceProtocol):
         options["startTime"] = self.current.timestamp if self.current else self.position
         options["noReplace"] = False
         await self.node.send(op="play", guildId=self.guild_id, track=self.current.track, **options)
-        await self.node.dispatch_event(PlayerResumedEvent(player=self, requester=requester or self.client.user.id))
+        self.node.dispatch_event(PlayerResumedEvent(player=self, requester=requester or self.client.user.id))
 
     async def stop(self, requester: discord.Member) -> None:
         """Stops the player."""
         await self.node.send(op="stop", guildId=self.guild_id)
-        await self.node.dispatch_event(PlayerStoppedEvent(self, requester))
+        self.node.dispatch_event(PlayerStoppedEvent(self, requester))
         self.current = None
 
     async def skip(self, requester: discord.Member) -> None:
@@ -642,7 +642,7 @@ class Player(VoiceProtocol):
         previous_position = self.position
         await self.next(requester=requester)
         if previous_track:
-            await self.node.dispatch_event(TrackSkippedEvent(self, requester, previous_track, previous_position))
+            self.node.dispatch_event(TrackSkippedEvent(self, requester, previous_track, previous_position))
 
     async def set_repeat(
         self, op_type: Literal["current", "queue", "disable"], repeat: bool, requester: discord.Member
@@ -673,7 +673,7 @@ class Player(VoiceProtocol):
         else:
             raise ValueError(f"op_type must be either 'current' or 'queue' or `disable` not `{op_type}`")
         await self._config.save()
-        await self.node.dispatch_event(
+        self.node.dispatch_event(
             PlayerRepeatEvent(self, requester, op_type, queue_before, queue_after, current_before, current_after)
         )
 
@@ -704,9 +704,9 @@ class Player(VoiceProtocol):
 
         self.paused = pause
         if self.paused:
-            await self.node.dispatch_event(PlayerPausedEvent(self, requester))
+            self.node.dispatch_event(PlayerPausedEvent(self, requester))
         else:
-            await self.node.dispatch_event(TrackResumedEvent(self, track=self.current, requester=requester))
+            self.node.dispatch_event(TrackResumedEvent(self, track=self.current, requester=requester))
 
     async def set_volume(self, vol: int | float | Volume, requester: discord.Member) -> None:
         """
@@ -729,7 +729,7 @@ class Player(VoiceProtocol):
         self._volume = Volume(volume)
         await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
         await self._config.save()
-        await self.node.dispatch_event(PlayerVolumeChangedEvent(self, requester, self.volume, volume))
+        self.node.dispatch_event(PlayerVolumeChangedEvent(self, requester, self.volume, volume))
 
     async def seek(self, position: float, requester: discord.Member, with_filter: bool = False) -> None:
         """
@@ -747,7 +747,7 @@ class Player(VoiceProtocol):
             if with_filter:
                 position = self.position
             position = max(min(position, self.current.duration), 0)
-            await self.node.dispatch_event(
+            self.node.dispatch_event(
                 TrackSeekEvent(self, requester, self.current, before=self.position, after=position)
             )
             await self.node.send(op="seek", guildId=self.guild_id, position=position)
@@ -782,7 +782,7 @@ class Player(VoiceProtocol):
             self.current.timestamp = self._last_position
 
         event = PlayerUpdateEvent(self, self._last_position, self.position_timestamp)
-        await self.node.dispatch_event(event)
+        self.node.dispatch_event(event)
 
     async def change_node(self, node: Node) -> None:
         """
@@ -818,7 +818,7 @@ class Player(VoiceProtocol):
         if self.volume_filter.changed:
             await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
 
-        await self.node.dispatch_event(NodeChangedEvent(self, old_node, node))
+        self.node.dispatch_event(NodeChangedEvent(self, old_node, node))
 
     async def connect(
         self,
@@ -853,7 +853,7 @@ class Player(VoiceProtocol):
     async def disconnect(self, *, force: bool = False, requester: discord.Member | None) -> None:
         try:
             LOGGER.info("[Player-%s] Disconnected from voice channel", self.channel.guild.id)
-            await self.node.dispatch_event(PlayerDisconnectedEvent(self, requester))
+            self.node.dispatch_event(PlayerDisconnectedEvent(self, requester))
             await self.guild.change_voice_state(channel=None)
             self._connected = False
             await self._config.save()
@@ -900,7 +900,7 @@ class Player(VoiceProtocol):
         self._config.self_deaf = self_deaf
         await self.guild.change_voice_state(channel=self.channel, self_mute=self_mute, self_deaf=self_deaf)
         self._connected = True
-        await self.node.dispatch_event(PlayerMovedEvent(self, requester, old_channel, self.channel))
+        self.node.dispatch_event(PlayerMovedEvent(self, requester, old_channel, self.channel))
         await self._config
         return channel
 
@@ -1205,7 +1205,7 @@ class Player(VoiceProtocol):
                 **kwargs,
             )
         await self.seek(self.position, with_filter=True, requester=requester)
-        await self.node.dispatch_event(FiltersAppliedEvent(player=self, requester=requester, **kwargs))
+        self.node.dispatch_event(FiltersAppliedEvent(player=self, requester=requester, **kwargs))
 
     def _process_skip_segments(self, skip_segments: list[str] | str | None):
         if skip_segments is not None and self.node.supports_sponsorblock:
@@ -1388,7 +1388,7 @@ class Player(VoiceProtocol):
         if self.queue.empty():
             return 0
         tracks, count = await self.queue.remove(track, duplicates=duplicates)
-        await self.node.dispatch_event(QueueTracksRemovedEvent(player=self, requester=requester, tracks=tracks))
+        self.node.dispatch_event(QueueTracksRemovedEvent(player=self, requester=requester, tracks=tracks))
         return count
 
     async def move_track(
@@ -1402,7 +1402,7 @@ class Player(VoiceProtocol):
         index = self.queue.index(track)
         track = await self.queue.get(index)
         await self.queue.put([track], new_index)
-        await self.node.dispatch_event(
+        self.node.dispatch_event(
             QueueTrackPositionChangedEvent(before=index, after=new_index, track=track, player=self, requester=requester)
         )
         return True
@@ -1410,7 +1410,7 @@ class Player(VoiceProtocol):
     async def shuffle_queue(self, requester: discord.Member) -> None:
         if await self.player_manager.global_config.fetch_shuffle() is False:
             return
-        await self.node.dispatch_event(QueueShuffledEvent(player=self, requester=requester))
+        self.node.dispatch_event(QueueShuffledEvent(player=self, requester=requester))
         await self.queue.shuffle()
 
     async def set_autoplay_playlist(self, playlist: int | PlaylistModel) -> None:
@@ -1560,5 +1560,5 @@ class Player(VoiceProtocol):
             await self.resume(requester)  # type: ignore
         self._restored = True
         await self.player_manager.client.player_state_db_manager.delete_player(guild_id=self.guild.id)
-        await self.node.dispatch_event(PlayerRestoredEvent(self, requester))
+        self.node.dispatch_event(PlayerRestoredEvent(self, requester))
         LOGGER.info("Player restored - %s", self)

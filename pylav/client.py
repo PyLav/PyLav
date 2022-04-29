@@ -502,6 +502,9 @@ class Client(metaclass=_Singleton):
         """
         return await node.routeplanner_free_all_failing()
 
+    def dispatch_event(self, event: Event):
+        asyncio.create_task(self._dispatch_event(event))
+
     async def _dispatch_event(self, event: Event):
         """|coro|
         Dispatches the given event to all registered hooks.

@@ -307,7 +307,7 @@ class NodeManager:
                 player._original_node = None
 
         del self.player_queue
-        await self.client._dispatch_event(NodeConnectedEvent(node))
+        self.client.dispatch_event(NodeConnectedEvent(node))
 
     async def node_disconnect(self, node: Node, code: int, reason: str) -> None:
         """
@@ -331,7 +331,7 @@ class NodeManager:
             reason,
             node,
         )
-        await self.client._dispatch_event(NodeDisconnectedEvent(node, code, reason))
+        self.client.dispatch_event(NodeDisconnectedEvent(node, code, reason))
         best_node = self.find_best_node(node.region)
 
         if not best_node:

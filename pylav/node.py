@@ -368,7 +368,7 @@ class Node:
 
         return self.stats.penalty.total
 
-    async def dispatch_event(self, event: Event) -> None:
+    def dispatch_event(self, event: Event) -> None:
         """|coro|
         Dispatches the given event to all registered hooks.
         Parameters
@@ -376,7 +376,7 @@ class Node:
         event: :class:`Event`
             The event to dispatch to the hooks.
         """
-        await self.node_manager.client._dispatch_event(event)
+        self.node_manager.client.dispatch_event(event)
 
     async def send(self, **data: Any) -> None:
         """|coro|

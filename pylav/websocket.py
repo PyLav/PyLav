@@ -381,7 +381,7 @@ class WebSocket:
             LOGGER.warning("[NODE-%s] Unknown event received: %s", self.node.name, event_type)
             return
 
-        await self.client._dispatch_event(event)
+        self.client.dispatch_event(event)
 
         if player:
             await player._handle_event(event)
@@ -451,7 +451,7 @@ class WebSocket:
             event = TrackStartNicoNicoEvent(player, track)
         else:  # This should never happen
             event = TrackStartEvent(player, track)
-        asyncio.create_task(self.client._dispatch_event(event))
+        self.client.dispatch_event(event)
 
     async def close(self):
         self._connect_task.cancel()

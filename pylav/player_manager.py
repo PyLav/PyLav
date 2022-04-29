@@ -205,7 +205,7 @@ class PlayerManager:
         player: Player = await act_channel.connect(cls=Player, self_deaf=self_deaf or player_config.self_deaf)  # type: ignore
         await player.post_init(node=best_node, player_manager=self, config=player_config, pylav=self.client)
         await player.move_to(requester, channel=player.channel, self_deaf=self_deaf or player_config.self_deaf)
-        await best_node.dispatch_event(PlayerConnectedEvent(player, requester or self.client.bot.user))
+        best_node.dispatch_event(PlayerConnectedEvent(player, requester or self.client.bot.user))
         self.players[channel.guild.id] = player
         LOGGER.info("[NODE-%s] Successfully created player for %s", best_node.name, channel.guild.id)
         return player
