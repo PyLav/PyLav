@@ -47,6 +47,7 @@ Documentation
   - Supports all features of [Lavalink](https://github.com/freyacodes/Lavalink)
     - Filters
     - IP Rotation
+    - Plug-ins
 
 Features
 ---------------------------
