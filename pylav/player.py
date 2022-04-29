@@ -1350,6 +1350,8 @@ class Player(VoiceProtocol):
                 queue_list += f"{current_track_description}\n"
                 queue_list += f"Requester: **{current.requester.mention}**"
                 queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
+            if self._config.fetch_shuffle():
+                queue_list += "__Queue order is not accurate due to shuffle being toggled__\n\n"
             if tracks:
                 padding = len(str(start_index + len(tracks)))
                 async for track_idx, track in AsyncIter(tracks).enumerate(start=start_index + 1):
