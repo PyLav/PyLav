@@ -630,7 +630,7 @@ class PlayerModel:
     id: int
     bot: int
     forced_channel_id: int | None = None
-    volume: int = 1000
+    volume: int = 100
     auto_play_playlist_id: int = 1
     text_channel_id: int | None = None
     notify_channel_id: int | None = None
