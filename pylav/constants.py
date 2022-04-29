@@ -40,6 +40,9 @@ SUPPORTED_SOURCES = {
     "soundgasm",
     "gcloud-tts",
     "sponsorblock",
+    "local",
+    "spotify",
+    "applemusic",
 }
 
 BUNDLED_PLAYLIST_IDS = {1, 2}

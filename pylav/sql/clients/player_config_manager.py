@@ -29,3 +29,8 @@ class PlayerConfigManager:
 
     async def reset_to_default(self, guild_id: int):
         await PlayerRow.delete().where((PlayerRow.bot == self.client.bot.user.id) & (PlayerRow.id == guild_id))
+
+    async def get_shuffle(self, guild_id: int) -> bool:
+        if (await self.get_global_config()).shuffle is False:
+            return False
+        return (await self.get_config(guild_id)).shuffle

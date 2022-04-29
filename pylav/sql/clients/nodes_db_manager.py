@@ -83,6 +83,7 @@ class NodeConfigManager:
         search_only: bool = False,
         managed: bool = False,
         extras: dict = None,
+        disabled_sources: list[str] = None,
         yaml: dict = None,
     ) -> NodeModel:
         if unique_identifier in self.currently_in_db:
@@ -98,6 +99,7 @@ class NodeConfigManager:
             resume_timeout=resume_timeout,
             managed=managed,
             name=name,
+            disabled_sources=disabled_sources or [],
             extras=extras or {},
         )
         data["yaml"]["server"]["host"] = host  # type: ignore
@@ -124,6 +126,7 @@ class NodeConfigManager:
         managed: bool = False,
         extras: dict = None,
         yaml: dict = None,
+        disabled_sources: list[str] = None,
     ) -> NodeModel:
         data = dict(
             yaml=yaml or {"server": {}, "lavalink": {"server": {}}},
@@ -135,6 +138,7 @@ class NodeConfigManager:
             resume_timeout=resume_timeout,
             managed=managed,
             name=name,
+            disabled_sources=disabled_sources or [],
             extras=extras or {},
         )
         data["yaml"]["server"]["host"] = host  # type: ignore

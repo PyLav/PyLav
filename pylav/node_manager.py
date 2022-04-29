@@ -162,6 +162,7 @@ class NodeManager:
                 ssl=ssl,
                 search_only=search_only,
                 unique_identifier=unique_identifier,
+                disabled_sources=disabled_sources,
                 managed=managed,
                 yaml=yaml,
                 extras=extras or {},

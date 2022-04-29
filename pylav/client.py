@@ -343,6 +343,7 @@ class Client(metaclass=_Singleton):
         managed: bool = False,
         skip_db: bool = False,
         yaml: dict | None = None,
+        disabled_sources: List[str] = None,
         extras: dict = None,
     ) -> Node:
         """
@@ -396,6 +397,7 @@ class Client(metaclass=_Singleton):
             skip_db=skip_db,
             managed=managed,
             yaml=yaml,
+            disabled_sources=disabled_sources,
             extras=extras or {},
         )
 
