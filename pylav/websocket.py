@@ -369,6 +369,7 @@ class WebSocket:
         elif event_type == "TrackStartEvent":
             track = player.current
             event = TrackStartEvent(player, track)  # FIXME: Check if this is correct
+            self._process_track_event(player, track)
         elif event_type == "TrackStuckEvent":
             event = TrackStuckEvent(player, player.current, data["thresholdMs"])
         elif event_type == "WebSocketClosedEvent":
