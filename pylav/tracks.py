@@ -318,7 +318,7 @@ class Track:
 
     @property
     def requires_capability(self) -> str:
-        return self.query.requires_capability
+        return self.query.requires_capability if self.query else "youtube"
 
     @property
     def query_identifier(self) -> str:
