@@ -38,7 +38,6 @@ from pylav.events import (
     TrackSeekEvent,
     TrackSkippedEvent,
     TracksRequestedEvent,
-    TrackStartEvent,
     TrackStuckEvent,
 )
 from pylav.exceptions import NoNodeWithRequestFunctionalityAvailable, TrackNotFound
@@ -431,7 +430,6 @@ class Player(VoiceProtocol):
         if track.skip_segments and self.node.supports_sponsorblock:
             options["skipSegments"] = track.skip_segments
         await self.node.send(op="play", guildId=self.guild_id, track=track.track, **options)
-        await self.node.dispatch_event(TrackStartEvent(self, track))
         await self.node.dispatch_event(TrackPreviousRequestedEvent(self, requester, track))
 
     async def quick_play(
@@ -468,7 +466,6 @@ class Player(VoiceProtocol):
         if track.skip_segments and self.node.supports_sponsorblock:
             options["skipSegments"] = track.skip_segments
         await self.node.send(op="play", guildId=self.guild_id, track=track.track, **options)
-        await self.node.dispatch_event(TrackStartEvent(self, track))
         await self.node.dispatch_event(QuickPlayEvent(self, requester, track))
 
     async def next(self, requester: discord.Member = None):
@@ -612,7 +609,6 @@ class Player(VoiceProtocol):
 
         self.current = track
         await self.node.send(op="play", guildId=self.guild_id, track=track.track, **options)
-        await self.node.dispatch_event(TrackStartEvent(self, track))
         if auto_play:
             await self.node.dispatch_event(TrackAutoPlayEvent(player=self, track=track))
 
@@ -808,7 +804,7 @@ class Player(VoiceProtocol):
             if self.paused:
                 await self.node.send(op="pause", guildId=self.guild_id, pause=self.paused)
 
-        if self.volume != 100:
+        if self.volume_filter.changed:
             await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
 
         await self.node.dispatch_event(NodeChangedEvent(self, old_node, node))
@@ -1517,7 +1513,7 @@ class Player(VoiceProtocol):
         self._distortion = Distortion.from_dict(effects.pop("distortion"))
         self._low_pass = LowPass.from_dict(effects.pop("low_pass"))
         self._channel_mix = ChannelMix.from_dict(effects.pop("channel_mix"))
-        if self.volume_filter.changed:
+        if self.volume_filter.changed and self.volume_filter.get_int_value() != 100:
             await self.set_volume(self.volume, requester)  # type: ignore
         if self.has_effects:
             await self.set_filters(

@@ -354,11 +354,16 @@ class WebSocket:
                 data["guildId"],
             )
             return
+        from pylav.query import Query
+        from pylav.tracks import Track
 
         event_type = data["type"]
-
         if event_type == "TrackEndEvent":
-            event = TrackEndEvent(player, player.current, data["reason"])
+            event = TrackEndEvent(
+                player,
+                Track(node=self.node, data=data["track"], query=await Query.from_base64(data["track"])),
+                data["reason"],
+            )
         elif event_type == "TrackExceptionEvent":
             event = TrackExceptionEvent(player, player.current, data["error"])
         elif event_type == "TrackStartEvent":
