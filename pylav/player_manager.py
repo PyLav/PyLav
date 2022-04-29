@@ -8,7 +8,7 @@ from red_commons.logging import getLogger
 
 from pylav.events import PlayerConnectedEvent
 from pylav.player import Player
-from pylav.sql.models import PlayerStateModel
+from pylav.sql.models import PlayerModel, PlayerStateModel
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -180,9 +180,6 @@ class PlayerManager:
             The node to put the player on. Defaults to `None` and a node with the lowest penalty is chosen.
         requester: :class:`discord.Member`
             The member requesting the player. Defaults to `None`.
-        restoring: :class:`bool`
-            Whether the player is being restored from a database. Defaults to `False`.
-            If set to True the player config will not be applied as it expects to be restored from the saved state.
         Returns
         -------
         :class:`Player`

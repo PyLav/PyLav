@@ -1,12 +1,13 @@
 from __future__ import annotations
 
+import asyncio
 import collections
 import contextlib
 import datetime
 import itertools
 import random
 import time
-from typing import TYPE_CHECKING, Any, Literal
+from typing import TYPE_CHECKING, Any, Coroutine, Literal
 
 import discord
 from discord import VoiceProtocol
@@ -1552,9 +1553,21 @@ class Player(VoiceProtocol):
         self.queue.raw_b64s = list(t.track for t in queue if t.track)
         self.history.raw_queue = collections.deque(history)
         self.history.raw_b64s = list(t.track for t in history)
+        tried = 0
         if self.current:
             self.current.timestamp = int(player.position)
             await self.queue.put([self.current], index=0)
+            node = self.node.node_manager.find_best_node(region=self.region, feature=self.current.requires_capability)
+            while not node:
+                await asyncio.sleep(1)
+                node = self.node.node_manager.find_best_node(
+                    region=self.region, feature=self.current.requires_capability
+                )
+                tried += 1
+                if tried > 600:
+                    return  # Exit without restoring after 10 minutes of waiting
+            await self.change_node(node)
+
         self._effect_enabled = player.effect_enabled
         effects = player.effects
         self._volume = Volume.from_dict(effects.pop("volume"))

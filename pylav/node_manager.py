@@ -269,7 +269,6 @@ class NodeManager:
                 nodes = [n for n in self.available_nodes if n.has_capability(feature)]
             else:
                 nodes = self.available_nodes
-
         if not nodes:
             return None
         best_node = min(nodes, key=operator.attrgetter("connected_count", "penalty"))
@@ -333,7 +332,7 @@ class NodeManager:
             node,
         )
         self.client.dispatch_event(NodeDisconnectedEvent(node, code, reason))
-        best_node = self.find_best_node(node.region)
+        best_node = self.find_best_node(region=node.region)
 
         if not best_node:
             self.player_queue.extend(node.players)

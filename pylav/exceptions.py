@@ -35,6 +35,7 @@ __all__ = (
     "PlaylistError",
     "InvalidPlaylist",
     "ManagedLinkStartAbortedUseExternal",
+    "AbortPlayerRestoreDueUnavailableNode",
 )
 
 from discord.ext.commands import CommandError
@@ -62,6 +63,10 @@ class AnotherClientAlreadyRegistered(PyLavError):
 
 class NodeError(PyLavError):
     """Base exception for Node errors."""
+
+
+class AbortPlayerRestoreDueUnavailableNode(NodeError):
+    """Raised when the player is aborted due to an unavailable node."""
 
 
 class WebsocketNotConnectedError(NodeError):

@@ -343,7 +343,7 @@ class Client(metaclass=_Singleton):
         managed: bool = False,
         skip_db: bool = False,
         yaml: dict | None = None,
-        disabled_sources: List[str] = None,
+        disabled_sources: list[str] = None,
         extras: dict = None,
     ) -> Node:
         """
@@ -382,6 +382,8 @@ class Client(metaclass=_Singleton):
             A dictionary of extra information to be stored in the node. Defaults to `None`.
         managed: :class:`bool`
             Whether the node is managed by the client. Defaults to `False`.
+        disabled_sources: Optional[:class:`list`[:class:`str`]]
+            A list of sources that should be disabled for the node. Defaults to `None`.
         """
         return await self.node_manager.add_node(
             host=host,
@@ -772,7 +774,7 @@ class Client(metaclass=_Singleton):
         track_count = 0
 
         for query in queries:
-            node = self.node_manager.find_best_node(query.requires_capability)
+            node = self.node_manager.find_best_node(feature=query.requires_capability)
             if node is None:
                 queries_failed.append(query)
             # Query tracks as the queue builds as this may be a slow operation
@@ -909,7 +911,7 @@ class Client(metaclass=_Singleton):
         for query in queries:
             async for response in self._yield_recursive_queries(query):
                 with contextlib.suppress(NoNodeWithRequestFunctionalityAvailable):
-                    node = self.node_manager.find_best_node(response.requires_capability)
+                    node = self.node_manager.find_best_node(feature=response.requires_capability)
                     if node is None or response.is_custom_playlist:
                         continue
                     if response.is_playlist or response.is_album:
