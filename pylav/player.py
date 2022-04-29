@@ -594,6 +594,8 @@ class Player(VoiceProtocol):
                     self.node.dispatch_event(QueueEndEvent(self))
                     return
             else:
+                if self._config.fetch_shuffle():
+                    await self.shuffle_queue(requester=self.client.bot.user)
                 track = await self.queue.get()
 
         if track.query is None:
