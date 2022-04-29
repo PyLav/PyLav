@@ -72,6 +72,7 @@ class Player(VoiceProtocol):
     ):
         self.bot = self.client = client
         self.guild_id = str(channel.guild.id)
+        self._channel = None
         self.channel = channel
         self.channel_id = channel.id
         self.node: Node = node
@@ -133,6 +134,16 @@ class Player(VoiceProtocol):
         self._text_channel = self.guild.get_channel_or_thread(config.text_channel_id)
         self._notify_channel = self.guild.get_channel_or_thread(config.notify_channel_id)
         self._volume = Volume(config.volume)
+
+    @property
+    def channel(self) -> discord.VoiceChannel:
+        return self._channel
+
+    @channel.setter
+    def channel(self, value: discord.VoiceChannel):
+        if isinstance(value, discord.VoiceChannel):
+            self._channel = value
+            self.region = value.rtc_region
 
     @property
     def config(self) -> PlayerModel:
@@ -675,7 +686,7 @@ class Player(VoiceProtocol):
             queue_after = self._config.repeat_queue = False
             current_after = self._config.repeat_current = False
         elif op_type == "current":
-            self._config.repeat_current = queue_after = repeat
+            self._config.repeat_current = current_after = repeat
             self._config.repeat_queue = False
         elif op_type == "queue":
             self._config.repeat_queue = queue_after = repeat
