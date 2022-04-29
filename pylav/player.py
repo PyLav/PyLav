@@ -475,8 +475,8 @@ class Player(VoiceProtocol):
         await self.node.send(op="play", guildId=self.guild_id, track=track.track, **options)
         self.node.dispatch_event(QuickPlayEvent(self, requester, track))
 
-    async def next(self, requester: discord.Member = None):
-        await self.play(None, None, requester or self.bot.user)  # type: ignore
+    async def next(self, requester: discord.Member = None) -> Coroutine[Any, Any, None]:
+        return self.play(None, None, requester or self.bot.user)  # type: ignore
 
     async def play(
         self,
