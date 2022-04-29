@@ -541,19 +541,20 @@ class Player(VoiceProtocol):
         """
         options = {}
         skip_segments = self._process_skip_segments(skip_segments)
+        self._last_update = 0
+        self._last_position = 0
+        self.position_timestamp = 0
+        self.paused = False
+        auto_play = False
+
         if track is not None and isinstance(track, (Track, dict, str, type(None))):
             track = Track(node=self.node, data=track, query=query, skip_segments=skip_segments, requester=requester.id)
         if self.current and self._config.repeat_current:
             await self.add(self.current.requester_id, self.current)
         elif self.current and self._config.repeat_queue:
             await self.add(self.current.requester_id, self.current, index=-1)
-
-        self._last_update = 0
-        self._last_position = 0
-        self.position_timestamp = 0
-        self.paused = False
-        auto_play = False
         if self.current:
+            self.current.timestamp = 0
             await self.history.put([self.current])
         if not track:
             if self.queue.empty():
@@ -646,7 +647,7 @@ class Player(VoiceProtocol):
         self._last_position = 0
         if self.node.supports_sponsorblock:
             options["skipSegments"] = self.current.skip_segments if self.current else []
-        options["startTime"] = self.current.timestamp if self.current else self.position
+        options["startTime"] = self.current.last_known_position if self.current else self.position
         options["noReplace"] = False
         await self.node.send(op="play", guildId=self.guild_id, track=self.current.track, **options)
         self.node.dispatch_event(PlayerResumedEvent(player=self, requester=requester or self.client.user.id))
@@ -742,7 +743,7 @@ class Player(VoiceProtocol):
         requester: :class:`discord.Member`
             The member who requested the volume change.
         """
-        max_volume = min(self._config.get_max_volume(), await self.player_manager.global_config.fetch_volume())
+        max_volume = min(await self._config.get_max_volume(), await self.player_manager.global_config.fetch_volume())
         volume = max(min(vol, max_volume), 0)
         if volume == self.volume:
             return
@@ -800,7 +801,7 @@ class Player(VoiceProtocol):
         self._last_position = state.get("position", 0)
         self.position_timestamp = state.get("time", 0)
         if self.current:
-            self.current.timestamp = self._last_position
+            self.current.last_known_position = self._last_position
 
         event = PlayerUpdateEvent(self, self._last_position, self.position_timestamp)
         self.node.dispatch_event(event)

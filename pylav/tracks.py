@@ -209,6 +209,14 @@ class Track:
         self.extra["timestamp"] = value
 
     @property
+    def last_known_position(self) -> int:
+        return self.extra.get("last_known_position", 0)
+
+    @last_known_position.setter
+    def last_known_position(self, value: int):
+        self.extra["last_known_position"] = value
+
+    @property
     def is_clypit(self) -> bool:
         return self.query.is_clypit
 
@@ -353,6 +361,7 @@ class Track:
             "skip_segments": self.skip_segments,
             "extra": {
                 "timestamp": self.timestamp,
+                "last_known_position": self.last_known_position,
             },
             "raw_data": self._raw_data,
         }

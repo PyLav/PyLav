@@ -724,67 +724,67 @@ class PlayerModel:
         player = (
             await PlayerRow.select(PlayerRow.volume)
             .output(load_json=True)
-            .where((PlayerRow.id == self.id) & (PlayerRow.bot == bot_id))
-        ).first()
+            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+        )
         if player:
-            self.volume = player["volume"]
+            self.volume = player[0]["volume"]
 
     async def update_auto_play_playlist_id(self) -> PlayerModel:
         player = (
             await PlayerRow.select(PlayerRow.auto_play_playlist_id)
             .output(load_json=True)
-            .where((PlayerRow.id == self.id) & (PlayerRow.bot == bot_id))
-        ).first()
+            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+        )
         if player:
-            self.auto_play_playlist_id = player["auto_play_playlist_id"]
+            self.auto_play_playlist_id = player[0]["auto_play_playlist_id"]
         return self
 
     async def update_text_channel_id(self) -> PlayerModel:
         player = (
             await PlayerRow.select(PlayerRow.text_channel_id)
             .output(load_json=True)
-            .where((PlayerRow.id == self.id) & (PlayerRow.bot == bot_id))
-        ).first()
+            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+        )
         if player:
-            self.text_channel_id = player["text_channel_id"]
+            self.text_channel_id = player[0]["text_channel_id"]
         return self
 
     async def update_notify_channel_id(self) -> PlayerModel:
         player = (
             await PlayerRow.select(PlayerRow.notify_channel_id)
             .output(load_json=True)
-            .where((PlayerRow.id == self.id) & (PlayerRow.bot == bot_id))
-        ).first()
+            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+        )
         if player:
-            self.notify_channel_id = player["notify_channel_id"]
+            self.notify_channel_id = player[0]["notify_channel_id"]
         return self
 
     async def update_forced_channel_id(self) -> PlayerModel:
         player = (
             await PlayerRow.select(PlayerRow.forced_channel_id)
             .output(load_json=True)
-            .where((PlayerRow.id == self.id) & (PlayerRow.bot == bot_id))
-        ).first()
+            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+        )
         if player:
-            self.forced_channel_id = player["forced_channel_id"]
+            self.forced_channel_id = player[0]["forced_channel_id"]
         return self
 
     async def update_repeat_current(self) -> PlayerModel:
         player = (
             await PlayerRow.select(PlayerRow.repeat_current)
             .output(load_json=True)
-            .where((PlayerRow.id == self.id) & (PlayerRow.bot == bot_id))
-        ).first()
+            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+        )
         if player:
-            self.repeat_current = player["repeat_current"]
+            self.repeat_current = player[0]["repeat_current"]
         return self
 
     async def update_repeat_queue(self) -> PlayerModel:
         player = (
             await PlayerRow.select(PlayerRow.repeat_queue)
             .output(load_json=True)
-            .where((PlayerRow.id == self.id) & (PlayerRow.bot == bot_id))
-        ).first()
+            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+        )
         if player:
             self.repeat_queue = player["repeat_queue"]
         return self
@@ -793,43 +793,43 @@ class PlayerModel:
         player = (
             await PlayerRow.select(PlayerRow.shuffle)
             .output(load_json=True)
-            .where((PlayerRow.id == self.id) & (PlayerRow.bot == bot_id))
-        ).first()
+            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+        )
         if player:
-            self.shuffle = player["shuffle"]
+            self.shuffle = player[0]["shuffle"]
         return self
 
     async def update_auto_play(self) -> PlayerModel:
         player = (
             await PlayerRow.select(PlayerRow.auto_play)
             .output(load_json=True)
-            .where((PlayerRow.id == self.id) & (PlayerRow.bot == bot_id))
-        ).first()
+            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+        )
         if player:
-            self.auto_play = player["auto_play"]
+            self.auto_play = player[0]["auto_play"]
         return self
 
     async def update_self_deaf(self) -> PlayerModel:
         player = (
             await PlayerRow.select(PlayerRow.self_deaf)
             .output(load_json=True)
-            .where((PlayerRow.id == self.id) & (PlayerRow.bot == bot_id))
-        ).first()
+            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+        )
         if player:
-            self.self_deaf = player["self_deaf"]
+            self.self_deaf = player[0]["self_deaf"]
         return self
 
     async def update_extras(self) -> PlayerModel:
         player = (
             await PlayerRow.select(PlayerRow.extras)
             .output(load_json=True)
-            .where((PlayerRow.id == self.id) & (PlayerRow.bot == bot_id))
-        ).first()
+            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+        )
         if player:
-            if isinstance(self.extras, str):
-                self.extras = ujson.loads(player["extras"])
+            if isinstance(player["extras"][0], str):
+                self.extras = ujson.loads(player[0]["extras"])
             else:
-                self.extras = player["extras"]
+                self.extras = player[0]["extras"]
         return self
 
     async def get_max_volume(self) -> int:
