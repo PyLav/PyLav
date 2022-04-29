@@ -625,9 +625,7 @@ class Player(VoiceProtocol):
         options["startTime"] = self.current.timestamp if self.current else self.position
         options["noReplace"] = False
         await self.node.send(op="play", guildId=self.guild_id, track=self.current.track, **options)
-        await self.node.dispatch_event(
-            TrackResumedEvent(player=self, track=self.current, requester=requester or self.client.user.id)
-        )
+        await self.node.dispatch_event(PlayerResumedEvent(player=self, requester=requester or self.client.user.id))
 
     async def stop(self, requester: discord.Member) -> None:
         """Stops the player."""
@@ -703,7 +701,7 @@ class Player(VoiceProtocol):
         if self.paused:
             await self.node.dispatch_event(PlayerPausedEvent(self, requester))
         else:
-            await self.node.dispatch_event(PlayerResumedEvent(self, requester))
+            await self.node.dispatch_event(TrackResumedEvent(self, track=self.current, requester=requester))
 
     async def set_volume(self, vol: int | float | Volume, requester: discord.Member) -> None:
         """
@@ -787,6 +785,8 @@ class Player(VoiceProtocol):
         node: :class:`Node`
             The node the player is changed to.
         """
+        if node.identifier == self.node.identifier:
+            return
         if self.node.available:
             await self.node.send(op="destroy", guildId=self.guild_id)
 

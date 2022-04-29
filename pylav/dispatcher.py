@@ -154,7 +154,7 @@ class DispatchManager:
         elif isinstance(event, TrackPreviousRequestedEvent):
             self.pylav_track_previous_requested(event)
         elif isinstance(event, TracksRequestedEvent):
-            self.pylav_track_requested(event)
+            self.pylav_tracks_requested(event)
         elif isinstance(event, TrackAutoPlayEvent):
             self.pylav_track_autoplay(event)
         elif isinstance(event, TrackResumedEvent):
@@ -163,7 +163,7 @@ class DispatchManager:
         elif isinstance(event, QueueShuffledEvent):
             self.pylav_queue_shuffled(event)
         elif isinstance(event, QueueEndEvent):
-            self.pylav_queue_ended(event)
+            self.pylav_queue_end(event)
         elif isinstance(event, QueueTrackPositionChangedEvent):
             self.pylav_queue_track_position_changed(event)
         elif isinstance(event, QueueTracksRemovedEvent):
@@ -230,8 +230,8 @@ class DispatchManager:
     def pylav_track_previous_requested(self, event: TrackPreviousRequestedEvent):
         self.dispatcher(self.pylav_track_previous_requested.__name__, event)
 
-    def pylav_track_requested(self, event: TracksRequestedEvent):
-        self.dispatcher(self.pylav_track_requested.__name__, event)
+    def pylav_tracks_requested(self, event: TracksRequestedEvent):
+        self.dispatcher(self.pylav_tracks_requested.__name__, event)
 
     def pylav_track_start_youtube(self, event: TrackStartYouTubeEvent):
         self.dispatcher(self.pylav_track_start_youtube.__name__, event)
@@ -307,8 +307,8 @@ class DispatchManager:
     def pylav_queue_shuffled(self, event: QueueShuffledEvent):
         self.dispatcher(self.pylav_queue_shuffled.__name__, event)
 
-    def pylav_queue_ended(self, event: QueueEndEvent):
-        self.dispatcher(self.pylav_queue_ended.__name__, event)
+    def pylav_queue_end(self, event: QueueEndEvent):
+        self.dispatcher(self.pylav_queue_end.__name__, event)
 
     def pylav_queue_tracks_removed(self, event: QueueTracksRemovedEvent):
         self.dispatcher(self.pylav_queue_tracks_removed.__name__, event)
