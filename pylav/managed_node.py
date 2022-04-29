@@ -111,7 +111,7 @@ BUILD_META_KEYS = ("number", "branchName", "finishDate", "href")
 #   This will download from the Master branch which is behind dev
 LAVALINK_JAR_ENDPOINT: Final[
     str
-] = "https://ci.fredboat.com/repository/download/Lavalink_Build/.lastSuccessful/Lavalink.jar"
+] = "https://ci.fredboat.com/guestAuth/repository/download/Lavalink_Build/.lastSuccessful/Lavalink.jar"
 
 
 def convert_function(key: str) -> str:
