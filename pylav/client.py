@@ -526,8 +526,6 @@ class Client(metaclass=_Singleton):
             task_list.append(task)
         await asyncio.gather(*task_list)
 
-        LOGGER.trace("Dispatched %s to all registered hooks", type(event).__name__)
-
     @staticmethod
     def __done_callback(task: asyncio.Task):
         exc = task.exception()
