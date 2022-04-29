@@ -150,6 +150,11 @@ class Player(VoiceProtocol):
     def text_channel(self) -> discord.TextChannel:
         return self._text_channel
 
+    @text_channel.setter
+    def text_channel(self, value: discord.TextChannel):
+        self._text_channel = value
+        self.config.text_channel_id = value.id
+
     @property
     def notify_channel(self) -> discord.TextChannel:
         return self._notify_channel
@@ -162,6 +167,11 @@ class Player(VoiceProtocol):
     @property
     def forced_vc(self) -> discord.VoiceChannel:
         return self._forced_vc
+
+    @text_channel.setter
+    def forced_vc(self, value: discord.VoiceChannel):
+        self._forced_vc = value
+        self.config.forced_channel_id = value.id
 
     @property
     def self_deaf(self) -> bool:
@@ -901,7 +911,7 @@ class Player(VoiceProtocol):
         await self.guild.change_voice_state(channel=self.channel, self_mute=self_mute, self_deaf=self_deaf)
         self._connected = True
         self.node.dispatch_event(PlayerMovedEvent(self, requester, old_channel, self.channel))
-        await self._config
+        await self._config.save()
         return channel
 
     async def self_deafen(self, toggle: bool) -> None:
