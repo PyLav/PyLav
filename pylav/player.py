@@ -147,31 +147,31 @@ class Player(VoiceProtocol):
         return self.lavalink.radio_browser
 
     @property
-    def text_channel(self) -> discord.TextChannel:
+    def text_channel(self) -> discord.abc.Messageable:
         return self._text_channel
 
     @text_channel.setter
-    def text_channel(self, value: discord.TextChannel):
+    def text_channel(self, value: discord.abc.Messageable):
         self._text_channel = value
-        self.config.text_channel_id = value.id
+        self.config.text_channel_id = value.id if value else None
 
     @property
-    def notify_channel(self) -> discord.TextChannel:
+    def notify_channel(self) -> discord.abc.Messageable:
         return self._notify_channel
 
     @notify_channel.setter
-    def notify_channel(self, value: discord.TextChannel):
+    def notify_channel(self, value: discord.abc.Messageable):
         self._notify_channel = value
-        self.config.notify_channel_id = value.id
+        self.config.notify_channel_id = value.id if value else None
 
     @property
-    def forced_vc(self) -> discord.VoiceChannel:
+    def forced_vc(self) -> discord.abc.Messageable:
         return self._forced_vc
 
     @text_channel.setter
-    def forced_vc(self, value: discord.VoiceChannel):
+    def forced_vc(self, value: discord.abc.Messageable):
         self._forced_vc = value
-        self.config.forced_channel_id = value.id
+        self.config.forced_channel_id = value.id if value else None
 
     @property
     def self_deaf(self) -> bool:
