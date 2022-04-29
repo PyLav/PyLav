@@ -102,7 +102,7 @@ class NodeConfigManager:
             disabled_sources=disabled_sources or [],
             extras=extras or {},
         )
-        data["yaml"]["server"]["host"] = host  # type: ignore
+        data["yaml"]["server"]["address"] = host  # type: ignore
         data["yaml"]["server"]["port"] = port  # type: ignore
         data["yaml"]["lavalink"]["server"]["password"] = password
 
@@ -141,7 +141,7 @@ class NodeConfigManager:
             disabled_sources=disabled_sources or [],
             extras=extras or {},
         )
-        data["yaml"]["server"]["host"] = host  # type: ignore
+        data["yaml"]["server"]["address"] = host  # type: ignore
         data["yaml"]["server"]["port"] = port  # type: ignore
         data["yaml"]["lavalink"]["server"]["password"] = password
         node = NodeModel(**data)
