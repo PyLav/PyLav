@@ -60,6 +60,7 @@ LOGGER = getLogger("red.PyLink.Player")
 
 class Player(VoiceProtocol):
     _config: PlayerModel
+    _global_config: PlayerModel
     _lavalink: Client
 
     def __init__(
@@ -124,6 +125,7 @@ class Player(VoiceProtocol):
         self.player_manager = player_manager
         self.node = node
         self._config = config
+        self._global_config = player_manager.global_config
         self._extras = config.extras
         self._post_init_completed = True
         await self.set_autoplay_playlist(config.auto_play_playlist_id)
@@ -151,6 +153,11 @@ class Player(VoiceProtocol):
     @property
     def notify_channel(self) -> discord.TextChannel:
         return self._notify_channel
+
+    @notify_channel.setter
+    def notify_channel(self, value: discord.TextChannel):
+        self._notify_channel = value
+        self.config.notify_channel_id = value.id
 
     @property
     def forced_vc(self) -> discord.VoiceChannel:
@@ -227,39 +234,6 @@ class Player(VoiceProtocol):
         """The currently applied Channel Mix filter."""
         return self._channel_mix
 
-    async def change_to_best_node(self, feature: str = None) -> Node | None:
-        """
-        Returns the best node to play the current track.
-        Returns
-        -------
-        :class:`Node`
-        """
-        node = self.node.node_manager.find_best_node(region=self.region, feature=feature)
-        if feature and not node:
-            raise NoNodeWithRequestFunctionalityAvailable(
-                f"No node with {feature} functionality available!", feature=feature
-            )
-
-        if node != self.node:
-            await self.change_node(node)
-            return node
-
-    async def change_to_best_node_diff_region(self, feature: str = None) -> Node | None:
-        """
-        Returns the best node to play the current track in a different region.
-        Returns
-        -------
-        :class:`Node`
-        """
-        node = self.node.node_manager.find_best_node(not_region=self.region, feature=feature)
-        if feature and not node:
-            raise NoNodeWithRequestFunctionalityAvailable(
-                f"No node with {feature} functionality available!", feature=feature
-            )
-        if node != self.node:
-            await self.change_node(node)
-            return node
-
     @property
     def has_effects(self):
         return self._effect_enabled
@@ -294,6 +268,39 @@ class Player(VoiceProtocol):
 
         difference = time.time() * 1000 - self._last_update
         return min(self._last_position + difference, self.current.duration)
+
+    async def change_to_best_node(self, feature: str = None) -> Node | None:
+        """
+        Returns the best node to play the current track.
+        Returns
+        -------
+        :class:`Node`
+        """
+        node = self.node.node_manager.find_best_node(region=self.region, feature=feature)
+        if feature and not node:
+            raise NoNodeWithRequestFunctionalityAvailable(
+                f"No node with {feature} functionality available!", feature=feature
+            )
+
+        if node != self.node:
+            await self.change_node(node)
+            return node
+
+    async def change_to_best_node_diff_region(self, feature: str = None) -> Node | None:
+        """
+        Returns the best node to play the current track in a different region.
+        Returns
+        -------
+        :class:`Node`
+        """
+        node = self.node.node_manager.find_best_node(not_region=self.region, feature=feature)
+        if feature and not node:
+            raise NoNodeWithRequestFunctionalityAvailable(
+                f"No node with {feature} functionality available!", feature=feature
+            )
+        if node != self.node:
+            await self.change_node(node)
+            return node
 
     def fetch(self, key: object, default: Any = None) -> Any:
         """
@@ -678,6 +685,8 @@ class Player(VoiceProtocol):
         shuffle: :class:`bool`
             Whether to shuffle the player or not.
         """
+        if await self.player_manager.global_config.fetch_shuffle() is False:
+            shuffle = False
         self._config.shuffle = shuffle
         await self._config.save()
 
@@ -704,7 +713,7 @@ class Player(VoiceProtocol):
         Sets the player's volume
         Note
         ----
-        A limit of 1000 is imposed by Lavalink.
+        A limit of 1000 is imposed by Lavalink. (This function also inforces a globally and server set limit.)
         Parameters
         ----------
         vol: :class:`int`
@@ -712,8 +721,10 @@ class Player(VoiceProtocol):
         requester: :class:`discord.Member`
             The member who requested the volume change.
         """
-
-        volume = max(min(vol, 1000), 0)
+        max_volume = min(self._config.get_max_volume(), await self.player_manager.global_config.fetch_volume())
+        volume = max(min(vol, max_volume), 0)
+        if volume == self.volume:
+            return
         self._config.volume = volume
         self._volume = Volume(volume)
         await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
@@ -886,10 +897,25 @@ class Player(VoiceProtocol):
             "[Player-%s] Moving from %s to voice channel: %s", self.channel.guild.id, self.channel.id, channel.id
         )
         self.channel = channel
+        self._config.self_deaf = self_deaf
         await self.guild.change_voice_state(channel=self.channel, self_mute=self_mute, self_deaf=self_deaf)
         self._connected = True
         await self.node.dispatch_event(PlayerMovedEvent(self, requester, old_channel, self.channel))
+        await self._config
         return channel
+
+    async def self_deafen(self, toggle: bool) -> None:
+        """|coro|
+        Deafens the player.
+        Parameters
+        -----------
+        toggle: :class:`bool`
+            Indicates if the player should be deafened.
+        """
+
+        self._config.self_deaf = toggle
+        await self.guild.change_voice_state(self_deaf=toggle)
+        await self._config.save()
 
     async def set_volume_filter(self, requester: discord.Member, volume: Volume) -> None:
         """
@@ -1382,6 +1408,8 @@ class Player(VoiceProtocol):
         return True
 
     async def shuffle_queue(self, requester: discord.Member) -> None:
+        if await self.player_manager.global_config.fetch_shuffle() is False:
+            return
         await self.node.dispatch_event(QueueShuffledEvent(player=self, requester=requester))
         await self.queue.shuffle()
 

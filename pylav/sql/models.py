@@ -630,7 +630,7 @@ class PlayerModel:
     id: int
     bot: int
     forced_channel_id: int | None = None
-    volume: int = 100
+    volume: int = 1000
     auto_play_playlist_id: int = 1
     text_channel_id: int | None = None
     notify_channel_id: int | None = None
@@ -831,3 +831,42 @@ class PlayerModel:
             else:
                 self.extras = player["extras"]
         return self
+
+    async def get_max_volume(self) -> int:
+        return self.extras.get("max_volume", 1000)
+
+    async def fetch_volume(self) -> int:
+        await self.update_volume()
+        return self.volume
+
+    async def fetch_repeat_current(self) -> bool:
+        await self.update_repeat_current()
+        return self.repeat_current
+
+    async def fetch_repeat_queue(self) -> bool:
+        await self.update_repeat_queue()
+        return self.repeat_queue
+
+    async def fetch_shuffle(self) -> bool:
+        await self.update_shuffle()
+        return self.shuffle
+
+    async def fetch_auto_play(self) -> bool:
+        await self.update_auto_play()
+        return self.auto_play
+
+    async def fetch_self_deaf(self) -> bool:
+        await self.update_self_deaf()
+        return self.self_deaf
+
+    async def fetch_extras(self) -> dict:
+        await self.update_extras()
+        return self.extras
+
+    async def fetch_empty_queue_dc(self) -> bool:
+        await self.update_extras()
+        return self.extras.get("empty_queue_dc", [False, 60])
+
+    async def fetch_alone_dc(self) -> bool:
+        await self.update_extras()
+        return self.extras.get("alone_dc", [False, 60])

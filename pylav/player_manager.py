@@ -34,6 +34,8 @@ class PlayerManager:
         The player that the player manager is initialized with.
     """
 
+    _global_player_config: PlayerModel
+
     def __init__(self, lavalink: Client, player: type[Player] = Player):  # type: ignore
         if not issubclass(player, Player):
             raise ValueError("Player must implement Player.")
@@ -48,6 +50,38 @@ class PlayerManager:
     def __iter__(self) -> Iterator[tuple[int, Player]]:
         """Returns an iterator that yields a tuple of (guild_id, player)."""
         yield from self.players.items()
+
+    @property
+    def global_config(self) -> PlayerModel:
+        return self._global_player_config
+
+    @property
+    def connected_players(self) -> list[Player]:
+        """Returns a list of all the connected players."""
+        return [p for p in self.players.values() if p.is_connected]
+
+    @property
+    def playing_players(self) -> list[Player]:
+        """Returns a list of all the playing players."""
+        return [p for p in self.players.values() if p.is_playing]
+
+    @property
+    def not_playing_players(self) -> list[Player]:
+        """Returns a list of all the not playing players."""
+        return [p for p in self.players.values() if not p.is_playing]
+
+    @property
+    def paused_players(self) -> list[Player]:
+        """Returns a list of all the paused players."""
+        return [p for p in self.players.values() if p.paused]
+
+    @property
+    def empty_players(self) -> list[Player]:
+        """Returns a list of all the empty players."""
+        return [p for p in self.players.values() if p.is_empty]
+
+    async def initialize(self):
+        self._global_player_config = await self.client.player_config_manager.get_global_config()
 
     async def destroy(self, guild_id: int, requester: discord.Member | None):
         """
@@ -94,31 +128,6 @@ class PlayerManager:
             return list(self.players.values())
 
         return [p for p in self.players.values() if bool(predicate(p))]
-
-    @property
-    def connected_players(self) -> list[Player]:
-        """Returns a list of all the connected players."""
-        return [p for p in self.players.values() if p.is_connected]
-
-    @property
-    def playing_players(self) -> list[Player]:
-        """Returns a list of all the playing players."""
-        return [p for p in self.players.values() if p.is_playing]
-
-    @property
-    def not_playing_players(self) -> list[Player]:
-        """Returns a list of all the not playing players."""
-        return [p for p in self.players.values() if not p.is_playing]
-
-    @property
-    def paused_players(self) -> list[Player]:
-        """Returns a list of all the paused players."""
-        return [p for p in self.players.values() if p.paused]
-
-    @property
-    def empty_players(self) -> list[Player]:
-        """Returns a list of all the empty players."""
-        return [p for p in self.players.values() if p.is_empty]
 
     async def remove(self, guild_id: int) -> None:
         """

@@ -253,6 +253,7 @@ class Client(metaclass=_Singleton):
                         await self._lib_config_manager.initialize()
                         await self._update_schema_manager.run_updates()
                         await self._radio_manager.initialize()
+                        await self._player_manager.initialize()
 
                         config_data = await self._lib_config_manager.get_config(
                             config_folder=self._config_folder,

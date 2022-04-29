@@ -21,6 +21,9 @@ class PlayerConfigManager:
     def client(self) -> Client:
         return self._client
 
+    async def get_global_config(self) -> PlayerModel:
+        return await PlayerModel(bot=self._client.bot.user.id, id=0).get_or_create()
+
     async def get_config(self, guild_id: int) -> PlayerModel:
         return await PlayerModel(bot=self._client.bot.user.id, id=guild_id).get_or_create()
 

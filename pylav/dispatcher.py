@@ -150,7 +150,7 @@ class DispatchManager:
         elif isinstance(event, TrackSkippedEvent):
             self.pylav_track_skipped(event)
         elif isinstance(event, TrackSeekEvent):
-            self.pylav_track_seek_event(event)
+            self.pylav_track_seek(event)
         elif isinstance(event, TrackPreviousRequestedEvent):
             self.pylav_track_previous_requested(event)
         elif isinstance(event, TracksRequestedEvent):
