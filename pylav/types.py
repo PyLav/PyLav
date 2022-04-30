@@ -1,7 +1,6 @@
-# isort: skip_file
 from __future__ import annotations
 
-from typing import Any, Awaitable, Callable, Coroutine, Literal, TYPE_CHECKING, TypeVar, Union, Type  # noqa: F401
+from typing import TYPE_CHECKING, Any, Awaitable, Callable, Coroutine, Literal, Type, TypeVar, Union  # noqa: F401
 
 import discord
 from typing_extensions import TypedDict
@@ -9,28 +8,26 @@ from typing_extensions import TypedDict
 T = TypeVar("T")
 
 if TYPE_CHECKING:
-    from discord.ext.commands.bot import AutoShardedBot, Bot  # noqa: F401
-    from discord.ext.commands.cog import Cog
-    from discord.ext.commands.context import Context
+    from discord.ext.commands import AutoShardedBot, Bot, Cog, Context
 
     try:
         from redbot.core.bot import Red
         from redbot.core.commands import Cog as RedCog
-        from redbot.core.commands.context import Context as RedContext
+        from redbot.core.commands import Context as RedContext
     except ImportError:
         Red = AutoShardedBot
         RedCog = Cog
         RedContext = Context
 
-    from pylav.query import Query  # noqa: F401
-    from pylav.utils import PyLavContext
     from pylav.client import Client
+    from pylav.query import Query
+    from pylav.utils import PyLavContext
 
 else:
     try:
         from redbot.core.bot import Red as BotClient
     except ImportError:
-        from discord.ext.commands.bot import AutoShardedBot as BotClient
+        from discord.ext.commands import AutoShardedBot as BotClient
 
 
 _Bot = Union["Red", "Bot", "AutoShardedBot"]
