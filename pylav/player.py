@@ -665,7 +665,8 @@ class Player(VoiceProtocol):
         """Plays the next track in the queue, if any."""
         previous_track = self.current
         previous_position = self.position
-        await self.next(requester=requester)
+        op = self.next(requester=requester)
+        await op
         if previous_track:
             self.node.dispatch_event(TrackSkippedEvent(self, requester, previous_track, previous_position))
 

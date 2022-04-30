@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import operator
 from typing import TYPE_CHECKING
 
@@ -25,6 +26,7 @@ class NodeManager:
         self._player_queue = []
 
         self._nodes = []
+        self._adding_nodes = asyncio.Event()
 
     def __iter__(self):
         yield from self._nodes
@@ -349,12 +351,27 @@ class NodeManager:
         await self.session.close()
 
     async def connect_to_all_nodes(self) -> None:
+        nodes_list = []
         for node in await self.client.node_db_manager.get_all_unamanaged_nodes():
             try:
                 connection_arguments = node.get_connection_args()
-                await self.add_node(**connection_arguments, skip_db=True)
+                nodes_list.append(await self.add_node(**connection_arguments, skip_db=True))
             except (ValueError, KeyError) as exc:
                 LOGGER.warning(
                     "[NODE-%s] Invalid node, skipping ... id: %s - Original error: %s", node.name, node.id, exc
                 )
                 continue
+
+        tasks = [asyncio.create_task(n.wait_until_ready()) for n in nodes_list]
+        if self.client.enable_managed_node:
+            tasks.append(asyncio.create_task(self.client._local_node_manager.wait_until_connected()))
+        done, pending = await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
+        for task in pending:
+            task.cancel()
+        for result in done:
+            result.result()
+        if not self._adding_nodes.is_set():
+            self._adding_nodes.set()
+
+    async def wait_until_ready(self, timeout: float | None = None):
+        await asyncio.wait_for(self._adding_nodes.wait(), timeout=timeout)

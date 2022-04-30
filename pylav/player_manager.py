@@ -161,6 +161,7 @@ class PlayerManager:
         node: Node = None,
         self_deaf: bool = False,
         requester: discord.Member = None,
+        feature: str | None = None,
     ) -> Player:
         """
         Creates a player if one doesn't exist with the given information.
@@ -180,6 +181,10 @@ class PlayerManager:
             The node to put the player on. Defaults to `None` and a node with the lowest penalty is chosen.
         requester: :class:`discord.Member`
             The member requesting the player. Defaults to `None`.
+        feature: Optional[:class:`str`]
+            The feature to look for for the initial Node. Defaults to `None`.
+        self_deaf: :class:`bool`
+            Whether the player should deafen themselves. Defaults to `False`.
         Returns
         -------
         :class:`Player`
@@ -191,7 +196,7 @@ class PlayerManager:
 
         region = self.client.node_manager.get_region(endpoint)
 
-        best_node = node or self.client.node_manager.find_best_node(region)
+        best_node = node or self.client.node_manager.find_best_node(region, feature=feature or None)
         if not best_node:
             raise NoNodeAvailable("No available nodes!")
         player_config = await self.client.player_config_manager.get_config(channel.guild.id)
@@ -223,13 +228,22 @@ class PlayerManager:
         LOGGER.info("Restored %s player states", len(self.players))
 
     async def _restore_player(self, player_state: PlayerStateModel) -> None:
+        from pylav.query import Query
+
         player = self.players.get(player_state.id)
         if player is not None:
             # Player was started before restore
             return
         channel = self.client.bot.get_channel(player_state.channel_id)
         requester = self.client.bot.user
-        discord_player = await self.create(channel=channel, requester=requester)
+        discord_player = await self.create(
+            channel=channel,
+            requester=requester,
+            feature=(await Query.from_base64(player_state.current["track"])).requires_capability
+            if player_state.current
+            else None,
+            self_deaf=player_state.self_deaf,
+        )
         await discord_player.restore(player_state, requester)
 
     async def shutdown(self) -> None:

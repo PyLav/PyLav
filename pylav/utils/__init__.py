@@ -499,8 +499,8 @@ class TrackHistoryQueue(PlayerQueue[T]):
         if len(items) + self.qsize() > self.maxsize:
             diff = len(items) + self.qsize() - self.maxsize
             for i in range(diff):
-                t = self._queue.pop()
-                self.raw_b64s.remove(t.track)
+                self._queue.pop()
+                self.raw_b64s.pop()
         if index is not None:
             if index < 0:
                 for i in items:
@@ -509,18 +509,19 @@ class TrackHistoryQueue(PlayerQueue[T]):
             else:
                 for i in items:
                     self._queue.insert(index, i)
-                    self.raw_b64s.append(i.track)
+                    self.raw_b64s.insert(index, i.track)
                     index += 1
         else:
             self._queue.extendleft(items)
-            self.raw_b64s.extend([i.track for i in items])
+            for i, t in enumerate(items):
+                self.raw_b64s.insert(i, t.track)
 
     def _get(self, index: int = None) -> T:
         if index is not None:
             r = self.popindex(index)
         else:
             r = self._queue.popleft()
-        self.raw_b64s.remove(r.track)
+        self.raw_b64s.pop(index if index is not None else -1)
         return r
 
     def put_nowait(self, items: list[T], index: int = None):

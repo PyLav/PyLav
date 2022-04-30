@@ -177,6 +177,7 @@ class LocalNodeManager:
         self._full_data: NodeModel = None  # type: ignore
         self.abort_for_unmanaged: asyncio.Event = asyncio.Event()
         self._args = []
+        self._wait_for = asyncio.Event()
 
     @property
     def node(self) -> Node | None:
@@ -436,6 +437,7 @@ class LocalNodeManager:
 
     async def _partial_shutdown(self) -> None:
         self.ready.clear()
+        self._wait_for.clear()
         # In certain situations to await self._proc.wait() is invalid so waiting on it waits forever.
         if self._shutdown is True:
             # For convenience, calling this method more than once or calling it before starting it
@@ -555,6 +557,12 @@ class LocalNodeManager:
         if not self.ready.is_set():
             raise asyncio.TimeoutError
 
+    async def wait_until_connected(self, timeout: float | None = None):
+        tasks = [asyncio.create_task(c) for c in [self._wait_for.wait(), self.wait_until_ready()]]
+        done, pending = await asyncio.wait(tasks, timeout=timeout or self.timeout, return_when=asyncio.ALL_COMPLETED)
+        for task in pending:
+            task.cancel()
+
     async def start_monitor(self, java_path: str):
         retry_count = 0
         backoff = ExponentialBackoffWithReset(base=3)
@@ -584,9 +592,11 @@ class LocalNodeManager:
                                 await asyncio.sleep(5)
                         else:
                             raise AttributeError
-                    except AttributeError:
+                    except AttributeError as e:
                         try:
-                            LOGGER.debug("Managed node monitor detected RLL is not connected to any nodes")
+                            LOGGER.debug(
+                                "Managed node monitor detected RLL is not connected to any nodes -%s", exc_info=e
+                            )
                             while True:
                                 node = self._client.node_manager.get_node_by_id(self._node_id)
                                 if node is not None:
@@ -684,14 +694,17 @@ class LocalNodeManager:
     async def start(self, java_path: str):
         if self.start_monitor_task is not None:
             await self.shutdown()
+        self._wait_for.clear()
         self.start_monitor_task = asyncio.create_task(self.start_monitor(java_path))
 
     async def connect_node(self, reconnect: bool, wait_for: float = 0.0, external_fallback: bool = False):
         await asyncio.sleep(wait_for)
+        self._wait_for.clear()
         if reconnect is True:
             node = self._client.node_manager.get_node_by_id(self._node_id)
             if node is not None:
                 await node.wait_until_ready(timeout=120)
+                self._wait_for.set()
                 return
         if node := self._client.node_manager.get_node_by_id(self._node_id) is None:
             self._node = await self._client.add_node(
@@ -713,6 +726,11 @@ class LocalNodeManager:
             )
         else:
             self._node = node
+
+        if not self._node._ws.connected:
+            await self._node.wait_until_ready()
+
+        self._wait_for.set()
 
     @staticmethod
     async def get_lavalink_process(*matches: str, cwd: str | None = None, lazy_match: bool = False):

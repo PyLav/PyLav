@@ -138,6 +138,7 @@ class Client(metaclass=_Singleton):
             self._spotify_client_secret = None
             self._spotify_auth = None
             self._shutting_down = False
+            self.enable_managed_node = None
             self._scheduler = AsyncIOScheduler()
         except Exception:
             LOGGER.exception("Failed to initialize Lavalink")
@@ -264,7 +265,7 @@ class Client(metaclass=_Singleton):
                             disabled_sources=[],
                         )
                         auto_update_managed_nodes = config_data.auto_update_managed_nodes
-                        enable_managed_node = config_data.enable_managed_node
+                        self.enable_managed_node = config_data.enable_managed_node
                         self._config_folder = aiopath.AsyncPath(config_data.config_folder)
                         localtrack_folder = aiopath.AsyncPath(config_data.localtrack_folder)
                         data = await self._node_config_manager.get_bundled_node_config()
@@ -291,10 +292,11 @@ class Client(metaclass=_Singleton):
                         await LocalFile.add_root_folder(path=localtrack_folder, create=True)
                         self._user_id = str(self._bot.user.id)
                         self._local_node_manager = LocalNodeManager(self, auto_update=auto_update_managed_nodes)
-                        if enable_managed_node:
+                        if self.enable_managed_node:
                             await self._local_node_manager.start(java_path=config_data.java_path)
                         await self.playlist_db_manager.update_bundled_playlists()
                         await self.node_manager.connect_to_all_nodes()
+                        await self.node_manager.wait_until_ready()
                         await self.player_manager.restore_player_states()
                         self._scheduler.add_job(
                             self._query_cache_manager.delete_old,

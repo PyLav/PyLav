@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
+import json
 from typing import TYPE_CHECKING, Any
 
 import aiohttp
@@ -77,7 +78,7 @@ class WebSocket:
         self._node = node
         self._client = self._node.node_manager.client
 
-        self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
+        self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=120), json_serialize=ujson.dumps)
         self._ws = None
         self._message_queue = []
 
@@ -178,9 +179,7 @@ class WebSocket:
 
                 try:
                     self._ws = await self._session.ws_connect(
-                        url=self._ws_uri,
-                        headers=headers,
-                        heartbeat=60,
+                        url=self._ws_uri, headers=headers, heartbeat=60, timeout=600
                     )
                     await self._node.update_features()
                     self.ready.set()
@@ -245,6 +244,7 @@ class WebSocket:
                         self._message_queue.clear()
 
                     await self._listen()
+                    LOGGER.critical("[NODE-%s] _listen returned.", self.node.name)
                     # Ensure this loop doesn't proceed if _listen returns control back to this
                     # function.
                     return
@@ -266,13 +266,7 @@ class WebSocket:
             async for msg in self._ws:
                 LOGGER.trace("[NODE-%s] Received WebSocket message: %s", self.node.name, msg.data)
 
-                if msg.type == aiohttp.WSMsgType.TEXT:
-                    await self.handle_message(msg.json(loads=ujson.loads))
-                elif msg.type == aiohttp.WSMsgType.ERROR and not self.client.is_shutting_down:
-                    exc = self._ws.exception()
-                    LOGGER.error("[NODE-%s] Exception in WebSocket! %s.", self.node.name, exc)
-                    break
-                elif msg.type in self._closers:
+                if msg.type is aiohttp.WSMsgType.CLOSED:
                     LOGGER.info(
                         "[NODE-%s] Received close frame with code %s.",
                         self.node.name,
@@ -280,6 +274,12 @@ class WebSocket:
                     )
                     await self._websocket_closed(msg.data, msg.extra)
                     return
+                else:
+                    await self.handle_message(msg.json(loads=json.loads))
+                # elif msg.type == aiohttp.WSMsgType.ERROR and not self.client.is_shutting_down:
+                #     exc = self._ws.exception()
+                #     LOGGER.error("[NODE-%s] Exception in WebSocket! %s.", self.node.name, exc)
+                #     break
             await self._websocket_closed()
         except Exception:
             if not self.client.is_shutting_down:
