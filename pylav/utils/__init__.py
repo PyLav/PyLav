@@ -716,7 +716,7 @@ class PyLavContext(_OriginalContextClass):
     def guild(self) -> Guild | None:
         """Optional[:class:`.Guild`]: Returns the guild associated with this context's command. None if not
         available."""
-        return self.author.guild
+        return getattr(self.author, "guild", None)
 
     @discord.utils.cached_property
     def channel(self) -> discord.abc.MessageableChannel:
