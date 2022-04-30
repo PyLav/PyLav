@@ -7,10 +7,12 @@ from uuid import uuid4
 import aiohttp
 import ujson
 
+from pylav.constants import SUPPORTED_SOURCES
 from pylav.events import Event
 from pylav.exceptions import Unauthorized
 from pylav.filters import ChannelMix, Distortion, Equalizer, Karaoke, LowPass, Rotation, Timescale, Vibrato, Volume
 from pylav.filters.tremolo import Tremolo
+from pylav.sql.models import NodeModel
 from pylav.types import LavalinkResponseT, TrackT
 from pylav.utils import AsyncIter
 
@@ -161,6 +163,8 @@ class Node:
         Whether to use a ssl connection.
     """
 
+    _config: NodeModel
+
     def __init__(
         self,
         manager: NodeManager,
@@ -191,6 +195,7 @@ class Node:
         self._host = host
         self._extras = extras or {}
         self._disabled_sources = set(disabled_sources or [])
+        self._config = None  # type: ignore
 
         if self._manager.get_node_by_id(unique_identifier) is not None:
             raise ValueError(f"A Node with identifier:{unique_identifier} already exists.")
@@ -780,6 +785,11 @@ class Node:
 
         await self.send(**op)
 
+    async def get_unsupported_features(self) -> set[str]:
+        if not self._capabilities:
+            await self.update_features()
+        return SUPPORTED_SOURCES - self._capabilities
+
     async def update_features(self):
         """|coro|
         Updates the features of the target node.
@@ -859,6 +869,25 @@ class Node:
         return source.lower() in self.sources
 
     has_capability = has_source
+
+    async def update_disabled_sources(self, sources: set[str]) -> None:
+        """
+        Updates the disabled sources.
+
+        Returns
+        -------
+        :class:`None`
+        """
+        if self.managed:
+            return
+        unsupported = await self.get_unsupported_features()
+        if self._config is None:
+            self._config = await self.node_manager.client.node_db_manager.get_node_config(self.identifier)
+        currently_disabled = set(self._config.disabled_sources)
+        unsupported = unsupported.union(currently_disabled).union(sources)
+        self._config.disabled_sources = list(unsupported)
+        self._disabled_sources = unsupported
+        await self._config.save()
 
     @property
     def capabilities(self) -> set:

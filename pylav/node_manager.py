@@ -153,7 +153,7 @@ class NodeManager:
         LOGGER.info("[NODE-%s] Successfully added to Node Manager", node.name)
         LOGGER.verbose("[NODE-%s] Successfully added to Node Manager -- %r", node.name, node)
         if not skip_db:
-            await self.client.node_db_manager.add_node(
+            node._config = await self.client.node_db_manager.add_node(
                 host=host,
                 port=port,
                 password=password,

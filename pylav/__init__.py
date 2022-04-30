@@ -45,5 +45,3 @@ __all__ = (
     "Query",
     "converters",
 )
-
-Track = Track
