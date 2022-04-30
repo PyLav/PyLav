@@ -213,7 +213,13 @@ class NodeManager:
                 return key
         return None
 
-    def find_best_node(self, region: str = None, not_region: str = None, feature: str = None) -> Node | None:
+    def find_best_node(
+        self,
+        region: str = None,
+        not_region: str = None,
+        feature: str = None,
+        already_attempted_regions: set[str] = None,
+    ) -> Node | None:
         """
         Finds the best (least used) node in the given region, if applicable.
         Parameters
@@ -250,25 +256,36 @@ class NodeManager:
                     gcloud-tts
                 With sponsorblock:
                     sponsorblock
+        already_attempted_regions: Optional[:class:`set`]
+            A set of regions that have already been attempted. Defaults to `None`.
         Returns
         -------
         Optional[:class:`Node`]
         """
+        already_attempted_regions = already_attempted_regions or set()
         if feature:
             nodes = [n for n in self.available_nodes if n.has_capability(feature)]
         else:
             nodes = self.available_nodes
 
         if region and not_region:
-            nodes = [n for n in nodes if n.region == region and n.region != not_region]
+            nodes = [
+                n
+                for n in nodes
+                if n.region == region and n.region != not_region and n.region not in already_attempted_regions
+            ]
         elif region:
-            nodes = [n for n in nodes if n.region == region]
+            nodes = [n for n in nodes if n.region == region and n.region not in already_attempted_regions]
         else:
-            nodes = [n for n in nodes if n.region != not_region]
+            nodes = [n for n in nodes if n.region != not_region and n.region not in already_attempted_regions]
 
         if not nodes:  # If there are no regional nodes available, or a region wasn't specified.
             if feature:
-                nodes = [n for n in self.available_nodes if n.has_capability(feature)]
+                nodes = [
+                    n
+                    for n in self.available_nodes
+                    if n.has_capability(feature) and n.region not in already_attempted_regions
+                ]
             else:
                 nodes = self.available_nodes
         if not nodes:

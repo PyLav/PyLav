@@ -49,12 +49,13 @@ class TrackStuckEvent(Event):
         The amount of time the track had while being stuck.
     """
 
-    __slots__ = ("player", "track", "threshold")
+    __slots__ = ("player", "track", "threshold", "node")
 
-    def __init__(self, player: Player, track: Track, threshold: float):
+    def __init__(self, player: Player, track: Track, threshold: float, node: Node):
         self.player = player
         self.track = track
         self.threshold = threshold
+        self.node = node
 
 
 class TrackExceptionEvent(Event):
@@ -70,12 +71,13 @@ class TrackExceptionEvent(Event):
         The type of exception that the track had while playing.
     """
 
-    __slots__ = ("player", "track", "exception")
+    __slots__ = ("player", "track", "exception", "node")
 
-    def __init__(self, player: Player, track: Track, exception: Exception):
+    def __init__(self, player: Player, track: Track, exception: Exception, node: Node):
         self.player = player
         self.track = track
         self.exception = exception
+        self.node = node
 
 
 class TrackEndEvent(Event):
@@ -91,12 +93,13 @@ class TrackEndEvent(Event):
         The reason why the track stopped playing.
     """
 
-    __slots__ = ("player", "track", "reason")
+    __slots__ = ("player", "track", "reason", "node")
 
-    def __init__(self, player: Player, track: Track, reason: str):
+    def __init__(self, player: Player, track: Track, reason: str, node: Node):
         self.player = player
         self.track = track
         self.reason = reason
+        self.node = node
 
 
 class TrackStartEvent(Event):
@@ -110,9 +113,9 @@ class TrackStartEvent(Event):
         The track that started playing.
     """
 
-    __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author")
+    __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
 
-    def __init__(self, player: Player, track: Track):
+    def __init__(self, player: Player, track: Track, node: Node):
         self.player = player
         self.track = track
         self.url = track.uri
@@ -120,6 +123,7 @@ class TrackStartEvent(Event):
         self.duration = track.duration
         self.title = track.title
         self.author = track.author
+        self.node = node
 
 
 class TrackAutoPlayEvent(Event):
@@ -508,13 +512,14 @@ class WebSocketClosedEvent(Event):
         If the websocket was closed remotely.
     """
 
-    __slots__ = ("player", "code", "reason", "by_remote")
+    __slots__ = ("player", "code", "reason", "by_remote", "node")
 
-    def __init__(self, player: Player, code: int, reason: str, by_remote: bool):
+    def __init__(self, player: Player, code: int, reason: str, by_remote: bool, node: Node):
         self.player = player
         self.code = code
         self.reason = reason
         self.by_remote = by_remote
+        self.node = node
 
 
 class SegmentSkippedEvent(Event):
@@ -526,11 +531,12 @@ class SegmentSkippedEvent(Event):
         The player whose segment was skipped.
     """
 
-    __slots__ = ("player", "category", "start", "end")
+    __slots__ = ("player", "category", "start", "end", "node")
 
-    def __init__(self, player: Player, category: str, start: float, end: float):
+    def __init__(self, player: Player, category: str, start: float, end: float, node: Node):
         self.player = player
         self.segment = Segment(category=category, start=start, end=end)
+        self.node = node
 
 
 class SegmentsLoadedEvent(Event):
@@ -544,11 +550,12 @@ class SegmentsLoadedEvent(Event):
         The segments that were loaded.
     """
 
-    __slots__ = ("player", "segments")
+    __slots__ = ("player", "segments", "node")
 
-    def __init__(self, player: Player, segments: list[dict]):
+    def __init__(self, player: Player, segments: list[dict], node: Node):
         self.player = player
         self.segments = [Segment(**segment) for segment in segments]
+        self.node = node
 
 
 class PlayerPausedEvent(Event):

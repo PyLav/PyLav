@@ -584,14 +584,10 @@ class Query:
             return
         recursion_depth += 1
         if query.is_m3u:
-            LOGGER.critical("Recursing into m3u playlist 999 %s", query.__dict__)
             async for m3u in query._yield_m3u_tracks():
-                LOGGER.critical("Recursing into m3u playlist 2331 %s", m3u.__dict__)
-                try:
+                with contextlib.suppress(Exception):
                     async for q in self._yield_tracks_recursively(m3u, recursion_depth):
                         yield q
-                except Exception:
-                    LOGGER.exception("Failed to recurse into m3u file111: %s", m3u)
         elif query.is_pylav:
             async for pylav in query._yield_pylav_file_tracks():
                 with contextlib.suppress(Exception):

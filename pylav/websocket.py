@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
-import json
 from typing import TYPE_CHECKING, Any
 
 import aiohttp
@@ -275,7 +274,7 @@ class WebSocket:
                     await self._websocket_closed(msg.data, msg.extra)
                     return
                 else:
-                    await self.handle_message(msg.json(loads=json.loads))
+                    await self.handle_message(msg.json(loads=ujson.loads))
                 # elif msg.type == aiohttp.WSMsgType.ERROR and not self.client.is_shutting_down:
                 #     exc = self._ws.exception()
                 #     LOGGER.error("[NODE-%s] Exception in WebSocket! %s.", self.node.name, exc)
@@ -354,38 +353,34 @@ class WebSocket:
                 data["guildId"],
             )
             return
-        from pylav.query import Query
-        from pylav.tracks import Track
 
         event_type = data["type"]
         if event_type == "TrackEndEvent":
-            event = TrackEndEvent(
-                player,
-                Track(node=self.node, data=data["track"], query=await Query.from_base64(data["track"])),
-                data["reason"],
-            )
+            player.current.timestamp = 0
+            event = TrackEndEvent(player, player.current, data["reason"], self.node)
+            await player._handle_event(event)
         elif event_type == "TrackExceptionEvent":
-            event = TrackExceptionEvent(player, player.current, data["error"])
+            event = TrackExceptionEvent(player, player.current, data["error"], node=self.node)
+            if self.node.identifier == player.node.identifier:
+                await player._handle_event(event)
         elif event_type == "TrackStartEvent":
             track = player.current
-            event = TrackStartEvent(player, track)  # FIXME: Check if this is correct
-            self._process_track_event(player, track)
+            event = TrackStartEvent(player, track, self.node)  # FIXME: Check if this is correct
+            self._process_track_event(player, track, self.node)
         elif event_type == "TrackStuckEvent":
-            event = TrackStuckEvent(player, player.current, data["thresholdMs"])
+            event = TrackStuckEvent(player, player.current, data["thresholdMs"], self.node)
+            await player._handle_event(event)
         elif event_type == "WebSocketClosedEvent":
-            event = WebSocketClosedEvent(player, data["code"], data["reason"], data["byRemote"])
+            event = WebSocketClosedEvent(player, data["code"], data["reason"], data["byRemote"], self.node)
         elif event_type == "SegmentsLoaded":
-            event = SegmentsLoadedEvent(player, data["segments"])
+            event = SegmentsLoadedEvent(player, data["segments"], self.node)
         elif event_type == "SegmentSkipped":
-            event = SegmentSkippedEvent(player, **data["segment"])
+            event = SegmentSkippedEvent(player, node=self.node, **data["segment"])
         else:
             LOGGER.warning("[NODE-%s] Unknown event received: %s", self.node.name, event_type)
             return
 
         self.client.dispatch_event(event)
-
-        if player:
-            await player._handle_event(event)
 
     async def send(self, **data: Any):
         """
@@ -398,60 +393,64 @@ class WebSocket:
         """
         if self.connected:
             LOGGER.trace("[NODE-%s] Sending payload %s", self.node.name, data)
-            await self._ws.send_json(data)
+            try:
+                await self._ws.send_json(data)
+            except ConnectionResetError:
+                LOGGER.debug("[NODE-%s] Send called before WebSocket ready!", self.node.name)
+                self._message_queue.append(data)
         else:
             LOGGER.debug("[NODE-%s] Send called before WebSocket ready!", self.node.name)
             self._message_queue.append(data)
 
-    def _process_track_event(self, player: Player, track: Track) -> None:
+    def _process_track_event(self, player: Player, track: Track, node: Node) -> None:
         if track.is_youtube_music:
-            event = TrackStartYouTubeMusicEvent(player, track)
+            event = TrackStartYouTubeMusicEvent(player, track, node)
         elif track.is_spotify:
-            event = TrackStartSpotifyEvent(player, track)
+            event = TrackStartSpotifyEvent(player, track, node)
         elif track.is_apple_music:
-            event = TrackStartAppleMusicEvent(player, track)
+            event = TrackStartAppleMusicEvent(player, track, node)
         elif track.is_local:
-            event = TrackStartLocalFileEvent(player, track)
+            event = TrackStartLocalFileEvent(player, track, node)
         elif track.is_http:
-            event = TrackStartHTTPEvent(player, track)
+            event = TrackStartHTTPEvent(player, track, node)
         elif track.is_speak:
-            event = TrackStartSpeakEvent(player, track)
+            event = TrackStartSpeakEvent(player, track, node)
         elif track.is_youtube:
-            event = TrackStartYouTubeEvent(player, track)
+            event = TrackStartYouTubeEvent(player, track, node)
         elif track.is_clypit:
-            event = TrackStartClypitEvent(player, track)
+            event = TrackStartClypitEvent(player, track, node)
         elif track.is_getyarn:
-            event = TrackStartGetYarnEvent(player, track)
+            event = TrackStartGetYarnEvent(player, track, node)
         elif track.is_twitch:
-            event = TrackStartTwitchEvent(player, track)
+            event = TrackStartTwitchEvent(player, track, node)
         elif track.is_vimeo:
-            event = TrackStartVimeoEvent(player, track)
+            event = TrackStartVimeoEvent(player, track, node)
         elif track.is_mixcloud:
-            event = TrackStartMixCloudEvent(player, track)
+            event = TrackStartMixCloudEvent(player, track, node)
         elif track.is_ocremix:
-            event = TrackStartOCRMixEvent(player, track)
+            event = TrackStartOCRMixEvent(player, track, node)
         elif track.is_pornhub:
-            event = TrackStartPornHubEvent(player, track)
+            event = TrackStartPornHubEvent(player, track, node)
         elif track.is_reddit:
-            event = TrackStartRedditEvent(player, track)
+            event = TrackStartRedditEvent(player, track, node)
         elif track.is_soundgasm:
-            event = TrackStartSoundgasmEvent(player, track)
+            event = TrackStartSoundgasmEvent(player, track, node)
         elif track.is_tiktok:
-            event = TrackStartTikTokEvent(player, track)
+            event = TrackStartTikTokEvent(player, track, node)
         elif track.is_bandcamp:
-            event = TrackStartBandcampEvent(player, track)
+            event = TrackStartBandcampEvent(player, track, node)
         elif track.is_soundcloud:
-            event = TrackStartSoundCloudEvent(player, track)
+            event = TrackStartSoundCloudEvent(player, track, node)
         elif track.is_twitch:
-            event = TrackStartTwitchEvent(player, track)
+            event = TrackStartTwitchEvent(player, track, node)
         elif track.is_vimeo:
-            event = TrackStartVimeoEvent(player, track)
+            event = TrackStartVimeoEvent(player, track, node)
         elif track.is_gctts:
-            event = TrackStartGCTTSEvent(player, track)
+            event = TrackStartGCTTSEvent(player, track, node)
         elif track.is_niconico:
-            event = TrackStartNicoNicoEvent(player, track)
+            event = TrackStartNicoNicoEvent(player, track, node)
         else:  # This should never happen
-            event = TrackStartEvent(player, track)
+            event = TrackStartEvent(player, track, node)
         self.client.dispatch_event(event)
 
     async def close(self):

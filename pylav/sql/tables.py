@@ -7,7 +7,7 @@ from piccolo.columns import JSONB, BigInt, Boolean, Float, Integer, Text, Timest
 from piccolo.engine import PostgresEngine
 from piccolo.table import Table
 
-if getpass.getuser() == "draper":  # FIME: This is a hack im lazy and should be removed before release
+if getpass.getuser() == "draper":  # FIXME: This is a hack im lazy and should be removed before release
     DATABASE = "py_lav"
     USER = "draper"
     PASSWORD = "testing"  # noqa

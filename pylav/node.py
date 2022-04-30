@@ -391,8 +391,18 @@ class Node:
     def __repr__(self):
         return (
             f"<Node id={self.identifier} name={self.name} "
-            f"region={self.region} ssl={self.ssl} search_only={self.search_only}>"
+            f"region={self.region} ssl={self.ssl} search_only={self.search_only} status={self._ws.connected}>"
         )
+
+    def __eq__(self, other):
+        if isinstance(other, Node):
+            return self.identifier == other.identifier
+        return NotImplemented
+
+    def __ne__(self, other):
+        if isinstance(other, Node):
+            return self.identifier != other.identifier
+        return NotImplemented
 
     async def get_query_youtube_music(self, query: str, bypass_cache: bool = False) -> LavalinkResponseT:
         """|coro|

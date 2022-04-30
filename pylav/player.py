@@ -408,7 +408,7 @@ class Player(VoiceProtocol):
         """
 
         at = await self._query_to_track(requester, track, query)
-        await self.queue.put([at], index=index)
+        self.queue.put_nowait([at], index=index)
         self.node.dispatch_event(TracksRequestedEvent(self, self.guild.get_member(requester), [at]))
 
     async def bulk_add(
@@ -438,7 +438,7 @@ class Player(VoiceProtocol):
                 track, query = entry, None
                 track = await self._query_to_track(requester, track, query)
             output.append(track)
-        await self.queue.put(output, index=index)
+        self.queue.put_nowait(output, index=index)
         self.node.dispatch_event(TracksRequestedEvent(self, self.guild.get_member(requester), output))
 
     async def previous(self, requester: discord.Member, bypass_cache: bool = False) -> None:
@@ -448,7 +448,7 @@ class Player(VoiceProtocol):
         if track.is_partial:
             await track.search(self, bypass_cache=bypass_cache)
         if self.current:
-            await self.history.put([self.current])
+            self.history.put_nowait([self.current])
 
         if track.query and not self.node.has_source(track.requires_capability):
             self.current = None
@@ -487,8 +487,9 @@ class Player(VoiceProtocol):
                 # If track was passed to `.play()` raise here
                 if not track:
                     raise TrackNotFound
-                # Otherwise dispatch Track Exception Event
-                self.node.dispatch_event(TrackExceptionEvent(self, track, exc))
+                event = TrackExceptionEvent(self, track, exc, self.node)
+                self.node.dispatch_event(event)
+                await self._handle_event(event)
                 return
         self.current = track
         options = {"noReplace": no_replace}
@@ -497,8 +498,8 @@ class Player(VoiceProtocol):
         await self.node.send(op="play", guildId=self.guild_id, track=track.track, **options)
         self.node.dispatch_event(QuickPlayEvent(self, requester, track))
 
-    def next(self, requester: discord.Member = None) -> Coroutine[Any, Any, None]:
-        return self.play(None, None, requester or self.bot.user)  # type: ignore
+    def next(self, requester: discord.Member = None, node: Node = None) -> Coroutine[Any, Any, None]:
+        return self.play(None, None, requester or self.bot.user, node=node)  # type: ignore
 
     async def play(
         self,
@@ -510,6 +511,7 @@ class Player(VoiceProtocol):
         no_replace: bool = False,
         skip_segments: list[str] | str = None,
         bypass_cache: bool = False,
+        node: Node = None,
     ) -> None:
         """
         Plays the given track.
@@ -539,6 +541,8 @@ class Player(VoiceProtocol):
             The member that requested the track.
         bypass_cache: Optional[:class:`bool`]
             If set to true, the track will not be looked up in the cache. Defaults to `False`.
+        node: Optional[:class:`Node`]
+            The node to use. Defaults the best available node with the needed feature.
         """
         options = {}
         skip_segments = self._process_skip_segments(skip_segments)
@@ -547,7 +551,6 @@ class Player(VoiceProtocol):
         self.position_timestamp = 0
         self.paused = False
         auto_play = False
-
         if track is not None and isinstance(track, (Track, dict, str, type(None))):
             track = Track(node=self.node, data=track, query=query, skip_segments=skip_segments, requester=requester.id)
         if self.current and self._config.repeat_current:
@@ -556,7 +559,8 @@ class Player(VoiceProtocol):
             await self.add(self.current.requester_id, self.current, index=-1)
         if self.current:
             self.current.timestamp = 0
-            await self.history.put([self.current])
+            self.history.put_nowait([self.current])
+        self.current = None
         if not track:
             if self.queue.empty():
                 if self.autoplay_enabled:
@@ -601,9 +605,17 @@ class Player(VoiceProtocol):
 
         if track.query is None:
             track._query = await Query.from_base64(track.track)
-        if track.query and not self.node.has_source(track.requires_capability):
-            self.current = None
-            await self.change_to_best_node(track.requires_capability)
+        if node:
+            if self.node != node:
+                await self.change_node(node)
+        else:
+            try:
+                await self.change_to_best_node(feature=track.requires_capability)
+            except NoNodeWithRequestFunctionalityAvailable as exc:
+                event = TrackExceptionEvent(self, track, exc, self.node)
+                self.node.dispatch_event(event)
+                await self._handle_event(event)
+                return
         track._node = self.node
         if track.is_partial:
             try:
@@ -613,9 +625,10 @@ class Player(VoiceProtocol):
                 if not track:
                     raise TrackNotFound
                 # Otherwise dispatch Track Exception Event
-                self.node.dispatch_event(TrackExceptionEvent(self, track, exc))
+                event = TrackExceptionEvent(self, track, exc, self.node)
+                self.node.dispatch_event(event)
+                await self._handle_event(event)
                 return
-
         if self.node.supports_sponsorblock:
             options["skipSegments"] = skip_segments or track.skip_segments
         if start_time is not None:
@@ -786,12 +799,34 @@ class Player(VoiceProtocol):
         event: :class:`Event`
             The event that will be handled.
         """
-        if (
-            isinstance(event, (TrackStuckEvent, TrackExceptionEvent))
-            or isinstance(event, TrackEndEvent)
-            and event.reason == "FINISHED"
-        ):
+        if event.node.identifier != self.node.identifier:
+            return
+        if isinstance(event, TrackStuckEvent) or isinstance(event, TrackEndEvent) and event.reason == "FINISHED":
             await self.next()
+        elif isinstance(event, TrackExceptionEvent):
+            error = f"{event.exception}"
+            if "country" in error.lower():
+                if "tried_invalid_region" not in event.track._extra:
+                    event.track._extra["tried_invalid_region"] = set()
+                event.track._extra["tried_invalid_region"].add(self.region)
+                print(event.track._extra["tried_invalid_region"])
+                node = self.node.node_manager.find_best_node(
+                    not_region=self.region,
+                    feature=event.track.requires_capability,
+                    already_attempted_regions=event.track._extra["tried_invalid_region"],
+                )
+                if node is None or node.identifier == event.node.identifier:
+                    await self.next()
+                else:
+                    await self.play(
+                        track=event.track,
+                        node=node,
+                        requester=event.track.requester,  # type: ignore
+                        query=event.track.query,
+                        skip_segments=event.track.skip_segments,
+                    )
+            else:
+                await self.next()
 
     async def _update_state(self, state: dict) -> None:
         """
@@ -1352,7 +1387,7 @@ class Player(VoiceProtocol):
                 queue_list += f"{current_track_description}\n"
                 queue_list += f"Requester: **{current.requester.mention}**"
                 queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
-            if self._config.fetch_shuffle():
+            if await self._config.fetch_shuffle():
                 queue_list += "__Queue order is not accurate due to shuffle being toggled__\n\n"
             if tracks:
                 padding = len(str(start_index + len(tracks)))
@@ -1429,7 +1464,7 @@ class Player(VoiceProtocol):
             return False
         index = self.queue.index(track)
         track = await self.queue.get(index)
-        await self.queue.put([track], new_index)
+        self.queue.put_nowait([track], new_index)
         self.node.dispatch_event(
             QueueTrackPositionChangedEvent(before=index, after=new_index, track=track, player=self, requester=requester)
         )
@@ -1509,7 +1544,7 @@ class Player(VoiceProtocol):
             if player.current
             else None
         )
-        self.current = current
+        self.current = None
         self._notify_channel = self.guild.get_channel_or_thread(player.notify_channel_id)
         self._text_channel = self.guild.get_channel_or_thread(player.text_channel_id)
         self._forced_vc = self.guild.get_channel_or_thread(player.channel_id)
@@ -1555,15 +1590,13 @@ class Player(VoiceProtocol):
         self.history.raw_queue = collections.deque(history)
         self.history.raw_b64s = list(t.track for t in history)
         tried = 0
-        if self.current:
-            self.current.timestamp = int(player.position)
-            await self.queue.put([self.current], index=0)
-            node = self.node.node_manager.find_best_node(region=self.region, feature=self.current.requires_capability)
+        if current:
+            current.timestamp = int(player.position)
+            self.queue.put_nowait([current], index=0)
+            node = self.node.node_manager.find_best_node(region=self.region, feature=current.requires_capability)
             while not node:
                 await asyncio.sleep(1)
-                node = self.node.node_manager.find_best_node(
-                    region=self.region, feature=self.current.requires_capability
-                )
+                node = self.node.node_manager.find_best_node(region=self.region, feature=current.requires_capability)
                 tried += 1
                 if tried > 600:
                     return  # Exit without restoring after 10 minutes of waiting
@@ -1597,7 +1630,7 @@ class Player(VoiceProtocol):
                 channel_mix=self._channel_mix,
             )
         if player.playing:
-            await self.resume(requester)  # type: ignore
+            await self.next(requester)  # type: ignore
         self._restored = True
         await self.player_manager.client.player_state_db_manager.delete_player(guild_id=self.guild.id)
         self.node.dispatch_event(PlayerRestoredEvent(self, requester))
