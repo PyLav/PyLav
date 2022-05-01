@@ -887,6 +887,7 @@ class Player(VoiceProtocol):
                 distortion=self.distortion,
                 low_pass=self.low_pass,
                 channel_mix=self.channel_mix,
+                reset_not_set=True,
             )
         if self.volume_filter.changed:
             await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
@@ -1691,6 +1692,7 @@ class Player(VoiceProtocol):
                 distortion=self._distortion,
                 low_pass=self._low_pass,
                 channel_mix=self._channel_mix,
+                reset_not_set=True,
             )
         if player.playing:
             await self.next(requester)  # type: ignore
