@@ -1298,7 +1298,7 @@ class Player(VoiceProtocol):
         self._effect_enabled = changed
         if reset_not_set:
             kwargs = {
-                "volume": volume or self.volume,
+                "volume": volume or self.volume_filter,
                 "equalizer": equalizer,
                 "karaoke": karaoke,
                 "timescale": timescale,
