@@ -48,6 +48,16 @@ class NodeConfigManager:
 
         return model_list
 
+    async def get_all_nodes(self) -> list[NodeModel]:
+        model_list = [
+            NodeModel(**node.to_dict())
+            for node in await NodeRow.objects().output(load_json=True).where(NodeRow.managed == False)
+        ]
+        for n in model_list:
+            self.currently_in_db.add(n.id)
+        model_list.append(await self.get_bundled_node_config())
+        return model_list
+
     async def get_bundled_node_config(self) -> NodeModel:
         node = (
             await NodeRow.objects()
