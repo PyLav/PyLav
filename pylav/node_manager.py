@@ -290,7 +290,7 @@ class NodeManager:
                 nodes = self.available_nodes
         if not nodes:
             return None
-        best_node = min(nodes, key=operator.attrgetter("server_playing_players", "penalty"))
+        best_node = min(nodes, key=operator.attrgetter("penalty"))
         return best_node
 
     def get_node_by_id(self, unique_identifier: int) -> Node | None:

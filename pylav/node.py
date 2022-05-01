@@ -379,7 +379,7 @@ class Node:
     def penalty(self) -> float:
         """Returns the load-balancing penalty for this node."""
         if not self.available or not self.stats:
-            return 9e30
+            return float("inf")
 
         return self.stats.penalty.total
 
