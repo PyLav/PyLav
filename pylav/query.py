@@ -25,7 +25,7 @@ MIXCLOUD_REGEX = re.compile(
     r"https?://(?:(?:www|beta|m)\.)?mixcloud.com/([^/]+)/(?!stream|uploads|favorites|listens|playlists)([^/]+)/?",
     re.IGNORECASE,
 )
-OCRREMIX_PATTERN = re.compile(r"(?:https?://(?:www\.)?ocremix\.org/remix/)?(?P<id>OCR\d+)(?:.*)?", re.IGNORECASE)
+OCRREMIX_PATTERN = re.compile(r"(?:https?://(?:www\.)?ocremix\.org/remix/)?(?P<ocrmix_id>OCR\d+)(?:.*)?", re.IGNORECASE)
 PORNHUB_REGEX = re.compile(
     r"^https?://([a-z]+.)?pornhub\.(com|net)/view_video\.php\?viewkey=([a-zA-Z\d]+).*$", re.IGNORECASE
 )
@@ -36,23 +36,27 @@ REDDIT_REGEX = re.compile(
     r"https://v\.redd\.it/([^/]+)(?:.*)?",
     re.IGNORECASE,
 )
-SOUNDGASM_REGEX = re.compile(r"https?://soundgasm\.net/u/(?P<path>(?P<author>[^/]+)/[^/]+)", re.IGNORECASE)
-TIKTOK_REGEX = re.compile(r"^https://(?:www\.|m\.)?tiktok\.com/@(?P<user>[^/]+)/video/(?P<video>\d+).*$", re.IGNORECASE)
+SOUNDGASM_REGEX = re.compile(
+    r"https?://soundgasm\.net/u/(?P<soundgasm_path>(?P<soundgasm_author>[^/]+)/[^/]+)", re.IGNORECASE
+)
+TIKTOK_REGEX = re.compile(
+    r"^https://(?:www\.|m\.)?tiktok\.com/@(?P<tiktok_user>[^/]+)/video/(?P<tiktok_video>\d+).*$", re.IGNORECASE
+)
 
 
 SPOTIFY_REGEX = re.compile(
     r"(https?://)?(www\.)?open\.spotify\.com/(user/[a-zA-Z\d\\-_]+/)?"
-    r"(?P<type>track|album|playlist|artist)/"
-    r"(?P<identifier>[a-zA-Z\d\\-_]+)",
+    r"(?P<spotify_type>track|album|playlist|artist)/"
+    r"(?P<spotify_identifier>[a-zA-Z\d\\-_]+)",
     re.IGNORECASE,
 )
 
 APPLE_MUSIC_REGEX = re.compile(
     r"(https?://)?(www\.)?music\.apple\.com/"
-    r"(?P<countrycode>[a-zA-Z]{2}/)?"
-    r"(?P<type>album|playlist|artist)(/[a-zA-Z\d\\-]+)?/"
-    r"(?P<identifier>[a-zA-Z\d.]+)"
-    r"(\?i=(?P<identifier2>\d+))?",
+    r"(?P<applemusic_countrycode>[a-zA-Z]{2}/)?"
+    r"(?P<applemusic_type>album|playlist|artist)(/[a-zA-Z\d\\-]+)?/"
+    r"(?P<applemusic_identifier>[a-zA-Z\d.]+)"
+    r"(\?i=(?P<applemusic_identifier2>\d+))?",
     re.IGNORECASE,
 )
 
@@ -75,14 +79,16 @@ SOUND_CLOUD_REGEX = re.compile(
 )
 M3U_REGEX = re.compile(r"^.*\.m3u8?$", re.IGNORECASE)
 PLS_REGEX = re.compile(r"^.*\.pls$", re.IGNORECASE)
-PLS_TRACK_REGEX = re.compile(r"^File\d+=(?P<query>.+)$", re.IGNORECASE)
+PLS_TRACK_REGEX = re.compile(r"^File\d+=(?P<pls_query>.+)$", re.IGNORECASE)
 XSPF_REGEX = re.compile(r"^.*\.xspf$", re.IGNORECASE)
 PYLAV_REGEX = re.compile(r"^.*\.pylav$", re.IGNORECASE)
 
-YOUTUBE_REGEX = re.compile(r"(?:http://|https://|)(?:www\.|)(?P<music>music\.)?youtu(be\.com|\.be)", re.IGNORECASE)
-SPEAK_REGEX = re.compile(r"^(?P<source>speak):\s*?(?P<query>.*)$", re.IGNORECASE)
-GCTSS_REGEX = re.compile(r"^(?P<source>tts://)\s*?(?P<query>.*)$", re.IGNORECASE)
-SEARCH_REGEX = re.compile(r"^(?P<source>ytm|yt|sp|sc|am)search:\s*?(?P<query>.*)$", re.IGNORECASE)
+YOUTUBE_REGEX = re.compile(
+    r"(?:http://|https://|)(?:www\.|)(?P<youtube_music>music\.)?youtu(be\.com|\.be)", re.IGNORECASE
+)
+SPEAK_REGEX = re.compile(r"^(?P<speak_source>speak):\s*?(?P<speak_query>.*)$", re.IGNORECASE)
+GCTSS_REGEX = re.compile(r"^(?P<gctts_source>tts://)\s*?(?P<gctts_query>.*)$", re.IGNORECASE)
+SEARCH_REGEX = re.compile(r"^(?P<search_source>ytm|yt|sp|sc|am)search:\s*?(?P<search_query>.*)$", re.IGNORECASE)
 HTTP_REGEX = re.compile(r"^http(s)?://", re.IGNORECASE)
 
 YOUTUBE_TIMESTAMP = re.compile(r"[&|?]t=(\d+)s?")
@@ -91,10 +97,49 @@ SPOTIFY_TIMESTAMP = re.compile(r"#(\d+):(\d+)")
 SOUNDCLOUD_TIMESTAMP = re.compile(r"#t=(\d+):(\d+)s?")
 TWITCH_TIMESTAMP = re.compile(r"\?t=(\d+)h(\d+)m(\d+)s")
 
-LOCAL_TRACK_NESTED = re.compile(r"^(?P<recursive>all|nested|recursive|tree):\s*?(?P<query>.*)$", re.IGNORECASE)
-LOCAL_TRACK_URI_REGEX = re.compile(r"^file://(?P<file>.*)$", re.IGNORECASE)
+LOCAL_TRACK_NESTED = re.compile(
+    r"^(?P<local_recursive>all|nested|recursive|tree):\s*?(?P<local_query>.*)$", re.IGNORECASE
+)
+LOCAL_TRACK_URI_REGEX = re.compile(r"^file://(?P<local_file>.*)$", re.IGNORECASE)
 BASE64_TEST_REGEX = re.compile(r"^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$")
 MAX_RECURSION_DEPTH = 5  # Maximum depth of recursive searches for custom playlists (pls, m3u, xspf, pylav)
+
+MERGED_REGEX = re.compile(
+    "|".join(
+        [
+            r.pattern
+            for r in [
+                SPOTIFY_REGEX,
+                APPLE_MUSIC_REGEX,
+                YOUTUBE_REGEX,
+                SPEAK_REGEX,
+                GCTSS_REGEX,
+                SEARCH_REGEX,
+                BASE64_TEST_REGEX,
+                CLYPIT_REGEX,
+                GETYARN_REGEX,
+                MIXCLOUD_REGEX,
+                OCRREMIX_PATTERN,
+                PORNHUB_REGEX,
+                REDDIT_REGEX,
+                SOUNDGASM_REGEX,
+                TIKTOK_REGEX,
+                BANDCAMP_REGEX,
+                NICONICO_REGEX,
+                TWITCH_REGEX,
+                VIMEO_REGEX,
+                SOUND_CLOUD_REGEX,
+                M3U_REGEX,
+                PLS_REGEX,
+                PYLAV_REGEX,
+                LOCAL_TRACK_NESTED,
+                LOCAL_TRACK_URI_REGEX,
+                HTTP_REGEX,
+            ]
+        ]
+    ),
+    re.IGNORECASE,
+)
 
 
 def process_youtube(cls: QueryT, query: str, music: bool):
@@ -330,7 +375,7 @@ class Query:
     @classmethod
     def __process_urls(cls, query: str) -> Query | None:
         if match := YOUTUBE_REGEX.match(query):
-            music = match.group("music")
+            music = match.group("youtube_music")
             return process_youtube(cls, query, music=bool(music))
         elif SPOTIFY_REGEX.match(query):
             return process_spotify(cls, query)
@@ -341,10 +386,10 @@ class Query:
         elif TWITCH_REGEX.match(query):
             return cls(query, "Twitch")
         elif match := GCTSS_REGEX.match(query):
-            query = match.group("query").strip()
+            query = match.group("gctts_query").strip()
             return cls(query, "Google TTS", search=True)
         elif match := SPEAK_REGEX.match(query):
-            query = match.group("query").strip()
+            query = match.group("speak_query").strip()
             return cls(query, "speak", search=True)
         elif CLYPIT_REGEX.match(query):
             return cls(query, "Clyp.it")
@@ -374,16 +419,16 @@ class Query:
     @classmethod
     def __process_search(cls, query: str) -> Query | None:
         if match := SEARCH_REGEX.match(query):
-            query = match.group("query").strip()
-            if match.group("source") == "ytm":
+            query = match.group("search_query").strip()
+            if match.group("search_source") == "ytm":
                 return cls(query, "YouTube Music", search=True)
-            elif match.group("source") == "yt":
+            elif match.group("search_source") == "yt":
                 return cls(query, "YouTube Music", search=True)
-            elif match.group("source") == "sp":
+            elif match.group("search_source") == "sp":
                 return cls(query, "Spotify", search=True)
-            elif match.group("source") == "sc":
+            elif match.group("search_source") == "sc":
                 return cls(query, "SoundCloud", search=True)
-            elif match.group("source") == "am":
+            elif match.group("search_source") == "am":
                 return cls(query, "Apple Music", search=True)
             else:
                 return cls(query, "YouTube Music", search=True)  # Fallback to YouTube
@@ -399,10 +444,10 @@ class Query:
         if match := M3U_REGEX.match(query):
             return cls(query, "M3U", query_type="album")
         if match := LOCAL_TRACK_URI_REGEX.match(query):
-            query = match.group("file").strip()
+            query = match.group("local_file").strip()
         elif match := LOCAL_TRACK_NESTED.match(query):
-            recursively = bool(match.group("recursive"))
-            query = match.group("query").strip()
+            recursively = bool(match.group("local_recursive"))
+            query = match.group("local_query").strip()
         path: aiopath.AsyncPath = aiopath.AsyncPath(query)
         if not await path.exists():
             if path.is_absolute():
@@ -565,7 +610,7 @@ class Query:
                     contents = await f.read()
                     for line in contents.splitlines():
                         if match := PLS_TRACK_REGEX.match(line):
-                            yield await Query.from_string(match.group("query").strip(), dont_search=True)
+                            yield await Query.from_string(match.group("pls_query").strip(), dont_search=True)
             elif is_url(self._query):
                 async with aiohttp.ClientSession() as session:
                     async with session.get(self._query) as resp:
@@ -573,7 +618,7 @@ class Query:
                         for line in contents.splitlines():
                             with contextlib.suppress(Exception):
                                 if match := PLS_TRACK_REGEX.match(line):
-                                    yield await Query.from_string(match.group("query").strip(), dont_search=True)
+                                    yield await Query.from_string(match.group("pls_query").strip(), dont_search=True)
 
     async def _yield_xspf_tracks(self) -> AsyncIterator[Query]:
         if self.is_xspf:
