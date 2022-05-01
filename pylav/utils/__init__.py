@@ -91,6 +91,18 @@ def _run_once(f):
     return wrapper
 
 
+def _run_once_async(f):
+    def wrapper(*args, **kwargs):
+        if not wrapper.has_run:
+            wrapper.has_run = True
+            return f(*args, **kwargs)
+        else:
+            return asyncio.sleep(0)
+
+    wrapper.has_run = False
+    return wrapper
+
+
 def _synchronized(lock):
     """Synchronization decorator"""
 

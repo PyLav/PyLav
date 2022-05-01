@@ -356,8 +356,22 @@ class WebSocket:
 
         event_type = data["type"]
         if event_type == "TrackEndEvent":
-            player.current.timestamp = 0
-            event = TrackEndEvent(player, player.current, data["reason"], self.node)
+            if player.current and player.current.track == data["track"]:
+                player.current.timestamp = 0
+            from pylav.query import Query
+            from pylav.tracks import Track
+
+            event = TrackEndEvent(
+                player,
+                Track(
+                    data=data["track"],
+                    requester=self._client.bot.user,
+                    query=await Query.from_base64(data["track"]),
+                    node=self.node,
+                ),
+                data["reason"],
+                self.node,
+            )
             await player._handle_event(event)
         elif event_type == "TrackExceptionEvent":
             event = TrackExceptionEvent(player, player.current, data["error"], node=self.node)

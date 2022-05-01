@@ -224,8 +224,8 @@ class DispatchManager:
     def pylav_track_skipped(self, event: TrackSkippedEvent):
         self.dispatcher(self.pylav_track_skipped.__name__, event)
 
-    def pylav_track_seek_event(self, event: TrackSeekEvent):
-        self.dispatcher(self.pylav_track_seek_event.__name__, event)
+    def pylav_track_seek(self, event: TrackSeekEvent):
+        self.dispatcher(self.pylav_track_seek.__name__, event)
 
     def pylav_track_previous_requested(self, event: TrackPreviousRequestedEvent):
         self.dispatcher(self.pylav_track_previous_requested.__name__, event)

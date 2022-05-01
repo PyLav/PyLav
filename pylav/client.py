@@ -44,7 +44,7 @@ from pylav.sql.clients.query_manager import QueryCacheManager
 from pylav.sql.clients.updater import UpdateSchemaManager
 from pylav.tracks import Track
 from pylav.types import BotT, CogT, ContextT, LavalinkResponseT
-from pylav.utils import PyLavContext, _get_context, _process_commands, _run_once, _Singleton, add_property
+from pylav.utils import PyLavContext, _get_context, _process_commands, _run_once_async, _Singleton, add_property
 
 LOGGER = getLogger("red.PyLink.Client")
 
@@ -234,7 +234,7 @@ class Client(metaclass=_Singleton):
     def bot_id(self) -> str:
         return self._user_id
 
-    @_run_once
+    @_run_once_async
     async def initialize(
         self,
     ) -> None:

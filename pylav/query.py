@@ -115,7 +115,6 @@ MERGED_REGEX = re.compile(
                 SPEAK_REGEX,
                 GCTSS_REGEX,
                 SEARCH_REGEX,
-                BASE64_TEST_REGEX,
                 CLYPIT_REGEX,
                 GETYARN_REGEX,
                 MIXCLOUD_REGEX,
@@ -494,7 +493,7 @@ class Query:
         elif query is None:
             raise ValueError("Query cannot be None")
         source = None
-        if BASE64_TEST_REGEX.match(query):
+        if len(query) > 20 and BASE64_TEST_REGEX.match(query):
             with contextlib.suppress(Exception):
                 data, _ = decode_track(query)
                 source = data["info"]["source"]
