@@ -246,6 +246,7 @@ class WebSocket:
                     LOGGER.critical("[NODE-%s] _listen returned.", self.node.name)
                     # Ensure this loop doesn't proceed if _listen returns control back to this
                     # function.
+                    asyncio.create_task(self._websocket_closed())
                     return
 
             LOGGER.warning(
@@ -264,8 +265,7 @@ class WebSocket:
         try:
             async for msg in self._ws:
                 LOGGER.trace("[NODE-%s] Received WebSocket message: %s", self.node.name, msg.data)
-
-                if msg.type is aiohttp.WSMsgType.CLOSED:
+                if msg.type == aiohttp.WSMsgType.CLOSED:
                     LOGGER.info(
                         "[NODE-%s] Received close frame with code %s.",
                         self.node.name,
