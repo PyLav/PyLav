@@ -720,7 +720,7 @@ class PlayerModel:
             self.extras = output.extras
         return self
 
-    async def update_volume(self) -> PlayerModel:
+    async def update_volume(self):
         player = (
             await PlayerRow.select(PlayerRow.volume)
             .output(load_json=True)

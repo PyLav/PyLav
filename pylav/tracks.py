@@ -11,7 +11,6 @@ from typing import TYPE_CHECKING, Any
 
 import discord
 from cached_property import cached_property, cached_property_with_ttl
-from piccolo.utils.sync import run_sync
 from red_commons.logging import getLogger
 
 from pylav.exceptions import InvalidTrack, TrackNotFound
@@ -138,10 +137,9 @@ class Track:
     def is_partial(self) -> bool:
         return self._is_partial and not self.track
 
-    @property
-    def query(self) -> Query:
+    async def query(self) -> Query:
         if self.track and self._updated_query is None:
-            self._updated_query = self._query = run_sync(Query.from_base64(self.track))
+            self._updated_query = self._query = await Query.from_base64(self.track)
         return self._query
 
     @property
@@ -216,113 +214,89 @@ class Track:
     def last_known_position(self, value: int):
         self.extra["last_known_position"] = value
 
-    @property
-    def is_clypit(self) -> bool:
-        return self.query.is_clypit
+    async def is_clypit(self) -> bool:
+        return (await self.query()).is_clypit
 
-    @property
-    def is_getyarn(self) -> bool:
-        return self.query.is_getyarn
+    async def is_getyarn(self) -> bool:
+        return (await self.query()).is_getyarn
 
-    @property
-    def is_mixcloud(self) -> bool:
-        return self.query.is_mixcloud
+    async def is_mixcloud(self) -> bool:
+        return (await self.query()).is_mixcloud
 
-    @property
-    def is_ocremix(self) -> bool:
-        return self.query.is_ocremix
+    async def is_ocremix(self) -> bool:
+        return (await self.query()).is_ocremix
 
-    @property
-    def is_pornhub(self) -> bool:
-        return self.query.is_pornhub
+    async def is_pornhub(self) -> bool:
+        return (await self.query()).is_pornhub
 
-    @property
-    def is_reddit(self) -> bool:
-        return self.query.is_reddit
+    async def is_reddit(self) -> bool:
+        return (await self.query()).is_reddit
 
-    @property
-    def is_soundgasm(self) -> bool:
-        return self.query.is_soundgasm
+    async def is_soundgasm(self) -> bool:
+        return (await self.query()).is_soundgasm
 
-    @property
-    def is_tiktok(self) -> bool:
-        return self.query.is_tiktok
+    async def is_tiktok(self) -> bool:
+        return (await self.query()).is_tiktok
 
-    @property
-    def is_spotify(self) -> bool:
-        return self.query.is_spotify
+    async def is_spotify(self) -> bool:
+        return (await self.query()).is_spotify
 
-    @property
-    def is_apple_music(self) -> bool:
-        return self.query.is_apple_music
+    async def is_apple_music(self) -> bool:
+        return (await self.query()).is_apple_music
 
-    @property
-    def is_bandcamp(self) -> bool:
-        return self.query.is_bandcamp
+    async def is_bandcamp(self) -> bool:
+        return (await self.query()).is_bandcamp
 
-    @property
-    def is_youtube(self) -> bool:
-        return self.query.is_youtube
+    async def is_youtube(self) -> bool:
+        return (await self.query()).is_youtube
 
-    @property
-    def is_youtube_music(self) -> bool:
-        return self.query.is_youtube_music
+    async def is_youtube_music(self) -> bool:
+        return (await self.query()).is_youtube_music
 
-    @property
-    def is_soundcloud(self) -> bool:
-        return self.query.is_soundcloud
+    async def is_soundcloud(self) -> bool:
+        return (await self.query()).is_soundcloud
 
-    @property
-    def is_twitch(self) -> bool:
-        return self.query.is_twitch
+    async def is_twitch(self) -> bool:
+        return (await self.query()).is_twitch
 
-    @property
-    def is_http(self) -> bool:
-        return self.query.is_http
+    async def is_http(self) -> bool:
+        return (await self.query()).is_http
 
-    @property
-    def is_local(self) -> bool:
-        return self.query.is_local
+    async def is_local(self) -> bool:
+        return (await self.query()).is_local
 
-    @property
-    def is_niconico(self) -> bool:
-        return self.query.is_niconico
+    async def is_niconico(self) -> bool:
+        return (await self.query()).is_niconico
 
-    @property
-    def is_vimeo(self) -> bool:
-        return self.query.is_vimeo
+    async def is_vimeo(self) -> bool:
+        return (await self.query()).is_vimeo
 
-    @property
-    def is_search(self) -> bool:
-        return self.query.is_search
+    async def is_search(self) -> bool:
+        return (await self.query()).is_search
 
-    @property
-    def is_album(self) -> bool:
-        return self.query.is_album
+    async def is_album(self) -> bool:
+        return (await self.query()).is_album
 
-    @property
-    def is_playlist(self) -> bool:
-        return self.query.is_playlist
+    async def is_playlist(self) -> bool:
+        return (await self.query()).is_playlist
 
-    @property
-    def is_single(self) -> bool:
-        return self.query.is_single
+    async def is_single(self) -> bool:
+        return (await self.query()).is_single
 
-    @property
-    def is_speak(self) -> bool:
-        return self.query.is_speak
+    async def is_speak(self) -> bool:
+        return (await self.query()).is_speak
 
-    @property
-    def is_gctts(self) -> bool:
-        return self.query.is_gctts
+    async def is_gctts(self) -> bool:
+        return (await self.query()).is_gctts
 
-    @property
-    def requires_capability(self) -> str:
-        return self.query.requires_capability if self.query else "youtube"
+    async def requires_capability(self) -> str:
+        return q.requires_capability if (q := await self.query()) else "youtube"
 
-    @property
-    def query_identifier(self) -> str:
-        return self.query.query_identifier
+    async def query_identifier(self) -> str:
+        return (await self.query()).query_identifier
+
+    async def query_source(self) -> str:
+        return (await self.query()).source
 
     async def thumbnail(self) -> str | None:
         """Optional[str]: Returns a thumbnail URL for YouTube and Spotify tracks."""
@@ -341,12 +315,9 @@ class Track:
         return super().__getattribute__(name)
 
     def __repr__(self) -> str:
-        return (
-            f"<AudioTrack title={self.title} identifier={self.identifier} "
-            f"query={self.query_identifier if self.query else 'N/A'}>"
-        )
+        return f"<AudioTrack title={self.title} identifier={self.identifier}>"
 
-    def to_json(self) -> dict:
+    async def to_json(self) -> dict:
         """
         Returns a dict representation of this AudioTrack.
         Returns
@@ -356,7 +327,7 @@ class Track:
         """
         return {
             "track": self.track,
-            "query": self.query_identifier if self.query else None,
+            "query": await self.query_identifier() if await self.query() else None,
             "requester": self.requester_id,
             "skip_segments": self.skip_segments,
             "extra": {
@@ -372,9 +343,9 @@ class Track:
 
     async def search(self, player: Player, bypass_cache: bool = False) -> None:
         self._query = await Query.from_string(self._query)
-        response = await player.node.get_tracks(self.query, first=True, bypass_cache=bypass_cache)
+        response = await player.node.get_tracks(await self.query(), first=True, bypass_cache=bypass_cache)
         if not response or "track" not in response:
-            raise TrackNotFound(f"No tracks found for query {self.query_identifier}")
+            raise TrackNotFound(f"No tracks found for query {await self.query_identifier()}")
         self.track = response["track"]
         self._unique_id = hashlib.md5()
         self._unique_id.update(self.track.encode())
@@ -414,7 +385,7 @@ class Track:
         self, max_length: int = None, author: bool = True, unformatted: bool = False, with_url: bool = False
     ) -> str:
         if self.is_partial:
-            base = await self.query.query_to_queue(max_length, partial=True)
+            base = await (await self.query()).query_to_queue(max_length, partial=True)
             base = SQUARE_BRACKETS.sub("", base).strip()
             if max_length and len(base) > (actual_length := max_length - 3):
                 base = base[:actual_length] + "..."
@@ -441,7 +412,7 @@ class Track:
             else:
                 author_string = f" - {self.author}"
 
-            if self.query and self.is_local:
+            if await self.query() and await self.is_local():
                 url_start = url_end = ""
                 if not (unknown_title and unknown_author):
                     base = f"{self.title}{author_string}"
@@ -449,7 +420,7 @@ class Track:
                     if max_length and len(base) > max_length:
                         base = base = "..." + base[-max_length:]
                     elif not max_length:
-                        base += f"\n{await self.query.query_to_string(ellipsis=False)} "
+                        base += f"\n{await  (await self.query()).query_to_string(ellipsis=False)} "
                     base = discord.utils.escape_markdown(base)
                     return f"{bold}{url_start}{base}{url_end}{bold}"
                 elif not unknown_title:
@@ -458,11 +429,11 @@ class Track:
                     if max_length and len(base) > max_length:
                         base = base = "..." + base[-max_length:]
                     elif not max_length:
-                        base += f"\n{await self.query.query_to_string(ellipsis=False)} "
+                        base += f"\n{await  (await self.query()).query_to_string(ellipsis=False)} "
                     base = discord.utils.escape_markdown(base)
                     return f"{bold}{url_start}{base}{url_end}{bold}"
                 else:
-                    base = await self.query.query_to_string(max_length, name_only=True)
+                    base = await (await self.query()).query_to_string(max_length, name_only=True)
                     base = SQUARE_BRACKETS.sub("", base).strip()
                     base = discord.utils.escape_markdown(base)
                     return f"{bold}{url_start}{base}{url_end}{bold}"

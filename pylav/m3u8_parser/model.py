@@ -382,7 +382,8 @@ class M3U8:
         async with file.open("w") as fileobj:
             await fileobj.write(self.dumps())
 
-    def _create_sub_directories(self, filename):
+    @staticmethod
+    def _create_sub_directories(filename):
         basename = os.path.dirname(filename)
         try:
             if basename:
@@ -1196,8 +1197,7 @@ class Skip:
         self.recently_removed_dateranges = recently_removed_dateranges
 
     def dumps(self):
-        skip = []
-        skip.append(f"SKIPPED-SEGMENTS={number_to_string(self.skipped_segments)}")
+        skip = [f"SKIPPED-SEGMENTS={number_to_string(self.skipped_segments)}"]
         if self.recently_removed_dateranges is not None:
             skip.append(f"RECENTLY-REMOVED-DATERANGES={quoted(self.recently_removed_dateranges)}")
 
@@ -1230,9 +1230,7 @@ class PreloadHint(BasePathMixin):
         return getattr(self, item)
 
     def dumps(self):
-        hint = []
-        hint.append(f"TYPE={self.hint_type}")
-        hint.append(f"URI={quoted(self.uri)}")
+        hint = [f"TYPE={self.hint_type}", f"URI={quoted(self.uri)}"]
 
         for attr in ["byterange_start", "byterange_length"]:
             if self[attr] is not None:
@@ -1286,8 +1284,7 @@ class DateRange:
         self.x_client_attrs = [(attr, kwargs.get(attr)) for attr in kwargs if attr.startswith("x_")]
 
     def dumps(self):
-        daterange = []
-        daterange.append(f"ID={quoted(self.id)}")
+        daterange = [f"ID={quoted(self.id)}"]
 
         # whilst START-DATE is technically REQUIRED by the spec, this is
         # contradicted by an example in the same document (see
@@ -1329,8 +1326,7 @@ class ContentSteering(BasePathMixin):
         self.pathway_id = pathway_id
 
     def dumps(self):
-        steering = []
-        steering.append(f"SERVER-URI={quoted(self.uri)}")
+        steering = [f"SERVER-URI={quoted(self.uri)}"]
 
         if self.pathway_id is not None:
             steering.append(f"PATHWAY-ID={quoted(self.pathway_id)}")

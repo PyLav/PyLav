@@ -33,7 +33,7 @@ class DefaultHTTPClient:
 
 
 class HTTPSHandler:
-    def __new__(self, verify_ssl: bool = True) -> urllib.request.HTTPSHandler:
+    def __new__(cls, verify_ssl: bool = True) -> urllib.request.HTTPSHandler:
         context = ssl.create_default_context()
         if not verify_ssl:
             context.check_hostname = False

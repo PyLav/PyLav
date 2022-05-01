@@ -180,7 +180,7 @@ class Player(VoiceProtocol):
     def forced_vc(self) -> discord.abc.Messageable:
         return self._forced_vc
 
-    @text_channel.setter
+    @forced_vc.setter
     def forced_vc(self, value: discord.abc.Messageable):
         self._forced_vc = value
         self.config.forced_channel_id = value.id if value else None
@@ -450,9 +450,9 @@ class Player(VoiceProtocol):
         if self.current:
             self.history.put_nowait([self.current])
 
-        if track.query and not self.node.has_source(track.requires_capability):
+        if await track.query() and not self.node.has_source(await track.requires_capability()):
             self.current = None
-            await self.change_to_best_node(track.requires_capability)
+            await self.change_to_best_node(await track.requires_capability())
 
         self.current = track
         options = {"noReplace": False}
@@ -476,9 +476,9 @@ class Player(VoiceProtocol):
             self.current.timestamp = self.position
             self.queue.put_nowait([self.current], 0)
 
-        if track.query and not self.node.has_source(track.requires_capability):
+        if await track.query() and not self.node.has_source(await track.requires_capability()):
             self.current = None
-            await self.change_to_best_node(track.requires_capability)
+            await self.change_to_best_node(await track.requires_capability())
 
         if track.is_partial:
             try:
@@ -603,14 +603,14 @@ class Player(VoiceProtocol):
                     await self.shuffle_queue(requester=self.client.user)
                 track = await self.queue.get()
 
-        if track.query is None:
+        if await track.query() is None:
             track._query = await Query.from_base64(track.track)
         if node:
             if self.node != node:
                 await self.change_node(node)
         else:
             try:
-                await self.change_to_best_node(feature=track.requires_capability)
+                await self.change_to_best_node(feature=await track.requires_capability())
             except NoNodeWithRequestFunctionalityAvailable as exc:
                 event = TrackExceptionEvent(self, track, exc, self.node)
                 self.node.dispatch_event(event)
@@ -812,7 +812,7 @@ class Player(VoiceProtocol):
                 print(event.track._extra["tried_invalid_region"])
                 node = self.node.node_manager.find_best_node(
                     not_region=self.region,
-                    feature=event.track.requires_capability,
+                    feature=await event.track.requires_capability(),
                     already_attempted_regions=event.track._extra["tried_invalid_region"],
                 )
                 if node is None or node.identifier == event.node.identifier:
@@ -822,7 +822,7 @@ class Player(VoiceProtocol):
                         track=event.track,
                         node=node,
                         requester=event.track.requester,  # type: ignore
-                        query=event.track.query,
+                        query=await event.track.query(),
                         skip_segments=event.track.skip_segments,
                     )
             else:
@@ -988,7 +988,7 @@ class Player(VoiceProtocol):
         """
 
         self._config.self_deaf = toggle
-        await self.guild.change_voice_state(self_deaf=toggle)
+        await self.guild.change_voice_state(self_deaf=toggle, channel=self.channel)
         await self._config.save()
 
     async def set_volume_filter(self, requester: discord.Member, volume: Volume) -> None:
@@ -1552,14 +1552,14 @@ class Player(VoiceProtocol):
         self._config.auto_play = autoplay
         await self._config.save()
 
-    def to_dict(self) -> dict:
+    async def to_dict(self) -> dict:
         """
         Returns a dict representation of the player.
         """
         return {
             "id": int(self.guild.id),
             "channel_id": self.channel.id,
-            "current": self.current.to_json() if self.current else None,
+            "current": await self.current.to_json() if self.current else None,
             "text_channel_id": self.text_channel.id if self.text_channel else None,
             "notify_channel_id": self.notify_channel.id if self.notify_channel else None,
             "paused": self.paused,
@@ -1571,8 +1571,8 @@ class Player(VoiceProtocol):
             "volume": self.volume,
             "position": self.position,
             "playing": self.is_playing,
-            "queue": [t.to_json() for t in self.queue.raw_queue] if not self.queue.empty() else [],
-            "history": [t.to_json() for t in self.history.raw_queue] if not self.history.empty() else [],
+            "queue": [await t.to_json() for t in self.queue.raw_queue] if not self.queue.empty() else [],
+            "history": [await t.to_json() for t in self.history.raw_queue] if not self.history.empty() else [],
             "effect_enabled": self._effect_enabled,
             "effects": {
                 "volume": self._volume.to_dict(),
@@ -1591,7 +1591,7 @@ class Player(VoiceProtocol):
         }
 
     async def save(self) -> None:
-        await self.node.node_manager.client.player_state_db_manager.save_player(self.to_dict())
+        await self.node.node_manager.client.player_state_db_manager.save_player(await self.to_dict())
 
     async def restore(self, player: PlayerStateModel, requester: discord.abc.User) -> None:
         if self._restored is True:
@@ -1657,10 +1657,14 @@ class Player(VoiceProtocol):
         if current:
             current.timestamp = int(player.position)
             self.queue.put_nowait([current], index=0)
-            node = self.node.node_manager.find_best_node(region=self.region, feature=current.requires_capability)
+            node = self.node.node_manager.find_best_node(
+                region=self.region, feature=await current.requires_capability()
+            )
             while not node:
                 await asyncio.sleep(1)
-                node = self.node.node_manager.find_best_node(region=self.region, feature=current.requires_capability)
+                node = self.node.node_manager.find_best_node(
+                    region=self.region, feature=await current.requires_capability()
+                )
                 tried += 1
                 if tried > 600:
                     return  # Exit without restoring after 10 minutes of waiting

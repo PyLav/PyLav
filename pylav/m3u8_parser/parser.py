@@ -388,14 +388,14 @@ def _cueout_no_duration(line):
     # this needs to be called first since line.split in all other
     # parsers will throw a ValueError if passed just this tag
     if line == protocol.ext_x_cue_out:
-        return (None, None)
+        return None, None
 
 
 def _cueout_elemental(line, state, prevline):
     param, value = line.split(":", 1)
     res = re.match(".*EXT-OATCLS-SCTE35:(.*)$", prevline)
     if res:
-        return (res.group(1), value)
+        return res.group(1), value
     else:
         return None
 
@@ -404,7 +404,7 @@ def _cueout_envivio(line, state, prevline):
     param, value = line.split(":", 1)
     res = re.match('.*DURATION=(.*),.*,CUE="(.*)"', value)
     if res:
-        return (res.group(2), res.group(1))
+        return res.group(2), res.group(1)
     else:
         return None
 
@@ -416,7 +416,7 @@ def _cueout_duration(line):
     param, value = line.split(":", 1)
     res = re.match(r"DURATION=(.*)", value)
     if res:
-        return (None, res.group(1))
+        return None, res.group(1)
 
 
 def _cueout_simple(line):
@@ -425,7 +425,7 @@ def _cueout_simple(line):
     param, value = line.split(":", 1)
     res = re.match(r"^(\d+(?:\.\d)?\d*)$", value)
     if res:
-        return (None, res.group(1))
+        return None, res.group(1)
 
 
 def _parse_cueout(line, state, prevline):

@@ -214,7 +214,7 @@ class PlayerManager:
 
     async def save_all_players(self) -> None:
         LOGGER.debug("Saving player states...")
-        await self.client.player_state_db_manager.save_players([p.to_dict() for p in self.players.values()])
+        await self.client.player_state_db_manager.save_players([await p.to_dict() for p in self.players.values()])
 
     async def restore_player_states(self) -> None:
         LOGGER.info("Restoring player states...")

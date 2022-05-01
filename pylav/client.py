@@ -782,7 +782,7 @@ class Client(metaclass=_Singleton):
             # Query tracks as the queue builds as this may be a slow operation
             if enqueue and successful_tracks and not (player.is_playing or player.paused):
                 track = successful_tracks.pop()
-                await player.play(track, track.query, requester)
+                await player.play(track, await track.query(), requester)
             if query.is_search or query.is_single:
                 try:
                     track = await self._get_tracks(query=query, first=True, bypass_cache=bypass_cache)
@@ -822,7 +822,7 @@ class Client(metaclass=_Singleton):
                             # Query tracks as the queue builds as this may be a slow operation
                             if enqueue and successful_tracks and not (player.is_playing or player.paused):
                                 track = successful_tracks.pop()
-                                await player.play(track, track.query, requester)
+                                await player.play(track, await track.query(), requester)
                 except NoNodeWithRequestFunctionalityAvailable:
                     queries_failed.append(query)
             elif (query.is_local or query.is_custom_playlist) and query.is_album:
@@ -845,7 +845,7 @@ class Client(metaclass=_Singleton):
                             # Query tracks as the queue builds as this may be a slow operation
                             if enqueue and successful_tracks and not (player.is_playing or player.paused):
                                 track = successful_tracks.pop()
-                                await player.play(track, track.query, requester)
+                                await player.play(track, await track.query(), requester)
                     if not yielded:
                         queries_failed.append(query)
                 except NoNodeWithRequestFunctionalityAvailable:
