@@ -351,6 +351,16 @@ class Node:
         return [p for p in self.players if p.is_connected]
 
     @property
+    def server_connected_players(self) -> int:
+        """Returns the number of players on this node that are connected."""
+        return len(self.connected_players) if not self.stats else self.stats.players
+
+    @property
+    def server_playing_players(self) -> int:
+        """Returns the number of players on this node that are playing."""
+        return len(self.playing_players) if not self.stats else self.stats.playing_players
+
+    @property
     def count(self) -> int:
         """Returns the number of players on this node."""
         return len(self.players)
