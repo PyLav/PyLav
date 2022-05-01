@@ -875,7 +875,19 @@ class Player(VoiceProtocol):
 
             if self.paused:
                 await self.node.send(op="pause", guildId=self.guild_id, pause=self.paused)
-
+        if self.has_effects:
+            await self.set_filters(
+                requester=self.guild.me,
+                equalizer=self.equalizer,
+                karaoke=self.karaoke,
+                timescale=self.timescale,
+                tremolo=self.tremolo,
+                vibrato=self.vibrato,
+                rotation=self.rotation,
+                distortion=self.distortion,
+                low_pass=self.low_pass,
+                channel_mix=self.channel_mix,
+            )
         if self.volume_filter.changed:
             await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
 
