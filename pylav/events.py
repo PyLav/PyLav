@@ -733,7 +733,6 @@ class FiltersAppliedEvent(Event):
     __slots__ = (
         "player",
         "requester",
-        "requester",
         "volume",
         "equalizer",
         "karaoke",
@@ -744,12 +743,14 @@ class FiltersAppliedEvent(Event):
         "distortion",
         "low_pass",
         "channel_mix",
+        "node",
     )
 
     def __init__(
         self,
         player: Player,
         requester: discord.Member,
+        node: Node,
         volume: Volume = None,
         equalizer: Equalizer = None,
         karaoke: Karaoke = None,
@@ -773,6 +774,7 @@ class FiltersAppliedEvent(Event):
         self.distortion = distortion
         self.low_pass = low_pass
         self.channel_mix = channel_mix
+        self.node = node
 
 
 class PlayerMovedEvent(Event):

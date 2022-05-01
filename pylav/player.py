@@ -1330,7 +1330,9 @@ class Player(VoiceProtocol):
                 **kwargs,
             )
         await self.seek(self.position, with_filter=True, requester=requester)
-        self.node.dispatch_event(FiltersAppliedEvent(player=self, requester=requester, **kwargs))
+        kwargs.pop("reset_not_set", None)
+        kwargs.pop("requester", None)
+        self.node.dispatch_event(FiltersAppliedEvent(player=self, requester=requester, node=self.node, **kwargs))
 
     def _process_skip_segments(self, skip_segments: list[str] | str | None):
         if skip_segments is not None and self.node.supports_sponsorblock:
