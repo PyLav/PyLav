@@ -805,13 +805,12 @@ class Player(VoiceProtocol):
             await self.next()
         elif isinstance(event, TrackExceptionEvent):
             error = f"{event.exception}"
-            if "country" in error.lower():
+            if self.node.region and "country" in error.lower():
                 if "tried_invalid_region" not in event.track._extra:
                     event.track._extra["tried_invalid_region"] = set()
-                event.track._extra["tried_invalid_region"].add(self.region)
-                print(event.track._extra["tried_invalid_region"])
+                event.track._extra["tried_invalid_region"].add(self.node.region)
                 node = self.node.node_manager.find_best_node(
-                    not_region=self.region,
+                    not_region=self.node.region,
                     feature=await event.track.requires_capability(),
                     already_attempted_regions=event.track._extra["tried_invalid_region"],
                 )
