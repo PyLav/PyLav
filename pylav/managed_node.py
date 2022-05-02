@@ -574,14 +574,14 @@ class LocalNodeManager:
                     await self._start(java_path=java_path)
                 while True:
                     await self.wait_until_ready(timeout=self.timeout)
-                    if self._node is None or self._node._ws.connected:
-                        await self.connect_node(reconnect=retry_count != 0, wait_for=3)
                     if not psutil.pid_exists(self._node_pid):
                         raise NoProcessFound
+                    if self._node is None or not self._node.websocket.connected and not self._node.websocket.connecting:
+                        await self.connect_node(reconnect=retry_count != 0, wait_for=3)
                     try:
                         node = self._client.node_manager.get_node_by_id(self._node_id)
                         if node is not None:
-                            await node.wait_until_ready(timeout=120)
+                            await node.wait_until_ready(timeout=30)
                         if node.websocket.connected:
                             try:
                                 # Hoping this throws an exception which will then trigger a restart
@@ -590,6 +590,8 @@ class LocalNodeManager:
                                 await asyncio.sleep(1)
                             except WebsocketNotConnectedError:
                                 await asyncio.sleep(5)
+                        elif node.websocket.connecting:
+                            await node.websocket.wait_until_ready(timeout=30)
                         else:
                             raise AttributeError
                     except AttributeError as e:
@@ -600,12 +602,12 @@ class LocalNodeManager:
                             while True:
                                 node = self._client.node_manager.get_node_by_id(self._node_id)
                                 if node is not None:
-                                    await node.wait_until_ready(timeout=120)
+                                    await node.wait_until_ready(timeout=30)
                                 if node and node.websocket.connected:
                                     break
                                 await asyncio.sleep(1)
                         except asyncio.TimeoutError:
-                            return  # lavalink_restart_connect will cause a new monitor task to be created.
+                            raise
                     except Exception as exc:
                         LOGGER.debug(exc, exc_info=exc)
                         raise NodeUnhealthy(str(exc))
@@ -680,6 +682,7 @@ class LocalNodeManager:
                 )
                 await asyncio.sleep(delay)
             except asyncio.CancelledError:
+                LOGGER.info("Lavalink Managed node startup cancelled")
                 return
             except Exception as exc:
                 delay = backoff.delay()
@@ -706,11 +709,13 @@ class LocalNodeManager:
             node = self._client.node_manager.get_node_by_id(self._node_id)
             if node is not None:
                 self._node = node
-                if node._ws.connected:
-                    await node.wait_until_ready(timeout=120)
+                if node.websocket.connecting:
+                    await node.wait_until_ready(timeout=30)
                 else:
-                    await node._ws._websocket_closed()
-                    await node.wait_until_ready(timeout=120)
+                    LOGGER.info("Lavalink node is not connected, reconnecting...")
+                    await node.websocket.close()
+                    await node.websocket._websocket_closed(reason="Managed Node restart")
+                    await node.wait_until_ready(timeout=30)
                 self._wait_for.set()
                 return
         if (node := self._client.node_manager.get_node_by_id(self._node_id)) is None:
@@ -733,13 +738,13 @@ class LocalNodeManager:
             )
         else:
             self._node = node
-
-        if node._ws.connected:
+        if node.websocket.connecting:
             await node.wait_until_ready()
         else:
-            await node._ws._websocket_closed()
-            await node.wait_until_ready()
-        self._wait_for.set()
+            LOGGER.info("Lavalink node is not connected, reconnecting 2...")
+            await node.websocket.close()
+            await node.websocket._websocket_closed(reason="Managed Node restart")
+            await node.wait_until_ready(timeout=30)
         self._wait_for.set()
 
     @staticmethod

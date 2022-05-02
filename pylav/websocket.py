@@ -135,7 +135,12 @@ class WebSocket:
     @property
     def connected(self):
         """Returns whether the websocket is connected to Lavalink."""
-        return self._ws is not None and not self._ws.closed
+        return self._ws is not None and not self._ws.closed and self.ready.is_set()
+
+    @property
+    def connecting(self):
+        """Returns whether the websocket is connecting to Lavalink."""
+        return not self.ready.is_set()
 
     async def ping(self) -> None:
         """Pings the websocket."""
