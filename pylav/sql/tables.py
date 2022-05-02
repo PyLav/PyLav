@@ -16,7 +16,7 @@ else:
     PORT = os.getenv("PYLAV__POSTGRES_POST", "5432")
     PASSWORD = os.getenv("PYLAV__POSTGRES_PASSWORD", "")
     USER = os.getenv("PYLAV__POSTGRES_USER", "postgres")
-    DATABASE = os.getenv("PYLAV__POSTGRES_DB", "pylav")
+    DATABASE = os.getenv("PYLAV__POSTGRES_DB", "postgres")
 HOST = os.getenv("PYLAV__POSTGRES_HOST", "localhost")
 
 
