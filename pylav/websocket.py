@@ -249,7 +249,7 @@ class WebSocket:
                         self._message_queue.clear()
 
                     await self._listen()
-                    LOGGER.critical("[NODE-%s] _listen returned.", self.node.name)
+                    LOGGER.debug("[NODE-%s] _listen returned.", self.node.name)
                     # Ensure this loop doesn't proceed if _listen returns control back to this
                     # function.
                     return
