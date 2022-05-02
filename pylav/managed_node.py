@@ -705,6 +705,7 @@ class LocalNodeManager:
         if reconnect is True:
             node = self._client.node_manager.get_node_by_id(self._node_id)
             if node is not None:
+                self._node = node
                 if node._ws.connected:
                     await node.wait_until_ready(timeout=120)
                 else:
