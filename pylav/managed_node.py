@@ -686,7 +686,7 @@ class LocalNodeManager:
                 )
                 await asyncio.sleep(delay)
             except asyncio.CancelledError:
-                LOGGER.warning("Lavalink Managed node startup cancelled")
+                LOGGER.warning("Lavalink Managed monitor task cancelled")
                 return
             except Exception as exc:
                 delay = backoff.delay()
