@@ -302,7 +302,6 @@ class LibConfigModel:
         java_path="java",
         enable_managed_node=True,
         auto_update_managed_nodes=True,
-        disabled_sources=None,
     ) -> LibConfigModel:
         r = (
             await LibConfigRow.objects()
@@ -315,7 +314,6 @@ class LibConfigModel:
                     localtrack_folder=localtrack_folder,
                     enable_managed_node=enable_managed_node,
                     auto_update_managed_nodes=auto_update_managed_nodes,
-                    disabled_sources=disabled_sources or [],
                     extras={},
                 ),
             )
