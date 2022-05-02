@@ -200,9 +200,10 @@ class WebSocket:
                         LOGGER.warning(
                             "[NODE-%s] Invalid response received; this may indicate that "
                             "Lavalink is not running, or is running on a port different "
-                            "to the one you passed to `add_node` (%s)",
+                            "to the one you passed to `add_node` (%s - %s)",
                             self.node.name,
                             self._ws_uri,
+                            headers,
                         )
                     elif isinstance(ce, aiohttp.WSServerHandshakeError):
                         if ce.status in (
