@@ -178,6 +178,7 @@ class LocalNodeManager:
         self.abort_for_unmanaged: asyncio.Event = asyncio.Event()
         self._args = []
         self._wait_for = asyncio.Event()
+        self._java_path = None
 
     @property
     def node(self) -> Node | None:
@@ -429,7 +430,6 @@ class LocalNodeManager:
     async def shutdown(self) -> None:
         if self.start_monitor_task is not None:
             self.start_monitor_task.cancel()
-        self.abort_for_unmanaged.clear()
         await self._partial_shutdown()
         await self._session.close()
         if self.node:
@@ -438,6 +438,7 @@ class LocalNodeManager:
     async def _partial_shutdown(self) -> None:
         self.ready.clear()
         self._wait_for.clear()
+        self.abort_for_unmanaged.clear()
         # In certain situations to await self._proc.wait() is invalid so waiting on it waits forever.
         if self._shutdown is True:
             # For convenience, calling this method more than once or calling it before starting it
@@ -456,6 +457,9 @@ class LocalNodeManager:
         self._proc = None
         self._shutdown = True
         self._node_pid = None
+        if self._node is not None:
+            await self._client.remove_node(self._node_id)
+            self._node = None
 
     async def _download_jar(self) -> None:
         if not self._auto_update:
@@ -682,7 +686,7 @@ class LocalNodeManager:
                 )
                 await asyncio.sleep(delay)
             except asyncio.CancelledError:
-                LOGGER.info("Lavalink Managed node startup cancelled")
+                LOGGER.warning("Lavalink Managed node startup cancelled")
                 return
             except Exception as exc:
                 delay = backoff.delay()
@@ -695,10 +699,13 @@ class LocalNodeManager:
                 await asyncio.sleep(delay)
 
     async def start(self, java_path: str):
+        self._java_path = java_path
         if self.start_monitor_task is not None:
             await self.shutdown()
+            self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
         self._wait_for.clear()
         self.start_monitor_task = asyncio.create_task(self.start_monitor(java_path))
+        self.start_monitor_task.set_name("LavalinkManagedNode.health_monitor")
 
     async def connect_node(self, reconnect: bool, wait_for: float = 0.0, external_fallback: bool = False):
         await asyncio.sleep(wait_for)
@@ -711,8 +718,10 @@ class LocalNodeManager:
                 self._node = node
                 if node.websocket.connecting:
                     await node.wait_until_ready(timeout=30)
+                elif node.websocket.connected:
+                    LOGGER.info("Managed Lavalink node is connected")
                 else:
-                    LOGGER.info("Lavalink node is not connected, reconnecting...")
+                    LOGGER.info("Managed Lavalink node is not connected, reconnecting...")
                     await node.websocket.close()
                     await node.websocket._websocket_closed(reason="Managed Node restart")
                     await node.wait_until_ready(timeout=30)
@@ -740,8 +749,10 @@ class LocalNodeManager:
             self._node = node
         if node.websocket.connecting:
             await node.wait_until_ready()
+        elif node.websocket.connected:
+            LOGGER.info("Managed Lavalink node is connected")
         else:
-            LOGGER.info("Lavalink node is not connected, reconnecting 2...")
+            LOGGER.info("Managed Lavalink node is not connected, reconnecting...")
             await node.websocket.close()
             await node.websocket._websocket_closed(reason="Managed Node restart")
             await node.wait_until_ready(timeout=30)
@@ -766,3 +777,7 @@ class LocalNodeManager:
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 pass
         return process_list
+
+    async def restart(self):
+        LOGGER.info("Restarting managed Lavalink node.")
+        await self.start(java_path=self._java_path)
