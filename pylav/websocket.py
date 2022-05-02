@@ -80,8 +80,6 @@ class WebSocket:
         self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=120), json_serialize=ujson.dumps)
         self._ws = None
         self._message_queue = []
-        if host == "0.0.0.0":
-            host = "localhost"  # If the Node IP is set to "0.0.0.0", we need to use localhost instead.
         self._host = host
         self._port = port
         self._password = password

@@ -5,7 +5,7 @@ import secrets
 from pylav._config import __VERSION__
 
 NODE_DEFAULT_SETTINGS = {
-    "server": {"port": 2154, "address": "0.0.0.0"},
+    "server": {"port": 2154, "address": "localhost"},
     "lavalink": {
         "plugins": [
             {
