@@ -4,11 +4,9 @@ import asyncio
 import random
 import socket
 
-import aiodns
 from red_commons.logging import getLogger
 
 LOGGER = getLogger("red.PyLink.pyradios")
-DNS_RESOLVER = aiodns.DNSResolver()
 
 
 class Error(Exception):
@@ -49,8 +47,7 @@ async def rdns_lookup(ip: str) -> str:
     """
 
     try:
-        p = await DNS_RESOLVER.gethostbyaddr(ip)
-        hostname = p.name
+        hostname, _, _ = await asyncio.to_thread(socket.gethostbyaddr, ip)
     except socket.herror as exc:
         raise RDNSLookupError(ip) from exc
     return hostname

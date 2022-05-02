@@ -247,7 +247,6 @@ class WebSocket:
                     LOGGER.critical("[NODE-%s] _listen returned.", self.node.name)
                     # Ensure this loop doesn't proceed if _listen returns control back to this
                     # function.
-                    asyncio.create_task(self._websocket_closed())
                     return
 
             LOGGER.warning(

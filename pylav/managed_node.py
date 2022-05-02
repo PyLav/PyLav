@@ -574,7 +574,7 @@ class LocalNodeManager:
                     await self._start(java_path=java_path)
                 while True:
                     await self.wait_until_ready(timeout=self.timeout)
-                    if self._node is None:
+                    if self._node is None or self._node._ws.connected:
                         await self.connect_node(reconnect=retry_count != 0, wait_for=3)
                     if not psutil.pid_exists(self._node_pid):
                         raise NoProcessFound
@@ -607,7 +607,7 @@ class LocalNodeManager:
                         except asyncio.TimeoutError:
                             return  # lavalink_restart_connect will cause a new monitor task to be created.
                     except Exception as exc:
-                        LOGGER.info(exc, exc_info=exc)
+                        LOGGER.debug(exc, exc_info=exc)
                         raise NodeUnhealthy(str(exc))
             except (TooManyProcessFound, IncorrectProcessFound, NoProcessFound):
                 await self._partial_shutdown()
@@ -700,14 +700,20 @@ class LocalNodeManager:
     async def connect_node(self, reconnect: bool, wait_for: float = 0.0, external_fallback: bool = False):
         await asyncio.sleep(wait_for)
         self._wait_for.clear()
+        if not self.ready.is_set():
+            raise ManagedLavalinkStartFailure()
         if reconnect is True:
             node = self._client.node_manager.get_node_by_id(self._node_id)
             if node is not None:
-                await node.wait_until_ready(timeout=120)
+                if node._ws.connected:
+                    await node.wait_until_ready(timeout=120)
+                else:
+                    await node._ws._websocket_closed()
+                    await node.wait_until_ready(timeout=120)
                 self._wait_for.set()
                 return
-        if node := self._client.node_manager.get_node_by_id(self._node_id) is None:
-            self._node = await self._client.add_node(
+        if (node := self._client.node_manager.get_node_by_id(self._node_id)) is None:
+            node = self._node = await self._client.add_node(
                 host=self._current_config["server"]["address"],
                 port=self._current_config["server"]["port"],
                 password=self._current_config["lavalink"]["server"]["password"],
@@ -727,9 +733,12 @@ class LocalNodeManager:
         else:
             self._node = node
 
-        if not self._node._ws.connected:
-            await self._node.wait_until_ready()
-
+        if node._ws.connected:
+            await node.wait_until_ready()
+        else:
+            await node._ws._websocket_closed()
+            await node.wait_until_ready()
+        self._wait_for.set()
         self._wait_for.set()
 
     @staticmethod

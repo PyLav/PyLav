@@ -804,28 +804,7 @@ class Player(VoiceProtocol):
         if isinstance(event, TrackStuckEvent) or isinstance(event, TrackEndEvent) and event.reason == "FINISHED":
             await self.next()
         elif isinstance(event, TrackExceptionEvent):
-            error = f"{event.exception}"
-            if self.node.region and "country" in error.lower():
-                if "tried_invalid_region" not in event.track._extra:
-                    event.track._extra["tried_invalid_region"] = set()
-                event.track._extra["tried_invalid_region"].add(self.node.region)
-                node = self.node.node_manager.find_best_node(
-                    not_region=self.node.region,
-                    feature=await event.track.requires_capability(),
-                    already_attempted_regions=event.track._extra["tried_invalid_region"],
-                )
-                if node is None or node.identifier == event.node.identifier:
-                    await self.next()
-                else:
-                    await self.play(
-                        track=event.track,
-                        node=node,
-                        requester=event.track.requester,  # type: ignore
-                        query=await event.track.query(),
-                        skip_segments=event.track.skip_segments,
-                    )
-            else:
-                await self.next()
+            await self.next()
 
     async def _update_state(self, state: dict) -> None:
         """
