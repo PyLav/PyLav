@@ -159,7 +159,7 @@ class PlayerManager:
         channel: discord.VoiceChannel,
         endpoint: str = None,
         node: Node = None,
-        self_deaf: bool = False,
+        self_deaf: bool = True,
         requester: discord.Member = None,
         feature: str | None = None,
     ) -> Player:

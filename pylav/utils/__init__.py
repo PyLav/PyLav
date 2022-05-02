@@ -750,7 +750,7 @@ class PyLavContext(_OriginalContextClass):
         p = self.lavalink.get_player(self.guild)
         return p
 
-    async def connect_player(self, channel: discord.VoiceChannel = None, self_deaf: bool = False) -> Player:
+    async def connect_player(self, channel: discord.VoiceChannel = None, self_deaf: bool = True) -> Player:
         """
         Connect player
         """

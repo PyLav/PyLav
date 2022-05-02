@@ -878,7 +878,7 @@ class Player(VoiceProtocol):
         timeout: float = 2.0,
         reconnect: bool = False,
         self_mute: bool = False,
-        self_deaf: bool = False,
+        self_deaf: bool = True,
         requester: discord.Member = None,
     ) -> None:
         """
@@ -922,7 +922,7 @@ class Player(VoiceProtocol):
         requester: discord.Member,
         channel: discord.VoiceChannel,
         self_mute: bool = False,
-        self_deaf: bool = False,
+        self_deaf: bool = True,
     ) -> discord.VoiceChannel | None:
         """|coro|
         Moves the player to a different voice channel.

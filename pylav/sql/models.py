@@ -636,7 +636,7 @@ class PlayerModel:
     repeat_queue: bool = False
     shuffle: bool = False
     auto_play: bool = True
-    self_deaf: bool = False
+    self_deaf: bool = True
     extras: dict = field(default_factory=dict)
 
     def __post_init__(self):
