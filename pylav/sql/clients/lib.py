@@ -52,7 +52,6 @@ class LibConfigManager:
         java_path,
         enable_managed_node,
         auto_update_managed_nodes,
-        disabled_sources,
     ) -> LibConfigModel:
         return await LibConfigModel.get_or_create(
             id=1,
@@ -62,7 +61,6 @@ class LibConfigManager:
             java_path=java_path,
             enable_managed_node=enable_managed_node,
             auto_update_managed_nodes=auto_update_managed_nodes,
-            disabled_sources=disabled_sources,
         )
 
     async def set_lib_config(
