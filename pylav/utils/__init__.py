@@ -81,32 +81,6 @@ _RED_LOGGER = getLogger("red")
 _LOCK = threading.Lock()
 
 
-class SingletonMethods:
-    _has_run = {}
-
-    @classmethod
-    def run_once(cls, f):
-        def wrapper(*args, **kwargs):
-            if not cls._has_run.get(f.__name__, False):
-                cls._has_run[f.__name__] = True
-                return f(*args, **kwargs)
-
-        cls._has_run[f.__name__] = False
-        return wrapper
-
-    @classmethod
-    def run_once_async(cls, f):
-        def wrapper(*args, **kwargs):
-            if not cls._has_run[f.__name__]:
-                cls._has_run[f.__name__] = True
-                return f(*args, **kwargs)
-            else:
-                return asyncio.sleep(0)
-
-        cls._has_run[f.__name__] = False
-        return wrapper
-
-
 def _synchronized(lock):
     """Synchronization decorator"""
 
@@ -119,6 +93,47 @@ def _synchronized(lock):
         return inner_wrapper
 
     return wrapper
+
+
+class SingletonMethods:
+    _has_run = {}
+    _responses = {}
+
+    @classmethod
+    @_synchronized(_LOCK)
+    def reset(cls):
+        cls._has_run = {}
+        cls._responses = {}
+
+    @classmethod
+    @_synchronized(_LOCK)
+    def run_once(cls, f):
+        @functools.wraps(f)
+        def wrapper(*args, **kwargs):
+            if not cls._has_run.get(f, False):
+                cls._has_run[f] = True
+                output = f(*args, **kwargs)
+                cls._responses[f] = output
+                return output
+            else:
+                return cls._responses.get(f, None)
+
+        cls._has_run[f] = False
+        return wrapper
+
+    @classmethod
+    @_synchronized(_LOCK)
+    def run_once_async(cls, f):
+        @functools.wraps(f)
+        def wrapper(*args, **kwargs):
+            if not cls._has_run.get(f, False):
+                cls._has_run[f.__name__] = True
+                return f(*args, **kwargs)
+            else:
+                return asyncio.sleep(0)
+
+        cls._has_run[f] = False
+        return wrapper
 
 
 class _Singleton(type):

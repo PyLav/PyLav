@@ -558,7 +558,7 @@ class Client(metaclass=_Singleton):
                         self._shutting_down = True
                         try:
                             Client._instances.clear()
-                            SingletonMethods._has_run.clear()
+                            SingletonMethods.reset()
                             self._initiated = False
                             await self.player_manager.save_all_players()
                             await self.player_manager.shutdown()
