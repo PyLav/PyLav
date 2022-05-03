@@ -4,7 +4,7 @@ import asyncio
 import random
 import socket
 
-from red_commons.logging import getLogger
+from pylav._logging import getLogger
 
 LOGGER = getLogger("red.PyLink.RadioBrowser")
 

@@ -2,8 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, AsyncIterator
 
-from red_commons.logging import getLogger
-
+from pylav._logging import getLogger
 from pylav.sql.models import PlayerStateModel
 from pylav.sql.tables import PlayerStateRow
 

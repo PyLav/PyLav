@@ -14,9 +14,9 @@ import ujson
 import yaml
 from packaging.version import LegacyVersion, Version
 from packaging.version import parse as parse_version
-from red_commons.logging import getLogger
 
 from pylav._config import CONFIG_DIR
+from pylav._logging import getLogger
 from pylav.constants import BUNDLED_PLAYLIST_IDS, SUPPORTED_SOURCES
 from pylav.exceptions import InvalidPlaylist
 from pylav.sql.tables import BotVersionRow, LibConfigRow, NodeRow, PlayerRow, PlayerStateRow, PlaylistRow, QueryRow

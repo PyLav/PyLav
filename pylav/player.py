@@ -12,8 +12,8 @@ from typing import TYPE_CHECKING, Any, Coroutine, Literal
 import discord
 from discord import VoiceProtocol
 from discord.abc import Messageable
-from red_commons.logging import getLogger
 
+from pylav._logging import getLogger
 from pylav.events import (
     FiltersAppliedEvent,
     NodeChangedEvent,

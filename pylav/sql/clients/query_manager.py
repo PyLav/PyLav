@@ -3,8 +3,7 @@ from __future__ import annotations
 import datetime
 from typing import TYPE_CHECKING
 
-from red_commons.logging import getLogger
-
+from pylav._logging import getLogger
 from pylav.exceptions import EntryNotFoundError
 from pylav.sql.models import QueryModel
 from pylav.sql.tables import QueryRow

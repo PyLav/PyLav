@@ -5,9 +5,9 @@ from typing import TYPE_CHECKING
 
 import aiopath
 from piccolo.table import create_tables
-from red_commons.logging import getLogger
 
 from pylav._config import CONFIG_DIR
+from pylav._logging import getLogger
 from pylav.sql.models import BotVersion, LibConfigModel
 from pylav.sql.tables import BotVersionRow, LibConfigRow, NodeRow, PlayerRow, PlayerStateRow, PlaylistRow, QueryRow
 

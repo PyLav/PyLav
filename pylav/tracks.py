@@ -11,8 +11,8 @@ from typing import TYPE_CHECKING, Any
 
 import discord
 from cached_property import cached_property, cached_property_with_ttl
-from red_commons.logging import getLogger
 
+from pylav._logging import getLogger
 from pylav.exceptions import InvalidTrack, TrackNotFound
 from pylav.query import Query
 from pylav.track_encoding import decode_track

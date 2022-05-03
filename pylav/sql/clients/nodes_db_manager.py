@@ -2,8 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from red_commons.logging import getLogger
-
+from pylav._logging import getLogger
 from pylav.exceptions import EntryNotFoundError
 from pylav.sql.models import NodeModel
 from pylav.sql.tables import NodeRow

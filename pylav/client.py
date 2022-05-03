@@ -21,9 +21,9 @@ from asyncspotify import ClientCredentialsFlow
 from discord.abc import Messageable
 from discord.ext.commands import Context
 from discord.types.embed import EmbedType
-from red_commons.logging import getLogger
 
 from pylav._config import __VERSION__, CONFIG_DIR
+from pylav._logging import getLogger
 from pylav.dispatcher import DispatchManager
 from pylav.events import Event
 from pylav.exceptions import AnotherClientAlreadyRegistered, NoNodeAvailable, NoNodeWithRequestFunctionalityAvailable

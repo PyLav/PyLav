@@ -6,8 +6,8 @@ from typing import TYPE_CHECKING, Any
 
 import aiohttp
 import ujson
-from red_commons.logging import getLogger
 
+from pylav._logging import getLogger
 from pylav.events import (
     SegmentSkippedEvent,
     SegmentsLoadedEvent,

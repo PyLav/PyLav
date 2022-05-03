@@ -6,8 +6,8 @@ from uuid import uuid4
 
 import aiohttp
 import ujson
-from red_commons.logging import getLogger
 
+from pylav._logging import getLogger
 from pylav.constants import SUPPORTED_SOURCES
 from pylav.events import Event
 from pylav.exceptions import Unauthorized

@@ -4,8 +4,8 @@ import asyncio
 from typing import TYPE_CHECKING, Iterator
 
 import discord
-from red_commons.logging import getLogger
 
+from pylav._logging import getLogger
 from pylav.events import PlayerConnectedEvent
 from pylav.player import Player
 from pylav.sql.models import PlayerModel, PlayerStateModel

@@ -1,3 +1,5 @@
+from pylav._logging import getLogger  # noqa isort:skip
+
 from pylav import converters
 from pylav.client import Client
 from pylav.exceptions import *

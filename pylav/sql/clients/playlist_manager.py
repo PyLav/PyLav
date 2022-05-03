@@ -4,8 +4,8 @@ import time
 from typing import TYPE_CHECKING, AsyncIterator
 
 import discord
-from red_commons.logging import getLogger
 
+from pylav._logging import getLogger
 from pylav.exceptions import EntryNotFoundError
 from pylav.sql.models import PlaylistModel
 from pylav.sql.tables import PlaylistRow

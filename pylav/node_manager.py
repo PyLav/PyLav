@@ -6,8 +6,8 @@ from typing import TYPE_CHECKING
 
 import aiohttp
 import ujson
-from red_commons.logging import getLogger
 
+from pylav._logging import getLogger
 from pylav.constants import DEFAULT_REGIONS
 from pylav.events import NodeConnectedEvent, NodeDisconnectedEvent
 from pylav.node import Node

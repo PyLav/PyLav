@@ -19,9 +19,9 @@ import psutil
 import rich.progress
 import ujson
 import yaml
-from red_commons.logging import getLogger
 
 from pylav._config import CONFIG_DIR
+from pylav._logging import getLogger
 from pylav.exceptions import (
     EarlyExitError,
     IncorrectProcessFound,

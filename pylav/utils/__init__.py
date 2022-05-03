@@ -71,7 +71,7 @@ __all__ = (
     "ExponentialBackoffWithReset",
 )
 
-from red_commons.logging import getLogger
+from pylav._logging import getLogger
 
 T = TypeVar("T")
 
