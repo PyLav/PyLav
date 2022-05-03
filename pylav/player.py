@@ -135,6 +135,8 @@ class Player(VoiceProtocol):
         self._text_channel = self.guild.get_channel_or_thread(config.text_channel_id)
         self._notify_channel = self.guild.get_channel_or_thread(config.notify_channel_id)
         self._volume = Volume(config.volume)
+        if self.volume_filter.changed:
+            await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
 
     @property
     def channel(self) -> discord.VoiceChannel:
