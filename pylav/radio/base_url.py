@@ -6,7 +6,7 @@ import socket
 
 from red_commons.logging import getLogger
 
-LOGGER = getLogger("red.PyLink.pyradios")
+LOGGER = getLogger("red.PyLink.RadioBrowser")
 
 
 class Error(Exception):
