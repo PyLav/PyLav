@@ -1,4 +1,6 @@
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/Drapersniper/Py-Lav/master.svg)](https://results.pre-commit.ci/latest/github/Drapersniper/Py-Lav/master)
+[![GitHub license](https://img.shields.io/github/license/Drapersniper/Py-Lav.svg)](https://github.com/Drapersniper/Py-Lav/blob/master/LICENSE)
+[![Support Server](https://img.shields.io/discord/970987707834720266)](https://discord.com/invite/Sjh2TSCYQB)
 
 Documentation
 ---------------------------
@@ -7,7 +9,7 @@ Documentation
   - MacOS: [PostgresSQL](https://www.postgresql.org/download/macosx/)
   - Windows: [PostgresSQL](https://www.postgresql.org/download/windows/)
   - Linux: [PostgresSQL](https://www.postgresql.org/download/linux/)
-- Python 3.10+
+- Python 3.10+ (On initial release - during pre-alpha phase 3.9+)
 - Env Vars to connect the lib to the PostgresSQL server
   - PYLAV__POSTGRES_POST - Defaults to 5432
   - PYLAV__POSTGRES_PASSWORD - Defaults to ""
@@ -52,7 +54,8 @@ Documentation
 Features
 ---------------------------
 - Multiple node support
-- Local track cache
+  - Node region assignment based on IP
+- Track cache for the last 30 days to reduce the number of duplicated queries
 - Managed local node with auto-restart and auto update
 - Many helper methods and functions
 - Support for multiple cogs to access the library at once
@@ -60,7 +63,8 @@ Features
 - Player state persistence
     - Upon library state being shutdown all player states are saved and restored on library startup
 - History of played tracks available for players
-- M3U, PLS and PYLAV text file parser to convert contents into a playlist
+- RadioBrowser.org API to retrieve radio stations available for players
+- M3U, PLS and PYLAV text file parser to convert contents into a playlist (p.s. Lavalink must support the format/coded of files still)
 
 
 Installation
