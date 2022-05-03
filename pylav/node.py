@@ -6,6 +6,7 @@ from uuid import uuid4
 
 import aiohttp
 import ujson
+from red_commons.logging import getLogger
 
 from pylav.constants import SUPPORTED_SOURCES
 from pylav.events import Event
@@ -21,6 +22,8 @@ if TYPE_CHECKING:
     from pylav.player import Player
     from pylav.query import Query
     from pylav.websocket import WebSocket
+
+LOGGER = getLogger("red.PyLink.Node")
 
 
 class Penalty:

@@ -978,6 +978,9 @@ class Player(VoiceProtocol):
             Volume to set
         requester : discord.Member
         """
+        max_volume = min(await self._config.get_max_volume(), await self.player_manager.global_config.fetch_volume())
+        if volume.get_int_value() > max_volume:
+            volume = Volume(max_volume)
         await self.set_filters(
             volume=volume,
             requester=requester,
@@ -1152,7 +1155,6 @@ class Player(VoiceProtocol):
             distortion=self.distortion if self.distortion.changed else None,
             timescale=Timescale(speed=1.17, pitch=1.2, rate=1),
             channel_mix=self.channel_mix if self.channel_mix.changed else None,
-            volume=self.volume_filter,
             reset_not_set=True,
         )
 
@@ -1170,7 +1172,6 @@ class Player(VoiceProtocol):
             equalizer=None,
             timescale=None,
             reset_not_set=True,
-            volume=self.volume_filter,
             karaoke=self.karaoke if self.karaoke.changed else None,
             tremolo=self.tremolo if self.tremolo.changed else None,
             vibrato=self.vibrato if self.vibrato.changed else None,
@@ -1287,7 +1288,8 @@ class Player(VoiceProtocol):
                 "low_pass": low_pass,
                 "channel_mix": channel_mix,
             }
-
+            if not volume:
+                kwargs.pop("volume", None)
             await self.node.filters(guild_id=self.channel.guild.id, **kwargs)
         else:
             kwargs = {
@@ -1302,6 +1304,8 @@ class Player(VoiceProtocol):
                 "low_pass": low_pass or (self.low_pass if self.low_pass.changed else None),
                 "channel_mix": channel_mix or (self.channel_mix if self.channel_mix.changed else None),
             }
+            if not volume:
+                kwargs.pop("volume", None)
 
             await self.node.filters(
                 guild_id=self.channel.guild.id,
@@ -1666,7 +1670,6 @@ class Player(VoiceProtocol):
         if self.has_effects:
             await self.node.filters(
                 guild_id=self.channel.guild.id,
-                requester=self.guild.me,
                 equalizer=self.equalizer,
                 karaoke=self.karaoke,
                 timescale=self.timescale,
