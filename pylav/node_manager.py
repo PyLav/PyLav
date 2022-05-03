@@ -82,9 +82,9 @@ class NodeManager:
         port: int,
         password: str,
         unique_identifier: int,
+        name: str,
         resume_key: str = None,
         resume_timeout: int = 60,
-        name: str = None,
         reconnect_attempts: int = -1,
         ssl: bool = False,
         search_only: bool = False,
@@ -110,7 +110,7 @@ class NodeManager:
         resume_timeout: Optional[:class:`int`]
             How long the node should wait for a connection while disconnected before clearing all players.
             Defaults to `60`.
-        name: Optional[:class:`str`]
+        name: :class:`str`
             An identifier for the node that will show in logs. Defaults to `None`.
         reconnect_attempts: Optional[:class:`int`]
             The amount of times connection with the node will be reattempted before giving up.
@@ -378,10 +378,12 @@ class NodeManager:
                     "[NODE-%s] Invalid node, skipping ... id: %s - Original error: %s", node.name, node.id, exc
                 )
                 continue
-
         tasks = [asyncio.create_task(n.wait_until_ready()) for n in nodes_list]
         if self.client.enable_managed_node:
             tasks.append(asyncio.create_task(self.client._local_node_manager.wait_until_connected()))
+        if not tasks:
+            LOGGER.warning("No nodes found, please add some nodes.")
+            return
         done, pending = await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
         for task in pending:
             task.cancel()

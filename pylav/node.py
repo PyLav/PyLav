@@ -194,8 +194,8 @@ class Node:
             unique_identifier = str(uuid4())
         self._managed = managed
         self._region = None
-        self._name = name or f"{self.region}-{self.host}-{unique_identifier}"
         self._host = host
+        self._name = name or f"{self._region}-{self._host}-{unique_identifier}"
         self._extras = extras or {}
         self._disabled_sources = set(disabled_sources or [])
         self._config = None  # type: ignore
