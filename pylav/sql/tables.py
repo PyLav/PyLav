@@ -70,7 +70,7 @@ class PlayerStateRow(Table, db=DB, tablename="player_state"):
     id = BigInt(primary_key=True, index=True)
     bot = BigInt(index=True, null=False)
     channel_id = BigInt(null=False)
-    volume = Integer(null=False, default=1000)
+    volume = Integer(null=False, default=100)
     position = Float(null=False, default=0.0)
     auto_play_playlist_id = BigInt(null=True)
     text_channel_id = BigInt(null=True)
@@ -95,7 +95,7 @@ class PlayerStateRow(Table, db=DB, tablename="player_state"):
 class PlayerRow(Table, db=DB, tablename="player"):
     id = BigInt(primary_key=True, index=True)
     bot = BigInt(index=True, null=False)
-    volume = Integer(null=False, default=1000)
+    volume = Integer(null=False, default=100)
     auto_play_playlist_id = BigInt(null=False, default=1)
 
     text_channel_id = BigInt(null=True)
