@@ -830,9 +830,6 @@ class PlayerModel:
                 self.extras = player[0]["extras"]
         return self
 
-    async def get_max_volume(self) -> int:
-        return self.extras.get("max_volume", 1000)
-
     async def fetch_volume(self) -> int:
         await self.update_volume()
         return self.volume
@@ -868,3 +865,11 @@ class PlayerModel:
     async def fetch_alone_dc(self) -> bool:
         await self.update_extras()
         return self.extras.get("alone_dc", [False, 60])
+
+    async def fetch_alone_pause(self) -> bool:
+        await self.update_extras()
+        return self.extras.get("alone_pause", [False, 60])
+
+    async def get_max_volume(self) -> int:
+        await self.update_extras()
+        return self.extras.get("max_volume", 1000)
