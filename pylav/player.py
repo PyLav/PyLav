@@ -1291,7 +1291,7 @@ class Player(VoiceProtocol):
             await self.node.filters(guild_id=self.channel.guild.id, **kwargs)
         else:
             kwargs = {
-                "volume": volume or self.volume_filter,
+                "volume": volume or (self.volume_filter if self.volume_filter.changed else None),
                 "equalizer": equalizer or (self.equalizer if self.equalizer.changed else None),
                 "karaoke": karaoke or (self.karaoke if self.karaoke.changed else None),
                 "timescale": timescale or (self.timescale if self.timescale.changed else None),
@@ -1599,7 +1599,6 @@ class Player(VoiceProtocol):
                 if player.auto_play_playlist_id
                 else None
             )
-        self._volume = Volume(player.volume)
         self._last_position = player.position
         queue = (
             [
@@ -1649,6 +1648,8 @@ class Player(VoiceProtocol):
                 if tried > 600:
                     return  # Exit without restoring after 10 minutes of waiting
             await self.change_node(node)
+        else:
+            await self.change_to_best_node()
 
         self._effect_enabled = player.effect_enabled
         effects = player.effects
@@ -1662,22 +1663,22 @@ class Player(VoiceProtocol):
         self._distortion = Distortion.from_dict(effects.pop("distortion"))
         self._low_pass = LowPass.from_dict(effects.pop("low_pass"))
         self._channel_mix = ChannelMix.from_dict(effects.pop("channel_mix"))
-        if self.volume_filter.changed and self.volume_filter.get_int_value() != 100:
-            await self.set_volume(self.volume, requester)  # type: ignore
         if self.has_effects:
-            await self.set_filters(
-                requester=requester,  # type: ignore
-                equalizer=self._equalizer,
-                karaoke=self._karaoke,
-                timescale=self._timescale,
-                tremolo=self._tremolo,
-                vibrato=self._vibrato,
-                rotation=self._rotation,
-                distortion=self._distortion,
-                low_pass=self._low_pass,
-                channel_mix=self._channel_mix,
-                reset_not_set=True,
+            await self.node.filters(
+                guild_id=self.channel.guild.id,
+                requester=self.guild.me,
+                equalizer=self.equalizer,
+                karaoke=self.karaoke,
+                timescale=self.timescale,
+                tremolo=self.tremolo,
+                vibrato=self.vibrato,
+                rotation=self.rotation,
+                distortion=self.distortion,
+                low_pass=self.low_pass,
+                channel_mix=self.channel_mix,
             )
+        if self.volume_filter.changed:
+            await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
         if player.playing:
             await self.next(requester)  # type: ignore
         self._restored = True
