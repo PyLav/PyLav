@@ -340,7 +340,7 @@ class LocalNodeManager:
             else:
                 extras = f" however you have version {self._java_version} (executable: {self._java_exc})"
             raise UnsupportedJavaError()  # FIXME: Add API endpoint to change this
-        java_xms, java_xmx = "64M", "32G"  # FIXME: Get from db
+        java_xms, java_xmx = "64M", self._full_data.extras.get("max_ram", "2048M") if self._full_data else "2048M"
         match = re.match(r"^(\d+)([MG])$", java_xmx, flags=re.IGNORECASE)
         command_args = [
             self._java_exc,
