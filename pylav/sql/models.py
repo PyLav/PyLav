@@ -824,7 +824,7 @@ class PlayerModel:
             .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
         )
         if player:
-            if isinstance(player["extras"][0], str):
+            if isinstance(player[0]["extras"], str):
                 self.extras = ujson.loads(player[0]["extras"])
             else:
                 self.extras = player[0]["extras"]
