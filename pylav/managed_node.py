@@ -711,7 +711,10 @@ class LocalNodeManager:
         await asyncio.sleep(wait_for)
         self._wait_for.clear()
         if not self.ready.is_set():
-            raise ManagedLavalinkStartFailure()
+            if not external_fallback:
+                raise ManagedLavalinkStartFailure()
+            else:
+                self.ready.set()
         if reconnect is True:
             node = self._client.node_manager.get_node_by_id(self._node_id)
             if node is not None:
