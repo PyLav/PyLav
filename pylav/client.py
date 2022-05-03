@@ -44,7 +44,7 @@ from pylav.sql.clients.query_manager import QueryCacheManager
 from pylav.sql.clients.updater import UpdateSchemaManager
 from pylav.tracks import Track
 from pylav.types import BotT, CogT, ContextT, LavalinkResponseT
-from pylav.utils import PyLavContext, _get_context, _process_commands, _run_once_async, _Singleton, add_property
+from pylav.utils import PyLavContext, SingletonMethods, _get_context, _process_commands, _Singleton, add_property
 
 LOGGER = getLogger("red.PyLink.Client")
 
@@ -234,7 +234,7 @@ class Client(metaclass=_Singleton):
     def bot_id(self) -> str:
         return self._user_id
 
-    @_run_once_async
+    @SingletonMethods.run_once_async
     async def initialize(
         self,
     ) -> None:
@@ -557,6 +557,9 @@ class Client(metaclass=_Singleton):
                     if not _COGS_REGISTERED:
                         self._shutting_down = True
                         try:
+                            Client._instances.clear()
+                            SingletonMethods._has_run.clear()
+                            self._initiated = False
                             await self.player_manager.save_all_players()
                             await self.player_manager.shutdown()
                             await self._node_manager.close()

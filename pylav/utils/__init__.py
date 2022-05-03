@@ -81,26 +81,30 @@ _RED_LOGGER = getLogger("red")
 _LOCK = threading.Lock()
 
 
-def _run_once(f):
-    def wrapper(*args, **kwargs):
-        if not wrapper.has_run:
-            wrapper.has_run = True
-            return f(*args, **kwargs)
+class SingletonMethods:
+    _has_run = {}
 
-    wrapper.has_run = False
-    return wrapper
+    @classmethod
+    def run_once(cls, f):
+        def wrapper(*args, **kwargs):
+            if not cls._has_run.get(f.__name__, False):
+                cls._has_run[f.__name__] = True
+                return f(*args, **kwargs)
 
+        cls._has_run[f.__name__] = False
+        return wrapper
 
-def _run_once_async(f):
-    def wrapper(*args, **kwargs):
-        if not wrapper.has_run:
-            wrapper.has_run = True
-            return f(*args, **kwargs)
-        else:
-            return asyncio.sleep(0)
+    @classmethod
+    def run_once_async(cls, f):
+        def wrapper(*args, **kwargs):
+            if not cls._has_run[f.__name__]:
+                cls._has_run[f.__name__] = True
+                return f(*args, **kwargs)
+            else:
+                return asyncio.sleep(0)
 
-    wrapper.has_run = False
-    return wrapper
+        cls._has_run[f.__name__] = False
+        return wrapper
 
 
 def _synchronized(lock):
