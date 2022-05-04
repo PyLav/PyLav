@@ -159,7 +159,7 @@ class WebSocket:
             headers = {
                 "Authorization": self._password,
                 "User-Id": str(self.bot_id),
-                "Client-Name": f"Py-Link/{self.lib_version}",
+                "Client-Name": f"PyLav/{self.lib_version}",
             }
 
             if self.client.is_shutting_down:

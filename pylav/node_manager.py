@@ -189,7 +189,7 @@ class NodeManager:
 
     def get_region(self, endpoint: str | None) -> str | None:
         """
-        Returns a Lavalink.py-friendly region from a Discord voice server address.
+        Returns a region from a Discord voice server address.
         Parameters
         ----------
         endpoint: :class:`str`
