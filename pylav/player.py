@@ -326,6 +326,22 @@ class Player(VoiceProtocol):
             await self.change_node(node)
             return node
 
+    def store(
+        self,
+        key: str,
+        value: Any,
+    ) -> None:
+        """
+        Stores a value in the player's memory storage.
+        Parameters
+        ----------
+        value: Any
+            The value to store.
+        key: str
+            The key to store the value under.
+        """
+        self._user_data[key] = value
+
     def fetch(self, key: object, default: Any = None) -> Any:
         """
         Retrieves the related value from the stored user data.
