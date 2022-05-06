@@ -92,6 +92,11 @@ class LavalinkResponseT(TypedDict):
     tracks: list[TrackT]
 
 
+class TimedFeatureT(TypedDict):
+    enabled: bool
+    time: int
+
+
 # This is merely a tag type to avoid circular import issues.
 # Yes, this is a terrible solution but ultimately it is the only solution.
 class _BaseCommand:

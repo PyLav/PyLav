@@ -20,8 +20,8 @@ from pylav._logging import getLogger
 from pylav.constants import BUNDLED_PLAYLIST_IDS, SUPPORTED_SOURCES
 from pylav.exceptions import InvalidPlaylist
 from pylav.sql.tables import BotVersionRow, LibConfigRow, NodeRow, PlayerRow, PlayerStateRow, PlaylistRow, QueryRow
-from pylav.types import BotT
-from pylav.utils import PyLavContext
+from pylav.types import BotT, TimedFeatureT
+from pylav.utils import PyLavContext, TimedFeature
 
 BRACKETS: re.Pattern = re.compile(r"[\[\]]")
 
@@ -629,6 +629,7 @@ class PlayerModel:
     bot: int
     forced_channel_id: int | None = None
     volume: int = 100
+    max_volume: int = 1000
     auto_play_playlist_id: int = 1
     text_channel_id: int | None = None
     notify_channel_id: int | None = None
@@ -638,10 +639,19 @@ class PlayerModel:
     auto_play: bool = True
     self_deaf: bool = True
     extras: dict = field(default_factory=dict)
+    empty_queue_dc: TimedFeatureT = field(default_factory=dict)
+    alone_dc: TimedFeatureT = field(default_factory=dict)
+    alone_pause: TimedFeatureT = field(default_factory=dict)
 
     def __post_init__(self):
         if isinstance(self.extras, str):
             self.extras = ujson.loads(self.extras)
+        if isinstance(self.empty_queue_dc, str):
+            self.empty_queue_dc = ujson.loads(self.empty_queue_dc)
+        if isinstance(self.alone_dc, str):
+            self.alone_dc = ujson.loads(self.alone_dc)
+        if isinstance(self.alone_pause, str):
+            self.alone_pause = ujson.loads(self.alone_pause)
 
     async def delete(self) -> None:
         await PlayerRow.delete().where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
@@ -651,6 +661,7 @@ class PlayerModel:
         values = {
             PlayerRow.forced_channel_id: self.forced_channel_id,
             PlayerRow.volume: self.volume,
+            PlayerRow.max_volume: self.max_volume,
             PlayerRow.auto_play_playlist_id: self.auto_play_playlist_id,
             PlayerRow.text_channel_id: self.text_channel_id,
             PlayerRow.notify_channel_id: self.notify_channel_id,
@@ -660,6 +671,9 @@ class PlayerModel:
             PlayerRow.auto_play: self.auto_play,
             PlayerRow.self_deaf: self.self_deaf,
             PlayerRow.extras: self.extras,
+            PlayerRow.empty_queue_dc: self.empty_queue_dc,
+            PlayerRow.alone_dc: self.alone_dc,
+            PlayerRow.alone_pause: self.alone_pause,
         }
         player = (
             await PlayerRow.objects()
@@ -689,6 +703,7 @@ class PlayerModel:
         values = {
             PlayerRow.forced_channel_id: self.forced_channel_id,
             PlayerRow.volume: self.volume,
+            PlayerRow.max_volume: self.max_volume,
             PlayerRow.auto_play_playlist_id: self.auto_play_playlist_id,
             PlayerRow.text_channel_id: self.text_channel_id,
             PlayerRow.notify_channel_id: self.notify_channel_id,
@@ -698,6 +713,9 @@ class PlayerModel:
             PlayerRow.auto_play: self.auto_play,
             PlayerRow.self_deaf: self.self_deaf,
             PlayerRow.extras: self.extras,
+            PlayerRow.empty_queue_dc: self.empty_queue_dc,
+            PlayerRow.alone_dc: self.alone_dc,
+            PlayerRow.alone_pause: self.alone_pause,
         }
         output = (
             await PlayerRow.objects()
@@ -707,6 +725,7 @@ class PlayerModel:
         if not output._was_created:
             self.forced_channel_id = output.forced_channel_id
             self.volume = output.volume
+            self.max_volume = output.max_volume
             self.auto_play_playlist_id = output.auto_play_playlist_id
             self.text_channel_id = output.text_channel_id
             self.notify_channel_id = output.notify_channel_id
@@ -716,6 +735,9 @@ class PlayerModel:
             self.auto_play = output.auto_play
             self.self_deaf = output.self_deaf
             self.extras = output.extras
+            self.empty_queue_dc = output.empty_queue_dc
+            self.alone_dc = output.alone_dc
+            self.alone_pause = output.alone_pause
         return self
 
     async def update_volume(self):
@@ -726,6 +748,15 @@ class PlayerModel:
         )
         if player:
             self.volume = player[0]["volume"]
+
+    async def update_max_volume(self):
+        player = (
+            await PlayerRow.select(PlayerRow.max_volume)
+            .output(load_json=True)
+            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+        )
+        if player:
+            self.max_volume = player[0]["max_volume"]
 
     async def update_auto_play_playlist_id(self) -> PlayerModel:
         player = (
@@ -830,6 +861,45 @@ class PlayerModel:
                 self.extras = player[0]["extras"]
         return self
 
+    async def update_empty_queue_dc(self) -> PlayerModel:
+        player = (
+            await PlayerRow.select(PlayerRow.empty_queue_dc)
+            .output(load_json=True)
+            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+        )
+        if player:
+            if isinstance(player[0]["empty_queue_dc"], str):
+                self.empty_queue_dc = ujson.loads(player[0]["empty_queue_dc"])
+            else:
+                self.empty_queue_dc = player[0]["empty_queue_dc"]
+        return self
+
+    async def update_alone_dc(self) -> PlayerModel:
+        player = (
+            await PlayerRow.select(PlayerRow.alone_dc)
+            .output(load_json=True)
+            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+        )
+        if player:
+            if isinstance(player[0]["alone_dc"], str):
+                self.alone_dc = ujson.loads(player[0]["alone_dc"])
+            else:
+                self.alone_dc = player[0]["alone_dc"]
+        return self
+
+    async def update_alone_pause(self) -> PlayerModel:
+        player = (
+            await PlayerRow.select(PlayerRow.alone_pause)
+            .output(load_json=True)
+            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+        )
+        if player:
+            if isinstance(player[0]["alone_pause"], str):
+                self.alone_pause = ujson.loads(player[0]["alone_pause"])
+            else:
+                self.alone_pause = player[0]["alone_pause"]
+        return self
+
     async def fetch_volume(self) -> int:
         await self.update_volume()
         return self.volume
@@ -858,18 +928,18 @@ class PlayerModel:
         await self.update_extras()
         return self.extras
 
-    async def fetch_empty_queue_dc(self) -> bool:
-        await self.update_extras()
-        return self.extras.get("empty_queue_dc", [False, 60])
+    async def fetch_empty_queue_dc(self) -> TimedFeature:
+        await self.update_empty_queue_dc()
+        return TimedFeature(**self.empty_queue_dc)
 
-    async def fetch_alone_dc(self) -> bool:
-        await self.update_extras()
-        return self.extras.get("alone_dc", [False, 60])
+    async def fetch_alone_dc(self) -> TimedFeature:
+        await self.update_alone_dc()
+        return TimedFeature(**self.alone_dc)
 
-    async def fetch_alone_pause(self) -> bool:
-        await self.update_extras()
-        return self.extras.get("alone_pause", [False, 60])
+    async def fetch_alone_pause(self) -> TimedFeature:
+        await self.update_alone_pause()
+        return TimedFeature(**self.alone_pause)
 
-    async def get_max_volume(self) -> int:
-        await self.update_extras()
-        return self.extras.get("max_volume", 1000)
+    async def fetch_max_volume(self) -> int:
+        await self.update_max_volume()
+        return self.max_volume

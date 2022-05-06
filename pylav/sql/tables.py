@@ -95,7 +95,8 @@ class PlayerStateRow(Table, db=DB, tablename="player_state"):
 class PlayerRow(Table, db=DB, tablename="player"):
     id = BigInt(primary_key=True, index=True)
     bot = BigInt(index=True, null=False)
-    volume = Integer(null=False, default=1000)
+    volume = Integer(null=False, default=100)
+    max_volume = Integer(null=False, default=1000)
     auto_play_playlist_id = BigInt(null=False, default=1)
 
     text_channel_id = BigInt(null=True)
@@ -107,6 +108,27 @@ class PlayerRow(Table, db=DB, tablename="player"):
     shuffle = Boolean(null=False, default=False)
     auto_play = Boolean(null=False, default=True)
     self_deaf = Boolean(null=False, default=True)
+    empty_queue_dc = JSONB(
+        null=False,
+        default={
+            "enabled": False,
+            "time": 60,
+        },
+    )
+    alone_dc = JSONB(
+        null=False,
+        default={
+            "enabled": False,
+            "time": 60,
+        },
+    )
+    alone_pause = JSONB(
+        null=False,
+        default={
+            "enabled": False,
+            "time": 60,
+        },
+    )
     extras = JSONB(null=False, default={})
 
 

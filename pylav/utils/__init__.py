@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import collections
 import contextlib
+import dataclasses
 import datetime
 import functools
 import random
@@ -162,6 +163,12 @@ class MissingSentinel(str):
 
 
 MISSING: Any = MissingSentinel("MISSING")
+
+
+@dataclasses.dataclass(eq=True)
+class TimedFeature:
+    enabled: bool = False
+    time: int = 60
 
 
 def add_property(inst: object, name: str, method: Callable) -> None:

@@ -778,7 +778,9 @@ class Player(VoiceProtocol):
         requester: :class:`discord.Member`
             The member who requested the volume change.
         """
-        max_volume = min(await self._config.get_max_volume(), await self.player_manager.global_config.fetch_volume())
+        max_volume = min(
+            await self._config.fetch_max_volume(), await self.player_manager.global_config.fetch_max_volume()
+        )
         volume = max(min(vol, max_volume), 0)
         if volume == self.volume:
             return
@@ -996,7 +998,9 @@ class Player(VoiceProtocol):
             Volume to set
         requester : discord.Member
         """
-        max_volume = min(await self._config.get_max_volume(), await self.player_manager.global_config.fetch_volume())
+        max_volume = min(
+            await self._config.fetch_max_volume(), await self.player_manager.global_config.fetch_max_volume()
+        )
         if volume.get_int_value() > max_volume:
             volume = Volume(max_volume)
         await self.set_filters(

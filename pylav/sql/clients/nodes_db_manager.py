@@ -72,7 +72,9 @@ class NodeConfigManager:
                     NodeRow.managed: True,
                     NodeRow.resume_key: None,
                     NodeRow.resume_timeout: 600,
-                    NodeRow.extras: {},
+                    NodeRow.extras: {
+                        "max_ram": "2048M",
+                    },
                 },
             )
         )
