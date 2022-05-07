@@ -37,7 +37,7 @@ from discord import Guild, Interaction, Member, Message
 from discord.abc import Messageable, User
 from discord.backoff import ExponentialBackoff
 from discord.ext import commands
-from discord.ext.commands import Cog, Parameter
+from discord.ext.commands import Parameter
 from discord.ext.commands.view import StringView
 from discord.types.embed import EmbedType
 from discord.utils import MISSING as D_MISSING  # noqa
@@ -83,7 +83,7 @@ _RED_LOGGER = getLogger("red")
 _LOCK = threading.Lock()
 
 
-class CogMixin(Cog, ABC):
+class CogMixin(ABC):
     bot: BotT
     lavalink: Client
 
