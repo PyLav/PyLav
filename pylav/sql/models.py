@@ -614,11 +614,10 @@ class PlayerStateModel:
         player = (
             await PlayerStateRow.select()
             .output(load_json=True)
-            .where((PlayerStateRow.channel_id == guild_id) & (PlayerStateRow.bot == bot_id))
-        ).first()
-
+            .where((PlayerStateRow.id == guild_id) & (PlayerStateRow.bot == bot_id))
+        )
         if player:
-            return cls(**player.to_dict())
+            return cls(**player[0])
 
         return None
 

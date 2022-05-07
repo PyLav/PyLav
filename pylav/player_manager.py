@@ -109,6 +109,16 @@ class PlayerManager:
         await player.disconnect(requester=requester)
         LOGGER.debug("[NODE-%s] Successfully destroyed player %s", player.node.name, guild_id)
 
+    async def save_and_restore(self, guild_id: int):
+        await asyncio.sleep(5)
+        player = self.players.pop(guild_id, None)
+        if player:
+            await player.save()
+            await player.disconnect(requester=self.client.bot.user)
+        player_state = await self.client.player_state_db_manager.get_player(guild_id)
+        if player_state:
+            await self._restore_player(player_state)
+
     def players(self) -> Iterator[Player]:
         """Returns an iterator that yields only values."""
         yield from self.players.values()
