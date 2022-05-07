@@ -1,0 +1,120 @@
+name: Create a Release
+
+on:
+    push:
+        branches:
+        -   master
+
+defaults:
+    run:
+        shell: bash
+env:
+    project-name: pylavcogs_shared
+
+jobs:
+    bump_version:
+        name: Bump release version
+        runs-on: ubuntu-latest
+        if: ${{ startsWith(github.event.head_commit.message, '[patch]') || startsWith(github.event.head_commit.message, '[minor]') || startsWith(github.event.head_commit.message, '[major]') }}
+        env:
+            RELEASE_TYPE: ${{ startsWith(github.event.head_commit.message, '[patch]') && 'patch' || startsWith(github.event.head_commit.message, '[minor]') && 'minor' || startsWith(github.event.head_commit.message, '[major]') && 'major' }}
+        steps:
+        -   uses: actions/checkout@v3
+            with:
+                token: ${{ secrets.PAT }}
+        -   name: Set up Python
+            uses: actions/setup-python@v3
+            with:
+                python-version: 3.x
+        -   name: Install dependencies
+            run: |
+                python -m pip install --upgrade pip
+                pip install bump2version setuptools wheel twine
+        -   name: Retrieve current version
+            run: |
+                echo "Current version: $(python setup.py --version)"
+                echo "::set-output name=VERSION::$(python setup.py --version)"
+            id: current_version
+        -   name: Bump Patch Version
+            run: |
+                bump2version --current-version $(python setup.py --version) ${{ env.RELEASE_TYPE }}
+        -   name: Retrieve new version
+            run: |
+                echo "::set-output name=VERSION::$(python setup.py --version)"
+            id: new_version
+        -   name: Import GPG key
+            uses: crazy-max/ghaction-import-gpg@v4
+            with:
+                gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+                git_user_signingkey: true
+                git_commit_gpgsign: true
+                git_tag_gpgsign: true
+            id: import_gpg
+        -   name: Git Auto Commit
+            uses: stefanzweifel/git-auto-commit-action@v4.13.1
+            with:
+                commit_message: '[skip ci]Automated version bump: v${{ steps.current_version.outputs.VERSION }} >> v${{ steps.new_version.outputs.VERSION }}'
+                tagging_message: v${{ steps.new_version.outputs.VERSION }}
+                commit_options: -S
+                commit_user_name: ${{ steps.import_gpg.outputs.name }}
+                commit_user_email: ${{ steps.import_gpg.outputs.email }}
+                commit_author: ${{ steps.import_gpg.outputs.name }} <${{ steps.import_gpg.outputs.email }}>
+        outputs:
+            RELEASE_TYPE: ${{ env.RELEASE_TYPE }}
+            CURRENT_RELEASE: ${{ steps.current_version.outputs.VERSION }}
+            NEW_RELEASE: ${{ steps.new_version.outputs.VERSION }}
+    release:
+        name: Create a GitHub Release
+        needs: [bump_version]
+        runs-on: ubuntu-latest
+        steps:
+        -   uses: actions/checkout@v3
+            with:
+                ref: master
+                token: ${{ secrets.PAT }}
+        -   name: Set up Python
+            uses: actions/setup-python@v3
+            with:
+                python-version: 3.x
+        -   name: Install dependencies
+            run: |
+                python -m pip install --upgrade pip
+                pip install setuptools wheel twine
+        -   name: Import GPG key
+            uses: crazy-max/ghaction-import-gpg@v4
+            with:
+                gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+                git_user_signingkey: true
+                git_commit_gpgsign: true
+                git_tag_gpgsign: true
+            id: import_gpg
+        -   uses: marvinpinto/action-automatic-releases@latest
+            with:
+                repo_token: ${{ secrets.PAT }}
+                prerelease: false
+                automatic_release_tag: v${{needs.bump_version.outputs.NEW_RELEASE}}
+                title: v${{needs.bump_version.outputs.NEW_RELEASE}}
+    publish:
+        name: Publish to PyPi
+        needs: [bump_version]
+        runs-on: ubuntu-latest
+        steps:
+        -   uses: actions/checkout@v3
+            with:
+                fetch-depth: 0
+                ref: master
+        -   name: Set up Python
+            uses: actions/setup-python@v3
+            with:
+                python-version: 3.x
+        -   name: Install dependencies
+            run: |
+                python -m pip install --upgrade pip
+                pip install build wheel
+        -   name: Build package
+            run: python -m build
+        -   name: Publish package
+            uses: pypa/gh-action-pypi-publish@release/v1
+            with:
+                user: __token__
+                password: ${{ secrets.PYPI_TOKEN }}
