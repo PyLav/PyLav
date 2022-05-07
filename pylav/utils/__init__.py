@@ -10,6 +10,7 @@ import random
 import threading
 import time
 import warnings
+from abc import ABC
 from asyncio import QueueFull, events, locks
 from copy import copy
 from enum import Enum
@@ -36,7 +37,7 @@ from discord import Guild, Interaction, Member, Message
 from discord.abc import Messageable, User
 from discord.backoff import ExponentialBackoff
 from discord.ext import commands
-from discord.ext.commands import Parameter
+from discord.ext.commands import Cog, Parameter
 from discord.ext.commands.view import StringView
 from discord.types.embed import EmbedType
 from discord.utils import MISSING as D_MISSING  # noqa
@@ -54,7 +55,7 @@ except ImportError:
 from discord.ext.commands.context import Context as DpyContext
 
 if TYPE_CHECKING:
-    from pylav import Player
+    from pylav import Client, Player
 
 __all__ = (
     "MISSING",
@@ -80,6 +81,14 @@ LOGGER = getLogger("red.PyLink.utils")
 _RED_LOGGER = getLogger("red")
 
 _LOCK = threading.Lock()
+
+
+class CogMixin(Cog, ABC):
+    bot: BotT
+    lavalink: Client
+
+    async def initialize(self):
+        raise NotImplementedError()
 
 
 def _synchronized(lock):

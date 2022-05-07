@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 
     from pylav.client import Client
     from pylav.query import Query
-    from pylav.utils import PyLavContext
+    from pylav.utils import CogMixin, PyLavContext
 
 else:
     try:
@@ -38,7 +38,7 @@ CoroFunc = Callable[..., Coro[Any]]
 MaybeCoro = Union[T, Coro[T]]
 MaybeAwaitable = Union[T, Awaitable[T]]
 
-CogT = TypeVar("CogT", bound="Optional[Union[RedCog, Cog]]")
+CogT = TypeVar("CogT", bound="Optional[Union[RedCog, Cog, CogMixin]]")
 Check = Callable[["ContextT"], MaybeCoro[bool]]
 Hook = Union[Callable[["CogT", "ContextT"], Coro[Any]], Callable[["ContextT"], Coro[Any]]]
 Error = Union[
