@@ -205,10 +205,7 @@ class Node:
         self._identifier = unique_identifier
         self._ssl = ssl
         if port is None:
-            if self._ssl:
-                self._port = 443
-            else:
-                self._port = 80
+            self._port = 443 if self._ssl else 80
         else:
             self._port = port
         self._password = password
@@ -360,12 +357,12 @@ class Node:
     @property
     def server_connected_players(self) -> int:
         """Returns the number of players on this node that are connected."""
-        return len(self.connected_players) if not self.stats else self.stats.players
+        return self.stats.players if self.stats else len(self.connected_players)
 
     @property
     def server_playing_players(self) -> int:
         """Returns the number of players on this node that are playing."""
-        return len(self.playing_players) if not self.stats else self.stats.playing_players
+        return self.stats.playing_players if self.stats else len(self.playing_players)
 
     @property
     def count(self) -> int:
@@ -585,13 +582,19 @@ class Node:
         list[dict]
             The list of results.
         """
-        if not self.available:
-            return {
+        return (
+            await self.get_tracks(
+                await self._query_cls.from_string(query),
+                bypass_cache=bypass_cache,
+                first=first,
+            )
+            if self.available
+            else {
                 "loadType": "LOAD_FAILED",
                 "playlistInfo": {"name": "", "selectedTrack": -1},
                 "tracks": [],
             }
-        return await self.get_tracks(await self._query_cls.from_string(query), bypass_cache=bypass_cache, first=first)
+        )
 
     async def get_tracks(
         self, query: Query, first: bool = False, bypass_cache: bool = False
@@ -613,46 +616,48 @@ class Node:
             A dict representing tracks.
         """
         if not bypass_cache and (response := await self.node_manager.client.query_cache_manager.get_query(query)):
-            # Note this is a partial return
-            #   (the tracks are only B64 encoded, to get the decoded tracks like the api returns
-            #   you'd need to call `pylava.utils.decode_tracks`)
-            if not first:
-                return {
+            return (
+                {"track": response.tracks[0]}
+                if first
+                else {
                     "playlistInfo": {
                         "name": response.name,
                     },
                     "loadType": "PlaylistLoaded"
                     if query.is_playlist or query.is_album
-                    else "TrackLoaded"
-                    if not query.is_search
-                    else "SearchLoaded",
-                    "tracks": [{"track": track} async for track in AsyncIter(response.tracks)],
+                    else "SearchLoaded"
+                    if query.is_search
+                    else "TrackLoaded",
+                    "tracks": [
+                        {"track": track}
+                        async for track in AsyncIter(response.tracks)
+                    ],
                 }
-            return {"track": response.tracks[0]}
+            )
 
         destination = f"{self.connection_protocol}://{self.host}:{self.port}/loadtracks"
         async with self._session.get(
-            destination, headers={"Authorization": self.password}, params={"identifier": query.query_identifier}
-        ) as res:
+                destination, headers={"Authorization": self.password}, params={"identifier": query.query_identifier}
+            ) as res:
             if res.status == 200:
                 result = await res.json(loads=ujson.loads)
                 asyncio.create_task(self.node_manager.client.query_cache_manager.add_query(query, result))
                 if first:
                     return next(iter(result.get("tracks", [])), {})
                 return result
-            if res.status == 401 or res.status == 403:
+            if res.status in [401, 403]:
                 raise Unauthorized
             return {}
 
     async def decode_track(self, track: str) -> TrackT | None:
         destination = f"{self.connection_protocol}://{self.host}:{self.port}/decodetrack"
         async with self.session.get(
-            destination, headers={"Authorization": self.password}, params={"track": track}
-        ) as res:
+                destination, headers={"Authorization": self.password}, params={"track": track}
+            ) as res:
             if res.status == 200:
                 return await res.json(loads=ujson.loads)
 
-            if res.status == 401 or res.status == 403:
+            if res.status in [401, 403]:
                 raise Unauthorized
 
             return None
@@ -663,7 +668,7 @@ class Node:
             if res.status == 200:
                 return await res.json(loads=ujson.loads)
 
-            if res.status == 401 or res.status == 403:
+            if res.status in [401, 403]:
                 raise Unauthorized
             return []
 
@@ -681,7 +686,7 @@ class Node:
             if res.status == 200:
                 return await res.json(loads=ujson.loads)
 
-            if res.status == 401 or res.status == 403:
+            if res.status in [401, 403]:
                 raise Unauthorized
             return None
 
@@ -702,9 +707,9 @@ class Node:
         destination = f"{self.connection_protocol}://{self.host}:{self.port}/routeplanner/free/address"
 
         async with self._session.post(
-            destination, headers={"Authorization": self.password}, json={"address": address}
-        ) as res:
-            if res.status == 401 or res.status == 403:
+                destination, headers={"Authorization": self.password}, json={"address": address}
+            ) as res:
+            if res.status in [401, 403]:
                 raise Unauthorized
             return res.status == 204
 
@@ -720,7 +725,7 @@ class Node:
         destination = f"{self.connection_protocol}://{self.host}:{self.port}/routeplanner/free/all"
 
         async with self._session.post(destination, headers={"Authorization": self.password}) as res:
-            if res.status == 401 or res.status == 403:
+            if res.status in [401, 403]:
                 raise Unauthorized
             return res.status == 204
 
@@ -738,7 +743,7 @@ class Node:
             if res.status == 200:
                 return await res.json(loads=ujson.loads)
 
-            if res.status == 401 or res.status == 403:
+            if res.status in [401, 403]:
                 raise Unauthorized
         return []
 
@@ -756,7 +761,7 @@ class Node:
             if res.status == 200:
                 return await res.json(loads=ujson.loads)
 
-            if res.status == 401 or res.status == 403:
+            if res.status in [401, 403]:
                 raise Unauthorized
         return {}
 

@@ -26,10 +26,7 @@ def get_closest_region_name(lat, lon):
 
 
 async def get_coordinates(ip: str | None = None):
-    url = "https://ipinfo.io/json"
-    if ip:
-        url = f"https://ipinfo.io/{ip}/json"
-
+    url = f"https://ipinfo.io/{ip}/json" if ip else "https://ipinfo.io/json"
     async with aiohttp.ClientSession(json_serialize=ujson.dumps) as session:
         async with session.get(url) as response:
             data = await response.json(loads=ujson.loads)

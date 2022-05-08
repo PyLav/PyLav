@@ -33,7 +33,7 @@ class Vibrato(FilterMixin):
     def frequency(self, v: float):
         if not (0.0 < v <= 14.0):
             raise ValueError(f"Frequency must be must be 0.0 < v <= 14.0, not {v}")
-        self._frequency = float(v)
+        self._frequency = v
         self.off = False
 
     @property
@@ -44,7 +44,7 @@ class Vibrato(FilterMixin):
     def depth(self, v: float):
         if not (0.0 < v <= 1.0):
             raise ValueError(f"Depth must be must be 0.0 < x ≤ 1.0, not {v}")
-        self._depth = float(v)
+        self._depth = v
         self.off = False
 
     @classmethod
@@ -54,12 +54,14 @@ class Vibrato(FilterMixin):
         return c
 
     def get(self) -> dict[str, float]:
-        if self.off:
-            return {}
-        return {
-            "frequency": self.frequency,
-            "depth": self.depth,
-        }
+        return (
+            {}
+            if self.off
+            else {
+                "frequency": self.frequency,
+                "depth": self.depth,
+            }
+        )
 
     def reset(self) -> None:
         self.frequency = 2.0

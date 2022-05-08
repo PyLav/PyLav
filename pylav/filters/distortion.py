@@ -72,7 +72,7 @@ class Distortion(FilterMixin):
 
     @sin_offset.setter
     def sin_offset(self, v: float):
-        self._sin_offset = float(v)
+        self._sin_offset = v
         self.off = False
 
     @property
@@ -81,7 +81,7 @@ class Distortion(FilterMixin):
 
     @sin_scale.setter
     def sin_scale(self, v: float):
-        self._sin_scale = float(v)
+        self._sin_scale = v
 
     @property
     def cos_offset(self) -> float:
@@ -89,7 +89,7 @@ class Distortion(FilterMixin):
 
     @cos_offset.setter
     def cos_offset(self, v: float):
-        self._cos_offset = float(v)
+        self._cos_offset = v
         self.off = False
 
     @property
@@ -98,7 +98,7 @@ class Distortion(FilterMixin):
 
     @cos_scale.setter
     def cos_scale(self, v: float):
-        self._cos_scale = float(v)
+        self._cos_scale = v
         self.off = False
 
     @property
@@ -107,7 +107,7 @@ class Distortion(FilterMixin):
 
     @tan_offset.setter
     def tan_offset(self, v: float):
-        self._tan_offset = float(v)
+        self._tan_offset = v
         self.off = False
 
     @property
@@ -116,7 +116,7 @@ class Distortion(FilterMixin):
 
     @tan_scale.setter
     def tan_scale(self, v: float):
-        self._tan_scale = float(v)
+        self._tan_scale = v
         self.off = False
 
     @property
@@ -125,7 +125,7 @@ class Distortion(FilterMixin):
 
     @offset.setter
     def offset(self, v: float):
-        self._offset = float(v)
+        self._offset = v
         self.off = False
 
     @property
@@ -134,7 +134,7 @@ class Distortion(FilterMixin):
 
     @scale.setter
     def scale(self, v: float):
-        self._scale = float(v)
+        self._scale = v
         self.off = False
 
     @classmethod

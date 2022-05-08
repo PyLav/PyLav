@@ -56,7 +56,7 @@ def bool_to_string(b):
         str: String representation of a bool type.
     """
     s = str(b).lower()
-    if s in ["true", "false"]:
+    if s in {"true", "false"}:
         return s
     raise TypeError("Value must be True or False.")
 

@@ -327,7 +327,7 @@ class Player(VoiceProtocol):
     @property
     def is_empty(self) -> bool:
         """Returns whether the player is empty or not."""
-        return sum(1 for i in self.channel.members if not i.bot) == 0
+        return sum(not i.bot for i in self.channel.members) == 0
 
     @property
     def position(self) -> float:
@@ -497,12 +497,8 @@ class Player(VoiceProtocol):
         output = []
         is_list = isinstance(tracks_and_queries[0], (list, tuple))
         async for entry in AsyncIter(tracks_and_queries):
-            if is_list:
-                track, query = entry
-                track = await self._query_to_track(requester, track, query)
-            else:
-                track, query = entry, None
-                track = await self._query_to_track(requester, track, query)
+            track, query = entry if is_list else (entry, None)
+            track = await self._query_to_track(requester, track, query)
             output.append(track)
         self.queue.put_nowait(output, index=index)
         self.node.dispatch_event(TracksRequestedEvent(self, self.guild.get_member(requester), output))
@@ -619,44 +615,39 @@ class Player(VoiceProtocol):
         auto_play = False
         if track is not None and isinstance(track, (Track, dict, str, type(None))):
             track = Track(node=self.node, data=track, query=query, skip_segments=skip_segments, requester=requester.id)
-        if self.current and self._config.repeat_current:
-            await self.add(self.current.requester_id, self.current)
-        elif self.current and self._config.repeat_queue:
-            await self.add(self.current.requester_id, self.current, index=-1)
+        if self.current:
+            if self._config.repeat_current:
+                await self.add(self.current.requester_id, self.current)
+            elif self._config.repeat_queue:
+                await self.add(self.current.requester_id, self.current, index=-1)
         if self.current:
             self.current.timestamp = 0
             self.history.put_nowait([self.current])
         self.current = None
         if not track:
             if self.queue.empty():
-                if self.autoplay_enabled:
-                    available_tracks = self._autoplay_playlist.tracks
-                    if available_tracks:
-                        tracks_not_in_history = list(set(available_tracks) - set(self.history.raw_b64s))
-                        if tracks_not_in_history:
-                            track = Track(
-                                node=self.node,
-                                data=(b64 := random.choice(tracks_not_in_history)),
-                                query=await Query.from_base64(b64),
-                                skip_segments=skip_segments,
-                                requester=self.client.user.id,
-                            )
-                        else:
-                            track = Track(
-                                node=self.node,
-                                data=(b64 := random.choice(available_tracks)),
-                                query=await Query.from_base64(b64),
-                                skip_segments=skip_segments,
-                                requester=self.client.user.id,
-                            )
-                        auto_play = True
+                if self.autoplay_enabled and (
+                    available_tracks := self._autoplay_playlist.tracks
+                ):
+                    if tracks_not_in_history := list(
+                        set(available_tracks) - set(self.history.raw_b64s)
+                    ):
+                        track = Track(
+                            node=self.node,
+                            data=(b64 := random.choice(tracks_not_in_history)),
+                            query=await Query.from_base64(b64),
+                            skip_segments=skip_segments,
+                            requester=self.client.user.id,
+                        )
                     else:
-                        await self.stop(
-                            requester=self.guild.get_member(self.node.node_manager.client.bot.user.id)
-                        )  # Also sets current to None.
-                        self.history.clear()
-                        self.node.dispatch_event(QueueEndEvent(self))
-                        return
+                        track = Track(
+                            node=self.node,
+                            data=(b64 := random.choice(available_tracks)),
+                            query=await Query.from_base64(b64),
+                            skip_segments=skip_segments,
+                            requester=self.client.user.id,
+                        )
+                    auto_play = True
                 else:
                     await self.stop(
                         requester=self.guild.get_member(self.node.node_manager.client.bot.user.id)
@@ -1358,9 +1349,6 @@ class Player(VoiceProtocol):
                 "low_pass": low_pass,
                 "channel_mix": channel_mix,
             }
-            if not volume:
-                kwargs.pop("volume", None)
-            await self.node.filters(guild_id=self.channel.guild.id, **kwargs)
         else:
             kwargs = {
                 "volume": volume or (self.volume_filter if self.volume_filter.changed else None),
@@ -1374,13 +1362,9 @@ class Player(VoiceProtocol):
                 "low_pass": low_pass or (self.low_pass if self.low_pass.changed else None),
                 "channel_mix": channel_mix or (self.channel_mix if self.channel_mix.changed else None),
             }
-            if not volume:
-                kwargs.pop("volume", None)
-
-            await self.node.filters(
-                guild_id=self.channel.guild.id,
-                **kwargs,
-            )
+        if not volume:
+            kwargs.pop("volume", None)
+        await self.node.filters(guild_id=self.channel.guild.id, **kwargs)
         await self.seek(self.position, with_filter=True, requester=requester)
         kwargs.pop("reset_not_set", None)
         kwargs.pop("requester", None)
@@ -1411,68 +1395,63 @@ class Player(VoiceProtocol):
         loc_time = round((pos / dur if dur != 0 else pos) * sections)
         bar = "\N{BOX DRAWINGS HEAVY HORIZONTAL}"
         seek = "\N{RADIO BUTTON}"
-        if paused:
-            msg = "\N{DOUBLE VERTICAL BAR}\N{VARIATION SELECTOR-16}"
-        else:
-            msg = "\N{BLACK RIGHT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}"
+        msg = (
+            "\N{DOUBLE VERTICAL BAR}\N{VARIATION SELECTOR-16}"
+            if paused
+            else "\N{BLACK RIGHT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}"
+        )
+
         for i in range(sections):
-            if i == loc_time:
-                msg += seek
-            else:
-                msg += bar
+            msg += seek if i == loc_time else bar
         return msg
 
     async def get_currently_playing_message(
         self, embed: bool = True, messageable: Messageable | discord.Interaction = None
     ) -> discord.Embed | str:
-        if embed:
-            queue_list = ""
-            arrow = self.draw_time()
-            pos = format_time(self.position)
-            current = self.current
-            if current.stream:
-                dur = "LIVE"
-            else:
-                dur = format_time(current.duration)
-            current_track_description = await current.get_track_display_name(with_url=True)
-            if current.stream:
-                queue_list += "**Currently livestreaming:**\n"
-                queue_list += f"{current_track_description}\n"
-                queue_list += f"Requester: **{current.requester.mention}**"
-                queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
-            else:
-                queue_list += "Playing: "
-                queue_list += f"{current_track_description}\n"
-                queue_list += f"Requester: **{current.requester.mention}**"
-                queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
-            page = await self.node.node_manager.client.construct_embed(
-                title=f"Now Playing in __{self.guild.name}__",
-                description=queue_list,
-                messageable=messageable,
-            )
-            if url := await current.thumbnail():
-                page.set_thumbnail(url=url)
+        if not embed:
+            return
+        queue_list = ""
+        arrow = self.draw_time()
+        pos = format_time(self.position)
+        current = self.current
+        dur = "LIVE" if current.stream else format_time(current.duration)
+        current_track_description = await current.get_track_display_name(with_url=True)
+        if current.stream:
+            queue_list += "**Currently livestreaming:**\n"
+        else:
+            queue_list += "Playing: "
+        queue_list += f"{current_track_description}\n"
+        queue_list += f"Requester: **{current.requester.mention}**"
+        queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
+        page = await self.node.node_manager.client.construct_embed(
+            title=f"Now Playing in __{self.guild.name}__",
+            description=queue_list,
+            messageable=messageable,
+        )
+        if url := await current.thumbnail():
+            page.set_thumbnail(url=url)
 
-            queue_dur = await self.queue_duration()
-            queue_total_duration = format_time(queue_dur)
-            text = f"{self.queue.qsize()} tracks, {queue_total_duration} remaining\n"
-            if not self.is_repeating:
-                repeat_emoji = "\N{CROSS MARK}"
-            elif self._config.repeat_queue:
-                repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS}"
-            else:
-                repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS WITH CIRCLED ONE OVERLAY}"
+        queue_dur = await self.queue_duration()
+        queue_total_duration = format_time(queue_dur)
+        text = f"{self.queue.qsize()} tracks, {queue_total_duration} remaining\n"
+        if not self.is_repeating:
+            repeat_emoji = "\N{CROSS MARK}"
+        elif self._config.repeat_queue:
+            repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS}"
+        else:
+            repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS WITH CIRCLED ONE OVERLAY}"
 
-            if not self._config.auto_play:
-                autoplay_emoji = "\N{CROSS MARK}"
-            else:
-                autoplay_emoji = "\N{WHITE HEAVY CHECK MARK}"
+        autoplay_emoji = (
+            "\N{WHITE HEAVY CHECK MARK}"
+            if self._config.auto_play
+            else "\N{CROSS MARK}"
+        )
 
-            text += "Repeating" + ": " + repeat_emoji
-            text += (" | " if text else "") + "Auto Play" + ": " + autoplay_emoji
-            text += (" | " if text else "") + "Volume" + ": " + f"{self.volume}%"
-            page.set_footer(text=text)
-            return page
+        text += "Repeating" + ": " + repeat_emoji
+        text += (" | " if text else "") + "Auto Play" + ": " + autoplay_emoji
+        text += (" | " if text else "") + "Volume" + ": " + f"{self.volume}%"
+        page.set_footer(text=text)
+        return page
 
     async def get_queue_page(
         self,

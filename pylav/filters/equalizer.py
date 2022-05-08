@@ -112,9 +112,7 @@ class Equalizer(FilterMixin):
         return cls.flat()
 
     def get(self) -> list[dict[str, int | float]]:
-        if self.off:
-            return []
-        return self._eq
+        return [] if self.off else self._eq
 
     def reset(self) -> None:
         self.off = True
@@ -154,11 +152,7 @@ class Equalizer(FilterMixin):
 
             for value in self._eq:
                 cur_gain = value.get("gain", 0.0)
-                if cur_gain >= gain:
-                    block += "[] "
-                else:
-                    block += "   "
-
+                block += "[] " if cur_gain >= gain else "   "
             block += "\n"
 
         block += bottom

@@ -31,7 +31,7 @@ class LowPass(FilterMixin):
 
     @smoothing.setter
     def smoothing(self, v: float):
-        self._smoothing = float(v)
+        self._smoothing = v
         self.off = False
 
     @classmethod
@@ -41,11 +41,13 @@ class LowPass(FilterMixin):
         return c
 
     def get(self) -> dict[str, float]:
-        if self.off:
-            return {}
-        return {
-            "smoothing": self.smoothing,
-        }
+        return (
+            {}
+            if self.off
+            else {
+                "smoothing": self.smoothing,
+            }
+        )
 
     def reset(self) -> None:
         self.smoothing = 20.0

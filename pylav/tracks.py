@@ -144,51 +144,35 @@ class Track:
 
     @property
     def identifier(self) -> str | None:
-        if self.is_partial:
-            return MISSING
-        return self.full_track["info"]["identifier"]
+        return MISSING if self.is_partial else self.full_track["info"]["identifier"]
 
     @property
     def is_seekable(self) -> bool:
-        if self.is_partial:
-            return MISSING
-        return self.full_track["info"]["isSeekable"]
+        return MISSING if self.is_partial else self.full_track["info"]["isSeekable"]
 
     @property
     def duration(self) -> int:
-        if self.is_partial:
-            return MISSING
-        return self.full_track["info"]["length"]
+        return MISSING if self.is_partial else self.full_track["info"]["length"]
 
     @property
     def stream(self) -> bool:
-        if self.is_partial:
-            return MISSING
-        return self.full_track["info"]["isStream"]
+        return MISSING if self.is_partial else self.full_track["info"]["isStream"]
 
     @property
     def title(self) -> str:
-        if self.is_partial:
-            return MISSING
-        return self.full_track["info"]["title"]
+        return MISSING if self.is_partial else self.full_track["info"]["title"]
 
     @property
     def uri(self) -> str:
-        if self.is_partial:
-            return MISSING
-        return self.full_track["info"]["uri"]
+        return MISSING if self.is_partial else self.full_track["info"]["uri"]
 
     @property
     def author(self) -> str:
-        if self.is_partial:
-            return MISSING
-        return self.full_track["info"]["author"]
+        return MISSING if self.is_partial else self.full_track["info"]["author"]
 
     @property
     def source(self) -> str:
-        if self.is_partial:
-            return MISSING
-        return self.full_track["info"]["source"]
+        return MISSING if self.is_partial else self.full_track["info"]["source"]
 
     @property
     def requester_id(self) -> int:
@@ -388,7 +372,7 @@ class Track:
             base = await (await self.query()).query_to_queue(max_length, partial=True)
             base = SQUARE_BRACKETS.sub("", base).strip()
             if max_length and len(base) > (actual_length := max_length - 3):
-                base = base[:actual_length] + "..."
+                base = f"{base[:actual_length]}..."
             return discord.utils.escape_markdown(base)
         else:
             length_to_trim = 7
@@ -407,52 +391,33 @@ class Track:
                 max_length -= length_to_trim
             unknown_author = self.author != "Unknown artist"
             unknown_title = self.title != "Unknown title"
-            if not author:
-                author_string = ""
-            else:
-                author_string = f" - {self.author}"
-
+            author_string = f" - {self.author}" if author else ""
             if await self.query() and await self.is_local():
                 url_start = url_end = ""
                 if not (unknown_title and unknown_author):
                     base = f"{self.title}{author_string}"
                     base = SQUARE_BRACKETS.sub("", base).strip()
                     if max_length and len(base) > max_length:
-                        base = base = "..." + base[-max_length:]
+                        base = base = f"...{base[-max_length:]}"
                     elif not max_length:
                         base += f"\n{await  (await self.query()).query_to_string(ellipsis=False)} "
-                    base = discord.utils.escape_markdown(base)
-                    return f"{bold}{url_start}{base}{url_end}{bold}"
-                elif not unknown_title:
-                    base = self.title
-                    base = SQUARE_BRACKETS.sub("", base).strip()
-                    if max_length and len(base) > max_length:
-                        base = base = "..." + base[-max_length:]
-                    elif not max_length:
-                        base += f"\n{await  (await self.query()).query_to_string(ellipsis=False)} "
-                    base = discord.utils.escape_markdown(base)
-                    return f"{bold}{url_start}{base}{url_end}{bold}"
                 else:
                     base = await (await self.query()).query_to_string(max_length, name_only=True)
                     base = SQUARE_BRACKETS.sub("", base).strip()
-                    base = discord.utils.escape_markdown(base)
-                    return f"{bold}{url_start}{base}{url_end}{bold}"
             else:
                 if self.stream:
                     icy = await self._icyparser(self.uri)
-                    if icy:
-                        base = icy
-                    else:
-                        base = f"{self.title}{author_string}"
+                    base = icy or f"{self.title}{author_string}"
                 elif self.author.lower() not in self.title.lower():
                     base = f"{self.title}{author_string}"
                 else:
                     base = self.title
                 base = SQUARE_BRACKETS.sub("", base).strip()
                 if max_length and len(base) > max_length:
-                    base = base[:max_length] + "..."
-                base = discord.utils.escape_markdown(base)
-                return f"{bold}{url_start}{base}{url_end}{bold}"
+                    base = f"{base[:max_length]}..."
+
+            base = discord.utils.escape_markdown(base)
+            return f"{bold}{url_start}{base}{url_end}{bold}"
 
     async def _icyparser(self, url: str) -> str | None:
         try:
@@ -462,13 +427,10 @@ class Track:
                     await resp.content.readexactly(metaint)
                     metadata_length = struct.unpack("B", await resp.content.readexactly(1))[0] * 16
                     metadata = await resp.content.readexactly(metadata_length)
-                    m = STREAM_TITLE.search(metadata.rstrip(b"\0"))
-                    if m:
-                        title = m.group(1)
-                        if title:
-                            title = title.decode("utf-8", errors="replace")
-                            return title
-                    else:
+                    if not (m := STREAM_TITLE.search(metadata.rstrip(b"\0"))):
                         return None
+                    if title := m.group(1):
+                        title = title.decode("utf-8", errors="replace")
+                        return title
         except Exception:
             return None

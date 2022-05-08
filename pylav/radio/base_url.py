@@ -34,8 +34,7 @@ async def fetch_servers():
         raise
     else:
         if data and isinstance(data[0][4], tuple):
-            for ip in data:
-                ips.append(ip[4][0])
+            ips.extend(ip[4][0] for ip in data)
     return ips
 
 

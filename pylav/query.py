@@ -179,21 +179,15 @@ def process_spotify(cls: QueryT, query: str) -> Query:
 
 
 def process_soundcloud(cls: QueryT, query: str):
-    if "/sets/" in query:
-        if "?in=" in query:
-            query_type = "single"
-        else:
-            query_type = "playlist"
-    else:
+    if "/sets/" in query and "?in=" in query or "/sets/" not in query:
         query_type = "single"
+    else:
+        query_type = "playlist"
     return cls(query, "SoundCloud", query_type=query_type)
 
 
 def process_bandcamp(cls: QueryT, query: str) -> Query:
-    if "/album/" in query:
-        query_type = "album"
-    else:
-        query_type = "single"
+    query_type = "album" if "/album/" in query else "single"
     return cls(query, "Bandcamp", query_type=query_type)
 
 
@@ -449,10 +443,7 @@ class Query:
             query = match.group("local_query").strip()
         path: aiopath.AsyncPath = aiopath.AsyncPath(query)
         if not await path.exists():
-            if path.is_absolute():
-                path_paths = path.parts[1:]
-            else:
-                path_paths = path.parts
+            path_paths = path.parts[1:] if path.is_absolute() else path.parts
             path = cls.__localfile_cls._ROOT_FOLDER.joinpath(*path_paths)
             if not await path.exists():
                 raise ValueError(f"{path} does not exist")
@@ -461,9 +452,7 @@ class Query:
             await local_path.initialize()
         except Exception as e:
             raise ValueError(f"{e}")
-        query_type = "single"
-        if await local_path.path.is_dir():
-            query_type = "album"
+        query_type = "album" if await local_path.path.is_dir() else "single"
         return cls(local_path, "Local Files", query_type=query_type, recursive=recursively)  # type: ignore
 
     @classmethod
@@ -502,11 +491,11 @@ class Query:
             if source:
                 output._source = cls.__get_source_from_str(source)
             return output
-        if output := cls.__process_urls(query):
-            if source:
-                output._source = cls.__get_source_from_str(source)
-            return output
-        elif output := cls.__process_search(query):
+        if (
+            (output := cls.__process_urls(query))
+            or not (output := cls.__process_urls(query))
+            and (output := cls.__process_search(query))
+        ):
             if source:
                 output._source = cls.__get_source_from_str(source)
             return output
@@ -560,7 +549,7 @@ class Query:
 
         if max_length and len(self._query) > max_length:
             if ellipsis:
-                return self._query[: max_length - 3].strip() + "..."
+                return f"{self._query[: max_length - 3].strip()}..."
             else:
                 return self._query[:max_length].strip()
 
@@ -582,15 +571,18 @@ class Query:
                             yield await Query.from_string(line.strip(), dont_search=True)
 
     async def _yield_local_tracks(self) -> AsyncIterator[Query]:
-        if self.is_local:
-            if self.is_album:
-                if self._recursive:
-                    op = self._query.files_in_tree
-                else:
-                    op = self._query.files_in_folder
+        if self.is_album:
+            if self.is_local:
+                op = (
+                    self._query.files_in_tree
+                    if self._recursive
+                    else self._query.files_in_folder
+                )
+
                 async for entry in op():
                     yield entry
-            elif self.is_single:
+        elif self.is_single:
+            if self.is_local:
                 yield self
 
     async def _yield_m3u_tracks(self) -> AsyncIterator[Query]:
@@ -602,22 +594,23 @@ class Query:
                 yield await Query.from_string(playlist.uri, dont_search=True)
 
     async def _yield_pls_tracks(self) -> AsyncIterator[Query]:
-        if self.is_pls and self.is_album:
-            file = aiopath.AsyncPath(self._query)
-            if await file.exists():
-                async with file.open("r") as f:
-                    contents = await f.read()
+        if not self.is_pls or not self.is_album:
+            return
+        file = aiopath.AsyncPath(self._query)
+        if await file.exists():
+            async with file.open("r") as f:
+                contents = await f.read()
+                for line in contents.splitlines():
+                    if match := PLS_TRACK_REGEX.match(line):
+                        yield await Query.from_string(match.group("pls_query").strip(), dont_search=True)
+        elif is_url(self._query):
+            async with aiohttp.ClientSession() as session:
+                async with session.get(self._query) as resp:
+                    contents = await resp.text()
                     for line in contents.splitlines():
-                        if match := PLS_TRACK_REGEX.match(line):
-                            yield await Query.from_string(match.group("pls_query").strip(), dont_search=True)
-            elif is_url(self._query):
-                async with aiohttp.ClientSession() as session:
-                    async with session.get(self._query) as resp:
-                        contents = await resp.text()
-                        for line in contents.splitlines():
-                            with contextlib.suppress(Exception):
-                                if match := PLS_TRACK_REGEX.match(line):
-                                    yield await Query.from_string(match.group("pls_query").strip(), dont_search=True)
+                        with contextlib.suppress(Exception):
+                            if match := PLS_TRACK_REGEX.match(line):
+                                yield await Query.from_string(match.group("pls_query").strip(), dont_search=True)
 
     async def _yield_xspf_tracks(self) -> AsyncIterator[Query]:
         if self.is_xspf:
@@ -661,14 +654,13 @@ class Query:
         return None
 
     async def query_to_queue(self, max_length: int = None, partial: bool = False, name_only: bool = False) -> str:
-        if partial:
-            source = len(self.source) + 3
-            if max_length:
-                max_length -= source
-            query_to_string = await self.query_to_string(max_length, name_only=name_only)
-            return f"({self.source}) {query_to_string}"
-        else:
+        if not partial:
             return await self.query_to_string(max_length, name_only=name_only)
+        source = len(self.source) + 3
+        if max_length:
+            max_length -= source
+        query_to_string = await self.query_to_string(max_length, name_only=name_only)
+        return f"({self.source}) {query_to_string}"
 
     @property
     def source(self) -> str:

@@ -158,9 +158,8 @@ class M3U8:
         else:
             self.data = {}
         self._base_uri = base_uri
-        if self._base_uri:
-            if not self._base_uri.endswith("/"):
-                self._base_uri += "/"
+        if self._base_uri and not self._base_uri.endswith("/"):
+            self._base_uri += "/"
 
         self._initialize_attributes()
         self.base_path = base_path
@@ -177,11 +176,10 @@ class M3U8:
         for attr, param in self.simple_attributes:
             setattr(self, attr, self.data.get(param))
 
-        self.files = []
-        for key in self.keys:
-            # Avoid None key, it could be the first one, don't repeat them
-            if key and key.uri not in self.files:
-                self.files.append(key.uri)
+        self.files = [
+            key.uri for key in self.keys if key and key.uri not in self.files
+        ]
+
         self.files.extend(self.segments.uri)
 
         self.media = MediaList([Media(base_uri=self.base_uri, **media) for media in self.data.get("media", [])])
@@ -332,7 +330,7 @@ class M3U8:
             output.append(f"#EXT-X-VERSION:{str(self.version)}")
         if self.target_duration:
             output.append(f"#EXT-X-TARGETDURATION:{number_to_string(self.target_duration)}")
-        if not (self.playlist_type is None or self.playlist_type == ""):
+        if self.playlist_type is not None and self.playlist_type != "":
             output.append(f"#EXT-X-PLAYLIST-TYPE:{str(self.playlist_type).upper()}")
         if self.start:
             output.append(str(self.start))
@@ -353,9 +351,7 @@ class M3U8:
         if self.session_data:
             output.append(str(self.session_data))
 
-        for key in self.session_keys:
-            output.append(str(key))
-
+        output.extend(str(key) for key in self.session_keys)
         output.append(str(self.segments))
 
         if self.preload_hint:
@@ -521,45 +517,46 @@ class Segment(BasePathMixin):
     def dumps(self, last_segment):
         output = []
 
-        if last_segment and self.key != last_segment.key:
-            output.append(str(self.key))
-            output.append("\n")
-        else:
-            # The key must be checked anyway now for the first segment
-            if self.key and last_segment is None:
-                output.append(str(self.key))
-                output.append("\n")
-
-        if last_segment and self.init_section != last_segment.init_section:
-            if not self.init_section:
-                raise MalformedPlaylistError("init section can't be None if previous is not None")
-            output.append(str(self.init_section))
-            output.append("\n")
-        else:
-            if self.init_section and last_segment is None:
-                output.append(str(self.init_section))
-                output.append("\n")
-
+        if (
+            (not last_segment or self.key == last_segment.key)
+            and self.key
+            and last_segment is None
+            or last_segment
+            and self.key != last_segment.key
+        ):
+            output.extend((str(self.key), "\n"))
+        if (
+            last_segment
+            and self.init_section != last_segment.init_section
+            and not self.init_section
+        ):
+            raise MalformedPlaylistError("init section can't be None if previous is not None")
+        elif (
+            last_segment
+            and self.init_section != last_segment.init_section
+            or self.init_section
+            and last_segment is None
+        ):
+            output.extend((str(self.init_section), "\n"))
         if self.discontinuity:
             output.append("#EXT-X-DISCONTINUITY\n")
         if self.program_date_time:
             output.append(f"#EXT-X-PROGRAM-DATE-TIME:{format_date_time(self.program_date_time)}\n")
 
         if len(self.dateranges):
-            output.append(str(self.dateranges))
-            output.append("\n")
-
+            output.extend((str(self.dateranges), "\n"))
         if self.cue_out_start:
-            output.append(f"#EXT-X-CUE-OUT{(':' + self.scte35_duration) if self.scte35_duration else ''}\n")
+            output.append(
+                f"#EXT-X-CUE-OUT{f':{self.scte35_duration}' if self.scte35_duration else ''}\n"
+            )
+
         elif self.cue_out:
             output.append("#EXT-X-CUE-OUT-CONT\n")
         if self.cue_in:
             output.append("#EXT-X-CUE-IN\n")
 
         if self.parts:
-            output.append(str(self.parts))
-            output.append("\n")
-
+            output.extend((str(self.parts), "\n"))
         if self.uri:
             if self.duration is not None:
                 output.append(f"#EXTINF:{number_to_string(self.duration)},")
@@ -690,9 +687,7 @@ class PartialSegment(BasePathMixin):
         output = []
 
         if len(self.dateranges):
-            output.append(str(self.dateranges))
-            output.append("\n")
-
+            output.extend((str(self.dateranges), "\n"))
         if self.gap_tag:
             output.append("#EXT-X-GAP\n")
 
@@ -764,15 +759,17 @@ class Key(BasePathMixin):
         return f"{self.tag}:{','.join(output)}"
 
     def __eq__(self, other):
-        if not other:
-            return False
         return (
-            self.method == other.method
-            and self.uri == other.uri
-            and self.iv == other.iv
-            and self.base_uri == other.base_uri
-            and self.keyformat == other.keyformat
-            and self.keyformatversions == other.keyformatversions
+            (
+                self.method == other.method
+                and self.uri == other.uri
+                and self.iv == other.iv
+                and self.base_uri == other.base_uri
+                and self.keyformat == other.keyformat
+                and self.keyformatversions == other.keyformatversions
+            )
+            if other
+            else False
         )
 
     def __ne__(self, other):
@@ -810,9 +807,13 @@ class InitializationSection(BasePathMixin):
         return "{tag}:{attributes}".format(tag=self.tag, attributes=",".join(output))
 
     def __eq__(self, other):
-        if not other:
-            return False
-        return self.uri == other.uri and self.byterange == other.byterange and self.base_uri == other.base_uri
+        return (
+            self.uri == other.uri
+            and self.byterange == other.byterange
+            and self.base_uri == other.base_uri
+            if other
+            else False
+        )
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -878,10 +879,9 @@ class Playlist(BasePathMixin):
         for media in self.media:
             if media.type in media_types:
                 continue
-            else:
-                media_types += [media.type]
-                media_type = media.type.upper()
-                stream_inf.append(f'{media_type}="{media.group_id}"')
+            media_types += [media.type]
+            media_type = media.type.upper()
+            stream_inf.append(f'{media_type}="{media.group_id}"')
 
         return f"#EXT-X-STREAM-INF:{','.join(stream_inf)}\n{self.uri}"
 
@@ -1176,9 +1176,11 @@ class ServerControl:
         if self.can_block_reload:
             ctrl.append(f"CAN-BLOCK-RELOAD={self.can_block_reload}")
 
-        for attr in ["hold_back", "part_hold_back"]:
-            if self[attr]:
-                ctrl.append(f"{denormalize_attribute(attr)}={number_to_string(self[attr])}")
+        ctrl.extend(
+            f"{denormalize_attribute(attr)}={number_to_string(self[attr])}"
+            for attr in ["hold_back", "part_hold_back"]
+            if self[attr]
+        )
 
         if self.can_skip_until:
             ctrl.append(f"CAN-SKIP-UNTIL={number_to_string(self.can_skip_until)}")
@@ -1310,8 +1312,10 @@ class DateRange:
             daterange.append(f"END-ON-NEXT={self.end_on_next}")
 
         # client attributes sorted alphabetically output order is predictable
-        for attr, value in sorted(self.x_client_attrs):
-            daterange.append(f"{denormalize_attribute(attr)}={value}")
+        daterange.extend(
+            f"{denormalize_attribute(attr)}={value}"
+            for attr, value in sorted(self.x_client_attrs)
+        )
 
         return f'#EXT-X-DATERANGE:{",".join(daterange)}'
 
@@ -1341,14 +1345,12 @@ def find_key(keydata, keylist):
     if not keydata:
         return None
     for key in keylist:
-        if key:
-            # Check the intersection of keys and values
-            if (
-                keydata.get("uri", None) == key.uri
-                and keydata.get("method", "NONE") == key.method
-                and keydata.get("iv", None) == key.iv
-            ):
-                return key
+        if key and (
+            keydata.get("uri", None) == key.uri
+            and keydata.get("method", "NONE") == key.method
+            and keydata.get("iv", None) == key.iv
+        ):
+            return key
     raise KeyError("No key found for key data")
 
 

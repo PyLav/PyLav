@@ -643,7 +643,12 @@ class Client(metaclass=_Singleton):
         messageable: Messageable | discord.Interaction = None,
     ) -> discord.Embed:
 
-        if messageable and not (colour or color) and hasattr(self._bot, "get_embed_color"):
+        if (
+            messageable
+            and not colour
+            and not color
+            and hasattr(self._bot, "get_embed_color")
+        ):
             colour = await self._bot.get_embed_color(messageable)
         elif colour or color:
             colour = colour or color
@@ -658,11 +663,8 @@ class Client(metaclass=_Singleton):
             description=description,
             timestamp=timestamp.isoformat(),
         )
-        if embed is not None:
-            embed = embed.to_dict()
-        else:
-            embed = {}
-        contents.update(embed)
+        embed = embed.to_dict() if embed is not None else {}
+        contents |= embed
         new_embed = discord.Embed.from_dict(contents)
         new_embed.color = colour
 
@@ -670,12 +672,8 @@ class Client(metaclass=_Singleton):
             new_embed.set_footer(text=footer, icon_url=footer_url)
         if thumbnail:
             new_embed.set_thumbnail(url=thumbnail)
-        if author_url or author_name:
-            if author_url and author_name:
-                new_embed.set_author(name=author_name, icon_url=author_url)
-            elif author_name:
-                new_embed.set_author(name=author_name)
-
+        if author_url and author_name:
+            new_embed.set_author(name=author_name, icon_url=author_url)
         return new_embed
 
     async def get_context(self, what: discord.Message | ContextT | discord.Interaction) -> PyLavContext:
@@ -692,10 +690,10 @@ class Client(metaclass=_Singleton):
     async def update_localtracks_folder(self, folder: str | None) -> None:
         from pylav.localfiles import LocalFile
 
-        if not folder:
-            localtrack_folder = self._config_folder / "music"
-        else:
-            localtrack_folder = aiopath.AsyncPath(folder)
+        localtrack_folder = (
+            aiopath.AsyncPath(folder) if folder else self._config_folder / "music"
+        )
+
         await LocalFile.add_root_folder(path=localtrack_folder, create=True)
 
     async def get_all_players(self) -> Iterator[Player]:
@@ -787,7 +785,12 @@ class Client(metaclass=_Singleton):
             if node is None:
                 queries_failed.append(query)
             # Query tracks as the queue builds as this may be a slow operation
-            if enqueue and successful_tracks and not (player.is_playing or player.paused):
+            if (
+                enqueue
+                and successful_tracks
+                and not player.is_playing
+                and not player.paused
+            ):
                 track = successful_tracks.pop()
                 await player.play(track, await track.query(), requester)
             if query.is_search or query.is_single:
@@ -808,15 +811,18 @@ class Client(metaclass=_Singleton):
                         )
                 except NoNodeWithRequestFunctionalityAvailable:
                     queries_failed.append(query)
-            elif (query.is_playlist or query.is_album) and not (query.is_local or query.is_custom_playlist):
+            elif (
+                ((query.is_playlist or query.is_album))
+                and not query.is_local
+                and not query.is_custom_playlist
+            ):
                 try:
                     tracks: dict = await self._get_tracks(query=query, bypass_cache=bypass_cache)
                     track_list = tracks.get("tracks", [])
                     if not track_list:
                         queries_failed.append(query)
                     for track in track_list:
-                        track_b64 = track.get("track")
-                        if track_b64:
+                        if track_b64 := track.get("track"):
                             track_count += 1
                             successful_tracks.append(
                                 Track(
@@ -827,7 +833,12 @@ class Client(metaclass=_Singleton):
                                 )
                             )
                             # Query tracks as the queue builds as this may be a slow operation
-                            if enqueue and successful_tracks and not (player.is_playing or player.paused):
+                            if (
+                                enqueue
+                                and successful_tracks
+                                and not player.is_playing
+                                and not player.paused
+                            ):
                                 track = successful_tracks.pop()
                                 await player.play(track, await track.query(), requester)
                 except NoNodeWithRequestFunctionalityAvailable:
@@ -838,8 +849,7 @@ class Client(metaclass=_Singleton):
                     async for local_track in query.get_all_tracks_in_folder():
                         yielded = True
                         track = await self._get_tracks(query=local_track, first=True, bypass_cache=True)
-                        track_b64 = track.get("track")
-                        if track_b64:
+                        if track_b64 := track.get("track"):
                             track_count += 1
                             successful_tracks.append(
                                 Track(
@@ -850,7 +860,12 @@ class Client(metaclass=_Singleton):
                                 )
                             )
                             # Query tracks as the queue builds as this may be a slow operation
-                            if enqueue and successful_tracks and not (player.is_playing or player.paused):
+                            if (
+                                enqueue
+                                and successful_tracks
+                                and not player.is_playing
+                                and not player.paused
+                            ):
                                 track = successful_tracks.pop()
                                 await player.play(track, await track.query(), requester)
                     if not yielded:
@@ -933,12 +948,14 @@ class Client(metaclass=_Singleton):
                     else:
                         LOGGER.critical("Unknown query type: %s", response)
 
-        output = {
-            "playlistInfo": {"name": playlist_name if len(queries) == 1 else "", "selectedTrack": -1},
+        return {
+            "playlistInfo": {
+                "name": playlist_name if len(queries) == 1 else "",
+                "selectedTrack": -1,
+            },
             "loadType": "SearchLoaded" if output_tracks else "LOAD_FAILED",
             "tracks": output_tracks,
         }
-        return output  # type: ignore
 
     async def remove_node(self, node_id: int):
         """Removes a node from the node manager."""

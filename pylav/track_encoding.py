@@ -110,7 +110,7 @@ def read_utfm(utf_len: int, utf_bytes: bytes) -> str:
                 raise UnicodeError("malformed input: partial character at end")
             char2 = utf_bytes[count - 1]
             if (char2 & 0xC0) != 0x80:
-                raise UnicodeError(f"malformed input around byte {str(count)}")
+                raise UnicodeError(f"malformed input around byte {count}")
 
             char_shift = ((c & 0x1F) << 6) | (char2 & 0x3F)
             chars.append(chr(char_shift))
@@ -128,6 +128,6 @@ def read_utfm(utf_len: int, utf_bytes: bytes) -> str:
             char_shift = ((c & 0x0F) << 12) | ((char2 & 0x3F) << 6) | ((char3 & 0x3F) << 0)
             chars.append(chr(char_shift))
         else:
-            raise UnicodeError(f"malformed input around byte {str(count)}")
+            raise UnicodeError(f"malformed input around byte {count}")
 
     return "".join(chars).encode("utf-16", "surrogatepass").decode("utf-16")

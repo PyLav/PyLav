@@ -62,10 +62,7 @@ class RadioBrowser:
             https://de1.api.radio-browser.info/#List_of_countries
         """
 
-        if code:
-            endpoint = f"json/countries/{code}"
-        else:
-            endpoint = "json/countries/"
+        endpoint = f"json/countries/{code}" if code else "json/countries/"
         url = self.build_url(endpoint)
         response = await self.client.get(url)
         return [Country(**country) for country in response]
@@ -84,10 +81,7 @@ class RadioBrowser:
             https://de1.api.radio-browser.info/#List_of_countrycodes
         """
 
-        if code:
-            endpoint = f"json/countrycodes/{code}"
-        else:
-            endpoint = "json/countrycodes/"
+        endpoint = f"json/countrycodes/{code}" if code else "json/countrycodes/"
         url = self.build_url(endpoint)
         response = await self.client.get(url)
         return [CountryCode(**country) for country in response]
@@ -133,13 +127,13 @@ class RadioBrowser:
         url = self.build_url(endpoint)
         response = await self.client.get(url)
 
-        if country and state:
-            return [
-                State(**tag)
-                for tag in response
-                if tag["country"].lower() == country.lower() and tag["name"].lower() == state.lower()
-            ]
         if country:
+            if state:
+                return [
+                    State(**tag)
+                    for tag in response
+                    if tag["country"].lower() == country.lower() and tag["name"].lower() == state.lower()
+                ]
             return [State(**tag) for tag in response if tag["country"].lower() == country.lower()]
         if state:
             return [State(**tag) for tag in response if tag["name"].lower() == state.lower()]
@@ -158,10 +152,7 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_languages
         """
-        if language:
-            endpoint = f"json/languages/{language}"
-        else:
-            endpoint = "json/languages/"
+        endpoint = f"json/languages/{language}" if language else "json/languages/"
         url = self.build_url(endpoint)
         response = await self.client.get(url)
         return [Language(**tag) for tag in response]
@@ -221,7 +212,7 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
-        kwargs.update({"name": name, "name_exact": exact})
+        kwargs |= {"name": name, "name_exact": exact}
         return await self.search(**kwargs)
 
     async def stations_by_codec(
@@ -238,7 +229,7 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
-        kwargs.update({"codec": codec, "codec_exact": exact})
+        kwargs |= {"codec": codec, "codec_exact": exact}
         return await self.search(**kwargs)
 
     async def stations_by_country(
@@ -255,7 +246,7 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
-        kwargs.update({"country": country, "country_exact": exact})
+        kwargs |= {"country": country, "country_exact": exact}
         return await self.search(**kwargs)
 
     async def stations_by_countrycode(self, code: str, **kwargs: str | int | bool | None) -> list[Station]:
@@ -270,7 +261,7 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
-        kwargs.update({"countrycode": code})
+        kwargs["countrycode"] = code
         return await self.search(**kwargs)
 
     async def stations_by_state(
@@ -287,7 +278,7 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
-        kwargs.update({"state": state, "state_exact": exact})
+        kwargs |= {"state": state, "state_exact": exact}
         return await self.search(**kwargs)
 
     async def stations_by_language(
@@ -304,7 +295,7 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
-        kwargs.update({"language": language, "language_exact": exact})
+        kwargs |= {"language": language, "language_exact": exact}
         return await self.search(**kwargs)
 
     async def stations_by_tag(self, tag: str, exact: bool = False, **kwargs: str | int | bool | None) -> list[Station]:
@@ -318,7 +309,7 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
-        kwargs.update({"tag": tag, "tag_exact": exact})
+        kwargs |= {"tag": tag, "tag_exact": exact}
         return await self.search(**kwargs)
 
     async def stations_by_tag_list(self, tag_list: list[str], **kwargs: str | int | bool | None) -> list[Station]:
@@ -333,7 +324,7 @@ class RadioBrowser:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
         tag_list = ",".join(tag_list)
-        kwargs.update({"tag_list": tag_list})
+        kwargs["tag_list"] = tag_list
         return await self.search(**kwargs)
 
     async def click_counter(self, stationuuid: str) -> dict[str, str | int | bool]:

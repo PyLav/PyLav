@@ -29,7 +29,7 @@ class Rotation(FilterMixin):
 
     @hertz.setter
     def hertz(self, v: float):
-        self._hertz = float(v)
+        self._hertz = v
         self.off = False
 
     @classmethod
@@ -39,11 +39,13 @@ class Rotation(FilterMixin):
         return c
 
     def get(self) -> dict[str, float]:
-        if self.off:
-            return {}
-        return {
-            "rotationHz": self.hertz,
-        }
+        return (
+            {}
+            if self.off
+            else {
+                "rotationHz": self.hertz,
+            }
+        )
 
     def reset(self) -> None:
         self.hertz = 0.0

@@ -111,8 +111,7 @@ class PlayerManager:
 
     async def save_and_restore(self, guild_id: int):
         await asyncio.sleep(5)
-        player = self.players.pop(guild_id, None)
-        if player:
+        if player := self.players.pop(guild_id, None):
             await player.save()
             await player.disconnect(requester=self.client.bot.user)
         player_state = await self.client.player_state_db_manager.get_player(guild_id)
@@ -134,10 +133,11 @@ class PlayerManager:
         -------
         List[:class:`Player`]
         """
-        if not predicate:
-            return list(self.players.values())
-
-        return [p for p in self.players.values() if bool(predicate(p))]
+        return (
+            [p for p in self.players.values() if bool(predicate(p))]
+            if predicate
+            else list(self.players.values())
+        )
 
     async def remove(self, guild_id: int) -> None:
         """

@@ -17,9 +17,7 @@ class FilterMixin:
 
     @property
     def off(self) -> bool:
-        if self.is_default():
-            return True
-        return self._off
+        return True if self.is_default() else self._off
 
     @off.setter
     def off(self, value: bool):

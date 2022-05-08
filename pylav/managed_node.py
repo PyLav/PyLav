@@ -125,7 +125,7 @@ def change_dict_naming_convention(data: dict) -> dict:
         if isinstance(v, dict):
             new_v = change_dict_naming_convention(v)
         elif isinstance(v, list):
-            new_v = list()
+            new_v = []
             for x in v:
                 if isinstance(x, dict):
                     new_v.append(change_dict_naming_convention(x))
@@ -210,17 +210,17 @@ class LocalNodeManager:
 
     async def get_ci_latest_info(self) -> dict:
         async with self._client.cached_session.get(
-            f"{JAR_SERVER}{JAR_SERVER_BUILD_INFO}", headers={"Accept": "application/json"}
-        ) as response:
+                f"{JAR_SERVER}{JAR_SERVER_BUILD_INFO}", headers={"Accept": "application/json"}
+            ) as response:
             if response.status != 200:
                 return {"number": -1}
             data = await response.json(loads=ujson.loads)
             data = data["build"][0]
             returning_data = {}
             for k in BUILD_META_KEYS:
-                if "finishDate" == k:
+                if k == "finishDate":
                     returning_data[k] = dateutil.parser.parse(data["finishOnAgentDate"])
-                elif "number" == k:
+                elif k == "number":
                     returning_data[k] = int(data[k])
                 else:
                     returning_data[k] = data[k]
@@ -449,11 +449,10 @@ class LocalNodeManager:
                 p = psutil.Process(self._node_pid)
                 p.terminate()
                 p.kill()
-        if self._proc is not None:
-            if self._proc.returncode is None:
-                self._proc.terminate()
-                self._proc.kill()
-                await self._proc.wait()
+        if self._proc is not None and self._proc.returncode is None:
+            self._proc.terminate()
+            self._proc.kill()
+            await self._proc.wait()
         self._proc = None
         self._shutdown = True
         self._node_pid = None
@@ -711,11 +710,11 @@ class LocalNodeManager:
         await asyncio.sleep(wait_for)
         self._wait_for.clear()
         if not self.ready.is_set():
-            if not external_fallback:
-                raise ManagedLavalinkStartFailure()
-            else:
+            if external_fallback:
                 self.ready.set()
-        if reconnect is True:
+            else:
+                raise ManagedLavalinkStartFailure()
+        if reconnect:
             node = self._client.node_manager.get_node_by_id(self._node_id)
             if node is not None:
                 self._node = node
@@ -737,9 +736,9 @@ class LocalNodeManager:
                 password=self._current_config["lavalink"]["server"]["password"],
                 resume_key=f"ManagedNode-{self._node_pid}-{self._node_id}",
                 resume_timeout=self._full_data.resume_timeout,
-                name=f"{self._full_data.name}: {self._node_pid}"
-                if not external_fallback
-                else f"PyLavPortConflictRecovery: {self._node_pid}",
+                name=f"PyLavPortConflictRecovery: {self._node_pid}"
+                if external_fallback
+                else f"{self._full_data.name}: {self._node_pid}",
                 yaml=self._full_data.yaml,
                 extras=self._full_data.extras,
                 managed=True,
@@ -748,6 +747,7 @@ class LocalNodeManager:
                 unique_identifier=self._full_data.id,
                 skip_db=True,
             )
+
         else:
             self._node = node
         if node.websocket.connecting:
@@ -767,7 +767,7 @@ class LocalNodeManager:
         filter_ = [cwd] if cwd else []
         async for proc in AsyncIter(psutil.process_iter()):
             try:
-                if cwd and not (await asyncio.to_thread(proc.cwd) in filter_):
+                if cwd and await asyncio.to_thread(proc.cwd) not in filter_:
                     continue
                 cmdline = await asyncio.to_thread(proc.cmdline)
                 if (matches and all(a in cmdline for a in matches)) or (

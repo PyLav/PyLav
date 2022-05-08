@@ -152,8 +152,10 @@ class NodeManager:
 
         LOGGER.info("[NODE-%s] Successfully added to Node Manager", node.name)
         LOGGER.verbose("[NODE-%s] Successfully added to Node Manager -- %r", node.name, node)
-        if not skip_db:
-            node._config = await self.client.node_db_manager.add_node(
+        node._config = (
+            await self.client.node_db_manager.get_node_config(unique_identifier)
+            if skip_db
+            else await self.client.node_db_manager.add_node(
                 host=host,
                 port=port,
                 password=password,
@@ -169,8 +171,8 @@ class NodeManager:
                 yaml=yaml,
                 extras=extras or {},
             )
-        else:
-            node._config = await self.client.node_db_manager.get_node_config(unique_identifier)
+        )
+
         return node
 
     async def remove_node(self, node: Node) -> None:
@@ -281,7 +283,7 @@ class NodeManager:
         else:
             nodes = [n for n in nodes if n.region != not_region and n.region not in already_attempted_regions]
 
-        if not nodes:  # If there are no regional nodes available, or a region wasn't specified.
+        if not nodes:
             if feature:
                 nodes = [
                     n
@@ -292,8 +294,7 @@ class NodeManager:
                 nodes = self.available_nodes
         if not nodes:
             return None
-        best_node = min(nodes, key=operator.attrgetter("penalty"))
-        return best_node
+        return min(nodes, key=operator.attrgetter("penalty"))
 
     def get_node_by_id(self, unique_identifier: int) -> Node | None:
         """

@@ -33,7 +33,7 @@ class Timescale(FilterMixin):
 
     @speed.setter
     def speed(self, v: float):
-        self._speed = float(v)
+        self._speed = v
         self.off = False
 
     @property
@@ -42,7 +42,7 @@ class Timescale(FilterMixin):
 
     @pitch.setter
     def pitch(self, v: float):
-        self._pitch = float(v)
+        self._pitch = v
         self.off = False
 
     @property
@@ -51,7 +51,7 @@ class Timescale(FilterMixin):
 
     @rate.setter
     def rate(self, v: float):
-        self._rate = float(v)
+        self._rate = v
         self.off = False
 
     @classmethod
