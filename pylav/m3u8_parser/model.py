@@ -176,9 +176,7 @@ class M3U8:
         for attr, param in self.simple_attributes:
             setattr(self, attr, self.data.get(param))
 
-        self.files = [
-            key.uri for key in self.keys if key and key.uri not in self.files
-        ]
+        self.files = [key.uri for key in self.keys if key and key.uri not in self.files]
 
         self.files.extend(self.segments.uri)
 
@@ -525,11 +523,7 @@ class Segment(BasePathMixin):
             and self.key != last_segment.key
         ):
             output.extend((str(self.key), "\n"))
-        if (
-            last_segment
-            and self.init_section != last_segment.init_section
-            and not self.init_section
-        ):
+        if last_segment and self.init_section != last_segment.init_section and not self.init_section:
             raise MalformedPlaylistError("init section can't be None if previous is not None")
         elif (
             last_segment
@@ -546,9 +540,7 @@ class Segment(BasePathMixin):
         if len(self.dateranges):
             output.extend((str(self.dateranges), "\n"))
         if self.cue_out_start:
-            output.append(
-                f"#EXT-X-CUE-OUT{f':{self.scte35_duration}' if self.scte35_duration else ''}\n"
-            )
+            output.append(f"#EXT-X-CUE-OUT{f':{self.scte35_duration}' if self.scte35_duration else ''}\n")
 
         elif self.cue_out:
             output.append("#EXT-X-CUE-OUT-CONT\n")
@@ -808,9 +800,7 @@ class InitializationSection(BasePathMixin):
 
     def __eq__(self, other):
         return (
-            self.uri == other.uri
-            and self.byterange == other.byterange
-            and self.base_uri == other.base_uri
+            self.uri == other.uri and self.byterange == other.byterange and self.base_uri == other.base_uri
             if other
             else False
         )
@@ -1312,10 +1302,7 @@ class DateRange:
             daterange.append(f"END-ON-NEXT={self.end_on_next}")
 
         # client attributes sorted alphabetically output order is predictable
-        daterange.extend(
-            f"{denormalize_attribute(attr)}={value}"
-            for attr, value in sorted(self.x_client_attrs)
-        )
+        daterange.extend(f"{denormalize_attribute(attr)}={value}" for attr, value in sorted(self.x_client_attrs))
 
         return f'#EXT-X-DATERANGE:{",".join(daterange)}'
 

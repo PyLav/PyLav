@@ -626,12 +626,8 @@ class Player(VoiceProtocol):
         self.current = None
         if not track:
             if self.queue.empty():
-                if self.autoplay_enabled and (
-                    available_tracks := self._autoplay_playlist.tracks
-                ):
-                    if tracks_not_in_history := list(
-                        set(available_tracks) - set(self.history.raw_b64s)
-                    ):
+                if self.autoplay_enabled and (available_tracks := self._autoplay_playlist.tracks):
+                    if tracks_not_in_history := list(set(available_tracks) - set(self.history.raw_b64s)):
                         track = Track(
                             node=self.node,
                             data=(b64 := random.choice(tracks_not_in_history)),
@@ -1441,11 +1437,7 @@ class Player(VoiceProtocol):
         else:
             repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS WITH CIRCLED ONE OVERLAY}"
 
-        autoplay_emoji = (
-            "\N{WHITE HEAVY CHECK MARK}"
-            if self._config.auto_play
-            else "\N{CROSS MARK}"
-        )
+        autoplay_emoji = "\N{WHITE HEAVY CHECK MARK}" if self._config.auto_play else "\N{CROSS MARK}"
 
         text += "Repeating" + ": " + repeat_emoji
         text += (" | " if text else "") + "Auto Play" + ": " + autoplay_emoji

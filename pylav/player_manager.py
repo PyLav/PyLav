@@ -133,11 +133,7 @@ class PlayerManager:
         -------
         List[:class:`Player`]
         """
-        return (
-            [p for p in self.players.values() if bool(predicate(p))]
-            if predicate
-            else list(self.players.values())
-        )
+        return [p for p in self.players.values() if bool(predicate(p))] if predicate else list(self.players.values())
 
     async def remove(self, guild_id: int) -> None:
         """

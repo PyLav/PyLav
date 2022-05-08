@@ -210,8 +210,8 @@ class LocalNodeManager:
 
     async def get_ci_latest_info(self) -> dict:
         async with self._client.cached_session.get(
-                f"{JAR_SERVER}{JAR_SERVER_BUILD_INFO}", headers={"Accept": "application/json"}
-            ) as response:
+            f"{JAR_SERVER}{JAR_SERVER_BUILD_INFO}", headers={"Accept": "application/json"}
+        ) as response:
             if response.status != 200:
                 return {"number": -1}
             data = await response.json(loads=ujson.loads)

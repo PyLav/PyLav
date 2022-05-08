@@ -751,9 +751,7 @@ class PyLavContext(_OriginalContextClass):
         """Union[:class:`.abc.Messageable`]: Returns the channel associated with this context's command.
         Shorthand for :attr:`.Message.channel`.
         """
-        if isinstance(
-            self._original_ctx_or_interaction, (discord.Interaction, DpyContext)
-        ):
+        if isinstance(self._original_ctx_or_interaction, (discord.Interaction, DpyContext)):
             return self._original_ctx_or_interaction.channel  # type: ignore
         else:
             return self.message.channel
