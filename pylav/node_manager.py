@@ -169,6 +169,8 @@ class NodeManager:
                 yaml=yaml,
                 extras=extras or {},
             )
+        else:
+            node._config = await self.client.node_db_manager.get_node_config(unique_identifier)
         return node
 
     async def remove_node(self, node: Node) -> None:

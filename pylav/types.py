@@ -38,7 +38,7 @@ CoroFunc = Callable[..., Coro[Any]]
 MaybeCoro = Union[T, Coro[T]]
 MaybeAwaitable = Union[T, Awaitable[T]]
 
-CogT = TypeVar("CogT", bound="Optional[Union[RedCog, Cog, CogMixin]]")
+CogT = TypeVar("CogT", bound="Optional[Union[CogMixin, RedCog, Cog]]")
 Check = Callable[["ContextT"], MaybeCoro[bool]]
 Hook = Union[Callable[["CogT", "ContextT"], Coro[Any]], Callable[["ContextT"], Coro[Any]]]
 Error = Union[

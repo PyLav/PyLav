@@ -243,6 +243,10 @@ class Node:
         return self._managed
 
     @property
+    def config(self) -> NodeModel:
+        return self._config
+
+    @property
     def identifier(self) -> int:
         """
         The identifier of the :class:`Node`.
