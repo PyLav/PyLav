@@ -36,9 +36,7 @@ class BasePathMixin:
     def base_path(self, newbase_path: str) -> None:
         if self.uri is not None:
             self.uri = (
-                self.uri.replace(self.base_path, newbase_path)
-                if self.base_path
-                else f"{newbase_path}/{self.uri}"
+                self.uri.replace(self.base_path, newbase_path) if self.base_path else f"{newbase_path}/{self.uri}"
             )
 
 

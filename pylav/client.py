@@ -643,12 +643,7 @@ class Client(metaclass=_Singleton):
         messageable: Messageable | discord.Interaction = None,
     ) -> discord.Embed:
 
-        if (
-            messageable
-            and not colour
-            and not color
-            and hasattr(self._bot, "get_embed_color")
-        ):
+        if messageable and not colour and not color and hasattr(self._bot, "get_embed_color"):
             colour = await self._bot.get_embed_color(messageable)
         elif colour or color:
             colour = colour or color
@@ -690,9 +685,7 @@ class Client(metaclass=_Singleton):
     async def update_localtracks_folder(self, folder: str | None) -> None:
         from pylav.localfiles import LocalFile
 
-        localtrack_folder = (
-            aiopath.AsyncPath(folder) if folder else self._config_folder / "music"
-        )
+        localtrack_folder = aiopath.AsyncPath(folder) if folder else self._config_folder / "music"
 
         await LocalFile.add_root_folder(path=localtrack_folder, create=True)
 
@@ -785,12 +778,7 @@ class Client(metaclass=_Singleton):
             if node is None:
                 queries_failed.append(query)
             # Query tracks as the queue builds as this may be a slow operation
-            if (
-                enqueue
-                and successful_tracks
-                and not player.is_playing
-                and not player.paused
-            ):
+            if enqueue and successful_tracks and not player.is_playing and not player.paused:
                 track = successful_tracks.pop()
                 await player.play(track, await track.query(), requester)
             if query.is_search or query.is_single:
@@ -811,11 +799,7 @@ class Client(metaclass=_Singleton):
                         )
                 except NoNodeWithRequestFunctionalityAvailable:
                     queries_failed.append(query)
-            elif (
-                ((query.is_playlist or query.is_album))
-                and not query.is_local
-                and not query.is_custom_playlist
-            ):
+            elif (query.is_playlist or query.is_album) and not query.is_local and not query.is_custom_playlist:
                 try:
                     tracks: dict = await self._get_tracks(query=query, bypass_cache=bypass_cache)
                     track_list = tracks.get("tracks", [])
@@ -833,12 +817,7 @@ class Client(metaclass=_Singleton):
                                 )
                             )
                             # Query tracks as the queue builds as this may be a slow operation
-                            if (
-                                enqueue
-                                and successful_tracks
-                                and not player.is_playing
-                                and not player.paused
-                            ):
+                            if enqueue and successful_tracks and not player.is_playing and not player.paused:
                                 track = successful_tracks.pop()
                                 await player.play(track, await track.query(), requester)
                 except NoNodeWithRequestFunctionalityAvailable:
@@ -860,12 +839,7 @@ class Client(metaclass=_Singleton):
                                 )
                             )
                             # Query tracks as the queue builds as this may be a slow operation
-                            if (
-                                enqueue
-                                and successful_tracks
-                                and not player.is_playing
-                                and not player.paused
-                            ):
+                            if enqueue and successful_tracks and not player.is_playing and not player.paused:
                                 track = successful_tracks.pop()
                                 await player.play(track, await track.query(), requester)
                     if not yielded:

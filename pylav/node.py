@@ -628,17 +628,14 @@ class Node:
                     else "SearchLoaded"
                     if query.is_search
                     else "TrackLoaded",
-                    "tracks": [
-                        {"track": track}
-                        async for track in AsyncIter(response.tracks)
-                    ],
+                    "tracks": [{"track": track} async for track in AsyncIter(response.tracks)],
                 }
             )
 
         destination = f"{self.connection_protocol}://{self.host}:{self.port}/loadtracks"
         async with self._session.get(
-                destination, headers={"Authorization": self.password}, params={"identifier": query.query_identifier}
-            ) as res:
+            destination, headers={"Authorization": self.password}, params={"identifier": query.query_identifier}
+        ) as res:
             if res.status == 200:
                 result = await res.json(loads=ujson.loads)
                 asyncio.create_task(self.node_manager.client.query_cache_manager.add_query(query, result))
@@ -652,8 +649,8 @@ class Node:
     async def decode_track(self, track: str) -> TrackT | None:
         destination = f"{self.connection_protocol}://{self.host}:{self.port}/decodetrack"
         async with self.session.get(
-                destination, headers={"Authorization": self.password}, params={"track": track}
-            ) as res:
+            destination, headers={"Authorization": self.password}, params={"track": track}
+        ) as res:
             if res.status == 200:
                 return await res.json(loads=ujson.loads)
 
@@ -707,8 +704,8 @@ class Node:
         destination = f"{self.connection_protocol}://{self.host}:{self.port}/routeplanner/free/address"
 
         async with self._session.post(
-                destination, headers={"Authorization": self.password}, json={"address": address}
-            ) as res:
+            destination, headers={"Authorization": self.password}, json={"address": address}
+        ) as res:
             if res.status in [401, 403]:
                 raise Unauthorized
             return res.status == 204

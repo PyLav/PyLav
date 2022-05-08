@@ -573,11 +573,7 @@ class Query:
     async def _yield_local_tracks(self) -> AsyncIterator[Query]:
         if self.is_album:
             if self.is_local:
-                op = (
-                    self._query.files_in_tree
-                    if self._recursive
-                    else self._query.files_in_folder
-                )
+                op = self._query.files_in_tree if self._recursive else self._query.files_in_folder
 
                 async for entry in op():
                     yield entry

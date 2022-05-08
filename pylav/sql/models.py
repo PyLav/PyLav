@@ -106,11 +106,7 @@ class PlaylistModel:
                 guild = guild_
             return f"(Server) {guild.name}"
         elif guild and (channel := guild.get_channel_or_thread(self.scope)):
-            return (
-                f"(Channel) {channel.mention}"
-                if mention
-                else f"(Channel) {channel.name}"
-            )
+            return f"(Channel) {channel.mention}" if mention else f"(Channel) {channel.name}"
 
         elif (
             (guild := guild_ or guild)
