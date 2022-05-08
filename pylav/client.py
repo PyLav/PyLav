@@ -647,8 +647,17 @@ class Client(metaclass=_Singleton):
             colour = await self._bot.get_embed_color(messageable)
         elif colour or color:
             colour = colour or color
-
-        contents = dict(title=title, type=type, url=url, description=description)
+        if timestamp and isinstance(timestamp, datetime.datetime):
+            timestamp = timestamp
+        else:
+            timestamp = datetime.datetime.now(tz=datetime.timezone.utc)
+        contents = dict(
+            title=title,
+            type=type,
+            url=url,
+            description=description,
+            timestamp=timestamp.isoformat(),
+        )
         if embed is not None:
             embed = embed.to_dict()
         else:
@@ -656,10 +665,6 @@ class Client(metaclass=_Singleton):
         contents.update(embed)
         new_embed = discord.Embed.from_dict(contents)
         new_embed.color = colour
-        if timestamp and isinstance(timestamp, datetime.datetime):
-            new_embed.timestamp = timestamp
-        else:
-            new_embed.timestamp = datetime.datetime.now(tz=datetime.timezone.utc)
 
         if footer:
             new_embed.set_footer(text=footer, icon_url=footer_url)
