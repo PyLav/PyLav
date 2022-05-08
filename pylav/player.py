@@ -1488,9 +1488,7 @@ class Player(VoiceProtocol):
             page.set_thumbnail(url=url)
         queue_dur = await self.queue_duration()
         queue_total_duration = format_time(queue_dur)
-        text = (
-            f"Page {page_index + 1}/{total_pages} | {self.queue.qsize()} tracks, {queue_total_duration} remaining\n"
-        )
+        text = f"Page {page_index + 1}/{total_pages} | {self.queue.qsize()} tracks, {queue_total_duration} remaining\n"
         if not self.is_repeating:
             repeat_emoji = "\N{CROSS MARK}"
         elif self._config.repeat_queue:
@@ -1498,11 +1496,7 @@ class Player(VoiceProtocol):
         else:
             repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS WITH CIRCLED ONE OVERLAY}"
 
-        autoplay_emoji = (
-            "\N{WHITE HEAVY CHECK MARK}"
-            if self.autoplay_enabled
-            else "\N{CROSS MARK}"
-        )
+        autoplay_emoji = "\N{WHITE HEAVY CHECK MARK}" if self.autoplay_enabled else "\N{CROSS MARK}"
 
         text += f"Repeating: {repeat_emoji}"
         text += f"{(' | ' if text else '')}Auto Play: {autoplay_emoji}"
@@ -1579,26 +1573,18 @@ class Player(VoiceProtocol):
             "channel_id": self.channel.id,
             "current": await self.current.to_json() if self.current else None,
             "text_channel_id": self.text_channel.id if self.text_channel else None,
-            "notify_channel_id": self.notify_channel.id
-            if self.notify_channel
-            else None,
+            "notify_channel_id": self.notify_channel.id if self.notify_channel else None,
             "paused": self.paused,
             "repeat_queue": self._config.repeat_queue,
             "repeat_current": self._config.repeat_current,
             "shuffle": self._config.shuffle,
             "auto_play": self._config.auto_play,
-            "auto_play_playlist_id": self._autoplay_playlist.id
-            if self._autoplay_playlist is not None
-            else None,
+            "auto_play_playlist_id": self._autoplay_playlist.id if self._autoplay_playlist is not None else None,
             "volume": self.volume,
             "position": self.position,
             "playing": self.is_playing,
-            "queue": []
-            if self.queue.empty()
-            else [await t.to_json() for t in self.queue.raw_queue],
-            "history": []
-            if self.history.empty()
-            else [await t.to_json() for t in self.history.raw_queue],
+            "queue": [] if self.queue.empty() else [await t.to_json() for t in self.queue.raw_queue],
+            "history": [] if self.history.empty() else [await t.to_json() for t in self.history.raw_queue],
             "effect_enabled": self._effect_enabled,
             "effects": {
                 "volume": self._volume.to_dict(),
