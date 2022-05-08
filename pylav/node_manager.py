@@ -368,6 +368,8 @@ class NodeManager:
 
     async def close(self) -> None:
         await self.session.close()
+        for node in self.nodes:
+            await node.close()
 
     async def connect_to_all_nodes(self) -> None:
         nodes_list = []

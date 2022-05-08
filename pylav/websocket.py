@@ -474,4 +474,6 @@ class WebSocket:
 
     async def close(self):
         self._connect_task.cancel()
+        if self._ws and not self._ws.closed:
+            await self._ws.close(code=4014, message=b"Shutting down...")
         await self._session.close()
