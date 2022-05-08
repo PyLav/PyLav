@@ -742,6 +742,7 @@ class PlayerModel:
             self.empty_queue_dc = output.empty_queue_dc
             self.alone_dc = output.alone_dc
             self.alone_pause = output.alone_pause
+            self.effects = output.effects
         return self
 
     async def update_volume(self):

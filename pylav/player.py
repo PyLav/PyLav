@@ -136,26 +136,26 @@ class Player(VoiceProtocol):
         self._notify_channel = self.guild.get_channel_or_thread(config.notify_channel_id)
         self._volume = Volume(config.volume)
         effects = config.effects
-        if v := effects.pop("volume"):
-            self._volume = Volume.from_dict(v)
-        if eq := effects.pop("equalizer"):
-            self._equalizer = Equalizer.from_dict(eq)
-        if k := effects.pop("karaoke"):
-            self._karaoke = Karaoke.from_dict(k)
-        if ts := effects.pop("timescale"):
-            self._timescale = Timescale.from_dict(ts)
-        if tr := effects.pop("tremolo"):
-            self._tremolo = Tremolo.from_dict(tr)
-        if vb := effects.pop("vibrato"):
-            self._vibrato = Vibrato.from_dict(vb)
-        if rt := effects.pop("rotation"):
-            self._rotation = Rotation.from_dict(rt)
-        if ds := effects.pop("distortion"):
-            self._distortion = Distortion.from_dict(ds)
-        if lp := effects.pop("lowpass"):
-            self._low_pass = LowPass.from_dict(lp)
-        if cm := effects.pop("channelmix"):
-            self._channel_mix = ChannelMix.from_dict(cm)
+        if (v := effects.get("volume", None)) and (f := Volume.from_dict(v)) and f.changed:
+            self._volume = f
+        if (eq := effects.get("equalizer", None)) and (f := Equalizer.from_dict(eq)) and f.changed:
+            self._equalizer = f
+        if (k := effects.get("karaoke", None)) and (f := Karaoke.from_dict(k)) and f.changed:
+            self._karaoke = f
+        if (ts := effects.get("timescale", None)) and (f := Timescale.from_dict(ts)) and f.changed:
+            self._timescale = f
+        if (tr := effects.get("tremolo", None)) and (f := Tremolo.from_dict(tr)) and f.changed:
+            self._tremolo = f
+        if (vb := effects.get("vibrato", None)) and (f := Vibrato.from_dict(vb)) and f.changed:
+            self._vibrato = f
+        if (ro := effects.get("rotation", None)) and (f := Rotation.from_dict(ro)) and f.changed:
+            self._rotation = f
+        if (di := effects.get("distortion", None)) and (f := Distortion.from_dict(di)) and f.changed:
+            self._distortion = f
+        if (lo := effects.get("lowpass", None)) and (f := LowPass.from_dict(lo)) and f.changed:
+            self._low_pass = f
+        if (ch := effects.get("channel_mix", None)) and (f := ChannelMix.from_dict(ch)) and f.changed:
+            self._channel_mix = f
         if any(
             f.changed
             for f in [
@@ -1727,16 +1727,27 @@ class Player(VoiceProtocol):
 
         self._effect_enabled = player.effect_enabled
         effects = player.effects
-        self._volume = Volume.from_dict(effects.pop("volume"))
-        self._equalizer = Equalizer.from_dict(effects.pop("equalizer"))
-        self._karaoke = Karaoke.from_dict(effects.pop("karaoke"))
-        self._timescale = Timescale.from_dict(effects.pop("timescale"))
-        self._tremolo = Tremolo.from_dict(effects.pop("tremolo"))
-        self._vibrato = Vibrato.from_dict(effects.pop("vibrato"))
-        self._rotation = Rotation.from_dict(effects.pop("rotation"))
-        self._distortion = Distortion.from_dict(effects.pop("distortion"))
-        self._low_pass = LowPass.from_dict(effects.pop("low_pass"))
-        self._channel_mix = ChannelMix.from_dict(effects.pop("channel_mix"))
+        if (v := effects.get("volume", None)) and (f := Volume.from_dict(v)) and f.changed:
+            self._volume = f
+        if (v := effects.get("equalizer", None)) and (f := Equalizer.from_dict(v)) and f.changed:
+            self._equalizer = f
+        if (v := effects.get("karaoke", None)) and (f := Karaoke.from_dict(v)) and f.changed:
+            self._karaoke = f
+        if (v := effects.get("timescale", None)) and (f := Timescale.from_dict(v)) and f.changed:
+            self._timescale = f
+        if (v := effects.get("tremolo", None)) and (f := Tremolo.from_dict(v)) and f.changed:
+            self._tremolo = f
+        if (v := effects.get("vibrato", None)) and (f := Vibrato.from_dict(v)) and f.changed:
+            self._vibrato = f
+        if (v := effects.get("rotation", None)) and (f := Rotation.from_dict(v)) and f.changed:
+            self._rotation = f
+        if (v := effects.get("distortion", None)) and (f := Distortion.from_dict(v)) and f.changed:
+            self._distortion = f
+        if (v := effects.get("low_pass", None)) and (f := LowPass.from_dict(v)) and f.changed:
+            self._low_pass = f
+        if (v := effects.get("channel_mix", None)) and (f := ChannelMix.from_dict(v)) and f.changed:
+            self._channel_mix = f
+
         if self.has_effects:
             await self.node.filters(
                 guild_id=self.channel.guild.id,
