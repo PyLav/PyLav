@@ -149,10 +149,10 @@ class SingletonMethods:
 class _Singleton(type):
     _instances = {}
 
-    def __call__(cls, *args, **kwargs):
-        if cls not in cls._instances:
-            cls._locked_call(*args, **kwargs)
-        return cls._instances[cls]
+    def __call__(self, *args, **kwargs):
+        if self not in self._instances:
+            self._locked_call(*args, **kwargs)
+        return self._instances[self]
 
     @_synchronized(_LOCK)
     def _locked_call(cls, *args, **kwargs):
@@ -214,12 +214,8 @@ def format_time(duration: int | float) -> str:
     days, seconds = divmod(seconds, 24 * 60 * 60)
     hours, seconds = divmod(seconds, 60 * 60)
     minutes, seconds = divmod(seconds, 60)
-    day = ""
-    hour = ""
-    if days:
-        day = f"{days:02d}:"
-    if hours or day:
-        hour = f"{hours:02d}:"
+    day = f"{days:02d}:" if days else ""
+    hour = f"{hours:02d}:" if hours or day else ""
     minutes = f"{minutes:02d}:"
     sec = f"{seconds:02d}"
     return f"{day}{hour}{minutes}{sec}"
@@ -331,9 +327,7 @@ class PlayerQueue(asyncio.Queue[T]):
         return len(self._queue)
 
     def __getitem__(self, key: int | slice) -> T | list[T]:
-        if not isinstance(key, int):
-            return NotImplemented
-        return self.popindex(key)
+        return self.popindex(key) if isinstance(key, int) else NotImplemented
 
     def __length_hint__(self):
         return len(self._queue)
@@ -342,26 +336,22 @@ class PlayerQueue(asyncio.Queue[T]):
 
     def _init(self, maxsize: int):
         self._queue = collections.deque(maxlen=maxsize or None)
-        self.raw_b64s = list()
+        self.raw_b64s = []
 
     def _get(self, index: int = None) -> T:
-        if index is not None:
-            r = self.popindex(index)
-        else:
-            r = self._queue.popleft()
+        r = self.popindex(index) if index is not None else self._queue.popleft()
         if r.track:
             self.raw_b64s.remove(r.track)
         return r
 
     def _put(self, items: list[T], index: int = None):
         if index is not None:
-            if index < 0:
-                for i in items:
+            for i in items:
+                if index < 0:
                     self._queue.append(i)
                     if i.track:
                         self.raw_b64s.append(i.track)
-            else:
-                for i in items:
+                else:
                     self._queue.insert(index, i)
                     if i.track:
                         self.raw_b64s.append(i.track)
@@ -422,10 +412,7 @@ class PlayerQueue(asyncio.Queue[T]):
         Note: if the Queue was initialized with maxsize=0 (the default),
         then full() is never True.
         """
-        if self._maxsize <= 0:
-            return False
-        else:
-            return self.qsize() >= self._maxsize
+        return False if self._maxsize <= 0 else self.qsize() >= self._maxsize
 
     async def put(self, items: list[T], index: int = None) -> None:
         """Put an item into the queue.
@@ -545,16 +532,15 @@ class TrackHistoryQueue(PlayerQueue[T]):
     def _put(self, items: list[T], index: int = None):
         if len(items) + self.qsize() > self.maxsize:
             diff = len(items) + self.qsize() - self.maxsize
-            for i in range(diff):
+            for _ in range(diff):
                 self._queue.pop()
                 self.raw_b64s.pop()
         if index is not None:
-            if index < 0:
-                for i in items:
+            for i in items:
+                if index < 0:
                     self._queue.append(i)
                     self.raw_b64s.append(i.track)
-            else:
-                for i in items:
+                else:
                     self._queue.insert(index, i)
                     self.raw_b64s.insert(index, i.track)
                     index += 1
@@ -564,10 +550,7 @@ class TrackHistoryQueue(PlayerQueue[T]):
                 self.raw_b64s.insert(i, t.track)
 
     def _get(self, index: int = None) -> T:
-        if index is not None:
-            r = self.popindex(index)
-        else:
-            r = self._queue.popleft()
+        r = self.popindex(index) if index is not None else self._queue.popleft()
         self.raw_b64s.pop(index if index is not None else -1)
         return r
 
@@ -755,9 +738,7 @@ class PyLavContext(_OriginalContextClass):
         """Optional[:class:`.Cog`]: Returns the cog associated with this context's command. None if it does not
         exist."""
 
-        if self.command is None:
-            return None
-        return self.command.cog
+        return None if self.command is None else self.command.cog
 
     @discord.utils.cached_property
     def guild(self) -> Guild | None:
@@ -770,10 +751,10 @@ class PyLavContext(_OriginalContextClass):
         """Union[:class:`.abc.Messageable`]: Returns the channel associated with this context's command.
         Shorthand for :attr:`.Message.channel`.
         """
-        if isinstance(self._original_ctx_or_interaction, discord.Interaction):
+        if isinstance(
+            self._original_ctx_or_interaction, (discord.Interaction, DpyContext)
+        ):
             return self._original_ctx_or_interaction.channel  # type: ignore
-        elif isinstance(self._original_ctx_or_interaction, DpyContext):
-            return self._original_ctx_or_interaction.channel
         else:
             return self.message.channel
 
@@ -782,8 +763,7 @@ class PyLavContext(_OriginalContextClass):
         """
         Get player
         """
-        p = self.lavalink.get_player(self.guild)
-        return p
+        return self.lavalink.get_player(self.guild)
 
     async def connect_player(self, channel: discord.VoiceChannel = None, self_deaf: bool = True) -> Player:
         """

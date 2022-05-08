@@ -250,9 +250,8 @@ def _parse_extinf(line, data, state, lineno, strict):
     elif len(chunks) == 1:
         if strict:
             raise ParseError(lineno, line)
-        else:
-            duration = chunks[0]
-            title = ""
+        duration = chunks[0]
+        title = ""
     if "segment" not in state:
         state["segment"] = {}
     state["segment"]["duration"] = float(duration)
@@ -276,10 +275,8 @@ def _parse_ts_chunk(line, data, state):
     segment["discontinuity"] = state.pop("discontinuity", False)
     if state.get("current_key"):
         segment["key"] = state["current_key"]
-    else:
-        # For unencrypted segments, the initial key would be None
-        if None not in data["keys"]:
-            data["keys"].append(None)
+    elif None not in data["keys"]:
+        data["keys"].append(None)
     if state.get("current_segment_map"):
         segment["init_section"] = state["current_segment_map"]
     segment["dateranges"] = state.pop("dateranges", None)
@@ -378,10 +375,9 @@ def _parse_cueout_cont(line, state):
     if len(elements) != 2:
         return
     param, value = elements
-    res = re.match(".*Duration=(.*),SCTE35=(.*)$", value)
-    if res:
-        state["current_cue_out_duration"] = res.group(1)
-        state["current_cue_out_scte35"] = res.group(2)
+    if res := re.match(".*Duration=(.*),SCTE35=(.*)$", value):
+        state["current_cue_out_duration"] = res[1]
+        state["current_cue_out_scte35"] = res[2]
 
 
 def _cueout_no_duration(line):
@@ -393,18 +389,16 @@ def _cueout_no_duration(line):
 
 def _cueout_elemental(line, state, prevline):
     param, value = line.split(":", 1)
-    res = re.match(".*EXT-OATCLS-SCTE35:(.*)$", prevline)
-    if res:
-        return res.group(1), value
+    if res := re.match(".*EXT-OATCLS-SCTE35:(.*)$", prevline):
+        return res[1], value
     else:
         return None
 
 
 def _cueout_envivio(line, state, prevline):
     param, value = line.split(":", 1)
-    res = re.match('.*DURATION=(.*),.*,CUE="(.*)"', value)
-    if res:
-        return res.group(2), res.group(1)
+    if res := re.match('.*DURATION=(.*),.*,CUE="(.*)"', value):
+        return res[2], res[1]
     else:
         return None
 
@@ -414,29 +408,26 @@ def _cueout_duration(line):
     # as it would capture those cues incompletely
     # This was added separately rather than modifying "simple"
     param, value = line.split(":", 1)
-    res = re.match(r"DURATION=(.*)", value)
-    if res:
-        return None, res.group(1)
+    if res := re.match(r"DURATION=(.*)", value):
+        return None, res[1]
 
 
 def _cueout_simple(line):
     # this needs to be called after _cueout_elemental
     # as it would capture those cues incompletely
     param, value = line.split(":", 1)
-    res = re.match(r"^(\d+(?:\.\d)?\d*)$", value)
-    if res:
-        return None, res.group(1)
+    if res := re.match(r"^(\d+(?:\.\d)?\d*)$", value):
+        return None, res[1]
 
 
 def _parse_cueout(line, state, prevline):
-    _cueout_state = (
+    if _cueout_state := (
         _cueout_no_duration(line)
         or _cueout_elemental(line, state, prevline)
         or _cueout_envivio(line, state, prevline)
         or _cueout_duration(line)
         or _cueout_simple(line)
-    )
-    if _cueout_state:
+    ):
         state["current_cue_out_scte35"] = _cueout_state[0]
         state["current_cue_out_duration"] = _cueout_state[1]
 

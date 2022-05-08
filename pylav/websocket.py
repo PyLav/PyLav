@@ -168,7 +168,7 @@ class WebSocket:
                 headers["Resume-Key"] = self._resume_key
             self._node._region = await get_closest_discord_region(self._host)
             is_finite_retry = self._max_reconnect_attempts != -1
-            max_attempts_str = "inf" if not is_finite_retry else self._max_reconnect_attempts
+            max_attempts_str = self._max_reconnect_attempts if is_finite_retry else "inf"
             attempt = 0
             backoff = ExponentialBackoffWithReset(base=3)
             while not self.connected and (not is_finite_retry or attempt < self._max_reconnect_attempts):
@@ -460,10 +460,6 @@ class WebSocket:
             event = TrackStartBandcampEvent(player, track, node)
         elif track.is_soundcloud:
             event = TrackStartSoundCloudEvent(player, track, node)
-        elif track.is_twitch:
-            event = TrackStartTwitchEvent(player, track, node)
-        elif track.is_vimeo:
-            event = TrackStartVimeoEvent(player, track, node)
         elif track.is_gctts:
             event = TrackStartGCTTSEvent(player, track, node)
         elif track.is_niconico:

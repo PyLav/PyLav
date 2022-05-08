@@ -142,10 +142,7 @@ class LocalFile:
         return string
 
     async def files_in_folder(self, show_folders: bool = False) -> AsyncIterator[Query]:
-        if not await self.path.is_dir():
-            parent = self.path.parent
-        else:
-            parent = self.path
+        parent = self.path if await self.path.is_dir() else self.path.parent
         async for path in self._get_entries_in_folder(parent, show_folders=show_folders):
             yield path
 
@@ -164,9 +161,6 @@ class LocalFile:
                     yield await Query.from_string(path)
 
     async def files_in_tree(self, show_folders: bool = False) -> AsyncIterator[Query]:
-        if not await self.path.is_dir():
-            parent = self.path.parent
-        else:
-            parent = self.path
+        parent = self.path if await self.path.is_dir() else self.path.parent
         async for path in self._get_entries_in_folder(parent, recursive=True, show_folders=show_folders):
             yield path

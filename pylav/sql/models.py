@@ -100,28 +100,30 @@ class PlaylistModel:
 
     async def get_scope_name(self, bot: BotT, mention: bool = True, guild: discord.Guild = None) -> str:
         if bot.user.id == self.scope:
-            scope_name = f"(Global) {bot.user.mention}" if mention else f"(Global) {bot.user}"
+            return f"(Global) {bot.user.mention}" if mention else f"(Global) {bot.user}"
         elif guild_ := bot.get_guild(self.scope):
             if guild_:
                 guild = guild_
-            scope_name = f"(Server) {guild.name}"
+            return f"(Server) {guild.name}"
         elif guild and (channel := guild.get_channel_or_thread(self.scope)):
-            scope_name = f"(Channel) {channel.mention}" if mention else f"(Channel) {channel.name}"
+            return (
+                f"(Channel) {channel.mention}"
+                if mention
+                else f"(Channel) {channel.name}"
+            )
+
         elif (
             (guild := guild_ or guild)
             and (guild and (author := guild.get_member(self.scope)))
             or (author := bot.get_user(self.author))
         ):
-            scope_name = f"(User) {author.mention}" if mention else f"(User) {author}"
+            return f"(User) {author.mention}" if mention else f"(User) {author}"
         else:
-            scope_name = f"(Invalid) {self.scope}"
-        return scope_name
+            return f"(Invalid) {self.scope}"
 
     async def get_author_name(self, bot: BotT, mention: bool = True) -> str | None:
         if user := bot.get_user(self.author):
-            if not mention:
-                return f"{user}"
-            return f"{user.mention}"
+            return f"{user.mention}" if mention else f"{user}"
         return f"{self.author}"
 
     async def get_name_formatted(self, with_url: bool = True) -> str:
@@ -383,8 +385,7 @@ class NodeModel:
 
     async def add_bulk_source_to_exclusion_list(self, *source: str):
         source = set(map(str.strip, map(str.lower, source)))
-        unsupported = source - SUPPORTED_SOURCES
-        if unsupported:
+        if unsupported := source - SUPPORTED_SOURCES:
             raise ValueError(f"Unsupported sources: {unsupported}\nSupported sources: {SUPPORTED_SOURCES}")
         intersection = source & SUPPORTED_SOURCES
         intersection |= set(self.disabled_sources)

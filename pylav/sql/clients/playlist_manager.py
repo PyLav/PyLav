@@ -30,16 +30,14 @@ class PlaylistConfigManager:
     async def get_playlist_by_name(playlist_name: str, limit: int = None) -> list[PlaylistModel]:
         if limit is None:
             playlists = await PlaylistRow.select().where(PlaylistRow.name.ilike(f"%{playlist_name.lower()}%"))
-            if not playlists:
-                raise EntryNotFoundError(f"Playlist with name {playlist_name} not found")
-            return [PlaylistModel(**playlist) for playlist in playlists]
         else:
             playlists = (
                 await PlaylistRow.select().where(PlaylistRow.name.ilike(f"%{playlist_name.lower()}%")).limit(limit)
             )
-            if not playlists:
-                raise EntryNotFoundError(f"Playlist with name {playlist_name} not found")
-            return [PlaylistModel(**playlist) for playlist in playlists]
+
+        if not playlists:
+            raise EntryNotFoundError(f"Playlist with name {playlist_name} not found")
+        return [PlaylistModel(**playlist) for playlist in playlists]
 
     @staticmethod
     async def get_playlist_by_id(playlist_id: int | str) -> PlaylistModel:
@@ -225,8 +223,8 @@ class PlaylistConfigManager:
             id_filtered = curated_data
         for id, (name, url) in id_filtered.items():
             async with self._client.cached_session.get(
-                url, params={"timestamp": int(time.time())}, headers={"content-type": "application/json"}
-            ) as response:
+                        url, params={"timestamp": int(time.time())}, headers={"content-type": "application/json"}
+                    ) as response:
                 try:
                     data = await response.text()
                 except Exception as exc:
@@ -234,8 +232,7 @@ class PlaylistConfigManager:
                     data = None
                 if not data:
                     continue
-                tracks = [t for t in map(str.strip, data.splitlines()) if t]
-                if tracks:
+                if tracks := [t for t in map(str.strip, data.splitlines()) if t]:
                     await self.create_or_update_global_playlist(
                         id=id, name=name, tracks=tracks, author=self._client.bot.user.id
                     )

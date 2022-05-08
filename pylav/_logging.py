@@ -12,8 +12,6 @@ LOGGER_PREFIX = os.getenv("PYLAV__LOGGER_PREFIX", None)
 
 if LOGGER_PREFIX is None:
     try:
-        pass
-
         LOGGER_PREFIX = "red."
     except ImportError:
         LOGGER_PREFIX = ""
