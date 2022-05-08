@@ -1453,65 +1453,62 @@ class Player(VoiceProtocol):
         embed: bool = True,
         messageable: Messageable | discord.Interaction = None,
     ) -> discord.Embed | str:
+        if not embed:
+            return
+        queue_list = ""
         start_index = page_index * per_page
         end_index = start_index + per_page
         tracks = list(itertools.islice(self.queue.raw_queue, start_index, end_index))
-        if embed:
-            queue_list = ""
-            arrow = self.draw_time()
-            pos = format_time(self.position)
-            current = self.current
-            if current.stream:
-                dur = "LIVE"
-            else:
-                dur = format_time(current.duration)
-            current_track_description = await current.get_track_display_name(with_url=True)
-            if current.stream:
-                queue_list += "**Currently livestreaming:**\n"
-                queue_list += f"{current_track_description}\n"
-                queue_list += f"Requester: **{current.requester.mention}**"
-                queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
-            else:
-                queue_list += "Playing: "
-                queue_list += f"{current_track_description}\n"
-                queue_list += f"Requester: **{current.requester.mention}**"
-                queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
-            if await self._config.fetch_shuffle():
-                queue_list += "__Queue order is not accurate due to shuffle being toggled__\n\n"
-            if tracks:
-                padding = len(str(start_index + len(tracks)))
-                async for track_idx, track in AsyncIter(tracks).enumerate(start=start_index + 1):
-                    track_description = await track.get_track_display_name(max_length=50, with_url=True)
-                    diff = padding - len(str(track_idx))
-                    queue_list += f"`{track_idx}.{' '*diff}` {track_description}\n"
-            page = await self.node.node_manager.client.construct_embed(
-                title=f"Queue for __{self.guild.name}__",
-                description=queue_list,
-                messageable=messageable,
-            )
-            if url := await current.thumbnail():
-                page.set_thumbnail(url=url)
-            queue_dur = await self.queue_duration()
-            queue_total_duration = format_time(queue_dur)
-            text = (
-                f"Page {page_index + 1}/{total_pages} | {self.queue.qsize()} tracks, {queue_total_duration} remaining\n"
-            )
-            if not self.is_repeating:
-                repeat_emoji = "\N{CROSS MARK}"
-            elif self._config.repeat_queue:
-                repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS}"
-            else:
-                repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS WITH CIRCLED ONE OVERLAY}"
+        arrow = self.draw_time()
+        pos = format_time(self.position)
+        current = self.current
+        dur = "LIVE" if current.stream else format_time(current.duration)
+        current_track_description = await current.get_track_display_name(with_url=True)
+        if current.stream:
+            queue_list += "**Currently livestreaming:**\n"
+        else:
+            queue_list += "Playing: "
+        queue_list += f"{current_track_description}\n"
+        queue_list += f"Requester: **{current.requester.mention}**"
+        queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
+        if await self._config.fetch_shuffle():
+            queue_list += "__Queue order is not accurate due to shuffle being toggled__\n\n"
+        if tracks:
+            padding = len(str(start_index + len(tracks)))
+            async for track_idx, track in AsyncIter(tracks).enumerate(start=start_index + 1):
+                track_description = await track.get_track_display_name(max_length=50, with_url=True)
+                diff = padding - len(str(track_idx))
+                queue_list += f"`{track_idx}.{' '*diff}` {track_description}\n"
+        page = await self.node.node_manager.client.construct_embed(
+            title=f"Queue for __{self.guild.name}__",
+            description=queue_list,
+            messageable=messageable,
+        )
+        if url := await current.thumbnail():
+            page.set_thumbnail(url=url)
+        queue_dur = await self.queue_duration()
+        queue_total_duration = format_time(queue_dur)
+        text = (
+            f"Page {page_index + 1}/{total_pages} | {self.queue.qsize()} tracks, {queue_total_duration} remaining\n"
+        )
+        if not self.is_repeating:
+            repeat_emoji = "\N{CROSS MARK}"
+        elif self._config.repeat_queue:
+            repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS}"
+        else:
+            repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS WITH CIRCLED ONE OVERLAY}"
 
-            if not self.autoplay_enabled:
-                autoplay_emoji = "\N{CROSS MARK}"
-            else:
-                autoplay_emoji = "\N{WHITE HEAVY CHECK MARK}"
-            text += f"Repeating: {repeat_emoji}"
-            text += f"{(' | ' if text else '')}Auto Play: {autoplay_emoji}"
-            text += f"{(' | ' if text else '')}Volume: {self.volume}%"
-            page.set_footer(text=text)
-            return page
+        autoplay_emoji = (
+            "\N{WHITE HEAVY CHECK MARK}"
+            if self.autoplay_enabled
+            else "\N{CROSS MARK}"
+        )
+
+        text += f"Repeating: {repeat_emoji}"
+        text += f"{(' | ' if text else '')}Auto Play: {autoplay_emoji}"
+        text += f"{(' | ' if text else '')}Volume: {self.volume}%"
+        page.set_footer(text=text)
+        return page
 
     async def queue_duration(self) -> int:
         dur = [
@@ -1522,14 +1519,10 @@ class Player(VoiceProtocol):
         if self.queue.empty():
             queue_dur = 0
         try:
-            if not self.current.stream:
-                remain = self.current.duration - self.position
-            else:
-                remain = 0
+            remain = 0 if self.current.stream else self.current.duration - self.position
         except AttributeError:
             remain = 0
-        queue_total_duration = remain + queue_dur
-        return queue_total_duration
+        return remain + queue_dur
 
     async def remove_from_queue(
         self,
@@ -1586,18 +1579,26 @@ class Player(VoiceProtocol):
             "channel_id": self.channel.id,
             "current": await self.current.to_json() if self.current else None,
             "text_channel_id": self.text_channel.id if self.text_channel else None,
-            "notify_channel_id": self.notify_channel.id if self.notify_channel else None,
+            "notify_channel_id": self.notify_channel.id
+            if self.notify_channel
+            else None,
             "paused": self.paused,
             "repeat_queue": self._config.repeat_queue,
             "repeat_current": self._config.repeat_current,
             "shuffle": self._config.shuffle,
             "auto_play": self._config.auto_play,
-            "auto_play_playlist_id": self._autoplay_playlist.id if self._autoplay_playlist is not None else None,
+            "auto_play_playlist_id": self._autoplay_playlist.id
+            if self._autoplay_playlist is not None
+            else None,
             "volume": self.volume,
             "position": self.position,
             "playing": self.is_playing,
-            "queue": [await t.to_json() for t in self.queue.raw_queue] if not self.queue.empty() else [],
-            "history": [await t.to_json() for t in self.history.raw_queue] if not self.history.empty() else [],
+            "queue": []
+            if self.queue.empty()
+            else [await t.to_json() for t in self.queue.raw_queue],
+            "history": []
+            if self.history.empty()
+            else [await t.to_json() for t in self.history.raw_queue],
             "effect_enabled": self._effect_enabled,
             "effects": {
                 "volume": self._volume.to_dict(),
