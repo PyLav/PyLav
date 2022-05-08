@@ -130,6 +130,7 @@ class PlayerRow(Table, db=DB, tablename="player"):
         },
     )
     extras = JSONB(null=False, default={})
+    effects = JSONB(null=False, default={})
 
 
 class NodeRow(Table, db=DB, tablename="node"):

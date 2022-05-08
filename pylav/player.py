@@ -135,6 +135,54 @@ class Player(VoiceProtocol):
         self._text_channel = self.guild.get_channel_or_thread(config.text_channel_id)
         self._notify_channel = self.guild.get_channel_or_thread(config.notify_channel_id)
         self._volume = Volume(config.volume)
+        effects = config.effects
+        if v := effects.pop("volume"):
+            self._volume = Volume.from_dict(v)
+        if eq := effects.pop("equalizer"):
+            self._equalizer = Equalizer.from_dict(eq)
+        if k := effects.pop("karaoke"):
+            self._karaoke = Karaoke.from_dict(k)
+        if ts := effects.pop("timescale"):
+            self._timescale = Timescale.from_dict(ts)
+        if tr := effects.pop("tremolo"):
+            self._tremolo = Tremolo.from_dict(tr)
+        if vb := effects.pop("vibrato"):
+            self._vibrato = Vibrato.from_dict(vb)
+        if rt := effects.pop("rotation"):
+            self._rotation = Rotation.from_dict(rt)
+        if ds := effects.pop("distortion"):
+            self._distortion = Distortion.from_dict(ds)
+        if lp := effects.pop("lowpass"):
+            self._low_pass = LowPass.from_dict(lp)
+        if cm := effects.pop("channelmix"):
+            self._channel_mix = ChannelMix.from_dict(cm)
+        if any(
+            f.changed
+            for f in [
+                self.equalizer,
+                self.karaoke,
+                self.timescale,
+                self.tremolo,
+                self.vibrato,
+                self.rotation,
+                self.distortion,
+                self.low_pass,
+                self.channel_mix,
+            ]
+        ):
+            await self.node.filters(
+                guild_id=self.channel.guild.id,
+                equalizer=self.equalizer,
+                karaoke=self.karaoke,
+                timescale=self.timescale,
+                tremolo=self.tremolo,
+                vibrato=self.vibrato,
+                rotation=self.rotation,
+                distortion=self.distortion,
+                low_pass=self.low_pass,
+                channel_mix=self.channel_mix,
+            )
+
         if self.volume_filter.changed:
             await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
 

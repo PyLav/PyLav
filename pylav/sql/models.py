@@ -637,6 +637,7 @@ class PlayerModel:
     shuffle: bool = False
     auto_play: bool = True
     self_deaf: bool = True
+    effects: dict = field(default_factory=dict)
     extras: dict = field(default_factory=dict)
     empty_queue_dc: TimedFeatureT = field(default_factory=dict)
     alone_dc: TimedFeatureT = field(default_factory=dict)
@@ -651,6 +652,8 @@ class PlayerModel:
             self.alone_dc = ujson.loads(self.alone_dc)
         if isinstance(self.alone_pause, str):
             self.alone_pause = ujson.loads(self.alone_pause)
+        if isinstance(self.effects, str):
+            self.effects = ujson.loads(self.effects)
 
     async def delete(self) -> None:
         await PlayerRow.delete().where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
@@ -673,6 +676,7 @@ class PlayerModel:
             PlayerRow.empty_queue_dc: self.empty_queue_dc,
             PlayerRow.alone_dc: self.alone_dc,
             PlayerRow.alone_pause: self.alone_pause,
+            PlayerRow.effects: self.effects,
         }
         player = (
             await PlayerRow.objects()
@@ -715,6 +719,7 @@ class PlayerModel:
             PlayerRow.empty_queue_dc: self.empty_queue_dc,
             PlayerRow.alone_dc: self.alone_dc,
             PlayerRow.alone_pause: self.alone_pause,
+            PlayerRow.effects: self.effects,
         }
         output = (
             await PlayerRow.objects()
@@ -860,6 +865,19 @@ class PlayerModel:
                 self.extras = player[0]["extras"]
         return self
 
+    async def update_effects(self) -> PlayerModel:
+        player = (
+            await PlayerRow.select(PlayerRow.effects)
+            .output(load_json=True)
+            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+        )
+        if player:
+            if isinstance(player[0]["effects"], str):
+                self.effects = ujson.loads(player[0]["effects"])
+            else:
+                self.effects = player[0]["effects"]
+        return self
+
     async def update_empty_queue_dc(self) -> PlayerModel:
         player = (
             await PlayerRow.select(PlayerRow.empty_queue_dc)
@@ -926,6 +944,10 @@ class PlayerModel:
     async def fetch_extras(self) -> dict:
         await self.update_extras()
         return self.extras
+
+    async def fetch_effects(self) -> dict:
+        await self.update_effects()
+        return self.effects
 
     async def fetch_empty_queue_dc(self) -> TimedFeature:
         await self.update_empty_queue_dc()
