@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Awaitable, Callable, Coroutine, Literal, Type, TypeVar, Union  # noqa: F401
+from typing import TYPE_CHECKING, Any, Awaitable, Callable, Coroutine, Literal, Optional, Type, TypeVar, Union
 
 import discord
+from discord import app_commands
 from typing_extensions import TypedDict
 
 T = TypeVar("T")
@@ -55,12 +56,21 @@ class BotClientWithLavalink(BotClient):
     guild: discord.Guild | None
 
     async def get_context(
-        self, message: discord.abc.Message | discord.Interaction, *, cls: type[PyLavContext] = None  # noqa: F821
+        self, message: discord.abc.Message | InteractionT, *, cls: type[PyLavContext] = None  # noqa: F821
     ) -> PyLavContext[Any]:
         ...
 
 
+class Interaction(discord.Interaction):
+    client: BotClientWithLavalink
+    response: discord.InteractionResponse
+    followup: discord.Webhook
+    command: app_commands.Command[Any, ..., Any] | app_commands.ContextMenu | None
+    channel: discord.interactions.InteractionChannel | None
+
+
 BotT = TypeVar("BotT", bound=BotClientWithLavalink, covariant=True)
+InteractionT = TypeVar("InteractionT", bound=Interaction)
 QueryT = TypeVar("QueryT", bound="Type[Query]")
 
 
@@ -95,9 +105,3 @@ class LavalinkResponseT(TypedDict):
 class TimedFeatureT(TypedDict):
     enabled: bool
     time: int
-
-
-# This is merely a tag type to avoid circular import issues.
-# Yes, this is a terrible solution but ultimately it is the only solution.
-class _BaseCommand:
-    __slots__ = ()

@@ -43,7 +43,7 @@ from pylav.sql.clients.playlist_manager import PlaylistConfigManager
 from pylav.sql.clients.query_manager import QueryCacheManager
 from pylav.sql.clients.updater import UpdateSchemaManager
 from pylav.tracks import Track
-from pylav.types import BotT, CogT, ContextT, LavalinkResponseT
+from pylav.types import BotT, CogT, ContextT, InteractionT, LavalinkResponseT
 from pylav.utils import PyLavContext, SingletonMethods, _get_context, _process_commands, _Singleton, add_property
 
 LOGGER = getLogger("red.PyLav.Client")
@@ -640,7 +640,7 @@ class Client(metaclass=_Singleton):
         thumbnail: str = None,
         footer: str = None,
         footer_url: str = None,
-        messageable: Messageable | discord.Interaction = None,
+        messageable: Messageable | InteractionT = None,
     ) -> discord.Embed:
 
         if messageable and not colour and not color and hasattr(self._bot, "get_embed_color"):
@@ -671,7 +671,7 @@ class Client(metaclass=_Singleton):
             new_embed.set_author(name=author_name, icon_url=author_url)
         return new_embed
 
-    async def get_context(self, what: discord.Message | ContextT | discord.Interaction) -> PyLavContext:
+    async def get_context(self, what: discord.Message | ContextT | InteractionT) -> PyLavContext:
         if isinstance(what, PyLavContext):
             return what
         elif isinstance(what, Context):

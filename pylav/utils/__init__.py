@@ -33,17 +33,14 @@ from typing import (
 )
 
 import discord  # type: ignore
-from discord import Guild, Interaction, Member, Message
-from discord.abc import Messageable, User
 from discord.backoff import ExponentialBackoff
-from discord.ext import commands
-from discord.ext.commands import Parameter
+from discord.ext import commands as dpy_command
 from discord.ext.commands.view import StringView
 from discord.types.embed import EmbedType
 from discord.utils import MISSING as D_MISSING  # noqa
 from discord.utils import maybe_coroutine
 
-from pylav.types import BotT, CogT, ContextT
+from pylav.types import BotT, CogT, ContextT, InteractionT
 
 try:
     from redbot.core.commands import Command
@@ -52,7 +49,7 @@ except ImportError:
     from discord.ext.commands import Command
     from discord.ext.commands import Context as _OriginalContextClass
 
-from discord.ext.commands.context import Context as DpyContext
+from discord.ext.commands import Context as DpyContext
 
 if TYPE_CHECKING:
     from pylav import Client, Player
@@ -676,13 +673,14 @@ class ExponentialBackoffWithReset(ExponentialBackoff):
 
 
 class PyLavContext(_OriginalContextClass):
-    _original_ctx_or_interaction: ContextT | Interaction | None
+    _original_ctx_or_interaction: ContextT | InteractionT | None
     bot: BotT
+    interaction: InteractionT | None
 
     def __init__(
         self,
         *,
-        message: Message,
+        message: discord.Message,
         bot: BotT,
         view: StringView,
         args: list[Any] = D_MISSING,
@@ -694,9 +692,9 @@ class PyLavContext(_OriginalContextClass):
         invoked_subcommand: Command[Any, ..., Any] | None = None,  # noqa
         subcommand_passed: str | None = None,
         command_failed: bool = False,
-        current_parameter: Parameter | None = None,
+        current_parameter: discord.ext.commands.Parameter | None = None,
         current_argument: str | None = None,
-        interaction: Interaction | None = None,
+        interaction: InteractionT | None = None,
     ):
         super().__init__(
             message=message,
@@ -720,7 +718,7 @@ class PyLavContext(_OriginalContextClass):
         self.lavalink = bot.lavalink
 
     @discord.utils.cached_property
-    def author(self) -> User | Member:
+    def author(self) -> discord.User | discord.Member:
         """Union[:class:`~discord.User`, :class:`.Member`]:
         Returns the author associated with this context's command. Shorthand for :attr:`.Message.author`
         """
@@ -741,7 +739,7 @@ class PyLavContext(_OriginalContextClass):
         return None if self.command is None else self.command.cog
 
     @discord.utils.cached_property
-    def guild(self) -> Guild | None:
+    def guild(self) -> discord.Guild | None:
         """Optional[:class:`.Guild`]: Returns the guild associated with this context's command. None if not
         available."""
         return getattr(self.author, "guild", None)
@@ -772,7 +770,7 @@ class PyLavContext(_OriginalContextClass):
         return await self.lavalink.connect_player(requester=requester, channel=channel, self_deaf=self_deaf)
 
     @property
-    def original_ctx_or_interaction(self) -> ContextT | Interaction | None:
+    def original_ctx_or_interaction(self) -> ContextT | InteractionT | None:
         """
         Get original ctx or interaction
         """
@@ -794,7 +792,7 @@ class PyLavContext(_OriginalContextClass):
         thumbnail: str = None,
         footer: str = None,
         footer_url: str = None,
-        messageable: Messageable | discord.Interaction = None,
+        messageable: discord.abc.Messageable | InteractionT = None,
     ) -> discord.Embed:
         """
         Construct embed
@@ -817,7 +815,7 @@ class PyLavContext(_OriginalContextClass):
         )
 
     @classmethod
-    async def from_interaction(cls, interaction: Interaction, /) -> PyLavContext:
+    async def from_interaction(cls, interaction: InteractionT, /) -> PyLavContext:
         #  When using this on a button interaction it raises an error as expected.
         #   This makes the `get_context` method work with buttons by storing the original context
 
@@ -869,13 +867,11 @@ async def _process_commands(self, message: discord.Message, /):
         self.dispatch("message_without_command", message)
 
 
-async def _get_context(
-    self: BotT, message: discord.Message | discord.Interaction, /, *, cls=PyLavContext
-) -> PyLavContext:
+async def _get_context(self: BotT, message: discord.Message | InteractionT, /, *, cls=PyLavContext) -> PyLavContext:
     return await super(self.__class__, self).get_context(message, cls=cls)  # noqa
 
 
-@commands.command(name="__dummy_command", hidden=True, disabled=True)
+@dpy_command.command(name="__dummy_command", hidden=True, disabled=True)
 async def dummy_command(self, context: PyLavContext):
     """Does nothing."""
 

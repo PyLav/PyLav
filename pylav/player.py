@@ -47,7 +47,7 @@ from pylav.filters.tremolo import Tremolo
 from pylav.query import Query
 from pylav.sql.models import PlayerModel, PlayerStateModel, PlaylistModel
 from pylav.tracks import Track
-from pylav.types import BotT
+from pylav.types import BotT, InteractionT
 from pylav.utils import AsyncIter, PlayerQueue, SegmentCategory, TrackHistoryQueue, format_time
 
 if TYPE_CHECKING:
@@ -1401,7 +1401,7 @@ class Player(VoiceProtocol):
         return msg
 
     async def get_currently_playing_message(
-        self, embed: bool = True, messageable: Messageable | discord.Interaction = None
+        self, embed: bool = True, messageable: Messageable | InteractionT = None
     ) -> discord.Embed | str:
         if not embed:
             return ""
@@ -1450,7 +1450,7 @@ class Player(VoiceProtocol):
         per_page: int,
         total_pages: int,
         embed: bool = True,
-        messageable: Messageable | discord.Interaction = None,
+        messageable: Messageable | InteractionT = None,
     ) -> discord.Embed | str:
         if not embed:
             return ""
