@@ -7,6 +7,7 @@ import aiohttp_client_cache
 from pylav.radio.base_url import pick_base_url
 from pylav.radio.objects import Codec, Country, CountryCode, Language, State, Station, Tag
 from pylav.radio.utils import type_check
+from pylav.utils import AsyncIter
 
 if TYPE_CHECKING:
     from pylav import Client
@@ -65,7 +66,7 @@ class RadioBrowser:
         endpoint = f"json/countries/{code}" if code else "json/countries/"
         url = self.build_url(endpoint)
         response = await self.client.get(url)
-        return [Country(**country) for country in response]
+        return [Country(**country) async for country in AsyncIter(response)]
 
     @type_check
     async def countrycodes(self, code: str = None) -> list[CountryCode]:
@@ -84,7 +85,7 @@ class RadioBrowser:
         endpoint = f"json/countrycodes/{code}" if code else "json/countrycodes/"
         url = self.build_url(endpoint)
         response = await self.client.get(url)
-        return [CountryCode(**country) for country in response]
+        return [CountryCode(**country) async for country in AsyncIter(response)]
 
     @type_check
     async def codecs(self, codec: str = None) -> list[Codec]:
@@ -104,8 +105,10 @@ class RadioBrowser:
         url = self.build_url(endpoint)
         response = await self.client.get(url)
         if codec:
-            return [Codec(**tag) for tag in response if tag["name"].lower() == codec.lower()]
-        return [Codec(**tag) for tag in response]
+            return [
+                Codec(**tag) async for tag in AsyncIter(response).filter(lambda s: s["name"].lower() == codec.lower())
+            ]
+        return [Codec(**tag) async for tag in AsyncIter(response)]
 
     @type_check
     async def states(self, country: str = None, state: str = None) -> list[State]:
@@ -134,10 +137,16 @@ class RadioBrowser:
                     for tag in response
                     if tag["country"].lower() == country.lower() and tag["name"].lower() == state.lower()
                 ]
-            return [State(**tag) for tag in response if tag["country"].lower() == country.lower()]
+            return [
+                State(**state)
+                async for state in AsyncIter(response).filter(lambda s: s["country"].lower() == country.lower())
+            ]
         if state:
-            return [State(**tag) for tag in response if tag["name"].lower() == state.lower()]
-        return [State(**tag) for tag in response]
+            return [
+                State(**state)
+                async for state in AsyncIter(response).filter(lambda s: s["name"].lower() == state.lower())
+            ]
+        return [State(**state) async for state in AsyncIter(response)]
 
     @type_check
     async def languages(self, language: str = None) -> list[Language]:
@@ -155,7 +164,7 @@ class RadioBrowser:
         endpoint = f"json/languages/{language}" if language else "json/languages/"
         url = self.build_url(endpoint)
         response = await self.client.get(url)
-        return [Language(**tag) for tag in response]
+        return [Language(**language) async for language in AsyncIter(response)]
 
     @type_check
     async def tags(self, tag: str = None) -> list[Tag]:
@@ -178,7 +187,7 @@ class RadioBrowser:
             endpoint = "json/tags/"
         url = self.build_url(endpoint)
         response = await self.client.get(url)
-        return [Tag(**tag) for tag in response]
+        return [Tag(**tag) async for ta in AsyncIter(response)]
 
     async def station_by_uuid(self, stationuuid: str) -> list[Station]:
         """Radio station by stationuuid.
@@ -195,7 +204,7 @@ class RadioBrowser:
         endpoint = f"json/stations/byuuid/{stationuuid}"
         url = self.build_url(endpoint)
         response = await self.client.get(url)
-        return [Station(**station) for station in response]
+        return [Station(**station) async for station in AsyncIter(response)]
 
     async def stations_by_name(
         self, name: str, exact: bool = False, **kwargs: str | int | bool | None
@@ -362,7 +371,7 @@ class RadioBrowser:
         endpoint = "json/stations"
         url = self.build_url(endpoint)
         response = await self.client.get(url, **kwargs)
-        return [Station(**station) for station in response]
+        return [Station(**station) async for station in AsyncIter(response)]
 
     async def stations_by_votes(self, limit: int, **kwargs: str | int | bool | None) -> list[Station]:
         """A list of the highest-voted stations.
@@ -379,7 +388,7 @@ class RadioBrowser:
         endpoint = f"json/stations/topvote/{limit}"
         url = self.build_url(endpoint)
         response = await self.client.get(url, **kwargs)
-        return [Station(**station) for station in response]
+        return [Station(**station) async for station in AsyncIter(response)]
 
     @type_check
     async def search(self, **kwargs: str | int | bool | None) -> list[Station]:
@@ -439,4 +448,4 @@ class RadioBrowser:
         kwargs["hidebroken"] = kwargs.pop("hidebroken", "true")
         url = self.build_url(endpoint)
         response = await self.client.get(url, **kwargs)
-        return [Station(**station) for station in response]
+        return [Station(**station) async for station in AsyncIter(response)]

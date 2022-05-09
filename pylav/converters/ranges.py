@@ -47,7 +47,6 @@ else:
 
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> int:
-            """Converts a node name or ID to a list of matching objects."""
             try:
                 level = int(arg)
             except ValueError as e:
