@@ -46,7 +46,7 @@ from pylav.tracks import Track
 from pylav.types import BotT, CogT, ContextT, LavalinkResponseT
 from pylav.utils import PyLavContext, SingletonMethods, _get_context, _process_commands, _Singleton, add_property
 
-LOGGER = getLogger("red.PyLink.Client")
+LOGGER = getLogger("red.PyLav.Client")
 
 _COGS_REGISTERED = set()
 
@@ -574,7 +574,7 @@ class Client(metaclass=_Singleton):
                         if _OLD_GET_CONTEXT is not None:
                             self.bot.get_context = _OLD_GET_CONTEXT
                         del self.bot._pylav_client  # noqa
-                        LOGGER.info("All cogs have been unregistered, Pylink client has been shutdown.")
+                        LOGGER.info("All cogs have been unregistered, PyLav client has been shutdown.")
 
     def get_player(self, guild: discord.Guild | int | None) -> Player | None:
         """|coro|

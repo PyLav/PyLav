@@ -49,7 +49,7 @@ if TYPE_CHECKING:
     from pylav.player import Player
     from pylav.tracks import Track
 
-LOGGER = getLogger("red.PyLink.WebSocket")
+LOGGER = getLogger("red.PyLav.WebSocket")
 
 
 def _done_callback(task: asyncio.Task) -> None:
@@ -113,7 +113,7 @@ class WebSocket:
 
     @property
     def lib_version(self) -> str:
-        """Returns the PyLink library version."""
+        """Returns the PyLav library version."""
         return self._client.lib_version
 
     @property

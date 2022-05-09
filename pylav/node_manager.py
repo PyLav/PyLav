@@ -16,7 +16,7 @@ from pylav.player import Player
 if TYPE_CHECKING:
     from pylav.client import Client
 
-LOGGER = getLogger("red.PyLink.NodeManager")
+LOGGER = getLogger("red.PyLav.NodeManager")
 
 
 class NodeManager:
@@ -95,7 +95,7 @@ class NodeManager:
         extras: dict = None,
     ) -> Node:
         """
-        Adds a node to PyLink's node manager.
+        Adds a node to PyLav's node manager.
         Parameters
         ----------
         host: :class:`str`

@@ -14,7 +14,7 @@ from pylav.sql.tables import BotVersionRow, LibConfigRow, NodeRow, PlayerRow, Pl
 if TYPE_CHECKING:
     from pylav.client import Client
 
-LOGGER = getLogger("red.PyLink.LibConfigManager")
+LOGGER = getLogger("red.PyLav.LibConfigManager")
 
 
 class LibConfigManager:

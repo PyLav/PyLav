@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from pylav.query import Query
     from pylav.websocket import WebSocket
 
-LOGGER = getLogger("red.PyLink.Node")
+LOGGER = getLogger("red.PyLav.Node")
 
 
 class Penalty:
