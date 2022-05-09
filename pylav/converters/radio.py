@@ -163,13 +163,13 @@ else:
             from pylav import EntryNotFoundError
 
             try:
-                countries = await ctx.lavalink.radio_browser.countrycodes(arg)
+                countrycodes = await ctx.lavalink.radio_browser.countrycodes(arg)
             except EntryNotFoundError as e:
-                raise commands.BadArgument(f"Country with name `{arg}` not found.") from e
+                raise commands.BadArgument(f"Country code `{arg}` not found.") from e
 
-            if r := next(filter(lambda n: arg == n.name, countries), None):
+            if r := next(filter(lambda n: arg == n.name, countrycodes), None):
                 return r
-            raise commands.BadArgument(f"Country with name `{arg}` not found.")
+            raise commands.BadArgument(f"Country code `{arg}` not found.")
 
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> CountryCode:
@@ -195,7 +195,7 @@ else:
                 countries = await ctx.lavalink.radio_browser.countries(arg)
             except EntryNotFoundError as e:
                 raise commands.BadArgument(f"Country with name `{arg}` not found.") from e
-            if r := next(filter(lambda n: arg == n.name, countries), None):
+            if r := next(filter(lambda n: arg == n.iso_3166_1, countries), None):
                 return r
             raise commands.BadArgument(f"Country with name `{arg}` not found.")
 
@@ -208,7 +208,7 @@ else:
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
             countries = await interaction.client.lavalink.radio_browser.countries()
             return [
-                Choice(name=n.name or "Unnamed", value=f"{n.name}")
+                Choice(name=n.name or "Unnamed", value=f"{n.iso_3166_1}")
                 for n in countries
                 if current.lower() in n.name.lower()
             ][:25]
