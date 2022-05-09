@@ -14,6 +14,9 @@ def _urijoin(base_uri: str, path: str) -> str:
 
 
 class BasePathMixin:
+    base_uri: str | None
+    uri: str | None
+
     @property
     def absolute_uri(self) -> str | None:
         if self.uri is None:
@@ -41,13 +44,13 @@ class BasePathMixin:
 
 
 class GroupedBasePathMixin:
-    def _set_base_uri(self, new_base_uri: str) -> str:
+    def _set_base_uri(self, new_base_uri: str) -> None:
         for item in self:
             item.base_uri = new_base_uri
 
     base_uri = property(None, _set_base_uri)
 
-    def _set_base_path(self, newbase_path: str) -> str:
+    def _set_base_path(self, newbase_path: str) -> None:
         for item in self:
             item.base_path = newbase_path
 

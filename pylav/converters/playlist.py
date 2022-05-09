@@ -19,6 +19,7 @@ else:
 
             try:
                 playlists = await ctx.lavalink.playlist_db_manager.get_playlist_by_name_or_id(arg)
-            except EntryNotFoundError:
-                raise commands.BadArgument(f"Playlist with name or id `{arg}` not found.")
+            except EntryNotFoundError as e:
+                raise commands.BadArgument(f"Playlist with name or id `{arg}` not found.") from e
+
             return playlists

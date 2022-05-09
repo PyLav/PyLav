@@ -161,7 +161,7 @@ class PlaylistModel:
                     data = gzip.decompress(data)
                     data = yaml.safe_load(data)
         except Exception as e:
-            raise InvalidPlaylist(f"Invalid playlist file - {e}")
+            raise InvalidPlaylist(f"Invalid playlist file - {e}") from e
         return cls(
             id=context.message.id,
             scope=scope,

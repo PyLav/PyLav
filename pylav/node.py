@@ -623,11 +623,11 @@ class Node:
                     "playlistInfo": {
                         "name": response.name,
                     },
-                    "loadType": "PlaylistLoaded"
+                    "loadType": "PLAYLIST_LOADED"
                     if query.is_playlist or query.is_album
-                    else "SearchLoaded"
+                    else "SEARCH_RESULT"
                     if query.is_search
-                    else "TrackLoaded",
+                    else "TRACK_LOADED",
                     "tracks": [{"track": track} async for track in AsyncIter(response.tracks)],
                 }
             )

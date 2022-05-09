@@ -19,8 +19,8 @@ else:
 
             try:
                 nodes = await ctx.lavalink.node_db_manager.get_all_nodes()
-            except EntryNotFoundError:
-                raise commands.BadArgument(f"Node with name or id `{arg}` not found.")
+            except EntryNotFoundError as e:
+                raise commands.BadArgument(f"Node with name or id `{arg}` not found.") from e
             if r := list(filter(lambda n: arg.lower() in n.name.lower() or arg == f"{n.id}", nodes)):
                 return r
             raise commands.BadArgument(f"Node with name or id `{arg}` not found.")

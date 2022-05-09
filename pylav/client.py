@@ -739,7 +739,7 @@ class Client(metaclass=_Singleton):
         player: Player | None = None,
         bypass_cache: bool = False,
         enqueue: bool = True,
-    ) -> tuple[list[Track], int, list[Query]]:
+    ) -> tuple[list[Track], int, list[Query]]:  # sourcery no-metrics
         """High level interface to get and return all tracks for a list of queries.
 
         This will automatically handle playlists, albums, searches and local files.
@@ -927,7 +927,7 @@ class Client(metaclass=_Singleton):
                 "name": playlist_name if len(queries) == 1 else "",
                 "selectedTrack": -1,
             },
-            "loadType": "SearchLoaded" if output_tracks else "LOAD_FAILED",
+            "loadType": "SEARCH_RESULT" if output_tracks else "LOAD_FAILED",
             "tracks": output_tracks,
         }
 

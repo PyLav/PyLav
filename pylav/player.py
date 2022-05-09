@@ -121,6 +121,7 @@ class Player(VoiceProtocol):
         return f"Player(id={self.guild.id}, channel={self.channel.id})"
 
     async def post_init(self, node: Node, player_manager: PlayerManager, config: PlayerModel, pylav: Client) -> None:
+        # sourcery no-metrics
         if self._post_init_completed:
             return
         self._lavalink = pylav
@@ -546,9 +547,8 @@ class Player(VoiceProtocol):
             try:
                 await track.search(self, bypass_cache=bypass_cache)
             except TrackNotFound as exc:
-                # If track was passed to `.play()` raise here
                 if not track:
-                    raise TrackNotFound
+                    raise TrackNotFound from exc
                 event = TrackExceptionEvent(self, track, exc, self.node)
                 self.node.dispatch_event(event)
                 await self._handle_event(event)
@@ -606,6 +606,7 @@ class Player(VoiceProtocol):
         node: Optional[:class:`Node`]
             The node to use. Defaults the best available node with the needed feature.
         """
+        # sourcery no-metrics
         options = {}
         skip_segments = self._process_skip_segments(skip_segments)
         self._last_update = 0
@@ -674,10 +675,8 @@ class Player(VoiceProtocol):
             try:
                 await track.search(self, bypass_cache=bypass_cache)
             except TrackNotFound as exc:
-                # If track was passed to `.play()` raise here
                 if not track:
-                    raise TrackNotFound
-                # Otherwise dispatch Track Exception Event
+                    raise TrackNotFound from exc
                 event = TrackExceptionEvent(self, track, exc, self.node)
                 self.node.dispatch_event(event)
                 await self._handle_event(event)
@@ -1269,7 +1268,7 @@ class Player(VoiceProtocol):
         low_pass: LowPass = None,
         channel_mix: ChannelMix = None,
         reset_not_set: bool = False,
-    ):
+    ):  # sourcery no-metrics
         """
         Sets the filters of Lavalink.
         Parameters
@@ -1405,7 +1404,7 @@ class Player(VoiceProtocol):
         self, embed: bool = True, messageable: Messageable | discord.Interaction = None
     ) -> discord.Embed | str:
         if not embed:
-            return
+            return ""
         queue_list = ""
         arrow = self.draw_time()
         pos = format_time(self.position)
@@ -1454,7 +1453,7 @@ class Player(VoiceProtocol):
         messageable: Messageable | discord.Interaction = None,
     ) -> discord.Embed | str:
         if not embed:
-            return
+            return ""
         queue_list = ""
         start_index = page_index * per_page
         end_index = start_index + per_page
@@ -1606,6 +1605,7 @@ class Player(VoiceProtocol):
         await self.node.node_manager.client.player_state_db_manager.save_player(await self.to_dict())
 
     async def restore(self, player: PlayerStateModel, requester: discord.abc.User) -> None:
+        # sourcery no-metrics
         if self._restored is True:
             return
         # FIXME: Add an event to ensure that the player is restored in the correct state ?
@@ -1661,16 +1661,16 @@ class Player(VoiceProtocol):
             else []
         )
         self.queue.raw_queue = collections.deque(queue)
-        self.queue.raw_b64s = list(t.track for t in queue if t.track)
+        self.queue.raw_b64s = [t.track for t in queue if t.track]
         self.history.raw_queue = collections.deque(history)
-        self.history.raw_b64s = list(t.track for t in history)
-        tried = 0
+        self.history.raw_b64s = [t.track for t in history]
         if current:
             current.timestamp = int(player.position)
             self.queue.put_nowait([current], index=0)
             node = self.node.node_manager.find_best_node(
                 region=self.region, feature=await current.requires_capability()
             )
+            tried = 0
             while not node:
                 await asyncio.sleep(1)
                 node = self.node.node_manager.find_best_node(

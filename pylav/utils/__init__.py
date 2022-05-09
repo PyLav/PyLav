@@ -294,8 +294,8 @@ class PlayerQueue(asyncio.Queue[T]):
                         removed.append(self.popindex(i))
                         count += 1
             return removed, count
-        except ValueError:
-            raise IndexError("Value not in queue")
+        except ValueError as e:
+            raise IndexError("Value not in queue") from e
 
     def clear(self):
         """Remove all items from the queue."""
@@ -1140,8 +1140,8 @@ class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=dupl
     async def __anext__(self) -> _T:
         try:
             item = next(self._iterator)
-        except StopIteration:
-            raise StopAsyncIteration
+        except StopIteration as e:
+            raise StopAsyncIteration from e
         if self._i == self._steps:
             self._i = 0
             await asyncio.sleep(self._delay)

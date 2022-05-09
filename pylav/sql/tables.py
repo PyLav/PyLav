@@ -1,3 +1,4 @@
+# sourcery skip: avoid-builtin-shadow
 from __future__ import annotations
 
 import getpass

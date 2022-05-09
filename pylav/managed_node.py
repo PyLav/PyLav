@@ -613,7 +613,7 @@ class LocalNodeManager:
                             raise
                     except Exception as exc:
                         LOGGER.debug(exc, exc_info=exc)
-                        raise NodeUnhealthy(str(exc))
+                        raise NodeUnhealthy(str(exc)) from exc
             except (TooManyProcessFound, IncorrectProcessFound, NoProcessFound):
                 await self._partial_shutdown()
             except asyncio.TimeoutError:

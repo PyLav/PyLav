@@ -82,7 +82,7 @@ def validate_input(types, input_data):
         try:
             type_ = types[key]
         except KeyError as exc:
-            raise IllegalArgumentError(f"There is no parameter named '{exc.args[0]}'")
+            raise IllegalArgumentError(f"There is no parameter named '{exc.args[0]}'") from exc
         else:
             if not isinstance(value, type_):
                 raise TypeError(

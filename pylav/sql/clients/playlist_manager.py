@@ -43,8 +43,8 @@ class PlaylistConfigManager:
     async def get_playlist_by_id(playlist_id: int | str) -> PlaylistModel:
         try:
             playlist_id = int(playlist_id)
-        except ValueError:
-            raise EntryNotFoundError(f"Playlist with id {playlist_id} not found")
+        except ValueError as e:
+            raise EntryNotFoundError(f"Playlist with id {playlist_id} not found") from e
         playlist = await PlaylistRow.select().where(PlaylistRow.id == playlist_id).limit(1).first()
         if not playlist:
             raise EntryNotFoundError(f"Playlist with ID {playlist_id} not found")

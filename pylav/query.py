@@ -451,7 +451,7 @@ class Query:
             local_path = cls.__localfile_cls(path.absolute())
             await local_path.initialize()
         except Exception as e:
-            raise ValueError(f"{e}")
+            raise ValueError(f"{e}") from e
         query_type = "album" if await local_path.path.is_dir() else "single"
         return cls(local_path, "Local Files", query_type=query_type, recursive=recursively)  # type: ignore
 
