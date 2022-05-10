@@ -46,7 +46,7 @@ from pylav.tracks import Track
 from pylav.types import BotT, CogT, ContextT, InteractionT, LavalinkResponseT
 from pylav.utils import PyLavContext, SingletonMethods, _get_context, _process_commands, _Singleton, add_property
 
-LOGGER = getLogger("red.PyLav.Client")
+LOGGER = getLogger("PyLav.Client")
 
 _COGS_REGISTERED = set()
 

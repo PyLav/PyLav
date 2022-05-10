@@ -11,7 +11,7 @@ from pylav.utils.built_in_node import NODE_DEFAULT_SETTINGS
 if TYPE_CHECKING:
     from pylav.client import Client
 
-LOGGER = getLogger("red.PyLav.NodeConfigManager")
+LOGGER = getLogger("PyLav.NodeConfigManager")
 
 
 class NodeConfigManager:

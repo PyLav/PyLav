@@ -9,7 +9,7 @@ from pylav.sql.tables import PlayerStateRow
 if TYPE_CHECKING:
     from pylav.client import Client
 
-LOGGER = getLogger("red.PyLav.PlayerStateDBManager")
+LOGGER = getLogger("PyLav.PlayerStateDBManager")
 
 
 class PlayerStateDBManager:

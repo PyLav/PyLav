@@ -15,7 +15,7 @@ from pylav.utils import AsyncIter
 if TYPE_CHECKING:
     from pylav.client import Client
 
-LOGGER = getLogger("red.PyLav.PlaylistConfigManager")
+LOGGER = getLogger("PyLav.PlaylistConfigManager")
 
 
 class PlaylistConfigManager:

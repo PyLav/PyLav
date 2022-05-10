@@ -56,7 +56,7 @@ if TYPE_CHECKING:
     from pylav.player_manager import PlayerManager
     from pylav.radio import RadioBrowser
 
-LOGGER = getLogger("red.PyLav.Player")
+LOGGER = getLogger("PyLav.Player")
 
 
 class Player(VoiceProtocol):

@@ -17,7 +17,7 @@ from pylav.types import QueryT
 if TYPE_CHECKING:
     from pylav.localfiles import LocalFile
 
-LOGGER = getLogger("red.PyLav.Query")
+LOGGER = getLogger("PyLav.Query")
 
 CLYPIT_REGEX = re.compile(r"(http://|https://(www.)?)?clyp\.it/(.*)", re.IGNORECASE)
 GETYARN_REGEX = re.compile(r"(?:http://|https://(?:www.)?)?getyarn.io/yarn-clip/(.*)", re.IGNORECASE)

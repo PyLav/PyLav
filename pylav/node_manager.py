@@ -16,7 +16,7 @@ from pylav.player import Player
 if TYPE_CHECKING:
     from pylav.client import Client
 
-LOGGER = getLogger("red.PyLav.NodeManager")
+LOGGER = getLogger("PyLav.NodeManager")
 
 
 class NodeManager:

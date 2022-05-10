@@ -25,7 +25,7 @@ from pylav.utils import PyLavContext, TimedFeature
 
 BRACKETS: re.Pattern = re.compile(r"[\[\]]")
 
-LOGGER = getLogger("red.PyLav.DBModels")
+LOGGER = getLogger("PyLav.DBModels")
 
 
 @dataclass(eq=True)

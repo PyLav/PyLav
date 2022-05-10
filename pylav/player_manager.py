@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 from pylav.exceptions import NoNodeAvailable
 from pylav.node import Node
 
-LOGGER = getLogger("red.PyLav.PlayerManager")
+LOGGER = getLogger("PyLav.PlayerManager")
 
 
 class PlayerManager:

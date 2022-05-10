@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 STREAM_TITLE: re.Pattern = re.compile(rb"StreamTitle='([^']*)';")
 SQUARE_BRACKETS: re.Pattern = re.compile(r"[\[\]]")
 
-LOGGER = getLogger("red.PyLav.tracks")
+LOGGER = getLogger("PyLav.tracks")
 
 
 @total_ordering

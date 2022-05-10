@@ -49,7 +49,7 @@ if TYPE_CHECKING:
     from pylav.player import Player
     from pylav.tracks import Track
 
-LOGGER = getLogger("red.PyLav.WebSocket")
+LOGGER = getLogger("PyLav.WebSocket")
 
 
 def _done_callback(task: asyncio.Task) -> None:

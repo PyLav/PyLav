@@ -45,7 +45,7 @@ from pylav.utils import AsyncIter, ExponentialBackoffWithReset
 if TYPE_CHECKING:
     from pylav.client import Client
 
-LOGGER = getLogger("red.PyLav.ManagedNode")
+LOGGER = getLogger("PyLav.ManagedNode")
 
 LAVALINK_DOWNLOAD_DIR = CONFIG_DIR / "lavalink"
 LAVALINK_DOWNLOAD_DIR = pathlib.Path(LAVALINK_DOWNLOAD_DIR)  # type: ignore

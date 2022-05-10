@@ -6,7 +6,7 @@ import socket
 
 from pylav._logging import getLogger
 
-LOGGER = getLogger("red.PyLav.RadioBrowser")
+LOGGER = getLogger("PyLav.RadioBrowser")
 
 
 class Error(Exception):

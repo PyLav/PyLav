@@ -73,7 +73,7 @@ from pylav._logging import getLogger
 
 T = TypeVar("T")
 
-LOGGER = getLogger("red.PyLav.utils")
+LOGGER = getLogger("PyLav.utils")
 _RED_LOGGER = getLogger("red")
 
 _LOCK = threading.Lock()

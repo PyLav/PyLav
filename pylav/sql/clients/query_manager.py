@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from pylav.client import Client
     from pylav.query import Query
 
-LOGGER = getLogger("red.PyLav.QueryCacheManager")
+LOGGER = getLogger("PyLav.QueryCacheManager")
 
 
 class QueryCacheManager:
