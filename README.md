@@ -12,7 +12,7 @@ Documentation
   - Linux: [PostgresSQL](https://www.postgresql.org/download/linux/)
 - Python 3.10+ (On initial release - during pre-alpha phase 3.9+)
 - Env Vars to connect the lib to the PostgresSQL server
-  - PYLAV__POSTGRES_POST - Defaults to 5432
+  - PYLAV__POSTGRES_PORT - Defaults to 5432
   - PYLAV__POSTGRES_PASSWORD - Defaults to ""
   - PYLAV__POSTGRES_USER - Defaults to "postgres"
   - PYLAV__POSTGRES_DB - Defaults to "pylav"

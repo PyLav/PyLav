@@ -14,7 +14,7 @@ if getpass.getuser() == "draper":  # FIXME: This is a hack im lazy and should be
     PASSWORD = "testing"  # noqa
     PORT = "5433"
 else:
-    PORT = os.getenv("PYLAV__POSTGRES_POST", "5432")
+    PORT = os.getenv("PYLAV__POSTGRES_PORT", os.getenv("PYLAV__POSTGRES_POST", "5432"))
     PASSWORD = os.getenv("PYLAV__POSTGRES_PASSWORD", "")
     USER = os.getenv("PYLAV__POSTGRES_USER", "postgres")
     DATABASE = os.getenv("PYLAV__POSTGRES_DB", "postgres")
