@@ -10,7 +10,6 @@ import random
 import threading
 import time
 import warnings
-from abc import ABC
 from asyncio import QueueFull, events, locks
 from copy import copy
 from enum import Enum
@@ -52,7 +51,7 @@ except ImportError:
 from discord.ext.commands import Context as DpyContext
 
 if TYPE_CHECKING:
-    from pylav import Client, Player
+    from pylav import Player
 
 __all__ = (
     "MISSING",
@@ -78,14 +77,6 @@ LOGGER = getLogger("red.PyLav.utils")
 _RED_LOGGER = getLogger("red")
 
 _LOCK = threading.Lock()
-
-
-class CogMixin(ABC):
-    bot: BotT
-    lavalink: Client
-
-    async def initialize(self):
-        raise NotImplementedError()
 
 
 def _synchronized(lock):
