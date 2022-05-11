@@ -5,16 +5,16 @@ import pathlib
 import sys
 
 import aiopath
-import appdirs
+import platformdirs
 
 basic_config: dict = {}
 instance_name = None
 
-appdir = appdirs.AppDirs("PyLav")
-__CONFIG_DIR = pathlib.Path(appdir.user_data_dir)
+appdir = platformdirs.PlatformDirs("PyLav")
+__CONFIG_DIR = pathlib.Path(appdir.user_config_path)
 _system_user = sys.platform == "linux" and 0 < os.getuid() < 1000
 if _system_user:
-    __CONFIG_DIR = pathlib.Path(appdir.site_data_dir)
+    __CONFIG_DIR = pathlib.Path(appdir.site_data_path)
 __CONFIG_DIR.mkdir(parents=True, exist_ok=True)
 CONFIG_DIR = aiopath.AsyncPath(__CONFIG_DIR)
 __VERSION__ = "0.0.2"
