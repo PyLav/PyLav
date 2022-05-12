@@ -9,7 +9,16 @@ from piccolo.table import create_tables
 from pylav._config import CONFIG_DIR
 from pylav._logging import getLogger
 from pylav.sql.models import BotVersion, LibConfigModel
-from pylav.sql.tables import BotVersionRow, LibConfigRow, NodeRow, PlayerRow, PlayerStateRow, PlaylistRow, QueryRow
+from pylav.sql.tables import (
+    BotVersionRow,
+    EqualizerRow,
+    LibConfigRow,
+    NodeRow,
+    PlayerRow,
+    PlayerStateRow,
+    PlaylistRow,
+    QueryRow,
+)
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -42,6 +51,7 @@ class LibConfigManager:
             QueryRow,
             BotVersionRow,
             PlayerRow,
+            EqualizerRow,
             if_not_exists=True,
         )
 

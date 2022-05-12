@@ -35,6 +35,7 @@ from pylav.player import Player
 from pylav.player_manager import PlayerManager
 from pylav.query import MAX_RECURSION_DEPTH, Query
 from pylav.radio import RadioBrowser
+from pylav.sql.clients.equalizer_manager import EqualizerConfigManager
 from pylav.sql.clients.lib import LibConfigManager
 from pylav.sql.clients.nodes_db_manager import NodeConfigManager
 from pylav.sql.clients.player_config_manager import PlayerConfigManager
@@ -130,6 +131,7 @@ class Client(metaclass=_Singleton):
             self._dispatch_manager = DispatchManager(self)
             self._player_state_db_manager = PlayerStateDBManager(self)
             self._player_config_manager = PlayerConfigManager(self)
+            self._equalizer_config_manager = EqualizerConfigManager(self)
             self._radio_manager = RadioBrowser(self)
             self._m3u8parser = M3U8Parser(self)
             self._connect_back = connect_back
@@ -187,6 +189,11 @@ class Client(metaclass=_Singleton):
     def playlist_db_manager(self) -> PlaylistConfigManager:
         """Returns the sql playlist config manager."""
         return self._playlist_config_manager
+
+    @property
+    def equalizer_db_manager(self) -> EqualizerConfigManager:
+        """Returns the sql equalizer config manager."""
+        return self._equalizer_config_manager
 
     @property
     def lib_db_manager(self) -> LibConfigManager:

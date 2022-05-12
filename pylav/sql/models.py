@@ -19,7 +19,17 @@ from pylav._config import CONFIG_DIR
 from pylav._logging import getLogger
 from pylav.constants import BUNDLED_PLAYLIST_IDS, SUPPORTED_SOURCES
 from pylav.exceptions import InvalidPlaylist
-from pylav.sql.tables import BotVersionRow, LibConfigRow, NodeRow, PlayerRow, PlayerStateRow, PlaylistRow, QueryRow
+from pylav.filters import Equalizer
+from pylav.sql.tables import (
+    BotVersionRow,
+    EqualizerRow,
+    LibConfigRow,
+    NodeRow,
+    PlayerRow,
+    PlayerStateRow,
+    PlaylistRow,
+    QueryRow,
+)
 from pylav.types import BotT, TimedFeatureT
 from pylav.utils import PyLavContext, TimedFeature
 
@@ -962,3 +972,298 @@ class PlayerModel:
     async def fetch_max_volume(self) -> int:
         await self.update_max_volume()
         return self.max_volume
+
+
+@dataclass(eq=True)
+class EqualizerModel:
+    id: int
+    scope: int
+    author: int
+    name: str | None = None
+    description: str | None = None
+    band_25: int = 0.0
+    band_40: int = 0.0
+    band_63: int = 0.0
+    band_100: int = 0.0
+    band_160: int = 0.0
+    band_250: int = 0.0
+    band_400: int = 0.0
+    band_630: int = 0.0
+    band_1000: int = 0.0
+    band_1600: int = 0.0
+    band_2500: int = 0.0
+    band_4000: int = 0.0
+    band_6300: int = 0.0
+    band_10000: int = 0.0
+    band_16000: int = 0.0
+
+    async def save(self) -> EqualizerModel:
+        """
+        Save the Equalizer to the database.
+        """
+        values = {
+            EqualizerRow.scope: self.scope,
+            EqualizerRow.author: self.author,
+            EqualizerRow.name: self.name,
+            EqualizerRow.description: self.description,
+            EqualizerRow.band_25: self.band_25,
+            EqualizerRow.band_40: self.band_40,
+            EqualizerRow.band_63: self.band_63,
+            EqualizerRow.band_100: self.band_100,
+            EqualizerRow.band_160: self.band_160,
+            EqualizerRow.band_250: self.band_250,
+            EqualizerRow.band_400: self.band_400,
+            EqualizerRow.band_630: self.band_630,
+            EqualizerRow.band_1000: self.band_1000,
+            EqualizerRow.band_1600: self.band_1600,
+            EqualizerRow.band_2500: self.band_2500,
+            EqualizerRow.band_4000: self.band_4000,
+            EqualizerRow.band_6300: self.band_6300,
+            EqualizerRow.band_10000: self.band_10000,
+            EqualizerRow.band_16000: self.band_16000,
+        }
+        playlist = (
+            await EqualizerRow.objects()
+            .output(load_json=True)
+            .get_or_create(EqualizerRow.id == self.id, defaults=values)
+        )
+        if not playlist._was_created:
+            await EqualizerRow.update(values).where(EqualizerRow.id == self.id)
+        return EqualizerModel(**playlist.to_dict())
+
+    @classmethod
+    async def get(cls, id: int) -> EqualizerModel | None:
+        """
+        Get an equalizer from the database.
+        """
+        equalizer = await EqualizerRow.select().where(EqualizerRow.id == id)
+        if equalizer:
+            return EqualizerModel(**equalizer.to_dict())
+        return None
+
+    async def delete(self):
+        await EqualizerRow.delete().where(EqualizerRow.id == self.id)
+
+    async def can_manage(self, bot: BotT, requester: discord.abc.User, guild: discord.Guild = None) -> bool:
+        if self.scope in BUNDLED_PLAYLIST_IDS:
+            return False
+        if requester.id in ((ids := getattr(bot, "owner_ids")) or ()) or requester.id == bot.owner_id:  # noqa
+            return True
+        elif self.scope == bot.user.id:
+            return False
+        channel = None
+        if (guild_ := bot.get_guild(self.scope)) or (
+            (guild := guild_ or guild) and (channel := guild.get_channel_or_thread(self.scope))
+        ):
+            if guild_:
+                guild = guild_
+            if guild.owner_id == requester.id:
+                return True
+            if hasattr(bot, "is_mod"):
+                if not isinstance(requester, discord.Member):
+                    requester = guild.get_member(requester.id)
+                    if not requester:
+                        return False
+                return await bot.is_mod(requester)
+            if channel and channel.permissions_for(guild.me).manage_guild:
+                return True
+            return False
+        return self.author == requester.id
+
+    async def get_scope_name(self, bot: BotT, mention: bool = True, guild: discord.Guild = None) -> str:
+        if bot.user.id == self.scope:
+            return f"(Global) {bot.user.mention}" if mention else f"(Global) {bot.user}"
+        elif guild_ := bot.get_guild(self.scope):
+            if guild_:
+                guild = guild_
+            return f"(Server) {guild.name}"
+        elif guild and (channel := guild.get_channel_or_thread(self.scope)):
+            return f"(Channel) {channel.mention}" if mention else f"(Channel) {channel.name}"
+
+        elif (
+            (guild := guild_ or guild)
+            and (guild and (author := guild.get_member(self.scope)))
+            or (author := bot.get_user(self.author))
+        ):
+            return f"(User) {author.mention}" if mention else f"(User) {author}"
+        else:
+            return f"(Invalid) {self.scope}"
+
+    async def get_author_name(self, bot: BotT, mention: bool = True) -> str | None:
+        if user := bot.get_user(self.author):
+            return f"{user.mention}" if mention else f"{user}"
+        return f"{self.author}"
+
+    @asynccontextmanager
+    async def to_yaml(self, guild: discord.Guild) -> Iterator[io.BytesIO]:
+        """
+        Serialize the Equalizer to a YAML file.
+
+        yields a tuple of (io.BytesIO, bool) where the bool is whether the playlist file was compressed using Gzip
+        """
+        data = {
+            "id": self.id,
+            "name": self.name,
+            "author": self.author,
+            "description": self.description,
+            "scope": self.scope,
+            "bands": {
+                "25": self.band_25,
+                "40": self.band_40,
+                "63": self.band_63,
+                "100": self.band_100,
+                "160": self.band_160,
+                "250": self.band_250,
+                "400": self.band_400,
+                "630": self.band_630,
+                "1000": self.band_1000,
+                "1600": self.band_1600,
+                "2500": self.band_2500,
+                "4000": self.band_4000,
+                "6300": self.band_6300,
+                "10000": self.band_10000,
+                "16000": self.band_16000,
+            },
+        }
+
+        with io.BytesIO() as bio:
+            with gzip.GzipFile(fileobj=bio, mode="wb", compresslevel=9) as gfile:
+                yaml.safe_dump(data, gfile, default_flow_style=False, sort_keys=False, encoding="utf-8")
+            bio.seek(0)
+            yield bio
+
+    @classmethod
+    async def from_yaml(cls, context: PyLavContext, scope: int, url: str) -> EqualizerModel:
+        """
+        Deserialize a Equalizer from a YAML file.
+        """
+        try:
+            async with aiohttp.ClientSession(auto_decompress=False) as session:
+                async with session.get(url) as response:
+                    data = await response.read()
+                    data = gzip.decompress(data)
+                    data = yaml.safe_load(data)
+        except Exception as e:
+            raise InvalidPlaylist(f"Invalid equalizer file - {e}") from e
+        return cls(
+            id=context.message.id,
+            scope=scope,
+            name=data["name"],
+            author=data["author"],
+            description=data["description"],
+            band_25=data["bands"]["25"],
+            band_40=data["bands"]["40"],
+            band_63=data["bands"]["63"],
+            band_100=data["bands"]["100"],
+            band_160=data["bands"]["160"],
+            band_250=data["bands"]["250"],
+            band_400=data["bands"]["400"],
+            band_630=data["bands"]["630"],
+            band_1000=data["bands"]["1000"],
+            band_1600=data["bands"]["1600"],
+            band_2500=data["bands"]["2500"],
+            band_4000=data["bands"]["4000"],
+            band_6300=data["bands"]["6300"],
+            band_10000=data["bands"]["10000"],
+            band_16000=data["bands"]["16000"],
+        )
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "name": self.name,
+            "author": self.author,
+            "description": self.description,
+            "scope": self.scope,
+            "bands": {
+                "25": self.band_25,
+                "40": self.band_40,
+                "63": self.band_63,
+                "100": self.band_100,
+                "160": self.band_160,
+                "250": self.band_250,
+                "400": self.band_400,
+                "630": self.band_630,
+                "1000": self.band_1000,
+                "1600": self.band_1600,
+                "2500": self.band_2500,
+                "4000": self.band_4000,
+                "6300": self.band_6300,
+                "10000": self.band_10000,
+                "16000": self.band_16000,
+            },
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> EqualizerModel:
+        return cls(
+            id=data["id"],
+            scope=data["scope"],
+            name=data["name"],
+            author=data["author"],
+            description=data["description"],
+            band_25=data["bands"]["25"],
+            band_40=data["bands"]["40"],
+            band_63=data["bands"]["63"],
+            band_100=data["bands"]["100"],
+            band_160=data["bands"]["160"],
+            band_250=data["bands"]["250"],
+            band_400=data["bands"]["400"],
+            band_630=data["bands"]["630"],
+            band_1000=data["bands"]["1000"],
+            band_1600=data["bands"]["1600"],
+            band_2500=data["bands"]["2500"],
+            band_4000=data["bands"]["4000"],
+            band_6300=data["bands"]["6300"],
+            band_10000=data["bands"]["10000"],
+            band_16000=data["bands"]["16000"],
+        )
+
+    def to_filter(self) -> Equalizer:
+        return Equalizer(
+            name=self.name or "CustomEqualizer",
+            levels=[
+                {"band": 0, "gain": self.band_25},
+                {"band": 1, "gain": self.band_40},
+                {"band": 2, "gain": self.band_63},
+                {"band": 3, "gain": self.band_100},
+                {"band": 4, "gain": self.band_160},
+                {"band": 5, "gain": self.band_250},
+                {"band": 6, "gain": self.band_400},
+                {"band": 7, "gain": self.band_630},
+                {"band": 8, "gain": self.band_1000},
+                {"band": 9, "gain": self.band_1600},
+                {"band": 10, "gain": self.band_2500},
+                {"band": 11, "gain": self.band_4000},
+                {"band": 12, "gain": self.band_6300},
+                {"band": 13, "gain": self.band_10000},
+                {"band": 14, "gain": self.band_16000},
+            ],
+        )
+
+    @classmethod
+    def from_filter(
+        cls, equalizer: Equalizer, context: PyLavContext, scope: int, description: str = None
+    ) -> EqualizerModel:
+        return EqualizerModel(
+            id=context.message.id,
+            scope=scope,
+            name=equalizer.name,
+            author=context.author.id,
+            description=description,
+            band_25=equalizer._eq[0]["gain"],
+            band_40=equalizer._eq[1]["gain"],
+            band_63=equalizer._eq[2]["gain"],
+            band_100=equalizer._eq[3]["gain"],
+            band_160=equalizer._eq[4]["gain"],
+            band_250=equalizer._eq[5]["gain"],
+            band_400=equalizer._eq[6]["gain"],
+            band_630=equalizer._eq[7]["gain"],
+            band_1000=equalizer._eq[8]["gain"],
+            band_1600=equalizer._eq[9]["gain"],
+            band_2500=equalizer._eq[10]["gain"],
+            band_4000=equalizer._eq[11]["gain"],
+            band_6300=equalizer._eq[12]["gain"],
+            band_10000=equalizer._eq[13]["gain"],
+            band_16000=equalizer._eq[14]["gain"],
+        )
