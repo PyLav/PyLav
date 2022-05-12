@@ -28,7 +28,15 @@ from pytz import utc
 from pylav._config import __VERSION__, CONFIG_DIR
 from pylav._logging import getLogger
 from pylav.dispatcher import DispatchManager
-from pylav.envvars import REDIS_DB, REDIS_FULLADDRESS_RESPONSE_CACHE, REDIS_HOST, REDIS_PASSWORD, REDIS_PORT
+from pylav.envvars import (
+    REDIS_DB,
+    REDIS_FULLADDRESS_RESPONSE_CACHE,
+    REDIS_HOST,
+    REDIS_PASSWORD,
+    REDIS_PORT,
+    REDIS_UNIX_SOCKET_PATH,
+    REDIS_USERNAME,
+)
 from pylav.events import Event
 from pylav.exceptions import AnotherClientAlreadyRegistered, NoNodeAvailable, NoNodeWithRequestFunctionalityAvailable
 from pylav.m3u8_parser import M3U8Parser
@@ -109,6 +117,7 @@ class Client(metaclass=_Singleton):
             bot.process_commands = MethodType(_process_commands, bot)
             bot.get_context = MethodType(_get_context, bot)
             _COGS_REGISTERED.add(cog.__cog_name__)
+            config_folder = pathlib.Path(config_folder)
             self._config_folder = aiopath.AsyncPath(config_folder)
             self._bot = bot
             self._user_id = str(bot.user.id)
@@ -157,13 +166,23 @@ class Client(metaclass=_Singleton):
             self._shutting_down = False
             self.enable_managed_node = None
             self._scheduler = AsyncIOScheduler()
+            (config_folder / ".jobs").mkdir(parents=True, exist_ok=True)
             jobstores = {"default": SQLAlchemyJobStore(url=f'sqlite:///{config_folder / ".jobs" / "jobs.db"}')}
-            if REDIS_HOST and REDIS_PORT:
+            if REDIS_UNIX_SOCKET_PATH:
+                args = {"unix_socket_path": REDIS_UNIX_SOCKET_PATH}
                 jobstores["default"] = RedisJobStore(
-                    host=REDIS_HOST,
-                    port=REDIS_PORT,
-                    db=REDIS_DB,
-                    password=REDIS_PASSWORD,
+                    **args,
+                )
+            elif REDIS_HOST and REDIS_PORT:
+                args = {
+                    "host": REDIS_HOST,
+                    "port": REDIS_PORT,
+                    "password": REDIS_PASSWORD,
+                    "username": REDIS_USERNAME,
+                    "db": REDIS_DB,
+                }
+                jobstores["default"] = RedisJobStore(
+                    **args,
                 )
             self._scheduler.configure(jobstores=jobstores, timezone=utc)
         except Exception:
