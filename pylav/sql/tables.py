@@ -1,28 +1,21 @@
 # sourcery skip: avoid-builtin-shadow
 from __future__ import annotations
 
-import getpass
-import os
-
 from piccolo.columns import JSONB, BigInt, Boolean, Float, Integer, Text, Timestamptz
 from piccolo.engine import PostgresEngine
 from piccolo.table import Table
 
-if getpass.getuser() == "draper":  # FIXME: This is a hack im lazy and should be removed before release
-    DATABASE = "py_lav"
-    USER = "draper"
-    PASSWORD = "testing"  # noqa
-    PORT = "5433"
-else:
-    # TODO: Remove this PYLAV__POSTGRES_POST
-    PORT = os.getenv("PYLAV__POSTGRES_PORT", os.getenv("PYLAV__POSTGRES_POST", "5432"))
-    PASSWORD = os.getenv("PYLAV__POSTGRES_PASSWORD", "")
-    USER = os.getenv("PYLAV__POSTGRES_USER", "postgres")
-    DATABASE = os.getenv("PYLAV__POSTGRES_DB", "postgres")
-HOST = os.getenv("PYLAV__POSTGRES_HOST", "localhost")
+from pylav.envvars import POSTGRE_DATABASE, POSTGRE_HOST, POSTGRE_PASSWORD, POSTGRE_PORT, POSTGRE_USER
 
-
-DB = PostgresEngine(config={"host": HOST, "port": int(PORT), "database": DATABASE, "user": USER, "password": PASSWORD})
+DB = PostgresEngine(
+    config={
+        "host": POSTGRE_HOST,
+        "port": int(POSTGRE_PORT),
+        "database": POSTGRE_DATABASE,
+        "user": POSTGRE_USER,
+        "password": POSTGRE_PASSWORD,
+    }
+)
 
 
 class PlaylistRow(Table, db=DB, tablename="playlist"):
