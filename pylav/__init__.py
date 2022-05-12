@@ -1,5 +1,5 @@
-from pylav._logging import getLogger  # noqa isort:skip
-
+from pylav._config import update_event_loop_policy  # isort:skip
+from pylav._logging import getLogger  # isort:skip
 from pylav import converters
 from pylav.client import Client
 from pylav.exceptions import *
@@ -46,4 +46,5 @@ __all__ = (
     "Client",
     "Query",
     "converters",
+    "update_event_loop_policy",
 )

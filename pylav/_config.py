@@ -18,3 +18,17 @@ if _system_user:
 __CONFIG_DIR.mkdir(parents=True, exist_ok=True)
 CONFIG_DIR = aiopath.AsyncPath(__CONFIG_DIR)
 __VERSION__ = "0.1.0"
+
+
+def update_event_loop_policy():
+    if sys.implementation.name == "cpython":
+        # Let's not force this dependency, uvloop is much faster on cpython
+        try:
+            import uvloop
+        except ImportError:
+            pass
+        else:
+            import asyncio
+
+            if not isinstance(asyncio.get_event_loop_policy(), uvloop.EventLoopPolicy):
+                asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
