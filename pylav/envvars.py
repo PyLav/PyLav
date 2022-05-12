@@ -11,23 +11,6 @@ POSTGRE_HOST = os.getenv("PYLAV__POSTGRES_HOST", "localhost")
 
 
 try:
-    from redis import Redis  # noqa
-
-    REDIS_HOST = os.getenv("PYLAV__REDIS_HOST")
-    REDIS_PORT = os.getenv("PYLAV__REDIS_PORT")
-    REDIS_USERNAME = os.getenv("PYLAV__REDIS_USERNAME")
-    REDIS_DB = os.getenv("PYLAV__REDIS_DB", "0")
-    REDIS_PASSWORD = os.getenv("PYLAV__REDIS_PASSWORD", "")
-    REDIS_UNIX_SOCKET_PATH = os.getenv("PYLAV__REDIS_UNIX_SOCKET_PATH")
-except ImportError:
-    REDIS_HOST = None
-    REDIS_PORT = None
-    REDIS_USERNAME = None
-    REDIS_DB = None
-    REDIS_PASSWORD = None
-    REDIS_UNIX_SOCKET_PATH = None
-
-try:
     from aioredis import Redis  # noqa
 
     # This is used specifically for the response cache for  the cached AIOHTTPClient

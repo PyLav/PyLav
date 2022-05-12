@@ -15,8 +15,6 @@ import aiohttp_client_cache
 import aiopath
 import discord
 import ujson
-from apscheduler.jobstores.redis import RedisJobStore
-from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from asyncspotify import Client as SpotifyClient
 from asyncspotify import ClientCredentialsFlow
@@ -28,15 +26,7 @@ from pytz import utc
 from pylav._config import __VERSION__, CONFIG_DIR
 from pylav._logging import getLogger
 from pylav.dispatcher import DispatchManager
-from pylav.envvars import (
-    REDIS_DB,
-    REDIS_FULLADDRESS_RESPONSE_CACHE,
-    REDIS_HOST,
-    REDIS_PASSWORD,
-    REDIS_PORT,
-    REDIS_UNIX_SOCKET_PATH,
-    REDIS_USERNAME,
-)
+from pylav.envvars import REDIS_FULLADDRESS_RESPONSE_CACHE
 from pylav.events import Event
 from pylav.exceptions import AnotherClientAlreadyRegistered, NoNodeAvailable, NoNodeWithRequestFunctionalityAvailable
 from pylav.m3u8_parser import M3U8Parser
@@ -118,6 +108,7 @@ class Client(metaclass=_Singleton):
             bot.get_context = MethodType(_get_context, bot)
             _COGS_REGISTERED.add(cog.__cog_name__)
             config_folder = pathlib.Path(config_folder)
+            (config_folder / ".data").mkdir(exist_ok=True, parents=True)
             self._config_folder = aiopath.AsyncPath(config_folder)
             self._bot = bot
             self._user_id = str(bot.user.id)
@@ -133,7 +124,7 @@ class Client(metaclass=_Singleton):
                 )
             else:
                 self._aiohttp_client_cache = aiohttp_client_cache.SQLiteBackend(
-                    cache_name=str(config_folder / ".cache" / "aiohttp-requests.db"),
+                    cache_name=str(config_folder / ".data" / "aiohttp-requests-cache.db"),
                     cache_control=True,
                     allowed_codes=(200,),
                     allowed_methods=("GET",),
@@ -166,25 +157,7 @@ class Client(metaclass=_Singleton):
             self._shutting_down = False
             self.enable_managed_node = None
             self._scheduler = AsyncIOScheduler()
-            (config_folder / ".jobs").mkdir(parents=True, exist_ok=True)
-            jobstores = {"default": SQLAlchemyJobStore(url=f'sqlite:///{config_folder / ".jobs" / "jobs.db"}')}
-            if REDIS_UNIX_SOCKET_PATH:
-                args = {"unix_socket_path": REDIS_UNIX_SOCKET_PATH}
-                jobstores["default"] = RedisJobStore(
-                    **args,
-                )
-            elif REDIS_HOST and REDIS_PORT:
-                args = {
-                    "host": REDIS_HOST,
-                    "port": REDIS_PORT,
-                    "password": REDIS_PASSWORD,
-                    "username": REDIS_USERNAME,
-                    "db": REDIS_DB,
-                }
-                jobstores["default"] = RedisJobStore(
-                    **args,
-                )
-            self._scheduler.configure(jobstores=jobstores, timezone=utc)
+            self._scheduler.configure(timezone=utc)
         except Exception:
             LOGGER.exception("Failed to initialize Lavalink")
             raise
