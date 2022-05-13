@@ -3,8 +3,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, AsyncIterator
 
 from pylav._logging import getLogger
+from pylav.sql import tables
 from pylav.sql.models import PlayerStateModel
-from pylav.sql.tables import PlayerStateRow
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -34,10 +34,10 @@ class PlayerStateDBManager:
         return await PlayerStateModel.get(bot_id=self._client.bot.user.id, guild_id=guild_id)
 
     async def get_all_players(self) -> AsyncIterator[PlayerStateModel]:
-        for entry in await PlayerStateRow.select().where(PlayerStateRow.bot == self.client.bot.user.id):  # type: ignore
+        for entry in await tables.PlayerStateRow.select().where(tables.PlayerStateRow.bot == self.client.bot.user.id):  # type: ignore
             yield PlayerStateModel(**entry)
 
     async def delete_player(self, guild_id: int):
-        await PlayerStateRow.delete().where(
-            (PlayerStateRow.bot == self.client.bot.user.id) & (PlayerStateRow.id == guild_id)
+        await tables.PlayerStateRow.delete().where(
+            (tables.PlayerStateRow.bot == self.client.bot.user.id) & (tables.PlayerStateRow.id == guild_id)
         )

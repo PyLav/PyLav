@@ -4,8 +4,8 @@ from typing import TYPE_CHECKING
 
 from pylav._logging import getLogger
 from pylav.exceptions import EntryNotFoundError
+from pylav.sql import tables
 from pylav.sql.models import NodeModel
-from pylav.sql.tables import NodeRow
 from pylav.utils.built_in_node import NODE_DEFAULT_SETTINGS
 
 if TYPE_CHECKING:
@@ -30,7 +30,7 @@ class NodeConfigManager:
         return await self.get_bundled_node_config()
 
     async def get_node_config(self, node_id: int) -> NodeModel:
-        node = await NodeRow.select().output(load_json=True).where(NodeRow.id == node_id).first()
+        node = await tables.NodeRow.select().output(load_json=True).where(tables.NodeRow.id == node_id).first()
         if not node:
             raise EntryNotFoundError(f"Node with id {node_id} not found")
         model = NodeModel(**node)
@@ -40,7 +40,9 @@ class NodeConfigManager:
     async def get_all_unamanaged_nodes(self) -> list[NodeModel]:
         model_list = [
             NodeModel(**node.to_dict())
-            for node in await NodeRow.objects().output(load_json=True).where(NodeRow.managed == False)  # noqa: E712
+            for node in await tables.NodeRow.objects()
+            .output(load_json=True)
+            .where(tables.NodeRow.managed == False)  # noqa: E712
         ]
         for n in model_list:
             self.currently_in_db.add(n.id)
@@ -50,7 +52,7 @@ class NodeConfigManager:
     async def get_all_nodes(self) -> list[NodeModel]:
         model_list = [
             NodeModel(**node.to_dict())
-            for node in await NodeRow.objects().output(load_json=True).where(NodeRow.managed == False)
+            for node in await tables.NodeRow.objects().output(load_json=True).where(tables.NodeRow.managed == False)
         ]
         for n in model_list:
             self.currently_in_db.add(n.id)
@@ -59,20 +61,20 @@ class NodeConfigManager:
 
     async def get_bundled_node_config(self) -> NodeModel:
         node = (
-            await NodeRow.objects()
+            await tables.NodeRow.objects()
             .output(load_json=True)
             .get_or_create(
-                (NodeRow.id == self._client.bot.user.id) & (NodeRow.managed == True),  # noqa: E712
+                (tables.NodeRow.id == self._client.bot.user.id) & (tables.NodeRow.managed == True),  # noqa: E712
                 defaults={
-                    NodeRow.ssl: False,
-                    NodeRow.reconnect_attempts: -1,
-                    NodeRow.search_only: False,
-                    NodeRow.yaml: NODE_DEFAULT_SETTINGS,
-                    NodeRow.name: "PyLavManagedNode",
-                    NodeRow.managed: True,
-                    NodeRow.resume_key: None,
-                    NodeRow.resume_timeout: 600,
-                    NodeRow.extras: {
+                    tables.NodeRow.ssl: False,
+                    tables.NodeRow.reconnect_attempts: -1,
+                    tables.NodeRow.search_only: False,
+                    tables.NodeRow.yaml: NODE_DEFAULT_SETTINGS,
+                    tables.NodeRow.name: "PyLavManagedNode",
+                    tables.NodeRow.managed: True,
+                    tables.NodeRow.resume_key: None,
+                    tables.NodeRow.resume_timeout: 600,
+                    tables.NodeRow.extras: {
                         "max_ram": "2048M",
                     },
                 },
@@ -163,5 +165,7 @@ class NodeConfigManager:
     async def delete(self, node_id: int) -> None:
         if node_id == self._client.bot.user.id:
             raise ValueError("Cannot delete bundled node")
-        await NodeRow.delete().where((NodeRow.id == node_id) & (NodeRow.managed != True))  # noqa: E712
+        await tables.NodeRow.delete().where(
+            (tables.NodeRow.id == node_id) & (tables.NodeRow.managed != True)
+        )  # noqa: E712
         self.currently_in_db.discard(node_id)

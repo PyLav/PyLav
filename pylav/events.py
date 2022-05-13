@@ -510,16 +510,30 @@ class WebSocketClosedEvent(Event):
         The node the player was moved to.
     by_remote: :class:`bool`
         If the websocket was closed remotely.
+    channel: :class:`discord.channel.VocalGuildChannel`
+        The voice channel the player was in.
+    node: :class:`Node`
+        The node the player was in.
+
     """
 
-    __slots__ = ("player", "code", "reason", "by_remote", "node")
+    __slots__ = ("player", "code", "reason", "by_remote", "node", "channel")
 
-    def __init__(self, player: Player, code: int, reason: str, by_remote: bool, node: Node):
+    def __init__(
+        self,
+        player: Player,
+        code: int,
+        reason: str,
+        by_remote: bool,
+        node: Node,
+        channel: discord.channel.VocalGuildChannel,
+    ):
         self.player = player
         self.code = code
         self.reason = reason
         self.by_remote = by_remote
         self.node = node
+        self.channel = channel
 
 
 class SegmentSkippedEvent(Event):
@@ -792,7 +806,11 @@ class PlayerMovedEvent(Event):
     __slots__ = ("player", "requester", "before", "after")
 
     def __init__(
-        self, player: Player, requester: discord.Member, before: discord.VoiceChannel, after: discord.VoiceChannel
+        self,
+        player: Player,
+        requester: discord.Member,
+        before: discord.channel.VocalGuildChannel,
+        after: discord.channel.VocalGuildChannel,
     ):
         self.player = player
         self.requester = requester

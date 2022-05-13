@@ -22,7 +22,8 @@ Documentation
       - REDIS_FULLADDRESS_RESPONSE_CACHE
         - e.g. redis://[[username]:[password]]@localhost:6379/0
         - e.g. unix://[[username]:[password]]@/path/to/socket.sock?db=0
-
+- Optional Env vars
+  - PYLAV__LOGGER_PREFIX - Sets the logger prefix, defaults to None, or "red." if [redbot](https://github.com/Cog-Creators/Red-DiscordBot) is installed.
 
 - [Discord.py](https://github.com/Rapptz/discord.py) 2.0.0+ bot
 

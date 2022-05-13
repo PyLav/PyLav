@@ -3,8 +3,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from pylav._logging import getLogger
+from pylav.sql import tables
 from pylav.sql.models import PlayerModel
-from pylav.sql.tables import PlayerRow
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -27,7 +27,9 @@ class PlayerConfigManager:
         return await PlayerModel(bot=self._client.bot.user.id, id=guild_id).get_or_create()
 
     async def reset_to_default(self, guild_id: int):
-        await PlayerRow.delete().where((PlayerRow.bot == self.client.bot.user.id) & (PlayerRow.id == guild_id))
+        await tables.PlayerRow.delete().where(
+            (tables.PlayerRow.bot == self.client.bot.user.id) & (tables.PlayerRow.id == guild_id)
+        )
 
     async def get_shuffle(self, guild_id: int) -> bool:
         if (await self.get_global_config()).shuffle is False:

@@ -6,6 +6,7 @@ import contextlib
 import datetime
 import itertools
 import random
+import re
 import time
 from typing import TYPE_CHECKING, Any, Coroutine, Literal
 
@@ -58,6 +59,8 @@ if TYPE_CHECKING:
 
 LOGGER = getLogger("PyLav.Player")
 
+ENDPONT_REGEX = re.compile(r"^(?P<region>.*)\d+.discord.media:\d+$")
+
 
 class Player(VoiceProtocol):
     _config: PlayerModel
@@ -67,7 +70,7 @@ class Player(VoiceProtocol):
     def __init__(
         self,
         client: BotT,
-        channel: discord.VoiceChannel,
+        channel: discord.channel.VocalGuildChannel,
         *,
         node: Node = None,
     ):
@@ -188,12 +191,12 @@ class Player(VoiceProtocol):
             await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
 
     @property
-    def channel(self) -> discord.VoiceChannel:
+    def channel(self) -> discord.channel.VocalGuildChannel:
         return self._channel
 
     @channel.setter
-    def channel(self, value: discord.VoiceChannel):
-        if isinstance(value, discord.VoiceChannel):
+    def channel(self, value: discord.channel.VocalGuildChannel) -> None:
+        if isinstance(value, (discord.VoiceChannel, discord.StageChannel)):
             self._channel = value
             self.region = value.rtc_region
 
@@ -210,29 +213,29 @@ class Player(VoiceProtocol):
         return self.lavalink.radio_browser
 
     @property
-    def text_channel(self) -> discord.abc.Messageable:
+    def text_channel(self) -> discord.abc.MessageableChannel:
         return self._text_channel
 
     @text_channel.setter
-    def text_channel(self, value: discord.abc.Messageable):
+    def text_channel(self, value: discord.abc.MessageableChannel):
         self._text_channel = value
         self.config.text_channel_id = value.id if value else None
 
     @property
-    def notify_channel(self) -> discord.abc.Messageable:
+    def notify_channel(self) -> discord.abc.MessageableChannel:
         return self._notify_channel
 
     @notify_channel.setter
-    def notify_channel(self, value: discord.abc.Messageable):
+    def notify_channel(self, value: discord.abc.MessageableChannel):
         self._notify_channel = value
         self.config.notify_channel_id = value.id if value else None
 
     @property
-    def forced_vc(self) -> discord.abc.Messageable:
+    def forced_vc(self) -> discord.abc.MessageableChannel:
         return self._forced_vc
 
     @forced_vc.setter
-    def forced_vc(self, value: discord.abc.Messageable):
+    def forced_vc(self, value: discord.abc.MessageableChannel):
         self._forced_vc = value
         self.config.forced_channel_id = value.id if value else None
 
@@ -421,18 +424,18 @@ class Player(VoiceProtocol):
 
     async def on_voice_server_update(self, data: dict) -> None:
         self._voice_state.update({"event": data})
-
-        await self._dispatch_voice_update()
+        if "endpoint" in data:
+            if match := ENDPONT_REGEX.match(data["endpoint"]):
+                match.group("region").replace("-", "_")
+            await self._dispatch_voice_update()
 
     async def on_voice_state_update(self, data: dict) -> None:
         self._voice_state.update({"sessionId": data["session_id"]})
-
         self.channel_id = data["channel_id"]
-
         if not self.channel_id:  # We're disconnecting
             self._voice_state.clear()
             return
-
+        self.channel = self.guild.get_channel(int(self.channel_id))
         await self._dispatch_voice_update()
 
     async def _dispatch_voice_update(self) -> None:
@@ -974,15 +977,15 @@ class Player(VoiceProtocol):
     async def move_to(
         self,
         requester: discord.Member,
-        channel: discord.VoiceChannel,
+        channel: discord.channel.VocalGuildChannel,
         self_mute: bool = False,
         self_deaf: bool = True,
-    ) -> discord.VoiceChannel | None:
+    ) -> discord.channel.VocalGuildChannel | None:
         """|coro|
         Moves the player to a different voice channel.
         Parameters
         -----------
-        channel: :class:`discord.VoiceChannel`
+        channel: :class:`discord.channel.VocalGuildChannel`
             The channel to move to. Must be a voice channel.
         self_mute: :class:`bool`
             Indicates if the player should be self-muted on move.
@@ -1608,7 +1611,6 @@ class Player(VoiceProtocol):
         # sourcery no-metrics
         if self._restored is True:
             return
-        # FIXME: Add an event to ensure that the player is restored in the correct state ?
         current = (
             Track(
                 node=self.node,

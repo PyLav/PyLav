@@ -287,7 +287,6 @@ class LocalNodeManager:
         LOGGER.info("Managed Lavalink node startup command: %s", command_string)
         if "-Xmx" not in command_string and msg is None:
             LOGGER.warning("Managed Lavalink node maximum allowed RAM not set or higher than available RAM")
-            # FIXME: Add instruction for user to set max RAM
         try:
             self._proc = await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
                 *args,
@@ -333,13 +332,8 @@ class LocalNodeManager:
 
     async def _get_jar_args(self) -> tuple[list[str], str | None]:
         (java_available, java_version) = await self._has_java()
-
         if not java_available:
-            if self._java_version is None:
-                extras = ""
-            else:
-                extras = f" however you have version {self._java_version} (executable: {self._java_exc})"
-            raise UnsupportedJavaError()  # FIXME: Add API endpoint to change this
+            raise Exception("Pylav - Java executable not found.")
         java_xms, java_xmx = "64M", self._full_data.extras.get("max_ram", "2048M") if self._full_data else "2048M"
         match = re.match(r"^(\d+)([MG])$", java_xmx, flags=re.IGNORECASE)
         command_args = [
@@ -355,7 +349,6 @@ class LocalNodeManager:
         ):
             command_args.append(f"-Xmx{java_xmx}")
         elif meta[0] is not None:
-            # FIXME: Add API endpoint to change this
             invalid = "Managed Lavalink node RAM allocation ignored due to system limitations, please fix this."
 
         command_args.extend(["-jar", str(LAVALINK_JAR_FILE)])

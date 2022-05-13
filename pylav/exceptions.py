@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import aiohttp
+from discord.ext.commands import CommandError
 
 __all__ = (
     "PyLavError",
@@ -36,9 +37,8 @@ __all__ = (
     "InvalidPlaylist",
     "ManagedLinkStartAbortedUseExternal",
     "AbortPlayerRestoreDueUnavailableNode",
+    "NoNodeWithRequestFunctionalityAvailable",
 )
-
-from discord.ext.commands import CommandError
 
 
 class PyLavError(CommandError):

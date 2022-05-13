@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING
 
 from pylav._logging import getLogger
 from pylav.exceptions import EntryNotFoundError
+from pylav.sql import tables
 from pylav.sql.models import QueryModel
-from pylav.sql.tables import QueryRow
 from pylav.utils import AsyncIter
 
 if TYPE_CHECKING:
@@ -30,12 +30,12 @@ class QueryCacheManager:
             # Do not cache local queries and single track urls or http source entries
             return None
         query = (
-            await QueryRow.select()
+            await tables.QueryRow.select()
             .output(as_json=True)
             .where(
-                (QueryRow.identifier == query.query_identifier)
+                (tables.QueryRow.identifier == query.query_identifier)
                 & (
-                    QueryRow.last_updated
+                    tables.QueryRow.last_updated
                     > datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=30)
                 )
             )
@@ -66,27 +66,29 @@ class QueryCacheManager:
     @staticmethod
     async def delete_old() -> None:
         LOGGER.trace("Deleting old queries")
-        await QueryRow.delete().where(
-            QueryRow.last_updated <= (datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=30))
+        await tables.QueryRow.delete().where(
+            tables.QueryRow.last_updated
+            <= (datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=30))
         )
         LOGGER.trace("Deleted old queries")
 
     @staticmethod
     async def wipe() -> None:
         LOGGER.trace("Wiping query cache")
-        await QueryRow.delete(force=True)
+        await tables.QueryRow.delete(force=True)
         LOGGER.trace("Wiped query cache")
 
     @staticmethod
     async def delete_older_than(days: int) -> None:
-        await QueryRow.delete().where(
-            QueryRow.last_updated <= (datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=days))
+        await tables.QueryRow.delete().where(
+            tables.QueryRow.last_updated
+            <= (datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=days))
         )
 
     @staticmethod
     async def delete_query(query: Query) -> None:
-        await QueryRow.delete().where(QueryRow.identifier == query.query_identifier)
+        await tables.QueryRow.delete().where(tables.QueryRow.identifier == query.query_identifier)
 
     @staticmethod
     async def size() -> int:
-        return await QueryRow.count()
+        return await tables.QueryRow.count()

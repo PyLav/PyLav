@@ -162,7 +162,7 @@ class PlayerManager:
 
     async def create(
         self,
-        channel: discord.VoiceChannel,
+        channel: discord.channel.VocalGuildChannel,
         endpoint: str = None,
         node: Node = None,
         self_deaf: bool = True,
@@ -179,7 +179,7 @@ class PlayerManager:
         Region can be omitted if node is specified and vice-versa.
         Parameters
         ----------
-        channel: :class:`discord.VoiceChannel`
+        channel: :class:`discord.channel.VocalGuildChannel`
             The voice channel to connect to.
         endpoint: :class:`str`
             The address of the Discord voice server. Defaults to `None`.

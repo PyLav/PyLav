@@ -8,17 +8,8 @@ from piccolo.table import create_tables
 
 from pylav._config import CONFIG_DIR
 from pylav._logging import getLogger
+from pylav.sql import tables
 from pylav.sql.models import BotVersion, LibConfigModel
-from pylav.sql.tables import (
-    BotVersionRow,
-    EqualizerRow,
-    LibConfigRow,
-    NodeRow,
-    PlayerRow,
-    PlayerStateRow,
-    PlaylistRow,
-    QueryRow,
-)
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -28,8 +19,6 @@ LOGGER = getLogger("PyLav.LibConfigManager")
 
 class LibConfigManager:
     def __init__(self, client: Client):
-        __database_folder: aiopath.AsyncPath = CONFIG_DIR
-        __default_db_name: aiopath.AsyncPath = __database_folder / "config.db"
         self._client = client
         self._config_folder = CONFIG_DIR
 
@@ -44,14 +33,15 @@ class LibConfigManager:
     async def create_tables() -> None:
         await asyncio.to_thread(
             create_tables,
-            PlaylistRow,
-            LibConfigRow,
-            PlayerStateRow,
-            NodeRow,
-            QueryRow,
-            BotVersionRow,
-            PlayerRow,
-            EqualizerRow,
+            tables.PlaylistRow,
+            tables.LibConfigRow,
+            tables.PlayerStateRow,
+            tables.NodeRow,
+            tables.QueryRow,
+            tables.BotVersionRow,
+            tables.PlayerRow,
+            tables.EqualizerRow,
+            tables.AioHttpCacheRow,
             if_not_exists=True,
         )
 

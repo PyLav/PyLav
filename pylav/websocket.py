@@ -384,13 +384,15 @@ class WebSocket:
                 await player._handle_event(event)
         elif event_type == "TrackStartEvent":
             track = player.current
-            event = TrackStartEvent(player, track, self.node)  # FIXME: Check if this is correct
-            self._process_track_event(player, track, self.node)
+            event = TrackStartEvent(player, track, self.node)
+            await self._process_track_event(player, track, self.node)
         elif event_type == "TrackStuckEvent":
             event = TrackStuckEvent(player, player.current, data["thresholdMs"], self.node)
             await player._handle_event(event)
         elif event_type == "WebSocketClosedEvent":
-            event = WebSocketClosedEvent(player, data["code"], data["reason"], data["byRemote"], self.node)
+            event = WebSocketClosedEvent(
+                player, data["code"], data["reason"], data["byRemote"], self.node, player.channel
+            )
         elif event_type == "SegmentsLoaded":
             event = SegmentsLoadedEvent(player, data["segments"], self.node)
         elif event_type == "SegmentSkipped":
@@ -421,48 +423,49 @@ class WebSocket:
             LOGGER.debug("[NODE-%s] Send called before WebSocket ready!", self.node.name)
             self._message_queue.append(data)
 
-    def _process_track_event(self, player: Player, track: Track, node: Node) -> None:
-        if track.is_youtube_music:
+    async def _process_track_event(self, player: Player, track: Track, node: Node) -> None:
+        # sourcery no-metrics
+        if await track.is_youtube_music():
             event = TrackStartYouTubeMusicEvent(player, track, node)
-        elif track.is_spotify:
+        elif await track.is_spotify():
             event = TrackStartSpotifyEvent(player, track, node)
-        elif track.is_apple_music:
+        elif await track.is_apple_music():
             event = TrackStartAppleMusicEvent(player, track, node)
-        elif track.is_local:
+        elif await track.is_local():
             event = TrackStartLocalFileEvent(player, track, node)
-        elif track.is_http:
+        elif await track.is_http():
             event = TrackStartHTTPEvent(player, track, node)
-        elif track.is_speak:
+        elif await track.is_speak():
             event = TrackStartSpeakEvent(player, track, node)
-        elif track.is_youtube:
+        elif await track.is_youtube():
             event = TrackStartYouTubeEvent(player, track, node)
-        elif track.is_clypit:
+        elif await track.is_clypit():
             event = TrackStartClypitEvent(player, track, node)
-        elif track.is_getyarn:
+        elif await track.is_getyarn():
             event = TrackStartGetYarnEvent(player, track, node)
-        elif track.is_twitch:
+        elif await track.is_twitch():
             event = TrackStartTwitchEvent(player, track, node)
-        elif track.is_vimeo:
+        elif await track.is_vimeo():
             event = TrackStartVimeoEvent(player, track, node)
-        elif track.is_mixcloud:
+        elif await track.is_mixcloud():
             event = TrackStartMixCloudEvent(player, track, node)
-        elif track.is_ocremix:
+        elif await track.is_ocremix():
             event = TrackStartOCRMixEvent(player, track, node)
-        elif track.is_pornhub:
+        elif await track.is_pornhub():
             event = TrackStartPornHubEvent(player, track, node)
-        elif track.is_reddit:
+        elif await track.is_reddit():
             event = TrackStartRedditEvent(player, track, node)
-        elif track.is_soundgasm:
+        elif await track.is_soundgasm():
             event = TrackStartSoundgasmEvent(player, track, node)
-        elif track.is_tiktok:
+        elif await track.is_tiktok():
             event = TrackStartTikTokEvent(player, track, node)
-        elif track.is_bandcamp:
+        elif await track.is_bandcamp():
             event = TrackStartBandcampEvent(player, track, node)
-        elif track.is_soundcloud:
+        elif await track.is_soundcloud():
             event = TrackStartSoundCloudEvent(player, track, node)
-        elif track.is_gctts:
+        elif await track.is_gctts():
             event = TrackStartGCTTSEvent(player, track, node)
-        elif track.is_niconico:
+        elif await track.is_niconico():
             event = TrackStartNicoNicoEvent(player, track, node)
         else:  # This should never happen
             event = TrackStartEvent(player, track, node)

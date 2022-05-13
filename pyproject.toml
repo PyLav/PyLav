@@ -1,9 +1,10 @@
 [tool.autopep8]
 max_line_length = 120
-ignore = "E203,E501,W503"
+ignore = "E203,E501,W503,E402"
 in-place = true
 recursive = true
 aggressive = 3
+exclude = "pylav/_city_dump.py"
 
 [tool.black]
 line-length = 120

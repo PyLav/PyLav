@@ -7,8 +7,8 @@ import discord
 
 from pylav._logging import getLogger
 from pylav.exceptions import EntryNotFoundError
+from pylav.sql import tables
 from pylav.sql.models import PlaylistModel
-from pylav.sql.tables import PlaylistRow
 from pylav.types import BotT
 from pylav.utils import AsyncIter
 
@@ -29,10 +29,14 @@ class PlaylistConfigManager:
     @staticmethod
     async def get_playlist_by_name(playlist_name: str, limit: int = None) -> list[PlaylistModel]:
         if limit is None:
-            playlists = await PlaylistRow.select().where(PlaylistRow.name.ilike(f"%{playlist_name.lower()}%"))
+            playlists = await tables.PlaylistRow.select().where(
+                tables.PlaylistRow.name.ilike(f"%{playlist_name.lower()}%")
+            )
         else:
             playlists = (
-                await PlaylistRow.select().where(PlaylistRow.name.ilike(f"%{playlist_name.lower()}%")).limit(limit)
+                await tables.PlaylistRow.select()
+                .where(tables.PlaylistRow.name.ilike(f"%{playlist_name.lower()}%"))
+                .limit(limit)
             )
 
         if not playlists:
@@ -45,7 +49,7 @@ class PlaylistConfigManager:
             playlist_id = int(playlist_id)
         except ValueError as e:
             raise EntryNotFoundError(f"Playlist with id {playlist_id} not found") from e
-        playlist = await PlaylistRow.select().where(PlaylistRow.id == playlist_id).limit(1).first()
+        playlist = await tables.PlaylistRow.select().where(tables.PlaylistRow.id == playlist_id).limit(1).first()
         if not playlist:
             raise EntryNotFoundError(f"Playlist with ID {playlist_id} not found")
         return PlaylistModel(**playlist)
@@ -60,21 +64,21 @@ class PlaylistConfigManager:
 
     @staticmethod
     async def get_playlists_by_author(author: int) -> list[PlaylistModel]:
-        playlists = await PlaylistRow.select().where(PlaylistRow.author == author)
+        playlists = await tables.PlaylistRow.select().where(tables.PlaylistRow.author == author)
         if not playlists:
             raise EntryNotFoundError(f"Playlist with author {author} not found")
         return [PlaylistModel(**playlist) for playlist in playlists]
 
     @staticmethod
     async def get_playlists_by_scope(scope: int) -> list[PlaylistModel]:
-        playlists = await PlaylistRow.select().where(PlaylistRow.scope == scope)
+        playlists = await tables.PlaylistRow.select().where(tables.PlaylistRow.scope == scope)
         if not playlists:
             raise EntryNotFoundError(f"Playlist with scope {scope} not found")
         return [PlaylistModel(**playlist) for playlist in playlists]
 
     @staticmethod
     async def get_all_playlists() -> AsyncIterator[PlaylistModel]:
-        for entry in await PlaylistRow.select():
+        for entry in await tables.PlaylistRow.select():
             yield PlaylistModel(**entry)
 
     @staticmethod
@@ -82,40 +86,44 @@ class PlaylistConfigManager:
         id: int, scope: int, author: int, name: str, url: str | None = None, tracks: list[str] = None
     ) -> PlaylistModel:
         values = {
-            PlaylistRow.scope: scope,
-            PlaylistRow.author: author,
-            PlaylistRow.name: name,
-            PlaylistRow.url: url,
-            PlaylistRow.tracks: tracks or [],
+            tables.PlaylistRow.scope: scope,
+            tables.PlaylistRow.author: author,
+            tables.PlaylistRow.name: name,
+            tables.PlaylistRow.url: url,
+            tables.PlaylistRow.tracks: tracks or [],
         }
         playlist = (
-            await PlaylistRow.objects().output(load_json=True).get_or_create(PlaylistRow.id == id, defaults=values)
+            await tables.PlaylistRow.objects()
+            .output(load_json=True)
+            .get_or_create(tables.PlaylistRow.id == id, defaults=values)
         )
         if not playlist._was_created:
-            await PlaylistRow.update(values).where(PlaylistRow.id == id)
+            await tables.PlaylistRow.update(values).where(tables.PlaylistRow.id == id)
         return PlaylistModel(**playlist.to_dict())
 
     @staticmethod
     async def delete_playlist(playlist_id: int) -> None:
-        await PlaylistRow.delete().where(PlaylistRow.id == playlist_id)
+        await tables.PlaylistRow.delete().where(tables.PlaylistRow.id == playlist_id)
 
     @staticmethod
     async def get_all_playlists_by_author(author: int) -> AsyncIterator[PlaylistModel]:
-        for entry in await PlaylistRow.select().where(PlaylistRow.author == author):
+        for entry in await tables.PlaylistRow.select().where(tables.PlaylistRow.author == author):
             yield PlaylistModel(**entry)
 
     @staticmethod
     async def get_all_playlists_by_scope(scope: int) -> AsyncIterator[PlaylistModel]:
-        for entry in await PlaylistRow.select().where(PlaylistRow.scope == scope):
+        for entry in await tables.PlaylistRow.select().where(tables.PlaylistRow.scope == scope):
             yield PlaylistModel(**entry)
 
     @staticmethod
     async def get_all_playlists_by_scope_and_author(scope: int, author: int) -> AsyncIterator[PlaylistModel]:
-        for entry in await PlaylistRow.select().where(PlaylistRow.scope == scope, PlaylistRow.author == author):
+        for entry in await tables.PlaylistRow.select().where(
+            tables.PlaylistRow.scope == scope, tables.PlaylistRow.author == author
+        ):
             yield PlaylistModel(**entry)
 
     async def get_global_playlists(self) -> AsyncIterator[PlaylistModel]:
-        for entry in await PlaylistRow.select().where(PlaylistRow.scope == self._client.bot.user.id):  # type: ignore
+        for entry in await tables.PlaylistRow.select().where(tables.PlaylistRow.scope == self._client.bot.user.id):  # type: ignore
             yield PlaylistModel(**entry)
 
     async def create_or_update_global_playlist(
@@ -133,7 +141,12 @@ class PlaylistConfigManager:
         )
 
     async def create_or_update_channel_playlist(
-        self, channel: discord.TextChannel, author: int, name: str, url: str | None = None, tracks: list[str] = None
+        self,
+        channel: discord.abc.MessageableChannel,
+        author: int,
+        name: str,
+        url: str | None = None,
+        tracks: list[str] = None,
     ) -> PlaylistModel:
         return await self.create_or_update_playlist(
             id=channel.id, scope=channel.id, author=author, name=name, url=url, tracks=tracks
@@ -147,7 +160,12 @@ class PlaylistConfigManager:
         )
 
     async def create_or_update_vc_playlist(
-        self, vc: discord.VoiceChannel, author: int, name: str, url: str | None = None, tracks: list[str] = None
+        self,
+        vc: discord.channel.VocalGuildChannel,
+        author: int,
+        name: str,
+        url: str | None = None,
+        tracks: list[str] = None,
     ) -> PlaylistModel:
         return await self.create_or_update_playlist(
             id=vc.id, scope=vc.id, author=author, name=name, url=url, tracks=tracks
@@ -158,9 +176,9 @@ class PlaylistConfigManager:
         requester: int,
         empty: bool = False,
         *,
-        vc: discord.VoiceChannel | discord.StageChannel = None,
+        vc: discord.channel.VocalGuildChannel = None,
         guild: discord.Guild = None,
-        channel: discord.TextChannel | discord.ForumChannel = None,
+        channel: discord.abc.MessageableChannel = None,
     ) -> tuple[list[PlaylistModel], list[PlaylistModel], list[PlaylistModel], list[PlaylistModel], list[PlaylistModel]]:
         """
         Gets all playlists a user has access to in a given context.

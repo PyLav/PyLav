@@ -37,6 +37,7 @@ from pylav.player import Player
 from pylav.player_manager import PlayerManager
 from pylav.query import MAX_RECURSION_DEPTH, Query
 from pylav.radio import RadioBrowser
+from pylav.sql.aiohttp_postgres_cache import PostgresCacheBackend
 from pylav.sql.clients.equalizer_manager import EqualizerConfigManager
 from pylav.sql.clients.lib import LibConfigManager
 from pylav.sql.clients.nodes_db_manager import NodeConfigManager
@@ -50,11 +51,6 @@ from pylav.types import BotT, CogT, ContextT, InteractionT, LavalinkResponseT
 from pylav.utils import PyLavContext, SingletonMethods, _get_context, _process_commands, _Singleton, add_property
 
 LOGGER = getLogger("PyLav.Client")
-
-_COGS_REGISTERED = set()
-
-_OLD_PROCESS_COMMAND_METHOD: Callable = None  # type: ignore
-_OLD_GET_CONTEXT: Callable = None  # type: ignore
 
 
 class Client(metaclass=_Singleton):
@@ -86,6 +82,9 @@ class Client(metaclass=_Singleton):
     _local_node_manager: LocalNodeManager
 
     _asyncio_lock = asyncio.Lock()
+    __cogs_registered = set()
+    __old_process_command_method: Callable = None  # type: ignore
+    __old_get_context: Callable = None  # type: ignore
     _initiated = False
 
     def __init__(
@@ -97,16 +96,15 @@ class Client(metaclass=_Singleton):
         config_folder: aiopath.AsyncPath | pathlib.Path = CONFIG_DIR,
     ):
         try:
-            global _COGS_REGISTERED, _OLD_PROCESS_COMMAND_METHOD, _OLD_GET_CONTEXT
             setattr(bot, "_pylav_client", self)
             add_property(bot, "lavalink", lambda b: b._pylav_client)
-            if _OLD_PROCESS_COMMAND_METHOD is None:
-                _OLD_PROCESS_COMMAND_METHOD = bot.process_commands
-            if _OLD_GET_CONTEXT is None:
-                _OLD_GET_CONTEXT = bot.get_context
+            if self.__old_process_command_method is None:
+                self.__old_process_command_method = bot.process_commands
+            if self.__old_get_context is None:
+                self.__old_get_context = bot.get_context
             bot.process_commands = MethodType(_process_commands, bot)
             bot.get_context = MethodType(_get_context, bot)
-            _COGS_REGISTERED.add(cog.__cog_name__)
+            self.__cogs_registered.add(cog.__cog_name__)
             config_folder = pathlib.Path(config_folder)
             (config_folder / ".data").mkdir(exist_ok=True, parents=True)
             self._config_folder = aiopath.AsyncPath(config_folder)
@@ -118,19 +116,20 @@ class Client(metaclass=_Singleton):
                     cache_control=True,
                     allowed_codes=(200,),
                     allowed_methods=("GET",),
-                    ignored_parameters=["timestamp"],
                     include_headers=True,
                     expire_after=datetime.timedelta(days=1),
+                    timeout=2.5,
+                    ignored_params=["auth_token", "timestamp"],
                 )
             else:
-                self._aiohttp_client_cache = aiohttp_client_cache.SQLiteBackend(
-                    cache_name=str(config_folder / ".data" / "aiohttp-requests-cache.db"),
+                self._aiohttp_client_cache = PostgresCacheBackend(
                     cache_control=True,
                     allowed_codes=(200,),
                     allowed_methods=("GET",),
-                    ignored_parameters=["timestamp"],
                     include_headers=True,
+                    ignored_params=["auth_token", "timestamp"],
                     expire_after=datetime.timedelta(days=1),
+                    timeout=2.5,
                 )
             self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
             self._cached_session = aiohttp_client_cache.CachedSession(
@@ -260,7 +259,7 @@ class Client(metaclass=_Singleton):
     @SingletonMethods.run_once_async
     async def initialize(
         self,
-    ) -> None:
+    ) -> None:  # sourcery no-metrics
         try:
             if not self._initiated:
                 async with self._asyncio_lock:
@@ -332,13 +331,12 @@ class Client(metaclass=_Singleton):
             raise exc
 
     async def register(self, cog: CogT) -> None:
-        global _COGS_REGISTERED
         LOGGER.info("Registering cog %s", cog.__cog_name__)
         if (instance := getattr(self.bot, "lavalink", None)) and not isinstance(instance, Client):
             raise AnotherClientAlreadyRegistered(
                 f"Another client instance has already been registered to bot.lavalink with type: {type(instance)}"
             )
-        _COGS_REGISTERED.add(cog.__cog_name__)
+        self.__cogs_registered.add(cog.__cog_name__)
 
     async def update_spotify_tokens(self, client_id: str, client_secret: str) -> None:
         self._spotify_client_id = client_id
@@ -571,33 +569,33 @@ class Client(metaclass=_Singleton):
         cog: :class:`discord.ext.commands.Cog`
             The cog to unregister.
         """
-        global _COGS_REGISTERED
-        if not self._shutting_down:
-            async with self._asyncio_lock:
-                if not self._shutting_down:
-                    _COGS_REGISTERED.discard(cog.__cog_name__)
-                    LOGGER.info("%s has been unregistered", cog.__cog_name__)
-                    if not _COGS_REGISTERED:
-                        self._shutting_down = True
-                        try:
-                            Client._instances.clear()
-                            SingletonMethods.reset()
-                            self._initiated = False
-                            await self.player_manager.save_all_players()
-                            await self.player_manager.shutdown()
-                            await self._node_manager.close()
-                            await self._local_node_manager.shutdown()
-                            await self._session.close()
-                            await self._cached_session.close()
-                            self._scheduler.shutdown(wait=True)
-                        except Exception as e:
-                            LOGGER.critical("Failed to shutdown the client", exc_info=e)
-                        if _OLD_PROCESS_COMMAND_METHOD is not None:
-                            self.bot.process_commands = _OLD_PROCESS_COMMAND_METHOD
-                        if _OLD_GET_CONTEXT is not None:
-                            self.bot.get_context = _OLD_GET_CONTEXT
-                        del self.bot._pylav_client  # noqa
-                        LOGGER.info("All cogs have been unregistered, PyLav client has been shutdown.")
+        if self._shutting_down:
+            return
+        async with self._asyncio_lock:
+            if not self._shutting_down:
+                self.__cogs_registered.discard(cog.__cog_name__)
+                LOGGER.info("%s has been unregistered", cog.__cog_name__)
+                if not self.__cogs_registered:
+                    self._shutting_down = True
+                    try:
+                        Client._instances.clear()
+                        SingletonMethods.reset()
+                        self._initiated = False
+                        await self.player_manager.save_all_players()
+                        await self.player_manager.shutdown()
+                        await self._node_manager.close()
+                        await self._local_node_manager.shutdown()
+                        await self._session.close()
+                        await self._cached_session.close()
+                        self._scheduler.shutdown(wait=True)
+                    except Exception as e:
+                        LOGGER.critical("Failed to shutdown the client", exc_info=e)
+                    if self.__old_process_command_method is not None:
+                        self.bot.process_commands = self.__old_process_command_method
+                    if self.__old_get_context is not None:
+                        self.bot.get_context = self.__old_get_context
+                    del self.bot._pylav_client  # noqa
+                    LOGGER.info("All cogs have been unregistered, PyLav client has been shutdown.")
 
     def get_player(self, guild: discord.Guild | int | None) -> Player | None:
         """|coro|
@@ -622,7 +620,7 @@ class Client(metaclass=_Singleton):
     async def connect_player(
         self,
         requester: discord.Member,
-        channel: discord.VoiceChannel,
+        channel: discord.channel.VocalGuildChannel,
         node: Node = None,
         self_deaf: bool = True,
     ) -> Player:
@@ -631,7 +629,7 @@ class Client(metaclass=_Singleton):
 
         Parameters
         ----------
-        channel: :class:`discord.VoiceChannel`
+        channel: :class:`discord.channel.VocalGuildChannel`
             The channel to connect to.
         node: :class:`Node`
             The node to use for the connection.

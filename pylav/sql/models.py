@@ -20,16 +20,7 @@ from pylav._logging import getLogger
 from pylav.constants import BUNDLED_PLAYLIST_IDS, SUPPORTED_SOURCES
 from pylav.exceptions import InvalidPlaylist
 from pylav.filters import Equalizer
-from pylav.sql.tables import (
-    BotVersionRow,
-    EqualizerRow,
-    LibConfigRow,
-    NodeRow,
-    PlayerRow,
-    PlayerStateRow,
-    PlaylistRow,
-    QueryRow,
-)
+from pylav.sql import tables
 from pylav.types import BotT, TimedFeatureT
 from pylav.utils import PyLavContext, TimedFeature
 
@@ -56,17 +47,19 @@ class PlaylistModel:
         Save the playlist to the database.
         """
         values = {
-            PlaylistRow.scope: self.scope,
-            PlaylistRow.author: self.author,
-            PlaylistRow.name: self.name,
-            PlaylistRow.url: self.url,
-            PlaylistRow.tracks: self.tracks,
+            tables.PlaylistRow.scope: self.scope,
+            tables.PlaylistRow.author: self.author,
+            tables.PlaylistRow.name: self.name,
+            tables.PlaylistRow.url: self.url,
+            tables.PlaylistRow.tracks: self.tracks,
         }
         playlist = (
-            await PlaylistRow.objects().output(load_json=True).get_or_create(PlaylistRow.id == self.id, defaults=values)
+            await tables.PlaylistRow.objects()
+            .output(load_json=True)
+            .get_or_create(tables.PlaylistRow.id == self.id, defaults=values)
         )
         if not playlist._was_created:
-            await PlaylistRow.update(values).where(PlaylistRow.id == self.id)
+            await tables.PlaylistRow.update(values).where(tables.PlaylistRow.id == self.id)
         return PlaylistModel(**playlist.to_dict())
 
     @classmethod
@@ -74,13 +67,13 @@ class PlaylistModel:
         """
         Get a playlist from the database.
         """
-        playlist = await PlaylistRow.select().where(PlaylistRow.id == id)
+        playlist = await tables.PlaylistRow.select().where(tables.PlaylistRow.id == id)
         if playlist:
             return PlaylistModel(**playlist.to_dict())
         return None
 
     async def delete(self):
-        await PlaylistRow.delete().where(PlaylistRow.id == self.id)
+        await tables.PlaylistRow.delete().where(tables.PlaylistRow.id == self.id)
 
     async def can_manage(self, bot: BotT, requester: discord.abc.User, guild: discord.Guild = None) -> bool:
         if self.scope in BUNDLED_PLAYLIST_IDS:
@@ -199,72 +192,72 @@ class LibConfigModel:
 
     async def get_config_folder(self) -> str:
         response = (
-            await LibConfigRow.select(LibConfigRow.config_folder)
-            .where((LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot))
+            await tables.LibConfigRow.select(tables.LibConfigRow.config_folder)
+            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
             .first()
         )
         return response["config_folder"]
 
     async def get_java_path(self) -> str:
         response = (
-            await LibConfigRow.select(LibConfigRow.java_path)
-            .where((LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot))
+            await tables.LibConfigRow.select(tables.LibConfigRow.java_path)
+            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
             .first()
         )
         return response["java_path"]
 
     async def get_enable_managed_node(self) -> bool:
         response = (
-            await LibConfigRow.select(LibConfigRow.enable_managed_node)
-            .where((LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot))
+            await tables.LibConfigRow.select(tables.LibConfigRow.enable_managed_node)
+            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
             .first()
         )
         return response["enable_managed_node"]
 
     async def get_auto_update_managed_nodes(self) -> bool:
         response = (
-            await LibConfigRow.select(LibConfigRow.auto_update_managed_nodes)
-            .where((LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot))
+            await tables.LibConfigRow.select(tables.LibConfigRow.auto_update_managed_nodes)
+            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
             .first()
         )
         return response["auto_update_managed_nodes"]
 
     async def get_localtrack_folder(self) -> str:
         response = (
-            await LibConfigRow.select(LibConfigRow.localtrack_folder)
-            .where((LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot))
+            await tables.LibConfigRow.select(tables.LibConfigRow.localtrack_folder)
+            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
             .first()
         )
         return response["localtrack_folder"]
 
     async def set_config_folder(self, value: str) -> None:
         self.config_folder = value
-        await LibConfigRow.update({LibConfigRow.config_folder: value}).where(
-            (LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot)
+        await tables.LibConfigRow.update({tables.LibConfigRow.config_folder: value}).where(
+            (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
         )
 
     async def set_java_path(self, value: str) -> None:
         self.java_path = value
-        await LibConfigRow.update({LibConfigRow.java_path: value}).where(
-            (LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot)
+        await tables.LibConfigRow.update({tables.LibConfigRow.java_path: value}).where(
+            (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
         )
 
     async def set_enable_managed_node(self, value: bool) -> None:
         self.enable_managed_node = value
-        await LibConfigRow.update({LibConfigRow.enable_managed_node: value}).where(
-            (LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot)
+        await tables.LibConfigRow.update({tables.LibConfigRow.enable_managed_node: value}).where(
+            (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
         )
 
     async def set_auto_update_managed_nodes(self, value: bool) -> None:
         self.auto_update_managed_nodes = value
-        await LibConfigRow.update({LibConfigRow.auto_update_managed_nodes: value}).where(
-            (LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot)
+        await tables.LibConfigRow.update({tables.LibConfigRow.auto_update_managed_nodes: value}).where(
+            (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
         )
 
     async def set_localtrack_folder(self, value: str) -> None:
         self.localtrack_folder = value
-        await LibConfigRow.update({LibConfigRow.localtrack_folder: value}).where(
-            (LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot)
+        await tables.LibConfigRow.update({tables.LibConfigRow.localtrack_folder: value}).where(
+            (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
         )
 
     async def save(self) -> LibConfigModel:
@@ -282,15 +275,21 @@ class LibConfigModel:
         if self.extras:
             data["extras"] = self.extras
         if data:
-            await LibConfigRow.update(**data).where((LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot))
+            await tables.LibConfigRow.update(**data).where(
+                (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
+            )
         return self
 
     async def delete(self) -> None:
-        await LibConfigRow.delete().where((LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot))
+        await tables.LibConfigRow.delete().where(
+            (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
+        )
 
     async def get_all(self) -> LibConfigModel:
         response = (
-            await LibConfigRow.select().where((LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot)).first()
+            await tables.LibConfigRow.select()
+            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            .first()
         )
         self.config_folder = response["config_folder"]
         self.java_path = response["java_path"]
@@ -312,10 +311,10 @@ class LibConfigModel:
         auto_update_managed_nodes=True,
     ) -> LibConfigModel:
         r = (
-            await LibConfigRow.objects()
+            await tables.LibConfigRow.objects()
             .output(load_json=True)
             .get_or_create(
-                (LibConfigRow.id == id) & (LibConfigRow.bot == bot),
+                (tables.LibConfigRow.id == id) & (tables.LibConfigRow.bot == bot),
                 defaults=dict(
                     config_folder=config_folder,
                     java_path=java_path,
@@ -353,7 +352,7 @@ class NodeModel:
 
     @classmethod
     async def from_id(cls, id: int) -> NodeModel:
-        response = await NodeRow.select().where(NodeRow.id == id).first()
+        response = await tables.NodeRow.select().where(tables.NodeRow.id == id).first()
         return cls(**response)
 
     def to_dict(self) -> dict:
@@ -409,39 +408,47 @@ class NodeModel:
         await self.upsert()
 
     async def delete(self) -> None:
-        await NodeRow.delete().where(NodeRow.id == self.id)
+        await tables.NodeRow.delete().where(tables.NodeRow.id == self.id)
 
     async def upsert(self) -> None:
         values = {
-            NodeRow.name: self.name,
-            NodeRow.ssl: self.ssl,
-            NodeRow.resume_key: self.resume_key,
-            NodeRow.reconnect_attempts: self.reconnect_attempts,
-            NodeRow.resume_timeout: self.resume_timeout,
-            NodeRow.search_only: self.search_only,
-            NodeRow.managed: self.managed,
-            NodeRow.extras: self.extras,
-            NodeRow.yaml: self.yaml,
-            NodeRow.disabled_sources: self.disabled_sources,
+            tables.NodeRow.name: self.name,
+            tables.NodeRow.ssl: self.ssl,
+            tables.NodeRow.resume_key: self.resume_key,
+            tables.NodeRow.reconnect_attempts: self.reconnect_attempts,
+            tables.NodeRow.resume_timeout: self.resume_timeout,
+            tables.NodeRow.search_only: self.search_only,
+            tables.NodeRow.managed: self.managed,
+            tables.NodeRow.extras: self.extras,
+            tables.NodeRow.yaml: self.yaml,
+            tables.NodeRow.disabled_sources: self.disabled_sources,
         }
-        node = await NodeRow.objects().output(load_json=True).get_or_create(NodeRow.id == self.id, defaults=values)
+        node = (
+            await tables.NodeRow.objects()
+            .output(load_json=True)
+            .get_or_create(tables.NodeRow.id == self.id, defaults=values)
+        )
         if not node._was_created:
-            await NodeRow.update(values).where(NodeRow.id == self.id)
+            await tables.NodeRow.update(values).where(tables.NodeRow.id == self.id)
 
     async def get_or_create(self) -> None:
         values = {
-            NodeRow.name: self.name,
-            NodeRow.ssl: self.ssl,
-            NodeRow.resume_key: self.resume_key,
-            NodeRow.reconnect_attempts: self.reconnect_attempts,
-            NodeRow.resume_timeout: self.resume_timeout,
-            NodeRow.search_only: self.search_only,
-            NodeRow.managed: self.managed,
-            NodeRow.extras: self.extras,
-            NodeRow.yaml: self.yaml,
-            NodeRow.disabled_sources: self.disabled_sources,
+            tables.NodeRow.name: self.name,
+            tables.NodeRow.ssl: self.ssl,
+            tables.NodeRow.resume_key: self.resume_key,
+            tables.NodeRow.reconnect_attempts: self.reconnect_attempts,
+            tables.NodeRow.resume_timeout: self.resume_timeout,
+            tables.NodeRow.search_only: self.search_only,
+            tables.NodeRow.managed: self.managed,
+            tables.NodeRow.extras: self.extras,
+            tables.NodeRow.yaml: self.yaml,
+            tables.NodeRow.disabled_sources: self.disabled_sources,
         }
-        output = await NodeRow.objects().output(load_json=True).get_or_create(NodeRow.id == self.id, defaults=values)
+        output = (
+            await tables.NodeRow.objects()
+            .output(load_json=True)
+            .get_or_create(tables.NodeRow.id == self.id, defaults=values)
+        )
         if not output._was_created:
             self.name = output.name
             self.ssl = output.ssl
@@ -468,9 +475,12 @@ class QueryModel:
 
     @classmethod
     async def get(cls, identifier: str) -> QueryModel | None:
-        query = await QueryRow.select().where(
-            (QueryRow.identifier == identifier)
-            & (QueryRow.last_updated > datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=30))
+        query = await tables.QueryRow.select().where(
+            (tables.QueryRow.identifier == identifier)
+            & (
+                tables.QueryRow.last_updated
+                > datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=30)
+            )
         )
         data = query.to_dict()
         if query:
@@ -478,26 +488,30 @@ class QueryModel:
         return None
 
     async def delete(self):
-        await QueryRow.delete().where(QueryRow.identifier == self.identifier)
+        await tables.QueryRow.delete().where(tables.QueryRow.identifier == self.identifier)
 
     async def upsert(self):
         if self.last_updated is None:
             self.last_updated = datetime.datetime.now(tz=datetime.timezone.utc)
-        values = {QueryRow.tracks: self.tracks, QueryRow.last_updated: self.last_updated, QueryRow.name: self.name}
+        values = {
+            tables.QueryRow.tracks: self.tracks,
+            tables.QueryRow.last_updated: self.last_updated,
+            tables.QueryRow.name: self.name,
+        }
         query = (
-            await QueryRow.objects()
+            await tables.QueryRow.objects()
             .output(load_json=True)
             .get_or_create(
-                (QueryRow.identifier == self.identifier)
+                (tables.QueryRow.identifier == self.identifier)
                 & (
-                    QueryRow.last_updated
+                    tables.QueryRow.last_updated
                     > datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=30)
                 ),
                 defaults=values,
             )
         )
         if not query._was_created:
-            await QueryRow.update(values).where(QueryRow.identifier == self.identifier)
+            await tables.QueryRow.update(values).where(tables.QueryRow.identifier == self.identifier)
 
     async def save(self):
         await self.upsert()
@@ -514,12 +528,12 @@ class BotVersion:
 
     async def get_or_create(self) -> BotVersion:
         values = {
-            BotVersionRow.version: f"{self.version}",
+            tables.BotVersionRow.version: f"{self.version}",
         }
         output = (
-            await BotVersionRow.objects()
+            await tables.BotVersionRow.objects()
             .output(load_json=True)
-            .get_or_create(BotVersionRow.bot == self.bot, defaults=values)
+            .get_or_create(tables.BotVersionRow.bot == self.bot, defaults=values)
         )
         if not output._was_created:
             self.version = parse_version(output.version)
@@ -527,15 +541,15 @@ class BotVersion:
 
     async def upsert(self) -> None:
         values = {
-            BotVersionRow.version: f"{self.version}",
+            tables.BotVersionRow.version: f"{self.version}",
         }
         node = (
-            await BotVersionRow.objects()
+            await tables.BotVersionRow.objects()
             .output(load_json=True)
-            .get_or_create(BotVersionRow.bot == self.bot, defaults=values)
+            .get_or_create(tables.BotVersionRow.bot == self.bot, defaults=values)
         )
         if not node._was_created:
-            await BotVersionRow.update(values).where(BotVersionRow.bot == self.bot)
+            await tables.BotVersionRow.update(values).where(tables.BotVersionRow.bot == self.bot)
 
     async def save(self) -> None:
         await self.upsert()
@@ -580,38 +594,44 @@ class PlayerStateModel:
             self.extras = ujson.loads(self.extras)
 
     async def delete(self) -> None:
-        await PlayerStateRow.delete().where((PlayerStateRow.id == self.id) & (PlayerStateRow.bot == self.bot))
+        await tables.PlayerStateRow.delete().where(
+            (tables.PlayerStateRow.id == self.id) & (tables.PlayerStateRow.bot == self.bot)
+        )
 
     async def upsert(self) -> None:
 
         values = {
-            PlayerStateRow.channel_id: self.channel_id,
-            PlayerStateRow.volume: self.volume,
-            PlayerStateRow.position: self.position,
-            PlayerStateRow.auto_play_playlist_id: self.auto_play_playlist_id,
-            PlayerStateRow.text_channel_id: self.text_channel_id,
-            PlayerStateRow.notify_channel_id: self.notify_channel_id,
-            PlayerStateRow.paused: self.paused,
-            PlayerStateRow.repeat_current: self.repeat_current,
-            PlayerStateRow.repeat_queue: self.repeat_queue,
-            PlayerStateRow.shuffle: self.shuffle,
-            PlayerStateRow.auto_play: self.auto_play,
-            PlayerStateRow.playing: self.playing,
-            PlayerStateRow.effect_enabled: self.effect_enabled,
-            PlayerStateRow.self_deaf: self.self_deaf,
-            PlayerStateRow.current: self.current,
-            PlayerStateRow.queue: self.queue,
-            PlayerStateRow.history: self.history,
-            PlayerStateRow.effects: self.effects,
-            PlayerStateRow.extras: self.extras,
+            tables.PlayerStateRow.channel_id: self.channel_id,
+            tables.PlayerStateRow.volume: self.volume,
+            tables.PlayerStateRow.position: self.position,
+            tables.PlayerStateRow.auto_play_playlist_id: self.auto_play_playlist_id,
+            tables.PlayerStateRow.text_channel_id: self.text_channel_id,
+            tables.PlayerStateRow.notify_channel_id: self.notify_channel_id,
+            tables.PlayerStateRow.paused: self.paused,
+            tables.PlayerStateRow.repeat_current: self.repeat_current,
+            tables.PlayerStateRow.repeat_queue: self.repeat_queue,
+            tables.PlayerStateRow.shuffle: self.shuffle,
+            tables.PlayerStateRow.auto_play: self.auto_play,
+            tables.PlayerStateRow.playing: self.playing,
+            tables.PlayerStateRow.effect_enabled: self.effect_enabled,
+            tables.PlayerStateRow.self_deaf: self.self_deaf,
+            tables.PlayerStateRow.current: self.current,
+            tables.PlayerStateRow.queue: self.queue,
+            tables.PlayerStateRow.history: self.history,
+            tables.PlayerStateRow.effects: self.effects,
+            tables.PlayerStateRow.extras: self.extras,
         }
         player = (
-            await PlayerStateRow.objects()
+            await tables.PlayerStateRow.objects()
             .output(load_json=True)
-            .get_or_create((PlayerStateRow.id == self.id) & (PlayerStateRow.bot == self.bot), defaults=values)
+            .get_or_create(
+                (tables.PlayerStateRow.id == self.id) & (tables.PlayerStateRow.bot == self.bot), defaults=values
+            )
         )
         if not player._was_created:
-            await PlayerStateRow.update(values).where((PlayerStateRow.id == self.id) & (PlayerStateRow.bot == self.bot))
+            await tables.PlayerStateRow.update(values).where(
+                (tables.PlayerStateRow.id == self.id) & (tables.PlayerStateRow.bot == self.bot)
+            )
 
     async def save(self) -> None:
         await self.upsert()
@@ -619,9 +639,9 @@ class PlayerStateModel:
     @classmethod
     async def get(cls, bot_id: int, guild_id: int) -> PlayerStateModel | None:
         player = (
-            await PlayerStateRow.select()
+            await tables.PlayerStateRow.select()
             .output(load_json=True)
-            .where((PlayerStateRow.id == guild_id) & (PlayerStateRow.bot == bot_id))
+            .where((tables.PlayerStateRow.id == guild_id) & (tables.PlayerStateRow.bot == bot_id))
         )
         if player:
             return cls(**player[0])
@@ -663,35 +683,37 @@ class PlayerModel:
             self.effects = ujson.loads(self.effects)
 
     async def delete(self) -> None:
-        await PlayerRow.delete().where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+        await tables.PlayerRow.delete().where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
 
     async def upsert(self) -> None:
 
         values = {
-            PlayerRow.forced_channel_id: self.forced_channel_id,
-            PlayerRow.volume: self.volume,
-            PlayerRow.max_volume: self.max_volume,
-            PlayerRow.auto_play_playlist_id: self.auto_play_playlist_id,
-            PlayerRow.text_channel_id: self.text_channel_id,
-            PlayerRow.notify_channel_id: self.notify_channel_id,
-            PlayerRow.repeat_current: self.repeat_current,
-            PlayerRow.repeat_queue: self.repeat_queue,
-            PlayerRow.shuffle: self.shuffle,
-            PlayerRow.auto_play: self.auto_play,
-            PlayerRow.self_deaf: self.self_deaf,
-            PlayerRow.extras: self.extras,
-            PlayerRow.empty_queue_dc: self.empty_queue_dc,
-            PlayerRow.alone_dc: self.alone_dc,
-            PlayerRow.alone_pause: self.alone_pause,
-            PlayerRow.effects: self.effects,
+            tables.PlayerRow.forced_channel_id: self.forced_channel_id,
+            tables.PlayerRow.volume: self.volume,
+            tables.PlayerRow.max_volume: self.max_volume,
+            tables.PlayerRow.auto_play_playlist_id: self.auto_play_playlist_id,
+            tables.PlayerRow.text_channel_id: self.text_channel_id,
+            tables.PlayerRow.notify_channel_id: self.notify_channel_id,
+            tables.PlayerRow.repeat_current: self.repeat_current,
+            tables.PlayerRow.repeat_queue: self.repeat_queue,
+            tables.PlayerRow.shuffle: self.shuffle,
+            tables.PlayerRow.auto_play: self.auto_play,
+            tables.PlayerRow.self_deaf: self.self_deaf,
+            tables.PlayerRow.extras: self.extras,
+            tables.PlayerRow.empty_queue_dc: self.empty_queue_dc,
+            tables.PlayerRow.alone_dc: self.alone_dc,
+            tables.PlayerRow.alone_pause: self.alone_pause,
+            tables.PlayerRow.effects: self.effects,
         }
         player = (
-            await PlayerRow.objects()
+            await tables.PlayerRow.objects()
             .output(load_json=True)
-            .get_or_create((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot), defaults=values)
+            .get_or_create((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot), defaults=values)
         )
         if not player._was_created:
-            await PlayerRow.update(values).where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+            await tables.PlayerRow.update(values).where(
+                (tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot)
+            )
 
     async def save(self) -> None:
         await self.upsert()
@@ -699,9 +721,9 @@ class PlayerModel:
     @classmethod
     async def get(cls, bot_id: int, guild_id: int) -> PlayerModel | None:
         player = (
-            await PlayerRow.select()
+            await tables.PlayerRow.select()
             .output(load_json=True)
-            .where((PlayerRow.forced_channel_id == guild_id) & (PlayerRow.bot == bot_id))
+            .where((tables.PlayerRow.forced_channel_id == guild_id) & (tables.PlayerRow.bot == bot_id))
         ).first()
 
         if player:
@@ -711,27 +733,27 @@ class PlayerModel:
 
     async def get_or_create(self) -> PlayerModel:
         values = {
-            PlayerRow.forced_channel_id: self.forced_channel_id,
-            PlayerRow.volume: self.volume,
-            PlayerRow.max_volume: self.max_volume,
-            PlayerRow.auto_play_playlist_id: self.auto_play_playlist_id,
-            PlayerRow.text_channel_id: self.text_channel_id,
-            PlayerRow.notify_channel_id: self.notify_channel_id,
-            PlayerRow.repeat_current: self.repeat_current,
-            PlayerRow.repeat_queue: self.repeat_queue,
-            PlayerRow.shuffle: self.shuffle,
-            PlayerRow.auto_play: self.auto_play,
-            PlayerRow.self_deaf: self.self_deaf,
-            PlayerRow.extras: self.extras,
-            PlayerRow.empty_queue_dc: self.empty_queue_dc,
-            PlayerRow.alone_dc: self.alone_dc,
-            PlayerRow.alone_pause: self.alone_pause,
-            PlayerRow.effects: self.effects,
+            tables.PlayerRow.forced_channel_id: self.forced_channel_id,
+            tables.PlayerRow.volume: self.volume,
+            tables.PlayerRow.max_volume: self.max_volume,
+            tables.PlayerRow.auto_play_playlist_id: self.auto_play_playlist_id,
+            tables.PlayerRow.text_channel_id: self.text_channel_id,
+            tables.PlayerRow.notify_channel_id: self.notify_channel_id,
+            tables.PlayerRow.repeat_current: self.repeat_current,
+            tables.PlayerRow.repeat_queue: self.repeat_queue,
+            tables.PlayerRow.shuffle: self.shuffle,
+            tables.PlayerRow.auto_play: self.auto_play,
+            tables.PlayerRow.self_deaf: self.self_deaf,
+            tables.PlayerRow.extras: self.extras,
+            tables.PlayerRow.empty_queue_dc: self.empty_queue_dc,
+            tables.PlayerRow.alone_dc: self.alone_dc,
+            tables.PlayerRow.alone_pause: self.alone_pause,
+            tables.PlayerRow.effects: self.effects,
         }
         output = (
-            await PlayerRow.objects()
+            await tables.PlayerRow.objects()
             .output(load_json=True)
-            .get_or_create((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot), defaults=values)
+            .get_or_create((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot), defaults=values)
         )
         if not output._was_created:
             self.forced_channel_id = output.forced_channel_id
@@ -754,27 +776,27 @@ class PlayerModel:
 
     async def update_volume(self):
         player = (
-            await PlayerRow.select(PlayerRow.volume)
+            await tables.PlayerRow.select(tables.PlayerRow.volume)
             .output(load_json=True)
-            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
         )
         if player:
             self.volume = player[0]["volume"]
 
     async def update_max_volume(self):
         player = (
-            await PlayerRow.select(PlayerRow.max_volume)
+            await tables.PlayerRow.select(tables.PlayerRow.max_volume)
             .output(load_json=True)
-            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
         )
         if player:
             self.max_volume = player[0]["max_volume"]
 
     async def update_auto_play_playlist_id(self) -> PlayerModel:
         player = (
-            await PlayerRow.select(PlayerRow.auto_play_playlist_id)
+            await tables.PlayerRow.select(tables.PlayerRow.auto_play_playlist_id)
             .output(load_json=True)
-            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
         )
         if player:
             self.auto_play_playlist_id = player[0]["auto_play_playlist_id"]
@@ -782,9 +804,9 @@ class PlayerModel:
 
     async def update_text_channel_id(self) -> PlayerModel:
         player = (
-            await PlayerRow.select(PlayerRow.text_channel_id)
+            await tables.PlayerRow.select(tables.PlayerRow.text_channel_id)
             .output(load_json=True)
-            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
         )
         if player:
             self.text_channel_id = player[0]["text_channel_id"]
@@ -792,9 +814,9 @@ class PlayerModel:
 
     async def update_notify_channel_id(self) -> PlayerModel:
         player = (
-            await PlayerRow.select(PlayerRow.notify_channel_id)
+            await tables.PlayerRow.select(tables.PlayerRow.notify_channel_id)
             .output(load_json=True)
-            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
         )
         if player:
             self.notify_channel_id = player[0]["notify_channel_id"]
@@ -802,9 +824,9 @@ class PlayerModel:
 
     async def update_forced_channel_id(self) -> PlayerModel:
         player = (
-            await PlayerRow.select(PlayerRow.forced_channel_id)
+            await tables.PlayerRow.select(tables.PlayerRow.forced_channel_id)
             .output(load_json=True)
-            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
         )
         if player:
             self.forced_channel_id = player[0]["forced_channel_id"]
@@ -812,9 +834,9 @@ class PlayerModel:
 
     async def update_repeat_current(self) -> PlayerModel:
         player = (
-            await PlayerRow.select(PlayerRow.repeat_current)
+            await tables.PlayerRow.select(tables.PlayerRow.repeat_current)
             .output(load_json=True)
-            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
         )
         if player:
             self.repeat_current = player[0]["repeat_current"]
@@ -822,9 +844,9 @@ class PlayerModel:
 
     async def update_repeat_queue(self) -> PlayerModel:
         player = (
-            await PlayerRow.select(PlayerRow.repeat_queue)
+            await tables.PlayerRow.select(tables.PlayerRow.repeat_queue)
             .output(load_json=True)
-            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
         )
         if player:
             self.repeat_queue = player["repeat_queue"]
@@ -832,9 +854,9 @@ class PlayerModel:
 
     async def update_shuffle(self) -> PlayerModel:
         player = (
-            await PlayerRow.select(PlayerRow.shuffle)
+            await tables.PlayerRow.select(tables.PlayerRow.shuffle)
             .output(load_json=True)
-            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
         )
         if player:
             self.shuffle = player[0]["shuffle"]
@@ -842,9 +864,9 @@ class PlayerModel:
 
     async def update_auto_play(self) -> PlayerModel:
         player = (
-            await PlayerRow.select(PlayerRow.auto_play)
+            await tables.PlayerRow.select(tables.PlayerRow.auto_play)
             .output(load_json=True)
-            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
         )
         if player:
             self.auto_play = player[0]["auto_play"]
@@ -852,9 +874,9 @@ class PlayerModel:
 
     async def update_self_deaf(self) -> PlayerModel:
         player = (
-            await PlayerRow.select(PlayerRow.self_deaf)
+            await tables.PlayerRow.select(tables.PlayerRow.self_deaf)
             .output(load_json=True)
-            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
         )
         if player:
             self.self_deaf = player[0]["self_deaf"]
@@ -862,9 +884,9 @@ class PlayerModel:
 
     async def update_extras(self) -> PlayerModel:
         player = (
-            await PlayerRow.select(PlayerRow.extras)
+            await tables.PlayerRow.select(tables.PlayerRow.extras)
             .output(load_json=True)
-            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
         )
         if player:
             if isinstance(player[0]["extras"], str):
@@ -875,9 +897,9 @@ class PlayerModel:
 
     async def update_effects(self) -> PlayerModel:
         player = (
-            await PlayerRow.select(PlayerRow.effects)
+            await tables.PlayerRow.select(tables.PlayerRow.effects)
             .output(load_json=True)
-            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
         )
         if player:
             if isinstance(player[0]["effects"], str):
@@ -888,9 +910,9 @@ class PlayerModel:
 
     async def update_empty_queue_dc(self) -> PlayerModel:
         player = (
-            await PlayerRow.select(PlayerRow.empty_queue_dc)
+            await tables.PlayerRow.select(tables.PlayerRow.empty_queue_dc)
             .output(load_json=True)
-            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
         )
         if player:
             if isinstance(player[0]["empty_queue_dc"], str):
@@ -901,9 +923,9 @@ class PlayerModel:
 
     async def update_alone_dc(self) -> PlayerModel:
         player = (
-            await PlayerRow.select(PlayerRow.alone_dc)
+            await tables.PlayerRow.select(tables.PlayerRow.alone_dc)
             .output(load_json=True)
-            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
         )
         if player:
             if isinstance(player[0]["alone_dc"], str):
@@ -914,9 +936,9 @@ class PlayerModel:
 
     async def update_alone_pause(self) -> PlayerModel:
         player = (
-            await PlayerRow.select(PlayerRow.alone_pause)
+            await tables.PlayerRow.select(tables.PlayerRow.alone_pause)
             .output(load_json=True)
-            .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
         )
         if player:
             if isinstance(player[0]["alone_pause"], str):
@@ -1002,33 +1024,33 @@ class EqualizerModel:
         Save the Equalizer to the database.
         """
         values = {
-            EqualizerRow.scope: self.scope,
-            EqualizerRow.author: self.author,
-            EqualizerRow.name: self.name,
-            EqualizerRow.description: self.description,
-            EqualizerRow.band_25: self.band_25,
-            EqualizerRow.band_40: self.band_40,
-            EqualizerRow.band_63: self.band_63,
-            EqualizerRow.band_100: self.band_100,
-            EqualizerRow.band_160: self.band_160,
-            EqualizerRow.band_250: self.band_250,
-            EqualizerRow.band_400: self.band_400,
-            EqualizerRow.band_630: self.band_630,
-            EqualizerRow.band_1000: self.band_1000,
-            EqualizerRow.band_1600: self.band_1600,
-            EqualizerRow.band_2500: self.band_2500,
-            EqualizerRow.band_4000: self.band_4000,
-            EqualizerRow.band_6300: self.band_6300,
-            EqualizerRow.band_10000: self.band_10000,
-            EqualizerRow.band_16000: self.band_16000,
+            tables.EqualizerRow.scope: self.scope,
+            tables.EqualizerRow.author: self.author,
+            tables.EqualizerRow.name: self.name,
+            tables.EqualizerRow.description: self.description,
+            tables.EqualizerRow.band_25: self.band_25,
+            tables.EqualizerRow.band_40: self.band_40,
+            tables.EqualizerRow.band_63: self.band_63,
+            tables.EqualizerRow.band_100: self.band_100,
+            tables.EqualizerRow.band_160: self.band_160,
+            tables.EqualizerRow.band_250: self.band_250,
+            tables.EqualizerRow.band_400: self.band_400,
+            tables.EqualizerRow.band_630: self.band_630,
+            tables.EqualizerRow.band_1000: self.band_1000,
+            tables.EqualizerRow.band_1600: self.band_1600,
+            tables.EqualizerRow.band_2500: self.band_2500,
+            tables.EqualizerRow.band_4000: self.band_4000,
+            tables.EqualizerRow.band_6300: self.band_6300,
+            tables.EqualizerRow.band_10000: self.band_10000,
+            tables.EqualizerRow.band_16000: self.band_16000,
         }
         playlist = (
-            await EqualizerRow.objects()
+            await tables.EqualizerRow.objects()
             .output(load_json=True)
-            .get_or_create(EqualizerRow.id == self.id, defaults=values)
+            .get_or_create(tables.EqualizerRow.id == self.id, defaults=values)
         )
         if not playlist._was_created:
-            await EqualizerRow.update(values).where(EqualizerRow.id == self.id)
+            await tables.EqualizerRow.update(values).where(tables.EqualizerRow.id == self.id)
         return EqualizerModel(**playlist.to_dict())
 
     @classmethod
@@ -1036,13 +1058,13 @@ class EqualizerModel:
         """
         Get an equalizer from the database.
         """
-        equalizer = await EqualizerRow.select().where(EqualizerRow.id == id)
+        equalizer = await tables.EqualizerRow.select().where(tables.EqualizerRow.id == id)
         if equalizer:
             return EqualizerModel(**equalizer.to_dict())
         return None
 
     async def delete(self):
-        await EqualizerRow.delete().where(EqualizerRow.id == self.id)
+        await tables.EqualizerRow.delete().where(tables.EqualizerRow.id == self.id)
 
     async def can_manage(self, bot: BotT, requester: discord.abc.User, guild: discord.Guild = None) -> bool:
         if self.scope in BUNDLED_PLAYLIST_IDS:

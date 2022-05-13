@@ -1,7 +1,7 @@
 # sourcery skip: avoid-builtin-shadow
 from __future__ import annotations
 
-from piccolo.columns import JSONB, BigInt, Boolean, Float, Integer, Text, Timestamptz
+from piccolo.columns import JSONB, BigInt, Boolean, Bytea, Float, Integer, Text, Timestamptz
 from piccolo.engine import PostgresEngine
 from piccolo.table import Table
 
@@ -152,3 +152,8 @@ class QueryRow(Table, db=DB, tablename="query"):
 class BotVersionRow(Table, db=DB, tablename="version"):
     bot = BigInt(primary_key=True, index=True)
     version = Text(null=False)
+
+
+class AioHttpCacheRow(Table, db=DB, tablename="aiohttp_client_cache"):
+    key = Text(primary_key=True, index=True)
+    value = Bytea()
