@@ -226,6 +226,7 @@ class PlayerQueue(asyncio.Queue[T]):
 
     def __init__(self, maxsize=0):
         self._maxsize = maxsize
+        self._loop = events.get_event_loop()
 
         # Futures.
         self._getters = collections.deque()
