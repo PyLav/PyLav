@@ -17,7 +17,7 @@ Documentation
   - PYLAV__POSTGRES_USER - Defaults to "postgres"
   - PYLAV__POSTGRES_DB - Defaults to "postgres"
   - PYLAV__POSTGRES_HOST - Defaults to "localhost"
-- Env Vars to connect the lib cache to Redis, note if these are missing the library will default to SQLite, therefore they are not necessary.
+- Env Vars to connect the lib cache to Redis, note if these are missing the library will default to PostgresSQL, therefore they are not necessary.
     - This will be used by the aiohttp cached client session for storing cached responses for 1 day, this reduces stress on some of the requests the lib makes such as to RadioBrowser.
       - REDIS_FULLADDRESS_RESPONSE_CACHE
         - e.g. redis://[[username]:[password]]@localhost:6379/0
