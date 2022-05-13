@@ -97,6 +97,12 @@ _RE_JAVA_VERSION_LINE_PRE223: Final[Pattern] = re.compile(
 _RE_JAVA_VERSION_LINE_223: Final[Pattern] = re.compile(
     r'version "(?P<major>\d+)(?:\.(?P<minor>\d+))?(?:\.\d+)*(-[a-zA-Z\d]+)?"'
 )
+_RE_JAVA_VERSION_LAZY = re.compile(
+    r"(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(0|[1-9]\d*)"
+    r"(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)"
+    r"(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))"
+    r"?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?"
+)
 
 LAVALINK_BRANCH_LINE: Final[Pattern] = re.compile(rb"Branch\s+(?P<branch>[\w\-\d_.]+)")
 LAVALINK_JAVA_LINE: Final[Pattern] = re.compile(rb"JVM:\s+(?P<jvm>\d+[.\d+]*)")
@@ -383,10 +389,13 @@ class LocalNodeManager:
 
         version_info: str = err.decode("utf-8")
         lines = version_info.splitlines()
-        for line in lines:
+
+        for i, line in enumerate(lines):
             match = _RE_JAVA_VERSION_LINE_PRE223.search(line)
             if match is None:
                 match = _RE_JAVA_VERSION_LINE_223.search(line)
+            if match is None and i == 0:
+                match = _RE_JAVA_VERSION_LAZY.search(line)
             if match is None:
                 continue
             major = int(match["major"])
