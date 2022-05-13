@@ -6,6 +6,7 @@ from typing import AsyncIterator, Final
 
 import aiopath
 from aiopath import AsyncPath
+from discord.utils import maybe_coroutine
 
 from pylav import Query
 
@@ -74,7 +75,7 @@ class LocalFile:
     async def initialize(self) -> None:
         if self.__init:
             return
-        self._path = self._path.absolute()
+        self._path = await maybe_coroutine(self._path.absolute)
         self._path.relative_to(self.root_folder)
         self.__init = True
 
@@ -110,11 +111,11 @@ class LocalFile:
         return self.__init
 
     async def to_string_user(self, length: int = None, name_only: bool = False, ellipsis: bool = False) -> str:
-        path = self.path.absolute()
+        path = await maybe_coroutine(self.path.absolute)
         if name_only:
             string = path.name if await self.path.is_dir() else path.stem
         else:
-            root = self.root_folder.absolute()
+            root = await maybe_coroutine(self.root_folder.absolute)
             string = str(path).replace(str(root), "")
         if not string:
             return path.name if await self.path.is_dir() else path.stem

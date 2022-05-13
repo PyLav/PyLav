@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, AsyncIterator, Literal
 
 import aiohttp
 import aiopath
+from discord.utils import maybe_coroutine
 
 from pylav._logging import getLogger
 from pylav.m3u8_parser._init__ import load as load_m3u8
@@ -443,12 +444,12 @@ class Query:
             query = match.group("local_query").strip()
         path: aiopath.AsyncPath = aiopath.AsyncPath(query)
         if not await path.exists():
-            path_paths = path.parts[1:] if path.is_absolute() else path.parts
+            path_paths = path.parts[1:] if await maybe_coroutine(path.is_absolute) else path.parts
             path = cls.__localfile_cls._ROOT_FOLDER.joinpath(*path_paths)
             if not await path.exists():
                 raise ValueError(f"{path} does not exist")
         try:
-            local_path = cls.__localfile_cls(path.absolute())
+            local_path = cls.__localfile_cls(await maybe_coroutine(path.absolute))
             await local_path.initialize()
         except Exception as e:
             raise ValueError(f"{e}") from e
