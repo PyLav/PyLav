@@ -80,9 +80,7 @@ _RE_BUILD_LINE: Final[Pattern] = re.compile(rb"Build:\s+(?P<build>\d+)")
 #
 # Implementation based on J2SE SDK/JRE Version String Naming Convention document:
 # https://www.oracle.com/java/technologies/javase/versioning-naming.html
-_RE_JAVA_VERSION_LINE_PRE223: Final[Pattern] = re.compile(
-    r'version "1\.(?P<major>[0-8])\.(?P<minor>0)(?:_\d+)?(?:-.*)?"'
-)
+_RE_JAVA_VERSION_LINE_PRE223 = re.compile(r'version "1\.(?P<major>[0-8])\.(?P<minor>0)(?:_\d+)?(?:-.*)?"')
 # - Version scheme introduced by JEP 223 - used by Java 9 and newer
 #
 # examples:
@@ -94,9 +92,7 @@ _RE_JAVA_VERSION_LINE_PRE223: Final[Pattern] = re.compile(
 #
 # Implementation based on JEP 223 document:
 # https://openjdk.java.net/jeps/223
-_RE_JAVA_VERSION_LINE_223: Final[Pattern] = re.compile(
-    r'version "(?P<major>\d+)(?:\.(?P<minor>\d+))?(?:\.\d+)*(-[a-zA-Z\d]+)?"'
-)
+_RE_JAVA_VERSION_LINE_223 = re.compile(r'version "(?P<major>\d+)(?:\.(?P<minor>\d+))?(?:\.\d+)*(-[a-zA-Z\d]+)?"')
 _RE_SEMANTIC_VERSION_LAZY = re.compile(
     r"(?P<major>[0-9]|[1-9][0-9]*)\."
     r"(?P<minor>[0-9]|[1-9][0-9]*)\."
@@ -373,7 +369,7 @@ class LocalNodeManager:
             self._java_version = None
         else:
             self._java_version = await self._get_java_version()
-            self._java_available = (11, 0) >= self._java_version  # https://github.com/freyacodes/Lavalink#requirements
+            self._java_available = self._java_version >= (11, 0)  # https://github.com/freyacodes/Lavalink#requirements
             self._java_exc = java_exec
         return self._java_available, self._java_version
 
@@ -569,7 +565,7 @@ class LocalNodeManager:
         for task in pending:
             task.cancel()
 
-    async def start_monitor(self, java_path: str):
+    async def start_monitor(self, java_path: str):  # sourcery no-metrics
         retry_count = 0
         backoff = ExponentialBackoffWithReset(base=3)
         while True:
@@ -710,6 +706,7 @@ class LocalNodeManager:
         self.start_monitor_task.set_name("LavalinkManagedNode.health_monitor")
 
     async def connect_node(self, reconnect: bool, wait_for: float = 0.0, external_fallback: bool = False):
+        # sourcery no-metrics
         await asyncio.sleep(wait_for)
         self._wait_for.clear()
         if not self.ready.is_set():
