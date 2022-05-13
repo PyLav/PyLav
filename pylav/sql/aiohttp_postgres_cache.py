@@ -1,13 +1,17 @@
-from abc import ABC
 from typing import AsyncIterable
 
-from aiohttp_client_cache import CacheBackend, ResponseOrKey
-from aiohttp_client_cache.backends import BaseCache
+from aiohttp_client_cache import BaseCache, CacheBackend, ResponseOrKey
+from aiohttp_client_cache.docs import extend_init_signature
 
 from pylav.sql import tables
 
 
-class PostgresCacheBackend(BaseCache, ABC):
+def postgres_template():
+    pass
+
+
+@extend_init_signature(CacheBackend, postgres_template)
+class PostgresCacheBackend(CacheBackend):
     """Wrapper for higher-level cache operations. In most cases, the only thing you need
     to specify here is which storage class(es) to use.
     """
@@ -18,7 +22,7 @@ class PostgresCacheBackend(BaseCache, ABC):
         self.responses = PostgresStorage(**kwargs)
 
 
-class PostgresStorage(CacheBackend):
+class PostgresStorage(BaseCache):
     """interface for lower-level backend storage operations"""
 
     def __init__(self, **kwargs):
@@ -74,3 +78,7 @@ class PostgresStorage(CacheBackend):
         entry = await tables.AioHttpCacheRow.objects().get_or_create(tables.AioHttpCacheRow.key == key, defaults=values)
         if not entry._was_created:
             await tables.AioHttpCacheRow.update(values).where(tables.AioHttpCacheRow.key == key)
+
+    async def bulk_delete(self, keys: set[str]) -> None:
+        """Delete multiple items from the cache"""
+        await tables.AioHttpCacheRow.delete().where(tables.AioHttpCacheRow.key.is_in(list(keys)))
