@@ -98,7 +98,11 @@ _RE_JAVA_VERSION_LINE_223: Final[Pattern] = re.compile(
     r'version "(?P<major>\d+)(?:\.(?P<minor>\d+))?(?:\.\d+)*(-[a-zA-Z\d]+)?"'
 )
 _RE_SEMANTIC_VERSION_LAZY = re.compile(
-    r"(?P<major>[0-9]+)\.(?P<minor>[0-9]+)\.([0-9]+)" r"(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?"
+    r"(?P<major>[0-9]|[1-9][0-9]*)\."
+    r"(?P<minor>[0-9]|[1-9][0-9]*)\."
+    r"(?P<micro>[0-9]|[1-9][0-9]*)"
+    r"(?:-(?P<build>[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?"
+    r"(?:\+[0-9A-Za-z-]+)?"
 )
 
 LAVALINK_BRANCH_LINE: Final[Pattern] = re.compile(rb"Branch\s+(?P<branch>[\w\-\d_.]+)")
