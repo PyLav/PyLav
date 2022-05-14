@@ -36,6 +36,7 @@ _Bot = Union["Red", "Bot", "AutoShardedBot"]
 class PyLavCogMixin(ABC):
     bot: BotT
     lavalink: Client
+    pylav: Client
 
 
 T = TypeVar("T")
@@ -58,6 +59,7 @@ ContextT = TypeVar("ContextT", bound="Union[PyLavContext[Any], RedContext[Any], 
 class BotClientWithLavalink(BotClient):
     _pylav_client: Client
     lavalink: Client
+    pylav: Client
     guild: discord.Guild | None
 
     async def get_context(

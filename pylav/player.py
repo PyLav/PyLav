@@ -209,6 +209,10 @@ class Player(VoiceProtocol):
         return self._lavalink
 
     @property
+    def pylav(self) -> Client:
+        return self._lavalink
+
+    @property
     def radio(self) -> RadioBrowser:
         return self.lavalink.radio_browser
 

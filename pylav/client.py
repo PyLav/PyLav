@@ -98,6 +98,7 @@ class Client(metaclass=_Singleton):
         try:
             setattr(bot, "_pylav_client", self)
             add_property(bot, "lavalink", lambda b: b._pylav_client)
+            add_property(bot, "pylav", lambda b: b._pylav_client)
             if self.__old_process_command_method is None:
                 self.__old_process_command_method = bot.process_commands
             if self.__old_get_context is None:

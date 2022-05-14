@@ -699,6 +699,7 @@ class PyLavContext(_OriginalContextClass):
 
         self._original_ctx_or_interaction = None
         self.lavalink = bot.lavalink
+        self.pylav = bot.lavalink
 
     @discord.utils.cached_property
     def author(self) -> discord.User | discord.Member:
