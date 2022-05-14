@@ -3,13 +3,13 @@ from __future__ import annotations
 import asyncio
 from typing import TYPE_CHECKING
 
-import aiopath
 from piccolo.table import create_tables
 
 from pylav._config import CONFIG_DIR
 from pylav._logging import getLogger
 from pylav.sql import tables
 from pylav.sql.models import BotVersion, LibConfigModel
+from pylav.vendored import aiopath
 
 if TYPE_CHECKING:
     from pylav.client import Client

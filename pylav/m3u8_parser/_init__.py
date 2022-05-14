@@ -3,8 +3,6 @@ from __future__ import annotations
 import asyncio
 import os
 
-import aiopath
-
 from pylav.m3u8_parser.httpclient import DefaultHTTPClient, _parsed_url
 from pylav.m3u8_parser.model import (
     M3U8,
@@ -30,6 +28,7 @@ from pylav.m3u8_parser.model import (
     Start,
 )
 from pylav.m3u8_parser.parser import ParseError, is_url, parse
+from pylav.vendored import aiopath
 
 # coding: utf-8
 # Copyright 2014 Globo.com Player authors. All rights reserved.

@@ -4,11 +4,10 @@ import os
 import pathlib
 from typing import AsyncIterator, Final
 
-import aiopath
-from aiopath import AsyncPath
 from discord.utils import maybe_coroutine
 
 from pylav import Query
+from pylav.vendored import aiopath
 
 __FULLY_SUPPORTED_MUSIC: Final[tuple[str, ...]] = (".mp3", ".flac", ".ogg")
 __PARTIALLY_SUPPORTED_MUSIC_EXT: tuple[str, ...] = (
@@ -138,6 +137,8 @@ class LocalFile:
                 string = os.path.join(*string_list[-2:])  # Folder and file only
             else:
                 string = os.path.join(*string_list)
+            if string.startswith("/") or string.startswith("\\"):
+                string = string[1:]
             if ellipsis and len(string) + 3 > length:
                 string = f"...{string[3:].strip()}"
         return string
@@ -148,20 +149,28 @@ class LocalFile:
             yield path
 
     async def _get_entries_in_folder(
-        self, folder: AsyncPath, recursive: bool = False, show_folders: bool = False
+        self, folder: aiopath.AsyncPath, recursive: bool = False, show_folders: bool = False, folder_only: bool = False
     ) -> AsyncIterator[Query]:
         async for path in folder.iterdir():
             if await path.is_dir():
                 if recursive:
-                    async for p in self._get_entries_in_folder(path):
+                    yield await Query.from_string(path)
+                    async for p in self._get_entries_in_folder(
+                        path, recursive=recursive, show_folders=show_folders, folder_only=folder_only
+                    ):
                         yield p
                 elif show_folders and path.is_relative_to(self._ROOT_FOLDER):
                     yield await Query.from_string(path)
-            elif await path.is_file():
+            elif not folder_only and await path.is_file():
                 if path.suffix.lower() in _ALL_EXTENSIONS and path.is_relative_to(self._ROOT_FOLDER):
                     yield await Query.from_string(path)
 
     async def files_in_tree(self, show_folders: bool = False) -> AsyncIterator[Query]:
         parent = self.path if await self.path.is_dir() else self.path.parent
         async for path in self._get_entries_in_folder(parent, recursive=True, show_folders=show_folders):
+            yield path
+
+    async def folders_in_tree(self) -> AsyncIterator[Query]:
+        parent = self.path if await self.path.is_dir() else self.path.parent
+        async for path in self._get_entries_in_folder(parent, recursive=True, show_folders=True, folder_only=True):
             yield path

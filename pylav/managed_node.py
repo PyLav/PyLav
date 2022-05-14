@@ -13,7 +13,6 @@ import tempfile
 from typing import TYPE_CHECKING, ClassVar, Final, Pattern
 
 import aiohttp
-import aiopath
 import dateutil.parser
 import psutil
 import rich.progress
@@ -41,6 +40,7 @@ from pylav.exceptions import (
 from pylav.node import Node
 from pylav.sql.models import NodeModel
 from pylav.utils import AsyncIter, ExponentialBackoffWithReset
+from pylav.vendored import aiopath
 
 if TYPE_CHECKING:
     from pylav.client import Client

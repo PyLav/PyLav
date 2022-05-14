@@ -8,11 +8,11 @@ exclude = "pylav/_city_dump.py"
 
 [tool.black]
 line-length = 120
-target-version = ['py39']
+target-version = ['py310']
 
 [tool.isort]
 profile = "black"
 line_length = 120
-py_version = 39
+py_version = 310
 known_third_party = ["aiohttp", "ujson", "red_commons", "discord", "sqlalchemy", "cached_property", "dateutils", "appdirs", "yaml", "aiopath", "aiopath", "tabulate", "humanize"]
 known_local_folder = ["pylav"]

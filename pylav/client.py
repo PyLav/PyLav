@@ -12,7 +12,6 @@ from typing import AsyncIterator, Callable, Iterator
 
 import aiohttp
 import aiohttp_client_cache
-import aiopath
 import discord
 import ujson
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -49,6 +48,7 @@ from pylav.sql.clients.updater import UpdateSchemaManager
 from pylav.tracks import Track
 from pylav.types import BotT, CogT, ContextT, InteractionT, LavalinkResponseT
 from pylav.utils import PyLavContext, SingletonMethods, _get_context, _process_commands, _Singleton, add_property
+from pylav.vendored import aiopath
 
 LOGGER = getLogger("PyLav.Client")
 

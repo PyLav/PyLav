@@ -8,11 +8,10 @@ import decimal
 import errno
 import os
 
-import aiopath
-
 from pylav.m3u8_parser.mixins import BasePathMixin, GroupedBasePathMixin
 from pylav.m3u8_parser.parser import format_date_time, parse
 from pylav.m3u8_parser.protocol import ext_x_key, ext_x_map, ext_x_session_key, ext_x_start
+from pylav.vendored import aiopath
 
 
 class MalformedPlaylistError(Exception):

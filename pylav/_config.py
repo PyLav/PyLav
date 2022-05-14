@@ -4,8 +4,9 @@ import os
 import pathlib
 import sys
 
-import aiopath
 import platformdirs
+
+from pylav.vendored import aiopath
 
 basic_config: dict = {}
 instance_name = None

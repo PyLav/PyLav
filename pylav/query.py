@@ -6,7 +6,6 @@ import re
 from typing import TYPE_CHECKING, AsyncIterator, Literal
 
 import aiohttp
-import aiopath
 from discord.utils import maybe_coroutine
 
 from pylav._logging import getLogger
@@ -14,6 +13,7 @@ from pylav.m3u8_parser._init__ import load as load_m3u8
 from pylav.m3u8_parser.parser import is_url
 from pylav.track_encoding import decode_track
 from pylav.types import QueryT
+from pylav.vendored import aiopath
 
 if TYPE_CHECKING:
     from pylav.localfiles import LocalFile
