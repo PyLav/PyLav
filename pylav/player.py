@@ -847,6 +847,8 @@ class Player(VoiceProtocol):
                 TrackSeekEvent(self, requester, self.current, before=self.position, after=position)
             )
             await self.node.send(op="seek", guildId=self.guild_id, position=position)
+            self._last_update = time.time() * 1000
+            self._last_position = position
 
     async def _handle_event(self, event) -> None:
         """
