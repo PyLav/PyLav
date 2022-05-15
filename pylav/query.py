@@ -716,7 +716,7 @@ class Query:
             return "YouTube Music"
         elif source == "soundcloud":
             return "SoundCloud"
-        elif source == "apple":
+        elif source == "applemusic":
             return "Apple Music"
         elif source == "local":
             return "Local Files"
