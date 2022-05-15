@@ -341,11 +341,9 @@ class LocalNodeManager:
             raise Exception("Pylav - Java executable not found.")
         java_xms, java_xmx = "64M", self._full_data.extras.get("max_ram", "2048M") if self._full_data else "2048M"
         match = re.match(r"^(\d+)([MG])$", java_xmx, flags=re.IGNORECASE)
-        command_args = [
-            self._java_exc,
-            "-Djdk.tls.client.protocols=TLSv1.2",
-            f"-Xms{java_xms}",
-        ]
+        command_args = [self._java_exc, f"-Xms{java_xms}"]
+        if (11, 0) <= java_version < (12, 0):
+            command_args.append("-Djdk.tls.client.protocols=TLSv1.2")
         meta = 0, None
         invalid = None
         if match and (
