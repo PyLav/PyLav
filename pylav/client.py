@@ -12,6 +12,7 @@ from typing import AsyncIterator, Callable, Iterator
 
 import aiohttp
 import aiohttp_client_cache
+import asyncstdlib
 import discord
 import ujson
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -444,7 +445,7 @@ class Client(metaclass=_Singleton):
         """
         if not self.node_manager.available_nodes:
             raise NoNodeAvailable("No available nodes!")
-        node = self.node_manager.find_best_node(feature=feature)
+        node = await self.node_manager.find_best_node(feature=feature)
         if node is None and feature:
             raise NoNodeWithRequestFunctionalityAvailable(
                 f"No node with {feature} functionality available!", feature=feature
@@ -469,7 +470,7 @@ class Client(metaclass=_Singleton):
         """
         if not self.node_manager.available_nodes:
             raise NoNodeAvailable("No available nodes!")
-        node = self.node_manager.find_best_node(feature=feature)
+        node = await self.node_manager.find_best_node(feature=feature)
         if node is None and feature:
             raise NoNodeWithRequestFunctionalityAvailable(
                 f"No node with {feature} functionality available!", feature=feature
@@ -716,7 +717,9 @@ class Client(metaclass=_Singleton):
         return iter(self.player_manager)
 
     async def get_managed_node(self) -> Node | None:
-        available_nodes = list(filter(operator.attrgetter("available"), self.node_manager.managed_nodes))
+        available_nodes = await asyncstdlib.builtins.list(
+            asyncstdlib.builtins.filter(operator.attrgetter("available"), self.node_manager.managed_nodes)
+        )
 
         if not available_nodes:
             return None
@@ -747,7 +750,7 @@ class Client(metaclass=_Singleton):
         """
         if not self.node_manager.available_nodes:
             raise NoNodeAvailable("No available nodes!")
-        node = self.node_manager.find_best_node(feature=query.requires_capability)
+        node = await self.node_manager.find_best_node(feature=query.requires_capability)
         if node is None:
             raise NoNodeWithRequestFunctionalityAvailable(
                 f"No node with {query.requires_capability} functionality available!", query.requires_capability
@@ -796,7 +799,7 @@ class Client(metaclass=_Singleton):
         track_count = 0
 
         for query in queries:
-            node = self.node_manager.find_best_node(feature=query.requires_capability)
+            node = await self.node_manager.find_best_node(feature=query.requires_capability)
             if node is None:
                 queries_failed.append(query)
             # Query tracks as the queue builds as this may be a slow operation
@@ -931,7 +934,7 @@ class Client(metaclass=_Singleton):
         for query in queries:
             async for response in self._yield_recursive_queries(query):
                 with contextlib.suppress(NoNodeWithRequestFunctionalityAvailable):
-                    node = self.node_manager.find_best_node(feature=response.requires_capability)
+                    node = await self.node_manager.find_best_node(feature=response.requires_capability)
                     if node is None or response.is_custom_playlist:
                         continue
                     if response.is_playlist or response.is_album:

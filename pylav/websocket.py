@@ -151,7 +151,7 @@ class WebSocket:
     async def wait_until_ready(self, timeout: float | None = None):
         await asyncio.wait_for(self.ready.wait(), timeout=timeout)
 
-    async def connect(self):
+    async def connect(self):  # sourcery no-metrics
         """Attempts to establish a connection to Lavalink."""
         try:
             self.ready.clear()
@@ -166,7 +166,8 @@ class WebSocket:
                 return
             if self._resuming_configured and self._resume_key:
                 headers["Resume-Key"] = self._resume_key
-            self._node._region = await get_closest_discord_region(self._host)
+            self._node._region, self._node._coordinates = await get_closest_discord_region(self._host)
+
             is_finite_retry = self._max_reconnect_attempts != -1
             max_attempts_str = self._max_reconnect_attempts if is_finite_retry else "inf"
             attempt = 0

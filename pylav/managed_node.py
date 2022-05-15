@@ -3,7 +3,6 @@ from __future__ import annotations
 import asyncio
 import asyncio.subprocess  # disables for # https://github.com/PyCQA/pylint/issues/1469
 import contextlib
-import itertools
 import pathlib
 import platform
 import re
@@ -13,6 +12,7 @@ import tempfile
 from typing import TYPE_CHECKING, ClassVar, Final, Pattern
 
 import aiohttp
+import asyncstdlib
 import dateutil.parser
 import psutil
 import rich.progress
@@ -237,8 +237,8 @@ class LocalNodeManager:
             f"{JAR_SERVER}{returning_data['href']}", headers={"Accept": "application/json"}
         ) as response:
             data = await response.json(loads=ujson.loads)
-            jar_meta = filter(lambda x: x["name"] == "Lavalink.jar", data["file"])
-            jar_url = next(jar_meta).get("content", {}).get("href")
+            jar_meta = asyncstdlib.builtins.filter(lambda x: x["name"] == "Lavalink.jar", data["file"])
+            jar_url = (await asyncstdlib.builtins.anext(jar_meta)).get("content", {}).get("href")
             returning_data["jar_url"] = jar_url
         return returning_data
 
@@ -406,7 +406,7 @@ class LocalNodeManager:
 
     async def _wait_for_launcher(self) -> None:
         LOGGER.info("Waiting for Managed Lavalink node to be ready")
-        for i in itertools.cycle(range(50)):
+        async for __ in asyncstdlib.itertools.cycle("."):
             line = await self._proc.stdout.readline()
             if _RE_READY_LINE.search(line):
                 self.ready.set()
@@ -422,9 +422,6 @@ class LocalNodeManager:
             if self._proc.returncode is not None:
                 # Avoid Console spam only print once every 2 seconds
                 raise EarlyExitError("Managed Lavalink node server exited early.")
-            if i == 49:
-                # Sleep after 50 lines to prevent busylooping
-                await asyncio.sleep(0.1)
 
     async def shutdown(self) -> None:
         if self.start_monitor_task is not None:
@@ -770,8 +767,8 @@ class LocalNodeManager:
                 if cwd and await asyncio.to_thread(proc.cwd) not in filter_:
                     continue
                 cmdline = await asyncio.to_thread(proc.cmdline)
-                if (matches and all(a in cmdline for a in matches)) or (
-                    lazy_match and any("lavalink" in arg.lower() for arg in cmdline)
+                if (matches and await asyncstdlib.builtins.all(a in cmdline for a in matches)) or (
+                    lazy_match and await asyncstdlib.builtins.any("lavalink" in arg.lower() for arg in cmdline)
                 ):
                     proc_as_dict = await asyncio.to_thread(
                         proc.as_dict, attrs=["pid", "name", "create_time", "status", "cmdline", "cwd"]

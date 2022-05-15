@@ -9,7 +9,6 @@ import functools
 import random
 import threading
 import time
-import warnings
 from asyncio import QueueFull, events, locks
 from copy import copy
 from enum import Enum

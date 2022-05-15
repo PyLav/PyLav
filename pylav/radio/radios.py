@@ -133,9 +133,10 @@ class RadioBrowser:
         if country:
             if state:
                 return [
-                    State(**tag)
-                    for tag in response
-                    if tag["country"].lower() == country.lower() and tag["name"].lower() == state.lower()
+                    State(**state)
+                    async for state in AsyncIter(response).filter(
+                        lambda s: s["country"].lower() == country.lower() and s["name"].lower() == state.lower()
+                    )
                 ]
             return [
                 State(**state)
@@ -187,7 +188,7 @@ class RadioBrowser:
             endpoint = "json/tags/"
         url = self.build_url(endpoint)
         response = await self.client.get(url)
-        return [Tag(**tag) async for ta in AsyncIter(response)]
+        return [Tag(**tag) async for tag in AsyncIter(response)]
 
     async def station_by_uuid(self, stationuuid: str) -> list[Station]:
         """Radio station by stationuuid.

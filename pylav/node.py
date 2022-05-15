@@ -8,7 +8,7 @@ import aiohttp
 import ujson
 
 from pylav._logging import getLogger
-from pylav.constants import SUPPORTED_SOURCES
+from pylav.constants import REGION_TO_COUNTRY_COORDINATE_MAPPING, SUPPORTED_SOURCES
 from pylav.events import Event
 from pylav.exceptions import Unauthorized
 from pylav.filters import ChannelMix, Distortion, Equalizer, Karaoke, LowPass, Rotation, Timescale, Vibrato, Volume
@@ -215,6 +215,7 @@ class Node:
         self._reconnect_attempts = reconnect_attempts
         self._search_only = search_only
         self._sources = self._capabilities = set()
+        self._coordinates = (0, 0)
 
         self._stats = None
         from pylav.websocket import WebSocket
@@ -234,6 +235,10 @@ class Node:
     @property
     def is_ready(self):
         return self._ready.is_set() and self._ws.connected
+
+    @property
+    def coordinates(self):
+        return self._coordinates
 
     @property
     def managed(self) -> bool:
@@ -1182,3 +1187,24 @@ class Node:
 
     async def wait_until_ready(self, timeout: float | None = None):
         await asyncio.wait_for(self._ready.wait(), timeout=timeout)
+
+    async def region_distance(self, region: str) -> float:
+        """
+        Returns the distance between the target node and the given region.
+
+        Parameters
+        ----------
+        region : :class:`str`
+            The region to get the distance to.
+
+        Returns
+        -------
+        :class:`float`
+            The distance between the target node and the given region.
+        """
+        coordinates = REGION_TO_COUNTRY_COORDINATE_MAPPING.get(region)
+
+        if not (coordinates and self.coordinates):
+            return float("inf")
+
+        return

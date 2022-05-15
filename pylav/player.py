@@ -4,17 +4,18 @@ import asyncio
 import collections
 import contextlib
 import datetime
-import itertools
 import random
 import re
 import time
 from typing import TYPE_CHECKING, Any, Coroutine, Literal
 
+import asyncstdlib
 import discord
 from discord import VoiceProtocol
 from discord.abc import Messageable
 
 from pylav._logging import getLogger
+from pylav.constants import REGION_TO_COUNTRY_COORDINATE_MAPPING
 from pylav.events import (
     FiltersAppliedEvent,
     NodeChangedEvent,
@@ -59,7 +60,7 @@ if TYPE_CHECKING:
 
 LOGGER = getLogger("PyLav.Player")
 
-ENDPONT_REGEX = re.compile(r"^(?P<region>.*)\d+.discord.media:\d+$")
+ENDPONT_REGEX = re.compile(r"^(?P<region>.*?)\d+.discord.media:\d+$")
 
 
 class Player(VoiceProtocol):
@@ -83,7 +84,8 @@ class Player(VoiceProtocol):
         self.player_manager: PlayerManager = None  # type: ignore
         self._original_node: Node = None  # type: ignore
         self._voice_state = {}
-        self.region = channel.rtc_region
+        self._region = channel.rtc_region or "unknown_pylav"
+        self._coordinates = REGION_TO_COUNTRY_COORDINATE_MAPPING.get(self._region, (0, 0))
         self._connected = False
         self.connected_at = datetime.datetime.now(tz=datetime.timezone.utc)
         self._text_channel = None
@@ -198,7 +200,16 @@ class Player(VoiceProtocol):
     def channel(self, value: discord.channel.VocalGuildChannel) -> None:
         if isinstance(value, (discord.VoiceChannel, discord.StageChannel)):
             self._channel = value
-            self.region = value.rtc_region
+            self._region = value.rtc_region or "unknown_pylav"
+            self._coordinates = REGION_TO_COUNTRY_COORDINATE_MAPPING.get(self._region, (0, 0))
+
+    @property
+    def coordinates(self) -> tuple[int, int]:
+        return self._coordinates
+
+    @property
+    def region(self) -> str | None:
+        return self._region
 
     @property
     def config(self) -> PlayerModel:
@@ -356,7 +367,9 @@ class Player(VoiceProtocol):
         -------
         :class:`Node`
         """
-        node = self.node.node_manager.find_best_node(region=self.region, feature=feature)
+        node = await self.node.node_manager.find_best_node(
+            region=self.region, feature=feature, coordinates=self.coordinates
+        )
         if feature and not node:
             raise NoNodeWithRequestFunctionalityAvailable(
                 f"No node with {feature} functionality available!", feature=feature
@@ -373,7 +386,9 @@ class Player(VoiceProtocol):
         -------
         :class:`Node`
         """
-        node = self.node.node_manager.find_best_node(not_region=self.region, feature=feature)
+        node = await self.node.node_manager.find_best_node(
+            not_region=self.region, feature=feature, coordinates=self.coordinates
+        )
         if feature and not node:
             raise NoNodeWithRequestFunctionalityAvailable(
                 f"No node with {feature} functionality available!", feature=feature
@@ -430,7 +445,8 @@ class Player(VoiceProtocol):
         self._voice_state.update({"event": data})
         if "endpoint" in data:
             if match := ENDPONT_REGEX.match(data["endpoint"]):
-                match.group("region").replace("-", "_")
+                self._region = match.group("region").replace("-", "_")
+                self._coordinates = REGION_TO_COUNTRY_COORDINATE_MAPPING.get(self._region, (0, 0))
             await self._dispatch_voice_update()
 
     async def on_voice_state_update(self, data: dict) -> None:
@@ -1466,7 +1482,9 @@ class Player(VoiceProtocol):
         queue_list = ""
         start_index = page_index * per_page
         end_index = start_index + per_page
-        tracks = list(itertools.islice(self.queue.raw_queue, start_index, end_index))
+        tracks = await asyncstdlib.builtins.list(
+            asyncstdlib.itertools.islice(self.queue.raw_queue, start_index, end_index)
+        )
         arrow = self.draw_time()
         pos = format_time(self.position)
         current = self.current
@@ -1675,14 +1693,14 @@ class Player(VoiceProtocol):
         if current:
             current.timestamp = int(player.position)
             self.queue.put_nowait([current], index=0)
-            node = self.node.node_manager.find_best_node(
-                region=self.region, feature=await current.requires_capability()
+            node = await self.node.node_manager.find_best_node(
+                region=self.region, feature=await current.requires_capability(), coordinates=self._coordinates
             )
             tried = 0
             while not node:
                 await asyncio.sleep(1)
-                node = self.node.node_manager.find_best_node(
-                    region=self.region, feature=await current.requires_capability()
+                node = await self.node.node_manager.find_best_node(
+                    region=self.region, feature=await current.requires_capability(), coordinates=self._coordinates
                 )
                 tried += 1
                 if tried > 600:

@@ -3,6 +3,7 @@ from __future__ import annotations
 import time
 from typing import TYPE_CHECKING, AsyncIterator
 
+import asyncstdlib
 import discord
 
 from pylav._logging import getLogger
@@ -250,7 +251,7 @@ class PlaylistConfigManager:
                     data = None
                 if not data:
                     continue
-                if tracks := [t for t in map(str.strip, data.splitlines()) if t]:
+                if tracks := [t async for t in asyncstdlib.builtins.map(str.strip, data.splitlines()) if t]:
                     await self.create_or_update_global_playlist(
                         id=id, name=name, tracks=tracks, author=self._client.bot.user.id
                     )

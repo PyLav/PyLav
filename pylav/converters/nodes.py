@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, TypeVar
 
+import asyncstdlib
 from discord.app_commands import Choice, Transformer
 from discord.ext import commands
 
@@ -23,7 +24,9 @@ else:
                 nodes = ctx.lavalink.node_manager.nodes
             except EntryNotFoundError as e:
                 raise commands.BadArgument(f"Node with name or id `{arg}` not found.") from e
-            if r := list(filter(lambda n: arg.lower() in n.name.lower() or arg == f"{n.identifier}", nodes)):
+            if r := await asyncstdlib.builtins.list(
+                asyncstdlib.builtins.filter(lambda n: arg.lower() in n.name.lower() or arg == f"{n.identifier}", nodes)
+            ):
                 return r
             raise commands.BadArgument(f"Node with name or id `{arg}` not found.")
 

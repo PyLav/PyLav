@@ -10,6 +10,7 @@ import ujson
 from pylav._logging import getLogger
 from pylav.constants import DEFAULT_REGIONS
 from pylav.events import NodeConnectedEvent, NodeDisconnectedEvent
+from pylav.location import get_closest_region_name_and_coordinate
 from pylav.node import Node
 from pylav.player import Player
 
@@ -217,12 +218,26 @@ class NodeManager:
                 return key
         return None
 
-    def find_best_node(
+    def get_closest_node(self, region: str) -> Node:
+        """
+        Returns the closest node to a given region.
+        Parameters
+        ----------
+        region: :class:`str`
+            The region to use.
+        Returns
+        -------
+        :class:`Node`
+        """
+        return min(self.available_nodes, key=lambda n: n.region_distance(region))
+
+    async def find_best_node(
         self,
         region: str = None,
         not_region: str = None,
         feature: str = None,
         already_attempted_regions: set[str] = None,
+        coordinates: tuple[float, float] = None,
     ) -> Node | None:
         """
         Finds the best (least used) node in the given region, if applicable.
@@ -234,6 +249,8 @@ class NodeManager:
             The region to exclude from the search. Defaults to `None`.
         feature: Optional[:class:`str`]
             The feature to check for. Defaults to `None`.
+        coordinates: Optional[:class:`tuple`[:class:`float`, :class:`float`]]
+            The coordinates to check for. Defaults to `None`.
 
             Supported capabilities:
                 Built-in:
@@ -271,15 +288,29 @@ class NodeManager:
             nodes = [n for n in self.available_nodes if n.has_capability(feature)]
         else:
             nodes = self.available_nodes
+        if coordinates is None:
+            coordinates = (0, 0)
 
         if region and not_region:
+            available_regions = {n.region for n in self.available_nodes if n.region not in already_attempted_regions}
+            closest_region, __ = await get_closest_region_name_and_coordinate(
+                *coordinates, region_pool=available_regions
+            )
             nodes = [
                 n
                 for n in nodes
-                if n.region == region and n.region != not_region and n.region not in already_attempted_regions
+                if (n.region in [region, closest_region])
+                and n.region != not_region
+                and n.region not in already_attempted_regions
             ]
         elif region:
-            nodes = [n for n in nodes if n.region == region and n.region not in already_attempted_regions]
+            available_regions = {n.region for n in self.available_nodes if n.region not in already_attempted_regions}
+            closest_region, __ = await get_closest_region_name_and_coordinate(
+                *coordinates, region_pool=available_regions
+            )
+            nodes = [
+                n for n in nodes if (n.region in [region, closest_region]) and n.region not in already_attempted_regions
+            ]
         else:
             nodes = [n for n in nodes if n.region != not_region and n.region not in already_attempted_regions]
 
@@ -354,7 +385,7 @@ class NodeManager:
             node,
         )
         self.client.dispatch_event(NodeDisconnectedEvent(node, code, reason))
-        best_node = self.find_best_node(region=node.region)
+        best_node = await self.find_best_node(region=node.region)
 
         if not best_node:
             self.player_queue.extend(node.players)
