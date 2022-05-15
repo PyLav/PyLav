@@ -914,6 +914,7 @@ class Client(metaclass=_Singleton):
         self,
         *queries: Query,
         bypass_cache: bool = False,
+        fullsearch: bool = False,
     ) -> LavalinkResponseT:
         """This method can be rather slow as it recursibly queries all queries and their associated entries.
 
@@ -928,6 +929,8 @@ class Client(metaclass=_Singleton):
         bypass_cache : `bool`, optional
             Whether to bypass the cache and force a new search.
             Local files will always be bypassed.
+        fullsearch : `bool`, optional
+            if a Search query is passed wether to returrn a list of tracks instead of the first.
         """
         output_tracks = []
         playlist_name = ""
@@ -940,6 +943,9 @@ class Client(metaclass=_Singleton):
                     if response.is_playlist or response.is_album:
                         _response = await node.get_tracks(response, bypass_cache=bypass_cache)
                         playlist_name = _response.get("playlistInfo", {}).get("name", "")
+                        output_tracks.extend(_response["tracks"])
+                    elif fullsearch and response.is_search:
+                        _response = await node.get_tracks(response, bypass_cache=bypass_cache)
                         output_tracks.extend(_response["tracks"])
                     elif response.is_single:
                         _response = await node.get_tracks(response, first=True, bypass_cache=bypass_cache)
