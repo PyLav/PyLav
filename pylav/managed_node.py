@@ -327,7 +327,9 @@ class LocalNodeManager:
         if data["sentry"]["dsn"]:
             data["sentry"]["tags"]["ID"] = self._client.bot.user.id
             data["sentry"]["tags"]["pylav_version"] = self._client.lib_version
-        if not data["lavalink"]["server"]["httpConfig"] and not data["lavalink"]["server"]["httpConfig"]["proxyHost"]:
+        if not data["lavalink"]["server"]["httpConfig"] or not data["lavalink"]["server"]["httpConfig"].get(
+            "proxyHost"
+        ):
             del data["lavalink"]["server"]["httpConfig"]
         self._current_config = data
         async with LAVALINK_APP_YML.open("w") as f:
