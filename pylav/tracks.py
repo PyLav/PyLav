@@ -295,6 +295,12 @@ class Track:
                 image = max(images, key=operator.attrgetter("width"))
                 return image.url
 
+    async def mix_playlist_url(self) -> str | None:
+        if not self.identifier:
+            return
+        if self.source == "youtube":
+            return f"https://www.youtube.com/watch?v={self.identifier}&list=RD{self.identifier}"
+
     def __getitem__(self, name) -> Any:
         return super().__getattribute__(name)
 
