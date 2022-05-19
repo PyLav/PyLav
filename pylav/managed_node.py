@@ -338,7 +338,7 @@ class LocalNodeManager:
     async def _get_jar_args(self) -> tuple[list[str], str | None]:
         (java_available, java_version) = await self._has_java()
         if not java_available:
-            raise Exception(f"Pylav - Java executable not found, tried to use: '{self._java_exc}'")
+            raise Exception(f"Pylav - Java executable not  found, tried to use: '{self._java_exc}'")
         java_xms, java_xmx = "64M", self._full_data.extras.get("max_ram", "2048M") if self._full_data else "2048M"
         match = re.match(r"^(\d+)([MG])$", java_xmx, flags=re.IGNORECASE)
         command_args = [self._java_exc, f"-Xms{java_xms}"]
@@ -426,10 +426,11 @@ class LocalNodeManager:
     async def shutdown(self) -> None:
         if self.start_monitor_task is not None:
             self.start_monitor_task.cancel()
-        await self._partial_shutdown()
-        await self._session.close()
         if self.node:
             await self._client.node_manager.remove_node(self.node)
+            self._node = None
+        await self._partial_shutdown()
+        await self._session.close()
 
     async def _partial_shutdown(self) -> None:
         self.ready.clear()
