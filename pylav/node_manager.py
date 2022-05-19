@@ -405,8 +405,11 @@ class NodeManager:
 
     async def connect_to_all_nodes(self) -> None:
         nodes_list = []
+        added_managed_external = False
         for node in await self.client.node_db_manager.get_all_unamanaged_nodes():
             try:
+                if node.id == 1:
+                    added_managed_external = True
                 connection_arguments = node.get_connection_args()
                 nodes_list.append(await self.add_node(**connection_arguments, skip_db=True))
             except (ValueError, KeyError) as exc:
@@ -421,7 +424,7 @@ class NodeManager:
             auto_update_managed_nodes=True,
             localtrack_folder=self.client._config_folder / "music",
         )
-        if config_data.extras["use_bundled_external"]:
+        if config_data.extras["use_bundled_external"] and not added_managed_external:
             nodes_list.append(
                 await self.add_node(
                     host="lava.link",
