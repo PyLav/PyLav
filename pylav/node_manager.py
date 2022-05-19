@@ -414,6 +414,22 @@ class NodeManager:
                     "[NODE-%s] Invalid node, skipping ... id: %s - Original error: %s", node.name, node.id, exc
                 )
                 continue
+        nodes_list.append(
+            await self.add_node(
+                host="lava.link",
+                unique_identifier=1,
+                name="Lava.Link (Bundled)",
+                port=80,
+                password=f"PyLav/{self.client.lib_version}",
+                resume_key=f"PyLav/{self.client.lib_version}-{self.client.bot_id}",
+                resume_timeout=60,
+                reconnect_attempts=-1,
+                ssl=False,
+                search_only=False,
+                managed=False,
+                skip_db=True,
+            )
+        )
         tasks = [asyncio.create_task(n.wait_until_ready()) for n in nodes_list]
         if self.client.enable_managed_node:
             tasks.append(asyncio.create_task(self.client._local_node_manager.wait_until_connected()))
