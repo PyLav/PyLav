@@ -422,12 +422,12 @@ class NodeManager:
                 port=80,
                 password=f"PyLav/{self.client.lib_version}",
                 resume_key=f"PyLav/{self.client.lib_version}-{self.client.bot_id}",
-                resume_timeout=60,
+                resume_timeout=600,
                 reconnect_attempts=-1,
                 ssl=False,
                 search_only=False,
                 managed=False,
-                skip_db=True,
+                skip_db=False,
             )
         )
         tasks = [asyncio.create_task(n.wait_until_ready()) for n in nodes_list]
