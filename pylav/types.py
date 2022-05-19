@@ -34,6 +34,7 @@ _Bot = Union["Red", "Bot", "AutoShardedBot"]
 
 
 class PyLavCogMixin(ABC):
+    __version__: str
     bot: BotT
     lavalink: Client
     pylav: Client

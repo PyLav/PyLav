@@ -338,7 +338,7 @@ class LocalNodeManager:
     async def _get_jar_args(self) -> tuple[list[str], str | None]:
         (java_available, java_version) = await self._has_java()
         if not java_available:
-            raise Exception("Pylav - Java executable not found.")
+            raise Exception(f"Pylav - Java executable not found, tried to use: '{self._java_exc}'")
         java_xms, java_xmx = "64M", self._full_data.extras.get("max_ram", "2048M") if self._full_data else "2048M"
         match = re.match(r"^(\d+)([MG])$", java_xmx, flags=re.IGNORECASE)
         command_args = [self._java_exc, f"-Xms{java_xms}"]
@@ -778,6 +778,7 @@ class LocalNodeManager:
                 pass
         return process_list
 
-    async def restart(self):
+    async def restart(self, java_path: str = None):
         LOGGER.info("Restarting managed Lavalink node.")
-        await self.start(java_path=self._java_path)
+        await self.shutdown()
+        await self.start(java_path=java_path or elf._java_path)
