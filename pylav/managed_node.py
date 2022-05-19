@@ -781,4 +781,4 @@ class LocalNodeManager:
     async def restart(self, java_path: str = None):
         LOGGER.info("Restarting managed Lavalink node.")
         await self.shutdown()
-        await self.start(java_path=java_path or elf._java_path)
+        await self.start(java_path=java_path or self._java_path)
