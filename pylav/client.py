@@ -287,6 +287,9 @@ class Client(metaclass=_Singleton):
                             auto_update_managed_nodes=True,
                             localtrack_folder=self._config_folder / "music",
                         )
+                        if "use_bundled_external" not in config_data.extras:
+                            config_data.extras["use_bundled_external"] = True
+                            await config_data.save()
                         auto_update_managed_nodes = config_data.auto_update_managed_nodes
                         self.enable_managed_node = config_data.enable_managed_node
                         self._config_folder = aiopath.AsyncPath(config_data.config_folder)
