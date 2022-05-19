@@ -260,6 +260,10 @@ class LibConfigModel:
             (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
         )
 
+    async def set_managed_external_node(self, value: bool) -> None:
+        self.extras["use_bundled_external"] = value
+        await self.save()
+
     async def save(self) -> LibConfigModel:
         data = {}
         if self.config_folder:
