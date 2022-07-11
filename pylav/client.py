@@ -8,7 +8,8 @@ import operator
 import pathlib
 import random
 from types import MethodType
-from typing import AsyncIterator, Callable, Iterator
+from typing import Callable
+from collections.abc import AsyncIterator, Iterator
 
 import aiohttp
 import aiohttp_client_cache

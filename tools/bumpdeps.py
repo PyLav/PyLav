@@ -73,7 +73,7 @@ import tempfile
 import textwrap
 import venv
 from pathlib import Path
-from typing import Iterable, Sequence
+from collections.abc import Iterable, Sequence
 
 import packaging.requirements
 import setuptools.config

@@ -7,7 +7,8 @@ import datetime
 import random
 import re
 import time
-from typing import TYPE_CHECKING, Any, Coroutine, Literal
+from typing import TYPE_CHECKING, Any, Literal
+from collections.abc import Coroutine
 
 import asyncstdlib
 import discord

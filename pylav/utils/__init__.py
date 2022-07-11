@@ -17,18 +17,13 @@ from types import GenericAlias
 from typing import (
     TYPE_CHECKING,
     Any,
-    AsyncIterable,
-    AsyncIterator,
-    Awaitable,
     Callable,
-    Generator,
-    Iterable,
-    Iterator,
     Optional,
     Tuple,
     TypeVar,
     Union,
 )
+from collections.abc import AsyncIterable, AsyncIterator, Awaitable, Generator, Iterable, Iterator
 
 import discord  # type: ignore
 from discord.backoff import ExponentialBackoff

@@ -4,7 +4,8 @@ import io
 from contextlib import asynccontextmanager
 from inspect import iscoroutinefunction
 from pathlib import Path
-from typing import IO, TYPE_CHECKING, AsyncContextManager, AsyncIterable, BinaryIO, Final, TextIO, Union, cast
+from typing import IO, TYPE_CHECKING, AsyncContextManager, BinaryIO, Final, TextIO, Union, cast
+from collections.abc import AsyncIterable
 
 from aiofile import AIOFile, BinaryFileWrapper, LineReader, TextFileWrapper
 from anyio import AsyncFile, open_file

@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import functools
 from pathlib import _Flavour, _ignore_error, _is_wildcard_pattern
-from typing import AsyncIterable, Callable
+from typing import Callable
+from collections.abc import AsyncIterable
 
 from pylav.vendored.aiopath.aiopath_310.wrap import CoroutineMethod
 

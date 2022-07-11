@@ -6,7 +6,7 @@ import io
 import re
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
-from typing import Iterator
+from collections.abc import Iterator
 
 import aiohttp
 import discord
