@@ -1,4 +1,4 @@
-from typing import AsyncIterable
+from collections.abc import AsyncIterable
 
 from aiohttp_client_cache import BaseCache, CacheBackend, ResponseOrKey
 from aiohttp_client_cache.docs import extend_init_signature

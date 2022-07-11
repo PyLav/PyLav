@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import time
-from typing import TYPE_CHECKING, AsyncIterator
+from typing import TYPE_CHECKING
+from collections.abc import AsyncIterator
 
 import asyncstdlib
 import discord
