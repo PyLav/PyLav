@@ -1370,6 +1370,24 @@ class Player(VoiceProtocol):
                 "low_pass": low_pass,
                 "channel_mix": channel_mix,
             }
+            if not (equalizer and equalizer.changed):
+                self._equalizer = Equalizer.default()
+            if not (karaoke and karaoke.changed):
+                self._karaoke = Karaoke.default()
+            if not (timescale and timescale.changed):
+                self._timescale = Timescale.default()
+            if not (tremolo and tremolo.changed):
+                self._tremolo = Tremolo.default()
+            if not (vibrato and vibrato.changed):
+                self._vibrato = Vibrato.default()
+            if not (rotation and rotation.changed):
+                self._rotation = Rotation.default()
+            if not (distortion and distortion.changed):
+                self._distortion = Distortion.default()
+            if not (low_pass and low_pass.changed):
+                self._low_pass = LowPass.default()
+            if not (channel_mix and channel_mix.changed):
+                self._channel_mix = ChannelMix.default()
         else:
             kwargs = {
                 "volume": volume or (self.volume_filter if self.volume_filter.changed else None),
