@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import os
+from collections.abc import AsyncIterable
 from os import PathLike, stat_result
 from pathlib import Path, PosixPath, PurePath, WindowsPath, _ignore_error, _NormalAccessor
 from stat import S_ISBLK, S_ISCHR, S_ISDIR, S_ISFIFO, S_ISLNK, S_ISREG, S_ISSOCK
 from typing import Final
-from collections.abc import AsyncIterable
 
 from pylav.vendored.aiopath.aiopath_310.flavours import _async_posix_flavour, _async_windows_flavour
 from pylav.vendored.aiopath.aiopath_310.handle import Handle, get_handle

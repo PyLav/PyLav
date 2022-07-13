@@ -3,8 +3,8 @@ from __future__ import annotations
 import contextlib
 import pathlib
 import re
-from typing import TYPE_CHECKING, Literal
 from collections.abc import AsyncIterator
+from typing import TYPE_CHECKING, Literal
 
 import aiohttp
 from discord.utils import maybe_coroutine

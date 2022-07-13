@@ -1,8 +1,8 @@
+from collections.abc import Awaitable
 from functools import partial, wraps
 from inspect import iscoroutinefunction
 from types import BuiltinFunctionType, BuiltinMethodType, FunctionType, MethodType
 from typing import Any, Callable, Protocol, runtime_checkable
-from collections.abc import Awaitable
 
 from anyio.to_thread import run_sync
 

@@ -72,8 +72,8 @@ import sys
 import tempfile
 import textwrap
 import venv
-from pathlib import Path
 from collections.abc import Iterable, Sequence
+from pathlib import Path
 
 import packaging.requirements
 import setuptools.config

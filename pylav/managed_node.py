@@ -9,8 +9,8 @@ import re
 import shlex
 import shutil
 import tempfile
-from typing import TYPE_CHECKING, ClassVar, Final
 from re import Pattern
+from typing import TYPE_CHECKING, ClassVar, Final
 
 import aiohttp
 import asyncstdlib

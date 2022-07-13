@@ -10,20 +10,12 @@ import random
 import threading
 import time
 from asyncio import QueueFull, events, locks
+from collections.abc import AsyncIterable, AsyncIterator, Awaitable, Generator, Iterable, Iterator
 from copy import copy
 from enum import Enum
 from itertools import chain
 from types import GenericAlias
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Callable,
-    Optional,
-    Tuple,
-    TypeVar,
-    Union,
-)
-from collections.abc import AsyncIterable, AsyncIterator, Awaitable, Generator, Iterable, Iterator
+from typing import TYPE_CHECKING, Any, Callable, Optional, Tuple, TypeVar, Union
 
 import discord  # type: ignore
 from discord.backoff import ExponentialBackoff

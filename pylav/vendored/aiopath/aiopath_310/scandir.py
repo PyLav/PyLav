@@ -1,6 +1,6 @@
+from collections.abc import AsyncIterable, Iterable
 from os import DirEntry, scandir, stat_result
 from typing import Any
-from collections.abc import AsyncIterable, Iterable
 
 from pylav.vendored.aiopath.aiopath_310.wrap import to_thread
 

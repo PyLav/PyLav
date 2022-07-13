@@ -4,9 +4,9 @@ import datetime
 import gzip
 import io
 import re
+from collections.abc import Iterator
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
-from collections.abc import Iterator
 
 import aiohttp
 import discord

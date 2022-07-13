@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import TYPE_CHECKING, Any, Callable, Literal, TypeVar, Union
 from collections.abc import Awaitable, Coroutine
+from typing import TYPE_CHECKING, Any, Callable, Literal, TypedDict, TypeVar, Union
 
 import discord
 from discord import app_commands
-from typing import TypedDict
 
 if TYPE_CHECKING:
     from discord.ext.commands import AutoShardedBot, Bot, Cog, Context
