@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING
 import asyncstdlib
 import discord
 
-from pylav import Query
 from pylav._logging import getLogger
 from pylav.exceptions import EntryNotFoundError
 from pylav.sql import tables
@@ -273,6 +272,7 @@ class PlaylistConfigManager:
                 if not data:
                     continue
                 if tracks := [t async for t in asyncstdlib.builtins.map(str.strip, data.splitlines()) if t]:
+                    LOGGER.info("Updating bundled playlist - %s (%s)", name, id)
                     await self.create_or_update_global_playlist(
                         id=id, name=name, tracks=tracks, author=self._client.bot.user.id
                     )
@@ -280,6 +280,8 @@ class PlaylistConfigManager:
                     await self.delete_playlist(playlist_id=id)
 
     async def update_bundled_external_playlists(self, *ids: int) -> None:
+        from pylav import Query
+
         # NOTICE: Update the BUNDLED_PLAYLIST_IDS constant in the constants.py file
         curated_data = {
             1000001: (
@@ -303,6 +305,7 @@ class PlaylistConfigManager:
         for id, (url, name) in id_filtered.items():
             track_list = []
             try:
+                LOGGER.info("Updating bundled external playlist - %s", id)
                 data = await self.client.get_tracks(await Query.from_string(url), bypass_cache=True)
                 name = data.get("playlistInfo", {}).get("name") or name
                 tracks_raw = data.get("tracks", [])
@@ -322,16 +325,21 @@ class PlaylistConfigManager:
                 await self.delete_playlist(playlist_id=id)
 
     async def update_external_playlists(self, *ids: int) -> None:
+        from pylav import Query
+
         async for playlist in self.get_external_playlists(*ids, ignore_ids=[1000001, 1000002, 1000003]):
             try:
+                LOGGER.info("Updating external playlist - %s (%s)", playlist.name, playlist.id)
                 query = await self.client.get_tracks(
                     await Query.from_string(playlist.url),
                     bypass_cache=True,
                 )
                 tracks_raw = query.get("tracks", [])
                 track_list = [t_ for t in tracks_raw if (t_ := t.get("track"))]
+                name = query.get("playlistInfo", {}).get("name") or playlist.name
                 if track_list:
                     playlist.tracks = track_list
+                    playlist.name = name
                     await playlist.save()
             except Exception as exc:
                 LOGGER.error(
