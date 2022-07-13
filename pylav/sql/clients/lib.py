@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-import asyncio
 from typing import TYPE_CHECKING
 
-from piccolo.table import create_tables
+from piccolo.table import create_db_tables
 
 from pylav._config import CONFIG_DIR
 from pylav._logging import getLogger
@@ -31,8 +30,7 @@ class LibConfigManager:
 
     @staticmethod
     async def create_tables() -> None:
-        await asyncio.to_thread(
-            create_tables,
+        await create_db_tables(
             tables.PlaylistRow,
             tables.LibConfigRow,
             tables.PlayerStateRow,
