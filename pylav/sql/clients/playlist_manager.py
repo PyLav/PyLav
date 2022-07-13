@@ -280,7 +280,7 @@ class PlaylistConfigManager:
                     await self.delete_playlist(playlist_id=id)
 
     async def update_bundled_external_playlists(self, *ids: int) -> None:
-        from pylav import Query
+        from pylav.query import Query
 
         # NOTICE: Update the BUNDLED_PLAYLIST_IDS constant in the constants.py file
         curated_data = {
@@ -325,7 +325,7 @@ class PlaylistConfigManager:
                 await self.delete_playlist(playlist_id=id)
 
     async def update_external_playlists(self, *ids: int) -> None:
-        from pylav import Query
+        from pylav.query import Query
 
         async for playlist in self.get_external_playlists(*ids, ignore_ids=[1000001, 1000002, 1000003]):
             try:
