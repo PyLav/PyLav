@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import time
-from typing import TYPE_CHECKING
 from collections.abc import AsyncIterator
+from typing import TYPE_CHECKING
 
 import asyncstdlib
 import discord
 
+from pylav import Query
 from pylav._logging import getLogger
 from pylav.exceptions import EntryNotFoundError
 from pylav.sql import tables
@@ -82,6 +83,24 @@ class PlaylistConfigManager:
     async def get_all_playlists() -> AsyncIterator[PlaylistModel]:
         for entry in await tables.PlaylistRow.select():
             yield PlaylistModel(**entry)
+
+    @staticmethod
+    async def get_external_playlists(*ids: int, ignore_ids: list[int] = None) -> AsyncIterator[PlaylistModel]:
+        if ignore_ids is None:
+            ignore_ids = []
+
+        if ids:
+            for entry in await tables.PlaylistRow.select().where(
+                (tables.PlaylistRow.url.is_not_null())
+                & (tables.PlaylistRow.id.is_in(ids))
+                & (tables.PlaylistRow.id.not_in(ignore_ids))
+            ):
+                yield PlaylistModel(**entry)
+        else:
+            for entry in await tables.PlaylistRow.select().where(
+                (tables.PlaylistRow.url.is_not_null()) & (tables.PlaylistRow.id.not_in(ignore_ids))
+            ):
+                yield PlaylistModel(**entry)
 
     @staticmethod
     async def create_or_update_playlist(
@@ -228,6 +247,7 @@ class PlaylistConfigManager:
         return returning_list
 
     async def update_bundled_playlists(self, *ids: int) -> None:
+        # NOTICE: Update the BUNDLED_PLAYLIST_IDS constant in the constants.py file
         curated_data = {
             1: (
                 "Aikaterna's curated tracks",
@@ -258,3 +278,65 @@ class PlaylistConfigManager:
                     )
                 else:
                     await self.delete_playlist(playlist_id=id)
+
+    async def update_bundled_external_playlists(self, *ids: int) -> None:
+        # NOTICE: Update the BUNDLED_PLAYLIST_IDS constant in the constants.py file
+        curated_data = {
+            1000001: (
+                # CYBER//
+                # Predä
+                ("https://open.spotify.com/playlist/2seaovjQuA2cMgltyLQUtd", "CYBER//")
+            ),
+            1000002: (
+                # PHONK//
+                # Predä
+                ("https://open.spotify.com/playlist/0rSd8LoXBD5tEBbSsbXqbc", "PHONK//")
+            ),
+            1000003: (  # bangers
+                # Predä
+                ("https://open.spotify.com/playlist/21trhbHm5hVgosPS1YpwSM", "bangers")
+            ),
+        }
+        id_filtered = {id: curated_data[id] for id in ids}
+        if not id_filtered:
+            id_filtered = curated_data
+        for id, (url, name) in id_filtered.items():
+            track_list = []
+            try:
+                data = await self.client.get_tracks(await Query.from_string(url), bypass_cache=True)
+                name = data.get("playlistInfo", {}).get("name") or name
+                tracks_raw = data.get("tracks", [])
+                track_list = [t_ for t in tracks_raw if (t_ := t.get("track"))]
+            except Exception as exc:
+                LOGGER.error(
+                    "Built-in external playlist couldn't be parsed - %s, report this error.", name, exc_info=exc
+                )
+                data = None
+            if not data:
+                continue
+            if track_list:
+                await self.create_or_update_global_playlist(
+                    id=id, name=name, tracks=track_list, author=self._client.bot.user.id
+                )
+            else:
+                await self.delete_playlist(playlist_id=id)
+
+    async def update_external_playlists(self, *ids: int) -> None:
+        async for playlist in self.get_external_playlists(*ids, ignore_ids=[1000001, 1000002, 1000003]):
+            try:
+                query = await self.client.get_tracks(
+                    await Query.from_string(playlist.url),
+                    bypass_cache=True,
+                )
+                tracks_raw = query.get("tracks", [])
+                track_list = [t_ for t in tracks_raw if (t_ := t.get("track"))]
+                if track_list:
+                    playlist.tracks = track_list
+                    await playlist.save()
+            except Exception as exc:
+                LOGGER.error(
+                    "External playlist couldn't be updated - %s (%s), report this error.",
+                    playlist.name,
+                    playlist.id,
+                    exc_info=exc,
+                )

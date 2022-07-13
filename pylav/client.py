@@ -7,9 +7,9 @@ import itertools
 import operator
 import pathlib
 import random
+from collections.abc import AsyncIterator, Iterator
 from types import MethodType
 from typing import Callable
-from collections.abc import AsyncIterator, Iterator
 
 import aiohttp
 import aiohttp_client_cache
@@ -321,7 +321,6 @@ class Client(metaclass=_Singleton):
                         self._local_node_manager = LocalNodeManager(self, auto_update=auto_update_managed_nodes)
                         if self.enable_managed_node:
                             await self._local_node_manager.start(java_path=config_data.java_path)
-                        await self.playlist_db_manager.update_bundled_playlists()
                         await self.node_manager.connect_to_all_nodes()
                         await self.node_manager.wait_until_ready()
                         await self.player_manager.restore_player_states()
@@ -329,6 +328,24 @@ class Client(metaclass=_Singleton):
                             self._query_cache_manager.delete_old,
                             trigger="interval",
                             seconds=600,
+                            max_instances=1,
+                        )
+                        self._scheduler.add_job(
+                            self.playlist_db_manager.update_bundled_playlists,
+                            trigger="interval",
+                            days=1,
+                            max_instances=1,
+                        )
+                        self._scheduler.add_job(
+                            self.playlist_db_manager.update_bundled_external_playlists,
+                            trigger="interval",
+                            weeks=1,
+                            max_instances=1,
+                        )
+                        self._scheduler.add_job(
+                            self.playlist_db_manager.update_external_playlists,
+                            trigger="interval",
+                            weeks=1,
                             max_instances=1,
                         )
                         self._scheduler.start()
