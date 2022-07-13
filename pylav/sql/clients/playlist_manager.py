@@ -298,6 +298,7 @@ class PlaylistConfigManager:
                 # Predä
                 ("https://open.spotify.com/playlist/21trhbHm5hVgosPS1YpwSM", "bangers")
             ),
+            1000004: ("https://open.spotify.com/playlist/0BbMjMQZ43vtdz7al266XH", "???"),
         }
         id_filtered = {id: curated_data[id] for id in ids}
         if not id_filtered:
