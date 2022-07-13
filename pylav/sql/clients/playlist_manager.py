@@ -319,7 +319,7 @@ class PlaylistConfigManager:
                 continue
             if track_list:
                 await self.create_or_update_global_playlist(
-                    id=id, name=name, tracks=track_list, author=self._client.bot.user.id
+                    id=id, name=name, tracks=track_list, author=self._client.bot.user.id, url=url
                 )
             else:
                 await self.delete_playlist(playlist_id=id)
