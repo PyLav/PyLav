@@ -53,11 +53,11 @@ LAVALINK_DOWNLOAD_DIR = pathlib.Path(LAVALINK_DOWNLOAD_DIR)  # type: ignore
 LAVALINK_DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
 _LAVALINK_JAR_FILE_FORCED_SYNC = LAVALINK_DOWNLOAD_DIR / "forced.jar"
 LAVALINK_DOWNLOAD_DIR: aiopath.AsyncPath = aiopath.AsyncPath(LAVALINK_DOWNLOAD_DIR)
-LAVALINK_JAR_FILE: Final[aiopath.AsyncPath] = LAVALINK_DOWNLOAD_DIR / "Lavalink.jar"
-LAVALINK_JAR_FILE_FORCED: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / "forced.jar"
+LAVALINK_JAR_FILE: aiopath.AsyncPath = LAVALINK_DOWNLOAD_DIR / "Lavalink.jar"
+LAVALINK_JAR_FILE_FORCED: Final[aiopath.AsyncPath] = LAVALINK_DOWNLOAD_DIR / "forced.jar"
 if USING_FORCED := _LAVALINK_JAR_FILE_FORCED_SYNC.exists():
     LOGGER.warning("%s found, disabling any JAR automated downloads", LAVALINK_JAR_FILE_FORCED)
-    LAVALINK_JAR_FILE: Final[aiopath.AsyncPath] = LAVALINK_JAR_FILE_FORCED
+    LAVALINK_JAR_FILE: aiopath.AsyncPath = LAVALINK_JAR_FILE_FORCED
 
 
 LAVALINK_APP_YML: Final[aiopath.AsyncPath] = LAVALINK_DOWNLOAD_DIR / "application.yml"
