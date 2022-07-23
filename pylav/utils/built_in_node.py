@@ -13,7 +13,7 @@ NODE_DEFAULT_SETTINGS = {
                 "repository": "https://jitpack.io",
             },
             {
-                "dependency": "com.dunctebot:skybot-lavalink-plugin:1.3.3",
+                "dependency": "com.dunctebot:skybot-lavalink-plugin:1.4.0",
                 "repository": "https://m2.duncte123.dev/releases",
             },
             {"dependency": "com.github.topisenpai:sponsorblock-plugin:v1.0.3", "repository": "https://jitpack.io"},
