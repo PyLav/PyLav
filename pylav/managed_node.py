@@ -53,6 +53,12 @@ LAVALINK_DOWNLOAD_DIR = pathlib.Path(LAVALINK_DOWNLOAD_DIR)  # type: ignore
 LAVALINK_DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
 LAVALINK_DOWNLOAD_DIR: aiopath.AsyncPath = aiopath.AsyncPath(LAVALINK_DOWNLOAD_DIR)
 LAVALINK_JAR_FILE: Final[aiopath.AsyncPath] = LAVALINK_DOWNLOAD_DIR / "Lavalink.jar"
+LAVALINK_JAR_FILE_FORCED: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / "forced.jar"
+if USING_FORCED := LAVALINK_JAR_FILE_FORCED.exists():
+    LAVALINK_JAR_FILE: Final[aiopath.AsyncPath] == aiopath.AsyncPath(LAVALINK_JAR_FILE_FORCED)
+else:
+    LAVALINK_JAR_FILE: Final[aiopath.AsyncPath] = LAVALINK_DOWNLOAD_DIR / "Lavalink.jar"
+
 LAVALINK_APP_YML: Final[aiopath.AsyncPath] = LAVALINK_DOWNLOAD_DIR / "application.yml"
 
 _RE_READY_LINE: Final[Pattern] = re.compile(rb"Started Launcher in \S+ seconds")
@@ -543,7 +549,7 @@ class LocalNodeManager:
 
     async def maybe_download_jar(self):
         self._ci_info = await self.get_ci_latest_info()
-        if not (await LAVALINK_JAR_FILE.exists() and await self._is_up_to_date()):
+        if not (USING_FORCED and await LAVALINK_JAR_FILE.exists() and await self._is_up_to_date()):
             await self._download_jar()
 
     async def wait_until_ready(self, timeout: float | None = None):

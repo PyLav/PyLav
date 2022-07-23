@@ -13,7 +13,7 @@ ENV_FILE = pathlib.Path.home() / "pylav.yaml"
 
 if not ENV_FILE.exists():
     LOGGER.warning(
-        "%s does not exist - This is not a problem if it does them the enviroment variables will be read from it.",
+        "%s does not exist - This is not a problem if it does then the enviroment variables will be read from it.",
         ENV_FILE,
     )
     POSTGRE_PORT = os.getenv("PYLAV__POSTGRES_PORT", os.getenv("PGPORT"))
@@ -39,6 +39,7 @@ if not ENV_FILE.exists():
         if REDIS_FULLADDRESS_RESPONSE_CACHE:
             data["PYLAV__REDIS_FULLADDRESS_RESPONSE_CACHE"] = REDIS_FULLADDRESS_RESPONSE_CACHE
         if data:
+            LOGGER.debug("Creating %s with the following content: %r", ENV_FILE, data)
             yaml.safe_dump(data, file, default_flow_style=False, sort_keys=False, encoding="utf-8")
 
 else:
