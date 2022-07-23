@@ -5,17 +5,20 @@ from piccolo.columns import JSONB, BigInt, Boolean, Bytea, Float, Integer, Text,
 from piccolo.engine import PostgresEngine
 from piccolo.table import Table
 
+from pylav._logging import getLogger
 from pylav.envvars import POSTGRE_DATABASE, POSTGRE_HOST, POSTGRE_PASSWORD, POSTGRE_PORT, POSTGRE_USER
 
-DB = PostgresEngine(
-    config={
-        "host": POSTGRE_HOST,
-        "port": int(POSTGRE_PORT) if isinstance(POSTGRE_PORT, str) else POSTGRE_PORT,
-        "database": POSTGRE_DATABASE,
-        "user": POSTGRE_USER,
-        "password": POSTGRE_PASSWORD,
-    }
-)
+LOGGER = getLogger("PyLav.Postgres")
+config = {
+    "host": POSTGRE_HOST,
+    "port": int(POSTGRE_PORT) if isinstance(POSTGRE_PORT, str) else POSTGRE_PORT,
+    "database": POSTGRE_DATABASE,
+    "user": POSTGRE_USER,
+    "password": POSTGRE_PASSWORD,
+}
+LOGGER.info("Connecting to Postgres server using %r", config)
+
+DB = PostgresEngine(config=config)
 
 
 class PlaylistRow(Table, db=DB, tablename="playlist"):
