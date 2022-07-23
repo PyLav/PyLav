@@ -466,7 +466,7 @@ class LocalNodeManager:
             jar_url = JAR_SERVER + self._ci_info["jar_url"]
         else:
             jar_url = LAVALINK_JAR_ENDPOINT
-        async with self._session.get(jar_url, timeout=600) as response:
+        async with self._session.get(jar_url, timeout=3600) as response:
             if 400 <= response.status < 600:
                 raise LavalinkDownloadFailed(response=response, should_retry=True)
             fd, path = tempfile.mkstemp()
