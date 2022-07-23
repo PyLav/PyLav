@@ -326,9 +326,10 @@ class PlaylistConfigManager:
                 await self.delete_playlist(playlist_id=id)
 
     async def update_external_playlists(self, *ids: int) -> None:
+        from pylav.constants import BUNDLED_PLAYLIST_IDS
         from pylav.query import Query
 
-        async for playlist in self.get_external_playlists(*ids, ignore_ids=[1000001, 1000002, 1000003]):
+        async for playlist in self.get_external_playlists(*ids, ignore_ids=BUNDLED_PLAYLIST_IDS):
             try:
                 LOGGER.info("Updating external playlist - %s (%s)", playlist.name, playlist.id)
                 query = await self.client.get_tracks(
