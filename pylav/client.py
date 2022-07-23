@@ -329,6 +329,9 @@ class Client(metaclass=_Singleton):
                         await self.node_manager.connect_to_all_nodes()
                         await self.node_manager.wait_until_ready()
                         await self.player_manager.restore_player_states()
+                        await self.playlist_db_manager.update_bundled_playlists()
+                        await self.playlist_db_manager.update_bundled_external_playlists()
+                        await self.playlist_db_manager.update_external_playlists()
                         self._scheduler.add_job(
                             self._query_cache_manager.delete_old,
                             trigger="interval",
