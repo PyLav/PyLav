@@ -105,6 +105,7 @@ class Client(metaclass=_Singleton):
                 self.__old_process_command_method = bot.process_commands
             if self.__old_get_context is None:
                 self.__old_get_context = bot.get_context
+            self.ready = asyncio.Event()
             bot.process_commands = MethodType(_process_commands, bot)
             bot.get_context = MethodType(_get_context, bot)
             self.__cogs_registered.add(cog.__cog_name__)
@@ -163,6 +164,9 @@ class Client(metaclass=_Singleton):
         except Exception:
             LOGGER.exception("Failed to initialize Lavalink")
             raise
+
+    async def wait_until_ready(self, timeout: float | None = None):
+        await asyncio.wait_for(self.ready.wait(), timeout=timeout)
 
     @property
     def initialized(self) -> bool:
@@ -268,6 +272,7 @@ class Client(metaclass=_Singleton):
                 async with self._asyncio_lock:
                     if not self._initiated:
                         self._initiated = True
+                        self.ready.clear()
                         await self.bot.wait_until_ready()
                         if hasattr(self.bot, "get_shared_api_token"):
                             spotify = await self.bot.get_shared_api_tokens("spotify")
@@ -349,6 +354,7 @@ class Client(metaclass=_Singleton):
                             max_instances=1,
                         )
                         self._scheduler.start()
+                        self.ready.set()
         except Exception as exc:
             LOGGER.critical("Failed start up", exc_info=exc)
             raise exc
@@ -600,6 +606,7 @@ class Client(metaclass=_Singleton):
                 LOGGER.info("%s has been unregistered", cog.__cog_name__)
                 if not self.__cogs_registered:
                     self._shutting_down = True
+                    self.ready.clear()
                     try:
                         Client._instances.clear()
                         SingletonMethods.reset()
