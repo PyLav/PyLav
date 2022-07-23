@@ -10,7 +10,7 @@ from pylav.envvars import POSTGRE_DATABASE, POSTGRE_HOST, POSTGRE_PASSWORD, POST
 DB = PostgresEngine(
     config={
         "host": POSTGRE_HOST,
-        "port": int(POSTGRE_PORT),
+        "port": int(POSTGRE_PORT) if isinstance(POSTGRE_PORT, str) else POSTGRE_PORT,
         "database": POSTGRE_DATABASE,
         "user": POSTGRE_USER,
         "password": POSTGRE_PASSWORD,
