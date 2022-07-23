@@ -112,7 +112,7 @@ python -m pip install -U pip setuptools wheel
 #### Install Postgres14
 **I will not be providing any further support on how to setup/use Postgres other than the instructions below**
 
-**Postgres is widely used so if you have any issue with the instructions above, or something is missing you can use Google to figure out the missing steps for you case**
+**Postgres is widely used so if you have any issue with the instructions below, or something is missing you can use Google to figure out the missing steps for you case**
 
 - PostgresSQL 14 server
   - MacOS: [PostgresSQL 14 using Postgres.app](https://postgresapp.com/)
@@ -122,7 +122,7 @@ python -m pip install -U pip setuptools wheel
 ### Create a new Postgres User and Password
 **I will not be providing any further support on how to setup/use Postgres other than the instructions below**
 
-**Postgres is widely used so if you have any issue with the instructions above, or something is missing you can use Google to figure out the missing steps for you case**
+**Postgres is widely used so if you have any issue with the instructions below, or something is missing you can use Google to figure out the missing steps for you case**
 
 - Linux:
 ```bash
