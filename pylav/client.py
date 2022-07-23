@@ -165,7 +165,7 @@ class Client(metaclass=_Singleton):
             LOGGER.exception("Failed to initialize Lavalink")
             raise
 
-    async def wait_until_ready(self, timeout: float | None = None):
+    async def wait_until_ready(self, timeout: float | None = None) -> None:
         await asyncio.wait_for(self.ready.wait(), timeout=timeout)
 
     @property
