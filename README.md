@@ -12,11 +12,12 @@ Documentation
   - Linux: [PostgresSQL](https://www.postgresql.org/download/linux/)
 - Python 3.10+ (On initial release - during pre-alpha phase 3.9+)
 - Env Vars to connect the lib to the PostgresSQL server
-  - PYLAV__POSTGRES_PORT - Defaults to 5432
-  - PYLAV__POSTGRES_PASSWORD - Defaults to No Password
-  - PYLAV__POSTGRES_USER - Defaults to "postgres"
-  - PYLAV__POSTGRES_DB - Defaults to "postgres"
-  - PYLAV__POSTGRES_HOST - Defaults to "localhost"
+  All Envvars default to AsyncPG [defaults](https://magicstack.github.io/asyncpg/current/api/index.html#connection)
+  - PYLAV__POSTGRES_PORT
+  - PYLAV__POSTGRES_PASSWORD
+  - PYLAV__POSTGRES_USER
+  - PYLAV__POSTGRES_DB
+  - PYLAV__POSTGRES_HOST
 - Env Vars to connect the lib cache to Redis, note if these are missing the library will default to PostgresSQL, therefore they are not necessary.
     - This will be used by the aiohttp cached client session for storing cached responses for 1 day, this reduces stress on some of the requests the lib makes such as to RadioBrowser.
       - REDIS_FULLADDRESS_RESPONSE_CACHE
