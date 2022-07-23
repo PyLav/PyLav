@@ -84,12 +84,80 @@ Installation
 
 If you're using a 4.18 or newer kernel and have [`libaio`](https://pagure.io/libaio) installed, `aiopath` will use it via `aiofile`. You can install `libaio` on Debian/Ubuntu like so:
 ```bash
-$ sudo apt install libaio1 libaio-dev
+sudo apt install libaio1 libaio-dev
+```
+
+#### Install Python 3.10
+  - [Windows & Mac](https://www.python.org/downloads/release/python-3105/)
+  - [Ubuntu 22.04](https://www.linuxcapable.com/how-to-install-python-3-10-on-ubuntu-22-04-lts/)
+    - Followed by:
+```bash
+sudo apt install python3.10-dev python3.10-venv python3.10-distutils -y
+```
+
+#### Create a Python3.10 Venv
+```bash
+python3.10 -m venv ~/p310
+```
+#### Activated Python3.10 Venv
+```bash
+source ~/p310/bin/activate
+```
+
+#### Pre-setup Python 3.10 Venv (After activating it)
+```bash
+python -m pip install -U pip setuptools wheel
+```
+
+#### Install Postgres14
+**I will not be providing any further support on how to setup/use Postgres other than the instructions below**
+
+**Postgres is widely used so if you have any issue with the instructions above, or something is missing you can use Google to figure out the missing steps for you case**
+
+- PostgresSQL 14 server
+  - MacOS: [PostgresSQL 14 using Postgres.app](https://postgresapp.com/)
+  - Windows: [PostgresSQL 14](https://www.postgresql.org/download/windows/)
+  - Linux: [PostgresSQL 14 using Postgres.app](https://www.postgresql.org/download/linux/) - Note you will want to use `postgresql-14` instead of `postgresql` i.e `sudo apt-get -y install postgresql-14`
+
+### Create a new Postgres User and Password
+**I will not be providing any further support on how to setup/use Postgres other than the instructions below**
+
+**Postgres is widely used so if you have any issue with the instructions above, or something is missing you can use Google to figure out the missing steps for you case**
+
+- Linux:
+```bash
+sudo -u postgres createuser -s -i -d -r -l -w <username>
+sudo -u postgres psql -c "ALTER ROLE <username> WITH PASSWORD '<password>';"
+```
+Make sure to replace `<username>` and `<password>` with the new values for example:
+```bash
+sudo -u postgres createuser -s -i -d -r -l -w Draper
+sudo -u postgres psql -c "ALTER ROLE Draper WITH PASSWORD 'MyNewPassword';"
+```
+
+#### Setting Environment variables:
+- MacOS: [Set Permanent Environment Variable](https://phoenixnap.com/kb/set-environment-variable-mac#ftoc-heading-5)
+- Windows: [Set Permanent System Environment Variable](https://www.forbeslindesay.co.uk/post/42833119552/permanently-set-environment-variables-on-windows)
+- Linux: [Set Permanent Environment Variable](https://phoenixnap.com/kb/linux-set-environment-variable#ftoc-heading-9)
+  - Not if you start your bot wil a service file you will need to set the environment variables there - [more info here](https://flatcar-linux.org/docs/latest/setup/systemd/environment-variables/).
+
+```bash
+PYLAV__POSTGRES_PORT=5432
+PYLAV__POSTGRES_PASSWORD=<password>
+PYLAV__POSTGRES_USER=<username>
+PYLAV__POSTGRES_DB=postgres
+PYLAV__POSTGRES_HOST=localhost
+```
+Make sure to replace `<username>` and `<password>` with the new values for example:
+```bash
+PYLAV__POSTGRES_PASSWORD=MyNewPassword
+PYLAV__POSTGRES_USER=Draper
 ```
 ---------------------------
 
 Getting Started
 -------------------------------------
+Once Postgres-14 is installed and you set the environment variables to the correct values for your instance you are all setup to start using PyLav.
 
 Credits
 ---------------------------
