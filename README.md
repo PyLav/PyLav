@@ -118,14 +118,14 @@ python -m pip install -U pip setuptools wheel
 - PostgresSQL 14 server
   - MacOS: [PostgresSQL 14 using Postgres.app](https://postgresapp.com/)
   - Windows: [PostgresSQL 14](https://www.postgresql.org/download/windows/)
-  - Linux: [PostgresSQL 14 using Postgres.app](https://www.postgresql.org/download/linux/) - Note you will want to use `postgresql-14` instead of `postgresql` i.e `sudo apt-get -y install postgresql-14`
+  - Linux: [PostgresSQL 14](https://www.postgresql.org/download/linux/) - Note you will want to use `postgresql-14` instead of `postgresql` i.e `sudo apt-get -y install postgresql-14`
 
 ### Create a new Postgres User and Password
 **I will not be providing any further support on how to setup/use Postgres other than the instructions below**
 
 **Postgres is widely used so if you have any issue with the instructions below, or something is missing you can use Google to figure out the missing steps for you case**
 
-- Linux:
+- Linux (Credits: [Predeactor](https://github.com/Predeactor)):
 ```bash
 sudo -u postgres createuser -s -i -d -r -l -w <username>
 sudo -u postgres psql -c "ALTER ROLE <username> WITH PASSWORD '<password>';"
