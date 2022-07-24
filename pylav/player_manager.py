@@ -236,7 +236,7 @@ class PlayerManager:
             asyncio.create_task(self._restore_player(p))
             async for p in self.client.player_state_db_manager.get_all_players()
         ]
-        await asyncio.gather(*tasks)
+        await asyncio.gather(*tasks, return_exceptions=True)
         LOGGER.info("Restored %s player states", len(self.players))
 
     async def _restore_player(self, player_state: PlayerStateModel) -> None:
@@ -269,4 +269,4 @@ class PlayerManager:
             asyncio.create_task(self.destroy(guild_id=guild_id, requester=self.client.bot.user))
             for guild_id in self.players
         ]
-        await asyncio.gather(*tasks)
+        await asyncio.gather(*tasks, return_exceptions=True)
