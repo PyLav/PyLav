@@ -245,8 +245,13 @@ class PlayerManager:
         player = self.players.get(player_state.id)
         if player is not None:
             # Player was started before restore
+            await self.client.player_state_db_manager.delete_player(guild_id=player_state.id)
             return
         channel = self.client.bot.get_channel(player_state.channel_id)
+        if not channel:
+            # Channel does not exist anymore
+            await self.client.player_state_db_manager.delete_player(guild_id=player_state.id)
+            return
         requester = self.client.bot.user
         discord_player = await self.create(
             channel=channel,
