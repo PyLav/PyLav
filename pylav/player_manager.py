@@ -245,11 +245,13 @@ class PlayerManager:
         player = self.players.get(player_state.id)
         if player is not None:
             # Player was started before restore
+            LOGGER.debug("Player %s initialized before restore, skipping restore", player_state.id)
             await self.client.player_state_db_manager.delete_player(guild_id=player_state.id)
             return
         channel = self.client.bot.get_channel(player_state.channel_id)
         if not channel:
             # Channel does not exist anymore
+            LOGGER.debug("Channel for %s could not be found, skipping player restore", player_state.id)
             await self.client.player_state_db_manager.delete_player(guild_id=player_state.id)
             return
         requester = self.client.bot.user
