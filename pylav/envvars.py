@@ -22,6 +22,8 @@ if not ENV_FILE.exists():
     POSTGRE_DATABASE = os.getenv("PYLAV__POSTGRES_DB", os.getenv("PGDATABASE"))
     POSTGRE_HOST = os.getenv("PYLAV__POSTGRES_HOST", os.getenv("PGHOST"))
 
+    JAVA_EXECUTABLE = os.getenv("PYLAV__JAVA_EXECUTABLE", "java")
+
     REDIS_FULLADDRESS_RESPONSE_CACHE = os.getenv("PYLAV__REDIS_FULLADDRESS_RESPONSE_CACHE")
 
     with ENV_FILE.open(mode="w") as file:
@@ -38,6 +40,9 @@ if not ENV_FILE.exists():
             data["PYLAV__POSTGRES_HOST"] = POSTGRE_HOST
         if REDIS_FULLADDRESS_RESPONSE_CACHE:
             data["PYLAV__REDIS_FULLADDRESS_RESPONSE_CACHE"] = REDIS_FULLADDRESS_RESPONSE_CACHE
+        if JAVA_EXECUTABLE:
+            data["PYLAV__JAVA_EXECUTABLE"] = JAVA_EXECUTABLE
+
         if data:
             LOGGER.debug("Creating %s with the following content: %r", ENV_FILE, data)
             yaml.safe_dump(data, file, default_flow_style=False, sort_keys=False, encoding="utf-8")
@@ -59,3 +64,4 @@ else:
         REDIS_FULLADDRESS_RESPONSE_CACHE = data.get("PYLAV__REDIS_FULLADDRESS_RESPONSE_CACHE") or os.getenv(
             "PYLAV__REDIS_FULLADDRESS_RESPONSE_CACHE"
         )
+        JAVA_EXECUTABLE = data.get("PYLAV__JAVA_EXECUTABLE") or os.getenv("PYLAV__JAVA_EXECUTABLE", "java")

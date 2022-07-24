@@ -154,6 +154,10 @@ Make sure to replace `<username>` and `<password>` with the new values for examp
 PYLAV__POSTGRES_PASSWORD=MyNewPassword
 PYLAV__POSTGRES_USER=Draper
 ```
+
+#### Install Java 11 or Java 13 (Only these 2 are known to have no issues with Lavalink)
+- Debian based OS - [Azure 13](https://docs.azul.com/core/zulu-openjdk/install/debian)
+- After installation run `which java` on Linux/Mac or `where java` on Windows, it should point to your install of Java 11/13 if it doesn't you will have to manually set the path the `PYLAV__JAVA_EXECUTABLE` environment variable
 ---------------------------
 
 Getting Started

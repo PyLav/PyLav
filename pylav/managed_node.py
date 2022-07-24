@@ -22,6 +22,7 @@ import yaml
 
 from pylav._config import CONFIG_DIR
 from pylav._logging import getLogger
+from pylav.envvars import JAVA_EXECUTABLE
 from pylav.exceptions import (
     EarlyExitError,
     IncorrectProcessFound,
@@ -168,7 +169,7 @@ class LocalNodeManager:
     _jvm: ClassVar[str | None] = None
     _lavalink_branch: ClassVar[str | None] = None
     _buildtime: ClassVar[str | None] = None
-    _java_exc: ClassVar[str] = "java"
+    _java_exc: ClassVar[str] = JAVA_EXECUTABLE
 
     def __init__(self, client: Client, timeout: int | None = None, auto_update: bool = True) -> None:
         self._auto_update = auto_update
