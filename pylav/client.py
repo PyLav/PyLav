@@ -372,6 +372,8 @@ class Client(metaclass=_Singleton):
         self.__cogs_registered.add(cog.__cog_name__)
 
     async def update_spotify_tokens(self, client_id: str, client_secret: str) -> None:
+        LOGGER.info("Updating Spotify Tokens")
+        LOGGER.debug("New Spotify token: ClientId: %s || ClientSecret: %s", client_id, client_secret)
         self._spotify_client_id = client_id
         self._spotify_client_secret = client_secret
         self._spotify_auth = ClientCredentialsFlow(
