@@ -41,7 +41,6 @@ __all__ = (
     "PlaylistError",
     "InvalidPlaylist",
     "Track",
-    "Track",
     "Player",
     "Client",
     "Query",
