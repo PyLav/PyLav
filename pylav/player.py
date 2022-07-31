@@ -257,7 +257,7 @@ class Player(VoiceProtocol):
 
     @property
     def self_deaf(self) -> bool:
-        return self._config.self_deaf if self._config else True
+        return self._config.self_deaf if self._config else self.global_config.self_deaf
 
     @property
     def is_repeating(self) -> bool:
@@ -267,7 +267,7 @@ class Player(VoiceProtocol):
     @property
     def autoplay_enabled(self) -> bool:
         """Whether autoplay is enabled."""
-        return self._config.auto_play and self._autoplay_playlist is not None
+        return self.global_config.auto_play and self._config.auto_play and self._autoplay_playlist is not None
 
     @property
     def volume(self) -> int:
@@ -1480,7 +1480,7 @@ class Player(VoiceProtocol):
         else:
             repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS WITH CIRCLED ONE OVERLAY}"
 
-        autoplay_emoji = "\N{WHITE HEAVY CHECK MARK}" if self._config.auto_play else "\N{CROSS MARK}"
+        autoplay_emoji = "\N{WHITE HEAVY CHECK MARK}" if self.autoplay_enabled else "\N{CROSS MARK}"
 
         text += "Repeating" + ": " + repeat_emoji
         text += (" | " if text else "") + "Auto Play" + ": " + autoplay_emoji
