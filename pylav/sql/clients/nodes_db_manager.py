@@ -74,13 +74,16 @@ class NodeConfigManager:
                     tables.NodeRow.managed: True,
                     tables.NodeRow.resume_key: None,
                     tables.NodeRow.resume_timeout: 600,
-                    tables.NodeRow.extras: {
-                        "max_ram": "2048M",
-                    },
+                    tables.NodeRow.extras: {"max_ram": "2048M", "downloaded_id": 0},
                 },
             )
         )
-        return NodeModel(**node.to_dict())
+        data = node.to_dict()
+        if "downloaded_id" not in data["extras"]:
+            data["extras"]["downloaded_id"] = 0
+        if "max_ram" not in data["extras"]:
+            data["extras"]["max_ram"] = "2048M"
+        return NodeModel(**data)
 
     async def add_node(
         self,

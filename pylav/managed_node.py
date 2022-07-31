@@ -114,16 +114,7 @@ LAVALINK_BRANCH_LINE: Final[Pattern] = re.compile(rb"Branch\s+(?P<branch>[\w\-\d
 LAVALINK_JAVA_LINE: Final[Pattern] = re.compile(rb"JVM:\s+(?P<jvm>\d+[.\d+]*)")
 LAVALINK_LAVAPLAYER_LINE: Final[Pattern] = re.compile(rb"Lavaplayer\s+(?P<lavaplayer>\d+[.\d+]*)")
 LAVALINK_BUILD_TIME_LINE: Final[Pattern] = re.compile(rb"Build time:\s+(?P<build_time>\d+[.\d+]*)")
-JAR_SERVER = "https://ci.fredboat.com"
-JAR_SERVER_BUILD_INFO = (
-    "/guestAuth/app/rest/builds?locator=branch:refs/heads/dev,buildType:Lavalink_Build,status:SUCCESS,count:1"
-)
-BUILD_META_KEYS = ("number", "branchName", "finishDate", "href")
-# This is a fallback URL for when the above doesn't return a valid input
-#   This will download from the Master branch which is behind dev
-LAVALINK_JAR_ENDPOINT: Final[
-    str
-] = "https://ci.fredboat.com/guestAuth/repository/download/Lavalink_Build/.lastSuccessful/Lavalink.jar"
+JAR_SERVER_RELEASES = "https://api.github.com/repos/freyacodes/Lavalink/releases"
 
 
 def convert_function(key: str) -> str:
@@ -172,9 +163,7 @@ class LocalNodeManager:
     _java_exc: ClassVar[str] = JAVA_EXECUTABLE
 
     def __init__(self, client: Client, timeout: int | None = None, auto_update: bool = True) -> None:
-        self._auto_update = auto_update
-        if USING_FORCED:
-            self._auto_update = False
+        self._auto_update = False if USING_FORCED else auto_update
         self.ready: asyncio.Event = asyncio.Event()
         self._ci_info: dict = {"number": 0, "branchName": "", "finishDate": "", "href": "", "jar_url": ""}
         self._client = client
@@ -224,34 +213,22 @@ class LocalNodeManager:
 
     async def get_ci_latest_info(self) -> dict:
         async with self._client.cached_session.get(
-            f"{JAR_SERVER}{JAR_SERVER_BUILD_INFO}", headers={"Accept": "application/json"}
+            f"{JAR_SERVER_RELEASES}", headers={"Accept": "application/json"}
         ) as response:
             if response.status != 200:
-                return {"number": -1}
+                self._ci_info["number"] = -1
+                return self._ci_info
             data = await response.json(loads=ujson.loads)
-            data = data["build"][0]
-            returning_data = {}
-            for k in BUILD_META_KEYS:
-                if k == "finishDate":
-                    returning_data[k] = dateutil.parser.parse(data["finishOnAgentDate"])
-                elif k == "number":
-                    returning_data[k] = int(data[k])
-                else:
-                    returning_data[k] = data[k]
-        async with self._client.cached_session.get(
-            f"{JAR_SERVER}{returning_data['href']}", headers={"Accept": "application/json"}
-        ) as response:
-            data = await response.json(loads=ujson.loads)
-            returning_data["href"] = data["artifacts"]["href"]
-
-        async with self._client.cached_session.get(
-            f"{JAR_SERVER}{returning_data['href']}", headers={"Accept": "application/json"}
-        ) as response:
-            data = await response.json(loads=ujson.loads)
-            jar_meta = asyncstdlib.builtins.filter(lambda x: x["name"] == "Lavalink.jar", data["file"])
-            jar_url = (await asyncstdlib.builtins.anext(jar_meta)).get("content", {}).get("href")
-            returning_data["jar_url"] = jar_url
-        return returning_data
+            release = max(data, key=lambda x: dateutil.parser.parse(x["published_at"]))
+            assets = release.get("assets", [])
+            url = None
+            for asset in assets:
+                if asset["name"] != "Lavalink.jar":
+                    continue
+                url = asset.get("browser_download_url")
+            date = release.get("published_at")
+            branch = release.get("target_commitish")
+            return {"number": release.get("id"), "branchName": branch, "finishDate": date, "jar_url": url}
 
     async def _start(self, java_path: str) -> None:
         arch_name = platform.machine()
@@ -472,10 +449,10 @@ class LocalNodeManager:
         if not self._auto_update:
             return
         LOGGER.info("Downloading Lavalink.jar...")
-        if self._ci_info["jar_url"]:
-            jar_url = JAR_SERVER + self._ci_info["jar_url"]
-        else:
-            jar_url = LAVALINK_JAR_ENDPOINT
+        jar_url = (
+            self._ci_info["jar_url"] or "https://github.com/freyacodes/Lavalink/releases/download/3.5/Lavalink.jar"
+        )
+
         async with self._session.get(jar_url, timeout=3600) as response:
             if 400 <= response.status < 600:
                 raise LavalinkDownloadFailed(response=response, should_retry=True)
@@ -505,12 +482,16 @@ class LocalNodeManager:
             shutil.move(path, str(LAVALINK_JAR_FILE), copy_function=shutil.copyfile)
 
         LOGGER.info("Successfully downloaded Lavalink.jar (%s bytes written)", format(nbytes, ","))
+        storage = await self._client.node_db_manager.get_bundled_node_config()
+        storage.extras["downloaded_id"] = self._ci_info["number"]
+        await storage.save()
         await self._is_up_to_date()
 
     async def _is_up_to_date(self):
         if self._up_to_date is True:
             # Return cached value if we've checked this before
             return True
+        last_download_id = (await self._client.node_db_manager.get_bundled_node_config()).extras["downloaded_id"]
         args, _ = await self._get_jar_args()
         args.append("--version")
         _proc = await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
@@ -545,7 +526,7 @@ class LocalNodeManager:
         self._lavaplayer = lavaplayer["lavaplayer"].decode()
         self._buildtime = date
         if self._auto_update:
-            self._up_to_date = build == self._ci_info.get("number")
+            self._up_to_date = last_download_id == self._ci_info.get("number", -1)
         else:
             self._ci_info["number"] = build
             self._up_to_date = True

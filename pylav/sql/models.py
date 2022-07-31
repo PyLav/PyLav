@@ -349,6 +349,10 @@ class NodeModel:
     def __post_init__(self):
         if isinstance(self.extras, str):
             self.extras = ujson.loads(self.extras)
+            if "downloaded_id" not in self.extras:
+                self.extras["downloaded_id"] = 0
+            if "max_ram" not in self.extras:
+                self.extras["max_ram"] = "2048M"
         if isinstance(self.yaml, str):
             self.yaml = ujson.loads(self.yaml)
         if isinstance(self.disabled_sources, str):

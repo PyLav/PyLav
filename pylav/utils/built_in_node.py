@@ -31,6 +31,7 @@ NODE_DEFAULT_SETTINGS = {
             },
             "bufferDurationMs": 400,
             "frameBufferDurationMs": 1000,
+            "trackStuckThresholdMs": 10000,
             "youtubePlaylistLoadLimit": 100,
             "playerUpdateInterval": 1,
             "youtubeSearchEnabled": True,
