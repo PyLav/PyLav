@@ -25,7 +25,8 @@ Documentation
         - e.g. unix://[[username]:[password]]@/path/to/socket.sock?db=0
 - Optional Env vars
   - PYLAV__LOGGER_PREFIX - Sets the logger prefix, defaults to None, or "red." if [redbot](https://github.com/Cog-Creators/Red-DiscordBot) is installed.
-
+  - PYLAV__JAVA_EXECUTABLE - Sets the Java executable to be used by PyLav for the managed Lavalink node
+  - PYLAV__USE_BUNDLED_EXTERNAL_NODES - Set this to 1 to enable the bundled external nodes or 0 to disabled it
 - [Discord.py](https://github.com/Rapptz/discord.py) 2.0.0+ bot
 
 ---------------------------

@@ -23,6 +23,10 @@ if not ENV_FILE.exists():
     POSTGRE_HOST = os.getenv("PYLAV__POSTGRES_HOST", os.getenv("PGHOST"))
 
     JAVA_EXECUTABLE = os.getenv("PYLAV__JAVA_EXECUTABLE", "java")
+    LINKED_BOT_IDS = os.getenv("PYLAV__JAVA_EXECUTABLE")
+    if LINKED_BOT_IDS:
+        LINKED_BOT_IDS = list(map(str.strip, LINKED_BOT_IDS.split("|")))
+    USE_BUNDLED_EXTERNAL_NODES = os.getenv("PYLAV__USE_BUNDLED_EXTERNAL_NODES", "1")
 
     REDIS_FULLADDRESS_RESPONSE_CACHE = os.getenv("PYLAV__REDIS_FULLADDRESS_RESPONSE_CACHE")
 
@@ -42,6 +46,10 @@ if not ENV_FILE.exists():
             data["PYLAV__REDIS_FULLADDRESS_RESPONSE_CACHE"] = REDIS_FULLADDRESS_RESPONSE_CACHE
         if JAVA_EXECUTABLE:
             data["PYLAV__JAVA_EXECUTABLE"] = JAVA_EXECUTABLE
+        if LINKED_BOT_IDS:
+            data["PYLAV__LINKED_BOT_IDS"] = LINKED_BOT_IDS
+        if USE_BUNDLED_EXTERNAL_NODES:
+            data["PYLAV__USE_BUNDLED_EXTERNAL_NODES"] = bool(int(USE_BUNDLED_EXTERNAL_NODES))
 
         if data:
             LOGGER.debug("Creating %s with the following content: %r", ENV_FILE, data)
@@ -65,3 +73,9 @@ else:
             "PYLAV__REDIS_FULLADDRESS_RESPONSE_CACHE"
         )
         JAVA_EXECUTABLE = data.get("PYLAV__JAVA_EXECUTABLE") or os.getenv("PYLAV__JAVA_EXECUTABLE", "java")
+        LINKED_BOT_IDS = data.getenv(
+            "PYLAV__LINKED_BOT_IDS", list(map(str.strip, os.getenv("PYLAV__JAVA_EXECUTABLE", "")))
+        )
+        USE_BUNDLED_EXTERNAL_NODES = data.getenv("PYLAV__USE_BUNDLED_EXTERNAL_NODES") or bool(
+            int(os.getenv("PYLAV__USE_BUNDLED_EXTERNAL_NODES", "1"))
+        )

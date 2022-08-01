@@ -9,6 +9,7 @@ import ujson
 
 from pylav._logging import getLogger
 from pylav.constants import DEFAULT_REGIONS
+from pylav.envvars import USE_BUNDLED_EXTERNAL_NODES
 from pylav.events import NodeConnectedEvent, NodeDisconnectedEvent
 from pylav.location import get_closest_region_name_and_coordinate
 from pylav.node import Node
@@ -423,8 +424,9 @@ class NodeManager:
             enable_managed_node=True,
             auto_update_managed_nodes=True,
             localtrack_folder=self.client._config_folder / "music",
+            use_bundled_external=USE_BUNDLED_EXTERNAL_NODES,
         )
-        if config_data.extras["use_bundled_external"] and not added_managed_external:
+        if config_data.use_bundled_external and not added_managed_external:
             nodes_list.append(
                 await self.add_node(
                     host="lava.link",

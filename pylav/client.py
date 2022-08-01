@@ -27,7 +27,7 @@ from pytz import utc
 from pylav._config import __VERSION__, CONFIG_DIR
 from pylav._logging import getLogger
 from pylav.dispatcher import DispatchManager
-from pylav.envvars import REDIS_FULLADDRESS_RESPONSE_CACHE
+from pylav.envvars import REDIS_FULLADDRESS_RESPONSE_CACHE, USE_BUNDLED_EXTERNAL_NODES
 from pylav.events import Event
 from pylav.exceptions import AnotherClientAlreadyRegistered, NoNodeAvailable, NoNodeWithRequestFunctionalityAvailable
 from pylav.m3u8_parser import M3U8Parser
@@ -292,10 +292,8 @@ class Client(metaclass=_Singleton):
                             enable_managed_node=True,
                             auto_update_managed_nodes=True,
                             localtrack_folder=self._config_folder / "music",
+                            use_bundled_external=USE_BUNDLED_EXTERNAL_NODES,
                         )
-                        if "use_bundled_external" not in config_data.extras:
-                            config_data.extras["use_bundled_external"] = True
-                            await config_data.save()
                         auto_update_managed_nodes = config_data.auto_update_managed_nodes
                         self.enable_managed_node = config_data.enable_managed_node
                         self._config_folder = aiopath.AsyncPath(config_data.config_folder)

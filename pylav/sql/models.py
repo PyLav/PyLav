@@ -183,6 +183,7 @@ class LibConfigModel:
     localtrack_folder: str | None = None
     java_path: str | None = None
     enable_managed_node: bool | None = None
+    use_bundled_external: bool = True
     auto_update_managed_nodes: bool | None = None
     extras: dict = field(default_factory=dict)
 
@@ -261,7 +262,7 @@ class LibConfigModel:
         )
 
     async def set_managed_external_node(self, value: bool) -> None:
-        self.extras["use_bundled_external"] = value
+        self.use_bundled_external = value
         await self.save()
 
     async def save(self) -> LibConfigModel:
@@ -270,12 +271,11 @@ class LibConfigModel:
             data["config_folder"] = self.config_folder
         if self.java_path:
             data["java_path"] = self.java_path
-        if self.enable_managed_node:
-            data["enable_managed_node"] = self.enable_managed_node
-        if self.auto_update_managed_nodes:
-            data["auto_update_managed_nodes"] = self.auto_update_managed_nodes
+        data["enable_managed_node"] = self.enable_managed_node
+        data["auto_update_managed_nodes"] = self.auto_update_managed_nodes
         if self.localtrack_folder:
             data["localtrack_folder"] = self.localtrack_folder
+        data["use_bundled_external"] = self.use_bundled_external
         if self.extras:
             data["extras"] = self.extras
         if data:
@@ -300,6 +300,7 @@ class LibConfigModel:
         self.enable_managed_node = response["enable_managed_node"]
         self.auto_update_managed_nodes = response["auto_update_managed_nodes"]
         self.localtrack_folder = response["localtrack_folder"]
+        self.use_bundled_external = response["use_bundled_external"]
         self.extras = ujson.loads(response["extras"]) if isinstance(response["extras"], str) else response["extras"]
         return self
 
@@ -311,8 +312,9 @@ class LibConfigModel:
         config_folder=str(CONFIG_DIR),
         localtrack_folder=str(CONFIG_DIR / "music"),
         java_path="java",
-        enable_managed_node=True,
-        auto_update_managed_nodes=True,
+        enable_managed_node: bool = True,
+        auto_update_managed_nodes: bool = True,
+        use_bundled_external: bool = True,
     ) -> LibConfigModel:
         r = (
             await tables.LibConfigRow.objects()
@@ -325,6 +327,7 @@ class LibConfigModel:
                     localtrack_folder=localtrack_folder,
                     enable_managed_node=enable_managed_node,
                     auto_update_managed_nodes=auto_update_managed_nodes,
+                    use_bundled_external=use_bundled_external,
                     extras={},
                 ),
             )
