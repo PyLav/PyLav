@@ -904,8 +904,12 @@ class Player(VoiceProtocol):
             return
         if isinstance(event, TrackStuckEvent) or isinstance(event, TrackEndEvent) and event.reason == "FINISHED":
             await self.next()
+            self.last_track = event.track
+            self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
         elif isinstance(event, TrackExceptionEvent):
             await self.next()
+            self.last_track = event.track
+            self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
 
     async def _update_state(self, state: dict) -> None:
         """
