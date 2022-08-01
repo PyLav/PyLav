@@ -1490,12 +1490,12 @@ class Player(VoiceProtocol):
         queue_list += f"Requester: **{current.requester.mention}**"
         queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
         if previous_track_description:
-            queue_list += f"**__Previous Track__**:\n{previous_track_description}\n"
-            queue_list += f"Duration: {'LIVE' if self.last_track.stream else format_time(self.last_track.duration)}\n"
+            queue_list += f"`Previous Track`:\n{previous_track_description}\n"
+            queue_list += f"Duration: `{'LIVE' if self.last_track.stream else format_time(self.last_track.duration)}`\n"
             queue_list += f"Requester: **{self.last_track.requester.mention}**\n\n"
         if next_track_description:
-            queue_list += f"**__Next Track__**:\n{next_track_description}\n"
-            queue_list += f"Duration: {'LIVE' if self.next_track.stream else format_time(self.next_track.duration)}\n"
+            queue_list += f"`Next Track`:\n{next_track_description}\n"
+            queue_list += f"Duration: `{'LIVE' if self.next_track.stream else format_time(self.next_track.duration)}`\n"
             queue_list += f"Requester: **{self.next_track.requester.mention}**\n\n"
         page = await self.node.node_manager.client.construct_embed(
             title=f"Now Playing in __{self.guild.name}__",
