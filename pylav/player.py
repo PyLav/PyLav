@@ -506,6 +506,7 @@ class Player(VoiceProtocol):
 
         at = await self._query_to_track(requester, track, query)
         self.queue.put_nowait([at], index=index)
+        self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
         self.node.dispatch_event(TracksRequestedEvent(self, self.guild.get_member(requester), [at]))
 
     async def bulk_add(
@@ -532,6 +533,7 @@ class Player(VoiceProtocol):
             track = await self._query_to_track(requester, track, query)
             output.append(track)
         self.queue.put_nowait(output, index=index)
+        self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
         self.node.dispatch_event(TracksRequestedEvent(self, self.guild.get_member(requester), output))
 
     async def previous(self, requester: discord.Member, bypass_cache: bool = False) -> None:
@@ -747,8 +749,7 @@ class Player(VoiceProtocol):
         options["noReplace"] = no_replace
 
         self.current = track
-        if not self.queue.empty():
-            self.next_track = self.queue.raw_queue.popleft()
+        self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
         await self.node.send(op="play", guildId=self.guild_id, track=track.track, **options)
         if auto_play:
             self.node.dispatch_event(TrackAutoPlayEvent(player=self, track=track))
@@ -1013,6 +1014,7 @@ class Player(VoiceProtocol):
             self.queue.clear()
             self.history.clear()
             self.last_track = None
+            self.next_track = None
             with contextlib.suppress(ValueError):
                 await self.player_manager.remove(self.channel.guild.id)
             await self.node.send(op="destroy", guildId=self.guild_id)
@@ -1610,6 +1612,7 @@ class Player(VoiceProtocol):
         if self.queue.empty():
             return 0
         tracks, count = await self.queue.remove(track, duplicates=duplicates)
+        self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
         self.node.dispatch_event(QueueTracksRemovedEvent(player=self, requester=requester, tracks=tracks))
         return count
 
@@ -1624,6 +1627,7 @@ class Player(VoiceProtocol):
         index = self.queue.index(track)
         track = await self.queue.get(index)
         self.queue.put_nowait([track], new_index)
+        self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
         self.node.dispatch_event(
             QueueTrackPositionChangedEvent(before=index, after=new_index, track=track, player=self, requester=requester)
         )
@@ -1634,6 +1638,7 @@ class Player(VoiceProtocol):
             return
         self.node.dispatch_event(QueueShuffledEvent(player=self, requester=requester))
         await self.queue.shuffle()
+        self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
 
     async def set_autoplay_playlist(self, playlist: int | PlaylistModel) -> None:
         if isinstance(playlist, int):
