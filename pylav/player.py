@@ -92,6 +92,8 @@ class Player(VoiceProtocol):
         self._text_channel = None
         self._notify_channel = None
         self._forced_vc = None
+        self.last_track = None
+        self.next_track = None
 
         self._user_data = {}
 
@@ -540,6 +542,7 @@ class Player(VoiceProtocol):
             await track.search(self, bypass_cache=bypass_cache)
         if self.current:
             self.history.put_nowait([self.current])
+            self.last_track = self.current
 
         if await track.query() and not self.node.has_source(await track.requires_capability()):
             self.current = None
@@ -563,9 +566,13 @@ class Player(VoiceProtocol):
     ) -> None:
         skip_segments = self._process_skip_segments(skip_segments)
         track = Track(node=self.node, data=track, query=query, skip_segments=skip_segments, requester=requester.id)
+        self.next_track = None
+        self.last_track = None
         if self.current:
             self.current.timestamp = self.position
             self.queue.put_nowait([self.current], 0)
+            self.next_track = self.current
+            self.last_track = self.current
 
         if await track.query() and not self.node.has_source(await track.requires_capability()):
             self.current = None
@@ -582,6 +589,8 @@ class Player(VoiceProtocol):
                 await self._handle_event(event)
                 return
         self.current = track
+        if self.next_track is None and not self.queue.empty():
+            self.next_track = self.queue.raw_queue.popleft()
         options = {"noReplace": no_replace}
         if track.skip_segments and self.node.supports_sponsorblock:
             options["skipSegments"] = track.skip_segments
@@ -642,6 +651,8 @@ class Player(VoiceProtocol):
         self.position_timestamp = 0
         self.paused = False
         auto_play = False
+        self.next_track = None
+        self.last_track = None
         if track is not None and isinstance(track, (Track, dict, str, type(None))):
             track = Track(node=self.node, data=track, query=query, skip_segments=skip_segments, requester=requester.id)
         if self.current:
@@ -652,6 +663,7 @@ class Player(VoiceProtocol):
         if self.current:
             self.current.timestamp = 0
             self.history.put_nowait([self.current])
+            self.last_track = self.current
         self.current = None
         if not track:
             if self.queue.empty():
@@ -673,11 +685,13 @@ class Player(VoiceProtocol):
                             requester=self.client.user.id,
                         )
                     auto_play = True
+                    self.next_track = None
                 else:
                     await self.stop(
                         requester=self.guild.get_member(self.node.node_manager.client.bot.user.id)
                     )  # Also sets current to None.
                     self.history.clear()
+                    self.last_track = None
                     self.node.dispatch_event(QueueEndEvent(self))
                     return
             else:
@@ -733,6 +747,8 @@ class Player(VoiceProtocol):
         options["noReplace"] = no_replace
 
         self.current = track
+        if not self.queue.empty():
+            self.next_track = self.queue.raw_queue.popleft()
         await self.node.send(op="play", guildId=self.guild_id, track=track.track, **options)
         if auto_play:
             self.node.dispatch_event(TrackAutoPlayEvent(player=self, track=track))
@@ -996,6 +1012,7 @@ class Player(VoiceProtocol):
         finally:
             self.queue.clear()
             self.history.clear()
+            self.last_track = None
             with contextlib.suppress(ValueError):
                 await self.player_manager.remove(self.channel.guild.id)
             await self.node.send(op="destroy", guildId=self.guild_id)
@@ -1459,6 +1476,12 @@ class Player(VoiceProtocol):
         current = self.current
         dur = "LIVE" if current.stream else format_time(current.duration)
         current_track_description = await current.get_track_display_name(with_url=True)
+        next_track_description = (
+            await self.next_track.get_track_display_name(with_url=True) if self.next_track else None
+        )
+        previous_track_description = (
+            await self.last_track.get_track_display_name(with_url=True) if self.last_track else None
+        )
         if current.stream:
             queue_list += "**Currently livestreaming:**\n"
         else:
@@ -1466,6 +1489,12 @@ class Player(VoiceProtocol):
         queue_list += f"{current_track_description}\n"
         queue_list += f"Requester: **{current.requester.mention}**"
         queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
+        if previous_track_description:
+            queue_list += f"**__Previous Track__**:\n{previous_track_description}\n"
+            queue_list += f"Requester: **{self.last_track.requester.mention}**\n\n"
+        if next_track_description:
+            queue_list += f"**__Next Track__**:\n{next_track_description}\n"
+            queue_list += f"Requester: **{self.next_track.requester.mention}**\n\n"
         page = await self.node.node_manager.client.construct_embed(
             title=f"Now Playing in __{self.guild.name}__",
             description=queue_list,
