@@ -1833,6 +1833,7 @@ class Player(VoiceProtocol):
             await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
         if player.playing:
             await self.next(requester)  # type: ignore
+        self.last_track = last_track
         self._restored = True
         await self.player_manager.client.player_state_db_manager.delete_player(guild_id=self.guild.id)
         self.node.dispatch_event(PlayerRestoredEvent(self, requester))
