@@ -1677,7 +1677,10 @@ class Player(VoiceProtocol):
                 "channel_mix": self._channel_mix.to_dict(),
             },
             "self_deaf": self.self_deaf,
-            "extras": {},
+            "extras": {
+                "last_track": await self.last_track.to_json() if self.last_track else None,
+                "next_track": await self.next_track.to_json() if self.next_track else None,
+            },
         }
 
     async def save(self) -> None:
@@ -1698,6 +1701,30 @@ class Player(VoiceProtocol):
             if player.current
             else None
         )
+        next_track = (
+            Track(
+                node=self.node,
+                data=player.extras.get("next_track", {}).pop("track"),
+                query=await Query.from_string(player.extras.get("next_track", {}).pop("query")),
+                **player.extras.get("next_track", {}).pop("extra"),
+                **player.extras.get("next_track", {}),
+            )
+            if player.extras.get("next_track", {})
+            else None
+        )
+        last_track = (
+            Track(
+                node=self.node,
+                data=player.extras.get("last_track", {}).pop("track"),
+                query=await Query.from_string(player.extras.get("last_track", {}).pop("query")),
+                **player.extras.get("last_track", {}).pop("extra"),
+                **player.extras.get("last_track", {}),
+            )
+            if player.extras.get("last_track", {})
+            else None
+        )
+        self.last_track = last_track
+        self.next_track = next_track
         self.current = None
         self._notify_channel = self.guild.get_channel_or_thread(player.notify_channel_id)
         self._text_channel = self.guild.get_channel_or_thread(player.text_channel_id)
