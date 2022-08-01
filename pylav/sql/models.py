@@ -185,6 +185,7 @@ class LibConfigModel:
     enable_managed_node: bool | None = None
     use_bundled_external: bool = True
     auto_update_managed_nodes: bool | None = None
+    download_id: int = 0
     extras: dict = field(default_factory=dict)
 
     def __post_init__(self):
@@ -261,6 +262,12 @@ class LibConfigModel:
             (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
         )
 
+    async def set_download_id(self, value: int) -> None:
+        self.download_id = value
+        await tables.LibConfigRow.update({tables.LibConfigRow.download_id: value}).where(
+            (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
+        )
+
     async def set_managed_external_node(self, value: bool) -> None:
         self.use_bundled_external = value
         await self.save()
@@ -278,6 +285,8 @@ class LibConfigModel:
         data["use_bundled_external"] = self.use_bundled_external
         if self.extras:
             data["extras"] = self.extras
+        if self.download_id:
+            data["download_id"] = self.download_id
         if data:
             await tables.LibConfigRow.update(**data).where(
                 (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
@@ -328,6 +337,7 @@ class LibConfigModel:
                     enable_managed_node=enable_managed_node,
                     auto_update_managed_nodes=auto_update_managed_nodes,
                     use_bundled_external=use_bundled_external,
+                    download_id=0,
                     extras={},
                 ),
             )
@@ -352,8 +362,6 @@ class NodeModel:
     def __post_init__(self):
         if isinstance(self.extras, str):
             self.extras = ujson.loads(self.extras)
-            if "downloaded_id" not in self.extras:
-                self.extras["downloaded_id"] = 0
             if "max_ram" not in self.extras:
                 self.extras["max_ram"] = "2048M"
         if isinstance(self.yaml, str):

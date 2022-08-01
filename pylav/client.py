@@ -47,6 +47,7 @@ from pylav.sql.clients.player_state_db_manager import PlayerStateDBManager
 from pylav.sql.clients.playlist_manager import PlaylistConfigManager
 from pylav.sql.clients.query_manager import QueryCacheManager
 from pylav.sql.clients.updater import UpdateSchemaManager
+from pylav.sql.models import LibConfigModel
 from pylav.tracks import Track
 from pylav.types import BotT, CogT, ContextT, InteractionT, LavalinkResponseT
 from pylav.utils import PyLavContext, SingletonMethods, _get_context, _process_commands, _Singleton, add_property
@@ -84,6 +85,7 @@ class Client(metaclass=_Singleton):
     _local_node_manager: LocalNodeManager
 
     _asyncio_lock = asyncio.Lock()
+    _config: LibConfigModel
     __cogs_registered = set()
     __old_process_command_method: Callable = None  # type: ignore
     __old_get_context: Callable = None  # type: ignore
@@ -286,7 +288,7 @@ class Client(metaclass=_Singleton):
                         await self._radio_manager.initialize()
                         await self._player_manager.initialize()
 
-                        config_data = await self._lib_config_manager.get_config(
+                        self._config = await self._lib_config_manager.get_config(
                             config_folder=self._config_folder,
                             java_path="java",
                             enable_managed_node=True,
@@ -294,10 +296,10 @@ class Client(metaclass=_Singleton):
                             localtrack_folder=self._config_folder / "music",
                             use_bundled_external=USE_BUNDLED_EXTERNAL_NODES,
                         )
-                        auto_update_managed_nodes = config_data.auto_update_managed_nodes
-                        self.enable_managed_node = config_data.enable_managed_node
-                        self._config_folder = aiopath.AsyncPath(config_data.config_folder)
-                        localtrack_folder = aiopath.AsyncPath(config_data.localtrack_folder)
+                        auto_update_managed_nodes = self._config.auto_update_managed_nodes
+                        self.enable_managed_node = self._config.enable_managed_node
+                        self._config_folder = aiopath.AsyncPath(self._config.config_folder)
+                        localtrack_folder = aiopath.AsyncPath(self._config.localtrack_folder)
                         data = await self._node_config_manager.get_bundled_node_config()
                         if not all([client_id, client_secret]):
                             spotify_data = data.yaml["plugins"]["topissourcemanagers"]["spotify"]
@@ -323,7 +325,7 @@ class Client(metaclass=_Singleton):
                         self._user_id = str(self._bot.user.id)
                         self._local_node_manager = LocalNodeManager(self, auto_update=auto_update_managed_nodes)
                         if self.enable_managed_node:
-                            await self._local_node_manager.start(java_path=config_data.java_path)
+                            await self._local_node_manager.start(java_path=self._config.java_path)
                         await self.node_manager.connect_to_all_nodes()
                         await self.node_manager.wait_until_ready()
                         await self.playlist_db_manager.update_bundled_playlists()

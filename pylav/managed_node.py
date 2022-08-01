@@ -65,7 +65,7 @@ LAVALINK_APP_YML: Final[aiopath.AsyncPath] = LAVALINK_DOWNLOAD_DIR / "applicatio
 
 _RE_READY_LINE: Final[Pattern] = re.compile(rb"Started Launcher in \S+ seconds")
 _FAILED_TO_START: Final[Pattern] = re.compile(rb"Web server failed to start\. (.*)")
-_RE_BUILD_LINE: Final[Pattern] = re.compile(rb"Build:\s+(?P<build>\d+)")
+_RE_BUILD_LINE: Final[Pattern] = re.compile(rb"Build:\s+(?P<build>\d+|Unknown)")
 
 # Version regexes
 #
@@ -228,7 +228,7 @@ class LocalNodeManager:
                 url = asset.get("browser_download_url")
             date = release.get("published_at")
             branch = release.get("target_commitish")
-            return {"number": release.get("id"), "branchName": branch, "finishDate": date, "jar_url": url}
+            return {"number": int(release.get("id")), "branchName": branch, "finishDate": date, "jar_url": url}
 
     async def _start(self, java_path: str) -> None:
         arch_name = platform.machine()
@@ -482,16 +482,15 @@ class LocalNodeManager:
             shutil.move(path, str(LAVALINK_JAR_FILE), copy_function=shutil.copyfile)
 
         LOGGER.info("Successfully downloaded Lavalink.jar (%s bytes written)", format(nbytes, ","))
-        storage = await self._client.node_db_manager.get_bundled_node_config()
-        storage.extras["downloaded_id"] = self._ci_info["number"]
-        await storage.save()
+        self._client._config.download_id = self._ci_info["number"]
+        await self._client._config.set_download_id(self._ci_info["number"])
         await self._is_up_to_date()
 
     async def _is_up_to_date(self):
         if self._up_to_date is True:
             # Return cached value if we've checked this before
             return True
-        last_download_id = (await self._client.node_db_manager.get_bundled_node_config()).extras["downloaded_id"]
+        last_download_id = self._client._config.download_id
         args, _ = await self._get_jar_args()
         args.append("--version")
         _proc = await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
@@ -516,8 +515,10 @@ class LocalNodeManager:
         if (buildtime := LAVALINK_BUILD_TIME_LINE.search(stdout)) is None:
             # Output is unexpected, suspect corrupted jarfile
             return False
-
-        build = int(build["build"])
+        if build["build"] == b"Unknown":
+            build = int(last_download_id)
+        else:
+            build = int(build["build"])
         date = buildtime["build_time"].decode()
         date = date.replace(".", "/")
         self._lavalink_build = build

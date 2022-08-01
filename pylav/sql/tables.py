@@ -37,7 +37,9 @@ class LibConfigRow(Table, db=DB, tablename="lib_config"):
     localtrack_folder = Text(null=True)
     java_path = Text(null=False, default="java")
     enable_managed_node = Boolean(null=False, default=True)
+    use_bundled_external = Boolean(null=False, default=True)
     auto_update_managed_nodes = Boolean(null=False, default=True)
+    download_id = BigInt(index=True, default=0)
     extras: JSONB = JSONB(null=False, default={})
 
 
