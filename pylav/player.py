@@ -1506,12 +1506,14 @@ class Player(VoiceProtocol):
         if previous_track_description:
             val = f"{previous_track_description}\n"
             val += f"Duration: `{'LIVE' if self.last_track.stream else format_time(self.last_track.duration)}`\n"
-            val += f"Requester: **{self.last_track.requester.mention}**\n\n"
+            if rq := self.last_track.requester:
+                val += f"Requester: **{rq.mention}**\n\n"
             page.add_field(name="Previous Track", value=val)
         if next_track_description:
             val = f"{next_track_description}\n"
             val += f"Duration: `{'LIVE' if self.next_track.stream else format_time(self.next_track.duration)}`\n"
-            val += f"Requester: **{self.next_track.requester.mention}**\n\n"
+            if rq := self.last_track.requester:
+                val += f"Requester: **{rq.mention}**\n\n"
             page.add_field(name="Next Track", value=val)
 
         queue_dur = await self.queue_duration()
