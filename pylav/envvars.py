@@ -76,6 +76,6 @@ else:
         LINKED_BOT_IDS = data.get(
             "PYLAV__LINKED_BOT_IDS", list(map(str.strip, os.getenv("PYLAV__JAVA_EXECUTABLE", "")))
         )
-        USE_BUNDLED_EXTERNAL_NODES = data.getenv("PYLAV__USE_BUNDLED_EXTERNAL_NODES") or bool(
+        USE_BUNDLED_EXTERNAL_NODES = data.get("PYLAV__USE_BUNDLED_EXTERNAL_NODES") or bool(
             int(os.getenv("PYLAV__USE_BUNDLED_EXTERNAL_NODES", "1"))
         )
