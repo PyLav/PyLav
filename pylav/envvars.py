@@ -73,7 +73,7 @@ else:
             "PYLAV__REDIS_FULLADDRESS_RESPONSE_CACHE"
         )
         JAVA_EXECUTABLE = data.get("PYLAV__JAVA_EXECUTABLE") or os.getenv("PYLAV__JAVA_EXECUTABLE", "java")
-        LINKED_BOT_IDS = data.getenv(
+        LINKED_BOT_IDS = data.get(
             "PYLAV__LINKED_BOT_IDS", list(map(str.strip, os.getenv("PYLAV__JAVA_EXECUTABLE", "")))
         )
         USE_BUNDLED_EXTERNAL_NODES = data.getenv("PYLAV__USE_BUNDLED_EXTERNAL_NODES") or bool(
