@@ -257,7 +257,7 @@ class Player(VoiceProtocol):
 
     @property
     def self_deaf(self) -> bool:
-        return self._config.self_deaf if self._config else self.global_config.self_deaf
+        return self._config.self_deaf if self._config else self.player_manager.global_config.self_deaf
 
     @property
     def is_repeating(self) -> bool:
@@ -267,7 +267,11 @@ class Player(VoiceProtocol):
     @property
     def autoplay_enabled(self) -> bool:
         """Whether autoplay is enabled."""
-        return self.global_config.auto_play and self._config.auto_play and self._autoplay_playlist is not None
+        return (
+            self.player_manager.global_config.auto_play
+            and self._config.auto_play
+            and self._autoplay_playlist is not None
+        )
 
     @property
     def volume(self) -> int:
