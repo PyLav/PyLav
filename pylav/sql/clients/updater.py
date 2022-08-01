@@ -35,4 +35,10 @@ class UpdateSchemaManager:
             full_data.yaml["lavalink"]["server"]["useSeekGhosting"] = True
             await full_data.save()
 
+        if (await self._client.lib_db_manager.get_bot_db_version()).version <= parse_version("0.3.2"):
+            await self._client.lib_db_manager.update_bot_dv_version("0.3.3")
+            full_data = await self._client.node_db_manager.get_bundled_node_config()
+            full_data.yaml["lavalink"]["server"]["youtubeConfig"] = {"email": "", "password": ""}
+            await full_data.save()
+
         await self._client.lib_db_manager.update_bot_dv_version(__VERSION__)

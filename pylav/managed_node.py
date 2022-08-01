@@ -305,8 +305,8 @@ class LocalNodeManager:
         # if they are set to empty values
         if not all(
             (
-                data["lavalink"]["server"]["youtubeConfig"]["PAPISID"],
-                data["lavalink"]["server"]["youtubeConfig"]["PSID"],
+                data["lavalink"]["server"]["youtubeConfig"]["email"],
+                data["lavalink"]["server"]["youtubeConfig"]["password"],
             )
         ):
             del data["lavalink"]["server"]["youtubeConfig"]

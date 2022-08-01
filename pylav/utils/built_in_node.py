@@ -48,8 +48,8 @@ NODE_DEFAULT_SETTINGS = {
                 "retryLimit": -1,
             },
             "youtubeConfig": {
-                "PAPISID": "",
-                "PSID": "",
+                "email": "",
+                "password": "",
             },
             "httpConfig": {"proxyHost": "", "proxyPort": 0, "proxyUser": "", "proxyPassword": ""},
         },
