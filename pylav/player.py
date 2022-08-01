@@ -1489,14 +1489,6 @@ class Player(VoiceProtocol):
         queue_list += f"{current_track_description}\n"
         queue_list += f"Requester: **{current.requester.mention}**"
         queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
-        if previous_track_description:
-            queue_list += f"`Previous Track`:\n{previous_track_description}\n"
-            queue_list += f"Duration: `{'LIVE' if self.last_track.stream else format_time(self.last_track.duration)}`\n"
-            queue_list += f"Requester: **{self.last_track.requester.mention}**\n\n"
-        if next_track_description:
-            queue_list += f"`Next Track`:\n{next_track_description}\n"
-            queue_list += f"Duration: `{'LIVE' if self.next_track.stream else format_time(self.next_track.duration)}`\n"
-            queue_list += f"Requester: **{self.next_track.requester.mention}**\n\n"
         page = await self.node.node_manager.client.construct_embed(
             title=f"Now Playing in __{self.guild.name}__",
             description=queue_list,
@@ -1504,6 +1496,17 @@ class Player(VoiceProtocol):
         )
         if url := await current.thumbnail():
             page.set_thumbnail(url=url)
+
+        if previous_track_description:
+            val = f"{previous_track_description}\n"
+            val += f"Duration: `{'LIVE' if self.last_track.stream else format_time(self.last_track.duration)}`\n"
+            val += f"Requester: **{self.last_track.requester.mention}**\n\n"
+            page.add_field(name="Previous Track", value=val)
+        if next_track_description:
+            val = f"{next_track_description}\n"
+            val += f"Duration: `{'LIVE' if self.next_track.stream else format_time(self.next_track.duration)}`\n"
+            val += f"Requester: **{self.next_track.requester.mention}**\n\n"
+            page.add_field(name="Next Track", value=val)
 
         queue_dur = await self.queue_duration()
         queue_total_duration = format_time(queue_dur)
