@@ -1541,15 +1541,18 @@ class Player(VoiceProtocol):
         total_pages: int,
         embed: bool = True,
         messageable: Messageable | InteractionT = None,
+        history: bool = False,
     ) -> discord.Embed | str:
         if not embed:
             return ""
+        if history:
+            queue = self.history
+        else:
+            queue = self.queue
         queue_list = ""
         start_index = page_index * per_page
         end_index = start_index + per_page
-        tracks = await asyncstdlib.builtins.list(
-            asyncstdlib.itertools.islice(self.queue.raw_queue, start_index, end_index)
-        )
+        tracks = await asyncstdlib.builtins.list(asyncstdlib.itertools.islice(queue.raw_queue, start_index, end_index))
         arrow = self.draw_time()
         pos = format_time(self.position)
         current = self.current
@@ -1562,7 +1565,7 @@ class Player(VoiceProtocol):
         queue_list += f"{current_track_description}\n"
         queue_list += f"Requester: **{current.requester.mention}**"
         queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
-        if await self._config.fetch_shuffle():
+        if not history and (await self._config.fetch_shuffle()):
             queue_list += "__Queue order is not accurate due to shuffle being toggled__\n\n"
         if tracks:
             padding = len(str(start_index + len(tracks)))
@@ -1571,15 +1574,15 @@ class Player(VoiceProtocol):
                 diff = padding - len(str(track_idx))
                 queue_list += f"`{track_idx}.{' '*diff}` {track_description}\n"
         page = await self.node.node_manager.client.construct_embed(
-            title=f"Queue for __{self.guild.name}__",
+            title=f"Queue for __{self.guild.name}__" if not history else f"Recently Played for __{self.guild.name}__",
             description=queue_list,
             messageable=messageable,
         )
         if url := await current.thumbnail():
             page.set_thumbnail(url=url)
-        queue_dur = await self.queue_duration()
+        queue_dur = await self.queue_duration(history=history)
         queue_total_duration = format_time(queue_dur)
-        text = f"Page {page_index + 1}/{total_pages} | {self.queue.qsize()} tracks, {queue_total_duration} remaining\n"
+        text = f"Page {page_index + 1}/{total_pages} | {queue.qsize()} tracks, {queue_total_duration} remaining\n"
         if not self.is_repeating:
             repeat_emoji = "\N{CROSS MARK}"
         elif self._config.repeat_queue:
@@ -1595,14 +1598,20 @@ class Player(VoiceProtocol):
         page.set_footer(text=text)
         return page
 
-    async def queue_duration(self) -> int:
+    async def queue_duration(self, history: bool = False) -> int:
+        if history:
+            queue = self.history
+        else:
+            queue = self.queue
         dur = [
             track.duration  # type: ignore
-            async for track in AsyncIter(self.queue.raw_queue).filter(lambda x: not (x.stream or x.is_partial))
+            async for track in AsyncIter(queue.raw_queue).filter(lambda x: not (x.stream or x.is_partial))
         ]
         queue_dur = sum(dur)
-        if self.queue.empty():
+        if queue.empty():
             queue_dur = 0
+        if history:
+            return queue_dur
         try:
             remain = 0 if self.current.stream else self.current.duration - self.position
         except AttributeError:
