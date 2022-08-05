@@ -1009,6 +1009,8 @@ class PlayerModel:
 
     async def dj_users_add(self, *users: discord.Member) -> PlayerModel:
         await self.dj_users_update()
+        if not users:
+            return self
         self.dj_users = self.dj_users.union([u.id for u in users])
         await self.dj_users_cleanup(users[0].guild, lazy=True)
         await self.save()
@@ -1016,6 +1018,8 @@ class PlayerModel:
 
     async def dj_roles_add(self, *roles: discord.Role) -> PlayerModel:
         await self.dj_roles_update()
+        if not roles:
+            return self
         self.dj_roles = self.dj_roles.union([r.id for r in roles])
         await self.dj_roles_cleanup(roles[0].guild, lazy=True)
         await self.save()
@@ -1023,6 +1027,8 @@ class PlayerModel:
 
     async def dj_users_remove(self, *users: discord.Member) -> PlayerModel:
         await self.dj_users_update()
+        if not users:
+            return self
         self.dj_users.difference_update({u.id for u in users})
         await self.dj_users_cleanup(users[0].guild, lazy=True)
         await self.save()
@@ -1030,6 +1036,8 @@ class PlayerModel:
 
     async def dj_roles_remove(self, *roles: discord.Role) -> PlayerModel:
         await self.dj_roles_update()
+        if not roles:
+            return self
         self.dj_roles.difference_update({r.id for r in roles if r})
         await self.dj_roles_cleanup(roles[0].guild, lazy=True)
         await self.save()
