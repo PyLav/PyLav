@@ -595,8 +595,8 @@ class PlayerStateModel:
     self_deaf: bool
 
     current: dict | None
-    queue: dict
-    history: dict
+    queue: list
+    history: list
     effects: dict
     extras: dict
 
@@ -688,6 +688,8 @@ class PlayerModel:
     empty_queue_dc: TimedFeatureT = field(default_factory=dict)
     alone_dc: TimedFeatureT = field(default_factory=dict)
     alone_pause: TimedFeatureT = field(default_factory=dict)
+    dj_users: set = field(default_factory=set)
+    dj_roles: set = field(default_factory=set)
 
     def __post_init__(self):
         if isinstance(self.extras, str):
@@ -700,6 +702,13 @@ class PlayerModel:
             self.alone_pause = ujson.loads(self.alone_pause)
         if isinstance(self.effects, str):
             self.effects = ujson.loads(self.effects)
+        if isinstance(self.dj_users, str):
+            self.dj_users = ujson.loads(self.dj_users)
+        if isinstance(self.dj_roles, str):
+            self.dj_roles = ujson.loads(self.dj_roles)
+
+        self.dj_users = set(self.dj_users)
+        self.dj_roles = set(self.dj_roles)
 
     async def delete(self) -> None:
         await tables.PlayerRow.delete().where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
@@ -723,6 +732,8 @@ class PlayerModel:
             tables.PlayerRow.alone_dc: self.alone_dc,
             tables.PlayerRow.alone_pause: self.alone_pause,
             tables.PlayerRow.effects: self.effects,
+            tables.PlayerRow.dj_users: list(self.dj_users),
+            tables.PlayerRow.dj_roles: list(self.dj_roles),
         }
         player = (
             await tables.PlayerRow.objects()
@@ -768,6 +779,8 @@ class PlayerModel:
             tables.PlayerRow.alone_dc: self.alone_dc,
             tables.PlayerRow.alone_pause: self.alone_pause,
             tables.PlayerRow.effects: self.effects,
+            tables.PlayerRow.dj_users: list(self.dj_users),
+            tables.PlayerRow.dj_roles: list(self.dj_roles),
         }
         output = (
             await tables.PlayerRow.objects()
@@ -791,6 +804,8 @@ class PlayerModel:
             self.alone_dc = output.alone_dc
             self.alone_pause = output.alone_pause
             self.effects = output.effects
+            self.dj_users = set(output.dj_users)
+            self.dj_roles = set(output.dj_roles)
         return self
 
     async def update_volume(self):
@@ -965,6 +980,97 @@ class PlayerModel:
             else:
                 self.alone_pause = player[0]["alone_pause"]
         return self
+
+    async def dj_users_update(self) -> PlayerModel:
+        player = (
+            await tables.PlayerRow.select(tables.PlayerRow.dj_users)
+            .output(load_json=True)
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+        )
+        if player:
+            if isinstance(player[0]["dj_users"], str):
+                self.dj_users = set(ujson.loads(player[0]["dj_users"]))
+            else:
+                self.dj_users = set(player[0]["dj_users"])
+        return self
+
+    async def dj_roles_update(self) -> PlayerModel:
+        player = (
+            await tables.PlayerRow.select(tables.PlayerRow.dj_roles)
+            .output(load_json=True)
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+        )
+        if player:
+            if isinstance(player[0]["dj_roles"], str):
+                self.dj_roles = set(ujson.loads(player[0]["dj_roles"]))
+            else:
+                self.dj_roles = set(player[0]["dj_roles"])
+        return self
+
+    async def dj_users_add(self, *users: discord.Member) -> PlayerModel:
+        await self.dj_users_update()
+        self.dj_users = self.dj_users.union([u.id for u in users])
+        await self.save()
+        return self
+
+    async def dj_roles_add(self, *roles: discord.Role) -> PlayerModel:
+        await self.dj_roles_update()
+        self.dj_roles = self.dj_roles.union([r.id for r in roles])
+        await self.dj_roles_cleanup(roles[0].guild)
+        await self.save()
+        return self
+
+    async def dj_users_remove(self, *users: discord.Member) -> PlayerModel:
+        await self.dj_users_update()
+        self.dj_users.difference_update({u.id for u in users})
+        await self.save()
+        return self
+
+    async def dj_roles_remove(self, *roles: discord.Role) -> PlayerModel:
+        await self.dj_roles_update()
+        self.dj_roles.difference_update({r.id for r in roles if r})
+        await self.dj_roles_cleanup(roles[0].guild)
+        await self.save()
+        return self
+
+    async def dj_users_cleanup(self, guild: discord.Guild) -> PlayerModel:
+        await self.dj_users_update()
+        self.dj_users = {u for u in self.dj_users if guild.get_member(i)}
+        await self.save()
+        return self
+
+    async def dj_roles_cleanup(self, guild: discord.Guild, lazy: bool = False) -> PlayerModel:
+        if not lazy:
+            await self.dj_roles_update()
+        self.dj_roles = {r for r in self.dj_roles if guild.get_role(i)}
+        if not lazy:
+            await self.save()
+        return self
+
+    async def dj_users_reset(self) -> PlayerModel:
+        self.dj_users = set()
+        await self.save()
+        return self
+
+    async def dj_roles_reset(self) -> PlayerModel:
+        self.dj_roles = set()
+        await self.save()
+        return self
+
+    async def is_dj(
+        self, user: discord.Member, additional_role_ids: list = None, additional_user_ids: list = None
+    ) -> bool:
+        if additional_user_ids and user.id in additional_user_ids:
+            return True
+        if additional_role_ids and any(r.id in additional_role_ids for r in user.roles):
+            return
+        await self.dj_users_update()
+        if user.id in self.dj_users:
+            return True
+        await self.dj_roles_update()
+        if any(r.id in self.dj_roles for r in user.roles):
+            return True
+        return False
 
     async def fetch_volume(self) -> int:
         await self.update_volume()

@@ -131,6 +131,8 @@ class PlayerRow(Table, db=DB, tablename="player"):
     )
     extras = JSONB(null=False, default={})
     effects = JSONB(null=False, default={})
+    dj_users = JSONB(null=False, default=[])
+    dj_roles = JSONB(null=False, default=[])
 
 
 class NodeRow(Table, db=DB, tablename="node"):
