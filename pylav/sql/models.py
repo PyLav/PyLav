@@ -1024,7 +1024,7 @@ class PlayerModel:
     async def dj_users_remove(self, *users: discord.Member) -> PlayerModel:
         await self.dj_users_update()
         self.dj_users.difference_update({u.id for u in users})
-        await self.dj_roles_cleanup(users[0].guild, lazy=True)
+        await self.dj_users_cleanup(users[0].guild, lazy=True)
         await self.save()
         return self
 
