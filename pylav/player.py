@@ -1572,7 +1572,10 @@ class Player(VoiceProtocol):
             async for track_idx, track in AsyncIter(tracks).enumerate(start=start_index + 1):
                 track_description = await track.get_track_display_name(max_length=50, with_url=True)
                 diff = padding - len(str(track_idx))
-                queue_list += f"`{track_idx}.{' '*diff}` {track_description}\n"
+                queue_list += f"`{track_idx}.{' '*diff}` {track_description}"
+                if history and track.requester:
+                    queue_list += f" - **{track.requester.mention}**"
+                queue_list += "\n"
         page = await self.node.node_manager.client.construct_embed(
             title=f"Queue for __{self.guild.name}__" if not history else f"Recently Played for __{self.guild.name}__",
             description=queue_list,
