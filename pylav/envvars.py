@@ -24,17 +24,15 @@ if not ENV_FILE.exists():
     POSTGRE_HOST = os.getenv("PYLAV__POSTGRES_HOST", os.getenv("PGHOST"))
 
     JAVA_EXECUTABLE = os.getenv("PYLAV__JAVA_EXECUTABLE", "java")
-    LINKED_BOT_IDS = os.getenv("PYLAV__JAVA_EXECUTABLE")
-    if LINKED_BOT_IDS:
-        LINKED_BOT_IDS = list(map(str.strip, LINKED_BOT_IDS.split("|")))
-    USE_BUNDLED_EXTERNAL_NODES = os.getenv("PYLAV__USE_BUNDLED_EXTERNAL_NODES", "1")
+    LINKED_BOT_IDS = list(map(str.strip, os.getenv("PYLAV__JAVA_EXECUTABLE", "").split("|")))
+    USE_BUNDLED_EXTERNAL_NODES = bool(int(os.getenv("PYLAV__USE_BUNDLED_EXTERNAL_NODES", "1")))
 
     REDIS_FULLADDRESS_RESPONSE_CACHE = os.getenv("PYLAV__REDIS_FULLADDRESS_RESPONSE_CACHE")
 
     EXTERNAL_UNMANAGED_HOST = os.getenv("PYLAV__EXTERNAL_UNMANAGED_HOST")
     EXTERNAL_UNMANAGED_PORT = int(os.getenv("PYLAV__EXTERNAL_UNMANAGED_PORT", "80"))
     EXTERNAL_UNMANAGED_PASSWORD = os.getenv("PYLAV__EXTERNAL_UNMANAGED_PASSWORD")
-    EXTERNAL_UNMANAGED_SSL = os.getenv("PYLAV__EXTERNAL_UNMANAGED_SSL")
+    EXTERNAL_UNMANAGED_SSL = bool(int(os.getenv("PYLAV__EXTERNAL_UNMANAGED_SSL", 0)))
     data = {
         "PYLAV__POSTGRES_PORT": POSTGRE_PORT,
         "PYLAV__POSTGRES_PASSWORD": POSTGRE_PASSWORD,
@@ -44,11 +42,11 @@ if not ENV_FILE.exists():
         "PYLAV__REDIS_FULLADDRESS_RESPONSE_CACHE": REDIS_FULLADDRESS_RESPONSE_CACHE,
         "PYLAV__JAVA_EXECUTABLE": JAVA_EXECUTABLE,
         "PYLAV__LINKED_BOT_IDS": LINKED_BOT_IDS,
-        "PYLAV__USE_BUNDLED_EXTERNAL_NODES": bool(int(USE_BUNDLED_EXTERNAL_NODES)),
+        "PYLAV__USE_BUNDLED_EXTERNAL_NODES": USE_BUNDLED_EXTERNAL_NODES,
         "PYLAV__EXTERNAL_UNMANAGED_HOST": EXTERNAL_UNMANAGED_HOST,
         "PYLAV__EXTERNAL_UNMANAGED_PORT": EXTERNAL_UNMANAGED_PORT,
         "PYLAV__EXTERNAL_UNMANAGED_PASSWORD": EXTERNAL_UNMANAGED_PASSWORD,
-        "PYLAV__EXTERNAL_UNMANAGED_SSL": bool(int(USE_BUNDLED_EXTERNAL_NODES)),
+        "PYLAV__EXTERNAL_UNMANAGED_SSL": EXTERNAL_UNMANAGED_SSL,
     }
     with ENV_FILE.open(mode="w") as file:
         LOGGER.debug("Creating %s with the following content: %r", ENV_FILE, data)
@@ -59,36 +57,36 @@ else:
     with ENV_FILE.open(mode="r") as file:
         data = yaml.safe_load(file.read())
 
-        POSTGRE_PORT = data.get("PYLAV__POSTGRES_PORT") or os.getenv("PYLAV__POSTGRES_PORT", os.getenv("PGPORT"))
-        POSTGRE_PASSWORD = data.get("PYLAV__POSTGRES_PASSWORD") or os.getenv(
-            "PYLAV__POSTGRES_PASSWORD", os.getenv("PGPASSWORD")
+        POSTGRE_PORT = data.get("PYLAV__POSTGRES_PORT", os.getenv("PYLAV__POSTGRES_PORT", os.getenv("PGPORT")))
+        POSTGRE_PASSWORD = data.get(
+            "PYLAV__POSTGRES_PASSWORD", os.getenv("PYLAV__POSTGRES_PASSWORD", os.getenv("PGPASSWORD"))
         )
-        POSTGRE_USER = data.get("PYLAV__POSTGRES_USER") or os.getenv("PYLAV__POSTGRES_USER", os.getenv("PGUSER"))
-        POSTGRE_DATABASE = data.get("PYLAV__POSTGRES_DB") or os.getenv("PYLAV__POSTGRES_DB", os.getenv("PGDATABASE"))
-        POSTGRE_HOST = data.get(" PYLAV__POSTGRES_HOST") or os.getenv(
-            "PYLAV__POSTGRES_HOST", os.getenv("PYLAV__POSTGRES_HOST")
+        POSTGRE_USER = data.get("PYLAV__POSTGRES_USER", os.getenv("PYLAV__POSTGRES_USER", os.getenv("PGUSER")))
+        POSTGRE_DATABASE = data.get("PYLAV__POSTGRES_DB", os.getenv("PYLAV__POSTGRES_DB", os.getenv("PGDATABASE")))
+        POSTGRE_HOST = data.get(
+            " PYLAV__POSTGRES_HOST", os.getenv("PYLAV__POSTGRES_HOST", os.getenv("PYLAV__POSTGRES_HOST"))
         )
-        REDIS_FULLADDRESS_RESPONSE_CACHE = data.get("PYLAV__REDIS_FULLADDRESS_RESPONSE_CACHE") or os.getenv(
-            "PYLAV__REDIS_FULLADDRESS_RESPONSE_CACHE"
+        REDIS_FULLADDRESS_RESPONSE_CACHE = data.get(
+            "PYLAV__REDIS_FULLADDRESS_RESPONSE_CACHE", os.getenv("PYLAV__REDIS_FULLADDRESS_RESPONSE_CACHE")
         )
-        JAVA_EXECUTABLE = data.get("PYLAV__JAVA_EXECUTABLE") or os.getenv("PYLAV__JAVA_EXECUTABLE", "java")
+        JAVA_EXECUTABLE = data.get("PYLAV__JAVA_EXECUTABLE", os.getenv("PYLAV__JAVA_EXECUTABLE", "java"))
         LINKED_BOT_IDS = data.get(
             "PYLAV__LINKED_BOT_IDS", list(map(str.strip, os.getenv("PYLAV__JAVA_EXECUTABLE", "")))
         )
-        USE_BUNDLED_EXTERNAL_NODES = data.get("PYLAV__USE_BUNDLED_EXTERNAL_NODES") or bool(
-            int(os.getenv("PYLAV__USE_BUNDLED_EXTERNAL_NODES", "1"))
+        USE_BUNDLED_EXTERNAL_NODES = data.get(
+            "PYLAV__USE_BUNDLED_EXTERNAL_NODES", bool(int(os.getenv("PYLAV__USE_BUNDLED_EXTERNAL_NODES", "1")))
         )
-        EXTERNAL_UNMANAGED_HOST = data.get("PYLAV__EXTERNAL_UNMANAGED_HOST") or os.getenv(
-            "PYLAV__EXTERNAL_UNMANAGED_HOST"
+        EXTERNAL_UNMANAGED_HOST = data.get(
+            "PYLAV__EXTERNAL_UNMANAGED_HOST", os.getenv("PYLAV__EXTERNAL_UNMANAGED_HOST")
         )
         EXTERNAL_UNMANAGED_PORT = int(
-            data.get("PYLAV__EXTERNAL_UNMANAGED_PORT") or os.getenv("PYLAV__EXTERNAL_UNMANAGED_PORT", "80")
+            data.get("PYLAV__EXTERNAL_UNMANAGED_PORT", os.getenv("PYLAV__EXTERNAL_UNMANAGED_PORT", "80"))
         )
-        EXTERNAL_UNMANAGED_PASSWORD = data.get("PYLAV__EXTERNAL_UNMANAGED_PASSWORD") or os.getenv(
-            "PYLAV__EXTERNAL_UNMANAGED_PASSWORD"
+        EXTERNAL_UNMANAGED_PASSWORD = data.get(
+            "PYLAV__EXTERNAL_UNMANAGED_PASSWORD", os.getenv("PYLAV__EXTERNAL_UNMANAGED_PASSWORD")
         )
-        EXTERNAL_UNMANAGED_SSL = data.get("PYLAV__EXTERNAL_UNMANAGED_SSL") or bool(
-            int(os.getenv("PYLAV__EXTERNAL_UNMANAGED_SSL", "0"))
+        EXTERNAL_UNMANAGED_SSL = data.get(
+            "PYLAV__EXTERNAL_UNMANAGED_SSL", bool(int(os.getenv("PYLAV__EXTERNAL_UNMANAGED_SSL", "0")))
         )
 
     data_new = {
@@ -104,7 +102,7 @@ else:
         "PYLAV__EXTERNAL_UNMANAGED_HOST": EXTERNAL_UNMANAGED_HOST,
         "PYLAV__EXTERNAL_UNMANAGED_PORT": EXTERNAL_UNMANAGED_PORT,
         "PYLAV__EXTERNAL_UNMANAGED_PASSWORD": EXTERNAL_UNMANAGED_PASSWORD,
-        "PYLAV__EXTERNAL_UNMANAGED_SSL": USE_BUNDLED_EXTERNAL_NODES,
+        "PYLAV__EXTERNAL_UNMANAGED_SSL": EXTERNAL_UNMANAGED_SSL,
     }
     if DeepDiff(data, data_new, ignore_order=True):
         with ENV_FILE.open(mode="w") as file:
