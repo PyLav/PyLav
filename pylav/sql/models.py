@@ -1010,33 +1010,37 @@ class PlayerModel:
     async def dj_users_add(self, *users: discord.Member) -> PlayerModel:
         await self.dj_users_update()
         self.dj_users = self.dj_users.union([u.id for u in users])
+        await self.dj_users_cleanup(users[0].guild, lazy=True)
         await self.save()
         return self
 
     async def dj_roles_add(self, *roles: discord.Role) -> PlayerModel:
         await self.dj_roles_update()
         self.dj_roles = self.dj_roles.union([r.id for r in roles])
-        await self.dj_roles_cleanup(roles[0].guild)
+        await self.dj_roles_cleanup(roles[0].guild, lazy=True)
         await self.save()
         return self
 
     async def dj_users_remove(self, *users: discord.Member) -> PlayerModel:
         await self.dj_users_update()
         self.dj_users.difference_update({u.id for u in users})
+        await self.dj_roles_cleanup(users[0].guild, lazy=True)
         await self.save()
         return self
 
     async def dj_roles_remove(self, *roles: discord.Role) -> PlayerModel:
         await self.dj_roles_update()
         self.dj_roles.difference_update({r.id for r in roles if r})
-        await self.dj_roles_cleanup(roles[0].guild)
+        await self.dj_roles_cleanup(roles[0].guild, lazy=True)
         await self.save()
         return self
 
-    async def dj_users_cleanup(self, guild: discord.Guild) -> PlayerModel:
-        await self.dj_users_update()
+    async def dj_users_cleanup(self, guild: discord.Guild, lazy: bool = False) -> PlayerModel:
+        if not lazy:
+            await self.dj_users_update()
         self.dj_users = {u for u in self.dj_users if guild.get_member(i)}
-        await self.save()
+        if not lazy:
+            await self.save()
         return self
 
     async def dj_roles_cleanup(self, guild: discord.Guild, lazy: bool = False) -> PlayerModel:
