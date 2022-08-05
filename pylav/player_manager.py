@@ -217,7 +217,9 @@ class PlayerManager:
         )
         if not best_node:
             raise NoNodeAvailable("No available nodes!")
-        await player.post_init(node=best_node, player_manager=self, config=player_config, pylav=self.client)
+        await player.post_init(
+            node=best_node, player_manager=self, config=player_config, pylav=self.client, requester=requester
+        )
         await player.move_to(requester, channel=player.channel, self_deaf=self_deaf or player_config.self_deaf)
         best_node.dispatch_event(PlayerConnectedEvent(player, requester or self.client.bot.user))
         self.players[channel.guild.id] = player
@@ -263,7 +265,8 @@ class PlayerManager:
             else None,
             self_deaf=player_state.self_deaf,
         )
-        await discord_player.restore(player_state, requester)
+        if not discord_player._restored:
+            await discord_player.restore(player_state, requester)
 
     async def shutdown(self) -> None:
         LOGGER.info("Shutting down all players...")

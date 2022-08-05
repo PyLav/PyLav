@@ -128,7 +128,14 @@ class Player(VoiceProtocol):
     def __str__(self):
         return f"Player(id={self.guild.id}, channel={self.channel.id})"
 
-    async def post_init(self, node: Node, player_manager: PlayerManager, config: PlayerModel, pylav: Client) -> None:
+    async def post_init(
+        self,
+        node: Node,
+        player_manager: PlayerManager,
+        config: PlayerModel,
+        pylav: Client,
+        requester: discord.Member = None,
+    ) -> None:
         # sourcery no-metrics
         if self._post_init_completed:
             return
@@ -140,60 +147,68 @@ class Player(VoiceProtocol):
         self._extras = config.extras
         self._post_init_completed = True
         await self.set_autoplay_playlist(config.auto_play_playlist_id)
-        self._forced_vc = self.guild.get_channel_or_thread(config.forced_channel_id)
-        self._text_channel = self.guild.get_channel_or_thread(config.text_channel_id)
-        self._notify_channel = self.guild.get_channel_or_thread(config.notify_channel_id)
-        self._volume = Volume(config.volume)
-        effects = config.effects
-        if (v := effects.get("volume", None)) and (f := Volume.from_dict(v)) and f.changed:
-            self._volume = f
-        if (eq := effects.get("equalizer", None)) and (f := Equalizer.from_dict(eq)) and f.changed:
-            self._equalizer = f
-        if (k := effects.get("karaoke", None)) and (f := Karaoke.from_dict(k)) and f.changed:
-            self._karaoke = f
-        if (ts := effects.get("timescale", None)) and (f := Timescale.from_dict(ts)) and f.changed:
-            self._timescale = f
-        if (tr := effects.get("tremolo", None)) and (f := Tremolo.from_dict(tr)) and f.changed:
-            self._tremolo = f
-        if (vb := effects.get("vibrato", None)) and (f := Vibrato.from_dict(vb)) and f.changed:
-            self._vibrato = f
-        if (ro := effects.get("rotation", None)) and (f := Rotation.from_dict(ro)) and f.changed:
-            self._rotation = f
-        if (di := effects.get("distortion", None)) and (f := Distortion.from_dict(di)) and f.changed:
-            self._distortion = f
-        if (lo := effects.get("lowpass", None)) and (f := LowPass.from_dict(lo)) and f.changed:
-            self._low_pass = f
-        if (ch := effects.get("channel_mix", None)) and (f := ChannelMix.from_dict(ch)) and f.changed:
-            self._channel_mix = f
-        if any(
-            f.changed
-            for f in [
-                self.equalizer,
-                self.karaoke,
-                self.timescale,
-                self.tremolo,
-                self.vibrato,
-                self.rotation,
-                self.distortion,
-                self.low_pass,
-                self.channel_mix,
-            ]
-        ):
-            await self.node.filters(
-                guild_id=self.channel.guild.id,
-                equalizer=self.equalizer,
-                karaoke=self.karaoke,
-                timescale=self.timescale,
-                tremolo=self.tremolo,
-                vibrato=self.vibrato,
-                rotation=self.rotation,
-                distortion=self.distortion,
-                low_pass=self.low_pass,
-                channel_mix=self.channel_mix,
-            )
+        player_state = await self.player_manager.client.player_state_db_manager.get_player(self.channel.guild.id)
+        if player_state:
+            await self.restore(player_state, requester or self.guild.me)
+            self._restored = True
+            await self.player_manager.client.player_state_db_manager.delete_player(self.channel.guild.id)
+            LOGGER.info("Player restored - %s", self)
 
-        if self.volume_filter.changed:
-            await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
+        else:
+            self._forced_vc = self.guild.get_channel_or_thread(config.forced_channel_id)
+            self._text_channel = self.guild.get_channel_or_thread(config.text_channel_id)
+            self._notify_channel = self.guild.get_channel_or_thread(config.notify_channel_id)
+            self._volume = Volume(config.volume)
+            effects = config.effects
+            if (v := effects.get("volume", None)) and (f := Volume.from_dict(v)) and f.changed:
+                self._volume = f
+            if (eq := effects.get("equalizer", None)) and (f := Equalizer.from_dict(eq)) and f.changed:
+                self._equalizer = f
+            if (k := effects.get("karaoke", None)) and (f := Karaoke.from_dict(k)) and f.changed:
+                self._karaoke = f
+            if (ts := effects.get("timescale", None)) and (f := Timescale.from_dict(ts)) and f.changed:
+                self._timescale = f
+            if (tr := effects.get("tremolo", None)) and (f := Tremolo.from_dict(tr)) and f.changed:
+                self._tremolo = f
+            if (vb := effects.get("vibrato", None)) and (f := Vibrato.from_dict(vb)) and f.changed:
+                self._vibrato = f
+            if (ro := effects.get("rotation", None)) and (f := Rotation.from_dict(ro)) and f.changed:
+                self._rotation = f
+            if (di := effects.get("distortion", None)) and (f := Distortion.from_dict(di)) and f.changed:
+                self._distortion = f
+            if (lo := effects.get("lowpass", None)) and (f := LowPass.from_dict(lo)) and f.changed:
+                self._low_pass = f
+            if (ch := effects.get("channel_mix", None)) and (f := ChannelMix.from_dict(ch)) and f.changed:
+                self._channel_mix = f
+            if any(
+                f.changed
+                for f in [
+                    self.equalizer,
+                    self.karaoke,
+                    self.timescale,
+                    self.tremolo,
+                    self.vibrato,
+                    self.rotation,
+                    self.distortion,
+                    self.low_pass,
+                    self.channel_mix,
+                ]
+            ):
+                await self.node.filters(
+                    guild_id=self.channel.guild.id,
+                    equalizer=self.equalizer,
+                    karaoke=self.karaoke,
+                    timescale=self.timescale,
+                    tremolo=self.tremolo,
+                    vibrato=self.vibrato,
+                    rotation=self.rotation,
+                    distortion=self.distortion,
+                    low_pass=self.low_pass,
+                    channel_mix=self.channel_mix,
+                )
+
+            if self.volume_filter.changed:
+                await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
 
     @property
     def channel(self) -> discord.channel.VocalGuildChannel:
@@ -765,12 +780,6 @@ class Player(VoiceProtocol):
         await self.node.send(op="play", guildId=self.guild_id, track=self.current.track, **options)
         self.node.dispatch_event(PlayerResumedEvent(player=self, requester=requester or self.client.user.id))
 
-    async def stop(self, requester: discord.Member) -> None:
-        """Stops the player."""
-        await self.node.send(op="stop", guildId=self.guild_id)
-        self.node.dispatch_event(PlayerStoppedEvent(self, requester))
-        self.current = None
-
     async def skip(self, requester: discord.Member) -> None:
         """Plays the next track in the queue, if any."""
         previous_track = self.current
@@ -1014,6 +1023,7 @@ class Player(VoiceProtocol):
             await self.guild.change_voice_state(channel=None)
             self._connected = False
             await self._config.save()
+            await self.save()
         finally:
             self.queue.clear()
             self.history.clear()
@@ -1023,6 +1033,14 @@ class Player(VoiceProtocol):
                 await self.player_manager.remove(self.channel.guild.id)
             await self.node.send(op="destroy", guildId=self.guild_id)
             self.cleanup()
+
+    async def stop(self, requester: discord.Member) -> None:
+        """Stops the player."""
+        await self.node.send(op="stop", guildId=self.guild_id)
+        self.node.dispatch_event(PlayerStoppedEvent(self, requester))
+        self.current = None
+        self.queue.clear()
+        self.next_track = None
 
     async def move_to(
         self,
