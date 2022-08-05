@@ -22,11 +22,21 @@ LOGGER = getLogger("PyLav.NodeManager")
 
 
 class NodeManager:
-    def __init__(self, client: Client):
+    def __init__(
+        self,
+        client: Client,
+        external_host: str = None,
+        external_password: str = None,
+        external_port: int = None,
+        external_ssl: bool = False,
+    ):
         self._client = client
         self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
         self._player_queue = []
-
+        self._unmanaged_external_host = external_host
+        self._unmanaged_external_password = external_password
+        self._unmanaged_external_port = external_port
+        self._unmanaged_external_ssl = external_ssl
         self._nodes = []
         self._adding_nodes = asyncio.Event()
 
@@ -418,6 +428,24 @@ class NodeManager:
                     "[NODE-%s] Invalid node, skipping ... id: %s - Original error: %s", node.name, node.id, exc
                 )
                 continue
+        if self._unmanaged_external_host and self._unmanaged_external_password:
+            nodes_list.append(
+                await self.add_node(
+                    host=self._unmanaged_external_host,
+                    unique_identifier=31415,
+                    name="ENVAR Node (Unmanaged)",
+                    port=self._unmanaged_external_port or (443 if self._unmanaged_external_ssl else 80),
+                    password=self._unmanaged_external_password,
+                    resume_key=f"PyLav/{self.client.lib_version}-{self.client.bot_id}",
+                    resume_timeout=600,
+                    reconnect_attempts=-1,
+                    ssl=self._unmanaged_external_ssl,
+                    search_only=False,
+                    managed=False,
+                    disabled_sources=[],
+                    skip_db=True,
+                )
+            )
         config_data = await self.client._lib_config_manager.get_config(
             config_folder=self.client._config_folder,
             java_path="java",

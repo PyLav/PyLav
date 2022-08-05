@@ -4,6 +4,7 @@ import os
 import pathlib
 
 import yaml
+from deepdiff import DeepDiff
 
 from pylav._logging import getLogger
 
@@ -30,30 +31,28 @@ if not ENV_FILE.exists():
 
     REDIS_FULLADDRESS_RESPONSE_CACHE = os.getenv("PYLAV__REDIS_FULLADDRESS_RESPONSE_CACHE")
 
+    EXTERNAL_UNMANAGED_HOST = os.getenv("PYLAV__EXTERNAL_UNMANAGED_HOST")
+    EXTERNAL_UNMANAGED_PORT = int(os.getenv("PYLAV__EXTERNAL_UNMANAGED_PORT", "80"))
+    EXTERNAL_UNMANAGED_PASSWORD = os.getenv("PYLAV__EXTERNAL_UNMANAGED_PASSWORD")
+    EXTERNAL_UNMANAGED_SSL = os.getenv("PYLAV__EXTERNAL_UNMANAGED_SSL")
+    data = {
+        "PYLAV__POSTGRES_PORT": POSTGRE_PORT,
+        "PYLAV__POSTGRES_PASSWORD": POSTGRE_PASSWORD,
+        "PYLAV__POSTGRES_USER": POSTGRE_USER,
+        "PYLAV__POSTGRES_DB": POSTGRE_DATABASE,
+        "PYLAV__POSTGRES_HOST": POSTGRE_HOST,
+        "PYLAV__REDIS_FULLADDRESS_RESPONSE_CACHE": REDIS_FULLADDRESS_RESPONSE_CACHE,
+        "PYLAV__JAVA_EXECUTABLE": JAVA_EXECUTABLE,
+        "PYLAV__LINKED_BOT_IDS": LINKED_BOT_IDS,
+        "PYLAV__USE_BUNDLED_EXTERNAL_NODES": bool(int(USE_BUNDLED_EXTERNAL_NODES)),
+        "PYLAV__EXTERNAL_UNMANAGED_HOST": EXTERNAL_UNMANAGED_HOST,
+        "PYLAV__EXTERNAL_UNMANAGED_PORT": EXTERNAL_UNMANAGED_PORT,
+        "PYLAV__EXTERNAL_UNMANAGED_PASSWORD": EXTERNAL_UNMANAGED_PASSWORD,
+        "PYLAV__EXTERNAL_UNMANAGED_SSL": bool(int(USE_BUNDLED_EXTERNAL_NODES)),
+    }
     with ENV_FILE.open(mode="w") as file:
-        data = {}
-        if POSTGRE_PORT:
-            data["PYLAV__POSTGRES_PORT"] = POSTGRE_PORT
-        if POSTGRE_PASSWORD:
-            data["PYLAV__POSTGRES_PASSWORD"] = POSTGRE_PASSWORD
-        if POSTGRE_USER:
-            data["PYLAV__POSTGRES_USER"] = POSTGRE_USER
-        if POSTGRE_DATABASE:
-            data["PYLAV__POSTGRES_DB"] = POSTGRE_DATABASE
-        if POSTGRE_HOST:
-            data["PYLAV__POSTGRES_HOST"] = POSTGRE_HOST
-        if REDIS_FULLADDRESS_RESPONSE_CACHE:
-            data["PYLAV__REDIS_FULLADDRESS_RESPONSE_CACHE"] = REDIS_FULLADDRESS_RESPONSE_CACHE
-        if JAVA_EXECUTABLE:
-            data["PYLAV__JAVA_EXECUTABLE"] = JAVA_EXECUTABLE
-        if LINKED_BOT_IDS:
-            data["PYLAV__LINKED_BOT_IDS"] = LINKED_BOT_IDS
-        if USE_BUNDLED_EXTERNAL_NODES:
-            data["PYLAV__USE_BUNDLED_EXTERNAL_NODES"] = bool(int(USE_BUNDLED_EXTERNAL_NODES))
-
-        if data:
-            LOGGER.debug("Creating %s with the following content: %r", ENV_FILE, data)
-            yaml.safe_dump(data, file, default_flow_style=False, sort_keys=False, encoding="utf-8")
+        LOGGER.debug("Creating %s with the following content: %r", ENV_FILE, data)
+        yaml.safe_dump(data, file, default_flow_style=False, sort_keys=False, encoding="utf-8")
 
 else:
     LOGGER.warning("%s exist - Enviroment variables will be read from it.", ENV_FILE)
@@ -79,3 +78,35 @@ else:
         USE_BUNDLED_EXTERNAL_NODES = data.get("PYLAV__USE_BUNDLED_EXTERNAL_NODES") or bool(
             int(os.getenv("PYLAV__USE_BUNDLED_EXTERNAL_NODES", "1"))
         )
+        EXTERNAL_UNMANAGED_HOST = data.get("PYLAV__EXTERNAL_UNMANAGED_HOST") or os.getenv(
+            "PYLAV__EXTERNAL_UNMANAGED_HOST"
+        )
+        EXTERNAL_UNMANAGED_PORT = int(
+            data.get("PYLAV__EXTERNAL_UNMANAGED_PORT") or os.getenv("PYLAV__EXTERNAL_UNMANAGED_PORT", "80")
+        )
+        EXTERNAL_UNMANAGED_PASSWORD = data.get("PYLAV__EXTERNAL_UNMANAGED_PASSWORD") or os.getenv(
+            "PYLAV__EXTERNAL_UNMANAGED_PASSWORD"
+        )
+        EXTERNAL_UNMANAGED_SSL = data.get("PYLAV__EXTERNAL_UNMANAGED_SSL") or bool(
+            int(os.getenv("PYLAV__EXTERNAL_UNMANAGED_SSL", "0"))
+        )
+
+    data_new = {
+        "PYLAV__POSTGRES_PORT": POSTGRE_PORT,
+        "PYLAV__POSTGRES_PASSWORD": POSTGRE_PASSWORD,
+        "PYLAV__POSTGRES_USER": POSTGRE_USER,
+        "PYLAV__POSTGRES_DB": POSTGRE_DATABASE,
+        "PYLAV__POSTGRES_HOST": POSTGRE_HOST,
+        "PYLAV__REDIS_FULLADDRESS_RESPONSE_CACHE": REDIS_FULLADDRESS_RESPONSE_CACHE,
+        "PYLAV__JAVA_EXECUTABLE": JAVA_EXECUTABLE,
+        "PYLAV__LINKED_BOT_IDS": LINKED_BOT_IDS,
+        "PYLAV__USE_BUNDLED_EXTERNAL_NODES": USE_BUNDLED_EXTERNAL_NODES,
+        "PYLAV__EXTERNAL_UNMANAGED_HOST": EXTERNAL_UNMANAGED_HOST,
+        "PYLAV__EXTERNAL_UNMANAGED_PORT": EXTERNAL_UNMANAGED_PORT,
+        "PYLAV__EXTERNAL_UNMANAGED_PASSWORD": EXTERNAL_UNMANAGED_PASSWORD,
+        "PYLAV__EXTERNAL_UNMANAGED_SSL": USE_BUNDLED_EXTERNAL_NODES,
+    }
+    if DeepDiff(data, data_new, ignore_order=True):
+        with ENV_FILE.open(mode="w") as file:
+            LOGGER.debug("Updating %s with the following content: %r", ENV_FILE, data_new)
+            yaml.safe_dump(data_new, file, default_flow_style=False, sort_keys=False, encoding="utf-8")

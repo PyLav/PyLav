@@ -27,7 +27,14 @@ from pytz import utc
 from pylav._config import __VERSION__, CONFIG_DIR
 from pylav._logging import getLogger
 from pylav.dispatcher import DispatchManager
-from pylav.envvars import REDIS_FULLADDRESS_RESPONSE_CACHE, USE_BUNDLED_EXTERNAL_NODES
+from pylav.envvars import (
+    EXTERNAL_UNMANAGED_HOST,
+    EXTERNAL_UNMANAGED_PASSWORD,
+    EXTERNAL_UNMANAGED_PORT,
+    EXTERNAL_UNMANAGED_SSL,
+    REDIS_FULLADDRESS_RESPONSE_CACHE,
+    USE_BUNDLED_EXTERNAL_NODES,
+)
 from pylav.events import Event
 from pylav.exceptions import AnotherClientAlreadyRegistered, NoNodeAvailable, NoNodeWithRequestFunctionalityAvailable
 from pylav.m3u8_parser import M3U8Parser
@@ -141,7 +148,13 @@ class Client(metaclass=_Singleton):
             self._cached_session = aiohttp_client_cache.CachedSession(
                 timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps, cache=self._aiohttp_client_cache
             )
-            self._node_manager = NodeManager(self)
+            self._node_manager = NodeManager(
+                self,
+                external_host=EXTERNAL_UNMANAGED_HOST,
+                external_port=EXTERNAL_UNMANAGED_PORT,
+                external_password=EXTERNAL_UNMANAGED_PASSWORD,
+                external_ssl=EXTERNAL_UNMANAGED_SSL,
+            )
             self._player_manager = PlayerManager(self, player)
             self._lib_config_manager = LibConfigManager(self)
             self._node_config_manager = NodeConfigManager(self)
@@ -324,7 +337,13 @@ class Client(metaclass=_Singleton):
                         await LocalFile.add_root_folder(path=localtrack_folder, create=True)
                         self._user_id = str(self._bot.user.id)
                         self._local_node_manager = LocalNodeManager(self, auto_update=auto_update_managed_nodes)
-                        if self.enable_managed_node:
+
+                        if (
+                            not (
+                                self._node_manager._unmanaged_external_password
+                                and self._node_manager._unmanaged_external_host
+                            )
+                        ) and self.enable_managed_node:
                             await self._local_node_manager.start(java_path=self._config.java_path)
                         await self.node_manager.connect_to_all_nodes()
                         await self.node_manager.wait_until_ready()

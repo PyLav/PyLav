@@ -11,6 +11,10 @@ Documentation
   - Windows: [PostgresSQL](https://www.postgresql.org/download/windows/)
   - Linux: [PostgresSQL](https://www.postgresql.org/download/linux/)
 - Python 3.10+ (On initial release - during pre-alpha phase 3.9+)
+- [Discord.py](https://github.com/Rapptz/discord.py) 2.0.0+ bot
+
+### Enviroment Variables
+#### Required
 - Env Vars to connect the lib to the PostgresSQL server
   All Envvars default to AsyncPG [defaults](https://magicstack.github.io/asyncpg/current/api/index.html#connection)
   - PYLAV__POSTGRES_PORT
@@ -18,17 +22,21 @@ Documentation
   - PYLAV__POSTGRES_USER
   - PYLAV__POSTGRES_DB
   - PYLAV__POSTGRES_HOST
+#### Optional
 - Env Vars to connect the lib cache to Redis, note if these are missing the library will default to PostgresSQL, therefore they are not necessary.
     - This will be used by the aiohttp cached client session for storing cached responses for 1 day, this reduces stress on some of the requests the lib makes such as to RadioBrowser.
       - REDIS_FULLADDRESS_RESPONSE_CACHE
         - e.g. redis://[[username]:[password]]@localhost:6379/0
         - e.g. unix://[[username]:[password]]@/path/to/socket.sock?db=0
-- Optional Env vars
+- Misc
   - PYLAV__LOGGER_PREFIX - Sets the logger prefix, defaults to None, or "red." if [redbot](https://github.com/Cog-Creators/Red-DiscordBot) is installed.
   - PYLAV__JAVA_EXECUTABLE - Sets the Java executable to be used by PyLav for the managed Lavalink node
   - PYLAV__USE_BUNDLED_EXTERNAL_NODES - Set this to 1 to enable the bundled external nodes or 0 to disabled it
-- [Discord.py](https://github.com/Rapptz/discord.py) 2.0.0+ bot
-
+- Unmanaged External Node - If both PYLAV__EXTERNAL_UNMANAGED_HOST and PYLAV__EXTERNAL_UNMANAGED_PASSWORD are set then the managed node is not started up
+  - PYLAV__EXTERNAL_UNMANAGED_HOST - No Default - Required (Should not contain the protocol i.e "http" or "https", this is determined by PYLAV__EXTERNAL_UNMANAGED_SSL)
+  - PYLAV__EXTERNAL_UNMANAGED_PASSWORD - No Default - Required
+  - PYLAV__EXTERNAL_UNMANAGED_PORT - Defaults to 80
+  - PYLAV__EXTERNAL_UNMANAGED_SSL - Defaults to 0 (i.e False) - Possible values are 0 - 1
 ---------------------------
 ## Supported sources
 ### [Built-in](https://github.com/freyacodes/Lavalink):
