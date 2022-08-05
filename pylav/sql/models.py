@@ -1058,12 +1058,12 @@ class PlayerModel:
         return self
 
     async def is_dj(
-        self, user: discord.Member, additional_role_ids: list = None, additional_user_ids: list = None
+        self, user: discord.Member, *, additional_role_ids: list = None, additional_user_ids: list = None
     ) -> bool:
         if additional_user_ids and user.id in additional_user_ids:
             return True
         if additional_role_ids and any(r.id in additional_role_ids for r in user.roles):
-            return
+            return True
         await self.dj_users_update()
         if user.id in self.dj_users:
             return True

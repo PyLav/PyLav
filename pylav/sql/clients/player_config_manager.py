@@ -35,3 +35,18 @@ class PlayerConfigManager:
         if (await self.get_global_config()).shuffle is False:
             return False
         return (await self.get_config(guild_id)).shuffle
+
+    async def is_dj(
+        self,
+        user: discord.Member,
+        guild: discord.Guild,
+        *,
+        additional_role_ids: list = None,
+        additional_user_ids: list = None,
+    ) -> bool:
+        if additional_user_ids and user.id in additional_user_ids:
+            return True
+        if additional_role_ids and any(r.id in additional_role_ids for r in user.roles):
+            return True
+        config = await PlayerModel(bot=self._client.bot.user.id, id=guild.id).get_or_create()
+        return await config.is_dj(user=user, additional_role_ids=None, additional_user_ids=None)
