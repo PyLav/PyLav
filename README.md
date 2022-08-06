@@ -13,7 +13,9 @@ Documentation
 - Python 3.10+ (On initial release - during pre-alpha phase 3.9+)
 - [Discord.py](https://github.com/Rapptz/discord.py) 2.0.0+ bot
 
-### Enviroment Variables
+### Environment Variables
+Note - All environment variables except `PYLAV__LOGGER_PREFIX` can be configured from the `pylav.yaml` file which should reside in the home directory of the user running the bot.
+An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml), if you don't create the file yourself pylav will do so on the first run, and once the file exists it will be preferred over the Environment Variable set.
 #### Required
 - Env Vars to connect the lib to the PostgresSQL server
   All Envvars default to AsyncPG [defaults](https://magicstack.github.io/asyncpg/current/api/index.html#connection)
@@ -25,7 +27,7 @@ Documentation
 #### Optional
 - Env Vars to connect the lib cache to Redis, note if these are missing the library will default to PostgresSQL, therefore they are not necessary.
     - This will be used by the aiohttp cached client session for storing cached responses for 1 day, this reduces stress on some of the requests the lib makes such as to RadioBrowser.
-      - REDIS_FULLADDRESS_RESPONSE_CACHE
+      - PYLAV__REDIS_FULL_ADDRESS_RESPONSE_CACHE
         - e.g. redis://[[username]:[password]]@localhost:6379/0
         - e.g. unix://[[username]:[password]]@/path/to/socket.sock?db=0
 - Misc

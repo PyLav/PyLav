@@ -32,7 +32,7 @@ from pylav.envvars import (
     EXTERNAL_UNMANAGED_PASSWORD,
     EXTERNAL_UNMANAGED_PORT,
     EXTERNAL_UNMANAGED_SSL,
-    REDIS_FULLADDRESS_RESPONSE_CACHE,
+    REDIS_FULL_ADDRESS_RESPONSE_CACHE,
     USE_BUNDLED_EXTERNAL_NODES,
 )
 from pylav.events import Event
@@ -123,9 +123,9 @@ class Client(metaclass=_Singleton):
             self._config_folder = aiopath.AsyncPath(config_folder)
             self._bot = bot
             self._user_id = str(bot.user.id)
-            if REDIS_FULLADDRESS_RESPONSE_CACHE:
+            if REDIS_FULL_ADDRESS_RESPONSE_CACHE:
                 self._aiohttp_client_cache = aiohttp_client_cache.RedisBackend(
-                    address=REDIS_FULLADDRESS_RESPONSE_CACHE,
+                    address=REDIS_FULL_ADDRESS_RESPONSE_CACHE,
                     cache_control=True,
                     allowed_codes=(200,),
                     allowed_methods=("GET",),

@@ -6,15 +6,15 @@ from piccolo.engine import PostgresEngine
 from piccolo.table import Table
 
 from pylav._logging import getLogger
-from pylav.envvars import POSTGRE_DATABASE, POSTGRE_HOST, POSTGRE_PASSWORD, POSTGRE_PORT, POSTGRE_USER
+from pylav.envvars import POSTGRES_DATABASE, POSTGRES_HOST, POSTGRES_PASSWORD, POSTGRES_PORT, POSTGRES_USER
 
 LOGGER = getLogger("PyLav.Postgres")
 config = {
-    "host": POSTGRE_HOST,
-    "port": int(POSTGRE_PORT) if isinstance(POSTGRE_PORT, str) else POSTGRE_PORT,
-    "database": POSTGRE_DATABASE,
-    "user": POSTGRE_USER,
-    "password": POSTGRE_PASSWORD,
+    "host": POSTGRES_HOST,
+    "port": int(POSTGRES_PORT) if isinstance(POSTGRES_PORT, str) else POSTGRES_PORT,
+    "database": POSTGRES_DATABASE,
+    "user": POSTGRES_USER,
+    "password": POSTGRES_PASSWORD,
 }
 LOGGER.info("Connecting to Postgres server using %r", config)
 
