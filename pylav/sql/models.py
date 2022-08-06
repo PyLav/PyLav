@@ -1082,6 +1082,8 @@ class PlayerModel:
         await self.dj_roles_update()
         if any(r.id in self.dj_roles for r in user.roles):
             return True
+        if not all([self.dj_users, self.dj_roles]):
+            return True
         return False
 
     async def fetch_volume(self) -> int:
