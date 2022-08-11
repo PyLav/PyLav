@@ -82,6 +82,7 @@ NODE_DEFAULT_SETTINGS = {
                 "ocremix": True,
                 "tiktok": True,
                 "mixcloud": True,
+                "soundgasm": True,
             },
         },
     },
