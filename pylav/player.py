@@ -214,15 +214,33 @@ class Player(VoiceProtocol):
 
             if self.volume_filter.changed:
                 await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
-        self.player_manager.client.scheduler.add_job(self.auto_dc_task, trigger="interval", seconds=5, max_instances=1)
         self.player_manager.client.scheduler.add_job(
-            self.auto_empty_queue_task, trigger="interval", seconds=5, max_instances=1
+            self.auto_dc_task,
+            trigger="interval",
+            seconds=5,
+            max_instances=1,
+            id=f"{self.bot.user.id}-{self.guild.id}-auto_dc_task",
         )
         self.player_manager.client.scheduler.add_job(
-            self.auto_pause_task, trigger="interval", seconds=5, max_instances=1
+            self.auto_empty_queue_task,
+            trigger="interval",
+            seconds=5,
+            max_instances=1,
+            id=f"{self.bot.user.id}-{self.guild.id}-auto_empty_queue_task",
         )
         self.player_manager.client.scheduler.add_job(
-            self.auto_save_task, trigger="interval", seconds=60, max_instances=1
+            self.auto_pause_task,
+            trigger="interval",
+            seconds=5,
+            max_instances=1,
+            id=f"{self.bot.user.id}-{self.guild.id}-auto_pause_task",
+        )
+        self.player_manager.client.scheduler.add_job(
+            self.auto_save_task,
+            trigger="interval",
+            seconds=60,
+            max_instances=1,
+            id=f"{self.bot.user.id}-{self.guild.id}-auto_save_task",
         )
 
     @property
@@ -1146,6 +1164,12 @@ class Player(VoiceProtocol):
             with contextlib.suppress(ValueError):
                 await self.player_manager.remove(self.channel.guild.id)
             await self.node.send(op="destroy", guildId=self.guild_id)
+            self.player_manager.client.scheduler.remove_job(id=f"{self.bot.user.id}-{self.guild.id}-auto_dc_task")
+            self.player_manager.client.scheduler.remove_job(
+                id=f"{self.bot.user.id}-{self.guild.id}-auto_empty_queue_task"
+            )
+            self.player_manager.client.scheduler.remove_job(id=f"{self.bot.user.id}-{self.guild.id}-auto_pause_task")
+            self.player_manager.client.scheduler.remove_job(id=f"{self.bot.user.id}-{self.guild.id}-auto_save_task")
             self.cleanup()
 
     async def stop(self, requester: discord.Member) -> None:
