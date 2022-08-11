@@ -270,10 +270,10 @@ class WebSocket:
         """Listens for websocket messages."""
         try:
             async for msg in self._ws:
-                LOGGER.trace("[NODE-%s] Received WebSocket message: %r", self.node.name, msg.data)
+                LOGGER.trace("[NODE-%s] Received WebSocket message: %s", self.node.name, msg.data)
                 if msg.type == aiohttp.WSMsgType.CLOSED:
                     LOGGER.info(
-                        "[NODE-%s] Received close frame with code %r.",
+                        "[NODE-%s] Received close frame with code %s.",
                         self.node.name,
                         msg.data,
                     )
