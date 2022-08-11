@@ -45,6 +45,10 @@ class PyLavError(CommandError):
     """Base exception for errors in the library."""
 
 
+class PyLavInvalidArguments(PyLavError):
+    """Base Exception for when invalid arguments are passed to a method"""
+
+
 class PyLavNotInitialized(PyLavError):
     """Raised when the library is not initialized."""
 

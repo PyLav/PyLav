@@ -1041,3 +1041,30 @@ class Client(metaclass=_Singleton):
         return await self.player_config_manager.is_dj(
             user=user, guild=guild, additional_role_ids=None, additional_user_ids=None
         )
+
+    async def generate_mix_playlist(
+        self,
+        *,
+        video_id: str | None = None,
+        user_id: str | None,
+        playlist_id: str | None = None,
+        channel_id: str | None = None,
+    ) -> str:
+        if not any([video_id, playlist_id, channel_id, user_id]):
+            raise PyLavInvalidArguments(
+                "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary."
+            )
+
+        if sum(1 for i in [video_id, playlist_id, channel_id, user_id] if i) > 1:
+            raise PyLavInvalidArguments(
+                "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple."
+            )
+
+        if video_id:
+            return f"https://www.youtube.com/watch?list=RD{video_id}"
+        if user_id:
+            return f"https://www.youtube.com/watch?list=UU{user_id}"
+        if playlist_id:
+            return f"https://www.youtube.com/watch?list=RDAMPL{playlist_id}"
+        if channel_id:
+            return f"https://www.youtube.com/watch?list=RDCM{channel_id}"
