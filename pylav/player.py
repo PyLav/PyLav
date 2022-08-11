@@ -98,6 +98,7 @@ class Player(VoiceProtocol):
         self._user_data = {}
 
         self.paused = False
+        self.stopped = False
         self._last_update = 0
         self._last_position = 0
         self.position_timestamp = 0
@@ -219,6 +220,9 @@ class Player(VoiceProtocol):
         )
         self.player_manager.client.scheduler.add_job(
             self.auto_pause_task, trigger="interval", seconds=5, max_instances=1
+        )
+        self.player_manager.client.scheduler.add_job(
+            self.auto_save_task, trigger="interval", seconds=60, max_instances=1
         )
 
     @property
@@ -471,6 +475,25 @@ class Player(VoiceProtocol):
                 self._last_empty_queue_check = time.time()
         else:
             self._last_empty_queue_check = 0
+
+    async def auto_save_task(self):
+        if not self.is_connected:
+            LOGGER.debug(
+                "Auto save task for %r fired while player is not connected to a voice channel - discarding",
+                self,
+            )
+            return
+        if not self.stopped:
+            LOGGER.debug(
+                "Auto save task for %r fired while player that has been stopped - discarding",
+                self,
+            )
+            return
+        LOGGER.info(
+            "Auto save task for %r - Saving the player at %s", self, datetime.datetime.now(tz=datetime.timezone.utc)
+        )
+        await self._config.save()
+        await self.save()
 
     async def change_to_best_node(self, feature: str = None) -> Node | None:
         """
@@ -757,6 +780,7 @@ class Player(VoiceProtocol):
         self._last_position = 0
         self.position_timestamp = 0
         self.paused = False
+        self.stopped = False
         auto_play = False
         self.next_track = None
         self.last_track = None
@@ -1131,6 +1155,8 @@ class Player(VoiceProtocol):
         self.current = None
         self.queue.clear()
         self.next_track = None
+        self.stopped = True
+        await self.player_manager.client.player_state_db_manager.delete_player(self.channel.guild.id)
 
     async def move_to(
         self,
@@ -1968,4 +1994,5 @@ class Player(VoiceProtocol):
         self._restored = True
         await self.player_manager.client.player_state_db_manager.delete_player(guild_id=self.guild.id)
         self.node.dispatch_event(PlayerRestoredEvent(self, requester))
+        self.stopped = (not self.autoplay_enabled) and not self.queue.qsize() and not self.current
         LOGGER.info("Player restored - %s", self)
