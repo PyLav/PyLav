@@ -483,7 +483,7 @@ class Player(VoiceProtocol):
                 self,
             )
             return
-        if not self.stopped:
+        if self.stopped:
             LOGGER.debug(
                 "Auto save task for %r fired while player that has been stopped - discarding",
                 self,
