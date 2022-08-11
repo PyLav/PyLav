@@ -67,4 +67,24 @@ class UpdateSchemaManager:
             await full_data.save()
             await self._client.lib_db_manager.update_bot_dv_version("0.3.5")
 
+        # TODO: Revert this when it is fixed upstream
+        if (await self._client.lib_db_manager.get_bot_db_version()).version <= parse_version("0.3.5"):
+            full_data = await self._client.node_db_manager.get_bundled_node_config()
+
+            del full_data.yaml["logging"]["path"]
+            full_data.yaml["logging"]["logback"] = {
+                "rollingpolicy": {
+                    "max-file-size": full_data.yaml["logging"]["file"]["max-size"],
+                    "max-history": full_data.yaml["logging"]["file"]["max-history"],
+                    "total-size-cap": "1GB",
+                }
+            }
+            del full_data.yaml["logging"]["file"]["max-size"]
+            del full_data.yaml["logging"]["file"]["max-history"]
+            await full_data.save()
+            await self._client.lib_db_manager.update_bot_dv_version("0.3.6")
+
+        bundled_external_node = await self._client.node_db_manager.get_node_config(1)
+        bundled_external_node.resume_key = f"PyLav/{self._client.lib_version}-{self._client.bot_id}"
+        await bundled_external_node.save()
         await self._client.lib_db_manager.update_bot_dv_version(__VERSION__)
