@@ -60,4 +60,11 @@ class UpdateSchemaManager:
             await full_data.save()
             await self._client.lib_db_manager.update_bot_dv_version("0.3.4")
 
+        # TODO: Revert this when it is fixed upstream
+        if (await self._client.lib_db_manager.get_bot_db_version()).version <= parse_version("0.3.4"):
+            full_data = await self._client.node_db_manager.get_bundled_node_config()
+            full_data.yaml["logging"]["file"]["path"] = full_data.yaml["logging"]["path"]
+            await full_data.save()
+            await self._client.lib_db_manager.update_bot_dv_version("0.3.5")
+
         await self._client.lib_db_manager.update_bot_dv_version(__VERSION__)
