@@ -315,6 +315,8 @@ class Client(metaclass=_Singleton):
                             localtrack_folder=self._config_folder / "music",
                             use_bundled_external=USE_BUNDLED_EXTERNAL_NODES,
                         )
+                        LOGGER.info("Config folder: %s", self._config.config_folder)
+                        LOGGER.info("Localtracks folder: %s", self._config.localtrack_folder)
                         auto_update_managed_nodes = self._config.auto_update_managed_nodes
                         self.enable_managed_node = self._config.enable_managed_node
                         self._config_folder = aiopath.AsyncPath(self._config.config_folder)

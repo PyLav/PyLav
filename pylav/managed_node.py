@@ -52,6 +52,7 @@ LOGGER = getLogger("PyLav.ManagedNode")
 LAVALINK_DOWNLOAD_DIR = CONFIG_DIR / "lavalink"
 LAVALINK_DOWNLOAD_DIR = pathlib.Path(LAVALINK_DOWNLOAD_DIR)  # type: ignore
 LAVALINK_DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
+LOGGER.info("Lavalink folder: %s", LAVALINK_DOWNLOAD_DIR)
 _LAVALINK_JAR_FILE_FORCED_SYNC = LAVALINK_DOWNLOAD_DIR / "forced.jar"
 LAVALINK_DOWNLOAD_DIR: aiopath.AsyncPath = aiopath.AsyncPath(LAVALINK_DOWNLOAD_DIR)
 LAVALINK_JAR_FILE: aiopath.AsyncPath = LAVALINK_DOWNLOAD_DIR / "Lavalink.jar"
