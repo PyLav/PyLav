@@ -21,7 +21,7 @@ from pylav.constants import BUNDLED_PLAYLIST_IDS, SUPPORTED_SOURCES
 from pylav.exceptions import InvalidPlaylist
 from pylav.filters import Equalizer
 from pylav.sql import tables
-from pylav.types import BotT, TimedFeatureT
+from pylav.types import BotT
 from pylav.utils import PyLavContext, TimedFeature
 
 BRACKETS: re.Pattern = re.compile(r"[\[\]]")
@@ -685,9 +685,9 @@ class PlayerModel:
     self_deaf: bool = True
     effects: dict = field(default_factory=dict)
     extras: dict = field(default_factory=dict)
-    empty_queue_dc: TimedFeatureT = field(default_factory=dict)
-    alone_dc: TimedFeatureT = field(default_factory=dict)
-    alone_pause: TimedFeatureT = field(default_factory=dict)
+    empty_queue_dc: TimedFeature = field(default_factory=TimedFeature)
+    alone_dc: TimedFeature = field(default_factory=TimedFeature)
+    alone_pause: TimedFeature = field(default_factory=TimedFeature)
     dj_users: set = field(default_factory=set)
     dj_roles: set = field(default_factory=set)
 
@@ -695,11 +695,11 @@ class PlayerModel:
         if isinstance(self.extras, str):
             self.extras = ujson.loads(self.extras)
         if isinstance(self.empty_queue_dc, str):
-            self.empty_queue_dc = ujson.loads(self.empty_queue_dc)
+            self.empty_queue_dc = TimedFeature(**ujson.loads(self.empty_queue_dc))
         if isinstance(self.alone_dc, str):
-            self.alone_dc = ujson.loads(self.alone_dc)
+            self.alone_dc = TimedFeature(**ujson.loads(self.alone_dc))
         if isinstance(self.alone_pause, str):
-            self.alone_pause = ujson.loads(self.alone_pause)
+            self.alone_pause = TimedFeature(**ujson.loads(self.alone_pause))
         if isinstance(self.effects, str):
             self.effects = ujson.loads(self.effects)
         if isinstance(self.dj_users, str):
@@ -728,9 +728,9 @@ class PlayerModel:
             tables.PlayerRow.auto_play: self.auto_play,
             tables.PlayerRow.self_deaf: self.self_deaf,
             tables.PlayerRow.extras: self.extras,
-            tables.PlayerRow.empty_queue_dc: self.empty_queue_dc,
-            tables.PlayerRow.alone_dc: self.alone_dc,
-            tables.PlayerRow.alone_pause: self.alone_pause,
+            tables.PlayerRow.empty_queue_dc: self.empty_queue_dc.to_dict(),
+            tables.PlayerRow.alone_dc: self.alone_dc.to_dict(),
+            tables.PlayerRow.alone_pause: self.alone_pause.to_dict(),
             tables.PlayerRow.effects: self.effects,
             tables.PlayerRow.dj_users: list(self.dj_users),
             tables.PlayerRow.dj_roles: list(self.dj_roles),
@@ -775,9 +775,9 @@ class PlayerModel:
             tables.PlayerRow.auto_play: self.auto_play,
             tables.PlayerRow.self_deaf: self.self_deaf,
             tables.PlayerRow.extras: self.extras,
-            tables.PlayerRow.empty_queue_dc: self.empty_queue_dc,
-            tables.PlayerRow.alone_dc: self.alone_dc,
-            tables.PlayerRow.alone_pause: self.alone_pause,
+            tables.PlayerRow.empty_queue_dc: self.empty_queue_dc.to_dict(),
+            tables.PlayerRow.alone_dc: self.alone_dc.to_dict(),
+            tables.PlayerRow.alone_pause: self.alone_pause.to_dict(),
             tables.PlayerRow.effects: self.effects,
             tables.PlayerRow.dj_users: list(self.dj_users),
             tables.PlayerRow.dj_roles: list(self.dj_roles),
@@ -800,9 +800,9 @@ class PlayerModel:
             self.auto_play = output.auto_play
             self.self_deaf = output.self_deaf
             self.extras = output.extras
-            self.empty_queue_dc = output.empty_queue_dc
-            self.alone_dc = output.alone_dc
-            self.alone_pause = output.alone_pause
+            self.empty_queue_dc = TimedFeature(**output.empty_queue_dc)
+            self.alone_dc = TimedFeature(**output.alone_dc)
+            self.alone_pause = TimedFeature(**output.alone_pause)
             self.effects = output.effects
             self.dj_users = set(output.dj_users)
             self.dj_roles = set(output.dj_roles)
@@ -950,9 +950,9 @@ class PlayerModel:
         )
         if player:
             if isinstance(player[0]["empty_queue_dc"], str):
-                self.empty_queue_dc = ujson.loads(player[0]["empty_queue_dc"])
+                self.empty_queue_dc = TimedFeature(**ujson.loads(player[0]["empty_queue_dc"]))
             else:
-                self.empty_queue_dc = player[0]["empty_queue_dc"]
+                self.empty_queue_dc = TimedFeature(**player[0]["empty_queue_dc"])
         return self
 
     async def update_alone_dc(self) -> PlayerModel:
@@ -963,9 +963,9 @@ class PlayerModel:
         )
         if player:
             if isinstance(player[0]["alone_dc"], str):
-                self.alone_dc = ujson.loads(player[0]["alone_dc"])
+                self.alone_dc = TimedFeature(**ujson.loads(player[0]["alone_dc"]))
             else:
-                self.alone_dc = player[0]["alone_dc"]
+                self.alone_dc = TimedFeature(**player[0]["alone_dc"])
         return self
 
     async def update_alone_pause(self) -> PlayerModel:
@@ -976,9 +976,9 @@ class PlayerModel:
         )
         if player:
             if isinstance(player[0]["alone_pause"], str):
-                self.alone_pause = ujson.loads(player[0]["alone_pause"])
+                self.alone_pause = TimedFeature(**ujson.loads(player[0]["alone_pause"]))
             else:
-                self.alone_pause = player[0]["alone_pause"]
+                self.alone_pause = TimedFeature(**player[0]["alone_pause"])
         return self
 
     async def dj_users_update(self) -> PlayerModel:
@@ -1120,15 +1120,15 @@ class PlayerModel:
 
     async def fetch_empty_queue_dc(self) -> TimedFeature:
         await self.update_empty_queue_dc()
-        return TimedFeature(**self.empty_queue_dc)
+        return self.empty_queue_dc
 
     async def fetch_alone_dc(self) -> TimedFeature:
         await self.update_alone_dc()
-        return TimedFeature(**self.alone_dc)
+        return self.alone_dc
 
     async def fetch_alone_pause(self) -> TimedFeature:
         await self.update_alone_pause()
-        return TimedFeature(**self.alone_pause)
+        return self.alone_pause
 
     async def fetch_max_volume(self) -> int:
         await self.update_max_volume()

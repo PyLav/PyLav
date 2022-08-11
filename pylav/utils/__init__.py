@@ -153,6 +153,9 @@ class TimedFeature:
     enabled: bool = False
     time: int = 60
 
+    def to_dict(self) -> dict:
+        return {"enabled": self.enabled, "time": self.time}
+
 
 def add_property(inst: object, name: str, method: Callable) -> None:
     cls = type(inst)

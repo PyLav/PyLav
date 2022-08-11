@@ -209,6 +209,13 @@ class Player(VoiceProtocol):
 
             if self.volume_filter.changed:
                 await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
+        self.player_manager.client.scheduler.add_job(self.auto_dc_task, trigger="interval", seconds=5, max_instances=1)
+        self.player_manager.client.scheduler.add_job(
+            self.auto_empty_queue_task, trigger="interval", seconds=5, max_instances=1
+        )
+        self.player_manager.client.scheduler.add_job(
+            self.auto_pause_task, trigger="interval", seconds=5, max_instances=1
+        )
 
     @property
     def channel(self) -> discord.channel.VocalGuildChannel:
@@ -381,6 +388,85 @@ class Player(VoiceProtocol):
 
         difference = time.time() * 1000 - self._last_update
         return min(self._last_position + difference, self.current.duration)
+
+    async def auto_pause_task(self):
+        if not self.is_connected:
+            LOGGER.debug(
+                "Auto Pause tasks for %r fired while player is not connected to a voice channel - discarding",
+                self,
+            )
+            return
+        if (not self.paused) and self.is_empty and (await self.config.fetch_alone_pause()).enabled:
+            if self._last_alone_check <= time.time() + self.config.alone_pause.time:
+                LOGGER.info(
+                    "Auto Pause tasks for %r - Player in an empty channel for longer than %s - Pausing",
+                    self,
+                    self.config.alone_pause.time,
+                )
+                await self.set_pause(pause=True, requester=self.guild.me)
+                self._last_alone_paused_check = 0
+        elif self.config.alone_pause.enabled and (not self.paused) and self.is_empty:
+            if not self._last_alone_paused_check:
+                LOGGER.debug(
+                    "Auto Pause tasks for %r - Player is alone - starting countdown",
+                    self,
+                )
+                self._last_alone_paused_check = time.time()
+        else:
+            self._last_alone_paused_check = 0
+
+    async def auto_dc_task(self):
+        if not self.is_connected:
+            LOGGER.debug(
+                "Auto Disconnect tasks for %r fired while player is not connected to a voice channel - discarding",
+                self,
+            )
+            return
+        if self.is_empty and (await self.config.fetch_alone_dc()).enabled:
+            if self._last_alone_check <= time.time() + self.config.alone_dc.time:
+                LOGGER.info(
+                    "Auto Disconnect tasks for %r - Player in an empty channel for longer than %s - Disconnecting",
+                    self,
+                    self.config.alone_dc.time,
+                )
+                await self.disconnect(requester=self.guild.me)
+                self._last_alone_dc_check = 0
+        elif self.config.alone_dc.enabled and self.is_empty:
+            if not self._last_alone_dc_check:
+                LOGGER.debug(
+                    "Auto Disconnect tasks for %r - Player is alone - starting countdown",
+                    self,
+                )
+                self._last_alone_dc_check = time.time()
+        else:
+            self._last_alone_dc_check = 0
+
+    async def auto_empty_queue_task(self):
+        if not self.is_connected:
+            LOGGER.debug(
+                "Auto Empty Queue tasks for %r fired while player is not connected to a voice channel - discarding",
+                self,
+            )
+            return
+        if self.queue.empty() and (await self.config.fetch_empty_queue_dc()).enabled:
+            if self._last_alone_check <= time.time() + self.config.empty_queue_dc.time:
+                LOGGER.info(
+                    "Auto Empty Queue tasks for %r - Queue is empty for longer than %s - Stopping and disconnecting",
+                    self,
+                    self.config.empty_queue_dc.time,
+                )
+                await self.stop(requester=self.guild.me)
+                await self.disconnect(requester=self.guild.me)
+                self._last_empty_queue_check = 0
+        elif self.config.empty_queue_dc.enabled and self.queue.empty():
+            if not self._last_empty_queue_check:
+                LOGGER.debug(
+                    "Auto Empty Queue tasks for %r - Queue is empty - starting countdown",
+                    self,
+                )
+                self._last_empty_queue_check = time.time()
+        else:
+            self._last_empty_queue_check = 0
 
     async def change_to_best_node(self, feature: str = None) -> Node | None:
         """
