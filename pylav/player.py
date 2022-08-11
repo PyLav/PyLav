@@ -423,7 +423,13 @@ class Player(VoiceProtocol):
             )
             return
         if (not self.paused) and self.is_empty and (await self.config.fetch_alone_pause()).enabled:
-            if self._last_alone_check <= time.time() + self.config.alone_pause.time:
+            if not self._last_alone_paused_check:
+                LOGGER.debug(
+                    "Auto Pause task for %s - Player is alone - starting countdown",
+                    self,
+                )
+                self._last_alone_paused_check = time.time()
+            if self._last_alone_check + self.config.alone_pause.time <= time.time():
                 LOGGER.info(
                     "Auto Pause task for %s - Player in an empty channel for longer than %s - Pausing",
                     self,
@@ -431,13 +437,6 @@ class Player(VoiceProtocol):
                 )
                 await self.set_pause(pause=True, requester=self.guild.me)
                 self._last_alone_paused_check = 0
-        elif self.config.alone_pause.enabled and (not self.paused) and self.is_empty:
-            if not self._last_alone_paused_check:
-                LOGGER.debug(
-                    "Auto Pause task for %s - Player is alone - starting countdown",
-                    self,
-                )
-                self._last_alone_paused_check = time.time()
         else:
             self._last_alone_paused_check = 0
 
@@ -449,7 +448,13 @@ class Player(VoiceProtocol):
             )
             return
         if self.is_empty and (await self.config.fetch_alone_dc()).enabled:
-            if self._last_alone_check <= time.time() + self.config.alone_dc.time:
+            if not self._last_alone_dc_check:
+                LOGGER.debug(
+                    "Auto Disconnect task for %s - Player is alone - starting countdown",
+                    self,
+                )
+                self._last_alone_dc_check = time.time()
+            if self._last_alone_check + self.config.alone_dc.time <= time.time():
                 LOGGER.info(
                     "Auto Disconnect task for %s - Player in an empty channel for longer than %s - Disconnecting",
                     self,
@@ -457,13 +462,6 @@ class Player(VoiceProtocol):
                 )
                 await self.disconnect(requester=self.guild.me)
                 self._last_alone_dc_check = 0
-        elif self.config.alone_dc.enabled and self.is_empty:
-            if not self._last_alone_dc_check:
-                LOGGER.debug(
-                    "Auto Disconnect task for %s - Player is alone - starting countdown",
-                    self,
-                )
-                self._last_alone_dc_check = time.time()
         else:
             self._last_alone_dc_check = 0
 
@@ -475,7 +473,13 @@ class Player(VoiceProtocol):
             )
             return
         if self.queue.empty() and (await self.config.fetch_empty_queue_dc()).enabled:
-            if self._last_alone_check <= time.time() + self.config.empty_queue_dc.time:
+            if not self._last_empty_queue_check:
+                LOGGER.debug(
+                    "Auto Empty Queue task for %s - Queue is empty - starting countdown",
+                    self,
+                )
+                self._last_empty_queue_check = time.time()
+            if self._last_alone_check + self.config.empty_queue_dc.time <= time.time():
                 LOGGER.info(
                     "Auto Empty Queue task for %s - Queue is empty for longer than %s - Stopping and disconnecting",
                     self,
@@ -484,13 +488,6 @@ class Player(VoiceProtocol):
                 await self.stop(requester=self.guild.me)
                 await self.disconnect(requester=self.guild.me)
                 self._last_empty_queue_check = 0
-        elif self.config.empty_queue_dc.enabled and self.queue.empty():
-            if not self._last_empty_queue_check:
-                LOGGER.debug(
-                    "Auto Empty Queue task for %s - Queue is empty - starting countdown",
-                    self,
-                )
-                self._last_empty_queue_check = time.time()
         else:
             self._last_empty_queue_check = 0
 
