@@ -1165,12 +1165,14 @@ class Player(VoiceProtocol):
             with contextlib.suppress(ValueError):
                 await self.player_manager.remove(self.channel.guild.id)
             await self.node.send(op="destroy", guildId=self.guild_id)
-            self.player_manager.client.scheduler.remove_job(id=f"{self.bot.user.id}-{self.guild.id}-auto_dc_task")
+            self.player_manager.client.scheduler.remove_job(job_id=f"{self.bot.user.id}-{self.guild.id}-auto_dc_task")
             self.player_manager.client.scheduler.remove_job(
-                id=f"{self.bot.user.id}-{self.guild.id}-auto_empty_queue_task"
+                job_id=f"{self.bot.user.id}-{self.guild.id}-auto_empty_queue_task"
             )
-            self.player_manager.client.scheduler.remove_job(id=f"{self.bot.user.id}-{self.guild.id}-auto_pause_task")
-            self.player_manager.client.scheduler.remove_job(id=f"{self.bot.user.id}-{self.guild.id}-auto_save_task")
+            self.player_manager.client.scheduler.remove_job(
+                job_id=f"{self.bot.user.id}-{self.guild.id}-auto_pause_task"
+            )
+            self.player_manager.client.scheduler.remove_job(job_id=f"{self.bot.user.id}-{self.guild.id}-auto_save_task")
             self.cleanup()
 
     async def stop(self, requester: discord.Member) -> None:
