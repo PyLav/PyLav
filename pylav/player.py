@@ -125,6 +125,10 @@ class Player(VoiceProtocol):
         self._config = None  # type: ignore
         self._extras = {}
 
+        self._last_alone_paused_check = 0
+        self._last_alone_dc_check = 0
+        self._last_empty_queue_check = 0
+
     def __str__(self):
         return f"Player(id={self.guild.id}, channel={self.channel.id})"
 
@@ -392,14 +396,14 @@ class Player(VoiceProtocol):
     async def auto_pause_task(self):
         if not self.is_connected:
             LOGGER.debug(
-                "Auto Pause tasks for %r fired while player is not connected to a voice channel - discarding",
+                "Auto Pause task for %r fired while player is not connected to a voice channel - discarding",
                 self,
             )
             return
         if (not self.paused) and self.is_empty and (await self.config.fetch_alone_pause()).enabled:
             if self._last_alone_check <= time.time() + self.config.alone_pause.time:
                 LOGGER.info(
-                    "Auto Pause tasks for %r - Player in an empty channel for longer than %s - Pausing",
+                    "Auto Pause task for %r - Player in an empty channel for longer than %s - Pausing",
                     self,
                     self.config.alone_pause.time,
                 )
@@ -408,7 +412,7 @@ class Player(VoiceProtocol):
         elif self.config.alone_pause.enabled and (not self.paused) and self.is_empty:
             if not self._last_alone_paused_check:
                 LOGGER.debug(
-                    "Auto Pause tasks for %r - Player is alone - starting countdown",
+                    "Auto Pause task for %r - Player is alone - starting countdown",
                     self,
                 )
                 self._last_alone_paused_check = time.time()
@@ -418,14 +422,14 @@ class Player(VoiceProtocol):
     async def auto_dc_task(self):
         if not self.is_connected:
             LOGGER.debug(
-                "Auto Disconnect tasks for %r fired while player is not connected to a voice channel - discarding",
+                "Auto Disconnect task for %r fired while player is not connected to a voice channel - discarding",
                 self,
             )
             return
         if self.is_empty and (await self.config.fetch_alone_dc()).enabled:
             if self._last_alone_check <= time.time() + self.config.alone_dc.time:
                 LOGGER.info(
-                    "Auto Disconnect tasks for %r - Player in an empty channel for longer than %s - Disconnecting",
+                    "Auto Disconnect task for %r - Player in an empty channel for longer than %s - Disconnecting",
                     self,
                     self.config.alone_dc.time,
                 )
@@ -434,7 +438,7 @@ class Player(VoiceProtocol):
         elif self.config.alone_dc.enabled and self.is_empty:
             if not self._last_alone_dc_check:
                 LOGGER.debug(
-                    "Auto Disconnect tasks for %r - Player is alone - starting countdown",
+                    "Auto Disconnect task for %r - Player is alone - starting countdown",
                     self,
                 )
                 self._last_alone_dc_check = time.time()
@@ -444,14 +448,14 @@ class Player(VoiceProtocol):
     async def auto_empty_queue_task(self):
         if not self.is_connected:
             LOGGER.debug(
-                "Auto Empty Queue tasks for %r fired while player is not connected to a voice channel - discarding",
+                "Auto Empty Queue task for %r fired while player is not connected to a voice channel - discarding",
                 self,
             )
             return
         if self.queue.empty() and (await self.config.fetch_empty_queue_dc()).enabled:
             if self._last_alone_check <= time.time() + self.config.empty_queue_dc.time:
                 LOGGER.info(
-                    "Auto Empty Queue tasks for %r - Queue is empty for longer than %s - Stopping and disconnecting",
+                    "Auto Empty Queue task for %r - Queue is empty for longer than %s - Stopping and disconnecting",
                     self,
                     self.config.empty_queue_dc.time,
                 )
@@ -461,7 +465,7 @@ class Player(VoiceProtocol):
         elif self.config.empty_queue_dc.enabled and self.queue.empty():
             if not self._last_empty_queue_check:
                 LOGGER.debug(
-                    "Auto Empty Queue tasks for %r - Queue is empty - starting countdown",
+                    "Auto Empty Queue task for %r - Queue is empty - starting countdown",
                     self,
                 )
                 self._last_empty_queue_check = time.time()
