@@ -289,7 +289,9 @@ class Client(metaclass=_Singleton):
                         self._initiated = True
                         self.ready.clear()
                         await self.bot.wait_until_ready()
-                        if hasattr(self.bot, "get_shared_api_token"):
+                        if hasattr(self.bot, "get_shared_api_tokens") and callable(
+                            getattr(self.bot, "get_shared_api_tokens")
+                        ):
                             spotify = await self.bot.get_shared_api_tokens("spotify")
                             client_id = spotify.get("client_id")
                             client_secret = spotify.get("client_secret")
@@ -297,6 +299,7 @@ class Client(metaclass=_Singleton):
                                 "Existing Spotify tokens found; Using them - %s - %s", client_id, client_secret
                             )
                         else:
+                            LOGGER.info("PyLav being run from a non Red bot")
                             client_id = None
                             client_secret = None
                         await self._lib_config_manager.initialize()
