@@ -293,6 +293,9 @@ class Client(metaclass=_Singleton):
                             spotify = await self.bot.get_shared_api_tokens("spotify")
                             client_id = spotify.get("client_id")
                             client_secret = spotify.get("client_secret")
+                            LOGGER.debug(
+                                "Existing Spotify tokens found; Using them - %s - %s", client_id, client_secret
+                            )
                         else:
                             client_id = None
                             client_secret = None
@@ -399,8 +402,8 @@ class Client(metaclass=_Singleton):
             client_id=self._spotify_client_id, client_secret=self._spotify_client_secret
         )
         bundled_node_config = await self._node_config_manager.get_bundled_node_config()
-        bundled_node_config.extras["plugins"]["topissourcemanagers"]["spotify"]["clientId"] = client_id
-        bundled_node_config.extras["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"] = client_secret
+        bundled_node_config.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientId"] = client_id
+        bundled_node_config.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"] = client_secret
         await bundled_node_config.save()
 
     async def add_node(
