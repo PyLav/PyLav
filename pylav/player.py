@@ -651,6 +651,8 @@ class Player(VoiceProtocol):
 
         at = await self._query_to_track(requester, track, query)
         self.queue.put_nowait([at], index=index)
+        if index is None:
+            await self.maybe_shuffle_queue(requester=requester)
         self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
         self.node.dispatch_event(TracksRequestedEvent(self, self.guild.get_member(requester), [at]))
 
@@ -678,6 +680,8 @@ class Player(VoiceProtocol):
             track = await self._query_to_track(requester, track, query)
             output.append(track)
         self.queue.put_nowait(output, index=index)
+        if index is None:
+            await self.maybe_shuffle_queue(requester=requester)
         self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
         self.node.dispatch_event(TracksRequestedEvent(self, self.guild.get_member(requester), output))
 
@@ -846,8 +850,6 @@ class Player(VoiceProtocol):
                     self.node.dispatch_event(QueueEndEvent(self))
                     return
             else:
-                if await self.player_manager.client.player_config_manager.get_shuffle(self.guild.id):
-                    await self.shuffle_queue(requester=self.client.user)
                 track = await self.queue.get()
 
         if await track.query() is None:
@@ -1729,7 +1731,7 @@ class Player(VoiceProtocol):
         queue_list += f"{current_track_description}\n"
         queue_list += f"Requester: **{current.requester.mention}**"
         queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
-        if not history and (await self._config.fetch_shuffle()):
+        if not history and (await self.player_manager.client.player_config_manager.get_shuffle(self.guild.id)):
             queue_list += "__Queue order is not accurate due to shuffle being toggled__\n\n"
         if tracks:
             padding = len(str(start_index + len(tracks)))
@@ -1815,9 +1817,12 @@ class Player(VoiceProtocol):
         )
         return True
 
-    async def shuffle_queue(self, requester: discord.Member) -> None:
-        if await self.player_manager.global_config.fetch_shuffle() is False:
+    async def maybe_shuffle_queue(self, requester: discord.Member) -> None:
+        if not (await self.player_manager.client.player_config_manager.get_shuffle(self.guild.id)):
             return
+        await self.shuffle_queue(requester)
+
+    async def shuffle_queue(self, requester: discord.Member) -> None:
         self.node.dispatch_event(QueueShuffledEvent(player=self, requester=requester))
         await self.queue.shuffle()
         self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
