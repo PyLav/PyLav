@@ -1678,7 +1678,7 @@ class Player(VoiceProtocol):
         if next_track_description:
             val = f"{next_track_description}\n"
             val += f"Duration: `{'LIVE' if self.next_track.stream else format_time(self.next_track.duration)}`\n"
-            if rq := self.last_track.requester:
+            if rq := self.next_track.requester:
                 val += f"Requester: **{rq.mention}**\n\n"
             page.add_field(name="Next Track", value=val)
 
