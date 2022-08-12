@@ -433,7 +433,7 @@ class Player(VoiceProtocol):
                     self,
                 )
                 self._last_alone_paused_check = time.time()
-            if self._last_alone_check + self.config.alone_pause.time <= time.time():
+            if self._last_alone_paused_check + self.config.alone_pause.time <= time.time():
                 LOGGER.info(
                     "Auto Pause task for %s - Player in an empty channel for longer than %s - Pausing",
                     self,
@@ -458,7 +458,7 @@ class Player(VoiceProtocol):
                     self,
                 )
                 self._last_alone_dc_check = time.time()
-            if self._last_alone_check + self.config.alone_dc.time <= time.time():
+            if self._last_alone_dc_check + self.config.alone_dc.time <= time.time():
                 LOGGER.info(
                     "Auto Disconnect task for %s - Player in an empty channel for longer than %s - Disconnecting",
                     self,
@@ -483,7 +483,7 @@ class Player(VoiceProtocol):
                     self,
                 )
                 self._last_empty_queue_check = time.time()
-            if self._last_alone_check + self.config.empty_queue_dc.time <= time.time():
+            if self._last_empty_queue_check + self.config.empty_queue_dc.time <= time.time():
                 LOGGER.info(
                     "Auto Empty Queue task for %s - Queue is empty for longer than %s - Stopping and disconnecting",
                     self,
@@ -590,10 +590,8 @@ class Player(VoiceProtocol):
         key: :class:`object`
             The key to delete.
         """
-        try:
+        with contextlib.suppress(KeyError):
             del self._user_data[key]
-        except KeyError:
-            pass
 
     async def on_voice_server_update(self, data: dict) -> None:
         self._voice_state.update({"event": data})
@@ -686,6 +684,7 @@ class Player(VoiceProtocol):
     async def previous(self, requester: discord.Member, bypass_cache: bool = False) -> None:
         if self.history.empty():
             raise TrackNotFound("There are no tracks currently in the player history.")
+        self.stopped = False
         track = await self.history.get()
         if track.is_partial:
             await track.search(self, bypass_cache=bypass_cache)
@@ -698,6 +697,7 @@ class Player(VoiceProtocol):
             await self.change_to_best_node(await track.requires_capability())
 
         self.current = track
+
         options = {"noReplace": False}
         if track.skip_segments and self.node.supports_sponsorblock:
             options["skipSegments"] = track.skip_segments
@@ -717,6 +717,7 @@ class Player(VoiceProtocol):
         track = Track(node=self.node, data=track, query=query, skip_segments=skip_segments, requester=requester.id)
         self.next_track = None
         self.last_track = None
+        self.stopped = False
         if self.current:
             self.current.timestamp = self.position
             self.queue.put_nowait([self.current], 0)
@@ -905,6 +906,7 @@ class Player(VoiceProtocol):
     async def resume(self, requester: discord.Member = None):
         options = {}
         self._last_update = 0
+        self.stopped = False
         self._last_position = 0
         if self.node.supports_sponsorblock:
             options["skipSegments"] = self.current.skip_segments if self.current else []
@@ -1162,6 +1164,7 @@ class Player(VoiceProtocol):
             self.history.clear()
             self.last_track = None
             self.next_track = None
+            self.stopped = True
             with contextlib.suppress(ValueError):
                 await self.player_manager.remove(self.channel.guild.id)
             await self.node.send(op="destroy", guildId=self.guild_id)
