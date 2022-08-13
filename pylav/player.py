@@ -421,7 +421,7 @@ class Player(VoiceProtocol):
 
     async def auto_pause_task(self):
         if not self.is_connected:
-            LOGGER.debug(
+            LOGGER.trace(
                 "Auto Pause task for %s fired while player is not connected to a voice channel - discarding",
                 self,
             )
@@ -446,7 +446,7 @@ class Player(VoiceProtocol):
 
     async def auto_dc_task(self):
         if not self.is_connected:
-            LOGGER.debug(
+            LOGGER.trace(
                 "Auto Disconnect task for %s fired while player is not connected to a voice channel - discarding",
                 self,
             )
@@ -471,7 +471,7 @@ class Player(VoiceProtocol):
 
     async def auto_empty_queue_task(self):
         if not self.is_connected:
-            LOGGER.debug(
+            LOGGER.trace(
                 "Auto Empty Queue task for %s fired while player is not connected to a voice channel - discarding",
                 self,
             )
@@ -497,22 +497,22 @@ class Player(VoiceProtocol):
 
     async def auto_save_task(self):
         if not self.is_connected:
-            LOGGER.debug(
+            LOGGER.trace(
                 "Auto save task for %s fired while player is not connected to a voice channel - discarding",
                 self,
             )
             return
         if self.stopped:
-            LOGGER.debug(
+            LOGGER.trace(
                 "Auto save task for %s fired while player that has been stopped - discarding",
                 self,
             )
             return
-        LOGGER.info(
+        LOGGER.debug(
             "Auto save task for %s - Saving the player at %s", self, datetime.datetime.now(tz=datetime.timezone.utc)
         )
-        await self._config.save()
         await self.save()
+        await self._config.save()
 
     async def change_to_best_node(self, feature: str = None) -> Node | None:
         """
