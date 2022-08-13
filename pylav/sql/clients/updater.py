@@ -5,8 +5,6 @@ from typing import TYPE_CHECKING
 
 from packaging.version import parse as parse_version
 
-from pylav import EntryNotFoundError
-
 if TYPE_CHECKING:
     from pylav.client import Client
 
@@ -17,6 +15,7 @@ class UpdateSchemaManager:
 
     async def run_updates(self):
         """Run through schema migrations."""
+        from pylav import EntryNotFoundError
         from pylav._config import __VERSION__
 
         # FIXME: This should be whatever value the first release is or alternatively `self._client.lib_version`
