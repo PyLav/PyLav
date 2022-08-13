@@ -89,8 +89,10 @@ NODE_DEFAULT_SETTINGS = {
     "metrics": {"prometheus": {"enabled": False, "endpoint": "/metrics"}},
     "sentry": {"dsn": "", "environment": "", "tags": {"pylav_version": __VERSION__}},
     "logging": {
-        "file": {"max-history": 7, "max-size": "25MB"},
-        "path": "./logs/",
+        "file": {"path": "./logs/"},
+        "logback": {
+            "rollingpolicy": {"max-history": 7, "max-file-size": "25MB", "total-size-cap": "1GB"},
+        },
         "level": {"root": "INFO", "lavalink": "INFO"},
     },
 }
