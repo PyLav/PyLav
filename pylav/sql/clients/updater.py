@@ -62,7 +62,6 @@ class UpdateSchemaManager:
             await full_data.save()
             await self._client.lib_db_manager.update_bot_dv_version("0.3.4")
 
-        # TODO: Revert this when it is fixed upstream
         if (await self._client.lib_db_manager.get_bot_db_version()).version <= parse_version("0.3.4"):
             full_data = await self._client.node_db_manager.get_bundled_node_config()
             if "path" in full_data.yaml["logging"]:
@@ -70,19 +69,18 @@ class UpdateSchemaManager:
                 await full_data.save()
             await self._client.lib_db_manager.update_bot_dv_version("0.3.5")
 
-        # TODO: Revert this when it is fixed upstream
         if (await self._client.lib_db_manager.get_bot_db_version()).version <= parse_version("0.3.5"):
             full_data = await self._client.node_db_manager.get_bundled_node_config()
             if "path" in full_data.yaml["logging"]:
                 del full_data.yaml["logging"]["path"]
-
-            full_data.yaml["logging"]["logback"] = {
-                "rollingpolicy": {
-                    "max-file-size": full_data.yaml["logging"]["file"]["max-size"],
-                    "max-history": full_data.yaml["logging"]["file"]["max-history"],
-                    "total-size-cap": "1GB",
+            if "rollingpolicy" not in full_data.yaml["logging"]["logback"]:
+                full_data.yaml["logging"]["logback"] = {
+                    "rollingpolicy": {
+                        "max-file-size": full_data.yaml["logging"]["file"]["max-size"],
+                        "max-history": full_data.yaml["logging"]["file"]["max-history"],
+                        "total-size-cap": "1GB",
+                    }
                 }
-            }
             if "max-size" in full_data.yaml["logging"]["file"]:
                 del full_data.yaml["logging"]["file"]["max-size"]
             if "max-history" in full_data.yaml["logging"]["file"]:
