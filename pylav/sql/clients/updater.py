@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import contextlib
 from typing import TYPE_CHECKING
 
 from packaging.version import parse as parse_version
+
+from pylav import EntryNotFoundError
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -87,8 +90,8 @@ class UpdateSchemaManager:
                 del full_data.yaml["logging"]["file"]["max-history"]
             await full_data.save()
             await self._client.lib_db_manager.update_bot_dv_version("0.3.6")
-
-        bundled_external_node = await self._client.node_db_manager.get_node_config(1)
-        bundled_external_node.resume_key = f"PyLav/{self._client.lib_version}-{self._client.bot_id}"
-        await bundled_external_node.save()
+        with contextlib.suppress(EntryNotFoundError):
+            bundled_external_node = await self._client.node_db_manager.get_node_config(1)
+            bundled_external_node.resume_key = f"PyLav/{self._client.lib_version}-{self._client.bot_id}"
+            await bundled_external_node.save()
         await self._client.lib_db_manager.update_bot_dv_version(__VERSION__)
