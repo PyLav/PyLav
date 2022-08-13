@@ -31,19 +31,19 @@ LOGGER = getLogger("PyLav.tracks")
 @total_ordering
 class Track:
     """
-    Represents the AudioTrack sent to Lavalink.
+    Represents the Track sent to Lavalink.
     Parameters
     ----------
     data: :class:`dict`
-        The data to initialise an AudioTrack from.
+        The data to initialise an Track from.
     requester: :class:`any`
         The requester of the track.
     extra: :class:`dict`
-        Any extra information to store in this AudioTrack.
+        Any extra information to store in this Track.
     Attributes
     ----------
     track: :class:`str`
-        The base64-encoded string representing a Lavalink-readable AudioTrack.
+        The base64-encoded string representing a Lavalink-readable Track.
     identifier: :class:`str`
         The track's id. For example, a YouTube track's identifier will look like dQw4w9WgXcQ.
     is_seekable: :class:`bool`
@@ -59,7 +59,7 @@ class Track:
     uri: :class:`str`
         The full URL of track.
     extra: :class:`dict`
-        Any extra properties given to this AudioTrack will be stored here.
+        Any extra properties given to this Track will be stored here.
     """
 
     def __init__(
@@ -305,15 +305,15 @@ class Track:
         return super().__getattribute__(name)
 
     def __repr__(self) -> str:
-        return f"<AudioTrack title={self.title} identifier={self.identifier}>"
+        return f"<Track title={self.title} identifier={self.identifier}>"
 
     async def to_json(self) -> dict:
         """
-        Returns a dict representation of this AudioTrack.
+        Returns a dict representation of this Track.
         Returns
         -------
         :class:`dict`
-            The dict representation of this AudioTrack.
+            The dict representation of this Track.
         """
         return {
             "track": self.track,

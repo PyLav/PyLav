@@ -639,8 +639,8 @@ class Player(VoiceProtocol):
         ----------
         requester: :class:`int`
             The ID of the user who requested the track.
-        track: Union[:class:`AudioTrack`, :class:`dict`]
-            The track to add. Accepts either an AudioTrack or
+        track: Union[:class:`Track`, :class:`dict`]
+            The track to add. Accepts either an Track or
             a dict representing a track returned from Lavalink.
         index: Optional[:class:`int`]
             The index at which to add the track.
@@ -666,7 +666,7 @@ class Player(VoiceProtocol):
         Adds multiple tracks to the queue.
         Parameters
         ----------
-        tracks_and_queries: list[Track | dict | str | list[tuple[AudioTrack | dict | str, Query]]]
+        tracks_and_queries: list[Track | dict | str | list[tuple[Track | dict | str, Query]]]
             A list of tuples containing the track and query.
         requester: :class:`int`
             The ID of the user who requested the tracks.
@@ -770,10 +770,10 @@ class Player(VoiceProtocol):
         Plays the given track.
         Parameters
         ----------
-        track: Optional[Union[:class:`AudioTrack`, :class:`dict`]]
+        track: Optional[Union[:class:`Track`, :class:`dict`]]
             The track to play. If left unspecified, this will default
             to the first track in the queue. Defaults to `None` so plays the next
-            song in queue. Accepts either an AudioTrack or a dict representing a track
+            song in queue. Accepts either an Track or a dict representing a track
             returned from Lavalink.
         start_time: Optional[:class:`int`]
             Setting that determines the number of milliseconds to offset the track by.

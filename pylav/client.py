@@ -847,7 +847,7 @@ class Client(metaclass=_Singleton):
 
         Returns
         -------
-        tracks : `List[AudioTrack]`
+        tracks : `List[Track]`
             The list of tracks found.
         total_tracks : `int`
             The total number of tracks found.

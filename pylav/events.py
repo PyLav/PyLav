@@ -987,8 +987,8 @@ class TracksRequestedEvent(Event):
         The player whose queue was shuffled.
     requester: :class:`discord.Member`
         The user who requested the change.
-    tracks: List[:class:`AudioTrack`]
-        The track that was seeked.
+    tracks: List[:class:`Track`]
+        The track that was sought.
     """
 
     __slots__ = ("player", "requester", "tracks")
@@ -1008,8 +1008,8 @@ class QuickPlayEvent(Event):
         The player whose queue was shuffled.
     requester: :class:`discord.Member`
         The user who requested the change.
-    tracks: List[:class:`AudioTrack`]
-        The track that was seeked.
+    tracks: List[:class:`Track`]
+        The track that was sought.
     """
 
     __slots__ = ("player", "requester", "track")

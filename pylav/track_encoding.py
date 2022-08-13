@@ -43,14 +43,14 @@ class DataReader:
 
 def decode_track(track: str) -> tuple[dict[str, str | dict[str, str | bool | int | None]], int]:
     """
-    Decodes a base64 track string into an AudioTrack object.
+    Decodes a base64 track string into an Track object.
     Parameters
     ----------
     track: :class:`str`
         The base64 track string.
     Returns
     -------
-    :class:`AudioTrack`
+    :class:`Track`
     """
     reader = DataReader(track)
 
