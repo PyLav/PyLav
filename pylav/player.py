@@ -241,7 +241,7 @@ class Player(VoiceProtocol):
         self.player_manager.client.scheduler.add_job(
             self.auto_save_task,
             trigger="interval",
-            seconds=60,
+            seconds=10,
             max_instances=1,
             id=f"{self.bot.user.id}-{self.guild.id}-auto_save_task",
             replace_existing=True,
