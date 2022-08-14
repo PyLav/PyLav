@@ -155,10 +155,8 @@ class Player(VoiceProtocol):
         player_state = await self.player_manager.client.player_state_db_manager.get_player(self.channel.guild.id)
         if player_state:
             await self.restore(player=player_state, requester=requester or self.guild.me)
-            self._restored = True
             await self.player_manager.client.player_state_db_manager.delete_player(self.channel.guild.id)
-            LOGGER.info("Player restored - %s", self)
-
+            LOGGER.info("Player restored in postinit - %s", self)
         else:
             self._forced_vc = self.guild.get_channel_or_thread(config.forced_channel_id)
             self._text_channel = self.guild.get_channel_or_thread(config.text_channel_id)
@@ -511,8 +509,8 @@ class Player(VoiceProtocol):
         LOGGER.verbose(
             "Auto save task for %s - Saving the player at %s", self, datetime.datetime.now(tz=datetime.timezone.utc)
         )
-        await self.save()
         await self._config.save()
+        await self.save()
 
     async def change_to_best_node(self, feature: str = None) -> Node | None:
         """
@@ -701,7 +699,6 @@ class Player(VoiceProtocol):
             await self.change_to_best_node(await track.requires_capability())
 
         self.current = track
-
         options = {"noReplace": False}
         if track.skip_segments and self.node.supports_sponsorblock:
             options["skipSegments"] = track.skip_segments
@@ -1155,14 +1152,14 @@ class Player(VoiceProtocol):
 
     async def disconnect(self, *, force: bool = False, requester: discord.Member | None) -> None:
         try:
-            LOGGER.info("[Player-%s] Disconnected from voice channel", self.channel.guild.id)
-            self.node.dispatch_event(PlayerDisconnectedEvent(self, requester))
-            await self.guild.change_voice_state(channel=None)
-            self._connected = False
             await self._config.save()
             if not self.stopped:
                 await self.save()
+            await self.guild.change_voice_state(channel=None)
+            self.node.dispatch_event(PlayerDisconnectedEvent(self, requester))
+            LOGGER.info("[Player-%s] Disconnected from voice channel", self.channel.guild.id)
         finally:
+            self._connected = False
             self.queue.clear()
             self.history.clear()
             self.last_track = None
@@ -1745,7 +1742,6 @@ class Player(VoiceProtocol):
             description=queue_list,
             messageable=messageable,
         )
-
         if url := await current.thumbnail():
             page.set_thumbnail(url=url)
         queue_dur = await self.queue_duration(history=history)
