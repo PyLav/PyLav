@@ -36,7 +36,12 @@ from pylav.envvars import (
     USE_BUNDLED_EXTERNAL_NODES,
 )
 from pylav.events import Event
-from pylav.exceptions import AnotherClientAlreadyRegistered, NoNodeAvailable, NoNodeWithRequestFunctionalityAvailable
+from pylav.exceptions import (
+    AnotherClientAlreadyRegistered,
+    NoNodeAvailable,
+    NoNodeWithRequestFunctionalityAvailable,
+    PyLavInvalidArguments,
+)
 from pylav.m3u8_parser import M3U8Parser
 from pylav.managed_node import LocalNodeManager
 from pylav.node import Node

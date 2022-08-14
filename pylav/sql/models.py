@@ -589,7 +589,7 @@ class PlayerStateModel:
     paused: bool
     repeat_current: bool
     repeat_queue: bool
-    shuffle: bool
+    shuffle: bool | None
     auto_play: bool
     playing: bool
     effect_enabled: bool
@@ -682,7 +682,7 @@ class PlayerModel:
     notify_channel_id: int | None = None
     repeat_current: bool = False
     repeat_queue: bool = False
-    shuffle: bool = False
+    shuffle: bool | None = None
     auto_play: bool = True
     self_deaf: bool = True
     effects: dict = field(default_factory=dict)
@@ -1048,7 +1048,7 @@ class PlayerModel:
     async def dj_users_cleanup(self, guild: discord.Guild, lazy: bool = False) -> PlayerModel:
         if not lazy:
             await self.dj_users_update()
-        self.dj_users = {u for u in self.dj_users if guild.get_member(i)}
+        self.dj_users = {u for u in self.dj_users if guild.get_member(u)}
         if not lazy:
             await self.save()
         return self
@@ -1056,7 +1056,7 @@ class PlayerModel:
     async def dj_roles_cleanup(self, guild: discord.Guild, lazy: bool = False) -> PlayerModel:
         if not lazy:
             await self.dj_roles_update()
-        self.dj_roles = {r for r in self.dj_roles if guild.get_role(i)}
+        self.dj_roles = {r for r in self.dj_roles if guild.get_role(r)}
         if not lazy:
             await self.save()
         return self
@@ -1079,9 +1079,11 @@ class PlayerModel:
         if additional_role_ids and any(r.id in additional_role_ids for r in user.roles):
             return True
         await self.dj_users_update()
+        await self.dj_users_cleanup(guild=user.guild, lazy=True)
         if user.id in self.dj_users:
             return True
         await self.dj_roles_update()
+        await self.dj_roles_cleanup(guild=user.guild, lazy=True)
         if any(r.id in self.dj_roles for r in user.roles):
             return True
         if not self.dj_users and not self.dj_roles:
@@ -1100,7 +1102,7 @@ class PlayerModel:
         await self.update_repeat_queue()
         return self.repeat_queue
 
-    async def fetch_shuffle(self) -> bool:
+    async def fetch_shuffle(self) -> bool | None:
         await self.update_shuffle()
         return self.shuffle
 

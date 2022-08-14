@@ -80,7 +80,7 @@ class PlayerStateRow(Table, db=DB, tablename="player_state"):
     paused = Boolean(null=False, default=False)
     repeat_current = Boolean(null=False, default=False)
     repeat_queue = Boolean(null=False, default=False)
-    shuffle = Boolean(null=False, default=False)
+    shuffle = Boolean(null=True, default=None)
     auto_play = Boolean(null=False, default=False)
     playing = Boolean(null=False, default=False)
     effect_enabled = Boolean(null=False, default=False)
@@ -106,7 +106,7 @@ class PlayerRow(Table, db=DB, tablename="player"):
 
     repeat_current = Boolean(null=False, default=False)
     repeat_queue = Boolean(null=False, default=False)
-    shuffle = Boolean(null=False, default=False)
+    shuffle = Boolean(null=True, default=None)
     auto_play = Boolean(null=False, default=True)
     self_deaf = Boolean(null=False, default=True)
     empty_queue_dc = JSONB(

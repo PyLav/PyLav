@@ -968,7 +968,7 @@ class Player(VoiceProtocol):
             Whether to shuffle the player or not.
         """
         if await self.player_manager.global_config.fetch_shuffle() is False:
-            shuffle = False
+            return
         self._config.shuffle = shuffle
         await self._config.save()
 
@@ -1729,7 +1729,7 @@ class Player(VoiceProtocol):
         queue_list += f"{current_track_description}\n"
         queue_list += f"Requester: **{current.requester.mention}**"
         queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
-        if not history and (await self.player_manager.client.player_config_manager.get_shuffle(self.guild.id)):
+        if not history and (await self.player_manager.client.player_config_manager.get_shuffle(self.guild.id)) is True:
             queue_list += "__Queue order is not accurate due to shuffle being toggled__\n\n"
         if tracks:
             padding = len(str(start_index + len(tracks)))
@@ -1814,7 +1814,7 @@ class Player(VoiceProtocol):
         return True
 
     async def maybe_shuffle_queue(self, requester: int) -> None:
-        if not (await self.player_manager.client.player_config_manager.get_shuffle(self.guild.id)):
+        if (await self.player_manager.client.player_config_manager.get_shuffle(self.guild.id)) is False:
             return
         await self.shuffle_queue(requester)
 
