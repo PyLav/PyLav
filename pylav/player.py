@@ -1902,23 +1902,23 @@ class Player(VoiceProtocol):
         next_track = (
             Track(
                 node=self.node,
-                data=player.extras.get("next_track", {}).pop("track"),
-                query=await Query.from_string(player.extras.get("next_track", {}).pop("query")),
-                **player.extras.get("next_track", {}).pop("extra"),
-                **player.extras.get("next_track", {}),
+                data=n_track.pop("track"),
+                query=await Query.from_string(n_track.pop("query")),
+                **n_track.pop("extra"),
+                **n_track,
             )
-            if player.extras.get("next_track", {})
+            if (n_track := player.extras.get("next_track", {}))
             else None
         )
         last_track = (
             Track(
                 node=self.node,
-                data=player.extras.get("last_track", {}).pop("track"),
-                query=await Query.from_string(player.extras.get("last_track", {}).pop("query")),
-                **player.extras.get("last_track", {}).pop("extra"),
-                **player.extras.get("last_track", {}),
+                data=l_track.pop("track"),
+                query=await Query.from_string(l_track.pop("query")),
+                **l_track.pop("extra"),
+                **l_track,
             )
-            if player.extras.get("last_track", {})
+            if (l_track := player.extras.get("last_track", {}))
             else None
         )
         self.last_track = last_track
