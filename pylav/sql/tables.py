@@ -1,7 +1,7 @@
 # sourcery skip: avoid-builtin-shadow
 from __future__ import annotations
 
-from piccolo.columns import JSONB, BigInt, Boolean, Bytea, Float, Integer, Text, Timestamptz
+from piccolo.columns import JSONB, Array, BigInt, Boolean, Bytea, Float, Integer, Text, Timestamptz
 from piccolo.engine import PostgresEngine
 from piccolo.table import Table
 
@@ -132,8 +132,8 @@ class PlayerRow(Table, db=DB, tablename="player"):
     )
     extras = JSONB(null=False, default={})
     effects = JSONB(null=False, default={})
-    dj_users = JSONB(null=False, default=[])
-    dj_roles = JSONB(null=False, default=[])
+    dj_users = Array(null=False, default=[], base_column=BigInt())
+    dj_roles = Array(null=False, default=[], base_column=BigInt())
 
 
 class NodeRow(Table, db=DB, tablename="node"):
