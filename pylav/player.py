@@ -1160,7 +1160,8 @@ class Player(VoiceProtocol):
             await self.guild.change_voice_state(channel=None)
             self._connected = False
             await self._config.save()
-            await self.save()
+            if not self.stopped:
+                await self.save()
         finally:
             self.queue.clear()
             self.history.clear()
