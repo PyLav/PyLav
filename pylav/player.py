@@ -428,7 +428,7 @@ class Player(VoiceProtocol):
             return
         if (not self.paused) and self.is_empty and (await self.config.fetch_alone_pause()).enabled:
             if not self._last_alone_paused_check:
-                LOGGER.debug(
+                LOGGER.verbose(
                     "Auto Pause task for %s - Player is alone - starting countdown",
                     self,
                 )
@@ -453,7 +453,7 @@ class Player(VoiceProtocol):
             return
         if self.is_empty and (await self.config.fetch_alone_dc()).enabled:
             if not self._last_alone_dc_check:
-                LOGGER.debug(
+                LOGGER.verbose(
                     "Auto Disconnect task for %s - Player is alone - starting countdown",
                     self,
                 )
@@ -478,7 +478,7 @@ class Player(VoiceProtocol):
             return
         if self.queue.empty() and (await self.config.fetch_empty_queue_dc()).enabled:
             if not self._last_empty_queue_check:
-                LOGGER.debug(
+                LOGGER.verbose(
                     "Auto Empty Queue task for %s - Queue is empty - starting countdown",
                     self,
                 )
@@ -508,7 +508,7 @@ class Player(VoiceProtocol):
                 self,
             )
             return
-        LOGGER.debug(
+        LOGGER.verbose(
             "Auto save task for %s - Saving the player at %s", self, datetime.datetime.now(tz=datetime.timezone.utc)
         )
         await self.save()
