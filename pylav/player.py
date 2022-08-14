@@ -154,7 +154,7 @@ class Player(VoiceProtocol):
         await self.set_autoplay_playlist(config.auto_play_playlist_id)
         player_state = await self.player_manager.client.player_state_db_manager.get_player(self.channel.guild.id)
         if player_state:
-            await self.restore(player_state, requester or self.guild.me)
+            await self.restore(player=player_state, requester=requester or self.guild.me)
             self._restored = True
             await self.player_manager.client.player_state_db_manager.delete_player(self.channel.guild.id)
             LOGGER.info("Player restored - %s", self)
@@ -1849,6 +1849,7 @@ class Player(VoiceProtocol):
             "current": await self.current.to_json() if self.current else None,
             "text_channel_id": self.text_channel.id if self.text_channel else None,
             "notify_channel_id": self.notify_channel.id if self.notify_channel else None,
+            "forced_channel_id": self.forced_vc.id if self.forced_vc else None,
             "paused": self.paused,
             "repeat_queue": self._config.repeat_queue,
             "repeat_current": self._config.repeat_current,
@@ -1925,7 +1926,7 @@ class Player(VoiceProtocol):
         self.current = None
         self._notify_channel = self.guild.get_channel_or_thread(player.notify_channel_id)
         self._text_channel = self.guild.get_channel_or_thread(player.text_channel_id)
-        self._forced_vc = self.guild.get_channel_or_thread(player.channel_id)
+        self._forced_vc = self.guild.get_channel_or_thread(player.forced_channel_id)
         self.paused = player.paused
         if self._autoplay_playlist is None:
             self._autoplay_playlist = (

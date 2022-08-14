@@ -73,6 +73,7 @@ class PlayerStateRow(Table, db=DB, tablename="player_state"):
     volume = Integer(null=False, default=100)
     position = Float(null=False, default=0.0)
     auto_play_playlist_id = BigInt(null=True)
+    forced_channel_id = BigInt(null=True)
     text_channel_id = BigInt(null=True)
     notify_channel_id = BigInt(null=True)
 

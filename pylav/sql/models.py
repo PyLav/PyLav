@@ -584,6 +584,7 @@ class PlayerStateModel:
     auto_play_playlist_id: int | None
     text_channel_id: int | None
     notify_channel_id: int | None
+    forced_channel_id: int | None
 
     paused: bool
     repeat_current: bool
@@ -626,6 +627,7 @@ class PlayerStateModel:
             tables.PlayerStateRow.auto_play_playlist_id: self.auto_play_playlist_id,
             tables.PlayerStateRow.text_channel_id: self.text_channel_id,
             tables.PlayerStateRow.notify_channel_id: self.notify_channel_id,
+            tables.PlayerStateRow.forced_channel_id: self.forced_channel_id,
             tables.PlayerStateRow.paused: self.paused,
             tables.PlayerStateRow.repeat_current: self.repeat_current,
             tables.PlayerStateRow.repeat_queue: self.repeat_queue,
