@@ -1711,10 +1711,7 @@ class Player(VoiceProtocol):
     ) -> discord.Embed | str:
         if not embed:
             return ""
-        if history:
-            queue = self.history
-        else:
-            queue = self.queue
+        queue = self.history if history else self.queue
         queue_list = ""
         start_index = page_index * per_page
         end_index = start_index + per_page
@@ -1743,10 +1740,11 @@ class Player(VoiceProtocol):
                     queue_list += f" - **{track.requester.mention}**"
                 queue_list += "\n"
         page = await self.node.node_manager.client.construct_embed(
-            title=f"Queue for __{self.guild.name}__" if not history else f"Recently Played for __{self.guild.name}__",
+            title=f"Recently Played for __{self.guild.name}__" if history else f"Queue for __{self.guild.name}__",
             description=queue_list,
             messageable=messageable,
         )
+
         if url := await current.thumbnail():
             page.set_thumbnail(url=url)
         queue_dur = await self.queue_duration(history=history)
@@ -1768,10 +1766,7 @@ class Player(VoiceProtocol):
         return page
 
     async def queue_duration(self, history: bool = False) -> int:
-        if history:
-            queue = self.history
-        else:
-            queue = self.queue
+        queue = self.history if history else self.queue
         dur = [
             track.duration  # type: ignore
             async for track in AsyncIter(queue.raw_queue).filter(lambda x: not (x.stream or x.is_partial))
@@ -1817,13 +1812,13 @@ class Player(VoiceProtocol):
         )
         return True
 
-    async def maybe_shuffle_queue(self, requester: discord.Member) -> None:
+    async def maybe_shuffle_queue(self, requester: int) -> None:
         if not (await self.player_manager.client.player_config_manager.get_shuffle(self.guild.id)):
             return
         await self.shuffle_queue(requester)
 
-    async def shuffle_queue(self, requester: discord.Member) -> None:
-        self.node.dispatch_event(QueueShuffledEvent(player=self, requester=requester))
+    async def shuffle_queue(self, requester: int) -> None:
+        self.node.dispatch_event(QueueShuffledEvent(player=self, requester=self.guild.get_member(requester)))
         await self.queue.shuffle()
         self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
 
@@ -1884,7 +1879,7 @@ class Player(VoiceProtocol):
     async def save(self) -> None:
         await self.node.node_manager.client.player_state_db_manager.save_player(await self.to_dict())
 
-    async def restore(self, player: PlayerStateModel, requester: discord.abc.User) -> None:
+    async def restore(self, player: PlayerStateModel, requester: discord.User | discord.Member) -> None:
         # sourcery no-metrics
         if self._restored is True:
             return

@@ -157,7 +157,7 @@ class TrackResumedEvent(Event):
 
     __slots__ = ("player", "track", "requester")
 
-    def __init__(self, player: Player, track: Track, requester: discord.abc.User):
+    def __init__(self, player: Player, track: Track, requester: discord.Member):
         self.player = player
         self.track = track
         self.requester = requester
