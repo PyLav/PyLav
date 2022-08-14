@@ -64,7 +64,7 @@ if USING_FORCED := _LAVALINK_JAR_FILE_FORCED_SYNC.exists():
 
 LAVALINK_APP_YML: Final[aiopath.AsyncPath] = LAVALINK_DOWNLOAD_DIR / "application.yml"
 
-_RE_READY_LINE: Final[Pattern] = re.compile(rb"Started Launcher in \S+ seconds")
+_RE_READY_LINE: Final[Pattern] = re.compile(rb"Lavalink is ready to accept connections")
 _FAILED_TO_START: Final[Pattern] = re.compile(rb"Web server failed to start\. (.*)")
 _RE_BUILD_LINE: Final[Pattern] = re.compile(rb"Build:\s+(?P<build>\d+|Unknown)")
 
