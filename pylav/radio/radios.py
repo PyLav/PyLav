@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 import aiohttp_client_cache
+import ujson
 
 from pylav.radio.base_url import pick_base_url
 from pylav.radio.objects import Codec, Country, CountryCode, Language, State, Station, Tag
@@ -21,7 +22,7 @@ class Request:
     async def get(self, url: str, **kwargs: Any):
         async with self._session.get(url, headers=self._headers, params=kwargs) as resp:
             if resp.status == 200:
-                return await resp.json()
+                return await resp.json(loads=ujson.loads)
         return resp.raise_for_status()
 
 
