@@ -1,7 +1,7 @@
 # Setup
 ## Linux <a name="Linux"></a>
 - #### [libaio](https://pagure.io/libaio)
- - `sudo apt install libaio1 libaio-dev`
+  - `sudo apt install libaio1 libaio-dev`
 - #### [Python 3.10](https://www.python.org/downloads/release/python-3106/)
   - ##### Ubuntu
     - `sudo apt update && sudo apt upgrade`
