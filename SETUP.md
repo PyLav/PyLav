@@ -59,7 +59,7 @@
     - ###### Create a new Database for the new user
       - Run `CREATE DATABASE pylav_db;`
         - This will crete a new database called `pylav_db`.
-      - Run `ALTER DATABASE myowndb OWNER TO <username>;`
+      - Run `ALTER DATABASE pylav_db OWNER TO <username>;`
 - #### [Install Java Azul 13](https://docs.azul.com/core/zulu-openjdk)
   - Download and run the dmg executable [here](https://cdn.azul.com/zulu/bin/zulu13.50.15-ca-jdk13.0.12-macosx_x64.dmg)
 
@@ -88,7 +88,7 @@
     - ###### Create a new Database for the new user
       - Run `CREATE DATABASE pylav_db;`
         - This will crete a new database called `pylav_db`.
-      - Run `ALTER DATABASE myowndb OWNER TO <username>;`
+      - Run `ALTER DATABASE pylav_db OWNER TO <username>;`
 - #### [Install Java Azul 13](https://docs.azul.com/core/zulu-openjdk)
   - Download and run the msi executable [here](https://cdn.azul.com/zulu/bin/zulu13.50.15-ca-jdk13.0.12-win_x64.msi)
     - Make sure to select the following when prompted `Add to PATH`, `set JAVA_HOME variable` and `JavaSoft (Oracle) registry keys`
