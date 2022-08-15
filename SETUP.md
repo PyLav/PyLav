@@ -1,17 +1,20 @@
 # Setup
+**NOTICE**:
+  - These instructions are only applicable until Red 3.5 release.
 **NOTE**:
   - PyLav assumes you are using PostgresSQL 14 and it also requires Python3.10 any other version for these will not work/be supported.
   - If you have docker; Setting up a postgres container for it would likely be the simplest option to setup the necessary server.
-#
-# Linux <a name="Linux"></a>
+
+# Linux (Ubuntu 20.04) <a name="Linux"></a>
+If you are not on Ubuntu 20.04 you just have to follow the instructions below to install the dependencies and set them up for your Linux distro (Google is your friend).
 - #### [libaio](https://pagure.io/libaio)
   - `sudo apt install libaio1 libaio-dev`
 - #### [Python 3.10](https://www.python.org/downloads/release/python-3106/)
   - ##### Ubuntu
-    - `sudo apt update && sudo apt upgrade`
+    - `sudo apt update -y && sudo apt upgrade -y`
     - `sudo apt install software-properties-common -y`
     - `sudo add-apt-repository ppa:deadsnakes/ppa -y`
-    - `sudo apt update`
+    - `sudo apt update -y`
     - `sudo apt install python3.10 -y`
     - `sudo apt install python3.10-dev python3.10-venv python3.10-distutils -y`
 
@@ -32,10 +35,10 @@
       - `sudo -u postgres createuser -s -i -d -r -l -w <username>`
       - `sudo -u postgres psql -c "ALTER ROLE <username> WITH PASSWORD '<password>';"`
         - Make sure to replace <username> and <password> with the new values
-      - ###### Create a new Database for the new user
-        - Run `sudo -u postgres psql -c "CREATE DATABASE pylav_db;"`
-          - This will crete a new database called `pylav_db`.
-        - Run `sudo -u postgres psql -c "ALTER DATABASE pylav_db OWNER TO <username>;"`
+    - ##### Create a new Database for the new user
+      - Run `sudo -u postgres psql -c "CREATE DATABASE pylav_db;"`
+        - This will crete a new database called `pylav_db`.
+      - Run `sudo -u postgres psql -c "ALTER DATABASE pylav_db OWNER TO <username>;"`
 - #### [Install Java Azul Zulu 13](https://docs.azul.com/core/)
   - Follow the instructions [here](https://docs.azul.com/core/zulu-openjdk/install/debian)
     - When prompted to run `sudo apt-get install zulu11-jdk` make sure to run `sudo apt-get install zulu13-ca-jdk-headless` instead.
@@ -60,10 +63,10 @@
     - Run `psql -u postgres` to login as the user `postgres`
     - When logged in run `CREATE ROLE <username> LOGIN PASSWORD '<password>';`
       - Make sure to replace <username> and <password> with the new values
-    - ###### Create a new Database for the new user
-      - Run `CREATE DATABASE pylav_db;`
-        - This will crete a new database called `pylav_db`.
-      - Run `ALTER DATABASE pylav_db OWNER TO <username>;`
+  - ##### Create a new Database for the new user
+    - Run `CREATE DATABASE pylav_db;`
+      - This will crete a new database called `pylav_db`.
+    - Run `ALTER DATABASE pylav_db OWNER TO <username>;`
 - #### [Install Java Azul Zulu 13](https://docs.azul.com/core/)
   - Download and run the dmg executable [here](https://cdn.azul.com/zulu/bin/zulu13.50.15-ca-jdk13.0.12-macosx_x64.dmg)
 
@@ -89,10 +92,10 @@
     - Run `psql -u postgres` to login as the user `postgres`
     - When logged in run `CREATE ROLE <username> LOGIN PASSWORD '<password>';`
       - Make sure to replace <username> and <password> with the new values
-    - ###### Create a new Database for the new user
-      - Run `CREATE DATABASE pylav_db;`
-        - This will crete a new database called `pylav_db`.
-      - Run `ALTER DATABASE pylav_db OWNER TO <username>;`
+  - ##### Create a new Database for the new user
+    - Run `CREATE DATABASE pylav_db;`
+      - This will crete a new database called `pylav_db`.
+    - Run `ALTER DATABASE pylav_db OWNER TO <username>;`
 - #### [Install Java Azul Zulu 13](https://docs.azul.com/core/)
   - Download and run the msi executable [here](https://cdn.azul.com/zulu/bin/zulu13.50.15-ca-jdk13.0.12-win_x64.msi)
     - Make sure to select the following when prompted `Add to PATH`, `set JAVA_HOME variable` and `JavaSoft (Oracle) registry keys`
@@ -122,8 +125,8 @@
       - Set `PYLAV__EXTERNAL_UNMANAGED_PORT` to the Lavalink node connection port - If this is not specified the node will use port `80` if `PYLAV__EXTERNAL_UNMANAGED_SSL` is set to `false` or `443` if `PYLAV__EXTERNAL_UNMANAGED_SSL` is set to `true`.
       - Set `PYLAV__EXTERNAL_UNMANAGED_SSL` to `true` or `false` depending on weather or not the external node is using SSL
 - If you already have a Redis server and want to make use of it for the request cache you can set `PYLAV__REDIS_FULL_ADDRESS_RESPONSE_CACHE` to the full connection url of your existing server.
-  - e.g. redis://[[username]:[password]]@localhost:6379/0
-  - e.g. unix://[[username]:[password]]@/path/to/socket.sock?db=0
+  - e.g. `redis://[[username]:[password]]@localhost:6379/0`
+  - e.g. `unix://[[username]:[password]]@/path/to/socket.sock?db=0`
 
 ## Red Users (PyLav Cogs) Setup
 ### Starting up your bot
