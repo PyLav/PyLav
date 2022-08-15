@@ -219,6 +219,7 @@ class Player(VoiceProtocol):
             max_instances=1,
             id=f"{self.bot.user.id}-{self.guild.id}-auto_dc_task",
             replace_existing=True,
+            coalesce=True,
         )
         self.player_manager.client.scheduler.add_job(
             self.auto_empty_queue_task,
@@ -227,6 +228,7 @@ class Player(VoiceProtocol):
             max_instances=1,
             id=f"{self.bot.user.id}-{self.guild.id}-auto_empty_queue_task",
             replace_existing=True,
+            coalesce=True,
         )
         self.player_manager.client.scheduler.add_job(
             self.auto_pause_task,
@@ -235,6 +237,7 @@ class Player(VoiceProtocol):
             max_instances=1,
             id=f"{self.bot.user.id}-{self.guild.id}-auto_pause_task",
             replace_existing=True,
+            coalesce=True,
         )
         self.player_manager.client.scheduler.add_job(
             self.auto_save_task,
@@ -243,6 +246,7 @@ class Player(VoiceProtocol):
             max_instances=1,
             id=f"{self.bot.user.id}-{self.guild.id}-auto_save_task",
             replace_existing=True,
+            coalesce=True,
         )
 
     @property

@@ -360,34 +360,50 @@ class Client(metaclass=_Singleton):
                             await self._local_node_manager.start(java_path=self._config.java_path)
                         await self.node_manager.connect_to_all_nodes()
                         await self.node_manager.wait_until_ready()
-                        await self.playlist_db_manager.update_bundled_playlists()
-                        await self.playlist_db_manager.update_bundled_external_playlists()
-                        await self.playlist_db_manager.update_external_playlists()
                         await self.player_manager.restore_player_states()
+                        time_now = datetime.datetime.now(tz=datetime.timezone.utc)
                         self._scheduler.add_job(
                             self._query_cache_manager.delete_old,
                             trigger="interval",
                             seconds=600,
                             max_instances=1,
+                            replace_existing=True,
+                            name="cache_delete_old",
+                            coalesce=True,
                         )
                         self._scheduler.add_job(
                             self.playlist_db_manager.update_bundled_playlists,
                             trigger="interval",
                             days=1,
                             max_instances=1,
+                            next_run_time=(ubp := time_now + datetime.timedelta(minutes=5)),
+                            replace_existing=True,
+                            name="update_bundled_playlists",
+                            coalesce=True,
                         )
+                        LOGGER.info("Scheduling first run of Bundled Playlist update task to: %s", ubp)
                         self._scheduler.add_job(
                             self.playlist_db_manager.update_bundled_external_playlists,
                             trigger="interval",
                             weeks=1,
                             max_instances=1,
+                            next_run_time=(ubep := time_now + datetime.timedelta(minutes=10)),
+                            replace_existing=True,
+                            name="update_bundled_external_playlists",
+                            coalesce=True,
                         )
+                        LOGGER.info("Scheduling first run of Bundled External Playlist update task to: %s", ubep)
                         self._scheduler.add_job(
                             self.playlist_db_manager.update_external_playlists,
                             trigger="interval",
                             weeks=1,
                             max_instances=1,
+                            next_run_time=(uep := time_now + datetime.timedelta(minutes=30)),
+                            replace_existing=True,
+                            name="update_external_playlists",
+                            coalesce=True,
                         )
+                        LOGGER.info("Scheduling first run of External Playlist update task to: %s", uep)
                         self._scheduler.start()
                         self.ready.set()
                         LOGGER.info("PyLav is ready.")

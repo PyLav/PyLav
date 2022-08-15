@@ -4,6 +4,7 @@ import datetime
 import gzip
 import io
 import re
+import sys
 from collections.abc import Iterator
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
@@ -14,6 +15,13 @@ import ujson
 import yaml
 from packaging.version import LegacyVersion, Version
 from packaging.version import parse as parse_version
+
+try:
+    import brotli
+
+    BROTLI_ENABLED = False
+except ImportError:
+    BROTLI_ENABLED = False
 
 from pylav._config import CONFIG_DIR
 from pylav._logging import getLogger
@@ -133,7 +141,7 @@ class PlaylistModel:
             return f"**{discord.utils.escape_markdown(name)}**"
 
     @asynccontextmanager
-    async def to_yaml(self, guild: discord.Guild) -> Iterator[io.BytesIO]:
+    async def to_yaml(self, guild: discord.Guild) -> Iterator[tuple[io.BytesIO, str]]:
         """
         Serialize the playlist to a YAML file.
 
@@ -145,12 +153,25 @@ class PlaylistModel:
             "url": self.url,
             "tracks": self.tracks,
         }
-
+        compression = None
         with io.BytesIO() as bio:
-            with gzip.GzipFile(fileobj=bio, mode="wb", compresslevel=9) as gfile:
-                yaml.safe_dump(data, gfile, default_flow_style=False, sort_keys=False, encoding="utf-8")
+            yaml.safe_dump(data, bio, default_flow_style=False, sort_keys=False, encoding="utf-8")
             bio.seek(0)
-            yield bio
+            LOGGER.debug(f"SIZE UNCOMPRESSED playlist ({self.name}): {sys.getsizeof(bio)}")
+            if sys.getsizeof(bio) > guild.filesize_limit:
+                with io.BytesIO() as bio:
+                    if BROTLI_ENABLED:
+                        compression = "brotli"
+                        bio.write(brotli.compress(yaml.dump(data, encoding="utf-8")))
+                    else:
+                        compression = "gzip"
+                        with gzip.GzipFile(fileobj=bio, mode="wb", compresslevel=9) as gfile:
+                            yaml.safe_dump(data, gfile, default_flow_style=False, sort_keys=False, encoding="utf-8")
+                    bio.seek(0)
+                    LOGGER.debug(f"SIZE COMPRESSED playlist [{compression}] ({self.name}): {sys.getsizeof(bio)}")
+                    yield bio, compression
+                    return
+            yield bio, compression
 
     @classmethod
     async def from_yaml(cls, context: PyLavContext, scope: int, url: str) -> PlaylistModel:
@@ -1260,7 +1281,7 @@ class EqualizerModel:
         return f"{self.author}"
 
     @asynccontextmanager
-    async def to_yaml(self, guild: discord.Guild) -> Iterator[io.BytesIO]:
+    async def to_yaml(self, guild: discord.Guild) -> Iterator[tuple[io.BytesIO, str]]:
         """
         Serialize the Equalizer to a YAML file.
 
@@ -1290,12 +1311,25 @@ class EqualizerModel:
                 "16000": self.band_16000,
             },
         }
-
+        compression = None
         with io.BytesIO() as bio:
-            with gzip.GzipFile(fileobj=bio, mode="wb", compresslevel=9) as gfile:
-                yaml.safe_dump(data, gfile, default_flow_style=False, sort_keys=False, encoding="utf-8")
+            yaml.safe_dump(data, bio, default_flow_style=False, sort_keys=False, encoding="utf-8")
             bio.seek(0)
-            yield bio
+            LOGGER.debug(f"SIZE UNCOMPRESSED EQ ({self.name}): {sys.getsizeof(bio)}")
+            if sys.getsizeof(bio) > guild.filesize_limit:
+                with io.BytesIO() as bio:
+                    if BROTLI_ENABLED:
+                        compression = "brotli"
+                        bio.write(brotli.compress(yaml.dump(data, encoding="utf-8")))
+                    else:
+                        compression = "gzip"
+                        with gzip.GzipFile(fileobj=bio, mode="wb", compresslevel=9) as gfile:
+                            yaml.safe_dump(data, gfile, default_flow_style=False, sort_keys=False, encoding="utf-8")
+                    bio.seek(0)
+                    LOGGER.debug(f"SIZE COMPRESSED EQ [{compression}] ({self.name}): {sys.getsizeof(bio)}")
+                    yield bio, compression
+                    return
+            yield bio, compression
 
     @classmethod
     async def from_yaml(cls, context: PyLavContext, scope: int, url: str) -> EqualizerModel:
