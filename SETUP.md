@@ -36,7 +36,7 @@
         - Run `sudo -u postgres psql -c "CREATE DATABASE pylav_db;"`
           - This will crete a new database called `pylav_db`.
         - Run `sudo -u postgres psql -c "ALTER DATABASE pylav_db OWNER TO <username>;"`
-- #### [Install Java Azul 13](https://docs.azul.com/core/zulu-openjdk)
+- #### [Install Java Azul Zulu 13](https://docs.azul.com/core/)
   - Follow the instructions [here](https://docs.azul.com/core/zulu-openjdk/install/debian)
     - When prompted to run `sudo apt-get install zulu11-jdk` make sure to run `sudo apt-get install zulu13-ca-jdk-headless` instead.
 
@@ -64,7 +64,7 @@
       - Run `CREATE DATABASE pylav_db;`
         - This will crete a new database called `pylav_db`.
       - Run `ALTER DATABASE pylav_db OWNER TO <username>;`
-- #### [Install Java Azul 13](https://docs.azul.com/core/zulu-openjdk)
+- #### [Install Java Azul Zulu 13](https://docs.azul.com/core/)
   - Download and run the dmg executable [here](https://cdn.azul.com/zulu/bin/zulu13.50.15-ca-jdk13.0.12-macosx_x64.dmg)
 
 ## Windows <a name="Windows"></a>
@@ -93,7 +93,7 @@
       - Run `CREATE DATABASE pylav_db;`
         - This will crete a new database called `pylav_db`.
       - Run `ALTER DATABASE pylav_db OWNER TO <username>;`
-- #### [Install Java Azul 13](https://docs.azul.com/core/zulu-openjdk)
+- #### [Install Java Azul Zulu 13](https://docs.azul.com/core/)
   - Download and run the msi executable [here](https://cdn.azul.com/zulu/bin/zulu13.50.15-ca-jdk13.0.12-win_x64.msi)
     - Make sure to select the following when prompted `Add to PATH`, `set JAVA_HOME variable` and `JavaSoft (Oracle) registry keys`
 
@@ -110,7 +110,7 @@
   - Change `PYLAV__POSTGRES_USER` from `postgres` to the user you created above.
   - Change `PYLAV__POSTGRES_DB` from `py_lav` to the name of the database you created above (if you followed the commands above it should be `pylav_db`).
   - Change `PYLAV__POSTGRES_PORT` and `PYLAV__POSTGRES_HOST` to the connection host and port for the Postgres server.
-  - `PYLAV__JAVA_EXECUTABLE` can be changed from java to the full path of the Azul 13 Java executable installed above.
+  - `PYLAV__JAVA_EXECUTABLE` can be changed from java to the full path of the Azul Zulu 13 Java executable installed above.
     - By default it will use `java` to ensure you have the correct version under `java` run `java --version` if it says "OpenJDK Runtime Environment Zulu13..." then this is not needed to be changed.
   - PyLav bundled an external undamaged public lavalink Node - the node used is a public node unaffiliated with PyLav or Draper, this will expose you IP to the server hosting the node for communication purposes.
     - To disable this set `PYLAV__USE_BUNDLED_EXTERNAL_NODES` to `false`
