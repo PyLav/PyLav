@@ -332,6 +332,7 @@ class LibConfigModel:
         self.auto_update_managed_nodes = response["auto_update_managed_nodes"]
         self.localtrack_folder = response["localtrack_folder"]
         self.use_bundled_external = response["use_bundled_external"]
+        self.download_id = response["download_id"]
         self.next_execution_update_bundled_playlists = response["next_execution_update_bundled_playlists"]
         self.next_execution_update_bundled_external_playlists = response[
             "next_execution_update_bundled_external_playlists"
