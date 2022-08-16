@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import datetime
 import time
 from collections.abc import AsyncIterator
 from typing import TYPE_CHECKING
@@ -8,6 +9,11 @@ import asyncstdlib
 import discord
 
 from pylav._logging import getLogger
+from pylav.envvars import (
+    TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS,
+    TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS,
+    TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS,
+)
 from pylav.exceptions import EntryNotFoundError
 from pylav.sql import tables
 from pylav.sql.models import PlaylistModel
@@ -247,6 +253,10 @@ class PlaylistConfigManager:
 
     async def update_bundled_playlists(self, *ids: int) -> None:
         # NOTICE: Update the BUNDLED_PLAYLIST_IDS constant in the constants.py file
+        self.client._config.last_executed_update_bundled_playlists = datetime.datetime.now(
+            tz=datetime.timezone.utc
+        ) + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS)
+        await self.client._config.save()
         curated_data = {
             1: (
                 "Aikaterna's curated tracks",
@@ -281,6 +291,11 @@ class PlaylistConfigManager:
 
     async def update_bundled_external_playlists(self, *ids: int) -> None:
         from pylav.query import Query
+
+        self.client._config.last_executed_update_bundled_external_playlists = datetime.datetime.now(
+            tz=datetime.timezone.utc
+        ) + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS)
+        await self.client._config.save()
 
         # NOTICE: Update the BUNDLED_PLAYLIST_IDS constant in the constants.py file
         curated_data = {
@@ -328,6 +343,11 @@ class PlaylistConfigManager:
     async def update_external_playlists(self, *ids: int) -> None:
         from pylav.constants import BUNDLED_PLAYLIST_IDS
         from pylav.query import Query
+
+        self.client._config.last_executed_update_external_playlists = datetime.datetime.now(
+            tz=datetime.timezone.utc
+        ) + datetime.timedelta(days=TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS)
+        await self.client._config.save()
 
         async for playlist in self.get_external_playlists(*ids, ignore_ids=BUNDLED_PLAYLIST_IDS):
             try:

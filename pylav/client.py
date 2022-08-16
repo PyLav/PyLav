@@ -33,6 +33,9 @@ from pylav.envvars import (
     EXTERNAL_UNMANAGED_PORT,
     EXTERNAL_UNMANAGED_SSL,
     REDIS_FULL_ADDRESS_RESPONSE_CACHE,
+    TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS,
+    TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS,
+    TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS,
     USE_BUNDLED_EXTERNAL_NODES,
 )
 from pylav.events import Event
@@ -362,6 +365,18 @@ class Client(metaclass=_Singleton):
                         await self.node_manager.wait_until_ready()
                         await self.player_manager.restore_player_states()
                         time_now = datetime.datetime.now(tz=datetime.timezone.utc)
+                        if self._config.last_executed_update_bundled_playlists is None:
+                            self._config.last_executed_update_bundled_playlists = time_now + datetime.timedelta(
+                                minutes=5
+                            )
+                        if self._config.last_executed_update_bundled_external_playlists is None:
+                            self._config.last_executed_update_bundled_external_playlists = (
+                                time_now + datetime.timedelta(minutes=10)
+                            )
+                        if self._config.last_executed_update_external_playlists is None:
+                            self._config.last_executed_update_external_playlists = time_now + datetime.timedelta(
+                                minutes=30
+                            )
                         self._scheduler.add_job(
                             self._query_cache_manager.delete_old,
                             trigger="interval",
@@ -370,40 +385,54 @@ class Client(metaclass=_Singleton):
                             replace_existing=True,
                             name="cache_delete_old",
                             coalesce=True,
+                            id=f"{self.bot.user.id}-cache_delete_old",
                         )
                         self._scheduler.add_job(
                             self.playlist_db_manager.update_bundled_playlists,
                             trigger="interval",
-                            days=1,
+                            days=TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS,
                             max_instances=1,
-                            next_run_time=(ubp := time_now + datetime.timedelta(minutes=5)),
+                            next_run_time=self._config.last_executed_update_bundled_playlists,
                             replace_existing=True,
                             name="update_bundled_playlists",
                             coalesce=True,
+                            id=f"{self.bot.user.id}-update_bundled_playlists",
                         )
-                        LOGGER.info("Scheduling first run of Bundled Playlist update task to: %s", ubp)
+                        LOGGER.info(
+                            "Scheduling first run of Bundled Playlist update task to: %s",
+                            self._config.last_executed_update_bundled_playlists,
+                        )
                         self._scheduler.add_job(
                             self.playlist_db_manager.update_bundled_external_playlists,
                             trigger="interval",
-                            weeks=1,
+                            days=TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS,
                             max_instances=1,
-                            next_run_time=(ubep := time_now + datetime.timedelta(minutes=10)),
+                            next_run_time=self._config.last_executed_update_bundled_external_playlists,
                             replace_existing=True,
                             name="update_bundled_external_playlists",
                             coalesce=True,
+                            id=f"{self.bot.user.id}-update_bundled_external_playlists",
                         )
-                        LOGGER.info("Scheduling first run of Bundled External Playlist update task to: %s", ubep)
+                        LOGGER.info(
+                            "Scheduling first run of Bundled External Playlist update task to: %s",
+                            self._config.last_executed_update_bundled_external_playlists,
+                        )
                         self._scheduler.add_job(
                             self.playlist_db_manager.update_external_playlists,
                             trigger="interval",
-                            weeks=1,
+                            days=TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS,
                             max_instances=1,
-                            next_run_time=(uep := time_now + datetime.timedelta(minutes=30)),
+                            next_run_time=self._config.last_executed_update_external_playlists,
                             replace_existing=True,
                             name="update_external_playlists",
                             coalesce=True,
+                            id=f"{self.bot.user.id}-update_external_playlists",
                         )
-                        LOGGER.info("Scheduling first run of External Playlist update task to: %s", uep)
+                        LOGGER.info(
+                            "Scheduling first run of External Playlist update task to: %s",
+                            self._config.last_executed_update_external_playlists,
+                        )
+                        await self._config.save()
                         self._scheduler.start()
                         self.ready.set()
                         LOGGER.info("PyLav is ready.")

@@ -208,6 +208,9 @@ class LibConfigModel:
     auto_update_managed_nodes: bool | None = None
     download_id: int = 0
     extras: dict = field(default_factory=dict)
+    last_executed_update_bundled_playlists: datetime.datetime | None = None
+    last_executed_update_bundled_external_playlists: datetime.datetime | None = None
+    last_executed_update_external_playlists: datetime.datetime | None = None
 
     def __post_init__(self):
         if isinstance(self.extras, str):
@@ -294,24 +297,22 @@ class LibConfigModel:
         await self.save()
 
     async def save(self) -> LibConfigModel:
-        data = {}
-        if self.config_folder:
-            data["config_folder"] = self.config_folder
-        if self.java_path:
-            data["java_path"] = self.java_path
-        data["enable_managed_node"] = self.enable_managed_node
-        data["auto_update_managed_nodes"] = self.auto_update_managed_nodes
-        if self.localtrack_folder:
-            data["localtrack_folder"] = self.localtrack_folder
-        data["use_bundled_external"] = self.use_bundled_external
-        if self.extras:
-            data["extras"] = self.extras
-        if self.download_id:
-            data["download_id"] = self.download_id
-        if data:
-            await tables.LibConfigRow.update(**data).where(
-                (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
-            )
+        data = {
+            "config_folder": self.config_folder,
+            "java_path": self.java_path,
+            "enable_managed_node": self.enable_managed_node,
+            "auto_update_managed_nodes": self.auto_update_managed_nodes,
+            "localtrack_folder": self.localtrack_folder,
+            "use_bundled_external": self.use_bundled_external,
+            "extras": self.extras,
+            "download_id": self.download_id,
+            "last_executed_update_bundled_playlists": self.last_executed_update_bundled_playlists,
+            "last_executed_update_bundled_external_playlists": self.last_executed_update_bundled_external_playlists,
+            "last_executed_update_external_playlists": self.last_executed_update_external_playlists,
+        }
+        await tables.LibConfigRow.update(**data).where(
+            (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
+        )
         return self
 
     async def delete(self) -> None:
@@ -331,6 +332,11 @@ class LibConfigModel:
         self.auto_update_managed_nodes = response["auto_update_managed_nodes"]
         self.localtrack_folder = response["localtrack_folder"]
         self.use_bundled_external = response["use_bundled_external"]
+        self.last_executed_update_bundled_playlists = response["last_executed_update_bundled_playlists"]
+        self.last_executed_update_bundled_external_playlists = response[
+            "last_executed_update_bundled_external_playlists"
+        ]
+        self.last_executed_update_external_playlists = response["last_executed_update_external_playlists"]
         self.extras = ujson.loads(response["extras"]) if isinstance(response["extras"], str) else response["extras"]
         return self
 
@@ -360,6 +366,9 @@ class LibConfigModel:
                     use_bundled_external=use_bundled_external,
                     download_id=0,
                     extras={},
+                    last_executed_update_bundled_playlists=None,
+                    last_executed_update_bundled_external_playlists=None,
+                    last_executed_update_external_playlists=None,
                 ),
             )
         )

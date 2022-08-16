@@ -41,6 +41,10 @@ An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml
   - PYLAV__EXTERNAL_UNMANAGED_PASSWORD - No Default - Required
   - PYLAV__EXTERNAL_UNMANAGED_PORT - Defaults to 80
   - PYLAV__EXTERNAL_UNMANAGED_SSL - Defaults to 0 (i.e False) - Possible values are 0 - 1
+- Tasks Timers
+  - PYLAV__TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS: Defaults to  1  # How many days to wait between updates - Minimum 1 Day.
+  - PYLAV__TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS: Defaults to  7 # How many days to wait between updates - Minimum 7 Days.
+  - PYLAV__TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS: Defaults to  7 # How many days to wait between updates - Minimum 7 Days.
 ---------------------------
 ## Supported sources
 ### [Built-in](https://github.com/freyacodes/Lavalink):

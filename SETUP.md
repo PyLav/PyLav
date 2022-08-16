@@ -127,6 +127,10 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
 - If you already have a Redis server and want to make use of it for the request cache you can set `PYLAV__REDIS_FULL_ADDRESS_RESPONSE_CACHE` to the full connection url of your existing server.
   - e.g. `redis://[[username]:[password]]@localhost:6379/0`
   - e.g. `unix://[[username]:[password]]@/path/to/socket.sock?db=0`
+- If you want to decrease the frequency of Playlist update tasks you can change the values of the following, note it will only get applied for the next cycle.
+  - `PYLAV__TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS`: Defaults to  1  # How many days to wait between updates - Minimum 1 Day.
+  - `PYLAV__TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS`: Defaults to  7 # How many days to wait between updates - Minimum 7 Days.
+  - `PYLAV__TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS`: Defaults to  7 # How many days to wait between updates - Minimum 7 Days.
 
 ## Red Users (PyLav Cogs) Setup
 ### Starting up your bot

@@ -7,8 +7,14 @@ PYLAV__POSTGRES_DB: py_lav  # The user created Postgres DB which pylav should us
 PYLAV__REDIS_FULL_ADDRESS_RESPONSE_CACHE:      # Optional Leave "null" so that it is not used.
 PYLAV__JAVA_EXECUTABLE: java   # The full path to the java executable to be used by the managed node - defaults to `java`
 PYLAV__LINKED_BOT_IDS: [] # Currently unused, list of bot ids
+
 PYLAV__USE_BUNDLED_EXTERNAL_NODES: false # Whether to use the bundled `lava.link` external server - Values are `true` or `false` - case sensitive (This node is unaffiliated to Pylav or its contributors - More info at: https://support.something.host/en/article/lavalink-hosting-okm26z/)
+
 PYLAV__EXTERNAL_UNMANAGED_HOST:      # host address of the node to connect to i.e `lava.link` without the connection protocol (i.e without http://, https://, ws:// or wss://)
 PYLAV__EXTERNAL_UNMANAGED_PORT: 2333 # Port to connect to the specified unmanaged external node
 PYLAV__EXTERNAL_UNMANAGED_PASSWORD: youshallnotpass # Password of the specified unmanaged external node - case sensitive
 PYLAV__EXTERNAL_UNMANAGED_SSL: false # Whether to use a secured connection (Server must support it i.e https:// and wss://) - Values are `true` or `false` - case sensitive
+
+PYLAV__TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS: 1  # How many days to wait between updates - Minimum 1 Day.
+PYLAV__TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS: 7 # How many days to wait between updates - Minimum 7 Days.
+PYLAV__TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS: 7 # How many days to wait between updates - Minimum 7 Days.
