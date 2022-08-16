@@ -90,7 +90,7 @@ def main() -> int:
         print("No primary_deps.ini found in the same directory as bumpdeps.py", file=sys.stderr)
         return 1
 
-    primary_reqs_cfg = setuptools.config.setupcfg.read_configuration(str(REQUIREMENTS_INI_PTH))
+    primary_reqs_cfg = setuptools.config.read_configuration(str(REQUIREMENTS_INI_PTH))
 
     print("[options]")
     print("install_requires =")
