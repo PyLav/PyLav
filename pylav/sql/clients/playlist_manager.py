@@ -253,7 +253,7 @@ class PlaylistConfigManager:
 
     async def update_bundled_playlists(self, *ids: int) -> None:
         # NOTICE: Update the BUNDLED_PLAYLIST_IDS constant in the constants.py file
-        self.client._config.last_executed_update_bundled_playlists = datetime.datetime.now(
+        self.client._config.next_execution_update_bundled_playlists = datetime.datetime.now(
             tz=datetime.timezone.utc
         ) + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS)
         await self.client._config.save()
@@ -292,7 +292,7 @@ class PlaylistConfigManager:
     async def update_bundled_external_playlists(self, *ids: int) -> None:
         from pylav.query import Query
 
-        self.client._config.last_executed_update_bundled_external_playlists = datetime.datetime.now(
+        self.client._config.next_execution_update_bundled_external_playlists = datetime.datetime.now(
             tz=datetime.timezone.utc
         ) + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS)
         await self.client._config.save()
@@ -344,7 +344,7 @@ class PlaylistConfigManager:
         from pylav.constants import BUNDLED_PLAYLIST_IDS
         from pylav.query import Query
 
-        self.client._config.last_executed_update_external_playlists = datetime.datetime.now(
+        self.client._config.next_execution_update_external_playlists = datetime.datetime.now(
             tz=datetime.timezone.utc
         ) + datetime.timedelta(days=TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS)
         await self.client._config.save()

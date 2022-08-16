@@ -41,9 +41,9 @@ class LibConfigRow(Table, db=DB, tablename="lib_config"):
     auto_update_managed_nodes = Boolean(null=False, default=True)
     download_id = BigInt(index=True, default=0)
     extras: JSONB = JSONB(null=False, default={})
-    last_executed_update_bundled_playlists = Timestamptz(null=True)
-    last_executed_update_bundled_external_playlists = Timestamptz(null=True)
-    last_executed_update_external_playlists = Timestamptz(null=True)
+    next_execution_update_bundled_playlists = Timestamptz(null=True)
+    next_execution_update_bundled_external_playlists = Timestamptz(null=True)
+    next_execution_update_external_playlists = Timestamptz(null=True)
 
 
 class EqualizerRow(Table, db=DB, tablename="equalizer"):

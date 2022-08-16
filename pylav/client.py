@@ -365,16 +365,16 @@ class Client(metaclass=_Singleton):
                         await self.node_manager.wait_until_ready()
                         await self.player_manager.restore_player_states()
                         time_now = datetime.datetime.now(tz=datetime.timezone.utc)
-                        if self._config.last_executed_update_bundled_playlists is None:
-                            self._config.last_executed_update_bundled_playlists = time_now + datetime.timedelta(
+                        if self._config.next_execution_update_bundled_playlists is None:
+                            self._config.next_execution_update_bundled_playlists = time_now + datetime.timedelta(
                                 minutes=5
                             )
-                        if self._config.last_executed_update_bundled_external_playlists is None:
-                            self._config.last_executed_update_bundled_external_playlists = (
+                        if self._config.next_execution_update_bundled_external_playlists is None:
+                            self._config.next_execution_update_bundled_external_playlists = (
                                 time_now + datetime.timedelta(minutes=10)
                             )
-                        if self._config.last_executed_update_external_playlists is None:
-                            self._config.last_executed_update_external_playlists = time_now + datetime.timedelta(
+                        if self._config.next_execution_update_external_playlists is None:
+                            self._config.next_execution_update_external_playlists = time_now + datetime.timedelta(
                                 minutes=30
                             )
                         self._scheduler.add_job(
@@ -392,7 +392,7 @@ class Client(metaclass=_Singleton):
                             trigger="interval",
                             days=TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS,
                             max_instances=1,
-                            next_run_time=self._config.last_executed_update_bundled_playlists,
+                            next_run_time=self._config.next_execution_update_bundled_playlists,
                             replace_existing=True,
                             name="update_bundled_playlists",
                             coalesce=True,
@@ -400,14 +400,14 @@ class Client(metaclass=_Singleton):
                         )
                         LOGGER.info(
                             "Scheduling first run of Bundled Playlist update task to: %s",
-                            self._config.last_executed_update_bundled_playlists,
+                            self._config.next_execution_update_bundled_playlists,
                         )
                         self._scheduler.add_job(
                             self.playlist_db_manager.update_bundled_external_playlists,
                             trigger="interval",
                             days=TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS,
                             max_instances=1,
-                            next_run_time=self._config.last_executed_update_bundled_external_playlists,
+                            next_run_time=self._config.next_execution_update_bundled_external_playlists,
                             replace_existing=True,
                             name="update_bundled_external_playlists",
                             coalesce=True,
@@ -415,14 +415,14 @@ class Client(metaclass=_Singleton):
                         )
                         LOGGER.info(
                             "Scheduling first run of Bundled External Playlist update task to: %s",
-                            self._config.last_executed_update_bundled_external_playlists,
+                            self._config.next_execution_update_bundled_external_playlists,
                         )
                         self._scheduler.add_job(
                             self.playlist_db_manager.update_external_playlists,
                             trigger="interval",
                             days=TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS,
                             max_instances=1,
-                            next_run_time=self._config.last_executed_update_external_playlists,
+                            next_run_time=self._config.next_execution_update_external_playlists,
                             replace_existing=True,
                             name="update_external_playlists",
                             coalesce=True,
@@ -430,7 +430,7 @@ class Client(metaclass=_Singleton):
                         )
                         LOGGER.info(
                             "Scheduling first run of External Playlist update task to: %s",
-                            self._config.last_executed_update_external_playlists,
+                            self._config.next_execution_update_external_playlists,
                         )
                         await self._config.save()
                         self._scheduler.start()
