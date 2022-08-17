@@ -910,11 +910,11 @@ class Node:
         unsupported = await self.get_unsupported_features()
         if self._config is None:
             self._config = await self.node_manager.client.node_db_manager.get_node_config(self.identifier)
-        currently_disabled = set(self._config.disabled_sources)
+        currently_disabled = set(self.config.disabled_sources)
         unsupported = unsupported.union(currently_disabled).union(sources)
-        self._config.disabled_sources = list(unsupported)
+        self.config.disabled_sources = list(unsupported)
         self._disabled_sources = unsupported
-        await self._config.save()
+        await self.config.save()
 
     @property
     def capabilities(self) -> set:

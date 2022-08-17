@@ -1190,6 +1190,10 @@ class PlayerModel:
         await self.update_max_volume()
         return self.max_volume
 
+    async def update(self) -> PlayerModel:
+        await self.get_or_create()
+        return self
+
 
 @dataclass(eq=True)
 class EqualizerModel:

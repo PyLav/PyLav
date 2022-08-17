@@ -319,7 +319,7 @@ class Track:
         return {
             "track": self.track,
             "query": await self.query_identifier() if await self.query() else None,
-            "requester": self.requester_id,
+            "requester": self.requester.id if self.requester else self.requester_id,
             "skip_segments": self.skip_segments,
             "extra": {
                 "timestamp": self.timestamp,

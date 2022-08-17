@@ -371,7 +371,7 @@ class WebSocket:
                 player,
                 Track(
                     data=data["track"],
-                    requester=self._client.bot.user,
+                    requester=self._client.bot.user.id,
                     query=await Query.from_base64(data["track"]),
                     node=self.node,
                 ),
