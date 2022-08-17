@@ -257,14 +257,18 @@ class PlayerManager:
             await self.client.player_state_db_manager.delete_player(guild_id=player_state.id)
             return
         requester = self.client.bot.user
-        discord_player = await self.create(
-            channel=channel,
-            requester=requester,
-            feature=(await Query.from_base64(player_state.current["track"])).requires_capability
-            if player_state.current
-            else None,
-            self_deaf=player_state.self_deaf,
-        )
+        try:
+            discord_player = await self.create(
+                channel=channel,
+                requester=requester,
+                feature=(await Query.from_base64(player_state.current["track"])).requires_capability
+                if player_state.current
+                else None,
+                self_deaf=player_state.self_deaf,
+            )
+        except Exception:
+            LOGGER.exception("Failed to restore player %s - %s", player_state.id, player_state.channel_id)
+            raise
         if not discord_player._restored:
             await discord_player.restore(player_state, requester)
 

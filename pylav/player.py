@@ -1196,7 +1196,7 @@ class Player(VoiceProtocol):
         await self.guild.change_voice_state(
             channel=self.channel,
             self_mute=self_mute,
-            self_deaf=await self.player_manager.client.player_config_manager.get_self_deaf(self.guild.id),
+            self_deaf=await self.bot.lavalink.player_config_manager.get_self_deaf(self.guild.id),
         )
         self._connected = True
         LOGGER.info("[Player-%s] Connected to voice channel", self.channel.guild.id)
