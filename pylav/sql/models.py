@@ -621,7 +621,7 @@ class PlayerStateModel:
     paused: bool
     repeat_current: bool
     repeat_queue: bool
-    shuffle: bool | None
+    shuffle: bool
     auto_shuffle: bool
     auto_play: bool
     playing: bool
@@ -716,7 +716,7 @@ class PlayerModel:
     notify_channel_id: int | None = None
     repeat_current: bool = False
     repeat_queue: bool = False
-    shuffle: bool | None = None
+    shuffle: bool = True
     auto_shuffle: bool = False
     auto_play: bool = True
     self_deaf: bool = True
