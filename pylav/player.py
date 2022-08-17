@@ -428,18 +428,26 @@ class Player(VoiceProtocol):
                 self,
             )
             return
-        if (not self.paused) and self.is_empty and (await self.config.fetch_alone_pause()).enabled:
+        if (
+            (not self.paused)
+            and self.is_empty
+            and (
+                feature := await self.player_manager.client.player_config_manager.get_alone_pause(
+                    guild_id=self.guild.id
+                )
+            )
+        ):
             if not self._last_alone_paused_check:
                 LOGGER.verbose(
                     "Auto Pause task for %s - Player is alone - starting countdown",
                     self,
                 )
                 self._last_alone_paused_check = time.time()
-            if self._last_alone_paused_check + self.config.alone_pause.time <= time.time():
+            if self._last_alone_paused_check + feature.time <= time.time():
                 LOGGER.info(
                     "Auto Pause task for %s - Player in an empty channel for longer than %s - Pausing",
                     self,
-                    self.config.alone_pause.time,
+                    feature.time,
                 )
                 await self.set_pause(pause=True, requester=self.guild.me)
                 self._last_alone_paused_check = 0
@@ -453,18 +461,20 @@ class Player(VoiceProtocol):
                 self,
             )
             return
-        if self.is_empty and (await self.config.fetch_alone_dc()).enabled:
+        if self.is_empty and (
+            feature := await self.player_manager.client.player_config_manager.get_alone_dc(guild_id=self.guild.id)
+        ):
             if not self._last_alone_dc_check:
                 LOGGER.verbose(
                     "Auto Disconnect task for %s - Player is alone - starting countdown",
                     self,
                 )
                 self._last_alone_dc_check = time.time()
-            if self._last_alone_dc_check + self.config.alone_dc.time <= time.time():
+            if self._last_alone_dc_check + feature.time <= time.time():
                 LOGGER.info(
                     "Auto Disconnect task for %s - Player in an empty channel for longer than %s - Disconnecting",
                     self,
-                    self.config.alone_dc.time,
+                    feature.time,
                 )
                 await self.disconnect(requester=self.guild.me)
                 self._last_alone_dc_check = 0
@@ -478,18 +488,20 @@ class Player(VoiceProtocol):
                 self,
             )
             return
-        if self.queue.empty() and (await self.config.fetch_empty_queue_dc()).enabled:
+        if self.queue.empty() and (
+            feature := await self.player_manager.client.player_config_manager.get_empty_queue_dc(guild_id=self.guild.id)
+        ):
             if not self._last_empty_queue_check:
                 LOGGER.verbose(
                     "Auto Empty Queue task for %s - Queue is empty - starting countdown",
                     self,
                 )
                 self._last_empty_queue_check = time.time()
-            if self._last_empty_queue_check + self.config.empty_queue_dc.time <= time.time():
+            if self._last_empty_queue_check + feature.time <= time.time():
                 LOGGER.info(
                     "Auto Empty Queue task for %s - Queue is empty for longer than %s - Stopping and disconnecting",
                     self,
-                    self.config.empty_queue_dc.time,
+                    feature.time,
                 )
                 await self.stop(requester=self.guild.me)
                 await self.disconnect(requester=self.guild.me)

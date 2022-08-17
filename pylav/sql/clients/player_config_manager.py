@@ -8,6 +8,7 @@ import discord
 from pylav._logging import getLogger
 from pylav.sql import tables
 from pylav.sql.models import PlayerModel
+from pylav.utils import TimedFeature
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -34,15 +35,42 @@ class PlayerConfigManager:
             (tables.PlayerRow.bot == self.client.bot.user.id) & (tables.PlayerRow.id == guild_id)
         )
 
-    async def get_shuffle(self, guild_id: int) -> bool | None:
+    async def get_volume(self, guild_id: int) -> int:
+        global_vol = (await self.get_global_config()).volume
+        server_vol = (await self.get_config(guild_id)).volume
+        if global_vol < server_vol:
+            return global_vol
+        return server_vol
+
+    async def get_shuffle(self, guild_id: int) -> bool:
         if (await self.get_global_config()).shuffle is False:
             return False
         return (await self.get_config(guild_id)).shuffle
 
-    async def get_auto_shuffle(self, guild_id: int) -> bool | None:
+    async def get_auto_shuffle(self, guild_id: int) -> bool:
         if (await self.get_global_config()).auto_shuffle is False:
             return False
         return (await self.get_config(guild_id)).auto_shuffle
+
+    async def get_self_deaf(self, guild_id: int) -> bool:
+        if (await self.get_global_config()).self_deaf is True:
+            return True
+        return (await self.get_config(guild_id)).self_deaf
+
+    async def get_empty_queue_dc(self, guild_id: int) -> TimedFeature:
+        if (global_config := await self.get_global_config()).empty_queue_dc.enabled is True:
+            return global_config.empty_queue_dc
+        return (await self.get_config(guild_id)).empty_queue_dc
+
+    async def get_alone_dc(self, guild_id: int) -> TimedFeature:
+        if (global_config := await self.get_global_config()).alone_dc.enabled is True:
+            return global_config.alone_dc
+        return (await self.get_config(guild_id)).alone_dc
+
+    async def get_alone_pause(self, guild_id: int) -> TimedFeature:
+        if (global_config := await self.get_global_config()).alone_pause.enabled is True:
+            return global_config.alone_pause
+        return (await self.get_config(guild_id)).alone_pause
 
     async def is_dj(
         self,
