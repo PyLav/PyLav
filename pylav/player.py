@@ -1806,7 +1806,7 @@ class Player(VoiceProtocol):
         text = f"Page {page_index + 1}/{total_pages} | {queue.qsize()} tracks, {queue_total_duration} remaining\n"
         if not self.is_repeating:
             repeat_emoji = "\N{CROSS MARK}"
-        elif self._config.repeat_queue:
+        elif self.config.repeat_queue:
             repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS}"
         else:
             repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS WITH CIRCLED ONE OVERLAY}"
