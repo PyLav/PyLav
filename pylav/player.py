@@ -147,6 +147,7 @@ class Player(VoiceProtocol):
         self._lavalink = pylav
         self.player_manager = player_manager
         self.node = node
+        await config.update()
         self._config = config
         self._global_config = player_manager.global_config
         self._extras = config.extras
@@ -843,6 +844,7 @@ class Player(VoiceProtocol):
         self.last_track = None
         if track is not None and isinstance(track, (Track, dict, str, type(None))):
             track = Track(node=self.node, data=track, query=query, skip_segments=skip_segments, requester=requester.id)
+        await self.config.update()
         if self.current:
             if self.config.repeat_current:
                 await self.add(self.current.requester_id, self.current)
@@ -1693,6 +1695,7 @@ class Player(VoiceProtocol):
     ) -> discord.Embed | str:
         if not embed:
             return ""
+        await self.config.update()
         queue_list = ""
         arrow = self.draw_time()
         pos = format_time(self.position)
@@ -1762,6 +1765,7 @@ class Player(VoiceProtocol):
     ) -> discord.Embed | str:
         if not embed:
             return ""
+        await self.config.update()
         queue = self.history if history else self.queue
         queue_list = ""
         start_index = page_index * per_page
