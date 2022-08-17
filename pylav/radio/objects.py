@@ -2,14 +2,19 @@ from __future__ import annotations
 
 import datetime
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from iso8601 import iso8601
 
 from pylav.query import Query
 
+if TYPE_CHECKING:
+    from pylav.radio import RadioBrowser
+
 
 @dataclass(eq=True)
 class Station:
+    radio_api_client: RadioBrowser
     changeuuid: str = None
     stationuuid: str = None
     serveruuid: str = None
@@ -61,6 +66,14 @@ class Station:
 
     async def get_query(self) -> Query:
         return await Query.from_string(self.url_resolved or self.url)
+
+    async def click(self) -> None:
+        """Increase the click count of a station by one.
+
+        This should be called everytime when a user starts playing a stream to mark the stream more popular than others.
+        Every call to this endpoint from the same IP address and for the same station only gets counted once per day.
+        """
+        await self.radio_api_client.click(station=self)
 
 
 @dataclass(eq=True)

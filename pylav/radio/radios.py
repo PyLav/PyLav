@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import contextlib
 from typing import TYPE_CHECKING, Any
 
+import aiohttp
 import aiohttp_client_cache
 import ujson
 
@@ -19,11 +21,20 @@ class Request:
         self._headers = headers
         self._session = session
 
-    async def get(self, url: str, **kwargs: Any):
-        async with self._session.get(url, headers=self._headers, params=kwargs) as resp:
-            if resp.status == 200:
-                return await resp.json(loads=ujson.loads)
-        return resp.raise_for_status()
+    async def get(self, url: str, skip_cache: bool = False, **kwargs: Any):
+        if not skip_cache:
+            async with self._session.get(url, headers=self._headers, params=kwargs) as resp:
+                if resp.status == 200:
+                    return await resp.json(loads=ujson.loads)
+            return resp.raise_for_status()
+        else:
+            async with aiohttp_client_cache.CachedSession(
+                headers=self._headers, timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps
+            ) as session:
+                async with session.get(url, params=kwargs) as resp:
+                    if resp.status == 200:
+                        return await resp.json(loads=ujson.loads)
+            return resp.raise_for_status()
 
 
 class RadioBrowser:
@@ -45,6 +56,9 @@ class RadioBrowser:
         self.client = Request(headers=headers, session=self._lib_client.cached_session)
 
     async def initialize(self) -> None:
+        await self.update_base_url()
+
+    async def update_base_url(self) -> None:
         self.base_url = await pick_base_url()
 
     def build_url(self, endpoint: str) -> str:
@@ -65,6 +79,7 @@ class RadioBrowser:
         """
 
         endpoint = f"json/countries/{code}" if code else "json/countries/"
+        await self.update_base_url()
         url = self.build_url(endpoint)
         response = await self.client.get(url)
         return [Country(**country) async for country in AsyncIter(response)]
@@ -84,6 +99,7 @@ class RadioBrowser:
         """
 
         endpoint = f"json/countrycodes/{code}" if code else "json/countrycodes/"
+        await self.update_base_url()
         url = self.build_url(endpoint)
         response = await self.client.get(url)
         return [CountryCode(**country) async for country in AsyncIter(response)]
@@ -103,6 +119,7 @@ class RadioBrowser:
         """
 
         endpoint = "json/codecs/"
+        await self.update_base_url()
         url = self.build_url(endpoint)
         response = await self.client.get(url)
         if codec:
@@ -127,7 +144,7 @@ class RadioBrowser:
         """
 
         endpoint = "json/states"
-
+        await self.update_base_url()
         url = self.build_url(endpoint)
         response = await self.client.get(url)
 
@@ -164,6 +181,7 @@ class RadioBrowser:
             https://de1.api.radio-browser.info/#List_of_languages
         """
         endpoint = f"json/languages/{language}" if language else "json/languages/"
+        await self.update_base_url()
         url = self.build_url(endpoint)
         response = await self.client.get(url)
         return [Language(**language) async for language in AsyncIter(response)]
@@ -187,6 +205,7 @@ class RadioBrowser:
             endpoint = f"json/tags/{tag}"
         else:
             endpoint = "json/tags/"
+        await self.update_base_url()
         url = self.build_url(endpoint)
         response = await self.client.get(url)
         return [Tag(**tag) async for tag in AsyncIter(response)]
@@ -204,9 +223,10 @@ class RadioBrowser:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
         endpoint = f"json/stations/byuuid/{stationuuid}"
+        await self.update_base_url()
         url = self.build_url(endpoint)
         response = await self.client.get(url)
-        return [Station(**station) async for station in AsyncIter(response)]
+        return [Station(radio_api_client=self, **station) async for station in AsyncIter(response)]
 
     async def stations_by_name(
         self, name: str, exact: bool = False, **kwargs: str | int | bool | None
@@ -358,6 +378,7 @@ class RadioBrowser:
             https://de1.api.radio-browser.info/#Count_station_click
         """
         endpoint = f"json/url/{stationuuid}"
+        await self.update_base_url()
         url = self.build_url(endpoint)
         return await self.client.get(url)
 
@@ -371,9 +392,10 @@ class RadioBrowser:
             https://nl1.api.radio-browser.info/#List_of_all_radio_stations
         """
         endpoint = "json/stations"
+        await self.update_base_url()
         url = self.build_url(endpoint)
         response = await self.client.get(url, **kwargs)
-        return [Station(**station) async for station in AsyncIter(response)]
+        return [Station(radio_api_client=self, **station) async for station in AsyncIter(response)]
 
     async def stations_by_votes(self, limit: int, **kwargs: str | int | bool | None) -> list[Station]:
         """A list of the highest-voted stations.
@@ -388,9 +410,10 @@ class RadioBrowser:
             https://nl1.api.radio-browser.info/#Stations_by_votes
         """
         endpoint = f"json/stations/topvote/{limit}"
+        await self.update_base_url()
         url = self.build_url(endpoint)
         response = await self.client.get(url, **kwargs)
-        return [Station(**station) async for station in AsyncIter(response)]
+        return [Station(radio_api_client=self, **station) async for station in AsyncIter(response)]
 
     @type_check
     async def search(self, **kwargs: str | int | bool | None) -> list[Station]:
@@ -448,6 +471,28 @@ class RadioBrowser:
             if paramkey in kwargs:
                 kwargs[paramkey] = kwargs[paramkey].lower()
         kwargs["hidebroken"] = kwargs.pop("hidebroken", "true")
+        await self.update_base_url()
         url = self.build_url(endpoint)
         response = await self.client.get(url, **kwargs)
-        return [Station(**station) async for station in AsyncIter(response)]
+        return [Station(radio_api_client=self, **station) async for station in AsyncIter(response)]
+
+    async def click(self, station: Station = None, station_id: str = None):
+        """Increase the click count of a station by one.
+
+        This should be called everytime when a user starts playing a stream to mark the stream more popular than others.
+        Every call to this endpoint from the same IP address and for the same station only gets counted once per day.
+
+        Parameters:
+            station (Station, optional): The station to click.
+            station_id (str, optional): The station uuid to click.
+        """
+        if station is None and station_id:
+            station = await self.station_by_uuid(station_id)
+
+        if not station:
+            return
+        endpoint = f"json/url/{station.stationuuid}"
+        await self.update_base_url()
+        url = self.build_url(endpoint)
+        with contextlib.suppress(Exception):
+            await self.client.get(url)
