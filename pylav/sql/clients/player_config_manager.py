@@ -72,6 +72,11 @@ class PlayerConfigManager:
             return global_config.alone_pause
         return (await self.get_config(guild_id)).alone_pause
 
+    async def get_auto_play(self, guild_id: int) -> bool:
+        if (await self.get_global_config()).auto_play is False:
+            return False
+        return (await self.get_config(guild_id)).auto_play
+
     async def is_dj(
         self,
         user: discord.Member,
