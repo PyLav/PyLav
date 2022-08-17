@@ -486,12 +486,11 @@ class RadioBrowser:
             station (Station, optional): The station to click.
             station_id (str, optional): The station uuid to click.
         """
-        if station is None and station_id:
-            station = await self.station_by_uuid(station_id)
-
-        if not station:
+        if (not station) and (not station_id):
             return
-        endpoint = f"json/url/{station.stationuuid}"
+        if station:
+            station_id = station.stationuuid
+        endpoint = f"json/url/{station_id}"
         await self.update_base_url()
         url = self.build_url(endpoint)
         with contextlib.suppress(Exception):
