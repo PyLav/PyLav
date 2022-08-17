@@ -397,6 +397,7 @@ class Client(metaclass=_Singleton):
                             name="update_bundled_playlists",
                             coalesce=True,
                             id=f"{self.bot.user.id}-update_bundled_playlists",
+                            misfire_grace_time=None,
                         )
                         LOGGER.info(
                             "Scheduling first run of Bundled Playlist update task to: %s",
@@ -412,6 +413,7 @@ class Client(metaclass=_Singleton):
                             name="update_bundled_external_playlists",
                             coalesce=True,
                             id=f"{self.bot.user.id}-update_bundled_external_playlists",
+                            misfire_grace_time=None,
                         )
                         LOGGER.info(
                             "Scheduling first run of Bundled External Playlist update task to: %s",
@@ -427,6 +429,7 @@ class Client(metaclass=_Singleton):
                             name="update_external_playlists",
                             coalesce=True,
                             id=f"{self.bot.user.id}-update_external_playlists",
+                            misfire_grace_time=None,
                         )
                         LOGGER.info(
                             "Scheduling first run of External Playlist update task to: %s",
