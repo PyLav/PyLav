@@ -212,6 +212,8 @@ class Player(VoiceProtocol):
 
             if self.volume_filter.changed:
                 await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
+
+        now_time = datetime.datetime.now(tz=datetime.timezone.utc)
         self.player_manager.client.scheduler.add_job(
             self.auto_dc_task,
             trigger="interval",
@@ -220,6 +222,7 @@ class Player(VoiceProtocol):
             id=f"{self.bot.user.id}-{self.guild.id}-auto_dc_task",
             replace_existing=True,
             coalesce=True,
+            next_run_time=now_time + datetime.timedelta(seconds=3),
         )
         self.player_manager.client.scheduler.add_job(
             self.auto_empty_queue_task,
@@ -229,6 +232,7 @@ class Player(VoiceProtocol):
             id=f"{self.bot.user.id}-{self.guild.id}-auto_empty_queue_task",
             replace_existing=True,
             coalesce=True,
+            next_run_time=now_time + datetime.timedelta(seconds=2),
         )
         self.player_manager.client.scheduler.add_job(
             self.auto_pause_task,
@@ -238,6 +242,7 @@ class Player(VoiceProtocol):
             id=f"{self.bot.user.id}-{self.guild.id}-auto_pause_task",
             replace_existing=True,
             coalesce=True,
+            next_run_time=now_time + datetime.timedelta(seconds=1),
         )
         self.player_manager.client.scheduler.add_job(
             self.auto_save_task,
@@ -247,6 +252,7 @@ class Player(VoiceProtocol):
             id=f"{self.bot.user.id}-{self.guild.id}-auto_save_task",
             replace_existing=True,
             coalesce=True,
+            next_run_time=now_time + datetime.timedelta(seconds=10),
         )
 
     @property
@@ -435,7 +441,7 @@ class Player(VoiceProtocol):
                 feature := await self.player_manager.client.player_config_manager.get_alone_pause(
                     guild_id=self.guild.id
                 )
-            )
+            ).enabled
         ):
             if not self._last_alone_paused_check:
                 LOGGER.verbose(
@@ -443,9 +449,9 @@ class Player(VoiceProtocol):
                     self,
                 )
                 self._last_alone_paused_check = time.time()
-            if self._last_alone_paused_check + feature.time <= time.time():
+            if (self._last_alone_paused_check + feature.time) <= time.time():
                 LOGGER.info(
-                    "Auto Pause task for %s - Player in an empty channel for longer than %s - Pausing",
+                    "Auto Pause task for %s - Player in an empty channel for longer than %s seconds - Pausing",
                     self,
                     feature.time,
                 )
@@ -461,8 +467,11 @@ class Player(VoiceProtocol):
                 self,
             )
             return
-        if self.is_empty and (
-            feature := await self.player_manager.client.player_config_manager.get_alone_dc(guild_id=self.guild.id)
+        if (
+            self.is_empty
+            and (
+                feature := await self.player_manager.client.player_config_manager.get_alone_dc(guild_id=self.guild.id)
+            ).enabled
         ):
             if not self._last_alone_dc_check:
                 LOGGER.verbose(
@@ -470,9 +479,10 @@ class Player(VoiceProtocol):
                     self,
                 )
                 self._last_alone_dc_check = time.time()
-            if self._last_alone_dc_check + feature.time <= time.time():
+            if (self._last_alone_dc_check + feature.time) <= time.time():
                 LOGGER.info(
-                    "Auto Disconnect task for %s - Player in an empty channel for longer than %s - Disconnecting",
+                    "Auto Disconnect task for %s - Player in an empty channel for longer than %s seconds "
+                    "- Disconnecting",
                     self,
                     feature.time,
                 )
@@ -488,8 +498,13 @@ class Player(VoiceProtocol):
                 self,
             )
             return
-        if self.queue.empty() and (
-            feature := await self.player_manager.client.player_config_manager.get_empty_queue_dc(guild_id=self.guild.id)
+        if (
+            self.queue.empty()
+            and (
+                feature := await self.player_manager.client.player_config_manager.get_empty_queue_dc(
+                    guild_id=self.guild.id
+                )
+            ).enabled
         ):
             if not self._last_empty_queue_check:
                 LOGGER.verbose(
@@ -497,9 +512,10 @@ class Player(VoiceProtocol):
                     self,
                 )
                 self._last_empty_queue_check = time.time()
-            if self._last_empty_queue_check + feature.time <= time.time():
+            if (self._last_empty_queue_check + feature.time) <= time.time():
                 LOGGER.info(
-                    "Auto Empty Queue task for %s - Queue is empty for longer than %s - Stopping and disconnecting",
+                    "Auto Empty Queue task for %s - Queue is empty for longer than %s seconds "
+                    "- Stopping and disconnecting",
                     self,
                     feature.time,
                 )
