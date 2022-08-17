@@ -622,6 +622,7 @@ class PlayerStateModel:
     repeat_current: bool
     repeat_queue: bool
     shuffle: bool | None
+    auto_shuffle: bool
     auto_play: bool
     playing: bool
     effect_enabled: bool
@@ -664,6 +665,7 @@ class PlayerStateModel:
             tables.PlayerStateRow.repeat_current: self.repeat_current,
             tables.PlayerStateRow.repeat_queue: self.repeat_queue,
             tables.PlayerStateRow.shuffle: self.shuffle,
+            tables.PlayerStateRow.auto_shuffle: self.auto_shuffle,
             tables.PlayerStateRow.auto_play: self.auto_play,
             tables.PlayerStateRow.playing: self.playing,
             tables.PlayerStateRow.effect_enabled: self.effect_enabled,
@@ -715,6 +717,7 @@ class PlayerModel:
     repeat_current: bool = False
     repeat_queue: bool = False
     shuffle: bool | None = None
+    auto_shuffle: bool = False
     auto_play: bool = True
     self_deaf: bool = True
     effects: dict = field(default_factory=dict)
@@ -759,6 +762,7 @@ class PlayerModel:
             tables.PlayerRow.repeat_current: self.repeat_current,
             tables.PlayerRow.repeat_queue: self.repeat_queue,
             tables.PlayerRow.shuffle: self.shuffle,
+            tables.PlayerRow.auto_shuffle: self.auto_shuffle,
             tables.PlayerRow.auto_play: self.auto_play,
             tables.PlayerRow.self_deaf: self.self_deaf,
             tables.PlayerRow.extras: self.extras,
@@ -806,6 +810,7 @@ class PlayerModel:
             tables.PlayerRow.repeat_current: self.repeat_current,
             tables.PlayerRow.repeat_queue: self.repeat_queue,
             tables.PlayerRow.shuffle: self.shuffle,
+            tables.PlayerRow.auto_shuffle: self.auto_shuffle,
             tables.PlayerRow.auto_play: self.auto_play,
             tables.PlayerRow.self_deaf: self.self_deaf,
             tables.PlayerRow.extras: self.extras,
@@ -831,6 +836,7 @@ class PlayerModel:
             self.repeat_current = output.repeat_current
             self.repeat_queue = output.repeat_queue
             self.shuffle = output.shuffle
+            self.auto_shuffle = output.auto_shuffle
             self.auto_play = output.auto_play
             self.self_deaf = output.self_deaf
             self.extras = output.extras
@@ -928,6 +934,16 @@ class PlayerModel:
         )
         if player:
             self.shuffle = player[0]["shuffle"]
+        return self
+
+    async def update_auto_shuffle(self) -> PlayerModel:
+        player = (
+            await tables.PlayerRow.select(tables.PlayerRow.auto_shuffle)
+            .output(load_json=True)
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+        )
+        if player:
+            self.auto_shuffle = player[0]["auto_shuffle"]
         return self
 
     async def update_auto_play(self) -> PlayerModel:
@@ -1137,6 +1153,10 @@ class PlayerModel:
     async def fetch_shuffle(self) -> bool | None:
         await self.update_shuffle()
         return self.shuffle
+
+    async def fetch_auto_shuffle(self) -> bool:
+        await self.update_auto_shuffle()
+        return self.auto_shuffle
 
     async def fetch_auto_play(self) -> bool:
         await self.update_auto_play()

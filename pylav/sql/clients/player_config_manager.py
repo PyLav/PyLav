@@ -39,6 +39,11 @@ class PlayerConfigManager:
             return False
         return (await self.get_config(guild_id)).shuffle
 
+    async def get_auto_shuffle(self, guild_id: int) -> bool | None:
+        if (await self.get_global_config()).auto_shuffle is False:
+            return False
+        return (await self.get_config(guild_id)).auto_shuffle
+
     async def is_dj(
         self,
         user: discord.Member,

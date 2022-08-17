@@ -653,7 +653,9 @@ class Player(VoiceProtocol):
 
         at = await self._query_to_track(requester, track, query)
         self.queue.put_nowait([at], index=index)
-        if index is None:
+        if index is None and (
+            await self.player_manager.client.player_config_manager.get_auto_shuffle(self.guild.id) is True
+        ):
             await self.maybe_shuffle_queue(requester=requester)
         self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
         self.node.dispatch_event(TracksRequestedEvent(self, self.guild.get_member(requester), [at]))
@@ -682,7 +684,9 @@ class Player(VoiceProtocol):
             track = await self._query_to_track(requester, track, query)
             output.append(track)
         self.queue.put_nowait(output, index=index)
-        if index is None:
+        if index is None and (
+            await self.player_manager.client.player_config_manager.get_auto_shuffle(self.guild.id) is True
+        ):
             await self.maybe_shuffle_queue(requester=requester)
         self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
         self.node.dispatch_event(TracksRequestedEvent(self, self.guild.get_member(requester), output))
@@ -971,6 +975,19 @@ class Player(VoiceProtocol):
         if await self.player_manager.global_config.fetch_shuffle() is False:
             return
         self._config.shuffle = shuffle
+        await self._config.save()
+
+    async def set_auto_shuffle(self, shuffle: int) -> None:
+        """
+        Sets the player's auto shuffle state.
+        Parameters
+        ----------
+        shuffle: :class:`bool`
+            Whether to shuffle the player or not.
+        """
+        if await self.player_manager.global_config.fetch_auto_shuffle() is False:
+            return
+        self._config.auto_shuffle = shuffle
         await self._config.save()
 
     async def set_pause(self, pause: bool, requester: discord.Member) -> None:
@@ -1854,6 +1871,7 @@ class Player(VoiceProtocol):
             "repeat_queue": self._config.repeat_queue,
             "repeat_current": self._config.repeat_current,
             "shuffle": self._config.shuffle,
+            "auto_shuffle": self._config.auto_shuffle,
             "auto_play": self._config.auto_play,
             "auto_play_playlist_id": self._autoplay_playlist.id if self._autoplay_playlist is not None else None,
             "volume": self.volume,
