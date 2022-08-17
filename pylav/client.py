@@ -7,7 +7,7 @@ import itertools
 import operator
 import pathlib
 import random
-from collections.abc import AsyncIterator, Iterator
+from collections.abc import AsyncIterator
 from types import MethodType
 from typing import Callable
 
@@ -330,11 +330,11 @@ class Client(metaclass=_Singleton):
                         self._config_folder = aiopath.AsyncPath(self._config.config_folder)
                         localtrack_folder = aiopath.AsyncPath(self._config.localtrack_folder)
                         data = await self._node_config_manager.get_bundled_node_config()
-                        if not all([client_id, client_secret]):
+                        if not await asyncstdlib.all([client_id, client_secret]):
                             spotify_data = data.yaml["plugins"]["topissourcemanagers"]["spotify"]
                             client_id = spotify_data["clientId"]
                             client_secret = spotify_data["clientSecret"]
-                        elif all([client_id, client_secret]):
+                        elif await asyncstdlib.all([client_id, client_secret]):
                             if (
                                 data.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientId"] != client_id
                                 or data.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"]
@@ -823,13 +823,13 @@ class Client(metaclass=_Singleton):
 
         await LocalFile.add_root_folder(path=localtrack_folder, create=True)
 
-    async def get_all_players(self) -> Iterator[Player]:
+    async def get_all_players(self) -> AsyncIterator[Player]:
 
-        return iter(self.player_manager)
+        return asyncstdlib.iter(self.player_manager)
 
     async def get_managed_node(self) -> Node | None:
-        available_nodes = await asyncstdlib.builtins.list(
-            asyncstdlib.builtins.filter(operator.attrgetter("available"), self.node_manager.managed_nodes)
+        available_nodes = await asyncstdlib.list(
+            asyncstdlib.filter(operator.attrgetter("available"), self.node_manager.managed_nodes)
         )
 
         if not available_nodes:
@@ -1088,7 +1088,7 @@ class Client(metaclass=_Singleton):
     ) -> bool:
         if additional_user_ids and user.id in additional_user_ids:
             return True
-        if additional_role_ids and any(r.id in additional_role_ids for r in user.roles):
+        if additional_role_ids and await asyncstdlib.any(r.id in additional_role_ids for r in user.roles):
             return True
         return await self.player_config_manager.is_dj(
             user=user, guild=guild, additional_role_ids=None, additional_user_ids=None
@@ -1102,12 +1102,12 @@ class Client(metaclass=_Singleton):
         playlist_id: str | None = None,
         channel_id: str | None = None,
     ) -> str:
-        if not any([video_id, playlist_id, channel_id, user_id]):
+        if not await asyncstdlib.any([video_id, playlist_id, channel_id, user_id]):
             raise PyLavInvalidArguments(
                 "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary."
             )
 
-        if sum(1 for i in [video_id, playlist_id, channel_id, user_id] if i) > 1:
+        if await asyncstdlib.sum(1 for i in [video_id, playlist_id, channel_id, user_id] if i) > 1:
             raise PyLavInvalidArguments(
                 "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple."
             )

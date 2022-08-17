@@ -24,8 +24,8 @@ else:
                 nodes = ctx.lavalink.node_manager.nodes
             except EntryNotFoundError as e:
                 raise commands.BadArgument(f"Node with name or id `{arg}` not found.") from e
-            if r := await asyncstdlib.builtins.list(
-                asyncstdlib.builtins.filter(lambda n: arg.lower() in n.name.lower() or arg == f"{n.identifier}", nodes)
+            if r := await asyncstdlib.list(
+                asyncstdlib.filter(lambda n: arg.lower() in n.name.lower() or arg == f"{n.identifier}", nodes)
             ):
                 return r
             raise commands.BadArgument(f"Node with name or id `{arg}` not found.")

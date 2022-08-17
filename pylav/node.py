@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
 import aiohttp
+import asyncstdlib
 import ujson
 
 from pylav._logging import getLogger
@@ -645,7 +646,9 @@ class Node:
                 result = await res.json(loads=ujson.loads)
                 asyncio.create_task(self.node_manager.client.query_cache_manager.add_query(query, result))
                 if first:
-                    return next(iter(result.get("tracks", [])), {})
+                    return await asyncstdlib.anext(
+                        asyncstdlib.iter(result.get("tracks", [])), default={}
+                    )  # type:ignore
                 return result
             if res.status in [401, 403]:
                 raise Unauthorized

@@ -9,6 +9,7 @@ import uuid
 from functools import total_ordering
 from typing import TYPE_CHECKING, Any
 
+import asyncstdlib
 import discord
 from cached_property import cached_property, cached_property_with_ttl
 
@@ -292,7 +293,7 @@ class Track:
             async with self._node.node_manager.client.spotify_client as sp_client:
                 track = await sp_client.get_track(self.identifier)
                 images = track.album.images
-                image = max(images, key=operator.attrgetter("width"))
+                image = await asyncstdlib.max(images, key=operator.attrgetter("width"))
                 return image.url
 
     async def mix_playlist_url(self) -> str | None:

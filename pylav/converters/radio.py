@@ -30,9 +30,7 @@ else:
                 stations = await ctx.lavalink.radio_browser.stations()
             except EntryNotFoundError as e:
                 raise commands.BadArgument(f"Station with name `{arg}` not found.") from e
-            if r := await asyncstdlib.builtins.list(
-                asyncstdlib.builtins.filter(lambda n: arg.lower() in n.name.lower(), stations)
-            ):
+            if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), stations)):
                 return r
             raise commands.BadArgument(f"Station with name `{arg}` not found.")
 
@@ -61,9 +59,7 @@ else:
                 tags = await ctx.lavalink.radio_browser.tags()
             except EntryNotFoundError as e:
                 raise commands.BadArgument(f"Tag with name `{arg}` not found.") from e
-            if r := await asyncstdlib.builtins.list(
-                asyncstdlib.builtins.filter(lambda n: arg.lower() in n.name.lower(), tags)
-            ):
+            if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), tags)):
                 return r
             raise commands.BadArgument(f"Tag with name `{arg}` not found.")
 
@@ -90,9 +86,7 @@ else:
                 langs = await ctx.lavalink.radio_browser.languages()
             except EntryNotFoundError as e:
                 raise commands.BadArgument(f"Language with name `{arg}` not found.") from e
-            if r := await asyncstdlib.builtins.list(
-                asyncstdlib.builtins.filter(lambda n: arg.lower() in n.name.lower(), langs)
-            ):
+            if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), langs)):
                 return r
             raise commands.BadArgument(f"Language with name `{arg}` not found.")
 
@@ -121,9 +115,7 @@ else:
                 states = await ctx.lavalink.radio_browser.states()
             except EntryNotFoundError as e:
                 raise commands.BadArgument(f"State with name `{arg}` not found.") from e
-            if r := await asyncstdlib.builtins.list(
-                asyncstdlib.builtins.filter(lambda n: arg.lower() in n.name.lower(), states)
-            ):
+            if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), states)):
                 return r
             raise commands.BadArgument(f"State with name `{arg}` not found.")
 
@@ -149,9 +141,7 @@ else:
                 codecs = await ctx.lavalink.radio_browser.codecs()
             except EntryNotFoundError as e:
                 raise commands.BadArgument(f"Codec with name `{arg}` not found.") from e
-            if r := await asyncstdlib.builtins.list(
-                asyncstdlib.builtins.filter(lambda n: arg.lower() in n.name.lower(), codecs)
-            ):
+            if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), codecs)):
                 return r
             raise commands.BadArgument(f"Codec with name `{arg}` not found.")
 
@@ -178,9 +168,7 @@ else:
             except EntryNotFoundError as e:
                 raise commands.BadArgument(f"Country code `{arg}` not found.") from e
 
-            if r := await asyncstdlib.builtins.list(
-                asyncstdlib.builtins.filter(lambda n: arg.lower() in n.name.lower(), countrycodes)
-            ):
+            if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), countrycodes)):
                 return r
             raise commands.BadArgument(f"Country code `{arg}` not found.")
 
@@ -208,9 +196,7 @@ else:
                 countries = await ctx.lavalink.radio_browser.countries()
             except EntryNotFoundError as e:
                 raise commands.BadArgument(f"Country with name `{arg}` not found.") from e
-            if r := await asyncstdlib.builtins.list(
-                asyncstdlib.builtins.filter(lambda n: arg.lower() in n.name.lower(), countries)
-            ):
+            if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), countries)):
                 return r
             raise commands.BadArgument(f"Country with name `{arg}` not found.")
 

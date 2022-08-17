@@ -4,6 +4,8 @@ import asyncio
 import random
 import socket
 
+import asyncstdlib
+
 from pylav._logging import getLogger
 
 LOGGER = getLogger("PyLav.RadioBrowser")
@@ -68,5 +70,5 @@ async def fetch_hosts() -> list[str]:
 
 async def pick_base_url() -> str:
     hosts = await fetch_hosts()
-    url = random.choice(sorted(hosts))
+    url = random.choice(await asyncstdlib.sorted(hosts))
     return f"https://{url}/"

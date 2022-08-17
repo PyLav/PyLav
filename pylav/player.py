@@ -183,7 +183,7 @@ class Player(VoiceProtocol):
                 self._low_pass = f
             if (ch := effects.get("channel_mix", None)) and (f := ChannelMix.from_dict(ch)) and f.changed:
                 self._channel_mix = f
-            if any(
+            if await asyncstdlib.any(
                 f.changed
                 for f in [
                     self.equalizer,
@@ -1004,10 +1004,10 @@ class Player(VoiceProtocol):
         requester: :class:`discord.Member`
             The member who requested the volume change.
         """
-        max_volume = min(
-            await self._config.fetch_max_volume(), await self.player_manager.global_config.fetch_max_volume()
+        max_volume = await asyncstdlib.min(
+            [await self._config.fetch_max_volume(), await self.player_manager.global_config.fetch_max_volume()]
         )
-        volume = max(min(vol, max_volume), 0)
+        volume = await asyncstdlib.max([await asyncstdlib.min([vol, max_volume]), 0])
         if volume == self.volume:
             return
         self._config.volume = volume
@@ -1031,7 +1031,7 @@ class Player(VoiceProtocol):
         if self.current and self.current.is_seekable:
             if with_filter:
                 position = self.position
-            position = max(min(position, self.current.duration), 0)
+            position = await asyncstdlib.max([await asyncstdlib.min([position, self.current.duration]), 0])
             self.node.dispatch_event(
                 TrackSeekEvent(self, requester, self.current, before=self.position, after=position)
             )
@@ -1253,8 +1253,8 @@ class Player(VoiceProtocol):
             Volume to set
         requester : discord.Member
         """
-        max_volume = min(
-            await self._config.fetch_max_volume(), await self.player_manager.global_config.fetch_max_volume()
+        max_volume = await asyncstdlib.min(
+            [await self._config.fetch_max_volume(), await self.player_manager.global_config.fetch_max_volume()]
         )
         if volume.get_int_value() > max_volume:
             volume = Volume(max_volume)
@@ -1717,7 +1717,7 @@ class Player(VoiceProtocol):
         queue_list = ""
         start_index = page_index * per_page
         end_index = start_index + per_page
-        tracks = await asyncstdlib.builtins.list(asyncstdlib.itertools.islice(queue.raw_queue, start_index, end_index))
+        tracks = await asyncstdlib.list(asyncstdlib.islice(queue.raw_queue, start_index, end_index))
         arrow = self.draw_time()
         pos = format_time(self.position)
         current = self.current
@@ -1776,7 +1776,7 @@ class Player(VoiceProtocol):
             track.duration  # type: ignore
             async for track in AsyncIter(queue.raw_queue).filter(lambda x: not (x.stream or x.is_partial))
         ]
-        queue_dur = sum(dur)
+        queue_dur = await asyncstdlib.sum(dur)
         if queue.empty():
             queue_dur = 0
         if history:

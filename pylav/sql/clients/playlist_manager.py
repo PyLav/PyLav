@@ -281,7 +281,7 @@ class PlaylistConfigManager:
                     data = None
                 if not data:
                     continue
-                if tracks := [t async for t in asyncstdlib.builtins.map(str.strip, data.splitlines()) if t]:
+                if tracks := [t async for t in asyncstdlib.map(str.strip, data.splitlines()) if t]:
                     LOGGER.info("Updating bundled playlist - %s (%s)", name, id)
                     await self.create_or_update_global_playlist(
                         id=id, name=name, tracks=tracks, author=self._client.bot.user.id

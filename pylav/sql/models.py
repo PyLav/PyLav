@@ -10,6 +10,7 @@ from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
 
 import aiohttp
+import asyncstdlib
 import discord
 import ujson
 import yaml
@@ -1107,7 +1108,7 @@ class PlayerModel:
     ) -> bool:
         if additional_user_ids and user.id in additional_user_ids:
             return True
-        if additional_role_ids and any(r.id in additional_role_ids for r in user.roles):
+        if additional_role_ids and await asyncstdlib.any(r.id in additional_role_ids for r in user.roles):
             return True
         await self.dj_users_update()
         await self.dj_users_cleanup(guild=user.guild, lazy=True)
@@ -1115,7 +1116,7 @@ class PlayerModel:
             return True
         await self.dj_roles_update()
         await self.dj_roles_cleanup(guild=user.guild, lazy=True)
-        if any(r.id in self.dj_roles for r in user.roles):
+        if await asyncstdlib.any(r.id in self.dj_roles for r in user.roles):
             return True
         if not self.dj_users and not self.dj_roles:
             return True

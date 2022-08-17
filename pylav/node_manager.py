@@ -5,6 +5,7 @@ import operator
 from typing import TYPE_CHECKING
 
 import aiohttp
+import asyncstdlib
 import ujson
 
 from pylav._logging import getLogger
@@ -336,7 +337,7 @@ class NodeManager:
                 nodes = self.available_nodes
         if not nodes:
             return None
-        return min(nodes, key=operator.attrgetter("penalty"))
+        return await asyncstdlib.min(nodes, key=operator.attrgetter("penalty"))
 
     def get_node_by_id(self, unique_identifier: int) -> Node | None:
         """

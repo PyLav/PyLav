@@ -20,10 +20,8 @@ def distance(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
 async def closest(data, v: tuple[float, float], *, region_pool: set[str] = None) -> tuple[float, float]:
     if region_pool is None:
         region_pool = set()
-    entries = await asyncstdlib.builtins.list(
-        asyncstdlib.builtins.filter(lambda x: not region_pool or x[0] in region_pool, data)
-    )
-    return await asyncstdlib.builtins.min(
+    entries = await asyncstdlib.list(asyncstdlib.filter(lambda x: not region_pool or x[0] in region_pool, data))
+    return await asyncstdlib.min(
         entries,
         key=lambda p: distance(v[0], v[1], p[1][0], p[1][1]),
     )
@@ -35,10 +33,8 @@ async def get_closest_region_name_and_coordinate(
     closest_region, closest_coordinates = await closest(
         REGION_TO_COUNTRY_COORDINATE_MAPPING.items(), (lat, lon), region_pool=region_pool
     )
-    name, coordinate = await asyncstdlib.builtins.anext(
-        asyncstdlib.builtins.iter(
-            (k, v) for k, v in REGION_TO_COUNTRY_COORDINATE_MAPPING.items() if v == closest_coordinates
-        )
+    name, coordinate = await asyncstdlib.anext(
+        asyncstdlib.iter((k, v) for k, v in REGION_TO_COUNTRY_COORDINATE_MAPPING.items() if v == closest_coordinates)
     )
     return name, coordinate
 

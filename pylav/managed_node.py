@@ -220,7 +220,7 @@ class LocalNodeManager:
                 self._ci_info["number"] = -1
                 return self._ci_info
             data = await response.json(loads=ujson.loads)
-            release = max(data, key=lambda x: dateutil.parser.parse(x["published_at"]))
+            release = await asyncstdlib.max(data, key=lambda x: dateutil.parser.parse(x["published_at"]))
             assets = release.get("assets", [])
             url = None
             for asset in assets:
@@ -304,7 +304,7 @@ class LocalNodeManager:
         data = change_dict_naming_convention(self._full_data.yaml)
         # The reason this is here is to completely remove these keys from the application.yml
         # if they are set to empty values
-        if not all(
+        if not await asyncstdlib.all(
             (
                 data["lavalink"]["server"]["youtubeConfig"]["email"],
                 data["lavalink"]["server"]["youtubeConfig"]["password"],
@@ -395,7 +395,7 @@ class LocalNodeManager:
 
     async def _wait_for_launcher(self) -> None:
         LOGGER.info("Waiting for Managed Lavalink node to be ready")
-        async for __ in asyncstdlib.itertools.cycle("."):
+        async for __ in asyncstdlib.cycle("."):
             line = await self._proc.stdout.readline()
             if _RE_READY_LINE.search(line):
                 self.ready.set()
@@ -762,8 +762,8 @@ class LocalNodeManager:
                 if cwd and await asyncio.to_thread(proc.cwd) not in filter_:
                     continue
                 cmdline = await asyncio.to_thread(proc.cmdline)
-                if (matches and await asyncstdlib.builtins.all(a in cmdline for a in matches)) or (
-                    lazy_match and await asyncstdlib.builtins.any("lavalink" in arg.lower() for arg in cmdline)
+                if (matches and await asyncstdlib.all(a in cmdline for a in matches)) or (
+                    lazy_match and await asyncstdlib.any("lavalink" in arg.lower() for arg in cmdline)
                 ):
                     proc_as_dict = await asyncio.to_thread(
                         proc.as_dict, attrs=["pid", "name", "create_time", "status", "cmdline", "cwd"]
