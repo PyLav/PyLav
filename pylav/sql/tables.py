@@ -44,6 +44,7 @@ class LibConfigRow(Table, db=DB, tablename="lib_config"):
     next_execution_update_bundled_playlists = Timestamptz(null=True)
     next_execution_update_bundled_external_playlists = Timestamptz(null=True)
     next_execution_update_external_playlists = Timestamptz(null=True)
+    update_bot_activity = Boolean(null=False, default=False)
 
 
 class EqualizerRow(Table, db=DB, tablename="equalizer"):

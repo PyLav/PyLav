@@ -212,6 +212,7 @@ class LibConfigModel:
     next_execution_update_bundled_playlists: datetime.datetime | None = None
     next_execution_update_bundled_external_playlists: datetime.datetime | None = None
     next_execution_update_external_playlists: datetime.datetime | None = None
+    update_bot_activity: bool = False
 
     def __post_init__(self):
         if isinstance(self.extras, str):
@@ -257,6 +258,46 @@ class LibConfigModel:
         )
         return response["localtrack_folder"]
 
+    async def get_download_id(self) -> int:
+        response = (
+            await tables.LibConfigRow.select(tables.LibConfigRow.download_id)
+            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            .first()
+        )
+        return response["download_id"]
+
+    async def get_next_execution_update_bundled_playlists(self) -> datetime.datetime:
+        response = (
+            await tables.LibConfigRow.select(tables.LibConfigRow.next_execution_update_bundled_playlists)
+            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            .first()
+        )
+        return response["next_execution_update_bundled_playlists"]
+
+    async def get_next_execution_update_bundled_external_playlists(self) -> datetime.datetime:
+        response = (
+            await tables.LibConfigRow.select(tables.LibConfigRow.next_execution_update_bundled_external_playlists)
+            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            .first()
+        )
+        return response["next_execution_update_bundled_external_playlists"]
+
+    async def get_next_execution_update_external_playlists(self) -> datetime.datetime:
+        response = (
+            await tables.LibConfigRow.select(tables.LibConfigRow.next_execution_update_external_playlists)
+            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            .first()
+        )
+        return response["next_execution_update_external_playlists"]
+
+    async def get_update_bot_activity(self) -> bool:
+        response = (
+            await tables.LibConfigRow.select(tables.LibConfigRow.update_bot_activity)
+            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            .first()
+        )
+        return response["update_bot_activity"]
+
     async def set_config_folder(self, value: str) -> None:
         self.config_folder = value
         await tables.LibConfigRow.update({tables.LibConfigRow.config_folder: value}).where(
@@ -297,6 +338,10 @@ class LibConfigModel:
         self.use_bundled_external = value
         await self.save()
 
+    async def set_update_bot_activity(self, value: bool) -> None:
+        self.update_bot_activity = value
+        await self.save()
+
     async def save(self) -> LibConfigModel:
         data = {
             "config_folder": self.config_folder,
@@ -310,6 +355,7 @@ class LibConfigModel:
             "next_execution_update_bundled_playlists": self.next_execution_update_bundled_playlists,
             "next_execution_update_bundled_external_playlists": self.next_execution_update_bundled_external_playlists,
             "next_execution_update_external_playlists": self.next_execution_update_external_playlists,
+            "update_bot_activity": self.update_bot_activity,
         }
         await tables.LibConfigRow.update(**data).where(
             (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
@@ -340,6 +386,7 @@ class LibConfigModel:
         ]
         self.next_execution_update_external_playlists = response["next_execution_update_external_playlists"]
         self.extras = ujson.loads(response["extras"]) if isinstance(response["extras"], str) else response["extras"]
+        self.update_bot_activity = response["update_bot_activity"]
         return self
 
     @classmethod
@@ -371,6 +418,7 @@ class LibConfigModel:
                     next_execution_update_bundled_playlists=None,
                     next_execution_update_bundled_external_playlists=None,
                     next_execution_update_external_playlists=None,
+                    update_bot_activity=False,
                 ),
             )
         )
