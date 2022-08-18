@@ -303,8 +303,10 @@ class PlayerManager:
         if not await LibConfigModel(bot=self.bot.user.id, id=1).get_update_bot_activity():
             return
         playing_players = len(self.playing_players)
+        activities = self.bot.guilds[0].me.activities
+        activity = discord.utils.find(lambda a: a.type == discord.ActivityType.listening, activities)
         if playing_players > 1:
-            if (not self.bot.activity) or f"Music in {playing_players} servers" not in self.bot.activity.name:
+            if (not activity) or f"Music in {playing_players} servers" not in activity.name:
                 LOGGER.debug("Updating bot activity to %s", f"Listening to Music in {playing_players} servers")
                 await self.bot.change_presence(
                     activity=discord.Activity(
@@ -318,19 +320,13 @@ class PlayerManager:
             track_name = await current_player.current.get_track_display_name(
                 max_length=40, author=True, unformatted=True
             )
-            if self.bot.activity and track_name in self.bot.activity.name:
+            if activity and track_name in activity.name:
                 return
             LOGGER.debug("Updating bot activity to %s", f"Listening to {track_name}")
             await self.bot.change_presence(
-                activity=discord.Activity(
-                    type=discord.ActivityType.listening,
-                    name=track_name,
-                    url=None
-                    if (query := await current_player.current.query()) and not query.is_local and not query.is_speak
-                    else current_player.current.uri,
-                )
+                activity=discord.Activity(type=discord.ActivityType.listening, name=track_name)
             )
 
-        elif playing_players == 0 and self.bot.activity:
+        elif playing_players == 0 and activity:
             LOGGER.debug("Removing bot activity")
             await self.bot.change_presence(activity=None)
