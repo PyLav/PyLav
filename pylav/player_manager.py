@@ -93,7 +93,6 @@ class PlayerManager:
             name="update_bot_activity",
             coalesce=True,
             id=f"{self.bot.user.id}-update_bot_activity",
-            misfire_grace_time=None,
         )
 
     async def destroy(self, guild_id: int, requester: discord.Member | None):
@@ -298,14 +297,14 @@ class PlayerManager:
         """
         if await LibConfigModel(bot=self.bot.user.id, id=1).get_update_bot_activity():
             playing_players = len(self.playing_players)
-            if playing_players > 1 and (
-                (not self.bot.activity) or f"Playing in {playing_players} servers" not in self.bot.activity.name
-            ):
-                await self.bot.change_presence(
-                    activity=discord.Activity(
-                        type=discord.ActivityType.listening, name=f"Music in {playing_players} servers"
+            if playing_players > 1:
+                if (not self.bot.activity) or f"Music in {playing_players} servers" not in self.bot.activity.name:
+                    LOGGER.debug("Updating bot activity to %s", f"Listening to Music in {playing_players} servers")
+                    await self.bot.change_presence(
+                        activity=discord.Activity(
+                            type=discord.ActivityType.listening, name=f"Music in {playing_players} servers"
+                        )
                     )
-                )
             elif playing_players == 1:
                 current_player = self.playing_players[0]
                 if current_player.current is None:
@@ -315,6 +314,7 @@ class PlayerManager:
                 )
                 if self.bot.activity and track_name in self.bot.activity.name:
                     return
+                LOGGER.debug("Updating bot activity to %s", f"Listening to {track_name}")
                 await self.bot.change_presence(
                     activity=discord.Activity(
                         type=discord.ActivityType.listening,
@@ -327,4 +327,5 @@ class PlayerManager:
                     )
                 )
             elif playing_players == 0 and self.bot.activity:
+                LOGGER.debug("Removing bot activity")
                 await self.bot.change_presence(activity=None)
