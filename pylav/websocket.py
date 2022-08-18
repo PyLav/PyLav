@@ -362,14 +362,15 @@ class WebSocket:
 
         event_type = data["type"]
         if event_type == "TrackEndEvent":
+            from pylav.query import Query
+            from pylav.tracks import Track
+
             requester = None
             track = None
             if player.current and player.current.track == data["track"]:
                 player.current.timestamp = 0
                 requester = player.current.requester
                 track = player.current
-            from pylav.query import Query
-            from pylav.tracks import Track
 
             event = TrackEndEvent(
                 player,
