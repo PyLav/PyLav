@@ -45,17 +45,6 @@ class PlayerManager:
         self.bot = lavalink.bot
         self.players: dict[int, Player] = {}
         self.default_player_class = player
-        self.client.scheduler.add_job(
-            self.update_bot_activity,
-            trigger="interval",
-            seconds=5,
-            max_instances=1,
-            replace_existing=True,
-            name="update_bot_activity",
-            coalesce=True,
-            id=f"{self.bot.user.id}-update_bot_activity",
-            misfire_grace_time=None,
-        )
 
     def __len__(self):
         return len(self.players)
@@ -95,6 +84,17 @@ class PlayerManager:
 
     async def initialize(self):
         self._global_player_config = await self.client.player_config_manager.get_global_config()
+        self.client.scheduler.add_job(
+            self.update_bot_activity,
+            trigger="interval",
+            seconds=5,
+            max_instances=1,
+            replace_existing=True,
+            name="update_bot_activity",
+            coalesce=True,
+            id=f"{self.bot.user.id}-update_bot_activity",
+            misfire_grace_time=None,
+        )
 
     async def destroy(self, guild_id: int, requester: discord.Member | None):
         """
