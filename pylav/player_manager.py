@@ -9,7 +9,7 @@ import discord
 from pylav._logging import getLogger
 from pylav.events import PlayerConnectedEvent
 from pylav.player import Player
-from pylav.sql.models import PlayerModel, PlayerStateModel
+from pylav.sql.models import LibConfigModel, PlayerModel, PlayerStateModel
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -42,8 +42,20 @@ class PlayerManager:
             raise ValueError("Player must implement Player.")
 
         self.client = lavalink
+        self.bot = lavalink.bot
         self.players: dict[int, Player] = {}
         self.default_player_class = player
+        self.client.scheduler.add_job(
+            self.update_bot_activity,
+            trigger="interval",
+            seconds=5,
+            max_instances=1,
+            replace_existing=True,
+            name="update_bot_activity",
+            coalesce=True,
+            id=f"{self.bot.user.id}-update_bot_activity",
+            misfire_grace_time=None,
+        )
 
     def __len__(self):
         return len(self.players)
@@ -279,3 +291,40 @@ class PlayerManager:
             for guild_id in self.players
         ]
         await asyncio.gather(*tasks, return_exceptions=True)
+
+    async def update_bot_activity(self) -> None:
+        """
+        Updates the bot's activity.
+        """
+        if await LibConfigModel(bot=self.bot.user.id, id=1).get_update_bot_activity():
+            playing_players = len(self.playing_players)
+            if playing_players > 1 and (
+                (not self.bot.activity) or f"Playing in {playing_players} servers" not in self.bot.activity.name
+            ):
+                await self.bot.change_presence(
+                    activity=discord.Activity(
+                        type=discord.ActivityType.listening, name=f"Music in {playing_players} servers"
+                    )
+                )
+            elif playing_players == 1:
+                current_player = self.playing_players[0]
+                if current_player.current is None:
+                    return
+                track_name = await current_player.current.get_track_display_name(
+                    max_length=40, author=True, unformatted=True
+                )
+                if self.bot.activity and track_name in self.bot.activity.name:
+                    return
+                await self.bot.change_presence(
+                    activity=discord.Activity(
+                        type=discord.ActivityType.listening,
+                        name=track_name,
+                        url=current_player.current.uri
+                        if not (
+                            (query := await current_player.current.query()) and not (query.is_local or query.is_speak)
+                        )
+                        else None,
+                    )
+                )
+            elif playing_players == 0 and self.bot.activity:
+                await self.bot.change_presence(activity=None)

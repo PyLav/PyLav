@@ -48,7 +48,7 @@ from pylav.exceptions import NoNodeWithRequestFunctionalityAvailable, TrackNotFo
 from pylav.filters import ChannelMix, Distortion, Equalizer, Karaoke, LowPass, Rotation, Timescale, Vibrato, Volume
 from pylav.filters.tremolo import Tremolo
 from pylav.query import Query
-from pylav.sql.models import LibConfigModel, PlayerModel, PlayerStateModel, PlaylistModel
+from pylav.sql.models import PlayerModel, PlayerStateModel, PlaylistModel
 from pylav.tracks import Track
 from pylav.types import BotT, InteractionT
 from pylav.utils import AsyncIter, PlayerQueue, SegmentCategory, TrackHistoryQueue, format_time
@@ -741,7 +741,6 @@ class Player(VoiceProtocol):
             options["skipSegments"] = track.skip_segments
         await self.node.send(op="play", guildId=self.guild_id, track=track.track, **options)
         self.node.dispatch_event(TrackPreviousRequestedEvent(self, requester, track))
-        await self.update_bot_activity()
 
     async def quick_play(
         self,
@@ -785,7 +784,6 @@ class Player(VoiceProtocol):
             options["skipSegments"] = track.skip_segments
         await self.node.send(op="play", guildId=self.guild_id, track=track.track, **options)
         self.node.dispatch_event(QuickPlayEvent(self, requester, track))
-        await self.update_bot_activity()
 
     def next(self, requester: discord.Member = None, node: Node = None) -> Coroutine[Any, Any, None]:
         return self.play(None, None, requester or self.bot.user, node=node)  # type: ignore
@@ -885,7 +883,6 @@ class Player(VoiceProtocol):
                     self.history.clear()
                     self.last_track = None
                     self.node.dispatch_event(QueueEndEvent(self))
-                    await self.update_bot_activity()
                     return
             else:
                 track = await self.queue.get()
@@ -942,7 +939,6 @@ class Player(VoiceProtocol):
         await self.node.send(op="play", guildId=self.guild_id, track=track.track, **options)
         if auto_play:
             self.node.dispatch_event(TrackAutoPlayEvent(player=self, track=track))
-        await self.update_bot_activity()
 
     async def resume(self, requester: discord.Member = None):
         options = {}
@@ -955,7 +951,6 @@ class Player(VoiceProtocol):
         options["noReplace"] = False
         await self.node.send(op="play", guildId=self.guild_id, track=self.current.track, **options)
         self.node.dispatch_event(PlayerResumedEvent(player=self, requester=requester or self.client.user.id))
-        await self.update_bot_activity()
 
     async def skip(self, requester: discord.Member) -> None:
         """Plays the next track in the queue, if any."""
@@ -1110,43 +1105,6 @@ class Player(VoiceProtocol):
             self.last_track = event.track
             self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
 
-    async def update_bot_activity(self, forced: bool = False) -> None:
-        """
-        Updates the bot's activity.
-        """
-        if await LibConfigModel(bot=self.bot.user.id, id=1).get_update_bot_activity():
-            playing_players = len(self.player_manager.playing_players)
-            if playing_players > 1 and (
-                (not self.bot.activity) or f"Playing in {playing_players} servers" not in self.bot.activity.name
-            ):
-                await self.bot.change_presence(
-                    activity=discord.Activity(
-                        type=discord.ActivityType.listening, name=f"Music in {playing_players} servers"
-                    )
-                )
-            elif playing_players == 1:
-                current_player = self.player_manager.playing_players[0]
-                if current_player.current is None:
-                    return
-                track_name = await current_player.current.get_track_display_name(
-                    max_length=40, author=True, unformatted=True
-                )
-                if self.bot.activity and track_name in self.bot.activity.name:
-                    return
-                await self.bot.change_presence(
-                    activity=discord.Activity(
-                        type=discord.ActivityType.listening,
-                        name=track_name,
-                        url=self.current.uri
-                        if not (
-                            (query := await current_player.current.query()) and not (query.is_local or query.is_speak)
-                        )
-                        else None,
-                    )
-                )
-            elif playing_players == 0 and (forced or self.bot.activity):
-                await self.bot.change_presence(activity=None)
-
     async def _update_state(self, state: dict) -> None:
         """
         Updates the position of the player.
@@ -1272,7 +1230,6 @@ class Player(VoiceProtocol):
                 job_id=f"{self.bot.user.id}-{self.guild.id}-auto_pause_task"
             )
             self.player_manager.client.scheduler.remove_job(job_id=f"{self.bot.user.id}-{self.guild.id}-auto_save_task")
-            await self.update_bot_activity(True)
             self.cleanup()
 
     async def stop(self, requester: discord.Member) -> None:
@@ -2130,4 +2087,3 @@ class Player(VoiceProtocol):
         self.node.dispatch_event(PlayerRestoredEvent(self, requester))
         self.stopped = (not self.autoplay_enabled) and not self.queue.qsize() and not self.current
         LOGGER.info("Player restored - %s", self)
-        await self.update_bot_activity()
