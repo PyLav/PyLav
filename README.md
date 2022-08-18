@@ -2,6 +2,7 @@
 [![GitHub license](https://img.shields.io/github/license/Drapersniper/Py-Lav.svg)](https://github.com/Drapersniper/Py-Lav/blob/master/LICENSE)
 [![Support Server](https://img.shields.io/discord/970987707834720266)](https://discord.com/invite/Sjh2TSCYQB)
 [![PyPi](https://img.shields.io/pypi/v/Py-Lav?style=plastic)](https://pypi.org/project/Py-Lav/)
+[![Documentation Status](https://readthedocs.org/projects/pylav/badge/?version=latest)](https://pylav.readthedocs.io/en/latest/?badge=latest)
 
 # Documentation
 ### Installation

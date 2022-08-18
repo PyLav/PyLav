@@ -20,9 +20,14 @@ class Event:
 
 
 class QueueEndEvent(Event):
-    """
-    This event is dispatched when there are no more songs in the queue.
+    """This event is dispatched when there are no more songs in the queue.
+
     Attributes
+    ----------
+    player: :class:`Player`
+        The player that has no more songs in queue.
+
+    Parameters
     ----------
     player: :class:`Player`
         The player that has no more songs in queue.
@@ -35,18 +40,31 @@ class QueueEndEvent(Event):
 
 
 class TrackStuckEvent(Event):
-    """
-    This event is dispatched when the currently playing track is stuck.
+    """This event is dispatched when the currently playing track is stuck.
     This normally has something to do with the stream you are playing
     and not Lavalink itself.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player that has the playing track being stuck.
     track: :class:`Track`
         The track is stuck from playing.
     threshold: :class:`int`
         The amount of time the track had while being stuck.
+    node: :class:`Node`
+        The node that the track is stuck on.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player that has the playing track being stuck.
+    track: :class:`Track`
+        The track is stuck from playing.
+    threshold: :class:`int`
+        The amount of time the track had while being stuck.
+    node: :class:`Node`
+        The node that the stuck track is playing on.
     """
 
     __slots__ = ("player", "track", "threshold", "node")
@@ -59,16 +77,29 @@ class TrackStuckEvent(Event):
 
 
 class TrackExceptionEvent(Event):
-    """
-    This event is dispatched when an exception occurs while playing a track.
+    """This event is dispatched when an exception occurs while playing a track.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player that had the exception occur while playing a track.
     track: :class:`Track`
         The track that had the exception while playing.
     exception: :class:`Exception`
         The type of exception that the track had while playing.
+    node: :class:`Node`
+        The node that the exception occurred on.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player that had the exception occur while playing a track.
+    track: :class:`Track`
+        The track that had the exception while playing.
+    exception: :class:`Exception`
+        The type of exception that the track had while playing.
+    node: :class:`Node`
+        The node that the exception occurred on.
     """
 
     __slots__ = ("player", "track", "exception", "node")
@@ -81,16 +112,29 @@ class TrackExceptionEvent(Event):
 
 
 class TrackEndEvent(Event):
-    """
-    This event is dispatched when the player finished playing a track.
+    """This event is dispatched when the player finished playing a track.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player that finished playing a track.
     track: :class:`Track`
         The track that finished playing.
     reason: :class:`str`
         The reason why the track stopped playing.
+    node: :class:`Node`
+        The node that the track finished playing on.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player that finished playing a track.
+    track: :class:`Track`
+        The track that finished playing.
+    reason: :class:`str`
+        The reason why the track stopped playing.
+    node: :class:`Node`
+        The node that the track finished playing on.
     """
 
     __slots__ = ("player", "track", "reason", "node")
@@ -103,14 +147,35 @@ class TrackEndEvent(Event):
 
 
 class TrackStartEvent(Event):
-    """
-    This event is dispatched when the player starts to play a track.
+    """This event is dispatched when the player starts to play a track.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player that started to play a track.
     track: :class:`Track`
         The track that started playing.
+    url: :class:`str`
+        The url of the track that started playing.
+    identifier: :class:`str`
+        The identifier of the track that started playing.
+    duration: :class:`int`
+        The duration of the track that started playing.
+    title: :class:`str`
+        The title of the track that started playing.
+    author: :class:`str`
+        The author of the track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
     """
 
     __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
@@ -127,14 +192,21 @@ class TrackStartEvent(Event):
 
 
 class TrackAutoPlayEvent(Event):
-    """
-    This event is dispatched when the player starts to play a track.
+    """This event is dispatched when the player starts to play a track.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player that started to play a track.
     track: :class:`Track`
         The track that started playing.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing
     """
 
     __slots__ = ("player", "track")
@@ -145,14 +217,25 @@ class TrackAutoPlayEvent(Event):
 
 
 class TrackResumedEvent(Event):
-    """
-    This event is dispatched when the player resumes playing a track.
+    """This event is dispatched when the player resumes playing a track.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player that resumed playing a track.
     track: :class:`Track`
         The track that resumed playing.
+    requester: :class:`discord.Member`
+        The member that requested the track to resume playing.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player that resumed playing a track.
+    track: :class:`Track`
+        The track that resumed playing.
+    requester: :class:`discord.Member`
+        The member that requested the track to resume playing.
     """
 
     __slots__ = ("player", "track", "requester")
@@ -164,263 +247,923 @@ class TrackResumedEvent(Event):
 
 
 class TrackStartYouTubeEvent(TrackStartEvent):
-    """
-    This event is dispatched when the player starts to play a YouTube track.
+    """This event is dispatched when the player starts to play a YouTube track.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player that started to play a track.
     track: :class:`Track`
         The track that started playing.
+    url: :class:`str`
+        The url of the track that started playing.
+    identifier: :class:`str`
+        The identifier of the track that started playing.
+    duration: :class:`int`
+        The duration of the track that started playing.
+    title: :class:`str`
+        The title of the track that started playing.
+    author: :class:`str`
+        The author of the track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
     """
+
+    __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
+
+    def __init__(self, player: Player, track: Track, node: Node):
+        super().__init__(player, track, node)
+        self.url = track.uri
+        self.identifier = track.identifier
+        self.duration = track.duration
+        self.title = track.title
+        self.author = track.author
 
 
 class TrackStartClypitEvent(TrackStartEvent):
-    """
-    This event is dispatched when the player starts to play a Clyp.it track.
+    """This event is dispatched when the player starts to play a Clyp.it track.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player that started to play a track.
     track: :class:`Track`
         The track that started playing.
+    url: :class:`str`
+        The url of the track that started playing.
+    identifier: :class:`str`
+        The identifier of the track that started playing.
+    duration: :class:`int`
+        The duration of the track that started playing.
+    title: :class:`str`
+        The title of the track that started playing.
+    author: :class:`str`
+        The author of the track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
     """
+
+    __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
+
+    def __init__(self, player: Player, track: Track, node: Node):
+        super().__init__(player, track, node)
+        self.url = track.uri
+        self.identifier = track.identifier
+        self.duration = track.duration
+        self.title = track.title
+        self.author = track.author
 
 
 class TrackStartGetYarnEvent(TrackStartEvent):
-    """
-    This event is dispatched when the player starts to play a GetYarn track.
+    """This event is dispatched when the player starts to play a GetYarn track.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player that started to play a track.
     track: :class:`Track`
         The track that started playing.
+    url: :class:`str`
+        The url of the track that started playing.
+    identifier: :class:`str`
+        The identifier of the track that started playing.
+    duration: :class:`int`
+        The duration of the track that started playing.
+    title: :class:`str`
+        The title of the track that started playing.
+    author: :class:`str`
+        The author of the track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
     """
+
+    __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
+
+    def __init__(self, player: Player, track: Track, node: Node):
+        super().__init__(player, track, node)
+        self.url = track.uri
+        self.identifier = track.identifier
+        self.duration = track.duration
+        self.title = track.title
+        self.author = track.author
 
 
 class TrackStartMixCloudEvent(TrackStartEvent):
-    """
-    This event is dispatched when the player starts to play a MixCloud track.
+    """This event is dispatched when the player starts to play a MixCloud track.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player that started to play a track.
     track: :class:`Track`
         The track that started playing.
+    url: :class:`str`
+        The url of the track that started playing.
+    identifier: :class:`str`
+        The identifier of the track that started playing.
+    duration: :class:`int`
+        The duration of the track that started playing.
+    title: :class:`str`
+        The title of the track that started playing.
+    author: :class:`str`
+        The author of the track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
     """
+
+    __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
+
+    def __init__(self, player: Player, track: Track, node: Node):
+        super().__init__(player, track, node)
+        self.url = track.uri
+        self.identifier = track.identifier
+        self.duration = track.duration
+        self.title = track.title
+        self.author = track.author
 
 
 class TrackStartOCRMixEvent(TrackStartEvent):
-    """
-    This event is dispatched when the player starts to play a OCR Mix track.
+    """This event is dispatched when the player starts to play a OCR Mix track.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player that started to play a track.
     track: :class:`Track`
         The track that started playing.
+    url: :class:`str`
+        The url of the track that started playing.
+    identifier: :class:`str`
+        The identifier of the track that started playing.
+    duration: :class:`int`
+        The duration of the track that started playing.
+    title: :class:`str`
+        The title of the track that started playing.
+    author: :class:`str`
+        The author of the track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
     """
+
+    __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
+
+    def __init__(self, player: Player, track: Track, node: Node):
+        super().__init__(player, track, node)
+        self.url = track.uri
+        self.identifier = track.identifier
+        self.duration = track.duration
+        self.title = track.title
+        self.author = track.author
 
 
 class TrackStartPornHubEvent(TrackStartEvent):
-    """
-    This event is dispatched when the player starts to play a Pornhub track.
+    """This event is dispatched when the player starts to play a Pornhub track.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player that started to play a track.
     track: :class:`Track`
         The track that started playing.
+    url: :class:`str`
+        The url of the track that started playing.
+    identifier: :class:`str`
+        The identifier of the track that started playing.
+    duration: :class:`int`
+        The duration of the track that started playing.
+    title: :class:`str`
+        The title of the track that started playing.
+    author: :class:`str`
+        The author of the track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
     """
+
+    __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
+
+    def __init__(self, player: Player, track: Track, node: Node):
+        super().__init__(player, track, node)
+        self.url = track.uri
+        self.identifier = track.identifier
+        self.duration = track.duration
+        self.title = track.title
+        self.author = track.author
 
 
 class TrackStartRedditEvent(TrackStartEvent):
-    """
-    This event is dispatched when the player starts to play a Reddit track.
+    """This event is dispatched when the player starts to play a Reddit track.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player that started to play a track.
     track: :class:`Track`
         The track that started playing.
+    url: :class:`str`
+        The url of the track that started playing.
+    identifier: :class:`str`
+        The identifier of the track that started playing.
+    duration: :class:`int`
+        The duration of the track that started playing.
+    title: :class:`str`
+        The title of the track that started playing.
+    author: :class:`str`
+        The author of the track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
     """
+
+    __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
+
+    def __init__(self, player: Player, track: Track, node: Node):
+        super().__init__(player, track, node)
+        self.url = track.uri
+        self.identifier = track.identifier
+        self.duration = track.duration
+        self.title = track.title
+        self.author = track.author
 
 
 class TrackStartSoundgasmEvent(TrackStartEvent):
-    """
-    This event is dispatched when the player starts to play a Soundgasm track.
+    """This event is dispatched when the player starts to play a Soundgasm track.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player that started to play a track.
     track: :class:`Track`
         The track that started playing.
+    url: :class:`str`
+        The url of the track that started playing.
+    identifier: :class:`str`
+        The identifier of the track that started playing.
+    duration: :class:`int`
+        The duration of the track that started playing.
+    title: :class:`str`
+        The title of the track that started playing.
+    author: :class:`str`
+        The author of the track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
     """
+
+    __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
+
+    def __init__(self, player: Player, track: Track, node: Node):
+        super().__init__(player, track, node)
+        self.url = track.uri
+        self.identifier = track.identifier
+        self.duration = track.duration
+        self.title = track.title
+        self.author = track.author
 
 
 class TrackStartTikTokEvent(TrackStartEvent):
-    """
-    This event is dispatched when the player starts to play a TikTok track.
+    """This event is dispatched when the player starts to play a TikTok track.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player that started to play a track.
     track: :class:`Track`
         The track that started playing.
+    url: :class:`str`
+        The url of the track that started playing.
+    identifier: :class:`str`
+        The identifier of the track that started playing.
+    duration: :class:`int`
+        The duration of the track that started playing.
+    title: :class:`str`
+        The title of the track that started playing.
+    author: :class:`str`
+        The author of the track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
     """
+
+    __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
+
+    def __init__(self, player: Player, track: Track, node: Node):
+        super().__init__(player, track, node)
+        self.url = track.uri
+        self.identifier = track.identifier
+        self.duration = track.duration
+        self.title = track.title
+        self.author = track.author
 
 
 class TrackStartSpotifyEvent(TrackStartEvent):
-    """
-    This event is dispatched when the player starts to play a Spotify track.
+    """This event is dispatched when the player starts to play a Spotify track.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player that started to play a track.
     track: :class:`Track`
         The track that started playing.
+    url: :class:`str`
+        The url of the track that started playing.
+    identifier: :class:`str`
+        The identifier of the track that started playing.
+    duration: :class:`int`
+        The duration of the track that started playing.
+    title: :class:`str`
+        The title of the track that started playing.
+    author: :class:`str`
+        The author of the track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
     """
+
+    __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
+
+    def __init__(self, player: Player, track: Track, node: Node):
+        super().__init__(player, track, node)
+        self.url = track.uri
+        self.identifier = track.identifier
+        self.duration = track.duration
+        self.title = track.title
+        self.author = track.author
 
 
 class TrackStartAppleMusicEvent(TrackStartEvent):
-    """
-    This event is dispatched when the player starts to play a Apple Music track.
+    """This event is dispatched when the player starts to play a Apple Music track.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player that started to play a track.
     track: :class:`Track`
         The track that started playing.
+    url: :class:`str`
+        The url of the track that started playing.
+    identifier: :class:`str`
+        The identifier of the track that started playing.
+    duration: :class:`int`
+        The duration of the track that started playing.
+    title: :class:`str`
+        The title of the track that started playing.
+    author: :class:`str`
+        The author of the track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
     """
+
+    __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
+
+    def __init__(self, player: Player, track: Track, node: Node):
+        super().__init__(player, track, node)
+        self.url = track.uri
+        self.identifier = track.identifier
+        self.duration = track.duration
+        self.title = track.title
+        self.author = track.author
 
 
 class TrackStartBandcampEvent(TrackStartEvent):
-    """
-    This event is dispatched when the player starts to play a Bandcamp track.
+    """This event is dispatched when the player starts to play a Bandcamp track.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player that started to play a track.
     track: :class:`Track`
         The track that started playing.
+    url: :class:`str`
+        The url of the track that started playing.
+    identifier: :class:`str`
+        The identifier of the track that started playing.
+    duration: :class:`int`
+        The duration of the track that started playing.
+    title: :class:`str`
+        The title of the track that started playing.
+    author: :class:`str`
+        The author of the track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
     """
+
+    __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
+
+    def __init__(self, player: Player, track: Track, node: Node):
+        super().__init__(player, track, node)
+        self.url = track.uri
+        self.identifier = track.identifier
+        self.duration = track.duration
+        self.title = track.title
+        self.author = track.author
 
 
 class TrackStartYouTubeMusicEvent(TrackStartEvent):
-    """
-    This event is dispatched when the player starts to play a YouTube Music track.
+    """This event is dispatched when the player starts to play a YouTube Music track.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player that started to play a track.
     track: :class:`Track`
         The track that started playing.
+    url: :class:`str`
+        The url of the track that started playing.
+    identifier: :class:`str`
+        The identifier of the track that started playing.
+    duration: :class:`int`
+        The duration of the track that started playing.
+    title: :class:`str`
+        The title of the track that started playing.
+    author: :class:`str`
+        The author of the track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
     """
+
+    __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
+
+    def __init__(self, player: Player, track: Track, node: Node):
+        super().__init__(player, track, node)
+        self.url = track.uri
+        self.identifier = track.identifier
+        self.duration = track.duration
+        self.title = track.title
+        self.author = track.author
 
 
 class TrackStartSoundCloudEvent(TrackStartEvent):
-    """
-    This event is dispatched when the player starts to play a SoundCloud track.
+    """This event is dispatched when the player starts to play a SoundCloud track.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player that started to play a track.
     track: :class:`Track`
         The track that started playing.
+    url: :class:`str`
+        The url of the track that started playing.
+    identifier: :class:`str`
+        The identifier of the track that started playing.
+    duration: :class:`int`
+        The duration of the track that started playing.
+    title: :class:`str`
+        The title of the track that started playing.
+    author: :class:`str`
+        The author of the track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
     """
+
+    __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
+
+    def __init__(self, player: Player, track: Track, node: Node):
+        super().__init__(player, track, node)
+        self.url = track.uri
+        self.identifier = track.identifier
+        self.duration = track.duration
+        self.title = track.title
+        self.author = track.author
 
 
 class TrackStartTwitchEvent(TrackStartEvent):
-    """
-    This event is dispatched when the player starts to play a Twitch track.
+    """This event is dispatched when the player starts to play a Twitch track.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player that started to play a track.
     track: :class:`Track`
         The track that started playing.
+    url: :class:`str`
+        The url of the track that started playing.
+    identifier: :class:`str`
+        The identifier of the track that started playing.
+    duration: :class:`int`
+        The duration of the track that started playing.
+    title: :class:`str`
+        The title of the track that started playing.
+    author: :class:`str`
+        The author of the track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
     """
+
+    __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
+
+    def __init__(self, player: Player, track: Track, node: Node):
+        super().__init__(player, track, node)
+        self.url = track.uri
+        self.identifier = track.identifier
+        self.duration = track.duration
+        self.title = track.title
+        self.author = track.author
 
 
 class TrackStartHTTPEvent(TrackStartEvent):
-    """
-    This event is dispatched when the player starts to play a HTTP track.
+    """This event is dispatched when the player starts to play a HTTP track.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player that started to play a track.
     track: :class:`Track`
         The track that started playing.
+    url: :class:`str`
+        The url of the track that started playing.
+    identifier: :class:`str`
+        The identifier of the track that started playing.
+    duration: :class:`int`
+        The duration of the track that started playing.
+    title: :class:`str`
+        The title of the track that started playing.
+    author: :class:`str`
+        The author of the track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
     """
+
+    __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
+
+    def __init__(self, player: Player, track: Track, node: Node):
+        super().__init__(player, track, node)
+        self.url = track.uri
+        self.identifier = track.identifier
+        self.duration = track.duration
+        self.title = track.title
+        self.author = track.author
 
 
 class TrackStartLocalFileEvent(TrackStartEvent):
-    """
-    This event is dispatched when the player starts to play a local file track.
+    """This event is dispatched when the player starts to play a local file track.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player that started to play a track.
     track: :class:`Track`
         The track that started playing.
+    url: :class:`str`
+        The url of the track that started playing.
+    identifier: :class:`str`
+        The identifier of the track that started playing.
+    duration: :class:`int`
+        The duration of the track that started playing.
+    title: :class:`str`
+        The title of the track that started playing.
+    author: :class:`str`
+        The author of the track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
     """
+
+    __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
+
+    def __init__(self, player: Player, track: Track, node: Node):
+        super().__init__(player, track, node)
+        self.url = track.uri
+        self.identifier = track.identifier
+        self.duration = track.duration
+        self.title = track.title
+        self.author = track.author
 
 
 class TrackStartNicoNicoEvent(TrackStartEvent):
-    """
-    This event is dispatched when the player starts to play a NicoNico track.
+    """This event is dispatched when the player starts to play a NicoNico track.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player that started to play a track.
     track: :class:`Track`
         The track that started playing.
+    url: :class:`str`
+        The url of the track that started playing.
+    identifier: :class:`str`
+        The identifier of the track that started playing.
+    duration: :class:`int`
+        The duration of the track that started playing.
+    title: :class:`str`
+        The title of the track that started playing.
+    author: :class:`str`
+        The author of the track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
     """
+
+    __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
+
+    def __init__(self, player: Player, track: Track, node: Node):
+        super().__init__(player, track, node)
+        self.url = track.uri
+        self.identifier = track.identifier
+        self.duration = track.duration
+        self.title = track.title
+        self.author = track.author
 
 
 class TrackStartVimeoEvent(TrackStartEvent):
-    """
-    This event is dispatched when the player starts to play a Vimeo track.
+    """This event is dispatched when the player starts to play a Vimeo track.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player that started to play a track.
     track: :class:`Track`
         The track that started playing.
+    url: :class:`str`
+        The url of the track that started playing.
+    identifier: :class:`str`
+        The identifier of the track that started playing.
+    duration: :class:`int`
+        The duration of the track that started playing.
+    title: :class:`str`
+        The title of the track that started playing.
+    author: :class:`str`
+        The author of the track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
     """
+
+    __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
+
+    def __init__(self, player: Player, track: Track, node: Node):
+        super().__init__(player, track, node)
+        self.url = track.uri
+        self.identifier = track.identifier
+        self.duration = track.duration
+        self.title = track.title
+        self.author = track.author
 
 
 class TrackStartSpeakEvent(TrackStartEvent):
-    """
-    This event is dispatched when t he player starts to play a Speak track.
+    """This event is dispatched when t he player starts to play a Speak track.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player that started to play a track.
     track: :class:`Track`
         The track that started playing.
+    url: :class:`str`
+        The url of the track that started playing.
+    identifier: :class:`str`
+        The identifier of the track that started playing.
+    duration: :class:`int`
+        The duration of the track that started playing.
+    title: :class:`str`
+        The title of the track that started playing.
+    author: :class:`str`
+        The author of the track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
     """
+
+    __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
+
+    def __init__(self, player: Player, track: Track, node: Node):
+        super().__init__(player, track, node)
+        self.url = track.uri
+        self.identifier = track.identifier
+        self.duration = track.duration
+        self.title = track.title
+        self.author = track.author
 
 
 class TrackStartGCTTSEvent(TrackStartEvent):
-    """
-    This event is dispatched when the player starts to play a Google Cloud TTS track.
+    """This event is dispatched when the player starts to play a Google Cloud TTS track.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player that started to play a track.
     track: :class:`Track`
         The track that started playing.
+    url: :class:`str`
+        The url of the track that started playing.
+    identifier: :class:`str`
+        The identifier of the track that started playing.
+    duration: :class:`int`
+        The duration of the track that started playing.
+    title: :class:`str`
+        The title of the track that started playing.
+    author: :class:`str`
+        The author of the track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    node: :class:`Node`
+        The node that the track started playing on.
     """
+
+    __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
+
+    def __init__(self, player: Player, track: Track, node: Node):
+        super().__init__(player, track, node)
+        self.url = track.uri
+        self.identifier = track.identifier
+        self.duration = track.duration
+        self.title = track.title
+        self.author = track.author
 
 
 class PlayerUpdateEvent(Event):
-    """
-    This event is dispatched when the player's progress changes.
+    """This event is dispatched when the player's progress changes.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
+        The player that's progress was updated.
+    position: :class:`int`
+        The position of the player that was changed to.
+    timestamp: :class:`int`
+        The timestamp that the player is currently on.
+
+    Parameters
+    ----------
+    player: :class:`Player`
         The player that's progress was updated.
     position: :class:`int`
         The position of the player that was changed to.
@@ -437,9 +1180,18 @@ class PlayerUpdateEvent(Event):
 
 
 class NodeDisconnectedEvent(Event):
-    """
-    This event is dispatched when a node disconnects and becomes unavailable.
+    """This event is dispatched when a node disconnects and becomes unavailable.
+
     Attributes
+    ----------
+    node: :class:`Node`
+        The node that was disconnected from.
+    code: :class:`int`
+        The status code of the event.
+    reason: :class:`str`
+        The reason of why the node was disconnected.
+
+    Parameters
     ----------
     node: :class:`Node`
         The node that was disconnected from.
@@ -458,9 +1210,14 @@ class NodeDisconnectedEvent(Event):
 
 
 class NodeConnectedEvent(Event):
-    """
-    This event is dispatched when Lavalink.py successfully connects to a node.
+    """This event is dispatched when Lavalink.py successfully connects to a node.
+
     Attributes
+    ----------
+    node: :class:`Node`
+        The node that was successfully connected to.
+
+    Parameters
     ----------
     node: :class:`Node`
         The node that was successfully connected to.
@@ -473,13 +1230,23 @@ class NodeConnectedEvent(Event):
 
 
 class NodeChangedEvent(Event):
-    """
-    This event is dispatched when a player changes to another node.
+    """This event is dispatched when a player changes to another node.
     Keep in mind this event can be dispatched multiple times if a node
     disconnects and the load balancer moves players to a new node.
+
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
+        The player whose node was changed.
+    old_node: :class:`Node`
+        The node the player was moved from.
+    new_node: :class:`Node`
+        The node the player was moved to.
+
+    Parameters
+    ----------
+    player: :class:`Player`
         The player whose node was changed.
     old_node: :class:`Node`
         The node the player was moved from.
@@ -496,13 +1263,13 @@ class NodeChangedEvent(Event):
 
 
 class WebSocketClosedEvent(Event):
-    """
-    This event is dispatched when an audio websocket to Discord
+    """This event is dispatched when an audio websocket to Discord
     is closed. This can happen for various reasons like an
     expired voice server update.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player whose audio websocket was closed.
     code: :class:`int`
         The node the player was moved from.
@@ -515,6 +1282,20 @@ class WebSocketClosedEvent(Event):
     node: :class:`Node`
         The node the player was in.
 
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player whose audio websocket was closed.
+    code: :class:`int`
+        The node the player was moved from.
+    reason: :class:`str`
+        The node the player was moved to.
+    by_remote: :class:`bool`
+        If the websocket was closed remotely.
+    channel: :class:`discord.channel.VocalGuildChannel`
+        The voice channel the player was in.
+    node: :class:`Node`
+        The node the player was in.
     """
 
     __slots__ = ("player", "code", "reason", "by_remote", "node", "channel")
@@ -537,12 +1318,25 @@ class WebSocketClosedEvent(Event):
 
 
 class SegmentSkippedEvent(Event):
-    """
-    This event is dispatched when a segment is skipped.
+    """This event is dispatched when a segment is skipped.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player whose segment was skipped.
+    segment: :class:`Segment`
+        The segment that was skipped.
+    node: :class:`Node`
+        The node the player was in.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player whose segment was skipped.
+    segment: :class:`Segment`
+        The segment that was skipped.
+    node: :class:`Node`
+        The node the player was in.
     """
 
     __slots__ = ("player", "category", "start", "end", "node")
@@ -554,14 +1348,25 @@ class SegmentSkippedEvent(Event):
 
 
 class SegmentsLoadedEvent(Event):
-    """
-    This event is dispatched when segments are loaded.
+    """This event is dispatched when segments are loaded.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player whose segments were loaded.
     segments: :class:`list` of :class:`Segment`
         The segments that were loaded.
+    node: :class:`Node`
+        The node the player was in.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player whose segments were loaded.
+    segments: :class:`list` of :class:`Segment`
+        The segments that were loaded.
+    node: :class:`Node`
+        The node the player was in.
     """
 
     __slots__ = ("player", "segments", "node")
@@ -573,11 +1378,18 @@ class SegmentsLoadedEvent(Event):
 
 
 class PlayerPausedEvent(Event):
-    """
-    This event is dispatched when a player is paused.
+    """This event is dispatched when a player is paused.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
+        The player whose track was paused.
+    requester: :class:`discord.Member`
+        The user who requested the change.
+
+    Parameters
+    ----------
+    player: :class:`Player`
         The player whose track was paused.
     requester: :class:`discord.Member`
         The user who requested the change.
@@ -591,11 +1403,18 @@ class PlayerPausedEvent(Event):
 
 
 class PlayerStoppedEvent(Event):
-    """
-    This event is dispatched when a player is stopped.
+    """This event is dispatched when a player is stopped.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
+        The player which was stopped.
+    requester: :class:`discord.Member`
+        The user who requested the change.
+
+    Parameters
+    ----------
+    player: :class:`Player`
         The player which was stopped.
     requester: :class:`discord.Member`
         The user who requested the change.
@@ -609,11 +1428,18 @@ class PlayerStoppedEvent(Event):
 
 
 class PlayerResumedEvent(Event):
-    """
-    This event is dispatched when a player is resumed.
+    """This event is dispatched when a player is resumed.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
+        The player whose track was resumed.
+    requester: :class:`discord.Member`
+        The user who requested the change.
+
+    Parameters
+    ----------
+    player: :class:`Player`
         The player whose track was resumed.
     requester: :class:`discord.Member`
         The user who requested the change.
@@ -627,11 +1453,18 @@ class PlayerResumedEvent(Event):
 
 
 class PlayerRestoredEvent(Event):
-    """
-    This event is dispatched when a player is restored.
+    """This event is dispatched when a player is restored.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
+        The player whose track was restored.
+    requester: :class:`discord.Member`
+        The user who requested the change.
+
+    Parameters
+    ----------
+    player: :class:`Player`
         The player whose track was restored.
     requester: :class:`discord.Member`
         The user who requested the change.
@@ -645,9 +1478,22 @@ class PlayerRestoredEvent(Event):
 
 
 class QueueTrackPositionChangedEvent(Event):
-    """
-    This event is dispatched when the position of a track is changed.
+    """This event is dispatched when the position of a track is changed.
+
     Attributes
+    ----------
+    player: :class:`Player`
+        The player whose track position was changed.
+    before: :class:`int`
+        The position of the track before the change.
+    after: :class:`int`
+        The position of the track after the change.
+    requester: :class:`discord.Member`
+        The user who requested the change.
+    track: :class:`Track`
+        The track whose position was changed.
+
+    Parameters
     ----------
     player: :class:`Player`
         The player whose track position was changed.
@@ -672,11 +1518,22 @@ class QueueTrackPositionChangedEvent(Event):
 
 
 class TrackSkippedEvent(Event):
-    """
-    This event is dispatched when a track is skipped.
+    """This event is dispatched when a track is skipped.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
+        The player whose track was skipped.
+    track: :class:`Track`
+        The track that was skipped.
+    requester: :class:`discord.Member`
+        The user who requested the change.
+    position: :class:`float`
+        The position of the track before the skip.
+
+    Parameters
+    ----------
+    player: :class:`Player`
         The player whose track was skipped.
     track: :class:`Track`
         The track that was skipped.
@@ -696,11 +1553,18 @@ class TrackSkippedEvent(Event):
 
 
 class QueueShuffledEvent(Event):
-    """
-    This event is dispatched when the queue is shuffled.
+    """This event is dispatched when the queue is shuffled.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
+        The player whose queue was shuffled.
+    requester: :class:`discord.Member`
+        The user who requested the change.
+
+    Parameters
+    ----------
+    player: :class:`Player`
         The player whose queue was shuffled.
     requester: :class:`discord.Member`
         The user who requested the change.
@@ -714,14 +1578,25 @@ class QueueShuffledEvent(Event):
 
 
 class QueueTracksRemovedEvent(Event):
-    """
-    This event is dispatched when tracks are removed from the queue.
+    """This event is dispatched when tracks are removed from the queue.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player whose queue was shuffled.
     requester: :class:`discord.Member`
         The user who requested the change.
+    tracks: :class:`list` of :class:`Track`
+        The tracks that were removed from the queue.
+
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player whose queue was shuffled.
+    requester: :class:`discord.Member`
+        The user who requested the change.
+    tracks: :class:`list` of :class:`Track`
+        The tracks that were removed from the queue.
     """
 
     __slots__ = ("player", "requester", "tracks")
@@ -733,15 +1608,65 @@ class QueueTracksRemovedEvent(Event):
 
 
 class FiltersAppliedEvent(Event):
-    """
-    This event is dispatched when filters are applied.
+    """This event is dispatched when filters are applied.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player whose queue was shuffled.
     requester: :class:`discord.Member`
         The user who requested the change.
+    volume: :class:`Volume`
+        The volume that was set.
+    equalizer: :class:`Equalizer`
+        The equalizer that was set.
+    karaoke: :class:`Karaoke`
+        The karaoke that was set.
+    timescale: :class:`Timescale`
+        The timescale that was set.
+    tremolo: :class:`Tremolo`
+        The tremolo that was set.
+    vibrato: :class:`Vibrato`
+        The vibrato that was set.
+    rotation: :class:`Rotation`
+        The rotation that was set.
+    distortion: :class:`Distortion`
+        The distortion that was set.
+    low_pass: :class:`Lowpass`
+        The lowpass that was set.
+    channel_mix: :class:`ChannelMix`
+        The channel mix that was set.
+    node: :class:`Node`
+        The node that was changed.
 
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player whose queue was shuffled.
+    requester: :class:`discord.Member`
+        The user who requested the change.
+    volume: :class:`Volume`
+        The volume that was set.
+    equalizer: :class:`Equalizer`
+        The equalizer that was set.
+    karaoke: :class:`Karaoke`
+        The karaoke that was set.
+    timescale: :class:`Timescale`
+        The timescale that was set.
+    tremolo: :class:`Tremolo`
+        The tremolo that was set.
+    vibrato: :class:`Vibrato`
+        The vibrato that was set.
+    rotation: :class:`Rotation`
+        The rotation that was set.
+    distortion: :class:`Distortion`
+        The distortion that was set.
+    low_pass: :class:`Lowpass`
+        The lowpass that was set.
+    channel_mix: :class:`ChannelMix`
+        The channel mix that was set.
+    node: :class:`Node`
+        The node that was changed.
     """
 
     __slots__ = (
@@ -792,15 +1717,18 @@ class FiltersAppliedEvent(Event):
 
 
 class PlayerMovedEvent(Event):
-    """
-    This event is dispatched when the player is moved.
+    """This event is dispatched when the player is moved.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player whose queue was shuffled.
     requester: :class:`discord.Member`
         The user who requested the change.
-
+    before: :class:`discord.channel.VocalGuildChannel`
+        The channel the player was in before the move.
+    after: :class:`discord.channel.VocalGuildChannel`
+        The channel the player is in now.
     """
 
     __slots__ = ("player", "requester", "before", "after")
@@ -819,16 +1747,27 @@ class PlayerMovedEvent(Event):
 
 
 class PlayerDisconnectedEvent(Event):
-    """
-    This event is dispatched when the player is moved.
+    """This event is dispatched when the player is moved.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player whose queue was shuffled.
     requester: :class:`discord.Member`
         The user who requested the change.
+    current_track: :class:`Track`
+        The track that was playing when the player disconnected.
+    position: :class:`int`
+        The position of the track that was playing when the player disconnected.
+    queue: :class:`collections.deque` of :class:`Track`
+        The tracks that are in the queue when the player disconnected.
 
-
+    Parameters
+    ----------
+    player: :class:`Player`
+        The player whose queue was shuffled.
+    requester: :class:`discord.Member`
+        The user who requested the change.
     """
 
     __slots__ = ("player", "requester", "current_track", "position", "queue")
@@ -842,16 +1781,14 @@ class PlayerDisconnectedEvent(Event):
 
 
 class PlayerConnectedEvent(Event):
-    """
-    This event is dispatched when the player is moved.
+    """This event is dispatched when the player is moved.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player whose queue was shuffled.
     requester: :class:`discord.Member`
         The user who requested the change.
-
-
     """
 
     __slots__ = ("player", "requester")
@@ -862,11 +1799,11 @@ class PlayerConnectedEvent(Event):
 
 
 class TrackSeekEvent(Event):
-    """
-    This event is dispatched when the player is moved.
+    """This event is dispatched when the player is moved.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player whose queue was shuffled.
     requester: :class:`discord.Member`
         The user who requested the change.
@@ -890,11 +1827,11 @@ class TrackSeekEvent(Event):
 
 
 class PlayerVolumeChangedEvent(Event):
-    """
-    This event is dispatched when the player is moved.
+    """This event is dispatched when the player is moved.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player whose queue was shuffled.
     requester: :class:`discord.Member`
         The user who requested the change.
@@ -915,11 +1852,11 @@ class PlayerVolumeChangedEvent(Event):
 
 
 class PlayerRepeatEvent(Event):
-    """
-    This event is dispatched when the player is moved.
+    """This event is dispatched when the player is moved.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player whose queue was shuffled.
     requester: :class:`discord.Member`
         The user who requested the change.
@@ -958,11 +1895,11 @@ class PlayerRepeatEvent(Event):
 
 
 class TrackPreviousRequestedEvent(Event):
-    """
-    This event is dispatched when a history track is requested.
+    """This event is dispatched when a history track is requested.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player whose queue was shuffled.
     requester: :class:`discord.Member`
         The user who requested the change.
@@ -979,16 +1916,16 @@ class TrackPreviousRequestedEvent(Event):
 
 
 class TracksRequestedEvent(Event):
-    """
-    This event is dispatched when a track in added to the queue.
+    """This event is dispatched when a track in added to the queue.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player whose queue was shuffled.
     requester: :class:`discord.Member`
         The user who requested the change.
-    tracks: List[:class:`Track`]
-        The track that was sought.
+    tracks: :class:`list` of :class:`Track`
+        The tracks that were added to the queue.
     """
 
     __slots__ = ("player", "requester", "tracks")
@@ -1000,16 +1937,16 @@ class TracksRequestedEvent(Event):
 
 
 class QuickPlayEvent(Event):
-    """
-    This event is dispatched when a track is played with higher priority than the current track.
+    """This event is dispatched when a track is played with higher priority than the current track.
+
     Attributes
     ----------
-    player: :class:`BasePlayer`
+    player: :class:`Player`
         The player whose queue was shuffled.
     requester: :class:`discord.Member`
         The user who requested the change.
-    tracks: List[:class:`Track`]
-        The track that was sought.
+    track: :class:`Track`
+        The track that was played.
     """
 
     __slots__ = ("player", "requester", "track")

@@ -109,6 +109,7 @@ class NodeManager:
     ) -> Node:
         """
         Adds a node to PyLav's node manager.
+
         Parameters
         ----------
         host: :class:`str`
@@ -144,6 +145,11 @@ class NodeManager:
             A dictionary of node settings. Defaults to `None`.
         extras: Optional[:class:`dict`]
             A dictionary of extra settings. Defaults to `{}`.
+
+        Returns
+        -------
+        :class:`Node`
+            The node that was added.
         """
         node = Node(
             manager=self,
@@ -251,46 +257,19 @@ class NodeManager:
         already_attempted_regions: set[str] = None,
         coordinates: tuple[float, float] = None,
     ) -> Node | None:
-        """
-        Finds the best (least used) node in the given region, if applicable.
+        """Finds the best (least used) node in the given region, if applicable.
         Parameters
         ----------
-        region: Optional[:class:`str`]
-            The region to find a node in. Defaults to `None`.
-        not_region: Optional[:class:`str`]
-            The region to exclude from the search. Defaults to `None`.
-        feature: Optional[:class:`str`]
-            The feature to check for. Defaults to `None`.
-        coordinates: Optional[:class:`tuple`[:class:`float`, :class:`float`]]
-            The coordinates to check for. Defaults to `None`.
-
-            Supported capabilities:
-                Built-in:
-                    youtube
-                    soundcloud
-                    twitch
-                    bandcamp
-                    vimeo
-                    http
-                    local
-                With Topis-Source-Managers-Plugin:
-                    spotify
-                    applemusic
-                With DuncteBot-plugin:
-                    getyarn
-                    clypit
-                    tts
-                    pornhub
-                    reddit
-                    ocremix
-                    tiktok
-                    mixcloud
-                With Google Cloud TTS:
-                    gcloud-tts
-                With sponsorblock:
-                    sponsorblock
-        already_attempted_regions: Optional[:class:`set`]
-            A set of regions that have already been attempted. Defaults to `None`.
+        region: :class:`str`
+            The region to use.
+        not_region: :class:`str`
+            The region to exclude.
+        feature: :class:`str`
+            The feature required.
+        already_attempted_regions: :class:`set`[:class:`str`]
+            A set of regions that have already been attempted.
+        coordinates: :class:`tuple`[:class:`float`, :class:`float`]
+            The coordinates to use.
         Returns
         -------
         Optional[:class:`Node`]

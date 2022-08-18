@@ -100,6 +100,40 @@ class NodeConfigManager:
         disabled_sources: list[str] = None,
         yaml: dict = None,
     ) -> NodeModel:
+        """
+        Add a new node to the database.
+
+        Parameters
+        ----------
+        host: str
+            The host of the node.
+        port: int
+            The port of the node.
+        password: str
+            The password of the node.
+        unique_identifier: int
+            The unique identifier of the node.
+        name: str
+            The name of the node.
+        resume_key: str
+            The resume key of the node.
+        resume_timeout: int
+            The resume timeout of the node.
+        reconnect_attempts: int
+            The reconnect attempts of the node.
+        ssl: bool
+            Whether the node is using ssl.
+        search_only: bool
+            Whether the node is search only.
+        managed: bool
+            Whether the node is managed.
+        extras: dict
+            The extras of the node.
+        disabled_sources: list[str]
+            The disabled sources of the node.
+        yaml: dict
+            The yaml of the node.
+        """
         if unique_identifier in self.currently_in_db:
             return await self.get_node_config(unique_identifier)
 

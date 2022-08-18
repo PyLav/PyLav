@@ -79,8 +79,10 @@ class Client(metaclass=_Singleton):
 
     Parameters
     ----------
-    bot : :class:`discord.Client`
+    bot : :class:`BotT`
         The bot instance.
+    cog: :class:`CogT`
+        The cog to register the client to.
     player: Optional[:class:`Player`]
         The class that should be used for the player. Defaults to ``Player``.
         Do not change this unless you know what you are doing!
@@ -95,6 +97,8 @@ class Client(metaclass=_Singleton):
         the player was moved via the fail-over mechanism, the player will still move back to the original
         node when it becomes available. This behaviour can be avoided in custom player implementations by
         setting `self._original_node` to `None` in the `change_node` function.
+    config_folder: Optional[:class:`pathlib.Path`]
+        The path to the config folder. Defaults to ``CONFIG_DIR``.
     """
 
     _local_node_manager: LocalNodeManager

@@ -21,18 +21,23 @@ LOGGER = getLogger("PyLav.PlayerManager")
 
 
 class PlayerManager:
-    """
-    Represents the player manager that contains all the players.
+    """Represents the player manager that contains all the players.
+
     len(x):
         Returns the total amount of cached players.
     iter(x):
         Returns an iterator of all the players cached.
+
     Attributes
     ----------
     players: :class:`dict`
         Cache of all the players that Lavalink has created.
     default_player_class: :class:`BasePlayer`
         The player that the player manager is initialized with.
+    bot: :class:`discord.Client`
+        The client that the player manager is initialized with.
+    client: :class:`Client`
+        The client that the player manager is initialized with.
     """
 
     _global_player_config: PlayerModel
@@ -131,12 +136,12 @@ class PlayerManager:
             await self._restore_player(player_state)
 
     def players(self) -> Iterator[Player]:
-        """Returns an iterator that yields only values."""
+        """Returns an iterator that yields the all :class:`Player`."""
         yield from self.players.values()
 
     def find_all(self, predicate=None):
-        """
-        Returns a list of players that match the given predicate.
+        """Returns a list of players that match the given predicate.
+
         Parameters
         ----------
         predicate: Optional[:class:`function`]
@@ -148,8 +153,8 @@ class PlayerManager:
         return [p for p in self.players.values() if bool(predicate(p))] if predicate else list(self.players.values())
 
     async def remove(self, guild_id: int) -> None:
-        """
-        Removes a player from the internal cache.
+        """Removes a player from the internal cache.
+
         Parameters
         ----------
         guild_id: :class:`int`
