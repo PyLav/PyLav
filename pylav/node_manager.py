@@ -314,9 +314,11 @@ class NodeManager:
                 ]
             else:
                 nodes = self.available_nodes
-        if not nodes:
-            return None
-        return await asyncstdlib.min(nodes, key=operator.attrgetter("penalty"))
+        return (
+            await asyncstdlib.min(nodes, key=operator.attrgetter("penalty"))
+            if nodes
+            else None
+        )
 
     def get_node_by_id(self, unique_identifier: int) -> Node | None:
         """

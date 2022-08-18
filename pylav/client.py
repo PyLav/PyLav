@@ -839,9 +839,7 @@ class Client(metaclass=_Singleton):
             asyncstdlib.filter(operator.attrgetter("available"), self.node_manager.managed_nodes)
         )
 
-        if not available_nodes:
-            return None
-        return random.choice(available_nodes)
+        return random.choice(available_nodes) if available_nodes else None
 
     async def _get_tracks(
         self,
