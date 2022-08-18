@@ -66,7 +66,6 @@ LAVALINK_APP_YML: Final[aiopath.AsyncPath] = LAVALINK_DOWNLOAD_DIR / "applicatio
 
 _RE_READY_LINE: Final[Pattern] = re.compile(rb"Lavalink is ready to accept connections")
 _FAILED_TO_START: Final[Pattern] = re.compile(rb"Web server failed to start\. (.*)")
-_RE_BUILD_LINE: Final[Pattern] = re.compile(rb"Build:\s+(?P<build>\d+|Unknown)")
 
 # Version regexes
 #
@@ -111,10 +110,13 @@ _RE_SEMANTIC_VERSION_LAZY = re.compile(
     r"(?:\+[0-9A-Za-z-]+)?"
 )
 
-LAVALINK_BRANCH_LINE: Final[Pattern] = re.compile(rb"Branch\s+(?P<branch>[\w\-\d_.]+)")
-LAVALINK_JAVA_LINE: Final[Pattern] = re.compile(rb"JVM:\s+(?P<jvm>\d+[.\d+]*)")
-LAVALINK_LAVAPLAYER_LINE: Final[Pattern] = re.compile(rb"Lavaplayer\s+(?P<lavaplayer>\d+[.\d+]*)")
-LAVALINK_BUILD_TIME_LINE: Final[Pattern] = re.compile(rb"Build time:\s+(?P<build_time>\d+[.\d+]*)")
+LAVALINK_BUILD_LINE: Final[Pattern] = re.compile(rb"Build:\s+(?P<build>\d+|Unknown)")
+LAVALINK_BRANCH_LINE: Final[Pattern] = re.compile(rb"Branch\s+(?P<branch>.+?)\n")
+LAVALINK_JAVA_LINE: Final[Pattern] = re.compile(rb"JVM:\s+(?P<jvm>.+?)\n")
+LAVALINK_LAVAPLAYER_LINE: Final[Pattern] = re.compile(rb"Lavaplayer\s+(?P<lavaplayer>.+?)\n")
+LAVALINK_BUILD_TIME_LINE: Final[Pattern] = re.compile(rb"Build time:\s+(?P<build_time>.+?)\n")
+LAVALINK_COMMIT_LINE: Final[Pattern] = re.compile(rb"Commit:\s+(?P<commit>.+?)\n")
+LAVALINK_VERSION_LINE: Final[Pattern] = re.compile(rb"Version:\s+(?P<version>.+?)\n")
 JAR_SERVER_RELEASES = "https://api.github.com/repos/freyacodes/Lavalink/releases"
 
 
@@ -161,6 +163,8 @@ class LocalNodeManager:
     _jvm: ClassVar[str | None] = None
     _lavalink_branch: ClassVar[str | None] = None
     _buildtime: ClassVar[str | None] = None
+    _commit: ClassVar[str | None] = None
+    _version: ClassVar[str | None] = None
     _java_exc: ClassVar[str] = JAVA_EXECUTABLE
 
     def __init__(self, client: Client, timeout: int | None = None, auto_update: bool = True) -> None:
@@ -217,6 +221,7 @@ class LocalNodeManager:
             f"{JAR_SERVER_RELEASES}", headers={"Accept": "application/json"}
         ) as response:
             if response.status != 200:
+                LOGGER.warning("Failed to get latest CI info from GitHub: %s", response.status)
                 self._ci_info["number"] = -1
                 return self._ci_info
             data = await response.json(loads=ujson.loads)
@@ -242,7 +247,7 @@ class LocalNodeManager:
         possible_lavalink_processes = await self.get_lavalink_process(lazy_match=True)
         if possible_lavalink_processes:
             LOGGER.info(
-                "Found %s processes that match potential unnamaged Lavalink nodes.",
+                "Found %s processes that match potential unmanaged Lavalink nodes.",
                 len(possible_lavalink_processes),
             )
             valid_working_dirs = [
@@ -484,6 +489,7 @@ class LocalNodeManager:
 
         LOGGER.info("Successfully downloaded Lavalink.jar (%s bytes written)", format(nbytes, ","))
         self._client._config.download_id = self._ci_info["number"]
+
         await self._client._config.set_download_id(self._ci_info["number"])
         await self._is_up_to_date()
 
@@ -501,21 +507,24 @@ class LocalNodeManager:
             stderr=asyncio.subprocess.STDOUT,
         )
         stdout = (await _proc.communicate())[0]
-        if (build := _RE_BUILD_LINE.search(stdout)) is None:
-            # Output is unexpected, suspect corrupted jarfile
-            return False
-        if (branch := LAVALINK_BRANCH_LINE.search(stdout)) is None:
-            # Output is unexpected, suspect corrupted jarfile
-            return False
-        if (java := LAVALINK_JAVA_LINE.search(stdout)) is None:
-            # Output is unexpected, suspect corrupted jarfile
-            return False
-        if (lavaplayer := LAVALINK_LAVAPLAYER_LINE.search(stdout)) is None:
-            # Output is unexpected, suspect corrupted jarfile
-            return False
-        if (buildtime := LAVALINK_BUILD_TIME_LINE.search(stdout)) is None:
-            # Output is unexpected, suspect corrupted jarfile
-            return False
+        build = LAVALINK_BUILD_LINE.search(stdout) or {"build": b"Unknown"}
+        branch = LAVALINK_BRANCH_LINE.search(stdout) or {"branch": b"Unknown"}
+        java = LAVALINK_JAVA_LINE.search(stdout) or {"jvm": b"Unknown"}
+        lavaplayer = LAVALINK_LAVAPLAYER_LINE.search(stdout) or {"lavaplayer": b"Unknown"}
+        buildtime = LAVALINK_BUILD_TIME_LINE.search(stdout) or {"build_time": b"Unknown"}
+        commit = LAVALINK_COMMIT_LINE.search(stdout) or {"commit": b"Unknown"}
+        version = LAVALINK_VERSION_LINE.search(stdout) or {"version": b"Unknown"}
+        LOGGER.info(
+            "Current Lavalink meta: Lavalink build: %s, branch: %s, "
+            "java: %s, lavaplayer: %s, build_time: %s commit: %s version: %s",
+            build["build"],
+            branch["branch"],
+            java["jvm"],
+            lavaplayer["lavaplayer"],
+            buildtime["build_time"],
+            commit["commit"],
+            version["version"],
+        )
         if build["build"] == b"Unknown":
             build = int(last_download_id)
         else:
@@ -526,6 +535,8 @@ class LocalNodeManager:
         self._lavalink_branch = branch["branch"].decode()
         self._jvm = java["jvm"].decode()
         self._lavaplayer = lavaplayer["lavaplayer"].decode()
+        self._commit = commit["commit"].decode()
+        self._version = version["version"].decode()
         self._buildtime = date
         if self._auto_update:
             self._up_to_date = last_download_id == self._ci_info.get("number", -1)
@@ -536,6 +547,7 @@ class LocalNodeManager:
 
     async def maybe_download_jar(self):
         self._ci_info = await self.get_ci_latest_info()
+        LOGGER.info("CI info: %s", self._ci_info)
         if not (await LAVALINK_JAR_FILE.exists() and await self._is_up_to_date()):
             await self._download_jar()
 
