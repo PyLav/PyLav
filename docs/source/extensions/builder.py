@@ -35,10 +35,7 @@ class DPYStandaloneHTMLBuilder(StandaloneHTMLBuilder):
         # the total count of lines for each index letter, used to distribute
         # the entries into two columns
         genindex = IndexEntries(self.env).create_index(self, group_entries=False)
-        indexcounts = [
-            sum(1 + len(subitems) for _, (_, subitems, _) in entries)
-            for _k, entries in genindex
-        ]
+        indexcounts = [sum(1 + len(subitems) for _, (_, subitems, _) in entries) for _k, entries in genindex]
 
         genindexcontext = {
             "genindexentries": genindex,

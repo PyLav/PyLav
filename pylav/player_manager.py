@@ -300,9 +300,7 @@ class PlayerManager:
         """
         Updates the bot's activity.
         """
-        if not await LibConfigModel(
-            bot=self.bot.user.id, id=1
-        ).get_update_bot_activity():
+        if not await LibConfigModel(bot=self.bot.user.id, id=1).get_update_bot_activity():
             return
         playing_players = len(self.playing_players)
         if playing_players > 1:
@@ -328,9 +326,7 @@ class PlayerManager:
                     type=discord.ActivityType.listening,
                     name=track_name,
                     url=None
-                    if (query := await current_player.current.query())
-                    and not query.is_local
-                    and not query.is_speak
+                    if (query := await current_player.current.query()) and not query.is_local and not query.is_speak
                     else current_player.current.uri,
                 )
             )
