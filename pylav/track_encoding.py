@@ -42,15 +42,17 @@ class DataReader:
 
 
 def decode_track(track: str) -> tuple[dict[str, str | dict[str, str | bool | int | None]], int]:
-    """
-    Decodes a base64 track string into an Track object.
+    """Decodes a base64 track string into an Track object.
+
     Parameters
     ----------
     track: :class:`str`
         The base64 track string.
+
     Returns
     -------
-    :class:`Track`
+    :class:`tuple` of :class:`dict` and :class:`int`
+    The first element is a dictionary of track properties and the second element is encoding version.
     """
     reader = DataReader(track)
 
