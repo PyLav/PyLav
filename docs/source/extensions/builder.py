@@ -35,9 +35,10 @@ class DPYStandaloneHTMLBuilder(StandaloneHTMLBuilder):
         # the total count of lines for each index letter, used to distribute
         # the entries into two columns
         genindex = IndexEntries(self.env).create_index(self, group_entries=False)
-        indexcounts = []
-        for _k, entries in genindex:
-            indexcounts.append(sum(1 + len(subitems) for _, (_, subitems, _) in entries))
+        indexcounts = [
+            sum(1 + len(subitems) for _, (_, subitems, _) in entries)
+            for _k, entries in genindex
+        ]
 
         genindexcontext = {
             "genindexentries": genindex,
@@ -50,7 +51,7 @@ class DPYStandaloneHTMLBuilder(StandaloneHTMLBuilder):
             self.handle_page("genindex-all", genindexcontext, "genindex.html")
             for (key, entries), count in zip(genindex, indexcounts):
                 ctx = {"key": key, "entries": entries, "count": count, "genindexentries": genindex}
-                self.handle_page("genindex-" + key, ctx, "genindex-single.html")
+                self.handle_page(f"genindex-{key}", ctx, "genindex-single.html")
         else:
             self.handle_page("genindex", genindexcontext, "genindex.html")
 
@@ -97,7 +98,7 @@ class DPYMessageCatalogBuilder(MessageCatalogBuilder):
                 "message.pot_t", context
             )
 
-            pofn = os.path.join(self.outdir, textdomain + ".pot")
+            pofn = os.path.join(self.outdir, f"{textdomain}.pot")
             if should_write(pofn, content):
                 with open(pofn, "w", encoding="utf-8") as pofile:
                     pofile.write(content)
