@@ -8,6 +8,7 @@ from pylav.filters.utils import FilterMixin
 
 class Equalizer(FilterMixin):
     """Class representing a usable equalizer.
+
     Parameters
     ------------
     levels: List[Tuple[int, float]]
@@ -24,10 +25,12 @@ class Equalizer(FilterMixin):
         self.off = False
 
     def to_dict(self) -> dict:
+        """Returns a dictionary representation of the Equalizer"""
         return {"equalizer": self._eq, "name": self._name, "off": self.off}
 
     @classmethod
     def from_dict(cls, data: dict) -> Equalizer:
+        """Creates an Equalizer from a dictionary"""
         c = cls(levels=data["equalizer"], name=data["name"])
         c.off = data["off"]
         return c
@@ -68,14 +71,11 @@ class Equalizer(FilterMixin):
     @classmethod
     def build(cls, *, levels: list, name: str = "CustomEqualizer") -> Equalizer:
         """Build a custom Equalizer class with the provided levels.
+
         Parameters
         ------------
         levels: List[Dict[str, Union[int, float]]]
-            [
-            {"band": 0, "gain": 0.0},
-            {"band": 1, "gain": 0.0},
-            ...
-            ]
+            A list of dictionaries containing the band and gain for each band.
         name: str
             An Optional string to name this Equalizer. Defaults to 'CustomEqualizer'
         """

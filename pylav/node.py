@@ -28,15 +28,12 @@ LOGGER = getLogger("PyLav.Node")
 
 
 class Penalty:
-    """
-    Represents the penalty of the stats of a Node.
+    """Represents the penalty of the stats of a Node.
+
     Attributes
     ----------
-    player_penalty: :class:`int`
-    cpu_penalty: :class:`int`
-    null_frame_penalty: :class:`int`
-    deficit_frame_penalty: :class:`int`
-    total: :class:`int`
+    player_penalty
+
     """
 
     __slots__ = (
@@ -47,7 +44,7 @@ class Penalty:
         "total",
     )
 
-    def __init__(self, stats):
+    def __init__(self, stats: Stats):
         self.player_penalty = stats.playing_players
         self.cpu_penalty = 1.05 ** (100 * stats.system_load) * 10 - 10
         self.null_frame_penalty = 0
@@ -64,8 +61,8 @@ class Penalty:
 
 
 class Stats:
-    """
-    Represents the stats of Lavalink node.
+    """Represents the stats of Lavalink node.
+
     Attributes
     ----------
     uptime: :class:`int`
@@ -120,35 +117,35 @@ class Stats:
         "penalty",
     )
 
-    def __init__(self, node, data):
+    def __init__(self, node: Node, data: dict):
         self._node = node
 
-        self.uptime = data["uptime"]
+        self.uptime: int = data["uptime"]
 
-        self.players = data["players"]
-        self.playing_players = data["playingPlayers"]
+        self.players: int = data["players"]
+        self.playing_players: int = data["playingPlayers"]
 
         memory = data["memory"]
-        self.memory_free = memory["free"]
-        self.memory_used = memory["used"]
-        self.memory_allocated = memory["allocated"]
-        self.memory_reservable = memory["reservable"]
+        self.memory_free: int = memory["free"]
+        self.memory_used: int = memory["used"]
+        self.memory_allocated: int = memory["allocated"]
+        self.memory_reservable: int = memory["reservable"]
 
         cpu = data["cpu"]
-        self.cpu_cores = cpu["cores"]
-        self.system_load = cpu["systemLoad"]
-        self.lavalink_load = cpu["lavalinkLoad"]
+        self.cpu_cores: int = cpu["cores"]
+        self.system_load: float = cpu["systemLoad"]
+        self.lavalink_load: float = cpu["lavalinkLoad"]
 
         frame_stats = data.get("frameStats", {})
-        self.frames_sent = frame_stats.get("sent", -1)
-        self.frames_nulled = frame_stats.get("nulled", -1)
-        self.frames_deficit = frame_stats.get("deficit", -1)
+        self.frames_sent: int = frame_stats.get("sent", -1)
+        self.frames_nulled: int = frame_stats.get("nulled", -1)
+        self.frames_deficit: int = frame_stats.get("deficit", -1)
         self.penalty = Penalty(self)
 
 
 class Node:
-    """
-    Represents a Node connection with Lavalink.
+    """Represents a Node connection with Lavalink.
+
     Note
     ----
     Nodes are **NOT** meant to be added manually, but rather with :func:`Client.add_node`.

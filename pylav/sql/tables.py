@@ -1,8 +1,10 @@
 # sourcery skip: avoid-builtin-shadow
 from __future__ import annotations
 
+import os
+
 from piccolo.columns import JSONB, Array, BigInt, Boolean, Bytea, Float, Integer, Text, Timestamptz
-from piccolo.engine import PostgresEngine
+from piccolo.engine import PostgresEngine, SQLiteEngine
 from piccolo.table import Table
 
 from pylav._logging import getLogger
@@ -17,8 +19,10 @@ config = {
     "password": POSTGRES_PASSWORD,
 }
 LOGGER.info("Connecting to Postgres server using %r", config)
-
-DB = PostgresEngine(config=config)
+if os.getenv("BUILDING_DOCS", False):
+    DB = SQLiteEngine()
+else:
+    DB = PostgresEngine(config=config)
 
 
 class PlaylistRow(Table, db=DB, tablename="playlist"):

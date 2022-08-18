@@ -21,18 +21,23 @@ LOGGER = getLogger("PyLav.PlayerManager")
 
 
 class PlayerManager:
-    """
-    Represents the player manager that contains all the players.
+    """Represents the player manager that contains all the players.
+
     len(x):
         Returns the total amount of cached players.
     iter(x):
         Returns an iterator of all the players cached.
+
     Attributes
     ----------
     players: :class:`dict`
         Cache of all the players that Lavalink has created.
     default_player_class: :class:`BasePlayer`
         The player that the player manager is initialized with.
+    bot: :class:`discord.Client`
+        The client that the player manager is initialized with.
+    client: :class:`Client`
+        The client that the player manager is initialized with.
     """
 
     _global_player_config: PlayerModel
@@ -131,12 +136,12 @@ class PlayerManager:
             await self._restore_player(player_state)
 
     def players(self) -> Iterator[Player]:
-        """Returns an iterator that yields only values."""
+        """Returns an iterator that yields the all :class:`Player`."""
         yield from self.players.values()
 
     def find_all(self, predicate=None):
-        """
-        Returns a list of players that match the given predicate.
+        """Returns a list of players that match the given predicate.
+
         Parameters
         ----------
         predicate: Optional[:class:`function`]
@@ -148,8 +153,8 @@ class PlayerManager:
         return [p for p in self.players.values() if bool(predicate(p))] if predicate else list(self.players.values())
 
     async def remove(self, guild_id: int) -> None:
-        """
-        Removes a player from the internal cache.
+        """Removes a player from the internal cache.
+
         Parameters
         ----------
         guild_id: :class:`int`
@@ -295,37 +300,37 @@ class PlayerManager:
         """
         Updates the bot's activity.
         """
-        if await LibConfigModel(bot=self.bot.user.id, id=1).get_update_bot_activity():
-            playing_players = len(self.playing_players)
-            if playing_players > 1:
-                if (not self.bot.activity) or f"Music in {playing_players} servers" not in self.bot.activity.name:
-                    LOGGER.debug("Updating bot activity to %s", f"Listening to Music in {playing_players} servers")
-                    await self.bot.change_presence(
-                        activity=discord.Activity(
-                            type=discord.ActivityType.listening, name=f"Music in {playing_players} servers"
-                        )
-                    )
-            elif playing_players == 1:
-                current_player = self.playing_players[0]
-                if current_player.current is None:
-                    return
-                track_name = await current_player.current.get_track_display_name(
-                    max_length=40, author=True, unformatted=True
-                )
-                if self.bot.activity and track_name in self.bot.activity.name:
-                    return
-                LOGGER.debug("Updating bot activity to %s", f"Listening to {track_name}")
+        if not await LibConfigModel(bot=self.bot.user.id, id=1).get_update_bot_activity():
+            return
+        playing_players = len(self.playing_players)
+        if playing_players > 1:
+            if (not self.bot.activity) or f"Music in {playing_players} servers" not in self.bot.activity.name:
+                LOGGER.debug("Updating bot activity to %s", f"Listening to Music in {playing_players} servers")
                 await self.bot.change_presence(
                     activity=discord.Activity(
-                        type=discord.ActivityType.listening,
-                        name=track_name,
-                        url=current_player.current.uri
-                        if not (
-                            (query := await current_player.current.query()) and not (query.is_local or query.is_speak)
-                        )
-                        else None,
+                        type=discord.ActivityType.listening, name=f"Music in {playing_players} servers"
                     )
                 )
-            elif playing_players == 0 and self.bot.activity:
-                LOGGER.debug("Removing bot activity")
-                await self.bot.change_presence(activity=None)
+        elif playing_players == 1:
+            current_player = self.playing_players[0]
+            if current_player.current is None:
+                return
+            track_name = await current_player.current.get_track_display_name(
+                max_length=40, author=True, unformatted=True
+            )
+            if self.bot.activity and track_name in self.bot.activity.name:
+                return
+            LOGGER.debug("Updating bot activity to %s", f"Listening to {track_name}")
+            await self.bot.change_presence(
+                activity=discord.Activity(
+                    type=discord.ActivityType.listening,
+                    name=track_name,
+                    url=None
+                    if (query := await current_player.current.query()) and not query.is_local and not query.is_speak
+                    else current_player.current.uri,
+                )
+            )
+
+        elif playing_players == 0 and self.bot.activity:
+            LOGGER.debug("Removing bot activity")
+            await self.bot.change_presence(activity=None)

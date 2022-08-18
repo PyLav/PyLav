@@ -633,6 +633,16 @@ class Player(VoiceProtocol):
             await self._dispatch_voice_update()
 
     async def on_voice_state_update(self, data: dict) -> None:
+        """|coro|
+
+        An abstract method that is called when the client's voice state
+        has changed. This corresponds to ``VOICE_STATE_UPDATE``.
+
+        Parameters
+        ------------
+        data: :class:`dict`
+            The raw :ddocs:`voice state payload <resources/voice#voice-state-object>`.
+        """
         self._voice_state.update({"sessionId": data["session_id"]})
         self.channel_id = data["channel_id"]
         if not self.channel_id:  # We're disconnecting
@@ -666,6 +676,7 @@ class Player(VoiceProtocol):
     ) -> None:
         """
         Adds a track to the queue.
+
         Parameters
         ----------
         requester: :class:`int`
@@ -678,6 +689,10 @@ class Player(VoiceProtocol):
             If index is left unspecified, the default behaviour is to append the track. Defaults to `None`.
         query: Optional[:class:`Query`]
             The query that was used to search for the track.
+
+        Returns
+        -------
+        :class:`None`
         """
 
         at = await self._query_to_track(requester, track, query)
@@ -800,8 +815,8 @@ class Player(VoiceProtocol):
         bypass_cache: bool = False,
         node: Node = None,
     ) -> None:
-        """
-        Plays the given track.
+        """Plays the given track.
+
         Parameters
         ----------
         track: Optional[Union[:class:`Track`, :class:`dict`]]

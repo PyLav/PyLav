@@ -1,0 +1,41 @@
+Sphinx==5.1.1
+sphinx-rtd-theme==1.0.0
+sphinxcontrib-applehelp==1.0.2
+sphinxcontrib-devhelp==1.0.2
+sphinxcontrib-htmlhelp==2.0.0
+sphinxcontrib-jsmath==1.0.1
+sphinxcontrib-qthelp==1.0.3
+sphinxcontrib-serializinghtml==1.1.5
+sphinxcontrib-trio==1.1.2
+sphinxcontrib-websupport==1.2.4
+aiofile==3.8.1; python_version >= "3.10"
+aiohttp[speedups]==3.8.1
+aiohttp-client-cache==0.7.3
+aiopath==0.5.12; python_version<'3.10'
+anyio==3.6.1; python_version >= "3.10"
+APScheduler==3.9.1
+apsw-wheels==3.36.0.post1
+asyncpg==0.26.0
+asyncspotify==0.12.1
+asyncstdlib==3.10.5
+cached-property==1.5.2
+discord.py[speed]==2.0.0
+deepdiff==5.8.1
+expiringdict==1.2.2
+humanize==4.3.0
+iso8601==1.0.2
+packaging==21.3
+piccolo[all]==0.84.0
+platformdirs==2.5.2
+psutil==5.9.1
+python-dateutil==2.8.2
+pytz==2022.2.1
+pytz-deprecation-shim>=0.1.0.post0
+PyYAML==6.0
+Red-Commons==1.0.0
+redis==4.3.4
+rich==12.5.1
+tabulate==0.8.10
+typing_extensions==4.3.0
+ujson==5.4.0
+uvloop==0.16.0; sys_platform != "win32" and platform_python_implementation == "CPython"
