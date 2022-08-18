@@ -25,7 +25,7 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
   - First activate the previous created VENV by running `source ~/p310/bin/activate`
   - Install the package download dependencies - `python -m pip install -U pip setuptools wheel`
   - ##### For non Red users
-    - Install PyLav -`python -m pip install git+https://github.com/Drapersniper/PyLav.git@master`
+    - Install PyLav -`python -m pip install Py-Lav`
   - ##### For Red users
     - Install a custom build of Red - `python -m pip install --force-reinstall git+https://github.com/Drapersniper/Red-DiscordBot@hybrid#egg=Red-DiscordBot`
 - #### [Postgres14](https://www.postgresql.org/)
@@ -53,7 +53,7 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
   - First activate the previous created VENV by running `source ~/p310/bin/activate`
   - Install the package download dependencies - `python -m pip install -U pip setuptools wheel`
   - ##### For non Red users
-    - Install PyLav -`python -m pip install git+https://github.com/Drapersniper/PyLav.git@master`
+    - Install PyLav -`python -m pip install Py-Lav`
   - ##### For Red users
     - Install a custom build of Red - `python -m pip install --force-reinstall git+https://github.com/Drapersniper/Red-DiscordBot@hybrid#egg=Red-DiscordBot`
 - #### [Postgres14](https://www.postgresql.org/)
@@ -82,7 +82,7 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
   - First activate the previous created VENV by running `source "%userprofile%\p310\Scripts\activate.bat"`
   - Install the package download dependencies - `python -m pip install -U pip setuptools wheel`
   - ##### For non Red users
-    - Install PyLav -`python -m pip install git+https://github.com/Drapersniper/PyLav.git@master`
+    - Install PyLav -`python -m pip install Py-Lav`
   - ##### For Red users
     - Install a custom build of Red - `python -m pip install --force-reinstall git+https://github.com/Drapersniper/Red-DiscordBot@hybrid#egg=Red-DiscordBot`
 - #### [Postgres14](https://www.postgresql.org/)
