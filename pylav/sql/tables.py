@@ -20,9 +20,9 @@ config = {
 }
 LOGGER.info("Connecting to Postgres server using %r", config)
 if os.getenv("BUILDING_DOCS", False):
-    DB = PostgresEngine(config=config)
-else:
     DB = SQLiteEngine()
+else:
+    DB = PostgresEngine(config=config)
 
 
 class PlaylistRow(Table, db=DB, tablename="playlist"):
