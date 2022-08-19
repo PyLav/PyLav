@@ -499,6 +499,9 @@ class Player(VoiceProtocol):
                 self,
             )
             return
+        if self.current:
+            LOGGER.trace("Auto Empty Queue task for %s - Current track is not empty - discarding", self)
+            return
         if (
             self.queue.empty()
             and (
