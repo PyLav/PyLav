@@ -490,8 +490,8 @@ class LocalNodeManager:
         LOGGER.info("Successfully downloaded Lavalink.jar (%s bytes written)", format(nbytes, ","))
         self._client._config.download_id = self._ci_info["number"]
 
-        await self._client._config.set_download_id(self._ci_info["number"])
         await self._is_up_to_date()
+        await self._client._config.set_download_id(self._ci_info["number"])
 
     async def _is_up_to_date(self):
         if self._up_to_date is True:
