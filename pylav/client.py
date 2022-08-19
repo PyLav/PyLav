@@ -1090,13 +1090,14 @@ class Client(metaclass=_Singleton):
         *,
         additional_role_ids: list = None,
         additional_user_ids: list = None,
+        bot: BotT = None,
     ) -> bool:
         if additional_user_ids and user.id in additional_user_ids:
             return True
         if additional_role_ids and await asyncstdlib.any(r.id in additional_role_ids for r in user.roles):
             return True
         return await self.player_config_manager.is_dj(
-            user=user, guild=guild, additional_role_ids=None, additional_user_ids=None
+            user=user, guild=guild, additional_role_ids=None, additional_user_ids=None, bot=bot
         )
 
     async def generate_mix_playlist(

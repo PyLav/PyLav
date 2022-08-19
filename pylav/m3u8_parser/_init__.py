@@ -101,6 +101,16 @@ async def load(
 
 
 async def _load_from_file(uri: str, custom_tags_parser=None):
+    """Loads a m3u8 file from the filesystem
+
+    Parameters:
+    -----------
+    uri: str
+        uri of the m3u8 file
+    custom_tags_parser: callable
+        custom tags parser function
+    """
+
     path = aiopath.AsyncPath(uri)
     async with path.open("r", encoding="utf8") as file:
         raw_content = (await file.read()).strip()

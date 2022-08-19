@@ -51,9 +51,12 @@ class PlaylistModel:
         if isinstance(self.tracks, str):
             self.tracks = ujson.loads(self.tracks)
 
-    async def save(self):
-        """
-        Save the playlist to the database.
+    async def save(self) -> PlaylistModel:
+        """Save the playlist to the database.
+        Returns
+        -------
+        PlaylistModel
+            The saved playlist.
         """
         values = {
             tables.PlaylistRow.scope: self.scope,
@@ -73,44 +76,69 @@ class PlaylistModel:
 
     @classmethod
     async def get(cls, id: int) -> PlaylistModel | None:
-        """
-        Get a playlist from the database.
+        """Get a playlist from the database.
+
+        Parameters
+        ----------
+        id : int
+            The id of the playlist.
+
+        Returns
+        -------
+        PlaylistModel | None
+            The playlist if it exists, otherwise None.
         """
         playlist = await tables.PlaylistRow.select().where(tables.PlaylistRow.id == id)
         if playlist:
             return PlaylistModel(**playlist.to_dict())
         return None
 
-    async def delete(self):
+    async def delete(self) -> None:
+        """Delete the playlist from the database."""
         await tables.PlaylistRow.delete().where(tables.PlaylistRow.id == self.id)
 
     async def can_manage(self, bot: BotT, requester: discord.abc.User, guild: discord.Guild = None) -> bool:
+        """Check if the requester can manage the playlist.
+
+        Parameters
+        ----------
+        bot : BotT
+            The bot instance.
+        requester : discord.abc.User
+            The requester.
+        guild : discord.Guild
+            The guild.
+
+        Returns
+        -------
+        bool
+            Whether the requester can manage the playlist.
+        """
         if self.scope in BUNDLED_PLAYLIST_IDS:
             return False
         if requester.id in ((ids := getattr(bot, "owner_ids")) or ()) or requester.id == bot.owner_id:  # noqa
             return True
         elif self.scope == bot.user.id:
             return False
-        channel = None
-        if (guild_ := bot.get_guild(self.scope)) or (
-            (guild := guild_ or guild) and (channel := guild.get_channel_or_thread(self.scope))
-        ):
-            if guild_:
-                guild = guild_
-            if guild.owner_id == requester.id:
-                return True
-            if hasattr(bot, "is_mod"):
-                if not isinstance(requester, discord.Member):
-                    requester = guild.get_member(requester.id)
-                    if not requester:
-                        return False
-                return await bot.is_mod(requester)
-            if channel and channel.permissions_for(guild.me).manage_guild:
-                return True
-            return False
         return self.author == requester.id
 
     async def get_scope_name(self, bot: BotT, mention: bool = True, guild: discord.Guild = None) -> str:
+        """Get the name of the scope of the playlist.
+
+        Parameters
+        ----------
+        bot : BotT
+            The bot instance.
+        mention : bool
+            Whether to add a mention if it is mentionable.
+        guild : discord.Guild
+            The guild to get the scope name for.
+
+        Returns
+        -------
+        str
+            The name of the scope of the playlist.
+        """
         if bot.user.id == self.scope:
             return f"(Global) {bot.user.mention}" if mention else f"(Global) {bot.user}"
         elif guild_ := bot.get_guild(self.scope):
@@ -130,11 +158,37 @@ class PlaylistModel:
             return f"(Invalid) {self.scope}"
 
     async def get_author_name(self, bot: BotT, mention: bool = True) -> str | None:
+        """Get the name of the author of the playlist.
+
+        Parameters
+        ----------
+        bot : BotT
+            The bot instance.
+        mention : bool
+            Whether to add a mention if it is mentionable.
+
+        Returns
+        -------
+        str | None
+            The name of the author of the playlist.
+        """
         if user := bot.get_user(self.author):
             return f"{user.mention}" if mention else f"{user}"
         return f"{self.author}"
 
     async def get_name_formatted(self, with_url: bool = True) -> str:
+        """Get the name of the playlist formatted.
+
+        Parameters
+        ----------
+        with_url : bool
+            Whether to include the url in the name.
+
+        Returns
+        -------
+        str
+            The formatted name.
+        """
         name = BRACKETS.sub("", self.name).strip()
         if with_url and self.url and self.url.startswith("http"):
             return f"**[{discord.utils.escape_markdown(name)}]({self.url})**"
@@ -142,11 +196,20 @@ class PlaylistModel:
             return f"**{discord.utils.escape_markdown(name)}**"
 
     @asynccontextmanager
-    async def to_yaml(self, guild: discord.Guild) -> Iterator[tuple[io.BytesIO, str]]:
-        """
-        Serialize the playlist to a YAML file.
+    async def to_yaml(self, guild: discord.Guild) -> Iterator[tuple[io.BytesIO, str | None]]:
+        """Serialize the playlist to a YAML file.
 
         yields a tuple of (io.BytesIO, bool) where the bool is whether the playlist file was compressed using Gzip
+
+        Parameters
+        ----------
+        guild : discord.Guild
+            The guild where the yaml will be sent to.
+
+        Yields
+        ------
+        tuple[io.BytesIO, str | None]
+            The YAML file and the compression type.
         """
         data = {
             "name": self.name,
@@ -176,8 +239,21 @@ class PlaylistModel:
 
     @classmethod
     async def from_yaml(cls, context: PyLavContext, scope: int, url: str) -> PlaylistModel:
-        """
-        Deserialize a playlist from a YAML file.
+        """Deserialize a playlist from a YAML file.
+
+        Parameters
+        ----------
+        context : PyLavContext
+            The context.
+        scope : int
+            The scope of the playlist.
+        url : str
+            The url of the playlist.
+
+        Returns
+        -------
+        PlaylistModel
+            The playlist.
         """
         try:
             async with aiohttp.ClientSession(auto_decompress=False) as session:
@@ -219,6 +295,13 @@ class LibConfigModel:
             self.extras = ujson.loads(self.extras)
 
     async def get_config_folder(self) -> str:
+        """Get the config folder.
+
+        Returns
+        -------
+        str
+            The config folder.
+        """
         response = (
             await tables.LibConfigRow.select(tables.LibConfigRow.config_folder)
             .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
@@ -227,6 +310,13 @@ class LibConfigModel:
         return response["config_folder"]
 
     async def get_java_path(self) -> str:
+        """Get the java path.
+
+        Returns
+        -------
+        str
+            The java path.
+        """
         response = (
             await tables.LibConfigRow.select(tables.LibConfigRow.java_path)
             .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
@@ -235,6 +325,13 @@ class LibConfigModel:
         return response["java_path"]
 
     async def get_enable_managed_node(self) -> bool:
+        """Get whether the managed node is enabled.
+
+        Returns
+        -------
+        bool
+            Whether the managed node is enabled.
+        """
         response = (
             await tables.LibConfigRow.select(tables.LibConfigRow.enable_managed_node)
             .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
@@ -243,6 +340,13 @@ class LibConfigModel:
         return response["enable_managed_node"]
 
     async def get_auto_update_managed_nodes(self) -> bool:
+        """Get whether the managed node should be auto updated.
+
+        Returns
+        -------
+        bool
+            Whether the managed node should be auto updated.
+        """
         response = (
             await tables.LibConfigRow.select(tables.LibConfigRow.auto_update_managed_nodes)
             .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
@@ -251,6 +355,13 @@ class LibConfigModel:
         return response["auto_update_managed_nodes"]
 
     async def get_localtrack_folder(self) -> str:
+        """Get the localtrack folder.
+
+        Returns
+        -------
+        str
+            The localtrack folder.
+        """
         response = (
             await tables.LibConfigRow.select(tables.LibConfigRow.localtrack_folder)
             .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
@@ -259,6 +370,13 @@ class LibConfigModel:
         return response["localtrack_folder"]
 
     async def get_download_id(self) -> int:
+        """Get the download id for the managed node.
+
+        Returns
+        -------
+        int
+            The download id for the managed node.
+        """
         response = (
             await tables.LibConfigRow.select(tables.LibConfigRow.download_id)
             .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
@@ -267,6 +385,13 @@ class LibConfigModel:
         return response["download_id"]
 
     async def get_next_execution_update_bundled_playlists(self) -> datetime.datetime:
+        """Get the next execution time for the update of bundled playlists.
+
+        Returns
+        -------
+        datetime.datetime
+            The next execution time for the update of bundled playlists.
+        """
         response = (
             await tables.LibConfigRow.select(tables.LibConfigRow.next_execution_update_bundled_playlists)
             .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
@@ -275,6 +400,13 @@ class LibConfigModel:
         return response["next_execution_update_bundled_playlists"]
 
     async def get_next_execution_update_bundled_external_playlists(self) -> datetime.datetime:
+        """Get the next execution time for the update of bundled external playlists.
+
+        Returns
+        -------
+        datetime.datetime
+            The next execution time for the update of bundled external playlists.
+        """
         response = (
             await tables.LibConfigRow.select(tables.LibConfigRow.next_execution_update_bundled_external_playlists)
             .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
@@ -283,6 +415,13 @@ class LibConfigModel:
         return response["next_execution_update_bundled_external_playlists"]
 
     async def get_next_execution_update_external_playlists(self) -> datetime.datetime:
+        """Get the next execution time for the update of external playlists.
+
+        Returns
+        -------
+        datetime.datetime
+            The next execution time for the update of external playlists.
+        """
         response = (
             await tables.LibConfigRow.select(tables.LibConfigRow.next_execution_update_external_playlists)
             .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
@@ -291,6 +430,13 @@ class LibConfigModel:
         return response["next_execution_update_external_playlists"]
 
     async def get_update_bot_activity(self) -> bool:
+        """Get whether the bot activity should be updated.
+
+        Returns
+        -------
+        bool
+            Whether the bot activity should be updated.
+        """
         response = (
             await tables.LibConfigRow.select(tables.LibConfigRow.update_bot_activity)
             .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
@@ -299,50 +445,114 @@ class LibConfigModel:
         return response["update_bot_activity"]
 
     async def set_config_folder(self, value: str) -> None:
+        """Set the config folder.
+
+        Parameters
+        ----------
+        value : str
+            The new config folder.
+        """
         self.config_folder = value
         await tables.LibConfigRow.update({tables.LibConfigRow.config_folder: value}).where(
             (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
         )
 
     async def set_java_path(self, value: str) -> None:
+        """Set the java path.
+
+        Parameters
+        ----------
+        value : str
+            The new java path.
+        """
         self.java_path = value
         await tables.LibConfigRow.update({tables.LibConfigRow.java_path: value}).where(
             (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
         )
 
     async def set_enable_managed_node(self, value: bool) -> None:
+        """Set whether the managed node is enabled.
+
+
+        Parameters
+        ----------
+        value : bool
+            Whether the managed node is enabled.
+        """
         self.enable_managed_node = value
         await tables.LibConfigRow.update({tables.LibConfigRow.enable_managed_node: value}).where(
             (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
         )
 
     async def set_auto_update_managed_nodes(self, value: bool) -> None:
+        """Set whether the managed node should be auto updated.
+
+        Parameters
+        ----------
+        value : bool
+            Whether the managed node should be auto updated.
+        """
         self.auto_update_managed_nodes = value
         await tables.LibConfigRow.update({tables.LibConfigRow.auto_update_managed_nodes: value}).where(
             (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
         )
 
     async def set_localtrack_folder(self, value: str) -> None:
+        """Set the localtrack folder.
+
+        Parameters
+        ----------
+        value : str
+            The new localtrack folder.
+        """
         self.localtrack_folder = value
         await tables.LibConfigRow.update({tables.LibConfigRow.localtrack_folder: value}).where(
             (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
         )
 
     async def set_download_id(self, value: int) -> None:
+        """Set the download id for the managed node.
+
+        Parameters
+        ----------
+        value : int
+            The new download id for the managed node.
+        """
         self.download_id = value
         await tables.LibConfigRow.update({tables.LibConfigRow.download_id: value}).where(
             (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
         )
 
     async def set_managed_external_node(self, value: bool) -> None:
+        """Set whether the managed external node is enabled.
+
+        Parameters
+        ----------
+        value : bool
+            Whether the managed external node is enabled.
+        """
         self.use_bundled_external = value
         await self.save()
 
     async def set_update_bot_activity(self, value: bool) -> None:
+        """Set whether the bot activity should be updated.
+
+        Parameters
+        ----------
+        value : bool
+            Whether the bot activity should be updated.
+        """
         self.update_bot_activity = value
         await self.save()
 
     async def save(self) -> LibConfigModel:
+        """Save the config to the database.
+
+        Returns
+        -------
+        LibConfigModel
+            The updated config.
+        """
         data = {
             "config_folder": self.config_folder,
             "java_path": self.java_path,
@@ -363,11 +573,19 @@ class LibConfigModel:
         return self
 
     async def delete(self) -> None:
+        """Delete the config from the database."""
         await tables.LibConfigRow.delete().where(
             (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
         )
 
     async def get_all(self) -> LibConfigModel:
+        """Update all attributed for the config from the database.
+
+        Returns
+        -------
+        LibConfigModel
+            The updated config.
+        """
         response = (
             await tables.LibConfigRow.select()
             .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
@@ -401,6 +619,33 @@ class LibConfigModel:
         auto_update_managed_nodes: bool = True,
         use_bundled_external: bool = True,
     ) -> LibConfigModel:
+
+        """Get or create a config for the bot.
+
+        Parameters
+        ----------
+        id : int
+            The config id.
+        bot : int
+            The id of the bot.
+        config_folder : str
+            The config folder.
+        localtrack_folder : str
+            The localtrack folder.
+        java_path : str
+            The java path.
+        enable_managed_node : bool
+            Whether the managed node is enabled.
+        auto_update_managed_nodes : bool
+            Whether the managed node should be auto updated.
+        use_bundled_external : bool
+            Whether the bundled external node is used.
+
+        Returns
+        -------
+        LibConfigModel
+            The config.
+        """
         r = (
             await tables.LibConfigRow.objects()
             .output(load_json=True)
@@ -451,10 +696,29 @@ class NodeModel:
 
     @classmethod
     async def from_id(cls, id: int) -> NodeModel:
+        """Get a node from the database.
+
+        Parameters
+        ----------
+        id : int
+            The id of the node.
+
+        Returns
+        -------
+        NodeModel
+            The node.
+        """
         response = await tables.NodeRow.select().where(tables.NodeRow.id == id).first()
         return cls(**response)
 
     def to_dict(self) -> dict:
+        """Convert the node to a dict.
+
+        Returns
+        -------
+        dict
+            The node as a dict.
+        """
         return {
             "id": self.id,
             "name": self.name,
@@ -470,6 +734,18 @@ class NodeModel:
         }
 
     def get_connection_args(self) -> dict:
+        """Get the connection args for the node.
+
+        Returns
+        -------
+        dict
+            The connection args.
+
+        Raises
+        ------
+        ValueError
+            If the node is misconfigured in the database.
+        """
         if self.yaml is None:
             raise ValueError("Node Connection config set")
         return {
@@ -488,6 +764,13 @@ class NodeModel:
         }
 
     async def add_bulk_source_to_exclusion_list(self, *source: str):
+        """Add sources to the exclusion list.
+
+        Parameters
+        ----------
+        source : str
+            The sources to add.
+        """
         source = set(map(str.strip, map(str.lower, source)))
         if unsupported := source - SUPPORTED_SOURCES:
             raise ValueError(f"Unsupported sources: {unsupported}\nSupported sources: {SUPPORTED_SOURCES}")
@@ -497,6 +780,13 @@ class NodeModel:
         await self.save()
 
     async def add_source_to_exclusion_list(self, source: str):
+        """Add a source to the exclusion list.
+
+        Parameters
+        ----------
+        source : str
+            The source to add.
+        """
         source = source.lower().strip()
         if source in SUPPORTED_SOURCES and source not in self.disabled_sources:
             self.disabled_sources.append(source)
@@ -504,12 +794,15 @@ class NodeModel:
         raise ValueError(f"Source {source} is not supported")
 
     async def save(self) -> None:
+        """Save the node to the database."""
         await self.upsert()
 
     async def delete(self) -> None:
+        """Delete the node from the database."""
         await tables.NodeRow.delete().where(tables.NodeRow.id == self.id)
 
     async def upsert(self) -> None:
+        """Upsert the node in the database."""
         values = {
             tables.NodeRow.name: self.name,
             tables.NodeRow.ssl: self.ssl,
@@ -530,7 +823,8 @@ class NodeModel:
         if not node._was_created:
             await tables.NodeRow.update(values).where(tables.NodeRow.id == self.id)
 
-    async def get_or_create(self) -> None:
+    async def update_or_create(self) -> None:
+        """Update or create the node in the database."""
         values = {
             tables.NodeRow.name: self.name,
             tables.NodeRow.ssl: self.ssl,
@@ -574,6 +868,18 @@ class QueryModel:
 
     @classmethod
     async def get(cls, identifier: str) -> QueryModel | None:
+        """Get a query from the database.
+
+        Parameters
+        ----------
+        identifier : str
+            The identifier of the query.
+
+        Returns
+        -------
+        QueryModel | None
+            The query if found, otherwise None.
+        """
         query = await tables.QueryRow.select().where(
             (tables.QueryRow.identifier == identifier)
             & (
@@ -587,9 +893,11 @@ class QueryModel:
         return None
 
     async def delete(self):
+        """Delete the query from the database."""
         await tables.QueryRow.delete().where(tables.QueryRow.identifier == self.identifier)
 
     async def upsert(self):
+        """Upsert the query in the database."""
         if self.last_updated is None:
             self.last_updated = datetime.datetime.now(tz=datetime.timezone.utc)
         values = {
@@ -613,6 +921,7 @@ class QueryModel:
             await tables.QueryRow.update(values).where(tables.QueryRow.identifier == self.identifier)
 
     async def save(self):
+        """Save the query to the database."""
         await self.upsert()
 
 
@@ -626,6 +935,13 @@ class BotVersion:
             self.version = parse_version(self.version)  # type: ignore
 
     async def get_or_create(self) -> BotVersion:
+        """Get or create the bot version in the database.
+
+        Returns
+        -------
+        BotVersion
+            The bot version.
+        """
         values = {
             tables.BotVersionRow.version: f"{self.version}",
         }
@@ -639,6 +955,7 @@ class BotVersion:
         return self
 
     async def upsert(self) -> None:
+        """Upsert the bot version in the database."""
         values = {
             tables.BotVersionRow.version: f"{self.version}",
         }
@@ -651,6 +968,7 @@ class BotVersion:
             await tables.BotVersionRow.update(values).where(tables.BotVersionRow.bot == self.bot)
 
     async def save(self) -> None:
+        """Save the bot version to the database."""
         await self.upsert()
 
 
@@ -695,12 +1013,13 @@ class PlayerStateModel:
             self.extras = ujson.loads(self.extras)
 
     async def delete(self) -> None:
+        """Delete the player state from the database."""
         await tables.PlayerStateRow.delete().where(
             (tables.PlayerStateRow.id == self.id) & (tables.PlayerStateRow.bot == self.bot)
         )
 
     async def upsert(self) -> None:
-
+        """Upsert the player state in the database."""
         values = {
             tables.PlayerStateRow.channel_id: self.channel_id,
             tables.PlayerStateRow.volume: self.volume,
@@ -737,10 +1056,25 @@ class PlayerStateModel:
             )
 
     async def save(self) -> None:
+        """Save the player state to the database."""
         await self.upsert()
 
     @classmethod
     async def get(cls, bot_id: int, guild_id: int) -> PlayerStateModel | None:
+        """Get the player state from the database.
+
+        Parameters
+        ----------
+        bot_id : int
+            The bot ID.
+        guild_id : int
+            The guild ID.
+
+        Returns
+        -------
+        PlayerStateModel | None
+            The player state if found, otherwise None.
+        """
         player = (
             await tables.PlayerStateRow.select()
             .output(load_json=True)
@@ -796,10 +1130,11 @@ class PlayerModel:
         self.dj_roles = set(self.dj_roles)
 
     async def delete(self) -> None:
+        """Delete the player from the database."""
         await tables.PlayerRow.delete().where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
 
     async def upsert(self) -> None:
-
+        """Upsert the player in the database."""
         values = {
             tables.PlayerRow.forced_channel_id: self.forced_channel_id,
             tables.PlayerRow.volume: self.volume,
@@ -832,10 +1167,25 @@ class PlayerModel:
             )
 
     async def save(self) -> None:
+        """Save the player to the database."""
         await self.upsert()
 
     @classmethod
     async def get(cls, bot_id: int, guild_id: int) -> PlayerModel | None:
+        """Get the player from the database.
+
+        Parameters
+        ----------
+        bot_id : int
+            The bot ID.
+        guild_id : int
+            The guild ID.
+
+        Returns
+        -------
+        PlayerModel | None
+            The player if found, otherwise None.
+        """
         player = (
             await tables.PlayerRow.select()
             .output(load_json=True)
@@ -848,6 +1198,14 @@ class PlayerModel:
         return None
 
     async def get_or_create(self) -> PlayerModel:
+        """Get the player from the database.
+
+        Returns
+        -------
+        PlayerModel
+            The player if found, otherwise None.
+        """
+
         values = {
             tables.PlayerRow.forced_channel_id: self.forced_channel_id,
             tables.PlayerRow.volume: self.volume,
@@ -897,6 +1255,7 @@ class PlayerModel:
         return self
 
     async def update_volume(self):
+        """Update the volume of the player."""
         player = (
             await tables.PlayerRow.select(tables.PlayerRow.volume)
             .output(load_json=True)
@@ -906,6 +1265,7 @@ class PlayerModel:
             self.volume = player[0]["volume"]
 
     async def update_max_volume(self):
+        """Update the max volume of the player."""
         player = (
             await tables.PlayerRow.select(tables.PlayerRow.max_volume)
             .output(load_json=True)
@@ -915,6 +1275,13 @@ class PlayerModel:
             self.max_volume = player[0]["max_volume"]
 
     async def update_auto_play_playlist_id(self) -> PlayerModel:
+        """Update the auto play playlist ID of the player.
+
+        Returns
+        -------
+        PlayerModel
+            The player.
+        """
         player = (
             await tables.PlayerRow.select(tables.PlayerRow.auto_play_playlist_id)
             .output(load_json=True)
@@ -925,6 +1292,13 @@ class PlayerModel:
         return self
 
     async def update_text_channel_id(self) -> PlayerModel:
+        """Update the text channel ID of the player.
+
+        Returns
+        -------
+        PlayerModel
+            The player.
+        """
         player = (
             await tables.PlayerRow.select(tables.PlayerRow.text_channel_id)
             .output(load_json=True)
@@ -935,6 +1309,13 @@ class PlayerModel:
         return self
 
     async def update_notify_channel_id(self) -> PlayerModel:
+        """Update the notify channel ID of the player.
+
+        Returns
+        -------
+        PlayerModel
+            The player.
+        """
         player = (
             await tables.PlayerRow.select(tables.PlayerRow.notify_channel_id)
             .output(load_json=True)
@@ -945,6 +1326,13 @@ class PlayerModel:
         return self
 
     async def update_forced_channel_id(self) -> PlayerModel:
+        """Update the forced channel ID of the player.
+
+        Returns
+        -------
+        PlayerModel
+            The player.
+        """
         player = (
             await tables.PlayerRow.select(tables.PlayerRow.forced_channel_id)
             .output(load_json=True)
@@ -955,6 +1343,13 @@ class PlayerModel:
         return self
 
     async def update_repeat_current(self) -> PlayerModel:
+        """Update the repeat current of the player.
+
+        Returns
+        -------
+        PlayerModel
+            The player.
+        """
         player = (
             await tables.PlayerRow.select(tables.PlayerRow.repeat_current)
             .output(load_json=True)
@@ -965,6 +1360,13 @@ class PlayerModel:
         return self
 
     async def update_repeat_queue(self) -> PlayerModel:
+        """Update the repeat queue of the player.
+
+        Returns
+        -------
+        PlayerModel
+            The player.
+        """
         player = (
             await tables.PlayerRow.select(tables.PlayerRow.repeat_queue)
             .output(load_json=True)
@@ -975,6 +1377,13 @@ class PlayerModel:
         return self
 
     async def update_shuffle(self) -> PlayerModel:
+        """Update the shuffle of the player.
+
+        Returns
+        -------
+        PlayerModel
+            The player.
+        """
         player = (
             await tables.PlayerRow.select(tables.PlayerRow.shuffle)
             .output(load_json=True)
@@ -985,6 +1394,13 @@ class PlayerModel:
         return self
 
     async def update_auto_shuffle(self) -> PlayerModel:
+        """Update the auto shuffle of the player.
+
+        Returns
+        -------
+        PlayerModel
+            The player.
+        """
         player = (
             await tables.PlayerRow.select(tables.PlayerRow.auto_shuffle)
             .output(load_json=True)
@@ -995,6 +1411,13 @@ class PlayerModel:
         return self
 
     async def update_auto_play(self) -> PlayerModel:
+        """Update the auto play of the player.
+
+        Returns
+        -------
+        PlayerModel
+            The player.
+        """
         player = (
             await tables.PlayerRow.select(tables.PlayerRow.auto_play)
             .output(load_json=True)
@@ -1005,6 +1428,13 @@ class PlayerModel:
         return self
 
     async def update_self_deaf(self) -> PlayerModel:
+        """Update the self deaf of the player.
+
+        Returns
+        -------
+        PlayerModel
+            The player.
+        """
         player = (
             await tables.PlayerRow.select(tables.PlayerRow.self_deaf)
             .output(load_json=True)
@@ -1015,6 +1445,13 @@ class PlayerModel:
         return self
 
     async def update_extras(self) -> PlayerModel:
+        """Update the extras of the player.
+
+        Returns
+        -------
+        PlayerModel
+            The player.
+        """
         player = (
             await tables.PlayerRow.select(tables.PlayerRow.extras)
             .output(load_json=True)
@@ -1028,6 +1465,13 @@ class PlayerModel:
         return self
 
     async def update_effects(self) -> PlayerModel:
+        """Update the effects of the player.
+
+        Returns
+        -------
+        PlayerModel
+            The player.
+        """
         player = (
             await tables.PlayerRow.select(tables.PlayerRow.effects)
             .output(load_json=True)
@@ -1041,6 +1485,13 @@ class PlayerModel:
         return self
 
     async def update_empty_queue_dc(self) -> PlayerModel:
+        """Update the empty queue dc of the player.
+
+        Returns
+        -------
+        PlayerModel
+            The player.
+        """
         player = (
             await tables.PlayerRow.select(tables.PlayerRow.empty_queue_dc)
             .output(load_json=True)
@@ -1054,6 +1505,13 @@ class PlayerModel:
         return self
 
     async def update_alone_dc(self) -> PlayerModel:
+        """Update the alone dc of the player.
+
+        Returns
+        -------
+        PlayerModel
+            The player.
+        """
         player = (
             await tables.PlayerRow.select(tables.PlayerRow.alone_dc)
             .output(load_json=True)
@@ -1067,6 +1525,13 @@ class PlayerModel:
         return self
 
     async def update_alone_pause(self) -> PlayerModel:
+        """Update the alone pause of the player.
+
+        Returns
+        -------
+        PlayerModel
+            The player.
+        """
         player = (
             await tables.PlayerRow.select(tables.PlayerRow.alone_pause)
             .output(load_json=True)
@@ -1080,6 +1545,13 @@ class PlayerModel:
         return self
 
     async def dj_users_update(self) -> PlayerModel:
+        """Update the dj users of the player.
+
+        Returns
+        -------
+        PlayerModel
+            The player.
+        """
         player = (
             await tables.PlayerRow.select(tables.PlayerRow.dj_users)
             .output(load_json=True)
@@ -1093,6 +1565,13 @@ class PlayerModel:
         return self
 
     async def dj_roles_update(self) -> PlayerModel:
+        """Update the dj roles of the player.
+
+        Returns
+        -------
+        PlayerModel
+            The player.
+        """
         player = (
             await tables.PlayerRow.select(tables.PlayerRow.dj_roles)
             .output(load_json=True)
@@ -1106,6 +1585,18 @@ class PlayerModel:
         return self
 
     async def dj_users_add(self, *users: discord.Member) -> PlayerModel:
+        """Add dj users to the player.
+
+        Parameters
+        ----------
+        users : discord.Member
+            The users to add.
+
+        Returns
+        -------
+        PlayerModel
+            The player.
+        """
         await self.dj_users_update()
         if not users:
             return self
@@ -1115,6 +1606,18 @@ class PlayerModel:
         return self
 
     async def dj_roles_add(self, *roles: discord.Role) -> PlayerModel:
+        """Add dj roles to the player.
+
+        Parameters
+        ----------
+        roles : discord.Role
+            The roles to add.
+
+        Returns
+        -------
+        PlayerModel
+            The player.
+        """
         await self.dj_roles_update()
         if not roles:
             return self
@@ -1124,6 +1627,18 @@ class PlayerModel:
         return self
 
     async def dj_users_remove(self, *users: discord.Member) -> PlayerModel:
+        """Remove dj users from the player.
+
+        Parameters
+        ----------
+        users : discord.Member
+            The users to add.
+
+        Returns
+        -------
+        PlayerModel
+            The player.
+        """
         await self.dj_users_update()
         if not users:
             return self
@@ -1133,6 +1648,18 @@ class PlayerModel:
         return self
 
     async def dj_roles_remove(self, *roles: discord.Role) -> PlayerModel:
+        """Remove dj roles from the player.
+
+        Parameters
+        ----------
+        roles : discord.Role
+            The roles to add.
+
+        Returns
+        -------
+        PlayerModel
+            The player
+        """
         await self.dj_roles_update()
         if not roles:
             return self
@@ -1142,6 +1669,20 @@ class PlayerModel:
         return self
 
     async def dj_users_cleanup(self, guild: discord.Guild, lazy: bool = False) -> PlayerModel:
+        """Cleanup the dj users of the player.
+
+        Parameters
+        ----------
+        guild : discord.Guild
+            The guild to cleanup.
+        lazy : bool
+            Whether to do a lazy cleanup.
+
+        Returns
+        -------
+        PlayerModel
+            The player.
+        """
         if not lazy:
             await self.dj_users_update()
         self.dj_users = {u for u in self.dj_users if guild.get_member(u)}
@@ -1150,6 +1691,20 @@ class PlayerModel:
         return self
 
     async def dj_roles_cleanup(self, guild: discord.Guild, lazy: bool = False) -> PlayerModel:
+        """Cleanup the dj roles of the player.
+
+        Parameters
+        ----------
+        guild : discord.Guild
+            The guild to cleanup.
+        lazy : bool
+            Whether to do a lazy cleanup.
+
+        Returns
+        -------
+        PlayerModel
+            The player.
+        """
         if not lazy:
             await self.dj_roles_update()
         self.dj_roles = {r for r in self.dj_roles if guild.get_role(r)}
@@ -1158,22 +1713,69 @@ class PlayerModel:
         return self
 
     async def dj_users_reset(self) -> PlayerModel:
+        """Reset the dj users of the player.
+
+        Returns
+        -------
+        PlayerModel
+            The player.
+        """
         self.dj_users = set()
         await self.save()
         return self
 
     async def dj_roles_reset(self) -> PlayerModel:
+        """Reset the dj roles of the player.
+
+        Returns
+        -------
+        PlayerModel
+            The player.
+        """
         self.dj_roles = set()
         await self.save()
         return self
 
     async def is_dj(
-        self, user: discord.Member, *, additional_role_ids: list = None, additional_user_ids: list = None
+        self,
+        user: discord.Member,
+        *,
+        additional_role_ids: list = None,
+        additional_user_ids: list = None,
+        bot: BotT = None,
     ) -> bool:
+
+        """Check if a user is a dj.
+
+        Parameters
+        ----------
+        user : discord.Member
+            The user to check.
+        additional_role_ids : list
+            The additional dj role ids to check.
+        additional_user_ids : list
+            The additional dj user ids to check.
+        bot : BotT
+            The bot instance to check for owners, admins or mods.
+
+        Returns
+        -------
+        bool
+            Whether the user is a dj.
+        """
         if additional_user_ids and user.id in additional_user_ids:
             return True
         if additional_role_ids and await asyncstdlib.any(r.id in additional_role_ids for r in user.roles):
             return True
+
+        if __ := user.guild:
+            if hasattr(bot, "is_owner") and await bot.is_owner(user):  # type: ignore
+                return True
+            if hasattr(bot, "is_admin") and await bot.is_admin(user):
+                return True
+            if hasattr(bot, "is_mod") and await bot.is_mod(user):
+                return True
+
         await self.dj_users_update()
         await self.dj_users_cleanup(guild=user.guild, lazy=True)
         if user.id in self.dj_users:
@@ -1187,58 +1789,156 @@ class PlayerModel:
         return False
 
     async def fetch_volume(self) -> int:
+        """Fetch the volume of the player.
+
+        Returns
+        -------
+        int
+            The volume.
+        """
         await self.update_volume()
         return self.volume
 
     async def fetch_repeat_current(self) -> bool:
+        """Fetch the repeat current of the player.
+
+        Returns
+        -------
+        bool
+            The repeat current.
+        """
         await self.update_repeat_current()
         return self.repeat_current
 
     async def fetch_repeat_queue(self) -> bool:
+        """Fetch the repeat queue of the player.
+
+        Returns
+        -------
+        bool
+            The repeat queue.
+        """
         await self.update_repeat_queue()
         return self.repeat_queue
 
     async def fetch_shuffle(self) -> bool | None:
+        """Fetch the shuffle of the player.
+
+        Returns
+        -------
+        bool | None
+            The shuffle.
+        """
         await self.update_shuffle()
         return self.shuffle
 
     async def fetch_auto_shuffle(self) -> bool:
+        """Fetch the auto shuffle of the player.
+
+        Returns
+        -------
+        bool
+            The auto shuffle.
+        """
         await self.update_auto_shuffle()
         return self.auto_shuffle
 
     async def fetch_auto_play(self) -> bool:
+        """Fetch the auto play of the player.
+
+        Returns
+        -------
+        bool
+            The auto play.
+        """
         await self.update_auto_play()
         return self.auto_play
 
     async def fetch_self_deaf(self) -> bool:
+        """Fetch the self deaf of the player.
+
+        Returns
+        -------
+        bool
+            The self deaf.
+        """
         await self.update_self_deaf()
         return self.self_deaf
 
     async def fetch_extras(self) -> dict:
+        """Fetch the extras of the player.
+
+        Returns
+        -------
+        dict
+            The extras.
+        """
         await self.update_extras()
         return self.extras
 
     async def fetch_effects(self) -> dict:
+        """Fetch the effects of the player.
+
+        Returns
+        -------
+        dict
+            The effects.
+        """
         await self.update_effects()
         return self.effects
 
     async def fetch_empty_queue_dc(self) -> TimedFeature:
+        """Fetch the empty queue dc of the player.
+
+        Returns
+        -------
+        TimedFeature
+            The empty queue dc.
+        """
         await self.update_empty_queue_dc()
         return self.empty_queue_dc
 
     async def fetch_alone_dc(self) -> TimedFeature:
+        """Fetch the alone dc of the player.
+
+        Returns
+        -------
+        TimedFeature
+            The alone dc.
+        """
         await self.update_alone_dc()
         return self.alone_dc
 
     async def fetch_alone_pause(self) -> TimedFeature:
+        """Fetch the alone pause of the player.
+
+        Returns
+        -------
+        TimedFeature
+            The alone pause.
+        """
         await self.update_alone_pause()
         return self.alone_pause
 
     async def fetch_max_volume(self) -> int:
+        """Fetch the max volume of the player.
+
+        Returns
+        -------
+        int
+            The max volume.
+        """
         await self.update_max_volume()
         return self.max_volume
 
     async def update(self) -> PlayerModel:
+        """Update the player.
+
+        Returns
+        -------
+        PlayerModel
+            The player.
+        """
         await self.get_or_create()
         return self
 
@@ -1267,8 +1967,12 @@ class EqualizerModel:
     band_16000: int = 0.0
 
     async def save(self) -> EqualizerModel:
-        """
-        Save the Equalizer to the database.
+        """Save the Equalizer to the database.
+
+        Returns
+        -------
+        EqualizerModel
+            The Equalizer.
         """
         values = {
             tables.EqualizerRow.scope: self.scope,
@@ -1302,8 +2006,17 @@ class EqualizerModel:
 
     @classmethod
     async def get(cls, id: int) -> EqualizerModel | None:
-        """
-        Get an equalizer from the database.
+        """Get an equalizer from the database.
+
+        Parameters
+        ----------
+        id: int
+            The id of the equalizer.
+
+        Returns
+        -------
+        EqualizerModel | None
+            The equalizer if found, else None.
         """
         equalizer = await tables.EqualizerRow.select().where(tables.EqualizerRow.id == id)
         if equalizer:
@@ -1311,35 +2024,51 @@ class EqualizerModel:
         return None
 
     async def delete(self):
+        """Delete the equalizer from the database."""
         await tables.EqualizerRow.delete().where(tables.EqualizerRow.id == self.id)
 
     async def can_manage(self, bot: BotT, requester: discord.abc.User, guild: discord.Guild = None) -> bool:
+        """Check if the requester can manage the equalizer.
+
+        Parameters
+        ----------
+        bot: BotT
+            The bot.
+        requester: discord.abc.User
+            The requester.
+        guild: discord.Guild | None
+            The guild.
+
+        Returns
+        -------
+        bool
+            If the requester can manage the equalizer.
+        """
         if self.scope in BUNDLED_PLAYLIST_IDS:
             return False
         if requester.id in ((ids := getattr(bot, "owner_ids")) or ()) or requester.id == bot.owner_id:  # noqa
             return True
         elif self.scope == bot.user.id:
             return False
-        channel = None
-        if (guild_ := bot.get_guild(self.scope)) or (
-            (guild := guild_ or guild) and (channel := guild.get_channel_or_thread(self.scope))
-        ):
-            if guild_:
-                guild = guild_
-            if guild.owner_id == requester.id:
-                return True
-            if hasattr(bot, "is_mod"):
-                if not isinstance(requester, discord.Member):
-                    requester = guild.get_member(requester.id)
-                    if not requester:
-                        return False
-                return await bot.is_mod(requester)
-            if channel and channel.permissions_for(guild.me).manage_guild:
-                return True
-            return False
         return self.author == requester.id
 
     async def get_scope_name(self, bot: BotT, mention: bool = True, guild: discord.Guild = None) -> str:
+        """Get the name of the scope.
+
+        Parameters
+        ----------
+        bot: BotT
+            The bot.
+        mention: bool
+            If the name should be mentionable.
+        guild: discord.Guild | None
+            The guild.
+
+        Returns
+        -------
+        str
+            The name of the scope.
+        """
         if bot.user.id == self.scope:
             return f"(Global) {bot.user.mention}" if mention else f"(Global) {bot.user}"
         elif guild_ := bot.get_guild(self.scope):
@@ -1359,16 +2088,40 @@ class EqualizerModel:
             return f"(Invalid) {self.scope}"
 
     async def get_author_name(self, bot: BotT, mention: bool = True) -> str | None:
+        """Get the name of the author.
+
+        Parameters
+        ----------
+        bot: BotT
+            The bot.
+        mention: bool
+            If the name should be mentionable.
+
+        Returns
+        -------
+        str | None
+            The name of the author.
+        """
         if user := bot.get_user(self.author):
             return f"{user.mention}" if mention else f"{user}"
         return f"{self.author}"
 
     @asynccontextmanager
-    async def to_yaml(self, guild: discord.Guild) -> Iterator[tuple[io.BytesIO, str]]:
-        """
-        Serialize the Equalizer to a YAML file.
+    async def to_yaml(self, guild: discord.Guild) -> Iterator[tuple[io.BytesIO, str | None]]:
+        """Serialize the Equalizer to a YAML file.
 
         yields a tuple of (io.BytesIO, bool) where the bool is whether the playlist file was compressed using Gzip
+
+        Parameters
+        ----------
+        guild: discord.Guild
+            The guild.
+
+        Yields
+        -------
+        tuple[io.BytesIO, str | None]
+            The YAML file and the compression type.
+
         """
         data = {
             "id": self.id,
@@ -1416,8 +2169,22 @@ class EqualizerModel:
 
     @classmethod
     async def from_yaml(cls, context: PyLavContext, scope: int, url: str) -> EqualizerModel:
-        """
-        Deserialize a Equalizer from a YAML file.
+        """Deserialize a Equalizer from a YAML file.
+
+        Parameters
+        ----------
+        context: PyLavContext
+            The context.
+        scope: int
+            The scope.
+        url: str
+            The URL to the YAML file.
+
+        Returns
+        -------
+        EqualizerModel
+            The Equalizer.
+
         """
         try:
             async with aiohttp.ClientSession(auto_decompress=False) as session:
@@ -1451,6 +2218,14 @@ class EqualizerModel:
         )
 
     def to_dict(self) -> dict:
+        """Serialize the Equalizer to a dict.
+
+        Returns
+        -------
+        dict
+            The dict representation of the Equalizer.
+        """
+
         return {
             "id": self.id,
             "name": self.name,
@@ -1478,6 +2253,18 @@ class EqualizerModel:
 
     @classmethod
     def from_dict(cls, data: dict) -> EqualizerModel:
+        """Deserialize a Equalizer from a dict.
+
+        Parameters
+        ----------
+        data: dict
+            The data to use to build the Equalizer
+
+        Returns
+        -------
+        EqualizerModel
+            The Equalizer
+        """
         return cls(
             id=data["id"],
             scope=data["scope"],
@@ -1502,6 +2289,13 @@ class EqualizerModel:
         )
 
     def to_filter(self) -> Equalizer:
+        """Serialize the Equalizer to a Filter.
+
+        Returns
+        -------
+        Equalizer
+            The filter representation of the Equalizer
+        """
         return Equalizer(
             name=self.name or "CustomEqualizer",
             levels=[
@@ -1527,6 +2321,24 @@ class EqualizerModel:
     def from_filter(
         cls, equalizer: Equalizer, context: PyLavContext, scope: int, description: str = None
     ) -> EqualizerModel:
+        """Deserialize a Equalizer from a Filter.
+
+        Parameters
+        ----------
+        equalizer: Equalizer
+            The filter object
+        context: PyLavContext
+            The Context
+        scope: int
+            The scope number
+        description: str
+            The description of the Equalizer
+
+        Returns
+        -------
+        EqualizerModel
+            The EqualizerModel built from the Equalizer object
+        """
         return EqualizerModel(
             id=context.message.id,
             scope=scope,

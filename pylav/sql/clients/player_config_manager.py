@@ -8,6 +8,7 @@ import discord
 from pylav._logging import getLogger
 from pylav.sql import tables
 from pylav.sql.models import PlayerModel
+from pylav.types import BotT
 from pylav.utils import TimedFeature
 
 if TYPE_CHECKING:
@@ -84,10 +85,11 @@ class PlayerConfigManager:
         *,
         additional_role_ids: list = None,
         additional_user_ids: list = None,
+        bot: BotT = None,
     ) -> bool:
         if additional_user_ids and user.id in additional_user_ids:
             return True
         if additional_role_ids and await asyncstdlib.any(r.id in additional_role_ids for r in user.roles):
             return True
         config = await PlayerModel(bot=self._client.bot.user.id, id=guild.id).get_or_create()
-        return await config.is_dj(user=user, additional_role_ids=None, additional_user_ids=None)
+        return await config.is_dj(user=user, additional_role_ids=None, additional_user_ids=None, bot=bot)
