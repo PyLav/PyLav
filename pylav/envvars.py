@@ -64,7 +64,7 @@ if not ENV_FILE.exists():
         yaml.safe_dump(data, file, default_flow_style=False, sort_keys=False, encoding="utf-8")
 
 else:
-    LOGGER.warning("%s exist - Environment variables will be read from it.", ENV_FILE)
+    LOGGER.info("%s exist - Environment variables will be read from it.", ENV_FILE)
     with ENV_FILE.open(mode="r") as file:
         data = yaml.safe_load(file.read())
         data_new = deepcopy(data)
