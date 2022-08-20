@@ -253,6 +253,8 @@ class PlaylistConfigManager:
 
     async def update_bundled_playlists(self, *ids: int) -> None:
         # NOTICE: Update the BUNDLED_PLAYLIST_IDS constant in the constants.py file
+        old_time_stamp = self.client._config.next_execution_update_bundled_playlists
+
         self.client._config.next_execution_update_bundled_playlists = datetime.datetime.now(
             tz=datetime.timezone.utc
         ) + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS)
@@ -280,6 +282,7 @@ class PlaylistConfigManager:
                     LOGGER.error("Built-in playlist couldn't be parsed - %s, report this error.", name, exc_info=exc)
                     data = None
                 if not data:
+                    self.client._config.next_execution_update_bundled_playlists = old_time_stamp
                     continue
                 if tracks := [t async for t in asyncstdlib.map(str.strip, data.splitlines()) if t]:
                     LOGGER.info("Updating bundled playlist - %s (%s)", name, id)
@@ -292,6 +295,7 @@ class PlaylistConfigManager:
     async def update_bundled_external_playlists(self, *ids: int) -> None:
         from pylav.query import Query
 
+        old_time_stamp = self.client._config.next_execution_update_bundled_external_playlists
         self.client._config.next_execution_update_bundled_external_playlists = datetime.datetime.now(
             tz=datetime.timezone.utc
         ) + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS)
@@ -332,6 +336,7 @@ class PlaylistConfigManager:
                 )
                 data = None
             if not data:
+                self.client._config.next_execution_update_bundled_external_playlists = old_time_stamp
                 continue
             if track_list:
                 await self.create_or_update_global_playlist(

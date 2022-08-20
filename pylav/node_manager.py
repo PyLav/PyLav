@@ -10,11 +10,12 @@ import ujson
 
 from pylav._logging import getLogger
 from pylav.constants import DEFAULT_REGIONS
-from pylav.envvars import USE_BUNDLED_EXTERNAL_NODES
+from pylav.envvars import USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE, USE_BUNDLED_EXTERNAL_PYLAV_NODE
 from pylav.events import NodeConnectedEvent, NodeDisconnectedEvent
 from pylav.location import get_closest_region_name_and_coordinate
 from pylav.node import Node
 from pylav.player import Player
+from pylav.sql.models import NodeModel
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -171,8 +172,28 @@ class NodeManager:
 
         LOGGER.info("[NODE-%s] Successfully added to Node Manager", node.name)
         LOGGER.verbose("[NODE-%s] Successfully added to Node Manager -- %r", node.name, node)
+        if skip_db:
+            data = dict(
+                yaml=yaml or {"server": {}, "lavalink": {"server": {}}},
+                id=unique_identifier,
+                ssl=ssl,
+                reconnect_attempts=reconnect_attempts,
+                search_only=search_only,
+                resume_key=resume_key,
+                resume_timeout=resume_timeout,
+                managed=managed,
+                name=name,
+                disabled_sources=disabled_sources or [],
+                extras=extras or {},
+            )
+            data["yaml"]["server"]["address"] = host  # type: ignore
+            data["yaml"]["server"]["port"] = port  # type: ignore
+            data["yaml"]["lavalink"]["server"]["password"] = password
+
+            node_config = NodeModel(**data)
+
         node._config = (
-            await self.client.node_db_manager.get_node_config(unique_identifier)
+            node_config
             if skip_db
             else await self.client.node_db_manager.add_node(
                 host=host,
@@ -397,10 +418,10 @@ class NodeManager:
         added_managed_external = False
         for node in await self.client.node_db_manager.get_all_unamanaged_nodes():
             try:
-                if node.id == 1:
+                if node.id in [1, 2]:
                     added_managed_external = True
                 connection_arguments = node.get_connection_args()
-                nodes_list.append(await self.add_node(**connection_arguments, skip_db=True))
+                nodes_list.append(await self.add_node(**connection_arguments, skip_db=node.id not in [1, 2]))
             except (ValueError, KeyError) as exc:
                 LOGGER.warning(
                     "[NODE-%s] Invalid node, skipping ... id: %s - Original error: %s", node.name, node.id, exc
@@ -430,41 +451,62 @@ class NodeManager:
             enable_managed_node=True,
             auto_update_managed_nodes=True,
             localtrack_folder=self.client._config_folder / "music",
-            use_bundled_external=USE_BUNDLED_EXTERNAL_NODES,
+            use_bundled_pylav_external=USE_BUNDLED_EXTERNAL_PYLAV_NODE,
+            use_bundled_lava_link_external=USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE,
         )
-        if config_data.use_bundled_external and not added_managed_external:
-            nodes_list.append(
-                await self.add_node(
-                    host="lava.link",
-                    unique_identifier=1,
-                    name="Lava.Link (Bundled)",
-                    port=80,
-                    password=f"PyLav/{self.client.lib_version}",
-                    resume_key=f"PyLav/{self.client.lib_version}-{self.client.bot_id}",
-                    resume_timeout=600,
-                    reconnect_attempts=-1,
-                    ssl=False,
-                    search_only=False,
-                    managed=False,
-                    disabled_sources=[
-                        "clypit",
-                        "reddit",
-                        "local",
-                        "tiktok",
-                        "speak",
-                        "pornhub",
-                        "soundgasm",
-                        "applemusic",
-                        "mixcloud",
-                        "sponsorblock",
-                        "getyarn",
-                        "spotify",
-                        "gcloud-tts",
-                        "ocremix",
-                    ],
-                    skip_db=False,
+        if not added_managed_external:
+            if config_data.use_bundled_pylav_external:
+                nodes_list.append(
+                    await self.add_node(
+                        host="24.199.64.56",
+                        unique_identifier=1,
+                        name="PyLav External (Bundled)",
+                        port=2154,
+                        password="dFfFUgemudCwym9xWcS6KDk2IyB90a3zZMdsHyK2ZEUsr41tgnd12",
+                        resume_key=f"PyLav/{self.client.lib_version}-{self.client.bot_id}",
+                        resume_timeout=600,
+                        reconnect_attempts=-1,
+                        ssl=False,
+                        search_only=False,
+                        managed=False,
+                        disabled_sources=[],
+                        skip_db=True,
+                    )
                 )
-            )
+            elif config_data.use_bundled_lava_link_external:
+                nodes_list.append(
+                    await self.add_node(
+                        host="lava.link",
+                        unique_identifier=2,
+                        name="Lava.Link (Bundled)",
+                        port=80,
+                        password=f"PyLav/{self.client.lib_version}",
+                        resume_key=f"PyLav/{self.client.lib_version}-{self.client.bot_id}",
+                        resume_timeout=600,
+                        reconnect_attempts=-1,
+                        ssl=False,
+                        search_only=False,
+                        managed=False,
+                        disabled_sources=[
+                            "clypit",
+                            "reddit",
+                            "local",
+                            "tiktok",
+                            "speak",
+                            "pornhub",
+                            "soundgasm",
+                            "applemusic",
+                            "mixcloud",
+                            "sponsorblock",
+                            "getyarn",
+                            "spotify",
+                            "gcloud-tts",
+                            "ocremix",
+                        ],
+                        skip_db=True,
+                    )
+                )
+
         tasks = [asyncio.create_task(n.wait_until_ready()) for n in nodes_list]
         if self.client.enable_managed_node:
             tasks.append(asyncio.create_task(self.client._local_node_manager.wait_until_connected()))

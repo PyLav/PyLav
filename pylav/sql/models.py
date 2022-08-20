@@ -281,7 +281,8 @@ class LibConfigModel:
     localtrack_folder: str | None = None
     java_path: str | None = None
     enable_managed_node: bool | None = None
-    use_bundled_external: bool = True
+    use_bundled_pylav_external: bool = True
+    use_bundled_lava_link_external: bool = False
     auto_update_managed_nodes: bool | None = None
     download_id: int = 0
     extras: dict = field(default_factory=dict)
@@ -523,7 +524,7 @@ class LibConfigModel:
             (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
         )
 
-    async def set_managed_external_node(self, value: bool) -> None:
+    async def set_managed_pylav_external_node(self, value: bool) -> None:
         """Set whether the managed external node is enabled.
 
         Parameters
@@ -531,7 +532,18 @@ class LibConfigModel:
         value : bool
             Whether the managed external node is enabled.
         """
-        self.use_bundled_external = value
+        self.use_bundled_pylav_external = value
+        await self.save()
+
+    async def set_managed_lava_link_external_node(self, value: bool) -> None:
+        """Set whether the managed external node is enabled.
+
+        Parameters
+        ----------
+        value : bool
+            Whether the managed external node is enabled.
+        """
+        self.use_bundled_lava_link_external = value
         await self.save()
 
     async def set_update_bot_activity(self, value: bool) -> None:
@@ -559,7 +571,8 @@ class LibConfigModel:
             "enable_managed_node": self.enable_managed_node,
             "auto_update_managed_nodes": self.auto_update_managed_nodes,
             "localtrack_folder": self.localtrack_folder,
-            "use_bundled_external": self.use_bundled_external,
+            "use_bundled_pylav_external": self.use_bundled_pylav_external,
+            "use_bundled_lava_link_external": self.use_bundled_lava_link_external,
             "extras": self.extras,
             "download_id": self.download_id,
             "next_execution_update_bundled_playlists": self.next_execution_update_bundled_playlists,
@@ -596,7 +609,8 @@ class LibConfigModel:
         self.enable_managed_node = response["enable_managed_node"]
         self.auto_update_managed_nodes = response["auto_update_managed_nodes"]
         self.localtrack_folder = response["localtrack_folder"]
-        self.use_bundled_external = response["use_bundled_external"]
+        self.use_bundled_pylav_external = response["use_bundled_pylav_external"]
+        self.use_bundled_lava_link_external = response["use_bundled_lava_link_external"]
         self.download_id = response["download_id"]
         self.next_execution_update_bundled_playlists = response["next_execution_update_bundled_playlists"]
         self.next_execution_update_bundled_external_playlists = response[
@@ -617,7 +631,8 @@ class LibConfigModel:
         java_path="java",
         enable_managed_node: bool = True,
         auto_update_managed_nodes: bool = True,
-        use_bundled_external: bool = True,
+        use_bundled_pylav_external: bool = True,
+        use_bundled_lava_link_external: bool = False,
     ) -> LibConfigModel:
 
         """Get or create a config for the bot.
@@ -638,7 +653,9 @@ class LibConfigModel:
             Whether the managed node is enabled.
         auto_update_managed_nodes : bool
             Whether the managed node should be auto updated.
-        use_bundled_external : bool
+        use_bundled_pylav_external : bool
+            Whether the bundled external node is used.
+        use_bundled_lava_link_external : bool
             Whether the bundled external node is used.
 
         Returns
@@ -657,7 +674,8 @@ class LibConfigModel:
                     localtrack_folder=localtrack_folder,
                     enable_managed_node=enable_managed_node,
                     auto_update_managed_nodes=auto_update_managed_nodes,
-                    use_bundled_external=use_bundled_external,
+                    use_bundled_pylav_external=use_bundled_pylav_external,
+                    use_bundled_lava_link_external=use_bundled_lava_link_external,
                     download_id=0,
                     extras={},
                     next_execution_update_bundled_playlists=None,

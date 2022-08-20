@@ -36,7 +36,8 @@ An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml
 - Misc
   - PYLAV__LOGGER_PREFIX - Sets the logger prefix, defaults to None, or "red." if [redbot](https://github.com/Cog-Creators/Red-DiscordBot) is installed.
   - PYLAV__JAVA_EXECUTABLE - Sets the Java executable to be used by PyLav for the managed Lavalink node
-  - PYLAV__USE_BUNDLED_EXTERNAL_NODES - Set this to 1 to enable the bundled external nodes or 0 to disabled it
+  - PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE - Enabled the bundled PyLav external node
+  - PYLAV__USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE - Enabled the bundled lava.link node
 - Unmanaged External Node - If both PYLAV__EXTERNAL_UNMANAGED_HOST and PYLAV__EXTERNAL_UNMANAGED_PASSWORD are set then the managed node is not started up
   - PYLAV__EXTERNAL_UNMANAGED_HOST - No Default - Required (Should not contain the protocol i.e "http" or "https", this is determined by PYLAV__EXTERNAL_UNMANAGED_SSL)
   - PYLAV__EXTERNAL_UNMANAGED_PASSWORD - No Default - Required

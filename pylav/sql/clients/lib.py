@@ -50,7 +50,8 @@ class LibConfigManager:
         java_path,
         enable_managed_node,
         auto_update_managed_nodes,
-        use_bundled_external,
+        use_bundled_pylav_external,
+        use_bundled_lava_link_external,
     ) -> LibConfigModel:
         return await LibConfigModel.get_or_create(
             id=1,
@@ -60,7 +61,8 @@ class LibConfigManager:
             java_path=java_path,
             enable_managed_node=enable_managed_node,
             auto_update_managed_nodes=auto_update_managed_nodes,
-            use_bundled_external=use_bundled_external,
+            use_bundled_pylav_external=use_bundled_pylav_external,
+            use_bundled_lava_link_external=use_bundled_lava_link_external,
         )
 
     async def set_lib_config(

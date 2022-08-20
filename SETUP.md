@@ -115,9 +115,12 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
   - Change `PYLAV__POSTGRES_PORT` and `PYLAV__POSTGRES_HOST` to the connection host and port for the Postgres server.
   - `PYLAV__JAVA_EXECUTABLE` can be changed from java to the full path of the Azul Zulu 13 Java executable installed above.
     - By default it will use `java` to ensure you have the correct version under `java` run `java --version` if it says "OpenJDK Runtime Environment Zulu13..." then this is not needed to be changed.
-  - PyLav bundled an external undamaged public lavalink Node - the node used is a public node unaffiliated with PyLav or Draper, this will expose you IP to the server hosting the node for communication purposes.
-    - To disable this set `PYLAV__USE_BUNDLED_EXTERNAL_NODES` to `false`
-    - To enable this set `PYLAV__USE_BUNDLED_EXTERNAL_NODES` to `true`
+  - PyLav bundled an external unmanaged public lavalink Node - the node used is a public node unaffiliated with PyLav or Draper, this will expose you IP to the server hosting the node for communication purposes.
+    - To disable this set `PYLAV__USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE` to `false`
+    - To enable this set `PYLAV__USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE` to `true`
+  - PyLav bundled an external unmanaged public lavalink Node - the node used is a public node hosted by Draper, this will expose you IP to the server hosting the node for communication purposes.
+    - To disable this set `PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE` to `false`
+    - To enable this set `PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE` to `true`
   - If you don't want PyLav to manage a node (not recommended) you can specify the connection args from an external node instead.
     - Note: PyLav supports multiple bots running on the same machine, this should not be the reason why you set these.
       - Set `PYLAV__EXTERNAL_UNMANAGED_HOST` to the Lavalink node connection host

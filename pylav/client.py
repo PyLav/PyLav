@@ -36,7 +36,8 @@ from pylav.envvars import (
     TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS,
     TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS,
     TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS,
-    USE_BUNDLED_EXTERNAL_NODES,
+    USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE,
+    USE_BUNDLED_EXTERNAL_PYLAV_NODE,
 )
 from pylav.events import Event
 from pylav.exceptions import (
@@ -325,7 +326,8 @@ class Client(metaclass=_Singleton):
                             enable_managed_node=True,
                             auto_update_managed_nodes=True,
                             localtrack_folder=self._config_folder / "music",
-                            use_bundled_external=USE_BUNDLED_EXTERNAL_NODES,
+                            use_bundled_lava_link_external=USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE,
+                            use_bundled_pylav_external=USE_BUNDLED_EXTERNAL_PYLAV_NODE,
                         )
                         LOGGER.info("Config folder: %s", self._config.config_folder)
                         LOGGER.info("Localtracks folder: %s", self._config.localtrack_folder)
