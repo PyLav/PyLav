@@ -104,7 +104,7 @@ else:
 
         if (USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE := data.get("PYLAV__USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE")) is None:
             USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE = bool(
-                int(os.getenv("PYLAV__USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE", "1"))
+                int(os.getenv("PYLAV__USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE", "0"))
             )
             data_new["PYLAV__USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE"] = USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE
 
