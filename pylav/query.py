@@ -518,7 +518,7 @@ class Query:
     @classmethod
     def from_string_noawait(cls, query: Query | str) -> Query:
         """
-        Same as from_string but without but non-awaitable - which makes it unable to process localtracks.
+        Same as from_string but synchronous - which makes it unable to process localtracks.
         """
         if isinstance(query, Query):
             return query
