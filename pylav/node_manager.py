@@ -469,7 +469,9 @@ class NodeManager:
                         ssl=False,
                         search_only=False,
                         managed=False,
-                        disabled_sources=[],
+                        disabled_sources=[
+                            "local",
+                        ],
                         skip_db=True,
                     )
                 )
