@@ -367,6 +367,8 @@ class Client(metaclass=_Singleton):
                             )
                         ) and self.enable_managed_node:
                             await self._local_node_manager.start(java_path=self._config.java_path)
+                        else:
+                            self._local_node_manager.ready.set()
                         await self.node_manager.connect_to_all_nodes()
                         await self.node_manager.wait_until_ready()
                         await self.player_manager.restore_player_states()
