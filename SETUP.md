@@ -1,7 +1,8 @@
 # Setup
 **NOTICE**:
   - These instructions are only applicable until Red 3.5 release.
-**NOTE**:
+
+**NOTICE**:
   - PyLav assumes you are using PostgresSQL 14 and it also requires Python3.10 any other version for these will not work/be supported.
   - If you have docker; Setting up a postgres container for it would likely be the simplest option to setup the necessary server.
 
