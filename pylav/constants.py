@@ -55,7 +55,21 @@ SUPPORTED_SOURCES = {
 BUNDLED_PLAYLIST_IDS = {1, 2, 1000001, 1000002, 1000003, 1000004}
 BUNDLED_NODES_IDS = {1, 2, 1001}
 
+# Mapping of the PyLav public nodes
+#   The floats entries are possible locations but not yet being used.
 PYLAV_NODES = {
     1: ("new_york_city", (40.79649328599502, -74.03042612557748)),
+    1.2: ("new_york_city", (40.7413699, -74.0032633)),
+    1.3: ("new_york_city", (40.8297457, -74.1268861)),
     2: ("singapore", (1.3213765, 103.6956208)),
+    # 3.1 has been removed
+    3.2: ("amsterdam", (52.2930976, 4.9441902)),
+    3.3: ("amsterdam", (52.3372962, 4.9314556)),
+    4.1: ("san_francisco", (37.723698, -122.40025)),
+    4.2: ("san_francisco", (37.7885638, -122.3907054)),
+    4.3: ("san_francisco", (37.3760022, -121.9721708)),
+    5.1: ("london", (51.5223359, -0.6317893)),
+    6.1: ("frankfurt", (50.11967, 8.732436)),
+    7.1: ("toronto", (43.6508542, -79.364145)),
+    8.1: ("india", (12.8394441, 77.6599313)),
 }
