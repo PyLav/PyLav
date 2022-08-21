@@ -722,8 +722,7 @@ class Client(metaclass=_Singleton):
                     LOGGER.info("All cogs have been unregistered, PyLav client has been shutdown.")
 
     def get_player(self, guild: discord.Guild | int | None) -> Player | None:
-        """|coro|
-        Gets the player for the target guild.
+        """Gets the player for the target guild.
 
         Parameters
         ----------
@@ -850,6 +849,7 @@ class Client(metaclass=_Singleton):
         query: Query,
         first: bool = False,
         bypass_cache: bool = False,
+        player: Player | None = None,
     ) -> dict:
         """|coro|
         Gets all tracks associated with the given query.
@@ -870,7 +870,11 @@ class Client(metaclass=_Singleton):
         """
         if not self.node_manager.available_nodes:
             raise NoNodeAvailable("No available nodes!")
-        node = await self.node_manager.find_best_node(feature=query.requires_capability)
+        node = await self.node_manager.find_best_node(
+            feature=query.requires_capability,
+            region=player.region if player else None,
+            coordinates=player.coordinates if player else None,
+        )
         if node is None:
             raise NoNodeWithRequestFunctionalityAvailable(
                 f"No node with {query.requires_capability} functionality available!", query.requires_capability
@@ -919,7 +923,11 @@ class Client(metaclass=_Singleton):
         track_count = 0
 
         for query in queries:
-            node = await self.node_manager.find_best_node(feature=query.requires_capability)
+            node = await self.node_manager.find_best_node(
+                region=player.region if player else None,
+                coordinates=player.coordinates if player else None,
+                feature=query.requires_capability,
+            )
             if node is None:
                 queries_failed.append(query)
             # Query tracks as the queue builds as this may be a slow operation
@@ -928,7 +936,7 @@ class Client(metaclass=_Singleton):
                 await player.play(track, await track.query(), requester)
             if query.is_search or query.is_single:
                 try:
-                    track = await self._get_tracks(query=query, first=True, bypass_cache=bypass_cache)
+                    track = await self._get_tracks(player=player, query=query, first=True, bypass_cache=bypass_cache)
                     track_b64 = track.get("track")
                     if not track_b64:
                         queries_failed.append(query)
@@ -946,7 +954,7 @@ class Client(metaclass=_Singleton):
                     queries_failed.append(query)
             elif (query.is_playlist or query.is_album) and not query.is_local and not query.is_custom_playlist:
                 try:
-                    tracks: dict = await self._get_tracks(query=query, bypass_cache=bypass_cache)
+                    tracks: dict = await self._get_tracks(player=player, query=query, bypass_cache=bypass_cache)
                     track_list = tracks.get("tracks", [])
                     if not track_list:
                         queries_failed.append(query)
@@ -972,7 +980,7 @@ class Client(metaclass=_Singleton):
                     yielded = False
                     async for local_track in query.get_all_tracks_in_folder():
                         yielded = True
-                        track = await self._get_tracks(query=local_track, first=True, bypass_cache=True)
+                        track = await self._get_tracks(player=player, query=local_track, first=True, bypass_cache=True)
                         if track_b64 := track.get("track"):
                             track_count += 1
                             successful_tracks.append(
@@ -1035,6 +1043,8 @@ class Client(metaclass=_Singleton):
         *queries: Query,
         bypass_cache: bool = False,
         fullsearch: bool = False,
+        region: str | None = None,
+        player: Player | None = None,
     ) -> LavalinkResponseT:
         """This method can be rather slow as it recursibly queries all queries and their associated entries.
 
@@ -1051,13 +1061,23 @@ class Client(metaclass=_Singleton):
             Local files will always be bypassed.
         fullsearch : `bool`, optional
             if a Search query is passed wether to returrn a list of tracks instead of the first.
+        region : `str`, optional
+            The region to search in.
+        player : `Player`, optional
+            The player to use for enqueuing tracks.
         """
         output_tracks = []
         playlist_name = ""
+        if region is None and player is not None:
+            region = player.region
+
+        if region is None:
+            region = "us_east"
+
         for query in queries:
             async for response in self._yield_recursive_queries(query):
                 with contextlib.suppress(NoNodeWithRequestFunctionalityAvailable):
-                    node = await self.node_manager.find_best_node(feature=response.requires_capability)
+                    node = await self.node_manager.find_best_node(region=region, feature=response.requires_capability)
                     if node is None or response.is_custom_playlist:
                         continue
                     if response.is_playlist or response.is_album:
@@ -1078,7 +1098,7 @@ class Client(metaclass=_Singleton):
                 "name": playlist_name if len(queries) == 1 else "",
                 "selectedTrack": -1,
             },
-            "loadType": "SEARCH_RESULT" if output_tracks else "LOAD_FAILED",
+            "loadType": "PLAYLIST_LOADED" if playlist_name else "SEARCH_RESULT" if output_tracks else "LOAD_FAILED",  # type: ignore
             "tracks": output_tracks,
         }
 
