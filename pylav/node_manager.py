@@ -458,15 +458,15 @@ class NodeManager:
             if config_data.use_bundled_pylav_external:
                 nodes_list.append(
                     await self.add_node(
-                        host="24.199.64.56",
+                        host="ll.draper.wtf",
                         unique_identifier=1,
                         name="PyLav External (Bundled)",
-                        port=2154,
-                        password="dFfFUgemudCwym9xWcS6KDk2IyB90a3zZMdsHyK2ZEUsr41tgnd12",
+                        port=443,
+                        password=f"PyLav/{self.client.lib_version}",
                         resume_key=f"PyLav/{self.client.lib_version}-{self.client.bot_id}",
                         resume_timeout=600,
                         reconnect_attempts=-1,
-                        ssl=False,
+                        ssl=True,
                         search_only=False,
                         managed=False,
                         disabled_sources=[
