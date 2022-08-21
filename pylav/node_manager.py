@@ -418,7 +418,7 @@ class NodeManager:
         added_managed_external = False
         for node in await self.client.node_db_manager.get_all_unamanaged_nodes():
             try:
-                if node.id in [1, 2]:
+                if node.id in [1, 2, 1001]:
                     added_managed_external = True
                 connection_arguments = node.get_connection_args()
                 nodes_list.append(await self.add_node(**connection_arguments, skip_db=node.id not in [1, 2]))
@@ -458,9 +458,28 @@ class NodeManager:
             if config_data.use_bundled_pylav_external:
                 nodes_list.append(
                     await self.add_node(
-                        host="ll.draper.wtf",
+                        host="ll-us-ny.draper.wtf",
                         unique_identifier=1,
-                        name="PyLav External (Bundled)",
+                        name="PyLav NY-US (Bundled)",
+                        port=443,
+                        password=f"PyLav/{self.client.lib_version}",
+                        resume_key=f"PyLav/{self.client.lib_version}-{self.client.bot_id}",
+                        resume_timeout=600,
+                        reconnect_attempts=-1,
+                        ssl=True,
+                        search_only=False,
+                        managed=False,
+                        disabled_sources=[
+                            "local",
+                        ],
+                        skip_db=True,
+                    )
+                )
+                nodes_list.append(
+                    await self.add_node(
+                        host="ll-sg.draper.wtf",
+                        unique_identifier=2,
+                        name="PyLav Singapore (Bundled)",
                         port=443,
                         password=f"PyLav/{self.client.lib_version}",
                         resume_key=f"PyLav/{self.client.lib_version}-{self.client.bot_id}",
@@ -479,7 +498,7 @@ class NodeManager:
                 nodes_list.append(
                     await self.add_node(
                         host="lava.link",
-                        unique_identifier=2,
+                        unique_identifier=1001,
                         name="Lava.Link (Bundled)",
                         port=80,
                         password=f"PyLav/{self.client.lib_version}",
