@@ -266,11 +266,18 @@ class Node:
         )
 
     @property
-    def is_ready(self):
+    def is_ready(self) -> bool:
         return self._ready.is_set() and self._ws.connected
 
     @property
-    def coordinates(self):
+    def coordinates(self) -> tuple[int, int]:
+        """The coordinates of the node.
+
+        Returns
+        -------
+        :class:`tuple`
+            The coordinates of the node.
+        """
         return self._coordinates
 
     @property

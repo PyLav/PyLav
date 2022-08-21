@@ -9,7 +9,7 @@ import asyncstdlib
 import ujson
 
 from pylav._logging import getLogger
-from pylav.constants import DEFAULT_REGIONS
+from pylav.constants import BUNDLED_NODES_IDS, DEFAULT_REGIONS
 from pylav.envvars import USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE, USE_BUNDLED_EXTERNAL_PYLAV_NODE
 from pylav.events import NodeConnectedEvent, NodeDisconnectedEvent
 from pylav.location import get_closest_region_name_and_coordinate
@@ -418,10 +418,10 @@ class NodeManager:
         added_managed_external = False
         for node in await self.client.node_db_manager.get_all_unamanaged_nodes():
             try:
-                if node.id in [1, 2, 1001]:
+                if node.id in BUNDLED_NODES_IDS:
                     added_managed_external = True
                 connection_arguments = node.get_connection_args()
-                nodes_list.append(await self.add_node(**connection_arguments, skip_db=node.id not in [1, 2]))
+                nodes_list.append(await self.add_node(**connection_arguments, skip_db=node.id not in BUNDLED_NODES_IDS))
             except (ValueError, KeyError) as exc:
                 LOGGER.warning(
                     "[NODE-%s] Invalid node, skipping ... id: %s - Original error: %s", node.name, node.id, exc

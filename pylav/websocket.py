@@ -8,6 +8,7 @@ import aiohttp
 import ujson
 
 from pylav._logging import getLogger
+from pylav.constants import PYLAV_NODES
 from pylav.events import (
     SegmentSkippedEvent,
     SegmentsLoadedEvent,
@@ -166,7 +167,11 @@ class WebSocket:
                 return
             if self._resuming_configured and self._resume_key:
                 headers["Resume-Key"] = self._resume_key
-            self._node._region, self._node._coordinates = await get_closest_discord_region(self._host)
+            if self._node.identifier in PYLAV_NODES:
+                # Since these nodes are proxied by Cloudflare - lets add a special case to properly identify them.
+                self._node._region, self._node._coordinates = PYLAV_NODES[self._node.identifier]
+            else:
+                self._node._region, self._node._coordinates = await get_closest_discord_region(self._host)
 
             is_finite_retry = self._max_reconnect_attempts != -1
             max_attempts_str = self._max_reconnect_attempts if is_finite_retry else "inf"
