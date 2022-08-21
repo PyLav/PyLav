@@ -429,8 +429,13 @@ class Node:
         """Returns the load-balancing penalty for this node."""
         if not self.available or not self.stats:
             return float("inf")
-
         return self.stats.penalty.total
+
+    async def penalty_with_region(self, region: str | None) -> float:
+        """The penalty for the node, with the region added in."""
+        if not region:
+            return self.penalty
+        return self.penalty + (1.1 ** (0.0025 * await self.region_distance(region)) * 500 - 500)
 
     def dispatch_event(self, event: Event) -> None:
         """|coro|
