@@ -539,7 +539,7 @@ class NodeManager:
         if not tasks:
             LOGGER.warning("No nodes found, please add some nodes.")
             return
-        done, pending = await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
+        done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
         for task in pending:
             task.cancel()
         for result in done:

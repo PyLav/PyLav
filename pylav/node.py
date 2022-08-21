@@ -370,7 +370,7 @@ class Node:
     @property
     def available(self) -> bool:
         """Returns whether the node is available for requests."""
-        return self._ws.connected
+        return self._ws.connected if self._ws else False
 
     @property
     def _original_players(self) -> list[Player]:
