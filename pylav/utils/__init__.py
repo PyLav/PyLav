@@ -10,7 +10,7 @@ import random
 import threading
 import time
 from asyncio import QueueFull, events, locks
-from collections.abc import AsyncIterable, AsyncIterator, Awaitable, Generator, Iterable, Iterator
+from collections.abc import AsyncIterable, AsyncIterator, Awaitable, Coroutine, Generator, Iterable, Iterator
 from copy import copy
 from enum import Enum
 from itertools import chain
@@ -38,6 +38,7 @@ from discord.ext.commands import Context as DpyContext
 
 if TYPE_CHECKING:
     from pylav import Player
+    from pylav.node import Node
 
 __all__ = (
     "MISSING",
@@ -847,6 +848,10 @@ async def _get_context(self: BotT, message: discord.Message | InteractionT, /, *
 @dpy_command.command(name="__dummy_command", hidden=True, disabled=True)
 async def dummy_command(self, context: PyLavContext):
     """Does nothing."""
+
+
+async def sort_key_nodes(node: Node, region: str = None) -> float:
+    return await node.penalty_with_region(region)
 
 
 # Everything under here is taken from

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import operator
+from functools import partial
 from typing import TYPE_CHECKING
 
 import aiohttp
@@ -9,13 +10,14 @@ import asyncstdlib
 import ujson
 
 from pylav._logging import getLogger
-from pylav.constants import BUNDLED_NODES_IDS, DEFAULT_REGIONS
+from pylav.constants import BUNDLED_NODES_IDS, DEFAULT_REGIONS, REGION_TO_COUNTRY_COORDINATE_MAPPING
 from pylav.envvars import USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE, USE_BUNDLED_EXTERNAL_PYLAV_NODE
 from pylav.events import NodeConnectedEvent, NodeDisconnectedEvent
 from pylav.location import get_closest_region_name_and_coordinate
 from pylav.node import Node
 from pylav.player import Player
 from pylav.sql.models import NodeModel
+from pylav.utils import sort_key_nodes
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -301,8 +303,10 @@ class NodeManager:
         else:
             nodes = self.available_nodes
         if coordinates is None:
-            coordinates = (0, 0)
-
+            if region and region in REGION_TO_COUNTRY_COORDINATE_MAPPING:
+                coordinates = REGION_TO_COUNTRY_COORDINATE_MAPPING[region]
+            else:
+                coordinates = (0, 0)
         if region and not_region:
             available_regions = {n.region for n in self.available_nodes if n.region not in already_attempted_regions}
             closest_region, __ = await get_closest_region_name_and_coordinate(
@@ -335,7 +339,7 @@ class NodeManager:
                 ]
             else:
                 nodes = self.available_nodes
-        return await asyncstdlib.min(nodes, key=lambda n: n.penalty_with_region(region)) if nodes else None
+        return await asyncstdlib.min(nodes, key=partial(sort_key_nodes, region=region), default=None) if nodes else None
 
     def get_node_by_id(self, unique_identifier: int) -> Node | None:
         """
