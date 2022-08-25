@@ -466,12 +466,19 @@ class Node:
     def __eq__(self, other):
         if isinstance(other, Node):
             return self.identifier == other.identifier
+        elif isinstance(other, NodeModel):
+            return self.host == other.yaml["server"]["address"] and self.port == other.yaml["server"]["port"]
         return NotImplemented
 
     def __ne__(self, other):
         if isinstance(other, Node):
             return self.identifier != other.identifier
+        elif isinstance(other, NodeModel):
+            return not (self.host == other.yaml["server"]["address"] and self.port == other.yaml["server"]["port"])
         return NotImplemented
+
+    def __hash__(self) -> int:
+        return hash((self.host, self.port))
 
     async def get_query_youtube_music(self, query: str, bypass_cache: bool = False) -> LavalinkResponseT:
         """|coro|

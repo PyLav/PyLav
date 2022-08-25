@@ -10,7 +10,12 @@ import asyncstdlib
 import ujson
 
 from pylav._logging import getLogger
-from pylav.constants import BUNDLED_NODES_IDS, DEFAULT_REGIONS, REGION_TO_COUNTRY_COORDINATE_MAPPING
+from pylav.constants import (
+    BUNDLED_NODES_IDS,
+    DEFAULT_REGIONS,
+    PYLAV_BUNDLED_NODES_SETTINGS,
+    REGION_TO_COUNTRY_COORDINATE_MAPPING,
+)
 from pylav.envvars import USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE, USE_BUNDLED_EXTERNAL_PYLAV_NODE
 from pylav.events import NodeConnectedEvent, NodeDisconnectedEvent
 from pylav.location import get_closest_region_name_and_coordinate
@@ -419,36 +424,54 @@ class NodeManager:
 
     async def connect_to_all_nodes(self) -> None:
         nodes_list = []
-        added_managed_external = False
         for node in await self.client.node_db_manager.get_all_unamanaged_nodes():
             try:
-                if node.id in BUNDLED_NODES_IDS:
-                    added_managed_external = True
-                connection_arguments = node.get_connection_args()
-                nodes_list.append(await self.add_node(**connection_arguments, skip_db=node.id not in BUNDLED_NODES_IDS))
+                if node in nodes_list:
+                    LOGGER.warning(
+                        "%s Node already added to connection pool - skipping duplicated connection - (%s:%s)",
+                        node.name,
+                        node.yaml["server"]["address"],
+                        node.yaml["server"]["port"],
+                    )
+                    continue
+                if node.yaml["server"]["address"] in PYLAV_BUNDLED_NODES_SETTINGS:
+                    connection_arguments = PYLAV_BUNDLED_NODES_SETTINGS[node.yaml["server"]["address"]]
+                else:
+                    connection_arguments = node.get_connection_args()
+                    connection_arguments["skip_db"] = node.id not in BUNDLED_NODES_IDS
+                nodes_list.append(await self.add_node(**connection_arguments))
             except (ValueError, KeyError) as exc:
                 LOGGER.warning(
                     "[NODE-%s] Invalid node, skipping ... id: %s - Original error: %s", node.name, node.id, exc
                 )
                 continue
         if self._unmanaged_external_host and self._unmanaged_external_password:
-            nodes_list.append(
-                await self.add_node(
-                    host=self._unmanaged_external_host,
-                    unique_identifier=31415,
-                    name="ENVAR Node (Unmanaged)",
-                    port=self._unmanaged_external_port or (443 if self._unmanaged_external_ssl else 80),
-                    password=self._unmanaged_external_password,
-                    resume_key=f"PyLav/{self.client.lib_version}-{self.client.bot_id}",
-                    resume_timeout=600,
-                    reconnect_attempts=-1,
-                    ssl=self._unmanaged_external_ssl,
-                    search_only=False,
-                    managed=False,
-                    disabled_sources=[],
-                    skip_db=True,
+            if await asyncstdlib.all(True for n in nodes_list if n.host != self._unmanaged_external_host):
+                if self._unmanaged_external_host in PYLAV_BUNDLED_NODES_SETTINGS:
+                    base_settings = PYLAV_BUNDLED_NODES_SETTINGS[self._unmanaged_external_host]
+                else:
+                    base_settings = {
+                        "port": self._unmanaged_external_port or (443 if self._unmanaged_external_ssl else 80),
+                        "ssl": self._unmanaged_external_ssl,
+                        "password": self._unmanaged_external_password,
+                        "resume_timeout": 600,
+                        "reconnect_attempts": -1,
+                        "search_only": False,
+                        "managed": False,
+                        "disabled_sources": [],
+                        "skip_db": True,
+                        "host": self._unmanaged_external_host,
+                        "unique_identifier": 31415,
+                        "name": "ENVAR Node (Unmanaged)",
+                        "resume_key": f"PyLav/{self.client.lib_version}-{self.client.bot_id}",
+                    }
+                nodes_list.append(await self.add_node(**base_settings))
+            else:
+                LOGGER.warning(
+                    "ENVAR Node (Unmanaged) already added to connection pool - skipping duplicated connection - (%s:%s)",
+                    self._unmanaged_external_host,
+                    self._unmanaged_external_port,
                 )
-            )
         config_data = await self.client._lib_config_manager.get_config(
             config_folder=self.client._config_folder,
             java_path="java",
@@ -458,80 +481,41 @@ class NodeManager:
             use_bundled_pylav_external=USE_BUNDLED_EXTERNAL_PYLAV_NODE,
             use_bundled_lava_link_external=USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE,
         )
-        if not added_managed_external:
-            if config_data.use_bundled_pylav_external:
-                nodes_list.append(
-                    await self.add_node(
-                        host="ll-us-ny.draper.wtf",
-                        unique_identifier=1,
-                        name="PyLav NY-US (Bundled)",
-                        port=443,
-                        password=f"PyLav/{self.client.lib_version}",
-                        resume_key=f"PyLav/{self.client.lib_version}-{self.client.bot_id}",
-                        resume_timeout=600,
-                        reconnect_attempts=-1,
-                        ssl=True,
-                        search_only=False,
-                        managed=False,
-                        disabled_sources=[
-                            "local",
-                        ],
-                        skip_db=True,
-                    )
-                )
-                nodes_list.append(
-                    await self.add_node(
-                        host="ll-sg.draper.wtf",
-                        unique_identifier=2,
-                        name="PyLav Singapore (Bundled)",
-                        port=443,
-                        password=f"PyLav/{self.client.lib_version}",
-                        resume_key=f"PyLav/{self.client.lib_version}-{self.client.bot_id}",
-                        resume_timeout=600,
-                        reconnect_attempts=-1,
-                        ssl=True,
-                        search_only=False,
-                        managed=False,
-                        disabled_sources=[
-                            "local",
-                        ],
-                        skip_db=True,
-                    )
-                )
-            elif config_data.use_bundled_lava_link_external:
-                nodes_list.append(
-                    await self.add_node(
-                        host="lava.link",
-                        unique_identifier=1001,
-                        name="Lava.Link (Bundled)",
-                        port=80,
-                        password=f"PyLav/{self.client.lib_version}",
-                        resume_key=f"PyLav/{self.client.lib_version}-{self.client.bot_id}",
-                        resume_timeout=600,
-                        reconnect_attempts=-1,
-                        ssl=False,
-                        search_only=False,
-                        managed=False,
-                        disabled_sources=[
-                            "clypit",
-                            "reddit",
-                            "local",
-                            "tiktok",
-                            "speak",
-                            "pornhub",
-                            "soundgasm",
-                            "applemusic",
-                            "mixcloud",
-                            "sponsorblock",
-                            "getyarn",
-                            "spotify",
-                            "gcloud-tts",
-                            "ocremix",
-                        ],
-                        skip_db=True,
-                    )
+        if config_data.use_bundled_pylav_external:
+            if await asyncstdlib.all(True for n in nodes_list if n.host != "ll-gb.draper.wtf"):
+                base_settings = PYLAV_BUNDLED_NODES_SETTINGS["ll-gb.draper.wtf"]
+                base_settings["host"] = "ll-gb.draper.wtf"
+                base_settings["resume_key"] = f"PyLav/{self.client.lib_version}-{self.client.bot_id}"
+                nodes_list.append(await self.add_node(**base_settings))
+            else:
+                LOGGER.debug(
+                    "%s already added to connection pool - skipping duplicated connection",
+                    PYLAV_BUNDLED_NODES_SETTINGS["ll-gb.draper.wtf"]["name"],
                 )
 
+            if await asyncstdlib.all(True for n in nodes_list if n.host != "ll-us-ny.draper.wtf"):
+                base_settings = PYLAV_BUNDLED_NODES_SETTINGS["ll-us-ny.draper.wtf"]
+                base_settings["resume_key"] = f"PyLav/{self.client.lib_version}-{self.client.bot_id}"
+                nodes_list.append(await self.add_node(**base_settings))
+            else:
+                LOGGER.debug(
+                    "%s already added to connection pool - skipping duplicated connection",
+                    PYLAV_BUNDLED_NODES_SETTINGS["ll-us-ny.draper.wtf"]["name"],
+                )
+        if config_data.use_bundled_lava_link_external:
+            if await asyncstdlib.all(True for n in nodes_list if n.host != "lava.link"):
+                nodes_list.append(
+                    await self.add_node(
+                        password=f"PyLav/{self.client.lib_version}",
+                        resume_key=f"PyLav/{self.client.lib_version}-{self.client.bot_id}",
+                        **PYLAV_BUNDLED_NODES_SETTINGS["lava.link"],
+                    )
+                )
+            else:
+                LOGGER.debug(
+                    "%s already added to connection pool - skipping duplicated connection",
+                    PYLAV_BUNDLED_NODES_SETTINGS["lava.link"]["name"],
+                )
         tasks = [asyncio.create_task(n.wait_until_ready()) for n in nodes_list]
         if (
             not (

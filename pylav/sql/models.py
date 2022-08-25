@@ -33,6 +33,9 @@ from pylav.sql import tables
 from pylav.types import BotT
 from pylav.utils import PyLavContext, TimedFeature
 
+Node = None
+
+
 BRACKETS: re.Pattern = re.compile(r"[\[\]]")
 
 LOGGER = getLogger("PyLav.DBModels")
@@ -688,7 +691,7 @@ class LibConfigModel:
         return cls(**r.to_dict())
 
 
-@dataclass(eq=True)
+@dataclass
 class NodeModel:
     id: int
     name: str
@@ -701,6 +704,23 @@ class NodeModel:
     extras: dict
     yaml: dict
     disabled_sources: field(default_factory=list)
+
+    def __eq__(self, other: NodeModel) -> bool:
+        global Node
+        if Node is None:
+            from pylav.node import Node
+        # noinspection PyProtectedMember
+        if isinstance(other, NodeModel):
+            return (
+                self.yaml["server"]["address"] == other.yaml["server"]["address"]
+                and self.yaml["server"]["port"] == other.yaml["server"]["port"]
+            )
+        elif isinstance(other, Node):
+            return other.host == self.yaml["server"]["address"] and other.self == other.yaml["server"]["port"]
+        return NotImplemented
+
+    def __hash__(self) -> int:
+        return hash((self.yaml["server"]["address"], self.yaml["server"]["port"]))
 
     def __post_init__(self):
         if isinstance(self.extras, str):

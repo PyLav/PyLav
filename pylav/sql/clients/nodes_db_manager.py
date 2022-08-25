@@ -37,17 +37,20 @@ class NodeConfigManager:
         self.currently_in_db.add(model.id)
         return model
 
-    async def get_all_unamanaged_nodes(self) -> list[NodeModel]:
+    async def get_all_unamanaged_nodes(self, dedupe: bool = True) -> list[NodeModel]:
         model_list = [
             NodeModel(**node.to_dict())
             for node in await tables.NodeRow.objects()
             .output(load_json=True)
             .where(tables.NodeRow.managed == False)  # noqa: E712
         ]
-        for n in model_list:
+        if dedupe:
+            new_model_list = list(set(model_list))
+        else:
+            new_model_list = model_list
+        for n in new_model_list:
             self.currently_in_db.add(n.id)
-
-        return model_list
+        return new_model_list
 
     async def get_all_nodes(self) -> list[NodeModel]:
         model_list = [
