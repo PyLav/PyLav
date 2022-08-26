@@ -10,9 +10,9 @@ import discord
 
 from pylav._logging import getLogger
 from pylav.envvars import (
-    TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS,
-    TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS,
-    TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS,
+    TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS,
+    TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS,
+    TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS,
 )
 from pylav.exceptions import EntryNotFoundError
 from pylav.sql import tables
@@ -257,7 +257,7 @@ class PlaylistConfigManager:
 
         self.client._config.next_execution_update_bundled_playlists = datetime.datetime.now(
             tz=datetime.timezone.utc
-        ) + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS)
+        ) + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS)
         await self.client._config.save()
         curated_data = {
             1: (
@@ -298,7 +298,7 @@ class PlaylistConfigManager:
         old_time_stamp = self.client._config.next_execution_update_bundled_external_playlists
         self.client._config.next_execution_update_bundled_external_playlists = datetime.datetime.now(
             tz=datetime.timezone.utc
-        ) + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS)
+        ) + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS)
         await self.client._config.save()
 
         # NOTICE: Update the BUNDLED_PLAYLIST_IDS constant in the constants.py file
@@ -351,7 +351,7 @@ class PlaylistConfigManager:
 
         self.client._config.next_execution_update_external_playlists = datetime.datetime.now(
             tz=datetime.timezone.utc
-        ) + datetime.timedelta(days=TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS)
+        ) + datetime.timedelta(days=TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS)
         await self.client._config.save()
 
         async for playlist in self.get_external_playlists(*ids, ignore_ids=BUNDLED_PLAYLIST_IDS):

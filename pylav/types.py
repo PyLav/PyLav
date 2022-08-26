@@ -5,17 +5,18 @@ from collections.abc import Awaitable, Coroutine
 from typing import TYPE_CHECKING, Any, Callable, Literal, TypedDict, TypeVar, Union
 
 import discord
-from discord import app_commands
 
 if TYPE_CHECKING:
+    from discord import app_commands
     from discord.ext.commands import AutoShardedBot, Bot, Cog, Context
 
     try:
         from redbot.core.bot import Red
+        from redbot.core.bot import Red as BotClient
         from redbot.core.commands import Cog as RedCog
         from redbot.core.commands import Context as RedContext
     except ImportError:
-        Red = AutoShardedBot
+        BotClient = Red = AutoShardedBot
         RedCog = Cog
         RedContext = Context
 
@@ -68,7 +69,7 @@ class BotClientWithLavalink(BotClient):
         ...
 
 
-class Interaction(discord.Interaction):
+class _InteractionT(discord.Interaction):
     client: BotClientWithLavalink
     response: discord.InteractionResponse
     followup: discord.Webhook
@@ -77,7 +78,9 @@ class Interaction(discord.Interaction):
 
 
 BotT = TypeVar("BotT", bound=BotClientWithLavalink, covariant=True)
-InteractionT = TypeVar("InteractionT", bound=Interaction)
+InteractionT = TypeVar("InteractionT", bound="Union[_InteractionT, discord.Interaction]")
+ContextObjectT = TypeVar("ContextObjectT", bound="Union[PyLavContext[Any], InteractionT[Any], Context[Any]]")
+
 QueryT = TypeVar("QueryT", bound="Type[Query]")
 
 

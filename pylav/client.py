@@ -33,9 +33,9 @@ from pylav.envvars import (
     EXTERNAL_UNMANAGED_PORT,
     EXTERNAL_UNMANAGED_SSL,
     REDIS_FULL_ADDRESS_RESPONSE_CACHE,
-    TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS,
-    TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS,
-    TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS,
+    TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS,
+    TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS,
+    TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS,
     USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE,
     USE_BUNDLED_EXTERNAL_PYLAV_NODE,
 )
@@ -398,7 +398,7 @@ class Client(metaclass=_Singleton):
                         self._scheduler.add_job(
                             self.playlist_db_manager.update_bundled_playlists,
                             trigger="interval",
-                            days=TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS,
+                            days=TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS,
                             max_instances=1,
                             next_run_time=self._config.next_execution_update_bundled_playlists,
                             replace_existing=True,
@@ -414,7 +414,7 @@ class Client(metaclass=_Singleton):
                         self._scheduler.add_job(
                             self.playlist_db_manager.update_bundled_external_playlists,
                             trigger="interval",
-                            days=TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS,
+                            days=TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS,
                             max_instances=1,
                             next_run_time=self._config.next_execution_update_bundled_external_playlists,
                             replace_existing=True,
@@ -430,7 +430,7 @@ class Client(metaclass=_Singleton):
                         self._scheduler.add_job(
                             self.playlist_db_manager.update_external_playlists,
                             trigger="interval",
-                            days=TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS,
+                            days=TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS,
                             max_instances=1,
                             next_run_time=self._config.next_execution_update_external_playlists,
                             replace_existing=True,

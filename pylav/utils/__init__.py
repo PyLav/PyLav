@@ -648,6 +648,7 @@ class ExponentialBackoffWithReset(ExponentialBackoff):
 class PyLavContext(_OriginalContextClass):
     _original_ctx_or_interaction: ContextT | InteractionT | None
     bot: BotT
+    client: BotT
     interaction: InteractionT | None
 
     def __init__(
