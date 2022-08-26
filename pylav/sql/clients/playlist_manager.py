@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import asyncio
+import contextlib
 import datetime
 import time
 from collections.abc import AsyncIterator
@@ -253,125 +255,136 @@ class PlaylistConfigManager:
 
     async def update_bundled_playlists(self, *ids: int) -> None:
         # NOTICE: Update the BUNDLED_PLAYLIST_IDS constant in the constants.py file
-        old_time_stamp = self.client._config.next_execution_update_bundled_playlists
+        with contextlib.suppress(
+            asyncio.exceptions.CancelledError,
+        ):
+            old_time_stamp = self.client._config.next_execution_update_bundled_playlists
 
-        self.client._config.next_execution_update_bundled_playlists = datetime.datetime.now(
-            tz=datetime.timezone.utc
-        ) + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS)
-        await self.client._config.save()
-        curated_data = {
-            1: (
-                "Aikaterna's curated tracks",
-                "https://gist.githubusercontent.com/Drapersniper/cbe10d7053c844f8c69637bb4fd9c5c3/raw/playlist.pylav",
-            ),
-            2: (
-                "Anime OPs/EDs",
-                "https://gist.githubusercontent.com/Drapersniper/2ad7c4cdd4519d9707f1a65d685fb95f/raw/anime_pl.pylav",
-            ),
-        }
-        id_filtered = {id: curated_data[id] for id in ids}
-        if not id_filtered:
-            id_filtered = curated_data
-        for id, (name, url) in id_filtered.items():
-            async with self._client.cached_session.get(
-                url, params={"timestamp": int(time.time())}, headers={"content-type": "application/json"}
-            ) as response:
-                try:
-                    data = await response.text()
-                except Exception as exc:
-                    LOGGER.error("Built-in playlist couldn't be parsed - %s, report this error.", name, exc_info=exc)
-                    data = None
-                if not data:
-                    self.client._config.next_execution_update_bundled_playlists = old_time_stamp
-                    continue
-                if tracks := [t async for t in asyncstdlib.map(str.strip, data.splitlines()) if t]:
-                    LOGGER.info("Updating bundled playlist - %s (%s)", name, id)
-                    await self.create_or_update_global_playlist(
-                        id=id, name=name, tracks=tracks, author=self._client.bot.user.id
-                    )
-                else:
-                    await self.delete_playlist(playlist_id=id)
+            self.client._config.next_execution_update_bundled_playlists = datetime.datetime.now(
+                tz=datetime.timezone.utc
+            ) + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS)
+            await self.client._config.save()
+            curated_data = {
+                1: (
+                    "Aikaterna's curated tracks",
+                    "https://gist.githubusercontent.com/Drapersniper/cbe10d7053c844f8c69637bb4fd9c5c3/raw/playlist.pylav",
+                ),
+                2: (
+                    "Anime OPs/EDs",
+                    "https://gist.githubusercontent.com/Drapersniper/2ad7c4cdd4519d9707f1a65d685fb95f/raw/anime_pl.pylav",
+                ),
+            }
+            id_filtered = {id: curated_data[id] for id in ids}
+            if not id_filtered:
+                id_filtered = curated_data
+            for id, (name, url) in id_filtered.items():
+                async with self._client.cached_session.get(
+                    url, params={"timestamp": int(time.time())}, headers={"content-type": "application/json"}
+                ) as response:
+                    try:
+                        data = await response.text()
+                    except Exception as exc:
+                        LOGGER.error(
+                            "Built-in playlist couldn't be parsed - %s, report this error.", name, exc_info=exc
+                        )
+                        data = None
+                    if not data:
+                        self.client._config.next_execution_update_bundled_playlists = old_time_stamp
+                        continue
+                    if tracks := [t async for t in asyncstdlib.map(str.strip, data.splitlines()) if t]:
+                        LOGGER.info("Updating bundled playlist - %s (%s)", name, id)
+                        await self.create_or_update_global_playlist(
+                            id=id, name=name, tracks=tracks, author=self._client.bot.user.id
+                        )
+                    else:
+                        await self.delete_playlist(playlist_id=id)
 
     async def update_bundled_external_playlists(self, *ids: int) -> None:
         from pylav.query import Query
 
-        old_time_stamp = self.client._config.next_execution_update_bundled_external_playlists
-        self.client._config.next_execution_update_bundled_external_playlists = datetime.datetime.now(
-            tz=datetime.timezone.utc
-        ) + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS)
-        await self.client._config.save()
+        with contextlib.suppress(
+            asyncio.exceptions.CancelledError,
+        ):
+            old_time_stamp = self.client._config.next_execution_update_bundled_external_playlists
+            self.client._config.next_execution_update_bundled_external_playlists = datetime.datetime.now(
+                tz=datetime.timezone.utc
+            ) + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS)
+            await self.client._config.save()
 
-        # NOTICE: Update the BUNDLED_PLAYLIST_IDS constant in the constants.py file
-        curated_data = {
-            1000001: (
-                # CYBER//
-                # Predä
-                ("https://open.spotify.com/playlist/2seaovjQuA2cMgltyLQUtd", "CYBER//")
-            ),
-            1000002: (
-                # PHONK//
-                # Predä
-                ("https://open.spotify.com/playlist/0rSd8LoXBD5tEBbSsbXqbc", "PHONK//")
-            ),
-            1000003: (  # bangers
-                # Predä
-                ("https://open.spotify.com/playlist/21trhbHm5hVgosPS1YpwSM", "bangers")
-            ),
-            1000004: ("https://open.spotify.com/playlist/0BbMjMQZ43vtdz7al266XH", "???"),
-        }
-        id_filtered = {id: curated_data[id] for id in ids}
-        if not id_filtered:
-            id_filtered = curated_data
-        for id, (url, name) in id_filtered.items():
-            track_list = []
-            try:
-                LOGGER.info("Updating bundled external playlist - %s", id)
-                data = await self.client.get_tracks(await Query.from_string(url), bypass_cache=True)
-                name = data.get("playlistInfo", {}).get("name") or name
-                tracks_raw = data.get("tracks", [])
-                track_list = [t_ for t in tracks_raw if (t_ := t.get("track"))]
-            except Exception as exc:
-                LOGGER.error(
-                    "Built-in external playlist couldn't be parsed - %s, report this error.", name, exc_info=exc
-                )
-                data = None
-            if not data:
-                self.client._config.next_execution_update_bundled_external_playlists = old_time_stamp
-                continue
-            if track_list:
-                await self.create_or_update_global_playlist(
-                    id=id, name=name, tracks=track_list, author=self._client.bot.user.id, url=url
-                )
-            else:
-                await self.delete_playlist(playlist_id=id)
+            # NOTICE: Update the BUNDLED_PLAYLIST_IDS constant in the constants.py file
+            curated_data = {
+                1000001: (
+                    # CYBER//
+                    # Predä
+                    ("https://open.spotify.com/playlist/2seaovjQuA2cMgltyLQUtd", "CYBER//")
+                ),
+                1000002: (
+                    # PHONK//
+                    # Predä
+                    ("https://open.spotify.com/playlist/0rSd8LoXBD5tEBbSsbXqbc", "PHONK//")
+                ),
+                1000003: (  # bangers
+                    # Predä
+                    ("https://open.spotify.com/playlist/21trhbHm5hVgosPS1YpwSM", "bangers")
+                ),
+                1000004: ("https://open.spotify.com/playlist/0BbMjMQZ43vtdz7al266XH", "???"),
+            }
+            id_filtered = {id: curated_data[id] for id in ids}
+            if not id_filtered:
+                id_filtered = curated_data
+            for id, (url, name) in id_filtered.items():
+                track_list = []
+                try:
+                    LOGGER.info("Updating bundled external playlist - %s", id)
+                    data = await self.client.get_tracks(await Query.from_string(url), bypass_cache=True)
+                    name = data.get("playlistInfo", {}).get("name") or name
+                    tracks_raw = data.get("tracks", [])
+                    track_list = [t_ for t in tracks_raw if (t_ := t.get("track"))]
+                except Exception as exc:
+                    LOGGER.error(
+                        "Built-in external playlist couldn't be parsed - %s, report this error.", name, exc_info=exc
+                    )
+                    data = None
+                if not data:
+                    self.client._config.next_execution_update_bundled_external_playlists = old_time_stamp
+                    continue
+                if track_list:
+                    await self.create_or_update_global_playlist(
+                        id=id, name=name, tracks=track_list, author=self._client.bot.user.id, url=url
+                    )
+                else:
+                    await self.delete_playlist(playlist_id=id)
 
     async def update_external_playlists(self, *ids: int) -> None:
         from pylav.constants import BUNDLED_PLAYLIST_IDS
         from pylav.query import Query
 
-        self.client._config.next_execution_update_external_playlists = datetime.datetime.now(
-            tz=datetime.timezone.utc
-        ) + datetime.timedelta(days=TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS)
-        await self.client._config.save()
+        with contextlib.suppress(
+            asyncio.exceptions.CancelledError,
+        ):
+            self.client._config.next_execution_update_external_playlists = datetime.datetime.now(
+                tz=datetime.timezone.utc
+            ) + datetime.timedelta(days=TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS)
+            await self.client._config.save()
 
-        async for playlist in self.get_external_playlists(*ids, ignore_ids=BUNDLED_PLAYLIST_IDS):
-            try:
-                LOGGER.info("Updating external playlist - %s (%s)", playlist.name, playlist.id)
-                query = await self.client.get_tracks(
-                    await Query.from_string(playlist.url),
-                    bypass_cache=True,
-                )
-                tracks_raw = query.get("tracks", [])
-                track_list = [t_ for t in tracks_raw if (t_ := t.get("track"))]
-                name = query.get("playlistInfo", {}).get("name") or playlist.name
-                if track_list:
-                    playlist.tracks = track_list
-                    playlist.name = name
-                    await playlist.save()
-            except Exception as exc:
-                LOGGER.error(
-                    "External playlist couldn't be updated - %s (%s), report this error.",
-                    playlist.name,
-                    playlist.id,
-                    exc_info=exc,
-                )
+            async for playlist in self.get_external_playlists(*ids, ignore_ids=BUNDLED_PLAYLIST_IDS):
+                try:
+                    LOGGER.info("Updating external playlist - %s (%s)", playlist.name, playlist.id)
+                    query = await self.client.get_tracks(
+                        await Query.from_string(playlist.url),
+                        bypass_cache=True,
+                    )
+                    tracks_raw = query.get("tracks", [])
+                    track_list = [t_ for t in tracks_raw if (t_ := t.get("track"))]
+                    name = query.get("playlistInfo", {}).get("name") or playlist.name
+                    if track_list:
+                        playlist.tracks = track_list
+                        playlist.name = name
+                        await playlist.save()
+                except Exception as exc:
+                    LOGGER.error(
+                        "External playlist couldn't be updated - %s (%s), report this error.",
+                        playlist.name,
+                        playlist.id,
+                        exc_info=exc,
+                    )

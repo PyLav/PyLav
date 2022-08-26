@@ -429,124 +429,138 @@ class Player(VoiceProtocol):
         return min(self._last_position + difference, self.current.duration)
 
     async def auto_pause_task(self):
-        if not self.is_connected:
-            LOGGER.trace(
-                "Auto Pause task for %s fired while player is not connected to a voice channel - discarding",
-                self,
-            )
-            return
-        if (
-            (not self.paused)
-            and self.is_empty
-            and (
-                feature := await self.player_manager.client.player_config_manager.get_alone_pause(
-                    guild_id=self.guild.id
-                )
-            ).enabled
+        with contextlib.suppress(
+            asyncio.exceptions.CancelledError,
         ):
-            if not self._last_alone_paused_check:
-                LOGGER.verbose(
-                    "Auto Pause task for %s - Player is alone - starting countdown",
+            if not self.is_connected:
+                LOGGER.trace(
+                    "Auto Pause task for %s fired while player is not connected to a voice channel - discarding",
                     self,
                 )
-                self._last_alone_paused_check = time.time()
-            if (self._last_alone_paused_check + feature.time) <= time.time():
-                LOGGER.info(
-                    "Auto Pause task for %s - Player in an empty channel for longer than %s seconds - Pausing",
-                    self,
-                    feature.time,
-                )
-                await self.set_pause(pause=True, requester=self.guild.me)
+                return
+            if (
+                (not self.paused)
+                and self.is_empty
+                and (
+                    feature := await self.player_manager.client.player_config_manager.get_alone_pause(
+                        guild_id=self.guild.id
+                    )
+                ).enabled
+            ):
+                if not self._last_alone_paused_check:
+                    LOGGER.verbose(
+                        "Auto Pause task for %s - Player is alone - starting countdown",
+                        self,
+                    )
+                    self._last_alone_paused_check = time.time()
+                if (self._last_alone_paused_check + feature.time) <= time.time():
+                    LOGGER.info(
+                        "Auto Pause task for %s - Player in an empty channel for longer than %s seconds - Pausing",
+                        self,
+                        feature.time,
+                    )
+                    await self.set_pause(pause=True, requester=self.guild.me)
+                    self._last_alone_paused_check = 0
+            else:
                 self._last_alone_paused_check = 0
-        else:
-            self._last_alone_paused_check = 0
 
     async def auto_dc_task(self):
-        if not self.is_connected:
-            LOGGER.trace(
-                "Auto Disconnect task for %s fired while player is not connected to a voice channel - discarding",
-                self,
-            )
-            return
-        if (
-            self.is_empty
-            and (
-                feature := await self.player_manager.client.player_config_manager.get_alone_dc(guild_id=self.guild.id)
-            ).enabled
+        with contextlib.suppress(
+            asyncio.exceptions.CancelledError,
         ):
-            if not self._last_alone_dc_check:
-                LOGGER.verbose(
-                    "Auto Disconnect task for %s - Player is alone - starting countdown",
+            if not self.is_connected:
+                LOGGER.trace(
+                    "Auto Disconnect task for %s fired while player is not connected to a voice channel - discarding",
                     self,
                 )
-                self._last_alone_dc_check = time.time()
-            if (self._last_alone_dc_check + feature.time) <= time.time():
-                LOGGER.info(
-                    "Auto Disconnect task for %s - Player in an empty channel for longer than %s seconds "
-                    "- Disconnecting",
-                    self,
-                    feature.time,
-                )
-                await self.disconnect(requester=self.guild.me)
+                return
+            if (
+                self.is_empty
+                and (
+                    feature := await self.player_manager.client.player_config_manager.get_alone_dc(
+                        guild_id=self.guild.id
+                    )
+                ).enabled
+            ):
+                if not self._last_alone_dc_check:
+                    LOGGER.verbose(
+                        "Auto Disconnect task for %s - Player is alone - starting countdown",
+                        self,
+                    )
+                    self._last_alone_dc_check = time.time()
+                if (self._last_alone_dc_check + feature.time) <= time.time():
+                    LOGGER.info(
+                        "Auto Disconnect task for %s - Player in an empty channel for longer than %s seconds "
+                        "- Disconnecting",
+                        self,
+                        feature.time,
+                    )
+                    await self.disconnect(requester=self.guild.me)
+                    self._last_alone_dc_check = 0
+            else:
                 self._last_alone_dc_check = 0
-        else:
-            self._last_alone_dc_check = 0
 
     async def auto_empty_queue_task(self):
-        if not self.is_connected:
-            LOGGER.trace(
-                "Auto Empty Queue task for %s fired while player is not connected to a voice channel - discarding",
-                self,
-            )
-            return
-        if self.current:
-            LOGGER.trace("Auto Empty Queue task for %s - Current track is not empty - discarding", self)
-            return
-        if (
-            self.queue.empty()
-            and (
-                feature := await self.player_manager.client.player_config_manager.get_empty_queue_dc(
-                    guild_id=self.guild.id
-                )
-            ).enabled
+        with contextlib.suppress(
+            asyncio.exceptions.CancelledError,
         ):
-            if not self._last_empty_queue_check:
-                LOGGER.verbose(
-                    "Auto Empty Queue task for %s - Queue is empty - starting countdown",
+            if not self.is_connected:
+                LOGGER.trace(
+                    "Auto Empty Queue task for %s fired while player is not connected to a voice channel - discarding",
                     self,
                 )
-                self._last_empty_queue_check = time.time()
-            if (self._last_empty_queue_check + feature.time) <= time.time():
-                LOGGER.info(
-                    "Auto Empty Queue task for %s - Queue is empty for longer than %s seconds "
-                    "- Stopping and disconnecting",
-                    self,
-                    feature.time,
-                )
-                await self.stop(requester=self.guild.me)
-                await self.disconnect(requester=self.guild.me)
+                return
+            if self.current:
+                LOGGER.trace("Auto Empty Queue task for %s - Current track is not empty - discarding", self)
+                return
+            if (
+                self.queue.empty()
+                and (
+                    feature := await self.player_manager.client.player_config_manager.get_empty_queue_dc(
+                        guild_id=self.guild.id
+                    )
+                ).enabled
+            ):
+                if not self._last_empty_queue_check:
+                    LOGGER.verbose(
+                        "Auto Empty Queue task for %s - Queue is empty - starting countdown",
+                        self,
+                    )
+                    self._last_empty_queue_check = time.time()
+                if (self._last_empty_queue_check + feature.time) <= time.time():
+                    LOGGER.info(
+                        "Auto Empty Queue task for %s - Queue is empty for longer than %s seconds "
+                        "- Stopping and disconnecting",
+                        self,
+                        feature.time,
+                    )
+                    await self.stop(requester=self.guild.me)
+                    await self.disconnect(requester=self.guild.me)
+                    self._last_empty_queue_check = 0
+            else:
                 self._last_empty_queue_check = 0
-        else:
-            self._last_empty_queue_check = 0
 
     async def auto_save_task(self):
-        if not self.is_connected:
-            LOGGER.trace(
-                "Auto save task for %s fired while player is not connected to a voice channel - discarding",
-                self,
+        with contextlib.suppress(
+            asyncio.exceptions.CancelledError,
+        ):
+            if not self.is_connected:
+                LOGGER.trace(
+                    "Auto save task for %s fired while player is not connected to a voice channel - discarding",
+                    self,
+                )
+                return
+            if self.stopped:
+                LOGGER.trace(
+                    "Auto save task for %s fired while player that has been stopped - discarding",
+                    self,
+                )
+                return
+            LOGGER.verbose(
+                "Auto save task for %s - Saving the player at %s", self, datetime.datetime.now(tz=datetime.timezone.utc)
             )
-            return
-        if self.stopped:
-            LOGGER.trace(
-                "Auto save task for %s fired while player that has been stopped - discarding",
-                self,
-            )
-            return
-        LOGGER.verbose(
-            "Auto save task for %s - Saving the player at %s", self, datetime.datetime.now(tz=datetime.timezone.utc)
-        )
-        await self.config.save()
-        await self.save()
+            await self.config.save()
+            await self.save()
 
     async def change_to_best_node(self, feature: str = None) -> Node | None:
         """

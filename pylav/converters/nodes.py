@@ -33,12 +33,14 @@ else:
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> list[Node]:
             ctx = await interaction.client.get_context(interaction)
+            if interaction and not interaction.response.is_done():
+                await ctx.defer(ephemeral=True)
             return await cls.convert(ctx, argument)
 
         @classmethod
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
             nodes = interaction.client.lavalink.node_manager.nodes
 
-            return [Choice(name=n.name, value=f"{n.identifier}") for n in nodes if current.lower() in n.name.lower()][
-                :25
-            ]
+            return [
+                Choice(name=n.name[:99], value=f"{n.identifier}") for n in nodes if current.lower() in n.name.lower()
+            ][:25]

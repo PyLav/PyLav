@@ -805,13 +805,12 @@ class PyLavContext(_OriginalContextClass):
         return instance
 
     def dispatch_command(
-        self, message: discord.Message, command: Command, prefix: str, author: discord.abc.User, *args: str
+        self, message: discord.Message, command: Command, author: discord.abc.User, args: list[str], prefix: str = None
     ) -> None:
         """
         Dispatch command
         """
         command_str = f"{prefix}{command.qualified_name} {' '.join(args)}"
-
         msg = copy(message)
         msg.author = author
         msg.content = command_str

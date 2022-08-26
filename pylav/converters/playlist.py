@@ -28,12 +28,14 @@ else:
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> list[PlaylistModel]:
             ctx = await interaction.client.get_context(interaction)
+            if interaction and not interaction.response.is_done():
+                await ctx.defer(ephemeral=True)
             return await cls.convert(ctx, argument)
 
         @classmethod
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
             return [
-                Choice(name=p.name, value=f"{p.id}")
+                Choice(name=p.name[:99], value=f"{p.id}")
                 for p in await interaction.client.lavalink.playlist_db_manager.get_playlist_by_name(current, limit=25)
                 if current.lower() in p.name.lower()
             ]

@@ -1,5 +1,7 @@
+import contextlib
 from collections.abc import AsyncIterable
 
+import asyncpg
 from aiohttp_client_cache import BaseCache, CacheBackend, ResponseOrKey
 from aiohttp_client_cache.docs import extend_init_signature
 
@@ -73,7 +75,12 @@ class PostgresStorage(BaseCache):
         """Write an item to the cache"""
 
         values = {tables.AioHttpCacheRow.value: self.serialize(item)}
-        entry = await tables.AioHttpCacheRow.objects().get_or_create(tables.AioHttpCacheRow.key == key, defaults=values)
+        while True:
+            with contextlib.suppress(asyncpg.exceptions.UniqueViolationError):
+                entry = await tables.AioHttpCacheRow.objects().get_or_create(
+                    tables.AioHttpCacheRow.key == key, defaults=values
+                )
+                break
         if not entry._was_created:
             await tables.AioHttpCacheRow.update(values).where(tables.AioHttpCacheRow.key == key)
 

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import asyncio
+import contextlib
 import datetime
 from typing import TYPE_CHECKING
 
@@ -65,12 +67,15 @@ class QueryCacheManager:
 
     @staticmethod
     async def delete_old() -> None:
-        LOGGER.trace("Deleting old queries")
-        await tables.QueryRow.delete().where(
-            tables.QueryRow.last_updated
-            <= (datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=30))
-        )
-        LOGGER.trace("Deleted old queries")
+        with contextlib.suppress(
+            asyncio.exceptions.CancelledError,
+        ):
+            LOGGER.trace("Deleting old queries")
+            await tables.QueryRow.delete().where(
+                tables.QueryRow.last_updated
+                <= (datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=30))
+            )
+            LOGGER.trace("Deleted old queries")
 
     @staticmethod
     async def wipe() -> None:

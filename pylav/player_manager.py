@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 from collections.abc import Iterator
 from typing import TYPE_CHECKING
 
@@ -300,33 +301,38 @@ class PlayerManager:
         """
         Updates the bot's activity.
         """
-        if not await LibConfigModel(bot=self.bot.user.id, id=1).get_update_bot_activity():
-            return
-        playing_players = len(self.playing_players)
-        activities = self.bot.guilds[0].me.activities
-        activity = discord.utils.find(lambda a: a.type == discord.ActivityType.listening, activities)
-        if playing_players > 1:
-            if (not activity) or f"Music in {playing_players} servers" not in activity.name:
-                LOGGER.debug("Updating bot activity to %s", f"Listening to Music in {playing_players} servers")
-                await self.bot.change_presence(
-                    activity=discord.Activity(
-                        type=discord.ActivityType.listening, name=f"Music in {playing_players} servers"
+        with contextlib.suppress(
+            asyncio.exceptions.CancelledError,
+        ):
+            if not await LibConfigModel(bot=self.bot.user.id, id=1).get_update_bot_activity():
+                return
+            playing_players = len(self.playing_players)
+            activities = self.bot.guilds[0].me.activities
+            activity = discord.utils.find(lambda a: a.type == discord.ActivityType.listening, activities)
+            if playing_players > 1:
+                if (not activity) or f"Music in {playing_players} servers" not in activity.name:
+                    LOGGER.debug("Updating bot activity to %s", f"Listening to Music in {playing_players} servers")
+                    await self.bot.change_presence(
+                        activity=discord.Activity(
+                            type=discord.ActivityType.listening, name=f"Music in {playing_players} servers"
+                        )
                     )
+            elif playing_players == 1:
+                current_player = self.playing_players[0]
+                if current_player.current is None:
+                    return
+                track_name = await current_player.current.get_track_display_name(
+                    max_length=40,
+                    author=True,
+                    unformatted=True,
                 )
-        elif playing_players == 1:
-            current_player = self.playing_players[0]
-            if current_player.current is None:
-                return
-            track_name = await current_player.current.get_track_display_name(
-                max_length=40, author=True, unformatted=True
-            )
-            if activity and track_name in activity.name:
-                return
-            LOGGER.debug("Updating bot activity to %s", f"Listening to {track_name}")
-            await self.bot.change_presence(
-                activity=discord.Activity(type=discord.ActivityType.listening, name=track_name)
-            )
+                if activity and track_name in activity.name:
+                    return
+                LOGGER.debug("Updating bot activity to %s", f"Listening to {track_name}")
+                await self.bot.change_presence(
+                    activity=discord.Activity(type=discord.ActivityType.listening, name=track_name)
+                )
 
-        elif playing_players == 0 and activity:
-            LOGGER.debug("Removing bot activity")
-            await self.bot.change_presence(activity=None)
+            elif playing_players == 0 and activity:
+                LOGGER.debug("Removing bot activity")
+                await self.bot.change_presence(activity=None)
