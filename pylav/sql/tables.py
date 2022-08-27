@@ -8,7 +8,14 @@ from piccolo.engine import PostgresEngine, SQLiteEngine
 from piccolo.table import Table
 
 from pylav._logging import getLogger
-from pylav.envvars import POSTGRES_DATABASE, POSTGRES_HOST, POSTGRES_PASSWORD, POSTGRES_PORT, POSTGRES_USER
+from pylav.envvars import (
+    JAVA_EXECUTABLE,
+    POSTGRES_DATABASE,
+    POSTGRES_HOST,
+    POSTGRES_PASSWORD,
+    POSTGRES_PORT,
+    POSTGRES_USER,
+)
 
 LOGGER = getLogger("PyLav.Postgres")
 config = {
@@ -39,7 +46,7 @@ class LibConfigRow(Table, db=DB, tablename="lib_config"):
     id = BigInt(index=True)
     config_folder = Text(null=False)
     localtrack_folder = Text(null=True)
-    java_path = Text(null=False, default="java")
+    java_path = Text(null=False, default=JAVA_EXECUTABLE)
     enable_managed_node = Boolean(null=False, default=True)
     use_bundled_lava_link_external = Boolean(null=False, default=True)
     use_bundled_pylav_external = Boolean(null=False, default=True)

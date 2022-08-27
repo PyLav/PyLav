@@ -5,6 +5,7 @@ import contextlib
 import datetime
 import itertools
 import operator
+import os.path
 import pathlib
 import random
 from collections.abc import AsyncIterator
@@ -32,6 +33,7 @@ from pylav.envvars import (
     EXTERNAL_UNMANAGED_PASSWORD,
     EXTERNAL_UNMANAGED_PORT,
     EXTERNAL_UNMANAGED_SSL,
+    JAVA_EXECUTABLE,
     REDIS_FULL_ADDRESS_RESPONSE_CACHE,
     TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS,
     TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS,
@@ -322,13 +324,17 @@ class Client(metaclass=_Singleton):
 
                         self._config = await self._lib_config_manager.get_config(
                             config_folder=self._config_folder,
-                            java_path="java",
+                            java_path=JAVA_EXECUTABLE,
                             enable_managed_node=True,
                             auto_update_managed_nodes=True,
                             localtrack_folder=self._config_folder / "music",
                             use_bundled_lava_link_external=USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE,
                             use_bundled_pylav_external=USE_BUNDLED_EXTERNAL_PYLAV_NODE,
                         )
+                        if self._config.java_path != JAVA_EXECUTABLE:
+                            if JAVA_EXECUTABLE != "java" and os.path.exists(JAVA_EXECUTABLE):
+                                self._config.java_path = JAVA_EXECUTABLE
+                                await self._config.save()
                         LOGGER.info("Config folder: %s", self._config.config_folder)
                         LOGGER.info("Localtracks folder: %s", self._config.localtrack_folder)
                         auto_update_managed_nodes = self._config.auto_update_managed_nodes

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import operator
+import os
 from functools import partial
 from typing import TYPE_CHECKING
 
@@ -16,7 +17,7 @@ from pylav.constants import (
     PYLAV_BUNDLED_NODES_SETTINGS,
     REGION_TO_COUNTRY_COORDINATE_MAPPING,
 )
-from pylav.envvars import USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE, USE_BUNDLED_EXTERNAL_PYLAV_NODE
+from pylav.envvars import JAVA_EXECUTABLE, USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE, USE_BUNDLED_EXTERNAL_PYLAV_NODE
 from pylav.events import NodeConnectedEvent, NodeDisconnectedEvent
 from pylav.location import get_closest_region_name_and_coordinate
 from pylav.node import Node
@@ -474,13 +475,17 @@ class NodeManager:
                 )
         config_data = await self.client._lib_config_manager.get_config(
             config_folder=self.client._config_folder,
-            java_path="java",
+            java_path=JAVA_EXECUTABLE,
             enable_managed_node=True,
             auto_update_managed_nodes=True,
             localtrack_folder=self.client._config_folder / "music",
             use_bundled_pylav_external=USE_BUNDLED_EXTERNAL_PYLAV_NODE,
             use_bundled_lava_link_external=USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE,
         )
+        if config_data.java_path != JAVA_EXECUTABLE:
+            if JAVA_EXECUTABLE != "java" and os.path.exists(JAVA_EXECUTABLE):
+                config_data.java_path = JAVA_EXECUTABLE
+                await config_data.save()
         if config_data.use_bundled_pylav_external:
             if await asyncstdlib.all(True for n in nodes_list if n.host != "ll-gb.draper.wtf"):
                 base_settings = PYLAV_BUNDLED_NODES_SETTINGS["ll-gb.draper.wtf"]

@@ -17,6 +17,8 @@ import yaml
 from packaging.version import LegacyVersion, Version
 from packaging.version import parse as parse_version
 
+from pylav.envvars import JAVA_EXECUTABLE
+
 try:
     import brotli
 
@@ -631,7 +633,7 @@ class LibConfigModel:
         bot: int,
         config_folder=str(CONFIG_DIR),
         localtrack_folder=str(CONFIG_DIR / "music"),
-        java_path="java",
+        java_path=JAVA_EXECUTABLE,
         enable_managed_node: bool = True,
         auto_update_managed_nodes: bool = True,
         use_bundled_pylav_external: bool = True,
