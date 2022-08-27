@@ -24,9 +24,9 @@ else:
 
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> Query:
+            if not interaction.response.is_done():
+                await interaction.response.defer(ephemeral=True)
             ctx = await interaction.client.get_context(interaction)
-            if interaction and not interaction.response.is_done():
-                await ctx.defer(ephemeral=True)
             return await cls.convert(ctx, argument)
 
         async def autocomplete(self, interaction: InteractionT, current: str) -> list[Choice]:
@@ -45,9 +45,9 @@ else:
 
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> Query:
+            if not interaction.response.is_done():
+                await interaction.response.defer(ephemeral=True)
             ctx = await interaction.client.get_context(interaction)
-            if interaction and not interaction.response.is_done():
-                await ctx.defer(ephemeral=True)
             return await cls.convert(ctx, argument)
 
         async def autocomplete(self, interaction: InteractionT, current: str) -> list[Choice]:

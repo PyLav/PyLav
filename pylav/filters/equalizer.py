@@ -3,6 +3,8 @@ from __future__ import annotations
 import collections
 from typing import Final
 
+from deepdiff import DeepDiff
+
 from pylav.filters.utils import FilterMixin
 
 
@@ -22,7 +24,6 @@ class Equalizer(FilterMixin):
         self._eq = self._factory(levels)
         self._raw = levels
         self._name = name
-        self.off = False
 
     def to_dict(self) -> dict:
         """Returns a dictionary representation of the Equalizer"""
@@ -48,7 +49,7 @@ class Equalizer(FilterMixin):
     def __eq__(self, other):
         """Overrides the default implementation"""
         if isinstance(other, Equalizer):
-            return self.__dict__.keys() == other.__dict__.keys() and self._eq == other._eq and self.name == other.name
+            return DeepDiff(self._eq, other._eq, ignore_order=True)
         return NotImplemented
 
     @property

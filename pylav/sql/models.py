@@ -1990,21 +1990,21 @@ class EqualizerModel:
     author: int
     name: str | None = None
     description: str | None = None
-    band_25: int = 0.0
-    band_40: int = 0.0
-    band_63: int = 0.0
-    band_100: int = 0.0
-    band_160: int = 0.0
-    band_250: int = 0.0
-    band_400: int = 0.0
-    band_630: int = 0.0
-    band_1000: int = 0.0
-    band_1600: int = 0.0
-    band_2500: int = 0.0
-    band_4000: int = 0.0
-    band_6300: int = 0.0
-    band_10000: int = 0.0
-    band_16000: int = 0.0
+    band_25: float = 0.0
+    band_40: float = 0.0
+    band_63: float = 0.0
+    band_100: float = 0.0
+    band_160: float = 0.0
+    band_250: float = 0.0
+    band_400: float = 0.0
+    band_630: float = 0.0
+    band_1000: float = 0.0
+    band_1600: float = 0.0
+    band_2500: float = 0.0
+    band_4000: float = 0.0
+    band_6300: float = 0.0
+    band_10000: float = 0.0
+    band_16000: float = 0.0
 
     async def save(self) -> EqualizerModel:
         """Save the Equalizer to the database.
@@ -2059,9 +2059,7 @@ class EqualizerModel:
             The equalizer if found, else None.
         """
         equalizer = await tables.EqualizerRow.select().where(tables.EqualizerRow.id == id)
-        if equalizer:
-            return EqualizerModel(**equalizer.to_dict())
-        return None
+        return EqualizerModel(**equalizer.to_dict()) if equalizer else None
 
     async def delete(self):
         """Delete the equalizer from the database."""
