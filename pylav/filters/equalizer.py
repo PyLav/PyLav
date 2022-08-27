@@ -49,7 +49,7 @@ class Equalizer(FilterMixin):
     def __eq__(self, other):
         """Overrides the default implementation"""
         if isinstance(other, Equalizer):
-            return DeepDiff(self._eq, other._eq, ignore_order=True)
+            return bool(DeepDiff(self._eq, other._eq, ignore_order=True))
         return NotImplemented
 
     @property
