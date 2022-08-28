@@ -8,6 +8,7 @@ import sys
 from collections.abc import Iterator
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
+from functools import _make_key  # type: ignore
 
 import aiohttp
 import asyncstdlib
@@ -16,8 +17,6 @@ import ujson
 import yaml
 from packaging.version import LegacyVersion, Version
 from packaging.version import parse as parse_version
-
-from pylav.envvars import JAVA_EXECUTABLE
 
 try:
     import brotli
@@ -29,14 +28,14 @@ except ImportError:
 from pylav._config import CONFIG_DIR
 from pylav._logging import getLogger
 from pylav.constants import BUNDLED_PLAYLIST_IDS, SUPPORTED_SOURCES
+from pylav.envvars import JAVA_EXECUTABLE
 from pylav.exceptions import InvalidPlaylist
 from pylav.filters import Equalizer
 from pylav.sql import tables
 from pylav.types import BotT
-from pylav.utils import PyLavContext, TimedFeature
+from pylav.utils import PyLavContext, TimedFeature, alru_cache
 
 Node = None
-
 
 BRACKETS: re.Pattern = re.compile(r"[\[\]]")
 
@@ -51,6 +50,9 @@ class PlaylistModel:
     name: str
     tracks: list[str] = field(default_factory=list)
     url: str | None = None
+
+    def __hash__(self):
+        return hash((self.id, self.scope))
 
     def __post_init__(self):
         if isinstance(self.tracks, str):
@@ -77,9 +79,12 @@ class PlaylistModel:
         )
         if not playlist._was_created:
             await tables.PlaylistRow.update(values).where(tables.PlaylistRow.id == self.id)
+        self.get.invalidate(self.id)
+        self.get.invalidate(id=self.id)
         return PlaylistModel(**playlist.to_dict())
 
     @classmethod
+    @alru_cache(maxsize=5)
     async def get(cls, id: int) -> PlaylistModel | None:
         """Get a playlist from the database.
 
@@ -94,12 +99,12 @@ class PlaylistModel:
             The playlist if it exists, otherwise None.
         """
         playlist = await tables.PlaylistRow.select().where(tables.PlaylistRow.id == id)
-        if playlist:
-            return PlaylistModel(**playlist.to_dict())
-        return None
+        return PlaylistModel(**playlist.to_dict()) if playlist else None
 
     async def delete(self) -> None:
         """Delete the playlist from the database."""
+        self.get.invalidate(self.id)
+        self.get.invalidate(id=self.id)
         await tables.PlaylistRow.delete().where(tables.PlaylistRow.id == self.id)
 
     async def can_manage(self, bot: BotT, requester: discord.abc.User, guild: discord.Guild = None) -> bool:
@@ -639,7 +644,6 @@ class LibConfigModel:
         use_bundled_pylav_external: bool = True,
         use_bundled_lava_link_external: bool = False,
     ) -> LibConfigModel:
-
         """Get or create a config for the bot.
 
         Parameters
@@ -902,11 +906,15 @@ class QueryModel:
     last_updated: datetime.datetime = None
     tracks: list[str] = field(default_factory=list)
 
+    def __hash__(self):
+        return hash((self.identifier,))
+
     def __post_init__(self):
         if isinstance(self.tracks, str):
             self.tracks = ujson.loads(self.tracks)
 
     @classmethod
+    @alru_cache(maxsize=5)
     async def get(cls, identifier: str) -> QueryModel | None:
         """Get a query from the database.
 
@@ -928,12 +936,12 @@ class QueryModel:
             )
         )
         data = query.to_dict()
-        if query:
-            return QueryModel(**data)
-        return None
+        return QueryModel(**data) if query else None
 
     async def delete(self):
         """Delete the query from the database."""
+        self.get.invalidate(self.identifier)
+        self.get.invalidate(identifier=self.identifier)
         await tables.QueryRow.delete().where(tables.QueryRow.identifier == self.identifier)
 
     async def upsert(self):
@@ -959,6 +967,8 @@ class QueryModel:
         )
         if not query._was_created:
             await tables.QueryRow.update(values).where(tables.QueryRow.identifier == self.identifier)
+        self.get.invalidate(self.identifier)
+        self.get.invalidate(identifier=self.identifier)
 
     async def save(self):
         """Save the query to the database."""
@@ -1169,9 +1179,14 @@ class PlayerModel:
         self.dj_users = set(self.dj_users)
         self.dj_roles = set(self.dj_roles)
 
+    def __hash__(self):
+        return hash((self.id, self.bot))
+
     async def delete(self) -> None:
         """Delete the player from the database."""
         await tables.PlayerRow.delete().where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+        self.get_or_create.invalidate()
+        self.is_dj.cache_clear()
 
     async def upsert(self) -> None:
         """Upsert the player in the database."""
@@ -1205,38 +1220,14 @@ class PlayerModel:
             await tables.PlayerRow.update(values).where(
                 (tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot)
             )
+        self.get_or_create.invalidate()
+        self.is_dj.cache_clear()
 
     async def save(self) -> None:
         """Save the player to the database."""
         await self.upsert()
 
-    @classmethod
-    async def get(cls, bot_id: int, guild_id: int) -> PlayerModel | None:
-        """Get the player from the database.
-
-        Parameters
-        ----------
-        bot_id : int
-            The bot ID.
-        guild_id : int
-            The guild ID.
-
-        Returns
-        -------
-        PlayerModel | None
-            The player if found, otherwise None.
-        """
-        player = (
-            await tables.PlayerRow.select()
-            .output(load_json=True)
-            .where((tables.PlayerRow.forced_channel_id == guild_id) & (tables.PlayerRow.bot == bot_id))
-        ).first()
-
-        if player:
-            return cls(**player.to_dict())
-
-        return None
-
+    @alru_cache(maxsize=5)
     async def get_or_create(self) -> PlayerModel:
         """Get the player from the database.
 
@@ -1776,6 +1767,7 @@ class PlayerModel:
         await self.save()
         return self
 
+    @alru_cache(maxsize=50)
     async def is_dj(
         self,
         user: discord.Member,
@@ -1784,7 +1776,6 @@ class PlayerModel:
         additional_user_ids: list = None,
         bot: BotT = None,
     ) -> bool:
-
         """Check if a user is a dj.
 
         Parameters
@@ -1807,15 +1798,13 @@ class PlayerModel:
             return True
         if additional_role_ids and await asyncstdlib.any(r.id in additional_role_ids for r in user.roles):
             return True
-
         if __ := user.guild:
-            if hasattr(bot, "is_owner") and await bot.is_owner(user):  # type: ignore
+            if hasattr(bot, "is_owner") and await bot.is_owner(user):
                 return True
             if hasattr(bot, "is_admin") and await bot.is_admin(user):
                 return True
             if hasattr(bot, "is_mod") and await bot.is_mod(user):
                 return True
-
         await self.dj_users_update()
         await self.dj_users_cleanup(guild=user.guild, lazy=True)
         if user.id in self.dj_users:
@@ -1824,9 +1813,7 @@ class PlayerModel:
         await self.dj_roles_cleanup(guild=user.guild, lazy=True)
         if await asyncstdlib.any(r.id in self.dj_roles for r in user.roles):
             return True
-        if not self.dj_users and not self.dj_roles:
-            return True
-        return False
+        return not self.dj_users and not self.dj_roles
 
     async def fetch_volume(self) -> int:
         """Fetch the volume of the player.
@@ -1979,6 +1966,8 @@ class PlayerModel:
         PlayerModel
             The player.
         """
+        self.get_or_create.invalidate()
+        self.is_dj.cache_clear()
         await self.get_or_create()
         return self
 

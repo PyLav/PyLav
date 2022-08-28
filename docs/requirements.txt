@@ -16,6 +16,7 @@ anyio==3.6.1; python_version >= "3.10"
 APScheduler==3.9.1
 apsw-wheels==3.36.0.post1
 asyncpg==0.26.0
+async_lru==1.0.3
 asyncspotify==0.12.1
 asyncstdlib==3.10.5
 cached-property==1.5.2

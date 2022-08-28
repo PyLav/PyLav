@@ -13,11 +13,23 @@ from asyncio import QueueFull, events, locks
 from collections.abc import AsyncIterable, AsyncIterator, Awaitable, Coroutine, Generator, Iterable, Iterator
 from copy import copy
 from enum import Enum
+from functools import _make_key  # type: ignore
 from itertools import chain
 from types import GenericAlias
 from typing import TYPE_CHECKING, Any, Callable, Optional, Tuple, TypeVar, Union
 
 import discord  # type: ignore
+from async_lru import (
+    _cache_clear,
+    _cache_hit,
+    _cache_info,
+    _cache_invalidate,
+    _cache_miss,
+    _close,
+    _done_callback,
+    _open,
+    unpartial,
+)
 from discord.backoff import ExponentialBackoff
 from discord.ext import commands as dpy_command
 from discord.ext.commands.view import StringView
@@ -64,6 +76,82 @@ LOGGER = getLogger("PyLav.utils")
 _RED_LOGGER = getLogger("red")
 
 _LOCK = threading.Lock()
+
+
+def alru_cache(
+    fn=None,
+    maxsize=128,
+    typed=False,
+    *,
+    cache_exceptions=True,
+):
+    def wrapper(fn):
+        _origin = unpartial(fn)
+
+        if not asyncio.iscoroutinefunction(_origin):
+            raise RuntimeError(f"Coroutine function is required, got {fn}")
+
+        # functools.partialmethod support
+        if hasattr(fn, "_make_unbound_method"):
+            fn = fn._make_unbound_method()
+
+        @functools.wraps(fn)
+        async def wrapped(*fn_args, **fn_kwargs):
+            if wrapped.closed:
+                raise RuntimeError(f"alru_cache is closed for {wrapped}")
+
+            loop = asyncio.get_event_loop()
+
+            key = _make_key(fn_args, fn_kwargs, typed)
+
+            fut = wrapped._cache.get(key)
+
+            if fut is not None:
+                if not fut.done():
+                    _cache_hit(wrapped, key)
+                    return await asyncio.shield(fut)
+
+                exc = fut._exception
+
+                if exc is None or cache_exceptions:
+                    _cache_hit(wrapped, key)
+                    return fut.result()
+
+                # exception here and cache_exceptions == False
+                wrapped._cache.pop(key)
+
+            fut = loop.create_future()
+            task = loop.create_task(fn(*fn_args, **fn_kwargs))
+            task.add_done_callback(functools.partial(_done_callback, fut))
+            wrapped.tasks.add(task)
+            task.add_done_callback(wrapped.tasks.remove)
+            if fn.__name__ == "get_or_create":
+                wrapped._cache[key] = fut
+
+            if maxsize is not None and len(wrapped._cache) > maxsize:
+                wrapped._cache.popitem()
+
+            _cache_miss(wrapped, key)
+            return await asyncio.shield(fut)
+
+        _cache_clear(wrapped)
+        wrapped._origin = _origin
+        wrapped.closed = False
+        wrapped.cache_info = functools.partial(_cache_info, wrapped, maxsize)
+        wrapped.cache_clear = functools.partial(_cache_clear, wrapped)
+        wrapped.invalidate = functools.partial(_cache_invalidate, wrapped, typed)
+        wrapped.close = functools.partial(_close, wrapped)
+        wrapped.open = functools.partial(_open, wrapped)
+
+        return wrapped
+
+    if fn is None:
+        return wrapper
+
+    if callable(fn) or hasattr(fn, "_make_unbound_method"):
+        return wrapper(fn)
+
+    raise NotImplementedError(f"{fn} decorating is not supported")
 
 
 def _synchronized(lock):
