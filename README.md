@@ -27,6 +27,8 @@ An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml
   - PYLAV__POSTGRES_USER
   - PYLAV__POSTGRES_DB
   - PYLAV__POSTGRES_HOST
+- Unix Socket env var.
+  - `PYLAV__POSTGRES_SOCKET` If this is provided `PYLAV__POSTGRES_HOST` and `PYLAV__POSTGRES_PORT` will be ignored.
 #### Optional
 - Env Vars to connect the lib cache to Redis, note if these are missing the library will default to PostgresSQL, therefore they are not necessary.
     - This will be used by the aiohttp cached client session for storing cached responses for 1 day, this reduces stress on some of the requests the lib makes such as to RadioBrowser.
