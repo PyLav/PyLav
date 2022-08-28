@@ -365,9 +365,7 @@ class Track:
 
     def __ne__(self, other):
         x = self.__eq__(other)
-        if x is not NotImplemented:
-            return not x
-        return NotImplemented
+        return not x if x is not NotImplemented else NotImplemented
 
     def __hash__(self):
         return hash((self.unique_identifier,))

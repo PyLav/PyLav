@@ -71,6 +71,13 @@ from pylav.types import BotT, CogT, ContextT, InteractionT, LavalinkResponseT
 from pylav.utils import PyLavContext, SingletonMethods, _get_context, _process_commands, _Singleton, add_property
 from pylav.vendored import aiopath
 
+try:
+    from redbot.core.i18n import Translator
+
+    _ = Translator("PyLavPlayer", pathlib.Path(__file__))
+except ImportError:
+    _ = lambda x: x
+
 LOGGER = getLogger("PyLav.Client")
 
 
@@ -571,11 +578,11 @@ class Client(metaclass=_Singleton):
             A dict representing the track's information.
         """
         if not self.node_manager.available_nodes:
-            raise NoNodeAvailable("No available nodes!")
+            raise NoNodeAvailable(_("No available nodes!"))
         node = await self.node_manager.find_best_node(feature=feature)
         if node is None and feature:
             raise NoNodeWithRequestFunctionalityAvailable(
-                f"No node with {feature} functionality available!", feature=feature
+                _("No node with {feature} functionality available!").format(feature=feature), feature=feature
             )
         return await node.decode_track(track)
 
@@ -596,11 +603,11 @@ class Client(metaclass=_Singleton):
             A list of dicts representing track information.
         """
         if not self.node_manager.available_nodes:
-            raise NoNodeAvailable("No available nodes!")
+            raise NoNodeAvailable(_("No available nodes!"))
         node = await self.node_manager.find_best_node(feature=feature)
         if node is None and feature:
             raise NoNodeWithRequestFunctionalityAvailable(
-                f"No node with {feature} functionality available!", feature=feature
+                _("No node with {feature} functionality available!").format(feature=feature), feature=feature
             )
         return await node.decode_tracks(tracks)
 
@@ -883,7 +890,8 @@ class Client(metaclass=_Singleton):
         )
         if node is None:
             raise NoNodeWithRequestFunctionalityAvailable(
-                f"No node with {query.requires_capability} functionality available!", query.requires_capability
+                _("No node with {query.requires_capability} functionality available!").format(query=query),
+                query.requires_capability,
             )
         return await node.get_tracks(query, first=first, bypass_cache=bypass_cache)
 
@@ -1026,7 +1034,6 @@ class Client(metaclass=_Singleton):
             async for m3u in query._yield_m3u_tracks():
                 with contextlib.suppress(Exception):
                     async for q in query._yield_tracks_recursively(m3u, recursion_depth):
-                        LOGGER.warning("Yielding m3u..2. tracks: %s", q.__dict__)
                         yield q
         elif query.is_pylav:
             async for pylav in query._yield_pylav_file_tracks():
@@ -1140,12 +1147,15 @@ class Client(metaclass=_Singleton):
     ) -> str:
         if not await asyncstdlib.any([video_id, playlist_id, channel_id, user_id]):
             raise PyLavInvalidArguments(
-                "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary."
+                _("To generate a mix playlist a Video, User, Channel or Playlist ID is necessary.")
             )
 
         if await asyncstdlib.sum(1 for i in [video_id, playlist_id, channel_id, user_id] if i) > 1:
             raise PyLavInvalidArguments(
-                "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple."
+                _(
+                    "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. "
+                    "However, you provided multiple."
+                )
             )
 
         if video_id:

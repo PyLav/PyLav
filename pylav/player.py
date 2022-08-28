@@ -4,6 +4,7 @@ import asyncio
 import collections
 import contextlib
 import datetime
+import pathlib
 import random
 import re
 import time
@@ -58,6 +59,13 @@ if TYPE_CHECKING:
     from pylav.node import Node
     from pylav.player_manager import PlayerManager
     from pylav.radio import RadioBrowser
+
+try:
+    from redbot.core.i18n import Translator
+
+    _ = Translator("PyLavPlayer", pathlib.Path(__file__))
+except ImportError:
+    _ = lambda x: x
 
 LOGGER = getLogger("PyLav.Player")
 
@@ -574,7 +582,7 @@ class Player(VoiceProtocol):
         )
         if feature and not node:
             raise NoNodeWithRequestFunctionalityAvailable(
-                f"No node with {feature} functionality available!", feature=feature
+                _("No node with {feature} functionality available!").format(feature=feature), feature=feature
             )
 
         if node != self.node:
@@ -593,7 +601,7 @@ class Player(VoiceProtocol):
         )
         if feature and not node:
             raise NoNodeWithRequestFunctionalityAvailable(
-                f"No node with {feature} functionality available!", feature=feature
+                _("No node with {feature} functionality available!").format(feature=feature), feature=feature
             )
         if node != self.node:
             await self.change_node(node)
@@ -754,7 +762,7 @@ class Player(VoiceProtocol):
 
     async def previous(self, requester: discord.Member, bypass_cache: bool = False) -> None:
         if self.history.empty():
-            raise TrackNotFound("There are no tracks currently in the player history.")
+            raise TrackNotFound(_("There are no tracks currently in the player history."))
         self.stopped = False
         track = await self.history.get()
         if track.is_partial:
@@ -1733,7 +1741,7 @@ class Player(VoiceProtocol):
         arrow = self.draw_time()
         pos = format_time(self.position)
         current = self.current
-        dur = "LIVE" if current.stream else format_time(current.duration)
+        dur = _("LIVE") if current.stream else format_time(current.duration)
         current_track_description = await current.get_track_display_name(with_url=True)
         next_track_description = (
             await self.next_track.get_track_display_name(with_url=True) if self.next_track else None
@@ -1742,14 +1750,14 @@ class Player(VoiceProtocol):
             await self.last_track.get_track_display_name(with_url=True) if self.last_track else None
         )
         if current.stream:
-            queue_list += "**Currently livestreaming:**\n"
+            queue_list += _("**Currently livestreaming:**\n")
         else:
-            queue_list += "Playing: "
+            queue_list += _("Playing: ")
         queue_list += f"{current_track_description}\n"
-        queue_list += f"Requester: **{current.requester.mention}**"
+        queue_list += _("Requester: **{current.requester.mention}**").format(current=current)
         queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
         page = await self.node.node_manager.client.construct_embed(
-            title=f"Now Playing in __{self.guild.name}__",
+            title=_("Now Playing in __{self.guild.name}__").format(self=self),
             description=queue_list,
             messageable=messageable,
         )
@@ -1758,20 +1766,26 @@ class Player(VoiceProtocol):
 
         if previous_track_description:
             val = f"{previous_track_description}\n"
-            val += f"Duration: `{'LIVE' if self.last_track.stream else format_time(self.last_track.duration)}`\n"
+            val += _("Duration: `{duration}`\n").format(
+                duration=_("LIVE") if self.next_track.stream else format_time(self.next_track.duration)
+            )
             if rq := self.last_track.requester:
-                val += f"Requester: **{rq.mention}**\n\n"
-            page.add_field(name="Previous Track", value=val)
+                val += _("Requester: **{rq}**\n\n").format(rq=rq.mention)
+            page.add_field(name=_("Previous Track"), value=val)
         if next_track_description:
             val = f"{next_track_description}\n"
-            val += f"Duration: `{'LIVE' if self.next_track.stream else format_time(self.next_track.duration)}`\n"
+            val += _("Duration: `{duration}`\n").format(
+                duration=_("LIVE") if self.next_track.stream else format_time(self.next_track.duration)
+            )
             if rq := self.next_track.requester:
-                val += f"Requester: **{rq.mention}**\n\n"
-            page.add_field(name="Next Track", value=val)
+                val += _("Requester: **{rq}**\n\n").format(rq=rq.mention)
+            page.add_field(name=_("Next Track"), value=val)
 
         queue_dur = await self.queue_duration()
         queue_total_duration = format_time(queue_dur)
-        text = f"{self.queue.qsize()} tracks, {queue_total_duration} remaining\n"
+        text = _("{queue_size} tracks, {queue_total_duration} remaining\n").format(
+            queue_size=self.queue.qsize(), queue_total_duration=queue_total_duration
+        )
         if not self.is_repeating:
             repeat_emoji = "\N{CROSS MARK}"
         elif self.config.repeat_queue:
@@ -1781,9 +1795,11 @@ class Player(VoiceProtocol):
 
         autoplay_emoji = "\N{WHITE HEAVY CHECK MARK}" if self.autoplay_enabled else "\N{CROSS MARK}"
 
-        text += "Repeating" + ": " + repeat_emoji
-        text += (" | " if text else "") + "Auto Play" + ": " + autoplay_emoji
-        text += (" | " if text else "") + "Volume" + ": " + f"{self.volume}%"
+        text += _("Repeating: {repeat_emoji}").format(repeat_emoji=repeat_emoji)
+        text += _("{space}Auto Play: {autoplay_emoji}").formart(
+            space=(" | " if text else ""), utoplay_emoji=autoplay_emoji
+        )
+        text += _("{space}Volume: {volume}%").format(space=(" | " if text else ""), volume=self.volume)
         page.set_footer(text=text)
         return page
 
@@ -1810,18 +1826,18 @@ class Player(VoiceProtocol):
         dur = "LIVE" if current.stream else format_time(current.duration)
         current_track_description = await current.get_track_display_name(with_url=True)
         if current.stream:
-            queue_list += "**Currently livestreaming:**\n"
+            queue_list += _("**Currently livestreaming:**\n")
         else:
-            queue_list += "Playing: "
+            queue_list += _("Playing: ")
         queue_list += f"{current_track_description}\n"
-        queue_list += f"Requester: **{current.requester.mention}**"
+        queue_list += _("Requester: **{current.requester.mention}**").format(current=current)
         queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
         if (
             len(tracks)
             and not history
             and (await self.player_manager.client.player_config_manager.get_auto_shuffle(self.guild.id)) is True
         ):
-            queue_list += "__Queue order is may not be accurate due to auto-shuffle being toggled__\n\n"
+            queue_list += _("__Queue order is may not be accurate due to auto-shuffle being toggled__\n\n")
         if tracks:
             padding = len(str(start_index + len(tracks)))
             async for track_idx, track in AsyncIter(tracks).enumerate(start=start_index + 1):
@@ -1832,7 +1848,9 @@ class Player(VoiceProtocol):
                     queue_list += f" - **{track.requester.mention}**"
                 queue_list += "\n"
         page = await self.node.node_manager.client.construct_embed(
-            title=f"Recently Played for __{self.guild.name}__" if history else f"Queue for __{self.guild.name}__",
+            title=_("Recently Played for __{self.guild.name}__").format(self=self)
+            if history
+            else _("Queue for __{self.guild.name}__").format(self=self),
             description=queue_list,
             messageable=messageable,
         )
@@ -1840,7 +1858,9 @@ class Player(VoiceProtocol):
             page.set_thumbnail(url=url)
         queue_dur = await self.queue_duration(history=history)
         queue_total_duration = format_time(queue_dur)
-        text = f"Page {page_index + 1}/{total_pages} | {queue.qsize()} tracks, {queue_total_duration} remaining\n"
+        text = _("Page {page_num}/{total_pages} | {queue_size} tracks, {queue_total_duration} remaining\n").format(
+            page_num=page_index + 1, queue_size=queue.qsize(), queue_total_duration=queue_total_duration
+        )
         if not self.is_repeating:
             repeat_emoji = "\N{CROSS MARK}"
         elif self.config.repeat_queue:
@@ -1850,9 +1870,11 @@ class Player(VoiceProtocol):
 
         autoplay_emoji = "\N{WHITE HEAVY CHECK MARK}" if self.autoplay_enabled else "\N{CROSS MARK}"
 
-        text += f"Repeating: {repeat_emoji}"
-        text += f"{(' | ' if text else '')}Auto Play: {autoplay_emoji}"
-        text += f"{(' | ' if text else '')}Volume: {self.volume}%"
+        text += _("Repeating: {repeat_emoji}").format(repeat_emoji=repeat_emoji)
+        text += _("{space}Auto Play: {autoplay_emoji}").formart(
+            space=(" | " if text else ""), autoplay_emoji=autoplay_emoji
+        )
+        text += _("{space}Volume: {volume}%").format(space=(" | " if text else ""), volume=self.volume)
         page.set_footer(text=text)
         return page
 

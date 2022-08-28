@@ -10,6 +10,13 @@ from discord.utils import maybe_coroutine
 from pylav import Query
 from pylav.vendored import aiopath
 
+try:
+    from redbot.core.i18n import Translator
+
+    _ = Translator("PyLavPlayer", pathlib.Path(__file__))
+except ImportError:
+    _ = lambda x: x
+
 __FULLY_SUPPORTED_MUSIC: Final[tuple[str, ...]] = (".mp3", ".flac", ".ogg")
 __PARTIALLY_SUPPORTED_MUSIC_EXT: tuple[str, ...] = (
     ".m3u",
@@ -63,7 +70,7 @@ class LocalFile:
     def __init__(self, path: str | pathlib.Path | aiopath.AsyncPath):
         if self._ROOT_FOLDER is None:
             raise RuntimeError(
-                "Root folder not initialized, " "call Client.update_localtracks_folder(folder: str | pathlib.Path)"
+                _("Root folder not initialized, call Client.update_localtracks_folder(folder: str | pathlib.Path)")
             )
         self._path: aiopath.AsyncPath = aiopath.AsyncPath(path)
         self._parent = self._path.parent

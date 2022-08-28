@@ -47,6 +47,13 @@ from pylav.vendored import aiopath
 if TYPE_CHECKING:
     from pylav.client import Client
 
+try:
+    from redbot.core.i18n import Translator
+
+    _ = Translator("PyLavPlayer", pathlib.Path(__file__))
+except ImportError:
+    _ = lambda x: x
+
 LOGGER = getLogger("PyLav.ManagedNode")
 
 LAVALINK_DOWNLOAD_DIR = CONFIG_DIR / "lavalink"
@@ -241,7 +248,7 @@ class LocalNodeManager:
         self._java_exc = java_path
         if arch_name in self._blacklisted_archs:
             raise InvalidArchitectureError(
-                "You are attempting to run the managed Lavalink node on an unsupported machine architecture."
+                _("You are attempting to run the managed Lavalink node on an unsupported machine architecture.")
             )
         await self.process_settings()
         possible_lavalink_processes = await self.get_lavalink_process(lazy_match=True)
@@ -331,18 +338,21 @@ class LocalNodeManager:
             await f.write(yaml.safe_dump(data))
 
     async def _get_jar_args(self) -> tuple[list[str], str | None]:
-        (java_available, java_version) = await self._has_java()
+        java_available, java_version = await self._has_java()
         if not java_available:
-            raise Exception(f"Pylav - Java executable not  found, tried to use: '{self._java_exc}'")
+            raise Exception(_("Pylav - Java executable not  found, tried to use: '{self._java_exc}'").format(self=self))
+
         java_xms, java_xmx = "64M", self._full_data.extras.get("max_ram", "2048M") if self._full_data else "2048M"
+
         match = re.match(r"^(\d+)([MG])$", java_xmx, flags=re.IGNORECASE)
         command_args = [self._java_exc, f"-Xms{java_xms}"]
         if (11, 0) <= java_version < (12, 0):
             command_args.append("-Djdk.tls.client.protocols=TLSv1.2")
         meta = 0, None
         invalid = None
-        if match and (
-            (int(match.group(1)) * 1024 ** (2 if match.group(2).lower() == "m" else 3))
+        if (
+            match
+            and int(match[1]) * 1024 ** (2 if match[2].lower() == "m" else 3)
             <= (meta := get_max_allocation_size(self._java_exc))[0]
         ):
             command_args.append(f"-Xmx{java_xmx}")
@@ -397,7 +407,11 @@ class LocalNodeManager:
 
             return major, minor
 
-        raise UnexpectedJavaResponseError(f"The output of `{self._java_exc} -version` was unexpected\n{version_info}.")
+        raise UnexpectedJavaResponseError(
+            _("The output of `{java_exc} -version` was unexpected\n{version_info}.").format(
+                java_exc=self._java_exc, version_info=version_info
+            )
+        )
 
     async def _wait_for_launcher(self) -> None:
         LOGGER.info("Waiting for Managed Lavalink node to be ready")
@@ -410,13 +424,16 @@ class LocalNodeManager:
             if _FAILED_TO_START.search(line):
                 if f"Port {self._current_config['server']['port']} was already in use".encode() in line:
                     raise PortAlreadyInUseError(
-                        f"Port {self._current_config['server']['port']} already in use. "
-                        "Managed Lavalink startup aborted."
+                        _("Port {port} already in use. Managed Lavalink startup aborted.").format(
+                            port=self._current_config["server"]["port"]
+                        )
                     )
-                raise ManagedLavalinkStartFailure(f"Lavalink failed to start: {line.decode().strip()}")
+                raise ManagedLavalinkStartFailure(
+                    _("Lavalink failed to start: {line}").format(line=line.decode("utf-8"))
+                )
             if self._proc.returncode is not None:
                 # Avoid Console spam only print once every 2 seconds
-                raise EarlyExitError("Managed Lavalink node server exited early.")
+                raise EarlyExitError(_("Managed Lavalink node server exited early."))
 
     async def shutdown(self) -> None:
         if self.start_monitor_task is not None:
@@ -771,19 +788,21 @@ class LocalNodeManager:
         process_list = []
         filter_ = [cwd] if cwd else []
         async for proc in AsyncIter(psutil.process_iter()):
-            try:
+            with contextlib.suppress(psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 if cwd and await asyncio.to_thread(proc.cwd) not in filter_:
                     continue
                 cmdline = await asyncio.to_thread(proc.cmdline)
-                if (matches and await asyncstdlib.all(a in cmdline for a in matches)) or (
-                    lazy_match and await asyncstdlib.any("lavalink" in arg.lower() for arg in cmdline)
+                if (
+                    matches
+                    and await asyncstdlib.all(a in cmdline for a in matches)
+                    or lazy_match
+                    and await asyncstdlib.any("lavalink" in arg.lower() for arg in cmdline)
                 ):
                     proc_as_dict = await asyncio.to_thread(
                         proc.as_dict, attrs=["pid", "name", "create_time", "status", "cmdline", "cwd"]
                     )
+
                     process_list.append(proc_as_dict)
-            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-                pass
         return process_list
 
     async def restart(self, java_path: str = None):

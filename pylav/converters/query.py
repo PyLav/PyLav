@@ -1,11 +1,19 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from discord.app_commands import Choice, Transformer
 from discord.ext import commands
 
 from pylav.types import ContextT, InteractionT
+
+try:
+    from redbot.core.i18n import Translator
+
+    _ = Translator("PyLavPlayer", Path(__file__))
+except ImportError:
+    _ = lambda x: x
 
 if TYPE_CHECKING:
     from pylav.query import Query
@@ -40,7 +48,7 @@ else:
             arg = arg.strip("<>")
             query = await Query.from_string(arg)
             if not (query.is_playlist or query.is_album):
-                raise commands.BadArgument("Query must be a playlist or album.")
+                raise commands.BadArgument(_("Query must be a playlist or album."))
             return query
 
         @classmethod

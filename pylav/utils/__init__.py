@@ -485,13 +485,9 @@ class PlayerQueue(asyncio.Queue[T]):
                 await putter
             except BaseException:
                 putter.cancel()  # Just in case putter is not done yet.
-                try:
+                with contextlib.suppress(ValueError):
                     # Clean self._putters from canceled putters.
                     self._putters.remove(putter)
-                except ValueError:
-                    # The putter could be removed from self._putters by a
-                    # previous get_nowait call.
-                    pass
                 if not self.full() and not putter.cancelled():
                     # We were woken up by get_nowait(), but can't take
                     # the call.  Wake up the next in line.
@@ -522,17 +518,10 @@ class PlayerQueue(asyncio.Queue[T]):
             try:
                 await getter
             except BaseException:
-                getter.cancel()  # Just in case getter is not done yet.
-                try:
-                    # Clean self._getters from canceled getters.
+                getter.cancel()
+                with contextlib.suppress(ValueError):
                     self._getters.remove(getter)
-                except ValueError:
-                    # The getter could be removed from self._getters by a
-                    # previous put_nowait call.
-                    pass
                 if not self.empty() and not getter.cancelled():
-                    # We were woken up by put_nowait(), but can't take
-                    # the call.  Wake up the next in line.
                     self._wakeup_next(self._getters)
                 raise
         return self.get_nowait(index=index)

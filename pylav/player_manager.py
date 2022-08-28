@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
+import pathlib
 from collections.abc import Iterator
 from typing import TYPE_CHECKING
 
@@ -18,6 +19,12 @@ if TYPE_CHECKING:
 from pylav.exceptions import NoNodeAvailable
 from pylav.node import Node
 
+try:
+    from redbot.core.i18n import Translator
+
+    _ = Translator("PyLavPlayer", pathlib.Path(__file__))
+except ImportError:
+    _ = lambda x: x
 LOGGER = getLogger("PyLav.PlayerManager")
 
 
@@ -233,7 +240,7 @@ class PlayerManager:
             region, feature=feature or None, coordinates=player.coordinates
         )
         if not best_node:
-            raise NoNodeAvailable("No available nodes!")
+            raise NoNodeAvailable(_("No available nodes!"))
         await player.post_init(
             node=best_node, player_manager=self, config=player_config, pylav=self.client, requester=requester
         )

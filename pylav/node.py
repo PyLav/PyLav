@@ -25,6 +25,7 @@ if TYPE_CHECKING:
     from pylav.query import Query
     from pylav.websocket import WebSocket
 
+
 LOGGER = getLogger("PyLav.Node")
 
 
@@ -61,10 +62,9 @@ class Penalty:
     @property
     def deficit_frame_penalty(self) -> float | int:
         """The penalty of the deficit frames of the node."""
-        deficit_frame_penalty = 0
-        if self._stats.frames_deficit != -1:
-            deficit_frame_penalty = (1.03 ** (500 * (self._stats.frames_deficit / 3000))) * 600 - 600
-        return deficit_frame_penalty
+        return (
+            1.03 ** (500 * (self._stats.frames_deficit / 3000)) * 600 - 600 if self._stats.frames_deficit != -1 else 0
+        )
 
     @property
     def total(self) -> float:

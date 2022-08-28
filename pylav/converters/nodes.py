@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import TYPE_CHECKING, TypeVar
 
 import asyncstdlib
@@ -8,6 +9,13 @@ from discord.ext import commands
 
 from pylav.node import Node
 from pylav.types import ContextT, InteractionT
+
+try:
+    from redbot.core.i18n import Translator
+
+    _ = Translator("PyLavPlayer", Path(__file__))
+except ImportError:
+    _ = lambda x: x
 
 if TYPE_CHECKING:
 
@@ -23,12 +31,12 @@ else:
             try:
                 nodes = ctx.lavalink.node_manager.nodes
             except EntryNotFoundError as e:
-                raise commands.BadArgument(f"Node with name or id `{arg}` not found.") from e
+                raise commands.BadArgument(_("Node with name or id `{arg}` not found.").format(arg=arg)) from e
             if r := await asyncstdlib.list(
                 asyncstdlib.filter(lambda n: arg.lower() in n.name.lower() or arg == f"{n.identifier}", nodes)
             ):
                 return r
-            raise commands.BadArgument(f"Node with name or id `{arg}` not found.")
+            raise commands.BadArgument(_("Node with name or id `{arg}` not found.").format(arg=arg))
 
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> list[Node]:

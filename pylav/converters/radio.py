@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import TYPE_CHECKING, TypeVar
 
 import asyncstdlib
@@ -8,6 +9,13 @@ from discord.ext import commands
 
 from pylav import getLogger
 from pylav.types import ContextT, InteractionT
+
+try:
+    from redbot.core.i18n import Translator
+
+    _ = Translator("PyLavPlayer", Path(__file__))
+except ImportError:
+    _ = lambda x: x
 
 LOGGER = getLogger("red.3pt.PyLav-Shared.converters.radio")
 
@@ -32,10 +40,10 @@ else:
             try:
                 stations = await ctx.lavalink.radio_browser.stations()
             except EntryNotFoundError as e:
-                raise commands.BadArgument(f"Station with name `{arg}` not found.") from e
+                raise commands.BadArgument(_("Station with name `{arg}` not found.").format(arg=arg)) from e
             if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), stations)):
                 return r
-            raise commands.BadArgument(f"Station with name `{arg}` not found.")
+            raise commands.BadArgument(_("Station with name `{arg}` not found.").format(arg=arg))
 
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> list[Station]:
@@ -93,7 +101,7 @@ else:
                 kwargs["name"] = current
             stations = await interaction.client.lavalink.radio_browser.search(limit=25, **kwargs)
             return [
-                Choice(name=n.name[:99] if n.name else "Unnamed", value=f"{n.name}")
+                Choice(name=n.name[:99] if n.name else _("Unnamed"), value=f"{n.name}")
                 for n in stations
                 if current.lower() in n.name.lower()
             ][:25]
@@ -107,10 +115,10 @@ else:
             try:
                 tags = await ctx.lavalink.radio_browser.tags()
             except EntryNotFoundError as e:
-                raise commands.BadArgument(f"Tag with name `{arg}` not found.") from e
+                raise commands.BadArgument(_("Tag with name `{arg}` not found.").format(arg=arg)) from e
             if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), tags)):
                 return r
-            raise commands.BadArgument(f"Tag with name `{arg}` not found.")
+            raise commands.BadArgument(_("Tag with name `{arg}` not found.").format(arg=arg))
 
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> list[Tag]:
@@ -123,7 +131,7 @@ else:
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
             tags = await interaction.client.lavalink.radio_browser.tags()
             return [
-                Choice(name=n.name[:99] if n.name else "Unnamed", value=f"{n.name}")
+                Choice(name=n.name[:99] if n.name else _("Unnamed"), value=f"{n.name}")
                 for n in tags
                 if current.lower() in n.name.lower()
             ][:25]
@@ -137,10 +145,10 @@ else:
             try:
                 langs = await ctx.lavalink.radio_browser.languages()
             except EntryNotFoundError as e:
-                raise commands.BadArgument(f"Language with name `{arg}` not found.") from e
+                raise commands.BadArgument(_("Language with name `{arg}` not found.").format(arg=arg)) from e
             if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), langs)):
                 return r
-            raise commands.BadArgument(f"Language with name `{arg}` not found.")
+            raise commands.BadArgument(_("Language with name `{arg}` not found.)").format(arg=arg))
 
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> list[Language]:
@@ -154,7 +162,7 @@ else:
             languages = await interaction.client.lavalink.radio_browser.languages()
 
             return [
-                Choice(name=n.name[:99] if n.name else "Unnamed", value=f"{n.name}")
+                Choice(name=n.name[:99] if n.name else _("Unnamed"), value=f"{n.name}")
                 for n in languages
                 if current.lower() in n.name.lower()
             ][:25]
@@ -168,10 +176,10 @@ else:
             try:
                 states = await ctx.lavalink.radio_browser.states()
             except EntryNotFoundError as e:
-                raise commands.BadArgument(f"State with name `{arg}` not found.") from e
+                raise commands.BadArgument(_("State with name `{arg}` not found.")) from e
             if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), states)):
                 return r
-            raise commands.BadArgument(f"State with name `{arg}` not found.")
+            raise commands.BadArgument(_("State with name `{arg}` not found."))
 
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> list[State]:
@@ -190,11 +198,9 @@ else:
 
                 if country and (val := country[0].get("value")):
                     kwargs["country"] = val
-            LOGGER.debug(f"StateConverter Autocompleting {current} with {kwargs} and {options}")
-
             states = await interaction.client.lavalink.radio_browser.states(**kwargs)
             return [
-                Choice(name=n.name[:99] if n.name else "Unnamed", value=f"{n.name}")
+                Choice(name=n.name[:99] if n.name else _("Unnamed"), value=f"{n.name}")
                 for n in states
                 if current.lower() in n.name.lower()
             ][:25]
@@ -208,10 +214,10 @@ else:
             try:
                 codecs = await ctx.lavalink.radio_browser.codecs()
             except EntryNotFoundError as e:
-                raise commands.BadArgument(f"Codec with name `{arg}` not found.") from e
+                raise commands.BadArgument(_("Codec with name `{arg}` not found.").format(arg=arg)) from e
             if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), codecs)):
                 return r
-            raise commands.BadArgument(f"Codec with name `{arg}` not found.")
+            raise commands.BadArgument(_("Codec with name `{arg}` not found.").format(arg=arg))
 
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> list[Codec]:
@@ -224,7 +230,7 @@ else:
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
             codecs = await interaction.client.lavalink.radio_browser.codecs()
             return [
-                Choice(name=n.name[:99] if n.name else "Unnamed", value=f"{n.name}")
+                Choice(name=n.name[:99] if n.name else _("Unnamed"), value=f"{n.name}")
                 for n in codecs
                 if current.lower() in n.name.lower()
             ][:25]
@@ -238,11 +244,11 @@ else:
             try:
                 countrycodes = await ctx.lavalink.radio_browser.countrycodes()
             except EntryNotFoundError as e:
-                raise commands.BadArgument(f"Country code `{arg}` not found.") from e
+                raise commands.BadArgument(_("Country code `{arg}` not found.").format(arg=arg)) from e
 
             if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), countrycodes)):
                 return r
-            raise commands.BadArgument(f"Country code `{arg}` not found.")
+            raise commands.BadArgument(_("Country code `{arg}` not found.").format(arg=arg))
 
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> list[CountryCode]:
@@ -255,7 +261,7 @@ else:
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
             countrycodes = await interaction.client.lavalink.radio_browser.countrycodes()
             return [
-                Choice(name=n.name[:99] if n.name else "Unnamed", value=f"{n.name}")
+                Choice(name=n.name[:99] if n.name else _("Unnamed"), value=f"{n.name}")
                 for n in countrycodes
                 if current.lower() in n.name.lower()
             ][:25]
@@ -269,10 +275,10 @@ else:
             try:
                 countries = await ctx.lavalink.radio_browser.countries()
             except EntryNotFoundError as e:
-                raise commands.BadArgument(f"Country with name `{arg}` not found.") from e
+                raise commands.BadArgument(_("Country with name `{arg}` not found.").format(arg=arg)) from e
             if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), countries)):
                 return r
-            raise commands.BadArgument(f"Country with name `{arg}` not found.")
+            raise commands.BadArgument(_("Country with name `{arg}` not found.").format(arg=arg))
 
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> list[Country]:
@@ -292,7 +298,7 @@ else:
                     kwargs["code"] = val
             countries = await interaction.client.lavalink.radio_browser.countries(**kwargs)
             return [
-                Choice(name=n.name[:99] if n.name else "Unnamed", value=f"{n.name}")
+                Choice(name=n.name[:99] if n.name else _("Unnamed"), value=f"{n.name}")
                 for n in countries
                 if current.lower() in n.name.lower()
             ][:25]

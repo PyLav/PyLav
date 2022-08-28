@@ -482,10 +482,9 @@ class NodeManager:
             use_bundled_pylav_external=USE_BUNDLED_EXTERNAL_PYLAV_NODE,
             use_bundled_lava_link_external=USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE,
         )
-        if config_data.java_path != JAVA_EXECUTABLE:
-            if JAVA_EXECUTABLE != "java" and os.path.exists(JAVA_EXECUTABLE):
-                config_data.java_path = JAVA_EXECUTABLE
-                await config_data.save()
+        if config_data.java_path != JAVA_EXECUTABLE and JAVA_EXECUTABLE != "java" and os.path.exists(JAVA_EXECUTABLE):
+            config_data.java_path = JAVA_EXECUTABLE
+            await config_data.save()
         if config_data.use_bundled_pylav_external:
             if await asyncstdlib.all(True for n in nodes_list if n.host != "ll-gb.draper.wtf"):
                 base_settings = PYLAV_BUNDLED_NODES_SETTINGS["ll-gb.draper.wtf"]
