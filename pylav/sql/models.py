@@ -84,7 +84,7 @@ class PlaylistModel:
         return PlaylistModel(**playlist.to_dict())
 
     @classmethod
-    @alru_cache(maxsize=5)
+    @alru_cache(maxsize=128)
     async def get(cls, id: int) -> PlaylistModel | None:
         """Get a playlist from the database.
 
@@ -914,7 +914,7 @@ class QueryModel:
             self.tracks = ujson.loads(self.tracks)
 
     @classmethod
-    @alru_cache(maxsize=5)
+    @alru_cache(maxsize=128)
     async def get(cls, identifier: str) -> QueryModel | None:
         """Get a query from the database.
 
@@ -1227,7 +1227,7 @@ class PlayerModel:
         """Save the player to the database."""
         await self.upsert()
 
-    @alru_cache(maxsize=5)
+    @alru_cache(maxsize=128)
     async def get_or_create(self) -> PlayerModel:
         """Get the player from the database.
 
@@ -1767,7 +1767,7 @@ class PlayerModel:
         await self.save()
         return self
 
-    @alru_cache(maxsize=50)
+    @alru_cache(maxsize=128)
     async def is_dj(
         self,
         user: discord.Member,
