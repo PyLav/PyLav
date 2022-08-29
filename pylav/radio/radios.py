@@ -26,7 +26,6 @@ class Request:
             async with self._session.get(url, headers=self._headers, params=kwargs) as resp:
                 if resp.status == 200:
                     return await resp.json(loads=ujson.loads)
-            return resp.raise_for_status()
         else:
             async with aiohttp_client_cache.CachedSession(
                 headers=self._headers, timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps
@@ -34,7 +33,7 @@ class Request:
                 async with session.get(url, params=kwargs) as resp:
                     if resp.status == 200:
                         return await resp.json(loads=ujson.loads)
-            return resp.raise_for_status()
+        return resp.raise_for_status()
 
 
 class RadioBrowser:
@@ -243,7 +242,7 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
-        kwargs |= {"name": name, "name_exact": exact}
+        kwargs |= {"name": name, "name_exact": exact, "order": "lastcheckok"}
         return await self.search(**kwargs)
 
     async def stations_by_codec(
@@ -260,7 +259,7 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
-        kwargs |= {"codec": codec, "codec_exact": exact}
+        kwargs |= {"codec": codec, "codec_exact": exact, "order": "lastcheckok"}
         return await self.search(**kwargs)
 
     async def stations_by_country(
@@ -277,7 +276,7 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
-        kwargs |= {"country": country, "country_exact": exact}
+        kwargs |= {"country": country, "country_exact": exact, "order": "lastcheckok"}
         return await self.search(**kwargs)
 
     async def stations_by_countrycode(self, code: str, **kwargs: str | int | bool | None) -> list[Station]:
@@ -292,7 +291,7 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
-        kwargs["countrycode"] = code
+        kwargs |= {"countrycode": code, "order": "lastcheckok"}
         return await self.search(**kwargs)
 
     async def stations_by_state(
@@ -309,7 +308,7 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
-        kwargs |= {"state": state, "state_exact": exact}
+        kwargs |= {"state": state, "state_exact": exact, "order": "lastcheckok"}
         return await self.search(**kwargs)
 
     async def stations_by_language(
@@ -326,7 +325,7 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
-        kwargs |= {"language": language, "language_exact": exact}
+        kwargs |= {"language": language, "language_exact": exact, "order": "lastcheckok"}
         return await self.search(**kwargs)
 
     async def stations_by_tag(self, tag: str, exact: bool = False, **kwargs: str | int | bool | None) -> list[Station]:
@@ -340,7 +339,7 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
-        kwargs |= {"tag": tag, "tag_exact": exact}
+        kwargs |= {"tag": tag, "tag_exact": exact, "order": "lastcheckok"}
         return await self.search(**kwargs)
 
     async def stations_by_tag_list(self, tag_list: list[str], **kwargs: str | int | bool | None) -> list[Station]:
@@ -356,6 +355,8 @@ class RadioBrowser:
         """
         tag_list = ",".join(tag_list)
         kwargs["tag_list"] = tag_list
+        kwargs |= {"tag_list": tag_list, "order": "lastcheckok"}
+
         return await self.search(**kwargs)
 
     async def click_counter(self, stationuuid: str) -> dict[str, str | int | bool]:
@@ -471,6 +472,8 @@ class RadioBrowser:
             if paramkey in kwargs:
                 kwargs[paramkey] = kwargs[paramkey].lower()
         kwargs["hidebroken"] = kwargs.pop("hidebroken", "true")
+        if kwargs["hidebroken"] is False:
+            kwargs["hidebroken"] = "false"
         await self.update_base_url()
         url = self.build_url(endpoint)
         response = await self.client.get(url, **kwargs)

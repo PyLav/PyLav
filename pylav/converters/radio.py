@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from operator import attrgetter
 from pathlib import Path
 from typing import TYPE_CHECKING, TypeVar
 
@@ -42,7 +43,7 @@ else:
             except EntryNotFoundError as e:
                 raise commands.BadArgument(_("Station with name `{arg}` not found.").format(arg=arg)) from e
             if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), stations)):
-                return r
+                return await asyncstdlib.sorted(r, key=attrgetter("lastcheckoktime_iso8601"), reverse=True)
             raise commands.BadArgument(_("Station with name `{arg}` not found.").format(arg=arg))
 
         @classmethod
@@ -56,7 +57,7 @@ else:
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
             data = interaction.data
             options = data.get("options", [])
-            kwargs = {"order": "clickcount"}
+            kwargs = {"order": "lastcheckok"}
             if options:
                 country_code = [v for v in options if v.get("name") == "countrycode"]
                 country = [v for v in options if v.get("name") == "country"]
@@ -95,13 +96,13 @@ else:
                             True for t in await interaction.client.lavalink.radio_browser.tags() if t.name == val
                         )
                     elif len(tags) > 1:
-                        kwargs["tag_list"] = [tv for t in tags if (tv := t.get("value"))]
+                        kwargs["tag_list"] = ",".join([tv for t in tags if (tv := t.get("value"))])
 
             if current:
                 kwargs["name"] = current
             stations = await interaction.client.lavalink.radio_browser.search(limit=25, **kwargs)
             return [
-                Choice(name=n.name[:99] if n.name else _("Unnamed"), value=f"{n.name}")
+                Choice(name=n.name[:95] if n.name else _("Unnamed"), value=f"{n.name}")
                 for n in stations
                 if current.lower() in n.name.lower()
             ][:25]
@@ -131,7 +132,7 @@ else:
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
             tags = await interaction.client.lavalink.radio_browser.tags()
             return [
-                Choice(name=n.name[:99] if n.name else _("Unnamed"), value=f"{n.name}")
+                Choice(name=n.name[:95] if n.name else _("Unnamed"), value=f"{n.name}")
                 for n in tags
                 if current.lower() in n.name.lower()
             ][:25]
@@ -162,7 +163,7 @@ else:
             languages = await interaction.client.lavalink.radio_browser.languages()
 
             return [
-                Choice(name=n.name[:99] if n.name else _("Unnamed"), value=f"{n.name}")
+                Choice(name=n.name[:95] if n.name else _("Unnamed"), value=f"{n.name}")
                 for n in languages
                 if current.lower() in n.name.lower()
             ][:25]
@@ -200,7 +201,7 @@ else:
                     kwargs["country"] = val
             states = await interaction.client.lavalink.radio_browser.states(**kwargs)
             return [
-                Choice(name=n.name[:99] if n.name else _("Unnamed"), value=f"{n.name}")
+                Choice(name=n.name[:95] if n.name else _("Unnamed"), value=f"{n.name}")
                 for n in states
                 if current.lower() in n.name.lower()
             ][:25]
@@ -230,7 +231,7 @@ else:
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
             codecs = await interaction.client.lavalink.radio_browser.codecs()
             return [
-                Choice(name=n.name[:99] if n.name else _("Unnamed"), value=f"{n.name}")
+                Choice(name=n.name[:95] if n.name else _("Unnamed"), value=f"{n.name}")
                 for n in codecs
                 if current.lower() in n.name.lower()
             ][:25]
@@ -261,7 +262,7 @@ else:
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
             countrycodes = await interaction.client.lavalink.radio_browser.countrycodes()
             return [
-                Choice(name=n.name[:99] if n.name else _("Unnamed"), value=f"{n.name}")
+                Choice(name=n.name[:95] if n.name else _("Unnamed"), value=f"{n.name}")
                 for n in countrycodes
                 if current.lower() in n.name.lower()
             ][:25]
@@ -298,7 +299,7 @@ else:
                     kwargs["code"] = val
             countries = await interaction.client.lavalink.radio_browser.countries(**kwargs)
             return [
-                Choice(name=n.name[:99] if n.name else _("Unnamed"), value=f"{n.name}")
+                Choice(name=n.name[:95] if n.name else _("Unnamed"), value=f"{n.name}")
                 for n in countries
                 if current.lower() in n.name.lower()
             ][:25]

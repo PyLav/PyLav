@@ -43,7 +43,7 @@ else:
         @classmethod
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
             return [
-                Choice(name=p.name[:99], value=f"{p.id}")
+                Choice(name=p.name[:95], value=f"{p.id}")
                 for p in await interaction.client.lavalink.playlist_db_manager.get_playlist_by_name(current, limit=25)
                 if current.lower() in p.name.lower()
             ]

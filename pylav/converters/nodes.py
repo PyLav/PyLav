@@ -50,5 +50,5 @@ else:
             nodes = interaction.client.lavalink.node_manager.nodes
 
             return [
-                Choice(name=n.name[:99], value=f"{n.identifier}") for n in nodes if current.lower() in n.name.lower()
+                Choice(name=n.name[:95], value=f"{n.identifier}") for n in nodes if current.lower() in n.name.lower()
             ][:25]
