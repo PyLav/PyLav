@@ -1,7 +1,5 @@
-import contextlib
 from collections.abc import AsyncIterable
 
-import asyncpg
 from aiohttp_client_cache import BaseCache, CacheBackend, ResponseOrKey
 from aiohttp_client_cache.docs import extend_init_signature
 
@@ -54,9 +52,7 @@ class PostgresStorage(BaseCache):
             .where(tables.AioHttpCacheRow.key == key)
             .limit(1)
         )
-        if not response:
-            return None
-        return self.deserialize(response["value"])
+        return self.deserialize(response["value"]) if response else None
 
     async def size(self) -> int:
         """Get the number of items in the cache"""
@@ -74,15 +70,15 @@ class PostgresStorage(BaseCache):
     async def write(self, key: str, item: ResponseOrKey):
         """Write an item to the cache"""
 
-        values = {tables.AioHttpCacheRow.value: self.serialize(item)}
-        while True:
-            with contextlib.suppress(asyncpg.exceptions.UniqueViolationError):
-                entry = await tables.AioHttpCacheRow.objects().get_or_create(
-                    tables.AioHttpCacheRow.key == key, defaults=values
-                )
-                break
-        if not entry._was_created:
-            await tables.AioHttpCacheRow.update(values).where(tables.AioHttpCacheRow.key == key)
+        await tables.AioHttpCacheRow.raw(
+            """
+            INSERT INTO aiohttp_client_cache (key, value)
+            VALUES ({}, {})
+            ON CONFLICT (key) DO UPDATE SET value = excluded.value
+            """,
+            key,
+            self.serialize(item),
+        )
 
     async def bulk_delete(self, keys: set[str]) -> None:
         """Delete multiple items from the cache"""

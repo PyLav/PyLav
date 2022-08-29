@@ -42,21 +42,22 @@ class PlaylistRow(Table, db=DB, tablename="playlist"):
 
 
 class LibConfigRow(Table, db=DB, tablename="lib_config"):
-    bot = BigInt(primary_key=True, index=True)
     id = BigInt(index=True)
+    bot = BigInt(primary_key=True, index=True)
     config_folder = Text(null=False)
-    localtrack_folder = Text(null=True)
     java_path = Text(null=False, default=JAVA_EXECUTABLE)
     enable_managed_node = Boolean(null=False, default=True)
-    use_bundled_lava_link_external = Boolean(null=False, default=True)
-    use_bundled_pylav_external = Boolean(null=False, default=True)
     auto_update_managed_nodes = Boolean(null=False, default=True)
+    localtrack_folder = Text(null=True)
     download_id = BigInt(index=True, default=0)
+    update_bot_activity = Boolean(null=False, default=False)
+    use_bundled_pylav_external = Boolean(null=False, default=True)
+    use_bundled_lava_link_external = Boolean(null=False, default=True)
+
     extras: JSONB = JSONB(null=False, default={})
     next_execution_update_bundled_playlists = Timestamptz(null=True)
     next_execution_update_bundled_external_playlists = Timestamptz(null=True)
     next_execution_update_external_playlists = Timestamptz(null=True)
-    update_bot_activity = Boolean(null=False, default=False)
 
 
 class EqualizerRow(Table, db=DB, tablename="equalizer"):

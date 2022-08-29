@@ -56,6 +56,7 @@ from pylav.player import Player
 from pylav.player_manager import PlayerManager
 from pylav.query import MAX_RECURSION_DEPTH, Query
 from pylav.radio import RadioBrowser
+from pylav.sql import tables
 from pylav.sql.aiohttp_postgres_cache import PostgresCacheBackend
 from pylav.sql.clients.equalizer_manager import EqualizerConfigManager
 from pylav.sql.clients.lib import LibConfigManager
@@ -309,6 +310,7 @@ class Client(metaclass=_Singleton):
                         self._initiated = True
                         self.ready.clear()
                         await self.bot.wait_until_ready()
+                        await tables.DB.start_connection_pool(max_size=100)
                         if hasattr(self.bot, "get_shared_api_tokens") and callable(
                             getattr(self.bot, "get_shared_api_tokens")
                         ):
@@ -754,6 +756,7 @@ class Client(metaclass=_Singleton):
                     if self.__old_get_context is not None:
                         self.bot.get_context = self.__old_get_context
                     del self.bot._pylav_client  # noqa
+                    await tables.DB.close_connection_pool()
                     LOGGER.info("All cogs have been unregistered, PyLav client has been shutdown.")
 
     def get_player(self, guild: discord.Guild | int | None) -> Player | None:

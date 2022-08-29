@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import aiohttp
+from discord.app_commands import AppCommandError
 from discord.ext.commands import CommandError
 
 __all__ = (
@@ -41,7 +42,7 @@ __all__ = (
 )
 
 
-class PyLavError(CommandError):
+class PyLavError(CommandError, AppCommandError):
     """Base exception for errors in the library."""
 
 

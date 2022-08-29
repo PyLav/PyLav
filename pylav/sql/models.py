@@ -65,23 +65,21 @@ class PlaylistModel:
         PlaylistModel
             The saved playlist.
         """
-        values = {
-            tables.PlaylistRow.scope: self.scope,
-            tables.PlaylistRow.author: self.author,
-            tables.PlaylistRow.name: self.name,
-            tables.PlaylistRow.url: self.url,
-            tables.PlaylistRow.tracks: self.tracks,
-        }
-        playlist = (
-            await tables.PlaylistRow.objects()
-            .output(load_json=True)
-            .get_or_create(tables.PlaylistRow.id == self.id, defaults=values)
+        await tables.PlaylistRow.raw(
+            "INSERT INTO playlist (id, scope, author, name, tracks, url) VALUES ({}, {}, {}, {}, {}, {})  "
+            "ON CONFLICT (id) "
+            "DO UPDATE "
+            "SET scope = EXCLUDED.scope, author = EXCLUDED.author, name = EXCLUDED.name, tracks = EXCLUDED.tracks, url = EXCLUDED.url",
+            self.id,
+            self.scope,
+            self.author,
+            self.name,
+            ujson.dumps(self.tracks),
+            self.url,
         )
-        if not playlist._was_created:
-            await tables.PlaylistRow.update(values).where(tables.PlaylistRow.id == self.id)
         self.get.invalidate(self.id)
         self.get.invalidate(id=self.id)
-        return PlaylistModel(**playlist.to_dict())
+        return self
 
     @classmethod
     @alru_cache(maxsize=128)
@@ -98,14 +96,14 @@ class PlaylistModel:
         PlaylistModel | None
             The playlist if it exists, otherwise None.
         """
-        playlist = await tables.PlaylistRow.select().where(tables.PlaylistRow.id == id)
-        return PlaylistModel(**playlist.to_dict()) if playlist else None
+        playlist = await tables.PlaylistRow.raw("SELECT * FROM playlist WHERE id = {} LIMIT 1", id)
+        return PlaylistModel(**playlist[0]) if playlist else None
 
     async def delete(self) -> None:
         """Delete the playlist from the database."""
         self.get.invalidate(self.id)
         self.get.invalidate(id=self.id)
-        await tables.PlaylistRow.delete().where(tables.PlaylistRow.id == self.id)
+        await tables.PlaylistRow.raw("DELETE FROM playlist WHERE id = {}", self.id)
 
     async def can_manage(self, bot: BotT, requester: discord.abc.User, guild: discord.Guild = None) -> bool:
         """Check if the requester can manage the playlist.
@@ -313,12 +311,14 @@ class LibConfigModel:
         str
             The config folder.
         """
-        response = (
-            await tables.LibConfigRow.select(tables.LibConfigRow.config_folder)
-            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
-            .first()
+        response = await tables.LibConfigRow.raw(
+            """
+            SELECT config_folder FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
+            """,
+            self.id,
+            self.bot,
         )
-        return response["config_folder"]
+        return response[0]["config_folder"]
 
     async def get_java_path(self) -> str:
         """Get the java path.
@@ -328,12 +328,15 @@ class LibConfigModel:
         str
             The java path.
         """
-        response = (
-            await tables.LibConfigRow.select(tables.LibConfigRow.java_path)
-            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
-            .first()
+        response = await tables.LibConfigRow.raw(
+            """
+            SELECT java_path FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
+            """,
+            self.id,
+            self.bot,
         )
-        return response["java_path"]
+
+        return response[0]["java_path"]
 
     async def get_enable_managed_node(self) -> bool:
         """Get whether the managed node is enabled.
@@ -343,12 +346,14 @@ class LibConfigModel:
         bool
             Whether the managed node is enabled.
         """
-        response = (
-            await tables.LibConfigRow.select(tables.LibConfigRow.enable_managed_node)
-            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
-            .first()
+        response = await tables.LibConfigRow.raw(
+            """
+            SELECT enable_managed_node FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
+            """,
+            self.id,
+            self.bot,
         )
-        return response["enable_managed_node"]
+        return response[0]["enable_managed_node"]
 
     async def get_auto_update_managed_nodes(self) -> bool:
         """Get whether the managed node should be auto updated.
@@ -358,12 +363,15 @@ class LibConfigModel:
         bool
             Whether the managed node should be auto updated.
         """
-        response = (
-            await tables.LibConfigRow.select(tables.LibConfigRow.auto_update_managed_nodes)
-            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
-            .first()
+        response = await tables.LibConfigRow.raw(
+            """
+            SELECT auto_update_managed_nodes FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
+            """,
+            self.id,
+            self.bot,
         )
-        return response["auto_update_managed_nodes"]
+
+        return response[0]["auto_update_managed_nodes"]
 
     async def get_localtrack_folder(self) -> str:
         """Get the localtrack folder.
@@ -373,12 +381,14 @@ class LibConfigModel:
         str
             The localtrack folder.
         """
-        response = (
-            await tables.LibConfigRow.select(tables.LibConfigRow.localtrack_folder)
-            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
-            .first()
+        response = await tables.LibConfigRow.raw(
+            """
+            SELECT localtrack_folder FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
+            """,
+            self.id,
+            self.bot,
         )
-        return response["localtrack_folder"]
+        return response[0]["localtrack_folder"]
 
     async def get_download_id(self) -> int:
         """Get the download id for the managed node.
@@ -388,12 +398,15 @@ class LibConfigModel:
         int
             The download id for the managed node.
         """
-        response = (
-            await tables.LibConfigRow.select(tables.LibConfigRow.download_id)
-            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
-            .first()
+        response = await tables.LibConfigRow.raw(
+            """
+            SELECT download_id FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
+            """,
+            self.id,
+            self.bot,
         )
-        return response["download_id"]
+
+        return response[0]["download_id"]
 
     async def get_next_execution_update_bundled_playlists(self) -> datetime.datetime:
         """Get the next execution time for the update of bundled playlists.
@@ -403,12 +416,14 @@ class LibConfigModel:
         datetime.datetime
             The next execution time for the update of bundled playlists.
         """
-        response = (
-            await tables.LibConfigRow.select(tables.LibConfigRow.next_execution_update_bundled_playlists)
-            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
-            .first()
+        response = await tables.LibConfigRow.raw(
+            """
+            SELECT next_execution_update_bundled_playlists FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
+            """,
+            self.id,
+            self.bot,
         )
-        return response["next_execution_update_bundled_playlists"]
+        return response[0]["next_execution_update_bundled_playlists"]
 
     async def get_next_execution_update_bundled_external_playlists(self) -> datetime.datetime:
         """Get the next execution time for the update of bundled external playlists.
@@ -418,12 +433,14 @@ class LibConfigModel:
         datetime.datetime
             The next execution time for the update of bundled external playlists.
         """
-        response = (
-            await tables.LibConfigRow.select(tables.LibConfigRow.next_execution_update_bundled_external_playlists)
-            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
-            .first()
+        response = await tables.LibConfigRow.raw(
+            """
+            SELECT next_execution_update_bundled_external_playlists FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
+            """,
+            self.id,
+            self.bot,
         )
-        return response["next_execution_update_bundled_external_playlists"]
+        return response[0]["next_execution_update_bundled_external_playlists"]
 
     async def get_next_execution_update_external_playlists(self) -> datetime.datetime:
         """Get the next execution time for the update of external playlists.
@@ -433,12 +450,14 @@ class LibConfigModel:
         datetime.datetime
             The next execution time for the update of external playlists.
         """
-        response = (
-            await tables.LibConfigRow.select(tables.LibConfigRow.next_execution_update_external_playlists)
-            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
-            .first()
+        response = await tables.LibConfigRow.raw(
+            """
+            SELECT next_execution_update_external_playlists FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
+            """,
+            self.id,
+            self.bot,
         )
-        return response["next_execution_update_external_playlists"]
+        return response[0]["next_execution_update_external_playlists"]
 
     async def get_update_bot_activity(self) -> bool:
         """Get whether the bot activity should be updated.
@@ -448,12 +467,14 @@ class LibConfigModel:
         bool
             Whether the bot activity should be updated.
         """
-        response = (
-            await tables.LibConfigRow.select(tables.LibConfigRow.update_bot_activity)
-            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
-            .first()
+        response = await tables.LibConfigRow.raw(
+            """
+            SELECT update_bot_activity FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
+            """,
+            self.id,
+            self.bot,
         )
-        return response["update_bot_activity"]
+        return response[0]["update_bot_activity"]
 
     async def set_config_folder(self, value: str) -> None:
         """Set the config folder.
@@ -464,9 +485,7 @@ class LibConfigModel:
             The new config folder.
         """
         self.config_folder = value
-        await tables.LibConfigRow.update({tables.LibConfigRow.config_folder: value}).where(
-            (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
-        )
+        await self.save()
 
     async def set_java_path(self, value: str) -> None:
         """Set the java path.
@@ -477,9 +496,7 @@ class LibConfigModel:
             The new java path.
         """
         self.java_path = value
-        await tables.LibConfigRow.update({tables.LibConfigRow.java_path: value}).where(
-            (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
-        )
+        await self.save()
 
     async def set_enable_managed_node(self, value: bool) -> None:
         """Set whether the managed node is enabled.
@@ -491,9 +508,7 @@ class LibConfigModel:
             Whether the managed node is enabled.
         """
         self.enable_managed_node = value
-        await tables.LibConfigRow.update({tables.LibConfigRow.enable_managed_node: value}).where(
-            (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
-        )
+        await self.save()
 
     async def set_auto_update_managed_nodes(self, value: bool) -> None:
         """Set whether the managed node should be auto updated.
@@ -504,9 +519,7 @@ class LibConfigModel:
             Whether the managed node should be auto updated.
         """
         self.auto_update_managed_nodes = value
-        await tables.LibConfigRow.update({tables.LibConfigRow.auto_update_managed_nodes: value}).where(
-            (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
-        )
+        await self.save()
 
     async def set_localtrack_folder(self, value: str) -> None:
         """Set the localtrack folder.
@@ -517,9 +530,7 @@ class LibConfigModel:
             The new localtrack folder.
         """
         self.localtrack_folder = value
-        await tables.LibConfigRow.update({tables.LibConfigRow.localtrack_folder: value}).where(
-            (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
-        )
+        await self.save()
 
     async def set_download_id(self, value: int) -> None:
         """Set the download id for the managed node.
@@ -530,9 +541,7 @@ class LibConfigModel:
             The new download id for the managed node.
         """
         self.download_id = value
-        await tables.LibConfigRow.update({tables.LibConfigRow.download_id: value}).where(
-            (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
-        )
+        await self.save()
 
     async def set_managed_pylav_external_node(self, value: bool) -> None:
         """Set whether the managed external node is enabled.
@@ -575,23 +584,57 @@ class LibConfigModel:
         LibConfigModel
             The updated config.
         """
-        data = {
-            "config_folder": self.config_folder,
-            "java_path": self.java_path,
-            "enable_managed_node": self.enable_managed_node,
-            "auto_update_managed_nodes": self.auto_update_managed_nodes,
-            "localtrack_folder": self.localtrack_folder,
-            "use_bundled_pylav_external": self.use_bundled_pylav_external,
-            "use_bundled_lava_link_external": self.use_bundled_lava_link_external,
-            "extras": self.extras,
-            "download_id": self.download_id,
-            "next_execution_update_bundled_playlists": self.next_execution_update_bundled_playlists,
-            "next_execution_update_bundled_external_playlists": self.next_execution_update_bundled_external_playlists,
-            "next_execution_update_external_playlists": self.next_execution_update_external_playlists,
-            "update_bot_activity": self.update_bot_activity,
-        }
-        await tables.LibConfigRow.update(**data).where(
-            (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
+        await tables.LibConfigRow.raw(
+            """
+            INSERT INTO lib_config
+            (
+                id,
+                bot,
+                config_folder,
+                java_path,
+                enable_managed_node,
+                auto_update_managed_nodes,
+                localtrack_folder,
+                download_id,
+                update_bot_activity,
+                use_bundled_pylav_external,
+                use_bundled_lava_link_external,
+                next_execution_update_bundled_playlists,
+                next_execution_update_bundled_external_playlists,
+                next_execution_update_external_playlists,
+                extras
+            )
+            VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})
+            ON CONFLICT (id, bot) DO
+            UPDATE SET  config_folder = excluded.config_folder,
+                        java_path = excluded.java_path,
+                        enable_managed_node = excluded.enable_managed_node,
+                        auto_update_managed_nodes = excluded.auto_update_managed_nodes,
+                        localtrack_folder = excluded.localtrack_folder,
+                        download_id = excluded.download_id,
+                        update_bot_activity = excluded.update_bot_activity,
+                        use_bundled_pylav_external = excluded.use_bundled_pylav_external,
+                        use_bundled_lava_link_external = excluded.use_bundled_lava_link_external,
+                        next_execution_update_bundled_playlists = excluded.next_execution_update_bundled_playlists,
+                        next_execution_update_bundled_external_playlists = excluded.next_execution_update_bundled_external_playlists,
+                        next_execution_update_external_playlists = excluded.next_execution_update_external_playlists,
+                        extras = excluded.extras;
+            """,
+            self.id,
+            self.bot,
+            self.config_folder,
+            self.java_path,
+            self.enable_managed_node,
+            self.auto_update_managed_nodes,
+            self.localtrack_folder,
+            self.download_id,
+            self.update_bot_activity,
+            self.use_bundled_pylav_external,
+            self.use_bundled_lava_link_external,
+            self.next_execution_update_bundled_playlists,
+            self.next_execution_update_bundled_external_playlists,
+            self.next_execution_update_external_playlists,
+            ujson.dumps(self.extras),
         )
         return self
 
@@ -609,11 +652,10 @@ class LibConfigModel:
         LibConfigModel
             The updated config.
         """
-        response = (
-            await tables.LibConfigRow.select()
-            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
-            .first()
+        response = await tables.LibConfigRow.raw(
+            """SELECT * FROM lib_config WHERE id = {} AND bot = {}""", self.id, self.bot
         )
+        response = response[0]
         self.config_folder = response["config_folder"]
         self.java_path = response["java_path"]
         self.enable_managed_node = response["enable_managed_node"]
@@ -627,7 +669,7 @@ class LibConfigModel:
             "next_execution_update_bundled_external_playlists"
         ]
         self.next_execution_update_external_playlists = response["next_execution_update_external_playlists"]
-        self.extras = ujson.loads(response["extras"]) if isinstance(response["extras"], str) else response["extras"]
+        self.extras = ujson.loads(response["extras"])
         self.update_bot_activity = response["update_bot_activity"]
         return self
 
@@ -739,7 +781,7 @@ class NodeModel:
             self.disabled_sources = ujson.loads(self.disabled_sources)
 
     @classmethod
-    async def from_id(cls, id: int) -> NodeModel:
+    async def from_id(cls, id: int) -> NodeModel | None:
         """Get a node from the database.
 
         Parameters
@@ -752,8 +794,8 @@ class NodeModel:
         NodeModel
             The node.
         """
-        response = await tables.NodeRow.select().where(tables.NodeRow.id == id).first()
-        return cls(**response)
+        response = await tables.NodeRow.raw("""SELECT * FROM node WHERE id = {}""", id)
+        return cls(**response[0]) if response else None
 
     def to_dict(self) -> dict:
         """Convert the node to a dict.
@@ -928,45 +970,35 @@ class QueryModel:
         QueryModel | None
             The query if found, otherwise None.
         """
-        query = await tables.QueryRow.select().where(
-            (tables.QueryRow.identifier == identifier)
-            & (
-                tables.QueryRow.last_updated
-                > datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=30)
-            )
+        query = await tables.QueryRow.raw(
+            """
+            SELECT * FROM query
+            WHERE identifier = {}
+            """,
+            identifier,
         )
-        data = query.to_dict()
-        return QueryModel(**data) if query else None
+        return QueryModel(**query[0]) if query else None
 
     async def delete(self):
         """Delete the query from the database."""
         self.get.invalidate(self.identifier)
         self.get.invalidate(identifier=self.identifier)
-        await tables.QueryRow.delete().where(tables.QueryRow.identifier == self.identifier)
+        await tables.QueryRow.raw("DELETE FROM query WHERE identifier = {}", self.identifier)
 
     async def upsert(self):
         """Upsert the query in the database."""
         if self.last_updated is None:
             self.last_updated = datetime.datetime.now(tz=datetime.timezone.utc)
-        values = {
-            tables.QueryRow.tracks: self.tracks,
-            tables.QueryRow.last_updated: self.last_updated,
-            tables.QueryRow.name: self.name,
-        }
-        query = (
-            await tables.QueryRow.objects()
-            .output(load_json=True)
-            .get_or_create(
-                (tables.QueryRow.identifier == self.identifier)
-                & (
-                    tables.QueryRow.last_updated
-                    > datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=30)
-                ),
-                defaults=values,
-            )
+        await tables.QueryRow.raw(
+            """INSERT INTO query (identifier, name, last_updated, tracks)
+            VALUES ({}, {}, {}, {})
+            ON CONFLICT (identifier) DO UPDATE SET name = EXCLUDED.name, last_updated = EXCLUDED.last_updated, tracks = EXCLUDED.tracks
+            """,
+            self.identifier,
+            self.name,
+            self.last_updated,
+            ujson.dumps(self.tracks),
         )
-        if not query._was_created:
-            await tables.QueryRow.update(values).where(tables.QueryRow.identifier == self.identifier)
         self.get.invalidate(self.identifier)
         self.get.invalidate(identifier=self.identifier)
 
@@ -1065,46 +1097,93 @@ class PlayerStateModel:
 
     async def delete(self) -> None:
         """Delete the player state from the database."""
-        await tables.PlayerStateRow.delete().where(
-            (tables.PlayerStateRow.id == self.id) & (tables.PlayerStateRow.bot == self.bot)
+        await tables.PlayerStateRow.raw(
+            """
+            DELETE FROM player_state
+            WHERE id = {} AND bot = {}
+            """,
+            self.id,
+            self.bot,
         )
 
     async def upsert(self) -> None:
         """Upsert the player state in the database."""
-        values = {
-            tables.PlayerStateRow.channel_id: self.channel_id,
-            tables.PlayerStateRow.volume: self.volume,
-            tables.PlayerStateRow.position: self.position,
-            tables.PlayerStateRow.auto_play_playlist_id: self.auto_play_playlist_id,
-            tables.PlayerStateRow.text_channel_id: self.text_channel_id,
-            tables.PlayerStateRow.notify_channel_id: self.notify_channel_id,
-            tables.PlayerStateRow.forced_channel_id: self.forced_channel_id,
-            tables.PlayerStateRow.paused: self.paused,
-            tables.PlayerStateRow.repeat_current: self.repeat_current,
-            tables.PlayerStateRow.repeat_queue: self.repeat_queue,
-            tables.PlayerStateRow.shuffle: self.shuffle,
-            tables.PlayerStateRow.auto_shuffle: self.auto_shuffle,
-            tables.PlayerStateRow.auto_play: self.auto_play,
-            tables.PlayerStateRow.playing: self.playing,
-            tables.PlayerStateRow.effect_enabled: self.effect_enabled,
-            tables.PlayerStateRow.self_deaf: self.self_deaf,
-            tables.PlayerStateRow.current: self.current,
-            tables.PlayerStateRow.queue: self.queue,
-            tables.PlayerStateRow.history: self.history,
-            tables.PlayerStateRow.effects: self.effects,
-            tables.PlayerStateRow.extras: self.extras,
-        }
-        player = (
-            await tables.PlayerStateRow.objects()
-            .output(load_json=True)
-            .get_or_create(
-                (tables.PlayerStateRow.id == self.id) & (tables.PlayerStateRow.bot == self.bot), defaults=values
+        await tables.AioHttpCacheRow.raw(
+            """
+            INSERT INTO player_state (
+                id,
+                bot,
+                channel_id,
+                volume,
+                position,
+                auto_play_playlist_id,
+                forced_channel_id,
+                text_channel_id,
+                notify_channel_id,
+                paused,
+                repeat_current,
+                repeat_queue,
+                shuffle,
+                auto_shuffle,
+                auto_play,
+                playing,
+                effect_enabled,
+                self_deaf,
+                current,
+                queue,
+                history,
+                effects,
+                extras
             )
+            VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE
+                SET channel_id = excluded.channel_id,
+                    volume = excluded.volume,
+                    position = excluded.position,
+                    auto_play_playlist_id = excluded.auto_play_playlist_id,
+                    forced_channel_id = excluded.forced_channel_id,
+                    text_channel_id = excluded.text_channel_id,
+                    notify_channel_id = excluded.notify_channel_id,
+                    paused = excluded.paused,
+                    repeat_current = excluded.repeat_current,
+                    repeat_queue = excluded.repeat_queue,
+                    shuffle = excluded.shuffle,
+                    auto_shuffle = excluded.auto_shuffle,
+                    auto_play = excluded.auto_play,
+                    playing = excluded.playing,
+                    effect_enabled = excluded.effect_enabled,
+                    self_deaf = excluded.self_deaf,
+                    current = excluded.current,
+                    queue = excluded.queue,
+                    history = excluded.history,
+                    effects = excluded.effects,
+                    extras = excluded.extras;
+            """,
+            self.id,
+            self.bot,
+            self.channel_id,
+            self.volume,
+            self.position,
+            self.auto_play_playlist_id,
+            self.forced_channel_id,
+            self.text_channel_id,
+            self.notify_channel_id,
+            self.paused,
+            self.repeat_current,
+            self.repeat_queue,
+            self.shuffle,
+            self.auto_shuffle,
+            self.auto_play,
+            self.playing,
+            self.effect_enabled,
+            self.self_deaf,
+            ujson.dumps(self.current),
+            ujson.dumps(self.queue),
+            ujson.dumps(self.history),
+            ujson.dumps(self.effects),
+            ujson.dumps(self.extras),
         )
-        if not player._was_created:
-            await tables.PlayerStateRow.update(values).where(
-                (tables.PlayerStateRow.id == self.id) & (tables.PlayerStateRow.bot == self.bot)
-            )
 
     async def save(self) -> None:
         """Save the player state to the database."""
@@ -1126,12 +1205,10 @@ class PlayerStateModel:
         PlayerStateModel | None
             The player state if found, otherwise None.
         """
-        player = (
-            await tables.PlayerStateRow.select()
-            .output(load_json=True)
-            .where((tables.PlayerStateRow.id == guild_id) & (tables.PlayerStateRow.bot == bot_id))
+
+        player = await tables.PlayerStateRow.raw(
+            """SELECT * FROM player_state WHERE bot = {} AND id = {}""", bot_id, guild_id
         )
-        player[0].pop("pk", None)
         return cls(**player[0]) if player else None
 
 
@@ -1184,42 +1261,83 @@ class PlayerModel:
 
     async def delete(self) -> None:
         """Delete the player from the database."""
-        await tables.PlayerRow.delete().where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+        await tables.PlayerRow.raw("DELETE FROM player WHERE id = {} and bot = {};", self.id, self.bot)
         self.get_or_create.invalidate()
         self.is_dj.cache_clear()
 
     async def upsert(self) -> None:
         """Upsert the player in the database."""
-        values = {
-            tables.PlayerRow.forced_channel_id: self.forced_channel_id,
-            tables.PlayerRow.volume: self.volume,
-            tables.PlayerRow.max_volume: self.max_volume,
-            tables.PlayerRow.auto_play_playlist_id: self.auto_play_playlist_id,
-            tables.PlayerRow.text_channel_id: self.text_channel_id,
-            tables.PlayerRow.notify_channel_id: self.notify_channel_id,
-            tables.PlayerRow.repeat_current: self.repeat_current,
-            tables.PlayerRow.repeat_queue: self.repeat_queue,
-            tables.PlayerRow.shuffle: self.shuffle,
-            tables.PlayerRow.auto_shuffle: self.auto_shuffle,
-            tables.PlayerRow.auto_play: self.auto_play,
-            tables.PlayerRow.self_deaf: self.self_deaf,
-            tables.PlayerRow.extras: self.extras,
-            tables.PlayerRow.empty_queue_dc: self.empty_queue_dc.to_dict(),
-            tables.PlayerRow.alone_dc: self.alone_dc.to_dict(),
-            tables.PlayerRow.alone_pause: self.alone_pause.to_dict(),
-            tables.PlayerRow.effects: self.effects,
-            tables.PlayerRow.dj_users: list(self.dj_users),
-            tables.PlayerRow.dj_roles: list(self.dj_roles),
-        }
-        player = (
-            await tables.PlayerRow.objects()
-            .output(load_json=True)
-            .get_or_create((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot), defaults=values)
-        )
-        if not player._was_created:
-            await tables.PlayerRow.update(values).where(
-                (tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot)
+        await tables.PlayerRow.raw(
+            """
+            INSERT INTO player
+            (
+                id,
+                bot,
+                volume,
+                max_volume,
+                auto_play_playlist_id,
+                text_channel_id,
+                notify_channel_id,
+                forced_channel_id,
+                repeat_current,
+                repeat_queue,
+                shuffle,
+                auto_shuffle,
+                auto_play,
+                self_deaf,
+                empty_queue_dc,
+                alone_dc,
+                alone_pause,
+                extras,
+                effects,
+                dj_users,
+                dj_roles
             )
+            VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE
+            SET volume = EXCLUDED.volume,
+                max_volume = EXCLUDED.max_volume,
+                auto_play_playlist_id = EXCLUDED.auto_play_playlist_id,
+                text_channel_id = EXCLUDED.text_channel_id,
+                notify_channel_id = EXCLUDED.notify_channel_id,
+                forced_channel_id = EXCLUDED.forced_channel_id,
+                repeat_current = EXCLUDED.repeat_current,
+                repeat_queue = EXCLUDED.repeat_queue,
+                shuffle = EXCLUDED.shuffle,
+                auto_shuffle = EXCLUDED.auto_shuffle,
+                auto_play = EXCLUDED.auto_play,
+                self_deaf = EXCLUDED.self_deaf,
+                empty_queue_dc = EXCLUDED.empty_queue_dc,
+                alone_dc = EXCLUDED.alone_dc,
+                alone_pause = EXCLUDED.alone_pause,
+                extras = EXCLUDED.extras,
+                effects = EXCLUDED.effects,
+                dj_users = EXCLUDED.dj_users,
+                dj_roles = EXCLUDED.dj_roles
+            """,
+            self.id,
+            self.bot,
+            self.volume,
+            self.max_volume,
+            self.auto_play_playlist_id,
+            self.text_channel_id,
+            self.notify_channel_id,
+            self.forced_channel_id,
+            self.repeat_current,
+            self.repeat_queue,
+            self.shuffle,
+            self.auto_shuffle,
+            self.auto_play,
+            self.self_deaf,
+            ujson.dumps(self.empty_queue_dc.to_dict()),
+            ujson.dumps(self.alone_dc.to_dict()),
+            ujson.dumps(self.alone_pause.to_dict()),
+            ujson.dumps(self.extras),
+            ujson.dumps(self.effects),
+            list(self.dj_users),
+            list(self.dj_roles),
+        )
         self.get_or_create.invalidate()
         self.is_dj.cache_clear()
 
@@ -1238,73 +1356,49 @@ class PlayerModel:
             The player if found, otherwise None.
         """
         self = cls(id=id, bot=bot)
-        values = {
-            tables.PlayerRow.forced_channel_id: self.forced_channel_id,
-            tables.PlayerRow.volume: self.volume,
-            tables.PlayerRow.max_volume: self.max_volume,
-            tables.PlayerRow.auto_play_playlist_id: self.auto_play_playlist_id,
-            tables.PlayerRow.text_channel_id: self.text_channel_id,
-            tables.PlayerRow.notify_channel_id: self.notify_channel_id,
-            tables.PlayerRow.repeat_current: self.repeat_current,
-            tables.PlayerRow.repeat_queue: self.repeat_queue,
-            tables.PlayerRow.shuffle: self.shuffle,
-            tables.PlayerRow.auto_shuffle: self.auto_shuffle,
-            tables.PlayerRow.auto_play: self.auto_play,
-            tables.PlayerRow.self_deaf: self.self_deaf,
-            tables.PlayerRow.extras: self.extras,
-            tables.PlayerRow.empty_queue_dc: self.empty_queue_dc.to_dict(),
-            tables.PlayerRow.alone_dc: self.alone_dc.to_dict(),
-            tables.PlayerRow.alone_pause: self.alone_pause.to_dict(),
-            tables.PlayerRow.effects: self.effects,
-            tables.PlayerRow.dj_users: list(self.dj_users),
-            tables.PlayerRow.dj_roles: list(self.dj_roles),
-        }
-        output = (
-            await tables.PlayerRow.objects()
-            .output(load_json=True)
-            .get_or_create((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot), defaults=values)
-        )
-        if not output._was_created:
-            self.forced_channel_id = output.forced_channel_id
-            self.volume = output.volume
-            self.max_volume = output.max_volume
-            self.auto_play_playlist_id = output.auto_play_playlist_id
-            self.text_channel_id = output.text_channel_id
-            self.notify_channel_id = output.notify_channel_id
-            self.repeat_current = output.repeat_current
-            self.repeat_queue = output.repeat_queue
-            self.shuffle = output.shuffle
-            self.auto_shuffle = output.auto_shuffle
-            self.auto_play = output.auto_play
-            self.self_deaf = output.self_deaf
-            self.extras = output.extras
-            self.empty_queue_dc = TimedFeature(**output.empty_queue_dc)
-            self.alone_dc = TimedFeature(**output.alone_dc)
-            self.alone_pause = TimedFeature(**output.alone_pause)
-            self.effects = output.effects
-            self.dj_users = set(output.dj_users)
-            self.dj_roles = set(output.dj_roles)
+        existing_data = await tables.PlayerRow.raw("SELECT * FROM player WHERE id = {} and bot = {} LIMIT 1;", id, bot)
+        if existing_data:
+            output = existing_data[0]
+            self.extras = ujson.loads(output["extras"])
+            self.empty_queue_dc = TimedFeature(**ujson.loads(output["empty_queue_dc"]))
+            self.alone_dc = TimedFeature(**ujson.loads(output["alone_dc"]))
+            self.alone_pause = TimedFeature(**ujson.loads(output["alone_pause"]))
+            self.effects = ujson.loads(output["effects"])
+            self.dj_users = set(output["dj_users"])
+            self.dj_roles = set(output["dj_roles"])
+            self.forced_channel_id = output["forced_channel_id"]
+            self.volume = output["volume"]
+            self.max_volume = output["max_volume"]
+            self.auto_play_playlist_id = output["auto_play_playlist_id"]
+            self.text_channel_id = output["text_channel_id"]
+            self.notify_channel_id = output["notify_channel_id"]
+            self.repeat_current = output["repeat_current"]
+            self.repeat_queue = output["repeat_queue"]
+            self.shuffle = output["shuffle"]
+            self.auto_shuffle = output["auto_shuffle"]
+            self.auto_play = output["auto_play"]
+            self.self_deaf = output["self_deaf"]
+        else:
+            await self.upsert()
         return self
 
-    async def update_volume(self):
+    async def update_volume(self) -> PlayerModel:
         """Update the volume of the player."""
-        player = (
-            await tables.PlayerRow.select(tables.PlayerRow.volume)
-            .output(load_json=True)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+        player = await tables.PlayerRow.raw(
+            """SELECT volume FROM player WHERE id = {} AND bot = {} LIMIT 1""", self.id, self.bot
         )
         if player:
             self.volume = player[0]["volume"]
+        return self
 
-    async def update_max_volume(self):
+    async def update_max_volume(self) -> PlayerModel:
         """Update the max volume of the player."""
-        player = (
-            await tables.PlayerRow.select(tables.PlayerRow.max_volume)
-            .output(load_json=True)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+        player = await tables.PlayerRow.raw(
+            """SELECT max_volume FROM player WHERE id = {} AND bot = {} LIMIT 1""", self.id, self.bot
         )
         if player:
             self.max_volume = player[0]["max_volume"]
+        return self
 
     async def update_auto_play_playlist_id(self) -> PlayerModel:
         """Update the auto play playlist ID of the player.
@@ -1314,11 +1408,10 @@ class PlayerModel:
         PlayerModel
             The player.
         """
-        player = (
-            await tables.PlayerRow.select(tables.PlayerRow.auto_play_playlist_id)
-            .output(load_json=True)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+        player = await tables.PlayerRow.raw(
+            """SELECT auto_play_playlist_id FROM player WHERE id = {} AND bot = {} LIMIT 1""", self.id, self.bot
         )
+
         if player:
             self.auto_play_playlist_id = player[0]["auto_play_playlist_id"]
         return self
@@ -1331,10 +1424,8 @@ class PlayerModel:
         PlayerModel
             The player.
         """
-        player = (
-            await tables.PlayerRow.select(tables.PlayerRow.text_channel_id)
-            .output(load_json=True)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+        player = await tables.PlayerRow.raw(
+            """SELECT text_channel_id FROM player WHERE id = {} AND bot = {} LIMIT 1""", self.id, self.bot
         )
         if player:
             self.text_channel_id = player[0]["text_channel_id"]
@@ -1348,11 +1439,10 @@ class PlayerModel:
         PlayerModel
             The player.
         """
-        player = (
-            await tables.PlayerRow.select(tables.PlayerRow.notify_channel_id)
-            .output(load_json=True)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+        player = await tables.PlayerRow.raw(
+            """SELECT notify_channel_id FROM player WHERE id = {} AND bot = {} LIMIT 1""", self.id, self.bot
         )
+
         if player:
             self.notify_channel_id = player[0]["notify_channel_id"]
         return self
@@ -1365,10 +1455,8 @@ class PlayerModel:
         PlayerModel
             The player.
         """
-        player = (
-            await tables.PlayerRow.select(tables.PlayerRow.forced_channel_id)
-            .output(load_json=True)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+        player = await tables.PlayerRow.raw(
+            "SELECT forced_channel_id FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
         )
         if player:
             self.forced_channel_id = player[0]["forced_channel_id"]
@@ -1382,10 +1470,8 @@ class PlayerModel:
         PlayerModel
             The player.
         """
-        player = (
-            await tables.PlayerRow.select(tables.PlayerRow.repeat_current)
-            .output(load_json=True)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+        player = await tables.PlayerRow.raw(
+            "SELECT repeat_current FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
         )
         if player:
             self.repeat_current = player[0]["repeat_current"]
@@ -1399,10 +1485,8 @@ class PlayerModel:
         PlayerModel
             The player.
         """
-        player = (
-            await tables.PlayerRow.select(tables.PlayerRow.repeat_queue)
-            .output(load_json=True)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+        player = await tables.PlayerRow.raw(
+            "SELECT repeat_queue FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
         )
         if player:
             self.repeat_queue = player["repeat_queue"]
@@ -1416,10 +1500,8 @@ class PlayerModel:
         PlayerModel
             The player.
         """
-        player = (
-            await tables.PlayerRow.select(tables.PlayerRow.shuffle)
-            .output(load_json=True)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+        player = await tables.PlayerRow.raw(
+            "SELECT shuffle FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
         )
         if player:
             self.shuffle = player[0]["shuffle"]
@@ -1433,10 +1515,8 @@ class PlayerModel:
         PlayerModel
             The player.
         """
-        player = (
-            await tables.PlayerRow.select(tables.PlayerRow.auto_shuffle)
-            .output(load_json=True)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+        player = await tables.PlayerRow.raw(
+            "SELECT auto_shuffle FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
         )
         if player:
             self.auto_shuffle = player[0]["auto_shuffle"]
@@ -1450,10 +1530,8 @@ class PlayerModel:
         PlayerModel
             The player.
         """
-        player = (
-            await tables.PlayerRow.select(tables.PlayerRow.auto_play)
-            .output(load_json=True)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+        player = await tables.PlayerRow.raw(
+            "SELECT auto_play FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
         )
         if player:
             self.auto_play = player[0]["auto_play"]
@@ -1467,10 +1545,8 @@ class PlayerModel:
         PlayerModel
             The player.
         """
-        player = (
-            await tables.PlayerRow.select(tables.PlayerRow.self_deaf)
-            .output(load_json=True)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+        player = await tables.PlayerRow.raw(
+            "SELECT self_deaf FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
         )
         if player:
             self.self_deaf = player[0]["self_deaf"]
@@ -1484,10 +1560,8 @@ class PlayerModel:
         PlayerModel
             The player.
         """
-        player = (
-            await tables.PlayerRow.select(tables.PlayerRow.extras)
-            .output(load_json=True)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+        player = await tables.PlayerRow.raw(
+            "SELECT extras FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
         )
         if player:
             if isinstance(player[0]["extras"], str):
@@ -1504,10 +1578,8 @@ class PlayerModel:
         PlayerModel
             The player.
         """
-        player = (
-            await tables.PlayerRow.select(tables.PlayerRow.effects)
-            .output(load_json=True)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+        player = await tables.PlayerRow.raw(
+            "SELECT effects FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
         )
         if player:
             if isinstance(player[0]["effects"], str):
@@ -1524,10 +1596,8 @@ class PlayerModel:
         PlayerModel
             The player.
         """
-        player = (
-            await tables.PlayerRow.select(tables.PlayerRow.empty_queue_dc)
-            .output(load_json=True)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+        player = await tables.PlayerRow.raw(
+            "SELECT empty_queue_dc FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
         )
         if player:
             if isinstance(player[0]["empty_queue_dc"], str):
@@ -1544,10 +1614,8 @@ class PlayerModel:
         PlayerModel
             The player.
         """
-        player = (
-            await tables.PlayerRow.select(tables.PlayerRow.alone_dc)
-            .output(load_json=True)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+        player = await tables.PlayerRow.raw(
+            "SELECT alone_dc FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
         )
         if player:
             if isinstance(player[0]["alone_dc"], str):
@@ -1564,10 +1632,8 @@ class PlayerModel:
         PlayerModel
             The player.
         """
-        player = (
-            await tables.PlayerRow.select(tables.PlayerRow.alone_pause)
-            .output(load_json=True)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+        player = await tables.PlayerRow.raw(
+            "SELECT alone_pause FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
         )
         if player:
             if isinstance(player[0]["alone_pause"], str):
@@ -1584,16 +1650,11 @@ class PlayerModel:
         PlayerModel
             The player.
         """
-        player = (
-            await tables.PlayerRow.select(tables.PlayerRow.dj_users)
-            .output(load_json=True)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+        player = await tables.PlayerRow.raw(
+            "SELECT dj_users FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
         )
         if player:
-            if isinstance(player[0]["dj_users"], str):
-                self.dj_users = set(ujson.loads(player[0]["dj_users"]))
-            else:
-                self.dj_users = set(player[0]["dj_users"])
+            self.dj_users = set(player[0]["dj_users"])
         return self
 
     async def dj_roles_update(self) -> PlayerModel:
@@ -1604,16 +1665,11 @@ class PlayerModel:
         PlayerModel
             The player.
         """
-        player = (
-            await tables.PlayerRow.select(tables.PlayerRow.dj_roles)
-            .output(load_json=True)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+        player = await tables.PlayerRow.raw(
+            "SELECT dj_roles FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
         )
         if player:
-            if isinstance(player[0]["dj_roles"], str):
-                self.dj_roles = set(ujson.loads(player[0]["dj_roles"]))
-            else:
-                self.dj_roles = set(player[0]["dj_roles"])
+            self.dj_roles = set(player[0]["dj_roles"])
         return self
 
     async def dj_users_add(self, *users: discord.Member) -> PlayerModel:
@@ -2004,6 +2060,7 @@ class EqualizerModel:
         EqualizerModel
             The Equalizer.
         """
+
         values = {
             tables.EqualizerRow.scope: self.scope,
             tables.EqualizerRow.author: self.author,
@@ -2048,8 +2105,13 @@ class EqualizerModel:
         EqualizerModel | None
             The equalizer if found, else None.
         """
-        equalizer = await tables.EqualizerRow.select().where(tables.EqualizerRow.id == id)
-        return EqualizerModel(**equalizer.to_dict()) if equalizer else None
+        equalizer = await tables.EqualizerRow.raw(
+            """
+            SELECT * FROM equalizer WHERE id = {}
+            """,
+            id,
+        )
+        return EqualizerModel(**equalizer[0]) if equalizer else None
 
     async def delete(self):
         """Delete the equalizer from the database."""

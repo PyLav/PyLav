@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from piccolo.table import create_db_tables
-
 from pylav._config import CONFIG_DIR
 from pylav._logging import getLogger
 from pylav.sql import tables
@@ -30,18 +28,22 @@ class LibConfigManager:
 
     @staticmethod
     async def create_tables() -> None:
-        await create_db_tables(
-            tables.PlaylistRow,
-            tables.LibConfigRow,
-            tables.PlayerStateRow,
-            tables.NodeRow,
-            tables.QueryRow,
-            tables.BotVersionRow,
-            tables.PlayerRow,
-            tables.EqualizerRow,
-            tables.AioHttpCacheRow,
-            if_not_exists=True,
+        await tables.PlaylistRow.create_table(if_not_exists=True)
+        await tables.LibConfigRow.create_table(if_not_exists=True)
+        await tables.LibConfigRow.raw(
+            "CREATE UNIQUE INDEX IF NOT EXISTS unique_lib_config_bot_id ON lib_config (bot, id)"
         )
+        await tables.EqualizerRow.create_table(if_not_exists=True)
+        await tables.PlayerStateRow.create_table(if_not_exists=True)
+        await tables.PlayerStateRow.raw(
+            "CREATE UNIQUE INDEX IF NOT EXISTS unique_player_state_bot_id ON player_state (bot, id)"
+        )
+        await tables.PlayerRow.create_table(if_not_exists=True)
+        await tables.PlaylistRow.raw("CREATE UNIQUE INDEX IF NOT EXISTS unique_player_bot_id ON player (bot, id)")
+        await tables.NodeRow.create_table(if_not_exists=True)
+        await tables.QueryRow.create_table(if_not_exists=True)
+        await tables.BotVersionRow.create_table(if_not_exists=True)
+        await tables.AioHttpCacheRow.create_table(if_not_exists=True)
 
     async def get_config(
         self,
