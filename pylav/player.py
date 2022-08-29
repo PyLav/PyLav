@@ -1796,7 +1796,7 @@ class Player(VoiceProtocol):
         autoplay_emoji = "\N{WHITE HEAVY CHECK MARK}" if self.autoplay_enabled else "\N{CROSS MARK}"
 
         text += _("Repeating: {repeat_emoji}").format(repeat_emoji=repeat_emoji)
-        text += _("{space}Auto Play: {autoplay_emoji}").formart(
+        text += _("{space}Auto Play: {autoplay_emoji}").format(
             space=(" | " if text else ""), utoplay_emoji=autoplay_emoji
         )
         text += _("{space}Volume: {volume}%").format(space=(" | " if text else ""), volume=self.volume)
@@ -1871,7 +1871,7 @@ class Player(VoiceProtocol):
         autoplay_emoji = "\N{WHITE HEAVY CHECK MARK}" if self.autoplay_enabled else "\N{CROSS MARK}"
 
         text += _("Repeating: {repeat_emoji}").format(repeat_emoji=repeat_emoji)
-        text += _("{space}Auto Play: {autoplay_emoji}").formart(
+        text += _("{space}Auto Play: {autoplay_emoji}").format(
             space=(" | " if text else ""), autoplay_emoji=autoplay_emoji
         )
         text += _("{space}Volume: {volume}%").format(space=(" | " if text else ""), volume=self.volume)
