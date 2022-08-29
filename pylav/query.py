@@ -79,7 +79,7 @@ SOUND_CLOUD_REGEX = re.compile(
     #  https://github.com/Walkyst/lavaplayer-fork/blob/67bfdc4757947db61105c73628f2e4c2a7e4e992/main/src/main/java/com/sedmelluq/discord/lavaplayer/source/soundcloud/SoundCloudAudioSourceManager.java#L48
     re.IGNORECASE,
 )
-M3U_REGEX = re.compile(r"^.*\.m3u8?$", re.IGNORECASE)
+M3U_REGEX = re.compile(r"^(?!http).*\.m3u8?$", re.IGNORECASE)
 PLS_REGEX = re.compile(r"^.*\.pls$", re.IGNORECASE)
 PLS_TRACK_REGEX = re.compile(r"^File\d+=(?P<pls_query>.+)$", re.IGNORECASE)
 XSPF_REGEX = re.compile(r"^.*\.xspf$", re.IGNORECASE)
@@ -458,7 +458,7 @@ class Query:
         return cls(local_path, "Local Files", query_type=query_type, recursive=recursively)  # type: ignore
 
     @classmethod
-    async def __process_playlist(cls, query: str) -> Query:
+    async def __process_playlist(cls, query: str) -> Query | None:
         if __ := M3U_REGEX.match(query):
             return cls(query, "M3U", query_type="album")
         elif __ := PLS_REGEX.match(query):
@@ -489,7 +489,7 @@ class Query:
                 data, _ = decode_track(query)
                 source = data["info"]["source"]
                 query = data["info"]["uri"]
-        if output := await cls.__process_playlist(query):
+        if not dont_search and (output := await cls.__process_playlist(query)):
             if source:
                 output._source = cls.__get_source_from_str(source)
             return output

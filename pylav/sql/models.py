@@ -1207,7 +1207,31 @@ class PlayerStateModel:
         """
 
         player = await tables.PlayerStateRow.raw(
-            """SELECT * FROM player_state WHERE bot = {} AND id = {}""", bot_id, guild_id
+            """SELECT id,
+                bot,
+                channel_id,
+                volume,
+                position,
+                auto_play_playlist_id,
+                forced_channel_id,
+                text_channel_id,
+                notify_channel_id,
+                paused,
+                repeat_current,
+                repeat_queue,
+                shuffle,
+                auto_shuffle,
+                auto_play,
+                playing,
+                effect_enabled,
+                self_deaf,
+                current,
+                queue,
+                history,
+                effects,
+                extras FROM player_state WHERE bot = {} AND id = {}""",
+            bot_id,
+            guild_id,
         )
         return cls(**player[0]) if player else None
 
@@ -1356,7 +1380,31 @@ class PlayerModel:
             The player if found, otherwise None.
         """
         self = cls(id=id, bot=bot)
-        existing_data = await tables.PlayerRow.raw("SELECT * FROM player WHERE id = {} and bot = {} LIMIT 1;", id, bot)
+        existing_data = await tables.PlayerRow.raw(
+            """SELECT id,
+                bot,
+                volume,
+                max_volume,
+                auto_play_playlist_id,
+                text_channel_id,
+                notify_channel_id,
+                forced_channel_id,
+                repeat_current,
+                repeat_queue,
+                shuffle,
+                auto_shuffle,
+                auto_play,
+                self_deaf,
+                empty_queue_dc,
+                alone_dc,
+                alone_pause,
+                extras,
+                effects,
+                dj_users,
+                dj_roles FROM player WHERE id = {} and bot = {} LIMIT 1;""",
+            id,
+            bot,
+        )
         if existing_data:
             output = existing_data[0]
             self.extras = ujson.loads(output["extras"])
