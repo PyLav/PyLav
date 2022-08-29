@@ -301,9 +301,7 @@ class Client(metaclass=_Singleton):
         return self._user_id
 
     @SingletonMethods.run_once_async
-    async def initialize(
-        self,
-    ) -> None:  # sourcery no-metrics
+    async def initialize(self) -> None:
         try:
             if not self._initiated:
                 async with self._asyncio_lock:
@@ -320,6 +318,7 @@ class Client(metaclass=_Singleton):
                             LOGGER.debug(
                                 "Existing Spotify tokens found; Using them - %s - %s", client_id, client_secret
                             )
+
                         else:
                             LOGGER.info("PyLav being run from a non Red bot")
                             client_id = None
@@ -328,7 +327,6 @@ class Client(metaclass=_Singleton):
                         await self._update_schema_manager.run_updates()
                         await self._radio_manager.initialize()
                         await self._player_manager.initialize()
-
                         self._config = await self._lib_config_manager.get_config(
                             config_folder=self._config_folder,
                             java_path=JAVA_EXECUTABLE,
@@ -338,10 +336,14 @@ class Client(metaclass=_Singleton):
                             use_bundled_lava_link_external=USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE,
                             use_bundled_pylav_external=USE_BUNDLED_EXTERNAL_PYLAV_NODE,
                         )
-                        if self._config.java_path != JAVA_EXECUTABLE:
-                            if JAVA_EXECUTABLE != "java" and os.path.exists(JAVA_EXECUTABLE):
-                                self._config.java_path = JAVA_EXECUTABLE
-                                await self._config.save()
+
+                        if (
+                            self._config.java_path != JAVA_EXECUTABLE
+                            and JAVA_EXECUTABLE != "java"
+                            and os.path.exists(JAVA_EXECUTABLE)
+                        ):
+                            self._config.java_path = JAVA_EXECUTABLE
+                            await self._config.save()
                         LOGGER.info("Config folder: %s", self._config.config_folder)
                         LOGGER.info("Localtracks folder: %s", self._config.localtrack_folder)
                         auto_update_managed_nodes = self._config.auto_update_managed_nodes
@@ -367,6 +369,7 @@ class Client(metaclass=_Singleton):
                         self._spotify_auth = ClientCredentialsFlow(
                             client_id=self._spotify_client_id, client_secret=self._spotify_client_secret
                         )
+
                         from pylav.localfiles import LocalFile
 
                         await LocalFile.add_root_folder(path=localtrack_folder, create=True)
@@ -378,26 +381,38 @@ class Client(metaclass=_Singleton):
                                 self._node_manager._unmanaged_external_password
                                 and self._node_manager._unmanaged_external_host
                             )
-                        ) and self.enable_managed_node:
+                            and self.enable_managed_node
+                        ):
                             await self._local_node_manager.start(java_path=self._config.java_path)
                         else:
                             self._local_node_manager.ready.set()
                         await self.node_manager.connect_to_all_nodes()
                         await self.node_manager.wait_until_ready()
+                        if (
+                            not (
+                                self._node_manager._unmanaged_external_password
+                                and self._node_manager._unmanaged_external_host
+                            )
+                            and self.enable_managed_node
+                        ):
+                            await self._local_node_manager.wait_until_connected()
                         await self.player_manager.restore_player_states()
                         time_now = datetime.datetime.now(tz=datetime.timezone.utc)
                         if self._config.next_execution_update_bundled_playlists is None:
                             self._config.next_execution_update_bundled_playlists = time_now + datetime.timedelta(
                                 minutes=5
                             )
+
                         if self._config.next_execution_update_bundled_external_playlists is None:
                             self._config.next_execution_update_bundled_external_playlists = (
                                 time_now + datetime.timedelta(minutes=10)
                             )
+
                         if self._config.next_execution_update_external_playlists is None:
                             self._config.next_execution_update_external_playlists = time_now + datetime.timedelta(
                                 minutes=30
                             )
+
                         self._scheduler.add_job(
                             self._query_cache_manager.delete_old,
                             trigger="interval",
@@ -408,6 +423,7 @@ class Client(metaclass=_Singleton):
                             coalesce=True,
                             id=f"{self.bot.user.id}-cache_delete_old",
                         )
+
                         self._scheduler.add_job(
                             self.playlist_db_manager.update_bundled_playlists,
                             trigger="interval",
@@ -420,10 +436,12 @@ class Client(metaclass=_Singleton):
                             id=f"{self.bot.user.id}-update_bundled_playlists",
                             misfire_grace_time=None,
                         )
+
                         LOGGER.info(
                             "Scheduling first run of Bundled Playlist update task to: %s",
                             self._config.next_execution_update_bundled_playlists,
                         )
+
                         self._scheduler.add_job(
                             self.playlist_db_manager.update_bundled_external_playlists,
                             trigger="interval",
@@ -436,10 +454,12 @@ class Client(metaclass=_Singleton):
                             id=f"{self.bot.user.id}-update_bundled_external_playlists",
                             misfire_grace_time=None,
                         )
+
                         LOGGER.info(
                             "Scheduling first run of Bundled External Playlist update task to: %s",
                             self._config.next_execution_update_bundled_external_playlists,
                         )
+
                         self._scheduler.add_job(
                             self.playlist_db_manager.update_external_playlists,
                             trigger="interval",
@@ -452,10 +472,12 @@ class Client(metaclass=_Singleton):
                             id=f"{self.bot.user.id}-update_external_playlists",
                             misfire_grace_time=None,
                         )
+
                         LOGGER.info(
                             "Scheduling first run of External Playlist update task to: %s",
                             self._config.next_execution_update_external_playlists,
                         )
+
                         await self._config.save()
                         self._scheduler.start()
                         self.ready.set()

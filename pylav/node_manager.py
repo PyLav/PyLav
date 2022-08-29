@@ -521,13 +521,6 @@ class NodeManager:
                     PYLAV_BUNDLED_NODES_SETTINGS["lava.link"]["name"],
                 )
         tasks = [asyncio.create_task(n.wait_until_ready()) for n in nodes_list]
-        if (
-            not (
-                self.client._node_manager._unmanaged_external_password
-                and self.client._node_manager._unmanaged_external_host
-            )
-        ) and self.client.enable_managed_node:
-            tasks.append(asyncio.create_task(self.client._local_node_manager.wait_until_connected()))
         if not tasks:
             LOGGER.warning("No nodes found, please add some nodes.")
             return
