@@ -78,13 +78,7 @@ _RED_LOGGER = getLogger("red")
 _LOCK = threading.Lock()
 
 
-def alru_cache(
-    fn=None,
-    maxsize=128,
-    typed=False,
-    *,
-    cache_exceptions=True,
-):
+def alru_cache(fn=None, maxsize=128, typed=False, *, cache_exceptions=True, ignore_kwargs=None):
     def wrapper(fn):
         _origin = unpartial(fn)
 
@@ -125,9 +119,7 @@ def alru_cache(
             task.add_done_callback(functools.partial(_done_callback, fut))
             wrapped.tasks.add(task)
             task.add_done_callback(wrapped.tasks.remove)
-            if fn.__name__ == "get_or_create":
-                wrapped._cache[key] = fut
-
+            wrapped._cache[key] = fut
             if maxsize is not None and len(wrapped._cache) > maxsize:
                 wrapped._cache.popitem()
 

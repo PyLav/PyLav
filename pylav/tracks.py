@@ -372,7 +372,7 @@ class Track:
 
     async def get_track_display_name(
         self, max_length: int = None, author: bool = True, unformatted: bool = False, with_url: bool = False
-    ) -> str:
+    ) -> str:  # sourcery skip: low-code-quality
         if self.is_partial:
             base = await (await self.query()).query_to_queue(max_length, partial=True)
             base = SQUARE_BRACKETS.sub("", base).strip()

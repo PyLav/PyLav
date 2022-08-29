@@ -1049,6 +1049,7 @@ class PlayerStateModel:
     history: list
     effects: dict
     extras: dict
+    pk = None
 
     def __post_init__(self):
         if isinstance(self.current, str):
@@ -1130,10 +1131,7 @@ class PlayerStateModel:
             .output(load_json=True)
             .where((tables.PlayerStateRow.id == guild_id) & (tables.PlayerStateRow.bot == bot_id))
         )
-        if player:
-            return cls(**player[0])
-
-        return None
+        return cls(**player[0]) if player else None
 
 
 @dataclass(eq=True)
@@ -1149,7 +1147,7 @@ class PlayerModel:
     repeat_current: bool = False
     repeat_queue: bool = False
     shuffle: bool = True
-    auto_shuffle: bool = False
+    auto_shuffle: bool = True
     auto_play: bool = True
     self_deaf: bool = True
     effects: dict = field(default_factory=dict)
@@ -1159,6 +1157,7 @@ class PlayerModel:
     alone_pause: TimedFeature = field(default_factory=TimedFeature)
     dj_users: set = field(default_factory=set)
     dj_roles: set = field(default_factory=set)
+    pk = None
 
     def __post_init__(self):
         if isinstance(self.extras, str):
@@ -1227,8 +1226,9 @@ class PlayerModel:
         """Save the player to the database."""
         await self.upsert()
 
-    @alru_cache(maxsize=128)
-    async def get_or_create(self) -> PlayerModel:
+    @classmethod
+    @alru_cache(maxsize=128, ignore_kwargs={"id": 0})
+    async def get_or_create(cls, id: int, bot: int) -> PlayerModel:
         """Get the player from the database.
 
         Returns
@@ -1236,7 +1236,7 @@ class PlayerModel:
         PlayerModel
             The player if found, otherwise None.
         """
-
+        self = cls(id=id, bot=bot)
         values = {
             tables.PlayerRow.forced_channel_id: self.forced_channel_id,
             tables.PlayerRow.volume: self.volume,
@@ -1968,7 +1968,7 @@ class PlayerModel:
         """
         self.get_or_create.invalidate()
         self.is_dj.cache_clear()
-        await self.get_or_create()
+        await self.get_or_create(id=self.id, bot=self.bot)
         return self
 
 

@@ -26,10 +26,10 @@ class PlayerConfigManager:
         return self._client
 
     async def get_global_config(self) -> PlayerModel:
-        return await PlayerModel(bot=self._client.bot.user.id, id=0, volume=1000).get_or_create()
+        return await PlayerModel.get_or_create(bot=self.client.bot.user.id, id=0)
 
     async def get_config(self, guild_id: int) -> PlayerModel:
-        return await PlayerModel(bot=self._client.bot.user.id, id=guild_id).get_or_create()
+        return await PlayerModel.get_or_create(bot=self.client.bot.user.id, id=guild_id)
 
     async def reset_to_default(self, guild_id: int):
         await tables.PlayerRow.delete().where(
@@ -39,9 +39,7 @@ class PlayerConfigManager:
     async def get_volume(self, guild_id: int) -> int:
         global_vol = (await self.get_global_config()).volume
         server_vol = (await self.get_config(guild_id)).volume
-        if global_vol < server_vol:
-            return global_vol
-        return server_vol
+        return global_vol if global_vol < server_vol else server_vol
 
     async def get_shuffle(self, guild_id: int) -> bool:
         if (await self.get_global_config()).shuffle is False:
@@ -91,5 +89,5 @@ class PlayerConfigManager:
             return True
         if additional_role_ids and await asyncstdlib.any(r.id in additional_role_ids for r in user.roles):
             return True
-        config = await PlayerModel(bot=self._client.bot.user.id, id=guild.id).get_or_create()
+        config = await PlayerModel.get_or_create(bot=self.client.bot.user.id, id=guild.id)
         return await config.is_dj(user=user, additional_role_ids=None, additional_user_ids=None, bot=bot)

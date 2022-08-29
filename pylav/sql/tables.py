@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import os
 
-from piccolo.columns import JSONB, Array, BigInt, Boolean, Bytea, Float, Integer, Text, Timestamptz
+from piccolo.columns import JSONB, UUID, Array, BigInt, Boolean, Bytea, Float, Integer, Text, Timestamptz
 from piccolo.engine import PostgresEngine, SQLiteEngine
 from piccolo.table import Table
 
@@ -83,7 +83,8 @@ class EqualizerRow(Table, db=DB, tablename="equalizer"):
 
 
 class PlayerStateRow(Table, db=DB, tablename="player_state"):
-    id = BigInt(primary_key=True, index=True)
+    pk = UUID(primary_key=True)
+    id = BigInt(index=True)
     bot = BigInt(index=True, null=False)
     channel_id = BigInt(null=False)
     volume = Integer(null=False, default=100)
@@ -111,7 +112,8 @@ class PlayerStateRow(Table, db=DB, tablename="player_state"):
 
 
 class PlayerRow(Table, db=DB, tablename="player"):
-    id = BigInt(primary_key=True, index=True)
+    pk = UUID(primary_key=True)
+    id = BigInt(index=True)
     bot = BigInt(index=True, null=False)
     volume = Integer(null=False, default=100)
     max_volume = Integer(null=False, default=1000)
@@ -124,7 +126,7 @@ class PlayerRow(Table, db=DB, tablename="player"):
     repeat_current = Boolean(null=False, default=False)
     repeat_queue = Boolean(null=False, default=False)
     shuffle = Boolean(null=False, default=True)
-    auto_shuffle = Boolean(null=False, default=False)
+    auto_shuffle = Boolean(null=False, default=True)
     auto_play = Boolean(null=False, default=True)
     self_deaf = Boolean(null=False, default=True)
     empty_queue_dc = JSONB(
