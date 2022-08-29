@@ -1131,6 +1131,7 @@ class PlayerStateModel:
             .output(load_json=True)
             .where((tables.PlayerStateRow.id == guild_id) & (tables.PlayerStateRow.bot == bot_id))
         )
+        player[0].pop("pk", None)
         return cls(**player[0]) if player else None
 
 

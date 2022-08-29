@@ -1797,7 +1797,7 @@ class Player(VoiceProtocol):
 
         text += _("Repeating: {repeat_emoji}").format(repeat_emoji=repeat_emoji)
         text += _("{space}Auto Play: {autoplay_emoji}").format(
-            space=(" | " if text else ""), utoplay_emoji=autoplay_emoji
+            space=(" | " if text else ""), autoplay_emoji=autoplay_emoji
         )
         text += _("{space}Volume: {volume}%").format(space=(" | " if text else ""), volume=self.volume)
         page.set_footer(text=text)
@@ -1837,7 +1837,7 @@ class Player(VoiceProtocol):
             and not history
             and (await self.player_manager.client.player_config_manager.get_auto_shuffle(self.guild.id)) is True
         ):
-            queue_list += _("__Queue order is may not be accurate due to auto-shuffle being toggled__\n\n")
+            queue_list += _("__Queue order is may not be accurate due to auto-shuffle being enabled__\n\n")
         if tracks:
             padding = len(str(start_index + len(tracks)))
             async for track_idx, track in AsyncIter(tracks).enumerate(start=start_index + 1):
@@ -1859,7 +1859,10 @@ class Player(VoiceProtocol):
         queue_dur = await self.queue_duration(history=history)
         queue_total_duration = format_time(queue_dur)
         text = _("Page {page_num}/{total_pages} | {queue_size} tracks, {queue_total_duration} remaining\n").format(
-            page_num=page_index + 1, queue_size=queue.qsize(), queue_total_duration=queue_total_duration
+            page_num=page_index + 1,
+            total_pages=total_pages,
+            queue_size=queue.qsize(),
+            queue_total_duration=queue_total_duration,
         )
         if not self.is_repeating:
             repeat_emoji = "\N{CROSS MARK}"
