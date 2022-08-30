@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-08-30 19:02+0000\n"
-"PO-Revision-Date: 2022-08-30 19:02\n"
+"PO-Revision-Date: 2022-08-30 19:29\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -19,119 +19,120 @@ msgstr ""
 
 #: pylav/client.py:605 pylav/client.py:630 pylav/player_manager.py:243
 msgid "No available nodes!"
-msgstr ""
+msgstr "Geen beschikbare knooppunten!"
 
 #: pylav/client.py:609 pylav/client.py:634 pylav/player.py:585
 #: pylav/player.py:604
 msgid "No node with {feature} functionality available!"
-msgstr ""
+msgstr "Geen node met {feature} functionaliteit beschikbaar!"
 
 #: pylav/client.py:918
 msgid "No node with {query.requires_capability} functionality available!"
-msgstr ""
+msgstr "Geen node met {query.requires_capability} functionaliteit beschikbaar!"
 
 #: pylav/client.py:1175
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary."
-msgstr ""
+msgstr "Voor het genereren van een mix afspeellijst is een Video, Gebruiker, Kanaal of Afspeellijst ID nodig."
 
 #: pylav/client.py:1180
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple."
-msgstr ""
+msgstr "Om een mix afspeellijst te genereren is een Video, Gebruiker, Kanaal of Afspeellijst ID nodig. Je hebt echter meerdere ingevoerd."
 
 #: pylav/managed_node.py:251
 msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture."
-msgstr ""
+msgstr "Je probeert het beheerde Lavalink-knooppunt te runnen op een niet-ondersteunde machinearchitectuur."
 
 #: pylav/managed_node.py:343
 msgid "Pylav - Java executable not  found, tried to use: '{self._java_exc}'"
-msgstr ""
+msgstr "Pylav - Java executable niet gevonden, probeerde te gebruiken: '{self._java_exc}'"
 
 #: pylav/managed_node.py:411
 msgid "The output of `{java_exc} -version` was unexpected\n"
 "{version_info}."
-msgstr ""
+msgstr "De output van `{java_exc} -version` was onverwacht\n"
+"{version_info}."
 
 #: pylav/managed_node.py:427
 msgid "Port {port} already in use. Managed Lavalink startup aborted."
-msgstr ""
+msgstr "Poort {port} al in gebruik. Opstarten met beheerde Lavalink afgebroken."
 
 #: pylav/managed_node.py:432
 msgid "Lavalink failed to start: {line}"
-msgstr ""
+msgstr "Lavalink kan niet starten: {line}"
 
 #: pylav/managed_node.py:436
 msgid "Managed Lavalink node server exited early."
-msgstr ""
+msgstr "Beheerde Lavalink knooppunt server is vroeg gesloten."
 
 #: pylav/player.py:765
 msgid "There are no tracks currently in the player history."
-msgstr ""
+msgstr "Er zijn momenteel geen nummers in de spelergeschiedenis."
 
 #: pylav/player.py:1744 pylav/player.py:1770 pylav/player.py:1778
 msgid "LIVE"
-msgstr ""
+msgstr "Live"
 
 #: pylav/player.py:1753 pylav/player.py:1829
 msgid "**Currently livestreaming:**\n"
-msgstr ""
+msgstr "**Op dit moment livestreaming:**\n"
 
 #: pylav/player.py:1755 pylav/player.py:1831
 msgid "Playing: "
-msgstr ""
+msgstr "Afspelen: "
 
 #: pylav/player.py:1757 pylav/player.py:1833
 msgid "Requester: **{current.requester.mention}**"
-msgstr ""
+msgstr "Aanvrager: **{current.requester.mention}**"
 
 #: pylav/player.py:1760
 msgid "Now Playing in __{self.guild.name}__"
-msgstr ""
+msgstr "Nu aan het spelen in __{self.guild.name}"
 
 #: pylav/player.py:1769 pylav/player.py:1777
 msgid "Duration: `{duration}`\n"
-msgstr ""
+msgstr "Duur: `{duration}`\n"
 
 #: pylav/player.py:1773 pylav/player.py:1781
 msgid "Requester: **{rq}**\n\n"
-msgstr ""
+msgstr "Aanvrager: **{rq}**\n\n"
 
 #: pylav/player.py:1774
 msgid "Previous Track"
-msgstr ""
+msgstr "Vorige track"
 
 #: pylav/player.py:1782
 msgid "Next Track"
-msgstr ""
+msgstr "Volgende track"
 
 #: pylav/player.py:1786
 msgid "{queue_size} tracks, {queue_total_duration} remaining\n"
-msgstr ""
+msgstr "{queue_size} nummers, {queue_total_duration} resterend\n"
 
 #: pylav/player.py:1798 pylav/player.py:1876
 msgid "Repeating: {repeat_emoji}"
-msgstr ""
+msgstr "Herhaling: {repeat_emoji}"
 
 #: pylav/player.py:1799 pylav/player.py:1877
 msgid "{space}Auto Play: {autoplay_emoji}"
-msgstr ""
+msgstr "{space}Automatisch Afspelen: {autoplay_emoji}"
 
 #: pylav/player.py:1802 pylav/player.py:1880
 msgid "{space}Volume: {volume}%"
-msgstr ""
+msgstr "{space}Volume: {volume}%"
 
 #: pylav/player.py:1840
 msgid "__Queue order is may not be accurate due to auto-shuffle being enabled__\n\n"
-msgstr ""
+msgstr "__Wachtrij is mogelijk niet accuraat omdat auto-shuffle is ingeschakeld__\n\n"
 
 #: pylav/player.py:1851
 msgid "Recently Played for __{self.guild.name}__"
-msgstr ""
+msgstr "Onlangs gespeeld voor __{self.guild.name}__"
 
 #: pylav/player.py:1853
 msgid "Queue for __{self.guild.name}__"
-msgstr ""
+msgstr "Wachtrij voor __{self.guild.name}"
 
 #: pylav/player.py:1861
 msgid "Page {page_num}/{total_pages} | {queue_size} tracks, {queue_total_duration} remaining\n"
-msgstr ""
+msgstr "Pagina {page_num}/{total_pages} ½ {queue_size} nummers, {queue_total_duration} resterend\n"
 

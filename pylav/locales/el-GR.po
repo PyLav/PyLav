@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-08-30 19:02+0000\n"
-"PO-Revision-Date: 2022-08-30 19:02\n"
+"PO-Revision-Date: 2022-08-30 19:29\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
@@ -19,101 +19,102 @@ msgstr ""
 
 #: pylav/client.py:605 pylav/client.py:630 pylav/player_manager.py:243
 msgid "No available nodes!"
-msgstr ""
+msgstr "Δεν υπάρχουν διαθέσιμοι κόμβοι!"
 
 #: pylav/client.py:609 pylav/client.py:634 pylav/player.py:585
 #: pylav/player.py:604
 msgid "No node with {feature} functionality available!"
-msgstr ""
+msgstr "Κανένας κόμβος με τη λειτουργία {feature} διαθέσιμη!"
 
 #: pylav/client.py:918
 msgid "No node with {query.requires_capability} functionality available!"
-msgstr ""
+msgstr "Κανένας κόμβος με τη λειτουργία {query.requires_capability} διαθέσιμη!"
 
 #: pylav/client.py:1175
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary."
-msgstr ""
+msgstr "Για να δημιουργήσετε μια λίστα αναπαραγωγής ενός μίγματος είναι απαραίτητο ένα βίντεο, ένα χρήστη, ένα κανάλι ή ένα αναγνωριστικό λίστας αναπαραγωγής."
 
 #: pylav/client.py:1180
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple."
-msgstr ""
+msgstr "Για να δημιουργήσετε μια λίστα αναπαραγωγής μίγματος είναι απαραίτητη μια ταυτότητα βίντεο, χρήστη, καναλιού ή λίστας αναπαραγωγής. Ωστόσο, δώσατε πολλαπλά."
 
 #: pylav/managed_node.py:251
 msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture."
-msgstr ""
+msgstr "Προσπαθείτε να εκτελέσετε τον διαχειριζόμενο κόμβο Lavalink σε μια μη υποστηριζόμενη αρχιτεκτονική μηχανών."
 
 #: pylav/managed_node.py:343
 msgid "Pylav - Java executable not  found, tried to use: '{self._java_exc}'"
-msgstr ""
+msgstr "Pylav - Το εκτελέσιμο Java δεν βρέθηκε, προσπάθησε να χρησιμοποιήσει: '{self._java_exc}'"
 
 #: pylav/managed_node.py:411
 msgid "The output of `{java_exc} -version` was unexpected\n"
 "{version_info}."
-msgstr ""
+msgstr "Η έξοδος του `{java_exc} -έκδοση` ήταν μη αναμενόμενη\n"
+"{version_info}."
 
 #: pylav/managed_node.py:427
 msgid "Port {port} already in use. Managed Lavalink startup aborted."
-msgstr ""
+msgstr "Η θύρα {port} ήδη σε χρήση. Η διαχείριση της εκκίνησης Lavalink ματαιώθηκε."
 
 #: pylav/managed_node.py:432
 msgid "Lavalink failed to start: {line}"
-msgstr ""
+msgstr "Αποτυχία εκκίνησης του Lavalink: {line}"
 
 #: pylav/managed_node.py:436
 msgid "Managed Lavalink node server exited early."
-msgstr ""
+msgstr "Ο διακομιστής κόμβων Lavalink τερμάτισε νωρίς."
 
 #: pylav/player.py:765
 msgid "There are no tracks currently in the player history."
-msgstr ""
+msgstr "Δεν υπάρχουν κομμάτια στο ιστορικό του παίκτη."
 
 #: pylav/player.py:1744 pylav/player.py:1770 pylav/player.py:1778
 msgid "LIVE"
-msgstr ""
+msgstr "ΖΩΝΤΑΝΑ"
 
 #: pylav/player.py:1753 pylav/player.py:1829
 msgid "**Currently livestreaming:**\n"
-msgstr ""
+msgstr "**Επί του παρόντος livestreaming:**\n"
 
 #: pylav/player.py:1755 pylav/player.py:1831
 msgid "Playing: "
-msgstr ""
+msgstr "Αναπαραγωγή: "
 
 #: pylav/player.py:1757 pylav/player.py:1833
 msgid "Requester: **{current.requester.mention}**"
-msgstr ""
+msgstr "Αιτών: **{current.requester.mention}**"
 
 #: pylav/player.py:1760
 msgid "Now Playing in __{self.guild.name}__"
-msgstr ""
+msgstr "Παίζοντας τώρα στο __{self.guild.name}__"
 
 #: pylav/player.py:1769 pylav/player.py:1777
 msgid "Duration: `{duration}`\n"
-msgstr ""
+msgstr "Διάρκεια: `{duration}`\n"
 
 #: pylav/player.py:1773 pylav/player.py:1781
 msgid "Requester: **{rq}**\n\n"
-msgstr ""
+msgstr "Αιτών: **{rq}**\n\n"
 
 #: pylav/player.py:1774
 msgid "Previous Track"
-msgstr ""
+msgstr "Προηγούμενο Κομμάτι"
 
 #: pylav/player.py:1782
 msgid "Next Track"
-msgstr ""
+msgstr "Επόμενο Κομμάτι"
 
 #: pylav/player.py:1786
 msgid "{queue_size} tracks, {queue_total_duration} remaining\n"
-msgstr ""
+msgstr "{queue_size} κομμάτια, {queue_total_duration} απομένουν\n"
 
 #: pylav/player.py:1798 pylav/player.py:1876
 msgid "Repeating: {repeat_emoji}"
-msgstr ""
+msgstr "Επανάληψη: {repeat_emoji}"
 
 #: pylav/player.py:1799 pylav/player.py:1877
 msgid "{space}Auto Play: {autoplay_emoji}"
-msgstr ""
+msgstr "{space}Αυτόματη αναπαραγωγή: {autoplay_emoji}"
 
 #: pylav/player.py:1802 pylav/player.py:1880
 msgid "{space}Volume: {volume}%"
@@ -121,17 +122,17 @@ msgstr ""
 
 #: pylav/player.py:1840
 msgid "__Queue order is may not be accurate due to auto-shuffle being enabled__\n\n"
-msgstr ""
+msgstr "__Σειρά ουράς μπορεί να μην είναι ακριβής λόγω ενεργοποιημένης αυτόματης ανακατέ__\n\n"
 
 #: pylav/player.py:1851
 msgid "Recently Played for __{self.guild.name}__"
-msgstr ""
+msgstr "Πρόσφατα παίχτηκε για __{self.guild.name}__"
 
 #: pylav/player.py:1853
 msgid "Queue for __{self.guild.name}__"
-msgstr ""
+msgstr "Ουρά για __{self.guild.name}__"
 
 #: pylav/player.py:1861
 msgid "Page {page_num}/{total_pages} | {queue_size} tracks, {queue_total_duration} remaining\n"
-msgstr ""
+msgstr "Σελίδα {page_num}/{total_pages} - {queue_size} κομμάτια, {queue_total_duration} απομένουν\n"
 

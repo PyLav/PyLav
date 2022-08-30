@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-08-30 19:02+0000\n"
-"PO-Revision-Date: 2022-08-30 19:02\n"
+"PO-Revision-Date: 2022-08-30 19:29\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "MIME-Version: 1.0\n"
@@ -19,119 +19,120 @@ msgstr ""
 
 #: pylav/client.py:605 pylav/client.py:630 pylav/player_manager.py:243
 msgid "No available nodes!"
-msgstr ""
+msgstr "Inga tillgängliga noder!"
 
 #: pylav/client.py:609 pylav/client.py:634 pylav/player.py:585
 #: pylav/player.py:604
 msgid "No node with {feature} functionality available!"
-msgstr ""
+msgstr "Ingen nod med {feature} funktionalitet tillgänglig!"
 
 #: pylav/client.py:918
 msgid "No node with {query.requires_capability} functionality available!"
-msgstr ""
+msgstr "Ingen nod med {query.requires_capability} funktionalitet tillgänglig!"
 
 #: pylav/client.py:1175
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary."
-msgstr ""
+msgstr "För att generera en mix spellista krävs en Video, användare, kanal eller spellista ID."
 
 #: pylav/client.py:1180
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple."
-msgstr ""
+msgstr "För att generera en blandning spellista en Video, Användare, Kanal eller Spellista ID är nödvändigt. Men du angav flera."
 
 #: pylav/managed_node.py:251
 msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture."
-msgstr ""
+msgstr "Du försöker köra den hanterade Lavalink-noden på en maskinarkitektur som inte stöds."
 
 #: pylav/managed_node.py:343
 msgid "Pylav - Java executable not  found, tried to use: '{self._java_exc}'"
-msgstr ""
+msgstr "Pylav - Java körbar kunde inte hittas, försökte använda: '{self._java_exc}'"
 
 #: pylav/managed_node.py:411
 msgid "The output of `{java_exc} -version` was unexpected\n"
 "{version_info}."
-msgstr ""
+msgstr "Utmatningen av `{java_exc} -version` var oväntad\n"
+"{version_info}."
 
 #: pylav/managed_node.py:427
 msgid "Port {port} already in use. Managed Lavalink startup aborted."
-msgstr ""
+msgstr "Port {port} används redan. Hanterad Lavalinkstart avbröts."
 
 #: pylav/managed_node.py:432
 msgid "Lavalink failed to start: {line}"
-msgstr ""
+msgstr "Lavalink kunde inte starta: {line}"
 
 #: pylav/managed_node.py:436
 msgid "Managed Lavalink node server exited early."
-msgstr ""
+msgstr "Hanterad Lavalink nod server avslutades tidigt."
 
 #: pylav/player.py:765
 msgid "There are no tracks currently in the player history."
-msgstr ""
+msgstr "Det finns inga spår i spelarhistoriken."
 
 #: pylav/player.py:1744 pylav/player.py:1770 pylav/player.py:1778
 msgid "LIVE"
-msgstr ""
+msgstr "LIVE"
 
 #: pylav/player.py:1753 pylav/player.py:1829
 msgid "**Currently livestreaming:**\n"
-msgstr ""
+msgstr "**För närvarande livestreaming:**\n"
 
 #: pylav/player.py:1755 pylav/player.py:1831
 msgid "Playing: "
-msgstr ""
+msgstr "Spelar: "
 
 #: pylav/player.py:1757 pylav/player.py:1833
 msgid "Requester: **{current.requester.mention}**"
-msgstr ""
+msgstr "Begäran: **{current.requester.mention}**"
 
 #: pylav/player.py:1760
 msgid "Now Playing in __{self.guild.name}__"
-msgstr ""
+msgstr "Spelas nu i __{self.guild.name}__"
 
 #: pylav/player.py:1769 pylav/player.py:1777
 msgid "Duration: `{duration}`\n"
-msgstr ""
+msgstr "Varaktighet: `{duration}`\n"
 
 #: pylav/player.py:1773 pylav/player.py:1781
 msgid "Requester: **{rq}**\n\n"
-msgstr ""
+msgstr "Begärande: **{rq}**\n\n"
 
 #: pylav/player.py:1774
 msgid "Previous Track"
-msgstr ""
+msgstr "Föregående spår"
 
 #: pylav/player.py:1782
 msgid "Next Track"
-msgstr ""
+msgstr "Nästa spår"
 
 #: pylav/player.py:1786
 msgid "{queue_size} tracks, {queue_total_duration} remaining\n"
-msgstr ""
+msgstr "{queue_size} spår, {queue_total_duration} kvar\n"
 
 #: pylav/player.py:1798 pylav/player.py:1876
 msgid "Repeating: {repeat_emoji}"
-msgstr ""
+msgstr "Repeterar: {repeat_emoji}"
 
 #: pylav/player.py:1799 pylav/player.py:1877
 msgid "{space}Auto Play: {autoplay_emoji}"
-msgstr ""
+msgstr "{space}Auto Play: {autoplay_emoji}"
 
 #: pylav/player.py:1802 pylav/player.py:1880
 msgid "{space}Volume: {volume}%"
-msgstr ""
+msgstr "{space}Volym: {volume}%"
 
 #: pylav/player.py:1840
 msgid "__Queue order is may not be accurate due to auto-shuffle being enabled__\n\n"
-msgstr ""
+msgstr "__Köordningen är kanske inte korrekt på grund av att auto-shuffle är aktiverad__\n\n"
 
 #: pylav/player.py:1851
 msgid "Recently Played for __{self.guild.name}__"
-msgstr ""
+msgstr "Nyligen spelad för __{self.guild.name}__"
 
 #: pylav/player.py:1853
 msgid "Queue for __{self.guild.name}__"
-msgstr ""
+msgstr "Kö för __{self.guild.name}__"
 
 #: pylav/player.py:1861
 msgid "Page {page_num}/{total_pages} | {queue_size} tracks, {queue_total_duration} remaining\n"
-msgstr ""
+msgstr "Sida {page_num}/{total_pages} <unk> {queue_size} låtar, {queue_total_duration} kvar\n"
 

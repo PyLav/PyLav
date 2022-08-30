@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-08-30 19:02+0000\n"
-"PO-Revision-Date: 2022-08-30 19:02\n"
+"PO-Revision-Date: 2022-08-30 19:29\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
@@ -19,5 +19,5 @@ msgstr ""
 
 #: pylav/localfiles/__init__.py:73
 msgid "Root folder not initialized, call Client.update_localtracks_folder(folder: str | pathlib.Path)"
-msgstr ""
+msgstr "Katalog główny nie został zainicjowany, wywołaj Client.update_localtracks_folder(folder: str | pathlib.Path)"
 

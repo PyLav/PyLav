@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-08-30 19:02+0000\n"
-"PO-Revision-Date: 2022-08-30 19:02\n"
+"PO-Revision-Date: 2022-08-30 19:29\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -19,119 +19,120 @@ msgstr ""
 
 #: pylav/client.py:605 pylav/client.py:630 pylav/player_manager.py:243
 msgid "No available nodes!"
-msgstr ""
+msgstr "Ei saatavilla olevia solmuja!"
 
 #: pylav/client.py:609 pylav/client.py:634 pylav/player.py:585
 #: pylav/player.py:604
 msgid "No node with {feature} functionality available!"
-msgstr ""
+msgstr "Ei solmua {feature} toiminnallisuudella käytettävissä!"
 
 #: pylav/client.py:918
 msgid "No node with {query.requires_capability} functionality available!"
-msgstr ""
+msgstr "Ei solmua {query.requires_capability} toiminnallisuudella käytettävissä!"
 
 #: pylav/client.py:1175
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary."
-msgstr ""
+msgstr "Sekoitussoittolistan luomiseksi tarvitaan video, käyttäjä, kanava tai soittolista ID."
 
 #: pylav/client.py:1180
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple."
-msgstr ""
+msgstr "Voit luoda sekoitussoittolistan video, käyttäjä, kanava tai soittolista ID on välttämätön. Annoit kuitenkin monta kertaa."
 
 #: pylav/managed_node.py:251
 msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture."
-msgstr ""
+msgstr "Yrität ajaa hallittua Lavalink solmua konearkkitehtuurissa, jota ei tueta."
 
 #: pylav/managed_node.py:343
 msgid "Pylav - Java executable not  found, tried to use: '{self._java_exc}'"
-msgstr ""
+msgstr "Pylav - suoritettavaa Java-ohjelmaa ei löydy, yritetty käyttää: '{self._java_exc}'"
 
 #: pylav/managed_node.py:411
 msgid "The output of `{java_exc} -version` was unexpected\n"
 "{version_info}."
-msgstr ""
+msgstr "`{java_exc} -version ulostulo oli odottamaton\n"
+"{version_info}."
 
 #: pylav/managed_node.py:427
 msgid "Port {port} already in use. Managed Lavalink startup aborted."
-msgstr ""
+msgstr "Portti {port} on jo käytössä. Hallittu Lavalink käynnistäminen keskeytetty."
 
 #: pylav/managed_node.py:432
 msgid "Lavalink failed to start: {line}"
-msgstr ""
+msgstr "Lavalink ei voitu käynnistää: {line}"
 
 #: pylav/managed_node.py:436
 msgid "Managed Lavalink node server exited early."
-msgstr ""
+msgstr "Hallittu Lavalink node palvelin poistui aikaisin."
 
 #: pylav/player.py:765
 msgid "There are no tracks currently in the player history."
-msgstr ""
+msgstr "Pelaajan historiassa ei ole tällä hetkellä kappaleita."
 
 #: pylav/player.py:1744 pylav/player.py:1770 pylav/player.py:1778
 msgid "LIVE"
-msgstr ""
+msgstr "ELÄI"
 
 #: pylav/player.py:1753 pylav/player.py:1829
 msgid "**Currently livestreaming:**\n"
-msgstr ""
+msgstr "**Tällä hetkellä ihmisiä:**\n"
 
 #: pylav/player.py:1755 pylav/player.py:1831
 msgid "Playing: "
-msgstr ""
+msgstr "Toisto: "
 
 #: pylav/player.py:1757 pylav/player.py:1833
 msgid "Requester: **{current.requester.mention}**"
-msgstr ""
+msgstr "Pyytäjä: **{current.requester.mention}**"
 
 #: pylav/player.py:1760
 msgid "Now Playing in __{self.guild.name}__"
-msgstr ""
+msgstr "Soi nyt __{self.guild.name}__"
 
 #: pylav/player.py:1769 pylav/player.py:1777
 msgid "Duration: `{duration}`\n"
-msgstr ""
+msgstr "Kesto: `{duration}`\n"
 
 #: pylav/player.py:1773 pylav/player.py:1781
 msgid "Requester: **{rq}**\n\n"
-msgstr ""
+msgstr "Pyytäjä: **{rq}**\n\n"
 
 #: pylav/player.py:1774
 msgid "Previous Track"
-msgstr ""
+msgstr "Edellinen Kappale"
 
 #: pylav/player.py:1782
 msgid "Next Track"
-msgstr ""
+msgstr "Seuraava Kappale"
 
 #: pylav/player.py:1786
 msgid "{queue_size} tracks, {queue_total_duration} remaining\n"
-msgstr ""
+msgstr "{queue_size} kappaletta, {queue_total_duration} jäljellä\n"
 
 #: pylav/player.py:1798 pylav/player.py:1876
 msgid "Repeating: {repeat_emoji}"
-msgstr ""
+msgstr "Toistuva: {repeat_emoji}"
 
 #: pylav/player.py:1799 pylav/player.py:1877
 msgid "{space}Auto Play: {autoplay_emoji}"
-msgstr ""
+msgstr "{space}Automaattinen pelaaminen: {autoplay_emoji}"
 
 #: pylav/player.py:1802 pylav/player.py:1880
 msgid "{space}Volume: {volume}%"
-msgstr ""
+msgstr "{space}Tilavuus: {volume}%"
 
 #: pylav/player.py:1840
 msgid "__Queue order is may not be accurate due to auto-shuffle being enabled__\n\n"
-msgstr ""
+msgstr "__Jonon järjestys ei välttämättä ole tarkka, koska automaattinen sekoitus on käytössä__\n\n"
 
 #: pylav/player.py:1851
 msgid "Recently Played for __{self.guild.name}__"
-msgstr ""
+msgstr "Äskettäin pelatut __{self.guild.name}__"
 
 #: pylav/player.py:1853
 msgid "Queue for __{self.guild.name}__"
-msgstr ""
+msgstr "Jono __{self.guild.name}__"
 
 #: pylav/player.py:1861
 msgid "Page {page_num}/{total_pages} | {queue_size} tracks, {queue_total_duration} remaining\n"
-msgstr ""
+msgstr "Sivu {page_num}/{total_pages} ¶ {queue_size} kappaletta, {queue_total_duration} jäljellä\n"
 
