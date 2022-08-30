@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-08-30 19:02+0000\n"
-"PO-Revision-Date: 2022-08-30 19:29\n"
+"POT-Creation-Date: 2022-08-30 20:52+0000\n"
+"PO-Revision-Date: 2022-08-30 20:55\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "MIME-Version: 1.0\n"
@@ -44,13 +44,9 @@ msgstr "Senza Nome"
 msgid "Tag with name `{arg}` not found."
 msgstr "Tag con nome `{arg}` non trovato."
 
-#: pylav/converters/radio.py:149
+#: pylav/converters/radio.py:149 pylav/converters/radio.py:152
 msgid "Language with name `{arg}` not found."
 msgstr "Lingua con nome `{arg}` non trovata."
-
-#: pylav/converters/radio.py:152
-msgid "Language with name `{arg}` not found.)"
-msgstr "Lingua con nome `{arg}` non trovata.)"
 
 #: pylav/converters/radio.py:180 pylav/converters/radio.py:183
 msgid "State with name `{arg}` not found."
