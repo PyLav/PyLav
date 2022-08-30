@@ -149,7 +149,7 @@ else:
                 raise commands.BadArgument(_("Language with name `{arg}` not found.").format(arg=arg)) from e
             if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), langs)):
                 return r
-            raise commands.BadArgument(_("Language with name `{arg}` not found.)").format(arg=arg))
+            raise commands.BadArgument(_("Language with name `{arg}` not found.").format(arg=arg))
 
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> list[Language]:
