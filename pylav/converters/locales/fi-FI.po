@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-08-30 19:02+0000\n"
-"PO-Revision-Date: 2022-08-30 19:02\n"
+"PO-Revision-Date: 2022-08-30 19:29\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -19,52 +19,52 @@ msgstr ""
 
 #: pylav/converters/nodes.py:34 pylav/converters/nodes.py:39
 msgid "Node with name or id `{arg}` not found."
-msgstr ""
+msgstr "Node with name or id `{arg}` ei löytynyt."
 
 #: pylav/converters/playlist.py:33
 msgid "Playlist with name or id `{arg}` not found."
-msgstr ""
+msgstr "Soittolistaa nimellä tai id:llä `{arg}` ei löytynyt."
 
 #: pylav/converters/query.py:51
 msgid "Query must be a playlist or album."
-msgstr ""
+msgstr "Kyselyn on oltava soittolista tai albumi."
 
 #: pylav/converters/radio.py:44 pylav/converters/radio.py:47
 msgid "Station with name `{arg}` not found."
-msgstr ""
+msgstr "Asemaa nimeltä `{arg}` ei löytynyt."
 
 #: pylav/converters/radio.py:105 pylav/converters/radio.py:135
 #: pylav/converters/radio.py:166 pylav/converters/radio.py:204
 #: pylav/converters/radio.py:234 pylav/converters/radio.py:265
 #: pylav/converters/radio.py:302
 msgid "Unnamed"
-msgstr ""
+msgstr "Nimetön"
 
 #: pylav/converters/radio.py:119 pylav/converters/radio.py:122
 msgid "Tag with name `{arg}` not found."
-msgstr ""
+msgstr "Tagia nimellä `{arg}` ei löytynyt."
 
 #: pylav/converters/radio.py:149
 msgid "Language with name `{arg}` not found."
-msgstr ""
+msgstr "Kieliä nimellä `{arg}` ei löytynyt."
 
 #: pylav/converters/radio.py:152
 msgid "Language with name `{arg}` not found.)"
-msgstr ""
+msgstr "Kieltä jolla on nimi `{arg}` ei löydy."
 
 #: pylav/converters/radio.py:180 pylav/converters/radio.py:183
 msgid "State with name `{arg}` not found."
-msgstr ""
+msgstr "Tilaa, jonka nimi on `{arg}` ei löytynyt."
 
 #: pylav/converters/radio.py:218 pylav/converters/radio.py:221
 msgid "Codec with name `{arg}` not found."
-msgstr ""
+msgstr "Koodia `{arg}` ei löytynyt."
 
 #: pylav/converters/radio.py:248 pylav/converters/radio.py:252
 msgid "Country code `{arg}` not found."
-msgstr ""
+msgstr "Maakoodia `{arg}` ei löytynyt."
 
 #: pylav/converters/radio.py:279 pylav/converters/radio.py:282
 msgid "Country with name `{arg}` not found."
-msgstr ""
+msgstr "Maa nimeltä `{arg}` ei löytynyt."
 
