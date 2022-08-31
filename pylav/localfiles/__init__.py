@@ -129,7 +129,7 @@ class LocalFile:
             if string.startswith("/") or string.startswith("\\"):
                 string = string[1:]
             if length:
-                string = string[: length * -1]
+                string = string[length * -1 :]
             if ellipsis and len(string) + 3 > length:
                 string = f"...{string[3:].strip()}"
             return string
