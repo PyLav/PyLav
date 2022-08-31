@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-08-31 13:15+0000\n"
-"PO-Revision-Date: 2022-08-31 13:19\n"
+"PO-Revision-Date: 2022-08-31 13:27\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "MIME-Version: 1.0\n"
@@ -32,15 +32,15 @@ msgstr "Niciun nod cu funcționalitatea {query.requires_capability} disponibil!"
 
 #: pylav/client.py:1175
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
-msgstr ""
+msgstr "Pentru a genera un mix playlist este necesar un Video, Utilizator, Canal sau Playlist ID"
 
 #: pylav/client.py:1180
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
-msgstr ""
+msgstr "Pentru a genera un mix playlist este necesar un video, un utilizator, un canal sau un ID Playlist. Cu toate acestea, ați furnizat mai multe"
 
 #: pylav/managed_node.py:251
 msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture"
-msgstr ""
+msgstr "Încercaţi să conduceţi nodul Lavalink pe o arhitectură a maşinii nesuportată"
 
 #: pylav/managed_node.py:343
 msgid "Pylav - Java executable not  found, tried to use: '{self._java_exc}'"
@@ -53,7 +53,7 @@ msgstr ""
 
 #: pylav/managed_node.py:427
 msgid "Port {port} already in use. Managed Lavalink startup aborted"
-msgstr ""
+msgstr "Portul {port} este deja în uz. Pornirea Lavalink gestionată anulată"
 
 #: pylav/managed_node.py:432
 msgid "Lavalink failed to start: {line}"
@@ -61,11 +61,11 @@ msgstr "Pornirea Lavalink a eșuat: {line}"
 
 #: pylav/managed_node.py:436
 msgid "Managed Lavalink node server exited early"
-msgstr ""
+msgstr "Serverul de nod Lavalink a ieșit din timp"
 
 #: pylav/player.py:765
 msgid "There are no tracks currently in the player history"
-msgstr ""
+msgstr "Nu există nicio melodie în istoricul jucătorilor"
 
 #: pylav/player.py:1744 pylav/player.py:1774 pylav/player.py:1785
 msgid "LIVE"
@@ -73,7 +73,7 @@ msgstr "IV-VA"
 
 #: pylav/player.py:1753 pylav/player.py:1842
 msgid "Currently livestreaming"
-msgstr ""
+msgstr "În prezent animalul"
 
 #: pylav/player.py:1755
 msgid "Playing: "
@@ -82,15 +82,15 @@ msgstr "Redare: "
 #: pylav/player.py:1758 pylav/player.py:1779 pylav/player.py:1790
 #: pylav/player.py:1848
 msgid "Requester"
-msgstr ""
+msgstr "Solicitant"
 
 #: pylav/player.py:1763
 msgid "Now Playing in"
-msgstr ""
+msgstr "Acum se joacă în"
 
 #: pylav/player.py:1775 pylav/player.py:1786
 msgid "Duration"
-msgstr ""
+msgstr "Durată"
 
 #: pylav/player.py:1781
 msgid "Previous Track"
@@ -102,49 +102,49 @@ msgstr "Următoarea piesă"
 
 #: pylav/player.py:1796
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
-msgstr ""
+msgstr "{track_count} melodii, {queue_total_duration} rămase\n"
 
 #: pylav/player.py:1808 pylav/player.py:1899
 msgid "{translation}: {repeat_emoji}"
-msgstr ""
+msgstr "{translation}: {repeat_emoji}"
 
 #: pylav/player.py:1808 pylav/player.py:1899
 msgid "Repeating"
-msgstr ""
+msgstr "Repetare"
 
 #: pylav/player.py:1809 pylav/player.py:1900
 msgid "{space}{translation}: {autoplay_emoji}"
-msgstr ""
+msgstr "{space}{translation}: {autoplay_emoji}"
 
 #: pylav/player.py:1810 pylav/player.py:1901
 msgid "Auto Play"
-msgstr ""
+msgstr "Redare automată"
 
 #: pylav/player.py:1812 pylav/player.py:1903
 msgid "{space}{translation}: {volume}%"
-msgstr ""
+msgstr "{space}{translation}: {volume}%"
 
 #: pylav/player.py:1813 pylav/player.py:1904
 msgid "Volume"
-msgstr ""
+msgstr "Volum"
 
 #: pylav/player.py:1845
 msgid "Playing"
-msgstr ""
+msgstr "Redare"
 
 #: pylav/player.py:1858
 msgid "Queue order is may not be accurate due to auto-shuffle being enabled"
-msgstr ""
+msgstr "Ordinea de așteptare ar putea să nu fie corectă din cauza activării auto-shuffle"
 
 #: pylav/player.py:1873
 msgid "Recently Played for"
-msgstr ""
+msgstr "Jucat recent pentru"
 
 #: pylav/player.py:1873
 msgid "Queue for"
-msgstr ""
+msgstr "Coadă pentru"
 
 #: pylav/player.py:1882
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
-msgstr ""
+msgstr "Pagina {current_page}/{total_pages} <unk> {track_number} melodii, {queue_total_duration} rămase\n"
 

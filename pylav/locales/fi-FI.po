@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-08-31 13:15+0000\n"
-"PO-Revision-Date: 2022-08-31 13:19\n"
+"PO-Revision-Date: 2022-08-31 13:27\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -32,15 +32,15 @@ msgstr "Ei solmua {query.requires_capability} toiminnallisuudella käytettäviss
 
 #: pylav/client.py:1175
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
-msgstr ""
+msgstr "Jos haluat luoda sekoitussoittolistan, tarvitaan video, käyttäjä, kanava tai soittolista ID."
 
 #: pylav/client.py:1180
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
-msgstr ""
+msgstr "Voit luoda sekoitussoittolistan video, käyttäjä, kanava tai soittolista ID on välttämätön, mutta olet antanut useita"
 
 #: pylav/managed_node.py:251
 msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture"
-msgstr ""
+msgstr "Yrität ajaa hallittua Lavalink solmua koneen arkkitehtuurissa, jota ei tueta"
 
 #: pylav/managed_node.py:343
 msgid "Pylav - Java executable not  found, tried to use: '{self._java_exc}'"
@@ -49,11 +49,12 @@ msgstr "Pylav - suoritettavaa Java-ohjelmaa ei löydy, yritetty käyttää: '{se
 #: pylav/managed_node.py:411
 msgid "The output of `{java_exc} -version` was unexpected\n"
 "{version_info}"
-msgstr ""
+msgstr "`{java_exc} -version ulostulo oli odottamaton\n"
+"{version_info}"
 
 #: pylav/managed_node.py:427
 msgid "Port {port} already in use. Managed Lavalink startup aborted"
-msgstr ""
+msgstr "Portti {port} on jo käytössä. Hallittu Lavalink käynnistäminen keskeytettiin"
 
 #: pylav/managed_node.py:432
 msgid "Lavalink failed to start: {line}"
@@ -61,11 +62,11 @@ msgstr "Lavalink ei voitu käynnistää: {line}"
 
 #: pylav/managed_node.py:436
 msgid "Managed Lavalink node server exited early"
-msgstr ""
+msgstr "Hallittu Lavalink palvelin poistui käytöstä aikaisin"
 
 #: pylav/player.py:765
 msgid "There are no tracks currently in the player history"
-msgstr ""
+msgstr "Pelaajan historiassa ei ole kappaleita"
 
 #: pylav/player.py:1744 pylav/player.py:1774 pylav/player.py:1785
 msgid "LIVE"
@@ -73,7 +74,7 @@ msgstr "ELÄI"
 
 #: pylav/player.py:1753 pylav/player.py:1842
 msgid "Currently livestreaming"
-msgstr ""
+msgstr "Tällä hetkellä hengissä"
 
 #: pylav/player.py:1755
 msgid "Playing: "
@@ -82,15 +83,15 @@ msgstr "Toisto: "
 #: pylav/player.py:1758 pylav/player.py:1779 pylav/player.py:1790
 #: pylav/player.py:1848
 msgid "Requester"
-msgstr ""
+msgstr "Pyytäjä"
 
 #: pylav/player.py:1763
 msgid "Now Playing in"
-msgstr ""
+msgstr "Nyt soi"
 
 #: pylav/player.py:1775 pylav/player.py:1786
 msgid "Duration"
-msgstr ""
+msgstr "Kesto"
 
 #: pylav/player.py:1781
 msgid "Previous Track"
@@ -102,49 +103,49 @@ msgstr "Seuraava Kappale"
 
 #: pylav/player.py:1796
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
-msgstr ""
+msgstr "{track_count} kappaletta, {queue_total_duration} jäljellä\n"
 
 #: pylav/player.py:1808 pylav/player.py:1899
 msgid "{translation}: {repeat_emoji}"
-msgstr ""
+msgstr "{translation}: {repeat_emoji}"
 
 #: pylav/player.py:1808 pylav/player.py:1899
 msgid "Repeating"
-msgstr ""
+msgstr "Toistuu"
 
 #: pylav/player.py:1809 pylav/player.py:1900
 msgid "{space}{translation}: {autoplay_emoji}"
-msgstr ""
+msgstr "{space}{translation}: {autoplay_emoji}"
 
 #: pylav/player.py:1810 pylav/player.py:1901
 msgid "Auto Play"
-msgstr ""
+msgstr "Automaattinen Toisto"
 
 #: pylav/player.py:1812 pylav/player.py:1903
 msgid "{space}{translation}: {volume}%"
-msgstr ""
+msgstr "{space}{translation}: {volume}%"
 
 #: pylav/player.py:1813 pylav/player.py:1904
 msgid "Volume"
-msgstr ""
+msgstr "Tilavuus"
 
 #: pylav/player.py:1845
 msgid "Playing"
-msgstr ""
+msgstr "Toistetaan"
 
 #: pylav/player.py:1858
 msgid "Queue order is may not be accurate due to auto-shuffle being enabled"
-msgstr ""
+msgstr "Jonon järjestys ei ehkä ole tarkka, koska automaattinen sekoitus on otettu käyttöön"
 
 #: pylav/player.py:1873
 msgid "Recently Played for"
-msgstr ""
+msgstr "Äskettäin soitettu"
 
 #: pylav/player.py:1873
 msgid "Queue for"
-msgstr ""
+msgstr "Jono varten"
 
 #: pylav/player.py:1882
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
-msgstr ""
+msgstr "Sivu {current_page}/{total_pages} ¶ {track_number} kappaletta, {queue_total_duration} jäljellä\n"
 
