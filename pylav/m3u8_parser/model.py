@@ -856,11 +856,8 @@ class Playlist(BasePathMixin):
         )
         self.media = []
         for media_type in ("audio", "video", "subtitles"):
-            group_id = stream_info.get(media_type)
-            if not group_id:
-                continue
-
-            self.media += filter(lambda m: m.group_id == group_id, media)
+            if group_id := stream_info.get(media_type):
+                self.media += filter(lambda m: m.group_id == group_id, media)
 
     def __str__(self):
         media_types = []
