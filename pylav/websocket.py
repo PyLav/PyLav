@@ -381,9 +381,7 @@ class WebSocket:
                 track
                 or Track(
                     data=data["track"],
-                    requester=requester.id
-                    if requester
-                    else self._client.bot.user.id,
+                    requester=requester.id if requester else self._client.bot.user.id,
                     query=await Query.from_base64(data["track"]),
                     node=self.node,
                 ),
