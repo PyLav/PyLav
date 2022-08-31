@@ -117,21 +117,33 @@ class LocalFile:
     def initialized(self) -> bool:
         return self.__init
 
-    async def to_string_user(self, length: int = None, name_only: bool = False, ellipsis: bool = False) -> str:
+    async def to_string_user(
+        self,
+        length: int = None,
+        name_only: bool = False,
+        ellipsis: bool = False,
+        with_emoji: bool = False,
+        no_extension: bool = False,
+    ) -> str:
+        if with_emoji:
+            length -= 1
         path = await maybe_coroutine(self.path.absolute)
         if name_only:
-            string = path.name if await self.path.is_dir() else path.stem
+            string = path.name if await self.path.is_dir() else path.stem if no_extension else path.name
         else:
             root = await maybe_coroutine(self.root_folder.absolute)
             string = str(path).replace(str(root), "")
         if not string:
-            string = path.name if await self.path.is_dir() else path.stem
+            string = path.name if await self.path.is_dir() else path.stem if no_extension else path.name
             if string.startswith("/") or string.startswith("\\"):
                 string = string[1:]
             if length:
                 string = string[length * -1 :]
-            if ellipsis and len(string) + 3 > length:
-                string = f"...{string[3:].strip()}"
+            if ellipsis and len(string) > length:
+                string = "\N{HORIZONTAL ELLIPSIS}" + f"{string[3:].strip()}"
+            if with_emoji:
+                emoji = "\N{FILE FOLDER}" if await self.path.is_dir() else "\N{MULTIPLE MUSICAL NOTES}"
+                string = emoji + string
             return string
 
         temp_path = aiopath.AsyncPath(string)
@@ -139,15 +151,8 @@ class LocalFile:
             parts = list(temp_path.parts)
             parts_reversed = list(parts[::-1])
             if await temp_path.is_file():
-                parts_reversed[0] = temp_path.name
-            count = 0
-            usable_parts = []
-            for part in parts_reversed:
-                if (not ellipsis) and usable_parts and (count + len(part) + 1) > length:
-                    break
-                count += len(part) + 1
-                usable_parts.append(part)
-            string_list = usable_parts[::-1]
+                parts_reversed[0] = temp_path.stem if no_extension else temp_path.name
+            string_list = parts_reversed[::-1]
             if name_only:
                 string = os.path.join(*string_list[-2:])  # Folder and file only
             else:
@@ -156,8 +161,11 @@ class LocalFile:
                 string = string[1:]
             if len(string) > length:
                 string = string[length * -1 :]
-            if ellipsis and len(string) + 3 > length:
-                string = f"...{string[3:].strip()}"
+            if ellipsis and len(string) > length:
+                string = "\N{HORIZONTAL ELLIPSIS}" + f"{string[length * -1:].strip()}"
+        if with_emoji:
+            emoji = "\N{FILE FOLDER}" if await self.path.is_dir() else "\N{MULTIPLE MUSICAL NOTES}"
+            string = emoji + string
         return string
 
     async def files_in_folder(self, show_folders: bool = False) -> AsyncIterator[Query]:

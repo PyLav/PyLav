@@ -1,14 +1,18 @@
 from __future__ import annotations
 
+import asyncio
 from pathlib import Path
 from typing import TYPE_CHECKING, TypeVar
 
 import asyncstdlib
+from asyncstdlib import heapq
 from discord.app_commands import Choice, Transformer
 from discord.ext import commands
+from rapidfuzz import fuzz
 
 from pylav.node import Node
 from pylav.types import ContextT, InteractionT
+from pylav.utils import shorten_string
 
 try:
     from redbot.core.i18n import Translator
@@ -49,6 +53,8 @@ else:
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
             nodes = interaction.client.lavalink.node_manager.nodes
 
-            return [
-                Choice(name=n.name[:95], value=f"{n.identifier}") for n in nodes if current.lower() in n.name.lower()
-            ][:25]
+            async def _filter(c):
+                return await asyncio.to_thread(fuzz.partial_ratio, current, c.name)
+
+            extracted = await heapq.nlargest(asyncstdlib.iter(nodes), n=25, key=_filter)
+            return [Choice(name=shorten_string(e.name, max_length=100), value=f"{e.identifier}") for e in extracted]

@@ -531,7 +531,14 @@ class Query:
         else:
             return cls(query, "YouTube Music", search=True)  # Fallback to YouTube Music
 
-    async def query_to_string(self, max_length: int = None, name_only: bool = False, ellipsis: bool = True) -> str:
+    async def query_to_string(
+        self,
+        max_length: int = None,
+        name_only: bool = False,
+        ellipsis: bool = True,
+        with_emoji: bool = False,
+        no_extension: bool = False,
+    ) -> str:
         """
         Returns a string representation of the query.
 
@@ -544,14 +551,20 @@ class Query:
             Only used for local tracks.
         ellipsis : bool
             Whether to format the string with ellipsis if it exceeds the max_length
+        with_emoji : bool
+            Whether to add an emoji to returned name if it is a local track.
+        no_extension : bool
+            Whether to remove the extension from the returned name if it is a local track.
         """
 
         if self.is_local:
-            return await self._query.to_string_user(max_length, name_only=name_only, ellipsis=ellipsis)
+            return await self._query.to_string_user(
+                max_length, name_only=name_only, ellipsis=ellipsis, with_emoji=with_emoji, no_extension=no_extension
+            )
 
         if max_length and len(self._query) > max_length:
             if ellipsis:
-                return f"{self._query[: max_length - 3].strip()}..."
+                return f"{self._query[: max_length - 1].strip()}" + "\N{HORIZONTAL ELLIPSIS}"
             else:
                 return self._query[:max_length].strip()
 

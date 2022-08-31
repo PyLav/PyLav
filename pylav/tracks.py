@@ -376,8 +376,8 @@ class Track:
         if self.is_partial:
             base = await (await self.query()).query_to_queue(max_length, partial=True)
             base = SQUARE_BRACKETS.sub("", base).strip()
-            if max_length and len(base) > (actual_length := max_length - 3):
-                base = f"{base[:actual_length]}..."
+            if max_length and len(base) > (actual_length := max_length - 1):
+                base = f"{base[:actual_length]}" + "\N{HORIZONTAL ELLIPSIS}"
             return discord.utils.escape_markdown(base)
         else:
             length_to_trim = 7
@@ -403,7 +403,7 @@ class Track:
                     base = f"{self.title}{author_string}"
                     base = SQUARE_BRACKETS.sub("", base).strip()
                     if max_length and len(base) > max_length:
-                        base = base = f"...{base[-max_length:]}"
+                        base = base = "\N{HORIZONTAL ELLIPSIS}" + f"{base[-max_length:]}"
                     elif not max_length:
                         base += f"\n{await  (await self.query()).query_to_string(ellipsis=False)} "
                 else:
@@ -419,7 +419,7 @@ class Track:
                     base = self.title
                 base = SQUARE_BRACKETS.sub("", base).strip()
                 if max_length and len(base) > max_length:
-                    base = f"{base[:max_length]}..."
+                    base = f"{base[:max_length]}" + "\N{HORIZONTAL ELLIPSIS}"
 
             base = discord.utils.escape_markdown(base)
             return f"{bold}{url_start}{base}{url_end}{bold}"

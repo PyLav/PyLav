@@ -66,6 +66,7 @@ __all__ = (
     "_get_context",
     "PyLavContext",
     "ExponentialBackoffWithReset",
+    "shorten_string",
 )
 
 from pylav._logging import getLogger
@@ -144,6 +145,15 @@ def alru_cache(fn=None, maxsize=128, typed=False, *, cache_exceptions=True, igno
         return wrapper(fn)
 
     raise NotImplementedError(f"{fn} decorating is not supported")
+
+
+def shorten_string(string: str, max_length: int, right: bool = True) -> str:
+    if len(string) > max_length:
+        if right:
+            return string[: max_length - 1] + "\N{HORIZONTAL ELLIPSIS}"
+        else:
+            return string[(max_length - 1) * -1 :] + "\N{HORIZONTAL ELLIPSIS}"
+    return string
 
 
 def _synchronized(lock):

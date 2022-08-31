@@ -1,15 +1,19 @@
 from __future__ import annotations
 
+import asyncio
 from operator import attrgetter
 from pathlib import Path
 from typing import TYPE_CHECKING, TypeVar
 
 import asyncstdlib
+from asyncstdlib import heapq
 from discord.app_commands import Choice, Transformer
 from discord.ext import commands
+from rapidfuzz import fuzz
 
 from pylav import getLogger
 from pylav.types import ContextT, InteractionT
+from pylav.utils import shorten_string
 
 try:
     from redbot.core.i18n import Translator
@@ -39,6 +43,9 @@ else:
             from pylav import EntryNotFoundError
 
             try:
+                station = await ctx.lavalink.radio_browser.station_by_uuid(arg)
+                if station:
+                    return station
                 stations = await ctx.lavalink.radio_browser.stations()
             except EntryNotFoundError as e:
                 raise commands.BadArgument(_("Station with name `{arg}` not found").format(arg=arg)) from e
@@ -101,11 +108,17 @@ else:
             if current:
                 kwargs["name"] = current
             stations = await interaction.client.lavalink.radio_browser.search(limit=25, **kwargs)
+
+            async def _filter(c):
+                return await asyncio.to_thread(fuzz.partial_ratio, current, c.name)
+
+            extracted: list[Station] = await heapq.nlargest(asyncstdlib.iter(stations), n=25, key=_filter)
             return [
-                Choice(name=n.name[:95] if n.name else _("Unnamed"), value=f"{n.name}")
-                for n in stations
-                if current.lower() in n.name.lower()
-            ][:25]
+                Choice(
+                    name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.stationuuid}"
+                )
+                for e in extracted
+            ]
 
     class TagConverter(Transformer):
         @classmethod
@@ -131,11 +144,15 @@ else:
         @classmethod
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
             tags = await interaction.client.lavalink.radio_browser.tags()
+
+            async def _filter(c):
+                return await asyncio.to_thread(fuzz.partial_ratio, current, c.name)
+
+            extracted = await heapq.nlargest(asyncstdlib.iter(tags), n=25, key=_filter)
             return [
-                Choice(name=n.name[:95] if n.name else _("Unnamed"), value=f"{n.name}")
-                for n in tags
-                if current.lower() in n.name.lower()
-            ][:25]
+                Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
+                for e in extracted
+            ]
 
     class LanguageConverter(Transformer):
         @classmethod
@@ -162,11 +179,14 @@ else:
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
             languages = await interaction.client.lavalink.radio_browser.languages()
 
+            async def _filter(c):
+                return await asyncio.to_thread(fuzz.partial_ratio, current, c.name)
+
+            extracted = await heapq.nlargest(asyncstdlib.iter(languages), n=25, key=_filter)
             return [
-                Choice(name=n.name[:95] if n.name else _("Unnamed"), value=f"{n.name}")
-                for n in languages
-                if current.lower() in n.name.lower()
-            ][:25]
+                Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
+                for e in extracted
+            ]
 
     class StateConverter(Transformer):
         @classmethod
@@ -200,11 +220,15 @@ else:
                 if country and (val := country[0].get("value")):
                     kwargs["country"] = val
             states = await interaction.client.lavalink.radio_browser.states(**kwargs)
+
+            async def _filter(c):
+                return await asyncio.to_thread(fuzz.partial_ratio, current, c.name)
+
+            extracted = await heapq.nlargest(asyncstdlib.iter(states), n=25, key=_filter)
             return [
-                Choice(name=n.name[:95] if n.name else _("Unnamed"), value=f"{n.name}")
-                for n in states
-                if current.lower() in n.name.lower()
-            ][:25]
+                Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
+                for e in extracted
+            ]
 
     class CodecConverter(Transformer):
         @classmethod
@@ -230,11 +254,15 @@ else:
         @classmethod
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
             codecs = await interaction.client.lavalink.radio_browser.codecs()
+
+            async def _filter(c):
+                return await asyncio.to_thread(fuzz.partial_ratio, current, c.name)
+
+            extracted = await heapq.nlargest(asyncstdlib.iter(codecs), n=25, key=_filter)
             return [
-                Choice(name=n.name[:95] if n.name else _("Unnamed"), value=f"{n.name}")
-                for n in codecs
-                if current.lower() in n.name.lower()
-            ][:25]
+                Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
+                for e in extracted
+            ]
 
     class CountryCodeConverter(Transformer):
         @classmethod
@@ -261,11 +289,15 @@ else:
         @classmethod
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
             countrycodes = await interaction.client.lavalink.radio_browser.countrycodes()
+
+            async def _filter(c):
+                return await asyncio.to_thread(fuzz.partial_ratio, current, c.name)
+
+            extracted = await heapq.nlargest(asyncstdlib.iter(countrycodes), n=25, key=_filter)
             return [
-                Choice(name=n.name[:95] if n.name else _("Unnamed"), value=f"{n.name}")
-                for n in countrycodes
-                if current.lower() in n.name.lower()
-            ][:25]
+                Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
+                for e in extracted
+            ]
 
     class CountryConverter(Transformer):
         @classmethod
@@ -298,8 +330,12 @@ else:
                 if code and (val := code[0].get("value")):
                     kwargs["code"] = val
             countries = await interaction.client.lavalink.radio_browser.countries(**kwargs)
+
+            async def _filter(c):
+                return await asyncio.to_thread(fuzz.partial_ratio, current, c.name)
+
+            extracted = await heapq.nlargest(asyncstdlib.iter(countries), n=25, key=_filter)
             return [
-                Choice(name=n.name[:95] if n.name else _("Unnamed"), value=f"{n.name}")
-                for n in countries
-                if current.lower() in n.name.lower()
-            ][:25]
+                Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
+                for e in extracted
+            ]
