@@ -18,7 +18,7 @@ if _system_user:
     __CONFIG_DIR = pathlib.Path(appdir.site_data_path)
 __CONFIG_DIR.mkdir(parents=True, exist_ok=True)
 CONFIG_DIR = aiopath.AsyncPath(__CONFIG_DIR)
-__VERSION__ = "0.6.8"
+__VERSION__ = "0.6.9"
 
 
 def update_event_loop_policy():
