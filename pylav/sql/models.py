@@ -1286,8 +1286,8 @@ class PlayerModel:
     async def delete(self) -> None:
         """Delete the player from the database"""
         await tables.PlayerRow.raw("DELETE FROM player WHERE id = {} and bot = {};", self.id, self.bot)
-        self.get_or_create.invalidate()
-        self.is_dj.cache_clear()
+        # self.get_or_create.invalidate()
+        # self.is_dj.cache_clear()
 
     async def upsert(self) -> None:
         """Upsert the player in the database"""
@@ -1362,8 +1362,8 @@ class PlayerModel:
             list(self.dj_users),
             list(self.dj_roles),
         )
-        self.get_or_create.invalidate()
-        self.is_dj.cache_clear()
+        # self.get_or_create.invalidate()
+        # self.is_dj.cache_clear()
 
     async def save(self) -> None:
         """Save the player to the database"""
@@ -2071,8 +2071,8 @@ class PlayerModel:
         PlayerModel
             The player.
         """
-        self.get_or_create.invalidate()
-        self.is_dj.cache_clear()
+        # self.get_or_create.invalidate()
+        # self.is_dj.cache_clear()
         await self.get_or_create(id=self.id, bot=self.bot)
         return self
 
