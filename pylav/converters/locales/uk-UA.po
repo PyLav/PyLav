@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-08-31 13:15+0000\n"
-"PO-Revision-Date: 2022-08-31 13:19\n"
+"PO-Revision-Date: 2022-08-31 13:33\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "MIME-Version: 1.0\n"
@@ -19,19 +19,19 @@ msgstr ""
 
 #: pylav/converters/nodes.py:34 pylav/converters/nodes.py:39
 msgid "Node with name or id `{arg}` not found"
-msgstr ""
+msgstr "Вузол з назвою або ідентифікатором `{arg}не знайдено"
 
 #: pylav/converters/playlist.py:33
 msgid "Playlist with name or id `{arg}` not found"
-msgstr ""
+msgstr "Плейлист з іменем або ідентифікатором `{arg}не знайдено"
 
 #: pylav/converters/query.py:51
 msgid "Query must be a playlist or album"
-msgstr ""
+msgstr "Запит повинен бути списком відтворення або альбомом"
 
 #: pylav/converters/radio.py:44 pylav/converters/radio.py:47
 msgid "Station with name `{arg}` not found"
-msgstr ""
+msgstr "Станція з іменем{arg}` не знайдена"
 
 #: pylav/converters/radio.py:105 pylav/converters/radio.py:135
 #: pylav/converters/radio.py:166 pylav/converters/radio.py:204
@@ -42,25 +42,25 @@ msgstr "Без імені"
 
 #: pylav/converters/radio.py:119 pylav/converters/radio.py:122
 msgid "Tag with name `{arg}` not found"
-msgstr ""
+msgstr "Тег з іменем{arg}` не знайдено"
 
 #: pylav/converters/radio.py:149 pylav/converters/radio.py:152
 msgid "Language with name `{arg}` not found"
-msgstr ""
+msgstr "Мову з іменем{arg}` не знайдено"
 
 #: pylav/converters/radio.py:180 pylav/converters/radio.py:183
 msgid "State with name `{arg}` not found"
-msgstr ""
+msgstr "Стан з іменем{arg}` не знайдений"
 
 #: pylav/converters/radio.py:218 pylav/converters/radio.py:221
 msgid "Codec with name `{arg}` not found"
-msgstr ""
+msgstr "Кодек з іменем{arg}` не знайдено"
 
 #: pylav/converters/radio.py:248 pylav/converters/radio.py:252
 msgid "Country code `{arg}` not found"
-msgstr ""
+msgstr "Код країни `{arg}не знайдено"
 
 #: pylav/converters/radio.py:279 pylav/converters/radio.py:282
 msgid "Country with name `{arg}` not found"
-msgstr ""
+msgstr "Країна з іменем{arg}` не знайдена"
 

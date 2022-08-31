@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-08-31 13:15+0000\n"
-"PO-Revision-Date: 2022-08-31 13:19\n"
+"PO-Revision-Date: 2022-08-31 13:27\n"
 "Last-Translator: \n"
 "Language-Team: Danish\n"
 "MIME-Version: 1.0\n"
@@ -32,15 +32,15 @@ msgstr "Ingen node med {query.requires_capability} funktionalitet tilgængelig!"
 
 #: pylav/client.py:1175
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
-msgstr ""
+msgstr "For at generere en mix afspilningsliste er et video, bruger, kanal eller Playlist ID nødvendig"
 
 #: pylav/client.py:1180
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
-msgstr ""
+msgstr "For at generere en mix afspilningsliste en Video, bruger, kanal eller Playlist ID er nødvendig. Dog har du leveret flere"
 
 #: pylav/managed_node.py:251
 msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture"
-msgstr ""
+msgstr "Du forsøger at køre den administrerede Lavalink-knude på en ikke-understøttet maskinarkitektur"
 
 #: pylav/managed_node.py:343
 msgid "Pylav - Java executable not  found, tried to use: '{self._java_exc}'"
@@ -49,11 +49,12 @@ msgstr "Pylav - Java eksekverbar ikke fundet, forsøgte at bruge: '{self._java_e
 #: pylav/managed_node.py:411
 msgid "The output of `{java_exc} -version` was unexpected\n"
 "{version_info}"
-msgstr ""
+msgstr "Outputtet fra `{java_exc} -version` var uventet\n"
+"{version_info}"
 
 #: pylav/managed_node.py:427
 msgid "Port {port} already in use. Managed Lavalink startup aborted"
-msgstr ""
+msgstr "Port {port} allerede i brug. Administreret Lavalink opstart afbrudt"
 
 #: pylav/managed_node.py:432
 msgid "Lavalink failed to start: {line}"
@@ -61,11 +62,11 @@ msgstr "Lavalink kunne ikke starte: {line}"
 
 #: pylav/managed_node.py:436
 msgid "Managed Lavalink node server exited early"
-msgstr ""
+msgstr "Administreret Lavalink node server afsluttede tidligt"
 
 #: pylav/player.py:765
 msgid "There are no tracks currently in the player history"
-msgstr ""
+msgstr "Der er ingen spor i spillerens historie"
 
 #: pylav/player.py:1744 pylav/player.py:1774 pylav/player.py:1785
 msgid "LIVE"
@@ -73,7 +74,7 @@ msgstr "LIVE"
 
 #: pylav/player.py:1753 pylav/player.py:1842
 msgid "Currently livestreaming"
-msgstr ""
+msgstr "I øjeblikket livestreaming"
 
 #: pylav/player.py:1755
 msgid "Playing: "
@@ -82,15 +83,15 @@ msgstr "Afspilning: "
 #: pylav/player.py:1758 pylav/player.py:1779 pylav/player.py:1790
 #: pylav/player.py:1848
 msgid "Requester"
-msgstr ""
+msgstr "Anmoder"
 
 #: pylav/player.py:1763
 msgid "Now Playing in"
-msgstr ""
+msgstr "Spiller nu om"
 
 #: pylav/player.py:1775 pylav/player.py:1786
 msgid "Duration"
-msgstr ""
+msgstr "Varighed"
 
 #: pylav/player.py:1781
 msgid "Previous Track"
@@ -102,49 +103,49 @@ msgstr "Næste Spor"
 
 #: pylav/player.py:1796
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
-msgstr ""
+msgstr "{track_count} numre, {queue_total_duration} tilbage\n"
 
 #: pylav/player.py:1808 pylav/player.py:1899
 msgid "{translation}: {repeat_emoji}"
-msgstr ""
+msgstr "{translation}: {repeat_emoji}"
 
 #: pylav/player.py:1808 pylav/player.py:1899
 msgid "Repeating"
-msgstr ""
+msgstr "Gentagelse"
 
 #: pylav/player.py:1809 pylav/player.py:1900
 msgid "{space}{translation}: {autoplay_emoji}"
-msgstr ""
+msgstr "{space}{translation}: {autoplay_emoji}"
 
 #: pylav/player.py:1810 pylav/player.py:1901
 msgid "Auto Play"
-msgstr ""
+msgstr "Automatisk Afspil"
 
 #: pylav/player.py:1812 pylav/player.py:1903
 msgid "{space}{translation}: {volume}%"
-msgstr ""
+msgstr "{space}{translation}: {volume}%"
 
 #: pylav/player.py:1813 pylav/player.py:1904
 msgid "Volume"
-msgstr ""
+msgstr "Lydstyrke"
 
 #: pylav/player.py:1845
 msgid "Playing"
-msgstr ""
+msgstr "Afspiller"
 
 #: pylav/player.py:1858
 msgid "Queue order is may not be accurate due to auto-shuffle being enabled"
-msgstr ""
+msgstr "Kø ordre er muligvis ikke præcis fordi auto-shuffle bliver aktiveret"
 
 #: pylav/player.py:1873
 msgid "Recently Played for"
-msgstr ""
+msgstr "Senest afspillet for"
 
 #: pylav/player.py:1873
 msgid "Queue for"
-msgstr ""
+msgstr "Kø for"
 
 #: pylav/player.py:1882
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
-msgstr ""
+msgstr "Side {current_page}/{total_pages} ¤ {track_number} numre, {queue_total_duration} tilbage\n"
 

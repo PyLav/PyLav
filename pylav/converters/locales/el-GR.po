@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-08-31 13:15+0000\n"
-"PO-Revision-Date: 2022-08-31 13:19\n"
+"PO-Revision-Date: 2022-08-31 13:33\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
@@ -19,19 +19,19 @@ msgstr ""
 
 #: pylav/converters/nodes.py:34 pylav/converters/nodes.py:39
 msgid "Node with name or id `{arg}` not found"
-msgstr ""
+msgstr "Ο κόμβος με όνομα ή ταυτότητα `{arg}` δεν βρέθηκε"
 
 #: pylav/converters/playlist.py:33
 msgid "Playlist with name or id `{arg}` not found"
-msgstr ""
+msgstr "Δεν βρέθηκε λίστα αναπαραγωγής με όνομα ή αναγνωριστικό `{arg}`"
 
 #: pylav/converters/query.py:51
 msgid "Query must be a playlist or album"
-msgstr ""
+msgstr "Το ερώτημα πρέπει να είναι λίστα αναπαραγωγής ή άλμπουμ"
 
 #: pylav/converters/radio.py:44 pylav/converters/radio.py:47
 msgid "Station with name `{arg}` not found"
-msgstr ""
+msgstr "Ο σταθμός με το όνομα `{arg}` δεν βρέθηκε"
 
 #: pylav/converters/radio.py:105 pylav/converters/radio.py:135
 #: pylav/converters/radio.py:166 pylav/converters/radio.py:204
@@ -42,25 +42,25 @@ msgstr "Ανώνυμο"
 
 #: pylav/converters/radio.py:119 pylav/converters/radio.py:122
 msgid "Tag with name `{arg}` not found"
-msgstr ""
+msgstr "Η ετικέτα με το όνομα `{arg}` δεν βρέθηκε"
 
 #: pylav/converters/radio.py:149 pylav/converters/radio.py:152
 msgid "Language with name `{arg}` not found"
-msgstr ""
+msgstr "Η γλώσσα με όνομα `{arg}` δεν βρέθηκε"
 
 #: pylav/converters/radio.py:180 pylav/converters/radio.py:183
 msgid "State with name `{arg}` not found"
-msgstr ""
+msgstr "Δεν βρέθηκε η κατάσταση με το όνομα `{arg}`"
 
 #: pylav/converters/radio.py:218 pylav/converters/radio.py:221
 msgid "Codec with name `{arg}` not found"
-msgstr ""
+msgstr "Το Codec με το όνομα `{arg}` δεν βρέθηκε"
 
 #: pylav/converters/radio.py:248 pylav/converters/radio.py:252
 msgid "Country code `{arg}` not found"
-msgstr ""
+msgstr "Δεν βρέθηκε κωδικός χώρας `{arg}`"
 
 #: pylav/converters/radio.py:279 pylav/converters/radio.py:282
 msgid "Country with name `{arg}` not found"
-msgstr ""
+msgstr "Η χώρα με όνομα `{arg}` δεν βρέθηκε"
 
