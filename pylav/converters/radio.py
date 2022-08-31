@@ -108,9 +108,17 @@ else:
             if current:
                 kwargs["name"] = current
             stations = await interaction.client.lavalink.radio_browser.search(limit=25, **kwargs)
+            if not current:
+                return [
+                    Choice(
+                        name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"),
+                        value=f"{e.stationuuid}",
+                    )
+                    for e in stations
+                ]
 
             async def _filter(c):
-                return await asyncio.to_thread(fuzz.partial_ratio, current, c.name)
+                return await asyncio.to_thread(fuzz.token_set_ratio, current, c.name)
 
             extracted: list[Station] = await heapq.nlargest(asyncstdlib.iter(stations), n=25, key=_filter)
             return [
@@ -144,9 +152,14 @@ else:
         @classmethod
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
             tags = await interaction.client.lavalink.radio_browser.tags()
+            if not current:
+                return [
+                    Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
+                    for e in tags
+                ][:25]
 
             async def _filter(c):
-                return await asyncio.to_thread(fuzz.partial_ratio, current, c.name)
+                return await asyncio.to_thread(fuzz.token_set_ratio, current, c.name)
 
             extracted = await heapq.nlargest(asyncstdlib.iter(tags), n=25, key=_filter)
             return [
@@ -178,9 +191,14 @@ else:
         @classmethod
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
             languages = await interaction.client.lavalink.radio_browser.languages()
+            if not current:
+                return [
+                    Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
+                    for e in languages
+                ][:25]
 
             async def _filter(c):
-                return await asyncio.to_thread(fuzz.partial_ratio, current, c.name)
+                return await asyncio.to_thread(fuzz.token_set_ratio, current, c.name)
 
             extracted = await heapq.nlargest(asyncstdlib.iter(languages), n=25, key=_filter)
             return [
@@ -220,9 +238,14 @@ else:
                 if country and (val := country[0].get("value")):
                     kwargs["country"] = val
             states = await interaction.client.lavalink.radio_browser.states(**kwargs)
+            if not current:
+                return [
+                    Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
+                    for e in states
+                ][:25]
 
             async def _filter(c):
-                return await asyncio.to_thread(fuzz.partial_ratio, current, c.name)
+                return await asyncio.to_thread(fuzz.token_set_ratio, current, c.name)
 
             extracted = await heapq.nlargest(asyncstdlib.iter(states), n=25, key=_filter)
             return [
@@ -254,9 +277,14 @@ else:
         @classmethod
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
             codecs = await interaction.client.lavalink.radio_browser.codecs()
+            if not current:
+                return [
+                    Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
+                    for e in codecs
+                ][:25]
 
             async def _filter(c):
-                return await asyncio.to_thread(fuzz.partial_ratio, current, c.name)
+                return await asyncio.to_thread(fuzz.token_set_ratio, current, c.name)
 
             extracted = await heapq.nlargest(asyncstdlib.iter(codecs), n=25, key=_filter)
             return [
@@ -289,9 +317,14 @@ else:
         @classmethod
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
             countrycodes = await interaction.client.lavalink.radio_browser.countrycodes()
+            if not current:
+                return [
+                    Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
+                    for e in countrycodes
+                ][:25]
 
             async def _filter(c):
-                return await asyncio.to_thread(fuzz.partial_ratio, current, c.name)
+                return await asyncio.to_thread(fuzz.token_set_ratio, current, c.name)
 
             extracted = await heapq.nlargest(asyncstdlib.iter(countrycodes), n=25, key=_filter)
             return [
@@ -330,9 +363,14 @@ else:
                 if code and (val := code[0].get("value")):
                     kwargs["code"] = val
             countries = await interaction.client.lavalink.radio_browser.countries(**kwargs)
+            if not current:
+                return [
+                    Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
+                    for e in countries
+                ][:25]
 
             async def _filter(c):
-                return await asyncio.to_thread(fuzz.partial_ratio, current, c.name)
+                return await asyncio.to_thread(fuzz.token_set_ratio, current, c.name)
 
             extracted = await heapq.nlargest(asyncstdlib.iter(countries), n=25, key=_filter)
             return [

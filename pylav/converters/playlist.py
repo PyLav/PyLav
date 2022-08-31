@@ -47,10 +47,14 @@ else:
 
         @classmethod
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
-            playlists = await interaction.client.lavalink.playlist_db_manager.get_playlist_by_name(current, limit=50)
+            playlists: list[PlaylistModel] = await interaction.client.lavalink.playlist_db_manager.get_playlist_by_name(
+                current, limit=50
+            )
+            if not current:
+                return [Choice(name=shorten_string(e.name, max_length=100), value=f"{e.id}") for e in playlists][:25]
 
-            async def _filter(c):
-                return await asyncio.to_thread(None, fuzz.partial_ratio, current, c.name)
+            async def _filter(c: PlaylistModel):
+                return await asyncio.to_thread(fuzz.token_set_ratio, current, c.name)
 
             extracted = await heapq.nlargest(asyncstdlib.iter(playlists), n=25, key=_filter)
             return [Choice(name=shorten_string(e.name, max_length=100), value=f"{e.id}") for e in extracted]

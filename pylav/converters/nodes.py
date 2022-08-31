@@ -52,9 +52,13 @@ else:
         @classmethod
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
             nodes = interaction.client.lavalink.node_manager.nodes
+            if not current:
+                return [Choice(name=shorten_string(e.name, max_length=100), value=f"{e.identifier}") for e in nodes][
+                    :25
+                ]
 
             async def _filter(c):
-                return await asyncio.to_thread(fuzz.partial_ratio, current, c.name)
+                return await asyncio.to_thread(fuzz.token_set_ratio, current, c.name)
 
             extracted = await heapq.nlargest(asyncstdlib.iter(nodes), n=25, key=_filter)
             return [Choice(name=shorten_string(e.name, max_length=100), value=f"{e.identifier}") for e in extracted]
