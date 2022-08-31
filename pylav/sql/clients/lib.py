@@ -78,7 +78,7 @@ class LibConfigManager:
         config_folder: aiopath.AsyncPath = aiopath.AsyncPath(config_folder)
         localtrack_folder: aiopath.AsyncPath = aiopath.AsyncPath(localtrack_folder)
         if await config_folder.is_file():
-            raise ValueError("The config folder must be a directory.")
+            raise ValueError("The config folder must be a directory")
         if await config_folder.is_dir() and not await config_folder.exists():
             await config_folder.mkdir(parents=True, exist_ok=True)
 

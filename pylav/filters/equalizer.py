@@ -54,14 +54,14 @@ class Equalizer(FilterMixin):
 
     @property
     def name(self) -> str:
-        """The Equalizers friendly name."""
+        """The Equalizers friendly name"""
         return self._name
 
     def _factory(self, levels: list) -> list[dict[str, int | float]]:
         if not levels:
             return self.default()._eq
         if not isinstance(levels[0], dict):
-            raise TypeError("Equalizer levels should be a list of dictionaries.")
+            raise TypeError("Equalizer levels should be a list of dictionaries")
 
         _dict = collections.defaultdict(float)
         _dict.update(d.values() for d in levels)

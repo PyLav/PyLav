@@ -12,7 +12,7 @@ LOGGER = getLogger("PyLav.RadioBrowser")
 
 
 class Error(Exception):
-    """Base class for all exceptions raised by this module."""
+    """Base class for all exceptions raised by this module"""
 
 
 class RDNSLookupError(Error):

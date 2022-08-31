@@ -14,7 +14,7 @@ class UpdateSchemaManager:
         self._client = client
 
     async def run_updates(self):
-        """Run through schema migrations."""
+        """Run through schema migrations"""
         from pylav import EntryNotFoundError
         from pylav._config import __VERSION__
 

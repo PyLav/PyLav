@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import datetime
+import pathlib
 import time
 from collections.abc import AsyncIterator
 from typing import TYPE_CHECKING
@@ -26,6 +27,12 @@ if TYPE_CHECKING:
     from pylav.client import Client
 
 LOGGER = getLogger("PyLav.PlaylistConfigManager")
+try:
+    from redbot.core.i18n import Translator
+
+    _ = Translator("PyLavPlayer", pathlib.Path(__file__))
+except ImportError:
+    _ = lambda x: x
 
 
 class PlaylistConfigManager:
@@ -50,7 +57,9 @@ class PlaylistConfigManager:
             )
 
         if not playlists:
-            raise EntryNotFoundError(f"Playlist with name {playlist_name} not found")
+            raise EntryNotFoundError(
+                _("Playlist with name {playlist_name} not found").format(playlist_name=playlist_name)
+            )
         return [PlaylistModel(**playlist) for playlist in playlists]
 
     @staticmethod
@@ -284,9 +293,7 @@ class PlaylistConfigManager:
                     try:
                         data = await response.text()
                     except Exception as exc:
-                        LOGGER.error(
-                            "Built-in playlist couldn't be parsed - %s, report this error.", name, exc_info=exc
-                        )
+                        LOGGER.error("Built-in playlist couldn't be parsed - %s, report this error", name, exc_info=exc)
                         data = None
                     if not data:
                         self.client._config.next_execution_update_bundled_playlists = old_time_stamp
@@ -342,7 +349,7 @@ class PlaylistConfigManager:
                     track_list = [t_ for t in tracks_raw if (t_ := t.get("track"))]
                 except Exception as exc:
                     LOGGER.error(
-                        "Built-in external playlist couldn't be parsed - %s, report this error.", name, exc_info=exc
+                        "Built-in external playlist couldn't be parsed - %s, report this error", name, exc_info=exc
                     )
                     data = None
                 if not data:
@@ -383,7 +390,7 @@ class PlaylistConfigManager:
                         await playlist.save()
                 except Exception as exc:
                     LOGGER.error(
-                        "External playlist couldn't be updated - %s (%s), report this error.",
+                        "External playlist couldn't be updated - %s (%s), report this error",
                         playlist.name,
                         playlist.id,
                         exc_info=exc,

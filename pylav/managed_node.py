@@ -248,19 +248,19 @@ class LocalNodeManager:
         self._java_exc = java_path
         if arch_name in self._blacklisted_archs:
             raise InvalidArchitectureError(
-                _("You are attempting to run the managed Lavalink node on an unsupported machine architecture.")
+                _("You are attempting to run the managed Lavalink node on an unsupported machine architecture")
             )
         await self.process_settings()
         possible_lavalink_processes = await self.get_lavalink_process(lazy_match=True)
         if possible_lavalink_processes:
             LOGGER.info(
-                "Found %s processes that match potential unmanaged Lavalink nodes.",
+                "Found %s processes that match potential unmanaged Lavalink nodes",
                 len(possible_lavalink_processes),
             )
             valid_working_dirs = [
                 cwd for d in possible_lavalink_processes if d.get("name") == "java" and (cwd := d.get("cwd"))
             ]
-            LOGGER.debug("Found %s java processed with a cwd set.", len(valid_working_dirs))
+            LOGGER.debug("Found %s java processed with a cwd set", len(valid_working_dirs))
             for cwd in valid_working_dirs:
                 config = aiopath.AsyncPath(cwd) / "application.yml"
                 if await config.exists() and await config.is_file():
@@ -357,7 +357,7 @@ class LocalNodeManager:
         ):
             command_args.append(f"-Xmx{java_xmx}")
         elif meta[0] is not None:
-            invalid = "Managed Lavalink node RAM allocation ignored due to system limitations, please fix this."
+            invalid = "Managed Lavalink node RAM allocation ignored due to system limitations, please fix this"
 
         command_args.extend(["-jar", str(LAVALINK_JAR_FILE)])
         self._args = command_args
@@ -379,7 +379,7 @@ class LocalNodeManager:
         return self._java_available, self._java_version
 
     async def _get_java_version(self) -> tuple[int, int]:
-        """This assumes we've already checked that java exists."""
+        """This assumes we've already checked that java exists"""
         _proc: asyncio.subprocess.Process = await asyncio.create_subprocess_exec(  # pylint:disable=no-member
             self._java_exc,
             "-version",
@@ -408,7 +408,7 @@ class LocalNodeManager:
             return major, minor
 
         raise UnexpectedJavaResponseError(
-            _("The output of `{java_exc} -version` was unexpected\n{version_info}.").format(
+            _("The output of `{java_exc} -version` was unexpected\n{version_info}").format(
                 java_exc=self._java_exc, version_info=version_info
             )
         )
@@ -419,12 +419,12 @@ class LocalNodeManager:
             line = await self._proc.stdout.readline()
             if _RE_READY_LINE.search(line):
                 self.ready.set()
-                LOGGER.info("Managed Lavalink node is ready to receive requests.")
+                LOGGER.info("Managed Lavalink node is ready to receive requests")
                 break
             if _FAILED_TO_START.search(line):
                 if f"Port {self._current_config['server']['port']} was already in use".encode() in line:
                     raise PortAlreadyInUseError(
-                        _("Port {port} already in use. Managed Lavalink startup aborted.").format(
+                        _("Port {port} already in use. Managed Lavalink startup aborted").format(
                             port=self._current_config["server"]["port"]
                         )
                     )
@@ -433,7 +433,7 @@ class LocalNodeManager:
                 )
             if self._proc.returncode is not None:
                 # Avoid Console spam only print once every 2 seconds
-                raise EarlyExitError(_("Managed Lavalink node server exited early."))
+                raise EarlyExitError(_("Managed Lavalink node server exited early"))
 
     async def shutdown(self) -> None:
         if self.start_monitor_task is not None:
@@ -472,7 +472,7 @@ class LocalNodeManager:
     async def _download_jar(self) -> None:
         if not self._auto_update:
             return
-        LOGGER.info("Downloading Lavalink.jar...")
+        LOGGER.info("Downloading Lavalink.jar")
         jar_url = (
             self._ci_info["jar_url"] or "https://github.com/freyacodes/Lavalink/releases/download/3.5/Lavalink.jar"
         )
@@ -683,7 +683,7 @@ class LocalNodeManager:
                     # lavalink_connection_aborted
                     return await self.shutdown()
             except InvalidArchitectureError:
-                LOGGER.critical("Invalid machine architecture, cannot run a managed Lavalink node.")
+                LOGGER.critical("Invalid machine architecture, cannot run a managed Lavalink node")
                 # lavalink_connection_aborted
                 return await self.shutdown()
             except (UnsupportedJavaError, UnexpectedJavaResponseError) as exc:
@@ -691,7 +691,7 @@ class LocalNodeManager:
                 # lavalink_connection_aborted
                 return await self.shutdown()
             except ManagedLinkStartAbortedUseExternal:
-                LOGGER.warning("Lavalink Managed node start aborted, using the detected external Lavalink node.")
+                LOGGER.warning("Lavalink Managed node start aborted, using the detected external Lavalink node")
                 await self.connect_node(reconnect=False, wait_for=0, external_fallback=True)
                 return
             except ManagedLavalinkNodeError as exc:
@@ -745,7 +745,7 @@ class LocalNodeManager:
                 elif node.websocket.connected:
                     LOGGER.info("Managed Lavalink node is connected")
                 else:
-                    LOGGER.info("Managed Lavalink node is not connected, reconnecting...")
+                    LOGGER.info("Managed Lavalink node is not connected, reconnecting")
                     await node.websocket.close()
                     await node.websocket._websocket_closed(reason="Managed Node restart")
                     await node.wait_until_ready(timeout=30)
@@ -777,7 +777,7 @@ class LocalNodeManager:
         elif node.websocket.connected:
             LOGGER.info("Managed Lavalink node is connected")
         else:
-            LOGGER.info("Managed Lavalink node is not connected, reconnecting...")
+            LOGGER.info("Managed Lavalink node is not connected, reconnecting")
             await node.websocket.close()
             await node.websocket._websocket_closed(reason="Managed Node restart")
             await node.wait_until_ready(timeout=30)
@@ -806,6 +806,6 @@ class LocalNodeManager:
         return process_list
 
     async def restart(self, java_path: str = None):
-        LOGGER.info("Restarting managed Lavalink node.")
+        LOGGER.info("Restarting managed Lavalink node")
         await self.shutdown()
         await self.start(java_path=java_path or self._java_path)

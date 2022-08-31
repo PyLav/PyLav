@@ -12,7 +12,7 @@ def postgres_template():
 
 @extend_init_signature(CacheBackend, postgres_template)
 class PostgresCacheBackend(CacheBackend):
-    """Wrapper for higher-level cache operations. In most cases, the only thing you need to specify here is which storage class(es) to use."""
+    """Wrapper for higher-level cache operations. In most cases, the only thing you need to specify here is which storage class(es) to use"""
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

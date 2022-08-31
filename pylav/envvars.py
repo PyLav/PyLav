@@ -15,7 +15,7 @@ ENV_FILE = pathlib.Path.home() / "pylav.yaml"
 
 if not ENV_FILE.exists():
     LOGGER.warning(
-        "%s does not exist - This is not a problem if it does then the environment variables will be read from it.",
+        "%s does not exist - This is not a problem if it does then the environment variables will be read from it",
         ENV_FILE,
     )
     POSTGRES_PORT = os.getenv("PYLAV__POSTGRES_PORT", os.getenv("PGPORT"))
@@ -76,7 +76,7 @@ if not ENV_FILE.exists():
         yaml.safe_dump(data, file, default_flow_style=False, sort_keys=False, encoding="utf-8")
 
 else:
-    LOGGER.info("%s exist - Environment variables will be read from it.", ENV_FILE)
+    LOGGER.info("%s exist - Environment variables will be read from it", ENV_FILE)
     with ENV_FILE.open(mode="r") as file:
         data = yaml.safe_load(file.read())
         data_new = deepcopy(data)

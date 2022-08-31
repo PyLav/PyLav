@@ -85,7 +85,7 @@ class Track:
             self.track = None
             self._is_partial = True
             if query is None:
-                raise InvalidTrack("Cannot create a partial Track without a query.")
+                raise InvalidTrack("Cannot create a partial Track without a query")
             self._unique_id.update(query.query_identifier.encode())
             self.extra = {}
             self._raw_data = extra.get("raw_data", {})
@@ -284,7 +284,7 @@ class Track:
         return (await self.query()).source
 
     async def thumbnail(self) -> str | None:
-        """Optional[str]: Returns a thumbnail URL for YouTube and Spotify tracks."""
+        """Optional[str]: Returns a thumbnail URL for YouTube and Spotify tracks"""
         if not self.identifier:
             return
         if self.source == "youtube":

@@ -332,12 +332,12 @@ class Player(VoiceProtocol):
 
     @property
     def is_repeating(self) -> bool:
-        """Whether the player is repeating tracks."""
+        """Whether the player is repeating tracks"""
         return self.config.repeat_current or self.config.repeat_queue
 
     @property
     def autoplay_enabled(self) -> bool:
-        """Whether autoplay is enabled."""
+        """Whether autoplay is enabled"""
         return (
             self.player_manager.global_config.auto_play
             and self.config.auto_play
@@ -353,52 +353,52 @@ class Player(VoiceProtocol):
 
     @property
     def volume_filter(self) -> Volume:
-        """The currently applied Volume filter."""
+        """The currently applied Volume filter"""
         return self._volume
 
     @property
     def equalizer(self) -> Equalizer:
-        """The currently applied Equalizer filter."""
+        """The currently applied Equalizer filter"""
         return self._equalizer
 
     @property
     def karaoke(self) -> Karaoke:
-        """The currently applied Karaoke filter."""
+        """The currently applied Karaoke filter"""
         return self._karaoke
 
     @property
     def timescale(self) -> Timescale:
-        """The currently applied Timescale filter."""
+        """The currently applied Timescale filter"""
         return self._timescale
 
     @property
     def tremolo(self) -> Tremolo:
-        """The currently applied Tremolo filter."""
+        """The currently applied Tremolo filter"""
         return self._tremolo
 
     @property
     def vibrato(self) -> Vibrato:
-        """The currently applied Vibrato filter."""
+        """The currently applied Vibrato filter"""
         return self._vibrato
 
     @property
     def rotation(self) -> Rotation:
-        """The currently applied Rotation filter."""
+        """The currently applied Rotation filter"""
         return self._rotation
 
     @property
     def distortion(self) -> Distortion:
-        """The currently applied Distortion filter."""
+        """The currently applied Distortion filter"""
         return self._distortion
 
     @property
     def low_pass(self) -> LowPass:
-        """The currently applied Low Pass filter."""
+        """The currently applied Low Pass filter"""
         return self._low_pass
 
     @property
     def channel_mix(self) -> ChannelMix:
-        """The currently applied Channel Mix filter."""
+        """The currently applied Channel Mix filter"""
         return self._channel_mix
 
     @property
@@ -411,22 +411,22 @@ class Player(VoiceProtocol):
 
     @property
     def is_playing(self) -> bool:
-        """Returns the player's track state."""
+        """Returns the player's track state"""
         return self.is_connected and self.current is not None
 
     @property
     def is_connected(self) -> bool:
-        """Returns whether the player is connected to a voice-channel or not."""
+        """Returns whether the player is connected to a voice-channel or not"""
         return self.channel_id is not None
 
     @property
     def is_empty(self) -> bool:
-        """Returns whether the player is empty or not."""
+        """Returns whether the player is empty or not"""
         return sum(not i.bot for i in self.channel.members) == 0
 
     @property
     def position(self) -> float:
-        """Returns the position in the track, adjusted for Lavalink's 5-second stats' interval."""
+        """Returns the position in the track, adjusted for Lavalink's 5-second stats' interval"""
         if not self.is_playing:
             return 0
 
@@ -762,7 +762,7 @@ class Player(VoiceProtocol):
 
     async def previous(self, requester: discord.Member, bypass_cache: bool = False) -> None:
         if self.history.empty():
-            raise TrackNotFound(_("There are no tracks currently in the player history."))
+            raise TrackNotFound(_("There are no tracks currently in the player history"))
         self.stopped = False
         track = await self.history.get()
         if track.is_partial:
@@ -993,7 +993,7 @@ class Player(VoiceProtocol):
         self.node.dispatch_event(PlayerResumedEvent(player=self, requester=requester or self.client.user.id))
 
     async def skip(self, requester: discord.Member) -> None:
-        """Plays the next track in the queue, if any."""
+        """Plays the next track in the queue, if any"""
         previous_track = self.current
         previous_position = self.position
         op = self.next(requester=requester)
@@ -1273,7 +1273,7 @@ class Player(VoiceProtocol):
             self.cleanup()
 
     async def stop(self, requester: discord.Member) -> None:
-        """Stops the player."""
+        """Stops the player"""
         await self.node.send(op="stop", guildId=self.guild_id)
         self.node.dispatch_event(PlayerStoppedEvent(self, requester))
         self.current = None
@@ -1750,14 +1750,18 @@ class Player(VoiceProtocol):
             await self.last_track.get_track_display_name(with_url=True) if self.last_track else None
         )
         if current.stream:
-            queue_list += _("**Currently livestreaming:**\n")
+            queue_list += "**{}:**\n".format(discord.utils.escape_markdown(_("Currently livestreaming")))
         else:
             queue_list += _("Playing: ")
         queue_list += f"{current_track_description}\n"
-        queue_list += _("Requester: **{current.requester.mention}**").format(current=current)
+        queue_list += "{translation}: **{current}**".format(
+            current=current.requester.mention, translation=discord.utils.escape_markdown(_("Requester"))
+        )
         queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
         page = await self.node.node_manager.client.construct_embed(
-            title=_("Now Playing in __{self.guild.name}__").format(self=self),
+            title="{translation} __{guild}__".format(
+                guild=self.guild.name, translation=discord.utils.escape_markdown(_("Now Playing in"))
+            ),
             description=queue_list,
             messageable=messageable,
         )
@@ -1766,25 +1770,31 @@ class Player(VoiceProtocol):
 
         if previous_track_description:
             val = f"{previous_track_description}\n"
-            val += _("Duration: `{duration}`\n").format(
-                duration=_("LIVE") if self.next_track.stream else format_time(self.next_track.duration)
+            val += "{translation}: `{duration}`\n".format(
+                duration=_("LIVE") if self.next_track.stream else format_time(self.next_track.duration),
+                translation=discord.utils.escape_markdown(_("Duration")),
             )
             if rq := self.last_track.requester:
-                val += _("Requester: **{rq}**\n\n").format(rq=rq.mention)
+                val += "{translation}: **{rq}**\n\n".format(
+                    rq=rq.mention, translation=discord.utils.escape_markdown(_("Requester"))
+                )
             page.add_field(name=_("Previous Track"), value=val)
         if next_track_description:
             val = f"{next_track_description}\n"
-            val += _("Duration: `{duration}`\n").format(
-                duration=_("LIVE") if self.next_track.stream else format_time(self.next_track.duration)
+            val += "{translation}: `{duration}`\n".format(
+                duration=_("LIVE") if self.next_track.stream else format_time(self.next_track.duration),
+                translation=discord.utils.escape_markdown(_("Duration")),
             )
             if rq := self.next_track.requester:
-                val += _("Requester: **{rq}**\n\n").format(rq=rq.mention)
+                val += "{translation}: **{rq}**\n\n".format(
+                    rq=rq.mention, translation=discord.utils.escape_markdown(_("Requester"))
+                )
             page.add_field(name=_("Next Track"), value=val)
 
         queue_dur = await self.queue_duration()
         queue_total_duration = format_time(queue_dur)
-        text = _("{queue_size} tracks, {queue_total_duration} remaining\n").format(
-            queue_size=self.queue.qsize(), queue_total_duration=queue_total_duration
+        text = _("{track_count} tracks, {queue_total_duration} remaining\n").format(
+            track_count=self.queue.qsize(), queue_total_duration=queue_total_duration
         )
         if not self.is_repeating:
             repeat_emoji = "\N{CROSS MARK}"
@@ -1795,11 +1805,13 @@ class Player(VoiceProtocol):
 
         autoplay_emoji = "\N{WHITE HEAVY CHECK MARK}" if self.autoplay_enabled else "\N{CROSS MARK}"
 
-        text += _("Repeating: {repeat_emoji}").format(repeat_emoji=repeat_emoji)
-        text += _("{space}Auto Play: {autoplay_emoji}").format(
-            space=(" | " if text else ""), autoplay_emoji=autoplay_emoji
+        text += _("{translation}: {repeat_emoji}").format(repeat_emoji=repeat_emoji, translation=_("Repeating"))
+        text += _("{space}{translation}: {autoplay_emoji}").format(
+            space=(" | " if text else ""), autoplay_emoji=autoplay_emoji, translation=_("Auto Play")
         )
-        text += _("{space}Volume: {volume}%").format(space=(" | " if text else ""), volume=self.volume)
+        text += _("{space}{translation}: {volume}%").format(
+            space=(" | " if text else ""), volume=self.volume, translation=_("Volume")
+        )
         page.set_footer(text=text)
         return page
 
@@ -1826,18 +1838,26 @@ class Player(VoiceProtocol):
         dur = "LIVE" if current.stream else format_time(current.duration)
         current_track_description = await current.get_track_display_name(with_url=True)
         if current.stream:
-            queue_list += _("**Currently livestreaming:**\n")
+            queue_list += "**{translation}:**\n".format(
+                translation=discord.utils.escape_markdown(_("Currently livestreaming"))
+            )
         else:
-            queue_list += _("Playing: ")
+            queue_list += "{translation}: ".format(translation=discord.utils.escape_markdown(_("Playing")))
         queue_list += f"{current_track_description}\n"
-        queue_list += _("Requester: **{current.requester.mention}**").format(current=current)
+        queue_list += "{translation}: **{current}**".format(
+            current=current.requester.mention, translation=discord.utils.escape_markdown(_("Requester"))
+        )
         queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
         if (
             len(tracks)
             and not history
             and (await self.player_manager.client.player_config_manager.get_auto_shuffle(self.guild.id)) is True
         ):
-            queue_list += _("__Queue order is may not be accurate due to auto-shuffle being enabled__\n\n")
+            queue_list += "__{translation}__\n\n".format(
+                translation=discord.utils.escape_markdown(
+                    _("Queue order is may not be accurate due to auto-shuffle being enabled")
+                )
+            )
         if tracks:
             padding = len(str(start_index + len(tracks)))
             async for track_idx, track in AsyncIter(tracks).enumerate(start=start_index + 1):
@@ -1848,9 +1868,10 @@ class Player(VoiceProtocol):
                     queue_list += f" - **{track.requester.mention}**"
                 queue_list += "\n"
         page = await self.node.node_manager.client.construct_embed(
-            title=_("Recently Played for __{self.guild.name}__").format(self=self)
-            if history
-            else _("Queue for __{self.guild.name}__").format(self=self),
+            title="{translation} __{guild}__".format(
+                guild=self.guild.name,
+                translation=discord.utils.escape_markdown(_("Recently Played for") if history else _("Queue for")),
+            ),
             description=queue_list,
             messageable=messageable,
         )
@@ -1858,10 +1879,12 @@ class Player(VoiceProtocol):
             page.set_thumbnail(url=url)
         queue_dur = await self.queue_duration(history=history)
         queue_total_duration = format_time(queue_dur)
-        text = _("Page {page_num}/{total_pages} | {queue_size} tracks, {queue_total_duration} remaining\n").format(
-            page_num=page_index + 1,
+        text = _(
+            "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
+        ).format(
+            current_page=page_index + 1,
             total_pages=total_pages,
-            queue_size=queue.qsize(),
+            track_number=queue.qsize(),
             queue_total_duration=queue_total_duration,
         )
         if not self.is_repeating:
@@ -1873,11 +1896,13 @@ class Player(VoiceProtocol):
 
         autoplay_emoji = "\N{WHITE HEAVY CHECK MARK}" if self.autoplay_enabled else "\N{CROSS MARK}"
 
-        text += _("Repeating: {repeat_emoji}").format(repeat_emoji=repeat_emoji)
-        text += _("{space}Auto Play: {autoplay_emoji}").format(
-            space=(" | " if text else ""), autoplay_emoji=autoplay_emoji
+        text += _("{translation}: {repeat_emoji}").format(repeat_emoji=repeat_emoji, translation=_("Repeating"))
+        text += _("{space}{translation}: {autoplay_emoji}").format(
+            space=(" | " if text else ""), autoplay_emoji=autoplay_emoji, translation=_("Auto Play")
         )
-        text += _("{space}Volume: {volume}%").format(space=(" | " if text else ""), volume=self.volume)
+        text += _("{space}{translation}: {volume}%").format(
+            space=(" | " if text else ""), volume=self.volume, translation=_("Volume")
+        )
         page.set_footer(text=text)
         return page
 

@@ -348,7 +348,7 @@ class PlayerQueue(asyncio.Queue[T]):
             raise IndexError("Value not in queue") from e
 
     def clear(self):
-        """Remove all items from the queue."""
+        """Remove all items from the queue"""
         self._queue.clear()
         for i in self._getters:
             i.cancel()
@@ -358,13 +358,13 @@ class PlayerQueue(asyncio.Queue[T]):
         self._putters.clear()
 
     async def shuffle(self):
-        """Shuffle the queue."""
+        """Shuffle the queue"""
         if self.empty():
             return
         await asyncio.to_thread(random.shuffle, self._queue)
 
     def index(self, value: T) -> int:
-        """Return first index of value."""
+        """Return first index of value"""
         return self._queue.index(value)
 
     def __contains__(self, obj: T) -> bool:
@@ -442,18 +442,18 @@ class PlayerQueue(asyncio.Queue[T]):
         return result
 
     def qsize(self) -> int:
-        """Number of items in the queue."""
+        """Number of items in the queue"""
         return len(self._queue)
 
     size = qsize
 
     @property
     def maxsize(self) -> int:
-        """Number of items allowed in the queue."""
+        """Number of items allowed in the queue"""
         return self._maxsize
 
     def empty(self) -> bool:
-        """Return True if the queue is empty, False otherwise."""
+        """Return True if the queue is empty, False otherwise"""
         return not len(self._queue)
 
     def full(self) -> bool:
@@ -778,14 +778,14 @@ class PyLavContext(_OriginalContextClass):
     @property
     def cog(self) -> CogT | None:
         """Optional[:class:`.Cog`]: Returns the cog associated with this context's command. None if it does not
-        exist."""
+        exist"""
 
         return None if self.command is None else self.command.cog
 
     @discord.utils.cached_property
     def guild(self) -> discord.Guild | None:
         """Optional[:class:`.Guild`]: Returns the guild associated with this context's command. None if not
-        available."""
+        available"""
         return getattr(self.author, "guild", None)
 
     @discord.utils.cached_property
@@ -916,7 +916,7 @@ async def _get_context(self: BotT, message: discord.Message | InteractionT, /, *
 
 @dpy_command.command(name="__dummy_command", hidden=True, disabled=True)
 async def dummy_command(self, context: PyLavContext):
-    """Does nothing."""
+    """Does nothing"""
 
 
 async def sort_key_nodes(node: Node, region: str = None) -> float:
@@ -967,7 +967,7 @@ class AsyncFilter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=du
         elif asyncio.iscoroutinefunction(func):
             self.__generator_instance = self.__sync_generator_async_pred()
         else:
-            raise TypeError("Must be either an async predicate, an async iterable, or both.")
+            raise TypeError("Must be either an async predicate, an async iterable, or both")
 
     async def __sync_generator_async_pred(self) -> AsyncIterator[_T]:
         for item in self.__iterable:
@@ -1396,6 +1396,6 @@ class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=dupl
         """
 
         if not callable(func):
-            raise TypeError("Mapping must be a callable.")
+            raise TypeError("Mapping must be a callable")
         self._map = func
         return self

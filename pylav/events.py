@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 
 class Event:
-    """The base for all Lavalink events."""
+    """The base for all Lavalink events"""
 
 
 class QueueEndEvent(Event):

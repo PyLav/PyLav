@@ -43,7 +43,7 @@ __all__ = (
 
 
 class PyLavError(CommandError, AppCommandError):
-    """Base exception for errors in the library."""
+    """Base exception for errors in the library"""
 
 
 class PyLavInvalidArguments(PyLavError):
@@ -51,35 +51,35 @@ class PyLavInvalidArguments(PyLavError):
 
 
 class PyLavNotInitialized(PyLavError):
-    """Raised when the library is not initialized."""
+    """Raised when the library is not initialized"""
 
 
 class SQLError(PyLavError):
-    """Base exception for errors in SQL."""
+    """Base exception for errors in SQL"""
 
 
 class EntryNotFoundError(SQLError):
-    """Raised when an entry is not found."""
+    """Raised when an entry is not found"""
 
 
 class AnotherClientAlreadyRegistered(PyLavError):
-    """Another client has already been registered."""
+    """Another client has already been registered"""
 
 
 class NodeError(PyLavError):
-    """Base exception for Node errors."""
+    """Base exception for Node errors"""
 
 
 class AbortPlayerRestoreDueUnavailableNode(NodeError):
-    """Raised when the player is aborted due to an unavailable node."""
+    """Raised when the player is aborted due to an unavailable node"""
 
 
 class WebsocketNotConnectedError(NodeError):
-    """Raised when the node websocket is not connected."""
+    """Raised when the node websocket is not connected"""
 
 
 class TrackError(PyLavError):
-    """Base exception for Track errors."""
+    """Base exception for Track errors"""
 
 
 class ManagedLavalinkNodeError(NodeError):
@@ -87,15 +87,15 @@ class ManagedLavalinkNodeError(NodeError):
 
 
 class HTTPError(PyLavError):
-    """Base exception for HTTP request errors."""
+    """Base exception for HTTP request errors"""
 
 
 class Unauthorized(HTTPError):
-    """Raised when a REST request fails due to an incorrect password."""
+    """Raised when a REST request fails due to an incorrect password"""
 
 
 class InvalidTrack(TrackError):
-    """Raised when an invalid track was passed."""
+    """Raised when an invalid track was passed"""
 
 
 class NodeUnhealthy(ManagedLavalinkNodeError):
@@ -103,7 +103,7 @@ class NodeUnhealthy(ManagedLavalinkNodeError):
 
 
 class InvalidArchitectureError(ManagedLavalinkNodeError):
-    """Error thrown when the Managed Lavalink node is started on an invalid arch."""
+    """Error thrown when the Managed Lavalink node is started on an invalid arch"""
 
 
 class ManagedLavalinkAlreadyRunningError(ManagedLavalinkNodeError):
@@ -178,23 +178,23 @@ class LavalinkDownloadFailed(ManagedLavalinkNodeError, RuntimeError):
 
 
 class TrackNotFound(TrackError):
-    """Raised when a track is not found."""
+    """Raised when a track is not found"""
 
 
 class CogAlreadyRegistered(PyLavError):
-    """Raised when a cog is already registered."""
+    """Raised when a cog is already registered"""
 
 
 class CogHasBeenRegistered(PyLavError):
-    """Raised when a cog is registered."""
+    """Raised when a cog is registered"""
 
 
 class NoNodeAvailable(NodeError):
-    """Raised when no node is available."""
+    """Raised when no node is available"""
 
 
 class NoNodeWithRequestFunctionalityAvailable(NodeError):
-    """Raised when no node with request functionality is available."""
+    """Raised when no node with request functionality is available"""
 
     def __init__(self, message: str, feature: str, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -204,8 +204,8 @@ class NoNodeWithRequestFunctionalityAvailable(NodeError):
 
 
 class PlaylistError(PyLavError):
-    """Base class for playlist related errors."""
+    """Base class for playlist related errors"""
 
 
 class InvalidPlaylist(PlaylistError):
-    """Raised when a playlist is invalid."""
+    """Raised when a playlist is invalid"""

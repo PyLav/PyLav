@@ -36,7 +36,7 @@ types = {
 
 
 class Error(Exception):
-    """Base class for all excpetions raised by this module."""
+    """Base class for all excpetions raised by this module"""
 
 
 class IllegalArgumentError(Error):
@@ -58,7 +58,7 @@ def bool_to_string(b):
     s = str(b).lower()
     if s in {"true", "false"}:
         return s
-    raise TypeError("Value must be True or False.")
+    raise TypeError("Value must be True or False")
 
 
 def snake_to_camel(s):

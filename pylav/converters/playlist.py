@@ -24,13 +24,13 @@ else:
     class PlaylistConverter(Transformer):
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[PlaylistModel]:
-            """Converts a playlist name or ID to a list of matching objects."""
+            """Converts a playlist name or ID to a list of matching objects"""
             from pylav import EntryNotFoundError
 
             try:
                 playlists = await ctx.lavalink.playlist_db_manager.get_playlist_by_name_or_id(arg)
             except EntryNotFoundError as e:
-                raise commands.BadArgument(_("Playlist with name or id `{arg}` not found.").format(arg=arg)) from e
+                raise commands.BadArgument(_("Playlist with name or id `{arg}` not found").format(arg=arg)) from e
             return playlists
 
         @classmethod

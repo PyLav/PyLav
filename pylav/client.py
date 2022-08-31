@@ -208,37 +208,37 @@ class Client(metaclass=_Singleton):
 
     @property
     def initialized(self) -> bool:
-        """Returns whether the client has been initialized."""
+        """Returns whether the client has been initialized"""
         return self._initiated
 
     @property
     def scheduler(self) -> AsyncIOScheduler:
-        """Returns the scheduler."""
+        """Returns the scheduler"""
         return self._scheduler
 
     @property
     def radio_browser(self) -> RadioBrowser:
-        """Returns the radio browser instance."""
+        """Returns the radio browser instance"""
         return self._radio_manager
 
     @property
     def player_config_manager(self) -> PlayerConfigManager:
-        """Returns the player config manager."""
+        """Returns the player config manager"""
         return self._player_config_manager
 
     @property
     def spotify_client(self) -> SpotifyClient:
-        """Returns the spotify client."""
+        """Returns the spotify client"""
         return SpotifyClient(self._spotify_auth)
 
     @property
     def is_shutting_down(self) -> bool:
-        """Returns whether the client is shutting down."""
+        """Returns whether the client is shutting down"""
         return self._shutting_down
 
     @property
     def node_db_manager(self) -> NodeConfigManager:
-        """Returns the sql node config manager."""
+        """Returns the sql node config manager"""
         return self._node_config_manager
 
     @property
@@ -247,22 +247,22 @@ class Client(metaclass=_Singleton):
 
     @property
     def playlist_db_manager(self) -> PlaylistConfigManager:
-        """Returns the sql playlist config manager."""
+        """Returns the sql playlist config manager"""
         return self._playlist_config_manager
 
     @property
     def equalizer_db_manager(self) -> EqualizerConfigManager:
-        """Returns the sql equalizer config manager."""
+        """Returns the sql equalizer config manager"""
         return self._equalizer_config_manager
 
     @property
     def lib_db_manager(self) -> LibConfigManager:
-        """Returns the sql lib config manager."""
+        """Returns the sql lib config manager"""
         return self._lib_config_manager
 
     @property
     def query_cache_manager(self) -> QueryCacheManager:
-        """Returns the query cache manager."""
+        """Returns the query cache manager"""
         return self._query_cache_manager
 
     @property
@@ -483,7 +483,7 @@ class Client(metaclass=_Singleton):
                         await self._config.save()
                         self._scheduler.start()
                         self.ready.set()
-                        LOGGER.info("PyLav is ready.")
+                        LOGGER.info("PyLav is ready")
         except Exception as exc:
             LOGGER.critical("Failed start up", exc_info=exc)
             raise exc
@@ -757,7 +757,7 @@ class Client(metaclass=_Singleton):
                         self.bot.get_context = self.__old_get_context
                     del self.bot._pylav_client  # noqa
                     await tables.DB.close_connection_pool()
-                    LOGGER.info("All cogs have been unregistered, PyLav client has been shutdown.")
+                    LOGGER.info("All cogs have been unregistered, PyLav client has been shutdown")
 
     def get_player(self, guild: discord.Guild | int | None) -> Player | None:
         """Gets the player for the target guild.
@@ -1141,7 +1141,7 @@ class Client(metaclass=_Singleton):
         }
 
     async def remove_node(self, node_id: int):
-        """Removes a node from the node manager."""
+        """Removes a node from the node manager"""
         node = self.node_manager.get_node_by_id(node_id)
         await self.node_manager.remove_node(node)
 
@@ -1172,14 +1172,14 @@ class Client(metaclass=_Singleton):
     ) -> str:
         if not await asyncstdlib.any([video_id, playlist_id, channel_id, user_id]):
             raise PyLavInvalidArguments(
-                _("To generate a mix playlist a Video, User, Channel or Playlist ID is necessary.")
+                _("To generate a mix playlist a Video, User, Channel or Playlist ID is necessary")
             )
 
         if await asyncstdlib.sum(1 for i in [video_id, playlist_id, channel_id, user_id] if i) > 1:
             raise PyLavInvalidArguments(
                 _(
                     "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. "
-                    "However, you provided multiple."
+                    "However, you provided multiple"
                 )
             )
 

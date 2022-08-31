@@ -61,7 +61,7 @@ def _done_callback(task: asyncio.Task) -> None:
 
 
 class WebSocket:
-    """Represents the WebSocket connection with Lavalink."""
+    """Represents the WebSocket connection with Lavalink"""
 
     def __init__(
         self,
@@ -104,46 +104,46 @@ class WebSocket:
 
     @property
     def is_ready(self) -> bool:
-        """Returns whether the websocket is ready."""
+        """Returns whether the websocket is ready"""
         return self.ready.is_set() and self.connected
 
     @property
     def socket_protocol(self) -> str:
-        """The protocol used for the socket connection."""
+        """The protocol used for the socket connection"""
         return "wss" if self._ssl else "ws"
 
     @property
     def lib_version(self) -> str:
-        """Returns the PyLav library version."""
+        """Returns the PyLav library version"""
         return self._client.lib_version
 
     @property
     def bot_id(self) -> str:
-        """Returns the bot's ID."""
+        """Returns the bot's ID"""
         return self._client.bot_id
 
     @property
     def node(self) -> Node:
-        """Returns the :class:`Node` instance."""
+        """Returns the :class:`Node` instance"""
         return self._node
 
     @property
     def client(self) -> Client:
-        """Returns the :class:`Client` instance."""
+        """Returns the :class:`Client` instance"""
         return self._client
 
     @property
     def connected(self):
-        """Returns whether the websocket is connected to Lavalink."""
+        """Returns whether the websocket is connected to Lavalink"""
         return self._ws is not None and not self._ws.closed and self.ready.is_set()
 
     @property
     def connecting(self):
-        """Returns whether the websocket is connecting to Lavalink."""
+        """Returns whether the websocket is connecting to Lavalink"""
         return not self.ready.is_set()
 
     async def ping(self) -> None:
-        """Pings the websocket."""
+        """Pings the websocket"""
         if self.connected:
             await self._ws.ping()
         else:
@@ -153,7 +153,7 @@ class WebSocket:
         await asyncio.wait_for(self.ready.wait(), timeout=timeout)
 
     async def connect(self):  # sourcery no-metrics
-        """Attempts to establish a connection to Lavalink."""
+        """Attempts to establish a connection to Lavalink"""
         try:
             self.ready.clear()
             self.node._ready.clear()
@@ -180,7 +180,7 @@ class WebSocket:
             while not self.connected and (not is_finite_retry or attempt < self._max_reconnect_attempts):
                 attempt += 1
                 LOGGER.info(
-                    "[NODE-%s] Attempting to establish WebSocket connection (%s/%s)...",
+                    "[NODE-%s] Attempting to establish WebSocket connection (%s/%s)",
                     self._node.name,
                     attempt,
                     max_attempts_str,
@@ -216,7 +216,7 @@ class WebSocket:
                             403,
                         ):  # Special handling for 401/403 (Unauthorized/Forbidden).
                             LOGGER.warning(
-                                "[NODE-%s] Authentication failed while trying to establish a connection to the node.",
+                                "[NODE-%s] Authentication failed while trying to establish a connection to the node",
                                 self.node.name,
                             )
                             # We shouldn't try to establish any more connections as correcting this particular error
@@ -228,7 +228,7 @@ class WebSocket:
                             "[NODE-%s] The remote server returned code %s, "
                             "the expected code was 101. This usually "
                             "indicates that the remote server is a webserver "
-                            "and not Lavalink. Check your ports, and try again.",
+                            "and not Lavalink. Check your ports, and try again",
                             self.node.name,
                             ce.status,
                         )
@@ -255,30 +255,30 @@ class WebSocket:
                         self._message_queue.clear()
 
                     await self._listen()
-                    LOGGER.debug("[NODE-%s] _listen returned.", self.node.name)
+                    LOGGER.debug("[NODE-%s] _listen returned", self.node.name)
                     # Ensure this loop doesn't proceed if _listen returns control back to this
                     # function.
                     return
 
             LOGGER.warning(
-                "[NODE-%s] A WebSocket connection could not be established within %s attempts.",
+                "[NODE-%s] A WebSocket connection could not be established within %s attempts",
                 self.node.name,
                 attempt,
             )
         except Exception:
             LOGGER.exception(
-                "[NODE-%s] An exception occurred while attempting to connect to the node.",
+                "[NODE-%s] An exception occurred while attempting to connect to the node",
                 self.node.name,
             )
 
     async def _listen(self):
-        """Listens for websocket messages."""
+        """Listens for websocket messages"""
         try:
             async for msg in self._ws:
                 LOGGER.trace("[NODE-%s] Received WebSocket message: %s", self.node.name, msg.data)
                 if msg.type == aiohttp.WSMsgType.CLOSED:
                     LOGGER.info(
-                        "[NODE-%s] Received close frame with code %s.",
+                        "[NODE-%s] Received close frame with code %s",
                         self.node.name,
                         msg.data,
                     )
@@ -288,7 +288,7 @@ class WebSocket:
                     await self.handle_message(msg.json(loads=ujson.loads))
                 # elif msg.type == aiohttp.WSMsgType.ERROR and not self.client.is_shutting_down:
                 #     exc = self._ws.exception()
-                #     LOGGER.error("[NODE-%s] Exception in WebSocket! %s.", self.node.name, exc)
+                #     LOGGER.error("[NODE-%s] Exception in WebSocket! %s", self.node.name, exc)
                 #     break
             await self._websocket_closed()
         except Exception:
@@ -486,5 +486,5 @@ class WebSocket:
     async def close(self):
         self._connect_task.cancel()
         if self._ws and not self._ws.closed:
-            await self._ws.close(code=4014, message=b"Shutting down...")
+            await self._ws.close(code=4014, message=b"Shutting down")
         await self._session.close()

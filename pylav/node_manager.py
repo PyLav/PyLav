@@ -59,42 +59,42 @@ class NodeManager:
 
     @property
     def client(self) -> Client:
-        """Returns the client."""
+        """Returns the client"""
         return self._client
 
     @property
     def nodes(self) -> list[Node]:
-        """Returns a list of all nodes."""
+        """Returns a list of all nodes"""
         return self._nodes
 
     @property
     def available_nodes(self) -> list[Node]:
-        """Returns a list of available nodes."""
+        """Returns a list of available nodes"""
         return list(filter(operator.attrgetter("available"), self.nodes))
 
     @property
     def managed_nodes(self) -> list[Node]:
-        """Returns a list of nodes that are managed by the client."""
+        """Returns a list of nodes that are managed by the client"""
         return list(filter(operator.attrgetter("managed"), self.nodes))
 
     @property
     def search_only_nodes(self) -> list[Node]:
-        """Returns a list of nodes that are search only."""
+        """Returns a list of nodes that are search only"""
         return list(filter(operator.attrgetter("available", "search_only"), self.nodes))
 
     @property
     def player_queue(self) -> list[Player]:
-        """Returns a list of players that are queued to be played."""
+        """Returns a list of players that are queued to be played"""
         return self._player_queue
 
     @player_queue.setter
     def player_queue(self, players: list[Player]) -> None:
-        """Sets the player queue."""
+        """Sets the player queue"""
         self._player_queue = players
 
     @player_queue.deleter
     def player_queue(self):
-        """Clears the player queue."""
+        """Clears the player queue"""
         self._player_queue.clear()
 
     async def add_node(
@@ -409,7 +409,7 @@ class NodeManager:
 
         if not best_node:
             self.player_queue.extend(node.players)
-            LOGGER.error("Unable to move players, no available nodes! Waiting for a node to become available.")
+            LOGGER.error("Unable to move players, no available nodes! Waiting for a node to become available")
             return
 
         for player in node.players:
@@ -522,7 +522,7 @@ class NodeManager:
                 )
         tasks = [asyncio.create_task(n.wait_until_ready()) for n in nodes_list]
         if not tasks:
-            LOGGER.warning("No nodes found, please add some nodes.")
+            LOGGER.warning("No nodes found, please add some nodes")
             return
         done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
         for task in pending:

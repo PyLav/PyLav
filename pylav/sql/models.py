@@ -33,7 +33,7 @@ from pylav.exceptions import InvalidPlaylist
 from pylav.filters import Equalizer
 from pylav.sql import tables
 from pylav.types import BotT
-from pylav.utils import PyLavContext, TimedFeature, alru_cache
+from pylav.utils import PyLavContext, TimedFeature
 
 Node = None
 
@@ -77,12 +77,12 @@ class PlaylistModel:
             ujson.dumps(self.tracks),
             self.url,
         )
-        self.get.invalidate(self.id)
-        self.get.invalidate(id=self.id)
+        # self.get.invalidate(self.id)
+        # self.get.invalidate(id=self.id)
         return self
 
     @classmethod
-    @alru_cache(maxsize=128)
+    # @alru_cache(maxsize=128)
     async def get(cls, id: int) -> PlaylistModel | None:
         """Get a playlist from the database.
 
@@ -100,9 +100,9 @@ class PlaylistModel:
         return PlaylistModel(**playlist[0]) if playlist else None
 
     async def delete(self) -> None:
-        """Delete the playlist from the database."""
-        self.get.invalidate(self.id)
-        self.get.invalidate(id=self.id)
+        """Delete the playlist from the database"""
+        # self.get.invalidate(self.id)
+        # self.get.invalidate(id=self.id)
         await tables.PlaylistRow.raw("DELETE FROM playlist WHERE id = {}", self.id)
 
     async def can_manage(self, bot: BotT, requester: discord.abc.User, guild: discord.Guild = None) -> bool:
@@ -639,7 +639,7 @@ class LibConfigModel:
         return self
 
     async def delete(self) -> None:
-        """Delete the config from the database."""
+        """Delete the config from the database"""
         await tables.LibConfigRow.delete().where(
             (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
         )
@@ -880,15 +880,15 @@ class NodeModel:
         raise ValueError(f"Source {source} is not supported")
 
     async def save(self) -> None:
-        """Save the node to the database."""
+        """Save the node to the database"""
         await self.upsert()
 
     async def delete(self) -> None:
-        """Delete the node from the database."""
+        """Delete the node from the database"""
         await tables.NodeRow.delete().where(tables.NodeRow.id == self.id)
 
     async def upsert(self) -> None:
-        """Upsert the node in the database."""
+        """Upsert the node in the database"""
         values = {
             tables.NodeRow.name: self.name,
             tables.NodeRow.ssl: self.ssl,
@@ -910,7 +910,7 @@ class NodeModel:
             await tables.NodeRow.update(values).where(tables.NodeRow.id == self.id)
 
     async def update_or_create(self) -> None:
-        """Update or create the node in the database."""
+        """Update or create the node in the database"""
         values = {
             tables.NodeRow.name: self.name,
             tables.NodeRow.ssl: self.ssl,
@@ -956,7 +956,7 @@ class QueryModel:
             self.tracks = ujson.loads(self.tracks)
 
     @classmethod
-    @alru_cache(maxsize=128)
+    # @alru_cache(maxsize=128)
     async def get(cls, identifier: str) -> QueryModel | None:
         """Get a query from the database.
 
@@ -980,13 +980,13 @@ class QueryModel:
         return QueryModel(**query[0]) if query else None
 
     async def delete(self):
-        """Delete the query from the database."""
-        self.get.invalidate(self.identifier)
-        self.get.invalidate(identifier=self.identifier)
+        """Delete the query from the database"""
+        # self.get.invalidate(self.identifier)
+        # self.get.invalidate(identifier=self.identifier)
         await tables.QueryRow.raw("DELETE FROM query WHERE identifier = {}", self.identifier)
 
     async def upsert(self):
-        """Upsert the query in the database."""
+        """Upsert the query in the database"""
         if self.last_updated is None:
             self.last_updated = datetime.datetime.now(tz=datetime.timezone.utc)
         await tables.QueryRow.raw(
@@ -999,11 +999,11 @@ class QueryModel:
             self.last_updated,
             ujson.dumps(self.tracks),
         )
-        self.get.invalidate(self.identifier)
-        self.get.invalidate(identifier=self.identifier)
+        # self.get.invalidate(self.identifier)
+        # self.get.invalidate(identifier=self.identifier)
 
     async def save(self):
-        """Save the query to the database."""
+        """Save the query to the database"""
         await self.upsert()
 
 
@@ -1037,7 +1037,7 @@ class BotVersion:
         return self
 
     async def upsert(self) -> None:
-        """Upsert the bot version in the database."""
+        """Upsert the bot version in the database"""
         values = {
             tables.BotVersionRow.version: f"{self.version}",
         }
@@ -1050,7 +1050,7 @@ class BotVersion:
             await tables.BotVersionRow.update(values).where(tables.BotVersionRow.bot == self.bot)
 
     async def save(self) -> None:
-        """Save the bot version to the database."""
+        """Save the bot version to the database"""
         await self.upsert()
 
 
@@ -1096,7 +1096,7 @@ class PlayerStateModel:
             self.extras = ujson.loads(self.extras)
 
     async def delete(self) -> None:
-        """Delete the player state from the database."""
+        """Delete the player state from the database"""
         await tables.PlayerStateRow.raw(
             """
             DELETE FROM player_state
@@ -1107,7 +1107,7 @@ class PlayerStateModel:
         )
 
     async def upsert(self) -> None:
-        """Upsert the player state in the database."""
+        """Upsert the player state in the database"""
         await tables.AioHttpCacheRow.raw(
             """
             INSERT INTO player_state (
@@ -1186,7 +1186,7 @@ class PlayerStateModel:
         )
 
     async def save(self) -> None:
-        """Save the player state to the database."""
+        """Save the player state to the database"""
         await self.upsert()
 
     @classmethod
@@ -1284,13 +1284,13 @@ class PlayerModel:
         return hash((self.id, self.bot))
 
     async def delete(self) -> None:
-        """Delete the player from the database."""
+        """Delete the player from the database"""
         await tables.PlayerRow.raw("DELETE FROM player WHERE id = {} and bot = {};", self.id, self.bot)
         self.get_or_create.invalidate()
         self.is_dj.cache_clear()
 
     async def upsert(self) -> None:
-        """Upsert the player in the database."""
+        """Upsert the player in the database"""
         await tables.PlayerRow.raw(
             """
             INSERT INTO player
@@ -1366,11 +1366,11 @@ class PlayerModel:
         self.is_dj.cache_clear()
 
     async def save(self) -> None:
-        """Save the player to the database."""
+        """Save the player to the database"""
         await self.upsert()
 
     @classmethod
-    @alru_cache(maxsize=128, ignore_kwargs={"id": 0})
+    # @alru_cache(maxsize=128, ignore_kwargs={"id": 0})
     async def get_or_create(cls, id: int, bot: int) -> PlayerModel:
         """Get the player from the database.
 
@@ -1431,7 +1431,7 @@ class PlayerModel:
         return self
 
     async def update_volume(self) -> PlayerModel:
-        """Update the volume of the player."""
+        """Update the volume of the player"""
         player = await tables.PlayerRow.raw(
             """SELECT volume FROM player WHERE id = {} AND bot = {} LIMIT 1""", self.id, self.bot
         )
@@ -1440,7 +1440,7 @@ class PlayerModel:
         return self
 
     async def update_max_volume(self) -> PlayerModel:
-        """Update the max volume of the player."""
+        """Update the max volume of the player"""
         player = await tables.PlayerRow.raw(
             """SELECT max_volume FROM player WHERE id = {} AND bot = {} LIMIT 1""", self.id, self.bot
         )
@@ -1872,7 +1872,7 @@ class PlayerModel:
         await self.save()
         return self
 
-    @alru_cache(maxsize=128)
+    # @alru_cache(maxsize=128)
     async def is_dj(
         self,
         user: discord.Member,
@@ -2162,7 +2162,7 @@ class EqualizerModel:
         return EqualizerModel(**equalizer[0]) if equalizer else None
 
     async def delete(self):
-        """Delete the equalizer from the database."""
+        """Delete the equalizer from the database"""
         await tables.EqualizerRow.delete().where(tables.EqualizerRow.id == self.id)
 
     async def can_manage(self, bot: BotT, requester: discord.abc.User, guild: discord.Guild = None) -> bool:

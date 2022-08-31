@@ -52,7 +52,7 @@ class PlayerManager:
 
     def __init__(self, lavalink: Client, player: type[Player] = Player):  # type: ignore
         if not issubclass(player, Player):
-            raise ValueError("Player must implement Player.")
+            raise ValueError("Player must implement Player")
 
         self.client = lavalink
         self.bot = lavalink.bot
@@ -63,7 +63,7 @@ class PlayerManager:
         return len(self.players)
 
     def __iter__(self) -> Iterator[tuple[int, Player]]:
-        """Returns an iterator that yields a tuple of (guild_id, player)."""
+        """Returns an iterator that yields a tuple of (guild_id, player)"""
         yield from self.players.items()
 
     @property
@@ -72,27 +72,27 @@ class PlayerManager:
 
     @property
     def connected_players(self) -> list[Player]:
-        """Returns a list of all the connected players."""
+        """Returns a list of all the connected players"""
         return [p for p in self.players.values() if p.is_connected]
 
     @property
     def playing_players(self) -> list[Player]:
-        """Returns a list of all the playing players."""
+        """Returns a list of all the playing players"""
         return [p for p in self.players.values() if p.is_playing]
 
     @property
     def not_playing_players(self) -> list[Player]:
-        """Returns a list of all the not playing players."""
+        """Returns a list of all the not playing players"""
         return [p for p in self.players.values() if not p.is_playing]
 
     @property
     def paused_players(self) -> list[Player]:
-        """Returns a list of all the paused players."""
+        """Returns a list of all the paused players"""
         return [p for p in self.players.values() if p.paused]
 
     @property
     def empty_players(self) -> list[Player]:
-        """Returns a list of all the empty players."""
+        """Returns a list of all the empty players"""
         return [p for p in self.players.values() if p.is_empty]
 
     async def initialize(self):
@@ -144,7 +144,7 @@ class PlayerManager:
             await self._restore_player(player_state)
 
     def players(self) -> Iterator[Player]:
-        """Returns an iterator that yields the all :class:`Player`."""
+        """Returns an iterator that yields the all :class:`Player`"""
         yield from self.players.values()
 
     def find_all(self, predicate=None):
@@ -251,11 +251,11 @@ class PlayerManager:
         return player
 
     async def save_all_players(self) -> None:
-        LOGGER.debug("Saving player states...")
+        LOGGER.debug("Saving player states")
         await self.client.player_state_db_manager.save_players([await p.to_dict() for p in self.connected_players])
 
     async def restore_player_states(self) -> None:
-        LOGGER.info("Restoring player states...")
+        LOGGER.info("Restoring player states")
         while not self.client.node_manager.available_nodes:
             await asyncio.sleep(1)
         tasks = [
@@ -297,7 +297,7 @@ class PlayerManager:
             await discord_player.restore(player_state, requester)
 
     async def shutdown(self) -> None:
-        LOGGER.info("Shutting down all players...")
+        LOGGER.info("Shutting down all players")
         tasks = [
             asyncio.create_task(self.destroy(guild_id=guild_id, requester=self.client.bot.user))
             for guild_id in self.players

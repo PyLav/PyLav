@@ -35,16 +35,16 @@ else:
     class StationConverter(Transformer):
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[Station]:
-            """Converts a station name to a matching object."""
+            """Converts a station name to a matching object"""
             from pylav import EntryNotFoundError
 
             try:
                 stations = await ctx.lavalink.radio_browser.stations()
             except EntryNotFoundError as e:
-                raise commands.BadArgument(_("Station with name `{arg}` not found.").format(arg=arg)) from e
+                raise commands.BadArgument(_("Station with name `{arg}` not found").format(arg=arg)) from e
             if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), stations)):
                 return await asyncstdlib.sorted(r, key=attrgetter("lastcheckoktime_iso8601"), reverse=True)
-            raise commands.BadArgument(_("Station with name `{arg}` not found.").format(arg=arg))
+            raise commands.BadArgument(_("Station with name `{arg}` not found").format(arg=arg))
 
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> list[Station]:
@@ -110,16 +110,16 @@ else:
     class TagConverter(Transformer):
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[Tag]:
-            """Converts a Tag name to to a matching object."""
+            """Converts a Tag name to to a matching object"""
             from pylav import EntryNotFoundError
 
             try:
                 tags = await ctx.lavalink.radio_browser.tags()
             except EntryNotFoundError as e:
-                raise commands.BadArgument(_("Tag with name `{arg}` not found.").format(arg=arg)) from e
+                raise commands.BadArgument(_("Tag with name `{arg}` not found").format(arg=arg)) from e
             if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), tags)):
                 return r
-            raise commands.BadArgument(_("Tag with name `{arg}` not found.").format(arg=arg))
+            raise commands.BadArgument(_("Tag with name `{arg}` not found").format(arg=arg))
 
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> list[Tag]:
@@ -140,16 +140,16 @@ else:
     class LanguageConverter(Transformer):
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[Language]:
-            """Converts a Language name to to a matching object."""
+            """Converts a Language name to to a matching object"""
             from pylav import EntryNotFoundError
 
             try:
                 langs = await ctx.lavalink.radio_browser.languages()
             except EntryNotFoundError as e:
-                raise commands.BadArgument(_("Language with name `{arg}` not found.").format(arg=arg)) from e
+                raise commands.BadArgument(_("Language with name `{arg}` not found").format(arg=arg)) from e
             if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), langs)):
                 return r
-            raise commands.BadArgument(_("Language with name `{arg}` not found.").format(arg=arg))
+            raise commands.BadArgument(_("Language with name `{arg}` not found").format(arg=arg))
 
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> list[Language]:
@@ -171,16 +171,16 @@ else:
     class StateConverter(Transformer):
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[State]:
-            """Converts a State name to to a matching object."""
+            """Converts a State name to to a matching object"""
             from pylav import EntryNotFoundError
 
             try:
                 states = await ctx.lavalink.radio_browser.states()
             except EntryNotFoundError as e:
-                raise commands.BadArgument(_("State with name `{arg}` not found.")) from e
+                raise commands.BadArgument(_("State with name `{arg}` not found")) from e
             if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), states)):
                 return r
-            raise commands.BadArgument(_("State with name `{arg}` not found."))
+            raise commands.BadArgument(_("State with name `{arg}` not found"))
 
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> list[State]:
@@ -209,16 +209,16 @@ else:
     class CodecConverter(Transformer):
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[Codec]:
-            """Converts a Codec name to to a matching object."""
+            """Converts a Codec name to to a matching object"""
             from pylav import EntryNotFoundError
 
             try:
                 codecs = await ctx.lavalink.radio_browser.codecs()
             except EntryNotFoundError as e:
-                raise commands.BadArgument(_("Codec with name `{arg}` not found.").format(arg=arg)) from e
+                raise commands.BadArgument(_("Codec with name `{arg}` not found").format(arg=arg)) from e
             if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), codecs)):
                 return r
-            raise commands.BadArgument(_("Codec with name `{arg}` not found.").format(arg=arg))
+            raise commands.BadArgument(_("Codec with name `{arg}` not found").format(arg=arg))
 
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> list[Codec]:
@@ -239,17 +239,17 @@ else:
     class CountryCodeConverter(Transformer):
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[CountryCode]:
-            """Converts a CountryCode name to to a matching object."""
+            """Converts a CountryCode name to to a matching object"""
             from pylav import EntryNotFoundError
 
             try:
                 countrycodes = await ctx.lavalink.radio_browser.countrycodes()
             except EntryNotFoundError as e:
-                raise commands.BadArgument(_("Country code `{arg}` not found.").format(arg=arg)) from e
+                raise commands.BadArgument(_("Country code `{arg}` not found").format(arg=arg)) from e
 
             if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), countrycodes)):
                 return r
-            raise commands.BadArgument(_("Country code `{arg}` not found.").format(arg=arg))
+            raise commands.BadArgument(_("Country code `{arg}` not found").format(arg=arg))
 
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> list[CountryCode]:
@@ -270,16 +270,16 @@ else:
     class CountryConverter(Transformer):
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[Country]:
-            """Converts a Country name to to a matching object."""
+            """Converts a Country name to to a matching object"""
             from pylav import EntryNotFoundError
 
             try:
                 countries = await ctx.lavalink.radio_browser.countries()
             except EntryNotFoundError as e:
-                raise commands.BadArgument(_("Country with name `{arg}` not found.").format(arg=arg)) from e
+                raise commands.BadArgument(_("Country with name `{arg}` not found").format(arg=arg)) from e
             if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), countries)):
                 return r
-            raise commands.BadArgument(_("Country with name `{arg}` not found.").format(arg=arg))
+            raise commands.BadArgument(_("Country with name `{arg}` not found").format(arg=arg))
 
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> list[Country]:
