@@ -125,7 +125,14 @@ class LocalFile:
             root = await maybe_coroutine(self.root_folder.absolute)
             string = str(path).replace(str(root), "")
         if not string:
-            return path.name if await self.path.is_dir() else path.stem
+            string = path.name if await self.path.is_dir() else path.stem
+            if string.startswith("/") or string.startswith("\\"):
+                string = string[1:]
+            if length:
+                string = string[: length * -1]
+            if ellipsis and len(string) + 3 > length:
+                string = f"...{string[3:].strip()}"
+            return string
 
         temp_path = aiopath.AsyncPath(string)
         if length is not None:
@@ -136,7 +143,7 @@ class LocalFile:
             count = 0
             usable_parts = []
             for part in parts_reversed:
-                if usable_parts and (count + len(part) + 1) > length:
+                if (not ellipsis) and usable_parts and (count + len(part) + 1) > length:
                     break
                 count += len(part) + 1
                 usable_parts.append(part)
@@ -147,6 +154,8 @@ class LocalFile:
                 string = os.path.join(*string_list)
             if string.startswith("/") or string.startswith("\\"):
                 string = string[1:]
+            if len(string) > length:
+                string = string[: length * -1]
             if ellipsis and len(string) + 3 > length:
                 string = f"...{string[3:].strip()}"
         return string
