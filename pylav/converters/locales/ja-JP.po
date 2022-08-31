@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-08-30 20:52+0000\n"
-"PO-Revision-Date: 2022-08-30 20:55\n"
+"POT-Creation-Date: 2022-08-31 13:15+0000\n"
+"PO-Revision-Date: 2022-08-31 13:19\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -18,20 +18,20 @@ msgstr ""
 "Language: ja_JP\n"
 
 #: pylav/converters/nodes.py:34 pylav/converters/nodes.py:39
-msgid "Node with name or id `{arg}` not found."
-msgstr "名前または id `{arg}`のノードが見つかりません。"
+msgid "Node with name or id `{arg}` not found"
+msgstr ""
 
 #: pylav/converters/playlist.py:33
-msgid "Playlist with name or id `{arg}` not found."
-msgstr "名前またはID付きのプレイリストが見つかりません。 `{arg}` 。"
+msgid "Playlist with name or id `{arg}` not found"
+msgstr ""
 
 #: pylav/converters/query.py:51
-msgid "Query must be a playlist or album."
-msgstr "クエリはプレイリストまたはアルバムでなければなりません。"
+msgid "Query must be a playlist or album"
+msgstr ""
 
 #: pylav/converters/radio.py:44 pylav/converters/radio.py:47
-msgid "Station with name `{arg}` not found."
-msgstr "ステーション名`{arg}`が見つかりません。"
+msgid "Station with name `{arg}` not found"
+msgstr ""
 
 #: pylav/converters/radio.py:105 pylav/converters/radio.py:135
 #: pylav/converters/radio.py:166 pylav/converters/radio.py:204
@@ -41,26 +41,26 @@ msgid "Unnamed"
 msgstr "名前なし"
 
 #: pylav/converters/radio.py:119 pylav/converters/radio.py:122
-msgid "Tag with name `{arg}` not found."
-msgstr "`{arg}`という名前のタグが見つかりません。"
+msgid "Tag with name `{arg}` not found"
+msgstr ""
 
 #: pylav/converters/radio.py:149 pylav/converters/radio.py:152
-msgid "Language with name `{arg}` not found."
-msgstr "`{arg}`という名前の言語が見つかりません。"
+msgid "Language with name `{arg}` not found"
+msgstr ""
 
 #: pylav/converters/radio.py:180 pylav/converters/radio.py:183
-msgid "State with name `{arg}` not found."
-msgstr "`{arg}`という名前の状態が見つかりません。"
+msgid "State with name `{arg}` not found"
+msgstr ""
 
 #: pylav/converters/radio.py:218 pylav/converters/radio.py:221
-msgid "Codec with name `{arg}` not found."
-msgstr "`{arg}`という名前のコーデックが見つかりません。"
+msgid "Codec with name `{arg}` not found"
+msgstr ""
 
 #: pylav/converters/radio.py:248 pylav/converters/radio.py:252
-msgid "Country code `{arg}` not found."
-msgstr "国コード`{arg}`が見つかりません。"
+msgid "Country code `{arg}` not found"
+msgstr ""
 
 #: pylav/converters/radio.py:279 pylav/converters/radio.py:282
-msgid "Country with name `{arg}` not found."
-msgstr "`{arg}`という名前の国が見つかりません。"
+msgid "Country with name `{arg}` not found"
+msgstr ""
 

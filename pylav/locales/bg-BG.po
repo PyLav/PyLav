@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-08-30 19:02+0000\n"
-"PO-Revision-Date: 2022-08-30 20:48\n"
+"POT-Creation-Date: 2022-08-31 13:15+0000\n"
+"PO-Revision-Date: 2022-08-31 13:19\n"
 "Last-Translator: \n"
 "Language-Team: Bulgarian\n"
 "MIME-Version: 1.0\n"
@@ -31,15 +31,15 @@ msgid "No node with {query.requires_capability} functionality available!"
 msgstr ""
 
 #: pylav/client.py:1175
-msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary."
+msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
 msgstr ""
 
 #: pylav/client.py:1180
-msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple."
+msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
 msgstr ""
 
 #: pylav/managed_node.py:251
-msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture."
+msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture"
 msgstr ""
 
 #: pylav/managed_node.py:343
@@ -48,11 +48,11 @@ msgstr ""
 
 #: pylav/managed_node.py:411
 msgid "The output of `{java_exc} -version` was unexpected\n"
-"{version_info}."
+"{version_info}"
 msgstr ""
 
 #: pylav/managed_node.py:427
-msgid "Port {port} already in use. Managed Lavalink startup aborted."
+msgid "Port {port} already in use. Managed Lavalink startup aborted"
 msgstr ""
 
 #: pylav/managed_node.py:432
@@ -60,78 +60,91 @@ msgid "Lavalink failed to start: {line}"
 msgstr ""
 
 #: pylav/managed_node.py:436
-msgid "Managed Lavalink node server exited early."
+msgid "Managed Lavalink node server exited early"
 msgstr ""
 
 #: pylav/player.py:765
-msgid "There are no tracks currently in the player history."
+msgid "There are no tracks currently in the player history"
 msgstr ""
 
-#: pylav/player.py:1744 pylav/player.py:1770 pylav/player.py:1778
+#: pylav/player.py:1744 pylav/player.py:1774 pylav/player.py:1785
 msgid "LIVE"
 msgstr ""
 
-#: pylav/player.py:1753 pylav/player.py:1829
-msgid "**Currently livestreaming:**\n"
+#: pylav/player.py:1753 pylav/player.py:1842
+msgid "Currently livestreaming"
 msgstr ""
 
-#: pylav/player.py:1755 pylav/player.py:1831
+#: pylav/player.py:1755
 msgid "Playing: "
 msgstr ""
 
-#: pylav/player.py:1757 pylav/player.py:1833
-msgid "Requester: **{current.requester.mention}**"
+#: pylav/player.py:1758 pylav/player.py:1779 pylav/player.py:1790
+#: pylav/player.py:1848
+msgid "Requester"
 msgstr ""
 
-#: pylav/player.py:1760
-msgid "Now Playing in __{self.guild.name}__"
+#: pylav/player.py:1763
+msgid "Now Playing in"
 msgstr ""
 
-#: pylav/player.py:1769 pylav/player.py:1777
-msgid "Duration: `{duration}`\n"
+#: pylav/player.py:1775 pylav/player.py:1786
+msgid "Duration"
 msgstr ""
 
-#: pylav/player.py:1773 pylav/player.py:1781
-msgid "Requester: **{rq}**\n\n"
-msgstr ""
-
-#: pylav/player.py:1774
+#: pylav/player.py:1781
 msgid "Previous Track"
 msgstr ""
 
-#: pylav/player.py:1782
+#: pylav/player.py:1792
 msgid "Next Track"
 msgstr ""
 
-#: pylav/player.py:1786
-msgid "{queue_size} tracks, {queue_total_duration} remaining\n"
+#: pylav/player.py:1796
+msgid "{track_count} tracks, {queue_total_duration} remaining\n"
 msgstr ""
 
-#: pylav/player.py:1798 pylav/player.py:1876
-msgid "Repeating: {repeat_emoji}"
+#: pylav/player.py:1808 pylav/player.py:1899
+msgid "{translation}: {repeat_emoji}"
 msgstr ""
 
-#: pylav/player.py:1799 pylav/player.py:1877
-msgid "{space}Auto Play: {autoplay_emoji}"
+#: pylav/player.py:1808 pylav/player.py:1899
+msgid "Repeating"
 msgstr ""
 
-#: pylav/player.py:1802 pylav/player.py:1880
-msgid "{space}Volume: {volume}%"
+#: pylav/player.py:1809 pylav/player.py:1900
+msgid "{space}{translation}: {autoplay_emoji}"
 msgstr ""
 
-#: pylav/player.py:1840
-msgid "__Queue order is may not be accurate due to auto-shuffle being enabled__\n\n"
+#: pylav/player.py:1810 pylav/player.py:1901
+msgid "Auto Play"
 msgstr ""
 
-#: pylav/player.py:1851
-msgid "Recently Played for __{self.guild.name}__"
+#: pylav/player.py:1812 pylav/player.py:1903
+msgid "{space}{translation}: {volume}%"
 msgstr ""
 
-#: pylav/player.py:1853
-msgid "Queue for __{self.guild.name}__"
+#: pylav/player.py:1813 pylav/player.py:1904
+msgid "Volume"
 msgstr ""
 
-#: pylav/player.py:1861
-msgid "Page {page_num}/{total_pages} | {queue_size} tracks, {queue_total_duration} remaining\n"
+#: pylav/player.py:1845
+msgid "Playing"
+msgstr ""
+
+#: pylav/player.py:1858
+msgid "Queue order is may not be accurate due to auto-shuffle being enabled"
+msgstr ""
+
+#: pylav/player.py:1873
+msgid "Recently Played for"
+msgstr ""
+
+#: pylav/player.py:1873
+msgid "Queue for"
+msgstr ""
+
+#: pylav/player.py:1882
+msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
 msgstr ""
 
