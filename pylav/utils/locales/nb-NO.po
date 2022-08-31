@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-08-31 13:15+0000\n"
-"PO-Revision-Date: 2022-08-31 18:08\n"
+"POT-Creation-Date: 2022-08-31 21:19+0000\n"
+"PO-Revision-Date: 2022-08-31 21:21\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 "X-Crowdin-File-ID: 546\n"
 "Language: no_NO\n"
 
-#: pylav/utils/__init__.py:919
+#: pylav/utils/__init__.py:929
 #, docstring
 msgid "Does nothing"
 msgstr "Gjør ingenting"
