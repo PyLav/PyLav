@@ -364,7 +364,7 @@ class Query:
             else:
                 return f"ytsearch:{self._query}"
         elif self.is_local:
-            return f"{self._query.path}"
+            return f"{getattr(self._query, 'path', self._query)}"
         return self._query
 
     @classmethod
@@ -648,7 +648,10 @@ class Query:
 
     async def folder(self) -> str | None:
         if self.is_local:
-            return self._query.parent.stem if await self._query.path.is_file() else self._query.name
+            if isinstance(self._query, LocalFile):
+                return self._query.parent.stem if await self._query.path.is_file() else self._query.name
+            else:
+                return self._query
         return None
 
     async def query_to_queue(self, max_length: int = None, partial: bool = False, name_only: bool = False) -> str:
