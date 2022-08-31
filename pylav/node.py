@@ -1258,8 +1258,4 @@ class Node:
         """
         coordinates = REGION_TO_COUNTRY_COORDINATE_MAPPING.get(region)
 
-        return (
-            distance(*self.coordinates, *coordinates)
-            if (coordinates and self.coordinates)
-            else float("inf")
-        )
+        return distance(*self.coordinates, *coordinates) if (coordinates and self.coordinates) else float("inf")
