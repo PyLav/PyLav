@@ -45,12 +45,7 @@ class _AsyncPosixFlavour(_PosixFlavour):
                     path, _, _ = path.rpartition(sep)
                     continue
 
-                if path.endswith(sep):
-                    newpath = path + name
-
-                else:
-                    newpath = path + sep + name
-
+                newpath = path + name if path.endswith(sep) else path + sep + name
                 if newpath in seen:
                     # Already seen this path
                     path = seen[newpath]
@@ -97,19 +92,18 @@ class _AsyncWindowsFlavour(_WindowsFlavour):
         if _getfinalpathname is not None:
             if strict:
                 return self._ext_to_normal(await _getfinalpathname(s))
-            else:
-                tail_parts: list[str] = []  # End of the path after the first one not found
-                while True:
-                    try:
-                        s = self._ext_to_normal(await _getfinalpathname(s))
-                    except FileNotFoundError:
-                        previous_s = s
-                        s, tail = os.path.split(s)
-                        tail_parts.append(tail)
-                        if previous_s == s:
-                            return path
-                    else:
-                        return os.path.join(s, *reversed(tail_parts))
+            tail_parts: list[str] = []  # End of the path after the first one not found
+            while True:
+                try:
+                    s = self._ext_to_normal(await _getfinalpathname(s))
+                except FileNotFoundError:
+                    previous_s = s
+                    s, tail = os.path.split(s)
+                    tail_parts.append(tail)
+                    if previous_s == s:
+                        return path
+                else:
+                    return os.path.join(s, *reversed(tail_parts))
         # Means fallback on absolute
         return None
 

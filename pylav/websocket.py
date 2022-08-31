@@ -334,12 +334,11 @@ class WebSocket:
         if op == "stats":
             self.node.stats = Stats(self.node, data)
         elif op == "playerUpdate":
-            player = self.client.player_manager.get(int(data["guildId"]))
-
-            if not player:
+            if player := self.client.player_manager.get(int(data["guildId"])):
+                await player._update_state(data["state"])
+            else:
                 return
 
-            await player._update_state(data["state"])
         elif op == "event":
             await self.handle_event(data)
         else:
@@ -379,17 +378,19 @@ class WebSocket:
 
             event = TrackEndEvent(
                 player,
-                Track(
+                track
+                or Track(
                     data=data["track"],
-                    requester=requester.id if requester else self._client.bot.user.id,
+                    requester=requester.id
+                    if requester
+                    else self._client.bot.user.id,
                     query=await Query.from_base64(data["track"]),
                     node=self.node,
-                )
-                if not track
-                else track,
+                ),
                 data["reason"],
                 self.node,
             )
+
             await player._handle_event(event)
         elif event_type == "TrackExceptionEvent":
             event = TrackExceptionEvent(player, player.current, data["error"], node=self.node)
