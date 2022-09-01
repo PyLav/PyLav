@@ -64,7 +64,7 @@ from pylav.sql.clients.player_state_db_manager import PlayerStateDBManager
 from pylav.sql.clients.playlist_manager import PlaylistConfigManager
 from pylav.sql.clients.query_manager import QueryCacheManager
 from pylav.sql.clients.updater import UpdateSchemaManager
-from pylav.sql.models import LibConfigModel
+from pylav.sql.models import LibConfigModel, NodeModel
 from pylav.tracks import Track
 from pylav.types import BotT, CogT, ContextT, InteractionT, LavalinkResponseT
 from pylav.utils import PyLavContext, SingletonMethods, _get_context, _process_commands, _Singleton, add_property
@@ -325,8 +325,10 @@ class Client(metaclass=_Singleton):
                             client_secret = None
                         await self._lib_config_manager.initialize()
                         await self._update_schema_manager.run_updates()
+                        await NodeModel.create_managed(id=self.bot.user.id)
                         await self._radio_manager.initialize()
                         await self._player_manager.initialize()
+                        await self.player_config_manager.initialize_global_config()
                         self._config = self._lib_config_manager.get_config()
                         config_data = await self._config.fetch_all()
                         java_path = config_data["java_path"]

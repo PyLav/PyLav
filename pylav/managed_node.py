@@ -344,7 +344,7 @@ class LocalNodeManager:
 
         java_xms, java_xmx = (
             "64M",
-            (await self._full_data.fetch_extras()).get("max_ram", "2048M") if self._full_data else "2048M",
+            (await self._client.node_db_manager.bundled_node_config().fetch_extras()).get("max_ram", "2048M"),
         )
 
         match = re.match(r"^(\d+)([MG])$", java_xmx, flags=re.IGNORECASE)
@@ -753,7 +753,7 @@ class LocalNodeManager:
                 self._wait_for.set()
                 return
         if (node := self._client.node_manager.get_node_by_id(self._node_id)) is None:
-            data = await self._full_data.fetch_all()
+            data = await self._client.node_db_manager.bundled_node_config().fetch_all()
             node = self._node = await self._client.add_node(
                 host=self._current_config["server"]["address"],
                 port=self._current_config["server"]["port"],
@@ -768,7 +768,7 @@ class LocalNodeManager:
                 managed=True,
                 ssl=False,
                 search_only=False,
-                unique_identifier=self._full_data.id,
+                unique_identifier=self._client.node_db_manager.bundled_node_config().id,
             )
 
         else:

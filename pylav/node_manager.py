@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import operator
 import os
+import typing
 from functools import partial
 from typing import TYPE_CHECKING
 
@@ -12,11 +13,12 @@ import ujson
 
 from pylav._logging import getLogger
 from pylav.constants import DEFAULT_REGIONS, PYLAV_BUNDLED_NODES_SETTINGS, REGION_TO_COUNTRY_COORDINATE_MAPPING
-from pylav.envvars import JAVA_EXECUTABLE, USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE, USE_BUNDLED_EXTERNAL_PYLAV_NODE
+from pylav.envvars import JAVA_EXECUTABLE
 from pylav.events import NodeConnectedEvent, NodeDisconnectedEvent
 from pylav.location import get_closest_region_name_and_coordinate
 from pylav.node import Node
 from pylav.player import Player
+from pylav.sql.models import LibConfigModel
 from pylav.utils import sort_key_nodes
 
 if TYPE_CHECKING:
@@ -392,23 +394,24 @@ class NodeManager:
     async def connect_to_all_nodes(self) -> None:
         nodes_list = []
         for node in await self.client.node_db_manager.get_all_unamanaged_nodes():
+            node_data = await node.fetch_all()
             try:
                 if node in nodes_list:
                     LOGGER.warning(
                         "%s Node already added to connection pool - skipping duplicated connection - (%s:%s)",
-                        node.name,
-                        node.yaml["server"]["address"],
-                        node.yaml["server"]["port"],
+                        node_data["name"],
+                        node_data["yaml"]["server"]["address"],
+                        node_data["yaml"]["server"]["port"],
                     )
                     continue
-                if node.yaml["server"]["address"] in PYLAV_BUNDLED_NODES_SETTINGS:
-                    connection_arguments = PYLAV_BUNDLED_NODES_SETTINGS[node.yaml["server"]["address"]]
+                if node_data["yaml"]["server"]["address"] in PYLAV_BUNDLED_NODES_SETTINGS:
+                    connection_arguments = PYLAV_BUNDLED_NODES_SETTINGS[node_data["yaml"]["server"]["address"]]
                 else:
-                    connection_arguments = node.get_connection_args()
+                    connection_arguments = await node.get_connection_args()
                 nodes_list.append(await self.add_node(**connection_arguments))
             except (ValueError, KeyError) as exc:
                 LOGGER.warning(
-                    "[NODE-%s] Invalid node, skipping ... id: %s - Original error: %s", node.name, node.id, exc
+                    "[NODE-%s] Invalid node, skipping ... id: %s - Original error: %s", node_data["name"], node.id, exc
                 )
                 continue
         if self._unmanaged_external_host and self._unmanaged_external_password:
@@ -437,19 +440,13 @@ class NodeManager:
                     self._unmanaged_external_host,
                     self._unmanaged_external_port,
                 )
-        config_data = await self.client._lib_config_manager.get_config(
-            config_folder=self.client._config_folder,
-            java_path=JAVA_EXECUTABLE,
-            enable_managed_node=True,
-            auto_update_managed_nodes=True,
-            localtrack_folder=self.client._config_folder / "music",
-            use_bundled_pylav_external=USE_BUNDLED_EXTERNAL_PYLAV_NODE,
-            use_bundled_lava_link_external=USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE,
-        )
-        if config_data.java_path != JAVA_EXECUTABLE and JAVA_EXECUTABLE != "java" and os.path.exists(JAVA_EXECUTABLE):
-            config_data.java_path = JAVA_EXECUTABLE
-            await config_data.save()
-        if config_data.use_bundled_pylav_external:
+        config_data = typing.cast(LibConfigModel, self.client._lib_config_manager.get_config())
+        all_data = await config_data.fetch_all()
+
+        if all_data["java_path"] != JAVA_EXECUTABLE and JAVA_EXECUTABLE != "java" and os.path.exists(JAVA_EXECUTABLE):
+            await config_data.update_java_path(JAVA_EXECUTABLE)
+
+        if all_data["use_bundled_pylav_external"]:
             if await asyncstdlib.all(True for n in nodes_list if n.host != "ll-gb.draper.wtf"):
                 base_settings = PYLAV_BUNDLED_NODES_SETTINGS["ll-gb.draper.wtf"]
                 base_settings["host"] = "ll-gb.draper.wtf"
@@ -470,7 +467,7 @@ class NodeManager:
                     "%s already added to connection pool - skipping duplicated connection",
                     PYLAV_BUNDLED_NODES_SETTINGS["ll-us-ny.draper.wtf"]["name"],
                 )
-        if config_data.use_bundled_lava_link_external:
+        if all_data["use_bundled_lava_link_external"]:
             if await asyncstdlib.all(True for n in nodes_list if n.host != "lava.link"):
                 nodes_list.append(
                     await self.add_node(

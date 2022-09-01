@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import os
 
-from piccolo.columns import JSONB, Array, BigInt, Boolean, Bytea, Float, Integer, Text, Timestamptz
+from piccolo.columns import JSONB, UUID, Array, BigInt, Boolean, Bytea, Float, Integer, Text, Timestamptz
 from piccolo.engine import PostgresEngine, SQLiteEngine
 from piccolo.table import Table
 from piccolo.utils.pydantic import create_pydantic_model
@@ -88,6 +88,7 @@ class EqualizerRow(Table, db=DB, tablename="equalizer"):
 
 
 class PlayerStateRow(Table, db=DB, tablename="player_state"):
+    primary_key = UUID(primary_key=True)
     id = BigInt(index=True, null=False)
     bot = BigInt(index=True, null=False)
     channel_id = BigInt(null=True, default=None)
@@ -116,6 +117,7 @@ class PlayerStateRow(Table, db=DB, tablename="player_state"):
 
 
 class PlayerRow(Table, db=DB, tablename="player"):
+    primary_key = UUID(primary_key=True)
     id = BigInt(index=True)
     bot = BigInt(index=True, null=False)
     volume = Integer(null=False, default=100)

@@ -54,11 +54,11 @@ class NodeModel:
         bool
             Whether the node exists in the database.
         """
-        return await tables.PlayerRow.raw("SELECT EXISTS(SELECT 1 FROM node WHERE id = {} and bot = {});", self.id)
+        return await tables.NodeRow.raw("SELECT EXISTS(SELECT 1 FROM node WHERE id = {} and bot = {});", self.id)
 
     async def delete(self) -> None:
         """Delete the node from the database"""
-        await tables.PlayerRow.raw("DELETE FROM node WHERE id = {}", self.id)
+        await tables.NodeRow.raw("DELETE FROM node WHERE id = {}", self.id)
 
     async def fetch_all(self) -> dict:
         response = await tables.NodeRow.raw(
@@ -69,7 +69,38 @@ class NodeModel:
         """,
             self.id,
         )
-        return response[0] if response else None
+        if response:
+            fields = (
+                "id",
+                "name",
+                "ssl",
+                "resume_key",
+                "resume_timeout",
+                "reconnect_attempts",
+                "search_only",
+                "managed",
+                "extras",
+                "yaml",
+                "disabled_sources",
+            )
+            values = response[0]["row"]
+            data = dict(zip(fields, values))
+            data["extras"] = ujson.loads(data["extras"])
+            data["yaml"] = ujson.loads(data["yaml"])
+            return data
+        return {
+            "id": self.id,
+            "name": tables.NodeRow.name.default,
+            "ssl": tables.NodeRow.ssl.default,
+            "resume_key": tables.NodeRow.resume_key.default,
+            "resume_timeout": tables.NodeRow.resume_timeout.default,
+            "reconnect_attempts": tables.NodeRow.reconnect_attempts.default,
+            "search_only": tables.NodeRow.search_only.default,
+            "managed": tables.NodeRow.managed.default,
+            "extras": tables.NodeRow.extras.default,
+            "yaml": tables.NodeRow.yaml.default,
+            "disabled_sources": tables.NodeRow.disabled_sources.default,
+        }
 
     async def fetch_name(self) -> str:
         """Fetch the node from the database.
@@ -84,17 +115,11 @@ class NodeModel:
 
     async def update_name(self, name: str) -> None:
         """Update the node's name in the database"""
-        await tables.PlayerRow.raw(
+        await tables.NodeRow.raw(
             """
-        UPDATE node
-        SET name = {}
-        WHERE id = {}
-        IF NOT EXISTS THEN
             INSERT INTO node (id, name) VALUES ({}, {})
-        END IF;
-        """,
-            name,
-            self.id,
+            ON CONFLICT (id) DO UPDATE SET name = excluded.name;
+            """,
             self.id,
             name,
         )
@@ -112,17 +137,11 @@ class NodeModel:
 
     async def update_ssl(self, ssl: bool) -> None:
         """Update the node's ssl setting in the database"""
-        await tables.PlayerRow.raw(
+        await tables.NodeRow.raw(
             """
-        UPDATE node
-        SET ssl = {}
-        WHERE id = {}
-        IF NOT EXISTS THEN
             INSERT INTO node (id, ssl) VALUES ({}, {})
-        END IF;
-        """,
-            ssl,
-            self.id,
+            ON CONFLICT (id) DO UPDATE SET ssl = excluded.ssl;
+            """,
             self.id,
             ssl,
         )
@@ -140,17 +159,14 @@ class NodeModel:
 
     async def update_resume_key(self, resume_key: str) -> None:
         """Update the node's resume key in the database"""
-        await tables.PlayerRow.raw(
+        await tables.NodeRow.raw(
             """
-        UPDATE node
-        SET resume_key = {}
-        WHERE id = {}
-        IF NOT EXISTS THEN
-            INSERT INTO node (id, resume_key) VALUES ({}, {})
-        END IF;
-        """,
-            resume_key,
-            self.id,
+            INSERT INTO
+                node (id, resume_key)
+            VALUES
+                ({}, {})
+            ON CONFLICT (id) DO UPDATE SET resume_key = excluded.resume_key;
+            """,
             self.id,
             resume_key,
         )
@@ -168,17 +184,11 @@ class NodeModel:
 
     async def update_resume_timeout(self, resume_timeout: int) -> None:
         """Update the node's resume timeout in the database"""
-        await tables.PlayerRow.raw(
+        await tables.NodeRow.raw(
             """
-                UPDATE node
-                SET resume_timeout = {}
-                WHERE id = {}
-                IF NOT EXISTS THEN
-                    INSERT INTO node (id, resume_timeout) VALUES ({}, {})
-                END IF;
-                """,
-            resume_timeout,
-            self.id,
+            INSERT INTO node (id, resume_timeout) VALUES ({}, {})
+            ON CONFLICT (id) DO UPDATE SET resume_timeout = excluded.resume_timeout;
+            """,
             self.id,
             resume_timeout,
         )
@@ -196,17 +206,11 @@ class NodeModel:
 
     async def update_reconnect_attempts(self, reconnect_attempts: int) -> None:
         """Update the node's reconnect attempts in the database"""
-        await tables.PlayerRow.raw(
+        await tables.NodeRow.raw(
             """
-                UPDATE node
-                SET reconnect_attempts = {}
-                WHERE id = {}
-                IF NOT EXISTS THEN
-                    INSERT INTO node (id, reconnect_attempts) VALUES ({}, {})
-                END IF;
-                """,
-            reconnect_attempts,
-            self.id,
+            INSERT INTO node (id, reconnect_attempts) VALUES ({}, {})
+            ON CONFLICT (id) DO UPDATE SET reconnect_attempts = excluded.reconnect_attempts;
+            """,
             self.id,
             reconnect_attempts,
         )
@@ -224,17 +228,11 @@ class NodeModel:
 
     async def update_search_only(self, search_only: bool) -> None:
         """Update the node's search only setting in the database"""
-        await tables.PlayerRow.raw(
+        await tables.NodeRow.raw(
             """
-                UPDATE node
-                SET search_only = {}
-                WHERE id = {}
-                IF NOT EXISTS THEN
-                    INSERT INTO node (id, search_only) VALUES ({}, {})
-                END IF;
-                """,
-            search_only,
-            self.id,
+            INSERT INTO node (id, search_only) VALUES ({}, {})
+            ON CONFLICT (id) DO UPDATE SET search_only = excluded.search_only;
+            """,
             self.id,
             search_only,
         )
@@ -252,17 +250,11 @@ class NodeModel:
 
     async def update_managed(self, managed: bool) -> None:
         """Update the node's managed setting in the database"""
-        await tables.PlayerRow.raw(
+        await tables.NodeRow.raw(
             """
-                UPDATE node
-                SET managed = {}
-                WHERE id = {}
-                IF NOT EXISTS THEN
-                    INSERT INTO node (id, managed) VALUES ({}, {})
-                END IF;
-                """,
-            managed,
-            self.id,
+            INSERT INTO node (id, managed) VALUES ({}, {})
+            ON CONFLICT (id) DO UPDATE SET managed = excluded.managed;
+            """,
             self.id,
             managed,
         )
@@ -280,20 +272,13 @@ class NodeModel:
 
     async def update_extras(self, extras: dict) -> None:
         """Update the node's extras in the database"""
-        data = ujson.dumps(extras)
-        await tables.PlayerRow.raw(
+        await tables.NodeRow.raw(
             """
-                UPDATE node
-                SET extras = {}
-                WHERE id = {}
-                IF NOT EXISTS THEN
-                    INSERT INTO node (id, extras) VALUES ({}, {})
-                END IF;
-                """,
-            data,
+            INSERT INTO node (id, extras) VALUES ({}, {})
+            ON CONFLICT (id) DO UPDATE SET extras = excluded.extras;
+            """,
             self.id,
-            self.id,
-            data,
+            ujson.dumps(extras),
         )
 
     async def fetch_yaml(self) -> dict:
@@ -305,24 +290,17 @@ class NodeModel:
             The node's yaml.
         """
         data = await tables.NodeRow.raw("SELECT yaml FROM node WHERE id = {}", self.id)
-        return ujson.loads(data[0]["yaml"]) if data else {}
+        return ujson.loads(data[0]["yaml"]) if data else tables.NodeRow.yaml.default
 
     async def update_yaml(self, yaml_data: dict) -> None:
         """Update the node's yaml in the database"""
-        yaml_ = ujson.dumps(yaml_data)
-        await tables.PlayerRow.raw(
+        await tables.NodeRow.raw(
             """
-                UPDATE node
-                SET yaml = {}
-                WHERE id = {}
-                IF NOT EXISTS THEN
-                    INSERT INTO node (id, yaml) VALUES ({}, {})
-                END IF;
-                """,
-            yaml_,
+            INSERT INTO node (id, yaml) VALUES ({}, {})
+            ON CONFLICT (id) DO UPDATE SET yaml = excluded.yaml;
+            """,
             self.id,
-            self.id,
-            yaml_,
+            ujson.dumps(yaml_data),
         )
 
     async def fetch_disabled_sources(self) -> list[str]:
@@ -340,41 +318,29 @@ class NodeModel:
         """Update the node's disabled sources in the database"""
         source = set(map(str.strip, map(str.lower, disabled_sources)))
         intersection = list(source & SUPPORTED_SOURCES)
-        await tables.PlayerRow.raw(
+        await tables.NodeRow.raw(
             """
-                        UPDATE node
-                        SET disabled_sources = {}
-                        WHERE id = {}
-                        IF NOT EXISTS THEN
-                            INSERT INTO node (id, disabled_sources) VALUES ({}, {})
-                        END IF;
-                        """,
-            intersection,
-            self.id,
+            INSERT INTO node (id, disabled_sources) VALUES ({}, {})
+            ON CONFLICT (id) DO UPDATE SET disabled_sources = excluded.disabled_sources;
+            """,
             self.id,
             intersection,
         )
 
     async def add_to_disabled_sources(self, source: str) -> None:
         """Add a source to the node's disabled sources in the database"""
-
-        await tables.PlayerRow.raw(
-            """UPDATE node
-                            SET disabled_sources = array_append(disabled_sources, {})
-                            WHERE id = {}
-                            IF NOT FOUND THEN
-                                INSERT INTO player (id, disabled_sources) VALUES ({}, {}, {})
-                            END IF;
-                            """,
-            source,
+        await tables.NodeRow.raw(
+            """
+            INSERT INTO node (id, disabled_sources) VALUES ({}, {})
+            ON CONFLICT (id) DO UPDATE SET disabled_sources = ARRAY_CAT(disabled_sources, EXCLUDED.disabled_sources);
+            """,
             self.id,
-            self.id,
-            source,
+            [source],
         )
 
     async def remove_from_disabled_sources(self, source: str) -> None:
         """Remove a source from the node's disabled sources in the database"""
-        await tables.PlayerRow.raw(
+        await tables.NodeRow.raw(
             """UPDATE node SET disabled_sources = array_remove(disabled_sources, {}) WHERE id = {}""",
             source,
             self.id,
@@ -384,23 +350,18 @@ class NodeModel:
         """Add sources to the node's disabled sources in the database"""
         source = set(map(str.strip, map(str.lower, [sources])))
         intersection = list(source & SUPPORTED_SOURCES)
-        await tables.PlayerRow.raw(
-            """UPDATE node
-                                    SET disabled_sources = disabled_sources || '{}'::text[]
-                                    WHERE id = {}
-                                    IF NOT FOUND THEN
-                                        INSERT INTO player (id, disabled_sources) VALUES ({}, {}, {})
-                                    END IF;
-                                    """,
-            f'{{{",".join(intersection)}}}',
-            self.id,
+        await tables.NodeRow.raw(
+            """
+            INSERT INTO node (id, disabled_sources) VALUES ({}, {})
+            ON CONFLICT (id) DO UPDATE SET disabled_sources = disabled_sources || EXCLUDED.disabled_sources;
+            """,
             self.id,
             intersection,
         )
 
     async def bulk_remove_from_disabled_sources(self, sources: list[str]) -> None:
         """Remove sources from the node's disabled sources in the database"""
-        await tables.PlayerRow.raw(
+        await tables.NodeRow.raw(
             """UPDATE node SET disabled_sources = array_diff(disabled_sources, '{}'::text[]) WHERE id = {}""",
             f'{{{",".join(sources)}}}',
             self.id,
@@ -437,9 +398,9 @@ class NodeModel:
         """Create the player in the database"""
         from pylav.utils.built_in_node import NODE_DEFAULT_SETTINGS
 
-        await tables.PlayerRow.raw(
+        await tables.NodeRow.raw(
             """
-                    INSERT INTO player
+                    INSERT INTO node
                     (id, managed, ssl, reconnect_attempts, search_only, yaml, name, resume_key, resume_timeout, extras)
                     VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {})
                     ON CONFLICT (id) DO NOTHING;
@@ -499,7 +460,7 @@ class PlayerModel:
 
     async def fetch_all(self) -> dict:
         """Get all players from the database"""
-        players = await tables.PlayerRow.raw(
+        response = await tables.PlayerRow.raw(
             """SELECT (
                 volume,
                 max_volume,
@@ -524,7 +485,59 @@ class PlayerModel:
             self.id,
             self.bot,
         )
-        return next(players, None)
+        if response:
+            fields = (
+                "volume",
+                "max_volume",
+                "auto_play_playlist_id",
+                "text_channel_id",
+                "notify_channel_id",
+                "forced_channel_id",
+                "repeat_current",
+                "repeat_queue",
+                "shuffle",
+                "auto_shuffle",
+                "auto_play",
+                "self_deaf",
+                "empty_queue_dc",
+                "alone_dc",
+                "alone_pause",
+                "extras",
+                "effects",
+                "dj_users",
+                "dj_roles",
+            )
+            values = response[0]["row"]
+            data = dict(zip(fields, values))
+            data["empty_queue_dc"] = TimedFeature.from_json(ujson.loads(data["empty_queue_dc"]))
+            data["alone_dc"] = TimedFeature.from_json(ujson.loads(data["alone_dc"]))
+            data["alone_pause"] = TimedFeature.from_json(ujson.loads(data["alone_pause"]))
+            data["extras"] = ujson.loads(data["extras"])
+            data["effects"] = ujson.loads(data["effects"])
+            return data
+        return {
+            "id": self.id,
+            "bot": self.bot,
+            "volume": tables.PlayerRow.volume.default,
+            "max_volume": tables.PlayerRow.max_volume.default,
+            "auto_play_playlist_id": tables.PlayerRow.auto_play_playlist_id.default,
+            "text_channel_id": tables.PlayerRow.text_channel_id.default,
+            "notify_channel_id": tables.PlayerRow.notify_channel_id.default,
+            "forced_channel_id": tables.PlayerRow.forced_channel_id.default,
+            "repeat_current": tables.PlayerRow.repeat_current.default,
+            "repeat_queue": tables.PlayerRow.repeat_queue.default,
+            "shuffle": tables.PlayerRow.shuffle.default,
+            "auto_shuffle": tables.PlayerRow.auto_shuffle.default,
+            "auto_play": tables.PlayerRow.auto_play.default,
+            "self_deaf": tables.PlayerRow.self_deaf.default,
+            "empty_queue_dc": tables.PlayerRow.empty_queue_dc.default,
+            "alone_dc": tables.PlayerRow.alone_dc.default,
+            "alone_pause": tables.PlayerRow.alone_pause.default,
+            "extras": tables.PlayerRow.extras.default,
+            "effects": tables.PlayerRow.effects.default,
+            "dj_users": tables.PlayerRow.dj_users.default,
+            "dj_roles": tables.PlayerRow.dj_roles.default,
+        }
 
     async def exists(self) -> bool:
         """Check if the player exists in the database"""
@@ -542,15 +555,10 @@ class PlayerModel:
     async def update_volume(self, volume: int) -> None:
         """Update the volume of the player in the db"""
         await tables.PlayerRow.raw(
-            """UPDATE player
-            SET volume = {}
-            WHERE id = {} AND bot = {}
-            IF NOT FOUND THEN
-                INSERT INTO player (id, bot, volume) VALUES ({}, {}, {})
-            END IF;""",
-            volume,
-            self.id,
-            self.bot,
+            """INSERT INTO player (id, bot, volume)
+        VALUES ({}, {}, {})
+        ON CONFLICT (id, bot)
+         DO UPDATE SET volume = excluded.volume;""",
             self.id,
             self.bot,
             volume,
@@ -566,16 +574,10 @@ class PlayerModel:
     async def update_max_volume(self, max_volume: int) -> None:
         """Update the max volume of the player in the db"""
         await tables.PlayerRow.raw(
-            """UPDATE player
-            SET max_volume = {}
-            WHERE id = {} AND bot = {}
-            IF NOT FOUND THEN
-                INSERT INTO player (id, bot, max_volume) VALUES ({}, {}, {})
-            END IF;
-            """,
-            max_volume,
-            self.id,
-            self.bot,
+            """INSERT INTO player (id, bot, max_volume)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET max_volume = excluded.max_volume;""",
             self.id,
             self.bot,
             max_volume,
@@ -591,16 +593,10 @@ class PlayerModel:
     async def update_auto_play_playlist_id(self, auto_play_playlist_id: int) -> None:
         """Update the auto play playlist ID of the player"""
         await tables.PlayerRow.raw(
-            """UPDATE player
-            SET auto_play_playlist_id = {}
-            WHERE id = {} AND bot = {}
-            IF NOT FOUND THEN
-                INSERT INTO player (id, bot, auto_play_playlist_id) VALUES ({}, {}, {})
-            END IF;
-            """,
-            auto_play_playlist_id,
-            self.id,
-            self.bot,
+            """INSERT INTO player (id, bot, auto_play_playlist_id)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET auto_play_playlist_id = excluded.auto_play_playlist_id;""",
             self.id,
             self.bot,
             auto_play_playlist_id,
@@ -616,16 +612,10 @@ class PlayerModel:
     async def update_text_channel_id(self, text_channel_id: int) -> None:
         """Update the text channel ID of the player"""
         await tables.PlayerRow.raw(
-            """UPDATE player
-            SET text_channel_id = {}
-            WHERE id = {} AND bot = {}
-            IF NOT FOUND THEN
-                INSERT INTO player (id, bot, text_channel_id) VALUES ({}, {}, {})
-            END IF;
-            """,
-            text_channel_id,
-            self.id,
-            self.bot,
+            """INSERT INTO player (id, bot, text_channel_id)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET text_channel_id = excluded.text_channel_id;""",
             self.id,
             self.bot,
             text_channel_id,
@@ -642,16 +632,10 @@ class PlayerModel:
     async def update_notify_channel_id(self, notify_channel_id: int) -> None:
         """Update the notify channel ID of the player"""
         await tables.PlayerRow.raw(
-            """UPDATE player
-            SET notify_channel_id = {}
-            WHERE id = {} AND bot = {}
-            IF NOT FOUND THEN
-                INSERT INTO player (id, bot, notify_channel_id) VALUES ({}, {}, {})
-            END IF;
-            """,
-            notify_channel_id,
-            self.id,
-            self.bot,
+            """INSERT INTO player (id, bot, notify_channel_id)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET notify_channel_id = excluded.notify_channel_id;""",
             self.id,
             self.bot,
             notify_channel_id,
@@ -667,16 +651,10 @@ class PlayerModel:
     async def update_forced_channel_id(self, forced_channel_id: int) -> None:
         """Update the forced channel ID of the player"""
         await tables.PlayerRow.raw(
-            """UPDATE player
-            SET forced_channel_id = {}
-            WHERE id = {} AND bot = {}
-            IF NOT FOUND THEN
-                INSERT INTO player (id, bot, forced_channel_id) VALUES ({}, {}, {})
-            END IF;
-            """,
-            forced_channel_id,
-            self.id,
-            self.bot,
+            """INSERT INTO player (id, bot, forced_channel_id)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET forced_channel_id = excluded.forced_channel_id;""",
             self.id,
             self.bot,
             forced_channel_id,
@@ -692,16 +670,10 @@ class PlayerModel:
     async def update_repeat_current(self, repeat_current: bool) -> None:
         """Update the repeat current of the player"""
         await tables.PlayerRow.raw(
-            """UPDATE player
-            SET repeat_current = {}
-            WHERE id = {} AND bot = {}
-            IF NOT FOUND THEN
-                INSERT INTO player (id, bot, repeat_current) VALUES ({}, {}, {})
-            END IF;
-            """,
-            repeat_current,
-            self.id,
-            self.bot,
+            """INSERT INTO player (id, bot, repeat_current)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET repeat_current = excluded.repeat_current;""",
             self.id,
             self.bot,
             repeat_current,
@@ -717,16 +689,10 @@ class PlayerModel:
     async def update_repeat_queue(self, repeat_queue: bool) -> None:
         """Update the repeat queue of the player"""
         await tables.PlayerRow.raw(
-            """UPDATE player
-            SET repeat_queue = {}
-            WHERE id = {} AND bot = {}
-            IF NOT FOUND THEN
-                INSERT INTO player (id, bot, repeat_queue) VALUES ({}, {}, {})
-            END IF;
-            """,
-            repeat_queue,
-            self.id,
-            self.bot,
+            """INSERT INTO player (id, bot, repeat_queue)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET repeat_queue = excluded.repeat_queue;""",
             self.id,
             self.bot,
             repeat_queue,
@@ -742,16 +708,10 @@ class PlayerModel:
     async def update_shuffle(self, shuffle: bool) -> None:
         """Update the shuffle of the player"""
         await tables.PlayerRow.raw(
-            """UPDATE player
-            SET shuffle = {}
-            WHERE id = {} AND bot = {}
-            IF NOT FOUND THEN
-                INSERT INTO player (id, bot, shuffle) VALUES ({}, {}, {})
-            END IF;
-            """,
-            shuffle,
-            self.id,
-            self.bot,
+            """INSERT INTO player (id, bot, shuffle)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET shuffle = excluded.shuffle;""",
             self.id,
             self.bot,
             shuffle,
@@ -767,16 +727,10 @@ class PlayerModel:
     async def update_auto_shuffle(self, auto_shuffle: bool) -> None:
         """Update the auto shuffle of the player"""
         await tables.PlayerRow.raw(
-            """UPDATE player
-            SET auto_shuffle = {}
-            WHERE id = {} AND bot = {}
-            IF NOT FOUND THEN
-                INSERT INTO player (id, bot, auto_shuffle) VALUES ({}, {}, {})
-            END IF;
-            """,
-            auto_shuffle,
-            self.id,
-            self.bot,
+            """INSERT INTO player (id, bot, auto_shuffle)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET auto_shuffle = excluded.auto_shuffle;""",
             self.id,
             self.bot,
             auto_shuffle,
@@ -792,16 +746,10 @@ class PlayerModel:
     async def update_auto_play(self, auto_play: bool) -> None:
         """Update the auto play of the player"""
         await tables.PlayerRow.raw(
-            """UPDATE player
-            SET auto_play = {}
-            WHERE id = {} AND bot = {}
-            IF NOT FOUND THEN
-                INSERT INTO player (id, bot, auto_play) VALUES ({}, {}, {})
-            END IF;
-            """,
-            auto_play,
-            self.id,
-            self.bot,
+            """INSERT INTO player (id, bot, auto_play)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET auto_play = excluded.auto_play;""",
             self.id,
             self.bot,
             auto_play,
@@ -817,16 +765,10 @@ class PlayerModel:
     async def update_self_deaf(self, self_deaf: bool) -> None:
         """Update the self deaf of the player"""
         await tables.PlayerRow.raw(
-            """UPDATE player
-            SET self_deaf = {}
-            WHERE id = {} AND bot = {}
-            IF NOT FOUND THEN
-                INSERT INTO player (id, bot, self_deaf) VALUES ({}, {}, {})
-            END IF;
-            """,
-            self_deaf,
-            self.id,
-            self.bot,
+            """INSERT INTO player (id, bot, self_deaf)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET self_deaf = excluded.self_deaf;""",
             self.id,
             self.bot,
             self_deaf,
@@ -837,25 +779,18 @@ class PlayerModel:
         player = await tables.PlayerRow.raw(
             "SELECT extras FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
         )
-        return ujson.loads(player[0]["extras"]) if player else {}
+        return ujson.loads(player[0]["extras"]) if player else tables.PlayerRow.extras.default
 
     async def update_extras(self, extras: dict) -> None:
         """Update the extras of the player"""
-        extras = ujson.dumps(extras)
         await tables.PlayerRow.raw(
-            """UPDATE player
-            SET extras = {}
-            WHERE id = {} AND bot = {}
-            IF NOT FOUND THEN
-                INSERT INTO player (id, bot, extras) VALUES ({}, {}, {})
-            END IF;
-            """,
-            extras,
+            """INSERT INTO player (id, bot, extras)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET extras = excluded.extras;""",
             self.id,
             self.bot,
-            self.id,
-            self.bot,
-            extras,
+            ujson.dumps(extras),
         )
 
     async def fetch_effects(self) -> dict:
@@ -863,25 +798,18 @@ class PlayerModel:
         player = await tables.PlayerRow.raw(
             "SELECT effects FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
         )
-        return ujson.loads(player[0]["effects"]) if player else {}
+        return ujson.loads(player[0]["effects"]) if player else tables.PlayerRow.effects.default
 
     async def update_effects(self, effects: dict) -> None:
         """Update the effects of the player"""
-        effects = ujson.dumps(effects)
         await tables.PlayerRow.raw(
-            """UPDATE player
-            SET effects = {}
-            WHERE id = {} AND bot = {}
-            IF NOT FOUND THEN
-                INSERT INTO player (id, bot, effects) VALUES ({}, {}, {})
-            END IF;
-            """,
-            effects,
+            """INSERT INTO player (id, bot, effects)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET effects = excluded.effects;""",
             self.id,
             self.bot,
-            self.id,
-            self.bot,
-            effects,
+            ujson.dumps(effects),
         )
 
     async def fetch_empty_queue_dc(self) -> TimedFeature:
@@ -896,19 +824,13 @@ class PlayerModel:
     async def update_empty_queue_dc(self, empty_queue_dc: dict) -> None:
         """Update the empty queue dc of the player"""
         await tables.PlayerRow.raw(
-            """UPDATE player
-            SET empty_queue_dc = {}
-            WHERE id = {} AND bot = {}
-            IF NOT FOUND THEN
-                INSERT INTO player (id, bot, empty_queue_dc) VALUES ({}, {}, {})
-            END IF;
-            """,
-            empty_queue_dc,
+            """INSERT INTO player (id, bot, empty_queue_dc)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET empty_queue_dc = excluded.empty_queue_dc;""",
             self.id,
             self.bot,
-            self.id,
-            self.bot,
-            empty_queue_dc,
+            ujson.dumps(empty_queue_dc),
         )
 
     async def fetch_alone_dc(self) -> TimedFeature:
@@ -921,19 +843,13 @@ class PlayerModel:
     async def update_alone_dc(self, alone_dc: dict) -> None:
         """Update the alone dc of the player"""
         await tables.PlayerRow.raw(
-            """UPDATE player
-            SET alone_dc = {}
-            WHERE id = {} AND bot = {}
-            IF NOT FOUND THEN
-                INSERT INTO player (id, bot, alone_dc) VALUES ({}, {}, {})
-            END IF;
-            """,
-            alone_dc,
+            """INSERT INTO player (id, bot, alone_dc)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET alone_dc = excluded.alone_dc;""",
             self.id,
             self.bot,
-            self.id,
-            self.bot,
-            alone_dc,
+            ujson.dumps(alone_dc),
         )
 
     async def fetch_alone_pause(self) -> TimedFeature:
@@ -946,19 +862,13 @@ class PlayerModel:
     async def update_alone_pause(self, alone_pause: dict) -> None:
         """Update the alone pause of the player"""
         await tables.PlayerRow.raw(
-            """UPDATE player
-            SET alone_pause = {}
-            WHERE id = {} AND bot = {}
-            IF NOT FOUND THEN
-                INSERT INTO player (id, bot, alone_pause) VALUES ({}, {}, {})
-            END IF;
-            """,
-            alone_pause,
+            """INSERT INTO player (id, bot, alone_pause)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET alone_pause = excluded.alone_pause;""",
             self.id,
             self.bot,
-            self.id,
-            self.bot,
-            alone_pause,
+            ujson.dumps(alone_pause),
         )
 
     async def fetch_dj_users(self) -> set[int]:
@@ -971,18 +881,11 @@ class PlayerModel:
 
     async def add_to_dj_users(self, user: discord.Member) -> None:
         """Add a user to the dj users of the player"""
-
         await tables.PlayerRow.raw(
-            """UPDATE player
-            SET dj_users = array_append(dj_users, {})
-            WHERE id = {} AND bot = {}
-            IF NOT FOUND THEN
-                INSERT INTO player (id, bot, dj_users) VALUES ({}, {}, {})
-            END IF;
-            """,
-            user.id,
-            self.id,
-            self.bot,
+            """INSERT INTO player (id, bot, dj_users)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET dj_users = array_cat(dj_users, EXCLUDED.dj_users);""",
             self.id,
             self.bot,
             [user.id],
@@ -1002,16 +905,10 @@ class PlayerModel:
         if not users:
             return
         await tables.PlayerRow.raw(
-            """UPDATE player
-                   SET dj_users = dj_users || '{}'::bigint[]
-                   WHERE id = {} AND bot = {}
-                   IF NOT FOUND THEN
-                       INSERT INTO player (id, bot, dj_users) VALUES ({}, {}, {})
-                   END IF;
-                   """,
-            f'{{{",".join(map(str, [u.id for u in users]))}}}',
-            self.id,
-            self.bot,
+            """INSERT INTO player (id, bot, dj_users)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET dj_users = array_cat(dj_users, EXCLUDED.dj_users);""",
             self.id,
             self.bot,
             [u.id for u in users],
@@ -1048,22 +945,16 @@ class PlayerModel:
 
         return set(player[0]["dj_roles"] if player else tables.PlayerRow.dj_roles.default)
 
-    async def add_to_dj_roles(self, roles: discord.Role) -> None:
+    async def add_to_dj_roles(self, role: discord.Role) -> None:
         """Add dj roles to the player"""
         await tables.PlayerRow.raw(
-            """UPDATE player
-                    SET dj_roles = array_append(dj_roles, {})
-                    WHERE id = {} AND bot = {}
-                    IF NOT FOUND THEN
-                        INSERT INTO player (id, bot, dj_roles) VALUES ({}, {}, {})
-                    END IF;
-                    """,
-            roles.id,
+            """INSERT INTO player (id, bot, dj_roles)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET dj_roles = array_cat(dj_roles, EXCLUDED.dj_users);""",
             self.id,
             self.bot,
-            self.id,
-            self.bot,
-            [roles.id],
+            [role.id],
         )
 
     async def remove_from_dj_roles(self, roles: discord.Role) -> None:
@@ -1085,19 +976,13 @@ class PlayerModel:
         if not roles:
             return
         await tables.PlayerRow.raw(
-            """UPDATE player
-                           SET dj_users = dj_roles || '{}'::bigint[]
-                           WHERE id = {} AND bot = {}
-                           IF NOT FOUND THEN
-                               INSERT INTO player (id, bot, dj_roles) VALUES ({}, {}, {})
-                           END IF;
-                           """,
-            f'{{{",".join(map(str, [u.id for u in roles]))}}}',
+            """INSERT INTO player (id, bot, dj_roles)
+                    VALUES ({}, {}, {})
+                    ON CONFLICT (id, bot)
+                    DO UPDATE SET dj_roles = array_cat(dj_roles, EXCLUDED.dj_users);""",
             self.id,
             self.bot,
-            self.id,
-            self.bot,
-            [u.id for u in roles],
+            [r.id for r in roles],
         )
 
     async def bulk_remove_dj_roles(self, *roles: discord.Role) -> None:
@@ -1189,11 +1074,10 @@ class BotVersion:
         """Update the version of the bot in the database"""
         await tables.BotVersionRow.raw(
             """
-            UPDATE version
-            SET version = {}
-            IF NOT FOUND THEN
-                INSERT INTO version (bot, version) VALUES ({}, {})
-            END IF;
+            INSERT INTO version (bot, version)
+            VALUES ({}, {})
+            ON CONFLICT (bot)
+            DO UPDATE SET version = EXCLUDED.version
             """,
             self.bot,
             str(version),
@@ -1242,19 +1126,16 @@ class LibConfigModel:
         config_folder
             The new config folder.
         """
-        config_folder = str(config_folder)
         await tables.LibConfigRow.raw(
             """
-            UPDATE lib_config
-            SET config_folder = {}
-            IF NOT FOUND THEN
-                INSERT INTO lib_config (id, bot, config_folder) VALUES ({}, {}, {})
-            END IF;
+            INSERT INTO lib_config (id, bot, config_folder)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET config_folder = EXCLUDED.config_folder
             """,
-            config_folder,
             self.id,
             self.bot,
-            config_folder,
+            str(config_folder),
         )
 
     async def fetch_localtrack_folder(self) -> str:
@@ -1282,19 +1163,16 @@ class LibConfigModel:
         localtrack_folder
             The new localtrack folder.
         """
-        localtrack_folder = str(localtrack_folder)
         await tables.LibConfigRow.raw(
             """
-            UPDATE lib_config
-            SET localtrack_folder = {}
-            IF NOT FOUND THEN
-                INSERT INTO lib_config (id, bot, localtrack_folder) VALUES ({}, {}, {})
-            END IF;
+            INSERT INTO lib_config (id, bot, localtrack_folder)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET localtrack_folder = EXCLUDED.localtrack_folder
             """,
-            localtrack_folder,
             self.id,
             self.bot,
-            localtrack_folder,
+            str(localtrack_folder),
         )
 
     async def fetch_java_path(self) -> str:
@@ -1322,19 +1200,16 @@ class LibConfigModel:
         java_path
             The new java path.
         """
-        java_path = str(java_path)
         await tables.LibConfigRow.raw(
             """
-            UPDATE lib_config
-            SET java_path = {}
-            IF NOT FOUND THEN
-                INSERT INTO lib_config (id, bot, java_path) VALUES ({}, {}, {})
-            END IF;
+            INSERT INTO lib_config (id, bot, java_path)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET java_path = EXCLUDED.java_path
             """,
-            java_path,
             self.id,
             self.bot,
-            java_path,
+            str(java_path),
         )
 
     async def fetch_enable_managed_node(self) -> bool:
@@ -1364,13 +1239,11 @@ class LibConfigModel:
         """
         await tables.LibConfigRow.raw(
             """
-            UPDATE lib_config
-            SET enable_managed_node = {}
-            IF NOT FOUND THEN
-                INSERT INTO lib_config (id, bot, enable_managed_node) VALUES ({}, {}, {})
-            END IF;
+            INSERT INTO lib_config (id, bot, enable_managed_node)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET enable_managed_node = EXCLUDED.enable_managed_node
             """,
-            enable_managed_node,
             self.id,
             self.bot,
             enable_managed_node,
@@ -1407,13 +1280,11 @@ class LibConfigModel:
         """
         await tables.LibConfigRow.raw(
             """
-            UPDATE lib_config
-            SET use_bundled_pylav_external = {}
-            IF NOT FOUND THEN
-                INSERT INTO lib_config (id, bot, use_bundled_pylav_external) VALUES ({}, {}, {})
-            END IF;
+            INSERT INTO lib_config (id, bot, use_bundled_pylav_external)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET use_bundled_pylav_external = EXCLUDED.use_bundled_pylav_external
             """,
-            use_bundled_pylav_external,
             self.id,
             self.bot,
             use_bundled_pylav_external,
@@ -1450,13 +1321,11 @@ class LibConfigModel:
         """
         await tables.LibConfigRow.raw(
             """
-            UPDATE lib_config
-            SET use_bundled_lava_link_external = {}
-            IF NOT FOUND THEN
-                INSERT INTO lib_config (id, bot, use_bundled_lava_link_external) VALUES ({}, {}, {})
-            END IF;
+            INSERT INTO lib_config (id, bot, use_bundled_lava_link_external)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET use_bundled_lava_link_external = EXCLUDED.use_bundled_lava_link_external
             """,
-            use_bundled_lava_link_external,
             self.id,
             self.bot,
             use_bundled_lava_link_external,
@@ -1489,13 +1358,11 @@ class LibConfigModel:
         """
         await tables.LibConfigRow.raw(
             """
-            UPDATE lib_config
-            SET download_id = {}
-            IF NOT FOUND THEN
-                INSERT INTO lib_config (id, bot, download_id) VALUES ({}, {}, {})
-            END IF;
+            INSERT INTO lib_config (id, bot, download_id)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET download_id = EXCLUDED.download_id
             """,
-            download_id,
             self.id,
             self.bot,
             download_id,
@@ -1516,7 +1383,7 @@ class LibConfigModel:
             self.id,
             self.bot,
         )
-        return ujson.loads(response[0]["extras"]) if response else {}
+        return ujson.loads(response[0]["extras"]) if response else tables.LibConfigRow.extras.default
 
     async def update_extras(self, extras: dict) -> None:
         """Update the extras.
@@ -1526,19 +1393,16 @@ class LibConfigModel:
         extras
             The new extras.
         """
-        data = ujson.dumps(extras)
         await tables.LibConfigRow.raw(
             """
-            UPDATE lib_config
-            SET extras = {}
-            IF NOT FOUND THEN
-                INSERT INTO lib_config (id, bot, extras) VALUES ({}, {}, {})
-            END IF;
+            INSERT INTO lib_config (id, bot, extras)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET extras = EXCLUDED.extras
             """,
-            data,
             self.id,
             self.bot,
-            data,
+            ujson.dumps(extras),
         )
 
     async def fetch_next_execution_update_bundled_playlists(self) -> datetime.datetime:
@@ -1572,13 +1436,11 @@ class LibConfigModel:
         """
         await tables.LibConfigRow.raw(
             """
-            UPDATE lib_config
-            SET next_execution_update_bundled_playlists = {}
-            IF NOT FOUND THEN
-                INSERT INTO lib_config (id, bot, next_execution_update_bundled_playlists) VALUES ({}, {}, {})
-            END IF;
+            INSERT INTO lib_config (id, bot, next_execution_update_bundled_playlists)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET next_execution_update_bundled_playlists = EXCLUDED.next_execution_update_bundled_playlists
             """,
-            next_execution,
             self.id,
             self.bot,
             next_execution,
@@ -1615,13 +1477,11 @@ class LibConfigModel:
         """
         await tables.LibConfigRow.raw(
             """
-            UPDATE lib_config
-            SET next_execution_update_bundled_external_playlists = {}
-            IF NOT FOUND THEN
-                INSERT INTO lib_config (id, bot, next_execution_update_bundled_external_playlists) VALUES ({}, {}, {})
-            END IF;
+            INSERT INTO lib_config (id, bot, next_execution_update_bundled_external_playlists)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET next_execution_update_bundled_external_playlists = EXCLUDED.next_execution_update_bundled_external_playlists
             """,
-            next_execution,
             self.id,
             self.bot,
             next_execution,
@@ -1658,13 +1518,11 @@ class LibConfigModel:
         """
         await tables.LibConfigRow.raw(
             """
-            UPDATE lib_config
-            SET next_execution_update_external_playlists = {}
-            IF NOT FOUND THEN
-                INSERT INTO lib_config (id, bot, next_execution_update_external_playlists) VALUES ({}, {}, {})
-            END IF;
+            INSERT INTO lib_config (id, bot, next_execution_update_external_playlists)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET next_execution_update_external_playlists = EXCLUDED.next_execution_update_external_playlists
             """,
-            next_execution,
             self.id,
             self.bot,
             next_execution,
@@ -1697,13 +1555,11 @@ class LibConfigModel:
         """
         await tables.LibConfigRow.raw(
             """
-            UPDATE lib_config
-            SET update_bot_activity = {}
-            IF NOT FOUND THEN
-                INSERT INTO lib_config (id, bot, update_bot_activity) VALUES ({}, {}, {})
-            END IF;
+            INSERT INTO lib_config (id, bot, update_bot_activity)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET update_bot_activity = EXCLUDED.update_bot_activity
             """,
-            update_bot_activity,
             self.id,
             self.bot,
             update_bot_activity,
@@ -1740,13 +1596,11 @@ class LibConfigModel:
         """
         await tables.LibConfigRow.raw(
             """
-            UPDATE lib_config
-            SET auto_update_managed_nodes = {}
-            IF NOT FOUND THEN
-                INSERT INTO lib_config (id, bot, auto_update_managed_nodes) VALUES ({}, {}, {})
-            END IF;
+            INSERT INTO lib_config (id, bot, auto_update_managed_nodes)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET auto_update_managed_nodes = EXCLUDED.auto_update_managed_nodes
             """,
-            auto_update_managed_nodes,
             self.id,
             self.bot,
             auto_update_managed_nodes,
@@ -1769,7 +1623,45 @@ class LibConfigModel:
         response = await tables.LibConfigRow.raw(
             """SELECT * FROM lib_config WHERE id = {} AND bot = {}""", self.id, self.bot
         )
-        return response[0] if response else None
+        if response:
+            keys = [
+                "id",
+                "config_folder",
+                "java_path",
+                "enable_managed_node",
+                "auto_update_managed_nodes",
+                "localtrack_folder",
+                "download_id",
+                "update_bot_activity",
+                "use_bundled_pylav_external",
+                "use_bundled_lava_link_external",
+                "extras",
+                "next_execution_update_bundled_playlists",
+                "next_execution_update_bundled_external_playlists",
+                "next_execution_update_external_playlists",
+            ]
+            values = response[0]["row"]
+            data = dict(zip(keys, values))
+            data["extras"] = ujson.loads(data["extras"])
+            return data
+
+        return {
+            "id": self.id,
+            "bot": self.bot,
+            "config_folder": tables.LibConfigRow.config_folder.default,
+            "java_path": tables.LibConfigRow.java_path.default,
+            "enable_managed_node": tables.LibConfigRow.enable_managed_node.default,
+            "auto_update_managed_nodes": tables.LibConfigRow.auto_update_managed_nodes.default,
+            "localtrack_folder": tables.LibConfigRow.localtrack_folder.default,
+            "download_id": tables.LibConfigRow.download_id.default,
+            "update_bot_activity": tables.LibConfigRow.update_bot_activity.default,
+            "use_bundled_pylav_external": tables.LibConfigRow.use_bundled_pylav_external.default,
+            "use_bundled_lava_link_external": tables.LibConfigRow.use_bundled_lava_link_external.default,
+            "extras": tables.LibConfigRow.extras.default,
+            "next_execution_update_bundled_playlists": tables.LibConfigRow.next_execution_update_bundled_playlists.default,
+            "next_execution_update_bundled_external_playlists": tables.LibConfigRow.next_execution_update_bundled_external_playlists.default,
+            "next_execution_update_external_playlists": tables.LibConfigRow.next_execution_update_external_playlists.default,
+        }
 
 
 @dataclass(eq=True)
@@ -1826,7 +1718,7 @@ class PlayerStateModel:
 
     async def save(self) -> None:
         """Save the player state to the database"""
-        await tables.AioHttpCacheRow.raw(
+        await tables.PlayerStateRow.raw(
             """
             INSERT INTO player_state (
                 id,

@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING
 from pylav._logging import getLogger
 from pylav.sql import tables
 from pylav.sql.models import NodeModel
-from pylav.sql.tables import NodePDModel
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -35,10 +34,10 @@ class NodeConfigManager:
         self.currently_in_db.add(node.id)
         return node
 
-    async def get_all_unamanaged_nodes(self, dedupe: bool = True) -> list[NodePDModel]:
+    async def get_all_unamanaged_nodes(self, dedupe: bool = True) -> list[NodeModel]:
         model_list = [
-            NodePDModel(**node)
-            for node in await tables.NodeRow.select()
+            NodeModel(**node)
+            for node in await tables.NodeRow.select(tables.NodeRow.id)
             .output(load_json=True)
             .where(tables.NodeRow.managed == False)  # noqa: E712
         ]
@@ -47,26 +46,28 @@ class NodeConfigManager:
             self.currently_in_db.add(n.id)
         return new_model_list
 
-    async def get_all_nodes(self) -> list[NodePDModel]:
+    async def get_all_nodes(self) -> list[NodeModel]:
         model_list = [
-            NodePDModel(**node)
-            for node in await tables.NodeRow.select().output(load_json=True).where(tables.NodeRow.managed == False)
+            NodeModel(**node)
+            for node in await tables.NodeRow.select(tables.NodeRow.id)
+            .output(load_json=True)
+            .where(tables.NodeRow.managed == False)
         ]
         for n in model_list:
             self.currently_in_db.add(n.id)
-        if mn := self.get_bundled_node_config():
+        if mn := self.bundled_node_config():
             model_list.append(mn)
         return model_list
 
-    async def get_bundled_node_config(self) -> NodePDModel | None:
+    async def get_bundled_node_config(self) -> NodeModel | None:
         managed_node = (
-            await tables.NodeRow.select()
+            await tables.NodeRow.select(tables.NodeRow.id)
             .output(load_json=True)
             .where((tables.NodeRow.id == self._client.bot.user.id) & (tables.NodeRow.managed == True))
             .first()
         )
         if managed_node:
-            return NodePDModel(**managed_node)
+            return NodeModel(**managed_node)
 
     async def update_node(
         self,

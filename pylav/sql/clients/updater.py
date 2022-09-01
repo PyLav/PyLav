@@ -19,8 +19,9 @@ class UpdateSchemaManager:
         from pylav._config import __VERSION__
 
         current_version = await self._client.lib_db_manager.get_bot_db_version().fetch_version()
-        if current_version <= parse_version("0.0.0.0"):
-            await self._client.lib_db_manager.update_bot_dv_version("0.0.0.1")
+        if current_version == parse_version("0.0.0.0"):
+            await self._client.lib_db_manager.update_bot_dv_version(__VERSION__)
+            return
 
         if current_version <= parse_version("0.0.0.1"):
             config = self._client.node_db_manager.bundled_node_config()
