@@ -40,8 +40,9 @@ class _AsyncSelector:
 
 
 class _TerminatingSelector:
+    @staticmethod
     async def _select_from(
-        self, parent_path: "AsyncPath", is_dir: CoroutineMethod, exists: CoroutineMethod, scandir: CoroutineMethod
+        parent_path: "AsyncPath", is_dir: CoroutineMethod, exists: CoroutineMethod, scandir: CoroutineMethod
     ) -> AsyncIterable["AsyncPath"]:
         yield parent_path
 

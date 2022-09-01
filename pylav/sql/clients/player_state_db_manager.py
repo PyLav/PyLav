@@ -23,14 +23,12 @@ class PlayerStateDBManager:
 
     async def save_players(self, players: list[dict]):
         for player in players:
-            player.pop("pk", None)
             p = PlayerStateModel(bot=self.client.bot.user.id, **player)
             await p.save()
             LOGGER.trace("Saved player %s", p)
         LOGGER.debug("Saved %s players", len(players))
 
     async def save_player(self, player: dict):
-        player.pop("pk", None)
         await PlayerStateModel(bot=self.client.bot.user.id, **player).save()
 
     async def get_player(self, guild_id: int) -> PlayerStateModel | None:
@@ -38,7 +36,6 @@ class PlayerStateDBManager:
 
     async def get_all_players(self) -> AsyncIterator[PlayerStateModel]:
         for entry in await tables.PlayerStateRow.select().where(tables.PlayerStateRow.bot == self.client.bot.user.id):  # type: ignore
-            entry.pop("pk", None)
             yield PlayerStateModel(**entry)
 
     async def delete_player(self, guild_id: int):

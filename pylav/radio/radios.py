@@ -37,15 +37,7 @@ class Request:
 
 
 class RadioBrowser:
-    """This class implements the main interface for the Radio Browser API.
-
-    Args:
-        session (obj, optional): The `requests_cache.CachedSession` instance.
-
-    Note:
-        Run `pip install requests_cache` to use cached session.
-
-    """
+    """This class implements the main interface for the Radio Browser API."""
 
     base_url: str
 

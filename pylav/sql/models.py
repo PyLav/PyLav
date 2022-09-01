@@ -3,8 +3,10 @@ from __future__ import annotations
 import datetime
 import gzip
 import io
+import pathlib
 import re
 import sys
+import typing
 from collections.abc import Iterator
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
@@ -18,6 +20,8 @@ import yaml
 from packaging.version import LegacyVersion, Version
 from packaging.version import parse as parse_version
 
+from pylav.vendored import aiopath
+
 try:
     import brotli
 
@@ -25,21 +29,1984 @@ try:
 except ImportError:
     BROTLI_ENABLED = False
 
-from pylav._config import CONFIG_DIR
 from pylav._logging import getLogger
 from pylav.constants import BUNDLED_PLAYLIST_IDS, SUPPORTED_SOURCES
-from pylav.envvars import JAVA_EXECUTABLE
 from pylav.exceptions import InvalidPlaylist
 from pylav.filters import Equalizer
 from pylav.sql import tables
 from pylav.types import BotT
 from pylav.utils import PyLavContext, TimedFeature
 
-Node = None
-
 BRACKETS: re.Pattern = re.compile(r"[\[\]]")
 
 LOGGER = getLogger("PyLav.DBModels")
+
+
+@dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
+class NodeModel:
+    id: int
+
+    async def exists(self) -> bool:
+        """Check if the node exists in the database.
+
+        Returns
+        -------
+        bool
+            Whether the node exists in the database.
+        """
+        return await tables.PlayerRow.raw("SELECT EXISTS(SELECT 1 FROM node WHERE id = {} and bot = {});", self.id)
+
+    async def delete(self) -> None:
+        """Delete the node from the database"""
+        await tables.PlayerRow.raw("DELETE FROM node WHERE id = {}", self.id)
+
+    async def fetch_all(self) -> dict:
+        response = await tables.NodeRow.raw(
+            """
+        SELECT (id, name, ssl, resume_key, resume_timeout, reconnect_attempts, search_only, managed, extras, yaml, disabled_sources)
+        FROM node
+        WHERE id = {}
+        """,
+            self.id,
+        )
+        return response[0] if response else None
+
+    async def fetch_name(self) -> str:
+        """Fetch the node from the database.
+
+        Returns
+        -------
+        ste
+            The node's name.
+        """
+        data = await tables.NodeRow.raw("SELECT name FROM node WHERE id = {}", self.id)
+        return data[0]["name"] if data else None
+
+    async def update_name(self, name: str) -> None:
+        """Update the node's name in the database"""
+        await tables.PlayerRow.raw(
+            """
+        UPDATE node
+        SET name = {}
+        WHERE id = {}
+        IF NOT EXISTS THEN
+            INSERT INTO node (id, name) VALUES ({}, {})
+        END IF;
+        """,
+            name,
+            self.id,
+            self.id,
+            name,
+        )
+
+    async def fetch_ssl(self) -> bool:
+        """Fetch the node's ssl setting from the database.
+
+        Returns
+        -------
+        bool
+            The node's ssl setting.
+        """
+        data = await tables.NodeRow.raw("SELECT ssl FROM node WHERE id = {}", self.id)
+        return data[0]["ssl"] if data else tables.NodeRow.ssl.default
+
+    async def update_ssl(self, ssl: bool) -> None:
+        """Update the node's ssl setting in the database"""
+        await tables.PlayerRow.raw(
+            """
+        UPDATE node
+        SET ssl = {}
+        WHERE id = {}
+        IF NOT EXISTS THEN
+            INSERT INTO node (id, ssl) VALUES ({}, {})
+        END IF;
+        """,
+            ssl,
+            self.id,
+            self.id,
+            ssl,
+        )
+
+    async def fetch_resume_key(self) -> str | None:
+        """Fetch the node's resume key from the database.
+
+        Returns
+        -------
+        str
+            The node's resume key.
+        """
+        data = await tables.NodeRow.raw("SELECT resume_key FROM node WHERE id = {}", self.id)
+        return data[0]["resume_key"] if data else None
+
+    async def update_resume_key(self, resume_key: str) -> None:
+        """Update the node's resume key in the database"""
+        await tables.PlayerRow.raw(
+            """
+        UPDATE node
+        SET resume_key = {}
+        WHERE id = {}
+        IF NOT EXISTS THEN
+            INSERT INTO node (id, resume_key) VALUES ({}, {})
+        END IF;
+        """,
+            resume_key,
+            self.id,
+            self.id,
+            resume_key,
+        )
+
+    async def fetch_resume_timeout(self) -> int:
+        """Fetch the node's resume timeout from the database.
+
+        Returns
+        -------
+        int
+            The node's resume timeout.
+        """
+        data = await tables.NodeRow.raw("SELECT resume_timeout FROM node WHERE id = {}", self.id)
+        return data[0]["resume_timeout"] if data else tables.NodeRow.resume_timeout.default
+
+    async def update_resume_timeout(self, resume_timeout: int) -> None:
+        """Update the node's resume timeout in the database"""
+        await tables.PlayerRow.raw(
+            """
+                UPDATE node
+                SET resume_timeout = {}
+                WHERE id = {}
+                IF NOT EXISTS THEN
+                    INSERT INTO node (id, resume_timeout) VALUES ({}, {})
+                END IF;
+                """,
+            resume_timeout,
+            self.id,
+            self.id,
+            resume_timeout,
+        )
+
+    async def fetch_reconnect_attempts(self) -> int:
+        """Fetch the node's reconnect attempts from the database.
+
+        Returns
+        -------
+        int
+            The node's reconnect attempts.
+        """
+        data = await tables.NodeRow.raw("SELECT reconnect_attempts FROM node WHERE id = {}", self.id)
+        return data[0]["reconnect_attempts"] if data else tables.NodeRow.reconnect_attempts.default
+
+    async def update_reconnect_attempts(self, reconnect_attempts: int) -> None:
+        """Update the node's reconnect attempts in the database"""
+        await tables.PlayerRow.raw(
+            """
+                UPDATE node
+                SET reconnect_attempts = {}
+                WHERE id = {}
+                IF NOT EXISTS THEN
+                    INSERT INTO node (id, reconnect_attempts) VALUES ({}, {})
+                END IF;
+                """,
+            reconnect_attempts,
+            self.id,
+            self.id,
+            reconnect_attempts,
+        )
+
+    async def fetch_search_only(self) -> bool:
+        """Fetch the node's search only setting from the database.
+
+        Returns
+        -------
+        bool
+            The node's search only setting.
+        """
+        data = await tables.NodeRow.raw("SELECT search_only FROM node WHERE id = {}", self.id)
+        return data[0]["search_only"] if data else tables.NodeRow.search_only.default
+
+    async def update_search_only(self, search_only: bool) -> None:
+        """Update the node's search only setting in the database"""
+        await tables.PlayerRow.raw(
+            """
+                UPDATE node
+                SET search_only = {}
+                WHERE id = {}
+                IF NOT EXISTS THEN
+                    INSERT INTO node (id, search_only) VALUES ({}, {})
+                END IF;
+                """,
+            search_only,
+            self.id,
+            self.id,
+            search_only,
+        )
+
+    async def fetch_managed(self) -> bool:
+        """Fetch the node's managed setting from the database.
+
+        Returns
+        -------
+        bool
+            The node's managed setting.
+        """
+        data = await tables.NodeRow.raw("SELECT managed FROM node WHERE id = {}", self.id)
+        return data[0]["managed"] if data else tables.NodeRow.managed.default
+
+    async def update_managed(self, managed: bool) -> None:
+        """Update the node's managed setting in the database"""
+        await tables.PlayerRow.raw(
+            """
+                UPDATE node
+                SET managed = {}
+                WHERE id = {}
+                IF NOT EXISTS THEN
+                    INSERT INTO node (id, managed) VALUES ({}, {})
+                END IF;
+                """,
+            managed,
+            self.id,
+            self.id,
+            managed,
+        )
+
+    async def fetch_extras(self) -> dict:
+        """Fetch the node's extras from the database.
+
+        Returns
+        -------
+        dict
+            The node's extras.
+        """
+        data = await tables.NodeRow.raw("SELECT extras FROM node WHERE id = {}", self.id)
+        return ujson.loads(data[0]["extras"]) if data else {}
+
+    async def update_extras(self, extras: dict) -> None:
+        """Update the node's extras in the database"""
+        data = ujson.dumps(extras)
+        await tables.PlayerRow.raw(
+            """
+                UPDATE node
+                SET extras = {}
+                WHERE id = {}
+                IF NOT EXISTS THEN
+                    INSERT INTO node (id, extras) VALUES ({}, {})
+                END IF;
+                """,
+            data,
+            self.id,
+            self.id,
+            data,
+        )
+
+    async def fetch_yaml(self) -> dict:
+        """Fetch the node's yaml from the database.
+
+        Returns
+        -------
+        dict
+            The node's yaml.
+        """
+        data = await tables.NodeRow.raw("SELECT yaml FROM node WHERE id = {}", self.id)
+        return ujson.loads(data[0]["yaml"]) if data else {}
+
+    async def update_yaml(self, yaml_data: dict) -> None:
+        """Update the node's yaml in the database"""
+        yaml_ = ujson.dumps(yaml_data)
+        await tables.PlayerRow.raw(
+            """
+                UPDATE node
+                SET yaml = {}
+                WHERE id = {}
+                IF NOT EXISTS THEN
+                    INSERT INTO node (id, yaml) VALUES ({}, {})
+                END IF;
+                """,
+            yaml_,
+            self.id,
+            self.id,
+            yaml_,
+        )
+
+    async def fetch_disabled_sources(self) -> list[str]:
+        """Fetch the node's disabled sources from the database.
+
+        Returns
+        -------
+        list[str]
+            The node's disabled sources.
+        """
+        data = await tables.NodeRow.raw("SELECT disabled_sources FROM node WHERE id = {}", self.id)
+        return data[0]["disabled_sources"] if data else tables.NodeRow.disabled_sources.default
+
+    async def update_disabled_sources(self, disabled_sources: list[str]) -> None:
+        """Update the node's disabled sources in the database"""
+        source = set(map(str.strip, map(str.lower, disabled_sources)))
+        intersection = list(source & SUPPORTED_SOURCES)
+        await tables.PlayerRow.raw(
+            """
+                        UPDATE node
+                        SET disabled_sources = {}
+                        WHERE id = {}
+                        IF NOT EXISTS THEN
+                            INSERT INTO node (id, disabled_sources) VALUES ({}, {})
+                        END IF;
+                        """,
+            intersection,
+            self.id,
+            self.id,
+            intersection,
+        )
+
+    async def add_to_disabled_sources(self, source: str) -> None:
+        """Add a source to the node's disabled sources in the database"""
+
+        await tables.PlayerRow.raw(
+            """UPDATE node
+                            SET disabled_sources = array_append(disabled_sources, {})
+                            WHERE id = {}
+                            IF NOT FOUND THEN
+                                INSERT INTO player (id, disabled_sources) VALUES ({}, {}, {})
+                            END IF;
+                            """,
+            source,
+            self.id,
+            self.id,
+            source,
+        )
+
+    async def remove_from_disabled_sources(self, source: str) -> None:
+        """Remove a source from the node's disabled sources in the database"""
+        await tables.PlayerRow.raw(
+            """UPDATE node SET disabled_sources = array_remove(disabled_sources, {}) WHERE id = {}""",
+            source,
+            self.id,
+        )
+
+    async def bulk_add_to_disabled_sources(self, sources: list[str]) -> None:
+        """Add sources to the node's disabled sources in the database"""
+        source = set(map(str.strip, map(str.lower, [sources])))
+        intersection = list(source & SUPPORTED_SOURCES)
+        await tables.PlayerRow.raw(
+            """UPDATE node
+                                    SET disabled_sources = disabled_sources || '{}'::text[]
+                                    WHERE id = {}
+                                    IF NOT FOUND THEN
+                                        INSERT INTO player (id, disabled_sources) VALUES ({}, {}, {})
+                                    END IF;
+                                    """,
+            f'{{{",".join(intersection)}}}',
+            self.id,
+            self.id,
+            intersection,
+        )
+
+    async def bulk_remove_from_disabled_sources(self, sources: list[str]) -> None:
+        """Remove sources from the node's disabled sources in the database"""
+        await tables.PlayerRow.raw(
+            """UPDATE node SET disabled_sources = array_diff(disabled_sources, '{}'::text[]) WHERE id = {}""",
+            f'{{{",".join(sources)}}}',
+            self.id,
+        )
+
+    async def get_connection_args(self) -> dict:
+        """Get the connection args for the node.
+
+        Returns
+        -------
+        dict
+            The connection args.
+        """
+        data = await self.fetch_all()
+        data["yaml"] = ujson.loads(data["yaml"])
+
+        return {
+            "unique_identifier": self.id,
+            "host": data["yaml"]["server"]["address"],
+            "port": data["yaml"]["server"]["port"],
+            "password": data["yaml"]["lavalink"]["server"]["password"],
+            "name": data["name"],
+            "ssl": data["ssl"],
+            "reconnect_attempts": data["reconnect_attempts"],
+            "search_only": data["search_only"],
+            "resume_timeout": data["resume_timeout"],
+            "resume_key": data["resume_key"],
+            "disabled_sources": data["disabled_sources"],
+            "managed": data["managed"],
+        }
+
+    @classmethod
+    async def create_managed(cls, id: int) -> None:
+        """Create the player in the database"""
+        from pylav.utils.built_in_node import NODE_DEFAULT_SETTINGS
+
+        await tables.PlayerRow.raw(
+            """
+                    INSERT INTO player
+                    (id, managed, ssl, reconnect_attempts, search_only, yaml, name, resume_key, resume_timeout, extras)
+                    VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {})
+                    ON CONFLICT (id) DO NOTHING;
+                    ;
+                    """,
+            id,
+            True,
+            False,
+            -1,
+            False,
+            ujson.dumps(NODE_DEFAULT_SETTINGS),
+            "PyLavManagedNode",
+            None,
+            600,
+            ujson.dumps({"max_ram": "2048M"}),
+        )
+
+
+@dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
+class PlayerModel:
+    id: int
+    bot: int
+
+    @classmethod
+    async def create_global(cls, bot: int) -> None:
+        """Create the player in the database"""
+        data = ujson.dumps(
+            {
+                "enabled": False,
+                "time": 60,
+            }
+        )
+        await tables.PlayerRow.raw(
+            """
+                INSERT INTO player
+                (id, bot, volume, max_volume, shuffle, auto_shuffle, auto_play, self_deaf, empty_queue_dc, alone_dc, alone_pause)
+                VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})
+                ON CONFLICT (id, bot) DO NOTHING;
+                ;
+                """,
+            0,
+            bot,
+            1000,
+            1000,
+            True,
+            True,
+            True,
+            True,
+            data,
+            data,
+            data,
+        )
+
+    async def delete(self) -> None:
+        """Delete the player from the database"""
+        await tables.PlayerRow.raw("DELETE FROM player WHERE id = {} and bot = {};", self.id, self.bot)
+
+    async def fetch_all(self) -> dict:
+        """Get all players from the database"""
+        players = await tables.PlayerRow.raw(
+            """SELECT (
+                volume,
+                max_volume,
+                auto_play_playlist_id,
+                text_channel_id,
+                notify_channel_id,
+                forced_channel_id,
+                repeat_current,
+                repeat_queue,
+                shuffle,
+                auto_shuffle,
+                auto_play,
+                self_deaf,
+                empty_queue_dc,
+                alone_dc,
+                alone_pause,
+                extras,
+                effects,
+                dj_users,
+                dj_roles
+            ) FROM player WHERE id = {} AND bot = {} LIMIT 1;""",
+            self.id,
+            self.bot,
+        )
+        return next(players, None)
+
+    async def exists(self) -> bool:
+        """Check if the player exists in the database"""
+        return await tables.PlayerRow.raw(
+            "SELECT EXISTS(SELECT 1 FROM player WHERE id = {} and bot = {});", self.id, self.bot
+        )
+
+    async def fetch_volume(self) -> int:
+        """Fetch the volume of the player from the db"""
+        player = await tables.PlayerRow.raw(
+            """SELECT volume FROM player WHERE id = {} AND bot = {} LIMIT 1""", self.id, self.bot
+        )
+        return player[0]["volume"] if player else tables.PlayerRow.volume.default
+
+    async def update_volume(self, volume: int) -> None:
+        """Update the volume of the player in the db"""
+        await tables.PlayerRow.raw(
+            """UPDATE player
+            SET volume = {}
+            WHERE id = {} AND bot = {}
+            IF NOT FOUND THEN
+                INSERT INTO player (id, bot, volume) VALUES ({}, {}, {})
+            END IF;""",
+            volume,
+            self.id,
+            self.bot,
+            self.id,
+            self.bot,
+            volume,
+        )
+
+    async def fetch_max_volume(self) -> int:
+        """Fetch the max volume of the player from the db"""
+        player = await tables.PlayerRow.raw(
+            """SELECT max_volume FROM player WHERE id = {} AND bot = {} LIMIT 1""", self.id, self.bot
+        )
+        return player[0]["max_volume"] if player else tables.PlayerRow.max_volume.default
+
+    async def update_max_volume(self, max_volume: int) -> None:
+        """Update the max volume of the player in the db"""
+        await tables.PlayerRow.raw(
+            """UPDATE player
+            SET max_volume = {}
+            WHERE id = {} AND bot = {}
+            IF NOT FOUND THEN
+                INSERT INTO player (id, bot, max_volume) VALUES ({}, {}, {})
+            END IF;
+            """,
+            max_volume,
+            self.id,
+            self.bot,
+            self.id,
+            self.bot,
+            max_volume,
+        )
+
+    async def fetch_auto_play_playlist_id(self) -> int:
+        """Fetch the auto play playlist ID of the player"""
+        player = await tables.PlayerRow.raw(
+            """SELECT auto_play_playlist_id FROM player WHERE id = {} AND bot = {} LIMIT 1""", self.id, self.bot
+        )
+        return player[0]["auto_play_playlist_id"] if player else tables.PlayerRow.auto_play_playlist_id.default
+
+    async def update_auto_play_playlist_id(self, auto_play_playlist_id: int) -> None:
+        """Update the auto play playlist ID of the player"""
+        await tables.PlayerRow.raw(
+            """UPDATE player
+            SET auto_play_playlist_id = {}
+            WHERE id = {} AND bot = {}
+            IF NOT FOUND THEN
+                INSERT INTO player (id, bot, auto_play_playlist_id) VALUES ({}, {}, {})
+            END IF;
+            """,
+            auto_play_playlist_id,
+            self.id,
+            self.bot,
+            self.id,
+            self.bot,
+            auto_play_playlist_id,
+        )
+
+    async def fetch_text_channel_id(self) -> int:
+        """Fetch the text channel ID of the player"""
+        player = await tables.PlayerRow.raw(
+            """SELECT text_channel_id FROM player WHERE id = {} AND bot = {} LIMIT 1""", self.id, self.bot
+        )
+        return player[0]["text_channel_id"] if player else tables.PlayerRow.text_channel_id.default
+
+    async def update_text_channel_id(self, text_channel_id: int) -> None:
+        """Update the text channel ID of the player"""
+        await tables.PlayerRow.raw(
+            """UPDATE player
+            SET text_channel_id = {}
+            WHERE id = {} AND bot = {}
+            IF NOT FOUND THEN
+                INSERT INTO player (id, bot, text_channel_id) VALUES ({}, {}, {})
+            END IF;
+            """,
+            text_channel_id,
+            self.id,
+            self.bot,
+            self.id,
+            self.bot,
+            text_channel_id,
+        )
+
+    async def fetch_notify_channel_id(self) -> int:
+        """Fetch the notify channel ID of the player"""
+        player = await tables.PlayerRow.raw(
+            """SELECT notify_channel_id FROM player WHERE id = {} AND bot = {} LIMIT 1""", self.id, self.bot
+        )
+
+        return player[0]["notify_channel_id"] if player else tables.PlayerRow.notify_channel_id.default
+
+    async def update_notify_channel_id(self, notify_channel_id: int) -> None:
+        """Update the notify channel ID of the player"""
+        await tables.PlayerRow.raw(
+            """UPDATE player
+            SET notify_channel_id = {}
+            WHERE id = {} AND bot = {}
+            IF NOT FOUND THEN
+                INSERT INTO player (id, bot, notify_channel_id) VALUES ({}, {}, {})
+            END IF;
+            """,
+            notify_channel_id,
+            self.id,
+            self.bot,
+            self.id,
+            self.bot,
+            notify_channel_id,
+        )
+
+    async def fetch_forced_channel_id(self) -> int:
+        """Fetch the forced channel ID of the player"""
+        player = await tables.PlayerRow.raw(
+            "SELECT forced_channel_id FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        )
+        return player[0]["forced_channel_id"] if player else tables.PlayerRow.forced_channel_id.default
+
+    async def update_forced_channel_id(self, forced_channel_id: int) -> None:
+        """Update the forced channel ID of the player"""
+        await tables.PlayerRow.raw(
+            """UPDATE player
+            SET forced_channel_id = {}
+            WHERE id = {} AND bot = {}
+            IF NOT FOUND THEN
+                INSERT INTO player (id, bot, forced_channel_id) VALUES ({}, {}, {})
+            END IF;
+            """,
+            forced_channel_id,
+            self.id,
+            self.bot,
+            self.id,
+            self.bot,
+            forced_channel_id,
+        )
+
+    async def fetch_repeat_current(self) -> bool:
+        """Fetch the repeat current of the player"""
+        player = await tables.PlayerRow.raw(
+            "SELECT repeat_current FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        )
+        return player[0]["repeat_current"] if player else tables.PlayerRow.repeat_current.default
+
+    async def update_repeat_current(self, repeat_current: bool) -> None:
+        """Update the repeat current of the player"""
+        await tables.PlayerRow.raw(
+            """UPDATE player
+            SET repeat_current = {}
+            WHERE id = {} AND bot = {}
+            IF NOT FOUND THEN
+                INSERT INTO player (id, bot, repeat_current) VALUES ({}, {}, {})
+            END IF;
+            """,
+            repeat_current,
+            self.id,
+            self.bot,
+            self.id,
+            self.bot,
+            repeat_current,
+        )
+
+    async def fetch_repeat_queue(self) -> bool:
+        """Fetch the repeat queue of the player"""
+        player = await tables.PlayerRow.raw(
+            "SELECT repeat_queue FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        )
+        return player[0]["repeat_queue"] if player else tables.PlayerRow.repeat_queue.default
+
+    async def update_repeat_queue(self, repeat_queue: bool) -> None:
+        """Update the repeat queue of the player"""
+        await tables.PlayerRow.raw(
+            """UPDATE player
+            SET repeat_queue = {}
+            WHERE id = {} AND bot = {}
+            IF NOT FOUND THEN
+                INSERT INTO player (id, bot, repeat_queue) VALUES ({}, {}, {})
+            END IF;
+            """,
+            repeat_queue,
+            self.id,
+            self.bot,
+            self.id,
+            self.bot,
+            repeat_queue,
+        )
+
+    async def fetch_shuffle(self) -> bool:
+        """Fetch the shuffle of the player"""
+        player = await tables.PlayerRow.raw(
+            "SELECT shuffle FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        )
+        return player[0]["shuffle"] if player else tables.PlayerRow.shuffle.default
+
+    async def update_shuffle(self, shuffle: bool) -> None:
+        """Update the shuffle of the player"""
+        await tables.PlayerRow.raw(
+            """UPDATE player
+            SET shuffle = {}
+            WHERE id = {} AND bot = {}
+            IF NOT FOUND THEN
+                INSERT INTO player (id, bot, shuffle) VALUES ({}, {}, {})
+            END IF;
+            """,
+            shuffle,
+            self.id,
+            self.bot,
+            self.id,
+            self.bot,
+            shuffle,
+        )
+
+    async def fetch_auto_shuffle(self) -> bool:
+        """Fetch the auto shuffle of the player"""
+        player = await tables.PlayerRow.raw(
+            "SELECT auto_shuffle FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        )
+        return player[0]["auto_shuffle"] if player else tables.PlayerRow.auto_shuffle.default
+
+    async def update_auto_shuffle(self, auto_shuffle: bool) -> None:
+        """Update the auto shuffle of the player"""
+        await tables.PlayerRow.raw(
+            """UPDATE player
+            SET auto_shuffle = {}
+            WHERE id = {} AND bot = {}
+            IF NOT FOUND THEN
+                INSERT INTO player (id, bot, auto_shuffle) VALUES ({}, {}, {})
+            END IF;
+            """,
+            auto_shuffle,
+            self.id,
+            self.bot,
+            self.id,
+            self.bot,
+            auto_shuffle,
+        )
+
+    async def fetch_auto_play(self) -> bool:
+        """Fetch the auto play of the player"""
+        player = await tables.PlayerRow.raw(
+            "SELECT auto_play FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        )
+        return player[0]["auto_play"] if player else tables.PlayerRow.auto_play.default
+
+    async def update_auto_play(self, auto_play: bool) -> None:
+        """Update the auto play of the player"""
+        await tables.PlayerRow.raw(
+            """UPDATE player
+            SET auto_play = {}
+            WHERE id = {} AND bot = {}
+            IF NOT FOUND THEN
+                INSERT INTO player (id, bot, auto_play) VALUES ({}, {}, {})
+            END IF;
+            """,
+            auto_play,
+            self.id,
+            self.bot,
+            self.id,
+            self.bot,
+            auto_play,
+        )
+
+    async def fetch_self_deaf(self) -> bool:
+        """Fetch the self deaf of the player"""
+        player = await tables.PlayerRow.raw(
+            "SELECT self_deaf FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        )
+        return player[0]["self_deaf"] if player else tables.PlayerRow.self_deaf.default
+
+    async def update_self_deaf(self, self_deaf: bool) -> None:
+        """Update the self deaf of the player"""
+        await tables.PlayerRow.raw(
+            """UPDATE player
+            SET self_deaf = {}
+            WHERE id = {} AND bot = {}
+            IF NOT FOUND THEN
+                INSERT INTO player (id, bot, self_deaf) VALUES ({}, {}, {})
+            END IF;
+            """,
+            self_deaf,
+            self.id,
+            self.bot,
+            self.id,
+            self.bot,
+            self_deaf,
+        )
+
+    async def fetch_extras(self) -> dict:
+        """Fetch the extras of the player"""
+        player = await tables.PlayerRow.raw(
+            "SELECT extras FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        )
+        return ujson.loads(player[0]["extras"]) if player else {}
+
+    async def update_extras(self, extras: dict) -> None:
+        """Update the extras of the player"""
+        extras = ujson.dumps(extras)
+        await tables.PlayerRow.raw(
+            """UPDATE player
+            SET extras = {}
+            WHERE id = {} AND bot = {}
+            IF NOT FOUND THEN
+                INSERT INTO player (id, bot, extras) VALUES ({}, {}, {})
+            END IF;
+            """,
+            extras,
+            self.id,
+            self.bot,
+            self.id,
+            self.bot,
+            extras,
+        )
+
+    async def fetch_effects(self) -> dict:
+        """Fetch the effects of the player"""
+        player = await tables.PlayerRow.raw(
+            "SELECT effects FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        )
+        return ujson.loads(player[0]["effects"]) if player else {}
+
+    async def update_effects(self, effects: dict) -> None:
+        """Update the effects of the player"""
+        effects = ujson.dumps(effects)
+        await tables.PlayerRow.raw(
+            """UPDATE player
+            SET effects = {}
+            WHERE id = {} AND bot = {}
+            IF NOT FOUND THEN
+                INSERT INTO player (id, bot, effects) VALUES ({}, {}, {})
+            END IF;
+            """,
+            effects,
+            self.id,
+            self.bot,
+            self.id,
+            self.bot,
+            effects,
+        )
+
+    async def fetch_empty_queue_dc(self) -> TimedFeature:
+        """Fetch the empty queue dc of the player"""
+        player = await tables.PlayerRow.raw(
+            "SELECT empty_queue_dc FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        )
+        return TimedFeature.from_json(
+            player[0]["empty_queue_dc"] if player else tables.PlayerRow.empty_queue_dc.default
+        )
+
+    async def update_empty_queue_dc(self, empty_queue_dc: dict) -> None:
+        """Update the empty queue dc of the player"""
+        await tables.PlayerRow.raw(
+            """UPDATE player
+            SET empty_queue_dc = {}
+            WHERE id = {} AND bot = {}
+            IF NOT FOUND THEN
+                INSERT INTO player (id, bot, empty_queue_dc) VALUES ({}, {}, {})
+            END IF;
+            """,
+            empty_queue_dc,
+            self.id,
+            self.bot,
+            self.id,
+            self.bot,
+            empty_queue_dc,
+        )
+
+    async def fetch_alone_dc(self) -> TimedFeature:
+        """Fetch the alone dc of the player"""
+        player = await tables.PlayerRow.raw(
+            "SELECT alone_dc FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        )
+        return TimedFeature.from_json(player[0]["alone_dc"] if player else tables.PlayerRow.alone_dc.default)
+
+    async def update_alone_dc(self, alone_dc: dict) -> None:
+        """Update the alone dc of the player"""
+        await tables.PlayerRow.raw(
+            """UPDATE player
+            SET alone_dc = {}
+            WHERE id = {} AND bot = {}
+            IF NOT FOUND THEN
+                INSERT INTO player (id, bot, alone_dc) VALUES ({}, {}, {})
+            END IF;
+            """,
+            alone_dc,
+            self.id,
+            self.bot,
+            self.id,
+            self.bot,
+            alone_dc,
+        )
+
+    async def fetch_alone_pause(self) -> TimedFeature:
+        """Fetch the alone pause of the player"""
+        player = await tables.PlayerRow.raw(
+            "SELECT alone_pause FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        )
+        return TimedFeature.from_json(player[0]["alone_pause"] if player else tables.PlayerRow.alone_pause.default)
+
+    async def update_alone_pause(self, alone_pause: dict) -> None:
+        """Update the alone pause of the player"""
+        await tables.PlayerRow.raw(
+            """UPDATE player
+            SET alone_pause = {}
+            WHERE id = {} AND bot = {}
+            IF NOT FOUND THEN
+                INSERT INTO player (id, bot, alone_pause) VALUES ({}, {}, {})
+            END IF;
+            """,
+            alone_pause,
+            self.id,
+            self.bot,
+            self.id,
+            self.bot,
+            alone_pause,
+        )
+
+    async def fetch_dj_users(self) -> set[int]:
+        """Fetch the dj users of the player"""
+        player = await tables.PlayerRow.raw(
+            "SELECT dj_users FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        )
+
+        return set(player[0]["dj_users"] if player else tables.PlayerRow.dj_users.default)
+
+    async def add_to_dj_users(self, user: discord.Member) -> None:
+        """Add a user to the dj users of the player"""
+
+        await tables.PlayerRow.raw(
+            """UPDATE player
+            SET dj_users = array_append(dj_users, {})
+            WHERE id = {} AND bot = {}
+            IF NOT FOUND THEN
+                INSERT INTO player (id, bot, dj_users) VALUES ({}, {}, {})
+            END IF;
+            """,
+            user.id,
+            self.id,
+            self.bot,
+            self.id,
+            self.bot,
+            [user.id],
+        )
+
+    async def remove_from_dj_users(self, user: discord.Member) -> None:
+        """Remove a user from the dj users of the player"""
+        await tables.PlayerRow.raw(
+            "UPDATE player SET dj_users = array_remove(dj_users, {}) WHERE id = {} AND bot = {};",
+            user.id,
+            self.id,
+            self.bot,
+        )
+
+    async def bulk_add_dj_users(self, *users: discord.Member) -> None:
+        """Add dj users to the player"""
+        if not users:
+            return
+        await tables.PlayerRow.raw(
+            """UPDATE player
+                   SET dj_users = dj_users || '{}'::bigint[]
+                   WHERE id = {} AND bot = {}
+                   IF NOT FOUND THEN
+                       INSERT INTO player (id, bot, dj_users) VALUES ({}, {}, {})
+                   END IF;
+                   """,
+            f'{{{",".join(map(str, [u.id for u in users]))}}}',
+            self.id,
+            self.bot,
+            self.id,
+            self.bot,
+            [u.id for u in users],
+        )
+
+    async def bulk_remove_dj_users(self, *users: discord.Member) -> None:
+        """Remove dj users from the player.
+
+        Parameters
+        ----------
+        users : discord.Member
+            The users to add
+        """
+        if not users:
+            return
+        await tables.PlayerRow.raw(
+            "UPDATE player SET dj_users = array_diff(dj_users, '{}'::bigint[]) WHERE id = {} AND bot = {}",
+            f'{{{",".join(map(str,[u.id for u in users]))}}}',
+            self.id,
+            self.bot,
+        )
+
+    async def dj_users_reset(self) -> None:
+        """Reset the dj users of the player"""
+        await tables.PlayerRow.raw(
+            "UPDATE player SET dj_users = '{}'::bigint[] WHERE id = {} AND bot = {}", "{}", self.id, self.bot
+        )
+
+    async def fetch_dj_roles(self) -> set[int]:
+        """Fetch the dj roles of the player"""
+        player = await tables.PlayerRow.raw(
+            "SELECT dj_roles FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        )
+
+        return set(player[0]["dj_roles"] if player else tables.PlayerRow.dj_roles.default)
+
+    async def add_to_dj_roles(self, roles: discord.Role) -> None:
+        """Add dj roles to the player"""
+        await tables.PlayerRow.raw(
+            """UPDATE player
+                    SET dj_roles = array_append(dj_roles, {})
+                    WHERE id = {} AND bot = {}
+                    IF NOT FOUND THEN
+                        INSERT INTO player (id, bot, dj_roles) VALUES ({}, {}, {})
+                    END IF;
+                    """,
+            roles.id,
+            self.id,
+            self.bot,
+            self.id,
+            self.bot,
+            [roles.id],
+        )
+
+    async def remove_from_dj_roles(self, roles: discord.Role) -> None:
+        """Remove dj roles from the player"""
+        await tables.PlayerRow.raw(
+            """UPDATE node SET disabled_sources = array_remove(disabled_sources, {}) WHERE id = {}""",
+            roles.id,
+            self.id,
+        )
+
+    async def bulk_add_dj_roles(self, *roles: discord.Role) -> None:
+        """Add dj roles to the player.
+
+        Parameters
+        ----------
+        roles : discord.Role
+            The roles to add"
+        """
+        if not roles:
+            return
+        await tables.PlayerRow.raw(
+            """UPDATE player
+                           SET dj_users = dj_roles || '{}'::bigint[]
+                           WHERE id = {} AND bot = {}
+                           IF NOT FOUND THEN
+                               INSERT INTO player (id, bot, dj_roles) VALUES ({}, {}, {})
+                           END IF;
+                           """,
+            f'{{{",".join(map(str, [u.id for u in roles]))}}}',
+            self.id,
+            self.bot,
+            self.id,
+            self.bot,
+            [u.id for u in roles],
+        )
+
+    async def bulk_remove_dj_roles(self, *roles: discord.Role) -> None:
+        """Remove dj roles from the player.
+
+        Parameters
+        ----------
+        roles : discord.Role
+            The roles to add.
+        """
+        if not roles:
+            return
+
+        await tables.PlayerRow.raw(
+            "UPDATE player SET dj_roles = array_diff(dj_roles, '{}'::bigint[]) WHERE id = {} AND bot = {}",
+            f'{{{",".join(map(str,[r.id for r in roles]))}}}',
+            self.id,
+            self.bot,
+        )
+
+    async def dj_roles_reset(self) -> None:
+        """Reset the dj roles of the player"""
+        await tables.PlayerRow.raw(
+            "UPDATE player SET dj_roles = '{}'::bigint[] WHERE id = {} AND bot = {}", "{}", self.id, self.bot
+        )
+
+    async def is_dj(
+        self,
+        user: discord.Member,
+        *,
+        additional_role_ids: list = None,
+        additional_user_ids: list = None,
+        bot: BotT = None,
+    ) -> bool:
+        """Check if a user is a dj.
+
+        Parameters
+        ----------
+        user : discord.Member
+            The user to check.
+        additional_role_ids : list
+            The additional dj role ids to check.
+        additional_user_ids : list
+            The additional dj user ids to check.
+        bot : BotT
+            The bot instance to check for owners, admins or mods.
+
+        Returns
+        -------
+        bool
+            Whether the user is a dj.
+        """
+        if additional_user_ids and user.id in additional_user_ids:
+            return True
+        if additional_role_ids and await asyncstdlib.any(r.id in additional_role_ids for r in user.roles):
+            return True
+        if __ := user.guild:
+            if hasattr(bot, "is_owner") and await bot.is_owner(typing.cast(discord.User, user)):
+                return True
+            if hasattr(bot, "is_admin") and await bot.is_admin(user):
+                return True
+            if hasattr(bot, "is_mod") and await bot.is_mod(user):
+                return True
+        dj_users = await self.fetch_dj_users()
+        if user.id in dj_users:
+            return True
+        dj_roles = await self.fetch_dj_roles()
+        if await asyncstdlib.any(r.id in dj_roles for r in user.roles):
+            return True
+        return not dj_users and not dj_roles
+
+
+@dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
+class BotVersion:
+    bot: int
+
+    async def fetch_version(self) -> LegacyVersion | Version:
+        """Fetch the version of the bot from the database"""
+        version = await tables.BotVersionRow.raw(
+            """
+            SELECT version FROM version
+            WHERE bot = {}
+            """,
+            self.bot,
+        )
+        return parse_version(version[0]["version"] if version else tables.BotVersionRow.version.default)
+
+    async def update_version(self, version: LegacyVersion | Version | str):
+        """Update the version of the bot in the database"""
+        await tables.BotVersionRow.raw(
+            """
+            UPDATE version
+            SET version = {}
+            IF NOT FOUND THEN
+                INSERT INTO version (bot, version) VALUES ({}, {})
+            END IF;
+            """,
+            self.bot,
+            str(version),
+        )
+
+
+@dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
+class LibConfigModel:
+    bot: int
+    id: int = 1
+
+    async def exists(self) -> bool:
+        """Check if the config exists.
+
+        Returns
+        -------
+        bool
+            Whether the config exists.
+        """
+        return await tables.PlayerRow.raw(
+            "SELECT EXISTS(SELECT 1 FROM lib_config WHERE id = {} and bot = {});", self.id, self.bot
+        )
+
+    async def fetch_config_folder(self) -> str:
+        """Fetch the config folder.
+
+        Returns
+        -------
+        str
+            The config folder.
+        """
+        response = await tables.LibConfigRow.raw(
+            """
+            SELECT config_folder FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
+            """,
+            self.id,
+            self.bot,
+        )
+        return response[0]["config_folder"] if response else tables.LibConfigRow.config_folder.default
+
+    async def update_config_folder(self, config_folder: aiopath.AsyncPath | pathlib.Path | str) -> None:
+        """Update the config folder.
+
+        Parameters
+        ----------
+        config_folder
+            The new config folder.
+        """
+        config_folder = str(config_folder)
+        await tables.LibConfigRow.raw(
+            """
+            UPDATE lib_config
+            SET config_folder = {}
+            IF NOT FOUND THEN
+                INSERT INTO lib_config (id, bot, config_folder) VALUES ({}, {}, {})
+            END IF;
+            """,
+            config_folder,
+            self.id,
+            self.bot,
+            config_folder,
+        )
+
+    async def fetch_localtrack_folder(self) -> str:
+        """Fetch the localtrack folder.
+
+        Returns
+        -------
+        str
+            The localtrack folder.
+        """
+        response = await tables.LibConfigRow.raw(
+            """
+            SELECT localtrack_folder FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
+            """,
+            self.id,
+            self.bot,
+        )
+        return response[0]["localtrack_folder"] if response else tables.LibConfigRow.localtrack_folder.default
+
+    async def update_localtrack_folder(self, localtrack_folder: aiopath.AsyncPath | pathlib.Path | str) -> None:
+        """Update the localtrack folder.
+
+        Parameters
+        ----------
+        localtrack_folder
+            The new localtrack folder.
+        """
+        localtrack_folder = str(localtrack_folder)
+        await tables.LibConfigRow.raw(
+            """
+            UPDATE lib_config
+            SET localtrack_folder = {}
+            IF NOT FOUND THEN
+                INSERT INTO lib_config (id, bot, localtrack_folder) VALUES ({}, {}, {})
+            END IF;
+            """,
+            localtrack_folder,
+            self.id,
+            self.bot,
+            localtrack_folder,
+        )
+
+    async def fetch_java_path(self) -> str:
+        """Fetch the java path.
+
+        Returns
+        -------
+        str
+            The java path.
+        """
+        response = await tables.LibConfigRow.raw(
+            """
+            SELECT java_path FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
+            """,
+            self.id,
+            self.bot,
+        )
+        return response[0]["java_path"] if response else tables.LibConfigRow.java_path.default
+
+    async def update_java_path(self, java_path: aiopath.AsyncPath | pathlib.Path | str) -> None:
+        """Update the java path.
+
+        Parameters
+        ----------
+        java_path
+            The new java path.
+        """
+        java_path = str(java_path)
+        await tables.LibConfigRow.raw(
+            """
+            UPDATE lib_config
+            SET java_path = {}
+            IF NOT FOUND THEN
+                INSERT INTO lib_config (id, bot, java_path) VALUES ({}, {}, {})
+            END IF;
+            """,
+            java_path,
+            self.id,
+            self.bot,
+            java_path,
+        )
+
+    async def fetch_enable_managed_node(self) -> bool:
+        """Fetch the enable_managed_node.
+
+        Returns
+        -------
+        bool
+            The enable_managed_node.
+        """
+        response = await tables.LibConfigRow.raw(
+            """
+            SELECT enable_managed_node FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
+            """,
+            self.id,
+            self.bot,
+        )
+        return response[0]["enable_managed_node"] if response else tables.LibConfigRow.enable_managed_node.default
+
+    async def update_enable_managed_node(self, enable_managed_node: bool) -> None:
+        """Update the enable_managed_node.
+
+        Parameters
+        ----------
+        enable_managed_node
+            The new enable_managed_node.
+        """
+        await tables.LibConfigRow.raw(
+            """
+            UPDATE lib_config
+            SET enable_managed_node = {}
+            IF NOT FOUND THEN
+                INSERT INTO lib_config (id, bot, enable_managed_node) VALUES ({}, {}, {})
+            END IF;
+            """,
+            enable_managed_node,
+            self.id,
+            self.bot,
+            enable_managed_node,
+        )
+
+    async def fetch_use_bundled_pylav_external(self) -> bool:
+        """Fetch the use_bundled_pylav_external.
+
+        Returns
+        -------
+        bool
+            The use_bundled_pylav_external.
+        """
+        response = await tables.LibConfigRow.raw(
+            """
+            SELECT use_bundled_pylav_external FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
+            """,
+            self.id,
+            self.bot,
+        )
+        return (
+            response[0]["use_bundled_pylav_external"]
+            if response
+            else tables.LibConfigRow.use_bundled_pylav_external.default
+        )
+
+    async def update_use_bundled_pylav_external(self, use_bundled_pylav_external: bool) -> None:
+        """Update the use_bundled_pylav_external.
+
+        Parameters
+        ----------
+        use_bundled_pylav_external
+            The new use_bundled_pylav_external.
+        """
+        await tables.LibConfigRow.raw(
+            """
+            UPDATE lib_config
+            SET use_bundled_pylav_external = {}
+            IF NOT FOUND THEN
+                INSERT INTO lib_config (id, bot, use_bundled_pylav_external) VALUES ({}, {}, {})
+            END IF;
+            """,
+            use_bundled_pylav_external,
+            self.id,
+            self.bot,
+            use_bundled_pylav_external,
+        )
+
+    async def fetch_use_bundled_lava_link_external(self) -> bool:
+        """Fetch the use_bundled_lava_link_external.
+
+        Returns
+        -------
+        bool
+            The use_bundled_lava_link_external.
+        """
+        response = await tables.LibConfigRow.raw(
+            """
+            SELECT use_bundled_lava_link_external FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
+            """,
+            self.id,
+            self.bot,
+        )
+        return (
+            response[0]["use_bundled_lava_link_external"]
+            if response
+            else tables.LibConfigRow.use_bundled_lava_link_external.default
+        )
+
+    async def update_use_bundled_lava_link_external(self, use_bundled_lava_link_external: bool) -> None:
+        """Update the use_bundled_lava_link_external.
+
+        Parameters
+        ----------
+        use_bundled_lava_link_external
+            The new use_bundled_lava_link_external.
+        """
+        await tables.LibConfigRow.raw(
+            """
+            UPDATE lib_config
+            SET use_bundled_lava_link_external = {}
+            IF NOT FOUND THEN
+                INSERT INTO lib_config (id, bot, use_bundled_lava_link_external) VALUES ({}, {}, {})
+            END IF;
+            """,
+            use_bundled_lava_link_external,
+            self.id,
+            self.bot,
+            use_bundled_lava_link_external,
+        )
+
+    async def fetch_download_id(self) -> int:
+        """Fetch the download_id.
+
+        Returns
+        -------
+        str
+            The download_id.
+        """
+        response = await tables.LibConfigRow.raw(
+            """
+            SELECT download_id FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
+            """,
+            self.id,
+            self.bot,
+        )
+        return response[0]["download_id"] if response else tables.LibConfigRow.download_id.default
+
+    async def update_download_id(self, download_id: int) -> None:
+        """Update the download_id.
+
+        Parameters
+        ----------
+        download_id
+            The new download_id.
+        """
+        await tables.LibConfigRow.raw(
+            """
+            UPDATE lib_config
+            SET download_id = {}
+            IF NOT FOUND THEN
+                INSERT INTO lib_config (id, bot, download_id) VALUES ({}, {}, {})
+            END IF;
+            """,
+            download_id,
+            self.id,
+            self.bot,
+            download_id,
+        )
+
+    async def fetch_extras(self) -> dict:
+        """Fetch the extras.
+
+        Returns
+        -------
+        dict
+            The extras.
+        """
+        response = await tables.LibConfigRow.raw(
+            """
+            SELECT extras FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
+            """,
+            self.id,
+            self.bot,
+        )
+        return ujson.loads(response[0]["extras"]) if response else {}
+
+    async def update_extras(self, extras: dict) -> None:
+        """Update the extras.
+
+        Parameters
+        ----------
+        extras
+            The new extras.
+        """
+        data = ujson.dumps(extras)
+        await tables.LibConfigRow.raw(
+            """
+            UPDATE lib_config
+            SET extras = {}
+            IF NOT FOUND THEN
+                INSERT INTO lib_config (id, bot, extras) VALUES ({}, {}, {})
+            END IF;
+            """,
+            data,
+            self.id,
+            self.bot,
+            data,
+        )
+
+    async def fetch_next_execution_update_bundled_playlists(self) -> datetime.datetime:
+        """Fetch the next_execution_update_bundled_playlists.
+
+        Returns
+        -------
+        datetime.datetime
+            The next_execution_update_bundled_playlists.
+        """
+        response = await tables.LibConfigRow.raw(
+            """
+            SELECT next_execution_update_bundled_playlists FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
+            """,
+            self.id,
+            self.bot,
+        )
+        return (
+            response[0]["next_execution_update_bundled_playlists"]
+            if response
+            else datetime.datetime.now(tz=datetime.timezone.utc)
+        )
+
+    async def update_next_execution_update_bundled_playlists(self, next_execution: datetime.datetime) -> None:
+        """Update the next_execution_update_bundled_playlists.
+
+        Parameters
+        ----------
+        next_execution
+            The new next_execution_update_bundled_playlists.
+        """
+        await tables.LibConfigRow.raw(
+            """
+            UPDATE lib_config
+            SET next_execution_update_bundled_playlists = {}
+            IF NOT FOUND THEN
+                INSERT INTO lib_config (id, bot, next_execution_update_bundled_playlists) VALUES ({}, {}, {})
+            END IF;
+            """,
+            next_execution,
+            self.id,
+            self.bot,
+            next_execution,
+        )
+
+    async def fetch_next_execution_update_bundled_external_playlists(self) -> datetime.datetime:
+        """Fetch the next_execution_update_bundled_external_playlists.
+
+        Returns
+        -------
+        datetime.datetime
+            The next_execution_update_bundled_external_playlists.
+        """
+        response = await tables.LibConfigRow.raw(
+            """
+            SELECT next_execution_update_bundled_external_playlists FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
+            """,
+            self.id,
+            self.bot,
+        )
+        return (
+            response[0]["next_execution_update_bundled_external_playlists"]
+            if response
+            else datetime.datetime.now(tz=datetime.timezone.utc)
+        )
+
+    async def update_next_execution_update_bundled_external_playlists(self, next_execution: datetime.datetime) -> None:
+        """Update the next_execution_update_bundled_external_playlists.
+
+        Parameters
+        ----------
+        next_execution
+            The new next_execution.
+        """
+        await tables.LibConfigRow.raw(
+            """
+            UPDATE lib_config
+            SET next_execution_update_bundled_external_playlists = {}
+            IF NOT FOUND THEN
+                INSERT INTO lib_config (id, bot, next_execution_update_bundled_external_playlists) VALUES ({}, {}, {})
+            END IF;
+            """,
+            next_execution,
+            self.id,
+            self.bot,
+            next_execution,
+        )
+
+    async def fetch_next_execution_update_external_playlists(self) -> datetime.datetime:
+        """Fetch the next_execution_update_external_playlists.
+
+        Returns
+        -------
+        datetime.datetime
+            The next_execution_update_external_playlists.
+        """
+        response = await tables.LibConfigRow.raw(
+            """
+            SELECT next_execution_update_external_playlists FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
+            """,
+            self.id,
+            self.bot,
+        )
+        return (
+            response[0]["next_execution_update_external_playlists"]
+            if response
+            else datetime.datetime.now(tz=datetime.timezone.utc)
+        )
+
+    async def update_next_execution_update_external_playlists(self, next_execution: datetime.datetime) -> None:
+        """Update the next_execution_update_external_playlists.
+
+        Parameters
+        ----------
+        next_execution
+            The new next_execution.
+        """
+        await tables.LibConfigRow.raw(
+            """
+            UPDATE lib_config
+            SET next_execution_update_external_playlists = {}
+            IF NOT FOUND THEN
+                INSERT INTO lib_config (id, bot, next_execution_update_external_playlists) VALUES ({}, {}, {})
+            END IF;
+            """,
+            next_execution,
+            self.id,
+            self.bot,
+            next_execution,
+        )
+
+    async def fetch_update_bot_activity(self) -> bool:
+        """Fetch the update_bot_activity.
+
+        Returns
+        -------
+        bool
+            The update_bot_activity.
+        """
+        response = await tables.LibConfigRow.raw(
+            """
+            SELECT update_bot_activity FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
+            """,
+            self.id,
+            self.bot,
+        )
+        return response[0]["update_bot_activity"] if response else tables.LibConfigRow.update_bot_activity.default
+
+    async def update_update_bot_activity(self, update_bot_activity: bool) -> None:
+        """Update the update_bot_activity.
+
+        Parameters
+        ----------
+        update_bot_activity
+            The new update_bot_activity.
+        """
+        await tables.LibConfigRow.raw(
+            """
+            UPDATE lib_config
+            SET update_bot_activity = {}
+            IF NOT FOUND THEN
+                INSERT INTO lib_config (id, bot, update_bot_activity) VALUES ({}, {}, {})
+            END IF;
+            """,
+            update_bot_activity,
+            self.id,
+            self.bot,
+            update_bot_activity,
+        )
+
+    async def fetch_auto_update_managed_nodes(self) -> bool:
+        """Fetch the auto_update_managed_nodes.
+
+        Returns
+        -------
+        bool
+            The auto_update_managed_nodes.
+        """
+        response = await tables.LibConfigRow.raw(
+            """
+            SELECT auto_update_managed_nodes FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
+            """,
+            self.id,
+            self.bot,
+        )
+        return (
+            response[0]["auto_update_managed_nodes"]
+            if response
+            else tables.LibConfigRow.auto_update_managed_nodes.default
+        )
+
+    async def update_auto_update_managed_nodes(self, auto_update_managed_nodes: bool) -> None:
+        """Update the auto_update_managed_nodes.
+
+        Parameters
+        ----------
+        auto_update_managed_nodes
+            The new auto_update_managed_nodes.
+        """
+        await tables.LibConfigRow.raw(
+            """
+            UPDATE lib_config
+            SET auto_update_managed_nodes = {}
+            IF NOT FOUND THEN
+                INSERT INTO lib_config (id, bot, auto_update_managed_nodes) VALUES ({}, {}, {})
+            END IF;
+            """,
+            auto_update_managed_nodes,
+            self.id,
+            self.bot,
+            auto_update_managed_nodes,
+        )
+
+    async def delete(self) -> None:
+        """Delete the config from the database"""
+        await tables.LibConfigRow.delete().where(
+            (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
+        )
+
+    async def fetch_all(self) -> dict:
+        """Update all attributed for the config from the database.
+
+        Returns
+        -------
+        LibConfigModel
+            The updated config.
+        """
+        response = await tables.LibConfigRow.raw(
+            """SELECT * FROM lib_config WHERE id = {} AND bot = {}""", self.id, self.bot
+        )
+        return response[0] if response else None
+
+
+@dataclass(eq=True)
+class PlayerStateModel:
+    id: int
+    bot: int
+    channel_id: int
+    volume: int
+    position: float
+    auto_play_playlist_id: int | None
+    text_channel_id: int | None
+    notify_channel_id: int | None
+    forced_channel_id: int | None
+
+    paused: bool
+    repeat_current: bool
+    repeat_queue: bool
+    shuffle: bool
+    auto_shuffle: bool
+    auto_play: bool
+    playing: bool
+    effect_enabled: bool
+    self_deaf: bool
+
+    current: dict | None
+    queue: list
+    history: list
+    effects: dict
+    extras: dict
+    pk = None
+
+    def __post_init__(self):
+        if isinstance(self.current, str):
+            self.current = ujson.loads(self.current)
+        if isinstance(self.queue, str):
+            self.queue = ujson.loads(self.queue)
+        if isinstance(self.history, str):
+            self.history = ujson.loads(self.history)
+        if isinstance(self.effects, str):
+            self.effects = ujson.loads(self.effects)
+        if isinstance(self.extras, str):
+            self.extras = ujson.loads(self.extras)
+
+    async def delete(self) -> None:
+        """Delete the player state from the database"""
+        await tables.PlayerStateRow.raw(
+            """
+            DELETE FROM player_state
+            WHERE id = {} AND bot = {}
+            """,
+            self.id,
+            self.bot,
+        )
+
+    async def save(self) -> None:
+        """Save the player state to the database"""
+        await tables.AioHttpCacheRow.raw(
+            """
+            INSERT INTO player_state (
+                id,
+                bot,
+                channel_id,
+                volume,
+                position,
+                auto_play_playlist_id,
+                forced_channel_id,
+                text_channel_id,
+                notify_channel_id,
+                paused,
+                repeat_current,
+                repeat_queue,
+                shuffle,
+                auto_shuffle,
+                auto_play,
+                playing,
+                effect_enabled,
+                self_deaf,
+                current,
+                queue,
+                history,
+                effects,
+                extras
+            )
+            VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE
+                SET channel_id = excluded.channel_id,
+                    volume = excluded.volume,
+                    position = excluded.position,
+                    auto_play_playlist_id = excluded.auto_play_playlist_id,
+                    forced_channel_id = excluded.forced_channel_id,
+                    text_channel_id = excluded.text_channel_id,
+                    notify_channel_id = excluded.notify_channel_id,
+                    paused = excluded.paused,
+                    repeat_current = excluded.repeat_current,
+                    repeat_queue = excluded.repeat_queue,
+                    shuffle = excluded.shuffle,
+                    auto_shuffle = excluded.auto_shuffle,
+                    auto_play = excluded.auto_play,
+                    playing = excluded.playing,
+                    effect_enabled = excluded.effect_enabled,
+                    self_deaf = excluded.self_deaf,
+                    current = excluded.current,
+                    queue = excluded.queue,
+                    history = excluded.history,
+                    effects = excluded.effects,
+                    extras = excluded.extras;
+            """,
+            self.id,
+            self.bot,
+            self.channel_id,
+            self.volume,
+            self.position,
+            self.auto_play_playlist_id,
+            self.forced_channel_id,
+            self.text_channel_id,
+            self.notify_channel_id,
+            self.paused,
+            self.repeat_current,
+            self.repeat_queue,
+            self.shuffle,
+            self.auto_shuffle,
+            self.auto_play,
+            self.playing,
+            self.effect_enabled,
+            self.self_deaf,
+            ujson.dumps(self.current),
+            ujson.dumps(self.queue),
+            ujson.dumps(self.history),
+            ujson.dumps(self.effects),
+            ujson.dumps(self.extras),
+        )
+
+    @classmethod
+    async def get(cls, bot_id: int, guild_id: int) -> PlayerStateModel | None:
+        """Get the player state from the database.
+
+        Parameters
+        ----------
+        bot_id : int
+            The bot ID.
+        guild_id : int
+            The guild ID.
+
+        Returns
+        -------
+        PlayerStateModel | None
+            The player state if found, otherwise None.
+        """
+
+        player = await tables.PlayerStateRow.raw(
+            """SELECT id,
+                bot,
+                channel_id,
+                volume,
+                position,
+                auto_play_playlist_id,
+                forced_channel_id,
+                text_channel_id,
+                notify_channel_id,
+                paused,
+                repeat_current,
+                repeat_queue,
+                shuffle,
+                auto_shuffle,
+                auto_play,
+                playing,
+                effect_enabled,
+                self_deaf,
+                current,
+                queue,
+                history,
+                effects,
+                extras FROM player_state WHERE bot = {} AND id = {}""",
+            bot_id,
+            guild_id,
+        )
+        return cls(**player[0]) if player else None
+
+
+@dataclass(eq=True)
+class QueryModel:
+    identifier: str
+    name: str | None = None
+    last_updated: datetime.datetime = None
+    tracks: list[str] = field(default_factory=list)
+
+    def __hash__(self):
+        return hash((self.identifier,))
+
+    def __post_init__(self):
+        if isinstance(self.tracks, str):
+            self.tracks = ujson.loads(self.tracks)
+
+    @classmethod
+    async def get(cls, identifier: str) -> QueryModel | None:
+        """Get a query from the database.
+
+        Parameters
+        ----------
+        identifier : str
+            The identifier of the query.
+
+        Returns
+        -------
+        QueryModel | None
+            The query if found, otherwise None.
+        """
+        query = await tables.QueryRow.raw(
+            """
+            SELECT identifier, name, last_updated, tracks FROM query
+            WHERE identifier = {}
+            """,
+            identifier,
+        )
+        return QueryModel(**query[0]) if query else None
+
+    async def delete(self):
+        """Delete the query from the database"""
+        await tables.QueryRow.raw("DELETE FROM query WHERE identifier = {}", self.identifier)
+
+    async def save(self):
+        """Save the query to the database"""
+        """Upsert the query in the database"""
+        if self.last_updated is None:
+            self.last_updated = datetime.datetime.now(tz=datetime.timezone.utc)
+        await tables.QueryRow.raw(
+            """INSERT INTO query (identifier, name, last_updated, tracks)
+            VALUES ({}, {}, {}, {})
+            ON CONFLICT (identifier) DO UPDATE SET name = EXCLUDED.name, last_updated = EXCLUDED.last_updated,
+            tracks = EXCLUDED.tracks
+            """,
+            self.identifier,
+            self.name,
+            self.last_updated,
+            ujson.dumps(self.tracks),
+        )
 
 
 @dataclass(eq=True)
@@ -77,8 +2044,6 @@ class PlaylistModel:
             ujson.dumps(self.tracks),
             self.url,
         )
-        # self.get.invalidate(self.id)
-        # self.get.invalidate(id=self.id)
         return self
 
     @classmethod
@@ -101,8 +2066,6 @@ class PlaylistModel:
 
     async def delete(self) -> None:
         """Delete the playlist from the database"""
-        # self.get.invalidate(self.id)
-        # self.get.invalidate(id=self.id)
         await tables.PlaylistRow.raw("DELETE FROM playlist WHERE id = {}", self.id)
 
     async def can_manage(self, bot: BotT, requester: discord.abc.User, guild: discord.Guild = None) -> bool:
@@ -279,1802 +2242,6 @@ class PlaylistModel:
             url=data["url"],
             tracks=data["tracks"],
         )
-
-
-@dataclass(eq=True)
-class LibConfigModel:
-    bot: int
-    id: int = 1
-    config_folder: str | None = None
-    localtrack_folder: str | None = None
-    java_path: str | None = None
-    enable_managed_node: bool | None = None
-    use_bundled_pylav_external: bool = True
-    use_bundled_lava_link_external: bool = False
-    auto_update_managed_nodes: bool | None = None
-    download_id: int = 0
-    extras: dict = field(default_factory=dict)
-    next_execution_update_bundled_playlists: datetime.datetime | None = None
-    next_execution_update_bundled_external_playlists: datetime.datetime | None = None
-    next_execution_update_external_playlists: datetime.datetime | None = None
-    update_bot_activity: bool = False
-
-    def __post_init__(self):
-        if isinstance(self.extras, str):
-            self.extras = ujson.loads(self.extras)
-
-    async def get_config_folder(self) -> str:
-        """Get the config folder.
-
-        Returns
-        -------
-        str
-            The config folder.
-        """
-        response = await tables.LibConfigRow.raw(
-            """
-            SELECT config_folder FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
-            """,
-            self.id,
-            self.bot,
-        )
-        return response[0]["config_folder"]
-
-    async def get_java_path(self) -> str:
-        """Get the java path.
-
-        Returns
-        -------
-        str
-            The java path.
-        """
-        response = await tables.LibConfigRow.raw(
-            """
-            SELECT java_path FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
-            """,
-            self.id,
-            self.bot,
-        )
-
-        return response[0]["java_path"]
-
-    async def get_enable_managed_node(self) -> bool:
-        """Get whether the managed node is enabled.
-
-        Returns
-        -------
-        bool
-            Whether the managed node is enabled.
-        """
-        response = await tables.LibConfigRow.raw(
-            """
-            SELECT enable_managed_node FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
-            """,
-            self.id,
-            self.bot,
-        )
-        return response[0]["enable_managed_node"]
-
-    async def get_auto_update_managed_nodes(self) -> bool:
-        """Get whether the managed node should be auto updated.
-
-        Returns
-        -------
-        bool
-            Whether the managed node should be auto updated.
-        """
-        response = await tables.LibConfigRow.raw(
-            """
-            SELECT auto_update_managed_nodes FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
-            """,
-            self.id,
-            self.bot,
-        )
-
-        return response[0]["auto_update_managed_nodes"]
-
-    async def get_localtrack_folder(self) -> str:
-        """Get the localtrack folder.
-
-        Returns
-        -------
-        str
-            The localtrack folder.
-        """
-        response = await tables.LibConfigRow.raw(
-            """
-            SELECT localtrack_folder FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
-            """,
-            self.id,
-            self.bot,
-        )
-        return response[0]["localtrack_folder"]
-
-    async def get_download_id(self) -> int:
-        """Get the download id for the managed node.
-
-        Returns
-        -------
-        int
-            The download id for the managed node.
-        """
-        response = await tables.LibConfigRow.raw(
-            """
-            SELECT download_id FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
-            """,
-            self.id,
-            self.bot,
-        )
-
-        return response[0]["download_id"]
-
-    async def get_next_execution_update_bundled_playlists(self) -> datetime.datetime:
-        """Get the next execution time for the update of bundled playlists.
-
-        Returns
-        -------
-        datetime.datetime
-            The next execution time for the update of bundled playlists.
-        """
-        response = await tables.LibConfigRow.raw(
-            """
-            SELECT next_execution_update_bundled_playlists FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
-            """,
-            self.id,
-            self.bot,
-        )
-        return response[0]["next_execution_update_bundled_playlists"]
-
-    async def get_next_execution_update_bundled_external_playlists(self) -> datetime.datetime:
-        """Get the next execution time for the update of bundled external playlists.
-
-        Returns
-        -------
-        datetime.datetime
-            The next execution time for the update of bundled external playlists.
-        """
-        response = await tables.LibConfigRow.raw(
-            """
-            SELECT next_execution_update_bundled_external_playlists FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
-            """,
-            self.id,
-            self.bot,
-        )
-        return response[0]["next_execution_update_bundled_external_playlists"]
-
-    async def get_next_execution_update_external_playlists(self) -> datetime.datetime:
-        """Get the next execution time for the update of external playlists.
-
-        Returns
-        -------
-        datetime.datetime
-            The next execution time for the update of external playlists.
-        """
-        response = await tables.LibConfigRow.raw(
-            """
-            SELECT next_execution_update_external_playlists FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
-            """,
-            self.id,
-            self.bot,
-        )
-        return response[0]["next_execution_update_external_playlists"]
-
-    async def get_update_bot_activity(self) -> bool:
-        """Get whether the bot activity should be updated.
-
-        Returns
-        -------
-        bool
-            Whether the bot activity should be updated.
-        """
-        response = await tables.LibConfigRow.raw(
-            """
-            SELECT update_bot_activity FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
-            """,
-            self.id,
-            self.bot,
-        )
-        return response[0]["update_bot_activity"]
-
-    async def set_config_folder(self, value: str) -> None:
-        """Set the config folder.
-
-        Parameters
-        ----------
-        value : str
-            The new config folder.
-        """
-        self.config_folder = value
-        await self.save()
-
-    async def set_java_path(self, value: str) -> None:
-        """Set the java path.
-
-        Parameters
-        ----------
-        value : str
-            The new java path.
-        """
-        self.java_path = value
-        await self.save()
-
-    async def set_enable_managed_node(self, value: bool) -> None:
-        """Set whether the managed node is enabled.
-
-
-        Parameters
-        ----------
-        value : bool
-            Whether the managed node is enabled.
-        """
-        self.enable_managed_node = value
-        await self.save()
-
-    async def set_auto_update_managed_nodes(self, value: bool) -> None:
-        """Set whether the managed node should be auto updated.
-
-        Parameters
-        ----------
-        value : bool
-            Whether the managed node should be auto updated.
-        """
-        self.auto_update_managed_nodes = value
-        await self.save()
-
-    async def set_localtrack_folder(self, value: str) -> None:
-        """Set the localtrack folder.
-
-        Parameters
-        ----------
-        value : str
-            The new localtrack folder.
-        """
-        self.localtrack_folder = value
-        await self.save()
-
-    async def set_download_id(self, value: int) -> None:
-        """Set the download id for the managed node.
-
-        Parameters
-        ----------
-        value : int
-            The new download id for the managed node.
-        """
-        self.download_id = value
-        await self.save()
-
-    async def set_managed_pylav_external_node(self, value: bool) -> None:
-        """Set whether the managed external node is enabled.
-
-        Parameters
-        ----------
-        value : bool
-            Whether the managed external node is enabled.
-        """
-        self.use_bundled_pylav_external = value
-        await self.save()
-
-    async def set_managed_lava_link_external_node(self, value: bool) -> None:
-        """Set whether the managed external node is enabled.
-
-        Parameters
-        ----------
-        value : bool
-            Whether the managed external node is enabled.
-        """
-        self.use_bundled_lava_link_external = value
-        await self.save()
-
-    async def set_update_bot_activity(self, value: bool) -> None:
-        """Set whether the bot activity should be updated.
-
-        Parameters
-        ----------
-        value : bool
-            Whether the bot activity should be updated.
-        """
-        self.update_bot_activity = value
-        await self.save()
-
-    async def save(self) -> LibConfigModel:
-        """Save the config to the database.
-
-        Returns
-        -------
-        LibConfigModel
-            The updated config.
-        """
-        await tables.LibConfigRow.raw(
-            """
-            INSERT INTO lib_config
-            (
-                id,
-                bot,
-                config_folder,
-                java_path,
-                enable_managed_node,
-                auto_update_managed_nodes,
-                localtrack_folder,
-                download_id,
-                update_bot_activity,
-                use_bundled_pylav_external,
-                use_bundled_lava_link_external,
-                next_execution_update_bundled_playlists,
-                next_execution_update_bundled_external_playlists,
-                next_execution_update_external_playlists,
-                extras
-            )
-            VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})
-            ON CONFLICT (id, bot) DO
-            UPDATE SET  config_folder = excluded.config_folder,
-                        java_path = excluded.java_path,
-                        enable_managed_node = excluded.enable_managed_node,
-                        auto_update_managed_nodes = excluded.auto_update_managed_nodes,
-                        localtrack_folder = excluded.localtrack_folder,
-                        download_id = excluded.download_id,
-                        update_bot_activity = excluded.update_bot_activity,
-                        use_bundled_pylav_external = excluded.use_bundled_pylav_external,
-                        use_bundled_lava_link_external = excluded.use_bundled_lava_link_external,
-                        next_execution_update_bundled_playlists = excluded.next_execution_update_bundled_playlists,
-                        next_execution_update_bundled_external_playlists = excluded.next_execution_update_bundled_external_playlists,
-                        next_execution_update_external_playlists = excluded.next_execution_update_external_playlists,
-                        extras = excluded.extras;
-            """,
-            self.id,
-            self.bot,
-            self.config_folder,
-            self.java_path,
-            self.enable_managed_node,
-            self.auto_update_managed_nodes,
-            self.localtrack_folder,
-            self.download_id,
-            self.update_bot_activity,
-            self.use_bundled_pylav_external,
-            self.use_bundled_lava_link_external,
-            self.next_execution_update_bundled_playlists,
-            self.next_execution_update_bundled_external_playlists,
-            self.next_execution_update_external_playlists,
-            ujson.dumps(self.extras),
-        )
-        return self
-
-    async def delete(self) -> None:
-        """Delete the config from the database"""
-        await tables.LibConfigRow.delete().where(
-            (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
-        )
-
-    async def get_all(self) -> LibConfigModel:
-        """Update all attributed for the config from the database.
-
-        Returns
-        -------
-        LibConfigModel
-            The updated config.
-        """
-        response = await tables.LibConfigRow.raw(
-            """SELECT * FROM lib_config WHERE id = {} AND bot = {}""", self.id, self.bot
-        )
-        response = response[0]
-        self.config_folder = response["config_folder"]
-        self.java_path = response["java_path"]
-        self.enable_managed_node = response["enable_managed_node"]
-        self.auto_update_managed_nodes = response["auto_update_managed_nodes"]
-        self.localtrack_folder = response["localtrack_folder"]
-        self.use_bundled_pylav_external = response["use_bundled_pylav_external"]
-        self.use_bundled_lava_link_external = response["use_bundled_lava_link_external"]
-        self.download_id = response["download_id"]
-        self.next_execution_update_bundled_playlists = response["next_execution_update_bundled_playlists"]
-        self.next_execution_update_bundled_external_playlists = response[
-            "next_execution_update_bundled_external_playlists"
-        ]
-        self.next_execution_update_external_playlists = response["next_execution_update_external_playlists"]
-        self.extras = ujson.loads(response["extras"])
-        self.update_bot_activity = response["update_bot_activity"]
-        return self
-
-    @classmethod
-    async def get_or_create(
-        cls,
-        id: int,
-        bot: int,
-        config_folder=str(CONFIG_DIR),
-        localtrack_folder=str(CONFIG_DIR / "music"),
-        java_path=JAVA_EXECUTABLE,
-        enable_managed_node: bool = True,
-        auto_update_managed_nodes: bool = True,
-        use_bundled_pylav_external: bool = True,
-        use_bundled_lava_link_external: bool = False,
-    ) -> LibConfigModel:
-        """Get or create a config for the bot.
-
-        Parameters
-        ----------
-        id : int
-            The config id.
-        bot : int
-            The id of the bot.
-        config_folder : str
-            The config folder.
-        localtrack_folder : str
-            The localtrack folder.
-        java_path : str
-            The java path.
-        enable_managed_node : bool
-            Whether the managed node is enabled.
-        auto_update_managed_nodes : bool
-            Whether the managed node should be auto updated.
-        use_bundled_pylav_external : bool
-            Whether the bundled external node is used.
-        use_bundled_lava_link_external : bool
-            Whether the bundled external node is used.
-
-        Returns
-        -------
-        LibConfigModel
-            The config.
-        """
-        r = (
-            await tables.LibConfigRow.objects()
-            .output(load_json=True)
-            .get_or_create(
-                (tables.LibConfigRow.id == id) & (tables.LibConfigRow.bot == bot),
-                defaults=dict(
-                    config_folder=config_folder,
-                    java_path=java_path,
-                    localtrack_folder=localtrack_folder,
-                    enable_managed_node=enable_managed_node,
-                    auto_update_managed_nodes=auto_update_managed_nodes,
-                    use_bundled_pylav_external=use_bundled_pylav_external,
-                    use_bundled_lava_link_external=use_bundled_lava_link_external,
-                    download_id=0,
-                    extras={},
-                    next_execution_update_bundled_playlists=None,
-                    next_execution_update_bundled_external_playlists=None,
-                    next_execution_update_external_playlists=None,
-                    update_bot_activity=False,
-                ),
-            )
-        )
-        return cls(**r.to_dict())
-
-
-@dataclass
-class NodeModel:
-    id: int
-    name: str
-    ssl: bool
-    resume_key: str | None
-    resume_timeout: int
-    reconnect_attempts: int
-    search_only: bool
-    managed: bool
-    extras: dict
-    yaml: dict
-    disabled_sources: field(default_factory=list)
-
-    def __eq__(self, other: NodeModel) -> bool:
-        global Node
-        if Node is None:
-            from pylav.node import Node
-        # noinspection PyProtectedMember
-        if isinstance(other, NodeModel):
-            return (
-                self.yaml["server"]["address"] == other.yaml["server"]["address"]
-                and self.yaml["server"]["port"] == other.yaml["server"]["port"]
-            )
-        elif isinstance(other, Node):
-            return other.host == self.yaml["server"]["address"] and other.self == other.yaml["server"]["port"]
-        return NotImplemented
-
-    def __hash__(self) -> int:
-        return hash((self.yaml["server"]["address"], self.yaml["server"]["port"]))
-
-    def __post_init__(self):
-        if isinstance(self.extras, str):
-            self.extras = ujson.loads(self.extras)
-            if "max_ram" not in self.extras:
-                self.extras["max_ram"] = "2048M"
-        if isinstance(self.yaml, str):
-            self.yaml = ujson.loads(self.yaml)
-        if isinstance(self.disabled_sources, str):
-            self.disabled_sources = ujson.loads(self.disabled_sources)
-
-    @classmethod
-    async def from_id(cls, id: int) -> NodeModel | None:
-        """Get a node from the database.
-
-        Parameters
-        ----------
-        id : int
-            The id of the node.
-
-        Returns
-        -------
-        NodeModel
-            The node.
-        """
-        response = await tables.NodeRow.raw("""SELECT * FROM node WHERE id = {}""", id)
-        return cls(**response[0]) if response else None
-
-    def to_dict(self) -> dict:
-        """Convert the node to a dict.
-
-        Returns
-        -------
-        dict
-            The node as a dict.
-        """
-        return {
-            "id": self.id,
-            "name": self.name,
-            "ssl": self.ssl,
-            "resume_key": self.resume_key,
-            "resume_timeout": self.resume_timeout,
-            "reconnect_attempts": self.reconnect_attempts,
-            "search_only": self.search_only,
-            "managed": self.managed,
-            "extras": self.extras,
-            "yaml": self.yaml,
-            "disabled_sources": self.disabled_sources,
-        }
-
-    def get_connection_args(self) -> dict:
-        """Get the connection args for the node.
-
-        Returns
-        -------
-        dict
-            The connection args.
-
-        Raises
-        ------
-        ValueError
-            If the node is misconfigured in the database.
-        """
-        if self.yaml is None:
-            raise ValueError("Node Connection config set")
-        return {
-            "unique_identifier": self.id,
-            "host": self.yaml["server"]["address"],
-            "port": self.yaml["server"]["port"],
-            "password": self.yaml["lavalink"]["server"]["password"],
-            "name": self.name,
-            "ssl": self.ssl,
-            "reconnect_attempts": self.reconnect_attempts,
-            "search_only": self.search_only,
-            "resume_timeout": self.resume_timeout,
-            "resume_key": self.resume_key,
-            "disabled_sources": self.disabled_sources,
-            "managed": self.managed,
-        }
-
-    async def add_bulk_source_to_exclusion_list(self, *source: str):
-        """Add sources to the exclusion list.
-
-        Parameters
-        ----------
-        source : str
-            The sources to add.
-        """
-        source = set(map(str.strip, map(str.lower, source)))
-        if unsupported := source - SUPPORTED_SOURCES:
-            raise ValueError(f"Unsupported sources: {unsupported}\nSupported sources: {SUPPORTED_SOURCES}")
-        intersection = source & SUPPORTED_SOURCES
-        intersection |= set(self.disabled_sources)
-        self.disabled_sources = list(intersection)
-        await self.save()
-
-    async def add_source_to_exclusion_list(self, source: str):
-        """Add a source to the exclusion list.
-
-        Parameters
-        ----------
-        source : str
-            The source to add.
-        """
-        source = source.lower().strip()
-        if source in SUPPORTED_SOURCES and source not in self.disabled_sources:
-            self.disabled_sources.append(source)
-            await self.save()
-        raise ValueError(f"Source {source} is not supported")
-
-    async def save(self) -> None:
-        """Save the node to the database"""
-        await self.upsert()
-
-    async def delete(self) -> None:
-        """Delete the node from the database"""
-        await tables.NodeRow.delete().where(tables.NodeRow.id == self.id)
-
-    async def upsert(self) -> None:
-        """Upsert the node in the database"""
-        values = {
-            tables.NodeRow.name: self.name,
-            tables.NodeRow.ssl: self.ssl,
-            tables.NodeRow.resume_key: self.resume_key,
-            tables.NodeRow.reconnect_attempts: self.reconnect_attempts,
-            tables.NodeRow.resume_timeout: self.resume_timeout,
-            tables.NodeRow.search_only: self.search_only,
-            tables.NodeRow.managed: self.managed,
-            tables.NodeRow.extras: self.extras,
-            tables.NodeRow.yaml: self.yaml,
-            tables.NodeRow.disabled_sources: self.disabled_sources,
-        }
-        node = (
-            await tables.NodeRow.objects()
-            .output(load_json=True)
-            .get_or_create(tables.NodeRow.id == self.id, defaults=values)
-        )
-        if not node._was_created:
-            await tables.NodeRow.update(values).where(tables.NodeRow.id == self.id)
-
-    async def update_or_create(self) -> None:
-        """Update or create the node in the database"""
-        values = {
-            tables.NodeRow.name: self.name,
-            tables.NodeRow.ssl: self.ssl,
-            tables.NodeRow.resume_key: self.resume_key,
-            tables.NodeRow.reconnect_attempts: self.reconnect_attempts,
-            tables.NodeRow.resume_timeout: self.resume_timeout,
-            tables.NodeRow.search_only: self.search_only,
-            tables.NodeRow.managed: self.managed,
-            tables.NodeRow.extras: self.extras,
-            tables.NodeRow.yaml: self.yaml,
-            tables.NodeRow.disabled_sources: self.disabled_sources,
-        }
-        output = (
-            await tables.NodeRow.objects()
-            .output(load_json=True)
-            .get_or_create(tables.NodeRow.id == self.id, defaults=values)
-        )
-        if not output._was_created:
-            self.name = output.name
-            self.ssl = output.ssl
-            self.reconnect_attempts = output.reconnect_attempts
-            self.search_only = output.search_only
-            self.extras = output.extras
-            self.managed = output.managed
-            self.yaml = output.yaml
-            self.resume_key = output.resume_key
-            self.resume_timeout = output.resume_timeout
-            self.disabled_sources = output.disabled_sources
-
-
-@dataclass(eq=True)
-class QueryModel:
-    identifier: str
-    name: str | None = None
-    last_updated: datetime.datetime = None
-    tracks: list[str] = field(default_factory=list)
-
-    def __hash__(self):
-        return hash((self.identifier,))
-
-    def __post_init__(self):
-        if isinstance(self.tracks, str):
-            self.tracks = ujson.loads(self.tracks)
-
-    @classmethod
-    # @alru_cache(maxsize=128)
-    async def get(cls, identifier: str) -> QueryModel | None:
-        """Get a query from the database.
-
-        Parameters
-        ----------
-        identifier : str
-            The identifier of the query.
-
-        Returns
-        -------
-        QueryModel | None
-            The query if found, otherwise None.
-        """
-        query = await tables.QueryRow.raw(
-            """
-            SELECT * FROM query
-            WHERE identifier = {}
-            """,
-            identifier,
-        )
-        return QueryModel(**query[0]) if query else None
-
-    async def delete(self):
-        """Delete the query from the database"""
-        # self.get.invalidate(self.identifier)
-        # self.get.invalidate(identifier=self.identifier)
-        await tables.QueryRow.raw("DELETE FROM query WHERE identifier = {}", self.identifier)
-
-    async def upsert(self):
-        """Upsert the query in the database"""
-        if self.last_updated is None:
-            self.last_updated = datetime.datetime.now(tz=datetime.timezone.utc)
-        await tables.QueryRow.raw(
-            """INSERT INTO query (identifier, name, last_updated, tracks)
-            VALUES ({}, {}, {}, {})
-            ON CONFLICT (identifier) DO UPDATE SET name = EXCLUDED.name, last_updated = EXCLUDED.last_updated, tracks = EXCLUDED.tracks
-            """,
-            self.identifier,
-            self.name,
-            self.last_updated,
-            ujson.dumps(self.tracks),
-        )
-        # self.get.invalidate(self.identifier)
-        # self.get.invalidate(identifier=self.identifier)
-
-    async def save(self):
-        """Save the query to the database"""
-        await self.upsert()
-
-
-@dataclass(eq=True)
-class BotVersion:
-    bot: int
-    version: str | LegacyVersion | Version
-
-    def __post_init__(self):
-        if isinstance(self.version, str):
-            self.version = parse_version(self.version)  # type: ignore
-
-    async def get_or_create(self) -> BotVersion:
-        """Get or create the bot version in the database.
-
-        Returns
-        -------
-        BotVersion
-            The bot version.
-        """
-        values = {
-            tables.BotVersionRow.version: f"{self.version}",
-        }
-        output = (
-            await tables.BotVersionRow.objects()
-            .output(load_json=True)
-            .get_or_create(tables.BotVersionRow.bot == self.bot, defaults=values)
-        )
-        if not output._was_created:
-            self.version = parse_version(output.version)
-        return self
-
-    async def upsert(self) -> None:
-        """Upsert the bot version in the database"""
-        values = {
-            tables.BotVersionRow.version: f"{self.version}",
-        }
-        node = (
-            await tables.BotVersionRow.objects()
-            .output(load_json=True)
-            .get_or_create(tables.BotVersionRow.bot == self.bot, defaults=values)
-        )
-        if not node._was_created:
-            await tables.BotVersionRow.update(values).where(tables.BotVersionRow.bot == self.bot)
-
-    async def save(self) -> None:
-        """Save the bot version to the database"""
-        await self.upsert()
-
-
-@dataclass(eq=True)
-class PlayerStateModel:
-    id: int
-    bot: int
-    channel_id: int
-    volume: int
-    position: float
-    auto_play_playlist_id: int | None
-    text_channel_id: int | None
-    notify_channel_id: int | None
-    forced_channel_id: int | None
-
-    paused: bool
-    repeat_current: bool
-    repeat_queue: bool
-    shuffle: bool
-    auto_shuffle: bool
-    auto_play: bool
-    playing: bool
-    effect_enabled: bool
-    self_deaf: bool
-
-    current: dict | None
-    queue: list
-    history: list
-    effects: dict
-    extras: dict
-    pk = None
-
-    def __post_init__(self):
-        if isinstance(self.current, str):
-            self.current = ujson.loads(self.current)
-        if isinstance(self.queue, str):
-            self.queue = ujson.loads(self.queue)
-        if isinstance(self.history, str):
-            self.history = ujson.loads(self.history)
-        if isinstance(self.effects, str):
-            self.effects = ujson.loads(self.effects)
-        if isinstance(self.extras, str):
-            self.extras = ujson.loads(self.extras)
-
-    async def delete(self) -> None:
-        """Delete the player state from the database"""
-        await tables.PlayerStateRow.raw(
-            """
-            DELETE FROM player_state
-            WHERE id = {} AND bot = {}
-            """,
-            self.id,
-            self.bot,
-        )
-
-    async def upsert(self) -> None:
-        """Upsert the player state in the database"""
-        await tables.AioHttpCacheRow.raw(
-            """
-            INSERT INTO player_state (
-                id,
-                bot,
-                channel_id,
-                volume,
-                position,
-                auto_play_playlist_id,
-                forced_channel_id,
-                text_channel_id,
-                notify_channel_id,
-                paused,
-                repeat_current,
-                repeat_queue,
-                shuffle,
-                auto_shuffle,
-                auto_play,
-                playing,
-                effect_enabled,
-                self_deaf,
-                current,
-                queue,
-                history,
-                effects,
-                extras
-            )
-            VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE
-                SET channel_id = excluded.channel_id,
-                    volume = excluded.volume,
-                    position = excluded.position,
-                    auto_play_playlist_id = excluded.auto_play_playlist_id,
-                    forced_channel_id = excluded.forced_channel_id,
-                    text_channel_id = excluded.text_channel_id,
-                    notify_channel_id = excluded.notify_channel_id,
-                    paused = excluded.paused,
-                    repeat_current = excluded.repeat_current,
-                    repeat_queue = excluded.repeat_queue,
-                    shuffle = excluded.shuffle,
-                    auto_shuffle = excluded.auto_shuffle,
-                    auto_play = excluded.auto_play,
-                    playing = excluded.playing,
-                    effect_enabled = excluded.effect_enabled,
-                    self_deaf = excluded.self_deaf,
-                    current = excluded.current,
-                    queue = excluded.queue,
-                    history = excluded.history,
-                    effects = excluded.effects,
-                    extras = excluded.extras;
-            """,
-            self.id,
-            self.bot,
-            self.channel_id,
-            self.volume,
-            self.position,
-            self.auto_play_playlist_id,
-            self.forced_channel_id,
-            self.text_channel_id,
-            self.notify_channel_id,
-            self.paused,
-            self.repeat_current,
-            self.repeat_queue,
-            self.shuffle,
-            self.auto_shuffle,
-            self.auto_play,
-            self.playing,
-            self.effect_enabled,
-            self.self_deaf,
-            ujson.dumps(self.current),
-            ujson.dumps(self.queue),
-            ujson.dumps(self.history),
-            ujson.dumps(self.effects),
-            ujson.dumps(self.extras),
-        )
-
-    async def save(self) -> None:
-        """Save the player state to the database"""
-        await self.upsert()
-
-    @classmethod
-    async def get(cls, bot_id: int, guild_id: int) -> PlayerStateModel | None:
-        """Get the player state from the database.
-
-        Parameters
-        ----------
-        bot_id : int
-            The bot ID.
-        guild_id : int
-            The guild ID.
-
-        Returns
-        -------
-        PlayerStateModel | None
-            The player state if found, otherwise None.
-        """
-
-        player = await tables.PlayerStateRow.raw(
-            """SELECT id,
-                bot,
-                channel_id,
-                volume,
-                position,
-                auto_play_playlist_id,
-                forced_channel_id,
-                text_channel_id,
-                notify_channel_id,
-                paused,
-                repeat_current,
-                repeat_queue,
-                shuffle,
-                auto_shuffle,
-                auto_play,
-                playing,
-                effect_enabled,
-                self_deaf,
-                current,
-                queue,
-                history,
-                effects,
-                extras FROM player_state WHERE bot = {} AND id = {}""",
-            bot_id,
-            guild_id,
-        )
-        return cls(**player[0]) if player else None
-
-
-@dataclass(eq=True)
-class PlayerModel:
-    id: int
-    bot: int
-    forced_channel_id: int | None = None
-    volume: int = 100
-    max_volume: int = 1000
-    auto_play_playlist_id: int = 1
-    text_channel_id: int | None = None
-    notify_channel_id: int | None = None
-    repeat_current: bool = False
-    repeat_queue: bool = False
-    shuffle: bool = True
-    auto_shuffle: bool = True
-    auto_play: bool = True
-    self_deaf: bool = True
-    effects: dict = field(default_factory=dict)
-    extras: dict = field(default_factory=dict)
-    empty_queue_dc: TimedFeature = field(default_factory=TimedFeature)
-    alone_dc: TimedFeature = field(default_factory=TimedFeature)
-    alone_pause: TimedFeature = field(default_factory=TimedFeature)
-    dj_users: set = field(default_factory=set)
-    dj_roles: set = field(default_factory=set)
-    pk = None
-
-    def __post_init__(self):
-        if isinstance(self.extras, str):
-            self.extras = ujson.loads(self.extras)
-        if isinstance(self.empty_queue_dc, str):
-            self.empty_queue_dc = TimedFeature(**ujson.loads(self.empty_queue_dc))
-        if isinstance(self.alone_dc, str):
-            self.alone_dc = TimedFeature(**ujson.loads(self.alone_dc))
-        if isinstance(self.alone_pause, str):
-            self.alone_pause = TimedFeature(**ujson.loads(self.alone_pause))
-        if isinstance(self.effects, str):
-            self.effects = ujson.loads(self.effects)
-        if isinstance(self.dj_users, str):
-            self.dj_users = ujson.loads(self.dj_users)
-        if isinstance(self.dj_roles, str):
-            self.dj_roles = ujson.loads(self.dj_roles)
-
-        self.dj_users = set(self.dj_users)
-        self.dj_roles = set(self.dj_roles)
-
-    def __hash__(self):
-        return hash((self.id, self.bot))
-
-    async def delete(self) -> None:
-        """Delete the player from the database"""
-        await tables.PlayerRow.raw("DELETE FROM player WHERE id = {} and bot = {};", self.id, self.bot)
-        # self.get_or_create.invalidate()
-        # self.is_dj.cache_clear()
-
-    async def upsert(self) -> None:
-        """Upsert the player in the database"""
-        await tables.PlayerRow.raw(
-            """
-            INSERT INTO player
-            (
-                id,
-                bot,
-                volume,
-                max_volume,
-                auto_play_playlist_id,
-                text_channel_id,
-                notify_channel_id,
-                forced_channel_id,
-                repeat_current,
-                repeat_queue,
-                shuffle,
-                auto_shuffle,
-                auto_play,
-                self_deaf,
-                empty_queue_dc,
-                alone_dc,
-                alone_pause,
-                extras,
-                effects,
-                dj_users,
-                dj_roles
-            )
-            VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE
-            SET volume = EXCLUDED.volume,
-                max_volume = EXCLUDED.max_volume,
-                auto_play_playlist_id = EXCLUDED.auto_play_playlist_id,
-                text_channel_id = EXCLUDED.text_channel_id,
-                notify_channel_id = EXCLUDED.notify_channel_id,
-                forced_channel_id = EXCLUDED.forced_channel_id,
-                repeat_current = EXCLUDED.repeat_current,
-                repeat_queue = EXCLUDED.repeat_queue,
-                shuffle = EXCLUDED.shuffle,
-                auto_shuffle = EXCLUDED.auto_shuffle,
-                auto_play = EXCLUDED.auto_play,
-                self_deaf = EXCLUDED.self_deaf,
-                empty_queue_dc = EXCLUDED.empty_queue_dc,
-                alone_dc = EXCLUDED.alone_dc,
-                alone_pause = EXCLUDED.alone_pause,
-                extras = EXCLUDED.extras,
-                effects = EXCLUDED.effects,
-                dj_users = EXCLUDED.dj_users,
-                dj_roles = EXCLUDED.dj_roles
-            """,
-            self.id,
-            self.bot,
-            self.volume,
-            self.max_volume,
-            self.auto_play_playlist_id,
-            self.text_channel_id,
-            self.notify_channel_id,
-            self.forced_channel_id,
-            self.repeat_current,
-            self.repeat_queue,
-            self.shuffle,
-            self.auto_shuffle,
-            self.auto_play,
-            self.self_deaf,
-            ujson.dumps(self.empty_queue_dc.to_dict()),
-            ujson.dumps(self.alone_dc.to_dict()),
-            ujson.dumps(self.alone_pause.to_dict()),
-            ujson.dumps(self.extras),
-            ujson.dumps(self.effects),
-            list(self.dj_users),
-            list(self.dj_roles),
-        )
-        # self.get_or_create.invalidate()
-        # self.is_dj.cache_clear()
-
-    async def save(self) -> None:
-        """Save the player to the database"""
-        await self.upsert()
-
-    @classmethod
-    # @alru_cache(maxsize=128, ignore_kwargs={"id": 0})
-    async def get_or_create(cls, id: int, bot: int) -> PlayerModel:
-        """Get the player from the database.
-
-        Returns
-        -------
-        PlayerModel
-            The player if found, otherwise None.
-        """
-        self = cls(id=id, bot=bot)
-        existing_data = await tables.PlayerRow.raw(
-            """SELECT id,
-                bot,
-                volume,
-                max_volume,
-                auto_play_playlist_id,
-                text_channel_id,
-                notify_channel_id,
-                forced_channel_id,
-                repeat_current,
-                repeat_queue,
-                shuffle,
-                auto_shuffle,
-                auto_play,
-                self_deaf,
-                empty_queue_dc,
-                alone_dc,
-                alone_pause,
-                extras,
-                effects,
-                dj_users,
-                dj_roles FROM player WHERE id = {} and bot = {} LIMIT 1;""",
-            id,
-            bot,
-        )
-        if existing_data:
-            output = existing_data[0]
-            self.extras = ujson.loads(output["extras"])
-            self.empty_queue_dc = TimedFeature(**ujson.loads(output["empty_queue_dc"]))
-            self.alone_dc = TimedFeature(**ujson.loads(output["alone_dc"]))
-            self.alone_pause = TimedFeature(**ujson.loads(output["alone_pause"]))
-            self.effects = ujson.loads(output["effects"])
-            self.dj_users = set(output["dj_users"])
-            self.dj_roles = set(output["dj_roles"])
-            self.forced_channel_id = output["forced_channel_id"]
-            self.volume = output["volume"]
-            self.max_volume = output["max_volume"]
-            self.auto_play_playlist_id = output["auto_play_playlist_id"]
-            self.text_channel_id = output["text_channel_id"]
-            self.notify_channel_id = output["notify_channel_id"]
-            self.repeat_current = output["repeat_current"]
-            self.repeat_queue = output["repeat_queue"]
-            self.shuffle = output["shuffle"]
-            self.auto_shuffle = output["auto_shuffle"]
-            self.auto_play = output["auto_play"]
-            self.self_deaf = output["self_deaf"]
-        else:
-            await self.upsert()
-        return self
-
-    async def update_volume(self) -> PlayerModel:
-        """Update the volume of the player"""
-        player = await tables.PlayerRow.raw(
-            """SELECT volume FROM player WHERE id = {} AND bot = {} LIMIT 1""", self.id, self.bot
-        )
-        if player:
-            self.volume = player[0]["volume"]
-        return self
-
-    async def update_max_volume(self) -> PlayerModel:
-        """Update the max volume of the player"""
-        player = await tables.PlayerRow.raw(
-            """SELECT max_volume FROM player WHERE id = {} AND bot = {} LIMIT 1""", self.id, self.bot
-        )
-        if player:
-            self.max_volume = player[0]["max_volume"]
-        return self
-
-    async def update_auto_play_playlist_id(self) -> PlayerModel:
-        """Update the auto play playlist ID of the player.
-
-        Returns
-        -------
-        PlayerModel
-            The player.
-        """
-        player = await tables.PlayerRow.raw(
-            """SELECT auto_play_playlist_id FROM player WHERE id = {} AND bot = {} LIMIT 1""", self.id, self.bot
-        )
-
-        if player:
-            self.auto_play_playlist_id = player[0]["auto_play_playlist_id"]
-        return self
-
-    async def update_text_channel_id(self) -> PlayerModel:
-        """Update the text channel ID of the player.
-
-        Returns
-        -------
-        PlayerModel
-            The player.
-        """
-        player = await tables.PlayerRow.raw(
-            """SELECT text_channel_id FROM player WHERE id = {} AND bot = {} LIMIT 1""", self.id, self.bot
-        )
-        if player:
-            self.text_channel_id = player[0]["text_channel_id"]
-        return self
-
-    async def update_notify_channel_id(self) -> PlayerModel:
-        """Update the notify channel ID of the player.
-
-        Returns
-        -------
-        PlayerModel
-            The player.
-        """
-        player = await tables.PlayerRow.raw(
-            """SELECT notify_channel_id FROM player WHERE id = {} AND bot = {} LIMIT 1""", self.id, self.bot
-        )
-
-        if player:
-            self.notify_channel_id = player[0]["notify_channel_id"]
-        return self
-
-    async def update_forced_channel_id(self) -> PlayerModel:
-        """Update the forced channel ID of the player.
-
-        Returns
-        -------
-        PlayerModel
-            The player.
-        """
-        player = await tables.PlayerRow.raw(
-            "SELECT forced_channel_id FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
-        )
-        if player:
-            self.forced_channel_id = player[0]["forced_channel_id"]
-        return self
-
-    async def update_repeat_current(self) -> PlayerModel:
-        """Update the repeat current of the player.
-
-        Returns
-        -------
-        PlayerModel
-            The player.
-        """
-        player = await tables.PlayerRow.raw(
-            "SELECT repeat_current FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
-        )
-        if player:
-            self.repeat_current = player[0]["repeat_current"]
-        return self
-
-    async def update_repeat_queue(self) -> PlayerModel:
-        """Update the repeat queue of the player.
-
-        Returns
-        -------
-        PlayerModel
-            The player.
-        """
-        player = await tables.PlayerRow.raw(
-            "SELECT repeat_queue FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
-        )
-        if player:
-            self.repeat_queue = player["repeat_queue"]
-        return self
-
-    async def update_shuffle(self) -> PlayerModel:
-        """Update the shuffle of the player.
-
-        Returns
-        -------
-        PlayerModel
-            The player.
-        """
-        player = await tables.PlayerRow.raw(
-            "SELECT shuffle FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
-        )
-        if player:
-            self.shuffle = player[0]["shuffle"]
-        return self
-
-    async def update_auto_shuffle(self) -> PlayerModel:
-        """Update the auto shuffle of the player.
-
-        Returns
-        -------
-        PlayerModel
-            The player.
-        """
-        player = await tables.PlayerRow.raw(
-            "SELECT auto_shuffle FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
-        )
-        if player:
-            self.auto_shuffle = player[0]["auto_shuffle"]
-        return self
-
-    async def update_auto_play(self) -> PlayerModel:
-        """Update the auto play of the player.
-
-        Returns
-        -------
-        PlayerModel
-            The player.
-        """
-        player = await tables.PlayerRow.raw(
-            "SELECT auto_play FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
-        )
-        if player:
-            self.auto_play = player[0]["auto_play"]
-        return self
-
-    async def update_self_deaf(self) -> PlayerModel:
-        """Update the self deaf of the player.
-
-        Returns
-        -------
-        PlayerModel
-            The player.
-        """
-        player = await tables.PlayerRow.raw(
-            "SELECT self_deaf FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
-        )
-        if player:
-            self.self_deaf = player[0]["self_deaf"]
-        return self
-
-    async def update_extras(self) -> PlayerModel:
-        """Update the extras of the player.
-
-        Returns
-        -------
-        PlayerModel
-            The player.
-        """
-        player = await tables.PlayerRow.raw(
-            "SELECT extras FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
-        )
-        if player:
-            if isinstance(player[0]["extras"], str):
-                self.extras = ujson.loads(player[0]["extras"])
-            else:
-                self.extras = player[0]["extras"]
-        return self
-
-    async def update_effects(self) -> PlayerModel:
-        """Update the effects of the player.
-
-        Returns
-        -------
-        PlayerModel
-            The player.
-        """
-        player = await tables.PlayerRow.raw(
-            "SELECT effects FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
-        )
-        if player:
-            if isinstance(player[0]["effects"], str):
-                self.effects = ujson.loads(player[0]["effects"])
-            else:
-                self.effects = player[0]["effects"]
-        return self
-
-    async def update_empty_queue_dc(self) -> PlayerModel:
-        """Update the empty queue dc of the player.
-
-        Returns
-        -------
-        PlayerModel
-            The player.
-        """
-        player = await tables.PlayerRow.raw(
-            "SELECT empty_queue_dc FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
-        )
-        if player:
-            if isinstance(player[0]["empty_queue_dc"], str):
-                self.empty_queue_dc = TimedFeature(**ujson.loads(player[0]["empty_queue_dc"]))
-            else:
-                self.empty_queue_dc = TimedFeature(**player[0]["empty_queue_dc"])
-        return self
-
-    async def update_alone_dc(self) -> PlayerModel:
-        """Update the alone dc of the player.
-
-        Returns
-        -------
-        PlayerModel
-            The player.
-        """
-        player = await tables.PlayerRow.raw(
-            "SELECT alone_dc FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
-        )
-        if player:
-            if isinstance(player[0]["alone_dc"], str):
-                self.alone_dc = TimedFeature(**ujson.loads(player[0]["alone_dc"]))
-            else:
-                self.alone_dc = TimedFeature(**player[0]["alone_dc"])
-        return self
-
-    async def update_alone_pause(self) -> PlayerModel:
-        """Update the alone pause of the player.
-
-        Returns
-        -------
-        PlayerModel
-            The player.
-        """
-        player = await tables.PlayerRow.raw(
-            "SELECT alone_pause FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
-        )
-        if player:
-            if isinstance(player[0]["alone_pause"], str):
-                self.alone_pause = TimedFeature(**ujson.loads(player[0]["alone_pause"]))
-            else:
-                self.alone_pause = TimedFeature(**player[0]["alone_pause"])
-        return self
-
-    async def dj_users_update(self) -> PlayerModel:
-        """Update the dj users of the player.
-
-        Returns
-        -------
-        PlayerModel
-            The player.
-        """
-        player = await tables.PlayerRow.raw(
-            "SELECT dj_users FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
-        )
-        if player:
-            self.dj_users = set(player[0]["dj_users"])
-        return self
-
-    async def dj_roles_update(self) -> PlayerModel:
-        """Update the dj roles of the player.
-
-        Returns
-        -------
-        PlayerModel
-            The player.
-        """
-        player = await tables.PlayerRow.raw(
-            "SELECT dj_roles FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
-        )
-        if player:
-            self.dj_roles = set(player[0]["dj_roles"])
-        return self
-
-    async def dj_users_add(self, *users: discord.Member) -> PlayerModel:
-        """Add dj users to the player.
-
-        Parameters
-        ----------
-        users : discord.Member
-            The users to add.
-
-        Returns
-        -------
-        PlayerModel
-            The player.
-        """
-        await self.dj_users_update()
-        if not users:
-            return self
-        self.dj_users = self.dj_users.union([u.id for u in users])
-        await self.dj_users_cleanup(users[0].guild, lazy=True)
-        await self.save()
-        return self
-
-    async def dj_roles_add(self, *roles: discord.Role) -> PlayerModel:
-        """Add dj roles to the player.
-
-        Parameters
-        ----------
-        roles : discord.Role
-            The roles to add.
-
-        Returns
-        -------
-        PlayerModel
-            The player.
-        """
-        await self.dj_roles_update()
-        if not roles:
-            return self
-        self.dj_roles = self.dj_roles.union([r.id for r in roles])
-        await self.dj_roles_cleanup(roles[0].guild, lazy=True)
-        await self.save()
-        return self
-
-    async def dj_users_remove(self, *users: discord.Member) -> PlayerModel:
-        """Remove dj users from the player.
-
-        Parameters
-        ----------
-        users : discord.Member
-            The users to add.
-
-        Returns
-        -------
-        PlayerModel
-            The player.
-        """
-        await self.dj_users_update()
-        if not users:
-            return self
-        self.dj_users.difference_update({u.id for u in users})
-        await self.dj_users_cleanup(users[0].guild, lazy=True)
-        await self.save()
-        return self
-
-    async def dj_roles_remove(self, *roles: discord.Role) -> PlayerModel:
-        """Remove dj roles from the player.
-
-        Parameters
-        ----------
-        roles : discord.Role
-            The roles to add.
-
-        Returns
-        -------
-        PlayerModel
-            The player
-        """
-        await self.dj_roles_update()
-        if not roles:
-            return self
-        self.dj_roles.difference_update({r.id for r in roles if r})
-        await self.dj_roles_cleanup(roles[0].guild, lazy=True)
-        await self.save()
-        return self
-
-    async def dj_users_cleanup(self, guild: discord.Guild, lazy: bool = False) -> PlayerModel:
-        """Cleanup the dj users of the player.
-
-        Parameters
-        ----------
-        guild : discord.Guild
-            The guild to cleanup.
-        lazy : bool
-            Whether to do a lazy cleanup.
-
-        Returns
-        -------
-        PlayerModel
-            The player.
-        """
-        if not lazy:
-            await self.dj_users_update()
-        self.dj_users = {u for u in self.dj_users if guild.get_member(u)}
-        if not lazy:
-            await self.save()
-        return self
-
-    async def dj_roles_cleanup(self, guild: discord.Guild, lazy: bool = False) -> PlayerModel:
-        """Cleanup the dj roles of the player.
-
-        Parameters
-        ----------
-        guild : discord.Guild
-            The guild to cleanup.
-        lazy : bool
-            Whether to do a lazy cleanup.
-
-        Returns
-        -------
-        PlayerModel
-            The player.
-        """
-        if not lazy:
-            await self.dj_roles_update()
-        self.dj_roles = {r for r in self.dj_roles if guild.get_role(r)}
-        if not lazy:
-            await self.save()
-        return self
-
-    async def dj_users_reset(self) -> PlayerModel:
-        """Reset the dj users of the player.
-
-        Returns
-        -------
-        PlayerModel
-            The player.
-        """
-        self.dj_users = set()
-        await self.save()
-        return self
-
-    async def dj_roles_reset(self) -> PlayerModel:
-        """Reset the dj roles of the player.
-
-        Returns
-        -------
-        PlayerModel
-            The player.
-        """
-        self.dj_roles = set()
-        await self.save()
-        return self
-
-    # @alru_cache(maxsize=128)
-    async def is_dj(
-        self,
-        user: discord.Member,
-        *,
-        additional_role_ids: list = None,
-        additional_user_ids: list = None,
-        bot: BotT = None,
-    ) -> bool:
-        """Check if a user is a dj.
-
-        Parameters
-        ----------
-        user : discord.Member
-            The user to check.
-        additional_role_ids : list
-            The additional dj role ids to check.
-        additional_user_ids : list
-            The additional dj user ids to check.
-        bot : BotT
-            The bot instance to check for owners, admins or mods.
-
-        Returns
-        -------
-        bool
-            Whether the user is a dj.
-        """
-        if additional_user_ids and user.id in additional_user_ids:
-            return True
-        if additional_role_ids and await asyncstdlib.any(r.id in additional_role_ids for r in user.roles):
-            return True
-        if __ := user.guild:
-            if hasattr(bot, "is_owner") and await bot.is_owner(user):
-                return True
-            if hasattr(bot, "is_admin") and await bot.is_admin(user):
-                return True
-            if hasattr(bot, "is_mod") and await bot.is_mod(user):
-                return True
-        await self.dj_users_update()
-        await self.dj_users_cleanup(guild=user.guild, lazy=True)
-        if user.id in self.dj_users:
-            return True
-        await self.dj_roles_update()
-        await self.dj_roles_cleanup(guild=user.guild, lazy=True)
-        if await asyncstdlib.any(r.id in self.dj_roles for r in user.roles):
-            return True
-        return not self.dj_users and not self.dj_roles
-
-    async def fetch_volume(self) -> int:
-        """Fetch the volume of the player.
-
-        Returns
-        -------
-        int
-            The volume.
-        """
-        await self.update_volume()
-        return self.volume
-
-    async def fetch_repeat_current(self) -> bool:
-        """Fetch the repeat current of the player.
-
-        Returns
-        -------
-        bool
-            The repeat current.
-        """
-        await self.update_repeat_current()
-        return self.repeat_current
-
-    async def fetch_repeat_queue(self) -> bool:
-        """Fetch the repeat queue of the player.
-
-        Returns
-        -------
-        bool
-            The repeat queue.
-        """
-        await self.update_repeat_queue()
-        return self.repeat_queue
-
-    async def fetch_shuffle(self) -> bool | None:
-        """Fetch the shuffle of the player.
-
-        Returns
-        -------
-        bool | None
-            The shuffle.
-        """
-        await self.update_shuffle()
-        return self.shuffle
-
-    async def fetch_auto_shuffle(self) -> bool:
-        """Fetch the auto shuffle of the player.
-
-        Returns
-        -------
-        bool
-            The auto shuffle.
-        """
-        await self.update_auto_shuffle()
-        return self.auto_shuffle
-
-    async def fetch_auto_play(self) -> bool:
-        """Fetch the auto play of the player.
-
-        Returns
-        -------
-        bool
-            The auto play.
-        """
-        await self.update_auto_play()
-        return self.auto_play
-
-    async def fetch_self_deaf(self) -> bool:
-        """Fetch the self deaf of the player.
-
-        Returns
-        -------
-        bool
-            The self deaf.
-        """
-        await self.update_self_deaf()
-        return self.self_deaf
-
-    async def fetch_extras(self) -> dict:
-        """Fetch the extras of the player.
-
-        Returns
-        -------
-        dict
-            The extras.
-        """
-        await self.update_extras()
-        return self.extras
-
-    async def fetch_effects(self) -> dict:
-        """Fetch the effects of the player.
-
-        Returns
-        -------
-        dict
-            The effects.
-        """
-        await self.update_effects()
-        return self.effects
-
-    async def fetch_empty_queue_dc(self) -> TimedFeature:
-        """Fetch the empty queue dc of the player.
-
-        Returns
-        -------
-        TimedFeature
-            The empty queue dc.
-        """
-        await self.update_empty_queue_dc()
-        return self.empty_queue_dc
-
-    async def fetch_alone_dc(self) -> TimedFeature:
-        """Fetch the alone dc of the player.
-
-        Returns
-        -------
-        TimedFeature
-            The alone dc.
-        """
-        await self.update_alone_dc()
-        return self.alone_dc
-
-    async def fetch_alone_pause(self) -> TimedFeature:
-        """Fetch the alone pause of the player.
-
-        Returns
-        -------
-        TimedFeature
-            The alone pause.
-        """
-        await self.update_alone_pause()
-        return self.alone_pause
-
-    async def fetch_max_volume(self) -> int:
-        """Fetch the max volume of the player.
-
-        Returns
-        -------
-        int
-            The max volume.
-        """
-        await self.update_max_volume()
-        return self.max_volume
-
-    async def update(self) -> PlayerModel:
-        """Update the player.
-
-        Returns
-        -------
-        PlayerModel
-            The player.
-        """
-        # self.get_or_create.invalidate()
-        # self.is_dj.cache_clear()
-        await self.get_or_create(id=self.id, bot=self.bot)
-        return self
 
 
 @dataclass(eq=True)

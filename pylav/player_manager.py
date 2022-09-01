@@ -11,7 +11,7 @@ import discord
 from pylav._logging import getLogger
 from pylav.events import PlayerConnectedEvent
 from pylav.player import Player
-from pylav.sql.models import LibConfigModel, PlayerModel, PlayerStateModel
+from pylav.sql.models import PlayerModel, PlayerStateModel
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -96,7 +96,7 @@ class PlayerManager:
         return [p for p in self.players.values() if p.is_empty]
 
     async def initialize(self):
-        self._global_player_config = await self.client.player_config_manager.get_global_config()
+        self._global_player_config = self.client.player_config_manager.get_global_config()
         self.client.scheduler.add_job(
             self.update_bot_activity,
             trigger="interval",
@@ -190,7 +190,7 @@ class PlayerManager:
         channel: discord.channel.VocalGuildChannel,
         endpoint: str = None,
         node: Node = None,
-        self_deaf: bool = True,
+        self_deaf: bool = None,
         requester: discord.Member = None,
         feature: str | None = None,
     ) -> Player:
@@ -230,12 +230,16 @@ class PlayerManager:
         best_node = node or await self.client.node_manager.find_best_node(region, feature=feature or None)
         if not best_node:
             raise NoNodeAvailable("No available nodes!")
-        player_config = await self.client.player_config_manager.get_config(channel.guild.id)
-        if player_config.forced_channel_id is not None:
-            act_channel = channel.guild.get_channel_or_thread(player_config.forced_channel_id)
+        player_config = self.client.player_config_manager.get_config(channel.guild.id)
+        forced_channel_id = await player_config.fetch_forced_channel_id()
+        self_deafen = await self.client.player_config_manager.get_self_deaf(channel.guild.id)
+        if forced_channel_id is not None:
+            act_channel = channel.guild.get_channel_or_thread(forced_channel_id)
         else:
             act_channel = channel
-        player: Player = await act_channel.connect(cls=Player, self_deaf=self_deaf or player_config.self_deaf)
+        player: Player = await act_channel.connect(
+            cls=Player, self_deaf=self_deafen if self_deaf is None else self_deaf
+        )
         best_node = node or await self.client.node_manager.find_best_node(
             region, feature=feature or None, coordinates=player.coordinates
         )
@@ -244,7 +248,9 @@ class PlayerManager:
         await player.post_init(
             node=best_node, player_manager=self, config=player_config, pylav=self.client, requester=requester
         )
-        await player.move_to(requester, channel=player.channel, self_deaf=self_deaf or player_config.self_deaf)
+        await player.move_to(
+            requester, channel=player.channel, self_deaf=self_deafen if self_deaf is None else self_deaf
+        )
         best_node.dispatch_event(PlayerConnectedEvent(player, requester or self.client.bot.user))
         self.players[channel.guild.id] = player
         LOGGER.info("[NODE-%s] Successfully created player for %s", best_node.name, channel.guild.id)
@@ -311,7 +317,7 @@ class PlayerManager:
         with contextlib.suppress(
             asyncio.exceptions.CancelledError,
         ):
-            if not await LibConfigModel(bot=self.bot.user.id, id=1).get_update_bot_activity():
+            if not await (self.client.lib_db_manager.get_config()).fetch_update_bot_activity():
                 return
             playing_players = len(self.playing_players)
             activities = self.bot.guilds[0].me.activities

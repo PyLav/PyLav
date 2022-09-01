@@ -45,7 +45,7 @@ from pylav.events import (
     TracksRequestedEvent,
     TrackStuckEvent,
 )
-from pylav.exceptions import NoNodeWithRequestFunctionalityAvailable, TrackNotFound
+from pylav.exceptions import EntryNotFoundError, NoNodeWithRequestFunctionalityAvailable, TrackNotFound
 from pylav.filters import ChannelMix, Distortion, Equalizer, Karaoke, LowPass, Rotation, Timescale, Vibrato, Volume
 from pylav.filters.tremolo import Tremolo
 from pylav.query import Query
@@ -155,23 +155,19 @@ class Player(VoiceProtocol):
         self._lavalink = pylav
         self.player_manager = player_manager
         self.node = node
-        await config.update()
         self._config = config
         self._global_config = player_manager.global_config
-        self._extras = config.extras
+        self._extras = await config.fetch_extras()
         self._post_init_completed = True
-        await self.set_autoplay_playlist(config.auto_play_playlist_id)
+
         player_state = await self.player_manager.client.player_state_db_manager.get_player(self.channel.guild.id)
         if player_state:
             await self.restore(player=player_state, requester=requester or self.guild.me)
             await self.player_manager.client.player_state_db_manager.delete_player(self.channel.guild.id)
             LOGGER.info("Player restored in postinit - %s", self)
         else:
-            self._forced_vc = self.guild.get_channel_or_thread(config.forced_channel_id)
-            self._text_channel = self.guild.get_channel_or_thread(config.text_channel_id)
-            self._notify_channel = self.guild.get_channel_or_thread(config.notify_channel_id)
-            self._volume = Volume(config.volume)
-            effects = config.effects
+            self._volume = Volume(await player_manager.client.player_config_manager.get_volume(self.guild.id))
+            effects = await config.fetch_effects()
             if (v := effects.get("volume", None)) and (f := Volume.from_dict(v)) and f.changed:
                 self._volume = f
             if (eq := effects.get("equalizer", None)) and (f := Equalizer.from_dict(eq)) and f.changed:
@@ -299,49 +295,38 @@ class Player(VoiceProtocol):
     def radio(self) -> RadioBrowser:
         return self.lavalink.radio_browser
 
-    @property
-    def text_channel(self) -> discord.abc.MessageableChannel:
-        return self._text_channel
+    async def text_channel(self) -> discord.abc.MessageableChannel:
+        return self.guild.get_channel_or_thread(await self.config.fetch_text_channel_id())
 
-    @text_channel.setter
-    def text_channel(self, value: discord.abc.MessageableChannel):
-        self._text_channel = value
-        self.config.text_channel_id = value.id if value else None
+    async def set_text_channel(self, value: discord.abc.MessageableChannel) -> None:
+        await self.config.update_text_channel_id(text_channel_id=value.id)
 
-    @property
-    def notify_channel(self) -> discord.abc.MessageableChannel:
-        return self._notify_channel
+    async def notify_channel(self) -> discord.abc.MessageableChannel:
+        return self.guild.get_channel_or_thread(await self.config.fetch_notify_channel_id())
 
-    @notify_channel.setter
-    def notify_channel(self, value: discord.abc.MessageableChannel):
-        self._notify_channel = value
-        self.config.notify_channel_id = value.id if value else None
+    async def set_notify_channel(self, value: discord.abc.MessageableChannel) -> None:
+        await self.config.update_notify_channel_id(notify_channel_id=value.id)
 
-    @property
-    def forced_vc(self) -> discord.abc.MessageableChannel:
-        return self._forced_vc
+    async def forced_vc(self) -> discord.abc.MessageableChannel:
+        return self.guild.get_channel_or_thread(await self.config.fetch_forced_channel_id())
 
-    @forced_vc.setter
-    def forced_vc(self, value: discord.abc.MessageableChannel):
-        self._forced_vc = value
-        self.config.forced_channel_id = value.id if value else None
+    async def set_forced_vc(self, value: discord.abc.MessageableChannel) -> None:
+        await self.config.update_forced_channel_id(forced_channel_id=value.id)
 
-    @property
-    def self_deaf(self) -> bool:
-        return self.config.self_deaf if self.config else self.player_manager.global_config.self_deaf
+    async def self_deaf(self) -> bool:
+        return await self.player_manager.client.player_config_manager.get_self_deaf(self.guild.id)
 
-    @property
-    def is_repeating(self) -> bool:
+    async def is_repeating(self) -> bool:
         """Whether the player is repeating tracks"""
-        return self.config.repeat_current or self.config.repeat_queue
+        if await self.config.fetch_repeat_queue() is True:
+            return True
+        return await self.config.fetch_repeat_current()
 
-    @property
-    def autoplay_enabled(self) -> bool:
+    async def autoplay_enabled(self) -> bool:
         """Whether autoplay is enabled"""
-        return (
-            self.player_manager.global_config.auto_play
-            and self.config.auto_play
-            and self._autoplay_playlist is not None
+        return bool(
+            await self.player_manager.client.player_config_manager.get_auto_play(self.guild.id) is True
+            and await self.get_auto_playlist() is not None
         )
 
     @property
@@ -567,7 +552,6 @@ class Player(VoiceProtocol):
             LOGGER.verbose(
                 "Auto save task for %s - Saving the player at %s", self, datetime.datetime.now(tz=datetime.timezone.utc)
             )
-            await self.config.save()
             await self.save()
 
     async def change_to_best_node(self, feature: str = None) -> Node | None:
@@ -884,11 +868,10 @@ class Player(VoiceProtocol):
         self.last_track = None
         if track is not None and isinstance(track, (Track, dict, str, type(None))):
             track = Track(node=self.node, data=track, query=query, skip_segments=skip_segments, requester=requester.id)
-        await self.config.update()
         if self.current:
-            if self.config.repeat_current:
+            if await self.config.fetch_repeat_current():
                 await self.add(self.current.requester_id, self.current)
-            elif self.config.repeat_queue:
+            elif await self.config.fetch_repeat_queue():
                 await self.add(self.current.requester_id, self.current, index=-1)
         if self.current:
             self.current.timestamp = 0
@@ -897,7 +880,7 @@ class Player(VoiceProtocol):
         self.current = None
         if not track:
             if self.queue.empty():
-                if self.autoplay_enabled and (available_tracks := self._autoplay_playlist.tracks):
+                if await self.autoplay_enabled() and (available_tracks := (await self.get_auto_playlist()).tracks):
                     if tracks_not_in_history := list(set(available_tracks) - set(self.history.raw_b64s)):
                         track = Track(
                             node=self.node,
@@ -1015,21 +998,24 @@ class Player(VoiceProtocol):
         requester: :class:`discord.Member`
             The member who requested the repeat change.
         """
-        current_after = current_before = self.config.repeat_current
-        queue_after = queue_before = self.config.repeat_queue
+        current_after = current_before = await self.config.fetch_repeat_current()
+        queue_after = queue_before = await self.config.fetch_repeat_queue()
 
         if op_type == "disable":
-            queue_after = self.config.repeat_queue = False
-            current_after = self.config.repeat_current = False
+            await self.config.update_repeat_current(False)
+            await self.config.update_repeat_queue(False)
+            queue_after = False
+            current_after = False
         elif op_type == "current":
-            self.config.repeat_current = current_after = repeat
-            self.config.repeat_queue = False
+            current_after = repeat
+            await self.config.update_repeat_current(current_after)
+            await self.config.update_repeat_queue(False)
         elif op_type == "queue":
-            self.config.repeat_queue = queue_after = repeat
-            self.config.repeat_current = False
+            queue_after = repeat
+            await self.config.update_repeat_current(False)
+            await self.config.update_repeat_queue(queue_after)
         else:
             raise ValueError(f"op_type must be either 'current' or 'queue' or `disable` not `{op_type}`")
-        await self.config.save()
         self.node.dispatch_event(
             PlayerRepeatEvent(self, requester, op_type, queue_before, queue_after, current_before, current_after)
         )
@@ -1044,10 +1030,9 @@ class Player(VoiceProtocol):
         """
         if await self.player_manager.global_config.fetch_shuffle() is False:
             return
-        self.config.shuffle = shuffle
-        await self.config.save()
+        await self.config.update_shuffle(shuffle)
 
-    async def set_auto_shuffle(self, shuffle: int) -> None:
+    async def set_auto_shuffle(self, shuffle: bool) -> None:
         """
         Sets the player's auto shuffle state.
         Parameters
@@ -1057,8 +1042,7 @@ class Player(VoiceProtocol):
         """
         if await self.player_manager.global_config.fetch_auto_shuffle() is False:
             return
-        self.config.auto_shuffle = shuffle
-        await self.config.save()
+        await self.config.update_auto_shuffle(shuffle)
 
     async def set_pause(self, pause: bool, requester: discord.Member) -> None:
         """
@@ -1091,16 +1075,13 @@ class Player(VoiceProtocol):
         requester: :class:`discord.Member`
             The member who requested the volume change.
         """
-        max_volume = await asyncstdlib.min(
-            [await self.config.fetch_max_volume(), await self.player_manager.global_config.fetch_max_volume()]
-        )
+        max_volume = await self.player_manager.client.player_config_manager.get_max_volume(self.guild.id)
         volume = await asyncstdlib.max([await asyncstdlib.min([vol, max_volume]), 0])
         if volume == self.volume:
             return
-        self.config.volume = volume
+        await self.config.update_volume(volume)
         self._volume = Volume(volume)
         await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
-        await self.config.save()
         self.node.dispatch_event(PlayerVolumeChangedEvent(self, requester, self.volume, volume))
 
     async def seek(self, position: float, requester: discord.Member, with_filter: bool = False) -> None:
@@ -1238,14 +1219,13 @@ class Player(VoiceProtocol):
         await self.guild.change_voice_state(
             channel=self.channel,
             self_mute=self_mute,
-            self_deaf=await self.bot.lavalink.player_config_manager.get_self_deaf(self.guild.id),
+            self_deaf=deaf if (deaf := self.self_deaf()) is True else self_deaf,
         )
         self._connected = True
         LOGGER.info("[Player-%s] Connected to voice channel", self.channel.guild.id)
 
     async def disconnect(self, *, force: bool = False, requester: discord.Member | None) -> None:
         try:
-            await self.config.save()
             if not self.stopped:
                 await self.save()
             await self.guild.change_voice_state(channel=None)
@@ -1302,10 +1282,8 @@ class Player(VoiceProtocol):
         requester: :class:`discord.Member`
             The member requesting to move the player.
         """
-        if self.config:
-            await self.config.update()
-        if self.config and self.forced_vc and channel.id != self.forced_vc.id:
-            channel = self.forced_vc
+        if self.config and (vc := await self.forced_vc()) and channel.id != vc.id:
+            channel = vc
             LOGGER.debug(
                 "[Player-%s] Player has a forced VC enabled replacing channel arg with it", self.channel.guild.id
             )
@@ -1316,11 +1294,10 @@ class Player(VoiceProtocol):
             "[Player-%s] Moving from %s to voice channel: %s", self.channel.guild.id, self.channel.id, channel.id
         )
         self.channel = channel
-        self.config.self_deaf = self_deaf
+        self_deaf = deaf if (deaf := self.self_deaf()) is True else self_deaf
         await self.guild.change_voice_state(channel=self.channel, self_mute=self_mute, self_deaf=self_deaf)
         self._connected = True
         self.node.dispatch_event(PlayerMovedEvent(self, requester, old_channel, self.channel))
-        await self.config.save()
         return channel
 
     async def self_deafen(self, toggle: bool) -> None:
@@ -1331,10 +1308,8 @@ class Player(VoiceProtocol):
         toggle: :class:`bool`
             Indicates if the player should be deafened.
         """
-
-        self.config.self_deaf = toggle
+        await self.config.update_self_deaf(toggle)
         await self.guild.change_voice_state(self_deaf=toggle, channel=self.channel)
-        await self.config.save()
 
     async def set_volume_filter(self, requester: discord.Member, volume: Volume) -> None:
         """
@@ -1345,9 +1320,7 @@ class Player(VoiceProtocol):
             Volume to set
         requester : discord.Member
         """
-        max_volume = await asyncstdlib.min(
-            [await self.config.fetch_max_volume(), await self.player_manager.global_config.fetch_max_volume()]
-        )
+        max_volume = await self.player_manager.client.player_config_manager.get_max_volume(self.guild.id)
         if volume.get_int_value() > max_volume:
             volume = Volume(max_volume)
         await self.set_filters(
@@ -1733,10 +1706,9 @@ class Player(VoiceProtocol):
 
     async def get_currently_playing_message(
         self, embed: bool = True, messageable: Messageable | InteractionT = None
-    ) -> discord.Embed | str:
+    ) -> discord.Embed | str:  # sourcery skip: use-fstring-for-formatting
         if not embed:
             return ""
-        await self.config.update()
         queue_list = ""
         arrow = self.draw_time()
         pos = format_time(self.position)
@@ -1798,12 +1770,12 @@ class Player(VoiceProtocol):
         )
         if not self.is_repeating:
             repeat_emoji = "\N{CROSS MARK}"
-        elif self.config.repeat_queue:
+        elif await self.config.fetch_repeat_queue():
             repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS}"
         else:
             repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS WITH CIRCLED ONE OVERLAY}"
 
-        autoplay_emoji = "\N{WHITE HEAVY CHECK MARK}" if self.autoplay_enabled else "\N{CROSS MARK}"
+        autoplay_emoji = "\N{WHITE HEAVY CHECK MARK}" if await self.autoplay_enabled() else "\N{CROSS MARK}"
 
         text += _("{translation}: {repeat_emoji}").format(repeat_emoji=repeat_emoji, translation=_("Repeating"))
         text += _("{space}{translation}: {autoplay_emoji}").format(
@@ -1826,7 +1798,6 @@ class Player(VoiceProtocol):
     ) -> discord.Embed | str:
         if not embed:
             return ""
-        await self.config.update()
         queue = self.history if history else self.queue
         queue_list = ""
         start_index = page_index * per_page
@@ -1889,12 +1860,12 @@ class Player(VoiceProtocol):
         )
         if not self.is_repeating:
             repeat_emoji = "\N{CROSS MARK}"
-        elif self.config.repeat_queue:
+        elif await self.config.fetch_repeat_queue():
             repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS}"
         else:
             repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS WITH CIRCLED ONE OVERLAY}"
 
-        autoplay_emoji = "\N{WHITE HEAVY CHECK MARK}" if self.autoplay_enabled else "\N{CROSS MARK}"
+        autoplay_emoji = "\N{WHITE HEAVY CHECK MARK}" if await self.autoplay_enabled() else "\N{CROSS MARK}"
 
         text += _("{translation}: {repeat_emoji}").format(repeat_emoji=repeat_emoji, translation=_("Repeating"))
         text += _("{space}{translation}: {autoplay_emoji}").format(
@@ -1965,34 +1936,40 @@ class Player(VoiceProtocol):
 
     async def set_autoplay_playlist(self, playlist: int | PlaylistModel) -> None:
         if isinstance(playlist, int):
-            self._autoplay_playlist = await self.player_manager.client.playlist_db_manager.get_playlist_by_id(playlist)
+            await self.config.update_auto_play_playlist_id(playlist)
         else:
-            self._autoplay_playlist = playlist
-        self.config.auto_play_playlist_id = self._autoplay_playlist.id
-        await self.config.save()
+            await self.config.update_auto_play_playlist_id(playlist.id)
+
+    async def get_auto_playlist(self) -> PlaylistModel | None:
+        try:
+            return await self.player_manager.client.playlist_db_manager.get_playlist_by_id(
+                await self.config.fetch_auto_play_playlist_id()
+            )
+        except EntryNotFoundError:
+            return None
 
     async def set_autoplay(self, autoplay: bool) -> None:
-        self.config.auto_play = autoplay
-        await self.config.save()
+        await self.config.update_auto_play(autoplay)
 
     async def to_dict(self) -> dict:
         """
         Returns a dict representation of the player.
         """
+        data = await self.config.fetch_all()
         return {
             "id": int(self.guild.id),
             "channel_id": self.channel.id,
             "current": await self.current.to_json() if self.current else None,
-            "text_channel_id": self.text_channel.id if self.text_channel else None,
-            "notify_channel_id": self.notify_channel.id if self.notify_channel else None,
-            "forced_channel_id": self.forced_vc.id if self.forced_vc else None,
+            "text_channel_id": data["text_channel_id"],
+            "notify_channel_id": data["notify_channel_id"],
+            "forced_channel_id": data["forced_channel_id"],
             "paused": self.paused,
-            "repeat_queue": self.config.repeat_queue,
-            "repeat_current": self.config.repeat_current,
-            "shuffle": self.config.shuffle,
-            "auto_shuffle": self.config.auto_shuffle,
-            "auto_play": self.config.auto_play,
-            "auto_play_playlist_id": self._autoplay_playlist.id if self._autoplay_playlist is not None else None,
+            "repeat_queue": data["fetch_repeat_queue"],
+            "repeat_current": data["fetch_repeat_current"],
+            "shuffle": data["shuffle"],
+            "auto_shuffle": data["auto_shuffle"],
+            "auto_play": data["auto_play"],
+            "auto_play_playlist_id": data["auto_play_playlist_id"],
             "volume": self.volume,
             "position": self.position,
             "playing": self.is_playing,
@@ -2011,7 +1988,7 @@ class Player(VoiceProtocol):
                 "low_pass": self._low_pass.to_dict(),
                 "channel_mix": self._channel_mix.to_dict(),
             },
-            "self_deaf": await self.player_manager.client.player_config_manager.get_self_deaf(self.guild.id),
+            "self_deaf": data["self_deaf"],
             "extras": {
                 "last_track": await self.last_track.to_json() if self.last_track else None,
                 "next_track": await self.next_track.to_json() if self.next_track else None,
@@ -2061,9 +2038,6 @@ class Player(VoiceProtocol):
         self.last_track = last_track
         self.next_track = next_track
         self.current = None
-        self._notify_channel = self.guild.get_channel_or_thread(player.notify_channel_id)
-        self._text_channel = self.guild.get_channel_or_thread(player.text_channel_id)
-        self._forced_vc = self.guild.get_channel_or_thread(player.forced_channel_id)
         self.paused = player.paused
         if self._autoplay_playlist is None:
             self._autoplay_playlist = (
@@ -2167,5 +2141,5 @@ class Player(VoiceProtocol):
         self._restored = True
         await self.player_manager.client.player_state_db_manager.delete_player(guild_id=self.guild.id)
         self.node.dispatch_event(PlayerRestoredEvent(self, requester))
-        self.stopped = (not self.autoplay_enabled) and not self.queue.qsize() and not self.current
+        self.stopped = (not await self.autoplay_enabled()) and not self.queue.qsize() and not self.current
         LOGGER.info("Player restored - %s", self)

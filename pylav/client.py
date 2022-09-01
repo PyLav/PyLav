@@ -38,8 +38,6 @@ from pylav.envvars import (
     TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS,
     TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS,
     TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS,
-    USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE,
-    USE_BUNDLED_EXTERNAL_PYLAV_NODE,
 )
 from pylav.events import Event
 from pylav.exceptions import (
@@ -329,43 +327,42 @@ class Client(metaclass=_Singleton):
                         await self._update_schema_manager.run_updates()
                         await self._radio_manager.initialize()
                         await self._player_manager.initialize()
-                        self._config = await self._lib_config_manager.get_config(
-                            config_folder=self._config_folder,
-                            java_path=JAVA_EXECUTABLE,
-                            enable_managed_node=True,
-                            auto_update_managed_nodes=True,
-                            localtrack_folder=self._config_folder / "music",
-                            use_bundled_lava_link_external=USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE,
-                            use_bundled_pylav_external=USE_BUNDLED_EXTERNAL_PYLAV_NODE,
-                        )
+                        self._config = self._lib_config_manager.get_config()
+                        config_data = await self._config.fetch_all()
+                        java_path = config_data["java_path"]
+                        config_folder = config_data["config_folder"]
+                        localtrack_folder = config_data["localtrack_folder"]
+                        auto_update_managed_nodes = config_data["auto_update_managed_nodes"]
+                        enable_managed_node = config_data["enable_managed_node"]
 
                         if (
-                            self._config.java_path != JAVA_EXECUTABLE
+                            java_path != JAVA_EXECUTABLE
                             and JAVA_EXECUTABLE != "java"
                             and os.path.exists(JAVA_EXECUTABLE)
                         ):
-                            self._config.java_path = JAVA_EXECUTABLE
-                            await self._config.save()
-                        LOGGER.info("Config folder: %s", self._config.config_folder)
-                        LOGGER.info("Localtracks folder: %s", self._config.localtrack_folder)
-                        auto_update_managed_nodes = self._config.auto_update_managed_nodes
-                        self.enable_managed_node = self._config.enable_managed_node
-                        self._config_folder = aiopath.AsyncPath(self._config.config_folder)
-                        localtrack_folder = aiopath.AsyncPath(self._config.localtrack_folder)
-                        data = await self._node_config_manager.get_bundled_node_config()
+                            await self._config.update_java_path(JAVA_EXECUTABLE)
+
+                        LOGGER.info("Config folder: %s", config_folder)
+                        LOGGER.info("Localtracks folder: %s", localtrack_folder)
+                        self.enable_managed_node = enable_managed_node
+                        self._config_folder = aiopath.AsyncPath(config_folder)
+                        localtrack_folder = aiopath.AsyncPath(localtrack_folder)
+                        bundled_node_config = self._node_config_manager.bundled_node_config()
                         if not await asyncstdlib.all([client_id, client_secret]):
-                            spotify_data = data.yaml["plugins"]["topissourcemanagers"]["spotify"]
+                            yaml_data = await bundled_node_config.fetch_yaml()
+                            spotify_data = yaml_data["plugins"]["topissourcemanagers"]["spotify"]
                             client_id = spotify_data["clientId"]
                             client_secret = spotify_data["clientSecret"]
                         elif await asyncstdlib.all([client_id, client_secret]):
+                            yaml_data = await bundled_node_config.fetch_yaml()
                             if (
-                                data.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientId"] != client_id
-                                or data.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"]
+                                yaml_data["plugins"]["topissourcemanagers"]["spotify"]["clientId"] != client_id
+                                or yaml_data["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"]
                                 != client_secret
                             ):
-                                data.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientId"] = client_id
-                                data.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"] = client_secret
-                            await data.save()
+                                yaml_data["plugins"]["topissourcemanagers"]["spotify"]["clientId"] = client_id
+                                yaml_data["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"] = client_secret
+                                await bundled_node_config.update_yaml(yaml_data)
                         self._spotify_client_id = client_id
                         self._spotify_client_secret = client_secret
                         self._spotify_auth = ClientCredentialsFlow(
@@ -385,7 +382,7 @@ class Client(metaclass=_Singleton):
                             )
                             and self.enable_managed_node
                         ):
-                            await self._local_node_manager.start(java_path=self._config.java_path)
+                            await self._local_node_manager.start(java_path=java_path)
                         else:
                             self._local_node_manager.ready.set()
                         await self.node_manager.connect_to_all_nodes()
@@ -400,19 +397,19 @@ class Client(metaclass=_Singleton):
                             await self._local_node_manager.wait_until_connected()
                         await self.player_manager.restore_player_states()
                         time_now = datetime.datetime.now(tz=datetime.timezone.utc)
-                        if self._config.next_execution_update_bundled_playlists is None:
-                            self._config.next_execution_update_bundled_playlists = time_now + datetime.timedelta(
-                                minutes=5
+                        if await self._config.fetch_next_execution_update_bundled_playlists() is None:
+                            await self._config.update_next_execution_update_bundled_playlists(
+                                time_now + datetime.timedelta(minutes=5)
                             )
 
-                        if self._config.next_execution_update_bundled_external_playlists is None:
-                            self._config.next_execution_update_bundled_external_playlists = (
+                        if await self._config.fetch_next_execution_update_bundled_external_playlists() is None:
+                            await self._config.update_next_execution_update_bundled_external_playlists(
                                 time_now + datetime.timedelta(minutes=10)
                             )
 
-                        if self._config.next_execution_update_external_playlists is None:
-                            self._config.next_execution_update_external_playlists = time_now + datetime.timedelta(
-                                minutes=30
+                        if await self._config.fetch_next_execution_update_external_playlists() is None:
+                            await self._config.update_next_execution_update_external_playlists(
+                                time_now + datetime.timedelta(minutes=30)
                             )
 
                         self._scheduler.add_job(
@@ -426,12 +423,15 @@ class Client(metaclass=_Singleton):
                             id=f"{self.bot.user.id}-cache_delete_old",
                         )
 
+                        next_execution_update_bundled_playlists = (
+                            await self._config.fetch_next_execution_update_bundled_playlists()
+                        )
                         self._scheduler.add_job(
                             self.playlist_db_manager.update_bundled_playlists,
                             trigger="interval",
                             days=TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS,
                             max_instances=1,
-                            next_run_time=self._config.next_execution_update_bundled_playlists,
+                            next_run_time=next_execution_update_bundled_playlists,
                             replace_existing=True,
                             name="update_bundled_playlists",
                             coalesce=True,
@@ -441,15 +441,17 @@ class Client(metaclass=_Singleton):
 
                         LOGGER.info(
                             "Scheduling first run of Bundled Playlist update task to: %s",
-                            self._config.next_execution_update_bundled_playlists,
+                            next_execution_update_bundled_playlists,
                         )
-
+                        next_execution_update_bundled_external_playlists = (
+                            await self._config.fetch_next_execution_update_bundled_external_playlists()
+                        )
                         self._scheduler.add_job(
                             self.playlist_db_manager.update_bundled_external_playlists,
                             trigger="interval",
                             days=TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS,
                             max_instances=1,
-                            next_run_time=self._config.next_execution_update_bundled_external_playlists,
+                            next_run_time=next_execution_update_bundled_external_playlists,
                             replace_existing=True,
                             name="update_bundled_external_playlists",
                             coalesce=True,
@@ -459,15 +461,18 @@ class Client(metaclass=_Singleton):
 
                         LOGGER.info(
                             "Scheduling first run of Bundled External Playlist update task to: %s",
-                            self._config.next_execution_update_bundled_external_playlists,
+                            next_execution_update_bundled_external_playlists,
                         )
 
+                        next_execution_update_external_playlists = (
+                            await self._config.fetch_next_execution_update_external_playlists()
+                        )
                         self._scheduler.add_job(
                             self.playlist_db_manager.update_external_playlists,
                             trigger="interval",
                             days=TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS,
                             max_instances=1,
-                            next_run_time=self._config.next_execution_update_external_playlists,
+                            next_run_time=next_execution_update_external_playlists,
                             replace_existing=True,
                             name="update_external_playlists",
                             coalesce=True,
@@ -477,10 +482,8 @@ class Client(metaclass=_Singleton):
 
                         LOGGER.info(
                             "Scheduling first run of External Playlist update task to: %s",
-                            self._config.next_execution_update_external_playlists,
+                            next_execution_update_external_playlists,
                         )
-
-                        await self._config.save()
                         self._scheduler.start()
                         self.ready.set()
                         LOGGER.info("PyLav is ready")
@@ -504,10 +507,11 @@ class Client(metaclass=_Singleton):
         self._spotify_auth = ClientCredentialsFlow(
             client_id=self._spotify_client_id, client_secret=self._spotify_client_secret
         )
-        bundled_node_config = await self._node_config_manager.get_bundled_node_config()
-        bundled_node_config.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientId"] = client_id
-        bundled_node_config.yaml["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"] = client_secret
-        await bundled_node_config.save()
+        bundled_node_config = self._node_config_manager.bundled_node_config()
+        bundled_node_config_yaml = await bundled_node_config.fetch_yaml()
+        bundled_node_config_yaml["plugins"]["topissourcemanagers"]["spotify"]["clientId"] = client_id
+        bundled_node_config_yaml["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"] = client_secret
+        await bundled_node_config.update_yaml(bundled_node_config_yaml)
 
     async def add_node(
         self,
@@ -523,7 +527,6 @@ class Client(metaclass=_Singleton):
         ssl: bool = False,
         search_only: bool = False,
         managed: bool = False,
-        skip_db: bool = False,
         yaml: dict | None = None,
         disabled_sources: list[str] = None,
         extras: dict = None,
@@ -556,8 +559,6 @@ class Client(metaclass=_Singleton):
             Whether the node should only be used for searching. Defaults to `False`.
         unique_identifier: :class:`in`
             A unique identifier for the node. Defaults to `None`.
-        skip_db: :class:`bool`
-            Whether the node should skip the database. Defaults to `False`.
         yaml: Optional[:class:`dict`]
             A dictionary of extra information to be stored in the node. Defaults to `None`.
         extras: Optional[:class:`dict`]
@@ -578,7 +579,6 @@ class Client(metaclass=_Singleton):
             ssl=ssl,
             search_only=search_only,
             unique_identifier=unique_identifier,
-            skip_db=skip_db,
             managed=managed,
             yaml=yaml,
             disabled_sources=disabled_sources,
@@ -1162,8 +1162,8 @@ class Client(metaclass=_Singleton):
             user=user, guild=guild, additional_role_ids=None, additional_user_ids=None, bot=bot
         )
 
+    @staticmethod
     async def generate_mix_playlist(
-        self,
         *,
         video_id: str | None = None,
         user_id: str | None,

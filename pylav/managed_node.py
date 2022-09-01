@@ -10,7 +10,7 @@ import shlex
 import shutil
 import tempfile
 from re import Pattern
-from typing import TYPE_CHECKING, ClassVar, Final
+from typing import TYPE_CHECKING, Final
 
 import aiohttp
 import asyncstdlib
@@ -160,19 +160,19 @@ def get_max_allocation_size(executable: str) -> tuple[int, bool]:
 
 class LocalNodeManager:
 
-    _java_available: ClassVar[bool | None] = None
-    _java_version: ClassVar[tuple[int, int] | None] = None
-    _up_to_date: ClassVar[bool | None] = None
+    _java_available: bool | None = None
+    _java_version: tuple[int, int] | None = None
+    _up_to_date: bool | None = None
     _blacklisted_archs: list[str] = []
 
-    _lavaplayer: ClassVar[str | None] = None
-    _lavalink_build: ClassVar[int | None] = None
-    _jvm: ClassVar[str | None] = None
-    _lavalink_branch: ClassVar[str | None] = None
-    _buildtime: ClassVar[str | None] = None
-    _commit: ClassVar[str | None] = None
-    _version: ClassVar[str | None] = None
-    _java_exc: ClassVar[str] = JAVA_EXECUTABLE
+    _lavaplayer: str | None = None
+    _lavalink_build: int | None = None
+    _jvm: str | None = None
+    _lavalink_branch: str | None = None
+    _buildtime: str | None = None
+    _commit: str | None = None
+    _version: str | None = None
+    _java_exc: str = JAVA_EXECUTABLE
 
     def __init__(self, client: Client, timeout: int | None = None, auto_update: bool = True) -> None:
         self._auto_update = False if USING_FORCED else auto_update
@@ -312,8 +312,8 @@ class LocalNodeManager:
             raise
 
     async def process_settings(self):
-        self._full_data = await self._client.node_db_manager.get_bundled_node_config()
-        data = change_dict_naming_convention(self._full_data.yaml)
+        self._full_data = await self._client.node_db_manager.bundled_node_config().fetch_all()
+        data = change_dict_naming_convention(self._full_data["yaml"])
         # The reason this is here is to completely remove these keys from the application.yml
         # if they are set to empty values
         if not await asyncstdlib.all(
@@ -342,7 +342,10 @@ class LocalNodeManager:
         if not java_available:
             raise Exception(_("Pylav - Java executable not  found, tried to use: '{self._java_exc}'").format(self=self))
 
-        java_xms, java_xmx = "64M", self._full_data.extras.get("max_ram", "2048M") if self._full_data else "2048M"
+        java_xms, java_xmx = (
+            "64M",
+            (await self._full_data.fetch_extras()).get("max_ram", "2048M") if self._full_data else "2048M",
+        )
 
         match = re.match(r"^(\d+)([MG])$", java_xmx, flags=re.IGNORECASE)
         command_args = [self._java_exc, f"-Xms{java_xms}"]
@@ -387,7 +390,7 @@ class LocalNodeManager:
             stderr=asyncio.subprocess.PIPE,
         )
         # java -version outputs to stderr
-        _, err = await _proc.communicate()
+        __, err = await _proc.communicate()
 
         version_info: str = err.decode("utf-8")
         lines = version_info.splitlines()
@@ -506,16 +509,14 @@ class LocalNodeManager:
             shutil.move(path, str(LAVALINK_JAR_FILE), copy_function=shutil.copyfile)
 
         LOGGER.info("Successfully downloaded Lavalink.jar (%s bytes written)", format(nbytes, ","))
-        self._client._config.download_id = self._ci_info["number"]
-
         await self._is_up_to_date()
-        await self._client._config.set_download_id(self._ci_info["number"])
+        await self._client._config.update_download_id(self._ci_info["number"])
 
     async def _is_up_to_date(self):
         if self._up_to_date is True:
             # Return cached value if we've checked this before
             return True
-        last_download_id = self._client._config.download_id
+        last_download_id = await self._client._config.fetch_download_id()
         args, _ = await self._get_jar_args()
         args.append("--version")
         _proc = await asyncio.subprocess.create_subprocess_exec(  # pylint:disable=no-member
@@ -752,22 +753,22 @@ class LocalNodeManager:
                 self._wait_for.set()
                 return
         if (node := self._client.node_manager.get_node_by_id(self._node_id)) is None:
+            data = await self._full_data.fetch_all()
             node = self._node = await self._client.add_node(
                 host=self._current_config["server"]["address"],
                 port=self._current_config["server"]["port"],
                 password=self._current_config["lavalink"]["server"]["password"],
                 resume_key=f"ManagedNode-{self._node_pid}-{self._node_id}",
-                resume_timeout=self._full_data.resume_timeout,
+                resume_timeout=data["resume_timeout"],
                 name=f"PyLavPortConflictRecovery: {self._node_pid}"
                 if external_fallback
-                else f"{self._full_data.name}: {self._node_pid}",
-                yaml=self._full_data.yaml,
-                extras=self._full_data.extras,
+                else f"{data['name']}: {self._node_pid}",
+                yaml=data["yaml"],
+                extras=data["extras"],
                 managed=True,
                 ssl=False,
                 search_only=False,
                 unique_identifier=self._full_data.id,
-                skip_db=True,
             )
 
         else:

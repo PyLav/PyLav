@@ -1339,7 +1339,7 @@ class SegmentSkippedEvent(Event):
         The node the player was in.
     """
 
-    __slots__ = ("player", "category", "start", "end", "node")
+    __slots__ = ("player", "segment", "node")
 
     def __init__(self, player: Player, category: str, start: float, end: float, node: Node):
         self.player = player
@@ -1951,7 +1951,7 @@ class QuickPlayEvent(Event):
 
     __slots__ = ("player", "requester", "track")
 
-    def __init__(self, player: Player, requester: discord.Member, tracks: Track):
+    def __init__(self, player: Player, requester: discord.Member, track: Track):
         self.player = player
         self.requester = requester
-        self.tracks = tracks
+        self.track = track

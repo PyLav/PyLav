@@ -20,13 +20,13 @@ async_lru==1.0.3
 asyncspotify==0.12.1
 asyncstdlib==3.10.5
 cached-property==1.5.2
-discord.py[speed]==2.0.0
+discord.py[speed]==2.0.1
 deepdiff==5.8.1
 expiringdict==1.2.2
 humanize==4.3.0
 iso8601==1.0.2
 packaging==21.3
-piccolo[all]==0.84.0
+piccolo[all]==0.88.0
 platformdirs==2.5.2
 psutil==5.9.1
 python-dateutil==2.8.2

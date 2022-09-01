@@ -18,37 +18,40 @@ class UpdateSchemaManager:
         from pylav import EntryNotFoundError
         from pylav._config import __VERSION__
 
-        # FIXME: This should be whatever value the first release is or alternatively `self._client.lib_version`
-
-        if (await self._client.lib_db_manager.get_bot_db_version()).version <= parse_version("0.0.0.0"):
+        current_version = await self._client.lib_db_manager.get_bot_db_version().fetch_version()
+        if current_version <= parse_version("0.0.0.0"):
             await self._client.lib_db_manager.update_bot_dv_version("0.0.0.1")
 
-        if (await self._client.lib_db_manager.get_bot_db_version()).version <= parse_version("0.0.0.1"):
-            full_data = await self._client.node_db_manager.get_bundled_node_config()
-            full_data.yaml["lavalink"]["server"]["trackStuckThresholdMs"] = 10000
-            await full_data.save()
+        if current_version <= parse_version("0.0.0.1"):
+            config = self._client.node_db_manager.bundled_node_config()
+            yaml_data = await config.fetch_yaml()
+            yaml_data["lavalink"]["server"]["trackStuckThresholdMs"] = 10000
+            await config.update_yaml(yaml_data)
             await self._client.lib_db_manager.update_bot_dv_version("0.0.0.2")
 
-        if (await self._client.lib_db_manager.get_bot_db_version()).version <= parse_version("0.3.1"):
-            full_data = await self._client.node_db_manager.get_bundled_node_config()
-            full_data.yaml["lavalink"]["server"]["opusEncodingQuality"] = 10
-            full_data.yaml["lavalink"]["server"]["resamplingQuality"] = "LOW"
-            full_data.yaml["lavalink"]["server"]["useSeekGhosting"] = True
-            await full_data.save()
+        if current_version <= parse_version("0.3.1"):
+            config = self._client.node_db_manager.bundled_node_config()
+            yaml_data = await config.fetch_yaml()
+            yaml_data["lavalink"]["server"]["opusEncodingQuality"] = 10
+            yaml_data["lavalink"]["server"]["resamplingQuality"] = "LOW"
+            yaml_data["lavalink"]["server"]["useSeekGhosting"] = True
+            await config.update_yaml(yaml_data)
             await self._client.lib_db_manager.update_bot_dv_version("0.3.2")
 
-        if (await self._client.lib_db_manager.get_bot_db_version()).version <= parse_version("0.3.2"):
-            full_data = await self._client.node_db_manager.get_bundled_node_config()
-            full_data.yaml["lavalink"]["server"]["youtubeConfig"] = {"email": "", "password": ""}
-            await full_data.save()
+        if current_version <= parse_version("0.3.2"):
+            config = self._client.node_db_manager.bundled_node_config()
+            yaml_data = await config.fetch_yaml()
+            yaml_data["lavalink"]["server"]["youtubeConfig"] = {"email": "", "password": ""}
+            await config.update_yaml(yaml_data)
             await self._client.lib_db_manager.update_bot_dv_version("0.3.3")
 
-        if (await self._client.lib_db_manager.get_bot_db_version()).version <= parse_version("0.3.3"):
-            full_data = await self._client.node_db_manager.get_bundled_node_config()
-            if "soundgasm" not in full_data.yaml["plugins"]["dunctebot"]["sources"]:
-                full_data.yaml["plugins"]["dunctebot"]["sources"]["soundgasm"] = True
+        if current_version <= parse_version("0.3.3"):
+            config = self._client.node_db_manager.bundled_node_config()
+            yaml_data = await config.fetch_yaml()
+            if "soundgasm" not in yaml_data["plugins"]["dunctebot"]["sources"]:
+                yaml_data["plugins"]["dunctebot"]["sources"]["soundgasm"] = True
 
-            full_data.yaml["lavalink"]["plugins"] = [
+            yaml_data["lavalink"]["plugins"] = [
                 {
                     "dependency": "com.github.Topis-Lavalink-Plugins:Topis-Source-Managers-Plugin:v2.0.7",
                     "repository": "https://jitpack.io",
@@ -59,36 +62,37 @@ class UpdateSchemaManager:
                 },
                 {"dependency": "com.github.topisenpai:sponsorblock-plugin:v1.0.3", "repository": "https://jitpack.io"},
             ]
-            await full_data.save()
+            await config.update_yaml(yaml_data)
             await self._client.lib_db_manager.update_bot_dv_version("0.3.4")
 
-        if (await self._client.lib_db_manager.get_bot_db_version()).version <= parse_version("0.3.4"):
-            full_data = await self._client.node_db_manager.get_bundled_node_config()
-            if "path" in full_data.yaml["logging"]:
-                full_data.yaml["logging"]["file"]["path"] = full_data.yaml["logging"]["path"]
-                await full_data.save()
+        if current_version <= parse_version("0.3.4"):
+            config = self._client.node_db_manager.bundled_node_config()
+            yaml_data = await config.fetch_yaml()
+            if "path" in yaml_data["logging"]:
+                yaml_data["logging"]["file"]["path"] = yaml_data["logging"]["path"]
+                await config.update_yaml(yaml_data)
             await self._client.lib_db_manager.update_bot_dv_version("0.3.5")
 
-        if (await self._client.lib_db_manager.get_bot_db_version()).version <= parse_version("0.3.5"):
-            full_data = await self._client.node_db_manager.get_bundled_node_config()
-            if "path" in full_data.yaml["logging"]:
-                del full_data.yaml["logging"]["path"]
-            if "rollingpolicy" not in full_data.yaml["logging"]["logback"]:
-                full_data.yaml["logging"]["logback"] = {
+        if current_version <= parse_version("0.3.5"):
+            config = self._client.node_db_manager.bundled_node_config()
+            yaml_data = await config.fetch_yaml()
+            if "path" in yaml_data["logging"]:
+                del yaml_data["logging"]["path"]
+            if "rollingpolicy" not in yaml_data["logging"]["logback"]:
+                yaml_data["logging"]["logback"] = {
                     "rollingpolicy": {
-                        "max-file-size": full_data.yaml["logging"]["file"]["max-size"],
-                        "max-history": full_data.yaml["logging"]["file"]["max-history"],
+                        "max-file-size": yaml_data["logging"]["file"]["max-size"],
+                        "max-history": yaml_data["logging"]["file"]["max-history"],
                         "total-size-cap": "1GB",
                     }
                 }
-            if "max-size" in full_data.yaml["logging"]["file"]:
-                del full_data.yaml["logging"]["file"]["max-size"]
-            if "max-history" in full_data.yaml["logging"]["file"]:
-                del full_data.yaml["logging"]["file"]["max-history"]
-            await full_data.save()
+            if "max-size" in yaml_data["logging"]["file"]:
+                del yaml_data["logging"]["file"]["max-size"]
+            if "max-history" in yaml_data["logging"]["file"]:
+                del yaml_data["logging"]["file"]["max-history"]
+            await config.update_yaml(yaml_data)
             await self._client.lib_db_manager.update_bot_dv_version("0.3.6")
         with contextlib.suppress(EntryNotFoundError):
-            bundled_external_node = await self._client.node_db_manager.get_node_config(1)
-            bundled_external_node.resume_key = f"PyLav/{self._client.lib_version}-{self._client.bot_id}"
-            await bundled_external_node.save()
+            config = self._client.node_db_manager.bundled_node_config()
+            await config.update_resume_key(f"PyLav/{self._client.lib_version}-{self._client.bot_id}")
         await self._client.lib_db_manager.update_bot_dv_version(__VERSION__)

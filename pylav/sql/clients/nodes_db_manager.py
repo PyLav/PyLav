@@ -1,12 +1,12 @@
 from __future__ import annotations
 
+from functools import lru_cache
 from typing import TYPE_CHECKING
 
 from pylav._logging import getLogger
-from pylav.exceptions import EntryNotFoundError
 from pylav.sql import tables
 from pylav.sql.models import NodeModel
-from pylav.utils.built_in_node import NODE_DEFAULT_SETTINGS
+from pylav.sql.tables import NodePDModel
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -25,21 +25,19 @@ class NodeConfigManager:
     def client(self) -> Client:
         return self._client
 
-    @property
-    async def bundled_node_config(self) -> NodeModel:
-        return await self.get_bundled_node_config()
+    @lru_cache(maxsize=1)
+    def bundled_node_config(self) -> NodeModel:
+        return NodeModel(id=self._client.bot.user.id)
 
-    async def get_node_config(self, node_id: int) -> NodeModel:
-        node = await tables.NodeRow.select().output(load_json=True).where(tables.NodeRow.id == node_id).first()
-        if not node:
-            raise EntryNotFoundError(f"Node with id {node_id} not found")
-        model = NodeModel(**node)
-        self.currently_in_db.add(model.id)
-        return model
+    @lru_cache(maxsize=64)
+    def get_node_config(self, node_id: int) -> NodeModel:
+        node = NodeModel(id=node_id)
+        self.currently_in_db.add(node.id)
+        return node
 
-    async def get_all_unamanaged_nodes(self, dedupe: bool = True) -> list[NodeModel]:
+    async def get_all_unamanaged_nodes(self, dedupe: bool = True) -> list[NodePDModel]:
         model_list = [
-            NodeModel(**node)
+            NodePDModel(**node)
             for node in await tables.NodeRow.select()
             .output(load_json=True)
             .where(tables.NodeRow.managed == False)  # noqa: E712
@@ -49,57 +47,45 @@ class NodeConfigManager:
             self.currently_in_db.add(n.id)
         return new_model_list
 
-    async def get_all_nodes(self) -> list[NodeModel]:
+    async def get_all_nodes(self) -> list[NodePDModel]:
         model_list = [
-            NodeModel(**node)
+            NodePDModel(**node)
             for node in await tables.NodeRow.select().output(load_json=True).where(tables.NodeRow.managed == False)
         ]
         for n in model_list:
             self.currently_in_db.add(n.id)
-        model_list.append(await self.get_bundled_node_config())
+        if mn := self.get_bundled_node_config():
+            model_list.append(mn)
         return model_list
 
-    async def get_bundled_node_config(self) -> NodeModel:
-        node = (
-            await tables.NodeRow.objects()
+    async def get_bundled_node_config(self) -> NodePDModel | None:
+        managed_node = (
+            await tables.NodeRow.select()
             .output(load_json=True)
-            .get_or_create(
-                (tables.NodeRow.id == self._client.bot.user.id) & (tables.NodeRow.managed == True),  # noqa: E712
-                defaults={
-                    tables.NodeRow.ssl: False,
-                    tables.NodeRow.reconnect_attempts: -1,
-                    tables.NodeRow.search_only: False,
-                    tables.NodeRow.yaml: NODE_DEFAULT_SETTINGS,
-                    tables.NodeRow.name: "PyLavManagedNode",
-                    tables.NodeRow.managed: True,
-                    tables.NodeRow.resume_key: None,
-                    tables.NodeRow.resume_timeout: 600,
-                    tables.NodeRow.extras: {"max_ram": "2048M"},
-                },
-            )
+            .where((tables.NodeRow.id == self._client.bot.user.id) & (tables.NodeRow.managed == True))
+            .first()
         )
-        data = node.to_dict()
-        if "max_ram" not in data["extras"]:
-            data["extras"]["max_ram"] = "2048M"
-        return NodeModel(**data)
+        if managed_node:
+            return NodePDModel(**managed_node)
 
-    async def add_node(
+    async def update_node(
         self,
         host: str,
         port: int,
         password: str,
         unique_identifier: int,
-        name: str,
         resume_key: str = None,
         resume_timeout: int = 60,
+        name: str = None,
         reconnect_attempts: int = -1,
         ssl: bool = False,
         search_only: bool = False,
         managed: bool = False,
         extras: dict = None,
-        disabled_sources: list[str] = None,
         yaml: dict = None,
+        disabled_sources: list[str] = None,
     ) -> NodeModel:
+
         """
         Add a new node to the database.
 
@@ -134,73 +120,33 @@ class NodeConfigManager:
         yaml: dict
             The yaml of the node.
         """
-        if unique_identifier in self.currently_in_db:
-            return await self.get_node_config(unique_identifier)
 
-        data = dict(
-            yaml=yaml or {"server": {}, "lavalink": {"server": {}}},
-            id=unique_identifier,
-            ssl=ssl,
-            reconnect_attempts=reconnect_attempts,
-            search_only=search_only,
-            resume_key=resume_key,
-            resume_timeout=resume_timeout,
-            managed=managed,
-            name=name,
-            disabled_sources=disabled_sources or [],
-            extras=extras or {},
-        )
-        data["yaml"]["server"]["address"] = host  # type: ignore
-        data["yaml"]["server"]["port"] = port  # type: ignore
-        data["yaml"]["lavalink"]["server"]["password"] = password
-
-        node = NodeModel(**data)
-        await node.save()
+        node = NodeModel(id=unique_identifier)
         self.currently_in_db.add(node.id)
-        return node
 
-    async def update_node(
-        self,
-        host: str,
-        port: int,
-        password: str,
-        unique_identifier: int,
-        resume_key: str = None,
-        resume_timeout: int = 60,
-        name: str = None,
-        reconnect_attempts: int = -1,
-        ssl: bool = False,
-        search_only: bool = False,
-        managed: bool = False,
-        extras: dict = None,
-        yaml: dict = None,
-        disabled_sources: list[str] = None,
-    ) -> NodeModel:
-        data = dict(
-            yaml=yaml or {"server": {}, "lavalink": {"server": {}}},
-            id=unique_identifier,
-            ssl=ssl,
-            reconnect_attempts=reconnect_attempts,
-            search_only=search_only,
-            resume_key=resume_key,
-            resume_timeout=resume_timeout,
-            managed=managed,
-            name=name,
-            disabled_sources=disabled_sources or [],
-            extras=extras or {},
-        )
-        data["yaml"]["server"]["address"] = host  # type: ignore
-        data["yaml"]["server"]["port"] = port  # type: ignore
-        data["yaml"]["lavalink"]["server"]["password"] = password
-        node = NodeModel(**data)
-        await node.save()
+        await node.update_ssl(ssl)
+        await node.update_reconnect_attempts(reconnect_attempts)
+        await node.update_search_only(search_only)
+        await node.update_resume_key(resume_key)
+        await node.update_resume_timeout(resume_timeout)
+        await node.update_managed(managed)
+
+        if name is not None:
+            await node.update_name(name)
+        if disabled_sources is not None:
+            await node.update_disabled_sources(disabled_sources)
+        if extras is not None:
+            await node.update_extras(extras)
+        if yaml is not None:
+            yaml = yaml or {"server": {}, "lavalink": {"server": {}}}
+            yaml["server"]["address"] = host  # type: ignore
+            yaml["server"]["port"] = port  # type: ignore
+            yaml["lavalink"]["server"]["password"] = password
+            await node.update_yaml(yaml)
         self.currently_in_db.add(node.id)
         return node
 
     async def delete(self, node_id: int) -> None:
         if node_id == self._client.bot.user.id:
             raise ValueError("Cannot delete bundled node")
-        await tables.NodeRow.delete().where(
-            (tables.NodeRow.id == node_id) & (tables.NodeRow.managed != True)
-        )  # noqa: E712
-        self.currently_in_db.discard(node_id)
+        await self.get_node_config(node_id=node_id).delete()

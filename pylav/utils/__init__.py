@@ -214,10 +214,10 @@ class SingletonMethods:
 class _Singleton(type):
     _instances = {}
 
-    def __call__(self, *args, **kwargs):
-        if self not in self._instances:
-            self._locked_call(*args, **kwargs)
-        return self._instances[self]
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._locked_call(*args, **kwargs)
+        return cls._instances[cls]
 
     @_synchronized(_LOCK)
     def _locked_call(cls, *args, **kwargs):
@@ -246,6 +246,12 @@ class TimedFeature:
 
     def to_dict(self) -> dict:
         return {"enabled": self.enabled, "time": self.time}
+
+    @classmethod
+    def from_dict(cls, d: dict) -> TimedFeature:
+        return cls(enabled=d["enabled"], time=d["time"])
+
+    from_json = from_dict
 
 
 def add_property(inst: object, name: str, method: Callable) -> None:
@@ -696,7 +702,7 @@ class SegmentCategory(Enum):
         """
         Get segment category list value
         """
-        return [category.value for category in cls]
+        return [category.value for category in cls]  # type: ignore
 
 
 class Segment:

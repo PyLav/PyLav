@@ -199,8 +199,6 @@ class Node:
         Whether to use a ssl connection.
     """
 
-    _config: NodeModel
-
     def __init__(
         self,
         manager: NodeManager,
@@ -223,6 +221,7 @@ class Node:
         self._query_cls: Query = Query  # type: ignore
         self._manager = manager
         self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
+        self._config: NodeModel = self._manager._client.node_db_manager.get_node_config(unique_identifier)
         if unique_identifier is None:
             unique_identifier = str(uuid4())
         self._managed = managed
@@ -231,7 +230,6 @@ class Node:
         self._name = name or f"{self._region}-{self._host}-{unique_identifier}"
         self._extras = extras or {}
         self._disabled_sources = set(disabled_sources or [])
-        self._config = None  # type: ignore
 
         if self._manager.get_node_by_id(unique_identifier) is not None:
             raise ValueError(f"A Node with identifier:{unique_identifier} already exists")
@@ -467,14 +465,14 @@ class Node:
         if isinstance(other, Node):
             return self.identifier == other.identifier
         elif isinstance(other, NodeModel):
-            return self.host == other.yaml["server"]["address"] and self.port == other.yaml["server"]["port"]
+            return self.identifier == other.id
         return NotImplemented
 
     def __ne__(self, other):
         if isinstance(other, Node):
             return self.identifier != other.identifier
         elif isinstance(other, NodeModel):
-            return not (self.host == other.yaml["server"]["address"] and self.port == other.yaml["server"]["port"])
+            return self.identifier != other.id
         return NotImplemented
 
     def __hash__(self) -> int:
@@ -959,13 +957,10 @@ class Node:
         if self.managed:
             return
         unsupported = await self.get_unsupported_features()
-        if self._config is None:
-            self._config = await self.node_manager.client.node_db_manager.get_node_config(self.identifier)
-        currently_disabled = set(self.config.disabled_sources)
-        unsupported = unsupported.union(currently_disabled).union(sources)
-        self.config.disabled_sources = list(unsupported)
+        currently_disabled = set(await self.config.fetch_disabled_sources())
+        unsupported = list(unsupported.union(currently_disabled).union(sources))
+        await self.config.update_disabled_sources(unsupported)
         self._disabled_sources = unsupported
-        await self.config.save()
 
     @property
     def capabilities(self) -> set:

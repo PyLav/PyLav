@@ -11,18 +11,12 @@ import asyncstdlib
 import ujson
 
 from pylav._logging import getLogger
-from pylav.constants import (
-    BUNDLED_NODES_IDS,
-    DEFAULT_REGIONS,
-    PYLAV_BUNDLED_NODES_SETTINGS,
-    REGION_TO_COUNTRY_COORDINATE_MAPPING,
-)
+from pylav.constants import DEFAULT_REGIONS, PYLAV_BUNDLED_NODES_SETTINGS, REGION_TO_COUNTRY_COORDINATE_MAPPING
 from pylav.envvars import JAVA_EXECUTABLE, USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE, USE_BUNDLED_EXTERNAL_PYLAV_NODE
 from pylav.events import NodeConnectedEvent, NodeDisconnectedEvent
 from pylav.location import get_closest_region_name_and_coordinate
 from pylav.node import Node
 from pylav.player import Player
-from pylav.sql.models import NodeModel
 from pylav.utils import sort_key_nodes
 
 if TYPE_CHECKING:
@@ -110,7 +104,6 @@ class NodeManager:
         reconnect_attempts: int = -1,
         ssl: bool = False,
         search_only: bool = False,
-        skip_db: bool = False,
         disabled_sources: list[str] = None,
         managed: bool = False,
         yaml: dict | None = None,
@@ -144,8 +137,6 @@ class NodeManager:
             Whether the node is search only. Defaults to `False`.
         unique_identifier: Optional[:class:`str`]
             A unique identifier for the node. Defaults to `None`.
-        skip_db: Optional[:class:`bool`]
-            Whether to skip the database creation op. Defaults to `False`.
         disabled_sources: Optional[:class:`list`[:class:`str`]]
             A list of sources to disable. Defaults to `None`.
         managed: Optional[:class:`bool`]
@@ -180,47 +171,22 @@ class NodeManager:
 
         LOGGER.info("[NODE-%s] Successfully added to Node Manager", node.name)
         LOGGER.verbose("[NODE-%s] Successfully added to Node Manager -- %r", node.name, node)
-        if skip_db:
-            data = dict(
-                yaml=yaml or {"server": {}, "lavalink": {"server": {}}},
-                id=unique_identifier,
-                ssl=ssl,
-                reconnect_attempts=reconnect_attempts,
-                search_only=search_only,
-                resume_key=resume_key,
-                resume_timeout=resume_timeout,
-                managed=managed,
-                name=name,
-                disabled_sources=disabled_sources or [],
-                extras=extras or {},
-            )
-            data["yaml"]["server"]["address"] = host  # type: ignore
-            data["yaml"]["server"]["port"] = port  # type: ignore
-            data["yaml"]["lavalink"]["server"]["password"] = password
-
-            node_config = NodeModel(**data)
-
-        node._config = (
-            node_config
-            if skip_db
-            else await self.client.node_db_manager.add_node(
-                host=host,
-                port=port,
-                password=password,
-                resume_key=resume_key,
-                resume_timeout=resume_timeout,
-                name=name,
-                reconnect_attempts=reconnect_attempts,
-                ssl=ssl,
-                search_only=search_only,
-                unique_identifier=unique_identifier,
-                disabled_sources=disabled_sources,
-                managed=managed,
-                yaml=yaml,
-                extras=extras or {},
-            )
+        node._config = await self.client.node_db_manager.update_node(
+            host=host,
+            port=port,
+            password=password,
+            resume_key=resume_key,
+            resume_timeout=resume_timeout,
+            name=name,
+            reconnect_attempts=reconnect_attempts,
+            ssl=ssl,
+            search_only=search_only,
+            unique_identifier=unique_identifier,
+            disabled_sources=disabled_sources,
+            managed=managed,
+            yaml=yaml,
+            extras=extras or {},
         )
-
         return node
 
     async def remove_node(self, node: Node) -> None:
@@ -439,7 +405,6 @@ class NodeManager:
                     connection_arguments = PYLAV_BUNDLED_NODES_SETTINGS[node.yaml["server"]["address"]]
                 else:
                     connection_arguments = node.get_connection_args()
-                    connection_arguments["skip_db"] = node.id not in BUNDLED_NODES_IDS
                 nodes_list.append(await self.add_node(**connection_arguments))
             except (ValueError, KeyError) as exc:
                 LOGGER.warning(
@@ -460,7 +425,6 @@ class NodeManager:
                         "search_only": False,
                         "managed": False,
                         "disabled_sources": [],
-                        "skip_db": True,
                         "host": self._unmanaged_external_host,
                         "unique_identifier": 31415,
                         "name": "ENVAR Node (Unmanaged)",

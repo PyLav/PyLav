@@ -3,10 +3,12 @@ from __future__ import annotations
 
 import os
 
-from piccolo.columns import JSONB, UUID, Array, BigInt, Boolean, Bytea, Float, Integer, Text, Timestamptz
+from piccolo.columns import JSONB, Array, BigInt, Boolean, Bytea, Float, Integer, Text, Timestamptz
 from piccolo.engine import PostgresEngine, SQLiteEngine
 from piccolo.table import Table
+from piccolo.utils.pydantic import create_pydantic_model
 
+from pylav._config import CONFIG_DIR
 from pylav._logging import getLogger
 from pylav.envvars import (
     JAVA_EXECUTABLE,
@@ -15,6 +17,8 @@ from pylav.envvars import (
     POSTGRES_PASSWORD,
     POSTGRES_PORT,
     POSTGRES_USER,
+    USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE,
+    USE_BUNDLED_EXTERNAL_PYLAV_NODE,
 )
 
 LOGGER = getLogger("PyLav.Postgres")
@@ -34,38 +38,38 @@ else:
 
 class PlaylistRow(Table, db=DB, tablename="playlist"):
     id = BigInt(primary_key=True)
-    scope = BigInt(null=False, index=True)
-    author = BigInt(null=False, index=True)
-    name = Text(null=False, index=True)
-    url = Text(null=True)
+    scope = BigInt(null=True, default=None)
+    author = BigInt(null=True, default=None)
+    name = Text(null=True, default=None)
+    url = Text(null=True, default=None)
     tracks = JSONB(null=False, default=[])
 
 
 class LibConfigRow(Table, db=DB, tablename="lib_config"):
     id = BigInt(index=True)
     bot = BigInt(primary_key=True, index=True)
-    config_folder = Text(null=False)
+    config_folder = Text(null=False, default=str(CONFIG_DIR))
     java_path = Text(null=False, default=JAVA_EXECUTABLE)
     enable_managed_node = Boolean(null=False, default=True)
     auto_update_managed_nodes = Boolean(null=False, default=True)
-    localtrack_folder = Text(null=True)
+    localtrack_folder = Text(null=True, default=str(CONFIG_DIR / "music"))
     download_id = BigInt(index=True, default=0)
     update_bot_activity = Boolean(null=False, default=False)
-    use_bundled_pylav_external = Boolean(null=False, default=True)
-    use_bundled_lava_link_external = Boolean(null=False, default=True)
+    use_bundled_pylav_external = Boolean(null=False, default=USE_BUNDLED_EXTERNAL_PYLAV_NODE)
+    use_bundled_lava_link_external = Boolean(null=False, default=USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE)
 
     extras: JSONB = JSONB(null=False, default={})
-    next_execution_update_bundled_playlists = Timestamptz(null=True)
-    next_execution_update_bundled_external_playlists = Timestamptz(null=True)
-    next_execution_update_external_playlists = Timestamptz(null=True)
+    next_execution_update_bundled_playlists = Timestamptz(null=True, default=None)
+    next_execution_update_bundled_external_playlists = Timestamptz(null=True, default=None)
+    next_execution_update_external_playlists = Timestamptz(null=True, default=None)
 
 
 class EqualizerRow(Table, db=DB, tablename="equalizer"):
     id = BigInt(primary_key=True, index=True)
-    scope = BigInt(null=False, index=True)
-    name = Text(null=True, index=True)
-    description = Text(null=True)
-    author = BigInt(null=False, index=True)
+    scope = BigInt(null=True, default=None)
+    name = Text(null=True, default=None)
+    description = Text(null=True, default=None)
+    author = BigInt(null=True, default=None)
     band_25 = Float(null=False, default=0.0)
     band_40 = Float(null=False, default=0.0)
     band_63 = Float(null=False, default=0.0)
@@ -84,16 +88,15 @@ class EqualizerRow(Table, db=DB, tablename="equalizer"):
 
 
 class PlayerStateRow(Table, db=DB, tablename="player_state"):
-    pk = UUID(primary_key=True)
-    id = BigInt(index=True)
+    id = BigInt(index=True, null=False)
     bot = BigInt(index=True, null=False)
-    channel_id = BigInt(null=False)
+    channel_id = BigInt(null=True, default=None)
     volume = Integer(null=False, default=100)
     position = Float(null=False, default=0.0)
-    auto_play_playlist_id = BigInt(null=True)
-    forced_channel_id = BigInt(null=True)
-    text_channel_id = BigInt(null=True)
-    notify_channel_id = BigInt(null=True)
+    auto_play_playlist_id = BigInt(null=True, default=None)
+    forced_channel_id = BigInt(null=True, default=None)
+    text_channel_id = BigInt(null=True, default=None)
+    notify_channel_id = BigInt(null=True, default=None)
 
     paused = Boolean(null=False, default=False)
     repeat_current = Boolean(null=False, default=False)
@@ -105,7 +108,7 @@ class PlayerStateRow(Table, db=DB, tablename="player_state"):
     effect_enabled = Boolean(null=False, default=False)
     self_deaf = Boolean(null=False, default=False)
 
-    current = JSONB(null=True)
+    current = JSONB(null=True, default={})
     queue = JSONB(null=False, default=[])
     history = JSONB(null=False, default=[])
     effects = JSONB(null=False, default={})
@@ -113,16 +116,15 @@ class PlayerStateRow(Table, db=DB, tablename="player_state"):
 
 
 class PlayerRow(Table, db=DB, tablename="player"):
-    pk = UUID(primary_key=True)
     id = BigInt(index=True)
     bot = BigInt(index=True, null=False)
     volume = Integer(null=False, default=100)
     max_volume = Integer(null=False, default=1000)
     auto_play_playlist_id = BigInt(null=False, default=1)
 
-    text_channel_id = BigInt(null=True)
-    notify_channel_id = BigInt(null=True)
-    forced_channel_id = BigInt(null=True)
+    text_channel_id = BigInt(null=True, default=None)
+    notify_channel_id = BigInt(null=True, default=None)
+    forced_channel_id = BigInt(null=True, default=None)
 
     repeat_current = Boolean(null=False, default=False)
     repeat_queue = Boolean(null=False, default=False)
@@ -161,28 +163,39 @@ class NodeRow(Table, db=DB, tablename="node"):
     id = BigInt(primary_key=True, index=True)
     name = Text(null=False)
     ssl = Boolean(null=False, default=False)
-    resume_key = Text(null=True)
+    resume_key = Text(null=True, default=None)
     resume_timeout = Integer(null=False, default=600)
-    reconnect_attempts = Integer(null=False)
+    reconnect_attempts = Integer(null=False, default=-1)
     search_only = Boolean(null=False, default=False)
     managed = Boolean(null=False, default=False)
-    disabled_sources = JSONB(null=False, default=[])
-    extras = JSONB(null=True)
-    yaml = JSONB(null=True)
+    disabled_sources = Array(null=False, default=[], base_column=Text())
+    extras = JSONB(null=True, default={})
+    yaml = JSONB(null=True, default={})
 
 
 class QueryRow(Table, db=DB, tablename="query"):
     identifier = Text(null=False, index=True, primary_key=True)
-    name = Text(null=True)
+    name = Text(null=True, default=None)
     tracks = JSONB(null=False, default=[])
     last_updated = Timestamptz(null=False, index=True)
 
 
 class BotVersionRow(Table, db=DB, tablename="version"):
     bot = BigInt(primary_key=True, index=True)
-    version = Text(null=False)
+    version = Text(null=False, default="0.0.0")
 
 
 class AioHttpCacheRow(Table, db=DB, tablename="aiohttp_client_cache"):
     key = Text(primary_key=True, index=True)
     value = Bytea()
+
+
+PlaylistPDModel = create_pydantic_model(PlaylistRow)
+LibConfigPDModel = create_pydantic_model(LibConfigRow)
+EqualizerPDModel = create_pydantic_model(EqualizerRow)
+PlayerStatePDModel = create_pydantic_model(PlayerStateRow)
+PlayerPDModel = create_pydantic_model(PlayerRow)
+NodePDModel = create_pydantic_model(NodeRow)
+QueryPDModel = create_pydantic_model(QueryRow)
+BotVersioPDModel = create_pydantic_model(BotVersionRow)
+AioHttpCachePDModel = create_pydantic_model(AioHttpCacheRow)

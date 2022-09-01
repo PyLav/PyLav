@@ -72,7 +72,8 @@ class _AsyncAccessor(_NormalAccessor):
         except ImportError:
             raise NotImplementedError("AsyncPath.group() is unsupported on this system")
 
-    async def scandir(self, *args, **kwargs) -> AsyncIterable[EntryWrapper]:
+    @staticmethod
+    async def scandir(*args, **kwargs) -> AsyncIterable[EntryWrapper]:
         async for entry in scandir_async(*args, **kwargs):
             yield entry
 
