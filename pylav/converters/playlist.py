@@ -10,7 +10,6 @@ from discord.app_commands import Choice, Transformer
 from discord.ext import commands
 from rapidfuzz import fuzz
 
-from pylav import EntryNotFoundError
 from pylav.types import ContextT, InteractionT
 from pylav.utils import shorten_string
 
@@ -48,6 +47,8 @@ else:
 
         @classmethod
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
+            from pylav import EntryNotFoundError
+
             try:
                 playlists: list[
                     PlaylistModel
