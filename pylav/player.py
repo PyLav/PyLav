@@ -1747,7 +1747,7 @@ class Player(VoiceProtocol):
         if previous_track_description:
             val = f"{previous_track_description}\n"
             val += "{translation}: `{duration}`\n".format(
-                duration=_("LIVE") if self.next_track.stream else format_time(self.next_track.duration),
+                duration=_("LIVE") if self.last_track.stream else format_time(self.last_track.duration),
                 translation=discord.utils.escape_markdown(_("Duration")),
             )
             if rq := self.last_track.requester:
