@@ -63,7 +63,7 @@ class NodeModel:
     async def fetch_all(self) -> dict:
         response = await tables.NodeRow.raw(
             """
-        SELECT (id, name, ssl, resume_key, resume_timeout, reconnect_attempts, search_only, managed, extras, yaml, disabled_sources)
+        SELECT *
         FROM node
         WHERE id = {}
         LIMIT 1
@@ -71,21 +71,7 @@ class NodeModel:
             self.id,
         )
         if response:
-            fields = (
-                "id",
-                "name",
-                "ssl",
-                "resume_key",
-                "resume_timeout",
-                "reconnect_attempts",
-                "search_only",
-                "managed",
-                "extras",
-                "yaml",
-                "disabled_sources",
-            )
-            values = response[0]["row"]
-            data = dict(zip(fields, values))
+            data = response[0]
             data["extras"] = ujson.loads(data["extras"])
             data["yaml"] = ujson.loads(data["yaml"])
             return data
@@ -1587,24 +1573,7 @@ class LibConfigModel:
         """
 
         response = await tables.LibConfigRow.raw(
-            """SELECT
-            (
-            id,
-            bot,
-            config_folder,
-            java_path,
-            enable_managed_node,
-            auto_update_managed_nodes,
-            localtrack_folder,
-            download_id,
-            update_bot_activity,
-            use_bundled_pylav_external,
-            use_bundled_lava_link_external,
-            extras,
-            next_execution_update_bundled_playlists,
-            next_execution_update_bundled_external_playlists,
-            next_execution_update_external_playlists
-            )
+            """SELECT *
             FROM lib_config
             WHERE id = {} AND bot = {}
             LIMIT 1""",
@@ -1612,28 +1581,9 @@ class LibConfigModel:
             self.bot,
         )
         if response:
-            keys = [
-                "id",
-                "bot",
-                "config_folder",
-                "java_path",
-                "enable_managed_node",
-                "auto_update_managed_nodes",
-                "localtrack_folder",
-                "download_id",
-                "update_bot_activity",
-                "use_bundled_pylav_external",
-                "use_bundled_lava_link_external",
-                "extras",
-                "next_execution_update_bundled_playlists",
-                "next_execution_update_bundled_external_playlists",
-                "next_execution_update_external_playlists",
-            ]
-            values = response[0]["row"]
-            data = dict(zip(keys, values))
+            data = response[0]
             data["extras"] = ujson.loads(data["extras"])
             return data
-
         return {
             "id": self.id,
             "bot": self.bot,
