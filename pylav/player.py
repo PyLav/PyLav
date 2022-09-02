@@ -1772,7 +1772,7 @@ class Player(VoiceProtocol):
         text = _("{track_count} tracks, {queue_total_duration} remaining\n").format(
             track_count=self.queue.qsize(), queue_total_duration=queue_total_duration
         )
-        if not self.is_repeating:
+        if not await self.is_repeating():
             repeat_emoji = "\N{CROSS MARK}"
         elif await self.config.fetch_repeat_queue():
             repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS}"
@@ -1862,7 +1862,7 @@ class Player(VoiceProtocol):
             track_number=queue.qsize(),
             queue_total_duration=queue_total_duration,
         )
-        if not self.is_repeating:
+        if not await self.is_repeating():
             repeat_emoji = "\N{CROSS MARK}"
         elif await self.config.fetch_repeat_queue():
             repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS}"
