@@ -10,6 +10,7 @@ from discord.app_commands import Choice, Transformer
 from discord.ext import commands
 from rapidfuzz import fuzz
 
+from pylav import EntryNotFoundError
 from pylav.types import ContextT, InteractionT
 from pylav.utils import shorten_string
 
@@ -47,9 +48,12 @@ else:
 
         @classmethod
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
-            playlists: list[PlaylistModel] = await interaction.client.lavalink.playlist_db_manager.get_playlist_by_name(
-                current, limit=50
-            )
+            try:
+                playlists: list[
+                    PlaylistModel
+                ] = await interaction.client.lavalink.playlist_db_manager.get_playlist_by_name(current, limit=50)
+            except EntryNotFoundError:
+                return []
             if not current:
                 return [Choice(name=shorten_string(e.name, max_length=100), value=f"{e.id}") for e in playlists][:25]
 
