@@ -413,9 +413,6 @@ class Client(metaclass=_Singleton):
                             await self._config.update_next_execution_update_external_playlists(
                                 time_now + datetime.timedelta(minutes=30)
                             )
-                        # TODO: Remove this
-                        await self.playlist_db_manager.update_bundled_playlists()
-                        await self.playlist_db_manager.update_bundled_external_playlists()
                         self._scheduler.add_job(
                             self._query_cache_manager.delete_old,
                             trigger="interval",
