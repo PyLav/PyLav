@@ -94,10 +94,10 @@ class PlayerStateRow(Table, db=DB, tablename="player_state"):
     channel_id = BigInt(null=True, default=None)
     volume = Integer(null=False, default=100)
     position = Float(null=False, default=0.0)
-    auto_play_playlist_id = BigInt(null=True, default=None)
-    forced_channel_id = BigInt(null=True, default=None)
-    text_channel_id = BigInt(null=True, default=None)
-    notify_channel_id = BigInt(null=True, default=None)
+    auto_play_playlist_id = BigInt(null=True, default=1)
+    forced_channel_id = BigInt(null=True, default=0)
+    text_channel_id = BigInt(null=True, default=0)
+    notify_channel_id = BigInt(null=True, default=0)
 
     paused = Boolean(null=False, default=False)
     repeat_current = Boolean(null=False, default=False)
@@ -124,9 +124,9 @@ class PlayerRow(Table, db=DB, tablename="player"):
     max_volume = Integer(null=False, default=1000)
     auto_play_playlist_id = BigInt(null=False, default=1)
 
-    text_channel_id = BigInt(null=True, default=None)
-    notify_channel_id = BigInt(null=True, default=None)
-    forced_channel_id = BigInt(null=True, default=None)
+    text_channel_id = BigInt(null=True, default=0)
+    notify_channel_id = BigInt(null=True, default=0)
+    forced_channel_id = BigInt(null=True, default=0)
 
     repeat_current = Boolean(null=False, default=False)
     repeat_queue = Boolean(null=False, default=False)
