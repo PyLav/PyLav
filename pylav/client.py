@@ -961,7 +961,6 @@ class Client(metaclass=_Singleton):
         successful_tracks = []
         queries_failed = []
         track_count = 0
-
         for query in queries:
             node = await self.node_manager.find_best_node(
                 region=player.region if player else None,
@@ -982,11 +981,13 @@ class Client(metaclass=_Singleton):
                         queries_failed.append(query)
                     if track_b64:
                         track_count += 1
+                        new_query = await Query.from_base64(track_b64)
+                        new_query.merge(query, start_time=True)
                         successful_tracks.append(
                             Track(
                                 data=track_b64,
                                 node=node,
-                                query=await Query.from_base64(track_b64),
+                                query=new_query,
                                 requester=requester.id,
                             )
                         )

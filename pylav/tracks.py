@@ -110,6 +110,8 @@ class Track:
             self.extra = extra
             self._raw_data = extra.get("raw_data", {})
             self._unique_id.update(self.track.encode())  # type: ignore
+        if self._query is not None:
+            self.timestamp = self.timestamp or self._query.start_time
         self._requester = requester or self._node.node_manager.client.bot.user.id
         self._id = str(uuid.uuid4())
         self._updated_query = None

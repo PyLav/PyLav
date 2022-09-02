@@ -940,7 +940,7 @@ class Player(VoiceProtocol):
                 return
         if self.node.supports_sponsorblock:
             options["skipSegments"] = skip_segments or track.skip_segments
-        if start_time is not None:
+        if start_time or track.timestamp:
             if not isinstance(start_time, int) or not 0 <= start_time <= track.duration:
                 raise ValueError(
                     "start_time must be an int with a value equal to, "

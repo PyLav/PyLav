@@ -209,13 +209,33 @@ class Query:
         self._query = query
         self._source = source
         self._search = search
-        self.start_time = start_time
+        self.start_time = start_time * 1000
         self.index = index
         self._type = query_type or "single"
         self._recursive = recursive
         from pylav.localfiles import LocalFile
 
         self.__localfile_cls = LocalFile
+
+    def merge(
+        self,
+        query: Query,
+        source: bool = False,
+        search: bool = False,
+        start_time: bool = False,
+        index: bool = False,
+        recursive: bool = False,
+    ) -> Query:
+        if source:
+            self._source = query.source
+        if search:
+            self._search = query._search
+        if start_time:
+            self.start_time = query.start_time
+        if index:
+            self.index = query.index
+        if recursive:
+            self._recursive = query._recursive
 
     def __str__(self) -> str:
         return self.query_identifier
@@ -493,11 +513,7 @@ class Query:
             if source:
                 output._source = cls.__get_source_from_str(source)
             return output
-        if (
-            (output := cls.__process_urls(query))
-            or not (output := cls.__process_urls(query))
-            and (output := cls.__process_search(query))
-        ):
+        if (output := cls.__process_urls(query)) or (output := cls.__process_search(query)):
             if source:
                 output._source = cls.__get_source_from_str(source)
             return output
