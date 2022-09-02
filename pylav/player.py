@@ -299,13 +299,13 @@ class Player(VoiceProtocol):
         return self.guild.get_channel_or_thread(await self.config.fetch_text_channel_id())
 
     async def set_text_channel(self, value: discord.abc.MessageableChannel) -> None:
-        await self.config.update_text_channel_id(text_channel_id=value.id)
+        await self.config.update_text_channel_id(text_channel_id=value.id if value else 0)
 
     async def notify_channel(self) -> discord.abc.MessageableChannel:
         return self.guild.get_channel_or_thread(await self.config.fetch_notify_channel_id())
 
     async def set_notify_channel(self, value: discord.abc.MessageableChannel) -> None:
-        await self.config.update_notify_channel_id(notify_channel_id=value.id)
+        await self.config.update_notify_channel_id(notify_channel_id=value.id if value else 0)
 
     async def forced_vc(self) -> discord.abc.MessageableChannel:
         return self.guild.get_channel_or_thread(await self.config.fetch_forced_channel_id())

@@ -233,7 +233,7 @@ class PlayerManager:
         player_config = self.client.player_config_manager.get_config(channel.guild.id)
         forced_channel_id = await player_config.fetch_forced_channel_id()
         self_deafen = await self.client.player_config_manager.get_self_deaf(channel.guild.id)
-        if forced_channel_id is not None:
+        if forced_channel_id != 0:
             act_channel = channel.guild.get_channel_or_thread(forced_channel_id)
         else:
             act_channel = channel
