@@ -362,7 +362,6 @@ class NodeModel:
             The connection args.
         """
         data = await self.fetch_all()
-        data["yaml"] = ujson.loads(data["yaml"])
 
         return {
             "unique_identifier": self.id,
