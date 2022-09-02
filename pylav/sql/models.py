@@ -319,7 +319,7 @@ class NodeModel:
         await tables.NodeRow.raw(
             """
             INSERT INTO node (id, disabled_sources) VALUES ({}, {})
-            ON CONFLICT (id) DO UPDATE SET disabled_sources = ARRAY_CAT(disabled_sources, EXCLUDED.disabled_sources);
+            ON CONFLICT (id) DO UPDATE SET disabled_sources = ARRAY_CAT(node.disabled_sources, EXCLUDED.disabled_sources);
             """,
             self.id,
             [source],
@@ -348,11 +348,10 @@ class NodeModel:
 
     async def bulk_remove_from_disabled_sources(self, sources: list[str]) -> None:
         """Remove sources from the node's disabled sources in the database"""
-        await tables.NodeRow.raw(
-            """UPDATE node SET disabled_sources = array_diff(disabled_sources, '{}'::text[]) WHERE id = {}""",
-            f'{{{",".join(sources)}}}',
-            self.id,
-        )
+        if not sources:
+            return
+        for source in sources:
+            await self.remove_from_disabled_sources(source)
 
     async def get_connection_args(self) -> dict:
         """Get the connection args for the node.
@@ -835,7 +834,7 @@ class PlayerModel:
             """INSERT INTO player (id, bot, dj_users)
             VALUES ({}, {}, {})
             ON CONFLICT (id, bot)
-            DO UPDATE SET dj_users = array_cat(dj_users, EXCLUDED.dj_users);""",
+            DO UPDATE SET dj_users = array_cat(player.dj_users, EXCLUDED.dj_users);""",
             self.id,
             self.bot,
             [user.id],
@@ -858,7 +857,7 @@ class PlayerModel:
             """INSERT INTO player (id, bot, dj_users)
             VALUES ({}, {}, {})
             ON CONFLICT (id, bot)
-            DO UPDATE SET dj_users = array_cat(dj_users, EXCLUDED.dj_users);""",
+            DO UPDATE SET dj_users = array_cat(player.dj_users, EXCLUDED.dj_users);""",
             self.id,
             self.bot,
             [u.id for u in users],
@@ -874,17 +873,20 @@ class PlayerModel:
         """
         if not users:
             return
-        await tables.PlayerRow.raw(
-            "UPDATE player SET dj_users = array_diff(dj_users, '{}'::bigint[]) WHERE id = {} AND bot = {}",
-            f'{{{",".join(map(str,[u.id for u in users]))}}}',
-            self.id,
-            self.bot,
-        )
+        async with tables.DB.transaction():
+            for user in users:
+                await self.remove_from_dj_users(user)
 
     async def dj_users_reset(self) -> None:
         """Reset the dj users of the player"""
         await tables.PlayerRow.raw(
-            "UPDATE player SET dj_users = '{}'::bigint[] WHERE id = {} AND bot = {}", "{}", self.id, self.bot
+            """
+            INSERT INTO player (id, bot, dj_users) VALUES ({}, {}, {})
+            ON CONFLICT (id, bot) DO UPDATE SET dj_users = excluded.dj_users;
+            """,
+            self.id,
+            self.bot,
+            [],
         )
 
     async def fetch_dj_roles(self) -> set[int]:
@@ -901,18 +903,19 @@ class PlayerModel:
             """INSERT INTO player (id, bot, dj_roles)
             VALUES ({}, {}, {})
             ON CONFLICT (id, bot)
-            DO UPDATE SET dj_roles = array_cat(dj_roles, EXCLUDED.dj_users);""",
+            DO UPDATE SET dj_roles = array_cat(player.dj_roles, EXCLUDED.dj_roles)""",
             self.id,
             self.bot,
             [role.id],
         )
 
-    async def remove_from_dj_roles(self, roles: discord.Role) -> None:
+    async def remove_from_dj_roles(self, role: discord.Role) -> None:
         """Remove dj roles from the player"""
         await tables.PlayerRow.raw(
-            """UPDATE node SET disabled_sources = array_remove(disabled_sources, {}) WHERE id = {}""",
-            roles.id,
+            """UPDATE player SET dj_roles = array_remove(dj_roles, {}) WHERE id = {} AND bot = {}""",
+            role.id,
             self.id,
+            self.bot,
         )
 
     async def bulk_add_dj_roles(self, *roles: discord.Role) -> None:
@@ -929,7 +932,7 @@ class PlayerModel:
             """INSERT INTO player (id, bot, dj_roles)
                     VALUES ({}, {}, {})
                     ON CONFLICT (id, bot)
-                    DO UPDATE SET dj_roles = array_cat(dj_roles, EXCLUDED.dj_users);""",
+                    DO UPDATE SET dj_roles = array_cat(player.dj_roles, EXCLUDED.dj_roles);""",
             self.id,
             self.bot,
             [r.id for r in roles],
@@ -945,18 +948,20 @@ class PlayerModel:
         """
         if not roles:
             return
-
-        await tables.PlayerRow.raw(
-            "UPDATE player SET dj_roles = array_diff(dj_roles, '{}'::bigint[]) WHERE id = {} AND bot = {}",
-            f'{{{",".join(map(str,[r.id for r in roles]))}}}',
-            self.id,
-            self.bot,
-        )
+        async with tables.DB.transaction():
+            for role in roles:
+                await self.remove_from_dj_roles(role)
 
     async def dj_roles_reset(self) -> None:
         """Reset the dj roles of the player"""
         await tables.PlayerRow.raw(
-            "UPDATE player SET dj_roles = '{}'::bigint[] WHERE id = {} AND bot = {}", "{}", self.id, self.bot
+            """
+                    INSERT INTO player (id, bot, dj_roles) VALUES ({}, {}, {})
+                    ON CONFLICT (id, bot) DO UPDATE SET dj_roles = excluded.dj_roles;
+                    """,
+            self.id,
+            self.bot,
+            [],
         )
 
     async def is_dj(
