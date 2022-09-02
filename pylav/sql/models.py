@@ -66,6 +66,7 @@ class NodeModel:
         SELECT (id, name, ssl, resume_key, resume_timeout, reconnect_attempts, search_only, managed, extras, yaml, disabled_sources)
         FROM node
         WHERE id = {}
+        LIMIT 1
         """,
             self.id,
         )
@@ -110,7 +111,7 @@ class NodeModel:
         ste
             The node's name.
         """
-        data = await tables.NodeRow.raw("SELECT name FROM node WHERE id = {}", self.id)
+        data = await tables.NodeRow.raw("SELECT name FROM node WHERE id = {} LIMIT 1", self.id)
         return data[0]["name"] if data else None
 
     async def update_name(self, name: str) -> None:
@@ -132,7 +133,7 @@ class NodeModel:
         bool
             The node's ssl setting.
         """
-        data = await tables.NodeRow.raw("SELECT ssl FROM node WHERE id = {}", self.id)
+        data = await tables.NodeRow.raw("SELECT ssl FROM node WHERE id = {} LIMIT 1", self.id)
         return data[0]["ssl"] if data else tables.NodeRow.ssl.default
 
     async def update_ssl(self, ssl: bool) -> None:
@@ -154,7 +155,7 @@ class NodeModel:
         str
             The node's resume key.
         """
-        data = await tables.NodeRow.raw("SELECT resume_key FROM node WHERE id = {}", self.id)
+        data = await tables.NodeRow.raw("SELECT resume_key FROM node WHERE id = {} LIMIT 1", self.id)
         return data[0]["resume_key"] if data else None
 
     async def update_resume_key(self, resume_key: str) -> None:
@@ -179,7 +180,7 @@ class NodeModel:
         int
             The node's resume timeout.
         """
-        data = await tables.NodeRow.raw("SELECT resume_timeout FROM node WHERE id = {}", self.id)
+        data = await tables.NodeRow.raw("SELECT resume_timeout FROM node WHERE id = {} LIMIT 1", self.id)
         return data[0]["resume_timeout"] if data else tables.NodeRow.resume_timeout.default
 
     async def update_resume_timeout(self, resume_timeout: int) -> None:
@@ -201,7 +202,7 @@ class NodeModel:
         int
             The node's reconnect attempts.
         """
-        data = await tables.NodeRow.raw("SELECT reconnect_attempts FROM node WHERE id = {}", self.id)
+        data = await tables.NodeRow.raw("SELECT reconnect_attempts FROM node WHERE id = {} LIMIT 1", self.id)
         return data[0]["reconnect_attempts"] if data else tables.NodeRow.reconnect_attempts.default
 
     async def update_reconnect_attempts(self, reconnect_attempts: int) -> None:
@@ -223,7 +224,7 @@ class NodeModel:
         bool
             The node's search only setting.
         """
-        data = await tables.NodeRow.raw("SELECT search_only FROM node WHERE id = {}", self.id)
+        data = await tables.NodeRow.raw("SELECT search_only FROM node WHERE id = {} LIMIT 1", self.id)
         return data[0]["search_only"] if data else tables.NodeRow.search_only.default
 
     async def update_search_only(self, search_only: bool) -> None:
@@ -245,7 +246,7 @@ class NodeModel:
         bool
             The node's managed setting.
         """
-        data = await tables.NodeRow.raw("SELECT managed FROM node WHERE id = {}", self.id)
+        data = await tables.NodeRow.raw("SELECT managed FROM node WHERE id = {} LIMIT 1", self.id)
         return data[0]["managed"] if data else tables.NodeRow.managed.default
 
     async def update_managed(self, managed: bool) -> None:
@@ -267,7 +268,7 @@ class NodeModel:
         dict
             The node's extras.
         """
-        data = await tables.NodeRow.raw("SELECT extras FROM node WHERE id = {}", self.id)
+        data = await tables.NodeRow.raw("SELECT extras FROM node WHERE id = {} LIMIT 1", self.id)
         return ujson.loads(data[0]["extras"]) if data else {}
 
     async def update_extras(self, extras: dict) -> None:
@@ -289,7 +290,7 @@ class NodeModel:
         dict
             The node's yaml.
         """
-        data = await tables.NodeRow.raw("SELECT yaml FROM node WHERE id = {}", self.id)
+        data = await tables.NodeRow.raw("SELECT yaml FROM node WHERE id = {} LIMIT 1", self.id)
         return ujson.loads(data[0]["yaml"]) if data else tables.NodeRow.yaml.default
 
     async def update_yaml(self, yaml_data: dict) -> None:
@@ -311,7 +312,7 @@ class NodeModel:
         list[str]
             The node's disabled sources.
         """
-        data = await tables.NodeRow.raw("SELECT disabled_sources FROM node WHERE id = {}", self.id)
+        data = await tables.NodeRow.raw("SELECT disabled_sources FROM node WHERE id = {} LIMIT 1", self.id)
         return data[0]["disabled_sources"] if data else tables.NodeRow.disabled_sources.default
 
     async def update_disabled_sources(self, disabled_sources: list[str]) -> None:
@@ -1065,6 +1066,7 @@ class BotVersion:
             """
             SELECT version FROM version
             WHERE bot = {}
+            LIMIT 1
             """,
             self.bot,
         )
@@ -1620,12 +1622,36 @@ class LibConfigModel:
         LibConfigModel
             The updated config.
         """
+
         response = await tables.LibConfigRow.raw(
-            """SELECT * FROM lib_config WHERE id = {} AND bot = {}""", self.id, self.bot
+            """SELECT
+            (
+            id,
+            bot,
+            config_folder,
+            java_path,
+            enable_managed_node,
+            auto_update_managed_nodes,
+            localtrack_folder,
+            download_id,
+            update_bot_activity,
+            use_bundled_pylav_external,
+            use_bundled_lava_link_external,
+            extras,
+            next_execution_update_bundled_playlists,
+            next_execution_update_bundled_external_playlists,
+            next_execution_update_external_playlists
+            )
+            FROM lib_config
+            WHERE id = {} AND bot = {}
+            LIMIT 1""",
+            self.id,
+            self.bot,
         )
         if response:
             keys = [
                 "id",
+                "bot",
                 "config_folder",
                 "java_path",
                 "enable_managed_node",
@@ -1835,7 +1861,7 @@ class PlayerStateModel:
                 queue,
                 history,
                 effects,
-                extras FROM player_state WHERE bot = {} AND id = {}""",
+                extras FROM player_state WHERE bot = {} AND id = {} LIMIT 1""",
             bot_id,
             guild_id,
         )
@@ -1874,6 +1900,7 @@ class QueryModel:
             """
             SELECT identifier, name, last_updated, tracks FROM query
             WHERE identifier = {}
+            LIMIT 1
             """,
             identifier,
         )
@@ -2215,6 +2242,7 @@ class EqualizerModel:
         equalizer = await tables.EqualizerRow.raw(
             """
             SELECT * FROM equalizer WHERE id = {}
+            LIMIT 1
             """,
             id,
         )
