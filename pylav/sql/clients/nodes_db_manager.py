@@ -124,27 +124,26 @@ class NodeConfigManager:
 
         node = NodeModel(id=unique_identifier)
         self.currently_in_db.add(node.id)
+        async with tables.DB.transaction():
+            await node.update_ssl(ssl)
+            await node.update_reconnect_attempts(reconnect_attempts)
+            await node.update_search_only(search_only)
+            await node.update_resume_key(resume_key)
+            await node.update_resume_timeout(resume_timeout)
+            await node.update_managed(managed)
 
-        await node.update_ssl(ssl)
-        await node.update_reconnect_attempts(reconnect_attempts)
-        await node.update_search_only(search_only)
-        await node.update_resume_key(resume_key)
-        await node.update_resume_timeout(resume_timeout)
-        await node.update_managed(managed)
-
-        if name is not None:
-            await node.update_name(name)
-        if disabled_sources is not None:
-            await node.update_disabled_sources(disabled_sources)
-        if extras is not None:
-            await node.update_extras(extras)
-        if yaml is not None:
+            if name is not None:
+                await node.update_name(name)
+            if disabled_sources is not None:
+                await node.update_disabled_sources(disabled_sources)
+            if extras is not None:
+                await node.update_extras(extras)
             yaml = yaml or {"server": {}, "lavalink": {"server": {}}}
             yaml["server"]["address"] = host  # type: ignore
             yaml["server"]["port"] = port  # type: ignore
             yaml["lavalink"]["server"]["password"] = password
             await node.update_yaml(yaml)
-        self.currently_in_db.add(node.id)
+            self.currently_in_db.add(node.id)
         return node
 
     async def delete(self, node_id: int) -> None:

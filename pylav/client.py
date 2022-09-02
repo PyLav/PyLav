@@ -1144,8 +1144,8 @@ class Client(metaclass=_Singleton):
 
     async def remove_node(self, node_id: int):
         """Removes a node from the node manager"""
-        node = self.node_manager.get_node_by_id(node_id)
-        await self.node_manager.remove_node(node)
+        if node := self.node_manager.get_node_by_id(node_id):
+            await self.node_manager.remove_node(node)
 
     async def is_dj(
         self,

@@ -12,7 +12,12 @@ import asyncstdlib
 import ujson
 
 from pylav._logging import getLogger
-from pylav.constants import DEFAULT_REGIONS, PYLAV_BUNDLED_NODES_SETTINGS, REGION_TO_COUNTRY_COORDINATE_MAPPING
+from pylav.constants import (
+    BUNDLED_NODES_IDS,
+    DEFAULT_REGIONS,
+    PYLAV_BUNDLED_NODES_SETTINGS,
+    REGION_TO_COUNTRY_COORDINATE_MAPPING,
+)
 from pylav.envvars import JAVA_EXECUTABLE
 from pylav.events import NodeConnectedEvent, NodeDisconnectedEvent
 from pylav.location import get_closest_region_name_and_coordinate
@@ -203,7 +208,7 @@ class NodeManager:
         self.nodes.remove(node)
         LOGGER.info("[NODE-%s] Successfully removed Node", node.name)
         LOGGER.verbose("[NODE-%s] Successfully removed Node -- %r", node.name, node)
-        if node.identifier and not node.managed:
+        if node.identifier and not node.managed and node.identifier not in BUNDLED_NODES_IDS:
             await self.client.node_db_manager.delete(node.identifier)
             LOGGER.debug("[NODE-%s] Successfully deleted Node from database", node.name)
 
@@ -447,7 +452,9 @@ class NodeManager:
             await config_data.update_java_path(JAVA_EXECUTABLE)
 
         if all_data["use_bundled_pylav_external"]:
-            if await asyncstdlib.all(True for n in nodes_list if n.host != "ll-gb.draper.wtf"):
+            if await asyncstdlib.all(
+                True for n in nodes_list if n.host != "ll-gb.draper.wtf"
+            ) and not self.get_node_by_id(PYLAV_BUNDLED_NODES_SETTINGS["ll-gb.draper.wtf"]["unique_identifier"]):
                 base_settings = PYLAV_BUNDLED_NODES_SETTINGS["ll-gb.draper.wtf"]
                 base_settings["host"] = "ll-gb.draper.wtf"
                 base_settings["resume_key"] = f"PyLav/{self.client.lib_version}-{self.client.bot_id}"
@@ -458,7 +465,9 @@ class NodeManager:
                     PYLAV_BUNDLED_NODES_SETTINGS["ll-gb.draper.wtf"]["name"],
                 )
 
-            if await asyncstdlib.all(True for n in nodes_list if n.host != "ll-us-ny.draper.wtf"):
+            if await asyncstdlib.all(
+                True for n in nodes_list if n.host != "ll-us-ny.draper.wtf"
+            ) and not self.get_node_by_id(PYLAV_BUNDLED_NODES_SETTINGS["ll-us-ny.draper.wtf"]["unique_identifier"]):
                 base_settings = PYLAV_BUNDLED_NODES_SETTINGS["ll-us-ny.draper.wtf"]
                 base_settings["resume_key"] = f"PyLav/{self.client.lib_version}-{self.client.bot_id}"
                 nodes_list.append(await self.add_node(**base_settings))
@@ -467,7 +476,9 @@ class NodeManager:
                     "%s already added to connection pool - skipping duplicated connection",
                     PYLAV_BUNDLED_NODES_SETTINGS["ll-us-ny.draper.wtf"]["name"],
                 )
-        if all_data["use_bundled_lava_link_external"]:
+        if all_data["use_bundled_lava_link_external"] and not self.get_node_by_id(
+            PYLAV_BUNDLED_NODES_SETTINGS["lava.link"]["unique_identifier"]
+        ):
             if await asyncstdlib.all(True for n in nodes_list if n.host != "lava.link"):
                 nodes_list.append(
                     await self.add_node(
