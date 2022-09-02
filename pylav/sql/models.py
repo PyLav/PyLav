@@ -462,54 +462,13 @@ class PlayerModel:
     async def fetch_all(self) -> dict:
         """Get all players from the database"""
         response = await tables.PlayerRow.raw(
-            """SELECT (
-                volume,
-                max_volume,
-                auto_play_playlist_id,
-                text_channel_id,
-                notify_channel_id,
-                forced_channel_id,
-                repeat_current,
-                repeat_queue,
-                shuffle,
-                auto_shuffle,
-                auto_play,
-                self_deaf,
-                empty_queue_dc,
-                alone_dc,
-                alone_pause,
-                extras,
-                effects,
-                dj_users,
-                dj_roles
-            ) FROM player WHERE id = {} AND bot = {} LIMIT 1;""",
+            """SELECT * FROM player WHERE id = {} AND bot = {} LIMIT 1;""",
             self.id,
             self.bot,
         )
         if response:
-            fields = (
-                "volume",
-                "max_volume",
-                "auto_play_playlist_id",
-                "text_channel_id",
-                "notify_channel_id",
-                "forced_channel_id",
-                "repeat_current",
-                "repeat_queue",
-                "shuffle",
-                "auto_shuffle",
-                "auto_play",
-                "self_deaf",
-                "empty_queue_dc",
-                "alone_dc",
-                "alone_pause",
-                "extras",
-                "effects",
-                "dj_users",
-                "dj_roles",
-            )
-            values = response[0]["row"]
-            data = dict(zip(fields, values))
+            data = response[0]
+            del data["primary_key"]
             data["empty_queue_dc"] = TimedFeature.from_json(ujson.loads(data["empty_queue_dc"]))
             data["alone_dc"] = TimedFeature.from_json(ujson.loads(data["alone_dc"]))
             data["alone_pause"] = TimedFeature.from_json(ujson.loads(data["alone_pause"]))
