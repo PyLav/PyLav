@@ -1219,7 +1219,7 @@ class Player(VoiceProtocol):
         await self.guild.change_voice_state(
             channel=self.channel,
             self_mute=self_mute,
-            self_deaf=deaf if (deaf := self.self_deaf()) is True else self_deaf,
+            self_deaf=deaf if (deaf := await self.self_deaf()) is True else self_deaf,
         )
         self._connected = True
         LOGGER.info("[Player-%s] Connected to voice channel", self.channel.guild.id)
@@ -1294,7 +1294,7 @@ class Player(VoiceProtocol):
             "[Player-%s] Moving from %s to voice channel: %s", self.channel.guild.id, self.channel.id, channel.id
         )
         self.channel = channel
-        self_deaf = deaf if (deaf := self.self_deaf()) is True else self_deaf
+        self_deaf = deaf if (deaf := await self.self_deaf()) is True else self_deaf
         await self.guild.change_voice_state(channel=self.channel, self_mute=self_mute, self_deaf=self_deaf)
         self._connected = True
         self.node.dispatch_event(PlayerMovedEvent(self, requester, old_channel, self.channel))
@@ -1964,8 +1964,8 @@ class Player(VoiceProtocol):
             "notify_channel_id": data["notify_channel_id"],
             "forced_channel_id": data["forced_channel_id"],
             "paused": self.paused,
-            "repeat_queue": data["fetch_repeat_queue"],
-            "repeat_current": data["fetch_repeat_current"],
+            "repeat_queue": data["repeat_queue"],
+            "repeat_current": data["repeat_current"],
             "shuffle": data["shuffle"],
             "auto_shuffle": data["auto_shuffle"],
             "auto_play": data["auto_play"],
