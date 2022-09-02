@@ -313,8 +313,12 @@ class Player(VoiceProtocol):
     async def set_forced_vc(self, value: discord.abc.MessageableChannel) -> None:
         await self.config.update_forced_channel_id(forced_channel_id=value.id)
 
-    async def self_deaf(self) -> bool:
-        return await self.player_manager.client.player_config_manager.get_self_deaf(self.guild.id)
+    async def self_deaf(self) -> bool | None:
+        return (
+            await self.player_manager.client.player_config_manager.get_self_deaf(self.guild.id)
+            if self.player_manager
+            else None
+        )
 
     async def is_repeating(self) -> bool:
         """Whether the player is repeating tracks"""
