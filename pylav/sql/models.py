@@ -98,8 +98,8 @@ class NodeModel:
             "reconnect_attempts": tables.NodeRow.reconnect_attempts.default,
             "search_only": tables.NodeRow.search_only.default,
             "managed": tables.NodeRow.managed.default,
-            "extras": tables.NodeRow.extras.default,
-            "yaml": tables.NodeRow.yaml.default,
+            "extras": ujson.loads(tables.NodeRow.extras.default),
+            "yaml": ujson.loads(tables.NodeRow.yaml.default),
             "disabled_sources": tables.NodeRow.disabled_sources.default,
         }
 
@@ -269,7 +269,7 @@ class NodeModel:
             The node's extras.
         """
         data = await tables.NodeRow.raw("SELECT extras FROM node WHERE id = {} LIMIT 1", self.id)
-        return ujson.loads(data[0]["extras"]) if data else {}
+        return ujson.loads(data[0]["extras"] if data else tables.NodeRow.extras.default)
 
     async def update_extras(self, extras: dict) -> None:
         """Update the node's extras in the database"""
@@ -291,7 +291,7 @@ class NodeModel:
             The node's yaml.
         """
         data = await tables.NodeRow.raw("SELECT yaml FROM node WHERE id = {} LIMIT 1", self.id)
-        return ujson.loads(data[0]["yaml"]) if data else tables.NodeRow.yaml.default
+        return ujson.loads(data[0]["yaml"] if data else tables.NodeRow.yaml.default)
 
     async def update_yaml(self, yaml_data: dict) -> None:
         """Update the node's yaml in the database"""
@@ -531,11 +531,11 @@ class PlayerModel:
             "auto_shuffle": tables.PlayerRow.auto_shuffle.default,
             "auto_play": tables.PlayerRow.auto_play.default,
             "self_deaf": tables.PlayerRow.self_deaf.default,
-            "empty_queue_dc": tables.PlayerRow.empty_queue_dc.default,
-            "alone_dc": tables.PlayerRow.alone_dc.default,
-            "alone_pause": tables.PlayerRow.alone_pause.default,
-            "extras": tables.PlayerRow.extras.default,
-            "effects": tables.PlayerRow.effects.default,
+            "empty_queue_dc": TimedFeature.from_json(ujson.loads(tables.PlayerRow.empty_queue_dc.default)),
+            "alone_dc": TimedFeature.from_json(ujson.loads(tables.PlayerRow.alone_dc.default)),
+            "alone_pause": TimedFeature.from_json(ujson.loads(tables.PlayerRow.alone_pause.default)),
+            "extras": ujson.loads(tables.PlayerRow.extras.default),
+            "effects": ujson.loads(tables.PlayerRow.effects.default),
             "dj_users": tables.PlayerRow.dj_users.default,
             "dj_roles": tables.PlayerRow.dj_roles.default,
         }
@@ -780,7 +780,7 @@ class PlayerModel:
         player = await tables.PlayerRow.raw(
             "SELECT extras FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
         )
-        return ujson.loads(player[0]["extras"]) if player else tables.PlayerRow.extras.default
+        return ujson.loads(player[0]["extras"] if player else tables.PlayerRow.extras.default)
 
     async def update_extras(self, extras: dict) -> None:
         """Update the extras of the player"""
@@ -799,7 +799,7 @@ class PlayerModel:
         player = await tables.PlayerRow.raw(
             "SELECT effects FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
         )
-        return ujson.loads(player[0]["effects"]) if player else tables.PlayerRow.effects.default
+        return ujson.loads(player[0]["effects"] if player else tables.PlayerRow.effects.default)
 
     async def update_effects(self, effects: dict) -> None:
         """Update the effects of the player"""
@@ -819,7 +819,7 @@ class PlayerModel:
             "SELECT empty_queue_dc FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
         )
         return TimedFeature.from_json(
-            player[0]["empty_queue_dc"] if player else tables.PlayerRow.empty_queue_dc.default
+            ujson.loads(player[0]["empty_queue_dc"] if player else tables.PlayerRow.empty_queue_dc.default)
         )
 
     async def update_empty_queue_dc(self, empty_queue_dc: dict) -> None:
@@ -839,7 +839,9 @@ class PlayerModel:
         player = await tables.PlayerRow.raw(
             "SELECT alone_dc FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
         )
-        return TimedFeature.from_json(player[0]["alone_dc"] if player else tables.PlayerRow.alone_dc.default)
+        return TimedFeature.from_json(
+            ujson.loads(player[0]["alone_dc"] if player else tables.PlayerRow.alone_dc.default)
+        )
 
     async def update_alone_dc(self, alone_dc: dict) -> None:
         """Update the alone dc of the player"""
@@ -858,7 +860,9 @@ class PlayerModel:
         player = await tables.PlayerRow.raw(
             "SELECT alone_pause FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
         )
-        return TimedFeature.from_json(player[0]["alone_pause"] if player else tables.PlayerRow.alone_pause.default)
+        return TimedFeature.from_json(
+            ujson.loads(player[0]["alone_pause"] if player else tables.PlayerRow.alone_pause.default)
+        )
 
     async def update_alone_pause(self, alone_pause: dict) -> None:
         """Update the alone pause of the player"""
@@ -1385,7 +1389,7 @@ class LibConfigModel:
             self.id,
             self.bot,
         )
-        return ujson.loads(response[0]["extras"]) if response else tables.LibConfigRow.extras.default
+        return ujson.loads(response[0]["extras"] if response else tables.LibConfigRow.extras.default)
 
     async def update_extras(self, extras: dict) -> None:
         """Update the extras.
@@ -1683,7 +1687,7 @@ class LibConfigModel:
             "update_bot_activity": tables.LibConfigRow.update_bot_activity.default,
             "use_bundled_pylav_external": tables.LibConfigRow.use_bundled_pylav_external.default,
             "use_bundled_lava_link_external": tables.LibConfigRow.use_bundled_lava_link_external.default,
-            "extras": tables.LibConfigRow.extras.default,
+            "extras": ujson.loads(tables.LibConfigRow.extras.default),
             "next_execution_update_bundled_playlists": tables.LibConfigRow.next_execution_update_bundled_playlists.default,
             "next_execution_update_bundled_external_playlists": tables.LibConfigRow.next_execution_update_bundled_external_playlists.default,
             "next_execution_update_external_playlists": tables.LibConfigRow.next_execution_update_external_playlists.default,
