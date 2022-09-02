@@ -762,7 +762,7 @@ class LocalNodeManager:
                 resume_timeout=data["resume_timeout"],
                 name=f"PyLavPortConflictRecovery: {self._node_pid}"
                 if external_fallback
-                else f"{data['name']}: {self._node_pid}",
+                else f"{data['name'].split(':')[0]}: {self._node_pid}",
                 yaml=data["yaml"],
                 extras=data["extras"],
                 managed=True,
