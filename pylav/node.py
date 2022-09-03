@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import typing
 from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
@@ -671,7 +672,8 @@ class Node:
             A dict representing tracks.
         """
         if not bypass_cache and (response := await self.node_manager.client.query_cache_manager.get_query(query)):
-            return (
+            return typing.cast(
+                LavalinkResponseT,
                 {"track": response.tracks[0]}
                 if first
                 else {
@@ -684,7 +686,7 @@ class Node:
                     if query.is_search
                     else "TRACK_LOADED",
                     "tracks": [{"track": track} async for track in AsyncIter(response.tracks)],
-                }
+                },
             )
 
         destination = f"{self.connection_protocol}://{self.host}:{self.port}/loadtracks"
