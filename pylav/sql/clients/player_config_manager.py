@@ -45,8 +45,8 @@ class PlayerConfigManager:
         return global_vol if global_vol < server_vol else server_vol
 
     async def get_max_volume(self, guild_id: int) -> int:
-        global_vol = await self.get_global_config().fetch_volume()
-        server_vol = await self.get_config(guild_id=guild_id).fetch_volume()
+        global_vol = await self.get_global_config().fetch_max_volume()
+        server_vol = await self.get_config(guild_id=guild_id).fetch_max_volume()
         return global_vol if global_vol < server_vol else server_vol
 
     async def get_shuffle(self, guild_id: int) -> bool:
