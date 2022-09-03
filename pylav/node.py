@@ -9,7 +9,7 @@ import asyncstdlib
 import ujson
 
 from pylav._logging import getLogger
-from pylav.constants import REGION_TO_COUNTRY_COORDINATE_MAPPING, SUPPORTED_SOURCES
+from pylav.constants import BUNDLED_NODES_IDS, PYLAV_NODES, REGION_TO_COUNTRY_COORDINATE_MAPPING, SUPPORTED_SOURCES
 from pylav.events import Event
 from pylav.exceptions import Unauthorized
 from pylav.filters import ChannelMix, Distortion, Equalizer, Karaoke, LowPass, Rotation, Timescale, Vibrato, Volume
@@ -924,6 +924,9 @@ class Node:
         #    using the correct node which will support local files instead of trying and failing most of the time.
         if not self.managed:
             self._capabilities.discard("local")
+        if self.identifier in PYLAV_NODES:
+            self._capabilities.discard("http")
+            self._capabilities.discard("local")
         # If not setup says these should be disabled remove them to trick the node to think they are disabled
         if self._sources:
             self._sources.difference_update(self._disabled_sources)
@@ -954,7 +957,7 @@ class Node:
         -------
         :class:`None`
         """
-        if self.managed:
+        if self.managed or self.identifier in BUNDLED_NODES_IDS:
             return
         unsupported = await self.get_unsupported_features()
         currently_disabled = set(await self.config.fetch_disabled_sources())
