@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import pathlib
+import typing
 from collections.abc import AsyncIterator
 from typing import Final
 
@@ -127,12 +128,14 @@ class LocalFile:
     ) -> str:
         if with_emoji:
             length -= 1
-        path = await maybe_coroutine(self.path.absolute)
+        path = typing.cast(aiopath.AsyncPath, await maybe_coroutine(self.path.absolute))
         if name_only:
             string = path.name if await self.path.is_dir() else path.stem if no_extension else path.name
         else:
-            root = await maybe_coroutine(self.root_folder.absolute)
+            root = typing.cast(aiopath.AsyncPath, await maybe_coroutine(self.root_folder.absolute))
             string = str(path).replace(str(root), "")
+            if no_extension:
+                string = string.removesuffix("".join(path.suffixes))
         if not string:
             string = path.name if await self.path.is_dir() else path.stem if no_extension else path.name
             if string.startswith("/") or string.startswith("\\"):
