@@ -18,6 +18,13 @@ class Timescale(FilterMixin):
             "off": self.off,
         }
 
+    def to_json(self) -> dict:
+        return {
+            "speed": self.speed,
+            "pitch": self.pitch,
+            "rate": self.rate,
+        }
+
     @classmethod
     def from_dict(cls, data: dict) -> Timescale:
         c = cls(speed=data["speed"], pitch=data["pitch"], rate=data["rate"])

@@ -26,6 +26,14 @@ class ChannelMix(FilterMixin):
             "off": self.off,
         }
 
+    def to_json(self) -> dict:
+        return {
+            "leftToLeft": self.left_to_left,
+            "leftToRight": self.left_to_right,
+            "rightToLeft": self.right_to_left,
+            "rightToRight": self.right_to_right,
+        }
+
     @classmethod
     def from_dict(cls, data: dict) -> ChannelMix:
         c = cls(

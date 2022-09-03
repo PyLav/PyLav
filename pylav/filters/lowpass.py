@@ -14,6 +14,11 @@ class LowPass(FilterMixin):
             "off": self.off,
         }
 
+    def to_json(self) -> dict:
+        return {
+            "smoothing": self.smoothing,
+        }
+
     @classmethod
     def from_dict(cls, data: dict) -> LowPass:
         c = cls(

@@ -16,6 +16,12 @@ class Tremolo(FilterMixin):
             "off": self.off,
         }
 
+    def to_json(self) -> dict:
+        return {
+            "frequency": self.frequency,
+            "depth": self.depth,
+        }
+
     @classmethod
     def from_dict(cls, data: dict) -> Tremolo:
         c = cls(frequency=data["frequency"], depth=data["depth"])

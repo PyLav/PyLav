@@ -20,6 +20,14 @@ class Karaoke(FilterMixin):
             "off": self.off,
         }
 
+    def to_json(self) -> dict:
+        return {
+            "level": self.level,
+            "mono_level": self.mono_level,
+            "filter_band": self.filter_band,
+            "filter_width": self.filter_width,
+        }
+
     @classmethod
     def from_dict(cls, data: dict) -> Karaoke:
         c = cls(

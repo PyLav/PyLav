@@ -14,6 +14,11 @@ class Rotation(FilterMixin):
             "off": self.off,
         }
 
+    def to_json(self) -> dict:
+        return {
+            "hertz": self.hertz,
+        }
+
     @classmethod
     def from_dict(cls, data: dict) -> Rotation:
         c = cls(hertz=data["hertz"])

@@ -38,6 +38,18 @@ class Distortion(FilterMixin):
             "off": self.off,
         }
 
+    def to_json(self) -> dict:
+        return {
+            "sin_offset": self.sin_offset,
+            "sin_scale": self.sin_scale,
+            "cos_offset": self.cos_offset,
+            "cos_scale": self.cos_scale,
+            "tan_offset": self.tan_offset,
+            "tan_scale": self.tan_scale,
+            "offset": self.offset,
+            "scale": self.scale,
+        }
+
     @classmethod
     def from_dict(cls, data: dict) -> Distortion:
         c = cls(

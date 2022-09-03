@@ -17,6 +17,9 @@ class Volume(FilterMixin):
     def to_dict(self) -> dict:
         return {"volume": self.value, "off": self.off}
 
+    def to_json(self) -> dict:
+        return {"volume": self.value}
+
     @classmethod
     def from_dict(cls, data: dict) -> Volume:
         c = cls(data["volume"])

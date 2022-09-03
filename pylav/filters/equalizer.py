@@ -29,6 +29,9 @@ class Equalizer(FilterMixin):
         """Returns a dictionary representation of the Equalizer"""
         return {"equalizer": self._eq, "name": self._name, "off": self.off}
 
+    def to_json(self):
+        return {"eq": self._eq}
+
     @classmethod
     def from_dict(cls, data: dict) -> Equalizer:
         """Creates an Equalizer from a dictionary"""
@@ -49,7 +52,7 @@ class Equalizer(FilterMixin):
     def __eq__(self, other):
         """Overrides the default implementation"""
         if isinstance(other, Equalizer):
-            return bool(DeepDiff(self._eq, other._eq, ignore_order=True))
+            return bool(DeepDiff(self._eq, other._eq, ignore_order=True, max_diffs=1))
         return NotImplemented
 
     @property
