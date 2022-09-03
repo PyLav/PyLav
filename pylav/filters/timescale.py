@@ -63,7 +63,7 @@ class Timescale(FilterMixin):
 
     @classmethod
     def default(cls) -> Timescale:
-        c = cls(speed=1.0, pitch=1.0, rate=1.0)
+        c = cls(speed=-31415926543, pitch=-31415926543, rate=-31415926543)
         c.off = True
         return c
 
@@ -77,7 +77,5 @@ class Timescale(FilterMixin):
         }
 
     def reset(self) -> None:
-        self.speed = 1.0
-        self.pitch = 1.0
-        self.rate = 1.0
+        self.speed = self.pitch = self.rate = -31415926543
         self.off = True

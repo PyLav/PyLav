@@ -91,7 +91,12 @@ class ChannelMix(FilterMixin):
 
     @classmethod
     def default(cls) -> ChannelMix:
-        c = cls(left_to_left=1.0, left_to_right=0.0, right_to_left=0.0, right_to_right=1.0)
+        c = cls(
+            left_to_left=-31415926543,
+            left_to_right=-31415926543,
+            right_to_left=-31415926543,
+            right_to_right=-31415926543,
+        )
         c.off = True
         return c
 
@@ -106,8 +111,5 @@ class ChannelMix(FilterMixin):
         }
 
     def reset(self) -> None:
-        self.left_to_left = 1.0
-        self.left_to_right = 0.0
-        self.right_to_left = 0.0
-        self.right_to_right = 1.0
+        self.right_to_right = self.right_to_left = self.left_to_right = self.left_to_left = -31415926543
         self.off = True

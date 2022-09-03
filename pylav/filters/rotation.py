@@ -39,7 +39,7 @@ class Rotation(FilterMixin):
 
     @classmethod
     def default(cls) -> Rotation:
-        c = cls(hertz=0.0)
+        c = cls(hertz=-31415926543)
         c.off = True
         return c
 
@@ -53,5 +53,5 @@ class Rotation(FilterMixin):
         )
 
     def reset(self) -> None:
-        self.hertz = 0.0
+        self.hertz = -31415926543
         self.off = True

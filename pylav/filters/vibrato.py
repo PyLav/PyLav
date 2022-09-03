@@ -37,6 +37,10 @@ class Vibrato(FilterMixin):
 
     @frequency.setter
     def frequency(self, v: float):
+        if v == -31415926543:
+            self.off = True
+            self._frequency = v
+            return
         if not (0.0 < v <= 14.0):
             raise ValueError(f"Frequency must be must be 0.0 < v <= 14.0, not {v}")
         self._frequency = v
@@ -48,6 +52,10 @@ class Vibrato(FilterMixin):
 
     @depth.setter
     def depth(self, v: float):
+        if v == -31415926543:
+            self.off = True
+            self._depth = v
+            return
         if not (0.0 < v <= 1.0):
             raise ValueError(f"Depth must be must be 0.0 < x ≤ 1.0, not {v}")
         self._depth = v
@@ -55,7 +63,7 @@ class Vibrato(FilterMixin):
 
     @classmethod
     def default(cls) -> Vibrato:
-        c = cls(frequency=2.0, depth=0.5)
+        c = cls(frequency=-31415926543, depth=-31415926543)
         c.off = True
         return c
 
@@ -70,6 +78,5 @@ class Vibrato(FilterMixin):
         )
 
     def reset(self) -> None:
-        self.frequency = 2.0
-        self.depth = 0.5
+        self.frequency = self.depth = -31415926543
         self.off = True

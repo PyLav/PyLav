@@ -41,7 +41,7 @@ class LowPass(FilterMixin):
 
     @classmethod
     def default(cls) -> LowPass:
-        c = cls(smoothing=20.0)
+        c = cls(smoothing=-31415926543)
         c.off = True
         return c
 
@@ -55,5 +55,5 @@ class LowPass(FilterMixin):
         )
 
     def reset(self) -> None:
-        self.smoothing = 20.0
+        self.smoothing = -31415926543
         self.off = True

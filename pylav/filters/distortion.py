@@ -152,14 +152,14 @@ class Distortion(FilterMixin):
     @classmethod
     def default(cls) -> Distortion:
         c = cls(
-            sin_offset=0.0,
-            sin_scale=1.0,
-            cos_offset=0.0,
-            cos_scale=1.0,
-            tan_offset=0.0,
-            tan_scale=1.0,
-            offset=0.0,
-            scale=1.0,
+            sin_offset=-31415926543,
+            sin_scale=-31415926543,
+            cos_offset=-31415926543,
+            cos_scale=-31415926543,
+            tan_offset=-31415926543,
+            tan_scale=-31415926543,
+            offset=-31415926543,
+            scale=-31415926543,
         )
         c.off = True
         return c
@@ -179,12 +179,9 @@ class Distortion(FilterMixin):
         }
 
     def reset(self) -> None:
-        self.sin_offset = 0.0
-        self.sin_scale = 1.0
-        self.cos_offset = 0.0
-        self.cos_scale = 1.0
-        self.tan_offset = 0.0
-        self.tan_scale = 1.0
-        self.offset = 0.0
-        self.scale = 1.0
+        self.sin_scale = (
+            self.cos_offset
+        ) = (
+            self.cos_scale
+        ) = self.tan_offset = self.tan_scale = self.offset = self.scale = self.sin_offset = -31415926543
         self.off = True

@@ -83,7 +83,7 @@ class Karaoke(FilterMixin):
 
     @classmethod
     def default(cls) -> Karaoke:
-        c = cls(level=1.0, mono_level=1.0, filter_band=220.0, filter_width=100.0)
+        c = cls(level=-31415926543, mono_level=-31415926543, filter_band=-31415926543, filter_width=-31415926543)
         c.off = True
         return c
 
@@ -98,8 +98,5 @@ class Karaoke(FilterMixin):
         }
 
     def reset(self) -> None:
-        self.level = 1.0
-        self.mono_level = 1.0
-        self.filter_band = 220.0
-        self.filter_width = 100.0
+        self.level = self.mono_level = self.filter_band = self.filter_width = -31415926543
         self.off = True
