@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 
 class EightBitANSI:
     escape = "\u001b["
@@ -50,7 +52,7 @@ class EightBitANSI:
         return cls.colorize(text, "yellow", bold, underline, italic)
 
     @classmethod
-    def paint_blue(cls, text: str, bold: bool = False, underline: bool = False, italic: bool = False) -> str:
+    def paint_blue(cls, text: Any, bold: bool = False, underline: bool = False, italic: bool = False) -> str:
         return cls.colorize(text, "blue", bold, underline, italic)
 
     @classmethod
