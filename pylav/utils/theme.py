@@ -1,6 +1,18 @@
 from __future__ import annotations
 
+from math import sqrt
 from typing import Any
+
+COLOURS = {
+    "black": (1, 1, 1),
+    "red": (220, 50, 47),
+    "green": (133, 153, 0),
+    "yellow": (181, 137, 0),
+    "blue": (38, 139, 210),
+    "magenta": (211, 54, 130),
+    "cyan": (42, 161, 152),
+    "white": (255, 255, 255),
+}
 
 
 class EightBitANSI:
@@ -66,3 +78,24 @@ class EightBitANSI:
     @classmethod
     def paint_white(cls, text: str, bold: bool = False, underline: bool = False, italic: bool = False) -> str:
         return cls.colorize(text, "white", bold, underline, italic)
+
+    @classmethod
+    def closest_from_rgb(cls, r: int, g: int, b: int) -> str:
+        """Get the closest 4-bit ANSI colour from a given RGB value."""
+        return cls.closest_color(r, g, b)
+
+    @classmethod
+    def closest_from_hex(cls, value: str) -> str:
+        """Get the closest 4-bit ANSI colour from a given hex value."""
+        value = value.lstrip("#")
+        lv = len(value)
+        return cls.closest_color(*tuple(int(value[i : i + lv // 3], 16) for i in range(0, lv, lv // 3)))
+
+    @classmethod
+    def closest_color(cls, red: int, green: int, blue: int) -> str:
+        color_diffs = []
+        for name, color in COLOURS.items():
+            cr, cg, cb = color
+            color_diff = sqrt((red - cr) ** 2 + (green - cg) ** 2 + (blue - cb) ** 2)
+            color_diffs.append((color_diff, name))
+        return min(color_diffs)[1]
