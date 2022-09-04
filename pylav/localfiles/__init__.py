@@ -135,7 +135,7 @@ class LocalFile:
             root = typing.cast(aiopath.AsyncPath, await maybe_coroutine(self.root_folder.absolute))
             string = str(path).replace(str(root), "")
             if no_extension:
-                string = string.removesuffix("".join(path.suffixes))
+                string = string.removesuffix(path.suffix)
         if not string:
             string = path.name if await self.path.is_dir() else path.stem if no_extension else path.name
             if string.startswith("/") or string.startswith("\\"):
