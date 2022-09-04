@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-09-04 12:27+0000\n"
-"PO-Revision-Date: 2022-09-04 12:29\n"
+"POT-Creation-Date: 2022-09-04 17:20+0000\n"
+"PO-Revision-Date: 2022-09-04 17:22\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "MIME-Version: 1.0\n"
@@ -43,8 +43,8 @@ msgid "You are attempting to run the managed Lavalink node on an unsupported mac
 msgstr "Încercaţi să conduceţi nodul Lavalink pe o arhitectură a maşinii nesuportată"
 
 #: pylav/managed_node.py:333
-msgid "Pylav - Java executable not  found, tried to use: '{self._java_exc}'"
-msgstr "Pylav - Java executable nu a fost găsit, a încercat să utilizeze: '{self._java_exc}'"
+msgid "Pylav - Java executable not found, tried to use: '{self._java_exc}'"
+msgstr ""
 
 #: pylav/managed_node.py:401
 msgid "The output of `{java_exc} -version` was unexpected\n"
