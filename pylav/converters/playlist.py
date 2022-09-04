@@ -63,9 +63,4 @@ else:
 
             extracted = await heapq.nlargest(asyncstdlib.iter(playlists), n=25, key=_filter)
 
-            async def alphabetical(x):
-                return x.name or "Ω"
-
-            extracted = await heapq.nsmallest(asyncstdlib.iter(extracted), n=25, key=alphabetical)
-
             return [Choice(name=shorten_string(e.name, max_length=100), value=f"{e.id}") for e in extracted]
