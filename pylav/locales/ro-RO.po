@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-08-31 13:15+0000\n"
-"PO-Revision-Date: 2022-08-31 13:27\n"
+"POT-Creation-Date: 2022-09-04 12:27+0000\n"
+"PO-Revision-Date: 2022-09-04 12:29\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "MIME-Version: 1.0\n"
@@ -17,134 +17,134 @@ msgstr ""
 "X-Crowdin-File-ID: 504\n"
 "Language: ro_RO\n"
 
-#: pylav/client.py:605 pylav/client.py:630 pylav/player_manager.py:243
+#: pylav/client.py:607 pylav/client.py:632 pylav/player_manager.py:247
 msgid "No available nodes!"
 msgstr "Nu sunt noduri disponibile!"
 
-#: pylav/client.py:609 pylav/client.py:634 pylav/player.py:585
-#: pylav/player.py:604
+#: pylav/client.py:611 pylav/client.py:636 pylav/player.py:573
+#: pylav/player.py:592
 msgid "No node with {feature} functionality available!"
 msgstr "Niciun nod cu funcționalitatea {feature} disponibil!"
 
-#: pylav/client.py:918
+#: pylav/client.py:920
 msgid "No node with {query.requires_capability} functionality available!"
 msgstr "Niciun nod cu funcționalitatea {query.requires_capability} disponibil!"
 
-#: pylav/client.py:1175
+#: pylav/client.py:1178
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
 msgstr "Pentru a genera un mix playlist este necesar un Video, Utilizator, Canal sau Playlist ID"
 
-#: pylav/client.py:1180
+#: pylav/client.py:1183
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
 msgstr "Pentru a genera un mix playlist este necesar un video, un utilizator, un canal sau un ID Playlist. Cu toate acestea, ați furnizat mai multe"
 
-#: pylav/managed_node.py:251
+#: pylav/managed_node.py:241
 msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture"
 msgstr "Încercaţi să conduceţi nodul Lavalink pe o arhitectură a maşinii nesuportată"
 
-#: pylav/managed_node.py:343
+#: pylav/managed_node.py:333
 msgid "Pylav - Java executable not  found, tried to use: '{self._java_exc}'"
 msgstr "Pylav - Java executable nu a fost găsit, a încercat să utilizeze: '{self._java_exc}'"
 
-#: pylav/managed_node.py:411
+#: pylav/managed_node.py:401
 msgid "The output of `{java_exc} -version` was unexpected\n"
 "{version_info}"
 msgstr ""
 
-#: pylav/managed_node.py:427
+#: pylav/managed_node.py:417
 msgid "Port {port} already in use. Managed Lavalink startup aborted"
 msgstr "Portul {port} este deja în uz. Pornirea Lavalink gestionată anulată"
 
-#: pylav/managed_node.py:432
+#: pylav/managed_node.py:422
 msgid "Lavalink failed to start: {line}"
 msgstr "Pornirea Lavalink a eșuat: {line}"
 
-#: pylav/managed_node.py:436
+#: pylav/managed_node.py:426
 msgid "Managed Lavalink node server exited early"
 msgstr "Serverul de nod Lavalink a ieșit din timp"
 
-#: pylav/player.py:765
+#: pylav/player.py:753
 msgid "There are no tracks currently in the player history"
 msgstr "Nu există nicio melodie în istoricul jucătorilor"
 
-#: pylav/player.py:1744 pylav/player.py:1774 pylav/player.py:1785
+#: pylav/player.py:1720 pylav/player.py:1750 pylav/player.py:1761
 msgid "LIVE"
 msgstr "IV-VA"
 
-#: pylav/player.py:1753 pylav/player.py:1842
+#: pylav/player.py:1729 pylav/player.py:1817
 msgid "Currently livestreaming"
 msgstr "În prezent animalul"
 
-#: pylav/player.py:1755
+#: pylav/player.py:1731
 msgid "Playing: "
 msgstr "Redare: "
 
-#: pylav/player.py:1758 pylav/player.py:1779 pylav/player.py:1790
-#: pylav/player.py:1848
+#: pylav/player.py:1734 pylav/player.py:1755 pylav/player.py:1766
+#: pylav/player.py:1823
 msgid "Requester"
 msgstr "Solicitant"
 
-#: pylav/player.py:1763
+#: pylav/player.py:1739
 msgid "Now Playing in"
 msgstr "Acum se joacă în"
 
-#: pylav/player.py:1775 pylav/player.py:1786
+#: pylav/player.py:1751 pylav/player.py:1762
 msgid "Duration"
 msgstr "Durată"
 
-#: pylav/player.py:1781
+#: pylav/player.py:1757
 msgid "Previous Track"
 msgstr "Pistă anterioară"
 
-#: pylav/player.py:1792
+#: pylav/player.py:1768
 msgid "Next Track"
 msgstr "Următoarea piesă"
 
-#: pylav/player.py:1796
+#: pylav/player.py:1772
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
 msgstr "{track_count} melodii, {queue_total_duration} rămase\n"
 
-#: pylav/player.py:1808 pylav/player.py:1899
+#: pylav/player.py:1784 pylav/player.py:1874
 msgid "{translation}: {repeat_emoji}"
 msgstr "{translation}: {repeat_emoji}"
 
-#: pylav/player.py:1808 pylav/player.py:1899
+#: pylav/player.py:1784 pylav/player.py:1874
 msgid "Repeating"
 msgstr "Repetare"
 
-#: pylav/player.py:1809 pylav/player.py:1900
+#: pylav/player.py:1785 pylav/player.py:1875
 msgid "{space}{translation}: {autoplay_emoji}"
 msgstr "{space}{translation}: {autoplay_emoji}"
 
-#: pylav/player.py:1810 pylav/player.py:1901
+#: pylav/player.py:1786 pylav/player.py:1876
 msgid "Auto Play"
 msgstr "Redare automată"
 
-#: pylav/player.py:1812 pylav/player.py:1903
+#: pylav/player.py:1788 pylav/player.py:1878
 msgid "{space}{translation}: {volume}%"
 msgstr "{space}{translation}: {volume}%"
 
-#: pylav/player.py:1813 pylav/player.py:1904
+#: pylav/player.py:1789 pylav/player.py:1879
 msgid "Volume"
 msgstr "Volum"
 
-#: pylav/player.py:1845
+#: pylav/player.py:1820
 msgid "Playing"
 msgstr "Redare"
 
-#: pylav/player.py:1858
+#: pylav/player.py:1833
 msgid "Queue order is may not be accurate due to auto-shuffle being enabled"
 msgstr "Ordinea de așteptare ar putea să nu fie corectă din cauza activării auto-shuffle"
 
-#: pylav/player.py:1873
+#: pylav/player.py:1848
 msgid "Recently Played for"
 msgstr "Jucat recent pentru"
 
-#: pylav/player.py:1873
+#: pylav/player.py:1848
 msgid "Queue for"
 msgstr "Coadă pentru"
 
-#: pylav/player.py:1882
+#: pylav/player.py:1857
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
 msgstr "Pagina {current_page}/{total_pages} <unk> {track_number} melodii, {queue_total_duration} rămase\n"
 
