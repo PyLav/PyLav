@@ -19,6 +19,7 @@ from pylav.envvars import (
     USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE,
     USE_BUNDLED_EXTERNAL_PYLAV_NODE,
 )
+from pylav.migrations import run_low_level_migrations
 
 LOGGER = getLogger("PyLav.Postgres")
 config = {
@@ -33,6 +34,8 @@ if os.getenv("BUILDING_DOCS", False):
     DB = SQLiteEngine()
 else:
     DB = PostgresEngine(config=config)
+
+run_low_level_migrations(DB)
 
 
 class PlaylistRow(Table, db=DB, tablename="playlist"):
