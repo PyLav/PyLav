@@ -61,4 +61,10 @@ else:
                 return await asyncio.to_thread(fuzz.token_set_ratio, current, c.name)
 
             extracted = await heapq.nlargest(asyncstdlib.iter(nodes), n=25, key=_filter)
+
+            async def alphabetical(x):
+                return x.name or "Ω"
+
+            extracted = await heapq.nsmallest(asyncstdlib.iter(extracted), n=25, key=alphabetical)
+
             return [Choice(name=shorten_string(e.name, max_length=100), value=f"{e.identifier}") for e in extracted]

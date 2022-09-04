@@ -121,6 +121,12 @@ else:
                 return await asyncio.to_thread(fuzz.token_set_ratio, current, c.name)
 
             extracted: list[Station] = await heapq.nlargest(asyncstdlib.iter(stations), n=25, key=_filter)
+
+            async def alphabetical(x):
+                return x.name or "Ω"
+
+            extracted = await heapq.nsmallest(asyncstdlib.iter(extracted), n=25, key=alphabetical)
+
             return [
                 Choice(
                     name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.stationuuid}"
@@ -162,6 +168,12 @@ else:
                 return await asyncio.to_thread(fuzz.token_set_ratio, current, c.name)
 
             extracted = await heapq.nlargest(asyncstdlib.iter(tags), n=25, key=_filter)
+
+            async def alphabetical(x):
+                return x.name or "Ω"
+
+            extracted = await heapq.nsmallest(asyncstdlib.iter(extracted), n=25, key=alphabetical)
+
             return [
                 Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
                 for e in extracted
@@ -201,6 +213,12 @@ else:
                 return await asyncio.to_thread(fuzz.token_set_ratio, current, c.name)
 
             extracted = await heapq.nlargest(asyncstdlib.iter(languages), n=25, key=_filter)
+
+            async def alphabetical(x):
+                return x.name or "Ω"
+
+            extracted = await heapq.nsmallest(asyncstdlib.iter(extracted), n=25, key=alphabetical)
+
             return [
                 Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
                 for e in extracted
@@ -248,6 +266,12 @@ else:
                 return await asyncio.to_thread(fuzz.token_set_ratio, current, c.name)
 
             extracted = await heapq.nlargest(asyncstdlib.iter(states), n=25, key=_filter)
+
+            async def alphabetical(x):
+                return x.name or "Ω"
+
+            extracted = await heapq.nsmallest(asyncstdlib.iter(extracted), n=25, key=alphabetical)
+
             return [
                 Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
                 for e in extracted
@@ -287,6 +311,12 @@ else:
                 return await asyncio.to_thread(fuzz.token_set_ratio, current, c.name)
 
             extracted = await heapq.nlargest(asyncstdlib.iter(codecs), n=25, key=_filter)
+
+            async def alphabetical(x):
+                return x.name or "Ω"
+
+            extracted = await heapq.nsmallest(asyncstdlib.iter(extracted), n=25, key=alphabetical)
+
             return [
                 Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
                 for e in extracted
@@ -327,6 +357,12 @@ else:
                 return await asyncio.to_thread(fuzz.token_set_ratio, current, c.name)
 
             extracted = await heapq.nlargest(asyncstdlib.iter(countrycodes), n=25, key=_filter)
+
+            async def alphabetical(x):
+                return x.name or "Ω"
+
+            extracted = await heapq.nsmallest(asyncstdlib.iter(extracted), n=25, key=alphabetical)
+
             return [
                 Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
                 for e in extracted
@@ -373,6 +409,12 @@ else:
                 return await asyncio.to_thread(fuzz.token_set_ratio, current, c.name)
 
             extracted = await heapq.nlargest(asyncstdlib.iter(countries), n=25, key=_filter)
+
+            async def alphabetical(x):
+                return x.name or "Ω"
+
+            extracted = await heapq.nsmallest(asyncstdlib.iter(extracted), n=25, key=alphabetical)
+
             return [
                 Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
                 for e in extracted
