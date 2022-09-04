@@ -48,12 +48,26 @@ class LibConfigManager:
         await tables.PlayerRow.create_table(if_not_exists=True)
         await tables.PlayerRow.raw("CREATE UNIQUE INDEX IF NOT EXISTS unique_player_bot_id ON player (bot, id)")
         await tables.PlayerRow.raw(array_remove_script)
-        await tables.PlayerRow.create_table(if_not_exists=True)
         await tables.NodeRow.create_table(if_not_exists=True)
         await tables.NodeRow.raw(array_remove_script)
         await tables.QueryRow.create_table(if_not_exists=True)
         await tables.BotVersionRow.create_table(if_not_exists=True)
         await tables.AioHttpCacheRow.create_table(if_not_exists=True)
+
+    async def reset_database(self) -> None:
+        await tables.PlaylistRow.raw(
+            f"DROP TABLE "
+            f"{tables.PlaylistRow._meta.tablename}, "
+            f"{tables.LibConfigRow}, "
+            f"{tables.EqualizerRow}, "
+            f"{tables.PlayerStateRow}, "
+            f"{tables.PlayerRow}, "
+            f"{tables.NodeRow}, "
+            f"{tables.QueryRow}, "
+            f"{tables.BotVersionRow}, "
+            f"{tables.AioHttpCacheRow};"
+        )
+        await self.create_tables()
 
     def get_config(
         self,
