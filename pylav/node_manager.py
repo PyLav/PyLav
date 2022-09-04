@@ -448,7 +448,7 @@ class NodeManager:
         config_data = typing.cast(LibConfigModel, self.client._lib_config_manager.get_config())
         all_data = await config_data.fetch_all()
 
-        if all_data["java_path"] != JAVA_EXECUTABLE and JAVA_EXECUTABLE != "java" and os.path.exists(JAVA_EXECUTABLE):
+        if all_data["java_path"] != JAVA_EXECUTABLE and os.path.exists(JAVA_EXECUTABLE):
             await config_data.update_java_path(JAVA_EXECUTABLE)
 
         if all_data["use_bundled_pylav_external"]:

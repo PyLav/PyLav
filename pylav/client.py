@@ -337,11 +337,7 @@ class Client(metaclass=_Singleton):
                         auto_update_managed_nodes = config_data["auto_update_managed_nodes"]
                         enable_managed_node = config_data["enable_managed_node"]
 
-                        if (
-                            java_path != JAVA_EXECUTABLE
-                            and JAVA_EXECUTABLE != "java"
-                            and os.path.exists(JAVA_EXECUTABLE)
-                        ):
+                        if java_path != JAVA_EXECUTABLE and os.path.exists(JAVA_EXECUTABLE):
                             await self._config.update_java_path(JAVA_EXECUTABLE)
 
                         LOGGER.info("Config folder: %s", config_folder)

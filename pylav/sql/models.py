@@ -20,6 +20,7 @@ import yaml
 from packaging.version import LegacyVersion, Version
 from packaging.version import parse as parse_version
 
+from pylav.envvars import JAVA_EXECUTABLE
 from pylav.vendored import aiopath
 
 try:
@@ -35,7 +36,7 @@ from pylav.exceptions import InvalidPlaylist
 from pylav.filters import Equalizer
 from pylav.sql import tables
 from pylav.types import BotT
-from pylav.utils import PyLavContext, TimedFeature, get_jar_ram_defaults
+from pylav.utils import PyLavContext, TimedFeature, get_jar_ram_actual, get_true_path
 
 BRACKETS: re.Pattern = re.compile(r"[\[\]]")
 
@@ -383,7 +384,7 @@ class NodeModel:
         """Create the player in the database"""
         from pylav.utils.built_in_node import NODE_DEFAULT_SETTINGS
 
-        __, java_xmx_default, __, __ = get_jar_ram_defaults()
+        __, java_xmx_default, __, __ = get_jar_ram_actual(JAVA_EXECUTABLE)
 
         await tables.NodeRow.raw(
             """
@@ -1147,7 +1148,9 @@ class LibConfigModel:
             self.id,
             self.bot,
         )
-        return response[0]["java_path"] if response else tables.LibConfigRow.java_path.default
+        temp_path = response[0]["java_path"] if response else tables.LibConfigRow.java_path.default
+        java_path = get_true_path(temp_path, temp_path)
+        return java_path
 
     async def update_java_path(self, java_path: aiopath.AsyncPath | pathlib.Path | str) -> None:
         """Update the java path.
@@ -1157,6 +1160,7 @@ class LibConfigModel:
         java_path
             The new java path.
         """
+        java_path = get_true_path(java_path, java_path)
         await tables.LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, java_path)
@@ -1589,12 +1593,13 @@ class LibConfigModel:
         if response:
             data = response[0]
             data["extras"] = ujson.loads(data["extras"])
+            data["java_path"] = get_true_path(data["java_path"], data["java_path"])
             return data
         return {
             "id": self.id,
             "bot": self.bot,
             "config_folder": tables.LibConfigRow.config_folder.default,
-            "java_path": tables.LibConfigRow.java_path.default,
+            "java_path": get_true_path(tables.LibConfigRow.java_path.default, tables.LibConfigRow.java_path.default),
             "enable_managed_node": tables.LibConfigRow.enable_managed_node.default,
             "auto_update_managed_nodes": tables.LibConfigRow.auto_update_managed_nodes.default,
             "localtrack_folder": tables.LibConfigRow.localtrack_folder.default,

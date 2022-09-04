@@ -11,7 +11,6 @@ from piccolo.utils.pydantic import create_pydantic_model
 from pylav._config import CONFIG_DIR
 from pylav._logging import getLogger
 from pylav.envvars import (
-    JAVA_EXECUTABLE,
     POSTGRES_DATABASE,
     POSTGRES_HOST,
     POSTGRES_PASSWORD,
@@ -49,7 +48,7 @@ class LibConfigRow(Table, db=DB, tablename="lib_config"):
     id = BigInt(index=True)
     bot = BigInt(primary_key=True, index=True)
     config_folder = Text(null=False, default=str(CONFIG_DIR))
-    java_path = Text(null=False, default=JAVA_EXECUTABLE)
+    java_path = Text(null=False, default="java")
     enable_managed_node = Boolean(null=False, default=True)
     auto_update_managed_nodes = Boolean(null=False, default=True)
     localtrack_folder = Text(null=True, default=str(CONFIG_DIR / "music"))

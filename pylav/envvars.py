@@ -13,6 +13,13 @@ LOGGER = getLogger("PyLav.Environment")
 
 ENV_FILE = pathlib.Path.home() / "pylav.yaml"
 
+
+def __get_path(path: str) -> str:
+    from pylav.utils import get_true_path
+
+    return get_true_path(path, fallback=path)
+
+
 if not ENV_FILE.exists():
     LOGGER.warning(
         "%s does not exist - This is not a problem if it does then the environment variables will be read from it",
@@ -29,7 +36,7 @@ if not ENV_FILE.exists():
         POSTGRES_HOST = POSTGRES_SOCKET
     else:
         POSTGRES_HOST = _POSTGRES_HOST
-    JAVA_EXECUTABLE = os.getenv("PYLAV__JAVA_EXECUTABLE", "java")
+    JAVA_EXECUTABLE = __get_path(os.getenv("PYLAV__JAVA_EXECUTABLE") or "java")
     LINKED_BOT_IDS = list(map(str.strip, os.getenv("PYLAV__LINKED_BOT_IDS", "").split("|")))
     USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE = bool(int(os.getenv("PYLAV__USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE", "0")))
     USE_BUNDLED_EXTERNAL_PYLAV_NODE = bool(int(os.getenv("PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE", "1")))
@@ -127,7 +134,7 @@ else:
             data_new["PYLAV__USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE"] = USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE
 
         if (JAVA_EXECUTABLE := data.get("PYLAV__JAVA_EXECUTABLE")) is None:
-            JAVA_EXECUTABLE = os.getenv("PYLAV__JAVA_EXECUTABLE", "java")
+            JAVA_EXECUTABLE = __get_path(os.getenv("PYLAV__JAVA_EXECUTABLE") or "java")
             data_new["PYLAV__JAVA_EXECUTABLE"] = JAVA_EXECUTABLE
 
         if (EXTERNAL_UNMANAGED_HOST := data.get("PYLAV__EXTERNAL_UNMANAGED_HOST")) is None:

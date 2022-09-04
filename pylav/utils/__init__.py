@@ -7,8 +7,10 @@ import dataclasses
 import datetime
 import functools
 import math
+import os
 import platform
 import random
+import shutil
 import sys
 import threading
 import time
@@ -41,7 +43,33 @@ from discord.types.embed import EmbedType
 from discord.utils import MISSING as D_MISSING  # noqa
 from discord.utils import maybe_coroutine
 
-from pylav.types import BotT, CogT, ContextT, InteractionT
+
+@contextlib.contextmanager
+def add_env_path(path: str | os.PathLike) -> Iterator[str]:
+    path = os.fspath(path)
+    existing_path = "PATH" in os.environ
+    old_path = os.environ["PATH"] if existing_path else None
+    try:
+        if path not in os.environ["PATH"]:
+            yield path + os.pathsep + os.environ["PATH"]
+        else:
+            yield os.environ["PATH"]
+    finally:
+        if existing_path:
+            os.environ["PATH"] = old_path
+        else:
+            del os.environ["PATH"]
+
+
+def get_true_path(executable: str, fallback: T = None) -> str | T | None:
+    path = os.environ.get("JAVA_HOME", executable)
+    with add_env_path(path if os.path.isdir(path) else os.path.split(path)[0]) as path_string:
+        executable = shutil.which(executable, path=path_string)
+    return executable or fallback
+
+
+from pylav.envvars import JAVA_EXECUTABLE  # isort:skip
+from pylav.types import BotT, CogT, ContextT, InteractionT  # isort:skip
 
 try:
     from redbot.core.commands import Command
@@ -50,7 +78,7 @@ except ImportError:
     from discord.ext.commands import Command
     from discord.ext.commands import Context as _OriginalContextClass
 
-from discord.ext.commands import Context as DpyContext
+from discord.ext.commands import Context as DpyContext  # isort:skip
 
 if TYPE_CHECKING:
     from pylav import Player
@@ -119,8 +147,10 @@ def get_jar_ram_defaults() -> tuple[str, str, int, int]:
 
 
 def get_jar_ram_actual(executable: str) -> tuple[str, str, int, int]:
+    if not executable:
+        executable = JAVA_EXECUTABLE
+    executable = get_true_path(executable, sys.executable)
     max_allocation, is_64bit = get_max_allocation_size(executable)
-    max_allocation * 0.5 if is_64bit else max_allocation
     min_ram, max_ram, min_ram_int, max_ram_int = _calculate_ram(max_allocation, is_64bit)
     return min_ram, max_ram, min_ram_int, max_ram_int
 

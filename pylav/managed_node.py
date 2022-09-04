@@ -41,7 +41,7 @@ from pylav.exceptions import (
 )
 from pylav.node import Node
 from pylav.sql.models import NodeModel
-from pylav.utils import AsyncIter, ExponentialBackoffWithReset, get_jar_ram_actual
+from pylav.utils import AsyncIter, ExponentialBackoffWithReset, get_jar_ram_actual, get_true_path
 from pylav.vendored import aiopath
 
 if TYPE_CHECKING:
@@ -357,7 +357,7 @@ class LocalNodeManager:
         if self._java_available:
             # Return cached value if we've checked this before
             return self._java_available, self._java_version
-        java_exec = shutil.which(self._java_exc)
+        java_exec = get_true_path(self._java_exc)
         java_available = java_exec is not None
         if not java_available:
             self._java_available = False
