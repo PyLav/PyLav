@@ -40,7 +40,7 @@ class NodeConfigManager:
             NodeModel(**node)
             for node in await tables.NodeRow.select(tables.NodeRow.id)
             .output(load_json=True)
-            .where(tables.NodeRow.managed == False)  # noqa: E712
+            .where((tables.NodeRow.managed == False) & (tables.NodeRow.id.not_in(BUNDLED_NODES_IDS)))  # noqa: E712
         ]
         new_model_list = list(set(model_list)) if dedupe else model_list
         for n in new_model_list:
