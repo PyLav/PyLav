@@ -125,6 +125,7 @@ class LocalFile:
         ellipsis: bool = False,
         with_emoji: bool = False,
         no_extension: bool = False,
+        is_album: bool = False,
     ) -> str:
         if with_emoji:
             length -= 1
@@ -145,7 +146,7 @@ class LocalFile:
             if ellipsis and len(string) > length:
                 string = "\N{HORIZONTAL ELLIPSIS}" + f"{string[3:].strip()}"
             if with_emoji:
-                emoji = "\N{FILE FOLDER}" if await self.path.is_dir() else "\N{MULTIPLE MUSICAL NOTES}"
+                emoji = "\N{FILE FOLDER}" if is_album else "\N{MULTIPLE MUSICAL NOTES}"
                 string = emoji + string
             return string
 
@@ -167,7 +168,7 @@ class LocalFile:
             if ellipsis and len(string) > length:
                 string = "\N{HORIZONTAL ELLIPSIS}" + f"{string[length * -1:].strip()}"
         if with_emoji:
-            emoji = "\N{FILE FOLDER}" if await self.path.is_dir() else "\N{MULTIPLE MUSICAL NOTES}"
+            emoji = "\N{FILE FOLDER}" if is_album else "\N{MULTIPLE MUSICAL NOTES}"
             string = emoji + string
         return string
 
@@ -189,7 +190,7 @@ class LocalFile:
                         yield p
                 elif show_folders and path.is_relative_to(self._ROOT_FOLDER):
                     yield await Query.from_string(path)
-            elif not folder_only and await path.is_file():
+            elif (not folder_only) and await path.is_file():
                 if path.suffix.lower() in _ALL_EXTENSIONS and path.is_relative_to(self._ROOT_FOLDER):
                     yield await Query.from_string(path)
 

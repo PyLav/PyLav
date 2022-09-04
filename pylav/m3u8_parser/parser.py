@@ -569,7 +569,7 @@ def normalize_attribute(attribute):
 
 
 def is_url(uri):
-    return uri.startswith(URI_PREFIXES)
+    return f"{uri}".startswith(URI_PREFIXES)
 
 
 def urljoin(base, url):

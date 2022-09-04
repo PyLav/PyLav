@@ -205,6 +205,7 @@ class Query:
         index=0,
         query_type: Literal["single", "playlist", "album"] = None,
         recursive: bool = False,
+        special_local: bool = False,
     ):
         self._query = query
         self._source = source
@@ -213,6 +214,7 @@ class Query:
         self.index = index
         self._type = query_type or "single"
         self._recursive = recursive
+        self._special_local = special_local
         from pylav.localfiles import LocalFile
 
         self.__localfile_cls = LocalFile
@@ -306,7 +308,7 @@ class Query:
 
     @property
     def is_local(self) -> bool:
-        return self.source == "Local Files"
+        return self.source == "Local Files" or (self._special_local and (self.is_m3u or self.is_pls or self.is_pylav))
 
     @property
     def is_niconico(self) -> bool:
@@ -456,8 +458,19 @@ class Query:
             cls.__localfile_cls = LocalFile
         recursively = False
         query = f"{query}"
-        if match := M3U_REGEX.match(query):
-            return cls(query, "M3U", query_type="album")
+        if __ := M3U_REGEX.match(query):
+            path: aiopath.AsyncPath = aiopath.AsyncPath(query)
+            if not await path.exists():
+                path_paths = path.parts[1:] if await maybe_coroutine(path.is_absolute) else path.parts
+                path = cls.__localfile_cls._ROOT_FOLDER.joinpath(*path_paths)
+                if not await path.exists():
+                    raise ValueError(f"{path} does not exist")
+            try:
+                local_path = cls.__localfile_cls(await maybe_coroutine(path.absolute))
+                await local_path.initialize()
+            except Exception as e:
+                raise ValueError(f"{e}") from e
+            return cls(local_path, "M3U", query_type="album", recursive=True, special_local=True)
         if match := LOCAL_TRACK_URI_REGEX.match(query):
             query = match.group("local_file").strip()
         elif match := LOCAL_TRACK_NESTED.match(query):
@@ -479,14 +492,15 @@ class Query:
 
     @classmethod
     async def __process_playlist(cls, query: str) -> Query | None:
+        url = is_url(query)
         if __ := M3U_REGEX.match(query):
-            return cls(query, "M3U", query_type="album")
+            return cls(query, "M3U", query_type="album", special_local=not url)
         elif __ := PLS_REGEX.match(query):
-            return cls(query, "PLS", query_type="album")
+            return cls(query, "PLS", query_type="album", special_local=not url)
         # elif __ := XSPF_REGEX.match(query):
         #     return cls(query, "XSPF", query_type="album")
         elif __ := PYLAV_REGEX.match(query):
-            return cls(query, "PyLav", query_type="album")
+            return cls(query, "PyLav", query_type="album", special_local=not url)
 
     @classmethod
     async def from_string(
@@ -494,7 +508,7 @@ class Query:
     ) -> Query:
         if isinstance(query, Query):
             return query
-        if isinstance(query, pathlib.Path):
+        if isinstance(query, (aiopath.AsyncPath, pathlib.Path)):
             try:
                 return await cls.__process_local(query)
             except Exception:
@@ -519,6 +533,8 @@ class Query:
             return output
         else:
             try:
+                if is_url(query):
+                    raise ValueError
                 output = await cls.__process_local(query)
                 if source:
                     output._source = cls.__get_source_from_str(source)
@@ -575,7 +591,12 @@ class Query:
 
         if self.is_local:
             return await self._query.to_string_user(
-                max_length, name_only=name_only, ellipsis=ellipsis, with_emoji=with_emoji, no_extension=no_extension
+                max_length,
+                name_only=name_only,
+                ellipsis=ellipsis,
+                with_emoji=with_emoji,
+                no_extension=no_extension,
+                is_album=self.is_album,
             )
 
         if max_length and len(self._query) > max_length:
@@ -614,7 +635,7 @@ class Query:
 
     async def _yield_m3u_tracks(self) -> AsyncIterator[Query]:
         if self.is_m3u and self.is_album:
-            m3u8 = await load_m3u8(None, uri=self._query)
+            m3u8 = await load_m3u8(None, uri=f"{self._query}")
             for track in m3u8.files:
                 yield await Query.from_string(track, dont_search=True)
             for playlist in m3u8.playlists:
