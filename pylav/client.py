@@ -397,22 +397,27 @@ class Client(metaclass=_Singleton):
                             and self.enable_managed_node
                         ):
                             await self._local_node_manager.wait_until_connected()
-                        await self.player_manager.restore_player_states()
                         time_now = datetime.datetime.now(tz=datetime.timezone.utc)
                         if await self._config.fetch_next_execution_update_bundled_playlists() is None:
                             await self._config.update_next_execution_update_bundled_playlists(
-                                time_now + datetime.timedelta(minutes=5)
+                                time_now + datetime.timedelta(minutes=5, days=1)
                             )
 
                         if await self._config.fetch_next_execution_update_bundled_external_playlists() is None:
                             await self._config.update_next_execution_update_bundled_external_playlists(
-                                time_now + datetime.timedelta(minutes=10)
+                                time_now + datetime.timedelta(minutes=10, days=7)
                             )
 
                         if await self._config.fetch_next_execution_update_external_playlists() is None:
                             await self._config.update_next_execution_update_external_playlists(
                                 time_now + datetime.timedelta(minutes=30)
                             )
+                        if await self.playlist_db_manager.count() == 0:
+                            await self.playlist_db_manager.update_bundled_playlists()
+                            await self.playlist_db_manager.update_bundled_external_playlists()
+
+                        await self.player_manager.restore_player_states()
+
                         self._scheduler.add_job(
                             self._query_cache_manager.delete_old,
                             trigger="interval",

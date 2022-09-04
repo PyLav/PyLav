@@ -4,6 +4,7 @@ from functools import lru_cache
 from typing import TYPE_CHECKING
 
 from pylav._logging import getLogger
+from pylav.constants import BUNDLED_NODES_IDS
 from pylav.sql import tables
 from pylav.sql.models import NodeModel
 
@@ -150,3 +151,7 @@ class NodeConfigManager:
         if node_id == self._client.bot.user.id:
             raise ValueError("Cannot delete bundled node")
         await self.get_node_config(node_id=node_id).delete()
+
+    async def count(self) -> int:
+        """Return the number of unbundled nodes in the database."""
+        return await tables.NodeRow.count().where(tables.NodeRow.id.not_in(BUNDLED_NODES_IDS))

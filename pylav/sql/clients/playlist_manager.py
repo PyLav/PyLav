@@ -396,3 +396,7 @@ class PlaylistConfigManager:
                         playlist.id,
                         exc_info=exc,
                     )
+
+    async def count(self) -> int:
+        """Returns the number of playlists in the database."""
+        return await tables.PlaylistRow.count()
