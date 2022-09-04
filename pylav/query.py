@@ -1,12 +1,15 @@
 from __future__ import annotations
 
+import asyncio
 import contextlib
+import gzip
 import pathlib
 import re
 from collections.abc import AsyncIterator
 from typing import TYPE_CHECKING, Literal
 
 import aiohttp
+import yaml
 from discord.utils import maybe_coroutine
 
 from pylav._logging import getLogger
@@ -227,7 +230,7 @@ class Query:
         start_time: bool = False,
         index: bool = False,
         recursive: bool = False,
-    ) -> Query:
+    ):
         if source:
             self._source = query.source
         if search:
@@ -451,6 +454,21 @@ class Query:
                 return cls(query, "YouTube Music", search=True)  # Fallback to YouTube
 
     @classmethod
+    async def __process_local_playlist(cls, query: str) -> LocalFile:
+        path: aiopath.AsyncPath = aiopath.AsyncPath(query)
+        if not await path.exists():
+            path_paths = path.parts[1:] if await maybe_coroutine(path.is_absolute) else path.parts
+            path = cls.__localfile_cls._ROOT_FOLDER.joinpath(*path_paths)
+            if not await path.exists():
+                raise ValueError(f"{path} does not exist")
+        try:
+            local_path = cls.__localfile_cls(await maybe_coroutine(path.absolute))
+            await local_path.initialize()
+        except Exception as e:
+            raise ValueError(f"{e}") from e
+        return local_path
+
+    @classmethod
     async def __process_local(cls, query: str | pathlib.Path | aiopath.AsyncPath) -> Query:
         if cls.__localfile_cls is None:
             from pylav.localfiles import LocalFile
@@ -458,19 +476,8 @@ class Query:
             cls.__localfile_cls = LocalFile
         recursively = False
         query = f"{query}"
-        if __ := M3U_REGEX.match(query):
-            path: aiopath.AsyncPath = aiopath.AsyncPath(query)
-            if not await path.exists():
-                path_paths = path.parts[1:] if await maybe_coroutine(path.is_absolute) else path.parts
-                path = cls.__localfile_cls._ROOT_FOLDER.joinpath(*path_paths)
-                if not await path.exists():
-                    raise ValueError(f"{path} does not exist")
-            try:
-                local_path = cls.__localfile_cls(await maybe_coroutine(path.absolute))
-                await local_path.initialize()
-            except Exception as e:
-                raise ValueError(f"{e}") from e
-            return cls(local_path, "M3U", query_type="album", recursive=True, special_local=True)
+        if playlist_cls := await cls.__process_playlist(query):
+            return playlist_cls
         if match := LOCAL_TRACK_URI_REGEX.match(query):
             query = match.group("local_file").strip()
         elif match := LOCAL_TRACK_NESTED.match(query):
@@ -493,14 +500,13 @@ class Query:
     @classmethod
     async def __process_playlist(cls, query: str) -> Query | None:
         url = is_url(query)
+        query_final = query if url else await cls.__process_local_playlist(query)
         if __ := M3U_REGEX.match(query):
-            return cls(query, "M3U", query_type="album", special_local=not url)
+            return cls(query_final, "M3U", query_type="album", special_local=not url)
         elif __ := PLS_REGEX.match(query):
-            return cls(query, "PLS", query_type="album", special_local=not url)
-        # elif __ := XSPF_REGEX.match(query):
-        #     return cls(query, "XSPF", query_type="album")
+            return cls(query_final, "PLS", query_type="album", special_local=not url)
         elif __ := PYLAV_REGEX.match(query):
-            return cls(query, "PyLav", query_type="album", special_local=not url)
+            return cls(query_final, "PyLav", query_type="album", special_local=not url)
 
     @classmethod
     async def from_string(
@@ -520,32 +526,40 @@ class Query:
         source = None
         if len(query) > 20 and BASE64_TEST_REGEX.match(query):
             with contextlib.suppress(Exception):
-                data, _ = decode_track(query)
+                data, _ = await asyncio.to_thread(decode_track, query)
                 source = data["info"]["source"]
                 query = data["info"]["uri"]
-        if not dont_search and (output := await cls.__process_playlist(query)):
-            if source:
-                output._source = cls.__get_source_from_str(source)
-            return output
-        if (output := cls.__process_urls(query)) or (output := cls.__process_search(query)):
-            if source:
-                output._source = cls.__get_source_from_str(source)
-            return output
-        else:
-            try:
-                if is_url(query):
-                    raise ValueError
-                output = await cls.__process_local(query)
+        try:
+            if not dont_search and (output := await cls.__process_playlist(query)):
                 if source:
                     output._source = cls.__get_source_from_str(source)
                 return output
-            except Exception:
-                if dont_search:
-                    return cls("invalid", "invalid")
-                output = cls(query, "YouTube Music", search=True)
+            if (output := cls.__process_urls(query)) or (output := cls.__process_search(query)):
                 if source:
                     output._source = cls.__get_source_from_str(source)
-                return output  # Fallback to YouTube Music
+                return output
+            else:
+                try:
+                    if is_url(query):
+                        raise ValueError
+                    output = await cls.__process_local(query)
+                    if source:
+                        output._source = cls.__get_source_from_str(source)
+                    return output
+                except Exception:
+                    if dont_search:
+                        return cls("invalid", "invalid")
+                    output = cls(query, "YouTube Music", search=True)
+                    if source:
+                        output._source = cls.__get_source_from_str(source)
+                    return output  # Fallback to YouTube Music
+        except Exception:
+            if dont_search:
+                return cls("invalid", "invalid")
+            output = cls(query, "YouTube Music", search=True)
+            if source:
+                output._source = cls.__get_source_from_str(source)
+            return output  # Fallback to YouTube Music
 
     @classmethod
     def from_string_noawait(cls, query: Query | str) -> Query:
@@ -598,29 +612,34 @@ class Query:
                 no_extension=no_extension,
                 is_album=self.is_album,
             )
-
         if max_length and len(self._query) > max_length:
             if ellipsis:
                 return f"{self._query[: max_length - 1].strip()}" + "\N{HORIZONTAL ELLIPSIS}"
             else:
                 return self._query[:max_length].strip()
-
         return self._query
 
     async def _yield_pylav_file_tracks(self) -> AsyncIterator[Query]:
-        if self.is_pylav and self.is_album:
+        if not self.is_pylav or not self.is_album:
+            return
+        if self._special_local:
+            file = self._query.path
+        else:
             file = aiopath.AsyncPath(self._query)
-            if await file.exists():
-                async with file.open("r") as f:
-                    contents = await f.read()
+        if await file.exists():
+            async with file.open("rb") as f:
+                contents = await f.read()
+                with contextlib.suppress(gzip.BadGzipFile):
+                    contents = gzip.decompress(contents)
+                contents = yaml.safe_load(contents)
+                for track in contents.get("tracks", []):
+                    yield await Query.from_base64(track)
+        elif is_url(self._query):
+            async with aiohttp.ClientSession() as session:
+                async with session.get(self._query) as resp:
+                    contents = await resp.text()
                     for line in contents.splitlines():
                         yield await Query.from_string(line.strip(), dont_search=True)
-            elif is_url(self._query):
-                async with aiohttp.ClientSession() as session:
-                    async with session.get(self._query) as resp:
-                        contents = await resp.text()
-                        for line in contents.splitlines():
-                            yield await Query.from_string(line.strip(), dont_search=True)
 
     async def _yield_local_tracks(self) -> AsyncIterator[Query]:
         if self.is_album:
@@ -644,7 +663,10 @@ class Query:
     async def _yield_pls_tracks(self) -> AsyncIterator[Query]:
         if not self.is_pls or not self.is_album:
             return
-        file = aiopath.AsyncPath(self._query)
+        if self._special_local:
+            file = self._query.path
+        else:
+            file = aiopath.AsyncPath(self._query)
         if await file.exists():
             async with file.open("r") as f:
                 contents = await f.read()
@@ -755,7 +777,7 @@ class Query:
 
     @classmethod
     async def from_base64(cls, base64_string: str) -> Query:
-        data, _ = decode_track(base64_string)
+        data, _ = await asyncio.to_thread(decode_track, base64_string)
         source = data["info"]["source"]
         url = data["info"]["uri"]
         response = await cls.from_string(url)

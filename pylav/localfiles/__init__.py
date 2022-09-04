@@ -29,6 +29,9 @@ __PARTIALLY_SUPPORTED_MUSIC_EXT: tuple[str, ...] = (
     ".wma",
     ".ts",
     ".au",
+    ".m3u8",
+    ".pls",
+    ".pylav",
     # These do not work
     # ".mid",
     # ".mka",
@@ -79,6 +82,9 @@ class LocalFile:
 
     def __str__(self) -> str:
         return str(self._path)
+
+    def __repr__(self) -> str:
+        return f"<LocalFile path={self._path}>"
 
     async def initialize(self) -> None:
         if self.__init:

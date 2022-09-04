@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 import datetime
 import gzip
 import io
@@ -2073,7 +2074,8 @@ class PlaylistModel:
             async with aiohttp.ClientSession(auto_decompress=False) as session:
                 async with session.get(url) as response:
                     data = await response.read()
-                    data = gzip.decompress(data)
+                    with contextlib.suppress(gzip.BadGzipFile):
+                        data = gzip.decompress(data)
                     data = yaml.safe_load(data)
         except Exception as e:
             raise InvalidPlaylist(f"Invalid playlist file - {e}") from e
@@ -2339,7 +2341,8 @@ class EqualizerModel:
             async with aiohttp.ClientSession(auto_decompress=False) as session:
                 async with session.get(url) as response:
                     data = await response.read()
-                    data = gzip.decompress(data)
+                    with contextlib.suppress(gzip.BadGzipFile):
+                        data = gzip.decompress(data)
                     data = yaml.safe_load(data)
         except Exception as e:
             raise InvalidPlaylist(f"Invalid equalizer file - {e}") from e

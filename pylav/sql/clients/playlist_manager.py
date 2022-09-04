@@ -4,11 +4,11 @@ import asyncio
 import contextlib
 import datetime
 import pathlib
-import time
+import typing
+from collections import namedtuple
 from collections.abc import AsyncIterator
 from typing import TYPE_CHECKING
 
-import asyncstdlib
 import discord
 
 from pylav._logging import getLogger
@@ -21,7 +21,7 @@ from pylav.exceptions import EntryNotFoundError
 from pylav.sql import tables
 from pylav.sql.models import PlaylistModel
 from pylav.types import BotT
-from pylav.utils import AsyncIter
+from pylav.utils import AsyncIter, PyLavContext
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -287,25 +287,22 @@ class PlaylistConfigManager:
             id_filtered = {id: curated_data[id] for id in ids}
             if not id_filtered:
                 id_filtered = curated_data
-            for id, (name, url) in id_filtered.items():
-                async with self._client.cached_session.get(
-                    url, params={"timestamp": int(time.time())}, headers={"content-type": "application/json"}
-                ) as response:
-                    try:
-                        data = await response.text()
-                    except Exception as exc:
-                        LOGGER.error("Built-in playlist couldn't be parsed - %s, report this error", name, exc_info=exc)
-                        data = None
-                    if not data:
-                        await self.client._config.update_next_execution_update_bundled_playlists(old_time_stamp)
-                        continue
-                    if tracks := [t async for t in asyncstdlib.map(str.strip, data.splitlines()) if t]:
-                        LOGGER.info("Updating bundled playlist - %s (%s)", name, id)
-                        await self.create_or_update_global_playlist(
-                            id=id, name=name, tracks=tracks, author=self._client.bot.user.id
-                        )
-                    else:
-                        await self.delete_playlist(playlist_id=id)
+            for playlist_id, (name, url) in id_filtered.items():
+                try:
+                    ctx = typing.cast(
+                        PyLavContext, namedtuple("PyLavContext", "message")(message=discord.Object(id=playlist_id))
+                    )
+                    playlist = await PlaylistModel.from_yaml(context=ctx, url=url, scope=self._client.bot.user.id)
+                    playlist.name = name
+                    playlist.author = self._client.bot.user.id
+                    playlist.scope = self._client.bot.user.id
+                    await playlist.save()
+                except Exception as exc:
+                    LOGGER.error("Built-in playlist couldn't be parsed - %s, report this error", name, exc_info=exc)
+                    playlist = None
+                if not playlist:
+                    await self.client._config.update_next_execution_update_bundled_playlists(old_time_stamp)
+                    continue
 
     async def update_bundled_external_playlists(self, *ids: int) -> None:
         from pylav.query import Query
