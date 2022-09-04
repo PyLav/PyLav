@@ -27,7 +27,7 @@ known_third_party = [
     "asyncstdlib",
     "cached_property",
     "discord",
-    "deepdiff",
+    "deepdiff6",
     "expiringdict",
     "humanize",
     "iso8601",
