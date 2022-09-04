@@ -35,7 +35,7 @@ from pylav.exceptions import InvalidPlaylist
 from pylav.filters import Equalizer
 from pylav.sql import tables
 from pylav.types import BotT
-from pylav.utils import PyLavContext, TimedFeature
+from pylav.utils import PyLavContext, TimedFeature, get_jar_ram_defaults
 
 BRACKETS: re.Pattern = re.compile(r"[\[\]]")
 
@@ -383,6 +383,8 @@ class NodeModel:
         """Create the player in the database"""
         from pylav.utils.built_in_node import NODE_DEFAULT_SETTINGS
 
+        __, java_xmx_default, __, __ = get_jar_ram_defaults()
+
         await tables.NodeRow.raw(
             """
                     INSERT INTO node
@@ -400,7 +402,7 @@ class NodeModel:
             "PyLavManagedNode",
             None,
             600,
-            ujson.dumps({"max_ram": "2048M"}),
+            ujson.dumps({"max_ram": java_xmx_default}),
         )
 
 

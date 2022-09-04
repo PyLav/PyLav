@@ -6,7 +6,10 @@ import contextlib
 import dataclasses
 import datetime
 import functools
+import math
+import platform
 import random
+import sys
 import threading
 import time
 from asyncio import QueueFull, events, locks
@@ -19,6 +22,7 @@ from types import GenericAlias
 from typing import TYPE_CHECKING, Any, Callable, Optional, Tuple, TypeVar, Union
 
 import discord  # type: ignore
+import psutil
 from async_lru import (
     _cache_clear,
     _cache_hit,
@@ -77,6 +81,48 @@ LOGGER = getLogger("PyLav.utils")
 _RED_LOGGER = getLogger("red")
 
 _LOCK = threading.Lock()
+
+
+def get_max_allocation_size(executable: str) -> tuple[int, bool]:
+    if platform.architecture(executable)[0] == "64bit":
+        max_heap_allowed = psutil.virtual_memory().total
+        thinks_is_64_bit = True
+    else:
+        max_heap_allowed = 4 * 1024**3
+        thinks_is_64_bit = False
+    return max_heap_allowed, thinks_is_64_bit
+
+
+def _calculate_ram(max_allocation: int, is_64bit: bool) -> tuple[str, str, int, int]:
+    min_ram_int = 64 * 1024**2
+    max_ram_allowed = max_allocation * 0.5 if is_64bit else max_allocation
+    max_ram_int = max(min_ram_int, max_ram_allowed)
+    size_name = ("", "K", "M", "G", "T")
+    i = int(math.floor(math.log(min_ram_int, 1024)))
+    p = math.pow(1024, i)
+    s = int(min_ram_int // p)
+    min_ram = f"{s}{size_name[i]}"
+
+    i = int(math.floor(math.log(max_ram_int, 1024)))
+    p = math.pow(1024, i)
+    s = int(max_ram_int // p)
+    max_ram = f"{s}{size_name[i]}"
+
+    return min_ram, max_ram, min_ram_int, max_ram_int
+
+
+def get_jar_ram_defaults() -> tuple[str, str, int, int]:
+    # We don't know the java executable at this stage - not worth the extra work required here
+    max_allocation, is_64bit = get_max_allocation_size(sys.executable)
+    min_ram, max_ram, min_ram_int, max_ram_int = _calculate_ram(max_allocation, is_64bit)
+    return min_ram, max_ram, min_ram_int, max_ram_int
+
+
+def get_jar_ram_actual(executable: str) -> tuple[str, str, int, int]:
+    max_allocation, is_64bit = get_max_allocation_size(executable)
+    max_allocation * 0.5 if is_64bit else max_allocation
+    min_ram, max_ram, min_ram_int, max_ram_int = _calculate_ram(max_allocation, is_64bit)
+    return min_ram, max_ram, min_ram_int, max_ram_int
 
 
 def alru_cache(fn=None, maxsize=128, typed=False, *, cache_exceptions=True, ignore_kwargs=None):

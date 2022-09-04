@@ -41,7 +41,7 @@ from pylav.exceptions import (
 )
 from pylav.node import Node
 from pylav.sql.models import NodeModel
-from pylav.utils import AsyncIter, ExponentialBackoffWithReset
+from pylav.utils import AsyncIter, ExponentialBackoffWithReset, get_jar_ram_actual
 from pylav.vendored import aiopath
 
 if TYPE_CHECKING:
@@ -146,16 +146,6 @@ def change_dict_naming_convention(data: dict) -> dict:
                     new_v.append(x)
         new[convert_function(k)] = new_v
     return new
-
-
-def get_max_allocation_size(executable: str) -> tuple[int, bool]:
-    if platform.architecture(executable)[0] == "64bit":
-        max_heap_allowed = psutil.virtual_memory().total
-        thinks_is_64_bit = True
-    else:
-        max_heap_allowed = 4 * 1024**3
-        thinks_is_64_bit = False
-    return max_heap_allowed, thinks_is_64_bit
 
 
 class LocalNodeManager:
@@ -342,9 +332,10 @@ class LocalNodeManager:
         if not java_available:
             raise Exception(_("Pylav - Java executable not  found, tried to use: '{self._java_exc}'").format(self=self))
 
+        java_xms_default, java_xmx_default, __, java_max_allowed_ram = get_jar_ram_actual(self._java_exc)
         java_xms, java_xmx = (
-            "64M",
-            (await self._client.node_db_manager.bundled_node_config().fetch_extras()).get("max_ram", "2048M"),
+            java_xms_default,
+            (await self._client.node_db_manager.bundled_node_config().fetch_extras()).get("max_ram", java_xmx_default),
         )
 
         match = re.match(r"^(\d+)([MG])$", java_xmx, flags=re.IGNORECASE)
@@ -353,11 +344,7 @@ class LocalNodeManager:
             command_args.append("-Djdk.tls.client.protocols=TLSv1.2")
         meta = 0, None
         invalid = None
-        if (
-            match
-            and int(match[1]) * 1024 ** (2 if match[2].lower() == "m" else 3)
-            <= (meta := get_max_allocation_size(self._java_exc))[0]
-        ):
+        if match and int(match[1]) * 1024 ** (2 if match[2].lower() == "m" else 3) <= java_max_allowed_ram:
             command_args.append(f"-Xmx{java_xmx}")
         elif meta[0] is not None:
             invalid = "Managed Lavalink node RAM allocation ignored due to system limitations, please fix this"
