@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-09-04 12:27+0000\n"
-"PO-Revision-Date: 2022-09-04 12:29\n"
+"PO-Revision-Date: 2022-09-04 20:34\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -19,15 +19,15 @@ msgstr ""
 
 #: pylav/utils/__init__.py:1036
 msgid "{} remaining. Type `more` to continue."
-msgstr ""
+msgstr "{} restant. Tapez `more` pour continuer."
 
 #: pylav/utils/__init__.py:1037
 msgid "There is still 1 message"
-msgstr ""
+msgstr "Il y a encore 1 message"
 
 #: pylav/utils/__init__.py:1039
 msgid "There are still {remaning} messages"
-msgstr ""
+msgstr "Il y a encore {remaning} messages"
 
 #: pylav/utils/__init__.py:1094
 #, docstring

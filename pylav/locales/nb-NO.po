@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-09-04 17:20+0000\n"
-"PO-Revision-Date: 2022-09-04 17:23\n"
+"PO-Revision-Date: 2022-09-04 20:34\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "MIME-Version: 1.0\n"
@@ -44,7 +44,7 @@ msgstr "Du prøver å kjøre den administrerte Lavalink noden på en ustøttet m
 
 #: pylav/managed_node.py:333
 msgid "Pylav - Java executable not found, tried to use: '{self._java_exc}'"
-msgstr ""
+msgstr "Pylav - Java kjørbar kunne ikke finnes, prøvde å bruke: '{self._java_exc}'"
 
 #: pylav/managed_node.py:401
 msgid "The output of `{java_exc} -version` was unexpected\n"
