@@ -1033,7 +1033,7 @@ class PyLavContext(_OriginalContextClass):
             n_remaining = len(messages) - idx
             if n_remaining > 0:
                 query = await self.send(
-                    _("{} remaining. " "Type `more` to continue.").format(
+                    _("{} remaining. Type `more` to continue.").format(
                         _("There is still 1 message")
                         if n_remaining == 1
                         else _("There are still {remaning} messages").format(remaning=n_remaining)

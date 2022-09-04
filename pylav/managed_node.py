@@ -330,7 +330,7 @@ class LocalNodeManager:
     async def _get_jar_args(self) -> tuple[list[str], str | None]:
         java_available, java_version = await self._has_java()
         if not java_available:
-            raise Exception(_("Pylav - Java executable not  found, tried to use: '{self._java_exc}'").format(self=self))
+            raise Exception(_("Pylav - Java executable not found, tried to use: '{self._java_exc}'").format(self=self))
 
         java_xms_default, java_xmx_default, __, java_max_allowed_ram = get_jar_ram_actual(self._java_exc)
         java_xms, java_xmx = (
