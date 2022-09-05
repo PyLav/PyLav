@@ -119,7 +119,7 @@ jobs:
                 user: __token__
                 password: ${{ secrets.PYPI_TOKEN }}
     crowdin-upload:
-        needs: [publish]
+        needs: [release]
         if: ${{ startsWith(github.event.head_commit.message, '[PERSONAL_ACCESS_TOKENch]') || startsWith(github.event.head_commit.message, '[minor]') || startsWith(github.event.head_commit.message, '[major]') }}
         runs-on: ubuntu-latest
         name: Upload the latest strings to Crowdin
