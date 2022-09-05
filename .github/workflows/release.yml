@@ -15,9 +15,9 @@ jobs:
     bump_version:
         name: Bump release version
         runs-on: ubuntu-latest
-        if: ${{ startsWith(github.event.head_commit.message, '[patch]') || startsWith(github.event.head_commit.message, '[minor]') || startsWith(github.event.head_commit.message, '[major]') }}
+        if: ${{ startsWith(github.event.head_commit.message, '[post]') || startsWith(github.event.head_commit.message, '[patch]') || startsWith(github.event.head_commit.message, '[minor]') || startsWith(github.event.head_commit.message, '[major]') }}
         env:
-            RELEASE_TYPE: ${{ startsWith(github.event.head_commit.message, '[patch]') && 'patch' || startsWith(github.event.head_commit.message, '[minor]') && 'minor' || startsWith(github.event.head_commit.message, '[major]') && 'major' }}
+            RELEASE_TYPE: ${{ startsWith(github.event.head_commit.message, '[post]') && 'post' || startsWith(github.event.head_commit.message, '[patch]') && 'patch' || startsWith(github.event.head_commit.message, '[minor]') && 'minor' || startsWith(github.event.head_commit.message, '[major]') && 'major' }}
         steps:
         -   uses: actions/checkout@v3
             with:
