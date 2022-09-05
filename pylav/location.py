@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import socket
+import typing
 from math import asin, cos, sqrt
 
 import aiohttp
@@ -17,10 +18,15 @@ def distance(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     return 12742 * asin(sqrt(hav))
 
 
-async def closest(data, v: tuple[float, float], *, region_pool: set[str] = None) -> tuple[float, float]:
+async def closest(
+    data: typing.ItemsView[str, tuple[float, float]], v: tuple[float, float], *, region_pool: set[str] = None
+) -> tuple[str, tuple[float, float]]:
     if region_pool is None:
         region_pool = set()
-    entries = await asyncstdlib.list(asyncstdlib.filter(lambda x: not region_pool or x[0] in region_pool, data))
+    entries = typing.cast(
+        list[tuple[str, tuple[float, float]]],
+        await asyncstdlib.list(asyncstdlib.filter(lambda x: not region_pool or x[0] in region_pool, data)),
+    )
     return await asyncstdlib.min(
         entries,
         key=lambda p: distance(v[0], v[1], p[1][0], p[1][1]),

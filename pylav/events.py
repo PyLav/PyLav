@@ -72,7 +72,7 @@ class TrackStuckEvent(Event):
         The player that has the playing track being stuck.
     track: :class:`Track`
         The track is stuck from playing.
-    threshold: :class:`int`
+    threshold: :class:`float`
         The amount of time the track had while being stuck.
     node: :class:`Node`
         The node that the stuck track is playing on.
@@ -1176,9 +1176,9 @@ class PlayerUpdateEvent(Event):
     ----------
     player: :class:`Player`
         The player that's progress was updated.
-    position: :class:`int`
+    position: :class:`float`
         The position of the player that was changed to.
-    timestamp: :class:`int`
+    timestamp: :class:`float`
         The timestamp that the player is currently on.
     """
 

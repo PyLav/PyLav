@@ -330,7 +330,7 @@ class LocalNodeManager:
     async def _get_jar_args(self) -> tuple[list[str], str | None]:
         java_available, java_version = await self._has_java()
         if not java_available:
-            raise Exception(_("Pylav - Java executable not found, tried to use: '{self._java_exc}'").format(self=self))
+            raise Exception(f"Pylav - Java executable not found, tried to use: '{self._java_exc}'")
 
         java_xms_default, java_xmx_default, __, java_max_allowed_ram = get_jar_ram_actual(self._java_exc)
         java_xms, java_xmx = (
@@ -423,7 +423,7 @@ class LocalNodeManager:
                 )
             if self._proc.returncode is not None:
                 # Avoid Console spam only print once every 2 seconds
-                raise EarlyExitError(_("Managed Lavalink node server exited early"))
+                raise EarlyExitError("Managed Lavalink node server exited early")
 
     async def shutdown(self) -> None:
         if self.start_monitor_task is not None:
