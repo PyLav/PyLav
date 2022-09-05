@@ -61,7 +61,22 @@ __PARTIALLY_SUPPORTED_VIDEO_EXT: tuple[str, ...] = (
     # ".mpeg",
     # ".swf",
 )
-__PARTIALLY_SUPPORTED_EXTENSION = __PARTIALLY_SUPPORTED_MUSIC_EXT + __PARTIALLY_SUPPORTED_VIDEO_EXT
+
+__PLUGIN_SUPPORTED_EXT: tuple[str, ...] = (
+    # https://github.com/esmBot/lava-xm-plugin
+    # More can be supported but theres just too many to add,
+    #  As people show up with the need to add more I will add them
+    #  Full list of supported format: https://github.com/libxmp/libxmp/tree/master/docs/formats
+    ".mod",
+    ".s3m",
+    ".xm",
+    ".it",
+    ".ahx",
+    # -------------------------------
+)
+__PARTIALLY_SUPPORTED_EXTENSION = (
+    __PARTIALLY_SUPPORTED_MUSIC_EXT + __PARTIALLY_SUPPORTED_VIDEO_EXT + __PLUGIN_SUPPORTED_EXT
+)
 
 _ALL_EXTENSIONS = __FULLY_SUPPORTED_MUSIC + __PARTIALLY_SUPPORTED_EXTENSION
 
