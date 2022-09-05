@@ -989,7 +989,7 @@ class PyLavContext(_OriginalContextClass):
         self.bot.dispatch("message", msg)
 
     async def send_interactive(
-        self, messages: Iterable[str], box_lang: str = None, timeout: int = 15, embed: bool = True
+        self, messages: Iterable[str], box_lang: str = None, timeout: int = 15, embed: bool = False
     ) -> list[discord.Message]:
         """Send multiple messages interactively.
 
