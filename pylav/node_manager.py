@@ -494,6 +494,12 @@ class NodeManager:
                 )
         tasks = [asyncio.create_task(n.wait_until_ready()) for n in nodes_list]
         if not tasks:
+            if (
+                not (self._unmanaged_external_password and self._unmanaged_external_host)
+                and self.client.enable_managed_node
+            ):
+                self._adding_nodes.set()
+                return
             LOGGER.warning("No nodes found, please add some nodes")
             return
         done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
