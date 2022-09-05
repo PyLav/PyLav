@@ -46,7 +46,18 @@ from pylav.events import (
     TrackStuckEvent,
 )
 from pylav.exceptions import EntryNotFoundError, NoNodeWithRequestFunctionalityAvailable, TrackNotFound
-from pylav.filters import ChannelMix, Distortion, Equalizer, Karaoke, LowPass, Rotation, Timescale, Vibrato, Volume
+from pylav.filters import (
+    ChannelMix,
+    Distortion,
+    Echo,
+    Equalizer,
+    Karaoke,
+    LowPass,
+    Rotation,
+    Timescale,
+    Vibrato,
+    Volume,
+)
 from pylav.filters.tremolo import Tremolo
 from pylav.query import Query
 from pylav.sql.models import PlayerModel, PlayerStateModel, PlaylistModel
@@ -128,6 +139,7 @@ class Player(VoiceProtocol):
         self._vibrato: Vibrato = Vibrato.default()
         self._rotation: Rotation = Rotation.default()
         self._distortion: Distortion = Distortion.default()
+        self._echo: Echo = Echo.default()
         self._low_pass: LowPass = LowPass.default()
         self._channel_mix: ChannelMix = ChannelMix.default()
 
@@ -188,6 +200,8 @@ class Player(VoiceProtocol):
                 self._low_pass = f
             if (ch := effects.get("channel_mix", None)) and (f := ChannelMix.from_dict(ch)) and f.changed:
                 self._channel_mix = f
+            if (echo := effects.get("echo", None)) and (f := Echo.from_dict(echo)) and f.changed:
+                self._echo = f
             if await asyncstdlib.any(
                 f.changed
                 for f in [
@@ -200,6 +214,7 @@ class Player(VoiceProtocol):
                     self.distortion,
                     self.low_pass,
                     self.channel_mix,
+                    self.echo,
                 ]
             ):
                 await self.node.filters(
@@ -213,6 +228,7 @@ class Player(VoiceProtocol):
                     distortion=self.distortion,
                     low_pass=self.low_pass,
                     channel_mix=self.channel_mix,
+                    echo=self.echo,
                 )
 
             if self.volume_filter.changed:
@@ -379,6 +395,11 @@ class Player(VoiceProtocol):
     def distortion(self) -> Distortion:
         """The currently applied Distortion filter"""
         return self._distortion
+
+    @property
+    def echo(self) -> Echo:
+        """The currently applied Echo filter"""
+        return self._echo
 
     @property
     def low_pass(self) -> LowPass:
@@ -1189,6 +1210,7 @@ class Player(VoiceProtocol):
                 distortion=self.distortion,
                 low_pass=self.low_pass,
                 channel_mix=self.channel_mix,
+                echo=self.echo,
                 reset_not_set=True,
             )
         if self.volume_filter.changed:
@@ -1476,6 +1498,24 @@ class Player(VoiceProtocol):
             requester=requester,
         )
 
+    async def set_echo(self, requester: discord.Member, echo: Echo, forced: bool = False) -> None:
+        """
+        Sets the Echo of Lavalink.
+        Parameters
+        ----------
+        echo : Echo
+            Echo to set
+        forced : bool
+            Whether to force the low_pass to be set resetting any other filters currently applied
+        requester : discord.Member
+            Member who requested the filter change
+        """
+        await self.set_filters(
+            echo=echo,
+            reset_not_set=forced,
+            requester=requester,
+        )
+
     async def apply_nightcore(self, requester: discord.Member) -> None:
         """
         Applies the NightCore filter to the player.
@@ -1501,6 +1541,7 @@ class Player(VoiceProtocol):
             distortion=self.distortion if self.distortion.changed else None,
             timescale=Timescale(speed=1.17, pitch=1.2, rate=1),
             channel_mix=self.channel_mix if self.channel_mix.changed else None,
+            echo=self.echo if self.echo.changed else None,
             reset_not_set=True,
         )
 
@@ -1523,6 +1564,7 @@ class Player(VoiceProtocol):
             vibrato=self.vibrato if self.vibrato.changed else None,
             distortion=self.distortion if self.distortion.changed else None,
             channel_mix=self.channel_mix if self.channel_mix.changed else None,
+            echo=self.echo if self.echo.changed else None,
         )
 
     async def set_channel_mix(self, requester: discord.Member, channel_mix: ChannelMix, forced: bool = False) -> None:
@@ -1557,6 +1599,7 @@ class Player(VoiceProtocol):
         distortion: Distortion = None,
         low_pass: LowPass = None,
         channel_mix: ChannelMix = None,
+        echo: Echo = None,
         reset_not_set: bool = False,
     ):  # sourcery no-metrics
         """
@@ -1583,6 +1626,8 @@ class Player(VoiceProtocol):
             LowPass to set
         channel_mix : ChannelMix
             ChannelMix to set
+        echo: Echo
+            Echo to set
         reset_not_set : bool
             Whether to reset any filters that are not set
         requester : discord.Member
@@ -1619,6 +1664,9 @@ class Player(VoiceProtocol):
         if channel_mix and channel_mix.changed:
             self._channel_mix = channel_mix
             changed = True
+        if echo and echo.changed:
+            self._echo = echo
+            changed = True
 
         self._effect_enabled = changed
         if reset_not_set:
@@ -1633,6 +1681,7 @@ class Player(VoiceProtocol):
                 "distortion": distortion,
                 "low_pass": low_pass,
                 "channel_mix": channel_mix,
+                "echo": echo,
             }
             if not (equalizer and equalizer.changed):
                 self._equalizer = Equalizer.default()
@@ -1652,6 +1701,8 @@ class Player(VoiceProtocol):
                 self._low_pass = LowPass.default()
             if not (channel_mix and channel_mix.changed):
                 self._channel_mix = ChannelMix.default()
+            if not (echo and echo.changed):
+                self._echo = Echo.default()
         else:
             kwargs = {
                 "volume": volume or (self.volume_filter if self.volume_filter.changed else None),
@@ -1664,6 +1715,7 @@ class Player(VoiceProtocol):
                 "distortion": distortion or (self.distortion if self.distortion.changed else None),
                 "low_pass": low_pass or (self.low_pass if self.low_pass.changed else None),
                 "channel_mix": channel_mix or (self.channel_mix if self.channel_mix.changed else None),
+                "echo": echo or (self.echo if self.echo.changed else None),
             }
         if not volume:
             kwargs.pop("volume", None)
@@ -1991,6 +2043,7 @@ class Player(VoiceProtocol):
                 "distortion": self._distortion.to_dict(),
                 "low_pass": self._low_pass.to_dict(),
                 "channel_mix": self._channel_mix.to_dict(),
+                "echo": self._echo.to_dict(),
             },
             "self_deaf": data["self_deaf"],
             "extras": {
@@ -2123,6 +2176,8 @@ class Player(VoiceProtocol):
             self._low_pass = f
         if (v := effects.get("channel_mix", None)) and (f := ChannelMix.from_dict(v)) and f.changed:
             self._channel_mix = f
+        if (v := effects.get("echo", None)) and (f := Echo.from_dict(v)) and f.changed:
+            self._echo = f
 
         if self.has_effects:
             await self.node.filters(
@@ -2136,6 +2191,7 @@ class Player(VoiceProtocol):
                 distortion=self.distortion,
                 low_pass=self.low_pass,
                 channel_mix=self.channel_mix,
+                echo=self.echo,
             )
         if self.volume_filter.changed:
             await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)

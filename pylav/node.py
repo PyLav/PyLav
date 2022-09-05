@@ -13,7 +13,18 @@ from pylav._logging import getLogger
 from pylav.constants import BUNDLED_NODES_IDS, PYLAV_NODES, REGION_TO_COUNTRY_COORDINATE_MAPPING, SUPPORTED_SOURCES
 from pylav.events import Event
 from pylav.exceptions import Unauthorized
-from pylav.filters import ChannelMix, Distortion, Equalizer, Karaoke, LowPass, Rotation, Timescale, Vibrato, Volume
+from pylav.filters import (
+    ChannelMix,
+    Distortion,
+    Echo,
+    Equalizer,
+    Karaoke,
+    LowPass,
+    Rotation,
+    Timescale,
+    Vibrato,
+    Volume,
+)
 from pylav.filters.tremolo import Tremolo
 from pylav.location import distance
 from pylav.sql.models import NodeModel
@@ -835,6 +846,7 @@ class Node:
         distortion: Distortion = None,
         low_pass: LowPass = None,
         channel_mix: ChannelMix = None,
+        echo: Echo = None,
     ):
         op = {
             "op": "filters",
@@ -860,6 +872,8 @@ class Node:
             op["lowPass"] = low_pass.get()
         if channel_mix and channel_mix.changed:
             op["channelMix"] = channel_mix.get()
+        if echo and echo.changed:
+            op["echo"] = echo.get()
 
         await self.send(**op)
 

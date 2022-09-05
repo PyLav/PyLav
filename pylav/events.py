@@ -5,7 +5,18 @@ from typing import TYPE_CHECKING, Literal
 
 import discord
 
-from pylav.filters import ChannelMix, Distortion, Equalizer, Karaoke, LowPass, Rotation, Timescale, Vibrato, Volume
+from pylav.filters import (
+    ChannelMix,
+    Distortion,
+    Echo,
+    Equalizer,
+    Karaoke,
+    LowPass,
+    Rotation,
+    Timescale,
+    Vibrato,
+    Volume,
+)
 from pylav.filters.tremolo import Tremolo
 from pylav.utils import Segment
 
@@ -1632,6 +1643,8 @@ class FiltersAppliedEvent(Event):
         The rotation that was set.
     distortion: :class:`Distortion`
         The distortion that was set.
+    echo : :class:`Echo`
+        The echo filter that was set
     low_pass: :class:`Lowpass`
         The lowpass that was set.
     channel_mix: :class:`ChannelMix`
@@ -1665,6 +1678,8 @@ class FiltersAppliedEvent(Event):
         The lowpass that was set.
     channel_mix: :class:`ChannelMix`
         The channel mix that was set.
+    echo: :class:`Echo`
+        The echo filter that was set
     node: :class:`Node`
         The node that was changed.
     """
@@ -1680,6 +1695,7 @@ class FiltersAppliedEvent(Event):
         "vibrato",
         "rotation",
         "distortion",
+        "echo",
         "low_pass",
         "channel_mix",
         "node",
@@ -1700,6 +1716,7 @@ class FiltersAppliedEvent(Event):
         distortion: Distortion = None,
         low_pass: LowPass = None,
         channel_mix: ChannelMix = None,
+        echo: Echo = None,
     ):
         self.player = player
         self.requester = requester
@@ -1714,6 +1731,7 @@ class FiltersAppliedEvent(Event):
         self.low_pass = low_pass
         self.channel_mix = channel_mix
         self.node = node
+        self.echo = echo
 
 
 class PlayerMovedEvent(Event):
