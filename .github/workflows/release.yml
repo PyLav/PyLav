@@ -15,9 +15,9 @@ jobs:
     bump_version:
         name: Bump release version
         runs-on: ubuntu-latest
-        if: ${{ startsWith(github.event.head_commit.message, '[post]') || startsWith(github.event.head_commit.message, '[PERSONAL_ACCESS_TOKENch]') || startsWith(github.event.head_commit.message, '[minor]') || startsWith(github.event.head_commit.message, '[major]') }}
+        if: ${{ startsWith(github.event.head_commit.message, '[post]') || startsWith(github.event.head_commit.message, '[patch]') || startsWith(github.event.head_commit.message, '[minor]') || startsWith(github.event.head_commit.message, '[major]') }}
         env:
-            RELEASE_TYPE: ${{ startsWith(github.event.head_commit.message, '[post]') && 'post' || startsWith(github.event.head_commit.message, '[PERSONAL_ACCESS_TOKENch]') && 'PERSONAL_ACCESS_TOKENch' || startsWith(github.event.head_commit.message, '[minor]') && 'minor' || startsWith(github.event.head_commit.message, '[major]') && 'major' }}
+            RELEASE_TYPE: ${{ startsWith(github.event.head_commit.message, '[post]') && 'post' || startsWith(github.event.head_commit.message, '[patch]') && 'patch' || startsWith(github.event.head_commit.message, '[minor]') && 'minor' || startsWith(github.event.head_commit.message, '[major]') && 'major' }}
         steps:
         -   uses: actions/checkout@v3
             with:
@@ -35,7 +35,7 @@ jobs:
                 echo "Current version: $(python setup.py --version)"
                 echo "::set-output name=VERSION::$(python setup.py --version)"
             id: current_version
-        -   name: Bump PERSONAL_ACCESS_TOKENch Version
+        -   name: Bump Version
             run: |
                 bump2version --current-version $(python setup.py --version) ${{ env.RELEASE_TYPE }}
         -   name: Retrieve new version
@@ -120,7 +120,7 @@ jobs:
                 password: ${{ secrets.PYPI_TOKEN }}
     crowdin-upload:
         needs: [release]
-        if: ${{ startsWith(github.event.head_commit.message, '[PERSONAL_ACCESS_TOKENch]') || startsWith(github.event.head_commit.message, '[minor]') || startsWith(github.event.head_commit.message, '[major]') }}
+        if: ${{ startsWith(github.event.head_commit.message, '[patch]') || startsWith(github.event.head_commit.message, '[minor]') || startsWith(github.event.head_commit.message, '[major]') }}
         runs-on: ubuntu-latest
         name: Upload the latest strings to Crowdin
         steps:
@@ -150,7 +150,7 @@ jobs:
                 CROWDIN_PROJECT_ID: ${{ secrets.crowdin_identifier }}
                 GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
     crowdin-download:
-        if: ${{ startsWith(github.event.head_commit.message, '[PERSONAL_ACCESS_TOKENch]') || startsWith(github.event.head_commit.message, '[minor]') || startsWith(github.event.head_commit.message, '[major]') }}
+        if: ${{ startsWith(github.event.head_commit.message, '[patch]') || startsWith(github.event.head_commit.message, '[minor]') || startsWith(github.event.head_commit.message, '[major]') }}
         needs: [release, crowdin-upload]
         runs-on: ubuntu-latest
         name: Download the latest translations from Crowdin
