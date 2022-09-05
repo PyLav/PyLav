@@ -1,9 +1,10 @@
 # Setup
 **NOTICE**:
-  - These instructions are only applicable until Red 3.5 release.
+  - **These instructions are only applicable until Red 3.5 release.**
+  - If you are a Red user, PyLav does not require your Red instance to be running a Postgres Config, however PyLav will still need its own Postgres server.
 
 **NOTICE**:
-  - PyLav assumes you are using PostgresSQL 14 and it also requires Python3.10 any other version for these will not work/be supported.
+  - PyLav assumes you are using PostgresSQL server running version 14  and it also requires Python3.10 any other version for these will not work/be supported.
   - If you have docker; Setting up a postgres container for it would likely be the simplest option to setup the necessary server.
 
 # Linux (Ubuntu 20.04) <a name="Linux"></a>
