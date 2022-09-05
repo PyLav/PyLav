@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-09-04 17:20+0000\n"
-"PO-Revision-Date: 2022-09-04 20:34\n"
+"POT-Creation-Date: 2022-09-05 20:33+0000\n"
+"PO-Revision-Date: 2022-09-05 20:36\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -17,24 +17,24 @@ msgstr ""
 "X-Crowdin-File-ID: 504\n"
 "Language: es_ES\n"
 
-#: pylav/client.py:607 pylav/client.py:632 pylav/player_manager.py:247
+#: pylav/client.py:608 pylav/client.py:633 pylav/player_manager.py:247
 msgid "No available nodes!"
 msgstr "¡No hay nodos disponibles!"
 
-#: pylav/client.py:611 pylav/client.py:636 pylav/player.py:573
-#: pylav/player.py:592
+#: pylav/client.py:612 pylav/client.py:637 pylav/player.py:594
+#: pylav/player.py:613
 msgid "No node with {feature} functionality available!"
 msgstr "¡No hay ningún nodo con la funcionalidad {feature} disponible!"
 
-#: pylav/client.py:920
+#: pylav/client.py:921
 msgid "No node with {query.requires_capability} functionality available!"
 msgstr "¡No hay ningún nodo con la funcionalidad {query.requires_capability} disponible!"
 
-#: pylav/client.py:1178
+#: pylav/client.py:1179
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
 msgstr "Para generar una lista de reproducción mezclada es necesario un ID de Video, Usuario, Canal o Lista de reproducción"
 
-#: pylav/client.py:1183
+#: pylav/client.py:1184
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
 msgstr "Para generar una lista de reproducción mezclada es necesario un ID de Video, Usuario, Canal o Lista de reproducción. Sin embargo, usted proporcionó varios"
 
@@ -64,88 +64,88 @@ msgstr "Lavalink no pudo iniciar: {line}"
 msgid "Managed Lavalink node server exited early"
 msgstr "El servidor de nodos Lavalink gestionado se cerró temprano"
 
-#: pylav/player.py:753
+#: pylav/player.py:774
 msgid "There are no tracks currently in the player history"
 msgstr "No hay pistas en el historial del jugador"
 
-#: pylav/player.py:1720 pylav/player.py:1750 pylav/player.py:1761
+#: pylav/player.py:1772 pylav/player.py:1802 pylav/player.py:1813
 msgid "LIVE"
 msgstr "VIVO"
 
-#: pylav/player.py:1729 pylav/player.py:1817
+#: pylav/player.py:1781 pylav/player.py:1869
 msgid "Currently livestreaming"
 msgstr "Actualmente en vivo"
 
-#: pylav/player.py:1731
+#: pylav/player.py:1783
 msgid "Playing: "
 msgstr "Reproduciendo: "
 
-#: pylav/player.py:1734 pylav/player.py:1755 pylav/player.py:1766
-#: pylav/player.py:1823
+#: pylav/player.py:1786 pylav/player.py:1807 pylav/player.py:1818
+#: pylav/player.py:1875
 msgid "Requester"
 msgstr "Solicitante"
 
-#: pylav/player.py:1739
+#: pylav/player.py:1791
 msgid "Now Playing in"
 msgstr "Ahora jugando en"
 
-#: pylav/player.py:1751 pylav/player.py:1762
+#: pylav/player.py:1803 pylav/player.py:1814
 msgid "Duration"
 msgstr "Duración"
 
-#: pylav/player.py:1757
+#: pylav/player.py:1809
 msgid "Previous Track"
 msgstr "Pista anterior"
 
-#: pylav/player.py:1768
+#: pylav/player.py:1820
 msgid "Next Track"
 msgstr "Siguiente pista"
 
-#: pylav/player.py:1772
+#: pylav/player.py:1824
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
 msgstr "{track_count} pistas, {queue_total_duration} restantes\n"
 
-#: pylav/player.py:1784 pylav/player.py:1874
+#: pylav/player.py:1836 pylav/player.py:1926
 msgid "{translation}: {repeat_emoji}"
 msgstr "{translation}: {repeat_emoji}"
 
-#: pylav/player.py:1784 pylav/player.py:1874
+#: pylav/player.py:1836 pylav/player.py:1926
 msgid "Repeating"
 msgstr "Repetir"
 
-#: pylav/player.py:1785 pylav/player.py:1875
+#: pylav/player.py:1837 pylav/player.py:1927
 msgid "{space}{translation}: {autoplay_emoji}"
 msgstr "{space}{translation}: {autoplay_emoji}"
 
-#: pylav/player.py:1786 pylav/player.py:1876
+#: pylav/player.py:1838 pylav/player.py:1928
 msgid "Auto Play"
 msgstr "Auto Jugar"
 
-#: pylav/player.py:1788 pylav/player.py:1878
+#: pylav/player.py:1840 pylav/player.py:1930
 msgid "{space}{translation}: {volume}%"
 msgstr "{space}{translation}: {volume}%"
 
-#: pylav/player.py:1789 pylav/player.py:1879
+#: pylav/player.py:1841 pylav/player.py:1931
 msgid "Volume"
 msgstr "Volumen"
 
-#: pylav/player.py:1820
+#: pylav/player.py:1872
 msgid "Playing"
 msgstr "Jugando"
 
-#: pylav/player.py:1833
+#: pylav/player.py:1885
 msgid "Queue order is may not be accurate due to auto-shuffle being enabled"
 msgstr "El orden de cola puede no ser exacto debido a que se está habilitando auto-shuffle"
 
-#: pylav/player.py:1848
+#: pylav/player.py:1900
 msgid "Recently Played for"
 msgstr "Reproducido recientemente por"
 
-#: pylav/player.py:1848
+#: pylav/player.py:1900
 msgid "Queue for"
 msgstr "Cola para"
 
-#: pylav/player.py:1857
+#: pylav/player.py:1909
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
 msgstr "Página {current_page}/{total_pages} | {track_number} pistas, {queue_total_duration} restantes\n"
 
