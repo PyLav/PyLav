@@ -151,7 +151,7 @@ jobs:
                 GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
     crowdin-download:
         if: ${{ startsWith(github.event.head_commit.message, '[PERSONAL_ACCESS_TOKENch]') || startsWith(github.event.head_commit.message, '[minor]') || startsWith(github.event.head_commit.message, '[major]') }}
-        needs: [publish, crowdin-upload]
+        needs: [release, crowdin-upload]
         runs-on: ubuntu-latest
         name: Download the latest translations from Crowdin
         steps:
