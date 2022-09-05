@@ -1410,7 +1410,7 @@ class PlayerPausedEvent(Event):
 
     def __init__(self, player: Player, requester: discord.Member):
         self.player = player
-        self.user = requester
+        self.requester = requester
 
 
 class PlayerStoppedEvent(Event):
@@ -1477,7 +1477,7 @@ class PlayerRestoredEvent(Event):
     ----------
     player: :class:`Player`
         The player whose track was restored.
-    requester: :class:`discord.Member`
+    requester: :class:`discord.abc.User`
         The user who requested the change.
     """
 
