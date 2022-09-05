@@ -1,3 +1,7 @@
 from setuptools import setup
 
-setup()
+from pylav import __VERSION__
+
+setup(
+    version=__VERSION__,
+)

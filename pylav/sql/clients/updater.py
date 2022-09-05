@@ -17,8 +17,8 @@ class UpdateSchemaManager:
 
     async def run_updates(self):
         """Run through schema migrations"""
-        from pylav import EntryNotFoundError
-        from pylav._config import __VERSION__
+        from pylav import __VERSION__
+        from pylav.exceptions import EntryNotFoundError
 
         current_version = await self._client.lib_db_manager.get_bot_db_version().fetch_version()
         if current_version == parse_version("0.0.0.0"):

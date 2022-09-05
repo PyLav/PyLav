@@ -25,7 +25,8 @@ from discord.ext.commands import Context
 from discord.types.embed import EmbedType
 from pytz import utc
 
-from pylav._config import __VERSION__, CONFIG_DIR
+from pylav import __VERSION__
+from pylav._config import CONFIG_DIR
 from pylav._logging import getLogger
 from pylav.dispatcher import DispatchManager
 from pylav.envvars import (

@@ -13,7 +13,7 @@ from pylav.radio.utils import type_check
 from pylav.utils import AsyncIter
 
 if TYPE_CHECKING:
-    from pylav import Client
+    from pylav.client import Client
 
 
 class Request:

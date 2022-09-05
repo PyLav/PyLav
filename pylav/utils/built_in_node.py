@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import secrets
 
-from pylav._config import __VERSION__
+from pylav import __VERSION__
 
 NODE_DEFAULT_SETTINGS = {
     "server": {"port": 2154, "address": "localhost"},

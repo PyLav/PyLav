@@ -85,8 +85,8 @@ except ImportError:
 from discord.ext.commands import Context as DpyContext  # isort:skip
 
 if TYPE_CHECKING:
-    from pylav import Player
     from pylav.node import Node
+    from pylav.player import Player
 
 __all__ = (
     "MISSING",

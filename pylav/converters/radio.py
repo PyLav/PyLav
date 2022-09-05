@@ -11,7 +11,7 @@ from discord.app_commands import Choice, Transformer
 from discord.ext import commands
 from rapidfuzz import fuzz
 
-from pylav import getLogger
+from pylav._logging import getLogger
 from pylav.types import ContextT, InteractionT
 from pylav.utils import shorten_string
 
@@ -40,7 +40,7 @@ else:
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[Station]:
             """Converts a station name to a matching object"""
-            from pylav import EntryNotFoundError
+            from pylav.exceptions import EntryNotFoundError
 
             try:
                 station = await ctx.lavalink.radio_browser.station_by_uuid(arg)
@@ -133,7 +133,7 @@ else:
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[Tag]:
             """Converts a Tag name to to a matching object"""
-            from pylav import EntryNotFoundError
+            from pylav.exceptions import EntryNotFoundError
 
             try:
                 tags = await ctx.lavalink.radio_browser.tags()
@@ -173,7 +173,7 @@ else:
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[Language]:
             """Converts a Language name to to a matching object"""
-            from pylav import EntryNotFoundError
+            from pylav.exceptions import EntryNotFoundError
 
             try:
                 langs = await ctx.lavalink.radio_browser.languages()
@@ -213,7 +213,7 @@ else:
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[State]:
             """Converts a State name to to a matching object"""
-            from pylav import EntryNotFoundError
+            from pylav.exceptions import EntryNotFoundError
 
             try:
                 states = await ctx.lavalink.radio_browser.states()
@@ -261,7 +261,7 @@ else:
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[Codec]:
             """Converts a Codec name to to a matching object"""
-            from pylav import EntryNotFoundError
+            from pylav.exceptions import EntryNotFoundError
 
             try:
                 codecs = await ctx.lavalink.radio_browser.codecs()
@@ -301,7 +301,7 @@ else:
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[CountryCode]:
             """Converts a CountryCode name to to a matching object"""
-            from pylav import EntryNotFoundError
+            from pylav.exceptions import EntryNotFoundError
 
             try:
                 countrycodes = await ctx.lavalink.radio_browser.countrycodes()
@@ -342,7 +342,7 @@ else:
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[Country]:
             """Converts a Country name to to a matching object"""
-            from pylav import EntryNotFoundError
+            from pylav.exceptions import EntryNotFoundError
 
             try:
                 countries = await ctx.lavalink.radio_browser.countries()

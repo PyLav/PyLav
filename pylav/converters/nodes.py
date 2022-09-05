@@ -30,7 +30,7 @@ else:
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[Node]:
             """Converts a node name or ID to a list of matching objects"""
-            from pylav import EntryNotFoundError
+            from pylav.exceptions import EntryNotFoundError
 
             try:
                 nodes = ctx.lavalink.node_manager.nodes

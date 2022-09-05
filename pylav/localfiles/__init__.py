@@ -8,7 +8,7 @@ from typing import Final
 
 from discord.utils import maybe_coroutine
 
-from pylav import Query
+from pylav.query import Query
 from pylav.vendored import aiopath
 
 try:

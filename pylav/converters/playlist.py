@@ -30,7 +30,7 @@ else:
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[PlaylistModel]:
             """Converts a playlist name or ID to a list of matching objects"""
-            from pylav import EntryNotFoundError
+            from pylav.exceptions import EntryNotFoundError
 
             try:
                 playlists = await ctx.lavalink.playlist_db_manager.get_playlist_by_name_or_id(arg)
@@ -47,7 +47,7 @@ else:
 
         @classmethod
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
-            from pylav import EntryNotFoundError
+            from pylav.exceptions import EntryNotFoundError
 
             try:
                 playlists: list[

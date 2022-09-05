@@ -66,7 +66,7 @@ from pylav.types import BotT, InteractionT
 from pylav.utils import AsyncIter, PlayerQueue, SegmentCategory, TrackHistoryQueue, format_time
 
 if TYPE_CHECKING:
-    from pylav import Client
+    from pylav.client import Client
     from pylav.node import Node
     from pylav.player_manager import PlayerManager
     from pylav.radio import RadioBrowser
