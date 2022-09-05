@@ -17,6 +17,8 @@ NODE_DEFAULT_SETTINGS = {
                 "repository": "https://m2.duncte123.dev/releases",
             },
             {"dependency": "com.github.topisenpai:sponsorblock-plugin:v1.0.3", "repository": "https://jitpack.io"},
+            {"dependency": "me.rohank05:lavalink-filter-plugin:0.0.1", "repository": "https://jitpack.io"},
+            {"dependency": "com.github.esmBot:lava-xm-plugin:v0.2.1", "repository": "https://jitpack.io"},
         ],
         "server": {
             "password": secrets.token_urlsafe(32),

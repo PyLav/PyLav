@@ -5,6 +5,8 @@ from typing import TYPE_CHECKING
 
 from packaging.version import parse as parse_version
 
+from pylav.utils.built_in_node import NODE_DEFAULT_SETTINGS
+
 if TYPE_CHECKING:
     from pylav.client import Client
 
@@ -52,17 +54,7 @@ class UpdateSchemaManager:
             if "soundgasm" not in yaml_data["plugins"]["dunctebot"]["sources"]:
                 yaml_data["plugins"]["dunctebot"]["sources"]["soundgasm"] = True
 
-            yaml_data["lavalink"]["plugins"] = [
-                {
-                    "dependency": "com.github.Topis-Lavalink-Plugins:Topis-Source-Managers-Plugin:v2.0.7",
-                    "repository": "https://jitpack.io",
-                },
-                {
-                    "dependency": "com.dunctebot:skybot-lavalink-plugin:1.4.0",
-                    "repository": "https://m2.duncte123.dev/releases",
-                },
-                {"dependency": "com.github.topisenpai:sponsorblock-plugin:v1.0.3", "repository": "https://jitpack.io"},
-            ]
+            yaml_data["lavalink"]["plugins"] = NODE_DEFAULT_SETTINGS["lavalink"]["plugins"]
             await config.update_yaml(yaml_data)
             await self._client.lib_db_manager.update_bot_dv_version("0.3.4")
 
@@ -93,6 +85,14 @@ class UpdateSchemaManager:
                 del yaml_data["logging"]["file"]["max-history"]
             await config.update_yaml(yaml_data)
             await self._client.lib_db_manager.update_bot_dv_version("0.3.6")
+
+        if current_version <= parse_version("0.7.5"):
+            config = self._client.node_db_manager.bundled_node_config()
+            yaml_data = await config.fetch_yaml()
+            if len(yaml_data["lavalink"]["plugins"]) < len(NODE_DEFAULT_SETTINGS["lavalink"]["plugins"]):
+                yaml_data["lavalink"]["plugins"] = NODE_DEFAULT_SETTINGS["lavalink"]["plugins"]
+                await config.update_yaml(yaml_data)
+
         with contextlib.suppress(EntryNotFoundError):
             config = self._client.node_db_manager.bundled_node_config()
             await config.update_resume_key(f"PyLav/{self._client.lib_version}-{self._client.bot_id}")
