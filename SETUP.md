@@ -29,6 +29,7 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
   - ##### For non Red users
     - Install PyLav -`python -m pip install Py-Lav`
   - ##### For Red users
+    - Complete the "Installing the pre-requirements" section of the [Red Docs](https://docs.discord.red/en/stable/install_guides/index.html)
     - Install a custom build of Red - `python -m pip install --force-reinstall git+https://github.com/Drapersniper/Red-DiscordBot@hybrid#egg=Red-DiscordBot`
 - #### [Postgres14](https://www.postgresql.org/)
   - Follow the install instruction [here](https://www.postgresql.org/download/linux/#generic)
@@ -57,6 +58,7 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
   - ##### For non Red users
     - Install PyLav -`python -m pip install Py-Lav`
   - ##### For Red users
+    - Complete the "Installing the pre-requirements" section of the [Red Docs](https://docs.discord.red/en/stable/install_guides/index.html)
     - Install a custom build of Red - `python -m pip install --force-reinstall git+https://github.com/Drapersniper/Red-DiscordBot@hybrid#egg=Red-DiscordBot`
 - #### [Postgres14](https://www.postgresql.org/)
   - Follow the install instruction [here](https://postgresapp.com/)
@@ -86,6 +88,7 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
   - ##### For non Red users
     - Install PyLav -`python -m pip install Py-Lav`
   - ##### For Red users
+    - Complete the "Installing the pre-requirements" section of the [Red Docs](https://docs.discord.red/en/stable/install_guides/index.html)
     - Install a custom build of Red - `python -m pip install --force-reinstall git+https://github.com/Drapersniper/Red-DiscordBot@hybrid#egg=Red-DiscordBot`
 - #### [Postgres14](https://www.postgresql.org/)
   - Follow the install instruction [here](https://www.postgresql.org/download/windows/)
