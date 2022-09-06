@@ -325,22 +325,20 @@ class Client(metaclass=_Singleton):
                             client_id = None
                             client_secret = None
                         await self._lib_config_manager.initialize()
-                        await self._update_schema_manager.run_updates()
+                        self._config = self._lib_config_manager.get_config()
                         await NodeModel.create_managed(id=self.bot.user.id)
+                        await self._update_schema_manager.run_updates()
                         await self._radio_manager.initialize()
                         await self._player_manager.initialize()
                         await self.player_config_manager.initialize_global_config()
-                        self._config = self._lib_config_manager.get_config()
                         config_data = await self._config.fetch_all()
                         java_path = config_data["java_path"]
                         config_folder = config_data["config_folder"]
                         localtrack_folder = config_data["localtrack_folder"]
                         auto_update_managed_nodes = config_data["auto_update_managed_nodes"]
                         enable_managed_node = config_data["enable_managed_node"]
-
                         if java_path != JAVA_EXECUTABLE and os.path.exists(JAVA_EXECUTABLE):
                             await self._config.update_java_path(JAVA_EXECUTABLE)
-
                         LOGGER.info("Config folder: %s", config_folder)
                         LOGGER.info("Localtracks folder: %s", localtrack_folder)
                         self.enable_managed_node = enable_managed_node
