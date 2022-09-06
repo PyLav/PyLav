@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-09-05 20:33+0000\n"
-"PO-Revision-Date: 2022-09-05 20:36\n"
+"POT-Creation-Date: 2022-09-05 23:57+0000\n"
+"PO-Revision-Date: 2022-09-06 00:00\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
@@ -42,10 +42,6 @@ msgstr "Για να δημιουργήσετε μια λίστα αναπαρα�
 msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture"
 msgstr "Προσπαθείτε να εκτελέσετε τον διαχειριζόμενο κόμβο Lavalink σε μια μη υποστηριζόμενη αρχιτεκτονική μηχανών"
 
-#: pylav/managed_node.py:333
-msgid "Pylav - Java executable not found, tried to use: '{self._java_exc}'"
-msgstr "Pylav - Το εκτελέσιμο Java δεν βρέθηκε, προσπάθησε να χρησιμοποιήσει: '{self._java_exc}'"
-
 #: pylav/managed_node.py:401
 msgid "The output of `{java_exc} -version` was unexpected\n"
 "{version_info}"
@@ -59,10 +55,6 @@ msgstr "Η θύρα {port} ήδη σε χρήση. Η διαχείριση τη�
 #: pylav/managed_node.py:422
 msgid "Lavalink failed to start: {line}"
 msgstr "Αποτυχία εκκίνησης του Lavalink: {line}"
-
-#: pylav/managed_node.py:426
-msgid "Managed Lavalink node server exited early"
-msgstr "Ο διακομιστής Lavalink με διαχείριση τερμάτισε νωρίς"
 
 #: pylav/player.py:774
 msgid "There are no tracks currently in the player history"
