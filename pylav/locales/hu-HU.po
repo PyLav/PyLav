@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-09-05 20:33+0000\n"
-"PO-Revision-Date: 2022-09-05 20:36\n"
+"POT-Creation-Date: 2022-09-05 23:57+0000\n"
+"PO-Revision-Date: 2022-09-06 00:00\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "MIME-Version: 1.0\n"
@@ -42,10 +42,6 @@ msgstr ""
 msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture"
 msgstr ""
 
-#: pylav/managed_node.py:333
-msgid "Pylav - Java executable not found, tried to use: '{self._java_exc}'"
-msgstr ""
-
 #: pylav/managed_node.py:401
 msgid "The output of `{java_exc} -version` was unexpected\n"
 "{version_info}"
@@ -57,10 +53,6 @@ msgstr ""
 
 #: pylav/managed_node.py:422
 msgid "Lavalink failed to start: {line}"
-msgstr ""
-
-#: pylav/managed_node.py:426
-msgid "Managed Lavalink node server exited early"
 msgstr ""
 
 #: pylav/player.py:774

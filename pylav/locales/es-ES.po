@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-09-05 20:33+0000\n"
-"PO-Revision-Date: 2022-09-05 20:36\n"
+"POT-Creation-Date: 2022-09-05 23:57+0000\n"
+"PO-Revision-Date: 2022-09-06 00:00\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -42,10 +42,6 @@ msgstr "Para generar una lista de reproducción mezclada es necesario un ID de V
 msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture"
 msgstr "Está intentando ejecutar el nodo Lavalink administrado en una arquitectura de máquina no soportada"
 
-#: pylav/managed_node.py:333
-msgid "Pylav - Java executable not found, tried to use: '{self._java_exc}'"
-msgstr "Pylav - Ejecutable de Java no encontrado, intentó usar: '{self._java_exc}'"
-
 #: pylav/managed_node.py:401
 msgid "The output of `{java_exc} -version` was unexpected\n"
 "{version_info}"
@@ -59,10 +55,6 @@ msgstr "El puerto {port} ya está en uso. Se ha cancelado el inicio de Lavalink 
 #: pylav/managed_node.py:422
 msgid "Lavalink failed to start: {line}"
 msgstr "Lavalink no pudo iniciar: {line}"
-
-#: pylav/managed_node.py:426
-msgid "Managed Lavalink node server exited early"
-msgstr "El servidor de nodos Lavalink gestionado se cerró temprano"
 
 #: pylav/player.py:774
 msgid "There are no tracks currently in the player history"
