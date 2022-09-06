@@ -10,6 +10,7 @@ from collections.abc import AsyncIterator
 from typing import TYPE_CHECKING
 
 import discord
+from pylav.constants import BUNDLED_PLAYLIST_IDS
 
 from pylav._logging import getLogger
 from pylav.envvars import (
@@ -42,6 +43,11 @@ class PlaylistConfigManager:
     @property
     def client(self) -> Client:
         return self._client
+
+    @staticmethod
+    async def get_bundled_playlists() -> list[PlaylistModel]:
+        playlists = await tables.PlaylistRow.select().where(tables.PlaylistRow.id.is_in(BUNDLED_PLAYLIST_IDS))
+        return [PlaylistModel(**playlist) for playlist in playlists]
 
     @staticmethod
     async def get_playlist_by_name(playlist_name: str, limit: int = None) -> list[PlaylistModel]:

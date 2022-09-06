@@ -9,6 +9,7 @@ from collections.abc import AsyncIterator
 from typing import TYPE_CHECKING, Literal
 
 import aiohttp
+import brotli
 import yaml
 from discord.utils import maybe_coroutine
 
@@ -629,8 +630,10 @@ class Query:
         if await file.exists():
             async with file.open("rb") as f:
                 contents = await f.read()
-                with contextlib.suppress(gzip.BadGzipFile):
+                if ".gz" in file.suffixes:
                     contents = gzip.decompress(contents)
+                elif ".br" in file.suffixes:
+                    contents = brotli.decompress(contents)
                 contents = yaml.safe_load(contents)
                 for track in contents.get("tracks", []):
                     yield await Query.from_base64(track)

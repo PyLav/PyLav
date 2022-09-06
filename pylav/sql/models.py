@@ -2074,8 +2074,10 @@ class PlaylistModel:
             async with aiohttp.ClientSession(auto_decompress=False) as session:
                 async with session.get(url) as response:
                     data = await response.read()
-                    with contextlib.suppress(gzip.BadGzipFile):
+                    if ".gz.pylav" in url:
                         data = gzip.decompress(data)
+                    elif ".br.pylav" in url:
+                        data = brotli.decompress(data)
                     data = yaml.safe_load(data)
         except Exception as e:
             raise InvalidPlaylist(f"Invalid playlist file - {e}") from e
@@ -2341,8 +2343,10 @@ class EqualizerModel:
             async with aiohttp.ClientSession(auto_decompress=False) as session:
                 async with session.get(url) as response:
                     data = await response.read()
-                    with contextlib.suppress(gzip.BadGzipFile):
+                    if ".gz.pylav" in url:
                         data = gzip.decompress(data)
+                    elif ".br.pylav" in url:
+                        data = brotli.decompress(data)
                     data = yaml.safe_load(data)
         except Exception as e:
             raise InvalidPlaylist(f"Invalid equalizer file - {e}") from e

@@ -93,6 +93,12 @@ class UpdateSchemaManager:
                 yaml_data["lavalink"]["plugins"] = NODE_DEFAULT_SETTINGS["lavalink"]["plugins"]
                 await config.update_yaml(yaml_data)
 
+        if current_version <= parse_version("0.8.4"):
+            playlists = [p for p in await self._client.playlist_db_manager.get_bundled_playlists() if p.id in {1, 2}]
+            for playlist in playlists:
+                await playlist.delete()
+            await self._client.playlist_db_manager.update_bundled_playlists(1, 2)
+
         with contextlib.suppress(EntryNotFoundError):
             config = self._client.node_db_manager.bundled_node_config()
             await config.update_resume_key(f"PyLav/{self._client.lib_version}-{self._client.bot_id}")
