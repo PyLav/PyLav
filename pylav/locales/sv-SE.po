@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-09-05 23:57+0000\n"
-"PO-Revision-Date: 2022-09-06 00:00\n"
+"POT-Creation-Date: 2022-09-06 12:21+0000\n"
+"PO-Revision-Date: 2022-09-06 12:24\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "MIME-Version: 1.0\n"
@@ -17,24 +17,24 @@ msgstr ""
 "X-Crowdin-File-ID: 504\n"
 "Language: sv_SE\n"
 
-#: pylav/client.py:608 pylav/client.py:633 pylav/player_manager.py:247
+#: pylav/client.py:606 pylav/client.py:631 pylav/player_manager.py:247
 msgid "No available nodes!"
 msgstr "Inga tillgängliga noder!"
 
-#: pylav/client.py:612 pylav/client.py:637 pylav/player.py:594
+#: pylav/client.py:610 pylav/client.py:635 pylav/player.py:594
 #: pylav/player.py:613
 msgid "No node with {feature} functionality available!"
 msgstr "Ingen nod med {feature} funktionalitet tillgänglig!"
 
-#: pylav/client.py:921
+#: pylav/client.py:919
 msgid "No node with {query.requires_capability} functionality available!"
 msgstr "Ingen nod med {query.requires_capability} funktionalitet tillgänglig!"
 
-#: pylav/client.py:1179
+#: pylav/client.py:1177
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
 msgstr "För att generera en mixa spellista krävs ett Video, Användare, Kanal eller Spellista ID"
 
-#: pylav/client.py:1184
+#: pylav/client.py:1182
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
 msgstr "För att generera en blandning spellista en Video, Användare, Kanal eller Spellista ID är nödvändigt. Men du angav flera"
 
