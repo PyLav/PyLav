@@ -64,7 +64,7 @@ source_suffix = ".rst"
 master_doc = "index"
 
 version = ""
-with open("../../pylav/_config.py") as f:
+with open("../../pylav/__init__.py") as f:
     version = re.search(r'^__VERSION__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE)[1]
 
 
