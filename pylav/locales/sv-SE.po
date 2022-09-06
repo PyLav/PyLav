@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-09-06 12:21+0000\n"
-"PO-Revision-Date: 2022-09-06 12:24\n"
+"POT-Creation-Date: 2022-09-06 19:37+0000\n"
+"PO-Revision-Date: 2022-09-06 19:40\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "MIME-Version: 1.0\n"
@@ -42,17 +42,17 @@ msgstr "För att generera en blandning spellista en Video, Användare, Kanal ell
 msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture"
 msgstr "Du försöker köra den hanterade Lavalink-noden på en maskinarkitektur som inte stöds"
 
-#: pylav/managed_node.py:401
+#: pylav/managed_node.py:403
 msgid "The output of `{java_exc} -version` was unexpected\n"
 "{version_info}"
 msgstr "Utmatningen av `{java_exc} -version` var oväntad\n"
 "{version_info}"
 
-#: pylav/managed_node.py:417
+#: pylav/managed_node.py:419
 msgid "Port {port} already in use. Managed Lavalink startup aborted"
 msgstr "Port {port} används redan. Hanterad Lavalink start avbröts"
 
-#: pylav/managed_node.py:422
+#: pylav/managed_node.py:424
 msgid "Lavalink failed to start: {line}"
 msgstr "Lavalink kunde inte starta: {line}"
 
