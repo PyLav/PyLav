@@ -2070,7 +2070,7 @@ class PlaylistModel:
             The playlist.
         """
         try:
-            async with aiohttp.ClientSession(auto_decompress=False) as session:
+            async with aiohttp.ClientSession(auto_decompress=False, json_serialize=ujson.dumps) as session:
                 async with session.get(url) as response:
                     data = await response.read()
                     if ".gz.pylav" in url:
@@ -2339,7 +2339,7 @@ class EqualizerModel:
 
         """
         try:
-            async with aiohttp.ClientSession(auto_decompress=False) as session:
+            async with aiohttp.ClientSession(auto_decompress=False, json_serialize=ujson.dumps) as session:
                 async with session.get(url) as response:
                     data = await response.read()
                     if ".gz.pylav" in url:

@@ -10,6 +10,7 @@ from discord.app_commands import Choice, Transformer
 from discord.ext import commands
 from rapidfuzz import fuzz
 
+from pylav.exceptions import EntryNotFoundError
 from pylav.types import ContextT, InteractionT
 from pylav.utils import shorten_string
 
@@ -30,7 +31,6 @@ else:
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[PlaylistModel]:
             """Converts a playlist name or ID to a list of matching objects"""
-            from pylav.exceptions import EntryNotFoundError
 
             try:
                 playlists = await ctx.lavalink.playlist_db_manager.get_playlist_by_name_or_id(arg)
@@ -47,7 +47,6 @@ else:
 
         @classmethod
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
-            from pylav.exceptions import EntryNotFoundError
 
             try:
                 playlists: list[
@@ -59,7 +58,11 @@ else:
                 return [Choice(name=shorten_string(e.name, max_length=100), value=f"{e.id}") for e in playlists][:25]
 
             async def _filter(c: PlaylistModel):
-                return await asyncio.to_thread(fuzz.token_set_ratio, current, c.name)
+                return (
+                    await asyncio.to_thread(fuzz.partial_ratio, c.name, current, score_cutoff=75),
+                    1 if c.author == interaction.user.id else 0,
+                    [-ord(i) for i in c.name],
+                )
 
             extracted = await heapq.nlargest(asyncstdlib.iter(playlists), n=25, key=_filter)
 

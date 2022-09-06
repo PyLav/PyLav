@@ -343,12 +343,12 @@ class NodeManager:
         """
         LOGGER.info("[NODE-%s] Successfully established connection", node.name)
 
-        for player in self.player_queue:
+        async for player in asyncstdlib.iter(self.player_queue):
             await player.change_node(node)
             LOGGER.debug("[NODE-%s] Successfully moved %s", node.name, player.guild_id)
 
         if self.client._connect_back:
-            for player in node._original_players:
+            async for player in asyncstdlib.iter(node._original_players):
                 await player.change_node(node)
                 player._original_node = None
 
@@ -385,7 +385,7 @@ class NodeManager:
             LOGGER.error("Unable to move players, no available nodes! Waiting for a node to become available")
             return
 
-        for player in node.players:
+        async for player in asyncstdlib.iter(node.players):
             await player.change_node(best_node)
 
             if self.client._connect_back:
@@ -393,12 +393,12 @@ class NodeManager:
 
     async def close(self) -> None:
         await self.session.close()
-        for node in self.nodes:
+        async for node in asyncstdlib.iter(self.nodes):
             await node.close()
 
     async def connect_to_all_nodes(self) -> None:
         nodes_list = []
-        for node in await self.client.node_db_manager.get_all_unamanaged_nodes():
+        async for node in asyncstdlib.iter(await self.client.node_db_manager.get_all_unamanaged_nodes()):
             node_data = await node.fetch_all()
             try:
                 if node in nodes_list:
@@ -453,7 +453,7 @@ class NodeManager:
 
         if all_data["use_bundled_pylav_external"]:
             if await asyncstdlib.all(
-                True for n in nodes_list if n.host != "ll-gb.draper.wtf"
+                True async for n in asyncstdlib.iter(nodes_list) if n.host != "ll-gb.draper.wtf"
             ) and not self.get_node_by_id(PYLAV_BUNDLED_NODES_SETTINGS["ll-gb.draper.wtf"]["unique_identifier"]):
                 base_settings = PYLAV_BUNDLED_NODES_SETTINGS["ll-gb.draper.wtf"]
                 base_settings["host"] = "ll-gb.draper.wtf"
@@ -466,7 +466,7 @@ class NodeManager:
                 )
 
             if await asyncstdlib.all(
-                True for n in nodes_list if n.host != "ll-us-ny.draper.wtf"
+                True async for n in asyncstdlib.iter(nodes_list) if n.host != "ll-us-ny.draper.wtf"
             ) and not self.get_node_by_id(PYLAV_BUNDLED_NODES_SETTINGS["ll-us-ny.draper.wtf"]["unique_identifier"]):
                 base_settings = PYLAV_BUNDLED_NODES_SETTINGS["ll-us-ny.draper.wtf"]
                 base_settings["resume_key"] = f"PyLav/{self.client.lib_version}-{self.client.bot_id}"
@@ -479,7 +479,7 @@ class NodeManager:
         if all_data["use_bundled_lava_link_external"] and not self.get_node_by_id(
             PYLAV_BUNDLED_NODES_SETTINGS["lava.link"]["unique_identifier"]
         ):
-            if await asyncstdlib.all(True for n in nodes_list if n.host != "lava.link"):
+            if await asyncstdlib.all(True async for n in asyncstdlib.iter(nodes_list) if n.host != "lava.link"):
                 nodes_list.append(
                     await self.add_node(
                         password=f"PyLav/{self.client.lib_version}",

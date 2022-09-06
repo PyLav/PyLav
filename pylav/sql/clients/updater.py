@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 from packaging.version import parse as parse_version
 
+from pylav.exceptions import EntryNotFoundError
 from pylav.utils.built_in_node import NODE_DEFAULT_SETTINGS
 
 if TYPE_CHECKING:
@@ -18,7 +19,6 @@ class UpdateSchemaManager:
     async def run_updates(self):
         """Run through schema migrations"""
         from pylav import __VERSION__
-        from pylav.exceptions import EntryNotFoundError
 
         current_version = await self._client.lib_db_manager.get_bot_db_version().fetch_version()
         if current_version == parse_version("0.0.0.0"):

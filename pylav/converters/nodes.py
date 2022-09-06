@@ -10,6 +10,7 @@ from discord.app_commands import Choice, Transformer
 from discord.ext import commands
 from rapidfuzz import fuzz
 
+from pylav.exceptions import EntryNotFoundError
 from pylav.node import Node
 from pylav.types import ContextT, InteractionT
 from pylav.utils import shorten_string
@@ -30,8 +31,6 @@ else:
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[Node]:
             """Converts a node name or ID to a list of matching objects"""
-            from pylav.exceptions import EntryNotFoundError
-
             try:
                 nodes = ctx.lavalink.node_manager.nodes
             except EntryNotFoundError as e:
@@ -58,7 +57,7 @@ else:
                 ]
 
             async def _filter(c):
-                return await asyncio.to_thread(fuzz.token_set_ratio, current, c.name)
+                return await asyncio.to_thread(fuzz.partial_ratio, c.name, current)
 
             extracted = await heapq.nlargest(asyncstdlib.iter(nodes), n=25, key=_filter)
 

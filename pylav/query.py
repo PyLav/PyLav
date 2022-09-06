@@ -9,7 +9,9 @@ from collections.abc import AsyncIterator
 from typing import TYPE_CHECKING, Literal
 
 import aiohttp
+import asyncstdlib
 import brotli
+import ujson
 import yaml
 from discord.utils import maybe_coroutine
 
@@ -635,13 +637,13 @@ class Query:
                 elif ".br" in file.suffixes:
                     contents = brotli.decompress(contents)
                 contents = yaml.safe_load(contents)
-                for track in contents.get("tracks", []):
+                async for track in asyncstdlib.iter(contents.get("tracks", [])):
                     yield await Query.from_base64(track)
         elif is_url(self._query):
-            async with aiohttp.ClientSession() as session:
+            async with aiohttp.ClientSession(json_serialize=ujson.dumps) as session:
                 async with session.get(self._query) as resp:
                     contents = await resp.text()
-                    for line in contents.splitlines():
+                    async for line in asyncstdlib.iter(contents.splitlines()):
                         yield await Query.from_string(line.strip(), dont_search=True)
 
     async def _yield_local_tracks(self) -> AsyncIterator[Query]:
@@ -656,12 +658,35 @@ class Query:
                 yield self
 
     async def _yield_m3u_tracks(self) -> AsyncIterator[Query]:
-        if self.is_m3u and self.is_album:
-            m3u8 = await load_m3u8(None, uri=f"{self._query}")
-            for track in m3u8.files:
+        if not self.is_m3u or not self.is_album:
+            return
+        m3u8 = await load_m3u8(None, uri=f"{self._query}")
+        if self._special_local:
+            file = self._query.path
+        else:
+            file = aiopath.AsyncPath(self._query)
+        async for track in asyncstdlib.iter(m3u8.files):
+            if is_url(track):
                 yield await Query.from_string(track, dont_search=True)
-            for playlist in m3u8.playlists:
+            else:
+                path: aiopath.AsyncPath = aiopath.AsyncPath(track)
+                if await path.exists():
+                    yield await Query.from_string(path, dont_search=True)
+                else:
+                    path = file.parent / path.relative_to(path.anchor)
+                    if await path.exists():
+                        yield await Query.from_string(path, dont_search=True)
+        async for playlist in asyncstdlib.iter(m3u8.playlists):
+            if is_url(playlist.uri):
                 yield await Query.from_string(playlist.uri, dont_search=True)
+            else:
+                path: aiopath.AsyncPath = aiopath.AsyncPath(playlist.uri)
+                if await path.exists():
+                    yield await Query.from_string(path, dont_search=True)
+                else:
+                    path = file.parent / path.relative_to(path.anchor)
+                    if await path.exists():
+                        yield await Query.from_string(path, dont_search=True)
 
     async def _yield_pls_tracks(self) -> AsyncIterator[Query]:
         if not self.is_pls or not self.is_album:
@@ -673,14 +698,24 @@ class Query:
         if await file.exists():
             async with file.open("r") as f:
                 contents = await f.read()
-                for line in contents.splitlines():
+                async for line in asyncstdlib.iter(contents.splitlines()):
                     if match := PLS_TRACK_REGEX.match(line):
-                        yield await Query.from_string(match.group("pls_query").strip(), dont_search=True)
+                        track = match.group("pls_query").strip()
+                        if is_url(track):
+                            yield await Query.from_string(track, dont_search=True)
+                        else:
+                            path: aiopath.AsyncPath = aiopath.AsyncPath(track)
+                            if await path.exists():
+                                yield await Query.from_string(path, dont_search=True)
+                            else:
+                                path = file.parent / path.relative_to(path.anchor)
+                                if await path.exists():
+                                    yield await Query.from_string(path, dont_search=True)
         elif is_url(self._query):
-            async with aiohttp.ClientSession() as session:
+            async with aiohttp.ClientSession(json_serialize=ujson.dumps) as session:
                 async with session.get(self._query) as resp:
                     contents = await resp.text()
-                    for line in contents.splitlines():
+                    async for line in asyncstdlib.iter(contents.splitlines()):
                         with contextlib.suppress(Exception):
                             if match := PLS_TRACK_REGEX.match(line):
                                 yield await Query.from_string(match.group("pls_query").strip(), dont_search=True)

@@ -53,6 +53,8 @@ class Station:
     has_extended_info: int = None
 
     def __post_init__(self):
+        if self.name is None:
+            self.name = "ΩM4L42rPHqy123PyLavInvalidFallback-un5Nht475B"
         if isinstance(self.lastchangetime_iso8601, str):
             self.lastchangetime_iso8601 = iso8601.parse_date(self.lastchangetime_iso8601)
         if isinstance(self.lastchecktime_iso8601, str):
@@ -81,12 +83,20 @@ class Tag:
     name: str = None
     stationcount: int = None
 
+    def __post_init__(self):
+        if self.name is None:
+            self.name = "ΩM4L42rPHqy123PyLavInvalidFallback-un5Nht475B"
+
 
 @dataclass(eq=True)
 class Language:
     name: str = None
     iso_639: str = None
     stationcount: int = None
+
+    def __post_init__(self):
+        if self.name is None:
+            self.name = "ΩM4L42rPHqy123PyLavInvalidFallback-un5Nht475B"
 
 
 @dataclass(eq=True)
@@ -95,11 +105,19 @@ class State:
     country: str = None
     stationcount: int = None
 
+    def __post_init__(self):
+        if self.name is None:
+            self.name = "ΩM4L42rPHqy123PyLavInvalidFallback-un5Nht475B"
+
 
 @dataclass(eq=True)
 class Codec:
     name: str = None
     stationcount: int = None
+
+    def __post_init__(self):
+        if self.name is None:
+            self.name = "ΩM4L42rPHqy123PyLavInvalidFallback-un5Nht475B"
 
 
 @dataclass(eq=True)
@@ -107,9 +125,17 @@ class CountryCode:
     name: str = None
     stationcount: int = None
 
+    def __post_init__(self):
+        if self.name is None:
+            self.name = "ΩM4L42rPHqy123PyLavInvalidFallback-un5Nht475B"
+
 
 @dataclass(eq=True)
 class Country:
     name: str = None
     iso_3166_1: str = None
     stationcount: int = None
+
+    def __post_init__(self):
+        if self.name is None:
+            self.name = "ΩM4L42rPHqy123PyLavInvalidFallback-un5Nht475B"

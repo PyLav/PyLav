@@ -225,7 +225,7 @@ class LocalNodeManager:
             release = await asyncstdlib.max(data, key=lambda x: dateutil.parser.parse(x["published_at"]))
             assets = release.get("assets", [])
             url = None
-            for asset in assets:
+            async for asset in asyncstdlib.iter(assets):
                 if asset["name"] != "Lavalink.jar":
                     continue
                 url = asset.get("browser_download_url")
@@ -248,10 +248,12 @@ class LocalNodeManager:
                 len(possible_lavalink_processes),
             )
             valid_working_dirs = [
-                cwd for d in possible_lavalink_processes if d.get("name") == "java" and (cwd := d.get("cwd"))
+                cwd
+                async for d in asyncstdlib.iter(possible_lavalink_processes)
+                if d.get("name") == "java" and (cwd := d.get("cwd"))
             ]
             LOGGER.debug("Found %s java processed with a cwd set", len(valid_working_dirs))
-            for cwd in valid_working_dirs:
+            async for cwd in asyncstdlib.iter(valid_working_dirs):
                 config = aiopath.AsyncPath(cwd) / "application.yml"
                 if await config.exists() and await config.is_file():
                     LOGGER.debug(
@@ -382,7 +384,7 @@ class LocalNodeManager:
         version_info: str = err.decode("utf-8")
         lines = version_info.splitlines()
 
-        for line in lines:
+        async for line in asyncstdlib.iter(lines):
             match = _RE_JAVA_VERSION_LINE_PRE223.search(line)
             if match is None:
                 match = _RE_JAVA_VERSION_LINE_223.search(line)
@@ -636,8 +638,10 @@ class LocalNodeManager:
             except ManagedLavalinkStartFailure:
                 LOGGER.warning("Lavalink Managed node failed to start, restarting")
                 await self._partial_shutdown()
-                for process in await self.get_lavalink_process(
-                    "-Djdk.tls.client.protocols=TLSv1.2", "-Xms64M", "-jar", cwd=str(LAVALINK_DOWNLOAD_DIR)
+                async for process in asyncstdlib.iter(
+                    await self.get_lavalink_process(
+                        "-Djdk.tls.client.protocols=TLSv1.2", "-Xms64M", "-jar", cwd=str(LAVALINK_DOWNLOAD_DIR)
+                    )
                 ):
                     with contextlib.suppress(psutil.Error):
                         pid = process["pid"]
@@ -782,9 +786,9 @@ class LocalNodeManager:
                 cmdline = await asyncio.to_thread(proc.cmdline)
                 if (
                     matches
-                    and await asyncstdlib.all(a in cmdline for a in matches)
+                    and await asyncstdlib.all(a in cmdline async for a in asyncstdlib.iter(matches))
                     or lazy_match
-                    and await asyncstdlib.any("lavalink" in arg.lower() for arg in cmdline)
+                    and await asyncstdlib.any("lavalink" in arg.lower() async for arg in asyncstdlib.iter(cmdline))
                 ):
                     proc_as_dict = await asyncio.to_thread(
                         proc.as_dict, attrs=["pid", "name", "create_time", "status", "cmdline", "cwd"]

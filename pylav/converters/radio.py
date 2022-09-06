@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-from operator import attrgetter
 from pathlib import Path
 from typing import TYPE_CHECKING, TypeVar
 
@@ -12,6 +11,7 @@ from discord.ext import commands
 from rapidfuzz import fuzz
 
 from pylav._logging import getLogger
+from pylav.exceptions import EntryNotFoundError
 from pylav.types import ContextT, InteractionT
 from pylav.utils import shorten_string
 
@@ -43,15 +43,11 @@ else:
             from pylav.exceptions import EntryNotFoundError
 
             try:
-                station = await ctx.lavalink.radio_browser.station_by_uuid(arg)
-                if station:
-                    return station
-                stations = await ctx.lavalink.radio_browser.stations()
+                return await ctx.lavalink.radio_browser.station_by_uuid(
+                    arg
+                ) or await ctx.lavalink.radio_browser.stations_by_name(name=arg)
             except EntryNotFoundError as e:
                 raise commands.BadArgument(_("Station with name `{arg}` not found").format(arg=arg)) from e
-            if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), stations)):
-                return await asyncstdlib.sorted(r, key=attrgetter("lastcheckoktime_iso8601"), reverse=True)
-            raise commands.BadArgument(_("Station with name `{arg}` not found").format(arg=arg))
 
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> list[Station]:
@@ -64,7 +60,7 @@ else:
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
             data = interaction.data
             options = data.get("options", [])
-            kwargs = {"order": "lastcheckok"}
+            kwargs = {"order": "votes"}
             if options:
                 country_code = [v for v in options if v.get("name") == "countrycode"]
                 country = [v for v in options if v.get("name") == "country"]
@@ -107,18 +103,25 @@ else:
 
             if current:
                 kwargs["name"] = current
-            stations = await interaction.client.lavalink.radio_browser.search(limit=25, **kwargs)
             if not current:
                 return [
                     Choice(
                         name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"),
                         value=f"{e.stationuuid}",
                     )
-                    for e in stations
+                    for e in await interaction.client.lavalink.radio_browser.stations_by_votes(limit=25)
                 ]
+            stations = await interaction.client.lavalink.radio_browser.search(limit=1000, **kwargs)
 
-            async def _filter(c):
-                return await asyncio.to_thread(fuzz.token_set_ratio, current, c.name)
+            async def _filter(c: Station):
+                return (
+                    await asyncio.to_thread(
+                        fuzz.partial_ratio,
+                        c.name,
+                        current,
+                    ),
+                    c.votes,
+                )
 
             extracted: list[Station] = await heapq.nlargest(asyncstdlib.iter(stations), n=25, key=_filter)
 
@@ -133,15 +136,11 @@ else:
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[Tag]:
             """Converts a Tag name to to a matching object"""
-            from pylav.exceptions import EntryNotFoundError
 
             try:
-                tags = await ctx.lavalink.radio_browser.tags()
+                return await ctx.lavalink.radio_browser.tags(arg)
             except EntryNotFoundError as e:
                 raise commands.BadArgument(_("Tag with name `{arg}` not found").format(arg=arg)) from e
-            if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), tags)):
-                return r
-            raise commands.BadArgument(_("Tag with name `{arg}` not found").format(arg=arg))
 
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> list[Tag]:
@@ -160,7 +159,7 @@ else:
                 ][:25]
 
             async def _filter(c):
-                return await asyncio.to_thread(fuzz.token_set_ratio, current, c.name)
+                return await asyncio.to_thread(fuzz.partial_ratio, c.name, current), [-ord(c) for c in c.name]
 
             extracted = await heapq.nlargest(asyncstdlib.iter(tags), n=25, key=_filter)
 
@@ -173,15 +172,11 @@ else:
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[Language]:
             """Converts a Language name to to a matching object"""
-            from pylav.exceptions import EntryNotFoundError
 
             try:
-                langs = await ctx.lavalink.radio_browser.languages()
+                return await ctx.lavalink.radio_browser.languages(arg)
             except EntryNotFoundError as e:
                 raise commands.BadArgument(_("Language with name `{arg}` not found").format(arg=arg)) from e
-            if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), langs)):
-                return r
-            raise commands.BadArgument(_("Language with name `{arg}` not found").format(arg=arg))
 
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> list[Language]:
@@ -200,7 +195,7 @@ else:
                 ][:25]
 
             async def _filter(c):
-                return await asyncio.to_thread(fuzz.token_set_ratio, current, c.name)
+                return await asyncio.to_thread(fuzz.partial_ratio, c.name, current), [-ord(c) for c in c.name]
 
             extracted = await heapq.nlargest(asyncstdlib.iter(languages), n=25, key=_filter)
 
@@ -213,15 +208,10 @@ else:
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[State]:
             """Converts a State name to to a matching object"""
-            from pylav.exceptions import EntryNotFoundError
-
             try:
-                states = await ctx.lavalink.radio_browser.states()
+                return await ctx.lavalink.radio_browser.states(state=arg)
             except EntryNotFoundError as e:
                 raise commands.BadArgument(_("State with name `{arg}` not found")) from e
-            if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), states)):
-                return r
-            raise commands.BadArgument(_("State with name `{arg}` not found"))
 
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> list[State]:
@@ -248,7 +238,7 @@ else:
                 ][:25]
 
             async def _filter(c):
-                return await asyncio.to_thread(fuzz.token_set_ratio, current, c.name)
+                return await asyncio.to_thread(fuzz.partial_ratio, c.name, current), [-ord(c) for c in c.name]
 
             extracted = await heapq.nlargest(asyncstdlib.iter(states), n=25, key=_filter)
 
@@ -261,15 +251,11 @@ else:
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[Codec]:
             """Converts a Codec name to to a matching object"""
-            from pylav.exceptions import EntryNotFoundError
 
             try:
-                codecs = await ctx.lavalink.radio_browser.codecs()
+                return await ctx.lavalink.radio_browser.codecs(arg)
             except EntryNotFoundError as e:
                 raise commands.BadArgument(_("Codec with name `{arg}` not found").format(arg=arg)) from e
-            if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), codecs)):
-                return r
-            raise commands.BadArgument(_("Codec with name `{arg}` not found").format(arg=arg))
 
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> list[Codec]:
@@ -288,7 +274,7 @@ else:
                 ][:25]
 
             async def _filter(c):
-                return await asyncio.to_thread(fuzz.token_set_ratio, current, c.name)
+                return await asyncio.to_thread(fuzz.ratio, c.name, current), [-ord(c) for c in c.name]
 
             extracted = await heapq.nlargest(asyncstdlib.iter(codecs), n=25, key=_filter)
 
@@ -301,16 +287,11 @@ else:
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[CountryCode]:
             """Converts a CountryCode name to to a matching object"""
-            from pylav.exceptions import EntryNotFoundError
 
             try:
-                countrycodes = await ctx.lavalink.radio_browser.countrycodes()
+                return await ctx.lavalink.radio_browser.countrycodes(arg)
             except EntryNotFoundError as e:
                 raise commands.BadArgument(_("Country code `{arg}` not found").format(arg=arg)) from e
-
-            if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), countrycodes)):
-                return r
-            raise commands.BadArgument(_("Country code `{arg}` not found").format(arg=arg))
 
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> list[CountryCode]:
@@ -329,7 +310,7 @@ else:
                 ][:25]
 
             async def _filter(c):
-                return await asyncio.to_thread(fuzz.token_set_ratio, current, c.name)
+                return await asyncio.to_thread(fuzz.partial_ratio, c.name, current), [-ord(c) for c in c.name]
 
             extracted = await heapq.nlargest(asyncstdlib.iter(countrycodes), n=25, key=_filter)
 
@@ -342,15 +323,17 @@ else:
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[Country]:
             """Converts a Country name to to a matching object"""
-            from pylav.exceptions import EntryNotFoundError
 
             try:
                 countries = await ctx.lavalink.radio_browser.countries()
             except EntryNotFoundError as e:
                 raise commands.BadArgument(_("Country with name `{arg}` not found").format(arg=arg)) from e
-            if r := await asyncstdlib.list(asyncstdlib.filter(lambda n: arg.lower() in n.name.lower(), countries)):
-                return r
-            raise commands.BadArgument(_("Country with name `{arg}` not found").format(arg=arg))
+
+            async def _filter(c):
+                return await asyncio.to_thread(fuzz.partial_ratio, arg, c.name), [-ord(c) for c in c.name]
+
+            extracted = await heapq.nlargest(asyncstdlib.iter(countries), n=25, key=_filter)
+            return extracted
 
         @classmethod
         async def transform(cls, interaction: InteractionT, argument: str) -> list[Country]:
@@ -376,7 +359,7 @@ else:
                 ][:25]
 
             async def _filter(c):
-                return await asyncio.to_thread(fuzz.token_set_ratio, current, c.name)
+                return await asyncio.to_thread(fuzz.partial_ratio, c.name, current), [-ord(c) for c in c.name]
 
             extracted = await heapq.nlargest(asyncstdlib.iter(countries), n=25, key=_filter)
 

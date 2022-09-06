@@ -430,7 +430,7 @@ class Track:
         try:
             async with self._node.session.get(url, headers={"Icy-MetaData": "1"}) as resp:
                 metaint = int(resp.headers["icy-metaint"])
-                for _ in range(5):
+                async for __ in asyncstdlib.iter(range(5)):
                     await resp.content.readexactly(metaint)
                     metadata_length = struct.unpack("B", await resp.content.readexactly(1))[0] * 16
                     metadata = await resp.content.readexactly(metadata_length)
