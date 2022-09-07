@@ -27,7 +27,7 @@ from pylav.filters import (
 )
 from pylav.filters.tremolo import Tremolo
 from pylav.location import distance
-from pylav.sql.models import NodeModel
+from pylav.sql.models import NodeModel, NodeModelMock
 from pylav.types import LavalinkResponseT, TrackT
 from pylav.utils import AsyncIter
 
@@ -227,13 +227,18 @@ class Node:
         disabled_sources: list[str] = None,
         managed: bool = False,
         extras: dict = None,
+        temporary: bool = False,
     ):
         from pylav.query import Query
 
         self._query_cls: Query = Query  # type: ignore
         self._manager = manager
         self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
-        self._config: NodeModel = self._manager._client.node_db_manager.get_node_config(unique_identifier)
+        self._temporary = temporary
+        if not temporary:
+            self._config: NodeModel = self._manager._client.node_db_manager.get_node_config(unique_identifier)
+        else:
+            self._config: NodeModelMock = None
         if unique_identifier is None:
             unique_identifier = str(uuid4())
         self._managed = managed
@@ -295,7 +300,7 @@ class Node:
         return self._managed
 
     @property
-    def config(self) -> NodeModel:
+    def config(self) -> NodeModelMock | NodeModel:
         return self._config
 
     @property

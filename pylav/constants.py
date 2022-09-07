@@ -71,6 +71,7 @@ PYLAV_NODE_SETTINGS = {
     "search_only": False,
     "managed": False,
     "disabled_sources": ["local", "http"],
+    "temporary": True,
 }
 
 PYLAV_BUNDLED_NODES_SETTINGS = {
@@ -106,5 +107,6 @@ PYLAV_BUNDLED_NODES_SETTINGS = {
             "gcloud-tts",
             "ocremix",
         ],
+        "temporary": True,
     },
 }

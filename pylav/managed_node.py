@@ -745,15 +745,24 @@ class LocalNodeManager:
                 return
         if (node := self._client.node_manager.get_node_by_id(self._node_id)) is None:
             data = await self._client.node_db_manager.bundled_node_config().fetch_all()
+            resume_key = (
+                f"PyLav/{self._client.lib_version}/PyLavPortConflictRecovery-{self._client.bot.user.id}-{self._node_pid}"
+                if external_fallback
+                else f"PyLav/{self._client.lib_version}/PyLavManagedNode-{self._client.bot.user.id}-{self._node_pid}"
+            )
+            name = (
+                f"PyLavPortConflictRecovery: {self._node_pid}"
+                if external_fallback
+                else f"PyLavManagedNode: {self._node_pid}"
+            )
+            data["yaml"]["sentry"]["tags"]["pylav_version"] = self._client.lib_version
             node = self._node = await self._client.add_node(
                 host=self._current_config["server"]["address"],
                 port=self._current_config["server"]["port"],
                 password=self._current_config["lavalink"]["server"]["password"],
-                resume_key=f"ManagedNode-{self._node_pid}-{self._node_id}",
+                resume_key=resume_key,
                 resume_timeout=data["resume_timeout"],
-                name=f"PyLavPortConflictRecovery: {self._node_pid}"
-                if external_fallback
-                else f"{data['name'].split(':')[0]}: {self._node_pid}",
+                name=name,
                 yaml=data["yaml"],
                 extras=data["extras"],
                 managed=True,
@@ -761,7 +770,8 @@ class LocalNodeManager:
                 search_only=False,
                 unique_identifier=self._client.node_db_manager.bundled_node_config().id,
             )
-
+            await node.config.update_name(name)
+            await node.config.update_resume_key(resume_key)
         else:
             self._node = node
         if node.websocket.connecting:

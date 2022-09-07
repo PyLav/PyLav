@@ -681,7 +681,7 @@ class Player(VoiceProtocol):
                     self,
                 )
                 return
-            LOGGER.verbose(
+            LOGGER.trace(
                 "Auto save task for %s - Saving the player at %s", self, datetime.datetime.now(tz=datetime.timezone.utc)
             )
             await self.save()

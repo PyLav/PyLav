@@ -531,6 +531,7 @@ class Client(metaclass=_Singleton):
         yaml: dict | None = None,
         disabled_sources: list[str] = None,
         extras: dict = None,
+        temporary: bool = False,
     ) -> Node:
         """
         Adds a node to Lavalink's node manager.
@@ -568,6 +569,8 @@ class Client(metaclass=_Singleton):
             Whether the node is managed by the client. Defaults to `False`.
         disabled_sources: Optional[:class:`list`[:class:`str`]]
             A list of sources that should be disabled for the node. Defaults to `None`.
+        temporary: :class:`bool`
+            Whether the node is temporary. Defaults to `False`.
         """
         return await self.node_manager.add_node(
             host=host,
@@ -584,6 +587,7 @@ class Client(metaclass=_Singleton):
             yaml=yaml,
             disabled_sources=disabled_sources,
             extras=extras or {},
+            temporary=temporary,
         )
 
     async def decode_track(self, track: str, feature: str = None) -> dict | None:

@@ -23,7 +23,7 @@ from pylav.events import NodeConnectedEvent, NodeDisconnectedEvent
 from pylav.location import get_closest_region_name_and_coordinate
 from pylav.node import Node
 from pylav.player import Player
-from pylav.sql.models import LibConfigModel
+from pylav.sql.models import LibConfigModel, NodeModelMock
 from pylav.utils import sort_key_nodes
 
 if TYPE_CHECKING:
@@ -115,6 +115,7 @@ class NodeManager:
         managed: bool = False,
         yaml: dict | None = None,
         extras: dict = None,
+        temporary: bool = False,
     ) -> Node:
         """
         Adds a node to PyLav's node manager.
@@ -152,6 +153,9 @@ class NodeManager:
             A dictionary of node settings. Defaults to `None`.
         extras: Optional[:class:`dict`]
             A dictionary of extra settings. Defaults to `{}`.
+        temporary: :class:`bool`
+            Whether the node is temporary. Defaults to `False`.
+            Temporary nodes are not added to the db.
 
         Returns
         -------
@@ -173,27 +177,49 @@ class NodeManager:
             disabled_sources=disabled_sources,
             managed=managed,
             extras=extras or {},
+            temporary=temporary,
         )
         self._nodes.append(node)
 
         LOGGER.info("[NODE-%s] Successfully added to Node Manager", node.name)
         LOGGER.verbose("[NODE-%s] Successfully added to Node Manager -- %r", node.name, node)
-        node._config = await self.client.node_db_manager.update_node(
-            host=host,
-            port=port,
-            password=password,
-            resume_key=resume_key,
-            resume_timeout=resume_timeout,
-            name=name,
-            reconnect_attempts=reconnect_attempts,
-            ssl=ssl,
-            search_only=search_only,
-            unique_identifier=unique_identifier,
-            disabled_sources=disabled_sources,
-            managed=managed,
-            yaml=yaml,
-            extras=extras or {},
-        )
+
+        if temporary:
+            yaml = yaml or {"server": {}, "lavalink": {"server": {}}}
+            yaml["server"]["address"] = host  # type: ignore
+            yaml["server"]["port"] = port  # type: ignore
+            yaml["lavalink"]["server"]["password"] = password
+            data = {
+                "name": name,
+                "ssl": ssl,
+                "resume_key": resume_key,
+                "resume_timeout": resume_timeout,
+                "reconnect_attempts": reconnect_attempts,
+                "search_only": search_only,
+                "managed": managed,
+                "extras": extras or {},
+                "yaml": yaml,
+                "disabled_sources": disabled_sources,
+            }
+            node._config = NodeModelMock(id=unique_identifier, data=data)
+
+        else:
+            node._config = await self.client.node_db_manager.update_node(
+                host=host,
+                port=port,
+                password=password,
+                resume_key=resume_key,
+                resume_timeout=resume_timeout,
+                name=name,
+                reconnect_attempts=reconnect_attempts,
+                ssl=ssl,
+                search_only=search_only,
+                unique_identifier=unique_identifier,
+                disabled_sources=disabled_sources,
+                managed=managed,
+                yaml=yaml,
+                extras=extras or {},
+            )
         return node
 
     async def remove_node(self, node: Node) -> None:
@@ -437,6 +463,7 @@ class NodeManager:
                         "unique_identifier": 31415,
                         "name": "ENVAR Node (Unmanaged)",
                         "resume_key": f"PyLav/{self.client.lib_version}-{self.client.bot_id}",
+                        "temporary": True,
                     }
                 nodes_list.append(await self.add_node(**base_settings))
             else:
