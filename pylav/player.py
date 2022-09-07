@@ -83,6 +83,13 @@ LOGGER = getLogger("PyLav.Player")
 ENDPONT_REGEX = re.compile(r"^(?P<region>.*?)\d+.discord.media:\d+$")
 
 
+def _done_callback(task: asyncio.Task) -> None:
+    with contextlib.suppress(asyncio.CancelledError):
+        exc = task.exception()
+        if exc is not None:
+            LOGGER.error("Error in task %s", task.get_name(), exc_info=exc)
+
+
 class Player(VoiceProtocol):
     _config: PlayerModel
     _global_config: PlayerModel
@@ -95,6 +102,7 @@ class Player(VoiceProtocol):
         *,
         node: Node = None,
     ):
+        self.ready = asyncio.Event()
         self.bot = self.client = client
         self.guild_id = str(channel.guild.id)
         self._channel = None
@@ -147,8 +155,11 @@ class Player(VoiceProtocol):
         self._extras = {}
 
         self._last_alone_paused_check = 0
+        self._was_alone_paused = False
         self._last_alone_dc_check = 0
         self._last_empty_queue_check = 0
+
+        self._waiting_for_node = asyncio.Event()
 
     def __str__(self):
         return f"Player(id={self.guild.id}, channel={self.channel.id})"
@@ -246,6 +257,17 @@ class Player(VoiceProtocol):
             next_run_time=now_time + datetime.timedelta(seconds=3),
         )
         self.player_manager.client.scheduler.add_job(
+            self.node_monitor_task,
+            trigger="interval",
+            seconds=5,
+            max_instances=1,
+            id=f"{self.bot.user.id}-{self.guild.id}-node_monitor_task",
+            replace_existing=True,
+            coalesce=True,
+            next_run_time=now_time + datetime.timedelta(seconds=15),
+        )
+
+        self.player_manager.client.scheduler.add_job(
             self.auto_empty_queue_task,
             trigger="interval",
             seconds=5,
@@ -266,6 +288,17 @@ class Player(VoiceProtocol):
             next_run_time=now_time + datetime.timedelta(seconds=1),
         )
         self.player_manager.client.scheduler.add_job(
+            self.auto_resume_task,
+            trigger="interval",
+            seconds=5,
+            max_instances=1,
+            id=f"{self.bot.user.id}-{self.guild.id}-auto_resume_task",
+            replace_existing=True,
+            coalesce=True,
+            next_run_time=now_time + datetime.timedelta(seconds=4),
+        )
+
+        self.player_manager.client.scheduler.add_job(
             self.auto_save_task,
             trigger="interval",
             seconds=10,
@@ -275,6 +308,7 @@ class Player(VoiceProtocol):
             coalesce=True,
             next_run_time=now_time + datetime.timedelta(seconds=10),
         )
+        self.ready.set()
 
     @property
     def channel(self) -> discord.channel.VocalGuildChannel:
@@ -450,6 +484,8 @@ class Player(VoiceProtocol):
         with contextlib.suppress(
             asyncio.exceptions.CancelledError,
         ):
+            if not self.ready.is_set():
+                return
             if not self.is_connected:
                 LOGGER.trace(
                     "Auto Pause task for %s fired while player is not connected to a voice channel - discarding",
@@ -478,14 +514,83 @@ class Player(VoiceProtocol):
                         feature.time,
                     )
                     await self.set_pause(pause=True, requester=self.guild.me)
+                    self._was_alone_paused = True
                     self._last_alone_paused_check = 0
             else:
                 self._last_alone_paused_check = 0
+
+    async def auto_resume_task(self):
+        with contextlib.suppress(
+            asyncio.exceptions.CancelledError,
+        ):
+            if not self.ready.is_set():
+                return
+            if not self._was_alone_paused:
+                LOGGER.trace(
+                    "Auto Resume task for %s fired while player is auto paused - discarding",
+                    self,
+                )
+                return
+            if (
+                self.paused
+                and not self.is_empty
+                and (
+                    feature := await self.player_manager.client.player_config_manager.get_alone_pause(
+                        guild_id=self.guild.id
+                    )
+                ).enabled
+            ):
+                LOGGER.info(
+                    "Auto Resume task for %s - Player in an non-empty channel - Resuming",
+                    self,
+                    feature.time,
+                )
+                await self.set_pause(pause=False, requester=self.guild.me)
+                self._was_alone_paused = False
+
+    async def node_monitor_task(self):
+        with contextlib.suppress(
+            asyncio.exceptions.CancelledError,
+        ):
+            if not self.ready.is_set():
+                return
+            if self.node.available:
+                LOGGER.trace(
+                    "Node monitor task for %s fired while the current node is available - releasing lock",
+                    self,
+                )
+                self._waiting_for_node.set()
+            elif (not self.player_manager.client.node_manager.available_nodes) and self._waiting_for_node.is_set():
+                LOGGER.debug(
+                    "Node monitor task for %s fired while there are no available nodes - acquiring lock",
+                    self,
+                )
+                self._waiting_for_node.clear()
+                task = asyncio.create_task(
+                    self.change_to_best_node(await self.current.requires_capability() if self.current else None)
+                )
+                task.set_name(f"NodeMonitorTask-{self.guild.id}-NoNodes")
+                task.add_done_callback(_done_callback)
+            elif self.node.available is False and self._waiting_for_node.is_set():
+                LOGGER.debug(
+                    "Node monitor task for %s fired while the current node is unavailable - acquiring lock",
+                    self,
+                )
+                self._waiting_for_node.clear()
+                task = asyncio.create_task(
+                    self.change_to_best_node(await self.current.requires_capability() if self.current else None)
+                )
+                task.set_name(f"NodeMonitorTask-{self.guild.id}-NodeUnavailable")
+                task.add_done_callback(_done_callback)
+            elif (not self._waiting_for_node.is_set()) and self.player_manager.client.node_manager.available_nodes:
+                self._waiting_for_node.set()
 
     async def auto_dc_task(self):
         with contextlib.suppress(
             asyncio.exceptions.CancelledError,
         ):
+            if not self.ready.is_set():
+                return
             if not self.is_connected:
                 LOGGER.trace(
                     "Auto Disconnect task for %s fired while player is not connected to a voice channel - discarding",
@@ -522,6 +627,8 @@ class Player(VoiceProtocol):
         with contextlib.suppress(
             asyncio.exceptions.CancelledError,
         ):
+            if not self.ready.is_set():
+                return
             if not self.is_connected:
                 LOGGER.trace(
                     "Auto Empty Queue task for %s fired while player is not connected to a voice channel - discarding",
@@ -589,11 +696,16 @@ class Player(VoiceProtocol):
         node = await self.node.node_manager.find_best_node(
             region=self.region, feature=feature, coordinates=self.coordinates
         )
-        if feature and not node:
-            raise NoNodeWithRequestFunctionalityAvailable(
-                _("No node with {feature} functionality available!").format(feature=feature), feature=feature
+        if not node:
+            LOGGER.warning("No node with %s functionality available - Waiting for one to become available!", feature)
+            await self._waiting_for_node.wait()
+            node = await self.node.node_manager.find_best_node(
+                region=self.region, feature=feature, coordinates=self.coordinates
             )
 
+        if feature and not node:
+            LOGGER.warning("No node with %s functionality available after one temporarily became available!", feature)
+            raise NoNodeWithRequestFunctionalityAvailable(f"No node with {feature} functionality available", feature)
         if node != self.node:
             await self.change_node(node)
             return node
@@ -608,10 +720,17 @@ class Player(VoiceProtocol):
         node = await self.node.node_manager.find_best_node(
             not_region=self.region, feature=feature, coordinates=self.coordinates
         )
-        if feature and not node:
-            raise NoNodeWithRequestFunctionalityAvailable(
-                _("No node with {feature} functionality available!").format(feature=feature), feature=feature
+        if not node:
+            LOGGER.warning("No node with %s functionality available - Waiting for one to become available!", feature)
+            await self._waiting_for_node.wait()
+            node = await self.node.node_manager.find_best_node(
+                region=self.region, feature=feature, coordinates=self.coordinates
             )
+
+        if feature and not node:
+            LOGGER.warning("No node with %s functionality available after one temporarily became available!", feature)
+            raise NoNodeWithRequestFunctionalityAvailable(f"No node with {feature} functionality available", feature)
+
         if node != self.node:
             await self.change_node(node)
             return node
@@ -1082,6 +1201,7 @@ class Player(VoiceProtocol):
         await self.node.send(op="pause", guildId=self.guild_id, pause=pause)
 
         self.paused = pause
+        self._was_alone_paused = False
         if self.paused:
             self.node.dispatch_event(PlayerPausedEvent(self, requester))
         else:
@@ -1268,6 +1388,9 @@ class Player(VoiceProtocol):
             with contextlib.suppress(ValueError):
                 await self.player_manager.remove(self.channel.guild.id)
             await self.node.send(op="destroy", guildId=self.guild_id)
+            self.player_manager.client.scheduler.remove_job(
+                job_id=f"{self.bot.user.id}-{self.guild.id}-node_monitor_task"
+            )
             self.player_manager.client.scheduler.remove_job(job_id=f"{self.bot.user.id}-{self.guild.id}-auto_dc_task")
             self.player_manager.client.scheduler.remove_job(
                 job_id=f"{self.bot.user.id}-{self.guild.id}-auto_empty_queue_task"
@@ -2049,6 +2172,7 @@ class Player(VoiceProtocol):
             "extras": {
                 "last_track": await self.last_track.to_json() if self.last_track else None,
                 "next_track": await self.next_track.to_json() if self.next_track else None,
+                "was_alone_paused": self._was_alone_paused,
             },
         }
 
@@ -2059,6 +2183,7 @@ class Player(VoiceProtocol):
         # sourcery no-metrics
         if self._restored is True:
             return
+        self._was_alone_paused = player.extras.get("was_alone_paused", False)
         current = (
             Track(
                 node=self.node,
