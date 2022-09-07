@@ -1,6 +1,10 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
+import datetime
+import functools
+import pathlib
 import typing
 from typing import TYPE_CHECKING, Any
 from uuid import uuid4
@@ -8,6 +12,8 @@ from uuid import uuid4
 import aiohttp
 import asyncstdlib
 import ujson
+from apscheduler.jobstores.base import JobLookupError
+from expiringdict import ExpiringDict
 
 from pylav._logging import getLogger
 from pylav.constants import BUNDLED_NODES_IDS, PYLAV_NODES, REGION_TO_COUNTRY_COORDINATE_MAPPING, SUPPORTED_SOURCES
@@ -36,6 +42,13 @@ if TYPE_CHECKING:
     from pylav.player import Player
     from pylav.query import Query
     from pylav.websocket import WebSocket
+
+try:
+    from redbot.core.i18n import Translator
+
+    _ = Translator("PyLavPlayer", pathlib.Path(__file__))
+except ImportError:
+    _ = lambda x: x
 
 
 LOGGER = getLogger("PyLav.Node")
@@ -84,7 +97,13 @@ class Penalty:
 
         This is the sum of the penalties of the node.
         """
-        return self.player_penalty + self.cpu_penalty + self.null_frame_penalty + self.deficit_frame_penalty
+        return (
+            self.player_penalty
+            + self.cpu_penalty
+            + self.null_frame_penalty
+            + self.deficit_frame_penalty
+            + self._stats._node.down_votes * 100
+        )
 
 
 class Stats:
@@ -264,6 +283,7 @@ class Node:
         self._search_only = search_only
         self._sources = self._capabilities = set()
         self._coordinates = (0, 0)
+        self._down_votes = ExpiringDict(max_len=float("inf"), max_age_seconds=600)  # type: ignore
 
         self._stats = None
         from pylav.websocket import WebSocket
@@ -279,6 +299,38 @@ class Node:
             reconnect_attempts=self.reconnect_attempts,
             ssl=self.ssl,
         )
+        self._manager.client.scheduler.add_job(
+            self.node_monitor_task,
+            trigger="interval",
+            seconds=5,
+            max_instances=1,
+            id=f"{self.identifier}-{self._manager.client.bot.user.id}-node_monitor_task",
+            replace_existing=True,
+            coalesce=True,
+            next_run_time=datetime.datetime.now(tz=datetime.timezone.utc) + datetime.timedelta(seconds=15),
+        )
+
+    async def node_monitor_task(self):
+        with contextlib.suppress(
+            asyncio.exceptions.CancelledError,
+        ):
+            playing_players = len(self.playing_players)
+            if playing_players == 0:
+                return
+            if (self.down_votes / playing_players) >= 0.5:
+                del self.down_votes
+
+                if self.identifier == self.node_manager.client.bot.user.id and self._ws is not None:
+                    self._ws._manual_shutdown = True
+                if self._ws is not None:
+                    await self._ws._ws.close(
+                        code=202,
+                        message="Node voted as being down",
+                    )
+                if self.identifier == self.node_manager.client.bot.user.id:
+                    await self.node_manager.client.managed_node_controller.restart()
+                    with contextlib.suppress(Exception):
+                        await self.close()
 
     @property
     def is_ready(self) -> bool:
@@ -446,6 +498,30 @@ class Node:
             return float("inf")
         return self.stats.penalty.total
 
+    def down_vote(self, player: Player) -> int:
+        """Adds a down vote for this node"""
+        if not player.is_playing:
+            return -1
+        self._down_votes[player.guild.id] = 1
+        return self.down_votes
+
+    def down_unvote(self, player: Player) -> int:
+        """Removes a down vote for this node"""
+        if not player.is_playing:
+            return -1
+        self._down_votes.pop(player.guild.id, None)
+        return self.down_votes
+
+    @property
+    def down_votes(self) -> int:
+        """Returns the down votes for this node"""
+        return len(set(self._down_votes.keys()))
+
+    @down_votes.deleter
+    def down_votes(self):
+        """Clears the down votes for this node"""
+        self._down_votes.clear()
+
     async def penalty_with_region(self, region: str | None) -> float:
         """The penalty for the node, with the region added in"""
         if not region:
@@ -475,12 +551,21 @@ class Node:
     def __repr__(self):
         return (
             f"<Node id={self.identifier} name={self.name} "
-            f"region={self.region} ssl={self.ssl} search_only={self.search_only} status={self._ws.connected}>"
+            f"region={self.region} ssl={self.ssl} "
+            f"search_only={self.search_only} status={self._ws.connected}, votes={self.down_votes}>"
         )
 
     def __eq__(self, other):
         if isinstance(other, Node):
-            return self.identifier == other.identifier
+            return functools.reduce(
+                lambda x, y: x and y,
+                map(
+                    lambda p, q: p == q,
+                    [self.identifier, self._ws.connected, self.name, self._resume_key],
+                    [other.identifier, self._ws.connected, self.name, self._resume_key],
+                ),
+                True,
+            )
         elif isinstance(other, NodeModel):
             return self.identifier == other.id
         return NotImplemented
@@ -1257,6 +1342,10 @@ class Node:
         if self._ws is not None:
             await self._ws.close()
         await self.session.close()
+        with contextlib.suppress(JobLookupError):
+            self.node_manager.client.scheduler.remove_job(
+                job_id=f"{self.identifier}-{self._manager.client.bot.user.id}-node_monitor_task"
+            )
 
     async def wait_until_ready(self, timeout: float | None = None):
         await asyncio.wait_for(self._ready.wait(), timeout=timeout)

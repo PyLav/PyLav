@@ -101,6 +101,7 @@ class WebSocket:
         self.ready = asyncio.Event()
         self._connect_task = asyncio.ensure_future(self.connect())
         self._connect_task.add_done_callback(_done_callback)
+        self._manual_shutdown = False
 
     @property
     def is_ready(self) -> bool:
@@ -234,7 +235,6 @@ class WebSocket:
                         )
                     await asyncio.sleep(backoff.delay())
                 else:
-                    await self.node.node_manager.node_connect(self.node)
                     #  asyncio.ensure_future(self._listen())
                     if (
                         not self._resuming_configured
@@ -247,13 +247,12 @@ class WebSocket:
                             timeout=self._resume_timeout,
                         )
                         self._resuming_configured = True
-
+                    await self.node.node_manager.node_connect(self.node)
                     if self._message_queue:
                         async for message in AsyncIter(self._message_queue):
                             await self.send(**message)
 
                         self._message_queue.clear()
-
                     await self._listen()
                     LOGGER.debug("[NODE-%s] _listen returned", self.node.name)
                     # Ensure this loop doesn't proceed if _listen returns control back to this
@@ -317,6 +316,9 @@ class WebSocket:
         await self.node.node_manager.node_disconnect(self.node, code, reason)
         if not self._connect_task.cancelled():
             self._connect_task.cancel()
+        if self._manual_shutdown:
+            await self.close()
+            return
         self._connect_task = asyncio.ensure_future(self.connect())
         self._connect_task.add_done_callback(_done_callback)
 

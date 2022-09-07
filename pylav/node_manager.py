@@ -368,6 +368,7 @@ class NodeManager:
             The node that has just connected.
         """
         LOGGER.info("[NODE-%s] Successfully established connection", node.name)
+        del node.down_votes
 
         async for player in asyncstdlib.iter(self.player_queue):
             await player.change_node(node)

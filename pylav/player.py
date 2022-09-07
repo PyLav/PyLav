@@ -256,16 +256,6 @@ class Player(VoiceProtocol):
             coalesce=True,
             next_run_time=now_time + datetime.timedelta(seconds=3),
         )
-        self.player_manager.client.scheduler.add_job(
-            self.node_monitor_task,
-            trigger="interval",
-            seconds=5,
-            max_instances=1,
-            id=f"{self.bot.user.id}-{self.guild.id}-node_monitor_task",
-            replace_existing=True,
-            coalesce=True,
-            next_run_time=now_time + datetime.timedelta(seconds=15),
-        )
 
         self.player_manager.client.scheduler.add_job(
             self.auto_empty_queue_task,
@@ -344,6 +334,12 @@ class Player(VoiceProtocol):
     @property
     def radio(self) -> RadioBrowser:
         return self.lavalink.radio_browser
+
+    def vote_node_down(self) -> int:
+        return -1 if (self.node is None or not self.is_playing) else self.node.down_vote(self)
+
+    def unvote_node_down(self) -> int:
+        return -1 if (self.node is None or not self.is_playing) else not self.node.down_unvote(self)
 
     async def text_channel(self) -> discord.abc.MessageableChannel:
         return self.guild.get_channel_or_thread(await self.config.fetch_text_channel_id())
@@ -547,43 +543,6 @@ class Player(VoiceProtocol):
                 )
                 await self.set_pause(pause=False, requester=self.guild.me)
                 self._was_alone_paused = False
-
-    async def node_monitor_task(self):
-        with contextlib.suppress(
-            asyncio.exceptions.CancelledError,
-        ):
-            if not self.ready.is_set():
-                return
-            if self.node.available:
-                LOGGER.trace(
-                    "Node monitor task for %s fired while the current node is available - releasing lock",
-                    self,
-                )
-                self._waiting_for_node.set()
-            elif (not self.player_manager.client.node_manager.available_nodes) and self._waiting_for_node.is_set():
-                LOGGER.debug(
-                    "Node monitor task for %s fired while there are no available nodes - acquiring lock",
-                    self,
-                )
-                self._waiting_for_node.clear()
-                task = asyncio.create_task(
-                    self.change_to_best_node(await self.current.requires_capability() if self.current else None)
-                )
-                task.set_name(f"NodeMonitorTask-{self.guild.id}-NoNodes")
-                task.add_done_callback(_done_callback)
-            elif self.node.available is False and self._waiting_for_node.is_set():
-                LOGGER.debug(
-                    "Node monitor task for %s fired while the current node is unavailable - acquiring lock",
-                    self,
-                )
-                self._waiting_for_node.clear()
-                task = asyncio.create_task(
-                    self.change_to_best_node(await self.current.requires_capability() if self.current else None)
-                )
-                task.set_name(f"NodeMonitorTask-{self.guild.id}-NodeUnavailable")
-                task.add_done_callback(_done_callback)
-            elif (not self._waiting_for_node.is_set()) and self.player_manager.client.node_manager.available_nodes:
-                self._waiting_for_node.set()
 
     async def auto_dc_task(self):
         with contextlib.suppress(
@@ -1296,7 +1255,8 @@ class Player(VoiceProtocol):
         node: :class:`Node`
             The node the player is changed to.
         """
-        if node.identifier == self.node.identifier:
+        if node == self.node and self.node.available:
+            LOGGER.critical("Tried to change node to the same node.")
             return
         if self.node.available:
             await self.node.send(op="destroy", guildId=self.guild_id)
@@ -1335,7 +1295,6 @@ class Player(VoiceProtocol):
             )
         if self.volume_filter.changed:
             await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
-
         self.node.dispatch_event(NodeChangedEvent(self, old_node, node))
 
     async def connect(
@@ -1388,9 +1347,6 @@ class Player(VoiceProtocol):
             with contextlib.suppress(ValueError):
                 await self.player_manager.remove(self.channel.guild.id)
             await self.node.send(op="destroy", guildId=self.guild_id)
-            self.player_manager.client.scheduler.remove_job(
-                job_id=f"{self.bot.user.id}-{self.guild.id}-node_monitor_task"
-            )
             self.player_manager.client.scheduler.remove_job(job_id=f"{self.bot.user.id}-{self.guild.id}-auto_dc_task")
             self.player_manager.client.scheduler.remove_job(
                 job_id=f"{self.bot.user.id}-{self.guild.id}-auto_empty_queue_task"
