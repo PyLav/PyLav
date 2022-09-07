@@ -133,7 +133,6 @@ class Player(VoiceProtocol):
         self.history: TrackHistoryQueue[Track] = TrackHistoryQueue(maxsize=100)
         self.current: Track | None = None
         self._post_init_completed = False
-        self._queue_length = 0
         self._autoplay_playlist: PlaylistModel = None  # type: ignore
         self._restored = False
 
@@ -161,8 +160,14 @@ class Player(VoiceProtocol):
 
         self._waiting_for_node = asyncio.Event()
 
-    def __str__(self):
-        return f"Player(id={self.guild.id}, channel={self.channel.id})"
+    def __repr__(self):
+        return (
+            f"<Player id={self.guild.id} "
+            f"channel={self.channel.id} "
+            f"playing={self.is_playing} "
+            f"queue={self.queue.size()} "
+            f"node={self.node}>"
+        )
 
     async def post_init(
         self,
@@ -645,7 +650,7 @@ class Player(VoiceProtocol):
             )
             await self.save()
 
-    async def change_to_best_node(self, feature: str = None) -> Node | None:
+    async def change_to_best_node(self, feature: str = None, ops: bool = True) -> Node | None:
         """
         Returns the best node to play the current track.
         Returns
@@ -665,11 +670,11 @@ class Player(VoiceProtocol):
         if feature and not node:
             LOGGER.warning("No node with %s functionality available after one temporarily became available!", feature)
             raise NoNodeWithRequestFunctionalityAvailable(f"No node with {feature} functionality available", feature)
-        if node != self.node:
-            await self.change_node(node)
+        if node != self.node or not ops:
+            await self.change_node(node, ops=ops)
             return node
 
-    async def change_to_best_node_diff_region(self, feature: str = None) -> Node | None:
+    async def change_to_best_node_diff_region(self, feature: str = None, ops: bool = True) -> Node | None:
         """
         Returns the best node to play the current track in a different region.
         Returns
@@ -690,8 +695,8 @@ class Player(VoiceProtocol):
             LOGGER.warning("No node with %s functionality available after one temporarily became available!", feature)
             raise NoNodeWithRequestFunctionalityAvailable(f"No node with {feature} functionality available", feature)
 
-        if node != self.node:
-            await self.change_node(node)
+        if node != self.node or not ops:
+            await self.change_node(node, ops=ops)
             return node
 
     def store(
@@ -1247,26 +1252,24 @@ class Player(VoiceProtocol):
         event = PlayerUpdateEvent(self, self._last_position, self.position_timestamp)
         self.node.dispatch_event(event)
 
-    async def change_node(self, node: Node) -> None:
+    async def change_node(self, node: Node, ops: bool = True) -> None:
         """
         Changes the player's node
         Parameters
         ----------
         node: :class:`Node`
             The node the player is changed to.
+        ops: :class:`bool`
+            Whether to change apply the volume and filter ops on change.
         """
-        if node == self.node and self.node.available:
-            LOGGER.critical("Tried to change node to the same node.")
+        if node == self.node and self.node.available and ops:
             return
         if self.node.available:
             await self.node.send(op="destroy", guildId=self.guild_id)
-
         old_node = self.node
         self.node = node
-
         if self._voice_state:
             await self._dispatch_voice_update()
-
         if self.current:
             options = {}
             if self.current.skip_segments and self.node.supports_sponsorblock:
@@ -1275,26 +1278,27 @@ class Player(VoiceProtocol):
                 op="play", guildId=self.guild_id, track=self.current.track, startTime=self.position, **options
             )
             self._last_update = time.time() * 1000
-
             if self.paused:
                 await self.node.send(op="pause", guildId=self.guild_id, pause=self.paused)
-        if self.has_effects:
-            await self.set_filters(
-                requester=self.guild.me,
-                equalizer=self.equalizer,
-                karaoke=self.karaoke,
-                timescale=self.timescale,
-                tremolo=self.tremolo,
-                vibrato=self.vibrato,
-                rotation=self.rotation,
-                distortion=self.distortion,
-                low_pass=self.low_pass,
-                channel_mix=self.channel_mix,
-                echo=self.echo,
-                reset_not_set=True,
-            )
-        if self.volume_filter.changed:
-            await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
+        if ops:
+            if self.has_effects:
+                await self.set_filters(
+                    requester=self.guild.me,
+                    equalizer=self.equalizer,
+                    karaoke=self.karaoke,
+                    timescale=self.timescale,
+                    tremolo=self.tremolo,
+                    vibrato=self.vibrato,
+                    rotation=self.rotation,
+                    distortion=self.distortion,
+                    low_pass=self.low_pass,
+                    channel_mix=self.channel_mix,
+                    echo=self.echo,
+                    reset_not_set=True,
+                )
+
+            if self.volume_filter.changed:
+                await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
         self.node.dispatch_event(NodeChangedEvent(self, old_node, node))
 
     async def connect(
@@ -2216,25 +2220,6 @@ class Player(VoiceProtocol):
         self.queue.raw_b64s = [t.track for t in queue if t.track]
         self.history.raw_queue = collections.deque(history)
         self.history.raw_b64s = [t.track for t in history]
-        if current:
-            current.timestamp = int(player.position)
-            self.queue.put_nowait([current], index=0)
-            node = await self.node.node_manager.find_best_node(
-                region=self.region, feature=await current.requires_capability(), coordinates=self._coordinates
-            )
-            tried = 0
-            while not node:
-                await asyncio.sleep(1)
-                node = await self.node.node_manager.find_best_node(
-                    region=self.region, feature=await current.requires_capability(), coordinates=self._coordinates
-                )
-                tried += 1
-                if tried > 600:
-                    return  # Exit without restoring after 10 minutes of waiting
-            await self.change_node(node)
-        else:
-            await self.change_to_best_node()
-
         self._effect_enabled = player.effect_enabled
         effects = player.effects
         if (v := effects.get("volume", None)) and (f := Volume.from_dict(v)) and f.changed:
@@ -2259,7 +2244,24 @@ class Player(VoiceProtocol):
             self._channel_mix = f
         if (v := effects.get("echo", None)) and (f := Echo.from_dict(v)) and f.changed:
             self._echo = f
-
+        if current:
+            self.current = current
+            current.timestamp = int(player.position)
+            node = await self.node.node_manager.find_best_node(
+                region=self.region, feature=await current.requires_capability(), coordinates=self._coordinates
+            )
+            tried = 0
+            while not node:
+                await asyncio.sleep(1)
+                node = await self.node.node_manager.find_best_node(
+                    region=self.region, feature=await current.requires_capability(), coordinates=self._coordinates
+                )
+                tried += 1
+                if tried > 600:
+                    return  # Exit without restoring after 10 minutes of waiting
+            await self.change_node(node, ops=False)
+        else:
+            await self.change_to_best_node(ops=False)
         if self.has_effects:
             await self.node.filters(
                 guild_id=self.channel.guild.id,
@@ -2276,7 +2278,7 @@ class Player(VoiceProtocol):
             )
         if self.volume_filter.changed:
             await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
-        if player.playing:
+        if player.playing and not current:
             await self.next(requester)  # type: ignore
         self.last_track = last_track
         self._restored = True

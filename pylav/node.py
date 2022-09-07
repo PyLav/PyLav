@@ -139,12 +139,12 @@ class Stats:
     @property
     def players(self) -> int:
         """The amount of players connected to the node"""
-        return self._data["players"]
+        return self._data["players"] or self._node.connected_count
 
     @property
     def playing_players(self) -> int:
         """The amount of players that are playing in the node"""
-        return self._data["playingPlayers"]
+        return self._data["playingPlayers"] or self._node.playing_count
 
     @property
     def memory_free(self) -> int:
@@ -469,12 +469,12 @@ class Node:
     @property
     def server_connected_players(self) -> int:
         """Returns the number of players on this node that are connected"""
-        return self.stats.players if self.stats else len(self.connected_players)
+        return self.stats.players if self.stats else self.connected_count
 
     @property
     def server_playing_players(self) -> int:
         """Returns the number of players on this node that are playing"""
-        return self.stats.playing_players if self.stats else len(self.playing_players)
+        return self.stats.playing_players if self.stats else self.playing_count
 
     @property
     def count(self) -> int:
@@ -552,7 +552,9 @@ class Node:
         return (
             f"<Node id={self.identifier} name={self.name} "
             f"region={self.region} ssl={self.ssl} "
-            f"search_only={self.search_only} status={self._ws.connected}, votes={self.down_votes}>"
+            f"search_only={self.search_only} connected={self._ws.connected if self._ws else False} "
+            f"votes={self.down_votes} "
+            f"players={self.server_connected_players} playing={self.server_playing_players}>"
         )
 
     def __eq__(self, other):

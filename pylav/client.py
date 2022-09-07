@@ -308,7 +308,12 @@ class Client(metaclass=_Singleton):
                     if not self._initiated:
                         self._initiated = True
                         self.ready.clear()
-                        await self.bot.wait_until_ready()
+                        if hasattr(self.bot, "wait_until_red_ready"):
+                            LOGGER.info("Running on a Red bot, waiting for Red to be ready")
+                            await self.bot.wait_until_red_ready()
+                        else:
+                            LOGGER.info("Running a discord.py bot waiting for bot to be ready")
+                            await self.bot.wait_until_ready()
                         await tables.DB.start_connection_pool(max_size=100)
                         if hasattr(self.bot, "get_shared_api_tokens") and callable(
                             getattr(self.bot, "get_shared_api_tokens")
