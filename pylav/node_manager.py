@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING
 import aiohttp
 import asyncstdlib
 import ujson
+from discord.backoff import ExponentialBackoff
 
 from pylav._logging import getLogger
 from pylav.constants import (
@@ -284,6 +285,9 @@ class NodeManager:
         feature: str = None,
         already_attempted_regions: set[str] = None,
         coordinates: tuple[float, float] = None,
+        wait: bool = False,
+        attempt: int = 0,
+        backoff: ExponentialBackoff = None,
     ) -> Node | None:
         """Finds the best (least used) node in the given region, if applicable.
         Parameters
@@ -298,10 +302,21 @@ class NodeManager:
             A set of regions that have already been attempted.
         coordinates: :class:`tuple`[:class:`float`, :class:`float`]
             The coordinates to use.
+        wait: :class:`bool`
+            Whether to wait for a node to become available.
+        attempt: :class:`int`
+            The current attempt number.
+        backoff: :class:`ExponentialBackoff`
+            The backoff to use.
         Returns
         -------
         Optional[:class:`Node`]
         """
+        if backoff is None:
+            backoff = ExponentialBackoff()
+            delay = 1
+        else:
+            delay = backoff.delay()
         already_attempted_regions = already_attempted_regions or set()
         if feature:
             nodes = [n for n in self.available_nodes if n.has_capability(feature)]
@@ -344,7 +359,20 @@ class NodeManager:
                 ]
             else:
                 nodes = self.available_nodes
-        return await asyncstdlib.min(nodes, key=partial(sort_key_nodes, region=region), default=None) if nodes else None
+        node = await asyncstdlib.min(nodes, key=partial(sort_key_nodes, region=region), default=None) if nodes else None
+        if node is None and wait:
+            await asyncio.sleep(delay)
+            return await self.find_best_node(
+                region=region,
+                not_region=not_region,
+                feature=feature,
+                already_attempted_regions=already_attempted_regions,
+                coordinates=coordinates,
+                wait=wait,
+                backoff=backoff,
+                attempt=attempt + 1,
+            )
+        return node
 
     def get_node_by_id(self, unique_identifier: int) -> Node | None:
         """
@@ -524,7 +552,7 @@ class NodeManager:
         if not tasks:
             if (
                 not (self._unmanaged_external_password and self._unmanaged_external_host)
-                and self.client.enable_managed_node
+                and await self.client.lib_db_manager.get_config().fetch_enable_managed_node()
             ):
                 self._adding_nodes.set()
                 return

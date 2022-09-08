@@ -56,7 +56,6 @@ BUNDLED_PLAYLIST_IDS = {1, 2, 1000001, 1000002, 1000003, 1000004}
 BUNDLED_NODES_IDS = {1, 2, 1001}
 
 # Mapping of the PyLav public nodes
-#   The floats entries are possible locations but not yet being used.
 PYLAV_NODES = {
     1: ("london", (1.3213765, 103.6956208)),
     2: ("new_york_city", (40.606872, -74.1769477)),
@@ -70,7 +69,7 @@ PYLAV_NODE_SETTINGS = {
     "reconnect_attempts": -1,
     "search_only": False,
     "managed": False,
-    "disabled_sources": ["local", "http"],
+    "disabled_sources": ["local", "http", "sponsorblock"],
     "temporary": True,
 }
 

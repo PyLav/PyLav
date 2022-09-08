@@ -490,3 +490,7 @@ class WebSocket:
         if self._ws and not self._ws.closed:
             await self._ws.close(code=4014, message=b"Shutting down")
         await self._session.close()
+
+    async def manual_closure(self, managed_node: bool = False):
+        self._manual_shutdown = managed_node
+        await self._websocket_closed(202, "Manual websocket shutdown requested")

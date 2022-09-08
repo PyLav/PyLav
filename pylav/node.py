@@ -320,12 +320,10 @@ class Node:
             if (self.down_votes / playing_players) >= 0.5:
                 del self.down_votes
 
-                if self.identifier == self.node_manager.client.bot.user.id and self._ws is not None:
-                    self._ws._manual_shutdown = True
                 if self._ws is not None:
-                    await self._ws._ws.close(
-                        code=202,
-                        message="Node voted as being down",
+                    await self.websocket.manual_closure(
+                        managed_node=self.identifier == self.node_manager.client.bot.user.id
+                        and self.websocket is not None
                     )
                 if self.identifier == self.node_manager.client.bot.user.id:
                     await self.node_manager.client.managed_node_controller.restart()
@@ -334,7 +332,7 @@ class Node:
 
     @property
     def is_ready(self) -> bool:
-        return self._ready.is_set() and self._ws.connected
+        return self._ready.is_set() and self.websocket.connected
 
     @property
     def coordinates(self) -> tuple[int, int]:
@@ -517,6 +515,10 @@ class Node:
         """Returns the down votes for this node"""
         return len(set(self._down_votes.keys()))
 
+    def voted(self, player: Player) -> bool:
+        """Returns whether a player has voted for this node"""
+        return player.guild.id in self._down_votes
+
     @down_votes.deleter
     def down_votes(self):
         """Clears the down votes for this node"""
@@ -552,7 +554,7 @@ class Node:
         return (
             f"<Node id={self.identifier} name={self.name} "
             f"region={self.region} ssl={self.ssl} "
-            f"search_only={self.search_only} connected={self._ws.connected if self._ws else False} "
+            f"search_only={self.search_only} connected={self.websocket.connected if self._ws else False} "
             f"votes={self.down_votes} "
             f"players={self.server_connected_players} playing={self.server_playing_players}>"
         )
@@ -563,8 +565,8 @@ class Node:
                 lambda x, y: x and y,
                 map(
                     lambda p, q: p == q,
-                    [self.identifier, self._ws.connected, self.name, self._resume_key],
-                    [other.identifier, self._ws.connected, self.name, self._resume_key],
+                    [self.identifier, self.websocket.connected, self.name, self._resume_key],
+                    [other.identifier, self.websocket.connected, self.name, self._resume_key],
                 ),
                 True,
             )
@@ -970,8 +972,7 @@ class Node:
         await self.send(**op)
 
     async def get_unsupported_features(self) -> set[str]:
-        if not self._capabilities:
-            await self.update_features()
+        await self.update_features()
         return SUPPORTED_SOURCES - self._capabilities
 
     async def update_features(self):
@@ -1341,8 +1342,8 @@ class Node:
         """
         Closes the target node.
         """
-        if self._ws is not None:
-            await self._ws.close()
+        if self.websocket is not None:
+            await self.websocket.close()
         await self.session.close()
         with contextlib.suppress(JobLookupError):
             self.node_manager.client.scheduler.remove_job(

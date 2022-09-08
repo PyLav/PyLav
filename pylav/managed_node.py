@@ -164,8 +164,7 @@ class LocalNodeManager:
     _version: str | None = None
     _java_exc: str = JAVA_EXECUTABLE
 
-    def __init__(self, client: Client, timeout: int | None = None, auto_update: bool = True) -> None:
-        self._auto_update = False if USING_FORCED else auto_update
+    def __init__(self, client: Client, timeout: int | None = None) -> None:
         self.ready: asyncio.Event = asyncio.Event()
         self._ci_info: dict = {"number": 0, "branchName": "", "finishDate": "", "href": "", "jar_url": ""}
         self._client = client
@@ -461,8 +460,15 @@ class LocalNodeManager:
             await self._client.remove_node(self._node_id)
             self._node = None
 
+    async def should_auto_update(self) -> bool:
+        return (
+            False
+            if USING_FORCED
+            else await self._client._lib_config_manager.get_config().fetch_auto_update_managed_nodes()
+        )
+
     async def _download_jar(self) -> None:
-        if not self._auto_update:
+        if not await self.should_auto_update():
             return
         LOGGER.info("Downloading Lavalink.jar")
         jar_url = (
@@ -546,7 +552,7 @@ class LocalNodeManager:
         self._commit = commit["commit"].decode()
         self._version = version["version"].decode()
         self._buildtime = date
-        if self._auto_update:
+        if await self.should_auto_update():
             self._up_to_date = last_download_id == self._ci_info.get("number", -1)
         else:
             self._ci_info["number"] = build
@@ -782,7 +788,7 @@ class LocalNodeManager:
             LOGGER.info("Managed Lavalink node is not connected, reconnecting")
             await node.websocket.close()
             await node.websocket._websocket_closed(reason="Managed Node restart")
-            await node.wait_until_ready(timeout=30)
+            await node.wait_until_ready(timeout=60)
         self._wait_for.set()
 
     @staticmethod
@@ -809,5 +815,10 @@ class LocalNodeManager:
 
     async def restart(self, java_path: str = None):
         LOGGER.info("Restarting managed Lavalink node")
+        node = await self._client.get_my_node()
+        if node:
+            await node.websocket.manual_closure(managed_node=True)
+            with contextlib.suppress(Exception):
+                await node.close()
         await self.shutdown()
         await self.start(java_path=java_path or self._java_path)

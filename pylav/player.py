@@ -343,6 +343,9 @@ class Player(VoiceProtocol):
     def vote_node_down(self) -> int:
         return -1 if (self.node is None or not self.is_playing) else self.node.down_vote(self)
 
+    def voted(self) -> bool:
+        return self.node.voted(self)
+
     def unvote_node_down(self) -> int:
         return -1 if (self.node is None or not self.is_playing) else not self.node.down_unvote(self)
 
@@ -657,14 +660,15 @@ class Player(VoiceProtocol):
         -------
         :class:`Node`
         """
+        if feature is None and self.current:
+            feature = await self.current.requires_capability()
         node = await self.node.node_manager.find_best_node(
             region=self.region, feature=feature, coordinates=self.coordinates
         )
         if not node:
             LOGGER.warning("No node with %s functionality available - Waiting for one to become available!", feature)
-            await self._waiting_for_node.wait()
             node = await self.node.node_manager.find_best_node(
-                region=self.region, feature=feature, coordinates=self.coordinates
+                region=self.region, feature=feature, coordinates=self.coordinates, wait=True
             )
 
         if feature and not node:
@@ -681,14 +685,15 @@ class Player(VoiceProtocol):
         -------
         :class:`Node`
         """
+        if feature is None and self.current:
+            feature = await self.current.requires_capability()
         node = await self.node.node_manager.find_best_node(
             not_region=self.region, feature=feature, coordinates=self.coordinates
         )
         if not node:
             LOGGER.warning("No node with %s functionality available - Waiting for one to become available!", feature)
-            await self._waiting_for_node.wait()
             node = await self.node.node_manager.find_best_node(
-                region=self.region, feature=feature, coordinates=self.coordinates
+                region=self.region, feature=feature, coordinates=self.coordinates, wait=True
             )
 
         if feature and not node:
@@ -2247,21 +2252,7 @@ class Player(VoiceProtocol):
         if current:
             self.current = current
             current.timestamp = int(player.position)
-            node = await self.node.node_manager.find_best_node(
-                region=self.region, feature=await current.requires_capability(), coordinates=self._coordinates
-            )
-            tried = 0
-            while not node:
-                await asyncio.sleep(1)
-                node = await self.node.node_manager.find_best_node(
-                    region=self.region, feature=await current.requires_capability(), coordinates=self._coordinates
-                )
-                tried += 1
-                if tried > 600:
-                    return  # Exit without restoring after 10 minutes of waiting
-            await self.change_node(node, ops=False)
-        else:
-            await self.change_to_best_node(ops=False)
+        await self.change_to_best_node(ops=False)
         if self.has_effects:
             await self.node.filters(
                 guild_id=self.channel.guild.id,

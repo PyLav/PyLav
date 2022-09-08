@@ -195,7 +195,6 @@ class Client(metaclass=_Singleton):
             self._spotify_client_secret = None
             self._spotify_auth = None
             self._shutting_down = False
-            self.enable_managed_node = None
             self._scheduler = AsyncIOScheduler()
             self._scheduler.configure(timezone=utc)
         except Exception:
@@ -340,13 +339,10 @@ class Client(metaclass=_Singleton):
                         java_path = config_data["java_path"]
                         config_folder = config_data["config_folder"]
                         localtrack_folder = config_data["localtrack_folder"]
-                        auto_update_managed_nodes = config_data["auto_update_managed_nodes"]
-                        enable_managed_node = config_data["enable_managed_node"]
                         if java_path != JAVA_EXECUTABLE and os.path.exists(JAVA_EXECUTABLE):
                             await self._config.update_java_path(JAVA_EXECUTABLE)
                         LOGGER.info("Config folder: %s", config_folder)
                         LOGGER.info("Localtracks folder: %s", localtrack_folder)
-                        self.enable_managed_node = enable_managed_node
                         self._config_folder = aiopath.AsyncPath(config_folder)
                         localtrack_folder = aiopath.AsyncPath(localtrack_folder)
                         bundled_node_config = self._node_config_manager.bundled_node_config()
@@ -375,14 +371,16 @@ class Client(metaclass=_Singleton):
 
                         await LocalFile.add_root_folder(path=localtrack_folder, create=True)
                         self._user_id = str(self._bot.user.id)
-                        self._local_node_manager = LocalNodeManager(self, auto_update=auto_update_managed_nodes)
+                        self._local_node_manager = LocalNodeManager(self)
+
+                        enable_managed_node = await self.lib_db_manager.get_config().fetch_enable_managed_node()
 
                         if (
                             not (
                                 self._node_manager._unmanaged_external_password
                                 and self._node_manager._unmanaged_external_host
                             )
-                            and self.enable_managed_node
+                            and enable_managed_node
                         ):
                             await self._local_node_manager.start(java_path=java_path)
                         else:
@@ -394,7 +392,7 @@ class Client(metaclass=_Singleton):
                                 self._node_manager._unmanaged_external_password
                                 and self._node_manager._unmanaged_external_host
                             )
-                            and self.enable_managed_node
+                            and enable_managed_node
                         ):
                             await self._local_node_manager.wait_until_connected()
                         time_now = datetime.datetime.now(tz=datetime.timezone.utc)
@@ -891,6 +889,12 @@ class Client(metaclass=_Singleton):
         )
 
         return random.choice(available_nodes) if available_nodes else None
+
+    async def get_my_node(self) -> Node | None:
+        return await asyncstdlib.anext(
+            asyncstdlib.filter(lambda n: n.identifier == self.bot.user.id, self.node_manager.managed_nodes),
+            default=None,
+        )
 
     async def _get_tracks(
         self,
