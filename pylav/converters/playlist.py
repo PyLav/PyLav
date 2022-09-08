@@ -11,6 +11,7 @@ from discord.ext import commands
 from rapidfuzz import fuzz
 
 from pylav.exceptions import EntryNotFoundError
+from pylav.sql import tables
 from pylav.types import ContextT, InteractionT
 from pylav.utils import shorten_string
 
@@ -55,15 +56,24 @@ else:
             except EntryNotFoundError:
                 return []
             if not current:
-                return [Choice(name=shorten_string(e.name, max_length=100), value=f"{e.id}") for e in playlists][:25]
+                async with tables.DB.transaction():
+                    return [
+                        Choice(name=shorten_string(await e.fetch_name(), max_length=100), value=f"{e.id}")
+                        for e in playlists
+                    ][:25]
 
             async def _filter(c: PlaylistModel):
+                name = await c.fetch_name()
+                author = await c.fetch_author()
                 return (
-                    await asyncio.to_thread(fuzz.partial_ratio, c.name, current, score_cutoff=75),
-                    1 if c.author == interaction.user.id else 0,
-                    [-ord(i) for i in c.name],
+                    await asyncio.to_thread(fuzz.partial_ratio, name, current, score_cutoff=75),
+                    1 if author == interaction.user.id else 0,
+                    [-ord(i) for i in name],
                 )
 
-            extracted = await heapq.nlargest(asyncstdlib.iter(playlists), n=25, key=_filter)
-
-            return [Choice(name=shorten_string(e.name, max_length=100), value=f"{e.id}") for e in extracted]
+            async with tables.DB.transaction():
+                extracted = await heapq.nlargest(asyncstdlib.iter(playlists), n=25, key=_filter)
+                return [
+                    Choice(name=shorten_string(await e.fetch_name(), max_length=100), value=f"{e.id}")
+                    for e in extracted
+                ]

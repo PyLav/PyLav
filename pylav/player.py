@@ -993,7 +993,9 @@ class Player(VoiceProtocol):
         self.current = None
         if not track:
             if self.queue.empty():
-                if await self.autoplay_enabled() and (available_tracks := (await self.get_auto_playlist()).tracks):
+                if await self.autoplay_enabled() and (
+                    available_tracks := await (await self.get_auto_playlist()).fetch_tracks()
+                ):
                     if tracks_not_in_history := list(set(available_tracks) - set(self.history.raw_b64s)):
                         track = Track(
                             node=self.node,
