@@ -377,7 +377,7 @@ class NodeModel:
         yaml["server"]["address"] = host  # type: ignore
         yaml["server"]["port"] = port  # type: ignore
         yaml["lavalink"]["server"]["password"] = password
-        if disabled_sources is not None:
+        if disabled_sources is None:
             disabled_sources = []
         if extras is None:
             extras = {}

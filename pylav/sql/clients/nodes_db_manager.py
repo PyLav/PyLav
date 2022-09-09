@@ -39,7 +39,7 @@ class NodeConfigManager:
         model_list = [
             NodeModel(**node)
             for node in await tables.NodeRow.raw(
-                """SELECT id FROM node WHERE {}""", tables.NodeRow.id.not_in(BUNDLED_NODES_IDS)
+                f"""SELECT id FROM node WHERE {tables.NodeRow.id.not_in(BUNDLED_NODES_IDS).querystring}"""
             )
         ]
         new_model_list = list(set(model_list)) if dedupe else model_list
@@ -142,6 +142,6 @@ class NodeConfigManager:
     async def count(self) -> int:
         """Return the number of unbundled nodes in the database."""
         response = await tables.NodeRow.raw(
-            """SELECT COUNT(id) FROM node WHERE {}""", tables.NodeRow.id.not_in(BUNDLED_NODES_IDS)
+            f"""SELECT COUNT(id) FROM node WHERE {tables.NodeRow.id.not_in(BUNDLED_NODES_IDS).querystring}"""
         )
         return response[0]["count"] if response else 0

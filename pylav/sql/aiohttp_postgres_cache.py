@@ -86,9 +86,8 @@ class PostgresStorage(BaseCache):
     async def bulk_delete(self, keys: set[str]) -> None:
         """Delete multiple items from the cache"""
         await tables.AioHttpCacheRow.raw(
-            """
+            f"""
             DELETE FROM aiohttp_client_cache
-            WHERE {}
+            WHERE {tables.AioHttpCacheRow.key.is_in(list(keys)).querystring}
             """,
-            tables.AioHttpCacheRow.key.is_in(list(keys)),
         )

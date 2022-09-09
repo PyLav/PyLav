@@ -57,11 +57,12 @@ class PlaylistConfigManager:
     async def get_playlist_by_name(playlist_name: str, limit: int = None) -> list[PlaylistModel]:
         if limit is None:
             playlists = await tables.PlaylistRow.raw(
-                "SELECT id FROM playlist WHERE {}", tables.PlaylistRow.name.ilike(playlist_name.lower())
+                f"SELECT id FROM playlist WHERE {tables.PlaylistRow.name.ilike(playlist_name.lower()).querystring}"
             )
         else:
             playlists = await tables.PlaylistRow.raw(
-                "SELECT id FROM playlist WHERE {} LIMIT {}", tables.PlaylistRow.name.ilike(playlist_name.lower()), limit
+                f"SELECT id FROM playlist WHERE {tables.PlaylistRow.name.ilike(playlist_name.lower()).querystring} "
+                f"LIMIT {limit}",
             )
 
         if not playlists:
@@ -118,24 +119,25 @@ class PlaylistConfigManager:
         if ids and ignore_ids:
 
             for entry in await tables.PlaylistRow.raw(
-                """SELECT id FROM playlist WHERE {}""",
-                (
-                    tables.PlaylistRow.url.is_not_null()
-                    & tables.PlaylistRow.id.in_(ids)
-                    & tables.PlaylistRow.id.not_in(ignore_ids)
-                ),
+                """SELECT id FROM playlist WHERE {}""".format(
+                    (
+                        tables.PlaylistRow.url.is_not_null()
+                        & tables.PlaylistRow.id.in_(ids)
+                        & tables.PlaylistRow.id.not_in(ignore_ids)
+                    ).querystring,
+                )
             ):
                 yield PlaylistModel(**entry)
         elif ignore_ids:
             for entry in await tables.PlaylistRow.raw(
-                """SELECT id FROM playlist WHERE {}""",
-                (tables.PlaylistRow.url.is_not_null() & tables.PlaylistRow.id.not_in(ignore_ids)),
+                f"""SELECT id FROM playlist WHERE
+                    {(tables.PlaylistRow.url.is_not_null() & tables.PlaylistRow.id.not_in(ignore_ids)).querystring}"""
             ):
                 yield PlaylistModel(**entry)
         else:
             for entry in await tables.PlaylistRow.raw(
-                """SELECT id FROM playlist WHERE {}""",
-                (tables.PlaylistRow.url.is_not_null() & tables.PlaylistRow.id.is_in(ignore_ids)),
+                f"""SELECT id FROM playlist WHERE
+                    {(tables.PlaylistRow.url.is_not_null() & tables.PlaylistRow.id.is_in(ignore_ids)).querystring}"""
             ):
                 yield PlaylistModel(**entry)
 
