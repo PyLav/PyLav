@@ -279,7 +279,9 @@ class NodeModel:
             The node's yaml.
         """
         data = await tables.NodeRow.raw("SELECT yaml FROM node WHERE id = {} LIMIT 1", self.id)
-        return ujson.loads(data[0]["yaml"] if data else tables.NodeRow.yaml.default)
+        if data:
+            return ujson.loads(data[0]["yaml" if data[0]["yaml"] != "{}" else tables.NodeRow.yaml.default])
+        return {}
 
     async def update_yaml(self, yaml_data: dict) -> None:
         """Update the node's yaml in the database"""
@@ -372,7 +374,6 @@ class NodeModel:
         disabled_sources: list[str] = None,
     ) -> None:
         """Update the node's data in the database"""
-
         yaml = yaml or {"server": {}, "lavalink": {"server": {}}}
         yaml["server"]["address"] = host  # type: ignore
         yaml["server"]["port"] = port  # type: ignore

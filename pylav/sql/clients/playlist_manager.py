@@ -91,18 +91,22 @@ class PlaylistConfigManager:
             return await self.get_playlist_by_name(playlist_name_or_id, limit=limit)
 
     @staticmethod
-    async def get_playlists_by_author(author: int) -> list[PlaylistModel]:
+    async def get_playlists_by_author(author: int, return_empty: bool = True) -> list[PlaylistModel]:
         playlists = await tables.PlaylistRow.raw("SELECT id FROM playlist WHERE author = {}", author)
-        if not playlists:
+
+        if playlists or return_empty:
+            return [PlaylistModel(**playlist) for playlist in playlists]
+        else:
             raise EntryNotFoundError(f"Playlist with author {author} not found")
-        return [PlaylistModel(**playlist) for playlist in playlists]
 
     @staticmethod
-    async def get_playlists_by_scope(scope: int) -> list[PlaylistModel]:
+    async def get_playlists_by_scope(scope: int, return_empty: bool = True) -> list[PlaylistModel]:
         playlists = await tables.PlaylistRow.raw("SELECT id FROM playlist WHERE scope = {}", scope)
-        if not playlists:
+
+        if playlists or return_empty:
+            return [PlaylistModel(**playlist) for playlist in playlists]
+        else:
             raise EntryNotFoundError(f"Playlist with scope {scope} not found")
-        return [PlaylistModel(**playlist) for playlist in playlists]
 
     @staticmethod
     async def get_all_playlists() -> AsyncIterator[PlaylistModel]:
@@ -221,26 +225,34 @@ class PlaylistConfigManager:
         async with tables.DB.transaction():
             global_playlists = [
                 p
-                for p in await self.get_playlists_by_scope(scope=self._client.bot.user.id)
+                for p in await self.get_playlists_by_scope(scope=self._client.bot.user.id, return_empty=True)
                 if (not empty or await p.size())
             ]
             user_playlists = [
-                p for p in await self.get_playlists_by_scope(scope=requester) if (not empty or await p.size())
+                p
+                for p in await self.get_playlists_by_scope(scope=requester, return_empty=True)
+                if (not empty or await p.size())
             ]
             vc_playlists = []
             guild_playlists = []
             channel_playlists = []
             if vc is not None:
                 vc_playlists = [
-                    p for p in await self.get_playlists_by_scope(scope=vc.id) if (not empty or await p.size())
+                    p
+                    for p in await self.get_playlists_by_scope(scope=vc.id, return_empty=True)
+                    if (not empty or await p.size())
                 ]
             if guild is not None:
                 guild_playlists = [
-                    p for p in await self.get_playlists_by_scope(scope=guild.id) if (not empty or await p.size())
+                    p
+                    for p in await self.get_playlists_by_scope(scope=guild.id, return_empty=True)
+                    if (not empty or await p.size())
                 ]
             if channel is not None:
                 channel_playlists = [
-                    p for p in await self.get_playlists_by_scope(scope=channel.id) if (not empty or await p.size())
+                    p
+                    for p in await self.get_playlists_by_scope(scope=channel.id, return_empty=True)
+                    if (not empty or await p.size())
                 ]
         return global_playlists, user_playlists, guild_playlists, channel_playlists, vc_playlists
 

@@ -321,9 +321,7 @@ class Client(metaclass=_Singleton):
                             client_id = spotify.get("client_id")
                             client_secret = spotify.get("client_secret")
                             if client_id and client_secret:
-                                LOGGER.debug(
-                                    "Existing Spotify tokens found; Using them - %s - %s", client_id, client_secret
-                                )
+                                LOGGER.debug("Existing Spotify tokens found; Using clientID - %s", client_id)
                         else:
                             LOGGER.info("PyLav being run from a non Red bot")
                             client_id = None

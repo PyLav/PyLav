@@ -53,18 +53,16 @@ class RadioBrowser:
     async def initialize(self) -> None:
         await self.update_base_url()
         LOGGER.debug("Priming the cache")
-        await asyncio.gather(
-            self.stations(),
-            self.tags(),
-            self.codecs(),
-            self.countries(),
-            self.languages(),
-            self.states(),
-            self.countrycodes(),
-            self.codecs(),
-            self.stations_by_clicks(limit=25),
-            self.stations_by_votes(limit=25),
-        )
+        asyncio.ensure_future(asyncio.create_task(self.stations()))
+        asyncio.ensure_future(asyncio.create_task(self.tags()))
+        asyncio.ensure_future(asyncio.create_task(self.codecs()))
+        asyncio.ensure_future(asyncio.create_task(self.countries()))
+        asyncio.ensure_future(asyncio.create_task(self.languages()))
+        asyncio.ensure_future(asyncio.create_task(self.states()))
+        asyncio.ensure_future(asyncio.create_task(self.countrycodes()))
+        asyncio.ensure_future(asyncio.create_task(self.codecs()))
+        asyncio.ensure_future(asyncio.create_task(self.stations_by_clicks(limit=25)))
+        asyncio.ensure_future(asyncio.create_task(self.stations_by_votes(limit=25)))
         LOGGER.debug("Cache primed")
 
     async def update_base_url(self) -> None:

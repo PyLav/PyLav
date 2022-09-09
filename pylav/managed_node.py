@@ -610,6 +610,8 @@ class LocalNodeManager:
                                 await asyncio.sleep(1)
                             except WebsocketNotConnectedError:
                                 await asyncio.sleep(5)
+                            except ConnectionResetError:
+                                raise AttributeError
                         elif node.websocket.connecting:
                             await node.websocket.wait_until_ready(timeout=30)
                         else:
@@ -744,9 +746,8 @@ class LocalNodeManager:
                     LOGGER.info("Managed Lavalink node is connected")
                 else:
                     LOGGER.info("Managed Lavalink node is not connected, reconnecting")
-                    await node.websocket.close()
-                    await node.websocket._websocket_closed(reason="Managed Node restart")
-                    await node.wait_until_ready(timeout=30)
+                    await self.restart()
+                    return
                 self._wait_for.set()
                 return
         if (node := self._client.node_manager.get_node_by_id(self._node_id)) is None:
@@ -769,12 +770,11 @@ class LocalNodeManager:
                 resume_key=resume_key,
                 resume_timeout=data["resume_timeout"],
                 name=name,
-                yaml=data["yaml"],
-                extras=data["extras"],
                 managed=True,
                 ssl=False,
                 search_only=False,
                 unique_identifier=self._client.node_db_manager.bundled_node_config().id,
+                temporary=True,
             )
             await node.config.update_name(name)
             await node.config.update_resume_key(resume_key)
@@ -817,7 +817,11 @@ class LocalNodeManager:
         LOGGER.info("Restarting managed Lavalink node")
         node = await self._client.get_my_node()
         if node:
-            await node.websocket.manual_closure(managed_node=True)
+            if self.start_monitor_task is not None:
+                self.start_monitor_task.cancel()
+                self.start_monitor_task = None
+            if not node.websocket._manual_shutdown:
+                await node.websocket.manual_closure(managed_node=True)
             with contextlib.suppress(Exception):
                 await node.close()
         await self.shutdown()

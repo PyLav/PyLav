@@ -179,6 +179,8 @@ class WebSocket:
             attempt = 0
             backoff = ExponentialBackoffWithReset(base=3)
             while not self.connected and (not is_finite_retry or attempt < self._max_reconnect_attempts):
+                if self._manual_shutdown:
+                    return
                 attempt += 1
                 LOGGER.info(
                     "[NODE-%s] Attempting to establish WebSocket connection (%s/%s)",
@@ -274,6 +276,8 @@ class WebSocket:
         """Listens for websocket messages"""
         try:
             async for msg in self._ws:
+                if self._manual_shutdown:
+                    return
                 LOGGER.trace("[NODE-%s] Received WebSocket message: %s", self.node.name, msg.data)
                 if msg.type == aiohttp.WSMsgType.CLOSED:
                     LOGGER.info(
@@ -426,6 +430,8 @@ class WebSocket:
         data: :class:`dict`
             The data sent to Lavalink.
         """
+        if self._manual_shutdown:
+            return
         if self.connected:
             LOGGER.trace("[NODE-%s] Sending payload %s", self.node.name, data)
             try:
@@ -487,10 +493,13 @@ class WebSocket:
 
     async def close(self):
         self._connect_task.cancel()
-        if self._ws and not self._ws.closed:
+        if self._ws and not self._ws.closed and not self._ws._closing:
             await self._ws.close(code=4014, message=b"Shutting down")
         await self._session.close()
 
     async def manual_closure(self, managed_node: bool = False):
         self._manual_shutdown = managed_node
+        if self._ws and not self._ws.closed and not self._ws._closing:
+            with contextlib.suppress(Exception):
+                await self._ws.close(code=4014, message=b"Shutting down")
         await self._websocket_closed(202, "Manual websocket shutdown requested")

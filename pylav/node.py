@@ -18,7 +18,7 @@ from expiringdict import ExpiringDict
 from pylav._logging import getLogger
 from pylav.constants import BUNDLED_NODES_IDS, PYLAV_NODES, REGION_TO_COUNTRY_COORDINATE_MAPPING, SUPPORTED_SOURCES
 from pylav.events import Event
-from pylav.exceptions import Unauthorized
+from pylav.exceptions import Unauthorized, WebsocketNotConnectedError
 from pylav.filters import (
     ChannelMix,
     Distortion,
@@ -310,25 +310,33 @@ class Node:
             next_run_time=datetime.datetime.now(tz=datetime.timezone.utc) + datetime.timedelta(seconds=15),
         )
 
+    async def _unhealthy(self):
+        del self.down_votes
+        if self._ws is not None:
+            await self.websocket.manual_closure(
+                managed_node=self.identifier == self.node_manager.client.bot.user.id and self.websocket is not None
+            )
+        if self.identifier == self.node_manager.client.bot.user.id:
+            await self.node_manager.client.managed_node_controller.restart()
+            with contextlib.suppress(Exception):
+                await self.close()
+
     async def node_monitor_task(self):
         with contextlib.suppress(
             asyncio.exceptions.CancelledError,
         ):
+            try:
+                await self.websocket.ping()
+                LOGGER.trace("Node %s is healthy", self.name)
+            except (WebsocketNotConnectedError, ConnectionResetError):
+                LOGGER.warning("Node %s is unhealthy - Triggering a state reset", self.name)
+                await self._unhealthy()
+
             playing_players = len(self.playing_players)
             if playing_players == 0:
                 return
             if (self.down_votes / playing_players) >= 0.5:
-                del self.down_votes
-
-                if self._ws is not None:
-                    await self.websocket.manual_closure(
-                        managed_node=self.identifier == self.node_manager.client.bot.user.id
-                        and self.websocket is not None
-                    )
-                if self.identifier == self.node_manager.client.bot.user.id:
-                    await self.node_manager.client.managed_node_controller.restart()
-                    with contextlib.suppress(Exception):
-                        await self.close()
+                await self._unhealthy()
 
     @property
     def is_ready(self) -> bool:

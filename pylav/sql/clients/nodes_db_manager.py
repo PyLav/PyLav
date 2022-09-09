@@ -39,7 +39,8 @@ class NodeConfigManager:
         model_list = [
             NodeModel(**node)
             for node in await tables.NodeRow.raw(
-                f"""SELECT id FROM node WHERE {tables.NodeRow.id.not_in(BUNDLED_NODES_IDS).querystring}"""
+                f"""SELECT id FROM node
+                WHERE {(tables.NodeRow.managed == False) & (tables.NodeRow.id.not_in(BUNDLED_NODES_IDS))}"""
             )
         ]
         new_model_list = list(set(model_list)) if dedupe else model_list
