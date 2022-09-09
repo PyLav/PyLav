@@ -776,21 +776,21 @@ class Node:
         :class:`dict`
             A dict representing tracks.
         """
-        if not bypass_cache and (response := await self.node_manager.client.query_cache_manager.get_query(query)):
+        if not bypass_cache and (response := await self.node_manager.client.query_cache_manager.fetch_query(query)):
             return typing.cast(
                 LavalinkResponseT,
-                {"track": response.tracks[0]}
+                {"track": await response.fetch_first()}
                 if first
                 else {
                     "playlistInfo": {
-                        "name": response.name,
+                        "name": await response.fetch_name(),
                     },
                     "loadType": "PLAYLIST_LOADED"
                     if query.is_playlist or query.is_album
                     else "SEARCH_RESULT"
                     if query.is_search
                     else "TRACK_LOADED",
-                    "tracks": [{"track": track} async for track in AsyncIter(response.tracks)],
+                    "tracks": [{"track": track} async for track in AsyncIter(await response.fetch_tracks())],
                 },
             )
 

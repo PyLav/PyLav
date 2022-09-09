@@ -38,9 +38,9 @@ class NodeConfigManager:
     async def get_all_unamanaged_nodes(self, dedupe: bool = True) -> list[NodeModel]:
         model_list = [
             NodeModel(**node)
-            for node in await tables.NodeRow.select(tables.NodeRow.id)
-            .output(load_json=True)
-            .where((tables.NodeRow.managed == False) & (tables.NodeRow.id.not_in(BUNDLED_NODES_IDS)))  # noqa: E712
+            for node in await tables.NodeRow.raw(
+                """SELECT id FROM node WHERE {}""", tables.NodeRow.id.not_in(BUNDLED_NODES_IDS)
+            )
         ]
         new_model_list = list(set(model_list)) if dedupe else model_list
         for n in new_model_list:
@@ -48,27 +48,19 @@ class NodeConfigManager:
         return new_model_list
 
     async def get_all_nodes(self) -> list[NodeModel]:
-        model_list = [
-            NodeModel(**node)
-            for node in await tables.NodeRow.select(tables.NodeRow.id)
-            .output(load_json=True)
-            .where(tables.NodeRow.managed == False)
-        ]
-        for n in model_list:
-            self.currently_in_db.add(n.id)
+        model_list = await self.get_all_unamanaged_nodes(dedupe=True)
         if mn := self.bundled_node_config():
             model_list.append(mn)
         return model_list
 
     async def get_bundled_node_config(self) -> NodeModel | None:
-        managed_node = (
-            await tables.NodeRow.select(tables.NodeRow.id)
-            .output(load_json=True)
-            .where((tables.NodeRow.id == self._client.bot.user.id) & (tables.NodeRow.managed == True))
-            .first()
+        response = await tables.NodeRow.raw(
+            """SELECT id FROM node WHERE
+            id = {} AND managed = {} LIMIT 1""",
+            self._client.bot.user.id,
+            True,
         )
-        if managed_node:
-            return NodeModel(**managed_node)
+        return NodeModel(**response[0]) if response else None
 
     async def update_node(
         self,
@@ -125,26 +117,21 @@ class NodeConfigManager:
 
         node = NodeModel(id=unique_identifier)
         self.currently_in_db.add(node.id)
-        async with tables.DB.transaction():
-            await node.update_ssl(ssl)
-            await node.update_reconnect_attempts(reconnect_attempts)
-            await node.update_search_only(search_only)
-            await node.update_resume_key(resume_key)
-            await node.update_resume_timeout(resume_timeout)
-            await node.update_managed(managed)
-
-            if name is not None:
-                await node.update_name(name)
-            if disabled_sources is not None:
-                await node.update_disabled_sources(disabled_sources)
-            if extras is not None:
-                await node.update_extras(extras)
-            yaml = yaml or {"server": {}, "lavalink": {"server": {}}}
-            yaml["server"]["address"] = host  # type: ignore
-            yaml["server"]["port"] = port  # type: ignore
-            yaml["lavalink"]["server"]["password"] = password
-            await node.update_yaml(yaml)
-            self.currently_in_db.add(node.id)
+        await node.bulk_update(
+            host=host,
+            port=port,
+            password=password,
+            name=name,
+            resume_key=resume_key,
+            resume_timeout=resume_timeout,
+            reconnect_attempts=reconnect_attempts,
+            ssl=ssl,
+            search_only=search_only,
+            managed=managed,
+            extras=extras,
+            disabled_sources=disabled_sources,
+            yaml=yaml,
+        )
         return node
 
     async def delete(self, node_id: int) -> None:
@@ -154,4 +141,7 @@ class NodeConfigManager:
 
     async def count(self) -> int:
         """Return the number of unbundled nodes in the database."""
-        return await tables.NodeRow.count().where(tables.NodeRow.id.not_in(BUNDLED_NODES_IDS))
+        response = await tables.NodeRow.raw(
+            """SELECT COUNT(id) FROM node WHERE {}""", tables.NodeRow.id.not_in(BUNDLED_NODES_IDS)
+        )
+        return response[0]["count"] if response else 0

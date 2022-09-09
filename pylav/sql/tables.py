@@ -4,6 +4,7 @@ from __future__ import annotations
 import os
 
 from piccolo.columns import JSONB, UUID, Array, BigInt, Boolean, Bytea, Float, Integer, Text, Timestamptz
+from piccolo.columns.defaults.timestamptz import TimestamptzNow
 from piccolo.engine import PostgresEngine, SQLiteEngine
 from piccolo.table import Table
 from piccolo.utils.pydantic import create_pydantic_model
@@ -181,7 +182,7 @@ class QueryRow(Table, db=DB, tablename="query"):
     identifier = Text(null=False, index=True, primary_key=True)
     name = Text(null=True, default=None)
     tracks = JSONB(null=False, default=[])
-    last_updated = Timestamptz(null=False, index=True)
+    last_updated = Timestamptz(null=False, index=True, default=TimestamptzNow())
 
 
 class BotVersionRow(Table, db=DB, tablename="version"):

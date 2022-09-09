@@ -188,7 +188,7 @@ class Player(VoiceProtocol):
         self._extras = await config.fetch_extras()
         self._post_init_completed = True
 
-        player_state = await self.player_manager.client.player_state_db_manager.get_player(self.channel.guild.id)
+        player_state = await self.player_manager.client.player_state_db_manager.fetch_player(self.channel.guild.id)
         if player_state:
             await self.restore(player=player_state, requester=requester or self.guild.me)
             await self.player_manager.client.player_state_db_manager.delete_player(self.channel.guild.id)

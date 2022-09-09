@@ -4,12 +4,13 @@ import datetime
 import gzip
 import io
 import pathlib
+import random
 import re
 import sys
 import typing
 from collections.abc import Iterator
 from contextlib import asynccontextmanager
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from functools import _make_key  # type: ignore
 
 import aiohttp
@@ -55,7 +56,7 @@ class NodeModel:
         bool
             Whether the node exists in the database.
         """
-        return await tables.NodeRow.raw("SELECT EXISTS(SELECT 1 FROM node WHERE id = {} and bot = {});", self.id)
+        return await tables.NodeRow.raw("SELECT EXISTS(SELECT 1 FROM node WHERE id = {});", self.id)
 
     async def delete(self) -> None:
         """Delete the node from the database"""
@@ -353,6 +354,73 @@ class NodeModel:
             return
         for source in sources:
             await self.remove_from_disabled_sources(source)
+
+    async def bulk_update(
+        self,
+        host: str,
+        port: int,
+        password: str,
+        resume_key: str = None,
+        resume_timeout: int = 60,
+        name: str = None,
+        reconnect_attempts: int = -1,
+        ssl: bool = False,
+        search_only: bool = False,
+        managed: bool = False,
+        extras: dict = None,
+        yaml: dict = None,
+        disabled_sources: list[str] = None,
+    ) -> None:
+        """Update the node's data in the database"""
+
+        yaml = yaml or {"server": {}, "lavalink": {"server": {}}}
+        yaml["server"]["address"] = host  # type: ignore
+        yaml["server"]["port"] = port  # type: ignore
+        yaml["lavalink"]["server"]["password"] = password
+        if disabled_sources is not None:
+            disabled_sources = []
+        if extras is None:
+            extras = {}
+        await tables.NodeRow.raw(
+            """
+            INSERT INTO node
+            (id,
+            name,
+            ssl,
+            resume_key,
+            resume_timeout,
+            reconnect_attempts,
+            search_only,
+            managed,
+            disabled_sources,
+            extras,
+            yaml)
+            VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})
+            ON CONFLICT (id)
+            DO UPDATE
+              SET name = excluded.name,
+              ssl = excluded.ssl,
+              resume_key = excluded.resume_key,
+              resume_timeout = excluded.resume_timeout,
+              reconnect_attempts = excluded.reconnect_attempts,
+              search_only = excluded.search_only,
+              managed = excluded.managed,
+              disabled_sources = excluded.disabled_sources,
+              extras = excluded.extras,
+              yaml = excluded.yaml;
+            """,
+            self.id,
+            name,
+            ssl,
+            resume_key,
+            resume_timeout,
+            reconnect_attempts,
+            search_only,
+            managed,
+            disabled_sources,
+            ujson.dumps(extras),
+            ujson.dumps(yaml),
+        )
 
     async def get_connection_args(self) -> dict:
         """Get the connection args for the node.
@@ -1833,6 +1901,630 @@ class LibConfigModel:
         }
 
 
+@dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
+class PlaylistModel:
+    id: int
+
+    async def exists(self) -> bool:
+        """Check if the config exists.
+
+        Returns
+        -------
+        bool
+            Whether the config exists.
+        """
+        return await tables.PlaylistRow.raw("SELECT EXISTS(SELECT 1 FROM playlist WHERE id = {});", self.id)
+
+    async def fetch_all(self) -> dict:
+        """Fetch all playlists from the database.
+
+        Returns
+        -------
+        dict
+            The playlists.
+        """
+        response = await tables.PlaylistRow.raw("SELECT * FROM playlist WHERE id = {} LIMIT 1", self.id)
+
+        if response:
+            data = response[0]
+            data["tracks"] = ujson.loads(data["tracks"])
+            return data
+
+        return {
+            "id": self.id,
+            "name": tables.PlaylistRow.name.default,
+            "tracks": [],
+            "scope": tables.PlaylistRow.scope.default,
+            "author": tables.PlaylistRow.author.default,
+            "url": tables.PlaylistRow.url.default,
+        }
+
+    async def fetch_scope(self) -> int | None:
+        """Fetch the scope of the playlist.
+
+        Returns
+        -------
+        int
+            The scope of the playlist.
+        """
+        response = await tables.PlaylistRow.raw("SELECT scope FROM playlist WHERE id = {} LIMIT 1;", self.id)
+        return response[0]["scope"] if response else tables.PlaylistRow.scope.default
+
+    async def update_scope(self, scope: int):
+        """Update the scope of the playlist.
+
+        Parameters
+        ----------
+        scope : int
+            The new scope of the playlist.
+        """
+        await tables.PlaylistRow.raw(
+            "INSERT INTO playlist (id, scope) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET scope = EXCLUDED.scope;",
+            self.id,
+            scope,
+        )
+
+    async def fetch_author(self) -> int | None:
+        """Fetch the author of the playlist.
+
+        Returns
+        -------
+        int
+            The author of the playlist.
+        """
+        response = await tables.PlaylistRow.raw("SELECT author FROM playlist WHERE id = {} LIMIT 1;", self.id)
+        return response[0]["author"] if response else tables.PlaylistRow.author.default
+
+    async def update_author(self, author: int):
+        """Update the author of the playlist.
+
+        Parameters
+        ----------
+        author : int
+            The new author of the playlist.
+        """
+        await tables.PlaylistRow.raw(
+            "INSERT INTO playlist (id, author) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET author = EXCLUDED.author;",
+            self.id,
+            author,
+        )
+
+    async def fetch_name(self) -> str | None:
+        """Fetch the name of the playlist.
+
+        Returns
+        -------
+        str
+            The name of the playlist.
+        """
+        response = await tables.PlaylistRow.raw("SELECT name FROM playlist WHERE id = {} LIMIT 1;", self.id)
+        return response[0]["name"] if response else tables.PlaylistRow.name.default
+
+    async def update_name(self, name: str):
+        """Update the name of the playlist.
+
+        Parameters
+        ----------
+        name : str
+            The new name of the playlist.
+        """
+        await tables.PlaylistRow.raw(
+            "INSERT INTO playlist (id, name) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name;",
+            self.id,
+            name,
+        )
+
+    async def fetch_url(self) -> str | None:
+        """Fetch the url of the playlist.
+
+        Returns
+        -------
+        str
+            The url of the playlist.
+        """
+        response = await tables.PlaylistRow.raw("SELECT url FROM playlist WHERE id = {} LIMIT 1;", self.id)
+        return response[0]["url"] if response else tables.PlaylistRow.url.default
+
+    async def update_url(self, url: str):
+        """Update the url of the playlist.
+
+        Parameters
+        ----------
+        url : str
+            The new url of the playlist.
+        """
+        await tables.PlaylistRow.raw(
+            "INSERT INTO playlist (id, url) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET url = EXCLUDED.url;",
+            self.id,
+            url,
+        )
+
+    async def fetch_tracks(self) -> list[str]:
+        """Fetch the tracks of the playlist.
+
+        Returns
+        -------
+        list[str]
+            The tracks of the playlist.
+        """
+        response = await tables.PlaylistRow.raw("SELECT tracks FROM playlist WHERE id = {} LIMIT 1;", self.id)
+        return ujson.loads(response[0]["tracks"] if response else tables.PlaylistRow.tracks.default)
+
+    async def update_tracks(self, tracks: list[str]):
+        """Update the tracks of the playlist.
+
+        Parameters
+        ----------
+        tracks : list[str]
+            The new tracks of the playlist.
+        """
+        await tables.PlaylistRow.raw(
+            "INSERT INTO playlist (id, tracks) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET tracks = EXCLUDED.tracks;",
+            self.id,
+            ujson.dumps(tracks),
+        )
+
+    async def size(self):
+        """Count the tracks of the playlist.
+
+        Returns
+        -------
+        int
+            The number of tracks in the playlist.
+        """
+        response = await tables.PlaylistRow.raw(
+            "SELECT jsonb_array_length(tracks) as size FROM playlist WHERE id = {} LIMIT 1;", self.id
+        )
+        return response[0]["size"] if response else 0
+
+    async def add_track(self, tracks: list[str]):
+        """Add a track to the playlist.
+
+        Parameters
+        ----------
+        tracks : list[str]
+            The tracks to add.
+        """
+        await tables.PlaylistRow.raw(
+            "INSERT INTO playlist (id, tracks) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET tracks = array_cat("
+            "player.tracks, EXCLUDED.tracks);",
+            self.id,
+            tracks,
+        )
+
+    async def bulk_remove_tracks(self, tracks: list[str]) -> None:
+        """Remove dj users from the player.
+
+        Parameters
+        ----------
+        tracks : list[str]
+            The track to remove
+        """
+        if not tracks:
+            return
+        async with tables.DB.transaction():
+            for track in tracks:
+                await self.remove_track(track)
+
+    async def remove_track(self, track: str) -> None:
+        """Remove a track from the playlist.
+
+        Parameters
+        ----------
+        track : str
+            The track to remove
+        """
+        await tables.PlaylistRow.raw(
+            "UPDATE player SET tracks = array_remove(tracks, {}) WHERE id = {};", self.id, track
+        )
+
+    async def remove_all_tracks(self) -> None:
+        """Remove all tracks from the playlist."""
+        await tables.PlaylistRow.raw("UPDATE player SET tracks = {} WHERE id = {};", [], self.id)
+
+    async def delete(self) -> None:
+        """Delete the playlist from the database"""
+        await tables.PlaylistRow.raw("DELETE FROM playlist WHERE id = {}", self.id)
+
+    async def can_manage(self, bot: BotT, requester: discord.abc.User, guild: discord.Guild = None) -> bool:
+        """Check if the requester can manage the playlist.
+
+        Parameters
+        ----------
+        bot : BotT
+            The bot instance.
+        requester : discord.abc.User
+            The requester.
+        guild : discord.Guild
+            The guild.
+
+        Returns
+        -------
+        bool
+            Whether the requester can manage the playlist.
+        """
+        async with tables.DB.transaction():
+            if self.id in BUNDLED_PLAYLIST_IDS:
+                return False
+            if requester.id in ((ids := getattr(bot, "owner_ids")) or ()) or requester.id == bot.owner_id:  # noqa
+                return True
+            elif await self.fetch_scope() == bot.user.id:
+                return False
+            return await self.fetch_author() == requester.id
+
+    async def get_scope_name(self, bot: BotT, mention: bool = True, guild: discord.Guild = None) -> str:
+        """Get the name of the scope of the playlist.
+
+        Parameters
+        ----------
+        bot : BotT
+            The bot instance.
+        mention : bool
+            Whether to add a mention if it is mentionable.
+        guild : discord.Guild
+            The guild to get the scope name for.
+
+        Returns
+        -------
+        str
+            The name of the scope of the playlist.
+        """
+        original_scope = await self.fetch_scope()
+        if bot.user.id == original_scope:
+            return f"(Global) {bot.user.mention}" if mention else f"(Global) {bot.user}"
+        elif guild_ := bot.get_guild(original_scope):
+            if guild_:
+                guild = guild_
+            return f"(Server) {guild.name}"
+        elif guild and (channel := guild.get_channel_or_thread(original_scope)):
+            return f"(Channel) {channel.mention}" if mention else f"(Channel) {channel.name}"
+
+        elif (
+            (guild := guild_ or guild)
+            and (guild and (scope := guild.get_member(original_scope)))
+            or (scope := bot.get_user(original_scope))
+        ):
+            return f"(User) {scope.mention}" if mention else f"(User) {scope}"
+        else:
+            return f"(Invalid) {original_scope}"
+
+    async def get_author_name(self, bot: BotT, mention: bool = True) -> str | None:
+        """Get the name of the author of the playlist.
+
+        Parameters
+        ----------
+        bot : BotT
+            The bot instance.
+        mention : bool
+            Whether to add a mention if it is mentionable.
+
+        Returns
+        -------
+        str | None
+            The name of the author of the playlist.
+        """
+        author = await self.fetch_author()
+        if user := bot.get_user(author):
+            return f"{user.mention}" if mention else f"{user}"
+        return f"{author}"
+
+    async def get_name_formatted(self, with_url: bool = True) -> str:
+        """Get the name of the playlist formatted.
+
+        Parameters
+        ----------
+        with_url : bool
+            Whether to include the url in the name.
+
+        Returns
+        -------
+        str
+            The formatted name.
+        """
+        name = BRACKETS.sub("", await self.fetch_name()).strip()
+        if with_url:
+            url = await self.fetch_url()
+            if url and url.startswith("http"):
+                return f"**[{discord.utils.escape_markdown(name)}]({url})**"
+        return f"**{discord.utils.escape_markdown(name)}**"
+
+    @asynccontextmanager
+    async def to_yaml(self, guild: discord.Guild) -> Iterator[tuple[io.BytesIO, str | None]]:
+        """Serialize the playlist to a YAML file.
+
+        yields a tuple of (io.BytesIO, bool) where the bool is whether the playlist file was compressed using Gzip
+
+        Parameters
+        ----------
+        guild : discord.Guild
+            The guild where the yaml will be sent to.
+
+        Yields
+        ------
+        tuple[io.BytesIO, str | None]
+            The YAML file and the compression type.
+        """
+        data = await self.fetch_all()
+        name = data["name"]
+        compression = None
+        with io.BytesIO() as bio:
+            yaml.safe_dump(data, bio, default_flow_style=False, sort_keys=False, encoding="utf-8")
+            bio.seek(0)
+            LOGGER.debug("SIZE UNCOMPRESSED playlist (%s): %s", name, sys.getsizeof(bio))
+            if sys.getsizeof(bio) > guild.filesize_limit:
+                with io.BytesIO() as bio:
+                    if BROTLI_ENABLED:
+                        compression = "brotli"
+                        bio.write(brotli.compress(yaml.dump(data, encoding="utf-8")))
+                    else:
+                        compression = "gzip"
+                        with gzip.GzipFile(fileobj=bio, mode="wb", compresslevel=9) as gfile:
+                            yaml.safe_dump(data, gfile, default_flow_style=False, sort_keys=False, encoding="utf-8")
+                    bio.seek(0)
+                    LOGGER.debug("SIZE COMPRESSED playlist [%s] (%s): %s", compression, name, sys.getsizeof(bio))
+                    yield bio, compression
+                    return
+            yield bio, compression
+
+    async def bulk_update(self, scope: int, name: str, author: int, url: str | None, tracks: list[str]) -> None:
+        """Bulk update the playlist."""
+        await tables.PlaylistRow.raw(
+            "INSERT INTO playlist  (id, name, author, scope, url, tracks) VALUES ({}, {}, {}, {}, {}, {}) "
+            "ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, author = EXCLUDED.author, scope = EXCLUDED.scope, "
+            "url = EXCLUDED.url, tracks = EXCLUDED.tracks",
+            self.id,
+            name,
+            author,
+            scope,
+            url,
+            ujson.dumps(tracks),
+        )
+
+    @classmethod
+    async def from_yaml(cls, context: PyLavContext, scope: int, url: str) -> PlaylistModel:
+        """Deserialize a playlist from a YAML file.
+
+        Parameters
+        ----------
+        context : PyLavContext
+            The context.
+        scope : int
+            The scope of the playlist.
+        url : str
+            The url of the playlist.
+
+        Returns
+        -------
+        PlaylistModel
+            The playlist.
+        """
+        try:
+            async with aiohttp.ClientSession(auto_decompress=False, json_serialize=ujson.dumps) as session:
+                async with session.get(url) as response:
+                    data = await response.read()
+                    if ".gz.pylav" in url:
+                        data = gzip.decompress(data)
+                    elif ".br.pylav" in url:
+                        data = brotli.decompress(data)
+                    data = yaml.safe_load(data)
+        except Exception as e:
+            raise InvalidPlaylist(f"Invalid playlist file - {e}") from e
+        playlist = cls(
+            id=context.message.id,
+        )
+        await playlist.bulk_update(
+            scope=scope, name=data["name"], url=data["url"], tracks=data["tracks"], author=context.author.id
+        )
+        return playlist
+
+    async def fetch_index(self, index: int) -> str | None:
+        """Get the track at the index.
+
+        Parameters
+        ----------
+        index: int
+            The index of the track
+
+        Returns
+        -------
+        str
+            The track at the index
+        """
+        response = await tables.QueryRow.raw(
+            "SELECT tracks->>{} as playlist FROM query WHERE id = {} LIMIT 1;", index, self.id
+        )
+        return response[0]["track"] if response else None
+
+    async def fetch__first(self) -> str | None:
+        """Get the first track.
+
+        Returns
+        -------
+        str
+            The first track
+        """
+        return await self.fetch_index(0)
+
+    async def fetch_random(self) -> str | None:
+        """Get a random track.
+
+        Returns
+        -------
+        str
+            A random track
+        """
+        return await self.fetch_index(random.randint(0, await self.size() - 1))
+
+
+@dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
+class QueryModel:
+    identifier: str
+
+    async def exists(self) -> bool:
+        """Check if the config exists.
+
+        Returns
+        -------
+        bool
+            Whether the config exists.
+        """
+        return await tables.QueryRow.raw("SELECT EXISTS(SELECT 1 FROM query WHERE identifier = {});", self.identifier)
+
+    async def delete(self):
+        """Delete the query from the database"""
+        await tables.QueryRow.raw("DELETE FROM query WHERE identifier = {}", self.identifier)
+
+    async def size(self):
+        """Count the tracks of the playlist.
+
+        Returns
+        -------
+        int
+            The number of tracks in the playlist.
+        """
+        response = await tables.QueryRow.raw(
+            """SELECT jsonb_array_length(tracks) as size
+        FROM query
+        WHERE identifier = {}
+        LIMIT 1;""",
+            self.identifier,
+        )
+        return response[0]["size"] if response else 0
+
+    async def fetch_tracks(self) -> list[str]:
+        """Get the tracks of the playlist.
+
+        Returns
+        -------
+        list[str]
+            The tracks of the playlist.
+        """
+        response = await tables.QueryRow.raw("SELECT tracks FROM query WHERE identifier = {} LIMIT 1;", self.identifier)
+        return ujson.loads(response[0]["tracks"] if response else tables.QueryRow.tracks.default)
+
+    async def update_tracks(self, tracks: list[str]):
+        """Update the tracks of the playlist.
+
+        Parameters
+        ----------
+        tracks: list[str]
+            The tracks of the playlist.
+        """
+        await tables.QueryRow.raw(
+            "INSERT INTO playlist (identifier, tracks) VALUES ({}, {}) ON CONFLICT (identifier) DO UPDATE SET tracks = "
+            "EXCLUDED.tracks;",
+            self.identifier,
+            ujson.dumps(tracks),
+        )
+
+    async def fetch_name(self) -> str:
+        """Get the name of the playlist.
+
+        Returns
+        -------
+        str
+            The name of the playlist.
+        """
+        response = await tables.QueryRow.raw("SELECT name FROM query WHERE identifier = {} LIMIT 1;", self.identifier)
+        return response[0]["name"] if response else tables.QueryRow.name.default
+
+    async def update_name(self, name: str):
+        """Update the name of the playlist.
+
+        Parameters
+        ----------
+        name: str
+            The name of the playlist.
+        """
+        await tables.QueryRow.raw(
+            "INSERT INTO query (identifier, name) VALUES ({}, {}) ON CONFLICT (identifier) DO UPDATE SET name = "
+            "EXCLUDED.name;",
+            self.identifier,
+            name,
+        )
+
+    async def fetch_last_updated(self) -> datetime:
+        """Get the last updated time of the playlist.
+
+        Returns
+        -------
+        datetime
+            The last updated time of the playlist.
+        """
+        response = await tables.QueryRow.raw(
+            "SELECT last_updated FROM query WHERE identifier = {} LIMIT 1;", self.identifier
+        )
+        return response[0]["last_updated"] if response else tables.QueryRow.last_updated.default
+
+    async def update_last_updated(self):
+        """Update the last updated time of the playlist"""
+        await tables.QueryRow.raw(
+            "INSERT INTO query (identifier, last_updated) "
+            "VALUES ({}, {}) ON CONFLICT (identifier) "
+            "DO UPDATE SET last_updated = EXCLUDED.last_updated;",
+            self.identifier,
+            tables.QueryRow.last_updated.default.python(),
+        )
+
+    async def bulk_update(self, tracks: list[str], name: str):
+        """Bulk update the query.
+
+        Parameters
+        ----------
+        tracks: list[str]
+            The tracks of the playlist.
+        name: str
+            The name of the playlist
+        """
+        await tables.QueryRow.raw(
+            "INSERT INTO query (identifier, tracks, name, last_updated) "
+            "VALUES ({}, {}, {}, {}) ON CONFLICT (identifier) "
+            "DO UPDATE SET tracks = EXCLUDED.tracks, name = EXCLUDED.name, last_updated = EXCLUDED.last_updated;",
+            self.identifier,
+            ujson.dumps(tracks),
+            name,
+            tables.QueryRow.last_updated.default.python(),
+        )
+
+    async def fetch_index(self, index: int) -> str | None:
+        """Get the track at the index.
+
+        Parameters
+        ----------
+        index: int
+            The index of the track
+
+        Returns
+        -------
+        str
+            The track at the index
+        """
+        response = await tables.QueryRow.raw(
+            "SELECT tracks->>{} as track FROM query WHERE identifier = {} LIMIT 1;", index, self.identifier
+        )
+        return response[0]["track"] if response else None
+
+    async def fetch_first(self) -> str | None:
+        """Get the first track.
+
+        Returns
+        -------
+        str
+            The first track
+        """
+        return await self.fetch_index(0)
+
+    async def fetch_random(self) -> str | None:
+        """Get a random track.
+
+        Returns
+        -------
+        str
+            A random track
+        """
+        return await self.fetch_index(random.randint(0, await self.size() - 1))
+
+
 @dataclass(eq=True)
 class PlayerStateModel:
     id: int
@@ -2009,410 +2701,6 @@ class PlayerStateModel:
             guild_id,
         )
         return cls(**player[0]) if player else None
-
-
-@dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
-class PlaylistModel:
-    id: int
-
-    async def exists(self) -> bool:
-        """Check if the config exists.
-
-        Returns
-        -------
-        bool
-            Whether the config exists.
-        """
-        return await tables.PlaylistRow.raw("SELECT EXISTS(SELECT 1 FROM playlist WHERE id = {});", self.id)
-
-    async def fetch_all(self) -> dict:
-        """Fetch all playlists from the database.
-
-        Returns
-        -------
-        dict
-            The playlists.
-        """
-        response = await tables.PlaylistRow.raw("SELECT * FROM playlist WHERE id = {} LIMIT 1", self.id)
-
-        if response:
-            data = response[0]
-            data["tracks"] = ujson.loads(data["tracks"])
-            return data
-
-        return {
-            "id": self.id,
-            "name": tables.PlaylistRow.name.default,
-            "tracks": [],
-            "scope": tables.PlaylistRow.scope.default,
-            "author": tables.PlaylistRow.author.default,
-            "url": tables.PlaylistRow.url.default,
-        }
-
-    async def fetch_scope(self) -> int | None:
-        """Fetch the scope of the playlist.
-
-        Returns
-        -------
-        int
-            The scope of the playlist.
-        """
-        response = await tables.PlaylistRow.raw("SELECT scope FROM playlist WHERE id = {} LIMIT 1;", self.id)
-        return response[0]["scope"] if response else tables.PlaylistRow.scope.default
-
-    async def update_scope(self, scope: int):
-        """Update the scope of the playlist.
-
-        Parameters
-        ----------
-        scope : int
-            The new scope of the playlist.
-        """
-        await tables.PlaylistRow.raw(
-            "INSERT INTO playlist (id, scope) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET scope = EXCLUDED.scope;",
-            self.id,
-            scope,
-        )
-
-    async def fetch_author(self) -> int | None:
-        """Fetch the author of the playlist.
-
-        Returns
-        -------
-        int
-            The author of the playlist.
-        """
-        response = await tables.PlaylistRow.raw("SELECT author FROM playlist WHERE id = {} LIMIT 1;", self.id)
-        return response[0]["author"] if response else tables.PlaylistRow.author.default
-
-    async def update_author(self, author: int):
-        """Update the author of the playlist.
-
-        Parameters
-        ----------
-        author : int
-            The new author of the playlist.
-        """
-        await tables.PlaylistRow.raw(
-            "INSERT INTO playlist (id, author) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET author = EXCLUDED.author;",
-            self.id,
-            author,
-        )
-
-    async def fetch_name(self) -> str | None:
-        """Fetch the name of the playlist.
-
-        Returns
-        -------
-        str
-            The name of the playlist.
-        """
-        response = await tables.PlaylistRow.raw("SELECT name FROM playlist WHERE id = {} LIMIT 1;", self.id)
-        return response[0]["name"] if response else tables.PlaylistRow.name.default
-
-    async def update_name(self, name: str):
-        """Update the name of the playlist.
-
-        Parameters
-        ----------
-        name : str
-            The new name of the playlist.
-        """
-        await tables.PlaylistRow.raw(
-            "INSERT INTO playlist (id, name) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name;",
-            self.id,
-            name,
-        )
-
-    async def fetch_url(self) -> str | None:
-        """Fetch the url of the playlist.
-
-        Returns
-        -------
-        str
-            The url of the playlist.
-        """
-        response = await tables.PlaylistRow.raw("SELECT url FROM playlist WHERE id = {} LIMIT 1;", self.id)
-        return response[0]["url"] if response else tables.PlaylistRow.url.default
-
-    async def update_url(self, url: str):
-        """Update the url of the playlist.
-
-        Parameters
-        ----------
-        url : str
-            The new url of the playlist.
-        """
-        await tables.PlaylistRow.raw(
-            "INSERT INTO playlist (id, url) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET url = EXCLUDED.url;",
-            self.id,
-            url,
-        )
-
-    async def fetch_tracks(self) -> list[str]:
-        """Fetch the tracks of the playlist.
-
-        Returns
-        -------
-        list[str]
-            The tracks of the playlist.
-        """
-        response = await tables.PlaylistRow.raw("SELECT tracks FROM playlist WHERE id = {} LIMIT 1;", self.id)
-        return ujson.loads(response[0]["tracks"] if response else tables.PlaylistRow.tracks.default)
-
-    async def update_tracks(self, tracks: list[str]):
-        """Update the tracks of the playlist.
-
-        Parameters
-        ----------
-        tracks : list[str]
-            The new tracks of the playlist.
-        """
-        await tables.PlaylistRow.raw(
-            "INSERT INTO playlist (id, tracks) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET tracks = EXCLUDED.tracks;",
-            self.id,
-            ujson.dumps(tracks),
-        )
-
-    async def add_track(self, tracks: list[str]):
-        """Add a track to the playlist.
-
-        Parameters
-        ----------
-        tracks : list[str]
-            The tracks to add.
-        """
-        await tables.PlaylistRow.raw(
-            "INSERT INTO playlist (id, tracks) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET tracks = array_cat("
-            "player.tracks, EXCLUDED.tracks);",
-            self.id,
-            tracks,
-        )
-
-    async def bulk_remove_tracks(self, tracks: list[str]) -> None:
-        """Remove dj users from the player.
-
-        Parameters
-        ----------
-        tracks : list[str]
-            The track to remove
-        """
-        if not tracks:
-            return
-        async with tables.DB.transaction():
-            for track in tracks:
-                await self.remove_track(track)
-
-    async def remove_track(self, track: str) -> None:
-        """Remove a track from the playlist.
-
-        Parameters
-        ----------
-        track : str
-            The track to remove
-        """
-        await tables.PlaylistRow.raw(
-            "UPDATE player SET tracks = array_remove(tracks, {}) WHERE id = {};", self.id, track
-        )
-
-    async def remove_all_tracks(self) -> None:
-        """Remove all tracks from the playlist."""
-        await tables.PlaylistRow.raw("UPDATE player SET tracks = {} WHERE id = {};", [], self.id)
-
-    async def delete(self) -> None:
-        """Delete the playlist from the database"""
-        await tables.PlaylistRow.raw("DELETE FROM playlist WHERE id = {}", self.id)
-
-    async def can_manage(self, bot: BotT, requester: discord.abc.User, guild: discord.Guild = None) -> bool:
-        """Check if the requester can manage the playlist.
-
-        Parameters
-        ----------
-        bot : BotT
-            The bot instance.
-        requester : discord.abc.User
-            The requester.
-        guild : discord.Guild
-            The guild.
-
-        Returns
-        -------
-        bool
-            Whether the requester can manage the playlist.
-        """
-        async with tables.DB.transaction():
-            if self.id in BUNDLED_PLAYLIST_IDS:
-                return False
-            if requester.id in ((ids := getattr(bot, "owner_ids")) or ()) or requester.id == bot.owner_id:  # noqa
-                return True
-            elif await self.fetch_scope() == bot.user.id:
-                return False
-            return await self.fetch_author() == requester.id
-
-    async def get_scope_name(self, bot: BotT, mention: bool = True, guild: discord.Guild = None) -> str:
-        """Get the name of the scope of the playlist.
-
-        Parameters
-        ----------
-        bot : BotT
-            The bot instance.
-        mention : bool
-            Whether to add a mention if it is mentionable.
-        guild : discord.Guild
-            The guild to get the scope name for.
-
-        Returns
-        -------
-        str
-            The name of the scope of the playlist.
-        """
-        original_scope = await self.fetch_scope()
-        if bot.user.id == original_scope:
-            return f"(Global) {bot.user.mention}" if mention else f"(Global) {bot.user}"
-        elif guild_ := bot.get_guild(original_scope):
-            if guild_:
-                guild = guild_
-            return f"(Server) {guild.name}"
-        elif guild and (channel := guild.get_channel_or_thread(original_scope)):
-            return f"(Channel) {channel.mention}" if mention else f"(Channel) {channel.name}"
-
-        elif (
-            (guild := guild_ or guild)
-            and (guild and (scope := guild.get_member(original_scope)))
-            or (scope := bot.get_user(original_scope))
-        ):
-            return f"(User) {scope.mention}" if mention else f"(User) {scope}"
-        else:
-            return f"(Invalid) {original_scope}"
-
-    async def get_author_name(self, bot: BotT, mention: bool = True) -> str | None:
-        """Get the name of the author of the playlist.
-
-        Parameters
-        ----------
-        bot : BotT
-            The bot instance.
-        mention : bool
-            Whether to add a mention if it is mentionable.
-
-        Returns
-        -------
-        str | None
-            The name of the author of the playlist.
-        """
-        author = await self.fetch_author()
-        if user := bot.get_user(author):
-            return f"{user.mention}" if mention else f"{user}"
-        return f"{author}"
-
-    async def get_name_formatted(self, with_url: bool = True) -> str:
-        """Get the name of the playlist formatted.
-
-        Parameters
-        ----------
-        with_url : bool
-            Whether to include the url in the name.
-
-        Returns
-        -------
-        str
-            The formatted name.
-        """
-        name = BRACKETS.sub("", await self.fetch_name()).strip()
-        if with_url:
-            url = await self.fetch_url()
-            if url and url.startswith("http"):
-                return f"**[{discord.utils.escape_markdown(name)}]({url})**"
-        return f"**{discord.utils.escape_markdown(name)}**"
-
-    @asynccontextmanager
-    async def to_yaml(self, guild: discord.Guild) -> Iterator[tuple[io.BytesIO, str | None]]:
-        """Serialize the playlist to a YAML file.
-
-        yields a tuple of (io.BytesIO, bool) where the bool is whether the playlist file was compressed using Gzip
-
-        Parameters
-        ----------
-        guild : discord.Guild
-            The guild where the yaml will be sent to.
-
-        Yields
-        ------
-        tuple[io.BytesIO, str | None]
-            The YAML file and the compression type.
-        """
-        data = await self.fetch_all()
-        name = data["name"]
-        compression = None
-        with io.BytesIO() as bio:
-            yaml.safe_dump(data, bio, default_flow_style=False, sort_keys=False, encoding="utf-8")
-            bio.seek(0)
-            LOGGER.debug(f"SIZE UNCOMPRESSED playlist ({name}): {sys.getsizeof(bio)}")
-            if sys.getsizeof(bio) > guild.filesize_limit:
-                with io.BytesIO() as bio:
-                    if BROTLI_ENABLED:
-                        compression = "brotli"
-                        bio.write(brotli.compress(yaml.dump(data, encoding="utf-8")))
-                    else:
-                        compression = "gzip"
-                        with gzip.GzipFile(fileobj=bio, mode="wb", compresslevel=9) as gfile:
-                            yaml.safe_dump(data, gfile, default_flow_style=False, sort_keys=False, encoding="utf-8")
-                    bio.seek(0)
-                    LOGGER.debug(f"SIZE COMPRESSED playlist [{compression}] ({name}): {sys.getsizeof(bio)}")
-                    yield bio, compression
-                    return
-            yield bio, compression
-
-    async def bulk_update(self, scope: int, name: str, author: int, url: str | None, tracks: list[str]) -> None:
-        """Bulk update the playlist."""
-        await tables.PlaylistRow.raw(
-            "INSERT INTO playlist  (id, name, author, scope, url, data) VALUES ({}, {}, {}, {}, {}, {}) "
-            "ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, author = EXCLUDED.author, scope = EXCLUDED.scope, "
-            "url = EXCLUDED.url, data = EXCLUDED.data",
-            self.id,
-            name,
-            author,
-            scope,
-            url,
-            ujson.dumps(tracks),
-        )
-
-    @classmethod
-    async def from_yaml(cls, context: PyLavContext, scope: int, url: str) -> PlaylistModel:
-        """Deserialize a playlist from a YAML file.
-
-        Parameters
-        ----------
-        context : PyLavContext
-            The context.
-        scope : int
-            The scope of the playlist.
-        url : str
-            The url of the playlist.
-
-        Returns
-        -------
-        PlaylistModel
-            The playlist.
-        """
-        try:
-            async with aiohttp.ClientSession(auto_decompress=False, json_serialize=ujson.dumps) as session:
-                async with session.get(url) as response:
-                    data = await response.read()
-                    if ".gz.pylav" in url:
-                        data = gzip.decompress(data)
-                    elif ".br.pylav" in url:
-                        data = brotli.decompress(data)
-                    data = yaml.safe_load(data)
-        except Exception as e:
-            raise InvalidPlaylist(f"Invalid playlist file - {e}") from e
-        playlist = cls(
-            id=context.message.id,
-        )
-        await playlist.bulk_update(
-            scope=scope, name=data["name"], url=data["url"], tracks=data["tracks"], author=context.author.id
-        )
-        return playlist
 
 
 @dataclass(eq=True)
@@ -2840,64 +3128,4 @@ class EqualizerModel:
             band_6300=equalizer._eq[12]["gain"],
             band_10000=equalizer._eq[13]["gain"],
             band_16000=equalizer._eq[14]["gain"],
-        )
-
-
-@dataclass(eq=True)
-class QueryModel:
-    identifier: str
-    name: str | None = None
-    last_updated: datetime.datetime = None
-    tracks: list[str] = field(default_factory=list)
-
-    def __hash__(self):
-        return hash((self.identifier,))
-
-    def __post_init__(self):
-        if isinstance(self.tracks, str):
-            self.tracks = ujson.loads(self.tracks)
-
-    @classmethod
-    async def get(cls, identifier: str) -> QueryModel | None:
-        """Get a query from the database.
-
-        Parameters
-        ----------
-        identifier : str
-            The identifier of the query.
-
-        Returns
-        -------
-        QueryModel | None
-            The query if found, otherwise None.
-        """
-        query = await tables.QueryRow.raw(
-            """
-            SELECT identifier, name, last_updated, tracks FROM query
-            WHERE identifier = {}
-            LIMIT 1
-            """,
-            identifier,
-        )
-        return QueryModel(**query[0]) if query else None
-
-    async def delete(self):
-        """Delete the query from the database"""
-        await tables.QueryRow.raw("DELETE FROM query WHERE identifier = {}", self.identifier)
-
-    async def save(self):
-        """Save the query to the database"""
-        """Upsert the query in the database"""
-        if self.last_updated is None:
-            self.last_updated = datetime.datetime.now(tz=datetime.timezone.utc)
-        await tables.QueryRow.raw(
-            """INSERT INTO query (identifier, name, last_updated, tracks)
-            VALUES ({}, {}, {}, {})
-            ON CONFLICT (identifier) DO UPDATE SET name = EXCLUDED.name, last_updated = EXCLUDED.last_updated,
-            tracks = EXCLUDED.tracks
-            """,
-            self.identifier,
-            self.name,
-            self.last_updated,
-            ujson.dumps(self.tracks),
         )

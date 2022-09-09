@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import datetime
+from functools import lru_cache
 from typing import TYPE_CHECKING
 
 from pylav._logging import getLogger
@@ -25,28 +26,31 @@ class QueryCacheManager:
     def client(self) -> Client:
         return self._client
 
-    @staticmethod
-    async def get_query(query: Query) -> QueryModel | None:
+    async def exists(self, query: Query) -> bool:
+        response = await tables.QueryRow.raw(
+            "SELECT EXISTS(SELECT 1 FROM query WHERE {}) AS exists",
+            (tables.QueryRow.identifier == query.query_identifier)
+            & (
+                tables.QueryRow.last_updated
+                > datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=30)
+            ),
+        )
+        return response[0]["exists"] if response else False
+
+    @lru_cache(maxsize=500)
+    def get(self, identifier: str) -> QueryModel:
+        """Get a query object"""
+        return QueryModel(identifier=identifier)
+
+    async def fetch_query(self, query: Query) -> QueryModel | None:
         if query.is_local or query.is_custom_playlist or query.is_http:
             # Do not cache local queries and single track urls or http source entries
             return None
-        query = (
-            await tables.QueryRow.select()
-            .output(as_json=True)
-            .where(
-                (tables.QueryRow.identifier == query.query_identifier)
-                & (
-                    tables.QueryRow.last_updated
-                    > datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=30)
-                )
-            )
-            .first()
-        )
-        if query:
-            return QueryModel(**query)
 
-    @staticmethod
-    async def add_query(query: Query, result: dict) -> bool:
+        if await self.exists(query):
+            return self.get(query.query_identifier)
+
+    async def add_query(self, query: Query, result: dict) -> bool:
         if query.is_local or query.is_custom_playlist or query.is_http:
             # Do not cache local queries and single track urls or http source entries
             return False
@@ -56,12 +60,8 @@ class QueryCacheManager:
         if not tracks:
             return False
         name = result.get("playlistInfo", {}).get("name", None)
-        await QueryModel(
-            identifier=query.query_identifier,
-            name=name,
-            tracks=[t["track"] async for t in AsyncIter(tracks)],
-            last_updated=datetime.datetime.now(tz=datetime.timezone.utc),
-        ).save()
+        query = self.get(query.query_identifier)
+        await query.bulk_update(name=name, tracks=[t["track"] async for t in AsyncIter(tracks)])
         return True
 
     @staticmethod
@@ -70,29 +70,38 @@ class QueryCacheManager:
             asyncio.exceptions.CancelledError,
         ):
             LOGGER.trace("Deleting old queries")
-            await tables.QueryRow.delete().where(
-                tables.QueryRow.last_updated
-                <= (datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=30))
+            await tables.QueryRow.raw(
+                "DELETE FROM query WHERE {}",
+                (
+                    tables.QueryRow.last_updated
+                    <= (datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=30))
+                ),
             )
             LOGGER.trace("Deleted old queries")
 
     @staticmethod
     async def wipe() -> None:
         LOGGER.trace("Wiping query cache")
-        await tables.QueryRow.delete(force=True)
+        await tables.QueryRow.raw(
+            "TRUNCATE TABLE query",
+        )
         LOGGER.trace("Wiped query cache")
 
     @staticmethod
     async def delete_older_than(days: int) -> None:
-        await tables.QueryRow.delete().where(
-            tables.QueryRow.last_updated
-            <= (datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=days))
+        await tables.QueryRow.raw(
+            "DELETE FROM query WHERE {}",
+            (
+                tables.QueryRow.last_updated
+                <= (datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=days))
+            ),
         )
 
     @staticmethod
     async def delete_query(query: Query) -> None:
-        await tables.QueryRow.delete().where(tables.QueryRow.identifier == query.query_identifier)
+        await tables.QueryRow.raw("DELETE FROM query WHERE identifier = {}", query.query_identifier)
 
     @staticmethod
     async def size() -> int:
-        return await tables.QueryRow.count()
+        response = await tables.QueryRow.raw("SELECT COUNT(query_identifier) FROM query")
+        return response[0]["count"] if response else 0

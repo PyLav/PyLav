@@ -57,11 +57,11 @@ class PlaylistConfigManager:
     async def get_playlist_by_name(playlist_name: str, limit: int = None) -> list[PlaylistModel]:
         if limit is None:
             playlists = await tables.PlaylistRow.raw(
-                "SELECT id FROM playlist WHERE name ILIKE {}", f"%{playlist_name.lower()}%"
+                "SELECT id FROM playlist WHERE {}", tables.PlaylistRow.name.ilike(playlist_name.lower())
             )
         else:
             playlists = await tables.PlaylistRow.raw(
-                "SELECT id FROM playlist WHERE name ILIKE {} LIMIT {}", f"%{playlist_name.lower()}%", limit
+                "SELECT id FROM playlist WHERE {} LIMIT {}", tables.PlaylistRow.name.ilike(playlist_name.lower()), limit
             )
 
         if not playlists:
@@ -73,10 +73,13 @@ class PlaylistConfigManager:
     @staticmethod
     async def get_playlist_by_id(playlist_id: int | str) -> PlaylistModel:
         try:
-            playlist = await tables.PlaylistRow.raw("SELECT id FROM playlist WHERE id = {}", playlist_id)
+            response = await tables.PlaylistRow.raw("SELECT id FROM playlist WHERE id = {}", int(playlist_id))
         except ValueError as e:
             raise EntryNotFoundError(f"Playlist with id {playlist_id} not found") from e
-        return PlaylistModel(**playlist)
+        if response:
+            return PlaylistModel(**response[0])
+        else:
+            raise EntryNotFoundError(f"Playlist with id {playlist_id} not found")
 
     async def get_playlist_by_name_or_id(
         self, playlist_name_or_id: int | str, limit: int = None
@@ -115,30 +118,24 @@ class PlaylistConfigManager:
         if ids and ignore_ids:
 
             for entry in await tables.PlaylistRow.raw(
-                """
-                               SELECT id FROM playlist WHERE (
-                               (url IS NOT NULL AND ID IN {}) AND id NOT IN {}
-                               )""",
-                ids,
-                ignore_ids,
+                """SELECT id FROM playlist WHERE {}""",
+                (
+                    tables.PlaylistRow.url.is_not_null()
+                    & tables.PlaylistRow.id.in_(ids)
+                    & tables.PlaylistRow.id.not_in(ignore_ids)
+                ),
             ):
                 yield PlaylistModel(**entry)
         elif ignore_ids:
             for entry in await tables.PlaylistRow.raw(
-                """
-                               SELECT id FROM playlist WHERE (
-                               (url IS NOT NULL) AND id NOT IN {}
-                               )""",
-                ignore_ids,
+                """SELECT id FROM playlist WHERE {}""",
+                (tables.PlaylistRow.url.is_not_null() & tables.PlaylistRow.id.not_in(ignore_ids)),
             ):
                 yield PlaylistModel(**entry)
         else:
             for entry in await tables.PlaylistRow.raw(
-                """
-                               SELECT id FROM playlist WHERE (
-                               (url IS NOT NULL AND ID IN {})
-                               )""",
-                ids,
+                """SELECT id FROM playlist WHERE {}""",
+                (tables.PlaylistRow.url.is_not_null() & tables.PlaylistRow.id.is_in(ignore_ids)),
             ):
                 yield PlaylistModel(**entry)
 
@@ -223,29 +220,25 @@ class PlaylistConfigManager:
             global_playlists = [
                 p
                 for p in await self.get_playlists_by_scope(scope=self._client.bot.user.id)
-                if (not empty or await p.fetch_tracks())
+                if (not empty or await p.size())
             ]
             user_playlists = [
-                p for p in await self.get_playlists_by_scope(scope=requester) if (not empty or await p.fetch_tracks())
+                p for p in await self.get_playlists_by_scope(scope=requester) if (not empty or await p.size())
             ]
             vc_playlists = []
             guild_playlists = []
             channel_playlists = []
             if vc is not None:
                 vc_playlists = [
-                    p for p in await self.get_playlists_by_scope(scope=vc.id) if (not empty or await p.fetch_tracks())
+                    p for p in await self.get_playlists_by_scope(scope=vc.id) if (not empty or await p.size())
                 ]
             if guild is not None:
                 guild_playlists = [
-                    p
-                    for p in await self.get_playlists_by_scope(scope=guild.id)
-                    if (not empty or await p.fetch_tracks())
+                    p for p in await self.get_playlists_by_scope(scope=guild.id) if (not empty or await p.size())
                 ]
             if channel is not None:
                 channel_playlists = [
-                    p
-                    for p in await self.get_playlists_by_scope(scope=channel.id)
-                    if (not empty or await p.fetch_tracks())
+                    p for p in await self.get_playlists_by_scope(scope=channel.id) if (not empty or await p.size())
                 ]
         return global_playlists, user_playlists, guild_playlists, channel_playlists, vc_playlists
 
@@ -404,8 +397,9 @@ class PlaylistConfigManager:
 
     async def count(self) -> int:
         """Returns the number of playlists in the database."""
-        return await tables.PlaylistRow.raw(
+        response = await tables.PlaylistRow.raw(
             """
-            SELECT COUNT(id) FROM playlists
+            SELECT COUNT(id) FROM playlist
             """
         )
+        return response[0].get("count", 0) if response else 0

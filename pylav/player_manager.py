@@ -139,7 +139,7 @@ class PlayerManager:
         if player := self.players.pop(guild_id, None):
             await player.save()
             await player.disconnect(requester=self.client.bot.user)
-        player_state = await self.client.player_state_db_manager.get_player(guild_id)
+        player_state = await self.client.player_state_db_manager.fetch_player(guild_id)
         if player_state:
             await self._restore_player(player_state)
 
@@ -266,7 +266,7 @@ class PlayerManager:
             await asyncio.sleep(1)
         tasks = [
             asyncio.create_task(self._restore_player(p))
-            async for p in self.client.player_state_db_manager.get_all_players()
+            async for p in self.client.player_state_db_manager.fetch_all_players()
         ]
         await asyncio.gather(*tasks, return_exceptions=True)
         LOGGER.info("Restored %s player states", len(self.players))
