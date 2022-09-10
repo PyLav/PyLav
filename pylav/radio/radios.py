@@ -253,7 +253,7 @@ class RadioBrowser:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
         kwargs |= {"name": name, "name_exact": exact, "order": "votes"}
-        kwargs["hidebroken"] = kwargs.pop("hidebroken", "true")
+        kwargs["hidebroken"] = kwargs.pop("hidebroken", True)
         return await self.search(**kwargs)
 
     async def stations_by_codec(
@@ -271,7 +271,7 @@ class RadioBrowser:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
         kwargs |= {"codec": codec, "codec_exact": exact, "order": "votes"}
-        kwargs["hidebroken"] = kwargs.pop("hidebroken", "true")
+        kwargs["hidebroken"] = kwargs.pop("hidebroken", True)
         return await self.search(**kwargs)
 
     async def stations_by_country(
@@ -289,7 +289,7 @@ class RadioBrowser:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
         kwargs |= {"country": country, "country_exact": exact, "order": "votes"}
-        kwargs["hidebroken"] = kwargs.pop("hidebroken", "true")
+        kwargs["hidebroken"] = kwargs.pop("hidebroken", True)
         return await self.search(**kwargs)
 
     async def stations_by_countrycode(self, code: str, **kwargs: str | int | bool | None) -> list[Station]:
@@ -305,7 +305,7 @@ class RadioBrowser:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
         kwargs |= {"countrycode": code, "order": "votes"}
-        kwargs["hidebroken"] = kwargs.pop("hidebroken", "true")
+        kwargs["hidebroken"] = kwargs.pop("hidebroken", True)
         return await self.search(**kwargs)
 
     async def stations_by_state(
@@ -323,7 +323,7 @@ class RadioBrowser:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
         kwargs |= {"state": state, "state_exact": exact, "order": "votes"}
-        kwargs["hidebroken"] = kwargs.pop("hidebroken", "true")
+        kwargs["hidebroken"] = kwargs.pop("hidebroken", True)
         return await self.search(**kwargs)
 
     async def stations_by_language(
@@ -341,7 +341,7 @@ class RadioBrowser:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
         kwargs |= {"language": language, "language_exact": exact, "order": "votes"}
-        kwargs["hidebroken"] = kwargs.pop("hidebroken", "true")
+        kwargs["hidebroken"] = kwargs.pop("hidebroken", True)
         return await self.search(**kwargs)
 
     async def stations_by_tag(self, tag: str, exact: bool = False, **kwargs: str | int | bool | None) -> list[Station]:
@@ -356,7 +356,7 @@ class RadioBrowser:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
         kwargs |= {"tag": tag, "tag_exact": exact, "order": "votes"}
-        kwargs["hidebroken"] = kwargs.pop("hidebroken", "true")
+        kwargs["hidebroken"] = kwargs.pop("hidebroken", True)
         return await self.search(**kwargs)
 
     async def stations_by_tag_list(self, tag_list: list[str], **kwargs: str | int | bool | None) -> list[Station]:
@@ -373,7 +373,7 @@ class RadioBrowser:
         tag_list = ",".join(tag_list)
         kwargs["tag_list"] = tag_list
         kwargs |= {"tag_list": tag_list, "order": "votes"}
-        kwargs["hidebroken"] = kwargs.pop("hidebroken", "true")
+        kwargs["hidebroken"] = kwargs.pop("hidebroken", True)
 
         return await self.search(**kwargs)
 
