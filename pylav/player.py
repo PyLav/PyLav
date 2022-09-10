@@ -129,6 +129,7 @@ class Player(VoiceProtocol):
         self._last_update = 0
         self._last_position = 0
         self.position_timestamp = 0
+        self._ping = 0
         self.queue: PlayerQueue[Track] = PlayerQueue()
         self.history: TrackHistoryQueue[Track] = TrackHistoryQueue(maxsize=100)
         self.current: Track | None = None
@@ -319,6 +320,10 @@ class Player(VoiceProtocol):
     @property
     def coordinates(self) -> tuple[int, int]:
         return self._coordinates
+
+    @property
+    def ping(self) -> int:
+        return self.ping
 
     @property
     def region(self) -> str | None:
@@ -1253,6 +1258,7 @@ class Player(VoiceProtocol):
         self._last_update = time.time() * 1000
         self._last_position = state.get("position", 0)
         self.position_timestamp = state.get("time", 0)
+        self._ping = state.get("ping", 0)
         if self.current:
             self.current.last_known_position = self._last_position
 
