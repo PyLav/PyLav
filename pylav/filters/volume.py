@@ -4,7 +4,10 @@ from pylav.filters.utils import FilterMixin
 
 
 class Volume(FilterMixin):
+    __slots__ = ("_value", "_off", "_default")
+
     def __init__(self, value: int | float | Volume):
+        super().__init__()
         self.off = False
         if isinstance(value, Volume):
             self.value = value.value

@@ -19,7 +19,10 @@ class Equalizer(FilterMixin):
         An Optional string to name this Equalizer. Defaults to 'CustomEqualizer'
     """
 
+    __slots__ = ("_eq", "_name", "_raw", "_off", "band_count", "_default")
+
     def __init__(self, *, levels: list, name: str = "CustomEqualizer"):
+        super().__init__()
         self.band_count: Final[int] = 15
         self._eq = self._factory(levels)
         self._raw = levels

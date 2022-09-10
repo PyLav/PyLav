@@ -129,6 +129,38 @@ class M3U8:
 
     """
 
+    __slots__ = (
+        "data",
+        "_base_uri",
+        "keys",
+        "segments",
+        "files",
+        "media",
+        "playlists",
+        "iframe_playlists",
+        "segment_map",
+        "start",
+        "server_control",
+        "part_inf",
+        "skip",
+        "rendition_reports",
+        "session_data",
+        "session_keys",
+        "preload_hint",
+        "content_steering",
+        "_base_path",
+        "is_variant",
+        "is_independent_segments",
+        "media_sequence",
+        "discontinuity_sequence",
+        "allow_cache",
+        "version",
+        "target_duration",
+        "playlist_type",
+        "is_i_frames_only",
+        "is_endlist",
+    )
+
     simple_attributes = (
         # obj attribute      # parser attribute
         ("is_variant", "is_variant"),
@@ -313,6 +345,7 @@ class M3U8:
         You could also use unicode(<this obj>) or str(<this obj>)
         """
         output = ["#EXTM3U"]
+
         if self.content_steering:
             output.append(str(self.content_steering))
         if self.is_independent_segments:
@@ -329,6 +362,7 @@ class M3U8:
             output.append(f"#EXT-X-TARGETDURATION:{number_to_string(self.target_duration)}")
         if self.playlist_type is not None and self.playlist_type != "":
             output.append(f"#EXT-X-PLAYLIST-TYPE:{str(self.playlist_type).upper()}")
+
         if self.start:
             output.append(str(self.start))
         if self.is_i_frames_only:
@@ -649,6 +683,19 @@ class PartialSegment(BasePathMixin):
       after the first EXT-X-PART tag in the Parent Segment with a GAP=YES
       attribute.
     """
+
+    __slots__ = (
+        "uri",
+        "base_uri",
+        "duration",
+        "program_date_time",
+        "current_program_date_time",
+        "byterange",
+        "independent",
+        "gap",
+        "dateranges",
+        "gap_tag",
+    )
 
     def __init__(
         self,
@@ -1196,6 +1243,8 @@ class Skip:
 
 
 class PartInformation:
+    __slots__ = ("part_target",)
+
     def __init__(self, part_target=None):
         self.part_target = part_target
 

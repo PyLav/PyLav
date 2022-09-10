@@ -40,7 +40,6 @@ from pylav.exceptions import (
     WebsocketNotConnectedError,
 )
 from pylav.node import Node
-from pylav.sql.models import NodeModel
 from pylav.utils import AsyncIter, ExponentialBackoffWithReset, get_jar_ram_actual, get_true_path
 from pylav.vendored import aiopath
 
@@ -149,22 +148,55 @@ def change_dict_naming_convention(data: dict) -> dict:
 
 
 class LocalNodeManager:
+    """A manager for a local Lavalink node."""
 
-    _java_available: bool | None = None
-    _java_version: tuple[int, int] | None = None
-    _up_to_date: bool | None = None
-    _blacklisted_archs: list[str] = []
-
-    _lavaplayer: str | None = None
-    _lavalink_build: int | None = None
-    _jvm: str | None = None
-    _lavalink_branch: str | None = None
-    _buildtime: str | None = None
-    _commit: str | None = None
-    _version: str | None = None
-    _java_exc: str = JAVA_EXECUTABLE
+    __slots__ = (
+        "ready",
+        "_ci_info",
+        "_client",
+        "_proc",
+        "_node_pid",
+        "_shutdown",
+        "start_monitor_task",
+        "timeout",
+        "_args",
+        "_session",
+        "_node_id",
+        "_node",
+        "_current_config",
+        "abort_for_unmanaged",
+        "_wait_for",
+        "_java_path",
+        "_java_exc",
+        "_java_available",
+        "_java_version",
+        "_java_version",
+        "_up_to_date",
+        "_blacklisted_archs",
+        "_lavaplayer",
+        "_lavalink_build",
+        "_jvm",
+        "_lavalink_branch",
+        "_buildtime",
+        "_commit",
+        "_version",
+    )
 
     def __init__(self, client: Client, timeout: int | None = None) -> None:
+        self._java_available: bool | None = None
+        self._java_version: tuple[int, int] | None = None
+        self._up_to_date: bool | None = None
+        self._blacklisted_archs: list[str] = []
+
+        self._lavaplayer: str | None = None
+        self._lavalink_build: int | None = None
+        self._jvm: str | None = None
+        self._lavalink_branch: str | None = None
+        self._buildtime: str | None = None
+        self._commit: str | None = None
+        self._version: str | None = None
+        self._java_exc: str = JAVA_EXECUTABLE
+
         self.ready: asyncio.Event = asyncio.Event()
         self._ci_info: dict = {"number": 0, "branchName": "", "finishDate": "", "href": "", "jar_url": ""}
         self._client = client
@@ -178,7 +210,6 @@ class LocalNodeManager:
         self._node_id: int = self._client.bot.user.id
         self._node: Node | None = None
         self._current_config = {}
-        self._full_data: NodeModel = None  # type: ignore
         self.abort_for_unmanaged: asyncio.Event = asyncio.Event()
         self._args = []
         self._wait_for = asyncio.Event()
@@ -303,8 +334,8 @@ class LocalNodeManager:
             raise
 
     async def process_settings(self):
-        self._full_data = await self._client.node_db_manager.bundled_node_config().fetch_all()
-        data = change_dict_naming_convention(self._full_data["yaml"])
+        data = await self._client.node_db_manager.bundled_node_config().fetch_yaml()
+        data = change_dict_naming_convention(data)
         # The reason this is here is to completely remove these keys from the application.yml
         # if they are set to empty values
         if not await asyncstdlib.all(
@@ -700,21 +731,14 @@ class LocalNodeManager:
                     exc,
                 )
                 await self._partial_shutdown()
-                LOGGER.warning(
-                    "Lavalink Managed node startup failed retrying in %s seconds",
-                    delay,
-                )
+                LOGGER.warning("Lavalink Managed node startup failed retrying in %s seconds", delay, exc_info=exc)
                 await asyncio.sleep(delay)
             except asyncio.CancelledError:
                 LOGGER.warning("Lavalink Managed monitor task cancelled")
                 return
             except Exception as exc:
                 delay = backoff.delay()
-                LOGGER.warning(
-                    "Lavalink Managed node startup failed retrying in %s seconds",
-                    delay,
-                )
-                LOGGER.info(exc, exc_info=exc)
+                LOGGER.warning("Lavalink Managed node startup failed retrying in %s seconds", delay, exc_info=exc)
                 await self._partial_shutdown()
                 await asyncio.sleep(delay)
 

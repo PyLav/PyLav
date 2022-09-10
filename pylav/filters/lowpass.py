@@ -4,8 +4,11 @@ from pylav.filters.utils import FilterMixin
 
 
 class LowPass(FilterMixin):
+    __slots__ = ("_smoothing", "_off", "_default")
+
     def __init__(self, smoothing: float):
-        self._smoothing = smoothing
+        super().__init__()
+        self.smoothing = smoothing
         self.off = False
 
     def to_dict(self) -> dict:

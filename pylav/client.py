@@ -112,7 +112,6 @@ class Client(metaclass=_Singleton):
     """
 
     _local_node_manager: LocalNodeManager
-
     _asyncio_lock = asyncio.Lock()
     _config: LibConfigModel
     __cogs_registered = set()
@@ -1054,7 +1053,7 @@ class Client(metaclass=_Singleton):
                     queries_failed.append(query)
             else:
                 queries_failed.append(query)
-                LOGGER.warning("Unhandled query: %s, %s", query.__dict__, query.query_identifier)
+                LOGGER.warning("Unhandled query: %s, %s", query.to_dict(), query.query_identifier)
         return successful_tracks, track_count, queries_failed
 
     @staticmethod

@@ -34,6 +34,18 @@ LOGGER = getLogger("PyLav.NodeManager")
 
 
 class NodeManager:
+    __slots__ = (
+        "_client",
+        "_session",
+        "_player_queue",
+        "_unmanaged_external_host",
+        "_unmanaged_external_password",
+        "_unmanaged_external_port",
+        "_unmanaged_external_ssl",
+        "_nodes",
+        "_adding_nodes",
+    )
+
     def __init__(
         self,
         client: Client,

@@ -6,8 +6,11 @@ from deepdiff import DeepDiff
 
 
 class FilterMixin:
-    _default: FilterMixin = None
-    _off = False
+    __slots__ = ("_default", "_off")
+
+    def __init__(self):
+        self._default = None
+        self._off = True
 
     def __eq__(self, other):
         """Overrides the default implementation"""
@@ -18,10 +21,11 @@ class FilterMixin:
     @abstractmethod
     def to_json(self) -> dict:
         """Returns a dictionary representation of the Filter without the state key"""
+        raise NotImplementedError
 
     def __hash__(self):
         """Overrides the default implementation"""
-        return hash(tuple(sorted(self.__dict__.items())))
+        return hash(tuple(sorted(self.to_json().items())))
 
     @property
     def off(self) -> bool:

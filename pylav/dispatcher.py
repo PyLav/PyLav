@@ -86,6 +86,8 @@ class DispatchManager:
 
     """
 
+    __slots__ = ("_client", "dispatcher", "mapping")
+
     def __init__(self, client: Client):
         self._client = client
         self.dispatcher = client.bot.dispatch

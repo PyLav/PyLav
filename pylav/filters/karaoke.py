@@ -4,7 +4,10 @@ from pylav.filters.utils import FilterMixin
 
 
 class Karaoke(FilterMixin):
+    __slots__ = ("_level", "_mono_level", "_filter_band", "_filter_width", "_off", "_default")
+
     def __init__(self, level: float, mono_level: float, filter_band: float, filter_width: float):
+        super().__init__()
         self.level = level
         self.mono_level = mono_level
         self.filter_band = filter_band

@@ -42,7 +42,7 @@ class PyLavCogMixin(ABC):
     lavalink: Client
     pylav: Client
 
-    @commands.command(name="play", description=_("Plays a specified query"), aliases=["p"])
+    @commands.command()
     async def command_play(self, context: PyLavContext, *, query: str = None):
         ...
 

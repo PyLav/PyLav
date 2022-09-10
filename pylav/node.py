@@ -230,6 +230,35 @@ class Node:
         Whether to use a ssl connection.
     """
 
+    __slots__ = (
+        "_query_cls",
+        "_manager",
+        "_session",
+        "_temporary",
+        "_host",
+        "_port",
+        "_password",
+        "_name",
+        "_ssl",
+        "_config",
+        "_managed",
+        "_region",
+        "_extras",
+        "_stats",
+        "_disabled_sources",
+        "_identifier",
+        "_resume_key",
+        "_resume_timeout",
+        "_reconnect_attempts",
+        "_search_only",
+        "_sources",
+        "_capabilities",
+        "_coordinates",
+        "_down_votes",
+        "_ready",
+        "_ws",
+    )
+
     def __init__(
         self,
         manager: NodeManager,

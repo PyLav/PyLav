@@ -14,6 +14,8 @@ LOGGER = getLogger("PyLav.NodeConfigManager")
 
 
 class NodeConfigManager:
+    __slots__ = ("_client", "currently_in_db")
+
     def __init__(self, client: Client):
         self._client = client
         self.currently_in_db = {

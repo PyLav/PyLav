@@ -4,7 +4,10 @@ from pylav.filters.utils import FilterMixin
 
 
 class Timescale(FilterMixin):
+    __slots__ = ("_speed", "_pitch", "_rate", "_off", "_default")
+
     def __init__(self, speed: float, pitch: float, rate: float):
+        super().__init__()
         self.speed = speed
         self.pitch = pitch
         self.rate = rate

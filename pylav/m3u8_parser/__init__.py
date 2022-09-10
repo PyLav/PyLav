@@ -9,6 +9,8 @@ from pylav.m3u8_parser._init__ import load, loads
 
 
 class M3U8Parser:
+    __slots__ = ("_client",)
+
     def __init__(self, client: Client):
         self._client = client
 

@@ -3,6 +3,8 @@ from __future__ import annotations
 import asyncio
 import os
 
+from aiocache import Cache, cached
+
 from pylav.m3u8_parser.httpclient import DefaultHTTPClient, _parsed_url
 from pylav.m3u8_parser.model import (
     M3U8,
@@ -65,6 +67,7 @@ __all__ = (
 )
 
 
+@cached(ttl=600, cache=Cache.MEMORY, namespace="m3u8_loads")
 async def loads(self, content: str, uri: str = None, custom_tags_parser=None):
     """
     Given a string with a m3u8 content, returns a M3U8 object.
@@ -78,6 +81,7 @@ async def loads(self, content: str, uri: str = None, custom_tags_parser=None):
         _parsed_url(uri)
 
 
+@cached(ttl=600, cache=Cache.MEMORY, namespace="m3u8_load")
 async def load(
     self,
     uri: str,

@@ -14,11 +14,14 @@ LOGGER = getLogger("PyLav.Caching")
 
 if CACHING_ENABLED:
     LOGGER.warning(
-        "Caching is enabled, this will make it so live edits to the database will not be reflected in the bot until the cache is invalidated or bot is restarted."
+        "Caching is enabled, "
+        "this will make it so live edits to the database will not be reflected "
+        "in the bot until the cache is invalidated or bot is restarted."
     )
 else:
     LOGGER.info(
-        "Caching is disabled, this will make it so live edits to the database will be reflected in the bot immediately."
+        "Caching is disabled, "
+        "this will make it so live edits to the database will be reflected in the bot immediately."
     )
 
 
@@ -26,25 +29,25 @@ class _SingletonByKey(type):
     _instances = {}
 
     @classmethod
-    def _get_key(cls, i, mro, **kwargs):
+    def _get_key(cls, mro, **kwargs):
         singleton_key = kwargs.get("id")
         for base in mro:
             if base.__module__.startswith("pylav.sql.models"):
                 key_name = base.__name__
                 if "LibConfigModel" in key_name:
-                    singleton_key = kwargs.get("bot")
+                    singleton_key += f".{kwargs.get('bot')}"
                 return singleton_key, key_name
 
     def __call__(cls, *args, **kwargs):
         # sourcery skip: instance-method-first-arg-name
-        key = cls._get_key(0, cls.mro(), **kwargs)
+        key = cls._get_key(cls.mro(), **kwargs)
         if key not in cls._instances:
             cls._locked_call(*args, **kwargs)
         return cls._instances[key]
 
     @_synchronized(_LOCK)
     def _locked_call(cls, *args, **kwargs):
-        key = cls._get_key(1, cls.mro(), **kwargs)
+        key = cls._get_key(cls.mro(), **kwargs)
         if key not in cls._instances:
             singleton = super().__call__(*args, **kwargs)
             cls._instances[key] = singleton
@@ -55,8 +58,7 @@ def key_builder(method: Callable, *args: Any, **kwargs: Any) -> str:
         _id = args[0].bot
     else:
         _id = args[0].id
-    key = f"{method.__module__ or ''}.{args[0].__class__.__name__}.{method.__name__}.{_id}"
-    return key
+    return f"{f'{method.__module__}.' or ''}{args[0].__class__.__name__}.{method.__name__}.{_id}"
 
 
 CACHE = cached(ttl=None, cache=Cache.MEMORY, key_builder=key_builder)

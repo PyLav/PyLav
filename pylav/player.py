@@ -15,6 +15,7 @@ import asyncstdlib
 import discord
 from discord import VoiceProtocol
 from discord.abc import Messageable
+from discord.utils import utcnow
 
 from pylav._logging import getLogger
 from pylav.constants import REGION_TO_COUNTRY_COORDINATE_MAPPING
@@ -91,6 +92,57 @@ def _done_callback(task: asyncio.Task) -> None:
 
 
 class Player(VoiceProtocol):
+    __slots__ = (
+        "ready",
+        "bot",
+        "client",
+        "guild_id",
+        "_channel",
+        "channel_id",
+        "node",
+        "player_manager",
+        "_original_node",
+        "_voice_state",
+        "_region",
+        "_coordinates",
+        "_connected",
+        "connected_at",
+        "paused",
+        "_config",
+        "stopped",
+        "_last_update",
+        "_last_position",
+        "position_timestamp",
+        "_ping",
+        "queue",
+        "history",
+        "current",
+        "_post_init_completed",
+        "_autoplay_playlist",
+        "_restored",
+        "_effect_enabled",
+        "_volume",
+        "_equalizer",
+        "_karaoke",
+        "_timescale",
+        "_tremolo",
+        "_vibrato",
+        "_rotation",
+        "_distortion",
+        "_lowpass",
+        "_echo",
+        "_channelmix",
+        "_extras",
+        "_last_alone_paused_check",
+        "_was_alone_paused",
+        "_last_alone_dc_check",
+        "_last_empty_queue_check",
+        "_waiting_for_node",
+        "last_track",
+        "next_track",
+        "_global_config",
+        "_lavalink",
+    )
     _config: PlayerModel
     _global_config: PlayerModel
     _lavalink: Client
@@ -116,9 +168,6 @@ class Player(VoiceProtocol):
         self._coordinates = REGION_TO_COUNTRY_COORDINATE_MAPPING.get(self._region, (0, 0))
         self._connected = False
         self.connected_at = datetime.datetime.now(tz=datetime.timezone.utc)
-        self._text_channel = None
-        self._notify_channel = None
-        self._forced_vc = None
         self.last_track = None
         self.next_track = None
 
@@ -1344,6 +1393,7 @@ class Player(VoiceProtocol):
             self_deaf=deaf if (deaf := await self.self_deaf()) is True else self_deaf,
         )
         self._connected = True
+        self.connected_at = utcnow()
         LOGGER.info("[Player-%s] Connected to voice channel", self.channel.guild.id)
 
     async def disconnect(self, *, force: bool = False, requester: discord.Member | None) -> None:

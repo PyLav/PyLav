@@ -63,6 +63,24 @@ class Track:
         Any extra properties given to this Track will be stored here.
     """
 
+    __slots__ = (
+        "_node",
+        "_is_partial",
+        "_query",
+        "_unique_id",
+        "_extra",
+        "_raw_data",
+        "_requester",
+        "_id",
+        "_updated_query",
+        "__clear_cache_task",
+        "__clear_thumbnail_cache_task",
+        "track",
+        "skip_segments",
+        "extra",
+        "__dict__",
+    )
+
     def __init__(
         self,
         *,

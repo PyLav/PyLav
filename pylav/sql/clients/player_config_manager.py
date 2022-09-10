@@ -17,6 +17,8 @@ LOGGER = getLogger("PyLav.PlayerConfigManager")
 
 
 class PlayerConfigManager:
+    __slots__ = ("_client",)
+
     def __init__(self, client: Client):
         self._client = client
 

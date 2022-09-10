@@ -4,7 +4,10 @@ from pylav.filters.utils import FilterMixin
 
 
 class Rotation(FilterMixin):
+    __slots__ = ("_hertz", "_off", "_default")
+
     def __init__(self, hertz: float):
+        super().__init__()
         self.hertz = hertz
         self.off = False
 

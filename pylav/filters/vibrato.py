@@ -4,7 +4,10 @@ from pylav.filters.utils import FilterMixin
 
 
 class Vibrato(FilterMixin):
+    __slots__ = ("_frequency", "_depth", "_off", "_default")
+
     def __init__(self, frequency: float, depth: float):
+        super().__init__()
         self.frequency = frequency
         self.depth = depth
         self.off = False

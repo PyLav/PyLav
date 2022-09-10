@@ -12,6 +12,8 @@ def _parsed_url(url: str) -> str | bytes:
 
 
 class DefaultHTTPClient:
+    __slots__ = ("proxies",)
+
     def __init__(self, proxies=None):
         self.proxies = proxies
 
@@ -33,6 +35,8 @@ class DefaultHTTPClient:
 
 
 class HTTPSHandler:
+    __slots__ = ()
+
     def __new__(cls, verify_ssl: bool = True) -> urllib.request.HTTPSHandler:
         context = ssl.create_default_context()
         if not verify_ssl:

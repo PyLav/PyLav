@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from pylav.radio import RadioBrowser
 
 
-@dataclass(eq=True)
+@dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True)
 class Station:
     radio_api_client: RadioBrowser
     changeuuid: str = None
@@ -78,7 +78,7 @@ class Station:
         await self.radio_api_client.click(station=self)
 
 
-@dataclass(eq=True)
+@dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True)
 class Tag:
     name: str = None
     stationcount: int = None
@@ -88,7 +88,7 @@ class Tag:
             self.name = "ΩM4L42rPHqy123PyLavInvalidFallback-un5Nht475B"
 
 
-@dataclass(eq=True)
+@dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True)
 class Language:
     name: str = None
     iso_639: str = None
@@ -99,7 +99,7 @@ class Language:
             self.name = "ΩM4L42rPHqy123PyLavInvalidFallback-un5Nht475B"
 
 
-@dataclass(eq=True)
+@dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True)
 class State:
     name: str = None
     country: str = None
@@ -110,7 +110,7 @@ class State:
             self.name = "ΩM4L42rPHqy123PyLavInvalidFallback-un5Nht475B"
 
 
-@dataclass(eq=True)
+@dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True)
 class Codec:
     name: str = None
     stationcount: int = None
@@ -120,7 +120,7 @@ class Codec:
             self.name = "ΩM4L42rPHqy123PyLavInvalidFallback-un5Nht475B"
 
 
-@dataclass(eq=True)
+@dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True)
 class CountryCode:
     name: str = None
     stationcount: int = None
@@ -130,7 +130,7 @@ class CountryCode:
             self.name = "ΩM4L42rPHqy123PyLavInvalidFallback-un5Nht475B"
 
 
-@dataclass(eq=True)
+@dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True)
 class Country:
     name: str = None
     iso_3166_1: str = None

@@ -14,6 +14,7 @@ def _urijoin(base_uri: str, path: str) -> str:
 
 
 class BasePathMixin:
+    __slots__ = ("base_uri", "uri")
     base_uri: str | None
     uri: str | None
 
@@ -44,6 +45,8 @@ class BasePathMixin:
 
 
 class GroupedBasePathMixin:
+    __slots__ = ()
+
     def _set_base_uri(self, new_base_uri: str) -> None:
         for item in self:
             item.base_uri = new_base_uri

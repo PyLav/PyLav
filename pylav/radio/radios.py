@@ -21,6 +21,8 @@ LOGGER = getLogger("PyLav.RadioBrowser")
 
 
 class Request:
+    __slots__ = ("_headers", "_session")
+
     def __init__(self, headers: dict[str, str] = None, session: aiohttp_client_cache.CachedSession = None):
         self._headers = headers
         self._session = session

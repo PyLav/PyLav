@@ -14,6 +14,8 @@ LOGGER = getLogger("PyLav.LibConfigManager")
 
 
 class LibConfigManager:
+    __slots__ = ("_client", "_config_folder")
+
     def __init__(self, client: Client):
         self._client = client
         self._config_folder = CONFIG_DIR

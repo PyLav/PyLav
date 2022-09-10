@@ -84,6 +84,11 @@ _ROOT_FOLDER: aiopath.AsyncPath = None  # type: ignore
 
 
 class LocalFile:
+    __slots__ = (
+        "_path",
+        "_parent",
+        "__init",
+    )
     _ROOT_FOLDER: aiopath.AsyncPath | None = _ROOT_FOLDER
 
     def __init__(self, path: str | pathlib.Path | aiopath.AsyncPath):

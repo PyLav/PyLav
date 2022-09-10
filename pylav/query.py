@@ -200,6 +200,19 @@ def process_bandcamp(cls: QueryT, query: str) -> Query:
 
 
 class Query:
+    __slots__ = (
+        "_query",
+        "_source",
+        "_start_time",
+        "_search",
+        "start_time",
+        "index",
+        "_type",
+        "_recursive",
+        "_special_local",
+        "_localfile_cls",
+    )
+
     __localfile_cls: type[LocalFile] = None  # type: ignore
 
     def __init__(
@@ -223,7 +236,24 @@ class Query:
         self._special_local = special_local
         from pylav.localfiles import LocalFile
 
-        self.__localfile_cls = LocalFile
+        self._localfile_cls = LocalFile
+        self.update_localfile_cls(LocalFile)
+
+    @classmethod
+    def update_localfile_cls(cls, localfile_cls: type[LocalFile]):
+        cls.__localfile_cls = localfile_cls
+
+    def to_dict(self) -> dict:
+        return {
+            "query": self._query,
+            "source": self._source,
+            "search": self._search,
+            "start_time": self.start_time,
+            "index": self.index,
+            "type": self._type,
+            "recursive": self._recursive,
+            "special_local": self._special_local,
+        }
 
     def merge(
         self,

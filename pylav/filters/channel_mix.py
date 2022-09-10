@@ -4,6 +4,8 @@ from pylav.filters.utils import FilterMixin
 
 
 class ChannelMix(FilterMixin):
+    __slots__ = ("_left_to_left", "_left_to_right", "_right_to_left", "_right_to_right", "_off", "_default")
+
     def __init__(
         self,
         left_to_left: float,
@@ -11,6 +13,7 @@ class ChannelMix(FilterMixin):
         right_to_left: float,
         right_to_right: float,
     ):
+        super().__init__()
         self.left_to_left = left_to_left
         self.left_to_right = left_to_right
         self.right_to_left = right_to_left

@@ -16,6 +16,8 @@ class Error(Exception):
 
 
 class RDNSLookupError(Error):
+    __slots__ = ("ip", "port")
+
     def __init__(self, ip):
         self.ip = ip
         self.error_msg = f"There was a problem with performing " f"reverse dns lookup for ip: {ip}"

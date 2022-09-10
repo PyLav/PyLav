@@ -6,6 +6,8 @@ from io import BytesIO
 
 
 class DataReader:
+    __slots__ = ("_buf",)
+
     def __init__(self, ts):
         self._buf = BytesIO(b64decode(ts))
 

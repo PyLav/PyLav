@@ -4,6 +4,19 @@ from pylav.filters.utils import FilterMixin
 
 
 class Distortion(FilterMixin):
+    __slots__ = (
+        "_sin_offset",
+        "_sin_scale",
+        "_cos_offset",
+        "_cos_scale",
+        "_tan_offset",
+        "_tan_scale",
+        "_offset",
+        "_scale",
+        "_off",
+        "_default",
+    )
+
     def __init__(
         self,
         sin_offset: float,
@@ -15,6 +28,7 @@ class Distortion(FilterMixin):
         offset: float,
         scale: float,
     ):
+        super().__init__()
         self.sin_offset = sin_offset
         self.sin_scale = sin_scale
         self.cos_offset = cos_offset

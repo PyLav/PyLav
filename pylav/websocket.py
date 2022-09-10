@@ -63,6 +63,27 @@ def _done_callback(task: asyncio.Task) -> None:
 class WebSocket:
     """Represents the WebSocket connection with Lavalink"""
 
+    __slots__ = (
+        "_node",
+        "_session",
+        "_ws",
+        "_message_queue",
+        "_host",
+        "_port",
+        "_password",
+        "_ssl",
+        "_max_reconnect_attempts",
+        "_resume_key",
+        "_resume_timeout",
+        "_resuming_configured",
+        "_ws_uri",
+        "_closers",
+        "_client",
+        "ready",
+        "_connect_task",
+        "_manual_shutdown",
+    )
+
     def __init__(
         self,
         *,

@@ -14,6 +14,8 @@ if TYPE_CHECKING:
 
 
 class UpdateSchemaManager:
+    __slots__ = ("_client",)
+
     def __init__(self, client: Client):
         self._client = client
 

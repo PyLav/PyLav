@@ -4,7 +4,10 @@ from pylav.filters.utils import FilterMixin
 
 
 class Echo(FilterMixin):
+    __slots__ = ("_delay", "_decay", "_off", "_default")
+
     def __init__(self, delay: float, decay: float):
+        super().__init__()
         self.delay = delay
         self.decay = decay
         self.off = False

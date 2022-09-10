@@ -48,6 +48,8 @@ class PlayerManager:
         The client that the player manager is initialized with.
     """
 
+    __slots__ = ("_players", "default_player_class", "bot", "client", "_global_player_config")
+
     _global_player_config: PlayerModel
 
     def __init__(self, lavalink: Client, player: type[Player] = Player):  # type: ignore
@@ -56,15 +58,20 @@ class PlayerManager:
 
         self.client = lavalink
         self.bot = lavalink.bot
-        self.players: dict[int, Player] = {}
+        self._players: dict[int, Player] = {}
         self.default_player_class = player
 
     def __len__(self):
-        return len(self.players)
+        return len(self._players)
 
     def __iter__(self) -> Iterator[tuple[int, Player]]:
         """Returns an iterator that yields a tuple of (guild_id, player)"""
         yield from self.players.items()
+
+    @property
+    def players(self) -> dict[int, Player]:
+        """Returns a dictionary of all players in manager."""
+        return self._players
 
     @property
     def global_config(self) -> PlayerModel:
@@ -142,10 +149,6 @@ class PlayerManager:
         player_state = await self.client.player_state_db_manager.fetch_player(guild_id)
         if player_state:
             await self._restore_player(player_state)
-
-    def players(self) -> Iterator[Player]:
-        """Returns an iterator that yields the all :class:`Player`"""
-        yield from self.players.values()
 
     def find_all(self, predicate=None):
         """Returns a list of players that match the given predicate.
