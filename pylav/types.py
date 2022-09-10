@@ -26,8 +26,10 @@ if TYPE_CHECKING:
 
 else:
     try:
+        from redbot.core import commands
         from redbot.core.bot import Red as BotClient
     except ImportError:
+        from discord.ext import commands
         from discord.ext.commands import AutoShardedBot as BotClient
 
 
@@ -39,6 +41,10 @@ class PyLavCogMixin(ABC):
     bot: BotT
     lavalink: Client
     pylav: Client
+
+    @commands.command(name="play", description=_("Plays a specified query"), aliases=["p"])
+    async def command_play(self, context: PyLavContext, *, query: str = None):
+        ...
 
 
 T = TypeVar("T")
