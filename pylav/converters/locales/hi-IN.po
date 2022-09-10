@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-09-06 19:37+0000\n"
-"PO-Revision-Date: 2022-09-06 19:40\n"
+"POT-Creation-Date: 2022-09-10 19:18+0000\n"
+"PO-Revision-Date: 2022-09-10 19:21\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "MIME-Version: 1.0\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "Node with name or id `{arg}` not found"
 msgstr ""
 
-#: pylav/converters/playlist.py:38
+#: pylav/converters/playlist.py:39
 msgid "Playlist with name or id `{arg}` not found"
 msgstr ""
 

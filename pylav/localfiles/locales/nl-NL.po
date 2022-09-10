@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-09-05 20:33+0000\n"
-"PO-Revision-Date: 2022-09-05 20:36\n"
+"POT-Creation-Date: 2022-09-10 19:18+0000\n"
+"PO-Revision-Date: 2022-09-10 19:21\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 "X-Crowdin-File-ID: 484\n"
 "Language: nl_NL\n"
 
-#: pylav/localfiles/__init__.py:92
+#: pylav/localfiles/__init__.py:97
 msgid "Root folder not initialized, call Client.update_localtracks_folder(folder: str | pathlib.Path)"
 msgstr "Hoofdmap niet geïnitialiseerd, bel Client.update_localtracks_folder(map: str ![pathlib.Path)"
 

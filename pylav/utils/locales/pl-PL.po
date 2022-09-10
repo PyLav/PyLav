@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-09-04 12:27+0000\n"
-"PO-Revision-Date: 2022-09-04 20:34\n"
+"POT-Creation-Date: 2022-09-10 19:18+0000\n"
+"PO-Revision-Date: 2022-09-10 19:21\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
@@ -17,19 +17,19 @@ msgstr ""
 "X-Crowdin-File-ID: 546\n"
 "Language: pl_PL\n"
 
-#: pylav/utils/__init__.py:1036
+#: pylav/utils/__init__.py:972
 msgid "{} remaining. Type `more` to continue."
 msgstr "{} pozostało. Wpisz `more` aby kontynuować."
 
-#: pylav/utils/__init__.py:1037
+#: pylav/utils/__init__.py:973
 msgid "There is still 1 message"
 msgstr "Nadal jest 1 wiadomość"
 
-#: pylav/utils/__init__.py:1039
+#: pylav/utils/__init__.py:975
 msgid "There are still {remaning} messages"
 msgstr "Nadal są {remaning} wiadomości"
 
-#: pylav/utils/__init__.py:1094
+#: pylav/utils/__init__.py:1030
 #, docstring
 msgid "Does nothing"
 msgstr "Nic nie robi"

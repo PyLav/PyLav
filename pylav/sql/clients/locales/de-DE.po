@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-09-06 09:27+0000\n"
-"PO-Revision-Date: 2022-09-06 09:30\n"
+"POT-Creation-Date: 2022-09-10 19:18+0000\n"
+"PO-Revision-Date: 2022-09-10 19:21\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 "X-Crowdin-File-ID: 530\n"
 "Language: de_DE\n"
 
-#: pylav/sql/clients/playlist_manager.py:67
+#: pylav/sql/clients/playlist_manager.py:66
 msgid "Playlist with name {playlist_name} not found"
 msgstr "Wiedergabeliste mit dem Namen {playlist_name} nicht gefunden"
 
