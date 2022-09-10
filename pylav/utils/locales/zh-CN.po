@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-09-10 19:18+0000\n"
-"PO-Revision-Date: 2022-09-10 19:21\n"
+"POT-Creation-Date: 2022-09-10 19:44+0000\n"
+"PO-Revision-Date: 2022-09-10 19:46\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -16,6 +16,38 @@ msgstr ""
 "X-Crowdin-File: /pylav/utils/locales/messages.pot\n"
 "X-Crowdin-File-ID: 546\n"
 "Language: zh_CN\n"
+
+#: pylav/utils/__init__.py:280
+msgid "hour"
+msgstr ""
+
+#: pylav/utils/__init__.py:281
+msgid "minute"
+msgstr ""
+
+#: pylav/utils/__init__.py:282
+msgid "second"
+msgstr ""
+
+#: pylav/utils/__init__.py:283
+msgid "day"
+msgstr ""
+
+#: pylav/utils/__init__.py:284
+msgid "days"
+msgstr ""
+
+#: pylav/utils/__init__.py:285
+msgid "hours"
+msgstr ""
+
+#: pylav/utils/__init__.py:286
+msgid "minutes"
+msgstr ""
+
+#: pylav/utils/__init__.py:287
+msgid "seconds"
+msgstr ""
 
 #: pylav/utils/__init__.py:972
 msgid "{} remaining. Type `more` to continue."
