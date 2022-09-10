@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING
 import aiohttp
 import asyncstdlib
 import ujson
-from discord.backoff import ExponentialBackoff
 
 from pylav._logging import getLogger
 from pylav.constants import (
@@ -25,7 +24,7 @@ from pylav.location import get_closest_region_name_and_coordinate
 from pylav.node import Node
 from pylav.player import Player
 from pylav.sql.models import LibConfigModel, NodeModelMock
-from pylav.utils import sort_key_nodes
+from pylav.utils import ExponentialBackoffWithReset, sort_key_nodes
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -299,7 +298,7 @@ class NodeManager:
         coordinates: tuple[float, float] = None,
         wait: bool = False,
         attempt: int = 0,
-        backoff: ExponentialBackoff = None,
+        backoff: ExponentialBackoffWithReset = None,
     ) -> Node | None:
         """Finds the best (least used) node in the given region, if applicable.
         Parameters
@@ -318,14 +317,14 @@ class NodeManager:
             Whether to wait for a node to become available.
         attempt: :class:`int`
             The current attempt number.
-        backoff: :class:`ExponentialBackoff`
+        backoff: :class:`ExponentialBackoffWithReset`
             The backoff to use.
         Returns
         -------
         Optional[:class:`Node`]
         """
         if backoff is None:
-            backoff = ExponentialBackoff()
+            backoff = ExponentialBackoffWithReset()
             delay = 1
         else:
             delay = backoff.delay()

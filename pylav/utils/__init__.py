@@ -258,7 +258,7 @@ class MissingSentinel(str):
 MISSING: Any = MissingSentinel("MISSING")
 
 
-@dataclasses.dataclass(eq=True)
+@dataclasses.dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
 class TimedFeature:
     enabled: bool = False
     time: int = 60
@@ -325,6 +325,8 @@ class PlayerQueue(asyncio.Queue[T]):
     with qsize(), since your single-threaded asyncio application won't be
     interrupted between calling qsize() and doing an operation on the Queue.
     """
+
+    __slots__ = ("_queue", "_maxsize", "_getters", "_putters", "_unfinished_tasks", "_finished", "_loop")
 
     _queue: collections.deque[T]
     raw_b64s: list[str]
@@ -597,6 +599,8 @@ class PlayerQueue(asyncio.Queue[T]):
 
 
 class TrackHistoryQueue(PlayerQueue[T]):
+    __slots__ = ("_queue", "_maxsize", "_getters", "_putters", "_unfinished_tasks", "_finished", "_loop")
+
     def __int__(self, maxsize: int = 0) -> None:
         super().__init__(maxsize=maxsize)
 
@@ -1062,6 +1066,8 @@ class AsyncFilter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=du
     We don't recommend instantiating this class directly.
     """
 
+    __slots__ = ("__func", "__iterable", "__generator_instance")
+
     def __init__(
         self,
         func: Callable[[_T], bool | Awaitable[bool]],
@@ -1279,6 +1285,8 @@ class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=dupl
     2
 
     """
+
+    __slots__ = ("_delay", "_iterator", "_i", "_steps", "_map")
 
     def __init__(self, iterable: Iterable[_T], delay: float | int = 0, steps: int = 100) -> None:
         if steps < 1:
@@ -1555,6 +1563,8 @@ class MessagePredicate(Callable[[discord.Message], bool]):
         attribute. Defaults to ``None``.
 
     """
+
+    __slots__ = ("result", "_pred")
 
     def __init__(self, predicate: Callable[[MessagePredicate, discord.Message], bool]) -> None:
         self._pred: Callable[[MessagePredicate, discord.Message], bool] = predicate

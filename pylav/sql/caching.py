@@ -30,7 +30,7 @@ class _SingletonByKey(type):
 
     @classmethod
     def _get_key(cls, mro, **kwargs):
-        singleton_key = kwargs.get("id")
+        singleton_key = f'{kwargs.get("id")}'
         for base in mro:
             if base.__module__.startswith("pylav.sql.models"):
                 key_name = base.__name__
