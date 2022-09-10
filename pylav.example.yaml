@@ -20,3 +20,5 @@ PYLAV__EXTERNAL_UNMANAGED_SSL: false # Whether to use a secured connection (Serv
 PYLAV__TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS: 1  # How many days to wait between updates - Minimum 1 Day.
 PYLAV__TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS: 7 # How many days to wait between updates - Minimum 7 Days.
 PYLAV__TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS: 7 # How many days to wait between updates - Minimum 7 Days.
+
+PYLAV__CACHING_ENABLED: false # Whether to cache the postgres queries - Values are `true` or `false` - case sensitive
