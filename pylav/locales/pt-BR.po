@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-09-08 20:30+0000\n"
-"PO-Revision-Date: 2022-09-08 20:34\n"
+"POT-Creation-Date: 2022-09-10 19:18+0000\n"
+"PO-Revision-Date: 2022-09-10 19:21\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -17,126 +17,126 @@ msgstr ""
 "X-Crowdin-File-ID: 504\n"
 "Language: pt_BR\n"
 
-#: pylav/client.py:613 pylav/client.py:638 pylav/player_manager.py:247
+#: pylav/client.py:610 pylav/client.py:635 pylav/player_manager.py:250
 msgid "No available nodes!"
 msgstr "Nenhum nó disponível!"
 
-#: pylav/client.py:617 pylav/client.py:642
+#: pylav/client.py:614 pylav/client.py:639
 msgid "No node with {feature} functionality available!"
 msgstr "Nenhum nó com a funcionalidade {feature} disponível!"
 
-#: pylav/client.py:932
+#: pylav/client.py:930
 msgid "No node with {query.requires_capability} functionality available!"
 msgstr "Nenhum nó com a funcionalidade {query.requires_capability} disponível!"
 
-#: pylav/client.py:1190
+#: pylav/client.py:1188
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
 msgstr "Para gerar uma playlist de mix é necessário um vídeo, usuário, canal ou ID da lista de reprodução"
 
-#: pylav/client.py:1195
+#: pylav/client.py:1193
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
 msgstr "Para gerar uma playlist de mix um vídeo, usuário, canal ou ID da lista de reprodução é necessário. No entanto, você forneceu múltiplos"
 
-#: pylav/managed_node.py:240
+#: pylav/managed_node.py:271
 msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture"
 msgstr "Você está tentando executar o nó Lavalink gerenciado em uma arquitetura de máquina não suportada"
 
-#: pylav/managed_node.py:402
+#: pylav/managed_node.py:433
 msgid "The output of `{java_exc} -version` was unexpected\n"
 "{version_info}"
 msgstr "A saída de `{java_exc} -version` foi inesperada\n"
 "{version_info}"
 
-#: pylav/managed_node.py:418
+#: pylav/managed_node.py:449
 msgid "Port {port} already in use. Managed Lavalink startup aborted"
 msgstr "Porta {port} já em uso. Iniciação assistida do Lavalink abortada"
 
-#: pylav/managed_node.py:423
+#: pylav/managed_node.py:454
 msgid "Lavalink failed to start: {line}"
 msgstr "Lavalink falhou ao iniciar: {line}"
 
-#: pylav/player.py:862
+#: pylav/player.py:916
 msgid "There are no tracks currently in the player history"
 msgstr "Não há nenhuma faixa no histórico do jogador"
 
-#: pylav/player.py:1860 pylav/player.py:1890 pylav/player.py:1901
+#: pylav/player.py:1918 pylav/player.py:1948 pylav/player.py:1959
 msgid "LIVE"
 msgstr "VIVO"
 
-#: pylav/player.py:1869 pylav/player.py:1957
+#: pylav/player.py:1927 pylav/player.py:2015
 msgid "Currently livestreaming"
 msgstr "Atualmente transmitindo"
 
-#: pylav/player.py:1871
+#: pylav/player.py:1929
 msgid "Playing: "
 msgstr "Reproduzindo: "
 
-#: pylav/player.py:1874 pylav/player.py:1895 pylav/player.py:1906
-#: pylav/player.py:1963
+#: pylav/player.py:1932 pylav/player.py:1953 pylav/player.py:1964
+#: pylav/player.py:2021
 msgid "Requester"
 msgstr "Solicitante"
 
-#: pylav/player.py:1879
+#: pylav/player.py:1937
 msgid "Now Playing in"
 msgstr "Reproduzindo agora"
 
-#: pylav/player.py:1891 pylav/player.py:1902
+#: pylav/player.py:1949 pylav/player.py:1960
 msgid "Duration"
 msgstr "Duração"
 
-#: pylav/player.py:1897
+#: pylav/player.py:1955
 msgid "Previous Track"
 msgstr "Faixa Anterior"
 
-#: pylav/player.py:1908
+#: pylav/player.py:1966
 msgid "Next Track"
 msgstr "Próxima faixa"
 
-#: pylav/player.py:1912
+#: pylav/player.py:1970
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
 msgstr "{track_count} faixas, {queue_total_duration} restante(s)\n"
 
-#: pylav/player.py:1924 pylav/player.py:2014
+#: pylav/player.py:1982 pylav/player.py:2072
 msgid "{translation}: {repeat_emoji}"
 msgstr "{translation}: {repeat_emoji}"
 
-#: pylav/player.py:1924 pylav/player.py:2014
+#: pylav/player.py:1982 pylav/player.py:2072
 msgid "Repeating"
 msgstr "Repetindo"
 
-#: pylav/player.py:1925 pylav/player.py:2015
+#: pylav/player.py:1983 pylav/player.py:2073
 msgid "{space}{translation}: {autoplay_emoji}"
 msgstr "{space}{translation}: {autoplay_emoji}"
 
-#: pylav/player.py:1926 pylav/player.py:2016
+#: pylav/player.py:1984 pylav/player.py:2074
 msgid "Auto Play"
 msgstr "Reprodução Automática"
 
-#: pylav/player.py:1928 pylav/player.py:2018
+#: pylav/player.py:1986 pylav/player.py:2076
 msgid "{space}{translation}: {volume}%"
 msgstr "{space}{translation}: {volume}%"
 
-#: pylav/player.py:1929 pylav/player.py:2019
+#: pylav/player.py:1987 pylav/player.py:2077
 msgid "Volume"
 msgstr "Volume"
 
-#: pylav/player.py:1960
+#: pylav/player.py:2018
 msgid "Playing"
 msgstr "Reproduzindo"
 
-#: pylav/player.py:1973
+#: pylav/player.py:2031
 msgid "Queue order is may not be accurate due to auto-shuffle being enabled"
 msgstr "A ordem da fila pode não ser precisa devido ao auto-embaralhamento estar habilitado"
 
-#: pylav/player.py:1988
+#: pylav/player.py:2046
 msgid "Recently Played for"
 msgstr "Reproduzido recentemente para"
 
-#: pylav/player.py:1988
+#: pylav/player.py:2046
 msgid "Queue for"
 msgstr "Fila para"
 
-#: pylav/player.py:1997
+#: pylav/player.py:2055
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
 msgstr "Página {current_page}/{total_pages} £ {track_number} faixas, {queue_total_duration} restante(s)\n"
 
