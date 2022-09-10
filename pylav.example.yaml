@@ -21,4 +21,5 @@ PYLAV__TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS: 1  # How many days to wait betw
 PYLAV__TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS: 7 # How many days to wait between updates - Minimum 7 Days.
 PYLAV__TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS: 7 # How many days to wait between updates - Minimum 7 Days.
 
+# Please note that if this is enable, multiple bots should not share the same database, as reads/writes will not be synced.
 PYLAV__CACHING_ENABLED: false # Whether to cache the postgres queries - Values are `true` or `false` - case sensitive
