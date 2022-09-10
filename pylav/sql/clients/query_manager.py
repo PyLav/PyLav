@@ -108,5 +108,5 @@ class QueryCacheManager:
 
     @staticmethod
     async def size() -> int:
-        response = await tables.QueryRow.raw("SELECT COUNT(query_identifier) FROM query")
+        response = await tables.QueryRow.raw("SELECT COUNT(identifier) FROM query")
         return response[0]["count"] if response else 0
