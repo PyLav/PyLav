@@ -17,28 +17,17 @@ import sys
 import threading
 import time
 from asyncio import QueueFull, events, locks
-from collections.abc import AsyncIterable, AsyncIterator, Awaitable, Coroutine, Generator, Iterable, Iterator, Sequence
+from collections.abc import AsyncIterable, AsyncIterator, Awaitable, Generator, Iterable, Iterator, Sequence
 from copy import copy
 from enum import Enum
 from functools import _make_key  # type: ignore
 from itertools import chain
 from re import Pattern
 from types import GenericAlias
-from typing import TYPE_CHECKING, Any, Callable, List, Optional, Tuple, TypeVar, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, TypeVar, cast
 
 import discord  # type: ignore
 import psutil
-from async_lru import (
-    _cache_clear,
-    _cache_hit,
-    _cache_info,
-    _cache_invalidate,
-    _cache_miss,
-    _close,
-    _done_callback,
-    _open,
-    unpartial,
-)
 from discord.backoff import ExponentialBackoff
 from discord.ext import commands
 from discord.ext import commands as dpy_command
@@ -288,17 +277,28 @@ def get_time_string(seconds: int | float) -> str:
     h, m = divmod(m, 60)
     d, h = divmod(h, 24)
 
+    hour = _("hour")
+    minute = _("minute")
+    second = _("second")
+    day = _("day")
+    days = _("days")
+    hours = _("hours")
+    minutes = _("minutes")
+    seconds = _("seconds")
+
     if d > 0:
-        msg = "{0}d {1}h"
+        return f"{d} {day if d == 1 else days} {h} {hour if h == 1 else hours}"
+
     elif d == 0 and h > 0:
-        msg = "{1}h {2}m"
+        return f"{h} {hour if h == 1 else hours} {m} {minute if m == 1 else minutes}"
+
     elif d == 0 and h == 0 and m > 0:
-        msg = "{2}m {3}s"
-    elif d == 0 and h == 0 and m == 0 and s > 0:
-        msg = "{3}s"
+        return f"{m} {minute if m == 1 else minutes} {s} {second if s == 1 else seconds}"
+
+    elif d == 0 and h == 0 and m == 0 and s >= 0:
+        return f"{s} {second if s == 1 else seconds}"
     else:
-        msg = ""
-    return msg.format(d, h, m, s)
+        return ""
 
 
 def format_time(duration: int | float) -> str:

@@ -29,7 +29,6 @@ class PostgresStorage(BaseCache):
 
     async def contains(self, key: str) -> bool:
         """Check if a key is stored in the cache"""
-        await tables.AioHttpCacheRow.raw()
         response = await tables.AioHttpCacheRow.raw(
             "SELECT EXISTS(SELECT 1 FROM aiohttp_client_cache WHERE key ={} LIMIT 1) AS exists", key
         )

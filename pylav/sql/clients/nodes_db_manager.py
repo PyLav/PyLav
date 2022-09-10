@@ -139,7 +139,8 @@ class NodeConfigManager:
             raise ValueError("Cannot delete bundled node")
         await self.get_node_config(node_id=node_id).delete()
 
-    async def count(self) -> int:
+    @staticmethod
+    async def count() -> int:
         """Return the number of unbundled nodes in the database."""
         response = await tables.NodeRow.raw(
             f"""SELECT COUNT(id) FROM node WHERE {tables.NodeRow.id.not_in(BUNDLED_NODES_IDS).querystring}"""

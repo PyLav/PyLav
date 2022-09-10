@@ -64,7 +64,7 @@ from pylav.query import Query
 from pylav.sql.models import PlayerModel, PlayerStateModel, PlaylistModel
 from pylav.tracks import Track
 from pylav.types import BotT, InteractionT
-from pylav.utils import AsyncIter, PlayerQueue, SegmentCategory, TrackHistoryQueue, format_time
+from pylav.utils import AsyncIter, PlayerQueue, SegmentCategory, TrackHistoryQueue, format_time, get_time_string
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -1966,7 +1966,7 @@ class Player(VoiceProtocol):
             page.add_field(name=_("Next Track"), value=val)
 
         queue_dur = await self.queue_duration()
-        queue_total_duration = format_time(queue_dur)
+        queue_total_duration = get_time_string(queue_dur // 1000)
         text = _("{track_count} tracks, {queue_total_duration} remaining\n").format(
             track_count=self.queue.qsize(), queue_total_duration=queue_total_duration
         )
@@ -2051,7 +2051,7 @@ class Player(VoiceProtocol):
         if url := await current.thumbnail():
             page.set_thumbnail(url=url)
         queue_dur = await self.queue_duration(history=history)
-        queue_total_duration = format_time(queue_dur)
+        queue_total_duration = get_time_string(queue_dur // 1000)
         text = _(
             "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
         ).format(

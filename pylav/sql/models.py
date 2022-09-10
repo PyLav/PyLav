@@ -522,7 +522,8 @@ class NodeModelMock(metaclass=_SingletonByKey):
     id: int
     data: dict
 
-    async def exists(self) -> bool:
+    @staticmethod
+    async def exists() -> bool:
         """Check if the node exists in the database.
 
         Returns

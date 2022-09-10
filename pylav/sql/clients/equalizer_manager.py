@@ -438,6 +438,7 @@ class EqualizerConfigManager:
                     returning_list.append(equalizer)
         return returning_list
 
-    async def count(self) -> int:
+    @staticmethod
+    async def count() -> int:
         """Returns the number of equalizers in the database."""
         return await tables.EqualizerRow.count()
