@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from functools import lru_cache
 from typing import TYPE_CHECKING
 
 from pylav._logging import getLogger
@@ -25,11 +24,9 @@ class NodeConfigManager:
     def client(self) -> Client:
         return self._client
 
-    @lru_cache(maxsize=1)
     def bundled_node_config(self) -> NodeModel:
         return NodeModel(id=self._client.bot.user.id)
 
-    @lru_cache(maxsize=64)
     def get_node_config(self, node_id: int) -> NodeModel:
         node = NodeModel(id=node_id)
         self.currently_in_db.add(node.id)

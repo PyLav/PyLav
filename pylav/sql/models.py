@@ -21,7 +21,8 @@ import yaml
 from packaging.version import LegacyVersion, Version
 from packaging.version import parse as parse_version
 
-from pylav.envvars import JAVA_EXECUTABLE
+from pylav.envvars import CACHING_ENABLED, JAVA_EXECUTABLE
+from pylav.sql.caching import CachedModel, _SingletonByKey, maybe_cached
 from pylav.vendored import aiopath
 
 try:
@@ -45,9 +46,10 @@ LOGGER = getLogger("PyLav.DBModels")
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
-class NodeModel:
+class NodeModel(CachedModel, metaclass=_SingletonByKey):
     id: int
 
+    @maybe_cached
     async def exists(self) -> bool:
         """Check if the node exists in the database.
 
@@ -61,7 +63,9 @@ class NodeModel:
     async def delete(self) -> None:
         """Delete the node from the database"""
         await tables.NodeRow.raw("DELETE FROM node WHERE id = {}", self.id)
+        await self.invalidate_cache()
 
+    @maybe_cached
     async def fetch_all(self) -> dict:
         response = await tables.NodeRow.raw(
             """
@@ -91,6 +95,7 @@ class NodeModel:
             "disabled_sources": tables.NodeRow.disabled_sources.default,
         }
 
+    @maybe_cached
     async def fetch_name(self) -> str:
         """Fetch the node from the database.
 
@@ -112,7 +117,10 @@ class NodeModel:
             self.id,
             name,
         )
+        await self.update_cache((self.fetch_name, name), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_ssl(self) -> bool:
         """Fetch the node's ssl setting from the database.
 
@@ -134,7 +142,10 @@ class NodeModel:
             self.id,
             ssl,
         )
+        await self.update_cache((self.fetch_ssl, ssl), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_resume_key(self) -> str | None:
         """Fetch the node's resume key from the database.
 
@@ -159,7 +170,10 @@ class NodeModel:
             self.id,
             resume_key,
         )
+        await self.update_cache((self.fetch_resume_key, resume_key), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_resume_timeout(self) -> int:
         """Fetch the node's resume timeout from the database.
 
@@ -181,7 +195,10 @@ class NodeModel:
             self.id,
             resume_timeout,
         )
+        await self.update_cache((self.fetch_resume_timeout, resume_timeout), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_reconnect_attempts(self) -> int:
         """Fetch the node's reconnect attempts from the database.
 
@@ -203,7 +220,10 @@ class NodeModel:
             self.id,
             reconnect_attempts,
         )
+        await self.update_cache((self.fetch_reconnect_attempts, reconnect_attempts), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_search_only(self) -> bool:
         """Fetch the node's search only setting from the database.
 
@@ -225,7 +245,10 @@ class NodeModel:
             self.id,
             search_only,
         )
+        await self.update_cache((self.fetch_search_only, search_only), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_managed(self) -> bool:
         """Fetch the node's managed setting from the database.
 
@@ -247,7 +270,10 @@ class NodeModel:
             self.id,
             managed,
         )
+        await self.update_cache((self.fetch_managed, managed), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_extras(self) -> dict:
         """Fetch the node's extras from the database.
 
@@ -269,7 +295,10 @@ class NodeModel:
             self.id,
             ujson.dumps(extras),
         )
+        await self.update_cache((self.fetch_extras, extras), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_yaml(self) -> dict:
         """Fetch the node's yaml from the database.
 
@@ -293,7 +322,10 @@ class NodeModel:
             self.id,
             ujson.dumps(yaml_data),
         )
+        await self.update_cache((self.fetch_yaml, yaml_data), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_disabled_sources(self) -> list[str]:
         """Fetch the node's disabled sources from the database.
 
@@ -317,6 +349,8 @@ class NodeModel:
             self.id,
             intersection,
         )
+        await self.update_cache((self.fetch_disabled_sources, intersection), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
     async def add_to_disabled_sources(self, source: str) -> None:
         """Add a source to the node's disabled sources in the database"""
@@ -328,6 +362,8 @@ class NodeModel:
             self.id,
             [source],
         )
+        await self.update_cache((self.exists, True))
+        await self.invalidate_cache(self.fetch_all, self.fetch_disabled_sources)
 
     async def remove_from_disabled_sources(self, source: str) -> None:
         """Remove a source from the node's disabled sources in the database"""
@@ -336,6 +372,8 @@ class NodeModel:
             source,
             self.id,
         )
+        await self.update_cache((self.exists, True))
+        await self.invalidate_cache(self.fetch_all, self.fetch_disabled_sources)
 
     async def bulk_add_to_disabled_sources(self, sources: list[str]) -> None:
         """Add sources to the node's disabled sources in the database"""
@@ -349,6 +387,8 @@ class NodeModel:
             self.id,
             intersection,
         )
+        await self.update_cache((self.exists, True))
+        await self.invalidate_cache(self.fetch_all, self.fetch_disabled_sources)
 
     async def bulk_remove_from_disabled_sources(self, sources: list[str]) -> None:
         """Remove sources from the node's disabled sources in the database"""
@@ -422,6 +462,7 @@ class NodeModel:
             ujson.dumps(extras),
             ujson.dumps(yaml),
         )
+        await self.invalidate_cache()
 
     async def get_connection_args(self) -> dict:
         """Get the connection args for the node.
@@ -477,7 +518,7 @@ class NodeModel:
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
-class NodeModelMock:
+class NodeModelMock(metaclass=_SingletonByKey):
     id: int
     data: dict
 
@@ -696,7 +737,7 @@ class NodeModelMock:
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
-class PlayerModel:
+class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     id: int
     bot: int
 
@@ -733,7 +774,9 @@ class PlayerModel:
     async def delete(self) -> None:
         """Delete the player from the database"""
         await tables.PlayerRow.raw("DELETE FROM player WHERE id = {} and bot = {};", self.id, self.bot)
+        await self.invalidate_cache()
 
+    @maybe_cached
     async def fetch_all(self) -> dict:
         """Get all players from the database"""
         response = await tables.PlayerRow.raw(
@@ -774,12 +817,14 @@ class PlayerModel:
             "dj_roles": tables.PlayerRow.dj_roles.default,
         }
 
+    @maybe_cached
     async def exists(self) -> bool:
         """Check if the player exists in the database"""
         return await tables.PlayerRow.raw(
             "SELECT EXISTS(SELECT 1 FROM player WHERE id = {} and bot = {});", self.id, self.bot
         )
 
+    @maybe_cached
     async def fetch_volume(self) -> int:
         """Fetch the volume of the player from the db"""
         player = await tables.PlayerRow.raw(
@@ -798,7 +843,10 @@ class PlayerModel:
             self.bot,
             volume,
         )
+        await self.update_cache((self.fetch_volume, volume), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_max_volume(self) -> int:
         """Fetch the max volume of the player from the db"""
         player = await tables.PlayerRow.raw(
@@ -817,7 +865,10 @@ class PlayerModel:
             self.bot,
             max_volume,
         )
+        await self.update_cache((self.fetch_max_volume, max_volume), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_auto_play_playlist_id(self) -> int:
         """Fetch the auto play playlist ID of the player"""
         player = await tables.PlayerRow.raw(
@@ -836,7 +887,10 @@ class PlayerModel:
             self.bot,
             auto_play_playlist_id,
         )
+        await self.update_cache((self.fetch_auto_play_playlist_id, auto_play_playlist_id), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_text_channel_id(self) -> int:
         """Fetch the text channel ID of the player"""
         player = await tables.PlayerRow.raw(
@@ -855,7 +909,10 @@ class PlayerModel:
             self.bot,
             text_channel_id,
         )
+        await self.update_cache((self.fetch_text_channel_id, text_channel_id), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_notify_channel_id(self) -> int:
         """Fetch the notify channel ID of the player"""
         player = await tables.PlayerRow.raw(
@@ -875,7 +932,10 @@ class PlayerModel:
             self.bot,
             notify_channel_id,
         )
+        await self.update_cache((self.fetch_notify_channel_id, notify_channel_id), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_forced_channel_id(self) -> int:
         """Fetch the forced channel ID of the player"""
         player = await tables.PlayerRow.raw(
@@ -894,7 +954,10 @@ class PlayerModel:
             self.bot,
             forced_channel_id,
         )
+        await self.update_cache((self.fetch_forced_channel_id, forced_channel_id), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_repeat_current(self) -> bool:
         """Fetch the repeat current of the player"""
         player = await tables.PlayerRow.raw(
@@ -913,7 +976,10 @@ class PlayerModel:
             self.bot,
             repeat_current,
         )
+        await self.update_cache((self.fetch_repeat_current, repeat_current), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_repeat_queue(self) -> bool:
         """Fetch the repeat queue of the player"""
         player = await tables.PlayerRow.raw(
@@ -932,7 +998,10 @@ class PlayerModel:
             self.bot,
             repeat_queue,
         )
+        await self.update_cache((self.fetch_repeat_queue, repeat_queue), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_shuffle(self) -> bool:
         """Fetch the shuffle of the player"""
         player = await tables.PlayerRow.raw(
@@ -951,7 +1020,10 @@ class PlayerModel:
             self.bot,
             shuffle,
         )
+        await self.update_cache((self.fetch_shuffle, shuffle), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_auto_shuffle(self) -> bool:
         """Fetch the auto shuffle of the player"""
         player = await tables.PlayerRow.raw(
@@ -970,7 +1042,10 @@ class PlayerModel:
             self.bot,
             auto_shuffle,
         )
+        await self.update_cache((self.fetch_auto_shuffle, auto_shuffle), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_auto_play(self) -> bool:
         """Fetch the auto play of the player"""
         player = await tables.PlayerRow.raw(
@@ -989,7 +1064,10 @@ class PlayerModel:
             self.bot,
             auto_play,
         )
+        await self.update_cache((self.fetch_auto_play, auto_play), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_self_deaf(self) -> bool:
         """Fetch the self deaf of the player"""
         player = await tables.PlayerRow.raw(
@@ -1008,7 +1086,10 @@ class PlayerModel:
             self.bot,
             self_deaf,
         )
+        await self.update_cache((self.fetch_self_deaf, self_deaf), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_extras(self) -> dict:
         """Fetch the extras of the player"""
         player = await tables.PlayerRow.raw(
@@ -1027,7 +1108,10 @@ class PlayerModel:
             self.bot,
             ujson.dumps(extras),
         )
+        await self.update_cache((self.fetch_extras, extras), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_effects(self) -> dict:
         """Fetch the effects of the player"""
         player = await tables.PlayerRow.raw(
@@ -1046,7 +1130,10 @@ class PlayerModel:
             self.bot,
             ujson.dumps(effects),
         )
+        await self.update_cache((self.fetch_effects, effects), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_empty_queue_dc(self) -> TimedFeature:
         """Fetch the empty queue dc of the player"""
         player = await tables.PlayerRow.raw(
@@ -1067,7 +1154,10 @@ class PlayerModel:
             self.bot,
             ujson.dumps(empty_queue_dc),
         )
+        await self.update_cache((self.fetch_empty_queue_dc, empty_queue_dc), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_alone_dc(self) -> TimedFeature:
         """Fetch the alone dc of the player"""
         player = await tables.PlayerRow.raw(
@@ -1088,7 +1178,10 @@ class PlayerModel:
             self.bot,
             ujson.dumps(alone_dc),
         )
+        await self.update_cache((self.fetch_alone_dc, alone_dc), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_alone_pause(self) -> TimedFeature:
         """Fetch the alone pause of the player"""
         player = await tables.PlayerRow.raw(
@@ -1109,7 +1202,10 @@ class PlayerModel:
             self.bot,
             ujson.dumps(alone_pause),
         )
+        await self.update_cache((self.fetch_alone_pause, alone_pause), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_dj_users(self) -> set[int]:
         """Fetch the dj users of the player"""
         player = await tables.PlayerRow.raw(
@@ -1129,6 +1225,8 @@ class PlayerModel:
             self.bot,
             [user.id],
         )
+        await self.update_cache((self.exists, True))
+        await self.invalidate_cache(self.fetch_all, self.fetch_dj_users)
 
     async def remove_from_dj_users(self, user: discord.Member) -> None:
         """Remove a user from the dj users of the player"""
@@ -1138,6 +1236,8 @@ class PlayerModel:
             self.id,
             self.bot,
         )
+        await self.update_cache((self.exists, True))
+        await self.invalidate_cache(self.fetch_all, self.fetch_dj_users)
 
     async def bulk_add_dj_users(self, *users: discord.Member) -> None:
         """Add dj users to the player"""
@@ -1152,6 +1252,8 @@ class PlayerModel:
             self.bot,
             [u.id for u in users],
         )
+        await self.update_cache((self.exists, True))
+        await self.invalidate_cache(self.fetch_all, self.fetch_dj_users)
 
     async def bulk_remove_dj_users(self, *users: discord.Member) -> None:
         """Remove dj users from the player.
@@ -1178,7 +1280,10 @@ class PlayerModel:
             self.bot,
             [],
         )
+        await self.update_cache((self.fetch_dj_users, set()), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_dj_roles(self) -> set[int]:
         """Fetch the dj roles of the player"""
         player = await tables.PlayerRow.raw(
@@ -1198,6 +1303,8 @@ class PlayerModel:
             self.bot,
             [role.id],
         )
+        await self.update_cache((self.exists, True))
+        await self.invalidate_cache(self.fetch_all, self.fetch_dj_roles)
 
     async def remove_from_dj_roles(self, role: discord.Role) -> None:
         """Remove dj roles from the player"""
@@ -1207,6 +1314,8 @@ class PlayerModel:
             self.id,
             self.bot,
         )
+        await self.update_cache((self.exists, True))
+        await self.invalidate_cache(self.fetch_all, self.fetch_dj_roles)
 
     async def bulk_add_dj_roles(self, *roles: discord.Role) -> None:
         """Add dj roles to the player.
@@ -1227,6 +1336,8 @@ class PlayerModel:
             self.bot,
             [r.id for r in roles],
         )
+        await self.update_cache((self.exists, True))
+        await self.invalidate_cache(self.fetch_all, self.fetch_dj_roles)
 
     async def bulk_remove_dj_roles(self, *roles: discord.Role) -> None:
         """Remove dj roles from the player.
@@ -1253,6 +1364,8 @@ class PlayerModel:
             self.bot,
             [],
         )
+        await self.update_cache((self.fetch_dj_roles, set()), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
     async def is_dj(
         self,
@@ -1301,9 +1414,10 @@ class PlayerModel:
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
-class BotVersion:
-    bot: int
+class BotVersion(CachedModel, metaclass=_SingletonByKey):
+    id: int
 
+    @maybe_cached
     async def fetch_version(self) -> LegacyVersion | Version:
         """Fetch the version of the bot from the database"""
         version = await tables.BotVersionRow.raw(
@@ -1312,7 +1426,7 @@ class BotVersion:
             WHERE bot = {}
             LIMIT 1
             """,
-            self.bot,
+            self.id,
         )
         return parse_version(version[0]["version"] if version else tables.BotVersionRow.version.default)
 
@@ -1325,16 +1439,18 @@ class BotVersion:
             ON CONFLICT (bot)
             DO UPDATE SET version = EXCLUDED.version
             """,
-            self.bot,
+            self.id,
             str(version),
         )
+        await self.invalidate_cache(self.fetch_version)
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
-class LibConfigModel:
+class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
     bot: int
     id: int = 1
 
+    @maybe_cached
     async def exists(self) -> bool:
         """Check if the config exists.
 
@@ -1347,6 +1463,7 @@ class LibConfigModel:
             "SELECT EXISTS(SELECT 1 FROM lib_config WHERE id = {} and bot = {});", self.id, self.bot
         )
 
+    @maybe_cached
     async def fetch_config_folder(self) -> str:
         """Fetch the config folder.
 
@@ -1383,7 +1500,10 @@ class LibConfigModel:
             self.bot,
             str(config_folder),
         )
+        await self.update_cache((self.fetch_config_folder, str(config_folder)), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_localtrack_folder(self) -> str:
         """Fetch the localtrack folder.
 
@@ -1420,7 +1540,10 @@ class LibConfigModel:
             self.bot,
             str(localtrack_folder),
         )
+        await self.update_cache((self.fetch_localtrack_folder, str(localtrack_folder)), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_java_path(self) -> str:
         """Fetch the java path.
 
@@ -1460,7 +1583,10 @@ class LibConfigModel:
             self.bot,
             str(java_path),
         )
+        await self.update_cache((self.fetch_java_path, str(java_path)), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_enable_managed_node(self) -> bool:
         """Fetch the enable_managed_node.
 
@@ -1497,7 +1623,10 @@ class LibConfigModel:
             self.bot,
             enable_managed_node,
         )
+        await self.update_cache((self.fetch_enable_managed_node, enable_managed_node), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_use_bundled_pylav_external(self) -> bool:
         """Fetch the use_bundled_pylav_external.
 
@@ -1538,7 +1667,12 @@ class LibConfigModel:
             self.bot,
             use_bundled_pylav_external,
         )
+        await self.update_cache(
+            (self.fetch_use_bundled_pylav_external, use_bundled_pylav_external), (self.exists, True)
+        )
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_use_bundled_lava_link_external(self) -> bool:
         """Fetch the use_bundled_lava_link_external.
 
@@ -1579,7 +1713,12 @@ class LibConfigModel:
             self.bot,
             use_bundled_lava_link_external,
         )
+        await self.update_cache(
+            (self.fetch_use_bundled_lava_link_external, use_bundled_lava_link_external), (self.exists, True)
+        )
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_download_id(self) -> int:
         """Fetch the download_id.
 
@@ -1616,7 +1755,10 @@ class LibConfigModel:
             self.bot,
             download_id,
         )
+        await self.update_cache((self.fetch_download_id, download_id), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_extras(self) -> dict:
         """Fetch the extras.
 
@@ -1653,7 +1795,10 @@ class LibConfigModel:
             self.bot,
             ujson.dumps(extras),
         )
+        await self.update_cache((self.fetch_extras, extras), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_next_execution_update_bundled_playlists(self) -> datetime.datetime:
         """Fetch the next_execution_update_bundled_playlists.
 
@@ -1694,7 +1839,12 @@ class LibConfigModel:
             self.bot,
             next_execution,
         )
+        await self.update_cache(
+            (self.fetch_next_execution_update_bundled_playlists, next_execution), (self.exists, True)
+        )
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_next_execution_update_bundled_external_playlists(self) -> datetime.datetime:
         """Fetch the next_execution_update_bundled_external_playlists.
 
@@ -1735,7 +1885,12 @@ class LibConfigModel:
             self.bot,
             next_execution,
         )
+        await self.update_cache(
+            (self.fetch_next_execution_update_bundled_external_playlists, next_execution), (self.exists, True)
+        )
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_next_execution_update_external_playlists(self) -> datetime.datetime:
         """Fetch the next_execution_update_external_playlists.
 
@@ -1776,7 +1931,12 @@ class LibConfigModel:
             self.bot,
             next_execution,
         )
+        await self.update_cache(
+            (self.fetch_next_execution_update_external_playlists, next_execution), (self.exists, True)
+        )
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_update_bot_activity(self) -> bool:
         """Fetch the update_bot_activity.
 
@@ -1813,7 +1973,10 @@ class LibConfigModel:
             self.bot,
             update_bot_activity,
         )
+        await self.update_cache((self.fetch_update_bot_activity, update_bot_activity), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_auto_update_managed_nodes(self) -> bool:
         """Fetch the auto_update_managed_nodes.
 
@@ -1854,13 +2017,17 @@ class LibConfigModel:
             self.bot,
             auto_update_managed_nodes,
         )
+        await self.update_cache((self.fetch_auto_update_managed_nodes, auto_update_managed_nodes), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
     async def delete(self) -> None:
         """Delete the config from the database"""
         await tables.LibConfigRow.delete().where(
             (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
         )
+        await self.invalidate_cache()
 
+    @maybe_cached
     async def fetch_all(self) -> dict:
         """Update all attributed for the config from the database.
 
@@ -1903,9 +2070,10 @@ class LibConfigModel:
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
-class PlaylistModel:
+class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
     id: int
 
+    @maybe_cached
     async def exists(self) -> bool:
         """Check if the config exists.
 
@@ -1916,6 +2084,7 @@ class PlaylistModel:
         """
         return await tables.PlaylistRow.raw("SELECT EXISTS(SELECT 1 FROM playlist WHERE id = {});", self.id)
 
+    @maybe_cached
     async def fetch_all(self) -> dict:
         """Fetch all playlists from the database.
 
@@ -1940,6 +2109,7 @@ class PlaylistModel:
             "url": tables.PlaylistRow.url.default,
         }
 
+    @maybe_cached
     async def fetch_scope(self) -> int | None:
         """Fetch the scope of the playlist.
 
@@ -1964,7 +2134,10 @@ class PlaylistModel:
             self.id,
             scope,
         )
+        await self.update_cache((self.fetch_scope, scope), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_author(self) -> int | None:
         """Fetch the author of the playlist.
 
@@ -1989,7 +2162,10 @@ class PlaylistModel:
             self.id,
             author,
         )
+        await self.update_cache((self.fetch_author, author), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_name(self) -> str | None:
         """Fetch the name of the playlist.
 
@@ -2014,7 +2190,10 @@ class PlaylistModel:
             self.id,
             name,
         )
+        await self.update_cache((self.fetch_name, name), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_url(self) -> str | None:
         """Fetch the url of the playlist.
 
@@ -2039,7 +2218,10 @@ class PlaylistModel:
             self.id,
             url,
         )
+        await self.update_cache((self.fetch_url, url), (self.exists, True))
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def fetch_tracks(self) -> list[str]:
         """Fetch the tracks of the playlist.
 
@@ -2064,7 +2246,15 @@ class PlaylistModel:
             self.id,
             ujson.dumps(tracks),
         )
+        await self.update_cache(
+            (self.fetch_tracks, tracks),
+            (self.exists, True),
+            (self.size, len(tracks)),
+            (self.fetch_first, tracks[0] if tracks else None),
+        )
+        await self.invalidate_cache(self.fetch_all)
 
+    @maybe_cached
     async def size(self):
         """Count the tracks of the playlist.
 
@@ -2092,6 +2282,7 @@ class PlaylistModel:
             self.id,
             tracks,
         )
+        await self.invalidate_cache(self.fetch_tracks, self.fetch_all, self.size, self.fetch_first, self.exists)
 
     async def bulk_remove_tracks(self, tracks: list[str]) -> None:
         """Remove dj users from the player.
@@ -2118,14 +2309,18 @@ class PlaylistModel:
         await tables.PlaylistRow.raw(
             "UPDATE player SET tracks = array_remove(tracks, {}) WHERE id = {};", self.id, track
         )
+        await self.invalidate_cache(self.fetch_tracks, self.fetch_all, self.size, self.fetch_first, self.exists)
 
     async def remove_all_tracks(self) -> None:
         """Remove all tracks from the playlist."""
         await tables.PlaylistRow.raw("UPDATE player SET tracks = {} WHERE id = {};", [], self.id)
+        await self.update_cache((self.fetch_tracks, []), (self.size, 0), (self.exists, True), (self.fetch_first, None))
+        await self.invalidate_cache(self.fetch_all)
 
     async def delete(self) -> None:
         """Delete the playlist from the database"""
         await tables.PlaylistRow.raw("DELETE FROM playlist WHERE id = {}", self.id)
+        await self.invalidate_cache()
 
     async def can_manage(self, bot: BotT, requester: discord.abc.User, guild: discord.Guild = None) -> bool:
         """Check if the requester can manage the playlist.
@@ -2280,6 +2475,7 @@ class PlaylistModel:
             url,
             ujson.dumps(tracks),
         )
+        await self.invalidate_cache()
 
     @classmethod
     async def from_yaml(cls, context: PyLavContext, scope: int, url: str) -> PlaylistModel:
@@ -2331,12 +2527,20 @@ class PlaylistModel:
         str
             The track at the index
         """
-        response = await tables.QueryRow.raw(
-            "SELECT tracks->>{} as playlist FROM query WHERE id = {} LIMIT 1;", index, self.id
-        )
-        return response[0]["track"] if response else None
+        if CACHING_ENABLED:
+            tracks = await self.fetch_tracks()
+            if index < 0:
+                return random.choice(tracks) if tracks else None
+            else:
+                return tracks[index] if index < len(tracks) else None
+        else:
+            response = await tables.QueryRow.raw(
+                "SELECT tracks->>{} as playlist FROM query WHERE id = {} LIMIT 1;", index, self.id
+            )
+            return response[0]["track"] if response else None
 
-    async def fetch__first(self) -> str | None:
+    @maybe_cached
+    async def fetch_first(self) -> str | None:
         """Get the first track.
 
         Returns
@@ -2344,7 +2548,10 @@ class PlaylistModel:
         str
             The first track
         """
-        return await self.fetch_index(0)
+        response = await tables.QueryRow.raw(
+            "SELECT tracks->>{} as playlist FROM query WHERE id = {} LIMIT 1;", 0, self.id
+        )
+        return response[0]["track"] if response else None
 
     async def fetch_random(self) -> str | None:
         """Get a random track.
@@ -2354,13 +2561,14 @@ class PlaylistModel:
         str
             A random track
         """
-        return await self.fetch_index(random.randint(0, await self.size() - 1))
+        return await self.fetch_index(-1)
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
-class QueryModel:
-    identifier: str
+class QueryModel(CachedModel, metaclass=_SingletonByKey):
+    id: str
 
+    @maybe_cached
     async def exists(self) -> bool:
         """Check if the config exists.
 
@@ -2369,12 +2577,14 @@ class QueryModel:
         bool
             Whether the config exists.
         """
-        return await tables.QueryRow.raw("SELECT EXISTS(SELECT 1 FROM query WHERE identifier = {});", self.identifier)
+        return await tables.QueryRow.raw("SELECT EXISTS(SELECT 1 FROM query WHERE identifier = {});", self.id)
 
     async def delete(self):
         """Delete the query from the database"""
-        await tables.QueryRow.raw("DELETE FROM query WHERE identifier = {}", self.identifier)
+        await tables.QueryRow.raw("DELETE FROM query WHERE identifier = {}", self.id)
+        await self.invalidate_cache()
 
+    @maybe_cached
     async def size(self):
         """Count the tracks of the playlist.
 
@@ -2388,10 +2598,11 @@ class QueryModel:
         FROM query
         WHERE identifier = {}
         LIMIT 1;""",
-            self.identifier,
+            self.id,
         )
         return response[0]["size"] if response else 0
 
+    @maybe_cached
     async def fetch_tracks(self) -> list[str]:
         """Get the tracks of the playlist.
 
@@ -2400,7 +2611,7 @@ class QueryModel:
         list[str]
             The tracks of the playlist.
         """
-        response = await tables.QueryRow.raw("SELECT tracks FROM query WHERE identifier = {} LIMIT 1;", self.identifier)
+        response = await tables.QueryRow.raw("SELECT tracks FROM query WHERE identifier = {} LIMIT 1;", self.id)
         return ujson.loads(response[0]["tracks"] if response else tables.QueryRow.tracks.default)
 
     async def update_tracks(self, tracks: list[str]):
@@ -2414,10 +2625,17 @@ class QueryModel:
         await tables.QueryRow.raw(
             "INSERT INTO playlist (identifier, tracks) VALUES ({}, {}) ON CONFLICT (identifier) DO UPDATE SET tracks = "
             "EXCLUDED.tracks;",
-            self.identifier,
+            self.id,
             ujson.dumps(tracks),
         )
+        await self.update_cache(
+            (self.fetch_tracks, tracks),
+            (self.size, len(tracks)),
+            (self.fetch_first, tracks[0] if tracks else None),
+            (self.exists, True),
+        )
 
+    @maybe_cached
     async def fetch_name(self) -> str:
         """Get the name of the playlist.
 
@@ -2426,7 +2644,7 @@ class QueryModel:
         str
             The name of the playlist.
         """
-        response = await tables.QueryRow.raw("SELECT name FROM query WHERE identifier = {} LIMIT 1;", self.identifier)
+        response = await tables.QueryRow.raw("SELECT name FROM query WHERE identifier = {} LIMIT 1;", self.id)
         return response[0]["name"] if response else tables.QueryRow.name.default
 
     async def update_name(self, name: str):
@@ -2440,10 +2658,12 @@ class QueryModel:
         await tables.QueryRow.raw(
             "INSERT INTO query (identifier, name) VALUES ({}, {}) ON CONFLICT (identifier) DO UPDATE SET name = "
             "EXCLUDED.name;",
-            self.identifier,
+            self.id,
             name,
         )
+        await self.update_cache((self.fetch_name, name), (self.exists, True))
 
+    @maybe_cached
     async def fetch_last_updated(self) -> datetime:
         """Get the last updated time of the playlist.
 
@@ -2452,9 +2672,7 @@ class QueryModel:
         datetime
             The last updated time of the playlist.
         """
-        response = await tables.QueryRow.raw(
-            "SELECT last_updated FROM query WHERE identifier = {} LIMIT 1;", self.identifier
-        )
+        response = await tables.QueryRow.raw("SELECT last_updated FROM query WHERE identifier = {} LIMIT 1;", self.id)
         return response[0]["last_updated"] if response else tables.QueryRow.last_updated.default
 
     async def update_last_updated(self):
@@ -2463,8 +2681,11 @@ class QueryModel:
             "INSERT INTO query (identifier, last_updated) "
             "VALUES ({}, {}) ON CONFLICT (identifier) "
             "DO UPDATE SET last_updated = EXCLUDED.last_updated;",
-            self.identifier,
+            self.id,
             tables.QueryRow.last_updated.default.python(),
+        )
+        await self.update_cache(
+            (self.fetch_last_updated, tables.QueryRow.last_updated.default.python()), (self.exists, True)
         )
 
     async def bulk_update(self, tracks: list[str], name: str):
@@ -2481,10 +2702,18 @@ class QueryModel:
             "INSERT INTO query (identifier, tracks, name, last_updated) "
             "VALUES ({}, {}, {}, {}) ON CONFLICT (identifier) "
             "DO UPDATE SET tracks = EXCLUDED.tracks, name = EXCLUDED.name, last_updated = EXCLUDED.last_updated;",
-            self.identifier,
+            self.id,
             ujson.dumps(tracks),
             name,
             tables.QueryRow.last_updated.default.python(),
+        )
+        await self.update_cache(
+            (self.fetch_tracks, tracks),
+            (self.size, len(tracks)),
+            (self.fetch_first, tracks[0] if tracks else None),
+            (self.fetch_name, name),
+            (self.fetch_last_updated, tables.QueryRow.last_updated.default.python()),
+            (self.exists, True),
         )
 
     async def fetch_index(self, index: int) -> str | None:
@@ -2500,11 +2729,19 @@ class QueryModel:
         str
             The track at the index
         """
-        response = await tables.QueryRow.raw(
-            "SELECT tracks->>{} as track FROM query WHERE identifier = {} LIMIT 1;", index, self.identifier
-        )
-        return response[0]["track"] if response else None
+        if CACHING_ENABLED:
+            tracks = await self.fetch_tracks()
+            if index < 0:
+                return random.choice(tracks) if tracks else None
+            else:
+                return tracks[index] if index < len(tracks) else None
+        else:
+            response = await tables.QueryRow.raw(
+                "SELECT tracks->>{} as query WHERE FROM query WHERE id = {} LIMIT 1;", index, self.id
+            )
+            return response[0]["track"] if response else None
 
+    @maybe_cached
     async def fetch_first(self) -> str | None:
         """Get the first track.
 
@@ -2513,7 +2750,10 @@ class QueryModel:
         str
             The first track
         """
-        return await self.fetch_index(0)
+        response = await tables.QueryRow.raw(
+            "SELECT tracks->>{} as track FROM query WHERE identifier = {} LIMIT 1;", 0, self.id
+        )
+        return response[0]["track"] if response else None
 
     async def fetch_random(self) -> str | None:
         """Get a random track.
@@ -2523,7 +2763,7 @@ class QueryModel:
         str
             A random track
         """
-        return await self.fetch_index(random.randint(0, await self.size() - 1))
+        return await self.fetch_index(-1)
 
 
 @dataclass(eq=True)

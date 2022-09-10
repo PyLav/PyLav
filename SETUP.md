@@ -139,7 +139,9 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
   - `PYLAV__TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS`: Defaults to  1  # How many days to wait between updates - Minimum 1 Day.
   - `PYLAV__TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS`: Defaults to  7 # How many days to wait between updates - Minimum 7 Days.
   - `PYLAV__TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS`: Defaults to  7 # How many days to wait between updates - Minimum 7 Days.
-
+- If you want PyLav to cache most of the queries from the Postgres server you can use `PYLAV__CACHING_ENABLED`
+  - If this is turned off every read from the database will be a direct query to the database, if this is turned on PyLav will cache the results in memory after the first query.
+    - If you have a remote server, this will likely be a good idea to turn on, however you look the ability to manually or otherwise edit the db and changes to be reflected in PyLav.
 ## Red Users (PyLav Cogs) Setup
 ### Starting up your bot
   - Activate your VENV created above

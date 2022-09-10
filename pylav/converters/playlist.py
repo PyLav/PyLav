@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-import itertools
-import random
 from pathlib import Path
 from typing import TYPE_CHECKING, TypeVar
 
@@ -52,12 +50,7 @@ else:
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
 
             if not current:
-                playlists = await interaction.client.lavalink.playlist_db_manager.get_all_for_user(
-                    interaction.user.id, empty=True, vc=interaction.user.voice.channel, channel=interaction.channel
-                )
-                playlists = list(itertools.chain.from_iterable(playlists))
-                if playlists:
-                    playlists = random.sample(playlists, k=min(len(playlists), 25))
+                playlists = await interaction.client.lavalink.playlist_db_manager.get_bundled_playlists()
                 return [
                     Choice(name=shorten_string(await e.fetch_name(), max_length=100), value=f"{e.id}")
                     for e in playlists

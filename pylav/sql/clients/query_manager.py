@@ -3,7 +3,6 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import datetime
-from functools import lru_cache
 from typing import TYPE_CHECKING
 
 from pylav._logging import getLogger
@@ -40,10 +39,9 @@ class QueryCacheManager:
         )
         return response[0]["exists"] if response else False
 
-    @lru_cache(maxsize=500)
     def get(self, identifier: str) -> QueryModel:
         """Get a query object"""
-        return QueryModel(identifier=identifier)
+        return QueryModel(id=identifier)
 
     async def fetch_query(self, query: Query) -> QueryModel | None:
         if query.is_local or query.is_custom_playlist or query.is_http:

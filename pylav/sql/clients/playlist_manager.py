@@ -7,7 +7,6 @@ import pathlib
 import typing
 from collections import namedtuple
 from collections.abc import AsyncIterator
-from functools import lru_cache
 from typing import TYPE_CHECKING
 
 import discord
@@ -45,40 +44,34 @@ class PlaylistConfigManager:
     def client(self) -> Client:
         return self._client
 
-    @lru_cache(maxsize=64)
     def get_playlist(self, id: int) -> PlaylistModel:
         return PlaylistModel(id=id)
 
-    @staticmethod
-    async def get_bundled_playlists() -> list[PlaylistModel]:
-        return [PlaylistModel(id=playlist) for playlist in BUNDLED_PLAYLIST_IDS]
+    async def get_bundled_playlists(self) -> list[PlaylistModel]:
+        return [self.get_playlist(playlist) for playlist in BUNDLED_PLAYLIST_IDS]
 
-    @staticmethod
-    async def get_playlist_by_name(playlist_name: str, limit: int = None) -> list[PlaylistModel]:
+    async def get_playlist_by_name(self, playlist_name: str, limit: int = None) -> list[PlaylistModel]:
+        where = tables.PlaylistRow.name.ilike(f"%{playlist_name.lower()}%")
         if limit is None:
-            playlists = await tables.PlaylistRow.raw(
-                f"SELECT id FROM playlist WHERE {tables.PlaylistRow.name.ilike(playlist_name.lower()).querystring}"
-            )
+            query = tables.PlaylistRow.raw(f"SELECT id FROM playlist WHERE {where.querystring}")
         else:
-            playlists = await tables.PlaylistRow.raw(
-                f"SELECT id FROM playlist WHERE {tables.PlaylistRow.name.ilike(playlist_name.lower()).querystring} "
-                f"LIMIT {limit}",
+            query = tables.PlaylistRow.raw(
+                f"SELECT id FROM playlist WHERE {where.querystring} " f"LIMIT {limit}",
             )
-
+        playlists = await query
         if not playlists:
             raise EntryNotFoundError(
                 _("Playlist with name {playlist_name} not found").format(playlist_name=playlist_name)
             )
-        return [PlaylistModel(**playlist) for playlist in playlists]
+        return [self.get_playlist(**playlist) for playlist in playlists]
 
-    @staticmethod
-    async def get_playlist_by_id(playlist_id: int | str) -> PlaylistModel:
+    async def get_playlist_by_id(self, playlist_id: int | str) -> PlaylistModel:
         try:
             response = await tables.PlaylistRow.raw("SELECT id FROM playlist WHERE id = {}", int(playlist_id))
         except ValueError as e:
             raise EntryNotFoundError(f"Playlist with id {playlist_id} not found") from e
         if response:
-            return PlaylistModel(**response[0])
+            return self.get_playlist(**response[0])
         else:
             raise EntryNotFoundError(f"Playlist with id {playlist_id} not found")
 
@@ -90,33 +83,29 @@ class PlaylistConfigManager:
         except EntryNotFoundError:
             return await self.get_playlist_by_name(playlist_name_or_id, limit=limit)
 
-    @staticmethod
-    async def get_playlists_by_author(author: int, return_empty: bool = True) -> list[PlaylistModel]:
+    async def get_playlists_by_author(self, author: int, return_empty: bool = True) -> list[PlaylistModel]:
         playlists = await tables.PlaylistRow.raw("SELECT id FROM playlist WHERE author = {}", author)
 
         if playlists or return_empty:
-            return [PlaylistModel(**playlist) for playlist in playlists]
+            return [self.get_playlist(**playlist) for playlist in playlists]
         else:
             raise EntryNotFoundError(f"Playlist with author {author} not found")
 
-    @staticmethod
-    async def get_playlists_by_scope(scope: int, return_empty: bool = True) -> list[PlaylistModel]:
+    async def get_playlists_by_scope(self, scope: int, return_empty: bool = True) -> list[PlaylistModel]:
         playlists = await tables.PlaylistRow.raw("SELECT id FROM playlist WHERE scope = {}", scope)
 
         if playlists or return_empty:
-            return [PlaylistModel(**playlist) for playlist in playlists]
+            return [self.get_playlist(**playlist) for playlist in playlists]
         else:
             raise EntryNotFoundError(f"Playlist with scope {scope} not found")
 
-    @staticmethod
-    async def get_all_playlists() -> AsyncIterator[PlaylistModel]:
+    async def get_all_playlists(self) -> AsyncIterator[PlaylistModel]:
         playlists = await tables.PlaylistRow.raw("SELECT id FROM playlist")
         if playlists:
             for playlist in playlists:
-                yield PlaylistModel(**playlist)
+                yield self.get_playlist(**playlist)
 
-    @staticmethod
-    async def get_external_playlists(*ids: int, ignore_ids: list[int] = None) -> AsyncIterator[PlaylistModel]:
+    async def get_external_playlists(self, *ids: int, ignore_ids: list[int] = None) -> AsyncIterator[PlaylistModel]:
         if ignore_ids is None:
             ignore_ids = []
 
@@ -131,19 +120,19 @@ class PlaylistConfigManager:
                     ).querystring,
                 )
             ):
-                yield PlaylistModel(**entry)
+                yield self.get_playlist(**entry)
         elif ignore_ids:
             for entry in await tables.PlaylistRow.raw(
                 f"""SELECT id FROM playlist WHERE
                     {(tables.PlaylistRow.url.is_not_null() & tables.PlaylistRow.id.not_in(ignore_ids)).querystring}"""
             ):
-                yield PlaylistModel(**entry)
+                yield self.get_playlist(**entry)
         else:
             for entry in await tables.PlaylistRow.raw(
                 f"""SELECT id FROM playlist WHERE
                     {(tables.PlaylistRow.url.is_not_null() & tables.PlaylistRow.id.is_in(ignore_ids)).querystring}"""
             ):
-                yield PlaylistModel(**entry)
+                yield self.get_playlist(**entry)
 
     async def create_or_update_playlist(
         self, id: int, scope: int, author: int, name: str, url: str | None = None, tracks: list[str] = None

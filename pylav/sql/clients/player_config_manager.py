@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from functools import lru_cache
 from typing import TYPE_CHECKING
 
 import asyncstdlib
@@ -28,11 +27,9 @@ class PlayerConfigManager:
     async def initialize_global_config(self):
         await PlayerModel.create_global(bot=self.client.bot.user.id)
 
-    @lru_cache(maxsize=1)
     def get_global_config(self) -> PlayerModel:
         return PlayerModel(bot=self.client.bot.user.id, id=0)
 
-    @lru_cache(maxsize=512, typed=True)
     def get_config(self, guild_id: int) -> PlayerModel:
         return PlayerModel(bot=self.client.bot.user.id, id=guild_id)
 

@@ -75,7 +75,7 @@ class LibConfigManager:
         return LibConfigModel(id=1, bot=self.client.bot.user.id)
 
     def get_bot_db_version(self) -> BotVersion:
-        return BotVersion(bot=self._client.bot.user.id)
+        return BotVersion(id=self._client.bot.user.id)
 
     async def update_bot_dv_version(self, version: str) -> None:
-        await BotVersion(bot=self._client.bot.user.id).update_version(version)
+        await self.get_bot_db_version().update_version(version)

@@ -454,7 +454,6 @@ class NodeManager:
     async def connect_to_all_nodes(self) -> None:
         nodes_list = []
         async for node in asyncstdlib.iter(await self.client.node_db_manager.get_all_unamanaged_nodes()):
-            LOGGER.critical("%s", node)
             if node.id == self.client.bot.user.id:
                 LOGGER.debug("Skipping node %s as it is the managed node", node.id)
                 continue

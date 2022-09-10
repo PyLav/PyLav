@@ -754,7 +754,8 @@ class Client(metaclass=_Singleton):
                         await self._local_node_manager.shutdown()
                         await self._session.close()
                         await self._cached_session.close()
-                        self._scheduler.shutdown(wait=True)
+                        if self._scheduler:
+                            self._scheduler.shutdown(wait=True)
                     except Exception as e:
                         LOGGER.critical("Failed to shutdown the client", exc_info=e)
                     if self.__old_process_command_method is not None:
