@@ -12,6 +12,7 @@ maybe_update_logger_class()
 LOGGER_PREFIX = os.getenv("PYLAV__LOGGER_PREFIX")
 
 logging.getLogger("deepdiff.diff").setLevel(logging.FATAL)
+logging.getLogger("apscheduler.scheduler").setLevel(logging.FATAL)
 
 if LOGGER_PREFIX is None:
     try:
