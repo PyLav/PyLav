@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-09-10 19:44+0000\n"
-"PO-Revision-Date: 2022-09-10 19:46\n"
+"POT-Creation-Date: 2022-09-11 11:25+0000\n"
+"PO-Revision-Date: 2022-09-11 11:29\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -17,51 +17,55 @@ msgstr ""
 "X-Crowdin-File-ID: 546\n"
 "Language: es_ES\n"
 
-#: pylav/utils/__init__.py:280
+#: pylav/utils/__init__.py:376
 msgid "hour"
 msgstr ""
 
-#: pylav/utils/__init__.py:281
+#: pylav/utils/__init__.py:377
 msgid "minute"
 msgstr ""
 
-#: pylav/utils/__init__.py:282
+#: pylav/utils/__init__.py:378
 msgid "second"
 msgstr ""
 
-#: pylav/utils/__init__.py:283
+#: pylav/utils/__init__.py:379
 msgid "day"
 msgstr ""
 
-#: pylav/utils/__init__.py:284
+#: pylav/utils/__init__.py:380
 msgid "days"
 msgstr ""
 
-#: pylav/utils/__init__.py:285
+#: pylav/utils/__init__.py:381
 msgid "hours"
 msgstr ""
 
-#: pylav/utils/__init__.py:286
+#: pylav/utils/__init__.py:382
 msgid "minutes"
 msgstr ""
 
-#: pylav/utils/__init__.py:287
+#: pylav/utils/__init__.py:383
 msgid "seconds"
 msgstr ""
 
-#: pylav/utils/__init__.py:972
+#: pylav/utils/__init__.py:404
+msgid "Unknown"
+msgstr ""
+
+#: pylav/utils/__init__.py:1070
 msgid "{} remaining. Type `more` to continue."
 msgstr "{} restante. Escribe `más` para continuar."
 
-#: pylav/utils/__init__.py:973
+#: pylav/utils/__init__.py:1071
 msgid "There is still 1 message"
 msgstr "Todavía hay 1 mensaje"
 
-#: pylav/utils/__init__.py:975
+#: pylav/utils/__init__.py:1073
 msgid "There are still {remaning} messages"
 msgstr "Todavía hay {remaning} mensajes"
 
-#: pylav/utils/__init__.py:1030
+#: pylav/utils/__init__.py:1128
 #, docstring
 msgid "Does nothing"
 msgstr "No hace nada"
