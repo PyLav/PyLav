@@ -103,16 +103,7 @@ class Distortion(FilterMixin):
         self._sin_offset = v
         self.off = all(
             v is None
-            for v in [
-                self._sin_offset,
-                self._sin_scale,
-                self._cos_offset,
-                self._cos_scale,
-                self._tan_offset,
-                self._tan_scale,
-                self._offset,
-                self._scale,
-            ]
+            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
         )
 
     @property
@@ -124,16 +115,7 @@ class Distortion(FilterMixin):
         self._sin_scale = v
         self.off = all(
             v is None
-            for v in [
-                self._sin_offset,
-                self._sin_scale,
-                self._cos_offset,
-                self._cos_scale,
-                self._tan_offset,
-                self._tan_scale,
-                self._offset,
-                self._scale,
-            ]
+            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
         )
 
     @property
@@ -145,16 +127,7 @@ class Distortion(FilterMixin):
         self._cos_offset = v
         self.off = all(
             v is None
-            for v in [
-                self._sin_offset,
-                self._sin_scale,
-                self._cos_offset,
-                self._cos_scale,
-                self._tan_offset,
-                self._tan_scale,
-                self._offset,
-                self._scale,
-            ]
+            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
         )
 
     @property
@@ -166,16 +139,7 @@ class Distortion(FilterMixin):
         self._cos_scale = v
         self.off = all(
             v is None
-            for v in [
-                self._sin_offset,
-                self._sin_scale,
-                self._cos_offset,
-                self._cos_scale,
-                self._tan_offset,
-                self._tan_scale,
-                self._offset,
-                self._scale,
-            ]
+            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
         )
 
     @property
@@ -187,16 +151,7 @@ class Distortion(FilterMixin):
         self._tan_offset = v
         self.off = all(
             v is None
-            for v in [
-                self._sin_offset,
-                self._sin_scale,
-                self._cos_offset,
-                self._cos_scale,
-                self._tan_offset,
-                self._tan_scale,
-                self._offset,
-                self._scale,
-            ]
+            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
         )
 
     @property
@@ -208,16 +163,7 @@ class Distortion(FilterMixin):
         self._tan_scale = v
         self.off = all(
             v is None
-            for v in [
-                self._sin_offset,
-                self._sin_scale,
-                self._cos_offset,
-                self._cos_scale,
-                self._tan_offset,
-                self._tan_scale,
-                self._offset,
-                self._scale,
-            ]
+            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
         )
 
     @property
@@ -229,16 +175,7 @@ class Distortion(FilterMixin):
         self._offset = v
         self.off = all(
             v is None
-            for v in [
-                self._sin_offset,
-                self._sin_scale,
-                self._cos_offset,
-                self._cos_scale,
-                self._tan_offset,
-                self._tan_scale,
-                self._offset,
-                self._scale,
-            ]
+            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
         )
 
     @property
@@ -250,16 +187,7 @@ class Distortion(FilterMixin):
         self._scale = v
         self.off = all(
             v is None
-            for v in [
-                self._sin_offset,
-                self._sin_scale,
-                self._cos_offset,
-                self._cos_scale,
-                self._tan_offset,
-                self._tan_scale,
-                self._offset,
-                self._scale,
-            ]
+            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
         )
 
     @classmethod

@@ -64,7 +64,8 @@ class ChannelMix(FilterMixin):
     def left_to_left(self, v: float | None):
         self._left_to_left = v
         self.off = all(
-            v is None for v in [self._left_to_left, self._left_to_right, self._right_to_left, self._right_to_right]
+            v is None
+            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
         )
 
     @property
@@ -75,7 +76,8 @@ class ChannelMix(FilterMixin):
     def left_to_right(self, v: float | None):
         self._left_to_right = v
         self.off = all(
-            v is None for v in [self._left_to_left, self._left_to_right, self._right_to_left, self._right_to_right]
+            v is None
+            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
         )
 
     @property
@@ -86,7 +88,8 @@ class ChannelMix(FilterMixin):
     def right_to_left(self, v: float | None):
         self._right_to_left = v
         self.off = all(
-            v is None for v in [self._left_to_left, self._left_to_right, self._right_to_left, self._right_to_right]
+            v is None
+            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
         )
 
     @property
@@ -97,7 +100,8 @@ class ChannelMix(FilterMixin):
     def right_to_right(self, v: float | None):
         self._right_to_right = v
         self.off = all(
-            v is None for v in [self._left_to_left, self._left_to_right, self._right_to_left, self._right_to_right]
+            v is None
+            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
         )
 
     @classmethod

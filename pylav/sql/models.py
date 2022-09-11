@@ -2536,7 +2536,7 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
                 return tracks[index] if index < len(tracks) else None
         else:
             response = await tables.QueryRow.raw(
-                "SELECT tracks->>{} as playlist FROM query WHERE id = {} LIMIT 1;", index, self.id
+                "SELECT tracks->>{} as playlist FROM query WHERE id = {} LIMIT 1;", f"{index}", self.id
             )
             return response[0]["track"] if response else None
 
@@ -2549,9 +2549,7 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         str
             The first track
         """
-        response = await tables.QueryRow.raw(
-            "SELECT tracks->>{} as playlist FROM query WHERE id = {} LIMIT 1;", 0, self.id
-        )
+        response = await tables.QueryRow.raw("SELECT tracks->>0 as playlist FROM query WHERE id = {} LIMIT 1;", self.id)
         return response[0]["track"] if response else None
 
     async def fetch_random(self) -> str | None:
@@ -2738,7 +2736,7 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
                 return tracks[index] if index < len(tracks) else None
         else:
             response = await tables.QueryRow.raw(
-                "SELECT tracks->>{} as query WHERE FROM query WHERE id = {} LIMIT 1;", index, self.id
+                "SELECT tracks->>{} as query WHERE FROM query WHERE id = {} LIMIT 1;", f"{index}", self.id
             )
             return response[0]["track"] if response else None
 
@@ -2752,7 +2750,7 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
             The first track
         """
         response = await tables.QueryRow.raw(
-            "SELECT tracks->>{} as track FROM query WHERE identifier = {} LIMIT 1;", 0, self.id
+            "SELECT tracks->>0 as track FROM query WHERE identifier = {} LIMIT 1;", self.id
         )
         return response[0]["track"] if response else None
 

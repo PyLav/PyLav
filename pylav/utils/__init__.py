@@ -243,6 +243,102 @@ class MissingSentinel(str):
     def __bool__(self) -> bool:
         return False
 
+    def __int__(self):
+        return 0
+
+    def __float__(self):
+        return 0.0
+
+    def __len__(self):
+        return 0
+
+    def __iter__(self):
+        return iter([])
+
+    def __getitem__(self, item):
+        return None
+
+    def __getattr__(self, item):
+        return None
+
+    def __divmod__(self, other):
+        return (0, 0)
+
+    def __rdivmod__(self, other):
+        return (0, 0)
+
+    def __floor__(self):
+        return 0
+
+    def __ceil__(self):
+        return 0
+
+    def __round__(self):
+        return 0
+
+    def __trunc__(self):
+        return 0
+
+    def __add__(self, other):
+        return other
+
+    def __radd__(self, other):
+        return other
+
+    def __sub__(self, other):
+        return other
+
+    def __rsub__(self, other):
+        return other
+
+    def __mul__(self, other):
+        return 0
+
+    def __rmul__(self, other):
+        return 0
+
+    def __matmul__(self, other):
+        return 0
+
+    def __rmatmul__(self, other):
+        return 0
+
+    def __mod__(self, other):
+        return 0
+
+    def __rmod__(self, other):
+        return 0
+
+    def __div__(self, other):
+        return 0
+
+    def __rdiv__(self, other):
+        return 0
+
+    def __truediv__(self, other):
+        return 0
+
+    def __rtruediv__(self, other):
+        return 0
+
+    def __floordiv__(self, other):
+        return 0
+
+    def __rfloordiv__(self, other):
+        return 0
+
+    def __pow__(self, other):
+        return 0
+
+    def __rpow__(self, other):
+        return 0
+
+    def __lshift__(self, other):
+        return 0
+
+    def __rlshift__(self, other):
+        return 0
+
 
 MISSING: Any = MissingSentinel("MISSING")
 
@@ -304,6 +400,8 @@ def get_time_string(seconds: int | float) -> str:
 def format_time(duration: int | float) -> str:
     """Formats the given time into DD:HH:MM:SS"""
     seconds = int(duration // 1000)
+    if seconds == 0:
+        return _("Unknown")
     days, seconds = divmod(seconds, 24 * 60 * 60)
     hours, seconds = divmod(seconds, 60 * 60)
     minutes, seconds = divmod(seconds, 60)

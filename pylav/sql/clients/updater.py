@@ -106,6 +106,9 @@ class UpdateSchemaManager:
             for node_id in BUNDLED_NODES_IDS:
                 await self._client.node_db_manager.delete(node_id)
 
+        if current_version <= parse_version("0.9.1.9999"):
+            await self._client.player_state_db_manager.delete_all_players()
+
         with contextlib.suppress(EntryNotFoundError):
             config = self._client.node_db_manager.bundled_node_config()
             await config.update_resume_key(f"PyLav/{self._client.lib_version}-{self._client.bot_id}")

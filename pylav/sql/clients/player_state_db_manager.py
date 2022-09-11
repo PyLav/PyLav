@@ -50,3 +50,9 @@ class PlayerStateDBManager:
             self.client.bot.user.id,
             guild_id,
         )
+
+    async def delete_all_players(self):
+        await tables.PlayerStateRow.raw(
+            """DELETE FROM player_state WHERE bot = {}""",
+            self.client.bot.user.id,
+        )

@@ -57,7 +57,10 @@ class Karaoke(FilterMixin):
     @level.setter
     def level(self, v: float | None):
         self._level = v
-        self.off = all(v is None for v in [self._level, self._mono_level, self._filter_band, self._filter_width])
+        self.off = all(
+            v is None
+            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
+        )
 
     @property
     def mono_level(self) -> float | None:
@@ -66,7 +69,10 @@ class Karaoke(FilterMixin):
     @mono_level.setter
     def mono_level(self, v: float | None):
         self._mono_level = v
-        self.off = all(v is None for v in [self._level, self._mono_level, self._filter_band, self._filter_width])
+        self.off = all(
+            v is None
+            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
+        )
 
     @property
     def filter_band(self) -> float | None:
@@ -75,7 +81,10 @@ class Karaoke(FilterMixin):
     @filter_band.setter
     def filter_band(self, v: float | None):
         self._filter_band = v
-        self.off = all(v is None for v in [self._level, self._mono_level, self._filter_band, self._filter_width])
+        self.off = all(
+            v is None
+            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
+        )
 
     @property
     def filter_width(self) -> float:
@@ -84,7 +93,10 @@ class Karaoke(FilterMixin):
     @filter_width.setter
     def filter_width(self, v: float | None):
         self._filter_width = v
-        self.off = all(v is None for v in [self._level, self._mono_level, self._filter_band, self._filter_width])
+        self.off = all(
+            v is None
+            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
+        )
 
     @classmethod
     def default(cls) -> Karaoke:

@@ -44,7 +44,10 @@ class Timescale(FilterMixin):
     @speed.setter
     def speed(self, v: float):
         self._speed = v
-        self.off = all(v is None for v in [self._speed, self._pitch, self._rate])
+        self.off = all(
+            v is None
+            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
+        )
 
     @property
     def pitch(self) -> float:
@@ -53,7 +56,10 @@ class Timescale(FilterMixin):
     @pitch.setter
     def pitch(self, v: float):
         self._pitch = v
-        self.off = all(v is None for v in [self._speed, self._pitch, self._rate])
+        self.off = all(
+            v is None
+            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
+        )
 
     @property
     def rate(self) -> float:
@@ -62,7 +68,10 @@ class Timescale(FilterMixin):
     @rate.setter
     def rate(self, v: float):
         self._rate = v
-        self.off = all(v is None for v in [self._speed, self._pitch, self._rate])
+        self.off = all(
+            v is None
+            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
+        )
 
     @classmethod
     def default(cls) -> Timescale:

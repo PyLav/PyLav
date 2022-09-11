@@ -42,7 +42,10 @@ class Echo(FilterMixin):
     def delay(self, v: float | None):
         if v is None:
             self._delay = None
-            self.off = all(v is None for v in [self._delay, self._decay])
+            self.off = all(
+                v is None
+                for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
+            )
             return
         if v < 0:
             raise ValueError(f"Delay must be must be greater than 0, not {v}")
@@ -57,7 +60,10 @@ class Echo(FilterMixin):
     def decay(self, v: float | None):
         if v is None:
             self._decay = v
-            self.off = all(v is None for v in [self._delay, self._decay])
+            self.off = all(
+                v is None
+                for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
+            )
             return
         if not (0.0 < v <= 1.0):
             raise ValueError(f"Decay must be must be 0.0 < x ≤ 1.0, not {v}")
