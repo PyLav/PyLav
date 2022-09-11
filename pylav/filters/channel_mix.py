@@ -8,19 +8,19 @@ class ChannelMix(FilterMixin):
 
     def __init__(
         self,
-        left_to_left: float,
-        left_to_right: float,
-        right_to_left: float,
-        right_to_right: float,
+        left_to_left: float = None,
+        left_to_right: float = None,
+        right_to_left: float = None,
+        right_to_right: float = None,
     ):
         super().__init__()
         self.left_to_left = left_to_left
         self.left_to_right = left_to_right
         self.right_to_left = right_to_left
         self.right_to_right = right_to_right
-        self.off = False
+        self.off = all(v is None for v in [left_to_left, left_to_right, right_to_left, right_to_right])
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, float | None | bool]:
         return {
             "leftToLeft": self.left_to_left,
             "leftToRight": self.left_to_right,
@@ -29,7 +29,7 @@ class ChannelMix(FilterMixin):
             "off": self.off,
         }
 
-    def to_json(self) -> dict:
+    def to_json(self) -> dict[str, float | None]:
         return {
             "leftToLeft": self.left_to_left,
             "leftToRight": self.left_to_right,
@@ -38,7 +38,7 @@ class ChannelMix(FilterMixin):
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> ChannelMix:
+    def from_dict(cls, data: dict[str, float | bool | None]) -> ChannelMix:
         c = cls(
             left_to_left=data["leftToLeft"],
             left_to_right=data["leftToRight"],
@@ -57,62 +57,67 @@ class ChannelMix(FilterMixin):
         )
 
     @property
-    def left_to_left(self) -> float:
+    def left_to_left(self) -> float | None:
         return self._left_to_left
 
     @left_to_left.setter
-    def left_to_left(self, v: float):
+    def left_to_left(self, v: float | None):
         self._left_to_left = v
-        self.off = False
+        self.off = all(
+            v is None for v in [self._left_to_left, self._left_to_right, self._right_to_left, self._right_to_right]
+        )
 
     @property
-    def left_to_right(self) -> float:
+    def left_to_right(self) -> float | None:
         return self._left_to_right
 
     @left_to_right.setter
-    def left_to_right(self, v: float):
+    def left_to_right(self, v: float | None):
         self._left_to_right = v
-        self.off = False
+        self.off = all(
+            v is None for v in [self._left_to_left, self._left_to_right, self._right_to_left, self._right_to_right]
+        )
 
     @property
-    def right_to_left(self) -> float:
+    def right_to_left(self) -> float | None:
         return self._right_to_left
 
     @right_to_left.setter
-    def right_to_left(self, v: float):
+    def right_to_left(self, v: float | None):
         self._right_to_left = v
-        self.off = False
+        self.off = all(
+            v is None for v in [self._left_to_left, self._left_to_right, self._right_to_left, self._right_to_right]
+        )
 
     @property
-    def right_to_right(self) -> float:
+    def right_to_right(self) -> float | None:
         return self._right_to_right
 
     @right_to_right.setter
-    def right_to_right(self, v: float):
+    def right_to_right(self, v: float | None):
         self._right_to_right = v
-        self.off = False
+        self.off = all(
+            v is None for v in [self._left_to_left, self._left_to_right, self._right_to_left, self._right_to_right]
+        )
 
     @classmethod
     def default(cls) -> ChannelMix:
-        c = cls(
-            left_to_left=-31415926543,
-            left_to_right=-31415926543,
-            right_to_left=-31415926543,
-            right_to_right=-31415926543,
-        )
-        c.off = True
-        return c
+        return cls()
 
     def get(self) -> dict[str, float]:
         if self.off:
             return {}
-        return {
-            "leftToLeft": self.left_to_left,
-            "leftToRight": self.left_to_right,
-            "rightToLeft": self.right_to_left,
-            "rightToRight": self.right_to_right,
-        }
+        response = {}
+        if self.left_to_left is not None:
+            response["leftToLeft"] = self.left_to_left
+        if self.left_to_right is not None:
+            response["leftToRight"] = self.left_to_right
+        if self.right_to_left is not None:
+            response["rightToLeft"] = self.right_to_left
+        if self.right_to_right is not None:
+            response["rightToRight"] = self.right_to_right
+        return response
 
     def reset(self) -> None:
-        self.right_to_right = self.right_to_left = self.left_to_right = self.left_to_left = -31415926543
+        self.right_to_right = self.right_to_left = self.left_to_right = self.left_to_left = None
         self.off = True

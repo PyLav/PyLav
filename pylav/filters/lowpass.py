@@ -6,24 +6,24 @@ from pylav.filters.utils import FilterMixin
 class LowPass(FilterMixin):
     __slots__ = ("_smoothing", "_off", "_default")
 
-    def __init__(self, smoothing: float):
+    def __init__(self, smoothing: float = None):
         super().__init__()
         self.smoothing = smoothing
-        self.off = False
+        self.off = smoothing is None
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, float | bool | None]:
         return {
             "smoothing": self.smoothing,
             "off": self.off,
         }
 
-    def to_json(self) -> dict:
+    def to_json(self) -> dict[str, float | None]:
         return {
             "smoothing": self.smoothing,
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> LowPass:
+    def from_dict(cls, data: dict[str, float | bool | None]) -> LowPass:
         c = cls(
             smoothing=data["smoothing"],
         )
@@ -34,29 +34,26 @@ class LowPass(FilterMixin):
         return f"<LowPass: smoothing={self.smoothing}>"
 
     @property
-    def smoothing(self) -> float:
+    def smoothing(self) -> float | None:
         return self._smoothing
 
     @smoothing.setter
-    def smoothing(self, v: float):
+    def smoothing(self, v: float | None):
         self._smoothing = v
-        self.off = False
+        self.off = v is None
 
     @classmethod
     def default(cls) -> LowPass:
-        c = cls(smoothing=-31415926543)
-        c.off = True
-        return c
+        return cls()
 
     def get(self) -> dict[str, float]:
-        return (
-            {}
-            if self.off
-            else {
-                "smoothing": self.smoothing,
-            }
-        )
+        if self.off:
+            return {}
+        response = {}
+        if self.smoothing is not None:
+            response["smoothing"] = self.smoothing
+        return response
 
     def reset(self) -> None:
-        self.smoothing = -31415926543
+        self.smoothing = None
         self.off = True

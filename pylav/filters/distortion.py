@@ -19,14 +19,14 @@ class Distortion(FilterMixin):
 
     def __init__(
         self,
-        sin_offset: float,
-        sin_scale: float,
-        cos_offset: float,
-        cos_scale: float,
-        tan_offset: float,
-        tan_scale: float,
-        offset: float,
-        scale: float,
+        sin_offset: float = None,
+        sin_scale: float = None,
+        cos_offset: float = None,
+        cos_scale: float = None,
+        tan_offset: float = None,
+        tan_scale: float = None,
+        offset: float = None,
+        scale: float = None,
     ):
         super().__init__()
         self.sin_offset = sin_offset
@@ -37,9 +37,11 @@ class Distortion(FilterMixin):
         self.tan_scale = tan_scale
         self.offset = offset
         self.scale = scale
-        self.off = False
+        self.off = all(
+            v is None for v in [sin_offset, sin_scale, cos_offset, cos_scale, tan_offset, tan_scale, offset, scale]
+        )
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, float | bool | None]:
         return {
             "sin_offset": self.sin_offset,
             "sin_scale": self.sin_scale,
@@ -52,7 +54,7 @@ class Distortion(FilterMixin):
             "off": self.off,
         }
 
-    def to_json(self) -> dict:
+    def to_json(self) -> dict[str, float | None]:
         return {
             "sin_offset": self.sin_offset,
             "sin_scale": self.sin_scale,
@@ -65,7 +67,7 @@ class Distortion(FilterMixin):
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> Distortion:
+    def from_dict(cls, data: dict[str, float | bool | None]) -> Distortion:
         c = cls(
             sin_offset=data["sin_offset"],
             sin_scale=data["sin_scale"],
@@ -93,109 +95,201 @@ class Distortion(FilterMixin):
         )
 
     @property
-    def sin_offset(self) -> float:
+    def sin_offset(self) -> float | None:
         return self._sin_offset
 
     @sin_offset.setter
-    def sin_offset(self, v: float):
+    def sin_offset(self, v: float | None) -> None:
         self._sin_offset = v
-        self.off = False
+        self.off = all(
+            v is None
+            for v in [
+                self._sin_offset,
+                self._sin_scale,
+                self._cos_offset,
+                self._cos_scale,
+                self._tan_offset,
+                self._tan_scale,
+                self._offset,
+                self._scale,
+            ]
+        )
 
     @property
-    def sin_scale(self) -> float:
+    def sin_scale(self) -> float | None:
         return self._sin_scale
 
     @sin_scale.setter
-    def sin_scale(self, v: float):
+    def sin_scale(self, v: float | None) -> None:
         self._sin_scale = v
+        self.off = all(
+            v is None
+            for v in [
+                self._sin_offset,
+                self._sin_scale,
+                self._cos_offset,
+                self._cos_scale,
+                self._tan_offset,
+                self._tan_scale,
+                self._offset,
+                self._scale,
+            ]
+        )
 
     @property
-    def cos_offset(self) -> float:
+    def cos_offset(self) -> float | None:
         return self._cos_offset
 
     @cos_offset.setter
-    def cos_offset(self, v: float):
+    def cos_offset(self, v: float | None) -> None:
         self._cos_offset = v
-        self.off = False
+        self.off = all(
+            v is None
+            for v in [
+                self._sin_offset,
+                self._sin_scale,
+                self._cos_offset,
+                self._cos_scale,
+                self._tan_offset,
+                self._tan_scale,
+                self._offset,
+                self._scale,
+            ]
+        )
 
     @property
-    def cos_scale(self) -> float:
+    def cos_scale(self) -> float | None:
         return self._cos_scale
 
     @cos_scale.setter
-    def cos_scale(self, v: float):
+    def cos_scale(self, v: float | None) -> None:
         self._cos_scale = v
-        self.off = False
+        self.off = all(
+            v is None
+            for v in [
+                self._sin_offset,
+                self._sin_scale,
+                self._cos_offset,
+                self._cos_scale,
+                self._tan_offset,
+                self._tan_scale,
+                self._offset,
+                self._scale,
+            ]
+        )
 
     @property
-    def tan_offset(self) -> float:
+    def tan_offset(self) -> float | None:
         return self._tan_offset
 
     @tan_offset.setter
-    def tan_offset(self, v: float):
+    def tan_offset(self, v: float | None) -> None:
         self._tan_offset = v
-        self.off = False
+        self.off = all(
+            v is None
+            for v in [
+                self._sin_offset,
+                self._sin_scale,
+                self._cos_offset,
+                self._cos_scale,
+                self._tan_offset,
+                self._tan_scale,
+                self._offset,
+                self._scale,
+            ]
+        )
 
     @property
-    def tan_scale(self) -> float:
+    def tan_scale(self) -> float | None:
         return self._tan_scale
 
     @tan_scale.setter
-    def tan_scale(self, v: float):
+    def tan_scale(self, v: float | None) -> None:
         self._tan_scale = v
-        self.off = False
+        self.off = all(
+            v is None
+            for v in [
+                self._sin_offset,
+                self._sin_scale,
+                self._cos_offset,
+                self._cos_scale,
+                self._tan_offset,
+                self._tan_scale,
+                self._offset,
+                self._scale,
+            ]
+        )
 
     @property
-    def offset(self) -> float:
+    def offset(self) -> float | None:
         return self._offset
 
     @offset.setter
-    def offset(self, v: float):
+    def offset(self, v: float | None) -> None:
         self._offset = v
-        self.off = False
+        self.off = all(
+            v is None
+            for v in [
+                self._sin_offset,
+                self._sin_scale,
+                self._cos_offset,
+                self._cos_scale,
+                self._tan_offset,
+                self._tan_scale,
+                self._offset,
+                self._scale,
+            ]
+        )
 
     @property
-    def scale(self) -> float:
+    def scale(self) -> float | None:
         return self._scale
 
     @scale.setter
-    def scale(self, v: float):
+    def scale(self, v: float | None) -> None:
         self._scale = v
-        self.off = False
+        self.off = all(
+            v is None
+            for v in [
+                self._sin_offset,
+                self._sin_scale,
+                self._cos_offset,
+                self._cos_scale,
+                self._tan_offset,
+                self._tan_scale,
+                self._offset,
+                self._scale,
+            ]
+        )
 
     @classmethod
     def default(cls) -> Distortion:
-        c = cls(
-            sin_offset=-31415926543,
-            sin_scale=-31415926543,
-            cos_offset=-31415926543,
-            cos_scale=-31415926543,
-            tan_offset=-31415926543,
-            tan_scale=-31415926543,
-            offset=-31415926543,
-            scale=-31415926543,
-        )
-        c.off = True
-        return c
+        return cls()
 
     def get(self) -> dict[str, float]:
         if self.off:
             return {}
-        return {
-            "sinOffset": self.sin_offset,
-            "sinScale": self.sin_scale,
-            "cosOffset": self.cos_offset,
-            "cosScale": self.cos_scale,
-            "tanOffset": self.tan_offset,
-            "tanScale": self.tan_scale,
-            "offset": self.offset,
-            "scale": self.scale,
-        }
+        response = {}
+        if self.sin_offset is not None:
+            response["sinOffset"] = self.sin_offset
+        if self.sin_scale is not None:
+            response["sinScale"] = self.sin_scale
+        if self.cos_offset is not None:
+            response["cosOffset"] = self.cos_offset
+        if self.cos_scale is not None:
+            response["cosScale"] = self.cos_scale
+        if self.tan_offset is not None:
+            response["tanOffset"] = self.tan_offset
+        if self.tan_scale is not None:
+            response["tanScale"] = self.tan_scale
+        if self.offset is not None:
+            response["offset"] = self.offset
+        if self.scale is not None:
+            response["scale"] = self.scale
+        return response
 
     def reset(self) -> None:
         self.sin_scale = (
             self.cos_offset
-        ) = (
-            self.cos_scale
-        ) = self.tan_offset = self.tan_scale = self.offset = self.scale = self.sin_offset = -31415926543
+        ) = self.cos_scale = self.tan_offset = self.tan_scale = self.offset = self.scale = self.sin_offset = None
         self.off = True

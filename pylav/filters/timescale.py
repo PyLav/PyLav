@@ -6,14 +6,14 @@ from pylav.filters.utils import FilterMixin
 class Timescale(FilterMixin):
     __slots__ = ("_speed", "_pitch", "_rate", "_off", "_default")
 
-    def __init__(self, speed: float, pitch: float, rate: float):
+    def __init__(self, speed: float = None, pitch: float = None, rate: float = None):
         super().__init__()
         self.speed = speed
         self.pitch = pitch
         self.rate = rate
-        self.off = False
+        self.off = all(v is None for v in [speed, pitch, rate])
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, float | bool | None]:
         return {
             "speed": self.speed,
             "pitch": self.pitch,
@@ -21,7 +21,7 @@ class Timescale(FilterMixin):
             "off": self.off,
         }
 
-    def to_json(self) -> dict:
+    def to_json(self) -> dict[str, float | None]:
         return {
             "speed": self.speed,
             "pitch": self.pitch,
@@ -29,7 +29,7 @@ class Timescale(FilterMixin):
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> Timescale:
+    def from_dict(cls, data: dict[str, float | bool | None]) -> Timescale:
         c = cls(speed=data["speed"], pitch=data["pitch"], rate=data["rate"])
         c.off = data["off"]
         return c
@@ -44,7 +44,7 @@ class Timescale(FilterMixin):
     @speed.setter
     def speed(self, v: float):
         self._speed = v
-        self.off = False
+        self.off = all(v is None for v in [self._speed, self._pitch, self._rate])
 
     @property
     def pitch(self) -> float:
@@ -53,7 +53,7 @@ class Timescale(FilterMixin):
     @pitch.setter
     def pitch(self, v: float):
         self._pitch = v
-        self.off = False
+        self.off = all(v is None for v in [self._speed, self._pitch, self._rate])
 
     @property
     def rate(self) -> float:
@@ -62,23 +62,24 @@ class Timescale(FilterMixin):
     @rate.setter
     def rate(self, v: float):
         self._rate = v
-        self.off = False
+        self.off = all(v is None for v in [self._speed, self._pitch, self._rate])
 
     @classmethod
     def default(cls) -> Timescale:
-        c = cls(speed=-31415926543, pitch=-31415926543, rate=-31415926543)
-        c.off = True
-        return c
+        return cls()
 
     def get(self) -> dict[str, float]:
         if self.off:
             return {}
-        return {
-            "speed": self.speed,
-            "pitch": self.pitch,
-            "rate": self.rate,
-        }
+        response = {}
+        if self.speed is not None:
+            response["speed"] = self.speed
+        if self.pitch is not None:
+            response["pitch"] = self.pitch
+        if self.rate is not None:
+            response["rate"] = self.rate
+        return response
 
     def reset(self) -> None:
-        self.speed = self.pitch = self.rate = -31415926543
+        self.speed = self.pitch = self.rate = None
         self.off = True

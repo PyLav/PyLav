@@ -28,11 +28,11 @@ class Equalizer(FilterMixin):
         self._raw = levels
         self._name = name
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, list[dict[str, int | float]] | str | bool]:
         """Returns a dictionary representation of the Equalizer"""
         return {"equalizer": self._eq, "name": self._name, "off": self.off}
 
-    def to_json(self):
+    def to_json(self) -> dict[str, list[dict[str, int | float]]]:
         return {"eq": self._eq}
 
     @classmethod

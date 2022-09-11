@@ -6,27 +6,27 @@ from pylav.filters.utils import FilterMixin
 class Vibrato(FilterMixin):
     __slots__ = ("_frequency", "_depth", "_off", "_default")
 
-    def __init__(self, frequency: float, depth: float):
+    def __init__(self, frequency: float = None, depth: float = None):
         super().__init__()
         self.frequency = frequency
         self.depth = depth
-        self.off = False
+        self.off = all(v is None for v in [frequency, depth])
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, float | bool | None]:
         return {
             "frequency": self.frequency,
             "depth": self.depth,
             "off": self.off,
         }
 
-    def to_json(self) -> dict:
+    def to_json(self) -> dict[str, float | None]:
         return {
             "frequency": self.frequency,
             "depth": self.depth,
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> Vibrato:
+    def from_dict(cls, data: dict[str, float | bool | None]) -> Vibrato:
         c = cls(frequency=data["frequency"], depth=data["depth"])
         c.off = data["off"]
         return c
@@ -35,14 +35,14 @@ class Vibrato(FilterMixin):
         return f"<Vibrato: frequency={self.frequency}, depth={self.depth}>"
 
     @property
-    def frequency(self) -> float:
+    def frequency(self) -> float | None:
         return self._frequency
 
     @frequency.setter
-    def frequency(self, v: float):
-        if v == -31415926543:
-            self.off = True
+    def frequency(self, v: float | None):
+        if v is None:
             self._frequency = v
+            self.off = all(v is None for v in [self._frequency, self._depth])
             return
         if not (0.0 < v <= 14.0):
             raise ValueError(f"Frequency must be must be 0.0 < v <= 14.0, not {v}")
@@ -54,10 +54,10 @@ class Vibrato(FilterMixin):
         return self._depth
 
     @depth.setter
-    def depth(self, v: float):
-        if v == -31415926543:
-            self.off = True
+    def depth(self, v: float | None):
+        if v is None:
             self._depth = v
+            self.off = all(v is None for v in [self._frequency, self._depth])
             return
         if not (0.0 < v <= 1.0):
             raise ValueError(f"Depth must be must be 0.0 < x ≤ 1.0, not {v}")
@@ -66,20 +66,18 @@ class Vibrato(FilterMixin):
 
     @classmethod
     def default(cls) -> Vibrato:
-        c = cls(frequency=-31415926543, depth=-31415926543)
-        c.off = True
-        return c
+        return cls()
 
     def get(self) -> dict[str, float]:
-        return (
-            {}
-            if self.off
-            else {
-                "frequency": self.frequency,
-                "depth": self.depth,
-            }
-        )
+        if self.off:
+            return {}
+        response = {}
+        if self.frequency is not None:
+            response["frequency"] = self.frequency
+        if self.depth is not None:
+            response["depth"] = self.depth
+        return response
 
     def reset(self) -> None:
-        self.frequency = self.depth = -31415926543
+        self.frequency = self.depth = None
         self.off = True

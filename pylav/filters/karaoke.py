@@ -6,15 +6,17 @@ from pylav.filters.utils import FilterMixin
 class Karaoke(FilterMixin):
     __slots__ = ("_level", "_mono_level", "_filter_band", "_filter_width", "_off", "_default")
 
-    def __init__(self, level: float, mono_level: float, filter_band: float, filter_width: float):
+    def __init__(
+        self, level: float = None, mono_level: float = None, filter_band: float = None, filter_width: float = None
+    ):
         super().__init__()
         self.level = level
         self.mono_level = mono_level
         self.filter_band = filter_band
         self.filter_width = filter_width
-        self.off = False
+        self.off = all(v is None for v in [level, mono_level, filter_band, filter_width])
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, float | bool | None]:
         return {
             "level": self.level,
             "mono_level": self.mono_level,
@@ -23,7 +25,7 @@ class Karaoke(FilterMixin):
             "off": self.off,
         }
 
-    def to_json(self) -> dict:
+    def to_json(self) -> dict[str, float | None]:
         return {
             "level": self.level,
             "mono_level": self.mono_level,
@@ -32,7 +34,7 @@ class Karaoke(FilterMixin):
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> Karaoke:
+    def from_dict(cls, data: dict[str, float | bool | None]) -> Karaoke:
         c = cls(
             level=data["level"],
             mono_level=data["mono_level"],
@@ -49,57 +51,59 @@ class Karaoke(FilterMixin):
         )
 
     @property
-    def level(self) -> float:
+    def level(self) -> float | None:
         return self._level
 
     @level.setter
-    def level(self, v: float):
+    def level(self, v: float | None):
         self._level = v
-        self.off = False
+        self.off = all(v is None for v in [self.level, self.mono_level, self.filter_band, self.filter_width])
 
     @property
-    def mono_level(self) -> float:
+    def mono_level(self) -> float | None:
         return self._mono_level
 
     @mono_level.setter
-    def mono_level(self, v: float):
+    def mono_level(self, v: float | None):
         self._mono_level = v
-        self.off = False
+        self.off = all(v is None for v in [self.level, self.mono_level, self.filter_band, self.filter_width])
 
     @property
-    def filter_band(self) -> float:
+    def filter_band(self) -> float | None:
         return self._filter_band
 
     @filter_band.setter
-    def filter_band(self, v: float):
+    def filter_band(self, v: float | None):
         self._filter_band = v
-        self.off = False
+        self.off = all(v is None for v in [self.level, self.mono_level, self.filter_band, self.filter_width])
 
     @property
     def filter_width(self) -> float:
         return self._filter_width
 
     @filter_width.setter
-    def filter_width(self, v: float):
+    def filter_width(self, v: float | None):
         self._filter_width = v
-        self.off = False
+        self.off = all(v is None for v in [self.level, self.mono_level, self.filter_band, self.filter_width])
 
     @classmethod
     def default(cls) -> Karaoke:
-        c = cls(level=-31415926543, mono_level=-31415926543, filter_band=-31415926543, filter_width=-31415926543)
-        c.off = True
-        return c
+        return cls()
 
     def get(self) -> dict[str, float]:
         if self.off:
             return {}
-        return {
-            "level": self.level,
-            "monoLevel": self.mono_level,
-            "filterBand": self.filter_band,
-            "filterWidth": self.filter_width,
-        }
+        response = {}
+        if self.level is not None:
+            response["level"] = self.level
+        if self.mono_level is not None:
+            response["monoLevel"] = self.mono_level
+        if self.filter_band is not None:
+            response["filterBand"] = self.filter_band
+        if self.filter_width is not None:
+            response["filterWidth"] = self.filter_width
+        return response
 
     def reset(self) -> None:
-        self.level = self.mono_level = self.filter_band = self.filter_width = -31415926543
+        self.level = self.mono_level = self.filter_band = self.filter_width = None
         self.off = True

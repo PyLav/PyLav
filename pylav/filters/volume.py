@@ -17,14 +17,14 @@ class Volume(FilterMixin):
         else:
             self.value = value
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, float | bool]:
         return {"volume": self.value, "off": self.off}
 
-    def to_json(self) -> dict:
+    def to_json(self) -> dict[str, float]:
         return {"volume": self.value}
 
     @classmethod
-    def from_dict(cls, data: dict) -> Volume:
+    def from_dict(cls, data: dict[str, float | bool]) -> Volume:
         c = cls(data["volume"])
         c.off = data["off"]
         return c
@@ -60,7 +60,7 @@ class Volume(FilterMixin):
         return self.value
 
     def get_int_value(self) -> int:
-        return min(int(round(self.value * 100)), 1000)
+        return min(max(int(round(self.value * 100)), 0), 1000)
 
     def __repr__(self):
         return str(self.value)

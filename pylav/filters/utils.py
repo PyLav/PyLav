@@ -6,11 +6,12 @@ from deepdiff import DeepDiff
 
 
 class FilterMixin:
-    __slots__ = ("_default", "_off")
+    __slots__ = ("_default", "_off", "_default_value")
 
     def __init__(self):
         self._default = None
         self._off = True
+        self._default_value = None
 
     def __eq__(self, other):
         """Overrides the default implementation"""
@@ -41,7 +42,7 @@ class FilterMixin:
 
     @classmethod
     def default(cls) -> FilterMixin:
-        return NotImplemented
+        return cls()
 
     def is_default(self) -> bool:
         if self._default is None:
