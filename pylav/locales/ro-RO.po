@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-09-10 19:18+0000\n"
-"PO-Revision-Date: 2022-09-10 19:21\n"
+"POT-Creation-Date: 2022-09-12 22:08+0000\n"
+"PO-Revision-Date: 2022-09-12 22:09\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "MIME-Version: 1.0\n"
@@ -17,23 +17,23 @@ msgstr ""
 "X-Crowdin-File-ID: 504\n"
 "Language: ro_RO\n"
 
-#: pylav/client.py:610 pylav/client.py:635 pylav/player_manager.py:250
+#: pylav/client.py:611 pylav/client.py:636 pylav/player_manager.py:250
 msgid "No available nodes!"
 msgstr "Nu sunt noduri disponibile!"
 
-#: pylav/client.py:614 pylav/client.py:639
+#: pylav/client.py:615 pylav/client.py:640
 msgid "No node with {feature} functionality available!"
 msgstr "Niciun nod cu funcționalitatea {feature} disponibil!"
 
-#: pylav/client.py:930
+#: pylav/client.py:931
 msgid "No node with {query.requires_capability} functionality available!"
 msgstr "Niciun nod cu funcționalitatea {query.requires_capability} disponibil!"
 
-#: pylav/client.py:1188
+#: pylav/client.py:1189
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
 msgstr "Pentru a genera un mix playlist este necesar un Video, Utilizator, Canal sau Playlist ID"
 
-#: pylav/client.py:1193
+#: pylav/client.py:1194
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
 msgstr "Pentru a genera un mix playlist este necesar un video, un utilizator, un canal sau un ID Playlist. Cu toate acestea, ați furnizat mai multe"
 
@@ -54,88 +54,88 @@ msgstr "Portul {port} este deja în uz. Pornirea Lavalink gestionată anulată"
 msgid "Lavalink failed to start: {line}"
 msgstr "Pornirea Lavalink a eșuat: {line}"
 
-#: pylav/player.py:916
+#: pylav/player.py:914
 msgid "There are no tracks currently in the player history"
 msgstr "Nu există nicio melodie în istoricul jucătorilor"
 
-#: pylav/player.py:1918 pylav/player.py:1948 pylav/player.py:1959
+#: pylav/player.py:1916 pylav/player.py:1946 pylav/player.py:1957
 msgid "LIVE"
 msgstr "IV-VA"
 
-#: pylav/player.py:1927 pylav/player.py:2015
+#: pylav/player.py:1925 pylav/player.py:2013
 msgid "Currently livestreaming"
 msgstr "În prezent animalul"
 
-#: pylav/player.py:1929
+#: pylav/player.py:1927
 msgid "Playing: "
 msgstr "Redare: "
 
-#: pylav/player.py:1932 pylav/player.py:1953 pylav/player.py:1964
-#: pylav/player.py:2021
+#: pylav/player.py:1930 pylav/player.py:1951 pylav/player.py:1962
+#: pylav/player.py:2019
 msgid "Requester"
 msgstr "Solicitant"
 
-#: pylav/player.py:1937
+#: pylav/player.py:1935
 msgid "Now Playing in"
 msgstr "Acum se joacă în"
 
-#: pylav/player.py:1949 pylav/player.py:1960
+#: pylav/player.py:1947 pylav/player.py:1958
 msgid "Duration"
 msgstr "Durată"
 
-#: pylav/player.py:1955
+#: pylav/player.py:1953
 msgid "Previous Track"
 msgstr "Pistă anterioară"
 
-#: pylav/player.py:1966
+#: pylav/player.py:1964
 msgid "Next Track"
 msgstr "Următoarea piesă"
 
-#: pylav/player.py:1970
+#: pylav/player.py:1968
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
 msgstr "{track_count} melodii, {queue_total_duration} rămase\n"
 
-#: pylav/player.py:1982 pylav/player.py:2072
+#: pylav/player.py:1980 pylav/player.py:2070
 msgid "{translation}: {repeat_emoji}"
 msgstr "{translation}: {repeat_emoji}"
 
-#: pylav/player.py:1982 pylav/player.py:2072
+#: pylav/player.py:1980 pylav/player.py:2070
 msgid "Repeating"
 msgstr "Repetare"
 
-#: pylav/player.py:1983 pylav/player.py:2073
+#: pylav/player.py:1981 pylav/player.py:2071
 msgid "{space}{translation}: {autoplay_emoji}"
 msgstr "{space}{translation}: {autoplay_emoji}"
 
-#: pylav/player.py:1984 pylav/player.py:2074
+#: pylav/player.py:1982 pylav/player.py:2072
 msgid "Auto Play"
 msgstr "Redare automată"
 
-#: pylav/player.py:1986 pylav/player.py:2076
+#: pylav/player.py:1984 pylav/player.py:2074
 msgid "{space}{translation}: {volume}%"
 msgstr "{space}{translation}: {volume}%"
 
-#: pylav/player.py:1987 pylav/player.py:2077
+#: pylav/player.py:1985 pylav/player.py:2075
 msgid "Volume"
 msgstr "Volum"
 
-#: pylav/player.py:2018
+#: pylav/player.py:2016
 msgid "Playing"
 msgstr "Redare"
 
-#: pylav/player.py:2031
+#: pylav/player.py:2029
 msgid "Queue order is may not be accurate due to auto-shuffle being enabled"
 msgstr "Ordinea de așteptare ar putea să nu fie corectă din cauza activării auto-shuffle"
 
-#: pylav/player.py:2046
+#: pylav/player.py:2044
 msgid "Recently Played for"
 msgstr "Jucat recent pentru"
 
-#: pylav/player.py:2046
+#: pylav/player.py:2044
 msgid "Queue for"
 msgstr "Coadă pentru"
 
-#: pylav/player.py:2055
+#: pylav/player.py:2053
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
 msgstr "Pagina {current_page}/{total_pages} <unk> {track_number} melodii, {queue_total_duration} rămase\n"
 
