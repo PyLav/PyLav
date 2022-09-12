@@ -167,7 +167,7 @@ class Player(VoiceProtocol):
         self._region = channel.rtc_region or "unknown_pylav"
         self._coordinates = REGION_TO_COUNTRY_COORDINATE_MAPPING.get(self._region, (0, 0))
         self._connected = False
-        self.connected_at = datetime.datetime.now(tz=datetime.timezone.utc)
+        self.connected_at = utcnow()
         self.last_track = None
         self.next_track = None
 
@@ -300,7 +300,7 @@ class Player(VoiceProtocol):
             if self.volume_filter.changed:
                 await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
 
-        now_time = datetime.datetime.now(tz=datetime.timezone.utc)
+        now_time = utcnow()
         self.player_manager.client.scheduler.add_job(
             self.auto_dc_task,
             trigger="interval",
@@ -702,9 +702,7 @@ class Player(VoiceProtocol):
                     self,
                 )
                 return
-            LOGGER.trace(
-                "Auto save task for %s - Saving the player at %s", self, datetime.datetime.now(tz=datetime.timezone.utc)
-            )
+            LOGGER.trace("Auto save task for %s - Saving the player at %s", self, utcnow())
             await self.save()
 
     async def change_to_best_node(self, feature: str = None, ops: bool = True) -> Node | None:

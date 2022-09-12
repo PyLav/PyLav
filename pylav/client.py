@@ -23,6 +23,7 @@ from asyncspotify import ClientCredentialsFlow
 from discord.abc import Messageable
 from discord.ext.commands import Context
 from discord.types.embed import EmbedType
+from discord.utils import utcnow
 from pytz import utc
 
 from pylav import __VERSION__
@@ -392,7 +393,7 @@ class Client(metaclass=_Singleton):
                             and enable_managed_node
                         ):
                             await self._local_node_manager.wait_until_connected()
-                        time_now = datetime.datetime.now(tz=datetime.timezone.utc)
+                        time_now = utcnow()
                         if await self._config.fetch_next_execution_update_bundled_playlists() is None:
                             await self._config.update_next_execution_update_bundled_playlists(
                                 time_now + datetime.timedelta(minutes=5, days=1)
@@ -838,7 +839,7 @@ class Client(metaclass=_Singleton):
         if timestamp and isinstance(timestamp, datetime.datetime):
             timestamp = timestamp
         else:
-            timestamp = datetime.datetime.now(tz=datetime.timezone.utc)
+            timestamp = utcnow()
         contents = dict(
             title=title,
             type=type,

@@ -13,6 +13,7 @@ import aiohttp
 import asyncstdlib
 import ujson
 from apscheduler.jobstores.base import JobLookupError
+from discord.utils import utcnow
 from expiringdict import ExpiringDict
 
 from pylav._logging import getLogger
@@ -336,7 +337,7 @@ class Node:
             id=f"{self.identifier}-{self._manager.client.bot.user.id}-node_monitor_task",
             replace_existing=True,
             coalesce=True,
-            next_run_time=datetime.datetime.now(tz=datetime.timezone.utc) + datetime.timedelta(seconds=15),
+            next_run_time=utcnow() + datetime.timedelta(seconds=15),
         )
 
     async def _unhealthy(self):

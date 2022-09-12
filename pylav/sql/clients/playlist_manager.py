@@ -10,6 +10,7 @@ from collections.abc import AsyncIterator
 from typing import TYPE_CHECKING
 
 import discord
+from discord.utils import utcnow
 
 from pylav._logging import getLogger
 from pylav.constants import BUNDLED_PLAYLIST_IDS
@@ -275,8 +276,7 @@ class PlaylistConfigManager:
             old_time_stamp = await self.client._config.fetch_next_execution_update_bundled_playlists()
 
             await self.client._config.update_next_execution_update_bundled_playlists(
-                datetime.datetime.now(tz=datetime.timezone.utc)
-                + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS)
+                utcnow() + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS)
             )
 
             curated_data = {
@@ -316,8 +316,7 @@ class PlaylistConfigManager:
         ):
             old_time_stamp = await self.client._config.fetch_next_execution_update_bundled_external_playlists()
             await self.client._config.update_next_execution_update_bundled_external_playlists(
-                datetime.datetime.now(tz=datetime.timezone.utc)
-                + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS)
+                utcnow() + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS)
             )
 
             # NOTICE: Update the BUNDLED_PLAYLIST_IDS constant in the constants.py file
@@ -372,8 +371,7 @@ class PlaylistConfigManager:
             asyncio.exceptions.CancelledError,
         ):
             await self.client._config.update_next_execution_update_external_playlists(
-                datetime.datetime.now(tz=datetime.timezone.utc)
-                + datetime.timedelta(days=TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS)
+                utcnow() + datetime.timedelta(days=TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS)
             )
 
             async for playlist in self.get_external_playlists(*ids, ignore_ids=BUNDLED_PLAYLIST_IDS):

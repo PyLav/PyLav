@@ -5,6 +5,8 @@ import contextlib
 import datetime
 from typing import TYPE_CHECKING
 
+from discord.utils import utcnow
+
 from pylav._logging import getLogger
 from pylav.sql import tables
 from pylav.sql.models import QueryModel
@@ -32,10 +34,7 @@ class QueryCacheManager:
             "SELECT EXISTS(SELECT 1 FROM query WHERE {}) AS exists".format(
                 (
                     (tables.QueryRow.identifier == query.query_identifier)
-                    & (
-                        tables.QueryRow.last_updated
-                        > datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=30)
-                    )
+                    & (tables.QueryRow.last_updated > utcnow() - datetime.timedelta(days=30))
                 ).querystring
             )
         )
@@ -75,10 +74,7 @@ class QueryCacheManager:
             LOGGER.trace("Deleting old queries")
             await tables.QueryRow.raw(
                 "DELETE FROM query WHERE {}".format(
-                    (
-                        tables.QueryRow.last_updated
-                        <= (datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=30))
-                    ).querystring,
+                    (tables.QueryRow.last_updated <= (utcnow() - datetime.timedelta(days=30))).querystring,
                 )
             )
             LOGGER.trace("Deleted old queries")
@@ -95,10 +91,7 @@ class QueryCacheManager:
     async def delete_older_than(days: int) -> None:
         await tables.QueryRow.raw(
             "DELETE FROM query WHERE {}".format(
-                (
-                    tables.QueryRow.last_updated
-                    <= (datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=days))
-                ).querystring,
+                (tables.QueryRow.last_updated <= (utcnow() - datetime.timedelta(days=days))).querystring,
             )
         )
 

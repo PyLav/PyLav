@@ -18,6 +18,7 @@ import asyncstdlib
 import discord
 import ujson
 import yaml
+from discord.utils import utcnow
 from packaging.version import LegacyVersion, Version
 from packaging.version import parse as parse_version
 
@@ -1815,11 +1816,7 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
             self.id,
             self.bot,
         )
-        return (
-            response[0]["next_execution_update_bundled_playlists"]
-            if response
-            else datetime.datetime.now(tz=datetime.timezone.utc)
-        )
+        return response[0]["next_execution_update_bundled_playlists"] if response else utcnow()
 
     async def update_next_execution_update_bundled_playlists(self, next_execution: datetime.datetime) -> None:
         """Update the next_execution_update_bundled_playlists.
@@ -1861,11 +1858,7 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
             self.id,
             self.bot,
         )
-        return (
-            response[0]["next_execution_update_bundled_external_playlists"]
-            if response
-            else datetime.datetime.now(tz=datetime.timezone.utc)
-        )
+        return response[0]["next_execution_update_bundled_external_playlists"] if response else utcnow()
 
     async def update_next_execution_update_bundled_external_playlists(self, next_execution: datetime.datetime) -> None:
         """Update the next_execution_update_bundled_external_playlists.
@@ -1907,11 +1900,7 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
             self.id,
             self.bot,
         )
-        return (
-            response[0]["next_execution_update_external_playlists"]
-            if response
-            else datetime.datetime.now(tz=datetime.timezone.utc)
-        )
+        return response[0]["next_execution_update_external_playlists"] if response else utcnow()
 
     async def update_next_execution_update_external_playlists(self, next_execution: datetime.datetime) -> None:
         """Update the next_execution_update_external_playlists.
