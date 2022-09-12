@@ -40,7 +40,8 @@ else:
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[Station]:
             """Converts a station name to a matching object"""
-            from pylav.exceptions import EntryNotFoundError
+            if ctx.bot.lavalink.radio_browser.disabled:
+                return []
 
             try:
                 return await ctx.lavalink.radio_browser.station_by_uuid(
@@ -54,10 +55,19 @@ else:
             if not interaction.response.is_done():
                 await interaction.response.defer(ephemeral=True)
             ctx = await interaction.client.get_context(interaction)
+            if interaction.client.lavalink.radio_browser.disabled:
+                return []
             return await cls.convert(ctx, argument)
 
         @classmethod
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
+            if interaction.client.lavalink.radio_browser.disabled:
+                return [
+                    Choice(
+                        name=_("Radio Browser is disabled"),
+                        value="???",
+                    )
+                ]
             data = interaction.data
             options = data.get("options", [])
             kwargs = {"order": "votes"}
@@ -136,6 +146,8 @@ else:
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[Tag]:
             """Converts a Tag name to to a matching object"""
+            if ctx.bot.lavalink.radio_browser.disabled:
+                return []
 
             try:
                 return await ctx.lavalink.radio_browser.tags(arg)
@@ -147,10 +159,19 @@ else:
             if not interaction.response.is_done():
                 await interaction.response.defer(ephemeral=True)
             ctx = await interaction.client.get_context(interaction)
+            if interaction.client.lavalink.radio_browser.disabled:
+                return []
             return await cls.convert(ctx, argument)
 
         @classmethod
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
+            if interaction.client.lavalink.radio_browser.disabled:
+                return [
+                    Choice(
+                        name=_("Radio Browser is disabled"),
+                        value="???",
+                    )
+                ]
             tags = await interaction.client.lavalink.radio_browser.tags()
             if not current:
                 return [
@@ -172,6 +193,8 @@ else:
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[Language]:
             """Converts a Language name to to a matching object"""
+            if ctx.bot.lavalink.radio_browser.disabled:
+                return []
 
             try:
                 return await ctx.lavalink.radio_browser.languages(arg)
@@ -183,10 +206,19 @@ else:
             if not interaction.response.is_done():
                 await interaction.response.defer(ephemeral=True)
             ctx = await interaction.client.get_context(interaction)
+            if interaction.client.lavalink.radio_browser.disabled:
+                return []
             return await cls.convert(ctx, argument)
 
         @classmethod
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
+            if interaction.client.lavalink.radio_browser.disabled:
+                return [
+                    Choice(
+                        name=_("Radio Browser is disabled"),
+                        value="???",
+                    )
+                ]
             languages = await interaction.client.lavalink.radio_browser.languages()
             if not current:
                 return [
@@ -208,6 +240,8 @@ else:
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[State]:
             """Converts a State name to to a matching object"""
+            if ctx.bot.lavalink.radio_browser.disabled:
+                return []
             try:
                 return await ctx.lavalink.radio_browser.states(state=arg)
             except EntryNotFoundError as e:
@@ -218,10 +252,19 @@ else:
             if not interaction.response.is_done():
                 await interaction.response.defer(ephemeral=True)
             ctx = await interaction.client.get_context(interaction)
+            if interaction.client.lavalink.radio_browser.disabled:
+                return []
             return await cls.convert(ctx, argument)
 
         @classmethod
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
+            if interaction.client.lavalink.radio_browser.disabled:
+                return [
+                    Choice(
+                        name=_("Radio Browser is disabled"),
+                        value="???",
+                    )
+                ]
             data = interaction.data
             options = data.get("options", [])
             kwargs = {}
@@ -251,6 +294,8 @@ else:
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[Codec]:
             """Converts a Codec name to to a matching object"""
+            if ctx.bot.lavalink.radio_browser.disabled:
+                return []
 
             try:
                 return await ctx.lavalink.radio_browser.codecs(arg)
@@ -262,10 +307,19 @@ else:
             if not interaction.response.is_done():
                 await interaction.response.defer(ephemeral=True)
             ctx = await interaction.client.get_context(interaction)
+            if interaction.client.lavalink.radio_browser.disabled:
+                return []
             return await cls.convert(ctx, argument)
 
         @classmethod
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
+            if interaction.client.lavalink.radio_browser.disabled:
+                return [
+                    Choice(
+                        name=_("Radio Browser is disabled"),
+                        value="???",
+                    )
+                ]
             codecs = await interaction.client.lavalink.radio_browser.codecs()
             if not current:
                 return [
@@ -287,6 +341,8 @@ else:
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[CountryCode]:
             """Converts a CountryCode name to to a matching object"""
+            if ctx.bot.lavalink.radio_browser.disabled:
+                return []
 
             try:
                 return await ctx.lavalink.radio_browser.countrycodes(arg)
@@ -298,10 +354,19 @@ else:
             if not interaction.response.is_done():
                 await interaction.response.defer(ephemeral=True)
             ctx = await interaction.client.get_context(interaction)
+            if interaction.client.lavalink.radio_browser.disabled:
+                return []
             return await cls.convert(ctx, argument)
 
         @classmethod
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
+            if interaction.client.lavalink.radio_browser.disabled:
+                return [
+                    Choice(
+                        name=_("Radio Browser is disabled"),
+                        value="???",
+                    )
+                ]
             countrycodes = await interaction.client.lavalink.radio_browser.countrycodes()
             if not current:
                 return [
@@ -323,6 +388,8 @@ else:
         @classmethod
         async def convert(cls, ctx: ContextT, arg: str) -> list[Country]:
             """Converts a Country name to to a matching object"""
+            if ctx.bot.lavalink.radio_browser.disabled:
+                return []
 
             try:
                 countries = await ctx.lavalink.radio_browser.countries()
@@ -340,10 +407,19 @@ else:
             if not interaction.response.is_done():
                 await interaction.response.defer(ephemeral=True)
             ctx = await interaction.client.get_context(interaction)
+            if interaction.client.lavalink.radio_browser.disabled:
+                return []
             return await cls.convert(ctx, argument)
 
         @classmethod
         async def autocomplete(cls, interaction: InteractionT, current: str) -> list[Choice]:
+            if interaction.client.lavalink.radio_browser.disabled:
+                return [
+                    Choice(
+                        name=_("Radio Browser is disabled"),
+                        value="???",
+                    )
+                ]
             data = interaction.data
             options = data.get("options", [])
             kwargs = {}
