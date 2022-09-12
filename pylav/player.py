@@ -372,7 +372,7 @@ class Player(VoiceProtocol):
 
     @property
     def ping(self) -> int:
-        return self.ping
+        return self._ping
 
     @property
     def region(self) -> str | None:
