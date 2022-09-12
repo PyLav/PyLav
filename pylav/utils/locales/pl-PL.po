@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-09-12 21:34+0000\n"
-"PO-Revision-Date: 2022-09-12 21:37\n"
+"PO-Revision-Date: 2022-09-12 23:09\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
@@ -19,39 +19,39 @@ msgstr ""
 
 #: pylav/utils/__init__.py:377
 msgid "hour"
-msgstr ""
+msgstr "godzina"
 
 #: pylav/utils/__init__.py:378
 msgid "minute"
-msgstr ""
+msgstr "minuta"
 
 #: pylav/utils/__init__.py:379
 msgid "second"
-msgstr ""
+msgstr "sekunda"
 
 #: pylav/utils/__init__.py:380
 msgid "day"
-msgstr ""
+msgstr "dzień"
 
 #: pylav/utils/__init__.py:381
 msgid "days"
-msgstr ""
+msgstr "dni"
 
 #: pylav/utils/__init__.py:382
 msgid "hours"
-msgstr ""
+msgstr "godziny"
 
 #: pylav/utils/__init__.py:383
 msgid "minutes"
-msgstr ""
+msgstr "minuty"
 
 #: pylav/utils/__init__.py:384
 msgid "seconds"
-msgstr ""
+msgstr "sekundy"
 
 #: pylav/utils/__init__.py:405
 msgid "Unknown"
-msgstr ""
+msgstr "Nieznane"
 
 #: pylav/utils/__init__.py:1071
 msgid "{} remaining. Type `more` to continue."

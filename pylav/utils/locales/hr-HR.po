@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-09-12 21:34+0000\n"
-"PO-Revision-Date: 2022-09-12 21:37\n"
+"PO-Revision-Date: 2022-09-12 23:09\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
 "MIME-Version: 1.0\n"
@@ -51,7 +51,7 @@ msgstr ""
 
 #: pylav/utils/__init__.py:405
 msgid "Unknown"
-msgstr ""
+msgstr "Nepoznato"
 
 #: pylav/utils/__init__.py:1071
 msgid "{} remaining. Type `more` to continue."

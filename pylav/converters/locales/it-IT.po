@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-09-12 17:45+0000\n"
-"PO-Revision-Date: 2022-09-12 17:49\n"
+"PO-Revision-Date: 2022-09-12 23:09\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "MIME-Version: 1.0\n"
@@ -38,7 +38,7 @@ msgstr "Stazione con nome `{arg}` non trovata"
 #: pylav/converters/radio.py:319 pylav/converters/radio.py:366
 #: pylav/converters/radio.py:419
 msgid "Radio Browser is disabled"
-msgstr ""
+msgstr "Il browser radio è disabilitato"
 
 #: pylav/converters/radio.py:119 pylav/converters/radio.py:140
 #: pylav/converters/radio.py:178 pylav/converters/radio.py:188
