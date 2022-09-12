@@ -51,27 +51,39 @@ class RadioBrowser:
         headers = {"User-Agent": f"PyLav/{client.lib_version}"}
         self._lib_client = client
         self.client = Request(headers=headers, session=self._lib_client.cached_session)
+        self._disabled = False
 
     async def initialize(self) -> None:
-        await self.update_base_url()
-        LOGGER.debug("Priming the cache")
-        asyncio.ensure_future(asyncio.create_task(self.stations()))
-        asyncio.ensure_future(asyncio.create_task(self.tags()))
-        asyncio.ensure_future(asyncio.create_task(self.codecs()))
-        asyncio.ensure_future(asyncio.create_task(self.countries()))
-        asyncio.ensure_future(asyncio.create_task(self.languages()))
-        asyncio.ensure_future(asyncio.create_task(self.states()))
-        asyncio.ensure_future(asyncio.create_task(self.countrycodes()))
-        asyncio.ensure_future(asyncio.create_task(self.codecs()))
-        asyncio.ensure_future(asyncio.create_task(self.stations_by_clicks(limit=25)))
-        asyncio.ensure_future(asyncio.create_task(self.stations_by_votes(limit=25)))
-        LOGGER.debug("Cache primed")
+        try:
+            await self.update_base_url()
+            self._disabled = False
+        except Exception as e:
+            LOGGER.error("Error while initializing the Radio Browser extension - disabling it")
+            LOGGER.debug(e, exc_info=e)
+            self._disabled = True
+        else:
+            LOGGER.debug("Priming the cache")
+            asyncio.ensure_future(asyncio.create_task(self.stations()))
+            asyncio.ensure_future(asyncio.create_task(self.tags()))
+            asyncio.ensure_future(asyncio.create_task(self.codecs()))
+            asyncio.ensure_future(asyncio.create_task(self.countries()))
+            asyncio.ensure_future(asyncio.create_task(self.languages()))
+            asyncio.ensure_future(asyncio.create_task(self.states()))
+            asyncio.ensure_future(asyncio.create_task(self.countrycodes()))
+            asyncio.ensure_future(asyncio.create_task(self.codecs()))
+            asyncio.ensure_future(asyncio.create_task(self.stations_by_clicks(limit=25)))
+            asyncio.ensure_future(asyncio.create_task(self.stations_by_votes(limit=25)))
+            LOGGER.debug("Cache primed")
 
     async def update_base_url(self) -> None:
         self.base_url = await pick_base_url()
 
     def build_url(self, endpoint: str) -> str:
         return f"{self.base_url}/{endpoint}"
+
+    @property
+    def disabled(self) -> bool:
+        return self._disabled
 
     @type_check
     async def countries(self, code: str = None) -> list[Country]:
@@ -86,6 +98,8 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_countries
         """
+        if self._disabled:
+            return []
 
         endpoint = f"json/countries/{code}" if code else "json/countries/"
         await self.update_base_url()
@@ -106,6 +120,8 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_countrycodes
         """
+        if self._disabled:
+            return []
 
         endpoint = f"json/countrycodes/{code}" if code else "json/countrycodes/"
         await self.update_base_url()
@@ -126,6 +142,8 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_codecs
         """
+        if self._disabled:
+            return []
 
         endpoint = "json/codecs/"
         await self.update_base_url()
@@ -151,6 +169,8 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_states
         """
+        if self._disabled:
+            return []
 
         endpoint = "json/states"
         await self.update_base_url()
@@ -189,6 +209,8 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_languages
         """
+        if self._disabled:
+            return []
         endpoint = f"json/languages/{language}" if language else "json/languages/"
         await self.update_base_url()
         url = self.build_url(endpoint)
@@ -208,6 +230,8 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_tags
         """
+        if self._disabled:
+            return []
 
         if tag:
             tag = tag.lower()
@@ -231,6 +255,8 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
+        if self._disabled:
+            return []
         endpoint = f"json/stations/byuuid/{stationuuid}"
         await self.update_base_url()
         url = self.build_url(endpoint)
@@ -252,6 +278,8 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
+        if self._disabled:
+            return []
         kwargs |= {"name": name, "name_exact": exact, "order": "votes"}
         kwargs["hidebroken"] = kwargs.pop("hidebroken", True)
         return await self.search(**kwargs)
@@ -270,6 +298,8 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
+        if self._disabled:
+            return []
         kwargs |= {"codec": codec, "codec_exact": exact, "order": "votes"}
         kwargs["hidebroken"] = kwargs.pop("hidebroken", True)
         return await self.search(**kwargs)
@@ -288,6 +318,8 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
+        if self._disabled:
+            return []
         kwargs |= {"country": country, "country_exact": exact, "order": "votes"}
         kwargs["hidebroken"] = kwargs.pop("hidebroken", True)
         return await self.search(**kwargs)
@@ -304,6 +336,8 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
+        if self._disabled:
+            return []
         kwargs |= {"countrycode": code, "order": "votes"}
         kwargs["hidebroken"] = kwargs.pop("hidebroken", True)
         return await self.search(**kwargs)
@@ -322,6 +356,8 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
+        if self._disabled:
+            return []
         kwargs |= {"state": state, "state_exact": exact, "order": "votes"}
         kwargs["hidebroken"] = kwargs.pop("hidebroken", True)
         return await self.search(**kwargs)
@@ -340,6 +376,8 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
+        if self._disabled:
+            return []
         kwargs |= {"language": language, "language_exact": exact, "order": "votes"}
         kwargs["hidebroken"] = kwargs.pop("hidebroken", True)
         return await self.search(**kwargs)
@@ -355,6 +393,8 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
+        if self._disabled:
+            return []
         kwargs |= {"tag": tag, "tag_exact": exact, "order": "votes"}
         kwargs["hidebroken"] = kwargs.pop("hidebroken", True)
         return await self.search(**kwargs)
@@ -370,6 +410,8 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
+        if self._disabled:
+            return []
         tag_list = ",".join(tag_list)
         kwargs["tag_list"] = tag_list
         kwargs |= {"tag_list": tag_list, "order": "votes"}
@@ -396,6 +438,8 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#Count_station_click
         """
+        if self._disabled:
+            return {}
         endpoint = f"json/url/{stationuuid}"
         await self.update_base_url()
         url = self.build_url(endpoint)
@@ -410,6 +454,8 @@ class RadioBrowser:
         See details:
             https://nl1.api.radio-browser.info/#List_of_all_radio_stations
         """
+        if self._disabled:
+            return []
         endpoint = "json/stations"
         kwargs["hidebroken"] = kwargs.pop("hidebroken", "true")
         await self.update_base_url()
@@ -429,6 +475,8 @@ class RadioBrowser:
         See details:
             https://nl1.api.radio-browser.info/#Stations_by_votes
         """
+        if self._disabled:
+            return []
         endpoint = f"json/stations/topvote/{limit}"
         await self.update_base_url()
         url = self.build_url(endpoint)
@@ -448,6 +496,8 @@ class RadioBrowser:
         See details:
             https://nl1.api.radio-browser.info/#Stations_by_clicks
         """
+        if self._disabled:
+            return []
         endpoint = f"json/stations/topclick/{limit}"
         await self.update_base_url()
         url = self.build_url(endpoint)
@@ -505,6 +555,8 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#Advanced_station_search
         """
+        if self._disabled:
+            return []
         endpoint = "json/stations/search"
         # lowercase tag reference since the API turned to be case-sensitive
         for paramkey in ["tag", "tagList"]:
@@ -528,6 +580,8 @@ class RadioBrowser:
             station (Station, optional): The station to click.
             station_id (str, optional): The station uuid to click.
         """
+        if self._disabled:
+            return
         if (not station) and (not station_id):
             return
         if station:
