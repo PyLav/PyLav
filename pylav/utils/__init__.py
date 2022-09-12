@@ -223,6 +223,7 @@ class _Singleton(type):
     _instances = {}
 
     def __call__(cls, *args, **kwargs):
+        # sourcery skip: instance-method-first-arg-name
         if cls not in cls._instances:
             cls._locked_call(*args, **kwargs)
         return cls._instances[cls]
@@ -2393,12 +2394,7 @@ class MessagePredicate(Callable[[discord.Message], bool]):
         def predicate(self: MessagePredicate, m: discord.Message) -> bool:
             if not same_context(m):
                 return False
-
-            if isinstance(pattern, str):
-                pattern_obj = re.compile(pattern)
-            else:
-                pattern_obj = pattern
-
+            pattern_obj = re.compile(pattern) if isinstance(pattern, str) else pattern
             match = pattern_obj.search(m.content)
             if match:
                 self.result = match
@@ -2409,12 +2405,11 @@ class MessagePredicate(Callable[[discord.Message], bool]):
 
     @staticmethod
     def _find_role(guild: discord.Guild, argument: str) -> discord.Role | None:
-        match = _ID_RE.match(argument) or _ROLE_MENTION_RE.match(argument)
-        if match:
-            result = guild.get_role(int(match.group(1)))
-        else:
-            result = discord.utils.get(guild.roles, name=argument)
-        return result
+        return (
+            guild.get_role(int(match.group(1)))
+            if (match := _ID_RE.match(argument) or _ROLE_MENTION_RE.match(argument))
+            else discord.utils.get(guild.roles, name=argument)
+        )
 
     @staticmethod
     def _get_guild(
