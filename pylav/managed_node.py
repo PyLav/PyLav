@@ -498,12 +498,12 @@ class LocalNodeManager:
             else await self._client._lib_config_manager.get_config().fetch_auto_update_managed_nodes()
         )
 
-    async def _download_jar(self) -> None:
-        if not await self.should_auto_update():
+    async def _download_jar(self, forced: bool = False) -> None:
+        if not await self.should_auto_update() and not forced:
             return
         LOGGER.info("Downloading Lavalink.jar")
         jar_url = (
-            self._ci_info["jar_url"] or "https://github.com/freyacodes/Lavalink/releases/download/3.5/Lavalink.jar"
+            self._ci_info["jar_url"] or "https://github.com/freyacodes/Lavalink/releases/download/3.5.1/Lavalink.jar"
         )
 
         async with self._session.get(jar_url, timeout=3600) as response:
@@ -535,11 +535,11 @@ class LocalNodeManager:
             shutil.move(path, str(LAVALINK_JAR_FILE), copy_function=shutil.copyfile)
 
         LOGGER.info("Successfully downloaded Lavalink.jar (%s bytes written)", format(nbytes, ","))
-        await self._is_up_to_date()
+        await self._is_up_to_date(forced=forced)
         await self._client._config.update_download_id(self._ci_info["number"])
 
-    async def _is_up_to_date(self):
-        if self._up_to_date is True:
+    async def _is_up_to_date(self, forced: bool = False) -> bool:
+        if self._up_to_date is True and not forced:
             # Return cached value if we've checked this before
             return True
         last_download_id = await self._client._config.fetch_download_id()
@@ -583,7 +583,7 @@ class LocalNodeManager:
         self._commit = commit["commit"].decode()
         self._version = version["version"].decode()
         self._buildtime = date
-        if await self.should_auto_update():
+        if await self.should_auto_update() or forced:
             self._up_to_date = last_download_id == self._ci_info.get("number", -1)
         else:
             self._ci_info["number"] = build
