@@ -1392,7 +1392,7 @@ class Player(VoiceProtocol):
         )
         self._connected = True
         self.connected_at = utcnow()
-        LOGGER.info("[Player-%s] Connected to voice channel", self.channel.guild.id)
+        LOGGER.debug("[Player-%s] Connected to voice channel", self.channel.guild.id)
 
     async def disconnect(self, *, force: bool = False, requester: discord.Member | None) -> None:
         try:
@@ -1400,7 +1400,7 @@ class Player(VoiceProtocol):
                 await self.save()
             await self.guild.change_voice_state(channel=None)
             self.node.dispatch_event(PlayerDisconnectedEvent(self, requester))
-            LOGGER.info("[Player-%s] Disconnected from voice channel", self.channel.guild.id)
+            LOGGER.debug("[Player-%s] Disconnected from voice channel", self.channel.guild.id)
         finally:
             self._connected = False
             self.queue.clear()
@@ -1460,7 +1460,7 @@ class Player(VoiceProtocol):
         if channel == self.channel:
             return
         old_channel = self.channel
-        LOGGER.info(
+        LOGGER.debug(
             "[Player-%s] Moving from %s to voice channel: %s", self.channel.guild.id, self.channel.id, channel.id
         )
         self.channel = channel
@@ -2306,8 +2306,8 @@ class Player(VoiceProtocol):
         if (v := effects.get("echo", None)) and (f := Echo.from_dict(v)) and f.changed:
             self._echo = f
         if current:
-            self.current = current
             current.timestamp = int(player.position)
+            self.queue.put_nowait([current], index=0)
         await self.change_to_best_node(ops=False)
         if self.has_effects:
             await self.node.filters(
@@ -2325,7 +2325,7 @@ class Player(VoiceProtocol):
             )
         if self.volume_filter.changed:
             await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
-        if player.playing and not current:
+        if player.playing:
             await self.next(requester)  # type: ignore
         self.last_track = last_track
         self._restored = True
