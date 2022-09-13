@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import asyncio
-import random
+import contextlib
 import socket
+import typing
 
-import asyncstdlib
+import aiohttp
+from aiocache import Cache, cached
 
 from pylav._logging import getLogger
 
@@ -24,24 +26,24 @@ class RDNSLookupError(Error):
         super().__init__(self.error_msg)
 
 
-async def fetch_servers():
+@cached(ttl=3600, cache=Cache.MEMORY, namespace="radio_browser", key="fetch_servers")
+async def fetch_servers() -> set[str]:
     """
     Get IP of all currently available `Radiob Browser` servers.
     Returns:
-        list: List of IPs
+        set: List of IPs
     """
-    ips = []
+    ips = set()
     try:
         data = await asyncio.to_thread(socket.getaddrinfo, "all.api.radio-browser.info", 80, 0, 0, socket.IPPROTO_TCP)
     except socket.gaierror:
-        LOGGER.exception("Network failure")
-        raise
+        return set()
     else:
-        if data and isinstance(data[0][4], tuple):
-            ips.extend(ip[4][0] for ip in data)
-    return ips
+        ips.update({i[4][0] for i in data})
+    return typing.cast(set[str], ips)
 
 
+@cached(ttl=3600, cache=Cache.MEMORY, namespace="radio_browser", key="rdns_lookup")
 async def rdns_lookup(ip: str) -> str:
     """
     Reverse DNS lookup.
@@ -56,6 +58,7 @@ async def rdns_lookup(ip: str) -> str:
     return hostname
 
 
+@cached(ttl=3600, cache=Cache.MEMORY, namespace="radio_browser", key="fetch_hosts")
 async def fetch_hosts() -> list[str]:
     names = []
     servers = await fetch_servers()
@@ -64,13 +67,19 @@ async def fetch_hosts() -> list[str]:
         try:
             host_name = await rdns_lookup(ip)
         except RDNSLookupError as exc:
-            LOGGER.exception(exc.error_msg)
+            LOGGER.trace(exc.error_msg, exc_info=True)
         else:
             names.append(host_name)
     return names
 
 
-async def pick_base_url() -> str:
+@cached(ttl=600, cache=Cache.MEMORY, namespace="radio_browser", key="pick_base_url")
+async def pick_base_url(session: aiohttp.ClientSession) -> str | None:
     hosts = await fetch_hosts()
-    url = random.choice(await asyncstdlib.sorted(hosts))
-    return f"https://{url}/"
+    for host in hosts:
+        with contextlib.suppress(Exception):
+            async with session.get(f"https://{host}/json/stats") as response:
+                if response.status == 200:
+                    return f"https://{host}"
+                LOGGER.verbose("Error interacting with %s: %s", host, response.status)
+    LOGGER.error("All the following hosts for the RadioBrowser API are broken: %s", ", ".join(hosts))
