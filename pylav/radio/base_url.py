@@ -26,7 +26,7 @@ class RDNSLookupError(Error):
         super().__init__(self.error_msg)
 
 
-@cached(ttl=3600, cache=Cache.MEMORY, namespace="radio_browser", key="fetch_servers")
+@cached(ttl=3600, cache=Cache.MEMORY, namespace="radio_browser", key=f"{__name__}.fetch_servers")
 async def fetch_servers() -> set[str]:
     """
     Get IP of all currently available `Radiob Browser` servers.
@@ -43,7 +43,7 @@ async def fetch_servers() -> set[str]:
     return typing.cast(set[str], ips)
 
 
-@cached(ttl=3600, cache=Cache.MEMORY, namespace="radio_browser", key="rdns_lookup")
+@cached(ttl=600, cache=Cache.MEMORY, namespace="radio_browser")
 async def rdns_lookup(ip: str) -> str:
     """
     Reverse DNS lookup.
@@ -58,7 +58,7 @@ async def rdns_lookup(ip: str) -> str:
     return hostname
 
 
-@cached(ttl=3600, cache=Cache.MEMORY, namespace="radio_browser", key="fetch_hosts")
+@cached(ttl=600, cache=Cache.MEMORY, namespace="radio_browser", key=f"{__name__}.fetch_hosts")
 async def fetch_hosts() -> list[str]:
     names = []
     servers = await fetch_servers()
@@ -73,7 +73,7 @@ async def fetch_hosts() -> list[str]:
     return names
 
 
-@cached(ttl=600, cache=Cache.MEMORY, namespace="radio_browser", key="pick_base_url")
+@cached(ttl=300, cache=Cache.MEMORY, namespace="radio_browser", key=f"{__name__}.pick_base_url")
 async def pick_base_url(session: aiohttp.ClientSession) -> str | None:
     hosts = await fetch_hosts()
     for host in hosts:

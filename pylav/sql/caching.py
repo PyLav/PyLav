@@ -58,7 +58,7 @@ def key_builder(method: Callable, *args: Any, **kwargs: Any) -> str:
         _id = args[0].bot
     else:
         _id = args[0].id
-    return f"{f'{method.__module__}.' or ''}{args[0].__class__.__name__}.{method.__name__}.{_id}"
+    return f"{f'{method.__module__}'}.{args[0].__class__.__name__}.{method.__name__}.{_id}"
 
 
 CACHE = cached(ttl=None, cache=Cache.MEMORY, key_builder=key_builder)
