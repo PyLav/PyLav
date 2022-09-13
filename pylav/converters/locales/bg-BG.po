@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-09-12 17:45+0000\n"
-"PO-Revision-Date: 2022-09-12 17:49\n"
+"POT-Creation-Date: 2022-09-13 18:13+0000\n"
+"PO-Revision-Date: 2022-09-13 18:17\n"
 "Last-Translator: \n"
 "Language-Team: Bulgarian\n"
 "MIME-Version: 1.0\n"
@@ -33,44 +33,44 @@ msgstr ""
 msgid "Station with name `{arg}` not found"
 msgstr ""
 
-#: pylav/converters/radio.py:67 pylav/converters/radio.py:171
-#: pylav/converters/radio.py:218 pylav/converters/radio.py:264
-#: pylav/converters/radio.py:319 pylav/converters/radio.py:366
-#: pylav/converters/radio.py:419
+#: pylav/converters/radio.py:67 pylav/converters/radio.py:169
+#: pylav/converters/radio.py:216 pylav/converters/radio.py:262
+#: pylav/converters/radio.py:317 pylav/converters/radio.py:364
+#: pylav/converters/radio.py:417
 msgid "Radio Browser is disabled"
 msgstr ""
 
-#: pylav/converters/radio.py:119 pylav/converters/radio.py:140
-#: pylav/converters/radio.py:178 pylav/converters/radio.py:188
-#: pylav/converters/radio.py:225 pylav/converters/radio.py:235
-#: pylav/converters/radio.py:279 pylav/converters/radio.py:289
-#: pylav/converters/radio.py:326 pylav/converters/radio.py:336
-#: pylav/converters/radio.py:373 pylav/converters/radio.py:383
-#: pylav/converters/radio.py:433 pylav/converters/radio.py:443
+#: pylav/converters/radio.py:117 pylav/converters/radio.py:138
+#: pylav/converters/radio.py:176 pylav/converters/radio.py:186
+#: pylav/converters/radio.py:223 pylav/converters/radio.py:233
+#: pylav/converters/radio.py:277 pylav/converters/radio.py:287
+#: pylav/converters/radio.py:324 pylav/converters/radio.py:334
+#: pylav/converters/radio.py:371 pylav/converters/radio.py:381
+#: pylav/converters/radio.py:431 pylav/converters/radio.py:441
 msgid "Unnamed"
 msgstr ""
 
-#: pylav/converters/radio.py:155
+#: pylav/converters/radio.py:153
 msgid "Tag with name `{arg}` not found"
 msgstr ""
 
-#: pylav/converters/radio.py:202
+#: pylav/converters/radio.py:200
 msgid "Language with name `{arg}` not found"
 msgstr ""
 
-#: pylav/converters/radio.py:248
+#: pylav/converters/radio.py:246
 msgid "State with name `{arg}` not found"
 msgstr ""
 
-#: pylav/converters/radio.py:303
+#: pylav/converters/radio.py:301
 msgid "Codec with name `{arg}` not found"
 msgstr ""
 
-#: pylav/converters/radio.py:350
+#: pylav/converters/radio.py:348
 msgid "Country code `{arg}` not found"
 msgstr ""
 
-#: pylav/converters/radio.py:397
+#: pylav/converters/radio.py:395
 msgid "Country with name `{arg}` not found"
 msgstr ""
 
