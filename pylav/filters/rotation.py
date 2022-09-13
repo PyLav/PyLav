@@ -4,29 +4,20 @@ from pylav.filters.utils import FilterMixin
 
 
 class Rotation(FilterMixin):
-    __slots__ = ("_hertz", "_off", "_default")
+    __slots__ = ("_hertz", "_default")
 
     def __init__(self, hertz: float = None):
         super().__init__()
         self.hertz = hertz
-        self.off = hertz is None
 
     def to_dict(self) -> dict[str, float | bool | None]:
-        return {
-            "hertz": self.hertz,
-            "off": self.off,
-        }
-
-    def to_json(self) -> dict[str, float | None]:
         return {
             "hertz": self.hertz,
         }
 
     @classmethod
     def from_dict(cls, data: dict[str, float | bool | None]) -> Rotation:
-        c = cls(hertz=data["hertz"])
-        c.off = data["off"]
-        return c
+        return cls(hertz=data["hertz"])
 
     def __repr__(self):
         return f"<Rotation: hertz={self.hertz}>"
@@ -38,7 +29,6 @@ class Rotation(FilterMixin):
     @hertz.setter
     def hertz(self, v: float | None):
         self._hertz = v
-        self.off = v is None
 
     @classmethod
     def default(cls) -> Rotation:
@@ -54,4 +44,3 @@ class Rotation(FilterMixin):
 
     def reset(self) -> None:
         self.hertz = None
-        self.off = True

@@ -4,30 +4,23 @@ from pylav.filters.utils import FilterMixin
 
 
 class Volume(FilterMixin):
-    __slots__ = ("_value", "_off", "_default")
+    __slots__ = ("_value", "_default")
 
     def __init__(self, value: int | float | Volume):
         super().__init__()
-        self.off = False
         if isinstance(value, Volume):
             self.value = value.value
-            self.off = value.off
         elif isinstance(value, int):
             self.value = value / 100
         else:
             self.value = value
 
     def to_dict(self) -> dict[str, float | bool]:
-        return {"volume": self.value, "off": self.off}
-
-    def to_json(self) -> dict[str, float]:
         return {"volume": self.value}
 
     @classmethod
     def from_dict(cls, data: dict[str, float | bool]) -> Volume:
-        c = cls(data["volume"])
-        c.off = data["off"]
-        return c
+        return cls(data["volume"])
 
     def __float__(self):
         return self.value

@@ -185,7 +185,7 @@ else:
             )
             data_new["PYLAV__TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS"] = TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS
 
-    if DeepDiff(data, data_new, ignore_order=True, max_diffs=1):
+    if DeepDiff(data, data_new, ignore_order=True, max_passes=2, cache_size=1000):
         with ENV_FILE.open(mode="w") as file:
             LOGGER.info("Updating %s with the following content: %r", ENV_FILE, data_new)
             yaml.safe_dump(data_new, file, default_flow_style=False, sort_keys=False, encoding="utf-8")

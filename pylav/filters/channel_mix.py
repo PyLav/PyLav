@@ -4,7 +4,7 @@ from pylav.filters.utils import FilterMixin
 
 
 class ChannelMix(FilterMixin):
-    __slots__ = ("_left_to_left", "_left_to_right", "_right_to_left", "_right_to_right", "_off", "_default")
+    __slots__ = ("_left_to_left", "_left_to_right", "_right_to_left", "_right_to_right", "_default")
 
     def __init__(
         self,
@@ -18,18 +18,8 @@ class ChannelMix(FilterMixin):
         self.left_to_right = left_to_right
         self.right_to_left = right_to_left
         self.right_to_right = right_to_right
-        self.off = all(v is None for v in [left_to_left, left_to_right, right_to_left, right_to_right])
 
     def to_dict(self) -> dict[str, float | None | bool]:
-        return {
-            "leftToLeft": self.left_to_left,
-            "leftToRight": self.left_to_right,
-            "rightToLeft": self.right_to_left,
-            "rightToRight": self.right_to_right,
-            "off": self.off,
-        }
-
-    def to_json(self) -> dict[str, float | None]:
         return {
             "leftToLeft": self.left_to_left,
             "leftToRight": self.left_to_right,
@@ -39,14 +29,12 @@ class ChannelMix(FilterMixin):
 
     @classmethod
     def from_dict(cls, data: dict[str, float | bool | None]) -> ChannelMix:
-        c = cls(
+        return cls(
             left_to_left=data["leftToLeft"],
             left_to_right=data["leftToRight"],
             right_to_left=data["rightToLeft"],
             right_to_right=data["rightToRight"],
         )
-        c.off = data["off"]
-        return c
 
     def __repr__(self):
         return (
@@ -63,10 +51,6 @@ class ChannelMix(FilterMixin):
     @left_to_left.setter
     def left_to_left(self, v: float | None):
         self._left_to_left = v
-        self.off = all(
-            v is None
-            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
-        )
 
     @property
     def left_to_right(self) -> float | None:
@@ -75,10 +59,6 @@ class ChannelMix(FilterMixin):
     @left_to_right.setter
     def left_to_right(self, v: float | None):
         self._left_to_right = v
-        self.off = all(
-            v is None
-            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
-        )
 
     @property
     def right_to_left(self) -> float | None:
@@ -87,10 +67,6 @@ class ChannelMix(FilterMixin):
     @right_to_left.setter
     def right_to_left(self, v: float | None):
         self._right_to_left = v
-        self.off = all(
-            v is None
-            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
-        )
 
     @property
     def right_to_right(self) -> float | None:
@@ -99,10 +75,6 @@ class ChannelMix(FilterMixin):
     @right_to_right.setter
     def right_to_right(self, v: float | None):
         self._right_to_right = v
-        self.off = all(
-            v is None
-            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
-        )
 
     @classmethod
     def default(cls) -> ChannelMix:
@@ -124,4 +96,3 @@ class ChannelMix(FilterMixin):
 
     def reset(self) -> None:
         self.right_to_right = self.right_to_left = self.left_to_right = self.left_to_left = None
-        self.off = True

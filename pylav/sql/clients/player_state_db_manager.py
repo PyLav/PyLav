@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from collections.abc import AsyncIterator
 from typing import TYPE_CHECKING
 
@@ -24,14 +25,12 @@ class PlayerStateDBManager:
         return self._client
 
     async def save_players(self, players: list[dict]):
-        for player in players:
-            p = PlayerStateModel(bot=self.client.bot.user.id, **player)
-            await p.save()
-            LOGGER.trace("Saved player %s", p)
+        await asyncio.gather(*[self.save_player(player) for player in players])
         LOGGER.debug("Saved %s players", len(players))
 
     async def save_player(self, player: dict):
         await PlayerStateModel(bot=self.client.bot.user.id, **player).save()
+        LOGGER.trace("Saved player %s", player.get("id"))
 
     async def fetch_player(self, guild_id: int) -> PlayerStateModel | None:
         return await PlayerStateModel.get(bot_id=self._client.bot.user.id, guild_id=guild_id)

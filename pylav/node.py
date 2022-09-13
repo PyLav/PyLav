@@ -984,27 +984,27 @@ class Node:
             "op": "filters",
             "guildId": str(guild_id),
         }
-        if volume and volume.changed:
+        if volume:
             op["volume"] = volume.get()
-        if equalizer and equalizer.changed:
+        if equalizer:
             op["equalizer"] = equalizer.get()
-        if karaoke and karaoke.changed:
+        if karaoke:
             op["karaoke"] = karaoke.get()
-        if timescale and timescale.changed:
+        if timescale:
             op["timescale"] = timescale.get()
-        if tremolo and tremolo.changed:
+        if tremolo:
             op["tremolo"] = tremolo.get()
-        if vibrato and vibrato.changed:
+        if vibrato:
             op["vibrato"] = vibrato.get()
-        if rotation and rotation.changed:
+        if rotation:
             op["rotation"] = rotation.get()
-        if distortion and distortion.changed:
+        if distortion:
             op["distortion"] = distortion.get()
-        if low_pass and low_pass.changed:
+        if low_pass:
             op["lowPass"] = low_pass.get()
-        if channel_mix and channel_mix.changed:
+        if channel_mix:
             op["channelMix"] = channel_mix.get()
-        if echo and echo.changed:
+        if echo:
             op["echo"] = echo.get()
 
         await self.send(**op)

@@ -246,27 +246,27 @@ class Player(VoiceProtocol):
         else:
             self._volume = Volume(await player_manager.client.player_config_manager.get_volume(self.guild.id))
             effects = await config.fetch_effects()
-            if (v := effects.get("volume", None)) and (f := Volume.from_dict(v)) and f.changed:
+            if (v := effects.get("volume", None)) and (f := Volume.from_dict(v)):
                 self._volume = f
-            if (eq := effects.get("equalizer", None)) and (f := Equalizer.from_dict(eq)) and f.changed:
+            if (eq := effects.get("equalizer", None)) and (f := Equalizer.from_dict(eq)):
                 self._equalizer = f
-            if (k := effects.get("karaoke", None)) and (f := Karaoke.from_dict(k)) and f.changed:
+            if (k := effects.get("karaoke", None)) and (f := Karaoke.from_dict(k)):
                 self._karaoke = f
-            if (ts := effects.get("timescale", None)) and (f := Timescale.from_dict(ts)) and f.changed:
+            if (ts := effects.get("timescale", None)) and (f := Timescale.from_dict(ts)):
                 self._timescale = f
-            if (tr := effects.get("tremolo", None)) and (f := Tremolo.from_dict(tr)) and f.changed:
+            if (tr := effects.get("tremolo", None)) and (f := Tremolo.from_dict(tr)):
                 self._tremolo = f
-            if (vb := effects.get("vibrato", None)) and (f := Vibrato.from_dict(vb)) and f.changed:
+            if (vb := effects.get("vibrato", None)) and (f := Vibrato.from_dict(vb)):
                 self._vibrato = f
-            if (ro := effects.get("rotation", None)) and (f := Rotation.from_dict(ro)) and f.changed:
+            if (ro := effects.get("rotation", None)) and (f := Rotation.from_dict(ro)):
                 self._rotation = f
-            if (di := effects.get("distortion", None)) and (f := Distortion.from_dict(di)) and f.changed:
+            if (di := effects.get("distortion", None)) and (f := Distortion.from_dict(di)):
                 self._distortion = f
-            if (lo := effects.get("lowpass", None)) and (f := LowPass.from_dict(lo)) and f.changed:
+            if (lo := effects.get("lowpass", None)) and (f := LowPass.from_dict(lo)):
                 self._low_pass = f
-            if (ch := effects.get("channel_mix", None)) and (f := ChannelMix.from_dict(ch)) and f.changed:
+            if (ch := effects.get("channel_mix", None)) and (f := ChannelMix.from_dict(ch)):
                 self._channel_mix = f
-            if (echo := effects.get("echo", None)) and (f := Echo.from_dict(echo)) and f.changed:
+            if (echo := effects.get("echo", None)) and (f := Echo.from_dict(echo)):
                 self._echo = f
             if await asyncstdlib.any(
                 f.changed
@@ -297,7 +297,7 @@ class Player(VoiceProtocol):
                     echo=self.echo,
                 )
 
-            if self.volume_filter.changed:
+            if self.volume_filter:
                 await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
 
         now_time = utcnow()
@@ -1357,7 +1357,7 @@ class Player(VoiceProtocol):
                     reset_not_set=True,
                 )
 
-            if self.volume_filter.changed:
+            if self.volume_filter:
                 await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
         self.node.dispatch_event(NodeChangedEvent(self, old_node, node))
 
@@ -1670,7 +1670,7 @@ class Player(VoiceProtocol):
         """
         await self.set_filters(
             requester=requester,
-            low_pass=None,  # Timescale breaks if it applied with lowpass
+            low_pass=None,
             equalizer=Equalizer(
                 levels=[
                     {"band": 0, "gain": -0.075},
@@ -1679,13 +1679,13 @@ class Player(VoiceProtocol):
                 ],
                 name="Nightcore",
             ),
-            karaoke=self.karaoke if self.karaoke.changed else None,
-            tremolo=self.tremolo if self.tremolo.changed else None,
-            vibrato=self.vibrato if self.vibrato.changed else None,
-            distortion=self.distortion if self.distortion.changed else None,
+            karaoke=self.karaoke or None,
+            tremolo=self.tremolo or None,
+            vibrato=self.vibrato or None,
+            distortion=self.distortion or None,
             timescale=Timescale(speed=1.17, pitch=1.2, rate=1),
-            channel_mix=self.channel_mix if self.channel_mix.changed else None,
-            echo=self.echo if self.echo.changed else None,
+            channel_mix=self.channel_mix or None,
+            echo=self.echo or None,
             reset_not_set=True,
         )
 
@@ -1699,16 +1699,16 @@ class Player(VoiceProtocol):
         """
         await self.set_filters(
             requester=requester,
-            low_pass=None,  # Timescale breaks if it applied with lowpass
+            low_pass=self.low_pass or None,
             equalizer=None,
             timescale=None,
             reset_not_set=True,
-            karaoke=self.karaoke if self.karaoke.changed else None,
-            tremolo=self.tremolo if self.tremolo.changed else None,
-            vibrato=self.vibrato if self.vibrato.changed else None,
-            distortion=self.distortion if self.distortion.changed else None,
-            channel_mix=self.channel_mix if self.channel_mix.changed else None,
-            echo=self.echo if self.echo.changed else None,
+            karaoke=self.karaoke or None,
+            tremolo=self.tremolo or None,
+            vibrato=self.vibrato or None,
+            distortion=self.distortion or None,
+            channel_mix=self.channel_mix or None,
+            echo=self.echo or None,
         )
 
     async def set_channel_mix(self, requester: discord.Member, channel_mix: ChannelMix, forced: bool = False) -> None:
@@ -1778,37 +1778,36 @@ class Player(VoiceProtocol):
             Member who requested the filters to be set
         """
         changed = False
-        if volume and volume.changed:
+        if volume:
             self._volume = volume
-            changed = True
-        if equalizer and equalizer.changed:
+        if equalizer:
             self._equalizer = equalizer
             changed = True
-        if karaoke and karaoke.changed:
+        if karaoke:
             self._karaoke = karaoke
             changed = True
-        if timescale and timescale.changed:
+        if timescale:
             self._timescale = timescale
             changed = True
-        if tremolo and tremolo.changed:
+        if tremolo:
             self._tremolo = tremolo
             changed = True
-        if vibrato and vibrato.changed:
+        if vibrato:
             self._vibrato = vibrato
             changed = True
-        if rotation and rotation.changed:
+        if rotation:
             self._rotation = rotation
             changed = True
-        if distortion and distortion.changed:
+        if distortion:
             self._distortion = distortion
             changed = True
-        if low_pass and low_pass.changed:
+        if low_pass:
             self._low_pass = low_pass
             changed = True
-        if channel_mix and channel_mix.changed:
+        if channel_mix:
             self._channel_mix = channel_mix
             changed = True
-        if echo and echo.changed:
+        if echo:
             self._echo = echo
             changed = True
 
@@ -1827,39 +1826,39 @@ class Player(VoiceProtocol):
                 "channel_mix": channel_mix,
                 "echo": echo,
             }
-            if not (equalizer and equalizer.changed):
-                self._equalizer = Equalizer.default()
-            if not (karaoke and karaoke.changed):
-                self._karaoke = Karaoke.default()
-            if not (timescale and timescale.changed):
-                self._timescale = Timescale.default()
-            if not (tremolo and tremolo.changed):
-                self._tremolo = Tremolo.default()
-            if not (vibrato and vibrato.changed):
-                self._vibrato = Vibrato.default()
-            if not (rotation and rotation.changed):
-                self._rotation = Rotation.default()
-            if not (distortion and distortion.changed):
-                self._distortion = Distortion.default()
-            if not (low_pass and low_pass.changed):
-                self._low_pass = LowPass.default()
-            if not (channel_mix and channel_mix.changed):
-                self._channel_mix = ChannelMix.default()
-            if not (echo and echo.changed):
-                self._echo = Echo.default()
+            if not equalizer:
+                self._equalizer = self._equalizer.default()
+            if not karaoke:
+                self._karaoke = self._karaoke.default()
+            if not timescale:
+                self._timescale = self._timescale.default()
+            if not tremolo:
+                self._tremolo = self._tremolo.default()
+            if not vibrato:
+                self._vibrato = self._vibrato.default()
+            if not rotation:
+                self._rotation = self._rotation.default()
+            if not distortion:
+                self._distortion = self._distortion.default()
+            if not low_pass:
+                self._low_pass = self._low_pass.default()
+            if not channel_mix:
+                self._channel_mix = self._channel_mix.default()
+            if not echo:
+                self._echo = self._echo.default()
         else:
             kwargs = {
-                "volume": volume or (self.volume_filter if self.volume_filter.changed else None),
-                "equalizer": equalizer or (self.equalizer if self.equalizer.changed else None),
-                "karaoke": karaoke or (self.karaoke if self.karaoke.changed else None),
-                "timescale": timescale or (self.timescale if self.timescale.changed else None),
-                "tremolo": tremolo or (self.tremolo if self.tremolo.changed else None),
-                "vibrato": vibrato or (self.vibrato if self.vibrato.changed else None),
-                "rotation": rotation or (self.rotation if self.rotation.changed else None),
-                "distortion": distortion or (self.distortion if self.distortion.changed else None),
-                "low_pass": low_pass or (self.low_pass if self.low_pass.changed else None),
-                "channel_mix": channel_mix or (self.channel_mix if self.channel_mix.changed else None),
-                "echo": echo or (self.echo if self.echo.changed else None),
+                "volume": volume or self.volume_filter or None,
+                "equalizer": equalizer or self.equalizer or None,
+                "karaoke": karaoke or self.karaoke or None,
+                "timescale": timescale or self.timescale or None,
+                "tremolo": tremolo or self.tremolo or None,
+                "vibrato": vibrato or self.vibrato or None,
+                "rotation": rotation or self.rotation or None,
+                "distortion": distortion or self.distortion or None,
+                "low_pass": low_pass or self.low_pass or None,
+                "channel_mix": channel_mix or self.channel_mix or None,
+                "echo": echo or self.echo or None,
             }
         if not volume:
             kwargs.pop("volume", None)
@@ -2283,27 +2282,27 @@ class Player(VoiceProtocol):
         self.history.raw_b64s = [t.track for t in history]
         self._effect_enabled = player.effect_enabled
         effects = player.effects
-        if (v := effects.get("volume", None)) and (f := Volume.from_dict(v)) and f.changed:
+        if (v := effects.get("volume", None)) and (f := Volume.from_dict(v)):
             self._volume = f
-        if (v := effects.get("equalizer", None)) and (f := Equalizer.from_dict(v)) and f.changed:
+        if (v := effects.get("equalizer", None)) and (f := Equalizer.from_dict(v)):
             self._equalizer = f
-        if (v := effects.get("karaoke", None)) and (f := Karaoke.from_dict(v)) and f.changed:
+        if (v := effects.get("karaoke", None)) and (f := Karaoke.from_dict(v)):
             self._karaoke = f
-        if (v := effects.get("timescale", None)) and (f := Timescale.from_dict(v)) and f.changed:
+        if (v := effects.get("timescale", None)) and (f := Timescale.from_dict(v)):
             self._timescale = f
-        if (v := effects.get("tremolo", None)) and (f := Tremolo.from_dict(v)) and f.changed:
+        if (v := effects.get("tremolo", None)) and (f := Tremolo.from_dict(v)):
             self._tremolo = f
-        if (v := effects.get("vibrato", None)) and (f := Vibrato.from_dict(v)) and f.changed:
+        if (v := effects.get("vibrato", None)) and (f := Vibrato.from_dict(v)):
             self._vibrato = f
-        if (v := effects.get("rotation", None)) and (f := Rotation.from_dict(v)) and f.changed:
+        if (v := effects.get("rotation", None)) and (f := Rotation.from_dict(v)):
             self._rotation = f
-        if (v := effects.get("distortion", None)) and (f := Distortion.from_dict(v)) and f.changed:
+        if (v := effects.get("distortion", None)) and (f := Distortion.from_dict(v)):
             self._distortion = f
-        if (v := effects.get("low_pass", None)) and (f := LowPass.from_dict(v)) and f.changed:
+        if (v := effects.get("low_pass", None)) and (f := LowPass.from_dict(v)):
             self._low_pass = f
-        if (v := effects.get("channel_mix", None)) and (f := ChannelMix.from_dict(v)) and f.changed:
+        if (v := effects.get("channel_mix", None)) and (f := ChannelMix.from_dict(v)):
             self._channel_mix = f
-        if (v := effects.get("echo", None)) and (f := Echo.from_dict(v)) and f.changed:
+        if (v := effects.get("echo", None)) and (f := Echo.from_dict(v)):
             self._echo = f
         if current:
             current.timestamp = int(player.position)
@@ -2323,7 +2322,7 @@ class Player(VoiceProtocol):
                 channel_mix=self.channel_mix,
                 echo=self.echo,
             )
-        if self.volume_filter.changed:
+        if self.volume_filter:
             await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
         if player.playing:
             await self.next(requester)  # type: ignore

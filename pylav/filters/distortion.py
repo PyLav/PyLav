@@ -13,7 +13,6 @@ class Distortion(FilterMixin):
         "_tan_scale",
         "_offset",
         "_scale",
-        "_off",
         "_default",
     )
 
@@ -37,24 +36,8 @@ class Distortion(FilterMixin):
         self.tan_scale = tan_scale
         self.offset = offset
         self.scale = scale
-        self.off = all(
-            v is None for v in [sin_offset, sin_scale, cos_offset, cos_scale, tan_offset, tan_scale, offset, scale]
-        )
 
     def to_dict(self) -> dict[str, float | bool | None]:
-        return {
-            "sin_offset": self.sin_offset,
-            "sin_scale": self.sin_scale,
-            "cos_offset": self.cos_offset,
-            "cos_scale": self.cos_scale,
-            "tan_offset": self.tan_offset,
-            "tan_scale": self.tan_scale,
-            "offset": self.offset,
-            "scale": self.scale,
-            "off": self.off,
-        }
-
-    def to_json(self) -> dict[str, float | None]:
         return {
             "sin_offset": self.sin_offset,
             "sin_scale": self.sin_scale,
@@ -68,7 +51,7 @@ class Distortion(FilterMixin):
 
     @classmethod
     def from_dict(cls, data: dict[str, float | bool | None]) -> Distortion:
-        c = cls(
+        return cls(
             sin_offset=data["sin_offset"],
             sin_scale=data["sin_scale"],
             cos_offset=data["cos_offset"],
@@ -78,8 +61,6 @@ class Distortion(FilterMixin):
             offset=data["offset"],
             scale=data["scale"],
         )
-        c.off = data["off"]
-        return c
 
     def __repr__(self):
         return (
@@ -101,10 +82,6 @@ class Distortion(FilterMixin):
     @sin_offset.setter
     def sin_offset(self, v: float | None) -> None:
         self._sin_offset = v
-        self.off = all(
-            v is None
-            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
-        )
 
     @property
     def sin_scale(self) -> float | None:
@@ -113,10 +90,6 @@ class Distortion(FilterMixin):
     @sin_scale.setter
     def sin_scale(self, v: float | None) -> None:
         self._sin_scale = v
-        self.off = all(
-            v is None
-            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
-        )
 
     @property
     def cos_offset(self) -> float | None:
@@ -125,10 +98,6 @@ class Distortion(FilterMixin):
     @cos_offset.setter
     def cos_offset(self, v: float | None) -> None:
         self._cos_offset = v
-        self.off = all(
-            v is None
-            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
-        )
 
     @property
     def cos_scale(self) -> float | None:
@@ -137,10 +106,6 @@ class Distortion(FilterMixin):
     @cos_scale.setter
     def cos_scale(self, v: float | None) -> None:
         self._cos_scale = v
-        self.off = all(
-            v is None
-            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
-        )
 
     @property
     def tan_offset(self) -> float | None:
@@ -149,10 +114,6 @@ class Distortion(FilterMixin):
     @tan_offset.setter
     def tan_offset(self, v: float | None) -> None:
         self._tan_offset = v
-        self.off = all(
-            v is None
-            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
-        )
 
     @property
     def tan_scale(self) -> float | None:
@@ -161,10 +122,6 @@ class Distortion(FilterMixin):
     @tan_scale.setter
     def tan_scale(self, v: float | None) -> None:
         self._tan_scale = v
-        self.off = all(
-            v is None
-            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
-        )
 
     @property
     def offset(self) -> float | None:
@@ -173,10 +130,6 @@ class Distortion(FilterMixin):
     @offset.setter
     def offset(self, v: float | None) -> None:
         self._offset = v
-        self.off = all(
-            v is None
-            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
-        )
 
     @property
     def scale(self) -> float | None:
@@ -185,10 +138,6 @@ class Distortion(FilterMixin):
     @scale.setter
     def scale(self, v: float | None) -> None:
         self._scale = v
-        self.off = all(
-            v is None
-            for v in [getattr(self, attr, None) for attr in self.__slots__ if attr not in {"_off", "_default"}]
-        )
 
     @classmethod
     def default(cls) -> Distortion:
@@ -220,4 +169,3 @@ class Distortion(FilterMixin):
         self.sin_scale = (
             self.cos_offset
         ) = self.cos_scale = self.tan_offset = self.tan_scale = self.offset = self.scale = self.sin_offset = None
-        self.off = True

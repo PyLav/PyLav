@@ -19,7 +19,7 @@ class Equalizer(FilterMixin):
         An Optional string to name this Equalizer. Defaults to 'CustomEqualizer'
     """
 
-    __slots__ = ("_eq", "_name", "_raw", "_off", "band_count", "_default")
+    __slots__ = ("_eq", "_name", "_raw", "band_count", "_default")
 
     def __init__(self, *, levels: list, name: str = "CustomEqualizer"):
         super().__init__()
@@ -30,17 +30,12 @@ class Equalizer(FilterMixin):
 
     def to_dict(self) -> dict[str, list[dict[str, int | float]] | str | bool]:
         """Returns a dictionary representation of the Equalizer"""
-        return {"equalizer": self._eq, "name": self._name, "off": self.off}
-
-    def to_json(self) -> dict[str, list[dict[str, int | float]]]:
-        return {"eq": self._eq}
+        return {"equalizer": self._eq, "name": self._name}
 
     @classmethod
     def from_dict(cls, data: dict) -> Equalizer:
         """Creates an Equalizer from a dictionary"""
-        c = cls(levels=data["equalizer"], name=data["name"])
-        c.off = data["off"]
-        return c
+        return cls(levels=data["equalizer"], name=data["name"])
 
     def __str__(self):
         return self._name
@@ -55,7 +50,11 @@ class Equalizer(FilterMixin):
     def __eq__(self, other):
         """Overrides the default implementation"""
         if isinstance(other, Equalizer):
-            return bool(DeepDiff(self._eq, other._eq, ignore_order=True, max_diffs=1))
+            return bool(
+                DeepDiff(
+                    self._eq, other._eq, ignore_order=True, max_passes=1, cache_size=100, exclude_paths=["root['name']"]
+                )
+            )
         return NotImplemented
 
     @property
@@ -122,7 +121,6 @@ class Equalizer(FilterMixin):
         return [] if self.off else self._eq
 
     def reset(self) -> None:
-        self.off = True
         eq = Equalizer.flat()
         self._eq = eq._eq
         self._name = eq._name
