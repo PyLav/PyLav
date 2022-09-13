@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-09-12 22:08+0000\n"
-"PO-Revision-Date: 2022-09-12 22:09\n"
+"POT-Creation-Date: 2022-09-13 20:20+0000\n"
+"PO-Revision-Date: 2022-09-13 20:24\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -59,84 +59,84 @@ msgstr "Lavalink se nepodařilo spustit: {line}"
 msgid "There are no tracks currently in the player history"
 msgstr "Momentálně nejsou žádné skladby v historii hráčů"
 
-#: pylav/player.py:1916 pylav/player.py:1946 pylav/player.py:1957
+#: pylav/player.py:1915 pylav/player.py:1945 pylav/player.py:1956
 msgid "LIVE"
 msgstr "ŽIVÁ"
 
-#: pylav/player.py:1925 pylav/player.py:2013
+#: pylav/player.py:1924 pylav/player.py:2012
 msgid "Currently livestreaming"
 msgstr "Momentálně dobytek"
 
-#: pylav/player.py:1927
+#: pylav/player.py:1926
 msgid "Playing: "
 msgstr "Přehrávání: "
 
-#: pylav/player.py:1930 pylav/player.py:1951 pylav/player.py:1962
-#: pylav/player.py:2019
+#: pylav/player.py:1929 pylav/player.py:1950 pylav/player.py:1961
+#: pylav/player.py:2018
 msgid "Requester"
 msgstr "Objednávka"
 
-#: pylav/player.py:1935
+#: pylav/player.py:1934
 msgid "Now Playing in"
 msgstr "Nyní hraje v"
 
-#: pylav/player.py:1947 pylav/player.py:1958
+#: pylav/player.py:1946 pylav/player.py:1957
 msgid "Duration"
 msgstr "Doba trvání"
 
-#: pylav/player.py:1953
+#: pylav/player.py:1952
 msgid "Previous Track"
 msgstr "Předchozí stopa"
 
-#: pylav/player.py:1964
+#: pylav/player.py:1963
 msgid "Next Track"
 msgstr "Další skladba"
 
-#: pylav/player.py:1968
+#: pylav/player.py:1967
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
 msgstr "{track_count} stop, {queue_total_duration} zbývá\n"
 
-#: pylav/player.py:1980 pylav/player.py:2070
+#: pylav/player.py:1979 pylav/player.py:2069
 msgid "{translation}: {repeat_emoji}"
 msgstr "{translation}: {repeat_emoji}"
 
-#: pylav/player.py:1980 pylav/player.py:2070
+#: pylav/player.py:1979 pylav/player.py:2069
 msgid "Repeating"
 msgstr "Opakování"
 
-#: pylav/player.py:1981 pylav/player.py:2071
+#: pylav/player.py:1980 pylav/player.py:2070
 msgid "{space}{translation}: {autoplay_emoji}"
 msgstr "{space}{translation}: {autoplay_emoji}"
 
-#: pylav/player.py:1982 pylav/player.py:2072
+#: pylav/player.py:1981 pylav/player.py:2071
 msgid "Auto Play"
 msgstr "Automatické přehrávání"
 
-#: pylav/player.py:1984 pylav/player.py:2074
+#: pylav/player.py:1983 pylav/player.py:2073
 msgid "{space}{translation}: {volume}%"
 msgstr "{space}{translation}: {volume}%"
 
-#: pylav/player.py:1985 pylav/player.py:2075
+#: pylav/player.py:1984 pylav/player.py:2074
 msgid "Volume"
 msgstr "Objem"
 
-#: pylav/player.py:2016
+#: pylav/player.py:2015
 msgid "Playing"
 msgstr "Přehrává se"
 
-#: pylav/player.py:2029
+#: pylav/player.py:2028
 msgid "Queue order is may not be accurate due to auto-shuffle being enabled"
 msgstr "Pořadí fronty nemusí být přesné, protože je povoleno automatické zamíchání"
 
-#: pylav/player.py:2044
+#: pylav/player.py:2043
 msgid "Recently Played for"
 msgstr "Nedávno hrané pro"
 
-#: pylav/player.py:2044
+#: pylav/player.py:2043
 msgid "Queue for"
 msgstr "Fronta pro"
 
-#: pylav/player.py:2053
+#: pylav/player.py:2052
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
 msgstr "Strana {current_page}/{total_pages} | {track_number} skladeb, {queue_total_duration} zbývá\n"
 
