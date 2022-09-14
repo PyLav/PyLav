@@ -456,6 +456,10 @@ class PlayerQueue(asyncio.Queue[T]):
             raise ValueError(f"Queue value cannot be longer than maxsize: {self._maxsize}")
         self._queue = value
 
+    @raw_queue.deleter
+    def raw_queue(self):
+        self.clear()
+
     def popindex(self, index: int) -> T:
         value = self._queue[index]
         del self._queue[index]
@@ -506,6 +510,9 @@ class PlayerQueue(asyncio.Queue[T]):
     def __contains__(self, obj: T) -> bool:
         return obj in self._queue
 
+    def __iter__(self) -> Iterator[T]:
+        return iter(self.raw_queue)
+
     def __len__(self):
         return len(self._queue)
 
@@ -513,7 +520,13 @@ class PlayerQueue(asyncio.Queue[T]):
         return len(self._queue)
 
     def __getitem__(self, key: int | slice) -> T | list[T]:
-        return self.popindex(key) if isinstance(key, int) else NotImplemented
+        return self.raw_queue[key]
+
+    def __setitem__(self, key: int, value: T | list[T]):
+        raise NotImplementedError("Use .put() to add entries to the queue")
+
+    def __delitem__(self, key: int):
+        raise NotImplementedError("Use .get() to remove entries from the queue")
 
     def __length_hint__(self):
         return len(self._queue)
