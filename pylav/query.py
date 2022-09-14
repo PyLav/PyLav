@@ -597,7 +597,7 @@ class Query:
     @classmethod
     def from_string_noawait(cls, query: Query | str) -> Query:
         """
-        Same as from_string but synchronous - which makes it unable to process localtracks.
+        Same as from_string but synchronous - which makes it unable to process localtracks, base64 queries or playlists (M3U, PLS, PyLav).
         """
         if isinstance(query, Query):
             return query
@@ -670,11 +670,16 @@ class Query:
                 async for track in asyncstdlib.iter(contents.get("tracks", [])):
                     yield await Query.from_base64(track)
         elif is_url(self._query):
-            async with aiohttp.ClientSession(json_serialize=ujson.dumps) as session:
-                async with session.get(self._query) as resp:
-                    contents = await resp.text()
-                    async for line in asyncstdlib.iter(contents.splitlines()):
-                        yield await Query.from_string(line.strip(), dont_search=True)
+            async with aiohttp.ClientSession(auto_decompress=False, json_serialize=ujson.dumps) as session:
+                async with session.get(self._query) as response:
+                    data = await response.read()
+                    if ".gz.pylav" in self._query:
+                        data = gzip.decompress(data)
+                    elif ".br.pylav" in self._query:
+                        data = brotli.decompress(data)
+                    data = yaml.safe_load(data)
+                    async for track in asyncstdlib.iter(data.get("tracks", [])):
+                        yield await Query.from_base64(track)
 
     async def _yield_local_tracks(self) -> AsyncIterator[Query]:
         if self.is_album:

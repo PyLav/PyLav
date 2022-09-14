@@ -974,27 +974,32 @@ class Client(metaclass=_Singleton):
         queries_failed = []
         track_count = 0
         for query in queries:
-            node = await self.node_manager.find_best_node(
-                region=player.region if player else None,
-                coordinates=player.coordinates if player else None,
-                feature=query.requires_capability,
-            )
-            if node is None:
-                queries_failed.append(query)
-            # Query tracks as the queue builds as this may be a slow operation
-            if enqueue and successful_tracks and not player.is_playing and not player.paused:
-                track = successful_tracks.pop()
-                await player.play(track, await track.query(), requester)
-            if query.is_search or query.is_single:
-                try:
-                    track = await self._get_tracks(player=player, query=query, first=True, bypass_cache=bypass_cache)
+            async for sub_query in self._yield_recursive_queries(query):
+                node = await self.node_manager.find_best_node(
+                    region=player.region if player else None,
+                    coordinates=player.coordinates if player else None,
+                    feature=sub_query.requires_capability,
+                )
+                if node is None:
+                    queries_failed.append(sub_query)
+                # Query tracks as the queue builds as this may be a slow operation
+                if enqueue and successful_tracks and not player.is_playing and not player.paused:
+                    track = successful_tracks.pop()
+                    await player.play(track, await track.query(), requester)
+                elif player.is_playing and player.queue.empty():
+                    track = successful_tracks.pop()
+                    await player.play(track, await track.query(), requester)
+                if sub_query.is_search or sub_query.is_single:
+                    track = await self._get_tracks(
+                        player=player, query=sub_query, first=True, bypass_cache=bypass_cache
+                    )
                     track_b64 = track.get("track")
                     if not track_b64:
-                        queries_failed.append(query)
+                        queries_failed.append(sub_query)
                     if track_b64:
                         track_count += 1
                         new_query = await Query.from_base64(track_b64)
-                        new_query.merge(query, start_time=True)
+                        new_query.merge(sub_query, start_time=True)
                         successful_tracks.append(
                             Track(
                                 data=track_b64,
@@ -1003,14 +1008,15 @@ class Client(metaclass=_Singleton):
                                 requester=requester.id,
                             )
                         )
-                except NoNodeWithRequestFunctionalityAvailable:
-                    queries_failed.append(query)
-            elif (query.is_playlist or query.is_album) and not query.is_local and not query.is_custom_playlist:
-                try:
-                    tracks: dict = await self._get_tracks(player=player, query=query, bypass_cache=bypass_cache)
+                elif (
+                    (sub_query.is_playlist or sub_query.is_album)
+                    and not sub_query.is_local
+                    and not sub_query.is_custom_playlist
+                ):
+                    tracks: dict = await self._get_tracks(player=player, query=sub_query, bypass_cache=bypass_cache)
                     track_list = tracks.get("tracks", [])
                     if not track_list:
-                        queries_failed.append(query)
+                        queries_failed.append(sub_query)
                     for track in track_list:
                         if track_b64 := track.get("track"):
                             track_count += 1
@@ -1026,12 +1032,9 @@ class Client(metaclass=_Singleton):
                             if enqueue and successful_tracks and not player.is_playing and not player.paused:
                                 track = successful_tracks.pop()
                                 await player.play(track, await track.query(), requester)
-                except NoNodeWithRequestFunctionalityAvailable:
-                    queries_failed.append(query)
-            elif (query.is_local or query.is_custom_playlist) and query.is_album:
-                try:
+                elif (sub_query.is_local or sub_query.is_custom_playlist) and sub_query.is_album:
                     yielded = False
-                    async for local_track in query.get_all_tracks_in_folder():
+                    async for local_track in sub_query.get_all_tracks_in_folder():
                         yielded = True
                         track = await self._get_tracks(player=player, query=local_track, first=True, bypass_cache=True)
                         if track_b64 := track.get("track"):
@@ -1049,12 +1052,10 @@ class Client(metaclass=_Singleton):
                                 track = successful_tracks.pop()
                                 await player.play(track, await track.query(), requester)
                     if not yielded:
-                        queries_failed.append(query)
-                except NoNodeWithRequestFunctionalityAvailable:
-                    queries_failed.append(query)
-            else:
-                queries_failed.append(query)
-                LOGGER.warning("Unhandled query: %s, %s", query.to_dict(), query.query_identifier)
+                        queries_failed.append(sub_query)
+                else:
+                    queries_failed.append(sub_query)
+                    LOGGER.warning("Unhandled query: %s, %s", sub_query.to_dict(), sub_query.query_identifier)
         return successful_tracks, track_count, queries_failed
 
     @staticmethod
@@ -1128,22 +1129,21 @@ class Client(metaclass=_Singleton):
 
         for query in queries:
             async for response in self._yield_recursive_queries(query):
-                with contextlib.suppress(NoNodeWithRequestFunctionalityAvailable):
-                    node = await self.node_manager.find_best_node(region=region, feature=response.requires_capability)
-                    if node is None or response.is_custom_playlist:
-                        continue
-                    if response.is_playlist or response.is_album:
-                        _response = await node.get_tracks(response, bypass_cache=bypass_cache)
-                        playlist_name = _response.get("playlistInfo", {}).get("name", "")
-                        output_tracks.extend(_response["tracks"])
-                    elif fullsearch and response.is_search:
-                        _response = await node.get_tracks(response, bypass_cache=bypass_cache)
-                        output_tracks.extend(_response["tracks"])
-                    elif response.is_single:
-                        _response = await node.get_tracks(response, first=True, bypass_cache=bypass_cache)
-                        output_tracks.append(_response)
-                    else:
-                        LOGGER.critical("Unknown query type: %s", response)
+                node = await self.node_manager.find_best_node(region=region, feature=response.requires_capability)
+                if node is None:
+                    continue
+                if response.is_playlist or response.is_album:
+                    _response = await node.get_tracks(response, bypass_cache=bypass_cache)
+                    playlist_name = _response.get("playlistInfo", {}).get("name", "")
+                    output_tracks.extend(_response["tracks"])
+                elif fullsearch and response.is_search:
+                    _response = await node.get_tracks(response, bypass_cache=bypass_cache)
+                    output_tracks.extend(_response["tracks"])
+                elif response.is_single:
+                    _response = await node.get_tracks(response, first=True, bypass_cache=bypass_cache)
+                    output_tracks.append(_response)
+                else:
+                    LOGGER.critical("Unknown query type: %s", response)
 
         return {
             "playlistInfo": {
