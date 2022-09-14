@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-09-12 21:34+0000\n"
-"PO-Revision-Date: 2022-09-12 23:09\n"
+"POT-Creation-Date: 2022-09-14 18:04+0000\n"
+"PO-Revision-Date: 2022-09-14 18:07\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -53,19 +53,19 @@ msgstr "seconden"
 msgid "Unknown"
 msgstr "onbekend"
 
-#: pylav/utils/__init__.py:1071
+#: pylav/utils/__init__.py:1084
 msgid "{} remaining. Type `more` to continue."
 msgstr "{} resterend. Typ `meer` om door te gaan."
 
-#: pylav/utils/__init__.py:1072
+#: pylav/utils/__init__.py:1085
 msgid "There is still 1 message"
 msgstr "Er is nog 1 bericht"
 
-#: pylav/utils/__init__.py:1074
+#: pylav/utils/__init__.py:1087
 msgid "There are still {remaning} messages"
 msgstr "Er zijn nog {remaning} berichten"
 
-#: pylav/utils/__init__.py:1129
+#: pylav/utils/__init__.py:1142
 #, docstring
 msgid "Does nothing"
 msgstr "Doet niets"
