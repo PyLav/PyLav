@@ -391,14 +391,19 @@ class Track:
         return hash((self.unique_identifier,))
 
     async def get_track_display_name(
-        self, max_length: int = None, author: bool = True, unformatted: bool = False, with_url: bool = False
+        self,
+        max_length: int = None,
+        author: bool = True,
+        unformatted: bool = False,
+        with_url: bool = False,
+        escape: bool = True,
     ) -> str:  # sourcery skip: low-code-quality
         if self.is_partial:
             base = await (await self.query()).query_to_queue(max_length, partial=True)
             base = SQUARE_BRACKETS.sub("", base).strip()
             if max_length and len(base) > (actual_length := max_length - 1):
                 base = f"{base[:actual_length]}" + "\N{HORIZONTAL ELLIPSIS}"
-            return discord.utils.escape_markdown(base)
+            return discord.utils.escape_markdown(base) if escape else base
         else:
             length_to_trim = 7
             if unformatted:
@@ -441,7 +446,7 @@ class Track:
                 if max_length and len(base) > max_length:
                     base = f"{base[:max_length]}" + "\N{HORIZONTAL ELLIPSIS}"
 
-            base = discord.utils.escape_markdown(base)
+            base = discord.utils.escape_markdown(base) if escape else base
             return f"{bold}{url_start}{base}{url_end}{bold}"
 
     async def _icyparser(self, url: str) -> str | None:

@@ -2394,14 +2394,15 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
             return f"{user.mention}" if mention else f"{user}"
         return f"{author}"
 
-    async def get_name_formatted(self, with_url: bool = True) -> str:
+    async def get_name_formatted(self, with_url: bool = True, escape: bool = True) -> str:
         """Get the name of the playlist formatted.
 
         Parameters
         ----------
         with_url : bool
             Whether to include the url in the name.
-
+        escape: bool
+            Whether to markdown escape the response
         Returns
         -------
         str
@@ -2411,8 +2412,8 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         if with_url:
             url = await self.fetch_url()
             if url and url.startswith("http"):
-                return f"**[{discord.utils.escape_markdown(name)}]({url})**"
-        return f"**{discord.utils.escape_markdown(name)}**"
+                return f"**[{discord.utils.escape_markdown(name) if escape else name}]({url})**"
+        return f"**{discord.utils.escape_markdown(name) if escape else name}**"
 
     @asynccontextmanager
     async def to_yaml(self, guild: discord.Guild) -> Iterator[tuple[io.BytesIO, str | None]]:
