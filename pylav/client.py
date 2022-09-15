@@ -986,7 +986,7 @@ class Client(metaclass=_Singleton):
                 if enqueue and successful_tracks and not player.is_playing and not player.paused:
                     track = successful_tracks.pop()
                     await player.play(track, await track.query(), requester)
-                elif player.is_playing and player.queue.empty():
+                elif successful_tracks and player.is_playing and player.queue.empty():
                     track = successful_tracks.pop()
                     await player.play(track, await track.query(), requester)
                 if sub_query.is_search or sub_query.is_single:
