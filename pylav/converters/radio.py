@@ -81,19 +81,13 @@ else:
                     kwargs["countrycode"] = val
                 if country and (val := country[0].get("value")):
                     kwargs["country"] = val
-                    countrycode = kwargs.get("countrycode")
-                    kwargs = {"code": countrycode} if countrycode else {}
                     kwargs["country_exact"] = any(
-                        True
-                        for c in await interaction.client.lavalink.radio_browser.countries(**kwargs)
-                        if c.name == val
+                        True for c in await interaction.client.lavalink.radio_browser.countries() if c.name == val
                     )
                 if state and (val := state[0].get("value")):
                     kwargs["state"] = val
-                    country = kwargs.get("country")
-                    kwargs = {"country": country} if country and kwargs.get("country_exact") else {}
                     kwargs["state_exact"] = any(
-                        True for t in await interaction.client.lavalink.radio_browser.states(**kwargs) if t.name == val
+                        True for t in await interaction.client.lavalink.radio_browser.states() if t.name == val
                     )
                 if language and (val := language[0].get("value")):
                     kwargs["language"] = val
@@ -119,7 +113,9 @@ else:
                     )
                     for e in await interaction.client.lavalink.radio_browser.stations_by_votes(limit=25)
                 ]
-            stations = await interaction.client.lavalink.radio_browser.search(limit=1000, **kwargs)
+            if not kwargs:
+                kwargs["limit"] = 1000
+            stations = await interaction.client.lavalink.radio_browser.search(**kwargs)
 
             async def _filter(c: Station):
                 return (
