@@ -41,6 +41,14 @@ from pylav.sql import tables
 from pylav.types import BotT
 from pylav.utils import PyLavContext, TimedFeature, get_jar_ram_actual, get_true_path
 
+try:
+    from redbot.core.i18n import Translator
+
+    _ = Translator("PyLavPlayer", pathlib.Path(__file__))
+except ImportError:
+    _ = lambda x: x
+
+
 BRACKETS: re.Pattern = re.compile(r"[\[\]]")
 
 LOGGER = getLogger("PyLav.DBModels")
@@ -2357,22 +2365,21 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         """
         original_scope = await self.fetch_scope()
         if bot.user.id == original_scope:
-            return f"(Global) {bot.user.mention}" if mention else f"(Global) {bot.user}"
+            return _("(Global) {user_name}").format(user_name=bot.user.mention if mention else bot.user)
         elif guild_ := bot.get_guild(original_scope):
             if guild_:
                 guild = guild_
-            return f"(Server) {guild.name}"
+            return _("(Server) {guild_name}").format(guild_name=guild.name)
         elif guild and (channel := guild.get_channel_or_thread(original_scope)):
-            return f"(Channel) {channel.mention}" if mention else f"(Channel) {channel.name}"
-
+            return _("(Channel) {channel}").format(channel=channel.mention if mention else channel.name)
         elif (
             (guild := guild_ or guild)
             and (guild and (scope := guild.get_member(original_scope)))
             or (scope := bot.get_user(original_scope))
         ):
-            return f"(User) {scope.mention}" if mention else f"(User) {scope}"
+            return _("(User) {user_name}").format(user_name=scope.mention if mention else scope)
         else:
-            return f"(Invalid) {original_scope}"
+            return _("(Invalid) {scope}").format(scope=original_scope)
 
     async def get_author_name(self, bot: BotT, mention: bool = True) -> str | None:
         """Get the name of the author of the playlist.
