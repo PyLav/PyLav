@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-09-14 18:04+0000\n"
-"PO-Revision-Date: 2022-09-14 18:07\n"
+"PO-Revision-Date: 2022-09-30 20:09\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -19,54 +19,54 @@ msgstr ""
 
 #: pylav/utils/__init__.py:377
 msgid "hour"
-msgstr ""
+msgstr "saat"
 
 #: pylav/utils/__init__.py:378
 msgid "minute"
-msgstr ""
+msgstr "dakika"
 
 #: pylav/utils/__init__.py:379
 msgid "second"
-msgstr ""
+msgstr "saniye"
 
 #: pylav/utils/__init__.py:380
 msgid "day"
-msgstr ""
+msgstr "gün"
 
 #: pylav/utils/__init__.py:381
 msgid "days"
-msgstr ""
+msgstr "günler"
 
 #: pylav/utils/__init__.py:382
 msgid "hours"
-msgstr ""
+msgstr "saatler"
 
 #: pylav/utils/__init__.py:383
 msgid "minutes"
-msgstr ""
+msgstr "dakikalar"
 
 #: pylav/utils/__init__.py:384
 msgid "seconds"
-msgstr ""
+msgstr "saniyeler"
 
 #: pylav/utils/__init__.py:405
 msgid "Unknown"
-msgstr ""
+msgstr "Bilinmeyen"
 
 #: pylav/utils/__init__.py:1084
 msgid "{} remaining. Type `more` to continue."
-msgstr ""
+msgstr "{} geriye kalan. Devam etmek için \"more\" yazın."
 
 #: pylav/utils/__init__.py:1085
 msgid "There is still 1 message"
-msgstr ""
+msgstr "Hala 1 mesaj var"
 
 #: pylav/utils/__init__.py:1087
 msgid "There are still {remaning} messages"
-msgstr ""
+msgstr "Hâlâ {remaning} mesaj var"
 
 #: pylav/utils/__init__.py:1142
 #, docstring
 msgid "Does nothing"
-msgstr ""
+msgstr "Hiç birşey yapmıyor"
 

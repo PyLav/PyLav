@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-09-13 20:20+0000\n"
-"PO-Revision-Date: 2022-09-13 20:24\n"
+"PO-Revision-Date: 2022-09-30 20:09\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -19,123 +19,124 @@ msgstr ""
 
 #: pylav/client.py:611 pylav/client.py:636 pylav/player_manager.py:250
 msgid "No available nodes!"
-msgstr ""
+msgstr "Kullanılabilir düğüm yok!"
 
 #: pylav/client.py:615 pylav/client.py:640
 msgid "No node with {feature} functionality available!"
-msgstr ""
+msgstr "{feature} işlevine sahip düğüm yok!"
 
 #: pylav/client.py:931
 msgid "No node with {query.requires_capability} functionality available!"
-msgstr ""
+msgstr "{query.requires_capability} işlevine sahip düğüm yok!"
 
 #: pylav/client.py:1189
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
-msgstr ""
+msgstr "Karışık oynatma listesi oluşturmak için bir Video, Kullanıcı, Kanal veya Oynatma Listesi Kimliği gereklidir"
 
 #: pylav/client.py:1194
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
-msgstr ""
+msgstr "Karışık oynatma listesi oluşturmak için Video, Kullanıcı, Kanal veya Oynatma Listesi Kimliği gereklidir. Ancak, birden fazla sağladınız"
 
 #: pylav/managed_node.py:271
 msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture"
-msgstr ""
+msgstr "Yönetilen Lavalink düğümünü desteklenmeyen bir makine mimarisinde çalıştırmaya çalışıyorsunuz"
 
 #: pylav/managed_node.py:433
 msgid "The output of `{java_exc} -version` was unexpected\n"
 "{version_info}"
-msgstr ""
+msgstr "\"{java_exc} -version\" çıktısı beklenmeyen bir şeydi\n"
+"{version_info}"
 
 #: pylav/managed_node.py:449
 msgid "Port {port} already in use. Managed Lavalink startup aborted"
-msgstr ""
+msgstr "{port} Bağlantı noktası zaten kullanılıyor. Yönetilen Lavalink başlatması iptal edildi"
 
 #: pylav/managed_node.py:454
 msgid "Lavalink failed to start: {line}"
-msgstr ""
+msgstr "Lavalink başlatılamadı: {line}"
 
 #: pylav/player.py:914
 msgid "There are no tracks currently in the player history"
-msgstr ""
+msgstr "Şu anda çalma geçmişinde hiçbir parça yok"
 
 #: pylav/player.py:1915 pylav/player.py:1945 pylav/player.py:1956
 msgid "LIVE"
-msgstr ""
+msgstr "CANLI"
 
 #: pylav/player.py:1924 pylav/player.py:2012
 msgid "Currently livestreaming"
-msgstr ""
+msgstr "Şu anda canlı yayında"
 
 #: pylav/player.py:1926
 msgid "Playing: "
-msgstr ""
+msgstr "Oynuyor: "
 
 #: pylav/player.py:1929 pylav/player.py:1950 pylav/player.py:1961
 #: pylav/player.py:2018
 msgid "Requester"
-msgstr ""
+msgstr "İstekte Bulunan"
 
 #: pylav/player.py:1934
 msgid "Now Playing in"
-msgstr ""
+msgstr "Şu Anda Oynatılıyor"
 
 #: pylav/player.py:1946 pylav/player.py:1957
 msgid "Duration"
-msgstr ""
+msgstr "Süre"
 
 #: pylav/player.py:1952
 msgid "Previous Track"
-msgstr ""
+msgstr "Önceki Parça"
 
 #: pylav/player.py:1963
 msgid "Next Track"
-msgstr ""
+msgstr "Sıradaki Parça"
 
 #: pylav/player.py:1967
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
-msgstr ""
+msgstr "{track_count} parça, kalan {queue_total_duration}"
 
 #: pylav/player.py:1979 pylav/player.py:2069
 msgid "{translation}: {repeat_emoji}"
-msgstr ""
+msgstr "{translation}: {repeat_emoji}"
 
 #: pylav/player.py:1979 pylav/player.py:2069
 msgid "Repeating"
-msgstr ""
+msgstr "Tekrar ediyor"
 
 #: pylav/player.py:1980 pylav/player.py:2070
 msgid "{space}{translation}: {autoplay_emoji}"
-msgstr ""
+msgstr "{space}{translation}: {autoplay_emoji}\n"
 
 #: pylav/player.py:1981 pylav/player.py:2071
 msgid "Auto Play"
-msgstr ""
+msgstr "Otomatik Oynat"
 
 #: pylav/player.py:1983 pylav/player.py:2073
 msgid "{space}{translation}: {volume}%"
-msgstr ""
+msgstr "{space}{translation}: {volume}%\n"
 
 #: pylav/player.py:1984 pylav/player.py:2074
 msgid "Volume"
-msgstr ""
+msgstr "Ses"
 
 #: pylav/player.py:2015
 msgid "Playing"
-msgstr ""
+msgstr "Oynuyor"
 
 #: pylav/player.py:2028
 msgid "Queue order is may not be accurate due to auto-shuffle being enabled"
-msgstr ""
+msgstr "Otomatik karıştırma etkinleştirildiğinden çalma sırası doğru olmayabilir"
 
 #: pylav/player.py:2043
 msgid "Recently Played for"
-msgstr ""
+msgstr "Son Çalınan"
 
 #: pylav/player.py:2043
 msgid "Queue for"
-msgstr ""
+msgstr "İçin sıra"
 
 #: pylav/player.py:2052
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
-msgstr ""
+msgstr "Sayfa {current_page}/{total_pages} | {track_number} parça, kalan {queue_total_duration}"
 
