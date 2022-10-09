@@ -9,7 +9,7 @@ NODE_DEFAULT_SETTINGS = {
     "lavalink": {
         "plugins": [
             {
-                "dependency": "com.github.Topis-Lavalink-Plugins:Topis-Source-Managers-Plugin:v2.0.7",
+                "dependency": "com.github.TopiSenpai.LavaSrc:lavasrc-plugin:v3.0.3",
                 "repository": "https://jitpack.io",
             },
             {
@@ -57,21 +57,23 @@ NODE_DEFAULT_SETTINGS = {
         },
     },
     "plugins": {
-        "topissourcemanagers": {
+        "lavasrc": {
             "providers": [
                 'ytmsearch:"%ISRC%"',
                 'ytsearch:"%ISRC%"',
                 "ytmsearch:%QUERY%",
                 "ytsearch:%QUERY%",
                 "scsearch:%QUERY%",
+                "dzisrc:%ISRC%",
             ],
-            "sources": {"spotify": True, "applemusic": True},
+            "sources": {"spotify": True, "applemusic": True, "deezer": False},
             "spotify": {
                 "clientId": "3d5cd36c73924786aa290798b2131c58",
                 "clientSecret": "edee5eb255a846fbac8297069debea2e",
                 "countryCode": "US",
             },
             "applemusic": {"countryCode": "US"},
+            "deezer": {"masterDecryptionKey": ""},
         },
         "dunctebot": {
             "ttsLanguage": "en-US",

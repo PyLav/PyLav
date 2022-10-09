@@ -95,19 +95,45 @@ class UpdateSchemaManager:
             if len(yaml_data["lavalink"]["plugins"]) < len(NODE_DEFAULT_SETTINGS["lavalink"]["plugins"]):
                 yaml_data["lavalink"]["plugins"] = NODE_DEFAULT_SETTINGS["lavalink"]["plugins"]
                 await config.update_yaml(yaml_data)
+            await self._client.lib_db_manager.update_bot_dv_version("0.7.6")
 
         if current_version <= parse_version("0.8.4.9999"):
             playlists = [p for p in await self._client.playlist_db_manager.get_bundled_playlists() if p.id in {1, 2}]
             for playlist in playlists:
                 await playlist.delete()
             await self._client.playlist_db_manager.update_bundled_playlists(1, 2)
+            await self._client.lib_db_manager.update_bot_dv_version("0.8.5")
 
         if current_version <= parse_version("0.8.7.9999"):
             for node_id in BUNDLED_NODES_IDS:
                 await self._client.node_db_manager.delete(node_id)
+            await self._client.lib_db_manager.update_bot_dv_version("0.8.8")
 
         if current_version <= parse_version("0.9.1.9999"):
             await self._client.player_state_db_manager.delete_all_players()
+            await self._client.lib_db_manager.update_bot_dv_version("0.9.2")
+
+        if current_version <= parse_version("0.10.4.9999"):
+            config = self._client.node_db_manager.bundled_node_config()
+            yaml_data = await config.fetch_yaml()
+            plugins = yaml_data["lavalink"]["plugins"]
+            keep = [
+                plugin
+                for plugin in plugins
+                if not plugin["dependency"].startswith(
+                    "com.github.Topis-Lavalink-Plugins:Topis-Source-Managers-Plugin:"
+                )
+            ]
+            keep.extend(
+                [
+                    plugin
+                    for plugin in NODE_DEFAULT_SETTINGS["lavalink"]["plugins"]
+                    if plugin["dependency"].startswith("com.github.TopiSenpai.LavaSrc:lavasrc-plugin")
+                ]
+            )
+            yaml_data["lavalink"]["plugins"] = keep
+            await config.update_yaml(yaml_data)
+            await self._client.lib_db_manager.update_bot_dv_version("0.10.5")
 
         with contextlib.suppress(EntryNotFoundError):
             config = self._client.node_db_manager.bundled_node_config()
