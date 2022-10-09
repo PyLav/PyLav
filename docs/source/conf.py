@@ -65,7 +65,7 @@ master_doc = "index"
 
 version = ""
 with open("../../pylav/__init__.py") as f:
-    version = re.search(r'^__VERSION__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE)[1]
+    version = re.search(r'^__version__\s*=\s*__VERSION__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE)[1]
 
 
 # The full version, including alpha/beta/rc tags.
