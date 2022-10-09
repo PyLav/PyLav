@@ -7,7 +7,7 @@ from packaging.version import parse as parse_version
 
 from pylav.constants import BUNDLED_NODES_IDS
 from pylav.exceptions import EntryNotFoundError
-from pylav.utils.built_in_node import NODE_DEFAULT_SETTINGS
+from pylav.managed_node import LAVALINK_DOWNLOAD_DIR
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -22,6 +22,7 @@ class UpdateSchemaManager:
     async def run_updates(self):
         """Run through schema migrations"""
         from pylav import __VERSION__
+        from pylav.utils.built_in_node import NODE_DEFAULT_SETTINGS
 
         current_version = await self._client.lib_db_manager.get_bot_db_version().fetch_version()
         if current_version == parse_version("0.0.0.0.9999"):
@@ -132,7 +133,20 @@ class UpdateSchemaManager:
                 ]
             )
             yaml_data["lavalink"]["plugins"] = keep
+            if "topissourcemanagers" in yaml_data["plugins"]:
+                yaml_data["plugins"]["lavasrc"] = yaml_data["plugins"]["topissourcemanagers"]
+                del yaml_data["plugins"]["topissourcemanagers"]
             await config.update_yaml(yaml_data)
+            folder = LAVALINK_DOWNLOAD_DIR / "plugins"
+            plugin_files = [
+                x
+                async for x in folder.iterdir()
+                if x.name.startswith("Topis-Source-Managers-Plugin-") and x.suffix == ".jar" and x.is_file()
+            ]
+            for file in plugin_files:
+                with contextlib.suppress(Exception):
+                    await file.unlink()
+
             await self._client.lib_db_manager.update_bot_dv_version("0.10.5")
 
         with contextlib.suppress(EntryNotFoundError):
