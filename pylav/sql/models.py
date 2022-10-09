@@ -2276,7 +2276,7 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         """
         await tables.PlaylistRow.raw(
             "INSERT INTO playlist (id, tracks) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET tracks = array_cat("
-            "player.tracks, EXCLUDED.tracks);",
+            "playlist.tracks, EXCLUDED.tracks);",
             self.id,
             tracks,
         )
@@ -2305,13 +2305,13 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
             The track to remove
         """
         await tables.PlaylistRow.raw(
-            "UPDATE player SET tracks = array_remove(tracks, {}) WHERE id = {};", self.id, track
+            "UPDATE playlist SET tracks = array_remove(tracks, {}) WHERE id = {};", self.id, track
         )
         await self.invalidate_cache(self.fetch_tracks, self.fetch_all, self.size, self.fetch_first, self.exists)
 
     async def remove_all_tracks(self) -> None:
         """Remove all tracks from the playlist."""
-        await tables.PlaylistRow.raw("UPDATE player SET tracks = {} WHERE id = {};", [], self.id)
+        await tables.PlaylistRow.raw("UPDATE playlist SET tracks = {} WHERE id = {};", [], self.id)
         await self.update_cache((self.fetch_tracks, []), (self.size, 0), (self.exists, True), (self.fetch_first, None))
         await self.invalidate_cache(self.fetch_all)
 
