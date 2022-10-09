@@ -1,0 +1,15 @@
+dataSource: commits
+ignoreIssuesWith:
+-   wontfix
+-   duplicate
+prefix: ''
+includeMessages: all
+ignoreCommitsWith:
+-   \[auto-changelogs\]
+-   \[auto-release\]
+-   \[auto-publish\]
+-   \[skip ci\]
+-   \[ci skip\]
+-   \[pre-commit.ci\]
+changelogFilename: CHANGELOG.md
+override: true
