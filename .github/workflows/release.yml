@@ -19,7 +19,7 @@ jobs:
         env:
             RELEASE_TYPE: ${{ startsWith(github.event.head_commit.message, '[post]') && 'post' || startsWith(github.event.head_commit.message, '[patch]') && 'patch' || startsWith(github.event.head_commit.message, '[minor]') && 'minor' || startsWith(github.event.head_commit.message, '[major]') && 'major' }}
         steps:
-        -   uses: actions/checkout@v3
+        -   uses: actions/checkout@v3.1.0
             with:
                 token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         -   name: Set up Python
@@ -68,7 +68,7 @@ jobs:
         needs: [bump_version]
         runs-on: ubuntu-latest
         steps:
-        -   uses: actions/checkout@v3
+        -   uses: actions/checkout@v3.1.0
             with:
                 ref: master
                 token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
@@ -99,7 +99,7 @@ jobs:
         needs: [bump_version]
         runs-on: ubuntu-latest
         steps:
-        -   uses: actions/checkout@v3
+        -   uses: actions/checkout@v3.1.0
             with:
                 fetch-depth: 0
                 ref: master
@@ -124,7 +124,7 @@ jobs:
         runs-on: ubuntu-latest
         name: Upload the latest strings to Crowdin
         steps:
-        -   uses: actions/checkout@v2
+        -   uses: actions/checkout@v3.1.0
             with:
                 ref: master
                 token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
@@ -155,7 +155,7 @@ jobs:
         runs-on: ubuntu-latest
         name: Download the latest translations from Crowdin
         steps:
-        -   uses: actions/checkout@v2
+        -   uses: actions/checkout@v3.1.0
             with:
                 ref: master
                 token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
