@@ -29,10 +29,7 @@ class PostgresStorage(BaseCache):
 
     async def contains(self, key: str) -> bool:
         """Check if a key is stored in the cache"""
-        response = await tables.AioHttpCacheRow.raw(
-            "SELECT EXISTS(SELECT 1 FROM aiohttp_client_cache WHERE key ={} LIMIT 1) AS exists", key
-        )
-        return response[0]["exists"] if response else False
+        return await tables.AioHttpCacheRow.exists().where(tables.AioHttpCacheRow.key == key)
 
     async def clear(self) -> None:
         """Delete all items from the cache"""
@@ -40,7 +37,7 @@ class PostgresStorage(BaseCache):
 
     async def delete(self, key: str) -> None:
         """Delete an item from the cache"""
-        await tables.AioHttpCacheRow.raw("DELETE FROM aiohttp_client_cache WHERE key = {}", key)
+        await tables.AioHttpCacheRow.delete().where(tables.AioHttpCacheRow.key == key)
 
     async def keys(self) -> AsyncIterable[str]:
         """Get all keys stored in the cache"""
@@ -50,15 +47,17 @@ class PostgresStorage(BaseCache):
 
     async def read(self, key: str) -> ResponseOrKey:
         """Read an item from the cache"""
-        response = await tables.AioHttpCacheRow.raw(
-            "SELECT value FROM aiohttp_client_cache WHERE key = {} LIMIT 1", key
+        response = (
+            await tables.AioHttpCacheRow.select(tables.AioHttpCacheRow.value)
+            .where(tables.AioHttpCacheRow.key == key)
+            .first()
+            .output(load_json=True, nested=True)
         )
         return self.deserialize(response["value"]) if response else None
 
     async def size(self) -> int:
         """Get the number of items in the cache"""
-        response = await tables.AioHttpCacheRow.raw("SELECT COUNT(*) FROM aiohttp_client_cache")
-        return response[0]["count"] if response else 0
+        return await tables.AioHttpCacheRow.count()
 
     def values(self) -> AsyncIterable[ResponseOrKey]:
         """Get all values stored in the cache"""
@@ -71,7 +70,8 @@ class PostgresStorage(BaseCache):
 
     async def write(self, key: str, item: ResponseOrKey):
         """Write an item to the cache"""
-
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.AioHttpCacheRow.raw(
             """
             INSERT INTO aiohttp_client_cache (key, value)
@@ -84,9 +84,4 @@ class PostgresStorage(BaseCache):
 
     async def bulk_delete(self, keys: set[str]) -> None:
         """Delete multiple items from the cache"""
-        await tables.AioHttpCacheRow.raw(
-            f"""
-            DELETE FROM aiohttp_client_cache
-            WHERE {tables.AioHttpCacheRow.key.is_in(list(keys)).querystring}
-            """,
-        )
+        await tables.AioHttpCacheRow.delete().where(tables.AioHttpCacheRow.key.is_in(list(keys)))

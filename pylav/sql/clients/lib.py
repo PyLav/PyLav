@@ -39,16 +39,19 @@ class LibConfigManager:
         """
         await tables.PlaylistRow.create_table(if_not_exists=True)
         await tables.LibConfigRow.create_table(if_not_exists=True)
-        await tables.LibConfigRow.raw(
-            "CREATE UNIQUE INDEX IF NOT EXISTS unique_lib_config_bot_id ON lib_config (bot, id)"
+        await tables.LibConfigRow.create_index(
+            columns=[tables.LibConfigRow.bot, tables.LibConfigRow.id], if_not_exists=True
         )
+
         await tables.EqualizerRow.create_table(if_not_exists=True)
         await tables.PlayerStateRow.create_table(if_not_exists=True)
-        await tables.PlayerStateRow.raw(
-            "CREATE UNIQUE INDEX IF NOT EXISTS unique_player_state_bot_id ON player_state (bot, id)"
+        await tables.PlayerStateRow.create_index(
+            columns=[tables.PlayerStateRow.bot, tables.PlayerStateRow.id], if_not_exists=True
         )
+
         await tables.PlayerRow.create_table(if_not_exists=True)
-        await tables.PlayerRow.raw("CREATE UNIQUE INDEX IF NOT EXISTS unique_player_bot_id ON player (bot, id)")
+        await tables.PlayerRow.create_index(columns=[tables.PlayerRow.bot, tables.PlayerRow.id], if_not_exists=True)
+
         await tables.PlayerRow.raw(array_remove_script)
         await tables.NodeRow.create_table(if_not_exists=True)
         await tables.NodeRow.raw(array_remove_script)
@@ -60,14 +63,14 @@ class LibConfigManager:
         await tables.PlaylistRow.raw(
             f"DROP TABLE "
             f"{tables.PlaylistRow._meta.tablename}, "
-            f"{tables.LibConfigRow}, "
-            f"{tables.EqualizerRow}, "
-            f"{tables.PlayerStateRow}, "
-            f"{tables.PlayerRow}, "
-            f"{tables.NodeRow}, "
-            f"{tables.QueryRow}, "
-            f"{tables.BotVersionRow}, "
-            f"{tables.AioHttpCacheRow};"
+            f"{tables.LibConfigRow._meta.tablename}, "
+            f"{tables.EqualizerRow._meta.tablename}, "
+            f"{tables.PlayerStateRow._meta.tablename}, "
+            f"{tables.PlayerRow._meta.tablename}, "
+            f"{tables.NodeRow._meta.tablename}, "
+            f"{tables.QueryRow._meta.tablename}, "
+            f"{tables.BotVersionRow._meta.tablename}, "
+            f"{tables.AioHttpCacheRow._meta.tablename};"
         )
         await self.create_tables()
 

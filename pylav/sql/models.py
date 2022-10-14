@@ -76,19 +76,15 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
 
     @maybe_cached
     async def fetch_all(self) -> dict:
-        response = await tables.NodeRow.raw(
-            """
-        SELECT *
-        FROM node
-        WHERE id = {}
-        LIMIT 1
-        """,
-            self.id,
+        data = (
+            await tables.NodeRow.select()
+            .where(tables.NodeRow.id == self.id)
+            .first()
+            .output(load_json=True, nested=True)
         )
-        if response:
-            data = response[0]
-            data["extras"] = ujson.loads(data["extras"])
-            data["yaml"] = ujson.loads(data["yaml"])
+        if data:
+            data["extras"] = data["extras"]
+            data["yaml"] = data["yaml"]
             return data
         return {
             "id": self.id,

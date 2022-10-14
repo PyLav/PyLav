@@ -51,7 +51,13 @@ class EqualizerConfigManager:
             equalizer_id = int(equalizer_id)
         except ValueError as e:
             raise EntryNotFoundError(f"Equalizer with id {equalizer_id} not found") from e
-        equalizer = await tables.EqualizerRow.select().where(tables.EqualizerRow.id == equalizer_id).limit(1).first()
+        equalizer = (
+            await tables.EqualizerRow.select()
+            .where(tables.EqualizerRow.id == equalizer_id)
+            .limit(1)
+            .first()
+            .output(load_json=True, nested=True)
+        )
         if not equalizer:
             raise EntryNotFoundError(f"Equalizer with ID {equalizer_id} not found")
         return EqualizerModel(**equalizer)
