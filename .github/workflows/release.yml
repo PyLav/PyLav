@@ -10,7 +10,7 @@ defaults:
         shell: bash
 env:
     project-name: PyLav
-
+    GREN_GITHUB_TOKEN: ${{ secrets.PAT }}
 jobs:
     bump_version:
         name: Bump release version
