@@ -22,6 +22,14 @@ from discord.utils import utcnow
 from packaging.version import LegacyVersion, Version
 from packaging.version import parse as parse_version
 
+import pylav.sql.tables.bot
+import pylav.sql.tables.equalizers
+import pylav.sql.tables.lib_config
+import pylav.sql.tables.nodes
+import pylav.sql.tables.player_states
+import pylav.sql.tables.players
+import pylav.sql.tables.playlists
+import pylav.sql.tables.queries
 from pylav.envvars import CACHING_ENABLED, JAVA_EXECUTABLE
 from pylav.sql.caching import CachedModel, _SingletonByKey, maybe_cached
 from pylav.vendored import aiopath
@@ -67,18 +75,18 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
         bool
             Whether the node exists in the database.
         """
-        return await tables.NodeRow.exists().where(tables.NodeRow.id == self.id)
+        return await pylav.sql.tables.nodes.NodeRow.exists().where(pylav.sql.tables.nodes.NodeRow.id == self.id)
 
     async def delete(self) -> None:
         """Delete the node from the database"""
-        await tables.NodeRow.delete().where(tables.NodeRow.id == self.id)
+        await pylav.sql.tables.nodes.NodeRow.delete().where(pylav.sql.tables.nodes.NodeRow.id == self.id)
         await self.invalidate_cache()
 
     @maybe_cached
     async def fetch_all(self) -> dict:
         data = (
-            await tables.NodeRow.select()
-            .where(tables.NodeRow.id == self.id)
+            await pylav.sql.tables.nodes.NodeRow.select()
+            .where(pylav.sql.tables.nodes.NodeRow.id == self.id)
             .first()
             .output(load_json=True, nested=True)
         )
@@ -88,16 +96,16 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
             return data
         return {
             "id": self.id,
-            "name": tables.NodeRow.name.default,
-            "ssl": tables.NodeRow.ssl.default,
-            "resume_key": tables.NodeRow.resume_key.default,
-            "resume_timeout": tables.NodeRow.resume_timeout.default,
-            "reconnect_attempts": tables.NodeRow.reconnect_attempts.default,
-            "search_only": tables.NodeRow.search_only.default,
-            "managed": tables.NodeRow.managed.default,
-            "extras": ujson.loads(tables.NodeRow.extras.default),
-            "yaml": ujson.loads(tables.NodeRow.yaml.default),
-            "disabled_sources": tables.NodeRow.disabled_sources.default,
+            "name": pylav.sql.tables.nodes.NodeRow.name.default,
+            "ssl": pylav.sql.tables.nodes.NodeRow.ssl.default,
+            "resume_key": pylav.sql.tables.nodes.NodeRow.resume_key.default,
+            "resume_timeout": pylav.sql.tables.nodes.NodeRow.resume_timeout.default,
+            "reconnect_attempts": pylav.sql.tables.nodes.NodeRow.reconnect_attempts.default,
+            "search_only": pylav.sql.tables.nodes.NodeRow.search_only.default,
+            "managed": pylav.sql.tables.nodes.NodeRow.managed.default,
+            "extras": ujson.loads(pylav.sql.tables.nodes.NodeRow.extras.default),
+            "yaml": ujson.loads(pylav.sql.tables.nodes.NodeRow.yaml.default),
+            "disabled_sources": pylav.sql.tables.nodes.NodeRow.disabled_sources.default,
         }
 
     @maybe_cached
@@ -110,8 +118,8 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
             The node's name.
         """
         data = (
-            await tables.NodeRow.select(tables.NodeRow.name)
-            .where(tables.NodeRow.id == self.id)
+            await pylav.sql.tables.nodes.NodeRow.select(pylav.sql.tables.nodes.NodeRow.name)
+            .where(pylav.sql.tables.nodes.NodeRow.id == self.id)
             .first()
             .output(load_json=True, nested=True)
         )
@@ -121,7 +129,7 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
         """Update the node's name in the database"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.NodeRow.raw(
+        await pylav.sql.tables.nodes.NodeRow.raw(
             """
             INSERT INTO node (id, name) VALUES ({}, {})
             ON CONFLICT (id) DO UPDATE SET name = excluded.name;
@@ -142,18 +150,18 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
             The node's ssl setting.
         """
         data = (
-            await tables.NodeRow.select(tables.NodeRow.ssl)
-            .where(tables.NodeRow.id == self.id)
+            await pylav.sql.tables.nodes.NodeRow.select(pylav.sql.tables.nodes.NodeRow.ssl)
+            .where(pylav.sql.tables.nodes.NodeRow.id == self.id)
             .first()
             .output(load_json=True, nested=True)
         )
-        return data["ssl"] if data else tables.NodeRow.ssl.default
+        return data["ssl"] if data else pylav.sql.tables.nodes.NodeRow.ssl.default
 
     async def update_ssl(self, ssl: bool) -> None:
         """Update the node's ssl setting in the database"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.NodeRow.raw(
+        await pylav.sql.tables.nodes.NodeRow.raw(
             """
             INSERT INTO node (id, ssl) VALUES ({}, {})
             ON CONFLICT (id) DO UPDATE SET ssl = excluded.ssl;
@@ -174,8 +182,8 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
             The node's resume key.
         """
         data = (
-            await tables.NodeRow.select(tables.NodeRow.resume_key)
-            .where(tables.NodeRow.id == self.id)
+            await pylav.sql.tables.nodes.NodeRow.select(pylav.sql.tables.nodes.NodeRow.resume_key)
+            .where(pylav.sql.tables.nodes.NodeRow.id == self.id)
             .first()
             .output(load_json=True, nested=True)
         )
@@ -185,7 +193,7 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
         """Update the node's resume key in the database"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.NodeRow.raw(
+        await pylav.sql.tables.nodes.NodeRow.raw(
             """
             INSERT INTO
                 node (id, resume_key)
@@ -209,18 +217,18 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
             The node's resume timeout.
         """
         data = (
-            await tables.NodeRow.select(tables.NodeRow.resume_timeout)
-            .where(tables.NodeRow.id == self.id)
+            await pylav.sql.tables.nodes.NodeRow.select(pylav.sql.tables.nodes.NodeRow.resume_timeout)
+            .where(pylav.sql.tables.nodes.NodeRow.id == self.id)
             .first()
             .output(load_json=True, nested=True)
         )
-        return data["resume_timeout"] if data else tables.NodeRow.resume_timeout.default
+        return data["resume_timeout"] if data else pylav.sql.tables.nodes.NodeRow.resume_timeout.default
 
     async def update_resume_timeout(self, resume_timeout: int) -> None:
         """Update the node's resume timeout in the database"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.NodeRow.raw(
+        await pylav.sql.tables.nodes.NodeRow.raw(
             """
             INSERT INTO node (id, resume_timeout) VALUES ({}, {})
             ON CONFLICT (id) DO UPDATE SET resume_timeout = excluded.resume_timeout;
@@ -241,18 +249,18 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
             The node's reconnect attempts.
         """
         data = (
-            await tables.NodeRow.select(tables.NodeRow.reconnect_attempts)
-            .where(tables.NodeRow.id == self.id)
+            await pylav.sql.tables.nodes.NodeRow.select(pylav.sql.tables.nodes.NodeRow.reconnect_attempts)
+            .where(pylav.sql.tables.nodes.NodeRow.id == self.id)
             .first()
             .output(load_json=True, nested=True)
         )
-        return data["reconnect_attempts"] if data else tables.NodeRow.reconnect_attempts.default
+        return data["reconnect_attempts"] if data else pylav.sql.tables.nodes.NodeRow.reconnect_attempts.default
 
     async def update_reconnect_attempts(self, reconnect_attempts: int) -> None:
         """Update the node's reconnect attempts in the database"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.NodeRow.raw(
+        await pylav.sql.tables.nodes.NodeRow.raw(
             """
             INSERT INTO node (id, reconnect_attempts) VALUES ({}, {})
             ON CONFLICT (id) DO UPDATE SET reconnect_attempts = excluded.reconnect_attempts;
@@ -273,18 +281,18 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
             The node's search only setting.
         """
         data = (
-            await tables.NodeRow.select(tables.NodeRow.search_only)
-            .where(tables.NodeRow.id == self.id)
+            await pylav.sql.tables.nodes.NodeRow.select(pylav.sql.tables.nodes.NodeRow.search_only)
+            .where(pylav.sql.tables.nodes.NodeRow.id == self.id)
             .first()
             .output(load_json=True, nested=True)
         )
-        return data["search_only"] if data else tables.NodeRow.search_only.default
+        return data["search_only"] if data else pylav.sql.tables.nodes.NodeRow.search_only.default
 
     async def update_search_only(self, search_only: bool) -> None:
         """Update the node's search only setting in the database"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.NodeRow.raw(
+        await pylav.sql.tables.nodes.NodeRow.raw(
             """
             INSERT INTO node (id, search_only) VALUES ({}, {})
             ON CONFLICT (id) DO UPDATE SET search_only = excluded.search_only;
@@ -305,18 +313,18 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
             The node's managed setting.
         """
         data = (
-            await tables.NodeRow.select(tables.NodeRow.managed)
-            .where(tables.NodeRow.id == self.id)
+            await pylav.sql.tables.nodes.NodeRow.select(pylav.sql.tables.nodes.NodeRow.managed)
+            .where(pylav.sql.tables.nodes.NodeRow.id == self.id)
             .first()
             .output(load_json=True, nested=True)
         )
-        return data["managed"] if data else tables.NodeRow.managed.default
+        return data["managed"] if data else pylav.sql.tables.nodes.NodeRow.managed.default
 
     async def update_managed(self, managed: bool) -> None:
         """Update the node's managed setting in the database"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.NodeRow.raw(
+        await pylav.sql.tables.nodes.NodeRow.raw(
             """
             INSERT INTO node (id, managed) VALUES ({}, {})
             ON CONFLICT (id) DO UPDATE SET managed = excluded.managed;
@@ -337,18 +345,18 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
             The node's extras.
         """
         data = (
-            await tables.NodeRow.select(tables.NodeRow.extras)
-            .where(tables.NodeRow.id == self.id)
+            await pylav.sql.tables.nodes.NodeRow.select(pylav.sql.tables.nodes.NodeRow.extras)
+            .where(pylav.sql.tables.nodes.NodeRow.id == self.id)
             .first()
             .output(load_json=True, nested=True)
         )
-        return data["extras"] if data else ujson.loads(tables.NodeRow.extras.default)
+        return data["extras"] if data else ujson.loads(pylav.sql.tables.nodes.NodeRow.extras.default)
 
     async def update_extras(self, extras: dict) -> None:
         """Update the node's extras in the database"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.NodeRow.raw(
+        await pylav.sql.tables.nodes.NodeRow.raw(
             """
             INSERT INTO node (id, extras) VALUES ({}, {})
             ON CONFLICT (id) DO UPDATE SET extras = excluded.extras;
@@ -369,18 +377,18 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
             The node's yaml.
         """
         data = (
-            await tables.NodeRow.select(tables.NodeRow.yaml)
-            .where(tables.NodeRow.id == self.id)
+            await pylav.sql.tables.nodes.NodeRow.select(pylav.sql.tables.nodes.NodeRow.yaml)
+            .where(pylav.sql.tables.nodes.NodeRow.id == self.id)
             .first()
             .output(load_json=True, nested=True)
         )
-        return data["extras"] if data else ujson.loads(tables.NodeRow.yaml.default)
+        return data["extras"] if data else ujson.loads(pylav.sql.tables.nodes.NodeRow.yaml.default)
 
     async def update_yaml(self, yaml_data: dict) -> None:
         """Update the node's yaml in the database"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.NodeRow.raw(
+        await pylav.sql.tables.nodes.NodeRow.raw(
             """
             INSERT INTO node (id, yaml) VALUES ({}, {})
             ON CONFLICT (id) DO UPDATE SET yaml = excluded.yaml;
@@ -401,12 +409,12 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
             The node's disabled sources.
         """
         data = (
-            await tables.NodeRow.select(tables.NodeRow.disabled_sources)
-            .where(tables.NodeRow.id == self.id)
+            await pylav.sql.tables.nodes.NodeRow.select(pylav.sql.tables.nodes.NodeRow.disabled_sources)
+            .where(pylav.sql.tables.nodes.NodeRow.id == self.id)
             .first()
             .output(load_json=True, nested=True)
         )
-        return data["disabled_sources"] if data else tables.NodeRow.disabled_sources.default
+        return data["disabled_sources"] if data else pylav.sql.tables.nodes.NodeRow.disabled_sources.default
 
     async def update_disabled_sources(self, disabled_sources: list[str]) -> None:
         """Update the node's disabled sources in the database"""
@@ -414,7 +422,7 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
         intersection = list(source & SUPPORTED_SOURCES)
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.NodeRow.raw(
+        await pylav.sql.tables.nodes.NodeRow.raw(
             """
             INSERT INTO node (id, disabled_sources) VALUES ({}, {})
             ON CONFLICT (id) DO UPDATE SET disabled_sources = excluded.disabled_sources;
@@ -429,7 +437,7 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
         """Add a source to the node's disabled sources in the database"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.NodeRow.raw(
+        await pylav.sql.tables.nodes.NodeRow.raw(
             """
             INSERT INTO node (id, disabled_sources) VALUES ({}, {})
             ON CONFLICT (id) DO UPDATE SET disabled_sources = ARRAY_CAT(node.disabled_sources, EXCLUDED.disabled_sources);
@@ -443,7 +451,7 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
     async def remove_from_disabled_sources(self, source: str) -> None:
         """Remove a source from the node's disabled sources in the database"""
         # TODO: When piccolo add support to more Array operations replace with ORM
-        await tables.NodeRow.raw(
+        await pylav.sql.tables.nodes.NodeRow.raw(
             """UPDATE node SET disabled_sources = array_remove(disabled_sources, {}) WHERE id = {}""",
             source,
             self.id,
@@ -457,7 +465,7 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
         intersection = list(source & SUPPORTED_SOURCES)
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.NodeRow.raw(
+        await pylav.sql.tables.nodes.NodeRow.raw(
             """
             INSERT INTO node (id, disabled_sources) VALUES ({}, {})
             ON CONFLICT (id) DO UPDATE SET disabled_sources = disabled_sources || EXCLUDED.disabled_sources;
@@ -502,7 +510,7 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
             extras = {}
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.NodeRow.raw(
+        await pylav.sql.tables.nodes.NodeRow.raw(
             """
             INSERT INTO node
             (id,
@@ -577,7 +585,7 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
         __, java_xmx_default, __, __ = get_jar_ram_actual(JAVA_EXECUTABLE)
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.NodeRow.raw(
+        await pylav.sql.tables.nodes.NodeRow.raw(
             """
             INSERT INTO node
             (id, managed, ssl, reconnect_attempts, search_only, yaml, name, resume_key, resume_timeout, extras)
@@ -834,7 +842,7 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
         )
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlayerRow.raw(
+        await pylav.sql.tables.players.PlayerRow.raw(
             """
             INSERT INTO player
             (id, bot, volume, max_volume, shuffle, auto_shuffle, auto_play, self_deaf, empty_queue_dc, alone_dc, alone_pause)
@@ -857,15 +865,20 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
 
     async def delete(self) -> None:
         """Delete the player from the database"""
-        await tables.PlayerRow.delete().where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+        await pylav.sql.tables.players.PlayerRow.delete().where(
+            (pylav.sql.tables.players.PlayerRow.id == self.id) & (pylav.sql.tables.players.PlayerRow.bot == self.bot)
+        )
         await self.invalidate_cache()
 
     @maybe_cached
     async def fetch_all(self) -> dict:
         """Get all players from the database"""
         data = (
-            await tables.PlayerRow.select()
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            await pylav.sql.tables.players.PlayerRow.select()
+            .where(
+                (pylav.sql.tables.players.PlayerRow.id == self.id)
+                & (pylav.sql.tables.players.PlayerRow.bot == self.bot)
+            )
             .output(load_json=True, nested=True)
         )
         if data:
@@ -879,32 +892,34 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
         return {
             "id": self.id,
             "bot": self.bot,
-            "volume": tables.PlayerRow.volume.default,
-            "max_volume": tables.PlayerRow.max_volume.default,
-            "auto_play_playlist_id": tables.PlayerRow.auto_play_playlist_id.default,
-            "text_channel_id": tables.PlayerRow.text_channel_id.default,
-            "notify_channel_id": tables.PlayerRow.notify_channel_id.default,
-            "forced_channel_id": tables.PlayerRow.forced_channel_id.default,
-            "repeat_current": tables.PlayerRow.repeat_current.default,
-            "repeat_queue": tables.PlayerRow.repeat_queue.default,
-            "shuffle": tables.PlayerRow.shuffle.default,
-            "auto_shuffle": tables.PlayerRow.auto_shuffle.default,
-            "auto_play": tables.PlayerRow.auto_play.default,
-            "self_deaf": tables.PlayerRow.self_deaf.default,
-            "empty_queue_dc": TimedFeature.from_json(ujson.loads(tables.PlayerRow.empty_queue_dc.default)),
-            "alone_dc": TimedFeature.from_json(ujson.loads(tables.PlayerRow.alone_dc.default)),
-            "alone_pause": TimedFeature.from_json(ujson.loads(tables.PlayerRow.alone_pause.default)),
-            "extras": ujson.loads(tables.PlayerRow.extras.default),
-            "effects": ujson.loads(tables.PlayerRow.effects.default),
-            "dj_users": tables.PlayerRow.dj_users.default,
-            "dj_roles": tables.PlayerRow.dj_roles.default,
+            "volume": pylav.sql.tables.players.PlayerRow.volume.default,
+            "max_volume": pylav.sql.tables.players.PlayerRow.max_volume.default,
+            "auto_play_playlist_id": pylav.sql.tables.players.PlayerRow.auto_play_playlist_id.default,
+            "text_channel_id": pylav.sql.tables.players.PlayerRow.text_channel_id.default,
+            "notify_channel_id": pylav.sql.tables.players.PlayerRow.notify_channel_id.default,
+            "forced_channel_id": pylav.sql.tables.players.PlayerRow.forced_channel_id.default,
+            "repeat_current": pylav.sql.tables.players.PlayerRow.repeat_current.default,
+            "repeat_queue": pylav.sql.tables.players.PlayerRow.repeat_queue.default,
+            "shuffle": pylav.sql.tables.players.PlayerRow.shuffle.default,
+            "auto_shuffle": pylav.sql.tables.players.PlayerRow.auto_shuffle.default,
+            "auto_play": pylav.sql.tables.players.PlayerRow.auto_play.default,
+            "self_deaf": pylav.sql.tables.players.PlayerRow.self_deaf.default,
+            "empty_queue_dc": TimedFeature.from_json(
+                ujson.loads(pylav.sql.tables.players.PlayerRow.empty_queue_dc.default)
+            ),
+            "alone_dc": TimedFeature.from_json(ujson.loads(pylav.sql.tables.players.PlayerRow.alone_dc.default)),
+            "alone_pause": TimedFeature.from_json(ujson.loads(pylav.sql.tables.players.PlayerRow.alone_pause.default)),
+            "extras": ujson.loads(pylav.sql.tables.players.PlayerRow.extras.default),
+            "effects": ujson.loads(pylav.sql.tables.players.PlayerRow.effects.default),
+            "dj_users": pylav.sql.tables.players.PlayerRow.dj_users.default,
+            "dj_roles": pylav.sql.tables.players.PlayerRow.dj_roles.default,
         }
 
     @maybe_cached
     async def exists(self) -> bool:
         """Check if the player exists in the database"""
-        return await tables.PlayerRow.exists().where(
-            (tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot)
+        return await pylav.sql.tables.players.PlayerRow.exists().where(
+            (pylav.sql.tables.players.PlayerRow.id == self.id) & (pylav.sql.tables.players.PlayerRow.bot == self.bot)
         )
 
     @maybe_cached
@@ -912,18 +927,21 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
         """Fetch the volume of the player from the db"""
 
         player = (
-            await tables.PlayerRow.select(tables.PlayerRow.volume)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            await pylav.sql.tables.players.PlayerRow.select(pylav.sql.tables.players.PlayerRow.volume)
+            .where(
+                (pylav.sql.tables.players.PlayerRow.id == self.id)
+                & (pylav.sql.tables.players.PlayerRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
-        return player["volume"] if player else tables.PlayerRow.volume.default
+        return player["volume"] if player else pylav.sql.tables.players.PlayerRow.volume.default
 
     async def update_volume(self, volume: int) -> None:
         """Update the volume of the player in the db"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlayerRow.raw(
+        await pylav.sql.tables.players.PlayerRow.raw(
             """INSERT INTO player (id, bot, volume)
         VALUES ({}, {}, {})
         ON CONFLICT (id, bot)
@@ -939,18 +957,21 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     async def fetch_max_volume(self) -> int:
         """Fetch the max volume of the player from the db"""
         player = (
-            await tables.PlayerRow.select(tables.PlayerRow.max_volume)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            await pylav.sql.tables.players.PlayerRow.select(pylav.sql.tables.players.PlayerRow.max_volume)
+            .where(
+                (pylav.sql.tables.players.PlayerRow.id == self.id)
+                & (pylav.sql.tables.players.PlayerRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
-        return player["max_volume"] if player else tables.PlayerRow.max_volume.default
+        return player["max_volume"] if player else pylav.sql.tables.players.PlayerRow.max_volume.default
 
     async def update_max_volume(self, max_volume: int) -> None:
         """Update the max volume of the player in the db"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlayerRow.raw(
+        await pylav.sql.tables.players.PlayerRow.raw(
             """INSERT INTO player (id, bot, max_volume)
             VALUES ({}, {}, {})
             ON CONFLICT (id, bot)
@@ -966,18 +987,25 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     async def fetch_auto_play_playlist_id(self) -> int:
         """Fetch the auto play playlist ID of the player"""
         player = (
-            await tables.PlayerRow.select(tables.PlayerRow.auto_play_playlist_id)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            await pylav.sql.tables.players.PlayerRow.select(pylav.sql.tables.players.PlayerRow.auto_play_playlist_id)
+            .where(
+                (pylav.sql.tables.players.PlayerRow.id == self.id)
+                & (pylav.sql.tables.players.PlayerRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
-        return player["auto_play_playlist_id"] if player else tables.PlayerRow.auto_play_playlist_id.default
+        return (
+            player["auto_play_playlist_id"]
+            if player
+            else pylav.sql.tables.players.PlayerRow.auto_play_playlist_id.default
+        )
 
     async def update_auto_play_playlist_id(self, auto_play_playlist_id: int) -> None:
         """Update the auto play playlist ID of the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlayerRow.raw(
+        await pylav.sql.tables.players.PlayerRow.raw(
             """INSERT INTO player (id, bot, auto_play_playlist_id)
             VALUES ({}, {}, {})
             ON CONFLICT (id, bot)
@@ -993,18 +1021,21 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     async def fetch_text_channel_id(self) -> int:
         """Fetch the text channel ID of the player"""
         player = (
-            await tables.PlayerRow.select(tables.PlayerRow.text_channel_id)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            await pylav.sql.tables.players.PlayerRow.select(pylav.sql.tables.players.PlayerRow.text_channel_id)
+            .where(
+                (pylav.sql.tables.players.PlayerRow.id == self.id)
+                & (pylav.sql.tables.players.PlayerRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
-        return player["text_channel_id"] if player else tables.PlayerRow.text_channel_id.default
+        return player["text_channel_id"] if player else pylav.sql.tables.players.PlayerRow.text_channel_id.default
 
     async def update_text_channel_id(self, text_channel_id: int) -> None:
         """Update the text channel ID of the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlayerRow.raw(
+        await pylav.sql.tables.players.PlayerRow.raw(
             """INSERT INTO player (id, bot, text_channel_id)
             VALUES ({}, {}, {})
             ON CONFLICT (id, bot)
@@ -1020,18 +1051,21 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     async def fetch_notify_channel_id(self) -> int:
         """Fetch the notify channel ID of the player"""
         player = (
-            await tables.PlayerRow.select(tables.PlayerRow.notify_channel_id)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            await pylav.sql.tables.players.PlayerRow.select(pylav.sql.tables.players.PlayerRow.notify_channel_id)
+            .where(
+                (pylav.sql.tables.players.PlayerRow.id == self.id)
+                & (pylav.sql.tables.players.PlayerRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
-        return player["notify_channel_id"] if player else tables.PlayerRow.notify_channel_id.default
+        return player["notify_channel_id"] if player else pylav.sql.tables.players.PlayerRow.notify_channel_id.default
 
     async def update_notify_channel_id(self, notify_channel_id: int) -> None:
         """Update the notify channel ID of the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlayerRow.raw(
+        await pylav.sql.tables.players.PlayerRow.raw(
             """INSERT INTO player (id, bot, notify_channel_id)
             VALUES ({}, {}, {})
             ON CONFLICT (id, bot)
@@ -1047,18 +1081,21 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     async def fetch_forced_channel_id(self) -> int:
         """Fetch the forced channel ID of the player"""
         player = (
-            await tables.PlayerRow.select(tables.PlayerRow.forced_channel_id)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            await pylav.sql.tables.players.PlayerRow.select(pylav.sql.tables.players.PlayerRow.forced_channel_id)
+            .where(
+                (pylav.sql.tables.players.PlayerRow.id == self.id)
+                & (pylav.sql.tables.players.PlayerRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
-        return player["forced_channel_id"] if player else tables.PlayerRow.forced_channel_id.default
+        return player["forced_channel_id"] if player else pylav.sql.tables.players.PlayerRow.forced_channel_id.default
 
     async def update_forced_channel_id(self, forced_channel_id: int) -> None:
         """Update the forced channel ID of the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlayerRow.raw(
+        await pylav.sql.tables.players.PlayerRow.raw(
             """INSERT INTO player (id, bot, forced_channel_id)
             VALUES ({}, {}, {})
             ON CONFLICT (id, bot)
@@ -1074,18 +1111,21 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     async def fetch_repeat_current(self) -> bool:
         """Fetch the repeat current of the player"""
         player = (
-            await tables.PlayerRow.select(tables.PlayerRow.repeat_current)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            await pylav.sql.tables.players.PlayerRow.select(pylav.sql.tables.players.PlayerRow.repeat_current)
+            .where(
+                (pylav.sql.tables.players.PlayerRow.id == self.id)
+                & (pylav.sql.tables.players.PlayerRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
-        return player["repeat_current"] if player else tables.PlayerRow.repeat_current.default
+        return player["repeat_current"] if player else pylav.sql.tables.players.PlayerRow.repeat_current.default
 
     async def update_repeat_current(self, repeat_current: bool) -> None:
         """Update the repeat current of the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlayerRow.raw(
+        await pylav.sql.tables.players.PlayerRow.raw(
             """INSERT INTO player (id, bot, repeat_current)
             VALUES ({}, {}, {})
             ON CONFLICT (id, bot)
@@ -1101,18 +1141,21 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     async def fetch_repeat_queue(self) -> bool:
         """Fetch the repeat queue of the player"""
         player = (
-            await tables.PlayerRow.select(tables.PlayerRow.repeat_queue)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            await pylav.sql.tables.players.PlayerRow.select(pylav.sql.tables.players.PlayerRow.repeat_queue)
+            .where(
+                (pylav.sql.tables.players.PlayerRow.id == self.id)
+                & (pylav.sql.tables.players.PlayerRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
-        return player["repeat_queue"] if player else tables.PlayerRow.repeat_queue.default
+        return player["repeat_queue"] if player else pylav.sql.tables.players.PlayerRow.repeat_queue.default
 
     async def update_repeat_queue(self, repeat_queue: bool) -> None:
         """Update the repeat queue of the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlayerRow.raw(
+        await pylav.sql.tables.players.PlayerRow.raw(
             """INSERT INTO player (id, bot, repeat_queue)
             VALUES ({}, {}, {})
             ON CONFLICT (id, bot)
@@ -1128,18 +1171,21 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     async def fetch_shuffle(self) -> bool:
         """Fetch the shuffle of the player"""
         player = (
-            await tables.PlayerRow.select(tables.PlayerRow.shuffle)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            await pylav.sql.tables.players.PlayerRow.select(pylav.sql.tables.players.PlayerRow.shuffle)
+            .where(
+                (pylav.sql.tables.players.PlayerRow.id == self.id)
+                & (pylav.sql.tables.players.PlayerRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
-        return player["shuffle"] if player else tables.PlayerRow.shuffle.default
+        return player["shuffle"] if player else pylav.sql.tables.players.PlayerRow.shuffle.default
 
     async def update_shuffle(self, shuffle: bool) -> None:
         """Update the shuffle of the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlayerRow.raw(
+        await pylav.sql.tables.players.PlayerRow.raw(
             """INSERT INTO player (id, bot, shuffle)
             VALUES ({}, {}, {})
             ON CONFLICT (id, bot)
@@ -1155,18 +1201,21 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     async def fetch_auto_shuffle(self) -> bool:
         """Fetch the auto shuffle of the player"""
         player = (
-            await tables.PlayerRow.select(tables.PlayerRow.auto_shuffle)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            await pylav.sql.tables.players.PlayerRow.select(pylav.sql.tables.players.PlayerRow.auto_shuffle)
+            .where(
+                (pylav.sql.tables.players.PlayerRow.id == self.id)
+                & (pylav.sql.tables.players.PlayerRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
-        return player["auto_shuffle"] if player else tables.PlayerRow.auto_shuffle.default
+        return player["auto_shuffle"] if player else pylav.sql.tables.players.PlayerRow.auto_shuffle.default
 
     async def update_auto_shuffle(self, auto_shuffle: bool) -> None:
         """Update the auto shuffle of the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlayerRow.raw(
+        await pylav.sql.tables.players.PlayerRow.raw(
             """INSERT INTO player (id, bot, auto_shuffle)
             VALUES ({}, {}, {})
             ON CONFLICT (id, bot)
@@ -1182,18 +1231,21 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     async def fetch_auto_play(self) -> bool:
         """Fetch the auto play of the player"""
         player = (
-            await tables.PlayerRow.select(tables.PlayerRow.auto_play)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            await pylav.sql.tables.players.PlayerRow.select(pylav.sql.tables.players.PlayerRow.auto_play)
+            .where(
+                (pylav.sql.tables.players.PlayerRow.id == self.id)
+                & (pylav.sql.tables.players.PlayerRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
-        return player["auto_play"] if player else tables.PlayerRow.auto_play.default
+        return player["auto_play"] if player else pylav.sql.tables.players.PlayerRow.auto_play.default
 
     async def update_auto_play(self, auto_play: bool) -> None:
         """Update the auto play of the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlayerRow.raw(
+        await pylav.sql.tables.players.PlayerRow.raw(
             """INSERT INTO player (id, bot, auto_play)
             VALUES ({}, {}, {})
             ON CONFLICT (id, bot)
@@ -1209,18 +1261,21 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     async def fetch_self_deaf(self) -> bool:
         """Fetch the self deaf of the player"""
         player = (
-            await tables.PlayerRow.select(tables.PlayerRow.self_deaf)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            await pylav.sql.tables.players.PlayerRow.select(pylav.sql.tables.players.PlayerRow.self_deaf)
+            .where(
+                (pylav.sql.tables.players.PlayerRow.id == self.id)
+                & (pylav.sql.tables.players.PlayerRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
-        return player["self_deaf"] if player else tables.PlayerRow.self_deaf.default
+        return player["self_deaf"] if player else pylav.sql.tables.players.PlayerRow.self_deaf.default
 
     async def update_self_deaf(self, self_deaf: bool) -> None:
         """Update the self deaf of the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlayerRow.raw(
+        await pylav.sql.tables.players.PlayerRow.raw(
             """INSERT INTO player (id, bot, self_deaf)
             VALUES ({}, {}, {})
             ON CONFLICT (id, bot)
@@ -1236,18 +1291,21 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     async def fetch_extras(self) -> dict:
         """Fetch the extras of the player"""
         player = (
-            await tables.PlayerRow.select(tables.PlayerRow.extras)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            await pylav.sql.tables.players.PlayerRow.select(pylav.sql.tables.players.PlayerRow.extras)
+            .where(
+                (pylav.sql.tables.players.PlayerRow.id == self.id)
+                & (pylav.sql.tables.players.PlayerRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
-        return player["extras"] if player else ujson.loads(tables.PlayerRow.extras.default)
+        return player["extras"] if player else ujson.loads(pylav.sql.tables.players.PlayerRow.extras.default)
 
     async def update_extras(self, extras: dict) -> None:
         """Update the extras of the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlayerRow.raw(
+        await pylav.sql.tables.players.PlayerRow.raw(
             """INSERT INTO player (id, bot, extras)
             VALUES ({}, {}, {})
             ON CONFLICT (id, bot)
@@ -1263,18 +1321,21 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     async def fetch_effects(self) -> dict:
         """Fetch the effects of the player"""
         player = (
-            await tables.PlayerRow.select(tables.PlayerRow.effects)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            await pylav.sql.tables.players.PlayerRow.select(pylav.sql.tables.players.PlayerRow.effects)
+            .where(
+                (pylav.sql.tables.players.PlayerRow.id == self.id)
+                & (pylav.sql.tables.players.PlayerRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
-        return player["effects"] if player else ujson.loads(tables.PlayerRow.effects.default)
+        return player["effects"] if player else ujson.loads(pylav.sql.tables.players.PlayerRow.effects.default)
 
     async def update_effects(self, effects: dict) -> None:
         """Update the effects of the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlayerRow.raw(
+        await pylav.sql.tables.players.PlayerRow.raw(
             """INSERT INTO player (id, bot, effects)
             VALUES ({}, {}, {})
             ON CONFLICT (id, bot)
@@ -1290,20 +1351,25 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     async def fetch_empty_queue_dc(self) -> TimedFeature:
         """Fetch the empty queue dc of the player"""
         player = (
-            await tables.PlayerRow.select(tables.PlayerRow.empty_queue_dc)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            await pylav.sql.tables.players.PlayerRow.select(pylav.sql.tables.players.PlayerRow.empty_queue_dc)
+            .where(
+                (pylav.sql.tables.players.PlayerRow.id == self.id)
+                & (pylav.sql.tables.players.PlayerRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
         return TimedFeature.from_json(
-            player["empty_queue_dc"] if player else ujson.loads(tables.PlayerRow.empty_queue_dc.default)
+            player["empty_queue_dc"]
+            if player
+            else ujson.loads(pylav.sql.tables.players.PlayerRow.empty_queue_dc.default)
         )
 
     async def update_empty_queue_dc(self, empty_queue_dc: dict) -> None:
         """Update the empty queue dc of the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlayerRow.raw(
+        await pylav.sql.tables.players.PlayerRow.raw(
             """INSERT INTO player (id, bot, empty_queue_dc)
             VALUES ({}, {}, {})
             ON CONFLICT (id, bot)
@@ -1319,18 +1385,23 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     async def fetch_alone_dc(self) -> TimedFeature:
         """Fetch the alone dc of the player"""
         player = (
-            await tables.PlayerRow.select(tables.PlayerRow.alone_dc)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            await pylav.sql.tables.players.PlayerRow.select(pylav.sql.tables.players.PlayerRow.alone_dc)
+            .where(
+                (pylav.sql.tables.players.PlayerRow.id == self.id)
+                & (pylav.sql.tables.players.PlayerRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
-        return TimedFeature.from_json(player["alone_dc"] if player else ujson.loads(tables.PlayerRow.alone_dc.default))
+        return TimedFeature.from_json(
+            player["alone_dc"] if player else ujson.loads(pylav.sql.tables.players.PlayerRow.alone_dc.default)
+        )
 
     async def update_alone_dc(self, alone_dc: dict) -> None:
         """Update the alone dc of the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlayerRow.raw(
+        await pylav.sql.tables.players.PlayerRow.raw(
             """INSERT INTO player (id, bot, alone_dc)
             VALUES ({}, {}, {})
             ON CONFLICT (id, bot)
@@ -1346,20 +1417,23 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     async def fetch_alone_pause(self) -> TimedFeature:
         """Fetch the alone pause of the player"""
         player = (
-            await tables.PlayerRow.select(tables.PlayerRow.alone_pause)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            await pylav.sql.tables.players.PlayerRow.select(pylav.sql.tables.players.PlayerRow.alone_pause)
+            .where(
+                (pylav.sql.tables.players.PlayerRow.id == self.id)
+                & (pylav.sql.tables.players.PlayerRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
         return TimedFeature.from_json(
-            player["alone_pause"] if player else ujson.loads(tables.PlayerRow.alone_pause.default)
+            player["alone_pause"] if player else ujson.loads(pylav.sql.tables.players.PlayerRow.alone_pause.default)
         )
 
     async def update_alone_pause(self, alone_pause: dict) -> None:
         """Update the alone pause of the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlayerRow.raw(
+        await pylav.sql.tables.players.PlayerRow.raw(
             """INSERT INTO player (id, bot, alone_pause)
             VALUES ({}, {}, {})
             ON CONFLICT (id, bot)
@@ -1375,19 +1449,22 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     async def fetch_dj_users(self) -> set[int]:
         """Fetch the dj users of the player"""
         player = (
-            await tables.PlayerRow.select(tables.PlayerRow.dj_users)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            await pylav.sql.tables.players.PlayerRow.select(pylav.sql.tables.players.PlayerRow.dj_users)
+            .where(
+                (pylav.sql.tables.players.PlayerRow.id == self.id)
+                & (pylav.sql.tables.players.PlayerRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
 
-        return set(player["dj_users"] if player else tables.PlayerRow.dj_users.default)
+        return set(player["dj_users"] if player else pylav.sql.tables.players.PlayerRow.dj_users.default)
 
     async def add_to_dj_users(self, user: discord.Member) -> None:
         """Add a user to the dj users of the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlayerRow.raw(
+        await pylav.sql.tables.players.PlayerRow.raw(
             """INSERT INTO player (id, bot, dj_users)
             VALUES ({}, {}, {})
             ON CONFLICT (id, bot)
@@ -1402,7 +1479,7 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     async def remove_from_dj_users(self, user: discord.Member) -> None:
         """Remove a user from the dj users of the player"""
         # TODO: When piccolo add more functions for dealing with arrays update this to become ORM
-        await tables.PlayerRow.raw(
+        await pylav.sql.tables.players.PlayerRow.raw(
             "UPDATE player SET dj_users = array_remove(dj_users, {}) WHERE id = {} AND bot = {};",
             user.id,
             self.id,
@@ -1417,7 +1494,7 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
             return
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlayerRow.raw(
+        await pylav.sql.tables.players.PlayerRow.raw(
             """INSERT INTO player (id, bot, dj_users)
             VALUES ({}, {}, {})
             ON CONFLICT (id, bot)
@@ -1447,7 +1524,7 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
         """Reset the dj users of the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlayerRow.raw(
+        await pylav.sql.tables.players.PlayerRow.raw(
             """
             INSERT INTO player (id, bot, dj_users) VALUES ({}, {}, {})
             ON CONFLICT (id, bot) DO UPDATE SET dj_users = excluded.dj_users;
@@ -1463,19 +1540,22 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     async def fetch_dj_roles(self) -> set[int]:
         """Fetch the dj roles of the player"""
         player = (
-            await tables.PlayerRow.select(tables.PlayerRow.dj_roles)
-            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            await pylav.sql.tables.players.PlayerRow.select(pylav.sql.tables.players.PlayerRow.dj_roles)
+            .where(
+                (pylav.sql.tables.players.PlayerRow.id == self.id)
+                & (pylav.sql.tables.players.PlayerRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
 
-        return set(player["dj_roles"] if player else tables.PlayerRow.dj_roles.default)
+        return set(player["dj_roles"] if player else pylav.sql.tables.players.PlayerRow.dj_roles.default)
 
     async def add_to_dj_roles(self, role: discord.Role) -> None:
         """Add dj roles to the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlayerRow.raw(
+        await pylav.sql.tables.players.PlayerRow.raw(
             """INSERT INTO player (id, bot, dj_roles)
             VALUES ({}, {}, {})
             ON CONFLICT (id, bot)
@@ -1491,7 +1571,7 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
         """Remove dj roles from the player"""
         # TODO: When piccolo add more functions for dealing with arrays update this to become ORM
 
-        await tables.PlayerRow.raw(
+        await pylav.sql.tables.players.PlayerRow.raw(
             """UPDATE player SET dj_roles = array_remove(dj_roles, {}) WHERE id = {} AND bot = {}""",
             role.id,
             self.id,
@@ -1512,7 +1592,7 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
             return
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlayerRow.raw(
+        await pylav.sql.tables.players.PlayerRow.raw(
             """INSERT INTO player (id, bot, dj_roles)
                     VALUES ({}, {}, {})
                     ON CONFLICT (id, bot)
@@ -1542,7 +1622,7 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
         """Reset the dj roles of the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlayerRow.raw(
+        await pylav.sql.tables.players.PlayerRow.raw(
             """
                     INSERT INTO player (id, bot, dj_roles) VALUES ({}, {}, {})
                     ON CONFLICT (id, bot) DO UPDATE SET dj_roles = excluded.dj_roles;
@@ -1555,17 +1635,17 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
         await self.invalidate_cache(self.fetch_all)
 
     async def _roleid_in_dj_roles(self, role_id: int) -> bool:
-        return await tables.PlayerRow.exists().where(
-            (tables.PlayerRow.id == self.id)
-            & (tables.PlayerRow.bot == self.bot)
-            & tables.PlayerRow.dj_roles.any(role_id)
+        return await pylav.sql.tables.players.PlayerRow.exists().where(
+            (pylav.sql.tables.players.PlayerRow.id == self.id)
+            & (pylav.sql.tables.players.PlayerRow.bot == self.bot)
+            & pylav.sql.tables.players.PlayerRow.dj_roles.any(role_id)
         )
 
     async def _userid_in_dj_users(self, user_id: int) -> bool:
-        return await tables.PlayerRow.exists().where(
-            (tables.PlayerRow.id == self.id)
-            & (tables.PlayerRow.bot == self.bot)
-            & tables.PlayerRow.dj_users.any(user_id)
+        return await pylav.sql.tables.players.PlayerRow.exists().where(
+            (pylav.sql.tables.players.PlayerRow.id == self.id)
+            & (pylav.sql.tables.players.PlayerRow.bot == self.bot)
+            & pylav.sql.tables.players.PlayerRow.dj_users.any(user_id)
         )
 
     async def is_dj(
@@ -1619,18 +1699,18 @@ class BotVersion(CachedModel, metaclass=_SingletonByKey):
     async def fetch_version(self) -> LegacyVersion | Version:
         """Fetch the version of the bot from the database"""
         data = (
-            await tables.BotVersionRow.select(tables.BotVersionRow.version)
-            .where(tables.PlayerRow.bot == self.id)
+            await pylav.sql.tables.bot.BotVersionRow.select(pylav.sql.tables.bot.BotVersionRow.version)
+            .where(pylav.sql.tables.players.PlayerRow.bot == self.id)
             .first()
             .output(load_json=True, nested=True)
         )
-        return parse_version(data["version"] if data else tables.BotVersionRow.version.default)
+        return parse_version(data["version"] if data else pylav.sql.tables.bot.BotVersionRow.version.default)
 
     async def update_version(self, version: LegacyVersion | Version | str):
         """Update the version of the bot in the database"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.BotVersionRow.raw(
+        await pylav.sql.tables.bot.BotVersionRow.raw(
             """
             INSERT INTO version (bot, version)
             VALUES ({}, {})
@@ -1657,8 +1737,9 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         bool
             Whether the config exists.
         """
-        return await tables.LibConfigRow.exists().where(
-            (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
+        return await pylav.sql.tables.lib_config.LibConfigRow.exists().where(
+            (pylav.sql.tables.lib_config.LibConfigRow.id == self.id)
+            & (pylav.sql.tables.lib_config.LibConfigRow.bot == self.bot)
         )
 
     @maybe_cached
@@ -1671,12 +1752,17 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
             The config folder.
         """
         response = (
-            await tables.LibConfigRow.select(tables.LibConfigRow.config_folder)
-            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            await pylav.sql.tables.lib_config.LibConfigRow.select(
+                pylav.sql.tables.lib_config.LibConfigRow.config_folder
+            )
+            .where(
+                (pylav.sql.tables.lib_config.LibConfigRow.id == self.id)
+                & (pylav.sql.tables.lib_config.LibConfigRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
-        return response["config_folder"] if response else tables.LibConfigRow.config_folder.default
+        return response["config_folder"] if response else pylav.sql.tables.lib_config.LibConfigRow.config_folder.default
 
     async def update_config_folder(self, config_folder: aiopath.AsyncPath | pathlib.Path | str) -> None:
         """Update the config folder.
@@ -1688,7 +1774,7 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         """
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.LibConfigRow.raw(
+        await pylav.sql.tables.lib_config.LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, config_folder)
             VALUES ({}, {}, {})
@@ -1712,12 +1798,21 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
             The localtrack folder.
         """
         response = (
-            await tables.LibConfigRow.select(tables.LibConfigRow.localtrack_folder)
-            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            await pylav.sql.tables.lib_config.LibConfigRow.select(
+                pylav.sql.tables.lib_config.LibConfigRow.localtrack_folder
+            )
+            .where(
+                (pylav.sql.tables.lib_config.LibConfigRow.id == self.id)
+                & (pylav.sql.tables.lib_config.LibConfigRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
-        return response["localtrack_folder"] if response else tables.LibConfigRow.localtrack_folder.default
+        return (
+            response["localtrack_folder"]
+            if response
+            else pylav.sql.tables.lib_config.LibConfigRow.localtrack_folder.default
+        )
 
     async def update_localtrack_folder(self, localtrack_folder: aiopath.AsyncPath | pathlib.Path | str) -> None:
         """Update the localtrack folder.
@@ -1729,7 +1824,7 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         """
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.LibConfigRow.raw(
+        await pylav.sql.tables.lib_config.LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, localtrack_folder)
             VALUES ({}, {}, {})
@@ -1753,13 +1848,16 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
             The java path.
         """
         response = (
-            await tables.LibConfigRow.select(tables.LibConfigRow.java_path)
-            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            await pylav.sql.tables.lib_config.LibConfigRow.select(pylav.sql.tables.lib_config.LibConfigRow.java_path)
+            .where(
+                (pylav.sql.tables.lib_config.LibConfigRow.id == self.id)
+                & (pylav.sql.tables.lib_config.LibConfigRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
 
-        temp_path = response["java_path"] if response else tables.LibConfigRow.java_path.default
+        temp_path = response["java_path"] if response else pylav.sql.tables.lib_config.LibConfigRow.java_path.default
         java_path = get_true_path(temp_path, temp_path)
         return java_path
 
@@ -1774,7 +1872,7 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         java_path = get_true_path(java_path, java_path)
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.LibConfigRow.raw(
+        await pylav.sql.tables.lib_config.LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, java_path)
             VALUES ({}, {}, {})
@@ -1798,12 +1896,21 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
             The enable_managed_node.
         """
         response = (
-            await tables.LibConfigRow.select(tables.LibConfigRow.enable_managed_node)
-            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            await pylav.sql.tables.lib_config.LibConfigRow.select(
+                pylav.sql.tables.lib_config.LibConfigRow.enable_managed_node
+            )
+            .where(
+                (pylav.sql.tables.lib_config.LibConfigRow.id == self.id)
+                & (pylav.sql.tables.lib_config.LibConfigRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
-        return response["enable_managed_node"] if response else tables.LibConfigRow.enable_managed_node.default
+        return (
+            response["enable_managed_node"]
+            if response
+            else pylav.sql.tables.lib_config.LibConfigRow.enable_managed_node.default
+        )
 
     async def update_enable_managed_node(self, enable_managed_node: bool) -> None:
         """Update the enable_managed_node.
@@ -1815,7 +1922,7 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         """
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.LibConfigRow.raw(
+        await pylav.sql.tables.lib_config.LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, enable_managed_node)
             VALUES ({}, {}, {})
@@ -1839,15 +1946,20 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
             The use_bundled_pylav_external.
         """
         response = (
-            await tables.LibConfigRow.select(tables.LibConfigRow.use_bundled_pylav_external)
-            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            await pylav.sql.tables.lib_config.LibConfigRow.select(
+                pylav.sql.tables.lib_config.LibConfigRow.use_bundled_pylav_external
+            )
+            .where(
+                (pylav.sql.tables.lib_config.LibConfigRow.id == self.id)
+                & (pylav.sql.tables.lib_config.LibConfigRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
         return (
             response["use_bundled_pylav_external"]
             if response
-            else tables.LibConfigRow.use_bundled_pylav_external.default
+            else pylav.sql.tables.lib_config.LibConfigRow.use_bundled_pylav_external.default
         )
 
     async def update_use_bundled_pylav_external(self, use_bundled_pylav_external: bool) -> None:
@@ -1860,7 +1972,7 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         """
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.LibConfigRow.raw(
+        await pylav.sql.tables.lib_config.LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, use_bundled_pylav_external)
             VALUES ({}, {}, {})
@@ -1886,15 +1998,20 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
             The use_bundled_lava_link_external.
         """
         response = (
-            await tables.LibConfigRow.select(tables.LibConfigRow.use_bundled_lava_link_external)
-            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            await pylav.sql.tables.lib_config.LibConfigRow.select(
+                pylav.sql.tables.lib_config.LibConfigRow.use_bundled_lava_link_external
+            )
+            .where(
+                (pylav.sql.tables.lib_config.LibConfigRow.id == self.id)
+                & (pylav.sql.tables.lib_config.LibConfigRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
         return (
             response["use_bundled_lava_link_external"]
             if response
-            else tables.LibConfigRow.use_bundled_lava_link_external.default
+            else pylav.sql.tables.lib_config.LibConfigRow.use_bundled_lava_link_external.default
         )
 
     async def update_use_bundled_lava_link_external(self, use_bundled_lava_link_external: bool) -> None:
@@ -1907,7 +2024,7 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         """
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.LibConfigRow.raw(
+        await pylav.sql.tables.lib_config.LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, use_bundled_lava_link_external)
             VALUES ({}, {}, {})
@@ -1933,12 +2050,15 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
             The download_id.
         """
         response = (
-            await tables.LibConfigRow.select(tables.LibConfigRow.download_id)
-            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            await pylav.sql.tables.lib_config.LibConfigRow.select(pylav.sql.tables.lib_config.LibConfigRow.download_id)
+            .where(
+                (pylav.sql.tables.lib_config.LibConfigRow.id == self.id)
+                & (pylav.sql.tables.lib_config.LibConfigRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
-        return response["download_id"] if response else tables.LibConfigRow.download_id.default
+        return response["download_id"] if response else pylav.sql.tables.lib_config.LibConfigRow.download_id.default
 
     async def update_download_id(self, download_id: int) -> None:
         """Update the download_id.
@@ -1950,7 +2070,7 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         """
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.LibConfigRow.raw(
+        await pylav.sql.tables.lib_config.LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, download_id)
             VALUES ({}, {}, {})
@@ -1974,12 +2094,15 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
             The extras.
         """
         response = (
-            await tables.LibConfigRow.select(tables.LibConfigRow.extras)
-            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            await pylav.sql.tables.lib_config.LibConfigRow.select(pylav.sql.tables.lib_config.LibConfigRow.extras)
+            .where(
+                (pylav.sql.tables.lib_config.LibConfigRow.id == self.id)
+                & (pylav.sql.tables.lib_config.LibConfigRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
-        return response["extras"] if response else ujson.loads(tables.LibConfigRow.extras.default)
+        return response["extras"] if response else ujson.loads(pylav.sql.tables.lib_config.LibConfigRow.extras.default)
 
     async def update_extras(self, extras: dict) -> None:
         """Update the extras.
@@ -1991,7 +2114,7 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         """
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.LibConfigRow.raw(
+        await pylav.sql.tables.lib_config.LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, extras)
             VALUES ({}, {}, {})
@@ -2015,8 +2138,13 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
             The next_execution_update_bundled_playlists.
         """
         response = (
-            await tables.LibConfigRow.select(tables.LibConfigRow.next_execution_update_bundled_playlists)
-            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            await pylav.sql.tables.lib_config.LibConfigRow.select(
+                pylav.sql.tables.lib_config.LibConfigRow.next_execution_update_bundled_playlists
+            )
+            .where(
+                (pylav.sql.tables.lib_config.LibConfigRow.id == self.id)
+                & (pylav.sql.tables.lib_config.LibConfigRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
@@ -2032,7 +2160,7 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         """
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.LibConfigRow.raw(
+        await pylav.sql.tables.lib_config.LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, next_execution_update_bundled_playlists)
             VALUES ({}, {}, {})
@@ -2058,8 +2186,13 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
             The next_execution_update_bundled_external_playlists.
         """
         response = (
-            await tables.LibConfigRow.select(tables.LibConfigRow.next_execution_update_bundled_external_playlists)
-            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            await pylav.sql.tables.lib_config.LibConfigRow.select(
+                pylav.sql.tables.lib_config.LibConfigRow.next_execution_update_bundled_external_playlists
+            )
+            .where(
+                (pylav.sql.tables.lib_config.LibConfigRow.id == self.id)
+                & (pylav.sql.tables.lib_config.LibConfigRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
@@ -2075,7 +2208,7 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         """
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.LibConfigRow.raw(
+        await pylav.sql.tables.lib_config.LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, next_execution_update_bundled_external_playlists)
             VALUES ({}, {}, {})
@@ -2101,8 +2234,13 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
             The next_execution_update_external_playlists.
         """
         response = (
-            await tables.LibConfigRow.select(tables.LibConfigRow.next_execution_update_external_playlists)
-            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            await pylav.sql.tables.lib_config.LibConfigRow.select(
+                pylav.sql.tables.lib_config.LibConfigRow.next_execution_update_external_playlists
+            )
+            .where(
+                (pylav.sql.tables.lib_config.LibConfigRow.id == self.id)
+                & (pylav.sql.tables.lib_config.LibConfigRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
@@ -2118,7 +2256,7 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         """
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.LibConfigRow.raw(
+        await pylav.sql.tables.lib_config.LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, next_execution_update_external_playlists)
             VALUES ({}, {}, {})
@@ -2144,12 +2282,21 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
             The update_bot_activity.
         """
         response = (
-            await tables.LibConfigRow.select(tables.LibConfigRow.update_bot_activity)
-            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            await pylav.sql.tables.lib_config.LibConfigRow.select(
+                pylav.sql.tables.lib_config.LibConfigRow.update_bot_activity
+            )
+            .where(
+                (pylav.sql.tables.lib_config.LibConfigRow.id == self.id)
+                & (pylav.sql.tables.lib_config.LibConfigRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
-        return response["update_bot_activity"] if response else tables.LibConfigRow.update_bot_activity.default
+        return (
+            response["update_bot_activity"]
+            if response
+            else pylav.sql.tables.lib_config.LibConfigRow.update_bot_activity.default
+        )
 
     async def update_update_bot_activity(self, update_bot_activity: bool) -> None:
         """Update the update_bot_activity.
@@ -2161,7 +2308,7 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         """
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.LibConfigRow.raw(
+        await pylav.sql.tables.lib_config.LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, update_bot_activity)
             VALUES ({}, {}, {})
@@ -2185,13 +2332,20 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
             The auto_update_managed_nodes.
         """
         response = (
-            await tables.LibConfigRow.select(tables.LibConfigRow.auto_update_managed_nodes)
-            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            await pylav.sql.tables.lib_config.LibConfigRow.select(
+                pylav.sql.tables.lib_config.LibConfigRow.auto_update_managed_nodes
+            )
+            .where(
+                (pylav.sql.tables.lib_config.LibConfigRow.id == self.id)
+                & (pylav.sql.tables.lib_config.LibConfigRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
         return (
-            response["auto_update_managed_nodes"] if response else tables.LibConfigRow.auto_update_managed_nodes.default
+            response["auto_update_managed_nodes"]
+            if response
+            else pylav.sql.tables.lib_config.LibConfigRow.auto_update_managed_nodes.default
         )
 
     async def update_auto_update_managed_nodes(self, auto_update_managed_nodes: bool) -> None:
@@ -2204,7 +2358,7 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         """
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.LibConfigRow.raw(
+        await pylav.sql.tables.lib_config.LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, auto_update_managed_nodes)
             VALUES ({}, {}, {})
@@ -2220,8 +2374,9 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
 
     async def delete(self) -> None:
         """Delete the config from the database"""
-        await tables.LibConfigRow.delete().where(
-            (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
+        await pylav.sql.tables.lib_config.LibConfigRow.delete().where(
+            (pylav.sql.tables.lib_config.LibConfigRow.id == self.id)
+            & (pylav.sql.tables.lib_config.LibConfigRow.bot == self.bot)
         )
         await self.invalidate_cache()
 
@@ -2235,8 +2390,11 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
             The updated config.
         """
         data = (
-            await tables.LibConfigRow.select()
-            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            await pylav.sql.tables.lib_config.LibConfigRow.select()
+            .where(
+                (pylav.sql.tables.lib_config.LibConfigRow.id == self.id)
+                & (pylav.sql.tables.lib_config.LibConfigRow.bot == self.bot)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
@@ -2247,19 +2405,22 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         return {
             "id": self.id,
             "bot": self.bot,
-            "config_folder": tables.LibConfigRow.config_folder.default,
-            "java_path": get_true_path(tables.LibConfigRow.java_path.default, tables.LibConfigRow.java_path.default),
-            "enable_managed_node": tables.LibConfigRow.enable_managed_node.default,
-            "auto_update_managed_nodes": tables.LibConfigRow.auto_update_managed_nodes.default,
-            "localtrack_folder": tables.LibConfigRow.localtrack_folder.default,
-            "download_id": tables.LibConfigRow.download_id.default,
-            "update_bot_activity": tables.LibConfigRow.update_bot_activity.default,
-            "use_bundled_pylav_external": tables.LibConfigRow.use_bundled_pylav_external.default,
-            "use_bundled_lava_link_external": tables.LibConfigRow.use_bundled_lava_link_external.default,
-            "extras": ujson.loads(tables.LibConfigRow.extras.default),
-            "next_execution_update_bundled_playlists": tables.LibConfigRow.next_execution_update_bundled_playlists.default,
-            "next_execution_update_bundled_external_playlists": tables.LibConfigRow.next_execution_update_bundled_external_playlists.default,
-            "next_execution_update_external_playlists": tables.LibConfigRow.next_execution_update_external_playlists.default,
+            "config_folder": pylav.sql.tables.lib_config.LibConfigRow.config_folder.default,
+            "java_path": get_true_path(
+                pylav.sql.tables.lib_config.LibConfigRow.java_path.default,
+                pylav.sql.tables.lib_config.LibConfigRow.java_path.default,
+            ),
+            "enable_managed_node": pylav.sql.tables.lib_config.LibConfigRow.enable_managed_node.default,
+            "auto_update_managed_nodes": pylav.sql.tables.lib_config.LibConfigRow.auto_update_managed_nodes.default,
+            "localtrack_folder": pylav.sql.tables.lib_config.LibConfigRow.localtrack_folder.default,
+            "download_id": pylav.sql.tables.lib_config.LibConfigRow.download_id.default,
+            "update_bot_activity": pylav.sql.tables.lib_config.LibConfigRow.update_bot_activity.default,
+            "use_bundled_pylav_external": pylav.sql.tables.lib_config.LibConfigRow.use_bundled_pylav_external.default,
+            "use_bundled_lava_link_external": pylav.sql.tables.lib_config.LibConfigRow.use_bundled_lava_link_external.default,
+            "extras": ujson.loads(pylav.sql.tables.lib_config.LibConfigRow.extras.default),
+            "next_execution_update_bundled_playlists": pylav.sql.tables.lib_config.LibConfigRow.next_execution_update_bundled_playlists.default,
+            "next_execution_update_bundled_external_playlists": pylav.sql.tables.lib_config.LibConfigRow.next_execution_update_bundled_external_playlists.default,
+            "next_execution_update_external_playlists": pylav.sql.tables.lib_config.LibConfigRow.next_execution_update_external_playlists.default,
         }
 
 
@@ -2277,7 +2438,9 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
             Whether the config exists.
         """
 
-        return await tables.PlaylistRow.exists().where(tables.PlaylistRow.id == self.id)
+        return await pylav.sql.tables.playlists.PlaylistRow.exists().where(
+            pylav.sql.tables.playlists.PlaylistRow.id == self.id
+        )
 
     @maybe_cached
     async def fetch_all(self) -> dict:
@@ -2289,8 +2452,8 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
             The playlists.
         """
         data = (
-            await tables.PlaylistRow.select()
-            .where(tables.PlaylistRow.id == self.id)
+            await pylav.sql.tables.playlists.PlaylistRow.select()
+            .where(pylav.sql.tables.playlists.PlaylistRow.id == self.id)
             .first()
             .output(load_json=True, nested=True)
         )
@@ -2301,11 +2464,11 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
 
         return {
             "id": self.id,
-            "name": tables.PlaylistRow.name.default,
+            "name": pylav.sql.tables.playlists.PlaylistRow.name.default,
             "tracks": [],
-            "scope": tables.PlaylistRow.scope.default,
-            "author": tables.PlaylistRow.author.default,
-            "url": tables.PlaylistRow.url.default,
+            "scope": pylav.sql.tables.playlists.PlaylistRow.scope.default,
+            "author": pylav.sql.tables.playlists.PlaylistRow.author.default,
+            "url": pylav.sql.tables.playlists.PlaylistRow.url.default,
         }
 
     @maybe_cached
@@ -2318,12 +2481,12 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
             The scope of the playlist.
         """
         response = (
-            await tables.PlaylistRow.select(tables.PlaylistRow.scope)
-            .where(tables.PlaylistRow.id == self.id)
+            await pylav.sql.tables.playlists.PlaylistRow.select(pylav.sql.tables.playlists.PlaylistRow.scope)
+            .where(pylav.sql.tables.playlists.PlaylistRow.id == self.id)
             .first()
             .output(load_json=True, nested=True)
         )
-        return response["scope"] if response else tables.PlaylistRow.scope.default
+        return response["scope"] if response else pylav.sql.tables.playlists.PlaylistRow.scope.default
 
     async def update_scope(self, scope: int):
         """Update the scope of the playlist.
@@ -2335,7 +2498,7 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         """
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlaylistRow.raw(
+        await pylav.sql.tables.playlists.PlaylistRow.raw(
             "INSERT INTO playlist (id, scope) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET scope = EXCLUDED.scope;",
             self.id,
             scope,
@@ -2353,12 +2516,12 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
             The author of the playlist.
         """
         response = (
-            await tables.PlaylistRow.select(tables.PlaylistRow.author)
-            .where(tables.PlaylistRow.id == self.id)
+            await pylav.sql.tables.playlists.PlaylistRow.select(pylav.sql.tables.playlists.PlaylistRow.author)
+            .where(pylav.sql.tables.playlists.PlaylistRow.id == self.id)
             .first()
             .output(load_json=True, nested=True)
         )
-        return response["author"] if response else tables.PlaylistRow.author.default
+        return response["author"] if response else pylav.sql.tables.playlists.PlaylistRow.author.default
 
     async def update_author(self, author: int):
         """Update the author of the playlist.
@@ -2370,7 +2533,7 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         """
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlaylistRow.raw(
+        await pylav.sql.tables.playlists.PlaylistRow.raw(
             "INSERT INTO playlist (id, author) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET author = EXCLUDED.author;",
             self.id,
             author,
@@ -2388,12 +2551,12 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
             The name of the playlist.
         """
         response = (
-            await tables.PlaylistRow.select(tables.PlaylistRow.name)
-            .where(tables.PlaylistRow.id == self.id)
+            await pylav.sql.tables.playlists.PlaylistRow.select(pylav.sql.tables.playlists.PlaylistRow.name)
+            .where(pylav.sql.tables.playlists.PlaylistRow.id == self.id)
             .first()
             .output(load_json=True, nested=True)
         )
-        return response["name"] if response else tables.PlaylistRow.name.default
+        return response["name"] if response else pylav.sql.tables.playlists.PlaylistRow.name.default
 
     async def update_name(self, name: str):
         """Update the name of the playlist.
@@ -2405,7 +2568,7 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         """
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlaylistRow.raw(
+        await pylav.sql.tables.playlists.PlaylistRow.raw(
             "INSERT INTO playlist (id, name) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name;",
             self.id,
             name,
@@ -2423,12 +2586,12 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
             The url of the playlist.
         """
         response = (
-            await tables.PlaylistRow.select(tables.PlaylistRow.url)
-            .where(tables.PlaylistRow.id == self.id)
+            await pylav.sql.tables.playlists.PlaylistRow.select(pylav.sql.tables.playlists.PlaylistRow.url)
+            .where(pylav.sql.tables.playlists.PlaylistRow.id == self.id)
             .first()
             .output(load_json=True, nested=True)
         )
-        return response["url"] if response else tables.PlaylistRow.url.default
+        return response["url"] if response else pylav.sql.tables.playlists.PlaylistRow.url.default
 
     async def update_url(self, url: str):
         """Update the url of the playlist.
@@ -2440,7 +2603,7 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         """
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlaylistRow.raw(
+        await pylav.sql.tables.playlists.PlaylistRow.raw(
             "INSERT INTO playlist (id, url) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET url = EXCLUDED.url;",
             self.id,
             url,
@@ -2458,12 +2621,12 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
             The tracks of the playlist.
         """
         response = (
-            await tables.PlaylistRow.select(tables.PlaylistRow.tracks)
-            .where(tables.PlaylistRow.id == self.id)
+            await pylav.sql.tables.playlists.PlaylistRow.select(pylav.sql.tables.playlists.PlaylistRow.tracks)
+            .where(pylav.sql.tables.playlists.PlaylistRow.id == self.id)
             .first()
             .output(load_json=True, nested=True)
         )
-        return response["tracks"] if response else ujson.loads(tables.PlaylistRow.tracks.default)
+        return response["tracks"] if response else ujson.loads(pylav.sql.tables.playlists.PlaylistRow.tracks.default)
 
     async def update_tracks(self, tracks: list[str]):
         """Update the tracks of the playlist.
@@ -2475,7 +2638,7 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         """
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlaylistRow.raw(
+        await pylav.sql.tables.playlists.PlaylistRow.raw(
             "INSERT INTO playlist (id, tracks) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET tracks = EXCLUDED.tracks;",
             self.id,
             ujson.dumps(tracks),
@@ -2498,7 +2661,7 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
             The number of tracks in the playlist.
         """
         # TODO: When piccolo add support to more JSON operations replace this with ORM version
-        response = await tables.PlaylistRow.raw(
+        response = await pylav.sql.tables.playlists.PlaylistRow.raw(
             "SELECT jsonb_array_length(tracks) as size FROM playlist WHERE id = {} LIMIT 1;", self.id
         )
         return response[0]["size"] if response else 0
@@ -2513,7 +2676,7 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         """
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlaylistRow.raw(
+        await pylav.sql.tables.playlists.PlaylistRow.raw(
             "INSERT INTO playlist (id, tracks) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET tracks = array_cat("
             "playlist.tracks, EXCLUDED.tracks);",
             self.id,
@@ -2545,20 +2708,24 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         """
         # TODO: When piccolo add support to more Array operations replace this with ORM version
 
-        await tables.PlaylistRow.raw(
+        await pylav.sql.tables.playlists.PlaylistRow.raw(
             "UPDATE playlist SET tracks = array_remove(tracks, {}) WHERE id = {};", self.id, track
         )
         await self.invalidate_cache(self.fetch_tracks, self.fetch_all, self.size, self.fetch_first, self.exists)
 
     async def remove_all_tracks(self) -> None:
         """Remove all tracks from the playlist."""
-        await tables.PlaylistRow.update({tables.PlaylistRow.tracks: []}).where(tables.PlaylistRow.id == self.id)
+        await pylav.sql.tables.playlists.PlaylistRow.update({pylav.sql.tables.playlists.PlaylistRow.tracks: []}).where(
+            pylav.sql.tables.playlists.PlaylistRow.id == self.id
+        )
         await self.update_cache((self.fetch_tracks, []), (self.size, 0), (self.exists, True), (self.fetch_first, None))
         await self.invalidate_cache(self.fetch_all)
 
     async def delete(self) -> None:
         """Delete the playlist from the database"""
-        await tables.PlaylistRow.delete().where(tables.PlaylistRow.id == self.id)
+        await pylav.sql.tables.playlists.PlaylistRow.delete().where(
+            pylav.sql.tables.playlists.PlaylistRow.id == self.id
+        )
         await self.invalidate_cache()
 
     async def can_manage(self, bot: BotT, requester: discord.abc.User, guild: discord.Guild = None) -> bool:
@@ -2705,7 +2872,7 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         """Bulk update the playlist."""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlaylistRow.raw(
+        await pylav.sql.tables.playlists.PlaylistRow.raw(
             "INSERT INTO playlist  (id, name, author, scope, url, tracks) VALUES ({}, {}, {}, {}, {}, {}) "
             "ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, author = EXCLUDED.author, scope = EXCLUDED.scope, "
             "url = EXCLUDED.url, tracks = EXCLUDED.tracks",
@@ -2773,9 +2940,11 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
             return tracks[index] if index < len(tracks) else None
         else:
             response = (
-                await tables.PlaylistRow.select(tables.PlaylistRow.tracks[index])
+                await pylav.sql.tables.playlists.PlaylistRow.select(
+                    pylav.sql.tables.playlists.PlaylistRow.tracks[index]
+                )
                 .first()
-                .where(tables.PlaylistRow.id == self.id)
+                .where(pylav.sql.tables.playlists.PlaylistRow.id == self.id)
                 .output(load_json=True, nested=True)
             )
             return response["track"] if response else None
@@ -2816,11 +2985,13 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
         bool
             Whether the config exists.
         """
-        return await tables.QueryRow.exists().where(tables.QueryRow.identifier == self.id)
+        return await pylav.sql.tables.queries.QueryRow.exists().where(
+            pylav.sql.tables.queries.QueryRow.identifier == self.id
+        )
 
     async def delete(self):
         """Delete the query from the database"""
-        await tables.QueryRow.delete().where(tables.QueryRow.identifier == self.id)
+        await pylav.sql.tables.queries.QueryRow.delete().where(pylav.sql.tables.queries.QueryRow.identifier == self.id)
         await self.invalidate_cache()
 
     @maybe_cached
@@ -2833,7 +3004,7 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
             The number of tracks in the playlist.
         """
         # TODO: When piccolo add support to more JSON operations replace this with ORM version
-        response = await tables.QueryRow.raw(
+        response = await pylav.sql.tables.queries.QueryRow.raw(
             """SELECT jsonb_array_length(tracks) as size
         FROM query
         WHERE identifier = {}
@@ -2852,12 +3023,12 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
             The tracks of the playlist.
         """
         response = (
-            await tables.QueryRow.select(tables.QueryRow.tracks)
-            .where(tables.QueryRow.identifier == self.id)
+            await pylav.sql.tables.queries.QueryRow.select(pylav.sql.tables.queries.QueryRow.tracks)
+            .where(pylav.sql.tables.queries.QueryRow.identifier == self.id)
             .first()
             .output(load_json=True, nested=True)
         )
-        return response["tracks"] if response else ujson.loads(tables.QueryRow.tracks.default)
+        return response["tracks"] if response else ujson.loads(pylav.sql.tables.queries.QueryRow.tracks.default)
 
     async def update_tracks(self, tracks: list[str]):
         """Update the tracks of the playlist.
@@ -2869,7 +3040,7 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
         """
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.QueryRow.raw(
+        await pylav.sql.tables.queries.QueryRow.raw(
             "INSERT INTO playlist (identifier, tracks) VALUES ({}, {}) ON CONFLICT (identifier) DO UPDATE SET tracks = "
             "EXCLUDED.tracks;",
             self.id,
@@ -2892,12 +3063,12 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
             The name of the playlist.
         """
         response = (
-            await tables.QueryRow.select(tables.QueryRow.name)
-            .where(tables.QueryRow.identifier == self.id)
+            await pylav.sql.tables.queries.QueryRow.select(pylav.sql.tables.queries.QueryRow.name)
+            .where(pylav.sql.tables.queries.QueryRow.identifier == self.id)
             .first()
             .output(load_json=True, nested=True)
         )
-        return response["name"] if response else tables.QueryRow.name.default
+        return response["name"] if response else pylav.sql.tables.queries.QueryRow.name.default
 
     async def update_name(self, name: str):
         """Update the name of the playlist.
@@ -2909,7 +3080,7 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
         """
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.QueryRow.raw(
+        await pylav.sql.tables.queries.QueryRow.raw(
             "INSERT INTO query (identifier, name) VALUES ({}, {}) ON CONFLICT (identifier) DO UPDATE SET name = "
             "EXCLUDED.name;",
             self.id,
@@ -2927,26 +3098,27 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
             The last updated time of the playlist.
         """
         response = (
-            await tables.QueryRow.select(tables.QueryRow.last_updated)
-            .where(tables.QueryRow.identifier == self.id)
+            await pylav.sql.tables.queries.QueryRow.select(pylav.sql.tables.queries.QueryRow.last_updated)
+            .where(pylav.sql.tables.queries.QueryRow.identifier == self.id)
             .first()
             .output(load_json=True, nested=True)
         )
-        return response["last_updated"] if response else tables.QueryRow.last_updated.default
+        return response["last_updated"] if response else pylav.sql.tables.queries.QueryRow.last_updated.default
 
     async def update_last_updated(self):
         """Update the last updated time of the playlist"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.QueryRow.raw(
+        await pylav.sql.tables.queries.QueryRow.raw(
             "INSERT INTO query (identifier, last_updated) "
             "VALUES ({}, {}) ON CONFLICT (identifier) "
             "DO UPDATE SET last_updated = EXCLUDED.last_updated;",
             self.id,
-            tables.QueryRow.last_updated.default.python(),
+            pylav.sql.tables.queries.QueryRow.last_updated.default.python(),
         )
         await self.update_cache(
-            (self.fetch_last_updated, tables.QueryRow.last_updated.default.python()), (self.exists, True)
+            (self.fetch_last_updated, pylav.sql.tables.queries.QueryRow.last_updated.default.python()),
+            (self.exists, True),
         )
 
     async def bulk_update(self, tracks: list[str], name: str):
@@ -2961,21 +3133,21 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
         """
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.QueryRow.raw(
+        await pylav.sql.tables.queries.QueryRow.raw(
             "INSERT INTO query (identifier, tracks, name, last_updated) "
             "VALUES ({}, {}, {}, {}) ON CONFLICT (identifier) "
             "DO UPDATE SET tracks = EXCLUDED.tracks, name = EXCLUDED.name, last_updated = EXCLUDED.last_updated;",
             self.id,
             ujson.dumps(tracks),
             name,
-            tables.QueryRow.last_updated.default.python(),
+            pylav.sql.tables.queries.QueryRow.last_updated.default.python(),
         )
         await self.update_cache(
             (self.fetch_tracks, tracks),
             (self.size, len(tracks)),
             (self.fetch_first, tracks[0] if tracks else None),
             (self.fetch_name, name),
-            (self.fetch_last_updated, tables.QueryRow.last_updated.default.python()),
+            (self.fetch_last_updated, pylav.sql.tables.queries.QueryRow.last_updated.default.python()),
             (self.exists, True),
         )
 
@@ -2997,9 +3169,9 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
             return tracks[index] if index < len(tracks) else None
         else:
             response = (
-                await tables.QueryRow.select(tables.QueryRow.tracks[index])
+                await pylav.sql.tables.queries.QueryRow.select(pylav.sql.tables.queries.QueryRow.tracks[index])
                 .first()
-                .where(tables.QueryRow.identifier == self.id)
+                .where(pylav.sql.tables.queries.QueryRow.identifier == self.id)
                 .output(load_json=True, nested=True)
             )
             return response["track"] if response else None
@@ -3069,15 +3241,16 @@ class PlayerStateModel:
 
     async def delete(self) -> None:
         """Delete the player state from the database"""
-        await tables.PlayerStateRow.delete().where(
-            (tables.PlayerStateRow.id == self.id) & (tables.PlayerStateRow.bot == self.bot)
+        await pylav.sql.tables.player_states.PlayerStateRow.delete().where(
+            (pylav.sql.tables.player_states.PlayerStateRow.id == self.id)
+            & (pylav.sql.tables.player_states.PlayerStateRow.bot == self.bot)
         )
 
     async def save(self) -> None:
         """Save the player state to the database"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await tables.PlayerStateRow.raw(
+        await pylav.sql.tables.player_states.PlayerStateRow.raw(
             """
             INSERT INTO player_state (
                 id,
@@ -3171,32 +3344,35 @@ class PlayerStateModel:
             The player state if found, otherwise None.
         """
         player = (
-            await tables.PlayerStateRow.select(
-                tables.PlayerStateRow.id,
-                tables.PlayerStateRow.bot,
-                tables.PlayerStateRow.channel_id,
-                tables.PlayerStateRow.volume,
-                tables.PlayerStateRow.position,
-                tables.PlayerStateRow.auto_play_playlist_id,
-                tables.PlayerStateRow.forced_channel_id,
-                tables.PlayerStateRow.text_channel_id,
-                tables.PlayerStateRow.notify_channel_id,
-                tables.PlayerStateRow.paused,
-                tables.PlayerStateRow.repeat_current,
-                tables.PlayerStateRow.repeat_queue,
-                tables.PlayerStateRow.shuffle,
-                tables.PlayerStateRow.auto_shuffle,
-                tables.PlayerStateRow.auto_play,
-                tables.PlayerStateRow.playing,
-                tables.PlayerStateRow.effect_enabled,
-                tables.PlayerStateRow.self_deaf,
-                tables.PlayerStateRow.current,
-                tables.PlayerStateRow.queue,
-                tables.PlayerStateRow.history,
-                tables.PlayerStateRow.effects,
-                tables.PlayerStateRow.extras,
+            await pylav.sql.tables.player_states.PlayerStateRow.select(
+                pylav.sql.tables.player_states.PlayerStateRow.id,
+                pylav.sql.tables.player_states.PlayerStateRow.bot,
+                pylav.sql.tables.player_states.PlayerStateRow.channel_id,
+                pylav.sql.tables.player_states.PlayerStateRow.volume,
+                pylav.sql.tables.player_states.PlayerStateRow.position,
+                pylav.sql.tables.player_states.PlayerStateRow.auto_play_playlist_id,
+                pylav.sql.tables.player_states.PlayerStateRow.forced_channel_id,
+                pylav.sql.tables.player_states.PlayerStateRow.text_channel_id,
+                pylav.sql.tables.player_states.PlayerStateRow.notify_channel_id,
+                pylav.sql.tables.player_states.PlayerStateRow.paused,
+                pylav.sql.tables.player_states.PlayerStateRow.repeat_current,
+                pylav.sql.tables.player_states.PlayerStateRow.repeat_queue,
+                pylav.sql.tables.player_states.PlayerStateRow.shuffle,
+                pylav.sql.tables.player_states.PlayerStateRow.auto_shuffle,
+                pylav.sql.tables.player_states.PlayerStateRow.auto_play,
+                pylav.sql.tables.player_states.PlayerStateRow.playing,
+                pylav.sql.tables.player_states.PlayerStateRow.effect_enabled,
+                pylav.sql.tables.player_states.PlayerStateRow.self_deaf,
+                pylav.sql.tables.player_states.PlayerStateRow.current,
+                pylav.sql.tables.player_states.PlayerStateRow.queue,
+                pylav.sql.tables.player_states.PlayerStateRow.history,
+                pylav.sql.tables.player_states.PlayerStateRow.effects,
+                pylav.sql.tables.player_states.PlayerStateRow.extras,
             )
-            .where((tables.PlayerStateRow.id == guild_id) & (tables.PlayerStateRow.bot == bot_id))
+            .where(
+                (pylav.sql.tables.player_states.PlayerStateRow.id == guild_id)
+                & (pylav.sql.tables.player_states.PlayerStateRow.bot == bot_id)
+            )
             .first()
             .output(load_json=True, nested=True)
         )
@@ -3236,33 +3412,35 @@ class EqualizerModel:
         """
 
         values = {
-            tables.EqualizerRow.scope: self.scope,
-            tables.EqualizerRow.author: self.author,
-            tables.EqualizerRow.name: self.name,
-            tables.EqualizerRow.description: self.description,
-            tables.EqualizerRow.band_25: self.band_25,
-            tables.EqualizerRow.band_40: self.band_40,
-            tables.EqualizerRow.band_63: self.band_63,
-            tables.EqualizerRow.band_100: self.band_100,
-            tables.EqualizerRow.band_160: self.band_160,
-            tables.EqualizerRow.band_250: self.band_250,
-            tables.EqualizerRow.band_400: self.band_400,
-            tables.EqualizerRow.band_630: self.band_630,
-            tables.EqualizerRow.band_1000: self.band_1000,
-            tables.EqualizerRow.band_1600: self.band_1600,
-            tables.EqualizerRow.band_2500: self.band_2500,
-            tables.EqualizerRow.band_4000: self.band_4000,
-            tables.EqualizerRow.band_6300: self.band_6300,
-            tables.EqualizerRow.band_10000: self.band_10000,
-            tables.EqualizerRow.band_16000: self.band_16000,
+            pylav.sql.tables.equalizers.EqualizerRow.scope: self.scope,
+            pylav.sql.tables.equalizers.EqualizerRow.author: self.author,
+            pylav.sql.tables.equalizers.EqualizerRow.name: self.name,
+            pylav.sql.tables.equalizers.EqualizerRow.description: self.description,
+            pylav.sql.tables.equalizers.EqualizerRow.band_25: self.band_25,
+            pylav.sql.tables.equalizers.EqualizerRow.band_40: self.band_40,
+            pylav.sql.tables.equalizers.EqualizerRow.band_63: self.band_63,
+            pylav.sql.tables.equalizers.EqualizerRow.band_100: self.band_100,
+            pylav.sql.tables.equalizers.EqualizerRow.band_160: self.band_160,
+            pylav.sql.tables.equalizers.EqualizerRow.band_250: self.band_250,
+            pylav.sql.tables.equalizers.EqualizerRow.band_400: self.band_400,
+            pylav.sql.tables.equalizers.EqualizerRow.band_630: self.band_630,
+            pylav.sql.tables.equalizers.EqualizerRow.band_1000: self.band_1000,
+            pylav.sql.tables.equalizers.EqualizerRow.band_1600: self.band_1600,
+            pylav.sql.tables.equalizers.EqualizerRow.band_2500: self.band_2500,
+            pylav.sql.tables.equalizers.EqualizerRow.band_4000: self.band_4000,
+            pylav.sql.tables.equalizers.EqualizerRow.band_6300: self.band_6300,
+            pylav.sql.tables.equalizers.EqualizerRow.band_10000: self.band_10000,
+            pylav.sql.tables.equalizers.EqualizerRow.band_16000: self.band_16000,
         }
         playlist = (
-            await tables.EqualizerRow.objects()
+            await pylav.sql.tables.equalizers.EqualizerRow.objects()
             .output(load_json=True, nested=True)
-            .get_or_create(tables.EqualizerRow.id == self.id, defaults=values)
+            .get_or_create(pylav.sql.tables.equalizers.EqualizerRow.id == self.id, defaults=values)
         )
         if not playlist._was_created:
-            await tables.EqualizerRow.update(values).where(tables.EqualizerRow.id == self.id)
+            await pylav.sql.tables.equalizers.EqualizerRow.update(values).where(
+                pylav.sql.tables.equalizers.EqualizerRow.id == self.id
+            )
         return EqualizerModel(**playlist.to_dict())
 
     @classmethod
@@ -3280,8 +3458,8 @@ class EqualizerModel:
             The equalizer if found, else None.
         """
         equalizer = (
-            await tables.EqualizerRow.select()
-            .where(tables.EqualizerRow.id == id)
+            await pylav.sql.tables.equalizers.EqualizerRow.select()
+            .where(pylav.sql.tables.equalizers.EqualizerRow.id == id)
             .first()
             .output(load_json=True, nested=True)
         )
@@ -3289,7 +3467,9 @@ class EqualizerModel:
 
     async def delete(self):
         """Delete the equalizer from the database"""
-        await tables.EqualizerRow.delete().where(tables.EqualizerRow.id == self.id)
+        await pylav.sql.tables.equalizers.EqualizerRow.delete().where(
+            pylav.sql.tables.equalizers.EqualizerRow.id == self.id
+        )
 
     async def can_manage(self, bot: BotT, requester: discord.abc.User, guild: discord.Guild = None) -> bool:
         """Check if the requester can manage the equalizer.

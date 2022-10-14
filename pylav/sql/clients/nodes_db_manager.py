@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import pylav.sql.tables.nodes
 from pylav._logging import getLogger
 from pylav.constants import BUNDLED_NODES_IDS
-from pylav.sql import tables
 from pylav.sql.models import NodeModel
 
 if TYPE_CHECKING:
@@ -37,8 +37,11 @@ class NodeConfigManager:
     async def get_all_unmanaged_nodes(self, dedupe: bool = True) -> list[NodeModel]:
         model_list = [
             NodeModel(**node)
-            for node in await tables.NodeRow.select(tables.NodeRow.id)
-            .where((tables.NodeRow.managed == False) & (tables.NodeRow.id.not_in(BUNDLED_NODES_IDS)))
+            for node in await pylav.sql.tables.nodes.NodeRow.select(pylav.sql.tables.nodes.NodeRow.id)
+            .where(
+                (pylav.sql.tables.nodes.NodeRow.managed == False)
+                & (pylav.sql.tables.nodes.NodeRow.id.not_in(BUNDLED_NODES_IDS))
+            )
             .output(nested=True, load_json=True)
         ]
         new_model_list = list(set(model_list)) if dedupe else model_list
@@ -54,8 +57,11 @@ class NodeConfigManager:
 
     async def get_bundled_node_config(self) -> NodeModel | None:
         response = (
-            await tables.NodeRow.select(tables.NodeRow.id)
-            .where((tables.NodeRow.id == self._client.bot.user.id) & (tables.NodeRow.managed is True))
+            await pylav.sql.tables.nodes.NodeRow.select(pylav.sql.tables.nodes.NodeRow.id)
+            .where(
+                (pylav.sql.tables.nodes.NodeRow.id == self._client.bot.user.id)
+                & (pylav.sql.tables.nodes.NodeRow.managed is True)
+            )
             .first()
         )
         return NodeModel(**response) if response else None
@@ -140,4 +146,6 @@ class NodeConfigManager:
     @staticmethod
     async def count() -> int:
         """Return the number of unbundled nodes in the database."""
-        return await tables.NodeRow.count().where(tables.NodeRow.id.not_in(BUNDLED_NODES_IDS))
+        return await pylav.sql.tables.nodes.NodeRow.count().where(
+            pylav.sql.tables.nodes.NodeRow.id.not_in(BUNDLED_NODES_IDS)
+        )

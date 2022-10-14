@@ -4,8 +4,8 @@ import asyncio
 from collections.abc import AsyncIterator
 from typing import TYPE_CHECKING
 
+import pylav.sql.tables.player_states
 from pylav._logging import getLogger
-from pylav.sql import tables
 from pylav.sql.models import PlayerStateModel
 
 if TYPE_CHECKING:
@@ -36,17 +36,22 @@ class PlayerStateDBManager:
         return await PlayerStateModel.get(bot_id=self._client.bot.user.id, guild_id=guild_id)
 
     async def fetch_all_players(self) -> AsyncIterator[PlayerStateModel]:
-        for entry in await tables.PlayerStateRow.select(
-            tables.PlayerStateRow.all_columns(exclude=[tables.PlayerStateRow.primary_key])
+        for entry in await pylav.sql.tables.player_states.PlayerStateRow.select(
+            pylav.sql.tables.player_states.PlayerStateRow.all_columns(
+                exclude=[pylav.sql.tables.player_states.PlayerStateRow.primary_key]
+            )
         ).where(
-            tables.PlayerStateRow.bot == self.client.bot.user.id
+            pylav.sql.tables.player_states.PlayerStateRow.bot == self.client.bot.user.id
         ):  # type: ignore
             yield PlayerStateModel(**entry)
 
     async def delete_player(self, guild_id: int):
-        await tables.PlayerStateRow.delete().where(
-            (tables.PlayerStateRow.bot == self.client.bot.user.id) & (tables.PlayerStateRow.id == guild_id)
+        await pylav.sql.tables.player_states.PlayerStateRow.delete().where(
+            (pylav.sql.tables.player_states.PlayerStateRow.bot == self.client.bot.user.id)
+            & (pylav.sql.tables.player_states.PlayerStateRow.id == guild_id)
         )
 
     async def delete_all_players(self):
-        await tables.PlayerStateRow.delete().where(tables.PlayerStateRow.bot == self.client.bot.user.id)
+        await pylav.sql.tables.player_states.PlayerStateRow.delete().where(
+            pylav.sql.tables.player_states.PlayerStateRow.bot == self.client.bot.user.id
+        )
