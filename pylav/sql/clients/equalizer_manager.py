@@ -31,15 +31,17 @@ class EqualizerConfigManager:
     @staticmethod
     async def get_equalizer_by_name(equalizer_name: str, limit: int = None) -> list[EqualizerModel]:
         if limit is None:
-            equalizers = await tables.EqualizerRow.select().where(
-                tables.EqualizerRow.name.ilike(f"%{equalizer_name.lower()}%")
+            equalizers = (
+                await tables.EqualizerRow.select()
+                .where(tables.EqualizerRow.name.ilike(f"%{equalizer_name.lower()}%"))
+                .output(load_json=True, nested=True)
             )
         else:
             equalizers = (
                 await tables.EqualizerRow.select()
                 .where(tables.EqualizerRow.name.ilike(f"%{equalizer_name.lower()}%"))
                 .limit(limit)
-            )
+            ).output(load_json=True, nested=True)
 
         if not equalizers:
             raise EntryNotFoundError(f"Equalizer with name {equalizer_name} not found")
@@ -72,21 +74,29 @@ class EqualizerConfigManager:
 
     @staticmethod
     async def get_equalizers_by_author(author: int) -> list[EqualizerModel]:
-        equalizers = await tables.EqualizerRow.select().where(tables.EqualizerRow.author == author)
+        equalizers = (
+            await tables.EqualizerRow.select()
+            .where(tables.EqualizerRow.author == author)
+            .output(load_json=True, nested=True)
+        )
         if not equalizers:
             raise EntryNotFoundError(f"Equalizer with author {author} not found")
         return [EqualizerModel(**equalizer) for equalizer in equalizers]
 
     @staticmethod
     async def get_equalizers_by_scope(scope: int) -> list[EqualizerModel]:
-        equalizers = await tables.EqualizerRow.select().where(tables.EqualizerRow.scope == scope)
+        equalizers = (
+            await tables.EqualizerRow.select()
+            .where(tables.EqualizerRow.scope == scope)
+            .output(load_json=True, nested=True)
+        )
         if not equalizers:
             raise EntryNotFoundError(f"Equalizer with scope {scope} not found")
         return [EqualizerModel(**equalizer) for equalizer in equalizers]
 
     @staticmethod
     async def get_all_equalizers() -> AsyncIterator[EqualizerModel]:
-        for entry in await tables.EqualizerRow.select():
+        for entry in await tables.EqualizerRow.select().output(load_json=True, nested=True):
             yield EqualizerModel(**entry)
 
     @staticmethod
@@ -135,7 +145,7 @@ class EqualizerConfigManager:
         }
         equalizer = (
             await tables.EqualizerRow.objects()
-            .output(load_json=True)
+            .output(load_json=True, nested=True)
             .get_or_create(tables.EqualizerRow.id == id, defaults=values)
         )
         if not equalizer._was_created:
@@ -148,23 +158,33 @@ class EqualizerConfigManager:
 
     @staticmethod
     async def get_all_equalizers_by_author(author: int) -> AsyncIterator[EqualizerModel]:
-        for entry in await tables.EqualizerRow.select().where(tables.EqualizerRow.author == author):
+        for entry in (
+            await tables.EqualizerRow.select()
+            .where(tables.EqualizerRow.author == author)
+            .output(load_json=True, nested=True)
+        ):
             yield EqualizerModel(**entry)
 
     @staticmethod
     async def get_all_equalizers_by_scope(scope: int) -> AsyncIterator[EqualizerModel]:
-        for entry in await tables.EqualizerRow.select().where(tables.EqualizerRow.scope == scope):
+        for entry in (
+            await tables.EqualizerRow.select()
+            .where(tables.EqualizerRow.scope == scope)
+            .output(load_json=True, nested=True)
+        ):
             yield EqualizerModel(**entry)
 
     @staticmethod
     async def get_all_equalizers_by_scope_and_author(scope: int, author: int) -> AsyncIterator[EqualizerModel]:
-        for entry in await tables.EqualizerRow.select().where(
-            tables.EqualizerRow.scope == scope, tables.EqualizerRow.author == author
+        for entry in (
+            await tables.EqualizerRow.select()
+            .where(tables.EqualizerRow.scope == scope, tables.EqualizerRow.author == author)
+            .output(load_json=True, nested=True)
         ):
             yield EqualizerModel(**entry)
 
     async def get_global_equalizers(self) -> AsyncIterator[EqualizerModel]:
-        for entry in await tables.EqualizerRow.select().where(tables.EqualizerRow.scope == self._client.bot.user.id):  # type: ignore
+        for entry in await tables.EqualizerRow.select().where(tables.EqualizerRow.scope == self._client.bot.user.id).output(load_json=True, nested=True):  # type: ignore
             yield EqualizerModel(**entry)
 
     async def create_or_update_global_equalizer(

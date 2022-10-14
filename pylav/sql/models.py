@@ -67,11 +67,11 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
         bool
             Whether the node exists in the database.
         """
-        return await tables.NodeRow.raw("SELECT EXISTS(SELECT 1 FROM node WHERE id = {});", self.id)
+        return await tables.NodeRow.exists().where(tables.NodeRow.id == self.id)
 
     async def delete(self) -> None:
         """Delete the node from the database"""
-        await tables.NodeRow.raw("DELETE FROM node WHERE id = {}", self.id)
+        await tables.NodeRow.delete().where(tables.NodeRow.id == self.id)
         await self.invalidate_cache()
 
     @maybe_cached
@@ -101,19 +101,26 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
         }
 
     @maybe_cached
-    async def fetch_name(self) -> str:
+    async def fetch_name(self) -> str | None:
         """Fetch the node from the database.
 
         Returns
         -------
-        ste
+        str
             The node's name.
         """
-        data = await tables.NodeRow.raw("SELECT name FROM node WHERE id = {} LIMIT 1", self.id)
-        return data[0]["name"] if data else None
+        data = (
+            await tables.NodeRow.select(tables.NodeRow.name)
+            .where(tables.NodeRow.id == self.id)
+            .first()
+            .output(load_json=True, nested=True)
+        )
+        return data["name"] if data else None
 
     async def update_name(self, name: str) -> None:
         """Update the node's name in the database"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.NodeRow.raw(
             """
             INSERT INTO node (id, name) VALUES ({}, {})
@@ -134,11 +141,18 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
         bool
             The node's ssl setting.
         """
-        data = await tables.NodeRow.raw("SELECT ssl FROM node WHERE id = {} LIMIT 1", self.id)
-        return data[0]["ssl"] if data else tables.NodeRow.ssl.default
+        data = (
+            await tables.NodeRow.select(tables.NodeRow.ssl)
+            .where(tables.NodeRow.id == self.id)
+            .first()
+            .output(load_json=True, nested=True)
+        )
+        return data["ssl"] if data else tables.NodeRow.ssl.default
 
     async def update_ssl(self, ssl: bool) -> None:
         """Update the node's ssl setting in the database"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.NodeRow.raw(
             """
             INSERT INTO node (id, ssl) VALUES ({}, {})
@@ -159,11 +173,18 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
         str
             The node's resume key.
         """
-        data = await tables.NodeRow.raw("SELECT resume_key FROM node WHERE id = {} LIMIT 1", self.id)
-        return data[0]["resume_key"] if data else None
+        data = (
+            await tables.NodeRow.select(tables.NodeRow.resume_key)
+            .where(tables.NodeRow.id == self.id)
+            .first()
+            .output(load_json=True, nested=True)
+        )
+        return data["resume_key"] if data else None
 
     async def update_resume_key(self, resume_key: str) -> None:
         """Update the node's resume key in the database"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.NodeRow.raw(
             """
             INSERT INTO
@@ -187,11 +208,18 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
         int
             The node's resume timeout.
         """
-        data = await tables.NodeRow.raw("SELECT resume_timeout FROM node WHERE id = {} LIMIT 1", self.id)
-        return data[0]["resume_timeout"] if data else tables.NodeRow.resume_timeout.default
+        data = (
+            await tables.NodeRow.select(tables.NodeRow.resume_timeout)
+            .where(tables.NodeRow.id == self.id)
+            .first()
+            .output(load_json=True, nested=True)
+        )
+        return data["resume_timeout"] if data else tables.NodeRow.resume_timeout.default
 
     async def update_resume_timeout(self, resume_timeout: int) -> None:
         """Update the node's resume timeout in the database"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.NodeRow.raw(
             """
             INSERT INTO node (id, resume_timeout) VALUES ({}, {})
@@ -212,11 +240,18 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
         int
             The node's reconnect attempts.
         """
-        data = await tables.NodeRow.raw("SELECT reconnect_attempts FROM node WHERE id = {} LIMIT 1", self.id)
-        return data[0]["reconnect_attempts"] if data else tables.NodeRow.reconnect_attempts.default
+        data = (
+            await tables.NodeRow.select(tables.NodeRow.reconnect_attempts)
+            .where(tables.NodeRow.id == self.id)
+            .first()
+            .output(load_json=True, nested=True)
+        )
+        return data["reconnect_attempts"] if data else tables.NodeRow.reconnect_attempts.default
 
     async def update_reconnect_attempts(self, reconnect_attempts: int) -> None:
         """Update the node's reconnect attempts in the database"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.NodeRow.raw(
             """
             INSERT INTO node (id, reconnect_attempts) VALUES ({}, {})
@@ -237,11 +272,18 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
         bool
             The node's search only setting.
         """
-        data = await tables.NodeRow.raw("SELECT search_only FROM node WHERE id = {} LIMIT 1", self.id)
-        return data[0]["search_only"] if data else tables.NodeRow.search_only.default
+        data = (
+            await tables.NodeRow.select(tables.NodeRow.search_only)
+            .where(tables.NodeRow.id == self.id)
+            .first()
+            .output(load_json=True, nested=True)
+        )
+        return data["search_only"] if data else tables.NodeRow.search_only.default
 
     async def update_search_only(self, search_only: bool) -> None:
         """Update the node's search only setting in the database"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.NodeRow.raw(
             """
             INSERT INTO node (id, search_only) VALUES ({}, {})
@@ -262,11 +304,18 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
         bool
             The node's managed setting.
         """
-        data = await tables.NodeRow.raw("SELECT managed FROM node WHERE id = {} LIMIT 1", self.id)
-        return data[0]["managed"] if data else tables.NodeRow.managed.default
+        data = (
+            await tables.NodeRow.select(tables.NodeRow.managed)
+            .where(tables.NodeRow.id == self.id)
+            .first()
+            .output(load_json=True, nested=True)
+        )
+        return data["managed"] if data else tables.NodeRow.managed.default
 
     async def update_managed(self, managed: bool) -> None:
         """Update the node's managed setting in the database"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.NodeRow.raw(
             """
             INSERT INTO node (id, managed) VALUES ({}, {})
@@ -287,11 +336,18 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
         dict
             The node's extras.
         """
-        data = await tables.NodeRow.raw("SELECT extras FROM node WHERE id = {} LIMIT 1", self.id)
-        return ujson.loads(data[0]["extras"] if data else tables.NodeRow.extras.default)
+        data = (
+            await tables.NodeRow.select(tables.NodeRow.extras)
+            .where(tables.NodeRow.id == self.id)
+            .first()
+            .output(load_json=True, nested=True)
+        )
+        return data["extras"] if data else ujson.loads(tables.NodeRow.extras.default)
 
     async def update_extras(self, extras: dict) -> None:
         """Update the node's extras in the database"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.NodeRow.raw(
             """
             INSERT INTO node (id, extras) VALUES ({}, {})
@@ -312,13 +368,18 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
         dict
             The node's yaml.
         """
-        data = await tables.NodeRow.raw("SELECT yaml FROM node WHERE id = {} LIMIT 1", self.id)
-        if data:
-            return ujson.loads(data[0]["yaml" if data[0]["yaml"] != "{}" else tables.NodeRow.yaml.default])
-        return {}
+        data = (
+            await tables.NodeRow.select(tables.NodeRow.yaml)
+            .where(tables.NodeRow.id == self.id)
+            .first()
+            .output(load_json=True, nested=True)
+        )
+        return data["extras"] if data else ujson.loads(tables.NodeRow.yaml.default)
 
     async def update_yaml(self, yaml_data: dict) -> None:
         """Update the node's yaml in the database"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.NodeRow.raw(
             """
             INSERT INTO node (id, yaml) VALUES ({}, {})
@@ -339,13 +400,20 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
         list[str]
             The node's disabled sources.
         """
-        data = await tables.NodeRow.raw("SELECT disabled_sources FROM node WHERE id = {} LIMIT 1", self.id)
-        return data[0]["disabled_sources"] if data else tables.NodeRow.disabled_sources.default
+        data = (
+            await tables.NodeRow.select(tables.NodeRow.disabled_sources)
+            .where(tables.NodeRow.id == self.id)
+            .first()
+            .output(load_json=True, nested=True)
+        )
+        return data["disabled_sources"] if data else tables.NodeRow.disabled_sources.default
 
     async def update_disabled_sources(self, disabled_sources: list[str]) -> None:
         """Update the node's disabled sources in the database"""
         source = set(map(str.strip, map(str.lower, disabled_sources)))
         intersection = list(source & SUPPORTED_SOURCES)
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.NodeRow.raw(
             """
             INSERT INTO node (id, disabled_sources) VALUES ({}, {})
@@ -359,6 +427,8 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
 
     async def add_to_disabled_sources(self, source: str) -> None:
         """Add a source to the node's disabled sources in the database"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.NodeRow.raw(
             """
             INSERT INTO node (id, disabled_sources) VALUES ({}, {})
@@ -372,6 +442,7 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
 
     async def remove_from_disabled_sources(self, source: str) -> None:
         """Remove a source from the node's disabled sources in the database"""
+        # TODO: When piccolo add support to more Array operations replace with ORM
         await tables.NodeRow.raw(
             """UPDATE node SET disabled_sources = array_remove(disabled_sources, {}) WHERE id = {}""",
             source,
@@ -384,6 +455,8 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
         """Add sources to the node's disabled sources in the database"""
         source = set(map(str.strip, map(str.lower, [sources])))
         intersection = list(source & SUPPORTED_SOURCES)
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.NodeRow.raw(
             """
             INSERT INTO node (id, disabled_sources) VALUES ({}, {})
@@ -427,6 +500,8 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
             disabled_sources = []
         if extras is None:
             extras = {}
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.NodeRow.raw(
             """
             INSERT INTO node
@@ -500,15 +575,16 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
         from pylav.utils.built_in_node import NODE_DEFAULT_SETTINGS
 
         __, java_xmx_default, __, __ = get_jar_ram_actual(JAVA_EXECUTABLE)
-
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.NodeRow.raw(
             """
-                    INSERT INTO node
-                    (id, managed, ssl, reconnect_attempts, search_only, yaml, name, resume_key, resume_timeout, extras)
-                    VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {})
-                    ON CONFLICT (id) DO NOTHING;
-                    ;
-                    """,
+            INSERT INTO node
+            (id, managed, ssl, reconnect_attempts, search_only, yaml, name, resume_key, resume_timeout, extras)
+            VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {})
+            ON CONFLICT (id) DO NOTHING;
+            ;
+            """,
             id,
             True,
             False,
@@ -756,14 +832,16 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
                 "time": 60,
             }
         )
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlayerRow.raw(
             """
-                INSERT INTO player
-                (id, bot, volume, max_volume, shuffle, auto_shuffle, auto_play, self_deaf, empty_queue_dc, alone_dc, alone_pause)
-                VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})
-                ON CONFLICT (id, bot) DO NOTHING;
-                ;
-                """,
+            INSERT INTO player
+            (id, bot, volume, max_volume, shuffle, auto_shuffle, auto_play, self_deaf, empty_queue_dc, alone_dc, alone_pause)
+            VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})
+            ON CONFLICT (id, bot) DO NOTHING;
+            ;
+            """,
             0,
             bot,
             1000,
@@ -779,25 +857,24 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
 
     async def delete(self) -> None:
         """Delete the player from the database"""
-        await tables.PlayerRow.raw("DELETE FROM player WHERE id = {} and bot = {};", self.id, self.bot)
+        await tables.PlayerRow.delete().where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
         await self.invalidate_cache()
 
     @maybe_cached
     async def fetch_all(self) -> dict:
         """Get all players from the database"""
-        response = await tables.PlayerRow.raw(
-            """SELECT * FROM player WHERE id = {} AND bot = {} LIMIT 1;""",
-            self.id,
-            self.bot,
+        data = (
+            await tables.PlayerRow.select()
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            .output(load_json=True, nested=True)
         )
-        if response:
-            data = response[0]
+        if data:
             del data["primary_key"]
-            data["empty_queue_dc"] = TimedFeature.from_json(ujson.loads(data["empty_queue_dc"]))
-            data["alone_dc"] = TimedFeature.from_json(ujson.loads(data["alone_dc"]))
-            data["alone_pause"] = TimedFeature.from_json(ujson.loads(data["alone_pause"]))
-            data["extras"] = ujson.loads(data["extras"])
-            data["effects"] = ujson.loads(data["effects"])
+            data["empty_queue_dc"] = TimedFeature.from_json(data["empty_queue_dc"])
+            data["alone_dc"] = TimedFeature.from_json(data["alone_dc"])
+            data["alone_pause"] = TimedFeature.from_json(data["alone_pause"])
+            data["extras"] = data["extras"]
+            data["effects"] = data["effects"]
             return data
         return {
             "id": self.id,
@@ -826,20 +903,26 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     @maybe_cached
     async def exists(self) -> bool:
         """Check if the player exists in the database"""
-        return await tables.PlayerRow.raw(
-            "SELECT EXISTS(SELECT 1 FROM player WHERE id = {} and bot = {});", self.id, self.bot
+        return await tables.PlayerRow.exists().where(
+            (tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot)
         )
 
     @maybe_cached
     async def fetch_volume(self) -> int:
         """Fetch the volume of the player from the db"""
-        player = await tables.PlayerRow.raw(
-            """SELECT volume FROM player WHERE id = {} AND bot = {} LIMIT 1""", self.id, self.bot
+
+        player = (
+            await tables.PlayerRow.select(tables.PlayerRow.volume)
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
-        return player[0]["volume"] if player else tables.PlayerRow.volume.default
+        return player["volume"] if player else tables.PlayerRow.volume.default
 
     async def update_volume(self, volume: int) -> None:
         """Update the volume of the player in the db"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlayerRow.raw(
             """INSERT INTO player (id, bot, volume)
         VALUES ({}, {}, {})
@@ -855,13 +938,18 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     @maybe_cached
     async def fetch_max_volume(self) -> int:
         """Fetch the max volume of the player from the db"""
-        player = await tables.PlayerRow.raw(
-            """SELECT max_volume FROM player WHERE id = {} AND bot = {} LIMIT 1""", self.id, self.bot
+        player = (
+            await tables.PlayerRow.select(tables.PlayerRow.max_volume)
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
-        return player[0]["max_volume"] if player else tables.PlayerRow.max_volume.default
+        return player["max_volume"] if player else tables.PlayerRow.max_volume.default
 
     async def update_max_volume(self, max_volume: int) -> None:
         """Update the max volume of the player in the db"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlayerRow.raw(
             """INSERT INTO player (id, bot, max_volume)
             VALUES ({}, {}, {})
@@ -877,13 +965,18 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     @maybe_cached
     async def fetch_auto_play_playlist_id(self) -> int:
         """Fetch the auto play playlist ID of the player"""
-        player = await tables.PlayerRow.raw(
-            """SELECT auto_play_playlist_id FROM player WHERE id = {} AND bot = {} LIMIT 1""", self.id, self.bot
+        player = (
+            await tables.PlayerRow.select(tables.PlayerRow.auto_play_playlist_id)
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
-        return player[0]["auto_play_playlist_id"] if player else tables.PlayerRow.auto_play_playlist_id.default
+        return player["auto_play_playlist_id"] if player else tables.PlayerRow.auto_play_playlist_id.default
 
     async def update_auto_play_playlist_id(self, auto_play_playlist_id: int) -> None:
         """Update the auto play playlist ID of the player"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlayerRow.raw(
             """INSERT INTO player (id, bot, auto_play_playlist_id)
             VALUES ({}, {}, {})
@@ -899,13 +992,18 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     @maybe_cached
     async def fetch_text_channel_id(self) -> int:
         """Fetch the text channel ID of the player"""
-        player = await tables.PlayerRow.raw(
-            """SELECT text_channel_id FROM player WHERE id = {} AND bot = {} LIMIT 1""", self.id, self.bot
+        player = (
+            await tables.PlayerRow.select(tables.PlayerRow.text_channel_id)
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
-        return player[0]["text_channel_id"] if player else tables.PlayerRow.text_channel_id.default
+        return player["text_channel_id"] if player else tables.PlayerRow.text_channel_id.default
 
     async def update_text_channel_id(self, text_channel_id: int) -> None:
         """Update the text channel ID of the player"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlayerRow.raw(
             """INSERT INTO player (id, bot, text_channel_id)
             VALUES ({}, {}, {})
@@ -921,14 +1019,18 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     @maybe_cached
     async def fetch_notify_channel_id(self) -> int:
         """Fetch the notify channel ID of the player"""
-        player = await tables.PlayerRow.raw(
-            """SELECT notify_channel_id FROM player WHERE id = {} AND bot = {} LIMIT 1""", self.id, self.bot
+        player = (
+            await tables.PlayerRow.select(tables.PlayerRow.notify_channel_id)
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
-
-        return player[0]["notify_channel_id"] if player else tables.PlayerRow.notify_channel_id.default
+        return player["notify_channel_id"] if player else tables.PlayerRow.notify_channel_id.default
 
     async def update_notify_channel_id(self, notify_channel_id: int) -> None:
         """Update the notify channel ID of the player"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlayerRow.raw(
             """INSERT INTO player (id, bot, notify_channel_id)
             VALUES ({}, {}, {})
@@ -944,13 +1046,18 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     @maybe_cached
     async def fetch_forced_channel_id(self) -> int:
         """Fetch the forced channel ID of the player"""
-        player = await tables.PlayerRow.raw(
-            "SELECT forced_channel_id FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        player = (
+            await tables.PlayerRow.select(tables.PlayerRow.forced_channel_id)
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
-        return player[0]["forced_channel_id"] if player else tables.PlayerRow.forced_channel_id.default
+        return player["forced_channel_id"] if player else tables.PlayerRow.forced_channel_id.default
 
     async def update_forced_channel_id(self, forced_channel_id: int) -> None:
         """Update the forced channel ID of the player"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlayerRow.raw(
             """INSERT INTO player (id, bot, forced_channel_id)
             VALUES ({}, {}, {})
@@ -966,13 +1073,18 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     @maybe_cached
     async def fetch_repeat_current(self) -> bool:
         """Fetch the repeat current of the player"""
-        player = await tables.PlayerRow.raw(
-            "SELECT repeat_current FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        player = (
+            await tables.PlayerRow.select(tables.PlayerRow.repeat_current)
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
-        return player[0]["repeat_current"] if player else tables.PlayerRow.repeat_current.default
+        return player["repeat_current"] if player else tables.PlayerRow.repeat_current.default
 
     async def update_repeat_current(self, repeat_current: bool) -> None:
         """Update the repeat current of the player"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlayerRow.raw(
             """INSERT INTO player (id, bot, repeat_current)
             VALUES ({}, {}, {})
@@ -988,13 +1100,18 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     @maybe_cached
     async def fetch_repeat_queue(self) -> bool:
         """Fetch the repeat queue of the player"""
-        player = await tables.PlayerRow.raw(
-            "SELECT repeat_queue FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        player = (
+            await tables.PlayerRow.select(tables.PlayerRow.repeat_queue)
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
-        return player[0]["repeat_queue"] if player else tables.PlayerRow.repeat_queue.default
+        return player["repeat_queue"] if player else tables.PlayerRow.repeat_queue.default
 
     async def update_repeat_queue(self, repeat_queue: bool) -> None:
         """Update the repeat queue of the player"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlayerRow.raw(
             """INSERT INTO player (id, bot, repeat_queue)
             VALUES ({}, {}, {})
@@ -1010,13 +1127,18 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     @maybe_cached
     async def fetch_shuffle(self) -> bool:
         """Fetch the shuffle of the player"""
-        player = await tables.PlayerRow.raw(
-            "SELECT shuffle FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        player = (
+            await tables.PlayerRow.select(tables.PlayerRow.shuffle)
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
-        return player[0]["shuffle"] if player else tables.PlayerRow.shuffle.default
+        return player["shuffle"] if player else tables.PlayerRow.shuffle.default
 
     async def update_shuffle(self, shuffle: bool) -> None:
         """Update the shuffle of the player"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlayerRow.raw(
             """INSERT INTO player (id, bot, shuffle)
             VALUES ({}, {}, {})
@@ -1032,13 +1154,18 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     @maybe_cached
     async def fetch_auto_shuffle(self) -> bool:
         """Fetch the auto shuffle of the player"""
-        player = await tables.PlayerRow.raw(
-            "SELECT auto_shuffle FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        player = (
+            await tables.PlayerRow.select(tables.PlayerRow.auto_shuffle)
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
-        return player[0]["auto_shuffle"] if player else tables.PlayerRow.auto_shuffle.default
+        return player["auto_shuffle"] if player else tables.PlayerRow.auto_shuffle.default
 
     async def update_auto_shuffle(self, auto_shuffle: bool) -> None:
         """Update the auto shuffle of the player"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlayerRow.raw(
             """INSERT INTO player (id, bot, auto_shuffle)
             VALUES ({}, {}, {})
@@ -1054,13 +1181,18 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     @maybe_cached
     async def fetch_auto_play(self) -> bool:
         """Fetch the auto play of the player"""
-        player = await tables.PlayerRow.raw(
-            "SELECT auto_play FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        player = (
+            await tables.PlayerRow.select(tables.PlayerRow.auto_play)
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
-        return player[0]["auto_play"] if player else tables.PlayerRow.auto_play.default
+        return player["auto_play"] if player else tables.PlayerRow.auto_play.default
 
     async def update_auto_play(self, auto_play: bool) -> None:
         """Update the auto play of the player"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlayerRow.raw(
             """INSERT INTO player (id, bot, auto_play)
             VALUES ({}, {}, {})
@@ -1076,13 +1208,18 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     @maybe_cached
     async def fetch_self_deaf(self) -> bool:
         """Fetch the self deaf of the player"""
-        player = await tables.PlayerRow.raw(
-            "SELECT self_deaf FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        player = (
+            await tables.PlayerRow.select(tables.PlayerRow.self_deaf)
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
-        return player[0]["self_deaf"] if player else tables.PlayerRow.self_deaf.default
+        return player["self_deaf"] if player else tables.PlayerRow.self_deaf.default
 
     async def update_self_deaf(self, self_deaf: bool) -> None:
         """Update the self deaf of the player"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlayerRow.raw(
             """INSERT INTO player (id, bot, self_deaf)
             VALUES ({}, {}, {})
@@ -1098,13 +1235,18 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     @maybe_cached
     async def fetch_extras(self) -> dict:
         """Fetch the extras of the player"""
-        player = await tables.PlayerRow.raw(
-            "SELECT extras FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        player = (
+            await tables.PlayerRow.select(tables.PlayerRow.extras)
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
-        return ujson.loads(player[0]["extras"] if player else tables.PlayerRow.extras.default)
+        return player["extras"] if player else ujson.loads(tables.PlayerRow.extras.default)
 
     async def update_extras(self, extras: dict) -> None:
         """Update the extras of the player"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlayerRow.raw(
             """INSERT INTO player (id, bot, extras)
             VALUES ({}, {}, {})
@@ -1120,13 +1262,18 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     @maybe_cached
     async def fetch_effects(self) -> dict:
         """Fetch the effects of the player"""
-        player = await tables.PlayerRow.raw(
-            "SELECT effects FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        player = (
+            await tables.PlayerRow.select(tables.PlayerRow.effects)
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
-        return ujson.loads(player[0]["effects"] if player else tables.PlayerRow.effects.default)
+        return player["effects"] if player else ujson.loads(tables.PlayerRow.effects.default)
 
     async def update_effects(self, effects: dict) -> None:
         """Update the effects of the player"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlayerRow.raw(
             """INSERT INTO player (id, bot, effects)
             VALUES ({}, {}, {})
@@ -1142,15 +1289,20 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     @maybe_cached
     async def fetch_empty_queue_dc(self) -> TimedFeature:
         """Fetch the empty queue dc of the player"""
-        player = await tables.PlayerRow.raw(
-            "SELECT empty_queue_dc FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        player = (
+            await tables.PlayerRow.select(tables.PlayerRow.empty_queue_dc)
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
         return TimedFeature.from_json(
-            ujson.loads(player[0]["empty_queue_dc"] if player else tables.PlayerRow.empty_queue_dc.default)
+            player["empty_queue_dc"] if player else ujson.loads(tables.PlayerRow.empty_queue_dc.default)
         )
 
     async def update_empty_queue_dc(self, empty_queue_dc: dict) -> None:
         """Update the empty queue dc of the player"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlayerRow.raw(
             """INSERT INTO player (id, bot, empty_queue_dc)
             VALUES ({}, {}, {})
@@ -1166,15 +1318,18 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     @maybe_cached
     async def fetch_alone_dc(self) -> TimedFeature:
         """Fetch the alone dc of the player"""
-        player = await tables.PlayerRow.raw(
-            "SELECT alone_dc FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        player = (
+            await tables.PlayerRow.select(tables.PlayerRow.alone_dc)
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
-        return TimedFeature.from_json(
-            ujson.loads(player[0]["alone_dc"] if player else tables.PlayerRow.alone_dc.default)
-        )
+        return TimedFeature.from_json(player["alone_dc"] if player else ujson.loads(tables.PlayerRow.alone_dc.default))
 
     async def update_alone_dc(self, alone_dc: dict) -> None:
         """Update the alone dc of the player"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlayerRow.raw(
             """INSERT INTO player (id, bot, alone_dc)
             VALUES ({}, {}, {})
@@ -1190,15 +1345,20 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     @maybe_cached
     async def fetch_alone_pause(self) -> TimedFeature:
         """Fetch the alone pause of the player"""
-        player = await tables.PlayerRow.raw(
-            "SELECT alone_pause FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        player = (
+            await tables.PlayerRow.select(tables.PlayerRow.alone_pause)
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
         return TimedFeature.from_json(
-            ujson.loads(player[0]["alone_pause"] if player else tables.PlayerRow.alone_pause.default)
+            player["alone_pause"] if player else ujson.loads(tables.PlayerRow.alone_pause.default)
         )
 
     async def update_alone_pause(self, alone_pause: dict) -> None:
         """Update the alone pause of the player"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlayerRow.raw(
             """INSERT INTO player (id, bot, alone_pause)
             VALUES ({}, {}, {})
@@ -1214,14 +1374,19 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     @maybe_cached
     async def fetch_dj_users(self) -> set[int]:
         """Fetch the dj users of the player"""
-        player = await tables.PlayerRow.raw(
-            "SELECT dj_users FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        player = (
+            await tables.PlayerRow.select(tables.PlayerRow.dj_users)
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
 
-        return set(player[0]["dj_users"] if player else tables.PlayerRow.dj_users.default)
+        return set(player["dj_users"] if player else tables.PlayerRow.dj_users.default)
 
     async def add_to_dj_users(self, user: discord.Member) -> None:
         """Add a user to the dj users of the player"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlayerRow.raw(
             """INSERT INTO player (id, bot, dj_users)
             VALUES ({}, {}, {})
@@ -1236,6 +1401,7 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
 
     async def remove_from_dj_users(self, user: discord.Member) -> None:
         """Remove a user from the dj users of the player"""
+        # TODO: When piccolo add more functions for dealing with arrays update this to become ORM
         await tables.PlayerRow.raw(
             "UPDATE player SET dj_users = array_remove(dj_users, {}) WHERE id = {} AND bot = {};",
             user.id,
@@ -1249,6 +1415,8 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
         """Add dj users to the player"""
         if not users:
             return
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlayerRow.raw(
             """INSERT INTO player (id, bot, dj_users)
             VALUES ({}, {}, {})
@@ -1277,6 +1445,8 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
 
     async def dj_users_reset(self) -> None:
         """Reset the dj users of the player"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlayerRow.raw(
             """
             INSERT INTO player (id, bot, dj_users) VALUES ({}, {}, {})
@@ -1292,14 +1462,19 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
     @maybe_cached
     async def fetch_dj_roles(self) -> set[int]:
         """Fetch the dj roles of the player"""
-        player = await tables.PlayerRow.raw(
-            "SELECT dj_roles FROM player WHERE id = {} AND bot = {} LIMIT 1;", self.id, self.bot
+        player = (
+            await tables.PlayerRow.select(tables.PlayerRow.dj_roles)
+            .where((tables.PlayerRow.id == self.id) & (tables.PlayerRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
 
-        return set(player[0]["dj_roles"] if player else tables.PlayerRow.dj_roles.default)
+        return set(player["dj_roles"] if player else tables.PlayerRow.dj_roles.default)
 
     async def add_to_dj_roles(self, role: discord.Role) -> None:
         """Add dj roles to the player"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlayerRow.raw(
             """INSERT INTO player (id, bot, dj_roles)
             VALUES ({}, {}, {})
@@ -1314,6 +1489,8 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
 
     async def remove_from_dj_roles(self, role: discord.Role) -> None:
         """Remove dj roles from the player"""
+        # TODO: When piccolo add more functions for dealing with arrays update this to become ORM
+
         await tables.PlayerRow.raw(
             """UPDATE player SET dj_roles = array_remove(dj_roles, {}) WHERE id = {} AND bot = {}""",
             role.id,
@@ -1333,6 +1510,8 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
         """
         if not roles:
             return
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlayerRow.raw(
             """INSERT INTO player (id, bot, dj_roles)
                     VALUES ({}, {}, {})
@@ -1361,6 +1540,8 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
 
     async def dj_roles_reset(self) -> None:
         """Reset the dj roles of the player"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlayerRow.raw(
             """
                     INSERT INTO player (id, bot, dj_roles) VALUES ({}, {}, {})
@@ -1372,6 +1553,20 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
         )
         await self.update_cache((self.fetch_dj_roles, set()), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
+
+    async def _roleid_in_dj_roles(self, role_id: int) -> bool:
+        return await tables.PlayerRow.exists().where(
+            (tables.PlayerRow.id == self.id)
+            & (tables.PlayerRow.bot == self.bot)
+            & tables.PlayerRow.dj_roles.any(role_id)
+        )
+
+    async def _userid_in_dj_users(self, user_id: int) -> bool:
+        return await tables.PlayerRow.exists().where(
+            (tables.PlayerRow.id == self.id)
+            & (tables.PlayerRow.bot == self.bot)
+            & tables.PlayerRow.dj_users.any(user_id)
+        )
 
     async def is_dj(
         self,
@@ -1410,13 +1605,12 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
                 return True
             if hasattr(bot, "is_mod") and await bot.is_mod(user):
                 return True
-        dj_users = await self.fetch_dj_users()
-        if user.id in dj_users:
+        if await self._userid_in_dj_users(user.id):
             return True
         dj_roles = await self.fetch_dj_roles()
         if await asyncstdlib.any(r.id in dj_roles for r in user.roles):
             return True
-        return not dj_users and not dj_roles
+        return False
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
@@ -1426,18 +1620,18 @@ class BotVersion(CachedModel, metaclass=_SingletonByKey):
     @maybe_cached
     async def fetch_version(self) -> LegacyVersion | Version:
         """Fetch the version of the bot from the database"""
-        version = await tables.BotVersionRow.raw(
-            """
-            SELECT version FROM version
-            WHERE bot = {}
-            LIMIT 1
-            """,
-            self.id,
+        data = (
+            await tables.BotVersionRow.select(tables.BotVersionRow.version)
+            .where(tables.PlayerRow.bot == self.id)
+            .first()
+            .output(load_json=True, nested=True)
         )
-        return parse_version(version[0]["version"] if version else tables.BotVersionRow.version.default)
+        return parse_version(data["version"] if data else tables.BotVersionRow.version.default)
 
     async def update_version(self, version: LegacyVersion | Version | str):
         """Update the version of the bot in the database"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.BotVersionRow.raw(
             """
             INSERT INTO version (bot, version)
@@ -1465,8 +1659,8 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         bool
             Whether the config exists.
         """
-        return await tables.PlayerRow.raw(
-            "SELECT EXISTS(SELECT 1 FROM lib_config WHERE id = {} and bot = {});", self.id, self.bot
+        return await tables.LibConfigRow.exists().where(
+            (tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot)
         )
 
     @maybe_cached
@@ -1478,14 +1672,13 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         str
             The config folder.
         """
-        response = await tables.LibConfigRow.raw(
-            """
-            SELECT config_folder FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
-            """,
-            self.id,
-            self.bot,
+        response = (
+            await tables.LibConfigRow.select(tables.LibConfigRow.config_folder)
+            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
-        return response[0]["config_folder"] if response else tables.LibConfigRow.config_folder.default
+        return response["config_folder"] if response else tables.LibConfigRow.config_folder.default
 
     async def update_config_folder(self, config_folder: aiopath.AsyncPath | pathlib.Path | str) -> None:
         """Update the config folder.
@@ -1495,6 +1688,8 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         config_folder
             The new config folder.
         """
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, config_folder)
@@ -1518,14 +1713,13 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         str
             The localtrack folder.
         """
-        response = await tables.LibConfigRow.raw(
-            """
-            SELECT localtrack_folder FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
-            """,
-            self.id,
-            self.bot,
+        response = (
+            await tables.LibConfigRow.select(tables.LibConfigRow.localtrack_folder)
+            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
-        return response[0]["localtrack_folder"] if response else tables.LibConfigRow.localtrack_folder.default
+        return response["localtrack_folder"] if response else tables.LibConfigRow.localtrack_folder.default
 
     async def update_localtrack_folder(self, localtrack_folder: aiopath.AsyncPath | pathlib.Path | str) -> None:
         """Update the localtrack folder.
@@ -1535,6 +1729,8 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         localtrack_folder
             The new localtrack folder.
         """
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, localtrack_folder)
@@ -1558,14 +1754,14 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         str
             The java path.
         """
-        response = await tables.LibConfigRow.raw(
-            """
-            SELECT java_path FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
-            """,
-            self.id,
-            self.bot,
+        response = (
+            await tables.LibConfigRow.select(tables.LibConfigRow.java_path)
+            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
-        temp_path = response[0]["java_path"] if response else tables.LibConfigRow.java_path.default
+
+        temp_path = response["java_path"] if response else tables.LibConfigRow.java_path.default
         java_path = get_true_path(temp_path, temp_path)
         return java_path
 
@@ -1578,6 +1774,8 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
             The new java path.
         """
         java_path = get_true_path(java_path, java_path)
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, java_path)
@@ -1601,14 +1799,13 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         bool
             The enable_managed_node.
         """
-        response = await tables.LibConfigRow.raw(
-            """
-            SELECT enable_managed_node FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
-            """,
-            self.id,
-            self.bot,
+        response = (
+            await tables.LibConfigRow.select(tables.LibConfigRow.enable_managed_node)
+            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
-        return response[0]["enable_managed_node"] if response else tables.LibConfigRow.enable_managed_node.default
+        return response["enable_managed_node"] if response else tables.LibConfigRow.enable_managed_node.default
 
     async def update_enable_managed_node(self, enable_managed_node: bool) -> None:
         """Update the enable_managed_node.
@@ -1618,6 +1815,8 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         enable_managed_node
             The new enable_managed_node.
         """
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, enable_managed_node)
@@ -1641,15 +1840,14 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         bool
             The use_bundled_pylav_external.
         """
-        response = await tables.LibConfigRow.raw(
-            """
-            SELECT use_bundled_pylav_external FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
-            """,
-            self.id,
-            self.bot,
+        response = (
+            await tables.LibConfigRow.select(tables.LibConfigRow.use_bundled_pylav_external)
+            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
         return (
-            response[0]["use_bundled_pylav_external"]
+            response["use_bundled_pylav_external"]
             if response
             else tables.LibConfigRow.use_bundled_pylav_external.default
         )
@@ -1662,6 +1860,8 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         use_bundled_pylav_external
             The new use_bundled_pylav_external.
         """
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, use_bundled_pylav_external)
@@ -1687,15 +1887,14 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         bool
             The use_bundled_lava_link_external.
         """
-        response = await tables.LibConfigRow.raw(
-            """
-            SELECT use_bundled_lava_link_external FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
-            """,
-            self.id,
-            self.bot,
+        response = (
+            await tables.LibConfigRow.select(tables.LibConfigRow.use_bundled_lava_link_external)
+            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
         return (
-            response[0]["use_bundled_lava_link_external"]
+            response["use_bundled_lava_link_external"]
             if response
             else tables.LibConfigRow.use_bundled_lava_link_external.default
         )
@@ -1708,6 +1907,8 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         use_bundled_lava_link_external
             The new use_bundled_lava_link_external.
         """
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, use_bundled_lava_link_external)
@@ -1733,14 +1934,13 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         str
             The download_id.
         """
-        response = await tables.LibConfigRow.raw(
-            """
-            SELECT download_id FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
-            """,
-            self.id,
-            self.bot,
+        response = (
+            await tables.LibConfigRow.select(tables.LibConfigRow.download_id)
+            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
-        return response[0]["download_id"] if response else tables.LibConfigRow.download_id.default
+        return response["download_id"] if response else tables.LibConfigRow.download_id.default
 
     async def update_download_id(self, download_id: int) -> None:
         """Update the download_id.
@@ -1750,6 +1950,8 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         download_id
             The new download_id.
         """
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, download_id)
@@ -1773,14 +1975,13 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         dict
             The extras.
         """
-        response = await tables.LibConfigRow.raw(
-            """
-            SELECT extras FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
-            """,
-            self.id,
-            self.bot,
+        response = (
+            await tables.LibConfigRow.select(tables.LibConfigRow.extras)
+            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
-        return ujson.loads(response[0]["extras"] if response else tables.LibConfigRow.extras.default)
+        return response["extras"] if response else ujson.loads(tables.LibConfigRow.extras.default)
 
     async def update_extras(self, extras: dict) -> None:
         """Update the extras.
@@ -1790,6 +1991,8 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         extras
             The new extras.
         """
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, extras)
@@ -1813,14 +2016,13 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         datetime.datetime
             The next_execution_update_bundled_playlists.
         """
-        response = await tables.LibConfigRow.raw(
-            """
-            SELECT next_execution_update_bundled_playlists FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
-            """,
-            self.id,
-            self.bot,
+        response = (
+            await tables.LibConfigRow.select(tables.LibConfigRow.next_execution_update_bundled_playlists)
+            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
-        return response[0]["next_execution_update_bundled_playlists"] if response else utcnow()
+        return response["next_execution_update_bundled_playlists"] if response else utcnow()
 
     async def update_next_execution_update_bundled_playlists(self, next_execution: datetime.datetime) -> None:
         """Update the next_execution_update_bundled_playlists.
@@ -1830,6 +2032,8 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         next_execution
             The new next_execution_update_bundled_playlists.
         """
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, next_execution_update_bundled_playlists)
@@ -1855,14 +2059,13 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         datetime.datetime
             The next_execution_update_bundled_external_playlists.
         """
-        response = await tables.LibConfigRow.raw(
-            """
-            SELECT next_execution_update_bundled_external_playlists FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
-            """,
-            self.id,
-            self.bot,
+        response = (
+            await tables.LibConfigRow.select(tables.LibConfigRow.next_execution_update_bundled_external_playlists)
+            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
-        return response[0]["next_execution_update_bundled_external_playlists"] if response else utcnow()
+        return response["next_execution_update_bundled_external_playlists"] if response else utcnow()
 
     async def update_next_execution_update_bundled_external_playlists(self, next_execution: datetime.datetime) -> None:
         """Update the next_execution_update_bundled_external_playlists.
@@ -1872,6 +2075,8 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         next_execution
             The new next_execution.
         """
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, next_execution_update_bundled_external_playlists)
@@ -1897,14 +2102,13 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         datetime.datetime
             The next_execution_update_external_playlists.
         """
-        response = await tables.LibConfigRow.raw(
-            """
-            SELECT next_execution_update_external_playlists FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
-            """,
-            self.id,
-            self.bot,
+        response = (
+            await tables.LibConfigRow.select(tables.LibConfigRow.next_execution_update_external_playlists)
+            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
-        return response[0]["next_execution_update_external_playlists"] if response else utcnow()
+        return response["next_execution_update_external_playlists"] if response else utcnow()
 
     async def update_next_execution_update_external_playlists(self, next_execution: datetime.datetime) -> None:
         """Update the next_execution_update_external_playlists.
@@ -1914,6 +2118,8 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         next_execution
             The new next_execution.
         """
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, next_execution_update_external_playlists)
@@ -1939,14 +2145,13 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         bool
             The update_bot_activity.
         """
-        response = await tables.LibConfigRow.raw(
-            """
-            SELECT update_bot_activity FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
-            """,
-            self.id,
-            self.bot,
+        response = (
+            await tables.LibConfigRow.select(tables.LibConfigRow.update_bot_activity)
+            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
-        return response[0]["update_bot_activity"] if response else tables.LibConfigRow.update_bot_activity.default
+        return response["update_bot_activity"] if response else tables.LibConfigRow.update_bot_activity.default
 
     async def update_update_bot_activity(self, update_bot_activity: bool) -> None:
         """Update the update_bot_activity.
@@ -1956,6 +2161,8 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         update_bot_activity
             The new update_bot_activity.
         """
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, update_bot_activity)
@@ -1979,17 +2186,14 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         bool
             The auto_update_managed_nodes.
         """
-        response = await tables.LibConfigRow.raw(
-            """
-            SELECT auto_update_managed_nodes FROM lib_config WHERE id = {} and bot = {} LIMIT 1;
-            """,
-            self.id,
-            self.bot,
+        response = (
+            await tables.LibConfigRow.select(tables.LibConfigRow.auto_update_managed_nodes)
+            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
         return (
-            response[0]["auto_update_managed_nodes"]
-            if response
-            else tables.LibConfigRow.auto_update_managed_nodes.default
+            response["auto_update_managed_nodes"] if response else tables.LibConfigRow.auto_update_managed_nodes.default
         )
 
     async def update_auto_update_managed_nodes(self, auto_update_managed_nodes: bool) -> None:
@@ -2000,6 +2204,8 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         auto_update_managed_nodes
             The new auto_update_managed_nodes.
         """
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, auto_update_managed_nodes)
@@ -2030,18 +2236,14 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
         LibConfigModel
             The updated config.
         """
-
-        response = await tables.LibConfigRow.raw(
-            """SELECT *
-            FROM lib_config
-            WHERE id = {} AND bot = {}
-            LIMIT 1""",
-            self.id,
-            self.bot,
+        data = (
+            await tables.LibConfigRow.select()
+            .where((tables.LibConfigRow.id == self.id) & (tables.LibConfigRow.bot == self.bot))
+            .first()
+            .output(load_json=True, nested=True)
         )
-        if response:
-            data = response[0]
-            data["extras"] = ujson.loads(data["extras"])
+        if data:
+            data["extras"] = data["extras"]
             data["java_path"] = get_true_path(data["java_path"], data["java_path"])
             return data
         return {
@@ -2076,7 +2278,8 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         bool
             Whether the config exists.
         """
-        return await tables.PlaylistRow.raw("SELECT EXISTS(SELECT 1 FROM playlist WHERE id = {});", self.id)
+
+        return await tables.PlaylistRow.exists().where(tables.PlaylistRow.id == self.id)
 
     @maybe_cached
     async def fetch_all(self) -> dict:
@@ -2087,11 +2290,15 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         dict
             The playlists.
         """
-        response = await tables.PlaylistRow.raw("SELECT * FROM playlist WHERE id = {} LIMIT 1", self.id)
+        data = (
+            await tables.PlaylistRow.select()
+            .where(tables.PlaylistRow.id == self.id)
+            .first()
+            .output(load_json=True, nested=True)
+        )
 
-        if response:
-            data = response[0]
-            data["tracks"] = ujson.loads(data["tracks"])
+        if data:
+            data["tracks"] = data["tracks"]
             return data
 
         return {
@@ -2112,8 +2319,13 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         int
             The scope of the playlist.
         """
-        response = await tables.PlaylistRow.raw("SELECT scope FROM playlist WHERE id = {} LIMIT 1;", self.id)
-        return response[0]["scope"] if response else tables.PlaylistRow.scope.default
+        response = (
+            await tables.PlaylistRow.select(tables.PlaylistRow.scope)
+            .where(tables.PlaylistRow.id == self.id)
+            .first()
+            .output(load_json=True, nested=True)
+        )
+        return response["scope"] if response else tables.PlaylistRow.scope.default
 
     async def update_scope(self, scope: int):
         """Update the scope of the playlist.
@@ -2123,6 +2335,8 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         scope : int
             The new scope of the playlist.
         """
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlaylistRow.raw(
             "INSERT INTO playlist (id, scope) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET scope = EXCLUDED.scope;",
             self.id,
@@ -2140,8 +2354,13 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         int
             The author of the playlist.
         """
-        response = await tables.PlaylistRow.raw("SELECT author FROM playlist WHERE id = {} LIMIT 1;", self.id)
-        return response[0]["author"] if response else tables.PlaylistRow.author.default
+        response = (
+            await tables.PlaylistRow.select(tables.PlaylistRow.author)
+            .where(tables.PlaylistRow.id == self.id)
+            .first()
+            .output(load_json=True, nested=True)
+        )
+        return response["author"] if response else tables.PlaylistRow.author.default
 
     async def update_author(self, author: int):
         """Update the author of the playlist.
@@ -2151,6 +2370,8 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         author : int
             The new author of the playlist.
         """
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlaylistRow.raw(
             "INSERT INTO playlist (id, author) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET author = EXCLUDED.author;",
             self.id,
@@ -2168,8 +2389,13 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         str
             The name of the playlist.
         """
-        response = await tables.PlaylistRow.raw("SELECT name FROM playlist WHERE id = {} LIMIT 1;", self.id)
-        return response[0]["name"] if response else tables.PlaylistRow.name.default
+        response = (
+            await tables.PlaylistRow.select(tables.PlaylistRow.name)
+            .where(tables.PlaylistRow.id == self.id)
+            .first()
+            .output(load_json=True, nested=True)
+        )
+        return response["name"] if response else tables.PlaylistRow.name.default
 
     async def update_name(self, name: str):
         """Update the name of the playlist.
@@ -2179,6 +2405,8 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         name : str
             The new name of the playlist.
         """
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlaylistRow.raw(
             "INSERT INTO playlist (id, name) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name;",
             self.id,
@@ -2196,8 +2424,13 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         str
             The url of the playlist.
         """
-        response = await tables.PlaylistRow.raw("SELECT url FROM playlist WHERE id = {} LIMIT 1;", self.id)
-        return response[0]["url"] if response else tables.PlaylistRow.url.default
+        response = (
+            await tables.PlaylistRow.select(tables.PlaylistRow.url)
+            .where(tables.PlaylistRow.id == self.id)
+            .first()
+            .output(load_json=True, nested=True)
+        )
+        return response["url"] if response else tables.PlaylistRow.url.default
 
     async def update_url(self, url: str):
         """Update the url of the playlist.
@@ -2207,6 +2440,8 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         url : str
             The new url of the playlist.
         """
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlaylistRow.raw(
             "INSERT INTO playlist (id, url) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET url = EXCLUDED.url;",
             self.id,
@@ -2224,8 +2459,13 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         list[str]
             The tracks of the playlist.
         """
-        response = await tables.PlaylistRow.raw("SELECT tracks FROM playlist WHERE id = {} LIMIT 1;", self.id)
-        return ujson.loads(response[0]["tracks"] if response else tables.PlaylistRow.tracks.default)
+        response = (
+            await tables.PlaylistRow.select(tables.PlaylistRow.tracks)
+            .where(tables.PlaylistRow.id == self.id)
+            .first()
+            .output(load_json=True, nested=True)
+        )
+        return response["tracks"] if response else ujson.loads(tables.PlaylistRow.tracks.default)
 
     async def update_tracks(self, tracks: list[str]):
         """Update the tracks of the playlist.
@@ -2235,6 +2475,8 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         tracks : list[str]
             The new tracks of the playlist.
         """
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlaylistRow.raw(
             "INSERT INTO playlist (id, tracks) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET tracks = EXCLUDED.tracks;",
             self.id,
@@ -2257,6 +2499,7 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         int
             The number of tracks in the playlist.
         """
+        # TODO: When piccolo add support to more JSON operations replace this with ORM version
         response = await tables.PlaylistRow.raw(
             "SELECT jsonb_array_length(tracks) as size FROM playlist WHERE id = {} LIMIT 1;", self.id
         )
@@ -2270,6 +2513,8 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         tracks : list[str]
             The tracks to add.
         """
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlaylistRow.raw(
             "INSERT INTO playlist (id, tracks) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET tracks = array_cat("
             "playlist.tracks, EXCLUDED.tracks);",
@@ -2300,6 +2545,8 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         track : str
             The track to remove
         """
+        # TODO: When piccolo add support to more Array operations replace this with ORM version
+
         await tables.PlaylistRow.raw(
             "UPDATE playlist SET tracks = array_remove(tracks, {}) WHERE id = {};", self.id, track
         )
@@ -2307,13 +2554,13 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
 
     async def remove_all_tracks(self) -> None:
         """Remove all tracks from the playlist."""
-        await tables.PlaylistRow.raw("UPDATE playlist SET tracks = {} WHERE id = {};", [], self.id)
+        await tables.PlaylistRow.update({tables.PlaylistRow.tracks: []}).where(tables.PlaylistRow.id == self.id)
         await self.update_cache((self.fetch_tracks, []), (self.size, 0), (self.exists, True), (self.fetch_first, None))
         await self.invalidate_cache(self.fetch_all)
 
     async def delete(self) -> None:
         """Delete the playlist from the database"""
-        await tables.PlaylistRow.raw("DELETE FROM playlist WHERE id = {}", self.id)
+        await tables.PlaylistRow.delete().where(tables.PlaylistRow.id == self.id)
         await self.invalidate_cache()
 
     async def can_manage(self, bot: BotT, requester: discord.abc.User, guild: discord.Guild = None) -> bool:
@@ -2458,6 +2705,8 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
 
     async def bulk_update(self, scope: int, name: str, author: int, url: str | None, tracks: list[str]) -> None:
         """Bulk update the playlist."""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlaylistRow.raw(
             "INSERT INTO playlist  (id, name, author, scope, url, tracks) VALUES ({}, {}, {}, {}, {}, {}) "
             "ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, author = EXCLUDED.author, scope = EXCLUDED.scope, "
@@ -2523,15 +2772,15 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         """
         if CACHING_ENABLED:
             tracks = await self.fetch_tracks()
-            if index < 0:
-                return random.choice(tracks) if tracks else None
-            else:
-                return tracks[index] if index < len(tracks) else None
+            return tracks[index] if index < len(tracks) else None
         else:
-            response = await tables.QueryRow.raw(
-                "SELECT tracks->>{} as playlist FROM query WHERE id = {} LIMIT 1;", f"{index}", self.id
+            response = (
+                await tables.PlaylistRow.select(tables.PlaylistRow.tracks[index])
+                .first()
+                .where(tables.PlaylistRow.id == self.id)
+                .output(load_json=True, nested=True)
             )
-            return response[0]["track"] if response else None
+            return response["track"] if response else None
 
     @maybe_cached
     async def fetch_first(self) -> str | None:
@@ -2542,8 +2791,7 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         str
             The first track
         """
-        response = await tables.QueryRow.raw("SELECT tracks->>0 as playlist FROM query WHERE id = {} LIMIT 1;", self.id)
-        return response[0]["track"] if response else None
+        return await self.fetch_index(0)
 
     async def fetch_random(self) -> str | None:
         """Get a random track.
@@ -2553,7 +2801,8 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         str
             A random track
         """
-        return await self.fetch_index(-1)
+
+        return await self.fetch_index(random.randint(0, await self.size()))
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
@@ -2569,11 +2818,11 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
         bool
             Whether the config exists.
         """
-        return await tables.QueryRow.raw("SELECT EXISTS(SELECT 1 FROM query WHERE identifier = {});", self.id)
+        return await tables.QueryRow.exists().where(tables.QueryRow.identifier == self.id)
 
     async def delete(self):
         """Delete the query from the database"""
-        await tables.QueryRow.raw("DELETE FROM query WHERE identifier = {}", self.id)
+        await tables.QueryRow.delete().where(tables.QueryRow.identifier == self.id)
         await self.invalidate_cache()
 
     @maybe_cached
@@ -2585,6 +2834,7 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
         int
             The number of tracks in the playlist.
         """
+        # TODO: When piccolo add support to more JSON operations replace this with ORM version
         response = await tables.QueryRow.raw(
             """SELECT jsonb_array_length(tracks) as size
         FROM query
@@ -2603,8 +2853,13 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
         list[str]
             The tracks of the playlist.
         """
-        response = await tables.QueryRow.raw("SELECT tracks FROM query WHERE identifier = {} LIMIT 1;", self.id)
-        return ujson.loads(response[0]["tracks"] if response else tables.QueryRow.tracks.default)
+        response = (
+            await tables.QueryRow.select(tables.QueryRow.tracks)
+            .where(tables.QueryRow.identifier == self.id)
+            .first()
+            .output(load_json=True, nested=True)
+        )
+        return response["tracks"] if response else ujson.loads(tables.QueryRow.tracks.default)
 
     async def update_tracks(self, tracks: list[str]):
         """Update the tracks of the playlist.
@@ -2614,6 +2869,8 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
         tracks: list[str]
             The tracks of the playlist.
         """
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.QueryRow.raw(
             "INSERT INTO playlist (identifier, tracks) VALUES ({}, {}) ON CONFLICT (identifier) DO UPDATE SET tracks = "
             "EXCLUDED.tracks;",
@@ -2636,8 +2893,13 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
         str
             The name of the playlist.
         """
-        response = await tables.QueryRow.raw("SELECT name FROM query WHERE identifier = {} LIMIT 1;", self.id)
-        return response[0]["name"] if response else tables.QueryRow.name.default
+        response = (
+            await tables.QueryRow.select(tables.QueryRow.name)
+            .where(tables.QueryRow.identifier == self.id)
+            .first()
+            .output(load_json=True, nested=True)
+        )
+        return response["name"] if response else tables.QueryRow.name.default
 
     async def update_name(self, name: str):
         """Update the name of the playlist.
@@ -2647,6 +2909,8 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
         name: str
             The name of the playlist.
         """
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.QueryRow.raw(
             "INSERT INTO query (identifier, name) VALUES ({}, {}) ON CONFLICT (identifier) DO UPDATE SET name = "
             "EXCLUDED.name;",
@@ -2664,11 +2928,18 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
         datetime
             The last updated time of the playlist.
         """
-        response = await tables.QueryRow.raw("SELECT last_updated FROM query WHERE identifier = {} LIMIT 1;", self.id)
-        return response[0]["last_updated"] if response else tables.QueryRow.last_updated.default
+        response = (
+            await tables.QueryRow.select(tables.QueryRow.last_updated)
+            .where(tables.QueryRow.identifier == self.id)
+            .first()
+            .output(load_json=True, nested=True)
+        )
+        return response["last_updated"] if response else tables.QueryRow.last_updated.default
 
     async def update_last_updated(self):
         """Update the last updated time of the playlist"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.QueryRow.raw(
             "INSERT INTO query (identifier, last_updated) "
             "VALUES ({}, {}) ON CONFLICT (identifier) "
@@ -2690,6 +2961,8 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
         name: str
             The name of the playlist
         """
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.QueryRow.raw(
             "INSERT INTO query (identifier, tracks, name, last_updated) "
             "VALUES ({}, {}, {}, {}) ON CONFLICT (identifier) "
@@ -2723,15 +2996,15 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
         """
         if CACHING_ENABLED:
             tracks = await self.fetch_tracks()
-            if index < 0:
-                return random.choice(tracks) if tracks else None
-            else:
-                return tracks[index] if index < len(tracks) else None
+            return tracks[index] if index < len(tracks) else None
         else:
-            response = await tables.QueryRow.raw(
-                "SELECT tracks->>{} as query WHERE FROM query WHERE id = {} LIMIT 1;", f"{index}", self.id
+            response = (
+                await tables.QueryRow.select(tables.QueryRow.tracks[index])
+                .first()
+                .where(tables.QueryRow.identifier == self.id)
+                .output(load_json=True, nested=True)
             )
-            return response[0]["track"] if response else None
+            return response["track"] if response else None
 
     @maybe_cached
     async def fetch_first(self) -> str | None:
@@ -2742,10 +3015,7 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
         str
             The first track
         """
-        response = await tables.QueryRow.raw(
-            "SELECT tracks->>0 as track FROM query WHERE identifier = {} LIMIT 1;", self.id
-        )
-        return response[0]["track"] if response else None
+        return await self.fetch_index(0)
 
     async def fetch_random(self) -> str | None:
         """Get a random track.
@@ -2755,7 +3025,7 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
         str
             A random track
         """
-        return await self.fetch_index(-1)
+        return await self.fetch_index(random.randint(0, await self.size()))
 
 
 @dataclass(eq=True)
@@ -2801,17 +3071,14 @@ class PlayerStateModel:
 
     async def delete(self) -> None:
         """Delete the player state from the database"""
-        await tables.PlayerStateRow.raw(
-            """
-            DELETE FROM player_state
-            WHERE id = {} AND bot = {}
-            """,
-            self.id,
-            self.bot,
+        await tables.PlayerStateRow.delete().where(
+            (tables.PlayerStateRow.id == self.id) & (tables.PlayerStateRow.bot == self.bot)
         )
 
     async def save(self) -> None:
         """Save the player state to the database"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await tables.PlayerStateRow.raw(
             """
             INSERT INTO player_state (
@@ -2905,35 +3172,37 @@ class PlayerStateModel:
         PlayerStateModel | None
             The player state if found, otherwise None.
         """
-
-        player = await tables.PlayerStateRow.raw(
-            """SELECT id,
-                bot,
-                channel_id,
-                volume,
-                position,
-                auto_play_playlist_id,
-                forced_channel_id,
-                text_channel_id,
-                notify_channel_id,
-                paused,
-                repeat_current,
-                repeat_queue,
-                shuffle,
-                auto_shuffle,
-                auto_play,
-                playing,
-                effect_enabled,
-                self_deaf,
-                current,
-                queue,
-                history,
-                effects,
-                extras FROM player_state WHERE bot = {} AND id = {} LIMIT 1""",
-            bot_id,
-            guild_id,
+        player = (
+            await tables.PlayerStateRow.select(
+                tables.PlayerStateRow.id,
+                tables.PlayerStateRow.bot,
+                tables.PlayerStateRow.channel_id,
+                tables.PlayerStateRow.volume,
+                tables.PlayerStateRow.position,
+                tables.PlayerStateRow.auto_play_playlist_id,
+                tables.PlayerStateRow.forced_channel_id,
+                tables.PlayerStateRow.text_channel_id,
+                tables.PlayerStateRow.notify_channel_id,
+                tables.PlayerStateRow.paused,
+                tables.PlayerStateRow.repeat_current,
+                tables.PlayerStateRow.repeat_queue,
+                tables.PlayerStateRow.shuffle,
+                tables.PlayerStateRow.auto_shuffle,
+                tables.PlayerStateRow.auto_play,
+                tables.PlayerStateRow.playing,
+                tables.PlayerStateRow.effect_enabled,
+                tables.PlayerStateRow.self_deaf,
+                tables.PlayerStateRow.current,
+                tables.PlayerStateRow.queue,
+                tables.PlayerStateRow.history,
+                tables.PlayerStateRow.effects,
+                tables.PlayerStateRow.extras,
+            )
+            .where((tables.PlayerStateRow.id == guild_id) & (tables.PlayerStateRow.bot == bot_id))
+            .first()
+            .output(load_json=True, nested=True)
         )
-        return cls(**player[0]) if player else None
+        return cls(**player) if player else None
 
 
 @dataclass(eq=True)
@@ -2991,7 +3260,7 @@ class EqualizerModel:
         }
         playlist = (
             await tables.EqualizerRow.objects()
-            .output(load_json=True)
+            .output(load_json=True, nested=True)
             .get_or_create(tables.EqualizerRow.id == self.id, defaults=values)
         )
         if not playlist._was_created:
@@ -3012,14 +3281,13 @@ class EqualizerModel:
         EqualizerModel | None
             The equalizer if found, else None.
         """
-        equalizer = await tables.EqualizerRow.raw(
-            """
-            SELECT * FROM equalizer WHERE id = {}
-            LIMIT 1
-            """,
-            id,
+        equalizer = (
+            await tables.EqualizerRow.select()
+            .where(tables.EqualizerRow.id == id)
+            .first()
+            .output(load_json=True, nested=True)
         )
-        return EqualizerModel(**equalizer[0]) if equalizer else None
+        return EqualizerModel(**equalizer) if equalizer else None
 
     async def delete(self):
         """Delete the equalizer from the database"""

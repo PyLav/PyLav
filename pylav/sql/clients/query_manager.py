@@ -30,15 +30,10 @@ class QueryCacheManager:
         return self._client
 
     async def exists(self, query: Query) -> bool:
-        response = await tables.QueryRow.raw(
-            "SELECT EXISTS(SELECT 1 FROM query WHERE {}) AS exists".format(
-                (
-                    (tables.QueryRow.identifier == query.query_identifier)
-                    & (tables.QueryRow.last_updated > utcnow() - datetime.timedelta(days=30))
-                ).querystring
-            )
+        return await tables.QueryRow.exists().where(
+            (tables.QueryRow.identifier == query.query_identifier)
+            & (tables.QueryRow.last_updated > utcnow() - datetime.timedelta(days=30))
         )
-        return response[0]["exists"] if response else False
 
     def get(self, identifier: str) -> QueryModel:
         """Get a query object"""
@@ -72,10 +67,8 @@ class QueryCacheManager:
             asyncio.exceptions.CancelledError,
         ):
             LOGGER.trace("Deleting old queries")
-            await tables.QueryRow.raw(
-                "DELETE FROM query WHERE {}".format(
-                    (tables.QueryRow.last_updated <= (utcnow() - datetime.timedelta(days=30))).querystring,
-                )
+            await tables.QueryRow.delete().where(
+                tables.QueryRow.last_updated <= (utcnow() - datetime.timedelta(days=30))
             )
             LOGGER.trace("Deleted old queries")
 
@@ -89,17 +82,12 @@ class QueryCacheManager:
 
     @staticmethod
     async def delete_older_than(days: int) -> None:
-        await tables.QueryRow.raw(
-            "DELETE FROM query WHERE {}".format(
-                (tables.QueryRow.last_updated <= (utcnow() - datetime.timedelta(days=days))).querystring,
-            )
-        )
+        await tables.QueryRow.delete().where(tables.QueryRow.last_updated <= (utcnow() - datetime.timedelta(days=days)))
 
     @staticmethod
     async def delete_query(query: Query) -> None:
-        await tables.QueryRow.raw("DELETE FROM query WHERE identifier = {}", query.query_identifier)
+        await tables.QueryRow.delete().where(tables.QueryRow.identifier == query.query_identifier)
 
     @staticmethod
     async def size() -> int:
-        response = await tables.QueryRow.raw("SELECT COUNT(identifier) FROM query")
-        return response[0]["count"] if response else 0
+        return await tables.QueryRow.count()

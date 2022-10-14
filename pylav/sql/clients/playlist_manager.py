@@ -54,13 +54,13 @@ class PlaylistConfigManager:
         return [self.get_playlist(playlist) for playlist in BUNDLED_PLAYLIST_IDS]
 
     async def get_playlist_by_name(self, playlist_name: str, limit: int = None) -> list[PlaylistModel]:
-        where = tables.PlaylistRow.name.ilike(f"%{playlist_name.lower()}%")
-        if limit is None:
-            query = tables.PlaylistRow.raw(f"SELECT id FROM playlist WHERE {where.querystring}")
-        else:
-            query = tables.PlaylistRow.raw(
-                f"SELECT id FROM playlist WHERE {where.querystring} " f"LIMIT {limit}",
-            )
+        query = (
+            tables.PlaylistRow.select(tables.PlaylistRow.id)
+            .where(tables.PlaylistRow.name.ilike(f"%{playlist_name.lower()}%"))
+            .output(load_json=True, nested=True)
+        )
+        if limit is not None:
+            query = query.limit(limit)
         playlists = await query
         if not playlists:
             raise EntryNotFoundError(
@@ -70,11 +70,12 @@ class PlaylistConfigManager:
 
     async def get_playlist_by_id(self, playlist_id: int | str) -> PlaylistModel:
         try:
-            response = await tables.PlaylistRow.raw("SELECT id FROM playlist WHERE id = {}", int(playlist_id))
+            playlist_id = int(playlist_id)
+            response = await tables.PlaylistRow.exists().where(tables.PlaylistRow.id == playlist_id)
         except ValueError as e:
             raise EntryNotFoundError(f"Playlist with id {playlist_id} not found") from e
         if response:
-            return self.get_playlist(**response[0])
+            return self.get_playlist(playlist_id)
         else:
             raise EntryNotFoundError(f"Playlist with id {playlist_id} not found")
 
@@ -87,54 +88,51 @@ class PlaylistConfigManager:
             return await self.get_playlist_by_name(playlist_name_or_id, limit=limit)
 
     async def get_playlists_by_author(self, author: int, return_empty: bool = True) -> list[PlaylistModel]:
-        playlists = await tables.PlaylistRow.raw("SELECT id FROM playlist WHERE author = {}", author)
-
+        playlists = (
+            await tables.PlaylistRow.select(tables.PlaylistRow.id)
+            .where(tables.PlaylistRow.author == author)
+            .output(load_json=True, nested=True)
+        )
         if playlists or return_empty:
             return [self.get_playlist(**playlist) for playlist in playlists]
         else:
             raise EntryNotFoundError(f"Playlist with author {author} not found")
 
     async def get_playlists_by_scope(self, scope: int, return_empty: bool = True) -> list[PlaylistModel]:
-        playlists = await tables.PlaylistRow.raw("SELECT id FROM playlist WHERE scope = {}", scope)
-
+        playlists = (
+            await tables.PlaylistRow.select(tables.PlaylistRow.id)
+            .where(tables.PlaylistRow.scope == scope)
+            .output(load_json=True, nested=True)
+        )
         if playlists or return_empty:
             return [self.get_playlist(**playlist) for playlist in playlists]
         else:
             raise EntryNotFoundError(f"Playlist with scope {scope} not found")
 
     async def get_all_playlists(self) -> AsyncIterator[PlaylistModel]:
-        playlists = await tables.PlaylistRow.raw("SELECT id FROM playlist")
-        if playlists:
-            for playlist in playlists:
-                yield self.get_playlist(**playlist)
+        async with await tables.PlaylistRow.select(tables.PlaylistRow.id).output(load_json=True, nested=True).batch(
+            batch_size=10
+        ) as batch:
+            async for entry in batch:
+                yield self.get_playlist(**entry)
 
     async def get_external_playlists(self, *ids: int, ignore_ids: list[int] = None) -> AsyncIterator[PlaylistModel]:
         if ignore_ids is None:
             ignore_ids = []
-
+        base_query = tables.PlaylistRow.select(tables.PlaylistRow.id).output(load_json=True, nested=True)
         if ids and ignore_ids:
-
-            for entry in await tables.PlaylistRow.raw(
-                """SELECT id FROM playlist WHERE {}""".format(
-                    (
-                        tables.PlaylistRow.url.is_not_null()
-                        & tables.PlaylistRow.id.in_(ids)
-                        & tables.PlaylistRow.id.not_in(ignore_ids)
-                    ).querystring,
-                )
-            ):
-                yield self.get_playlist(**entry)
+            query = base_query.where(
+                tables.PlaylistRow.url.is_not_null()
+                & tables.PlaylistRow.id.in_(ids)
+                & tables.PlaylistRow.id.not_in(ignore_ids)
+            )
         elif ignore_ids:
-            for entry in await tables.PlaylistRow.raw(
-                f"""SELECT id FROM playlist WHERE
-                    {(tables.PlaylistRow.url.is_not_null() & tables.PlaylistRow.id.not_in(ignore_ids)).querystring}"""
-            ):
-                yield self.get_playlist(**entry)
+            query = base_query.where(tables.PlaylistRow.url.is_not_null() & tables.PlaylistRow.id.not_in(ignore_ids))
         else:
-            for entry in await tables.PlaylistRow.raw(
-                f"""SELECT id FROM playlist WHERE
-                    {(tables.PlaylistRow.url.is_not_null() & tables.PlaylistRow.id.is_in(ignore_ids)).querystring}"""
-            ):
+            query = base_query.where(tables.PlaylistRow.url.is_not_null() & tables.PlaylistRow.id.is_in(ids))
+
+        async with await query.batch(batch_size=10) as batch:
+            async for entry in batch:
                 yield self.get_playlist(**entry)
 
     async def create_or_update_playlist(
@@ -400,9 +398,4 @@ class PlaylistConfigManager:
 
     async def count(self) -> int:
         """Returns the number of playlists in the database."""
-        response = await tables.PlaylistRow.raw(
-            """
-            SELECT COUNT(id) FROM playlist
-            """
-        )
-        return response[0].get("count", 0) if response else 0
+        return await tables.PlaylistRow.count()

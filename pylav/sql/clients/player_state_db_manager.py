@@ -44,14 +44,9 @@ class PlayerStateDBManager:
             yield PlayerStateModel(**entry)
 
     async def delete_player(self, guild_id: int):
-        await tables.PlayerStateRow.raw(
-            """DELETE FROM player_state WHERE bot = {} AND id = {}""",
-            self.client.bot.user.id,
-            guild_id,
+        await tables.PlayerStateRow.delete().where(
+            (tables.PlayerStateRow.bot == self.client.bot.user.id) & (tables.PlayerStateRow.id == guild_id)
         )
 
     async def delete_all_players(self):
-        await tables.PlayerStateRow.raw(
-            """DELETE FROM player_state WHERE bot = {}""",
-            self.client.bot.user.id,
-        )
+        await tables.PlayerStateRow.delete().where(tables.PlayerStateRow.bot == self.client.bot.user.id)

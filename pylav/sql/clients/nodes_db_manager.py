@@ -34,13 +34,12 @@ class NodeConfigManager:
         self.currently_in_db.add(node.id)
         return node
 
-    async def get_all_unamanaged_nodes(self, dedupe: bool = True) -> list[NodeModel]:
+    async def get_all_unmanaged_nodes(self, dedupe: bool = True) -> list[NodeModel]:
         model_list = [
             NodeModel(**node)
-            for node in await tables.NodeRow.raw(
-                f"""SELECT id FROM node
-                WHERE {(tables.NodeRow.managed == False) & (tables.NodeRow.id.not_in(BUNDLED_NODES_IDS))}"""
-            )
+            for node in await tables.NodeRow.select(tables.NodeRow.id)
+            .where((tables.NodeRow.managed == False) & (tables.NodeRow.id.not_in(BUNDLED_NODES_IDS)))
+            .output(nested=True, load_json=True)
         ]
         new_model_list = list(set(model_list)) if dedupe else model_list
         for n in new_model_list:
@@ -48,19 +47,18 @@ class NodeConfigManager:
         return new_model_list
 
     async def get_all_nodes(self) -> list[NodeModel]:
-        model_list = await self.get_all_unamanaged_nodes(dedupe=True)
+        model_list = await self.get_all_unmanaged_nodes(dedupe=True)
         if mn := self.bundled_node_config():
             model_list.append(mn)
         return model_list
 
     async def get_bundled_node_config(self) -> NodeModel | None:
-        response = await tables.NodeRow.raw(
-            """SELECT id FROM node WHERE
-            id = {} AND managed = {} LIMIT 1""",
-            self._client.bot.user.id,
-            True,
+        response = (
+            await tables.NodeRow.select(tables.NodeRow.id)
+            .where((tables.NodeRow.id == self._client.bot.user.id) & (tables.NodeRow.managed is True))
+            .first()
         )
-        return NodeModel(**response[0]) if response else None
+        return NodeModel(**response) if response else None
 
     async def update_node(
         self,
@@ -142,7 +140,4 @@ class NodeConfigManager:
     @staticmethod
     async def count() -> int:
         """Return the number of unbundled nodes in the database."""
-        response = await tables.NodeRow.raw(
-            f"""SELECT COUNT(id) FROM node WHERE {tables.NodeRow.id.not_in(BUNDLED_NODES_IDS).querystring}"""
-        )
-        return response[0]["count"] if response else 0
+        return await tables.NodeRow.count().where(tables.NodeRow.id.not_in(BUNDLED_NODES_IDS))
