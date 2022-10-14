@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-09-15 18:38+0000\n"
-"PO-Revision-Date: 2022-09-15 18:41\n"
+"PO-Revision-Date: 2022-10-14 10:09\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "MIME-Version: 1.0\n"
@@ -19,21 +19,21 @@ msgstr ""
 
 #: pylav/sql/models.py:2368
 msgid "(Global) {user_name}"
-msgstr ""
+msgstr "(Global) {user_name}"
 
 #: pylav/sql/models.py:2372
 msgid "(Server) {guild_name}"
-msgstr ""
+msgstr "Server) {guild_name}"
 
 #: pylav/sql/models.py:2374
 msgid "(Channel) {channel}"
-msgstr ""
+msgstr "(Kanal) {channel}"
 
 #: pylav/sql/models.py:2380
 msgid "(User) {user_name}"
-msgstr ""
+msgstr "(Bruker) {user_name}"
 
 #: pylav/sql/models.py:2382
 msgid "(Invalid) {scope}"
-msgstr ""
+msgstr "(ugyldig) {scope}"
 
