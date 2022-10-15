@@ -45,7 +45,6 @@ from pylav._logging import getLogger
 from pylav.constants import BUNDLED_PLAYLIST_IDS, SUPPORTED_SOURCES
 from pylav.exceptions import InvalidPlaylist
 from pylav.filters import Equalizer
-from pylav.sql import tables
 from pylav.types import BotT
 from pylav.utils import PyLavContext, TimedFeature, get_jar_ram_actual, get_true_path
 

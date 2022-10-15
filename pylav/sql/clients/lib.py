@@ -64,7 +64,7 @@ class LibConfigManager:
 
         await pylav.sql.tables.players.PlayerRow.create_table(if_not_exists=True)
         await pylav.sql.tables.players.PlayerRow.create_index(
-            columns=[pylav.sql.tables.players.PlayerRow.bot, pylav.sql.tables.player.PlayerRow.id], if_not_exists=True
+            columns=[pylav.sql.tables.players.PlayerRow.bot, pylav.sql.tables.players.PlayerRow.id], if_not_exists=True
         )
 
         await pylav.sql.tables.players.PlayerRow.raw(array_remove_script)
