@@ -3,10 +3,8 @@ from __future__ import annotations
 from collections.abc import AsyncIterator
 from typing import TYPE_CHECKING
 
-try:
-    import discord
-except:
-    pass
+import discord
+
 import pylav.sql.tables.equalizers
 from pylav._logging import getLogger
 from pylav.exceptions import EntryNotFoundError
