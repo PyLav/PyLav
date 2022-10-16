@@ -325,7 +325,7 @@ class Client(metaclass=_Singleton):
                             deezer = await self.bot.get_shared_api_tokens("deezer")
                             deezer_token = deezer.get("token")
                             if deezer_token:
-                                LOGGER.debug("Existing Deezer token found; Using it - %s")
+                                LOGGER.debug("Existing Deezer token found; Using it")
                         else:
                             LOGGER.info("PyLav being run from a non Red bot")
                             client_id = None
