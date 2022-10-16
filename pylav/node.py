@@ -955,6 +955,16 @@ class Node:
         :class:`dict`
             A dict representing the sources.
         """
+        # TODO:
+        #  https://github.com/freyacodes/Lavalink/blob/new-api-draft/IMPLEMENTATION.md#get-lavalink-info
+        #  f"{self.connection_protocol}://{self.host}:{self.port}/v3/info"
+        # sourceManagers
+
+        # TODO:
+        #  merge this with get_plugins
+
+        # TODO:
+        #  Expose version, buildTime, git, jvm, lavaplayer
         destination = f"{self.connection_protocol}://{self.host}:{self.port}/sources"
         async with self._session.get(destination, headers={"Authorization": self.password}) as res:
             if res.status == 200:
