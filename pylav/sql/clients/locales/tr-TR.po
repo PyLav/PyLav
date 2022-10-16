@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-09-12 22:08+0000\n"
-"PO-Revision-Date: 2022-09-30 20:09\n"
+"POT-Creation-Date: 2022-10-16 15:05+0000\n"
+"PO-Revision-Date: 2022-10-16 15:08\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 "X-Crowdin-File-ID: 530\n"
 "Language: tr_TR\n"
 
-#: pylav/sql/clients/playlist_manager.py:67
+#: pylav/sql/clients/playlist_manager.py:68
 msgid "Playlist with name {playlist_name} not found"
 msgstr "{playlist_name} adlı oynatma listesi bulunamadı"
 
