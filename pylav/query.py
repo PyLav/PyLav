@@ -60,7 +60,7 @@ SPOTIFY_REGEX = re.compile(
 )
 
 APPLE_MUSIC_REGEX = re.compile(
-    r"(https?://)?(www\.)?music\.apple\.com/(?P<countrycode>[a-zA-Z]{2}/)?"
+    r"(https?://)?(www\.)?music\.apple\.com/(?P<amcountrycode>[a-zA-Z]{2}/)?"
     r"(?P<type>album|playlist|artist|song)(/[a-zA-Z\d\-]+)?/"
     r"(?P<identifier>[a-zA-Z\\d\-.]+)"
     r"(\?i=(?P<identifier2>\d+))?",
@@ -104,10 +104,11 @@ SEARCH_REGEX = re.compile(
 )
 HTTP_REGEX = re.compile(r"^http(s)?://", re.IGNORECASE)
 DEEZER_REGEX = re.compile(
-    r"^(https?://)?(www\\.)?deezer\\.com/"
-    r"(?P<countrycode>[a-zA-Z]{2}/)?"
-    r"(?P<type>track|album|playlist|artist)/"
-    r"(?P<identifier>[0-9]+).*$",
+    r"^(https?://)?(www\.)?deezer\.com/"
+    r"(?P<dzcountrycode>[a-zA-Z]{2}/)?"
+    r"(?P<dztype>track|album|playlist|artist)/"
+    r"(?P<dzidentifier>[0-9]+).*$|"
+    r"^(https?://)?(www\.)?deezer\.page\.link/.*$",
     re.IGNORECASE,
 )
 YOUTUBE_TIMESTAMP = re.compile(r"[&|?]t=(\d+)s?")
@@ -152,6 +153,7 @@ MERGED_REGEX = re.compile(
                 PYLAV_REGEX,
                 LOCAL_TRACK_NESTED,
                 LOCAL_TRACK_URI_REGEX,
+                DEEZER_REGEX,
                 HTTP_REGEX,
             ]
         ]
@@ -191,7 +193,7 @@ def process_youtube(cls: QueryT, query: str, music: bool):
 def process_deezer(cls: QueryT, query: str) -> Query:
     search = DEEZER_REGEX.search(query)
     data = search.groupdict()
-    query_type = data.get("type")
+    query_type = data.get("dztype")
     return cls(
         query,
         "Deezer",
