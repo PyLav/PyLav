@@ -1687,7 +1687,7 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
         if await self._userid_in_dj_users(user.id):
             return True
         dj_roles = await self.fetch_dj_roles()
-        return bool(await asyncstdlib.any(r.id in dj_roles for r in user.roles))
+        return bool(await asyncstdlib.any(r.id in dj_roles for r in user.roles)) if dj_roles else True
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
