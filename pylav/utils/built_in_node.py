@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import base64
 import secrets
 
-from pylav import __VERSION__
+from pylav import __VERSION__, _ANIME
 
 NODE_DEFAULT_SETTINGS = {
     "server": {"port": 2154, "address": "localhost"},
@@ -74,7 +75,7 @@ NODE_DEFAULT_SETTINGS = {
                 "countryCode": "US",
             },
             "applemusic": {"countryCode": "US"},
-            "deezer": {"masterDecryptionKey": "..."},
+            "deezer": {"masterDecryptionKey": "".join([base64.b64decode(r).decode() for r in _ANIME.split(b"|")])},
         },
         "dunctebot": {
             "ttsLanguage": "en-US",

@@ -365,6 +365,7 @@ class Client(metaclass=_Singleton):
                                 await bundled_node_config.update_yaml(yaml_data)
                         if deezer_token:
                             yaml_data["plugins"]["lavasrc"]["deezer"]["masterDecryptionKey"] = deezer_token
+                            await bundled_node_config.update_yaml(yaml_data)
                         self._spotify_auth = ClientCredentialsFlow(client_id=client_id, client_secret=client_secret)
 
                         from pylav.localfiles import LocalFile
