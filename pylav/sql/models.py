@@ -381,7 +381,7 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
             .first()
             .output(load_json=True, nested=True)
         )
-        return data["extras"] if data else ujson.loads(pylav.sql.tables.nodes.NodeRow.yaml.default)
+        return data["yaml"] if data else ujson.loads(pylav.sql.tables.nodes.NodeRow.yaml.default)
 
     async def update_yaml(self, yaml_data: dict) -> None:
         """Update the node's yaml in the database"""
