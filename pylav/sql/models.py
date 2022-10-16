@@ -1699,7 +1699,7 @@ class BotVersion(CachedModel, metaclass=_SingletonByKey):
         """Fetch the version of the bot from the database"""
         data = (
             await pylav.sql.tables.bot.BotVersionRow.select(pylav.sql.tables.bot.BotVersionRow.version)
-            .where(pylav.sql.tables.players.PlayerRow.bot == self.id)
+            .where(pylav.sql.tables.bot.BotVersionRow.bot == self.id)
             .first()
             .output(load_json=True, nested=True)
         )

@@ -346,18 +346,17 @@ class Client(metaclass=_Singleton):
                         bundled_node_config = self._node_config_manager.bundled_node_config()
                         if not await asyncstdlib.all([client_id, client_secret]):
                             yaml_data = await bundled_node_config.fetch_yaml()
-                            spotify_data = yaml_data["plugins"]["topissourcemanagers"]["spotify"]
+                            spotify_data = yaml_data["plugins"]["lavasrc"]["spotify"]
                             client_id = spotify_data["clientId"]
                             client_secret = spotify_data["clientSecret"]
                         elif await asyncstdlib.all([client_id, client_secret]):
                             yaml_data = await bundled_node_config.fetch_yaml()
                             if (
-                                yaml_data["plugins"]["topissourcemanagers"]["spotify"]["clientId"] != client_id
-                                or yaml_data["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"]
-                                != client_secret
+                                yaml_data["plugins"]["lavasrc"]["spotify"]["clientId"] != client_id
+                                or yaml_data["plugins"]["lavasrc"]["spotify"]["clientSecret"] != client_secret
                             ):
-                                yaml_data["plugins"]["topissourcemanagers"]["spotify"]["clientId"] = client_id
-                                yaml_data["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"] = client_secret
+                                yaml_data["plugins"]["lavasrc"]["spotify"]["clientId"] = client_id
+                                yaml_data["plugins"]["lavasrc"]["spotify"]["clientSecret"] = client_secret
                                 await bundled_node_config.update_yaml(yaml_data)
                         self._spotify_client_id = client_id
                         self._spotify_client_secret = client_secret
@@ -511,8 +510,8 @@ class Client(metaclass=_Singleton):
         )
         bundled_node_config = self._node_config_manager.bundled_node_config()
         bundled_node_config_yaml = await bundled_node_config.fetch_yaml()
-        bundled_node_config_yaml["plugins"]["topissourcemanagers"]["spotify"]["clientId"] = client_id
-        bundled_node_config_yaml["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"] = client_secret
+        bundled_node_config_yaml["plugins"]["lavasrc"]["spotify"]["clientId"] = client_id
+        bundled_node_config_yaml["plugins"]["lavasrc"]["spotify"]["clientSecret"] = client_secret
         await bundled_node_config.update_yaml(bundled_node_config_yaml)
 
     async def add_node(

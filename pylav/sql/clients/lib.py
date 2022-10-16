@@ -47,26 +47,18 @@ class LibConfigManager:
         """
         await pylav.sql.tables.playlists.PlaylistRow.create_table(if_not_exists=True)
         await pylav.sql.tables.lib_config.LibConfigRow.create_table(if_not_exists=True)
-        await pylav.sql.tables.lib_config.LibConfigRow.create_index(
-            columns=[pylav.sql.tables.lib_config.LibConfigRow.bot, pylav.sql.tables.lib_config.LibConfigRow.id],
-            if_not_exists=True,
+        await pylav.sql.tables.lib_config.LibConfigRow.raw(
+            f"CREATE UNIQUE INDEX IF NOT EXISTS unique_lib_config_bot_id ON {pylav.sql.tables.lib_config.LibConfigRow._meta.tablename} (bot, id)"
         )
-
         await pylav.sql.tables.equalizers.EqualizerRow.create_table(if_not_exists=True)
         await pylav.sql.tables.player_states.PlayerStateRow.create_table(if_not_exists=True)
-        await pylav.sql.tables.player_states.PlayerStateRow.create_index(
-            columns=[
-                pylav.sql.tables.player_states.PlayerStateRow.bot,
-                pylav.sql.tables.player_states.PlayerStateRow.id,
-            ],
-            if_not_exists=True,
+        await pylav.sql.tables.player_states.PlayerStateRow.raw(
+            f"CREATE UNIQUE INDEX IF NOT EXISTS unique_player_state_bot_id ON {pylav.sql.tables.player_states.PlayerStateRow._meta.tablename} (bot, id)"
         )
-
         await pylav.sql.tables.players.PlayerRow.create_table(if_not_exists=True)
-        await pylav.sql.tables.players.PlayerRow.create_index(
-            columns=[pylav.sql.tables.players.PlayerRow.bot, pylav.sql.tables.players.PlayerRow.id], if_not_exists=True
+        await pylav.sql.tables.players.PlayerRow.raw(
+            f"CREATE UNIQUE INDEX IF NOT EXISTS unique_player_bot_id ON {pylav.sql.tables.players.PlayerRow._meta.tablename} (bot, id)"
         )
-
         await pylav.sql.tables.players.PlayerRow.raw(array_remove_script)
         await pylav.sql.tables.nodes.NodeRow.create_table(if_not_exists=True)
         await pylav.sql.tables.nodes.NodeRow.raw(array_remove_script)

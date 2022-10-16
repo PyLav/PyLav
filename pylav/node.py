@@ -1043,6 +1043,8 @@ class Node:
             for feature in await self.get_plugins():
                 if feature["name"] == "Topis-Source-Managers-Plugin":
                     self._capabilities.update(["spotify", "applemusic"])
+                elif feature["name"] == "lavasrc":
+                    self._capabilities.update(["spotify", "applemusic", "Deezer"])
                 elif feature["name"] == "DuncteBot-plugin":
                     self._capabilities.update(
                         [
@@ -1327,6 +1329,18 @@ class Node:
             True if the target node supports Twitch, False otherwise.
         """
         return self.has_source("twitch")
+
+    @property
+    def supports_deezer(self) -> bool:
+        """
+        Checks if the target node supports Deezer.
+
+        Returns
+        -------
+        :class:`bool`
+            True if the target node supports Deezer, False otherwise.
+        """
+        return self.has_source("deezer")
 
     @property
     def supports_vimeo(self) -> bool:
