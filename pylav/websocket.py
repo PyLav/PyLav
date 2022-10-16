@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
+import datetime
 from typing import TYPE_CHECKING, Any
 
 import aiohttp
 import ujson
+from discord.utils import utcnow
 
 from pylav._logging import getLogger
 from pylav.constants import PYLAV_NODES
@@ -112,6 +114,9 @@ class WebSocket:
         self._resume_timeout = resume_timeout
         self._resuming_configured = False
 
+        # TODO:
+        #  /v3/websocket
+        #  https://github.com/freyacodes/Lavalink/blob/new-api-draft/IMPLEMENTATION.md#significant-changes-v360---v370
         self._ws_uri = f"{self.socket_protocol}://{self._host}:{self._port}"
 
         self._closers = (
@@ -362,10 +367,15 @@ class WebSocket:
             self.node.stats = Stats(self.node, data)
         elif op == "playerUpdate":
             if player := self.client.player_manager.get(int(data["guildId"])):
-                if data["state"]["connected"]:
-                    await player._update_state(data["state"])
-                else:
+                if (
+                    (not data["state"]["connected"])
+                    and player.is_playing
+                    and self.ready.is_set()
+                    and player.connected_at < utcnow() - datetime.timedelta(minutes=15)
+                ):
                     await player.reconnect()
+                    return
+                await player._update_state(data["state"])
             else:
                 return
 

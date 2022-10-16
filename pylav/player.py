@@ -1407,7 +1407,6 @@ class Player(VoiceProtocol):
     async def reconnect(self):
         shard = self.bot.get_shard(self.guild.shard_id)
         while shard.is_closed():
-            LOGGER.info("Sleeping awaiting for shard")
             await asyncio.sleep(1)
 
         await self.guild.change_voice_state(

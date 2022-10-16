@@ -446,7 +446,7 @@ class NodeManager:
         self.client.dispatch_event(NodeDisconnectedEvent(node, code, reason))
         best_node = await self.find_best_node(region=node.region)
 
-        if not best_node:
+        if not best_node or not best_node.available:
             self.player_queue.extend(node.players)
             LOGGER.error("Unable to move players, no available nodes! Waiting for a node to become available")
             return
