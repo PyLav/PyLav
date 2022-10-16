@@ -61,9 +61,10 @@ An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml
   - vimeo
   - http
   - local
-### With [Topis-Source-Managers-Plugin](https://github.com/Topis-Lavalink-Plugins/Topis-Source-Managers-Plugin):
+### With [LavaSrc](https://github.com/TopiSenpai/LavaSrc)
   - spotify
   - applemusic
+  - deezer
 ### With [DuncteBot-plugin](https://github.com/DuncteBot/skybot-lavalink-plugin):
   - getyarn
   - clypit
@@ -77,6 +78,9 @@ An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml
   - gcloud-tts
 ### With [Sponsorblock-Plugin](https://github.com/Topis-Lavalink-Plugins/Sponsorblock-Plugin):
   - sponsorblock
+### With [Topis-Source-Managers-Plugin](https://github.com/Topis-Lavalink-Plugins/Topis-Source-Managers-Plugin) - Deprecated, use LavaSrc instead:
+  - spotify
+  - applemusic
 
 ## Supported Lavalink features
   - Supports all features of [Lavalink](https://github.com/freyacodes/Lavalink)

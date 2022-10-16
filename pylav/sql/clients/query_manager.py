@@ -7,8 +7,8 @@ from typing import TYPE_CHECKING
 
 from discord.utils import utcnow
 
+import pylav.sql.tables.queries
 from pylav._logging import getLogger
-from pylav.sql import tables
 from pylav.sql.models import QueryModel
 from pylav.utils import AsyncIter
 
@@ -30,15 +30,10 @@ class QueryCacheManager:
         return self._client
 
     async def exists(self, query: Query) -> bool:
-        response = await tables.QueryRow.raw(
-            "SELECT EXISTS(SELECT 1 FROM query WHERE {}) AS exists".format(
-                (
-                    (tables.QueryRow.identifier == query.query_identifier)
-                    & (tables.QueryRow.last_updated > utcnow() - datetime.timedelta(days=30))
-                ).querystring
-            )
+        return await pylav.sql.tables.queries.QueryRow.exists().where(
+            (pylav.sql.tables.queries.QueryRow.identifier == query.query_identifier)
+            & (pylav.sql.tables.queries.QueryRow.last_updated > utcnow() - datetime.timedelta(days=30))
         )
-        return response[0]["exists"] if response else False
 
     def get(self, identifier: str) -> QueryModel:
         """Get a query object"""
@@ -72,34 +67,31 @@ class QueryCacheManager:
             asyncio.exceptions.CancelledError,
         ):
             LOGGER.trace("Deleting old queries")
-            await tables.QueryRow.raw(
-                "DELETE FROM query WHERE {}".format(
-                    (tables.QueryRow.last_updated <= (utcnow() - datetime.timedelta(days=30))).querystring,
-                )
+            await pylav.sql.tables.queries.QueryRow.delete().where(
+                pylav.sql.tables.queries.QueryRow.last_updated <= (utcnow() - datetime.timedelta(days=30))
             )
             LOGGER.trace("Deleted old queries")
 
     @staticmethod
     async def wipe() -> None:
         LOGGER.trace("Wiping query cache")
-        await tables.QueryRow.raw(
+        await pylav.sql.tables.queries.QueryRow.raw(
             "TRUNCATE TABLE query",
         )
         LOGGER.trace("Wiped query cache")
 
     @staticmethod
     async def delete_older_than(days: int) -> None:
-        await tables.QueryRow.raw(
-            "DELETE FROM query WHERE {}".format(
-                (tables.QueryRow.last_updated <= (utcnow() - datetime.timedelta(days=days))).querystring,
-            )
+        await pylav.sql.tables.queries.QueryRow.delete().where(
+            pylav.sql.tables.queries.QueryRow.last_updated <= (utcnow() - datetime.timedelta(days=days))
         )
 
     @staticmethod
     async def delete_query(query: Query) -> None:
-        await tables.QueryRow.raw("DELETE FROM query WHERE identifier = {}", query.query_identifier)
+        await pylav.sql.tables.queries.QueryRow.delete().where(
+            pylav.sql.tables.queries.QueryRow.identifier == query.query_identifier
+        )
 
     @staticmethod
     async def size() -> int:
-        response = await tables.QueryRow.raw("SELECT COUNT(identifier) FROM query")
-        return response[0]["count"] if response else 0
+        return await pylav.sql.tables.queries.QueryRow.count()

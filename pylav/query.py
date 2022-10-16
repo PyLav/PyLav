@@ -60,11 +60,10 @@ SPOTIFY_REGEX = re.compile(
 )
 
 APPLE_MUSIC_REGEX = re.compile(
-    r"(https?://)?(www\.)?music\.apple\.com/"
-    r"(?P<applemusic_countrycode>[a-zA-Z]{2}/)?"
-    r"(?P<applemusic_type>album|playlist|artist)(/[a-zA-Z\d\\-]+)?/"
-    r"(?P<applemusic_identifier>[a-zA-Z\d.]+)"
-    r"(\?i=(?P<applemusic_identifier2>\d+))?",
+    r"(https?://)?(www\.)?music\.apple\.com/(?P<countrycode>[a-zA-Z]{2}/)?"
+    r"(?P<type>album|playlist|artist|song)(/[a-zA-Z\d\-]+)?/"
+    r"(?P<identifier>[a-zA-Z\\d\-.]+)"
+    r"(\?i=(?P<identifier2>\d+))?",
     re.IGNORECASE,
 )
 
@@ -77,11 +76,15 @@ VIMEO_REGEX = re.compile(r"^https://vimeo.com/\d+(?:\?.*|)$", re.IGNORECASE)
 
 SOUND_CLOUD_REGEX = re.compile(
     r"^(?:http://|https://|)soundcloud\.app\.goo\.gl/([a-zA-Z0-9-_]+)/?(?:\?.*|)$|"
-    r"^(?:http://|https://|)(?:www\\.|)(?:m\.|)soundcloud\.com/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/?(?:\?.*|)$|"
-    r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/s-([a-zA-Z0-9-_]+)(?:\?.*|)$|"
-    r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/([a-zA-Z0-9-_]+)/likes/?(?:\\?.*|)$|"
-    r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)(?:\?.*|)$",
-    # This last line was manually added and does not exist in  in lavaplayer...
+    r"^(?:http://|https://|)(?:www\\.|)(?:m\.|)soundcloud\.com/"
+    r"([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/?(?:\?.*|)$|"
+    r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/"
+    r"([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/s-([a-zA-Z0-9-_]+)(?:\?.*|)$|"
+    r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/"
+    r"([a-zA-Z0-9-_]+)/likes/?(?:\\?.*|)$|"
+    r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/"
+    r"([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)(?:\?.*|)$",
+    # This last line was manually added and does not exist in in lavaplayer...
     #  https://github.com/Walkyst/lavaplayer-fork/blob/67bfdc4757947db61105c73628f2e4c2a7e4e992/main/src/main/java/com/sedmelluq/discord/lavaplayer/source/soundcloud/SoundCloudAudioSourceManager.java#L48
     re.IGNORECASE,
 )
@@ -96,9 +99,17 @@ YOUTUBE_REGEX = re.compile(
 )
 SPEAK_REGEX = re.compile(r"^(?P<speak_source>speak):\s*?(?P<speak_query>.*)$", re.IGNORECASE)
 GCTSS_REGEX = re.compile(r"^(?P<gctts_source>tts://)\s*?(?P<gctts_query>.*)$", re.IGNORECASE)
-SEARCH_REGEX = re.compile(r"^(?P<search_source>ytm|yt|sp|sc|am)search:\s*?(?P<search_query>.*)$", re.IGNORECASE)
+SEARCH_REGEX = re.compile(
+    r"^((?P<search_source>ytm|yt|sp|sc|am|dz)search|(?P<search_deezer>dzisrc)):\s*?(?P<search_query>.*)$", re.IGNORECASE
+)
 HTTP_REGEX = re.compile(r"^http(s)?://", re.IGNORECASE)
-
+DEEZER_REGEX = re.compile(
+    r"^(https?://)?(www\\.)?deezer\\.com/"
+    r"(?P<countrycode>[a-zA-Z]{2}/)?"
+    r"(?P<type>track|album|playlist|artist)/"
+    r"(?P<identifier>[0-9]+).*$",
+    re.IGNORECASE,
+)
 YOUTUBE_TIMESTAMP = re.compile(r"[&|?]t=(\d+)s?")
 YOUTUBE_INDEX = re.compile(r"&index=(\d+)")
 SPOTIFY_TIMESTAMP = re.compile(r"#(\d+):(\d+)")
@@ -174,6 +185,17 @@ def process_youtube(cls: QueryT, query: str, music: bool):
         start_time=start_time,
         query_type=query_type,  # type: ignore
         index=index,
+    )
+
+
+def process_deezer(cls: QueryT, query: str) -> Query:
+    search = DEEZER_REGEX.search(query)
+    data = search.groupdict()
+    query_type = data.get("type")
+    return cls(
+        query,
+        "Deezer",
+        query_type="single" if query_type == "track" else "album" if query_type == "album" else "playlist",
     )
 
 
@@ -355,6 +377,10 @@ class Query:
         return self.source == "Vimeo"
 
     @property
+    def is_deezer(self) -> bool:
+        return self.source == "Deezer"
+
+    @property
     def is_search(self) -> bool:
         return self._search
 
@@ -415,6 +441,8 @@ class Query:
                 return f"amsearch:{self._query}"
             elif self.is_soundcloud:
                 return f"scsearch:{self._query}"
+            elif self.is_deezer:
+                return f"dzsearch:{self._query}"
             elif self.is_speak:
                 return f"speak:{self._query[:200]}"
             elif self.is_gctts:
@@ -434,6 +462,8 @@ class Query:
             return process_spotify(cls, query)
         elif APPLE_MUSIC_REGEX.match(query):
             return cls(query, "Apple Music")
+        elif DEEZER_REGEX.match(query):
+            return process_deezer(cls, query)
         elif SOUND_CLOUD_REGEX.match(query):
             return process_soundcloud(cls, query)
         elif TWITCH_REGEX.match(query):
@@ -472,8 +502,12 @@ class Query:
     @classmethod
     def __process_search(cls, query: str) -> Query | None:
         if match := SEARCH_REGEX.match(query):
-            query = match.group("search_query").strip()
-            if match.group("search_source") == "ytm":
+            query = match.group("search_query")
+            deezer = (not query) and (query := match.group("search_deezer"))
+            query = query.strip()
+            if deezer:
+                return cls(query, "Deezer", search=True)
+            elif match.group("search_source") == "ytm":
                 return cls(query, "YouTube Music", search=True)
             elif match.group("search_source") == "yt":
                 return cls(query, "YouTube Music", search=True)
@@ -483,6 +517,8 @@ class Query:
                 return cls(query, "SoundCloud", search=True)
             elif match.group("search_source") == "am":
                 return cls(query, "Apple Music", search=True)
+            elif match.group("search_source") == "dz":
+                return cls(query, "Deezer", search=True)
             else:
                 return cls(query, "YouTube Music", search=True)  # Fallback to YouTube
 
@@ -818,7 +854,7 @@ class Query:
             raise ValueError("Source can only be set for search queries")
 
         source = source.lower()
-        if source not in (allowed := {"ytm", "yt", "sp", "sc", "am", "local", "speak", "tts://"}):
+        if source not in (allowed := {"ytm", "yt", "sp", "sc", "am", "local", "speak", "tts://", "dz"}):
             raise ValueError(f"Invalid source: {source} - Allowed: {allowed}")
         if source == "ytm":
             source = "YouTube Music"
@@ -836,6 +872,8 @@ class Query:
             source = "speak"
         elif source == "tts://":
             source = "Google TTS"
+        elif source == "dz":
+            source = "Deezer"
         self._source = source
 
     def with_index(self, index: int) -> Query:
@@ -899,6 +937,8 @@ class Query:
             return "TikTok"
         elif source == "niconico":
             return "Niconico"
+        elif source == "deezer":
+            return "Deezer"
         else:
             return "YouTube"
 
@@ -942,5 +982,7 @@ class Query:
             return "soundgasm"
         elif self.is_vimeo:
             return "vimeo"
+        elif self.is_deezer:
+            return "deezer"
         else:
             return "youtube"

@@ -2,9 +2,17 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import pylav.sql.tables.bot
+import pylav.sql.tables.cache
+import pylav.sql.tables.equalizers
+import pylav.sql.tables.lib_config
+import pylav.sql.tables.nodes
+import pylav.sql.tables.player_states
+import pylav.sql.tables.players
+import pylav.sql.tables.playlists
+import pylav.sql.tables.queries
 from pylav._config import CONFIG_DIR
 from pylav._logging import getLogger
-from pylav.sql import tables
 from pylav.sql.models import BotVersion, LibConfigModel
 
 if TYPE_CHECKING:
@@ -37,37 +45,39 @@ class LibConfigManager:
             where elem <> all(array2)
         $$;
         """
-        await tables.PlaylistRow.create_table(if_not_exists=True)
-        await tables.LibConfigRow.create_table(if_not_exists=True)
-        await tables.LibConfigRow.raw(
-            "CREATE UNIQUE INDEX IF NOT EXISTS unique_lib_config_bot_id ON lib_config (bot, id)"
+        await pylav.sql.tables.playlists.PlaylistRow.create_table(if_not_exists=True)
+        await pylav.sql.tables.lib_config.LibConfigRow.create_table(if_not_exists=True)
+        await pylav.sql.tables.lib_config.LibConfigRow.raw(
+            f"CREATE UNIQUE INDEX IF NOT EXISTS unique_lib_config_bot_id ON {pylav.sql.tables.lib_config.LibConfigRow._meta.tablename} (bot, id)"
         )
-        await tables.EqualizerRow.create_table(if_not_exists=True)
-        await tables.PlayerStateRow.create_table(if_not_exists=True)
-        await tables.PlayerStateRow.raw(
-            "CREATE UNIQUE INDEX IF NOT EXISTS unique_player_state_bot_id ON player_state (bot, id)"
+        await pylav.sql.tables.equalizers.EqualizerRow.create_table(if_not_exists=True)
+        await pylav.sql.tables.player_states.PlayerStateRow.create_table(if_not_exists=True)
+        await pylav.sql.tables.player_states.PlayerStateRow.raw(
+            f"CREATE UNIQUE INDEX IF NOT EXISTS unique_player_state_bot_id ON {pylav.sql.tables.player_states.PlayerStateRow._meta.tablename} (bot, id)"
         )
-        await tables.PlayerRow.create_table(if_not_exists=True)
-        await tables.PlayerRow.raw("CREATE UNIQUE INDEX IF NOT EXISTS unique_player_bot_id ON player (bot, id)")
-        await tables.PlayerRow.raw(array_remove_script)
-        await tables.NodeRow.create_table(if_not_exists=True)
-        await tables.NodeRow.raw(array_remove_script)
-        await tables.QueryRow.create_table(if_not_exists=True)
-        await tables.BotVersionRow.create_table(if_not_exists=True)
-        await tables.AioHttpCacheRow.create_table(if_not_exists=True)
+        await pylav.sql.tables.players.PlayerRow.create_table(if_not_exists=True)
+        await pylav.sql.tables.players.PlayerRow.raw(
+            f"CREATE UNIQUE INDEX IF NOT EXISTS unique_player_bot_id ON {pylav.sql.tables.players.PlayerRow._meta.tablename} (bot, id)"
+        )
+        await pylav.sql.tables.players.PlayerRow.raw(array_remove_script)
+        await pylav.sql.tables.nodes.NodeRow.create_table(if_not_exists=True)
+        await pylav.sql.tables.nodes.NodeRow.raw(array_remove_script)
+        await pylav.sql.tables.queries.QueryRow.create_table(if_not_exists=True)
+        await pylav.sql.tables.bot.BotVersionRow.create_table(if_not_exists=True)
+        await pylav.sql.tables.cache.AioHttpCacheRow.create_table(if_not_exists=True)
 
     async def reset_database(self) -> None:
-        await tables.PlaylistRow.raw(
+        await pylav.sql.tables.playlists.PlaylistRow.raw(
             f"DROP TABLE "
-            f"{tables.PlaylistRow._meta.tablename}, "
-            f"{tables.LibConfigRow}, "
-            f"{tables.EqualizerRow}, "
-            f"{tables.PlayerStateRow}, "
-            f"{tables.PlayerRow}, "
-            f"{tables.NodeRow}, "
-            f"{tables.QueryRow}, "
-            f"{tables.BotVersionRow}, "
-            f"{tables.AioHttpCacheRow};"
+            f"{pylav.sql.tables.playlists.PlaylistRow._meta.tablename}, "
+            f"{pylav.sql.tables.lib_config.LibConfigRow._meta.tablename}, "
+            f"{pylav.sql.tables.equalizers.EqualizerRow._meta.tablename}, "
+            f"{pylav.sql.tables.player_states.PlayerStateRow._meta.tablename}, "
+            f"{pylav.sql.tables.players.PlayerRow._meta.tablename}, "
+            f"{pylav.sql.tables.nodes.NodeRow._meta.tablename}, "
+            f"{pylav.sql.tables.queries.QueryRow._meta.tablename}, "
+            f"{pylav.sql.tables.bot.BotVersionRow._meta.tablename}, "
+            f"{pylav.sql.tables.cache.AioHttpCacheRow._meta.tablename};"
         )
         await self.create_tables()
 

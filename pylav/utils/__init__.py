@@ -92,6 +92,7 @@ __all__ = (
     "PyLavContext",
     "ExponentialBackoffWithReset",
     "shorten_string",
+    "TimedFeature",
 )
 
 from pylav._logging import getLogger

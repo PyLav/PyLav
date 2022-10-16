@@ -322,10 +322,15 @@ class Client(metaclass=_Singleton):
                             client_secret = spotify.get("client_secret")
                             if client_id and client_secret:
                                 LOGGER.debug("Existing Spotify tokens found; Using clientID - %s", client_id)
+                            deezer = await self.bot.get_shared_api_tokens("deezer")
+                            deezer_token = deezer.get("token")
+                            if deezer_token:
+                                LOGGER.debug("Existing Deezer token found; Using it")
                         else:
                             LOGGER.info("PyLav being run from a non Red bot")
                             client_id = None
                             client_secret = None
+                            deezer_token = "..."
                         await self._lib_config_manager.initialize()
                         self._config = self._lib_config_manager.get_config()
                         await NodeModel.create_managed(id=self.bot.user.id)
@@ -346,24 +351,22 @@ class Client(metaclass=_Singleton):
                         bundled_node_config = self._node_config_manager.bundled_node_config()
                         if not await asyncstdlib.all([client_id, client_secret]):
                             yaml_data = await bundled_node_config.fetch_yaml()
-                            spotify_data = yaml_data["plugins"]["topissourcemanagers"]["spotify"]
+                            spotify_data = yaml_data["plugins"]["lavasrc"]["spotify"]
                             client_id = spotify_data["clientId"]
                             client_secret = spotify_data["clientSecret"]
                         elif await asyncstdlib.all([client_id, client_secret]):
                             yaml_data = await bundled_node_config.fetch_yaml()
                             if (
-                                yaml_data["plugins"]["topissourcemanagers"]["spotify"]["clientId"] != client_id
-                                or yaml_data["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"]
-                                != client_secret
+                                yaml_data["plugins"]["lavasrc"]["spotify"]["clientId"] != client_id
+                                or yaml_data["plugins"]["lavasrc"]["spotify"]["clientSecret"] != client_secret
                             ):
-                                yaml_data["plugins"]["topissourcemanagers"]["spotify"]["clientId"] = client_id
-                                yaml_data["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"] = client_secret
+                                yaml_data["plugins"]["lavasrc"]["spotify"]["clientId"] = client_id
+                                yaml_data["plugins"]["lavasrc"]["spotify"]["clientSecret"] = client_secret
                                 await bundled_node_config.update_yaml(yaml_data)
-                        self._spotify_client_id = client_id
-                        self._spotify_client_secret = client_secret
-                        self._spotify_auth = ClientCredentialsFlow(
-                            client_id=self._spotify_client_id, client_secret=self._spotify_client_secret
-                        )
+                        if deezer_token:
+                            yaml_data["plugins"]["lavasrc"]["deezer"]["masterDecryptionKey"] = deezer_token
+                            await bundled_node_config.update_yaml(yaml_data)
+                        self._spotify_auth = ClientCredentialsFlow(client_id=client_id, client_secret=client_secret)
 
                         from pylav.localfiles import LocalFile
 
@@ -504,15 +507,11 @@ class Client(metaclass=_Singleton):
     async def update_spotify_tokens(self, client_id: str, client_secret: str) -> None:
         LOGGER.info("Updating Spotify Tokens")
         LOGGER.debug("New Spotify token: ClientId: %s || ClientSecret: %s", client_id, client_secret)
-        self._spotify_client_id = client_id
-        self._spotify_client_secret = client_secret
-        self._spotify_auth = ClientCredentialsFlow(
-            client_id=self._spotify_client_id, client_secret=self._spotify_client_secret
-        )
+        self._spotify_auth = ClientCredentialsFlow(client_id=client_id, client_secret=client_secret)
         bundled_node_config = self._node_config_manager.bundled_node_config()
         bundled_node_config_yaml = await bundled_node_config.fetch_yaml()
-        bundled_node_config_yaml["plugins"]["topissourcemanagers"]["spotify"]["clientId"] = client_id
-        bundled_node_config_yaml["plugins"]["topissourcemanagers"]["spotify"]["clientSecret"] = client_secret
+        bundled_node_config_yaml["plugins"]["lavasrc"]["spotify"]["clientId"] = client_id
+        bundled_node_config_yaml["plugins"]["lavasrc"]["spotify"]["clientSecret"] = client_secret
         await bundled_node_config.update_yaml(bundled_node_config_yaml)
 
     async def add_node(

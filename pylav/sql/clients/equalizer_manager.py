@@ -5,9 +5,9 @@ from typing import TYPE_CHECKING
 
 import discord
 
+import pylav.sql.tables.equalizers
 from pylav._logging import getLogger
 from pylav.exceptions import EntryNotFoundError
-from pylav.sql import tables
 from pylav.sql.models import EqualizerModel
 from pylav.types import BotT
 from pylav.utils import AsyncIter
@@ -31,15 +31,17 @@ class EqualizerConfigManager:
     @staticmethod
     async def get_equalizer_by_name(equalizer_name: str, limit: int = None) -> list[EqualizerModel]:
         if limit is None:
-            equalizers = await tables.EqualizerRow.select().where(
-                tables.EqualizerRow.name.ilike(f"%{equalizer_name.lower()}%")
+            equalizers = (
+                await pylav.sql.tables.equalizers.EqualizerRow.select()
+                .where(pylav.sql.tables.equalizers.EqualizerRow.name.ilike(f"%{equalizer_name.lower()}%"))
+                .output(load_json=True, nested=True)
             )
         else:
             equalizers = (
-                await tables.EqualizerRow.select()
-                .where(tables.EqualizerRow.name.ilike(f"%{equalizer_name.lower()}%"))
+                await pylav.sql.tables.equalizers.EqualizerRow.select()
+                .where(pylav.sql.tables.equalizers.EqualizerRow.name.ilike(f"%{equalizer_name.lower()}%"))
                 .limit(limit)
-            )
+            ).output(load_json=True, nested=True)
 
         if not equalizers:
             raise EntryNotFoundError(f"Equalizer with name {equalizer_name} not found")
@@ -51,7 +53,13 @@ class EqualizerConfigManager:
             equalizer_id = int(equalizer_id)
         except ValueError as e:
             raise EntryNotFoundError(f"Equalizer with id {equalizer_id} not found") from e
-        equalizer = await tables.EqualizerRow.select().where(tables.EqualizerRow.id == equalizer_id).limit(1).first()
+        equalizer = (
+            await pylav.sql.tables.equalizers.EqualizerRow.select()
+            .where(pylav.sql.tables.equalizers.EqualizerRow.id == equalizer_id)
+            .limit(1)
+            .first()
+            .output(load_json=True, nested=True)
+        )
         if not equalizer:
             raise EntryNotFoundError(f"Equalizer with ID {equalizer_id} not found")
         return EqualizerModel(**equalizer)
@@ -66,21 +74,29 @@ class EqualizerConfigManager:
 
     @staticmethod
     async def get_equalizers_by_author(author: int) -> list[EqualizerModel]:
-        equalizers = await tables.EqualizerRow.select().where(tables.EqualizerRow.author == author)
+        equalizers = (
+            await pylav.sql.tables.equalizers.EqualizerRow.select()
+            .where(pylav.sql.tables.equalizers.EqualizerRow.author == author)
+            .output(load_json=True, nested=True)
+        )
         if not equalizers:
             raise EntryNotFoundError(f"Equalizer with author {author} not found")
         return [EqualizerModel(**equalizer) for equalizer in equalizers]
 
     @staticmethod
     async def get_equalizers_by_scope(scope: int) -> list[EqualizerModel]:
-        equalizers = await tables.EqualizerRow.select().where(tables.EqualizerRow.scope == scope)
+        equalizers = (
+            await pylav.sql.tables.equalizers.EqualizerRow.select()
+            .where(pylav.sql.tables.equalizers.EqualizerRow.scope == scope)
+            .output(load_json=True, nested=True)
+        )
         if not equalizers:
             raise EntryNotFoundError(f"Equalizer with scope {scope} not found")
         return [EqualizerModel(**equalizer) for equalizer in equalizers]
 
     @staticmethod
     async def get_all_equalizers() -> AsyncIterator[EqualizerModel]:
-        for entry in await tables.EqualizerRow.select():
+        for entry in await pylav.sql.tables.equalizers.EqualizerRow.select().output(load_json=True, nested=True):
             yield EqualizerModel(**entry)
 
     @staticmethod
@@ -107,58 +123,79 @@ class EqualizerConfigManager:
         band_16000: float = 0.0,
     ) -> EqualizerModel:
         values = {
-            tables.EqualizerRow.scope: scope,
-            tables.EqualizerRow.author: author,
-            tables.EqualizerRow.name: name,
-            tables.EqualizerRow.description: description,
-            tables.EqualizerRow.band_25: band_25,
-            tables.EqualizerRow.band_40: band_40,
-            tables.EqualizerRow.band_63: band_63,
-            tables.EqualizerRow.band_100: band_100,
-            tables.EqualizerRow.band_160: band_160,
-            tables.EqualizerRow.band_250: band_250,
-            tables.EqualizerRow.band_400: band_400,
-            tables.EqualizerRow.band_630: band_630,
-            tables.EqualizerRow.band_1000: band_1000,
-            tables.EqualizerRow.band_1600: band_1600,
-            tables.EqualizerRow.band_2500: band_2500,
-            tables.EqualizerRow.band_4000: band_4000,
-            tables.EqualizerRow.band_6300: band_6300,
-            tables.EqualizerRow.band_10000: band_10000,
-            tables.EqualizerRow.band_16000: band_16000,
+            pylav.sql.tables.equalizers.EqualizerRow.scope: scope,
+            pylav.sql.tables.equalizers.EqualizerRow.author: author,
+            pylav.sql.tables.equalizers.EqualizerRow.name: name,
+            pylav.sql.tables.equalizers.EqualizerRow.description: description,
+            pylav.sql.tables.equalizers.EqualizerRow.band_25: band_25,
+            pylav.sql.tables.equalizers.EqualizerRow.band_40: band_40,
+            pylav.sql.tables.equalizers.EqualizerRow.band_63: band_63,
+            pylav.sql.tables.equalizers.EqualizerRow.band_100: band_100,
+            pylav.sql.tables.equalizers.EqualizerRow.band_160: band_160,
+            pylav.sql.tables.equalizers.EqualizerRow.band_250: band_250,
+            pylav.sql.tables.equalizers.EqualizerRow.band_400: band_400,
+            pylav.sql.tables.equalizers.EqualizerRow.band_630: band_630,
+            pylav.sql.tables.equalizers.EqualizerRow.band_1000: band_1000,
+            pylav.sql.tables.equalizers.EqualizerRow.band_1600: band_1600,
+            pylav.sql.tables.equalizers.EqualizerRow.band_2500: band_2500,
+            pylav.sql.tables.equalizers.EqualizerRow.band_4000: band_4000,
+            pylav.sql.tables.equalizers.EqualizerRow.band_6300: band_6300,
+            pylav.sql.tables.equalizers.EqualizerRow.band_10000: band_10000,
+            pylav.sql.tables.equalizers.EqualizerRow.band_16000: band_16000,
         }
         equalizer = (
-            await tables.EqualizerRow.objects()
-            .output(load_json=True)
-            .get_or_create(tables.EqualizerRow.id == id, defaults=values)
+            await pylav.sql.tables.equalizers.EqualizerRow.objects()
+            .output(load_json=True, nested=True)
+            .get_or_create(pylav.sql.tables.equalizers.EqualizerRow.id == id, defaults=values)
         )
         if not equalizer._was_created:
-            await tables.EqualizerRow.update(values).where(tables.EqualizerRow.id == id)
+            await pylav.sql.tables.equalizers.EqualizerRow.update(values).where(
+                pylav.sql.tables.equalizers.EqualizerRow.id == id
+            )
         return EqualizerModel(**equalizer.to_dict())
 
     @staticmethod
     async def delete_equalizer(equalizer_id: int) -> None:
-        await tables.EqualizerRow.delete().where(tables.EqualizerRow.id == equalizer_id)
+        await pylav.sql.tables.equalizers.EqualizerRow.delete().where(
+            pylav.sql.tables.equalizers.EqualizerRow.id == equalizer_id
+        )
 
     @staticmethod
     async def get_all_equalizers_by_author(author: int) -> AsyncIterator[EqualizerModel]:
-        for entry in await tables.EqualizerRow.select().where(tables.EqualizerRow.author == author):
+        for entry in (
+            await pylav.sql.tables.equalizers.EqualizerRow.select()
+            .where(pylav.sql.tables.equalizers.EqualizerRow.author == author)
+            .output(load_json=True, nested=True)
+        ):
             yield EqualizerModel(**entry)
 
     @staticmethod
     async def get_all_equalizers_by_scope(scope: int) -> AsyncIterator[EqualizerModel]:
-        for entry in await tables.EqualizerRow.select().where(tables.EqualizerRow.scope == scope):
+        for entry in (
+            await pylav.sql.tables.equalizers.EqualizerRow.select()
+            .where(pylav.sql.tables.equalizers.EqualizerRow.scope == scope)
+            .output(load_json=True, nested=True)
+        ):
             yield EqualizerModel(**entry)
 
     @staticmethod
     async def get_all_equalizers_by_scope_and_author(scope: int, author: int) -> AsyncIterator[EqualizerModel]:
-        for entry in await tables.EqualizerRow.select().where(
-            tables.EqualizerRow.scope == scope, tables.EqualizerRow.author == author
+        for entry in (
+            await pylav.sql.tables.equalizers.EqualizerRow.select()
+            .where(
+                pylav.sql.tables.equalizers.EqualizerRow.scope == scope,
+                pylav.sql.tables.equalizers.EqualizerRow.author == author,
+            )
+            .output(load_json=True, nested=True)
         ):
             yield EqualizerModel(**entry)
 
     async def get_global_equalizers(self) -> AsyncIterator[EqualizerModel]:
-        for entry in await tables.EqualizerRow.select().where(tables.EqualizerRow.scope == self._client.bot.user.id):  # type: ignore
+        for entry in (
+            await pylav.sql.tables.equalizers.EqualizerRow.select()
+            .where(pylav.sql.tables.equalizers.EqualizerRow.scope == self._client.bot.user.id)
+            .output(load_json=True, nested=True)
+        ):  # type: ignore
             yield EqualizerModel(**entry)
 
     async def create_or_update_global_equalizer(
@@ -441,4 +478,4 @@ class EqualizerConfigManager:
     @staticmethod
     async def count() -> int:
         """Returns the number of equalizers in the database."""
-        return await tables.EqualizerRow.count()
+        return await pylav.sql.tables.equalizers.EqualizerRow.count()

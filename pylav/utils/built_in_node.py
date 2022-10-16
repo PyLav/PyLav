@@ -1,15 +1,16 @@
 from __future__ import annotations
 
+import base64
 import secrets
 
-from pylav import __VERSION__
+from pylav import __VERSION__, _ANIME
 
 NODE_DEFAULT_SETTINGS = {
     "server": {"port": 2154, "address": "localhost"},
     "lavalink": {
         "plugins": [
             {
-                "dependency": "com.github.Topis-Lavalink-Plugins:Topis-Source-Managers-Plugin:v2.0.7",
+                "dependency": "com.github.TopiSenpai.LavaSrc:lavasrc-plugin:3.0.6",
                 "repository": "https://jitpack.io",
             },
             {
@@ -57,21 +58,24 @@ NODE_DEFAULT_SETTINGS = {
         },
     },
     "plugins": {
-        "topissourcemanagers": {
+        "lavasrc": {
             "providers": [
                 'ytmsearch:"%ISRC%"',
                 'ytsearch:"%ISRC%"',
                 "ytmsearch:%QUERY%",
                 "ytsearch:%QUERY%",
                 "scsearch:%QUERY%",
+                "dzisrc:%ISRC%",
+                "dzsearch:%QUERY%",
             ],
-            "sources": {"spotify": True, "applemusic": True},
+            "sources": {"spotify": True, "applemusic": True, "deezer": True},
             "spotify": {
                 "clientId": "3d5cd36c73924786aa290798b2131c58",
                 "clientSecret": "edee5eb255a846fbac8297069debea2e",
                 "countryCode": "US",
             },
             "applemusic": {"countryCode": "US"},
+            "deezer": {"masterDecryptionKey": "".join([base64.b64decode(r).decode() for r in _ANIME.split(b"|")])},
         },
         "dunctebot": {
             "ttsLanguage": "en-US",
