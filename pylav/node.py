@@ -1044,7 +1044,7 @@ class Node:
                 if feature["name"] == "Topis-Source-Managers-Plugin":
                     self._capabilities.update(["spotify", "applemusic"])
                 elif feature["name"] == "lavasrc":
-                    self._capabilities.update(["spotify", "applemusic", "Deezer"])
+                    self._capabilities.update(["spotify", "applemusic", "deezer"])
                 elif feature["name"] == "DuncteBot-plugin":
                     self._capabilities.update(
                         [
