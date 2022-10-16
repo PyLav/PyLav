@@ -113,11 +113,10 @@ class PlaylistConfigManager:
             raise EntryNotFoundError(f"Playlist with scope {scope} not found")
 
     async def get_all_playlists(self) -> AsyncIterator[PlaylistModel]:
-        async with await pylav.sql.tables.playlists.PlaylistRow.select(
+        for entry in await pylav.sql.tables.playlists.PlaylistRow.select(
             pylav.sql.tables.playlists.PlaylistRow.id
-        ).output(load_json=True, nested=True).batch(batch_size=10) as batch:
-            async for entry in batch:
-                yield self.get_playlist(**entry)
+        ).output(load_json=True, nested=True):
+            yield self.get_playlist(**entry)
 
     async def get_external_playlists(self, *ids: int, ignore_ids: list[int] = None) -> AsyncIterator[PlaylistModel]:
         if ignore_ids is None:
@@ -142,9 +141,8 @@ class PlaylistConfigManager:
                 & pylav.sql.tables.playlists.PlaylistRow.id.is_in(ids)
             )
 
-        async with await query.batch(batch_size=10) as batch:
-            async for entry in batch:
-                yield self.get_playlist(**entry)
+        for entry in await query:
+            yield self.get_playlist(**entry)
 
     async def create_or_update_playlist(
         self, id: int, scope: int, author: int, name: str, url: str | None = None, tracks: list[str] = None

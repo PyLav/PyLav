@@ -89,23 +89,23 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
             .first()
             .output(load_json=True, nested=True)
         )
-        if data:
-            data["extras"] = data["extras"]
-            data["yaml"] = data["yaml"]
-            return data
-        return {
-            "id": self.id,
-            "name": pylav.sql.tables.nodes.NodeRow.name.default,
-            "ssl": pylav.sql.tables.nodes.NodeRow.ssl.default,
-            "resume_key": pylav.sql.tables.nodes.NodeRow.resume_key.default,
-            "resume_timeout": pylav.sql.tables.nodes.NodeRow.resume_timeout.default,
-            "reconnect_attempts": pylav.sql.tables.nodes.NodeRow.reconnect_attempts.default,
-            "search_only": pylav.sql.tables.nodes.NodeRow.search_only.default,
-            "managed": pylav.sql.tables.nodes.NodeRow.managed.default,
-            "extras": ujson.loads(pylav.sql.tables.nodes.NodeRow.extras.default),
-            "yaml": ujson.loads(pylav.sql.tables.nodes.NodeRow.yaml.default),
-            "disabled_sources": pylav.sql.tables.nodes.NodeRow.disabled_sources.default,
-        }
+        return (
+            data
+            if data
+            else {
+                "id": self.id,
+                "name": pylav.sql.tables.nodes.NodeRow.name.default,
+                "ssl": pylav.sql.tables.nodes.NodeRow.ssl.default,
+                "resume_key": pylav.sql.tables.nodes.NodeRow.resume_key.default,
+                "resume_timeout": pylav.sql.tables.nodes.NodeRow.resume_timeout.default,
+                "reconnect_attempts": pylav.sql.tables.nodes.NodeRow.reconnect_attempts.default,
+                "search_only": pylav.sql.tables.nodes.NodeRow.search_only.default,
+                "managed": pylav.sql.tables.nodes.NodeRow.managed.default,
+                "extras": ujson.loads(pylav.sql.tables.nodes.NodeRow.extras.default),
+                "yaml": ujson.loads(pylav.sql.tables.nodes.NodeRow.yaml.default),
+                "disabled_sources": pylav.sql.tables.nodes.NodeRow.disabled_sources.default,
+            }
+        )
 
     @maybe_cached
     async def fetch_name(self) -> str | None:
@@ -878,6 +878,7 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
                 (pylav.sql.tables.players.PlayerRow.id == self.id)
                 & (pylav.sql.tables.players.PlayerRow.bot == self.bot)
             )
+            .first()
             .output(load_json=True, nested=True)
         )
         if data:
@@ -2398,7 +2399,6 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
             .output(load_json=True, nested=True)
         )
         if data:
-            data["extras"] = data["extras"]
             data["java_path"] = get_true_path(data["java_path"], data["java_path"])
             return data
         return {
@@ -2456,19 +2456,18 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
             .first()
             .output(load_json=True, nested=True)
         )
-
-        if data:
-            data["tracks"] = data["tracks"]
-            return data
-
-        return {
-            "id": self.id,
-            "name": pylav.sql.tables.playlists.PlaylistRow.name.default,
-            "tracks": [],
-            "scope": pylav.sql.tables.playlists.PlaylistRow.scope.default,
-            "author": pylav.sql.tables.playlists.PlaylistRow.author.default,
-            "url": pylav.sql.tables.playlists.PlaylistRow.url.default,
-        }
+        return (
+            data
+            if data
+            else {
+                "id": self.id,
+                "name": pylav.sql.tables.playlists.PlaylistRow.name.default,
+                "tracks": [],
+                "scope": pylav.sql.tables.playlists.PlaylistRow.scope.default,
+                "author": pylav.sql.tables.playlists.PlaylistRow.author.default,
+                "url": pylav.sql.tables.playlists.PlaylistRow.url.default,
+            }
+        )
 
     @maybe_cached
     async def fetch_scope(self) -> int | None:

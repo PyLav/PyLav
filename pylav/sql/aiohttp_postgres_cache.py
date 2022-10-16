@@ -43,11 +43,10 @@ class PostgresStorage(BaseCache):
 
     async def keys(self) -> AsyncIterable[str]:
         """Get all keys stored in the cache"""
-        async with await pylav.sql.tables.cache.AioHttpCacheRow.select(
+        for entry in await pylav.sql.tables.cache.AioHttpCacheRow.select(
             pylav.sql.tables.cache.AioHttpCacheRow.key
-        ).output(load_json=True, nested=True).batch(batch_size=10) as batch:
-            async for entry in batch:
-                yield entry["key"]
+        ).output(load_json=True, nested=True):
+            yield entry["key"]
 
     async def read(self, key: str) -> ResponseOrKey:
         """Read an item from the cache"""
@@ -68,11 +67,10 @@ class PostgresStorage(BaseCache):
         return self._values()
 
     async def _values(self) -> AsyncIterable[ResponseOrKey]:
-        async with await pylav.sql.tables.cache.AioHttpCacheRow.select(
+        for entry in await pylav.sql.tables.cache.AioHttpCacheRow.select(
             pylav.sql.tables.cache.AioHttpCacheRow.value
-        ).output(load_json=True, nested=True).batch(batch_size=10) as batch:
-            async for entry in batch:
-                yield self.deserialize(entry["value"])
+        ).output(load_json=True, nested=True):
+            yield self.deserialize(entry["value"])
 
     async def write(self, key: str, item: ResponseOrKey):
         """Write an item to the cache"""

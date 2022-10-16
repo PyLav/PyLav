@@ -56,7 +56,6 @@ class EqualizerConfigManager:
         equalizer = (
             await pylav.sql.tables.equalizers.EqualizerRow.select()
             .where(pylav.sql.tables.equalizers.EqualizerRow.id == equalizer_id)
-            .limit(1)
             .first()
             .output(load_json=True, nested=True)
         )

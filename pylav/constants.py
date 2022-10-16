@@ -73,6 +73,12 @@ PYLAV_NODE_SETTINGS = {
     "temporary": True,
 }
 
+BUNDLED_NODES_IDS_HOST_MAPPING = {
+    1: "ll-gb.draper.wtf",
+    2: "ll-us-ny.draper.wtf",
+    1001: "lava.link",
+}
+
 PYLAV_BUNDLED_NODES_SETTINGS = {
     "ll-gb.draper.wtf": dict(
         **PYLAV_NODE_SETTINGS, host="ll-gb.draper.wtf", unique_identifier=1, name="PyLav London (Bundled)"

@@ -4,8 +4,8 @@ from typing import TYPE_CHECKING
 
 import pylav.sql.tables.nodes
 from pylav._logging import getLogger
-from pylav.constants import BUNDLED_NODES_IDS
-from pylav.sql.models import NodeModel
+from pylav.constants import BUNDLED_NODES_IDS, BUNDLED_NODES_IDS_HOST_MAPPING, PYLAV_BUNDLED_NODES_SETTINGS
+from pylav.sql.models import NodeModel, NodeModelMock
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -30,7 +30,10 @@ class NodeConfigManager:
         return NodeModel(id=self._client.bot.user.id)
 
     def get_node_config(self, node_id: int) -> NodeModel:
-        node = NodeModel(id=node_id)
+        if node_id not in BUNDLED_NODES_IDS:
+            node = NodeModel(id=node_id)
+        else:
+            node = NodeModelMock(id=node_id, data=PYLAV_BUNDLED_NODES_SETTINGS[BUNDLED_NODES_IDS_HOST_MAPPING[node_id]])
         self.currently_in_db.add(node.id)
         return node
 
