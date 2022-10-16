@@ -76,11 +76,15 @@ VIMEO_REGEX = re.compile(r"^https://vimeo.com/\d+(?:\?.*|)$", re.IGNORECASE)
 
 SOUND_CLOUD_REGEX = re.compile(
     r"^(?:http://|https://|)soundcloud\.app\.goo\.gl/([a-zA-Z0-9-_]+)/?(?:\?.*|)$|"
-    r"^(?:http://|https://|)(?:www\\.|)(?:m\.|)soundcloud\.com/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/?(?:\?.*|)$|"
-    r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/s-([a-zA-Z0-9-_]+)(?:\?.*|)$|"
-    r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/([a-zA-Z0-9-_]+)/likes/?(?:\\?.*|)$|"
-    r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)(?:\?.*|)$",
-    # This last line was manually added and does not exist in  in lavaplayer...
+    r"^(?:http://|https://|)(?:www\\.|)(?:m\.|)soundcloud\.com/"
+    r"([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/?(?:\?.*|)$|"
+    r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/"
+    r"([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/s-([a-zA-Z0-9-_]+)(?:\?.*|)$|"
+    r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/"
+    r"([a-zA-Z0-9-_]+)/likes/?(?:\\?.*|)$|"
+    r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/"
+    r"([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)(?:\?.*|)$",
+    # This last line was manually added and does not exist in in lavaplayer...
     #  https://github.com/Walkyst/lavaplayer-fork/blob/67bfdc4757947db61105c73628f2e4c2a7e4e992/main/src/main/java/com/sedmelluq/discord/lavaplayer/source/soundcloud/SoundCloudAudioSourceManager.java#L48
     re.IGNORECASE,
 )
@@ -100,7 +104,10 @@ SEARCH_REGEX = re.compile(
 )
 HTTP_REGEX = re.compile(r"^http(s)?://", re.IGNORECASE)
 DEEZER_REGEX = re.compile(
-    r"^(https?://)?(www\\.)?deezer\\.com/(?P<countrycode>[a-zA-Z]{2}/)?(?P<type>track|album|playlist|artist)/(?P<identifier>[0-9]+).*$",
+    r"^(https?://)?(www\\.)?deezer\\.com/"
+    r"(?P<countrycode>[a-zA-Z]{2}/)?"
+    r"(?P<type>track|album|playlist|artist)/"
+    r"(?P<identifier>[0-9]+).*$",
     re.IGNORECASE,
 )
 YOUTUBE_TIMESTAMP = re.compile(r"[&|?]t=(\d+)s?")
