@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-10-16 15:05+0000\n"
-"PO-Revision-Date: 2022-10-16 15:08\n"
+"POT-Creation-Date: 2022-10-16 16:06+0000\n"
+"PO-Revision-Date: 2022-10-16 16:09\n"
 "Last-Translator: \n"
 "Language-Team: Bulgarian\n"
 "MIME-Version: 1.0\n"
@@ -54,88 +54,88 @@ msgstr ""
 msgid "Lavalink failed to start: {line}"
 msgstr ""
 
-#: pylav/player.py:914
+#: pylav/player.py:923
 msgid "There are no tracks currently in the player history"
 msgstr ""
 
-#: pylav/player.py:1915 pylav/player.py:1945 pylav/player.py:1956
+#: pylav/player.py:1945 pylav/player.py:1975 pylav/player.py:1986
 msgid "LIVE"
 msgstr ""
 
-#: pylav/player.py:1924 pylav/player.py:2012
+#: pylav/player.py:1954 pylav/player.py:2042
 msgid "Currently livestreaming"
 msgstr ""
 
-#: pylav/player.py:1926
+#: pylav/player.py:1956
 msgid "Playing: "
 msgstr ""
 
-#: pylav/player.py:1929 pylav/player.py:1950 pylav/player.py:1961
-#: pylav/player.py:2018
+#: pylav/player.py:1959 pylav/player.py:1980 pylav/player.py:1991
+#: pylav/player.py:2048
 msgid "Requester"
 msgstr ""
 
-#: pylav/player.py:1934
+#: pylav/player.py:1964
 msgid "Now Playing in"
 msgstr ""
 
-#: pylav/player.py:1946 pylav/player.py:1957
+#: pylav/player.py:1976 pylav/player.py:1987
 msgid "Duration"
 msgstr ""
 
-#: pylav/player.py:1952
+#: pylav/player.py:1982
 msgid "Previous Track"
 msgstr ""
 
-#: pylav/player.py:1963
+#: pylav/player.py:1993
 msgid "Next Track"
 msgstr ""
 
-#: pylav/player.py:1967
+#: pylav/player.py:1997
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
 msgstr ""
 
-#: pylav/player.py:1979 pylav/player.py:2069
+#: pylav/player.py:2009 pylav/player.py:2099
 msgid "{translation}: {repeat_emoji}"
 msgstr ""
 
-#: pylav/player.py:1979 pylav/player.py:2069
+#: pylav/player.py:2009 pylav/player.py:2099
 msgid "Repeating"
 msgstr ""
 
-#: pylav/player.py:1980 pylav/player.py:2070
+#: pylav/player.py:2010 pylav/player.py:2100
 msgid "{space}{translation}: {autoplay_emoji}"
 msgstr ""
 
-#: pylav/player.py:1981 pylav/player.py:2071
+#: pylav/player.py:2011 pylav/player.py:2101
 msgid "Auto Play"
 msgstr ""
 
-#: pylav/player.py:1983 pylav/player.py:2073
+#: pylav/player.py:2013 pylav/player.py:2103
 msgid "{space}{translation}: {volume}%"
 msgstr ""
 
-#: pylav/player.py:1984 pylav/player.py:2074
+#: pylav/player.py:2014 pylav/player.py:2104
 msgid "Volume"
 msgstr ""
 
-#: pylav/player.py:2015
+#: pylav/player.py:2045
 msgid "Playing"
 msgstr ""
 
-#: pylav/player.py:2028
+#: pylav/player.py:2058
 msgid "Queue order is may not be accurate due to auto-shuffle being enabled"
 msgstr ""
 
-#: pylav/player.py:2043
+#: pylav/player.py:2073
 msgid "Recently Played for"
 msgstr ""
 
-#: pylav/player.py:2043
+#: pylav/player.py:2073
 msgid "Queue for"
 msgstr ""
 
-#: pylav/player.py:2052
+#: pylav/player.py:2082
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
 msgstr ""
 
