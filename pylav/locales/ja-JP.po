@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-10-16 15:05+0000\n"
-"PO-Revision-Date: 2022-10-16 15:08\n"
+"POT-Creation-Date: 2022-10-16 16:06+0000\n"
+"PO-Revision-Date: 2022-10-16 16:09\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -55,88 +55,88 @@ msgstr "ポート {port} は既に使用されています。管理された Lav
 msgid "Lavalink failed to start: {line}"
 msgstr "ラバリンクの開始に失敗しました: {line}"
 
-#: pylav/player.py:914
+#: pylav/player.py:923
 msgid "There are no tracks currently in the player history"
 msgstr "プレーヤーの履歴に現在トラックはありません"
 
-#: pylav/player.py:1915 pylav/player.py:1945 pylav/player.py:1956
+#: pylav/player.py:1945 pylav/player.py:1975 pylav/player.py:1986
 msgid "LIVE"
 msgstr "ライブ"
 
-#: pylav/player.py:1924 pylav/player.py:2012
+#: pylav/player.py:1954 pylav/player.py:2042
 msgid "Currently livestreaming"
 msgstr "現在ライブ配信中"
 
-#: pylav/player.py:1926
+#: pylav/player.py:1956
 msgid "Playing: "
 msgstr "再生中: "
 
-#: pylav/player.py:1929 pylav/player.py:1950 pylav/player.py:1961
-#: pylav/player.py:2018
+#: pylav/player.py:1959 pylav/player.py:1980 pylav/player.py:1991
+#: pylav/player.py:2048
 msgid "Requester"
 msgstr "要求者"
 
-#: pylav/player.py:1934
+#: pylav/player.py:1964
 msgid "Now Playing in"
 msgstr "再生中"
 
-#: pylav/player.py:1946 pylav/player.py:1957
+#: pylav/player.py:1976 pylav/player.py:1987
 msgid "Duration"
 msgstr "期間"
 
-#: pylav/player.py:1952
+#: pylav/player.py:1982
 msgid "Previous Track"
 msgstr "前のトラック"
 
-#: pylav/player.py:1963
+#: pylav/player.py:1993
 msgid "Next Track"
 msgstr "次のトラック"
 
-#: pylav/player.py:1967
+#: pylav/player.py:1997
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
 msgstr "{track_count} トラック, 残り {queue_total_duration}\n"
 
-#: pylav/player.py:1979 pylav/player.py:2069
+#: pylav/player.py:2009 pylav/player.py:2099
 msgid "{translation}: {repeat_emoji}"
 msgstr "{translation}: {repeat_emoji}"
 
-#: pylav/player.py:1979 pylav/player.py:2069
+#: pylav/player.py:2009 pylav/player.py:2099
 msgid "Repeating"
 msgstr "繰り返し"
 
-#: pylav/player.py:1980 pylav/player.py:2070
+#: pylav/player.py:2010 pylav/player.py:2100
 msgid "{space}{translation}: {autoplay_emoji}"
 msgstr "{space}{translation}: {autoplay_emoji}"
 
-#: pylav/player.py:1981 pylav/player.py:2071
+#: pylav/player.py:2011 pylav/player.py:2101
 msgid "Auto Play"
 msgstr "自動再生"
 
-#: pylav/player.py:1983 pylav/player.py:2073
+#: pylav/player.py:2013 pylav/player.py:2103
 msgid "{space}{translation}: {volume}%"
 msgstr "{space}{translation}: {volume}%"
 
-#: pylav/player.py:1984 pylav/player.py:2074
+#: pylav/player.py:2014 pylav/player.py:2104
 msgid "Volume"
 msgstr "音量"
 
-#: pylav/player.py:2015
+#: pylav/player.py:2045
 msgid "Playing"
 msgstr "再生中"
 
-#: pylav/player.py:2028
+#: pylav/player.py:2058
 msgid "Queue order is may not be accurate due to auto-shuffle being enabled"
 msgstr "自動シャッフルが有効になっているため、キューの順序が正確でない可能性があります"
 
-#: pylav/player.py:2043
+#: pylav/player.py:2073
 msgid "Recently Played for"
 msgstr "最近プレイした曲："
 
-#: pylav/player.py:2043
+#: pylav/player.py:2073
 msgid "Queue for"
 msgstr "キュー："
 
-#: pylav/player.py:2052
+#: pylav/player.py:2082
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
 msgstr "ページ {current_page}/{total_pages} | {track_number} トラック, 残り {queue_total_duration}\n"
 
