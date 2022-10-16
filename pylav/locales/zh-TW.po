@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-09-13 20:20+0000\n"
-"PO-Revision-Date: 2022-09-13 20:24\n"
+"POT-Creation-Date: 2022-10-16 15:05+0000\n"
+"PO-Revision-Date: 2022-10-16 15:08\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -17,23 +17,23 @@ msgstr ""
 "X-Crowdin-File-ID: 504\n"
 "Language: zh_TW\n"
 
-#: pylav/client.py:611 pylav/client.py:636 pylav/player_manager.py:250
+#: pylav/client.py:610 pylav/client.py:635 pylav/player_manager.py:250
 msgid "No available nodes!"
 msgstr ""
 
-#: pylav/client.py:615 pylav/client.py:640
+#: pylav/client.py:614 pylav/client.py:639
 msgid "No node with {feature} functionality available!"
 msgstr ""
 
-#: pylav/client.py:931
+#: pylav/client.py:930
 msgid "No node with {query.requires_capability} functionality available!"
 msgstr ""
 
-#: pylav/client.py:1189
+#: pylav/client.py:1188
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
 msgstr ""
 
-#: pylav/client.py:1194
+#: pylav/client.py:1193
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
 msgstr ""
 
