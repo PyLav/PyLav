@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.11.0.1 (16/10/2022)
+- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/104082eb10828e4c12348d38dcd10b985da06c59) - @Drapersniper
+- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/759a235a30937a0707c01036b0789901ab30860b) - @crowdin-bot
+
+---
+
 ## v0.11.0.0 (16/10/2022)
 - [[minor] Add todos for LL v3.7](https://github.com/Drapersniper/PyLav/commit/9c411262f6b74117413576dc7e8d6732e5944766) - @Drapersniper
 - [Fix deezer matching](https://github.com/Drapersniper/PyLav/commit/c9428c86fd7348227f16f5a0592d8346dd196e6f) - @Drapersniper
@@ -122,7 +128,3 @@
 ---
 
 ## v0.9.1.0 (10/09/2022)
-
----
-
-## v0.9.0.1 (10/09/2022)
