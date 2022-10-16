@@ -64,7 +64,16 @@ from pylav.query import Query
 from pylav.sql.models import PlayerModel, PlayerStateModel, PlaylistModel
 from pylav.tracks import Track
 from pylav.types import BotT, InteractionT
-from pylav.utils import AsyncIter, PlayerQueue, SegmentCategory, TrackHistoryQueue, format_time, get_time_string
+from pylav.utils import (
+    _LOCK,
+    AsyncIter,
+    PlayerQueue,
+    SegmentCategory,
+    TrackHistoryQueue,
+    _synchronized,
+    format_time,
+    get_time_string,
+)
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -1393,6 +1402,27 @@ class Player(VoiceProtocol):
         self._connected = True
         self.connected_at = utcnow()
         LOGGER.debug("[Player-%s] Connected to voice channel", self.channel.guild.id)
+
+    @_synchronized(_LOCK, discard=True)
+    async def reconnect(self):
+        shard = self.bot.get_shard(self.guild.shard_id)
+        while shard.is_closed():
+            LOGGER.info("Sleeping awaiting for shard")
+            await asyncio.sleep(1)
+
+        await self.guild.change_voice_state(
+            channel=None,
+            self_mute=False,
+            self_deaf=False,
+        )
+        await self.guild.change_voice_state(
+            channel=self.channel,
+            self_mute=False,
+            self_deaf=await self.self_deaf(),
+        )
+        self._connected = True
+        self.connected_at = utcnow()
+        LOGGER.debug("[Player-%s] Reconnected to voice channel", self.channel.guild.id)
 
     async def disconnect(self, *, force: bool = False, requester: discord.Member | None) -> None:
         try:

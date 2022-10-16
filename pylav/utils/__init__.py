@@ -165,12 +165,14 @@ def shorten_string(string: str, max_length: int, right: bool = True) -> str:
     return string
 
 
-def _synchronized(lock):
+def _synchronized(lock: threading.Lock, discard=False):
     """Synchronization decorator"""
 
     def wrapper(f):
         @functools.wraps(f)
         def inner_wrapper(*args, **kw):
+            if lock.locked() and discard:
+                return
             with lock:
                 return f(*args, **kw)
 

@@ -362,7 +362,10 @@ class WebSocket:
             self.node.stats = Stats(self.node, data)
         elif op == "playerUpdate":
             if player := self.client.player_manager.get(int(data["guildId"])):
-                await player._update_state(data["state"])
+                if data["state"]["connected"]:
+                    await player._update_state(data["state"])
+                else:
+                    await player.reconnect()
             else:
                 return
 
