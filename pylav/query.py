@@ -60,11 +60,10 @@ SPOTIFY_REGEX = re.compile(
 )
 
 APPLE_MUSIC_REGEX = re.compile(
-    r"(https?://)?(www\.)?music\.apple\.com/"
-    r"(?P<applemusic_countrycode>[a-zA-Z]{2}/)?"
-    r"(?P<applemusic_type>album|playlist|artist)(/[a-zA-Z\d\\-]+)?/"
-    r"(?P<applemusic_identifier>[a-zA-Z\d.]+)"
-    r"(\?i=(?P<applemusic_identifier2>\d+))?",
+    r"(https?://)?(www\.)?music\.apple\.com/(?P<countrycode>[a-zA-Z]{2}/)?"
+    r"(?P<type>album|playlist|artist|song)(/[a-zA-Z\d\-]+)?/"
+    r"(?P<identifier>[a-zA-Z\\d\-.]+)"
+    r"(\?i=(?P<identifier2>\d+))?",
     re.IGNORECASE,
 )
 
