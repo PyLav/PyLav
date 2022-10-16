@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.11.1.0 (16/10/2022)
+- [[patch] several fixes to the resuming logic](https://github.com/Drapersniper/PyLav/commit/6a09ca8852e46d3158765d8f89bdc19bf7863ea2) - @Drapersniper
+
+---
+
 ## v0.11.0.1 (16/10/2022)
 - [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/104082eb10828e4c12348d38dcd10b985da06c59) - @Drapersniper
 - [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/759a235a30937a0707c01036b0789901ab30860b) - @crowdin-bot
@@ -124,7 +129,3 @@
 ---
 
 ## v0.9.1.1 (10/09/2022)
-
----
-
-## v0.9.1.0 (10/09/2022)
