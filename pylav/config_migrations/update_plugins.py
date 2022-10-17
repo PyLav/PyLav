@@ -70,4 +70,4 @@ async def update_plugins(client: "Client") -> None:
         else:
             LOGGER.info("No plugin updates required")
     except Exception as exc:
-        LOGGER.error(f"Failed to update plugins", exc_info=exc)
+        LOGGER.error("Failed to update plugins", exc_info=exc)
