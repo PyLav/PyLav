@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from pylav.client import Client
 
 
-async def run_0360_migration(client: "Client", current_version: LegacyVersion | Version) -> None:
+async def run_migration_0360(client: "Client", current_version: LegacyVersion | Version) -> None:
     if current_version >= parse_version("0.3.6"):
         return
     from pylav.config_migrations import LOGGER

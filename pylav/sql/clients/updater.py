@@ -2,18 +2,18 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from pylav.config_migrations.m0002 import run_0002_migration
-from pylav.config_migrations.m0320 import run_0320_migration
-from pylav.config_migrations.m0330 import run_0330_migration
-from pylav.config_migrations.m0340 import run_0340_migration
-from pylav.config_migrations.m0350 import run_0350_migration
-from pylav.config_migrations.m0360 import run_0360_migration
-from pylav.config_migrations.m0760 import run_0760_migration
-from pylav.config_migrations.m0850 import run_0850_migration
-from pylav.config_migrations.m0880 import run_0880_migration
-from pylav.config_migrations.m0920 import run_0920_migration
-from pylav.config_migrations.m01050 import run_01050_migration
-from pylav.config_migrations.m01130 import run_01130_migration
+from pylav.config_migrations.m0002 import run_migration_0002
+from pylav.config_migrations.m0320 import run_migration_0320
+from pylav.config_migrations.m0330 import run_migration_0330
+from pylav.config_migrations.m0340 import run_migration_0340
+from pylav.config_migrations.m0350 import run_migration_0350
+from pylav.config_migrations.m0360 import run_migration_0360
+from pylav.config_migrations.m0760 import run_migration_0760
+from pylav.config_migrations.m0850 import run_migration_0850
+from pylav.config_migrations.m0880 import run_migration_0880
+from pylav.config_migrations.m0920 import run_migration_0920
+from pylav.config_migrations.m01050 import run_migration_01050
+from pylav.config_migrations.m01130 import run_migration_01130
 from pylav.config_migrations.set_current_version import set_current_version
 from pylav.config_migrations.update_plugins import update_plugins
 
@@ -32,17 +32,17 @@ class UpdateSchemaManager:
 
         current_version = await self._client.lib_db_manager.get_bot_db_version().fetch_version()
 
-        await run_0002_migration(self._client, current_version)
-        await run_0320_migration(self._client, current_version)
-        await run_0330_migration(self._client, current_version)
-        await run_0340_migration(self._client, current_version)
-        await run_0350_migration(self._client, current_version)
-        await run_0360_migration(self._client, current_version)
-        await run_0760_migration(self._client, current_version)
-        await run_0850_migration(self._client, current_version)
-        await run_0880_migration(self._client, current_version)
-        await run_0920_migration(self._client, current_version)
-        await run_01050_migration(self._client, current_version)
-        await run_01130_migration(self._client, current_version)
+        await run_migration_0002(self._client, current_version)
+        await run_migration_0320(self._client, current_version)
+        await run_migration_0330(self._client, current_version)
+        await run_migration_0340(self._client, current_version)
+        await run_migration_0350(self._client, current_version)
+        await run_migration_0360(self._client, current_version)
+        await run_migration_0760(self._client, current_version)
+        await run_migration_0850(self._client, current_version)
+        await run_migration_0880(self._client, current_version)
+        await run_migration_0920(self._client, current_version)
+        await run_migration_01050(self._client, current_version)
+        await run_migration_01130(self._client, current_version)
         await set_current_version(self._client)
         await update_plugins(self._client)
