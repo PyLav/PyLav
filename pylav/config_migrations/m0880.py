@@ -8,12 +8,13 @@ if TYPE_CHECKING:
 
 
 async def run_0880_migration(client: "Client", current_version: LegacyVersion | Version) -> None:
-    if current_version <= parse_version("0.8.7.9999"):
-        from pylav.config_migrations import LOGGER
+    if current_version >= parse_version("0.8.8"):
+        return
+    from pylav.config_migrations import LOGGER
 
-        LOGGER.info("Running 0.8.8.0 migration")
-        from pylav.constants import BUNDLED_NODES_IDS
+    LOGGER.info("Running 0.8.8.0 migration")
+    from pylav.constants import BUNDLED_NODES_IDS
 
-        for node_id in BUNDLED_NODES_IDS:
-            await client.node_db_manager.delete(node_id)
-        await client.lib_db_manager.update_bot_dv_version("0.8.8")
+    for node_id in BUNDLED_NODES_IDS:
+        await client.node_db_manager.delete(node_id)
+    await client.lib_db_manager.update_bot_dv_version("0.8.8")

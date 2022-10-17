@@ -8,12 +8,13 @@ if TYPE_CHECKING:
 
 
 async def run_0002_migration(client: "Client", current_version: LegacyVersion | Version) -> None:
-    if current_version <= parse_version("0.0.0.1.9999"):
-        from pylav.config_migrations import LOGGER
+    if current_version >= parse_version("0.0.0.2"):
+        return
+    from pylav.config_migrations import LOGGER
 
-        LOGGER.info("Running 0.0.0.2 migration")
-        config = client.node_db_manager.bundled_node_config()
-        yaml_data = await config.fetch_yaml()
-        yaml_data["lavalink"]["server"]["trackStuckThresholdMs"] = 10000
-        await config.update_yaml(yaml_data)
-        await client.lib_db_manager.update_bot_dv_version("0.0.0.2")
+    LOGGER.info("Running 0.0.0.2 migration")
+    config = client.node_db_manager.bundled_node_config()
+    yaml_data = await config.fetch_yaml()
+    yaml_data["lavalink"]["server"]["trackStuckThresholdMs"] = 10000
+    await config.update_yaml(yaml_data)
+    await client.lib_db_manager.update_bot_dv_version("0.0.0.2")

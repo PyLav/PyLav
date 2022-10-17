@@ -8,12 +8,14 @@ if TYPE_CHECKING:
 
 
 async def run_0850_migration(client: "Client", current_version: LegacyVersion | Version) -> None:
-    if current_version <= parse_version("0.8.4.9999"):
-        from pylav.config_migrations import LOGGER
+    if current_version >= parse_version("0.8.5"):
+        return
 
-        LOGGER.info("Running 0.8.5.0 migration")
-        playlists = [p for p in await client.playlist_db_manager.get_bundled_playlists() if p.id in {1, 2}]
-        for playlist in playlists:
-            await playlist.delete()
-        await client.playlist_db_manager.update_bundled_playlists(1, 2)
-        await client.lib_db_manager.update_bot_dv_version("0.8.5")
+    from pylav.config_migrations import LOGGER
+
+    LOGGER.info("Running 0.8.5.0 migration")
+    playlists = [p for p in await client.playlist_db_manager.get_bundled_playlists() if p.id in {1, 2}]
+    for playlist in playlists:
+        await playlist.delete()
+    await client.playlist_db_manager.update_bundled_playlists(1, 2)
+    await client.lib_db_manager.update_bot_dv_version("0.8.5")
