@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.11.4.1 (17/10/2022)
+- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/168d051f040cb45ac4af7ee47f2b224946000e84) - @Drapersniper
+- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/77a31c25d3f450937b939adf41fc9f235de48ce0) - @crowdin-bot
+
+---
+
 ## v0.11.4.0 (17/10/2022)
 - [[patch]Refactor migration code, fix plugin migration, auto update plugin](https://github.com/Drapersniper/PyLav/commit/5a252bc7afed388b030c1da073bf27f69dd58216) - @Drapersniper
 
@@ -131,7 +137,3 @@
 ---
 
 ## v0.9.3.0 (12/09/2022)
-
----
-
-## v0.9.2.1 (11/09/2022)
