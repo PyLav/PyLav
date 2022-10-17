@@ -1,13 +1,21 @@
 from __future__ import annotations
 
-import contextlib
 from typing import TYPE_CHECKING
 
-from packaging.version import parse as parse_version
-
-from pylav.constants import BUNDLED_NODES_IDS
-from pylav.exceptions import EntryNotFoundError
-from pylav.utils.built_in_node import NODE_DEFAULT_SETTINGS
+from pylav.config_migrations.m0002 import run_0002_migration
+from pylav.config_migrations.m0320 import run_0320_migration
+from pylav.config_migrations.m0330 import run_0330_migration
+from pylav.config_migrations.m0340 import run_0340_migration
+from pylav.config_migrations.m0350 import run_0350_migration
+from pylav.config_migrations.m0360 import run_0360_migration
+from pylav.config_migrations.m0760 import run_0760_migration
+from pylav.config_migrations.m0850 import run_0850_migration
+from pylav.config_migrations.m0880 import run_0880_migration
+from pylav.config_migrations.m0920 import run_0920_migration
+from pylav.config_migrations.m01050 import run_01050_migration
+from pylav.config_migrations.m01130 import run_01130_migration
+from pylav.config_migrations.set_current_version import set_current_version
+from pylav.config_migrations.update_plugins import update_plugins
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -21,141 +29,20 @@ class UpdateSchemaManager:
 
     async def run_updates(self):
         """Run through schema migrations"""
-        from pylav import __VERSION__
-        from pylav.managed_node import LAVALINK_DOWNLOAD_DIR
 
         current_version = await self._client.lib_db_manager.get_bot_db_version().fetch_version()
-        if current_version == parse_version("0.0.0.0.9999"):
-            await self._client.lib_db_manager.update_bot_dv_version(__VERSION__)
-            return
 
-        if current_version <= parse_version("0.0.0.1.9999"):
-            config = self._client.node_db_manager.bundled_node_config()
-            yaml_data = await config.fetch_yaml()
-            yaml_data["lavalink"]["server"]["trackStuckThresholdMs"] = 10000
-            await config.update_yaml(yaml_data)
-            await self._client.lib_db_manager.update_bot_dv_version("0.0.0.2")
-
-        if current_version <= parse_version("0.3.1.9999"):
-            config = self._client.node_db_manager.bundled_node_config()
-            yaml_data = await config.fetch_yaml()
-            yaml_data["lavalink"]["server"]["opusEncodingQuality"] = 10
-            yaml_data["lavalink"]["server"]["resamplingQuality"] = "LOW"
-            yaml_data["lavalink"]["server"]["useSeekGhosting"] = True
-            await config.update_yaml(yaml_data)
-            await self._client.lib_db_manager.update_bot_dv_version("0.3.2")
-
-        if current_version <= parse_version("0.3.2.9999"):
-            config = self._client.node_db_manager.bundled_node_config()
-            yaml_data = await config.fetch_yaml()
-            yaml_data["lavalink"]["server"]["youtubeConfig"] = {"email": "", "password": ""}
-            await config.update_yaml(yaml_data)
-            await self._client.lib_db_manager.update_bot_dv_version("0.3.3")
-
-        if current_version <= parse_version("0.3.3.9999"):
-            config = self._client.node_db_manager.bundled_node_config()
-            yaml_data = await config.fetch_yaml()
-            if "soundgasm" not in yaml_data["plugins"]["dunctebot"]["sources"]:
-                yaml_data["plugins"]["dunctebot"]["sources"]["soundgasm"] = True
-
-            yaml_data["lavalink"]["plugins"] = NODE_DEFAULT_SETTINGS["lavalink"]["plugins"]
-            await config.update_yaml(yaml_data)
-            await self._client.lib_db_manager.update_bot_dv_version("0.3.4")
-
-        if current_version <= parse_version("0.3.4.9999"):
-            config = self._client.node_db_manager.bundled_node_config()
-            yaml_data = await config.fetch_yaml()
-            if "path" in yaml_data["logging"]:
-                yaml_data["logging"]["file"]["path"] = yaml_data["logging"]["path"]
-                await config.update_yaml(yaml_data)
-            await self._client.lib_db_manager.update_bot_dv_version("0.3.5")
-
-        if current_version <= parse_version("0.3.5.9999"):
-            config = self._client.node_db_manager.bundled_node_config()
-            yaml_data = await config.fetch_yaml()
-            if "path" in yaml_data["logging"]:
-                del yaml_data["logging"]["path"]
-            if "rollingpolicy" not in yaml_data["logging"]["logback"]:
-                yaml_data["logging"]["logback"] = {
-                    "rollingpolicy": {
-                        "max-file-size": yaml_data["logging"]["file"]["max-size"],
-                        "max-history": yaml_data["logging"]["file"]["max-history"],
-                        "total-size-cap": "1GB",
-                    }
-                }
-            if "max-size" in yaml_data["logging"]["file"]:
-                del yaml_data["logging"]["file"]["max-size"]
-            if "max-history" in yaml_data["logging"]["file"]:
-                del yaml_data["logging"]["file"]["max-history"]
-            await config.update_yaml(yaml_data)
-            await self._client.lib_db_manager.update_bot_dv_version("0.3.6")
-
-        if current_version <= parse_version("0.7.5.9999"):
-            config = self._client.node_db_manager.bundled_node_config()
-            yaml_data = await config.fetch_yaml()
-            if len(yaml_data["lavalink"]["plugins"]) < len(NODE_DEFAULT_SETTINGS["lavalink"]["plugins"]):
-                yaml_data["lavalink"]["plugins"] = NODE_DEFAULT_SETTINGS["lavalink"]["plugins"]
-                await config.update_yaml(yaml_data)
-            await self._client.lib_db_manager.update_bot_dv_version("0.7.6")
-
-        if current_version <= parse_version("0.8.4.9999"):
-            playlists = [p for p in await self._client.playlist_db_manager.get_bundled_playlists() if p.id in {1, 2}]
-            for playlist in playlists:
-                await playlist.delete()
-            await self._client.playlist_db_manager.update_bundled_playlists(1, 2)
-            await self._client.lib_db_manager.update_bot_dv_version("0.8.5")
-
-        if current_version <= parse_version("0.8.7.9999"):
-            for node_id in BUNDLED_NODES_IDS:
-                await self._client.node_db_manager.delete(node_id)
-            await self._client.lib_db_manager.update_bot_dv_version("0.8.8")
-
-        if current_version <= parse_version("0.9.1.9999"):
-            await self._client.player_state_db_manager.delete_all_players()
-            await self._client.lib_db_manager.update_bot_dv_version("0.9.2")
-
-        if current_version <= parse_version("0.10.4.9999"):
-            config = self._client.node_db_manager.bundled_node_config()
-            yaml_data = await config.fetch_yaml()
-            plugins = yaml_data["lavalink"]["plugins"]
-            keep = [
-                plugin
-                for plugin in plugins
-                if not plugin["dependency"].startswith(
-                    "com.github.Topis-Lavalink-Plugins:Topis-Source-Managers-Plugin:"
-                )
-            ]
-            keep.extend(
-                [
-                    plugin
-                    for plugin in NODE_DEFAULT_SETTINGS["lavalink"]["plugins"]
-                    if plugin["dependency"].startswith("com.github.TopiSenpai.LavaSrc:lavasrc-plugin")
-                ]
-            )
-            yaml_data["lavalink"]["plugins"] = keep
-            if "topissourcemanagers" in yaml_data["plugins"]:
-                yaml_data["plugins"]["lavasrc"] = yaml_data["plugins"]["topissourcemanagers"]
-                del yaml_data["plugins"]["topissourcemanagers"]
-            yaml_data["plugins"]["lavasrc"]["providers"].append("dzisrc:%ISRC%")
-            yaml_data["plugins"]["lavasrc"]["sources"]["deezer"] = NODE_DEFAULT_SETTINGS["plugins"]["lavasrc"][
-                "sources"
-            ]["deezer"]
-            yaml_data["plugins"]["lavasrc"]["deezer"] = NODE_DEFAULT_SETTINGS["plugins"]["lavasrc"]["deezer"]
-
-            await config.update_yaml(yaml_data)
-            folder = LAVALINK_DOWNLOAD_DIR / "plugins"
-            plugin_files = [
-                x
-                async for x in folder.iterdir()
-                if x.name.startswith("Topis-Source-Managers-Plugin-") and x.suffix == ".jar" and x.is_file()
-            ]
-            for file in plugin_files:
-                with contextlib.suppress(Exception):
-                    await file.unlink()
-
-            await self._client.lib_db_manager.update_bot_dv_version("0.10.5")
-
-        with contextlib.suppress(EntryNotFoundError):
-            config = self._client.node_db_manager.bundled_node_config()
-            await config.update_resume_key(f"PyLav/{self._client.lib_version}-{self._client.bot_id}")
-        await self._client.lib_db_manager.update_bot_dv_version(__VERSION__)
+        await run_0002_migration(self._client, current_version)
+        await run_0320_migration(self._client, current_version)
+        await run_0330_migration(self._client, current_version)
+        await run_0340_migration(self._client, current_version)
+        await run_0350_migration(self._client, current_version)
+        await run_0360_migration(self._client, current_version)
+        await run_0760_migration(self._client, current_version)
+        await run_0850_migration(self._client, current_version)
+        await run_0880_migration(self._client, current_version)
+        await run_0920_migration(self._client, current_version)
+        await run_01050_migration(self._client, current_version)
+        await run_01130_migration(self._client, current_version)
+        await set_current_version(self._client)
+        await update_plugins(self._client)
