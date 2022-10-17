@@ -6,6 +6,7 @@ import contextlib
 import dataclasses
 import datetime
 import functools
+import inspect
 import math
 import os
 import pathlib
@@ -24,7 +25,7 @@ from functools import _make_key  # type: ignore
 from itertools import chain
 from re import Pattern
 from types import GenericAlias
-from typing import TYPE_CHECKING, Any, Callable, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Callable, TypeVar, cast, get_type_hints
 
 import discord  # type: ignore
 import psutil
@@ -110,6 +111,24 @@ LOGGER = getLogger("PyLav.utils")
 _RED_LOGGER = getLogger("red")
 
 _LOCK = threading.Lock()
+
+
+def check_annotated(func):
+    hints = get_type_hints(func, include_extras=True)
+    spec = inspect.getfullargspec(func)
+
+    def wrapper(*args, **kwargs):
+        for idx, arg_name in enumerate(spec[0]):
+            hint = hints.get(arg_name)
+            validators = getattr(hint, "__metadata__", None)
+            if not validators:
+                continue
+            for validator in validators:
+                validator.validate_value(args[idx])
+
+        return func(*args, **kwargs)
+
+    return wrapper
 
 
 def get_max_allocation_size(executable: str) -> tuple[int, bool]:
