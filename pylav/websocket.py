@@ -19,6 +19,7 @@ from pylav.events import (
     TrackStartAppleMusicEvent,
     TrackStartBandcampEvent,
     TrackStartClypitEvent,
+    TrackStartDeezerEvent,
     TrackStartEvent,
     TrackStartGCTTSEvent,
     TrackStartGetYarnEvent,
@@ -44,6 +45,7 @@ from pylav.events import (
 from pylav.exceptions import WebsocketNotConnectedError
 from pylav.location import get_closest_discord_region
 from pylav.node import Stats
+from pylav.types import LavalinkEventT, LavalinkPlayerUpdateT, LavalinkReadyT, LavalinkStatsT
 from pylav.utils import AsyncIter, ExponentialBackoffWithReset
 
 if TYPE_CHECKING:
@@ -78,12 +80,14 @@ class WebSocket:
         "_resume_key",
         "_resume_timeout",
         "_resuming_configured",
-        "_ws_uri",
         "_closers",
         "_client",
         "ready",
         "_connect_task",
         "_manual_shutdown",
+        "_session_id",
+        "_resumed",
+        "_api_version",
     )
 
     def __init__(
@@ -113,11 +117,9 @@ class WebSocket:
         self._resume_key = resume_key
         self._resume_timeout = resume_timeout
         self._resuming_configured = False
-
-        # TODO:
-        #  /v3/websocket
-        #  https://github.com/freyacodes/Lavalink/blob/new-api-draft/IMPLEMENTATION.md#significant-changes-v360---v370
-        self._ws_uri = f"{self.socket_protocol}://{self._host}:{self._port}"
+        self._session_id: str | None = None
+        self._resumed: bool | None = None
+        self._api_version: int | None = None
 
         self._closers = (
             aiohttp.WSMsgType.CLOSE,
@@ -169,6 +171,11 @@ class WebSocket:
         """Returns whether the websocket is connecting to Lavalink"""
         return not self.ready.is_set()
 
+    @property
+    def session_id(self) -> str:
+        """Returns the session ID"""
+        return self._session_id
+
     async def ping(self) -> None:
         """Pings the websocket"""
         if self.connected:
@@ -184,14 +191,14 @@ class WebSocket:
         try:
             self.ready.clear()
             self.node._ready.clear()
+            if self.client.is_shutting_down:
+                return
             headers = {
                 "Authorization": self._password,
                 "User-Id": str(self.bot_id),
                 "Client-Name": f"PyLav/{self.lib_version}",
             }
-
-            if self.client.is_shutting_down:
-                return
+            self._api_version = await self.node.fetch_api_version()
             if self._resuming_configured and self._resume_key:
                 headers["Resume-Key"] = self._resume_key
             if self._node.identifier in PYLAV_NODES:
@@ -214,14 +221,10 @@ class WebSocket:
                     attempt,
                     max_attempts_str,
                 )
-
+                ws_uri = await self.node.get_endpoint(websocket=True)
                 try:
-                    self._ws = await self._session.ws_connect(
-                        url=self._ws_uri, headers=headers, heartbeat=60, timeout=600
-                    )
+                    self._ws = await self._session.ws_connect(url=ws_uri, headers=headers, heartbeat=60, timeout=600)
                     await self._node.update_features()
-                    self.ready.set()
-                    self.node._ready.set()
                     backoff.reset()
                 except (
                     aiohttp.ClientConnectorError,
@@ -236,7 +239,7 @@ class WebSocket:
                             "Lavalink is not running, or is running on a port different "
                             "to the one you passed to `add_node` (%s - %s)",
                             self.node.name,
-                            self._ws_uri,
+                            ws_uri,
                             headers,
                         )
                     elif isinstance(ce, aiohttp.WSServerHandshakeError):
@@ -352,45 +355,86 @@ class WebSocket:
         self._connect_task = asyncio.ensure_future(self.connect())
         self._connect_task.add_done_callback(_done_callback)
 
-    async def handle_message(self, data: dict):
+    async def handle_message(self, data: LavalinkPlayerUpdateT | LavalinkEventT | LavalinkStatsT | LavalinkReadyT):
         """
         Handles the response from the websocket.
 
         Parameters
         ----------
-        data: :class:`dict`
+        data: LavalinkPlayerUpdateT|LavalinkEventT| LavalinkStatsT| LavalinkReadyT
             The data given from Lavalink.
         """
         op = data["op"]
 
-        if op == "stats":
-            self.node.stats = Stats(self.node, data)
-        elif op == "playerUpdate":
-            if player := self.client.player_manager.get(int(data["guildId"])):
-                if (
-                    (not data["state"]["connected"])
-                    and player.is_playing
-                    and self.ready.is_set()
-                    and player.connected_at < utcnow() - datetime.timedelta(minutes=15)
-                ):
-                    await player.reconnect()
-                    return
-                await player._update_state(data["state"])
-            else:
-                return
+        match op:
+            case "playerUpdate":
+                await self.handle_player_update(data)
+            case "stats":
+                await self.handle_stats(data)
+            case "event":
+                await self.handle_event(data)
+            case "ready":
+                await self.handle_ready(data)
+            case _:
+                LOGGER.warning("[NODE-%s] Received unknown op: %s", self.node.name, op)
 
-        elif op == "event":
-            await self.handle_event(data)
-        else:
-            LOGGER.warning("[NODE-%s] Received unknown op: %s", self.node.name, op)
-
-    async def handle_event(self, data: dict):
+    async def handle_stats(self, data: LavalinkStatsT):
         """
-        Handles the event from Lavalink.
+        Handles the stats message from the websocket.
 
         Parameters
         ----------
-        data: :class:`dict`
+        data: LavalinkStatsT
+            The data given from Lavalink.
+        """
+
+        self.node.stats = Stats(self.node, data)
+
+    async def handle_player_update(self, data: LavalinkPlayerUpdateT):
+        """
+        Handles the player update message  from the websocket.
+
+        Parameters
+        ----------
+        data: LavalinkPlayerUpdateT
+            The data given from Lavalink.
+        """
+
+        if player := self.client.player_manager.get(int(data["guildId"])):
+            if (
+                (not data["state"]["connected"])
+                and player.is_playing
+                and self.ready.is_set()
+                and player.connected_at < utcnow() - datetime.timedelta(minutes=15)
+            ):
+                await player.reconnect()
+                return
+            await player._update_state(data["state"])
+        else:
+            return
+
+    async def handle_ready(self, data: LavalinkReadyT):
+        """
+        Handles the ready message from the websocket.
+
+        Parameters
+        ----------
+        data: LavalinkReadyT
+            The data given from Lavalink.
+        """
+        self._session_id = data["sessionId"]
+        self._resumed = data.get("resumed", False)
+        self.ready.set()
+        self.node._ready.set()
+        LOGGER.info("[NODE-%s] Node connected successfully and is now ready to accept commands", self.node.name)
+
+    async def handle_event(self, data: LavalinkEventT):
+        """
+        Handles the event message from Lavalink.
+
+        Parameters
+        ----------
+        data: LavalinkEventT
             The data given from Lavalink.
         """
         if self.client.is_shutting_down:
@@ -479,50 +523,58 @@ class WebSocket:
 
     async def _process_track_event(self, player: Player, track: Track, node: Node) -> None:
         # sourcery no-metrics
-        if await track.is_youtube_music():
-            event = TrackStartYouTubeMusicEvent(player, track, node)
-        elif await track.is_spotify():
-            event = TrackStartSpotifyEvent(player, track, node)
-        elif await track.is_apple_music():
-            event = TrackStartAppleMusicEvent(player, track, node)
-        elif await track.is_local():
-            event = TrackStartLocalFileEvent(player, track, node)
-        elif await track.is_http():
-            event = TrackStartHTTPEvent(player, track, node)
-        elif await track.is_speak():
-            event = TrackStartSpeakEvent(player, track, node)
-        elif await track.is_youtube():
-            event = TrackStartYouTubeEvent(player, track, node)
-        elif await track.is_clypit():
-            event = TrackStartClypitEvent(player, track, node)
-        elif await track.is_getyarn():
-            event = TrackStartGetYarnEvent(player, track, node)
-        elif await track.is_twitch():
-            event = TrackStartTwitchEvent(player, track, node)
-        elif await track.is_vimeo():
-            event = TrackStartVimeoEvent(player, track, node)
-        elif await track.is_mixcloud():
-            event = TrackStartMixCloudEvent(player, track, node)
-        elif await track.is_ocremix():
-            event = TrackStartOCRMixEvent(player, track, node)
-        elif await track.is_pornhub():
-            event = TrackStartPornHubEvent(player, track, node)
-        elif await track.is_reddit():
-            event = TrackStartRedditEvent(player, track, node)
-        elif await track.is_soundgasm():
-            event = TrackStartSoundgasmEvent(player, track, node)
-        elif await track.is_tiktok():
-            event = TrackStartTikTokEvent(player, track, node)
-        elif await track.is_bandcamp():
-            event = TrackStartBandcampEvent(player, track, node)
-        elif await track.is_soundcloud():
-            event = TrackStartSoundCloudEvent(player, track, node)
-        elif await track.is_gctts():
-            event = TrackStartGCTTSEvent(player, track, node)
-        elif await track.is_niconico():
-            event = TrackStartNicoNicoEvent(player, track, node)
-        else:  # This should never happen
-            event = TrackStartEvent(player, track, node)
+        query = await track.query()
+
+        match query.source:
+            case "YouTube Music":
+                event = TrackStartYouTubeMusicEvent(player, track, node)
+            case "YouTube":
+                event = TrackStartYouTubeEvent(player, track, node)
+            case "Spotify":
+                event = TrackStartSpotifyEvent(player, track, node)
+            case "Deezer":
+                event = TrackStartDeezerEvent(player, track, node)
+            case "Apple Music":
+                event = TrackStartAppleMusicEvent(player, track, node)
+            case "HTTP":
+                event = TrackStartHTTPEvent(player, track, node)
+            case "SoundCloud":
+                event = TrackStartSoundCloudEvent(player, track, node)
+            case "Clyp.it":
+                event = TrackStartClypitEvent(player, track, node)
+            case "Twitch":
+                event = TrackStartTwitchEvent(player, track, node)
+            case "Bandcamp":
+                event = TrackStartBandcampEvent(player, track, node)
+            case "Vimeo":
+                event = TrackStartVimeoEvent(player, track, node)
+            case "speak":
+                event = TrackStartSpeakEvent(player, track, node)
+            case "GetYarn":
+                event = TrackStartGetYarnEvent(player, track, node)
+            case "Mixcloud":
+                event = TrackStartMixCloudEvent(player, track, node)
+            case "OverClocked ReMix":
+                event = TrackStartOCRMixEvent(player, track, node)
+            case "Pornhub":
+                event = TrackStartPornHubEvent(player, track, node)
+            case "Reddit":
+                event = TrackStartRedditEvent(player, track, node)
+            case "SoundGasm":
+                event = TrackStartSoundgasmEvent(player, track, node)
+            case "TikTok":
+                event = TrackStartTikTokEvent(player, track, node)
+            case "Google TTS":
+                event = TrackStartGCTTSEvent(player, track, node)
+            case "Niconico":
+                event = TrackStartNicoNicoEvent(player, track, node)
+            case _:
+                if query.source == "Local Files" or (
+                    query._special_local and (query.is_m3u or query.is_pls or query.is_pylav)
+                ):
+                    event = TrackStartLocalFileEvent(player, track, node)
+                else:
+                    event = TrackStartEvent(player, track, node)
         self.client.dispatch_event(event)
 
     async def close(self):
