@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 
 async def run_01050_migration(client: "Client", current_version: LegacyVersion | Version) -> None:
-    if current_version > parse_version("0.10.4.9999"):
+    if current_version >= parse_version("0.10.5"):
         return
     from pylav.config_migrations import LOGGER
 
