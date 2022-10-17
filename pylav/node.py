@@ -15,11 +15,13 @@ import ujson
 from apscheduler.jobstores.base import JobLookupError
 from discord.utils import utcnow
 from expiringdict import ExpiringDict
+from packaging.version import LegacyVersion, Version
+from packaging.version import parse as parse_version
 
 from pylav._logging import getLogger
 from pylav.constants import BUNDLED_NODES_IDS, PYLAV_NODES, REGION_TO_COUNTRY_COORDINATE_MAPPING, SUPPORTED_SOURCES
 from pylav.events import Event
-from pylav.exceptions import Unauthorized, WebsocketNotConnectedError
+from pylav.exceptions import Unauthorized, UnsupportedNodeAPI, WebsocketNotConnectedError
 from pylav.filters import (
     ChannelMix,
     Distortion,
@@ -258,6 +260,8 @@ class Node:
         "_down_votes",
         "_ready",
         "_ws",
+        "_version",
+        "_api_version",
     )
 
     def __init__(
@@ -281,6 +285,8 @@ class Node:
         from pylav.query import Query
 
         self._query_cls: Query = Query  # type: ignore
+        self._version: Version | LegacyVersion | None = None
+        self._api_version: int | None = None
         self._manager = manager
         self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
         self._temporary = temporary
@@ -340,6 +346,60 @@ class Node:
             next_run_time=utcnow() + datetime.timedelta(seconds=15),
         )
 
+    async def fetch_node_version(self) -> Version | LegacyVersion:
+        destination = f"{self.connection_protocol}://{self.host}:{self.port}/version"
+        async with self._session.get(destination, headers={"Authorization": self.password}) as res:
+            if res.status == 200:
+                self._version = parse_version(await res.text())
+                return self._version
+            if res.status in [401, 403]:
+                raise Unauthorized
+        raise ValueError(f"Server returned an unexpected return code: {res.status}")
+
+    async def fetch_api_version(self):
+        if self.version is None:
+            await self.fetch_node_version()
+        if self.version < (v370 := Version("3.7.0.rc0")):
+            self._api_version = None
+        elif v370 <= self.version < (v400 := Version("4.0.0.rc0")):
+            self._api_version = 3
+        elif v400 <= self.version < Version("5.0.0.rc0"):
+            self._api_version = 4
+        else:
+            raise UnsupportedNodeAPI()
+
+    async def get_endpoint(self, *, websocket: bool = False, plugins: bool = False, info: bool = False) -> str:
+        if self._api_version is None:
+            await self.fetch_api_version()
+        if websocket:
+            return self.get_websocket()
+        if info:
+            return self.get_info_endpoint()
+        if plugins:
+            return self.get_plugins_endpoint()
+
+    def get_websocket(self) -> str:
+        match self.api_version:
+            case 3:
+                return f"{self.socket_protocol}://{self.host}:{self.port}/v3/websocket"
+            case 4:
+                return f"{self.socket_protocol}://{self.host}:{self.port}/v4/websocket"
+            case None:
+                return f"{self.socket_protocol}://{self.host}:{self.port}/websocket"
+        raise UnsupportedNodeAPI()
+
+    def get_info_endpoint(self) -> str:
+        match self.api_version:
+            case 3:
+                return f"{self.connection_protocol}://{self.host}:{self.port}/v3/info"
+            case 4:
+                return f"{self.connection_protocol}://{self.host}:{self.port}/v4/info"
+            case None:
+                return f"{self.connection_protocol}://{self.host}:{self.port}/plugins"
+        raise UnsupportedNodeAPI()
+
+    get_plugins_endpoint = get_info_endpoint
+
     async def _unhealthy(self):
         del self.down_votes
         if self._ws is not None:
@@ -367,6 +427,19 @@ class Node:
                 return
             if (self.down_votes / playing_players) >= 0.5:
                 await self._unhealthy()
+
+    @property
+    def version(self) -> Version | LegacyVersion | None:
+        return self._version
+
+    @property
+    def api_version(self) -> int | None:
+        return self._api_version
+
+    @property
+    def socket_protocol(self) -> str:
+        """The protocol used for the socket connection"""
+        return "wss" if self._ssl else "ws"
 
     @property
     def is_ready(self) -> bool:
@@ -1043,12 +1116,12 @@ class Node:
         if not self._sources:
             if self.managed:
                 self._capabilities.add("local")
-            # FIXME: Remove me when the PR upstream is merged
+            # FIXME: Remove me when the PR upstream is merged (3.7)
             # This only exists as the above does not provide any useful info currently.
             #    However once it is merged this should be removed as it is not a good way to assess capabilities.
             #    As even though a plugin may be enable the source it adds may be disabled.
 
-            #   Since this assumes everything is enable is is bound to cause track exceptions to be thrown when
+            #   Since this assumes everything is enable is bound to cause track exceptions to be thrown when
             #   a source required but assumed enabled is in actuality disabled.
             for feature in await self.get_plugins():
                 if feature["name"] == "Topis-Source-Managers-Plugin":

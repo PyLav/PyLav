@@ -294,6 +294,9 @@ class Track:
     async def is_gctts(self) -> bool:
         return (await self.query()).is_gctts
 
+    async def is_deezer(self) -> bool:
+        return (await self.query()).is_deezer
+
     async def requires_capability(self) -> str:
         return q.requires_capability if (q := await self.query()) else "youtube"
 

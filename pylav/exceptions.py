@@ -70,6 +70,10 @@ class NodeError(PyLavError):
     """Base exception for Node errors"""
 
 
+class UnsupportedNodeAPI(NodeError):
+    """Error raised when the node version is unsupported"""
+
+
 class AbortPlayerRestoreDueUnavailableNode(NodeError):
     """Raised when the player is aborted due to an unavailable node"""
 
