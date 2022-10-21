@@ -2935,7 +2935,8 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
                 .where(pylav.sql.tables.playlists.PlaylistRow.id == self.id)
                 .output(load_json=True, nested=True)
             )
-            return response["track"][index] if response else None
+            if response and len(response["tracks"]) > index:
+                return response["tracks"][index]
 
     @maybe_cached
     async def fetch_first(self) -> str | None:
@@ -3162,7 +3163,8 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
                 .where(pylav.sql.tables.queries.QueryRow.identifier == self.id)
                 .output(load_json=True, nested=True)
             )
-            return response["track"][index] if response else None
+            if response and len(response["tracks"]) > index:
+                return response["tracks"][index]
 
     @maybe_cached
     async def fetch_first(self) -> str | None:
