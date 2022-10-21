@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.11.6.1 (21/10/2022)
+- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/1f865ff795211895ddf861cf55d31503312d9c71) - @Drapersniper
+- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/3823b4f6642502372f4ea1ee197117ed97fa848e) - @crowdin-bot
+
+---
+
 ## v0.11.6.0 (21/10/2022)
 - [[patch] certified typo moment (#82)](https://github.com/Drapersniper/PyLav/commit/857affacf4521be1e58d2b08f93be7790d0ea30b) - @Pogogo007
 
@@ -135,7 +141,3 @@
 ---
 
 ## v0.9.4.0 (12/09/2022)
-
----
-
-## v0.9.3.2 (12/09/2022)
