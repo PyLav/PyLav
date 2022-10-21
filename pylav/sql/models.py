@@ -89,23 +89,19 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
             .first()
             .output(load_json=True, nested=True)
         )
-        return (
-            data
-            if data
-            else {
-                "id": self.id,
-                "name": pylav.sql.tables.nodes.NodeRow.name.default,
-                "ssl": pylav.sql.tables.nodes.NodeRow.ssl.default,
-                "resume_key": pylav.sql.tables.nodes.NodeRow.resume_key.default,
-                "resume_timeout": pylav.sql.tables.nodes.NodeRow.resume_timeout.default,
-                "reconnect_attempts": pylav.sql.tables.nodes.NodeRow.reconnect_attempts.default,
-                "search_only": pylav.sql.tables.nodes.NodeRow.search_only.default,
-                "managed": pylav.sql.tables.nodes.NodeRow.managed.default,
-                "extras": ujson.loads(pylav.sql.tables.nodes.NodeRow.extras.default),
-                "yaml": ujson.loads(pylav.sql.tables.nodes.NodeRow.yaml.default),
-                "disabled_sources": pylav.sql.tables.nodes.NodeRow.disabled_sources.default,
-            }
-        )
+        return data or {
+            "id": self.id,
+            "name": pylav.sql.tables.nodes.NodeRow.name.default,
+            "ssl": pylav.sql.tables.nodes.NodeRow.ssl.default,
+            "resume_key": pylav.sql.tables.nodes.NodeRow.resume_key.default,
+            "resume_timeout": pylav.sql.tables.nodes.NodeRow.resume_timeout.default,
+            "reconnect_attempts": pylav.sql.tables.nodes.NodeRow.reconnect_attempts.default,
+            "search_only": pylav.sql.tables.nodes.NodeRow.search_only.default,
+            "managed": pylav.sql.tables.nodes.NodeRow.managed.default,
+            "extras": ujson.loads(pylav.sql.tables.nodes.NodeRow.extras.default),
+            "yaml": ujson.loads(pylav.sql.tables.nodes.NodeRow.yaml.default),
+            "disabled_sources": pylav.sql.tables.nodes.NodeRow.disabled_sources.default,
+        }
 
     @maybe_cached
     async def fetch_name(self) -> str | None:
@@ -2456,18 +2452,14 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
             .first()
             .output(load_json=True, nested=True)
         )
-        return (
-            data
-            if data
-            else {
-                "id": self.id,
-                "name": pylav.sql.tables.playlists.PlaylistRow.name.default,
-                "tracks": [],
-                "scope": pylav.sql.tables.playlists.PlaylistRow.scope.default,
-                "author": pylav.sql.tables.playlists.PlaylistRow.author.default,
-                "url": pylav.sql.tables.playlists.PlaylistRow.url.default,
-            }
-        )
+        return data or {
+            "id": self.id,
+            "name": pylav.sql.tables.playlists.PlaylistRow.name.default,
+            "tracks": [],
+            "scope": pylav.sql.tables.playlists.PlaylistRow.scope.default,
+            "author": pylav.sql.tables.playlists.PlaylistRow.author.default,
+            "url": pylav.sql.tables.playlists.PlaylistRow.url.default,
+        }
 
     @maybe_cached
     async def fetch_scope(self) -> int | None:
@@ -2938,14 +2930,12 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
             return tracks[index] if index < len(tracks) else None
         else:
             response = (
-                await pylav.sql.tables.playlists.PlaylistRow.select(
-                    pylav.sql.tables.playlists.PlaylistRow.tracks[index]
-                )
+                await pylav.sql.tables.playlists.PlaylistRow.select(pylav.sql.tables.playlists.PlaylistRow.tracks)
                 .first()
                 .where(pylav.sql.tables.playlists.PlaylistRow.id == self.id)
                 .output(load_json=True, nested=True)
             )
-            return response["track"] if response else None
+            return response["track"][index] if response else None
 
     @maybe_cached
     async def fetch_first(self) -> str | None:
@@ -3167,12 +3157,12 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
             return tracks[index] if index < len(tracks) else None
         else:
             response = (
-                await pylav.sql.tables.queries.QueryRow.select(pylav.sql.tables.queries.QueryRow.tracks[index])
+                await pylav.sql.tables.queries.QueryRow.select(pylav.sql.tables.queries.QueryRow.tracks)
                 .first()
                 .where(pylav.sql.tables.queries.QueryRow.identifier == self.id)
                 .output(load_json=True, nested=True)
             )
-            return response["track"] if response else None
+            return response["track"][index] if response else None
 
     @maybe_cached
     async def fetch_first(self) -> str | None:
