@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.11.5.0 (21/10/2022)
+- [[patch] TypeError: 'JSONB' object is not subscriptable (#80)](https://github.com/Drapersniper/PyLav/commit/d0235c946079d48f82ea4aec8048efc8fff5ca62) - @Drapersniper
+
+---
+
 ## v0.11.4.1 (17/10/2022)
 - [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/168d051f040cb45ac4af7ee47f2b224946000e84) - @Drapersniper
 - [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/77a31c25d3f450937b939adf41fc9f235de48ce0) - @crowdin-bot
@@ -133,7 +138,3 @@
 ---
 
 ## v0.9.3.1 (12/09/2022)
-
----
-
-## v0.9.3.0 (12/09/2022)
