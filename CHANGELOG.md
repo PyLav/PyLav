@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.11.6.0 (21/10/2022)
+- [[patch] certified typo moment (#82)](https://github.com/Drapersniper/PyLav/commit/857affacf4521be1e58d2b08f93be7790d0ea30b) - @Pogogo007
+
+---
+
 ## v0.11.5.0 (21/10/2022)
 - [[patch] TypeError: 'JSONB' object is not subscriptable (#80)](https://github.com/Drapersniper/PyLav/commit/d0235c946079d48f82ea4aec8048efc8fff5ca62) - @Drapersniper
 
@@ -134,7 +139,3 @@
 ---
 
 ## v0.9.3.2 (12/09/2022)
-
----
-
-## v0.9.3.1 (12/09/2022)
