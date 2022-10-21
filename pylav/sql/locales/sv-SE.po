@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-10-16 19:09+0000\n"
-"PO-Revision-Date: 2022-10-16 19:09\n"
+"POT-Creation-Date: 2022-10-21 21:05+0000\n"
+"PO-Revision-Date: 2022-10-21 21:09\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "MIME-Version: 1.0\n"
@@ -17,23 +17,23 @@ msgstr ""
 "X-Crowdin-File-ID: 506\n"
 "Language: sv_SE\n"
 
-#: pylav/sql/models.py:2774
+#: pylav/sql/models.py:2766
 msgid "(Global) {user_name}"
 msgstr "(Global) {user_name}"
 
-#: pylav/sql/models.py:2778
+#: pylav/sql/models.py:2770
 msgid "(Server) {guild_name}"
 msgstr "(Server) {guild_name}"
 
-#: pylav/sql/models.py:2780
+#: pylav/sql/models.py:2772
 msgid "(Channel) {channel}"
 msgstr "(Kanal) {channel}"
 
-#: pylav/sql/models.py:2786
+#: pylav/sql/models.py:2778
 msgid "(User) {user_name}"
 msgstr "(Användare) {user_name}"
 
-#: pylav/sql/models.py:2788
+#: pylav/sql/models.py:2780
 msgid "(Invalid) {scope}"
 msgstr "(Ogiltig) {scope}"
 
