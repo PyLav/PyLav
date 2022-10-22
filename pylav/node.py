@@ -1021,9 +1021,7 @@ class Node:
             Lavalink LoadTrack Response Object
         """
         data = (
-            await self.get_tracks(
-                await self._query_cls.from_string(query), bypass_cache=bypass_cache
-            )
+            await self.get_tracks(await self._query_cls.from_string(query), bypass_cache=bypass_cache)
             if self.available
             else {
                 "loadType": "NO_MATCHES",
