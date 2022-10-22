@@ -1065,38 +1065,6 @@ class Node:
             return self.parse_loadtrack_response(data)
 
     # ENDPOINTS
-    async def fetch_node_version(self) -> Version | LegacyVersion:
-        async with self._session.get(self.get_endpoint_version(), headers={"Authorization": self.password}) as res:
-            if res.status == 200:
-                self._version = parse_version(await res.text())
-                return self._version
-            if res.status in [401, 403]:
-                raise Unauthorized
-            raise ValueError(f"Server returned an unexpected return code: {res.status}")
-
-    async def fetch_api_version(self):
-        if self.version is None:
-            await self.fetch_node_version()
-        if self.version < (v370 := Version("3.7.0-alpha")):
-            self._api_version = None
-        elif v370 <= self.version < (v400 := Version("4.0.0-alpha")):
-            self._api_version = 3
-        elif v400 <= self.version < Version("5.0.0-alpha"):
-            self._api_version = 4
-        else:
-            raise UnsupportedNodeAPI()
-
-    async def get_guild_player(self, guild_id: int) -> RestGetPlayerResponseT:
-        async with self._session.get(
-            self.get_endpoint_session_player_by_guild_id(guild_id=guild_id), headers={"Authorization": self.password}
-        ) as res:
-            if res.status == 200:
-                data = await res.json(loads=ujson.loads)
-                return data
-            if res.status in [401, 403]:
-                raise Unauthorized
-        raise ValueError(f"Server returned an unexpected return code: {res.status}")
-
     def get_endpoint_websocket(self) -> str:
         match self.api_version:
             case 3:
@@ -1323,6 +1291,33 @@ class Node:
                 raise Unauthorized
 
     # REST API - Wrappers
+
+    async def fetch_node_version(self) -> Version | LegacyVersion:
+        self._version = await self.get_version()
+        return self._version
+
+    async def fetch_api_version(self):
+        if self.version is None:
+            await self.fetch_node_version()
+        if self.version < (v370 := Version("3.7.0-alpha")):
+            self._api_version = None
+        elif v370 <= self.version < (v400 := Version("4.0.0-alpha")):
+            self._api_version = 3
+        elif v400 <= self.version < Version("5.0.0-alpha"):
+            self._api_version = 4
+        else:
+            raise UnsupportedNodeAPI()
+
+    async def get_guild_player(self, guild_id: int) -> RestGetPlayerResponseT:
+        async with self._session.get(
+            self.get_endpoint_session_player_by_guild_id(guild_id=guild_id), headers={"Authorization": self.password}
+        ) as res:
+            if res.status == 200:
+                data = await res.json(loads=ujson.loads)
+                return data
+            if res.status in [401, 403]:
+                raise Unauthorized
+        raise ValueError(f"Server returned an unexpected return code: {res.status}")
 
     async def get_track(
         self, query: Query, first: bool = False, bypass_cache: bool = False
