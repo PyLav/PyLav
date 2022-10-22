@@ -173,14 +173,16 @@ class TrackStartEventT(TypedDict):
     op: Literal["event"]
     guildId: str
     type: Literal["TrackStartEvent"]
-    track: TrackT
+    encodedTrack: str
+    track: NotRequired[str]
 
 
 class TrackEndEventT(TypedDict):
     op: Literal["event"]
     guildId: str
     type: Literal["TrackEndEvent"]
-    track: TrackT
+    encodedTrack: str
+    track: NotRequired[str]
     reason: Literal["FINISHED", "LOAD_FAILED", "STOPPED", "REPLACED", "CLEANUP"]
 
 
@@ -197,7 +199,8 @@ class TrackExceptionEventT(TypedDict):
     op: Literal["event"]
     guildId: str
     type: Literal["TrackExceptionEvent"]
-    track: TrackT
+    encodedTrack: str
+    track: NotRequired[str]
     exception: TrackExceptionT
 
 
@@ -205,7 +208,8 @@ class TrackStuckEventT(TypedDict):
     op: Literal["event"]
     guildId: str
     type: Literal["TrackStuckEvent"]
-    track: TrackT
+    encodedTrack: str
+    track: NotRequired[str]
     thresholdMs: int
 
 
