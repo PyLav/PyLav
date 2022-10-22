@@ -10,9 +10,9 @@ from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
 import aiohttp
-import asyncstdlib
 import ujson
 from apscheduler.jobstores.base import JobLookupError
+from dacite import from_dict
 from discord.utils import utcnow
 from expiringdict import ExpiringDict
 from packaging.version import LegacyVersion, Version
@@ -20,6 +20,16 @@ from packaging.version import parse as parse_version
 
 from pylav._logging import getLogger
 from pylav.constants import BUNDLED_NODES_IDS, PYLAV_NODES, REGION_TO_COUNTRY_COORDINATE_MAPPING, SUPPORTED_SOURCES
+from pylav.endpoints.response_objects import (
+    LoadFailedObject,
+    NoMatchesObject,
+    PlaylistLoadedObject,
+    RestGetInfoResponse,
+    RoutePlannerStatusResponseObject,
+    SearchResultObject,
+    TrackLoadedObject,
+    TrackObject,
+)
 from pylav.events import Event
 from pylav.exceptions import Unauthorized, UnsupportedNodeAPI, WebsocketNotConnectedError
 from pylav.filters import (
@@ -37,7 +47,7 @@ from pylav.filters import (
 from pylav.filters.tremolo import Tremolo
 from pylav.location import distance
 from pylav.sql.models import NodeModel, NodeModelMock
-from pylav.types import LavalinkResponseT, TrackT
+from pylav.types import LavalinkResponseT, LoadTracksResponseT, RestGetPlayerResponseT
 from pylav.utils import AsyncIter
 
 if TYPE_CHECKING:
@@ -254,7 +264,6 @@ class Node:
         "_resume_timeout",
         "_reconnect_attempts",
         "_search_only",
-        "_sources",
         "_capabilities",
         "_coordinates",
         "_down_votes",
@@ -317,7 +326,7 @@ class Node:
         self._resume_timeout = resume_timeout
         self._reconnect_attempts = reconnect_attempts
         self._search_only = search_only
-        self._sources = self._capabilities = set()
+        self._capabilities = set()
         self._coordinates = (0, 0)
         self._down_votes = ExpiringDict(max_len=float("inf"), max_age_seconds=600)  # type: ignore
 
@@ -347,8 +356,7 @@ class Node:
         )
 
     async def fetch_node_version(self) -> Version | LegacyVersion:
-        destination = f"{self.connection_protocol}://{self.host}:{self.port}/version"
-        async with self._session.get(destination, headers={"Authorization": self.password}) as res:
+        async with self._session.get(self.get_endpoint_version(), headers={"Authorization": self.password}) as res:
             if res.status == 200:
                 self._version = parse_version(await res.text())
                 return self._version
@@ -368,37 +376,107 @@ class Node:
         else:
             raise UnsupportedNodeAPI()
 
-    async def get_endpoint(self, *, websocket: bool = False, plugins: bool = False, info: bool = False) -> str:
-        if self._api_version is None:
-            await self.fetch_api_version()
-        if websocket:
-            return self.get_websocket()
-        if info:
-            return self.get_info_endpoint()
-        if plugins:
-            return self.get_plugins_endpoint()
+    async def get_guild_player(self, guild_id: int) -> RestGetPlayerResponseT:
+        async with self._session.get(
+            self.get_endpoint_session_player_by_guild_id(guild_id=guild_id), headers={"Authorization": self.password}
+        ) as res:
+            if res.status == 200:
+                data = await res.json(loads=ujson.loads)
+                return data
+            if res.status in [401, 403]:
+                raise Unauthorized
+        raise ValueError(f"Server returned an unexpected return code: {res.status}")
 
-    def get_websocket(self) -> str:
+    def get_endpoint_websocket(self) -> str:
         match self.api_version:
             case 3:
                 return f"{self.socket_protocol}://{self.host}:{self.port}/v3/websocket"
             case 4:
                 return f"{self.socket_protocol}://{self.host}:{self.port}/v4/websocket"
-            case None:
-                return f"{self.socket_protocol}://{self.host}:{self.port}/websocket"
         raise UnsupportedNodeAPI()
 
-    def get_info_endpoint(self) -> str:
+    def get_endpoint_info(self) -> str:
         match self.api_version:
             case 3:
                 return f"{self.connection_protocol}://{self.host}:{self.port}/v3/info"
             case 4:
                 return f"{self.connection_protocol}://{self.host}:{self.port}/v4/info"
-            case None:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/plugins"
         raise UnsupportedNodeAPI()
 
-    get_plugins_endpoint = get_info_endpoint
+    def get_endpoint_session_players(self) -> str:
+        match self.api_version:
+            case 3:
+                return f"{self.connection_protocol}://{self.host}:{self.port}/v3/sessions/{self.websocket.session_id}/players"
+            case 4:
+                return f"{self.connection_protocol}://{self.host}:{self.port}/v4/sessions/{self.websocket.session_id}/players"
+        raise UnsupportedNodeAPI()
+
+    def get_endpoint_session_player_by_guild_id(self, guild_id: int) -> str:
+        match self.api_version:
+            case 3:
+                return f"{self.connection_protocol}://{self.host}:{self.port}/v3/sessions/{self.websocket.session_id}/players/{guild_id}"
+            case 4:
+                return f"{self.connection_protocol}://{self.host}:{self.port}/v4/sessions/{self.websocket.session_id}/players/{guild_id}"
+        raise UnsupportedNodeAPI()
+
+    def get_endpoint_loadtracks(self) -> str:
+        match self.api_version:
+            case 3:
+                return f"{self.connection_protocol}://{self.host}:{self.port}/v3/loadtracks"
+            case 4:
+                return f"{self.connection_protocol}://{self.host}:{self.port}/v4/loadtracks"
+        raise UnsupportedNodeAPI()
+
+    def get_endpoint_decodetrack(self) -> str:
+        match self.api_version:
+            case 3:
+                return f"{self.connection_protocol}://{self.host}:{self.port}/v3/decodetrack"
+            case 4:
+                return f"{self.connection_protocol}://{self.host}:{self.port}/v4/decodetrack"
+        raise UnsupportedNodeAPI()
+
+    def get_endpoint_decodetracks(self) -> str:
+        match self.api_version:
+            case 3:
+                return f"{self.connection_protocol}://{self.host}:{self.port}/v3/decodetracks"
+            case 4:
+                return f"{self.connection_protocol}://{self.host}:{self.port}/v4/decodetracks"
+        raise UnsupportedNodeAPI()
+
+    def get_endpoint_stats(self) -> str:
+        match self.api_version:
+            case 3:
+                return f"{self.connection_protocol}://{self.host}:{self.port}/v3/stats"
+            case 4:
+                return f"{self.connection_protocol}://{self.host}:{self.port}/v4/stats"
+        raise UnsupportedNodeAPI()
+
+    def get_endpoint_version(self) -> str:
+        return f"{self.connection_protocol}://{self.host}:{self.port}/version"
+
+    def get_endpoint_routeplanner_status(self) -> str:
+        match self.api_version:
+            case 3:
+                return f"{self.connection_protocol}://{self.host}:{self.port}/v3/routeplanner/status"
+            case 4:
+                return f"{self.connection_protocol}://{self.host}:{self.port}/v4/routeplanner/status"
+        raise UnsupportedNodeAPI()
+
+    def get_endpoint_routeplanner_free_address(self) -> str:
+        match self.api_version:
+            case 3:
+                return f"{self.connection_protocol}://{self.host}:{self.port}/v3/routeplanner/free/address"
+            case 4:
+                return f"{self.connection_protocol}://{self.host}:{self.port}/v4/routeplanner/free/address"
+        raise UnsupportedNodeAPI()
+
+    def get_endpoint_routeplanner_free_all(self) -> str:
+        match self.api_version:
+            case 3:
+                return f"{self.connection_protocol}://{self.host}:{self.port}/v3/routeplanner/free/all"
+            case 4:
+                return f"{self.connection_protocol}://{self.host}:{self.port}/v4/routeplanner/free/all"
+        raise UnsupportedNodeAPI()
 
     async def _unhealthy(self):
         del self.down_votes
@@ -695,7 +773,35 @@ class Node:
     def __hash__(self) -> int:
         return hash((self.host, self.port))
 
-    async def get_query_youtube_music(self, query: str, bypass_cache: bool = False) -> LavalinkResponseT:
+    def parse_loadtrack_response(
+        self, data: LoadTracksResponseT
+    ) -> TrackLoadedObject | PlaylistLoadedObject | NoMatchesObject | LoadFailedObject | SearchResultObject:
+        """Parses the loadtrack response.
+         Parameters
+         ----------
+         data: LoadTracksResponseT
+             The data to parse.
+        Returns
+         -------
+         TrackLoadedObject | PlaylistLoadedObject | NoMatchesObject | LoadFailedObject | SearchResultObject
+             Lavalink LoadTrack Response Object
+        """
+
+        match data["loadType"]:
+            case "LOAD_FAILED":
+                raise from_dict(data_class=LoadFailedObject, data=data)
+            case "NO_MATCHES":
+                raise from_dict(data_class=NoMatchesObject, data=data)
+            case "PLAYLIST_LOADED":
+                return from_dict(data_class=PlaylistLoadedObject, data=data)
+            case "TRACK_LOADED":
+                return from_dict(data_class=TrackLoadedObject, data=data)
+            case "SEARCH_RESULT":
+                return from_dict(data_class=SearchResultObject, data=data)
+
+    async def get_query_youtube_music(
+        self, query: str, bypass_cache: bool = False
+    ) -> TrackLoadedObject | PlaylistLoadedObject | NoMatchesObject | LoadFailedObject | SearchResultObject:
         """|coro|
         Gets the query from YouTube music.
         Parameters
@@ -706,19 +812,23 @@ class Node:
             Whether to bypass the cache.
         Returns
         -------
-        list[dict]
-            The list of results.
+        TrackLoadedObject | PlaylistLoadedObject | NoMatchesObject | LoadFailedObject | SearchResultObject
+            Lavalink LoadTrack Response Object
         """
         if not self.available:
-            return {
-                "loadType": "LOAD_FAILED",
-                "playlistInfo": {"name": "", "selectedTrack": -1},
-                "tracks": [],
+            data = {
+                "loadType": "NO_MATCHES",
             }
-        query = f"ytmsearch:{query}"
-        return await self.get_tracks(await self._query_cls.from_string(query), bypass_cache=bypass_cache)
+        else:
+            data = await self.get_tracks(
+                await self._query_cls.from_string(f"ytmsearch:{query}"), bypass_cache=bypass_cache
+            )
 
-    async def get_query_youtube(self, query: str, bypass_cache: bool = False) -> LavalinkResponseT:
+        return self.parse_loadtrack_response(data)
+
+    async def get_query_youtube(
+        self, query: str, bypass_cache: bool = False
+    ) -> TrackLoadedObject | PlaylistLoadedObject | NoMatchesObject | LoadFailedObject | SearchResultObject:
         """|coro|
         Gets the query from YouTube music.
         Parameters
@@ -729,19 +839,23 @@ class Node:
             Whether to bypass the cache.
         Returns
         -------
-        list[dict]
-            The list of results.
+        TrackLoadedObject | PlaylistLoadedObject | NoMatchesObject | LoadFailedObject | SearchResultObject
+            Lavalink LoadTrack Response Object
         """
         if not self.available:
-            return {
-                "loadType": "LOAD_FAILED",
-                "playlistInfo": {"name": "", "selectedTrack": -1},
-                "tracks": [],
+            data = {
+                "loadType": "NO_MATCHES",
             }
-        query = f"ytsearch:{query}"
-        return await self.get_tracks(await self._query_cls.from_string(query), bypass_cache=bypass_cache)
+        else:
+            data = await self.get_tracks(
+                await self._query_cls.from_string(f"ytsearch:{query}"), bypass_cache=bypass_cache
+            )
 
-    async def get_query_soundcloud(self, query: str, bypass_cache: bool = False) -> LavalinkResponseT:
+        return self.parse_loadtrack_response(data)
+
+    async def get_query_soundcloud(
+        self, query: str, bypass_cache: bool = False
+    ) -> TrackLoadedObject | PlaylistLoadedObject | NoMatchesObject | LoadFailedObject | SearchResultObject:
         """|coro|
         Gets the query from Soundcloud.
         Parameters
@@ -752,19 +866,23 @@ class Node:
             Whether to bypass the cache.
         Returns
         -------
-        list[dict]
-            The list of results.
+        TrackLoadedObject | PlaylistLoadedObject | NoMatchesObject | LoadFailedObject | SearchResultObject
+            Lavalink LoadTrack Response Object
         """
         if not self.available:
-            return {
-                "loadType": "LOAD_FAILED",
-                "playlistInfo": {"name": "", "selectedTrack": -1},
-                "tracks": [],
+            data = {
+                "loadType": "NO_MATCHES",
             }
-        query = f"scsearch:{query}"
-        return await self.get_tracks(await self._query_cls.from_string(query), bypass_cache=bypass_cache)
+        else:
+            data = await self.get_tracks(
+                await self._query_cls.from_string(f"scsearch:{query}"), bypass_cache=bypass_cache
+            )
 
-    async def get_query_speak(self, query: str, bypass_cache: bool = False) -> list | None:
+        return self.parse_loadtrack_response(data)
+
+    async def get_query_speak(
+        self, query: str, bypass_cache: bool = False
+    ) -> TrackLoadedObject | PlaylistLoadedObject | NoMatchesObject | LoadFailedObject | SearchResultObject:
         """|coro|
         Gets the query for speak.
         Parameters
@@ -775,20 +893,22 @@ class Node:
             Whether to bypass the cache.
         Returns
         -------
-        list[dict]
-            The list of results.
+        TrackLoadedObject | PlaylistLoadedObject | NoMatchesObject | LoadFailedObject | SearchResultObject
+            Lavalink LoadTrack Response Object
         """
         if not self.available:
-            return []
-        if len(query) > 200:
-            query = query[:200]
-        query = f"speak:{query}"
-        response = await self.get_tracks(
-            await self._query_cls.from_string(query), bypass_cache=bypass_cache, first=True
-        )
-        return response.get("tracks")
+            data = {
+                "loadType": "LOAD_FAILED",
+            }
+        else:
+            if len(query) > 200:
+                query = query[:200]
+            data = await self.get_tracks(await self._query_cls.from_string(f"speak:{query}"), bypass_cache=bypass_cache)
+        return self.parse_loadtrack_response(data)
 
-    async def get_query_spotify(self, query: str, bypass_cache: bool = False) -> LavalinkResponseT:
+    async def get_query_spotify(
+        self, query: str, bypass_cache: bool = False
+    ) -> TrackLoadedObject | PlaylistLoadedObject | NoMatchesObject | LoadFailedObject | SearchResultObject:
         """|coro|
         Gets the query from Spotify.
         Parameters
@@ -797,22 +917,25 @@ class Node:
             The query to search for.
         bypass_cache: :class:`bool`
             Whether to bypass the cache.
-
         Returns
         -------
-        list[dict]
-            The list of results.
+        TrackLoadedObject | PlaylistLoadedObject | NoMatchesObject | LoadFailedObject | SearchResultObject
+            Lavalink LoadTrack Response Object
         """
         if not self.available:
-            return {
-                "loadType": "LOAD_FAILED",
-                "playlistInfo": {"name": "", "selectedTrack": -1},
-                "tracks": [],
+            data = {
+                "loadType": "NO_MATCHES",
             }
-        query = f"spsearch:{query}"
-        return await self.get_tracks(await self._query_cls.from_string(query), bypass_cache=bypass_cache)
+        else:
+            data = await self.get_tracks(
+                await self._query_cls.from_string(f"spsearch:{query}"), bypass_cache=bypass_cache
+            )
 
-    async def get_query_apple_music(self, query: str, bypass_cache: bool = False) -> LavalinkResponseT:
+        return self.parse_loadtrack_response(data)
+
+    async def get_query_apple_music(
+        self, query: str, bypass_cache: bool = False
+    ) -> TrackLoadedObject | PlaylistLoadedObject | NoMatchesObject | LoadFailedObject | SearchResultObject:
         """|coro|
         Gets the query from Apple Music.
         Parameters
@@ -821,23 +944,54 @@ class Node:
             The query to search for.
         bypass_cache: :class:`bool`
             Whether to bypass the cache.
+
         Returns
         -------
-        list[dict]
-            The list of results.
+        TrackLoadedObject | PlaylistLoadedObject | NoMatchesObject | LoadFailedObject | SearchResultObject
+            Lavalink LoadTrack Response Object
         """
         if not self.available:
-            return {
-                "loadType": "LOAD_FAILED",
-                "playlistInfo": {"name": "", "selectedTrack": -1},
-                "tracks": [],
+            data = {
+                "loadType": "NO_MATCHES",
             }
-        query = f"amsearch:{query}"
-        return await self.get_tracks(await self._query_cls.from_string(query), bypass_cache=bypass_cache)
+        else:
+            data = await self.get_tracks(
+                await self._query_cls.from_string(f"amsearch:{query}"), bypass_cache=bypass_cache
+            )
+
+        return self.parse_loadtrack_response(data)
+
+    async def get_query_deezer(
+        self, query: str, bypass_cache: bool = False
+    ) -> TrackLoadedObject | PlaylistLoadedObject | NoMatchesObject | LoadFailedObject | SearchResultObject:
+        """|coro|
+        Gets the query from Deezer.
+        Parameters
+        ----------
+        query: :class:`str`
+            The query to search for.
+        bypass_cache: :class:`bool`
+            Whether to bypass the cache.
+
+        Returns
+        -------
+        TrackLoadedObject | PlaylistLoadedObject | NoMatchesObject | LoadFailedObject | SearchResultObject
+            Lavalink LoadTrack Response Object
+        """
+        if not self.available:
+            data = {
+                "loadType": "NO_MATCHES",
+            }
+        else:
+            data = await self.get_tracks(
+                await self._query_cls.from_string(f"dzsearch:{query}"), bypass_cache=bypass_cache
+            )
+
+        return self.parse_loadtrack_response(data)
 
     async def get_query_localfiles(
         self, query: str, bypass_cache: bool = True, first: bool = True
-    ) -> LavalinkResponseT | TrackT:
+    ) -> TrackLoadedObject | PlaylistLoadedObject | NoMatchesObject | LoadFailedObject | SearchResultObject:
         """|coro|
         Gets the query from Localfiles.
         Parameters
@@ -851,26 +1005,38 @@ class Node:
 
         Returns
         -------
-        list[dict]
-            The list of results.
+        TrackLoadedObject | PlaylistLoadedObject | NoMatchesObject | LoadFailedObject | SearchResultObject
+            Lavalink LoadTrack Response Object
         """
-        return (
-            await self.get_tracks(
-                await self._query_cls.from_string(query),
-                bypass_cache=bypass_cache,
-                first=first,
-            )
-            if self.available
-            else {
-                "loadType": "LOAD_FAILED",
-                "playlistInfo": {"name": "", "selectedTrack": -1},
-                "tracks": [],
+        if not self.available:
+            data = {
+                "loadType": "NO_MATCHES",
             }
-        )
+        else:
+            data = await self.get_tracks(await self._query_cls.from_string(query), bypass_cache=bypass_cache)
+        response = self.parse_loadtrack_response(data)
+        return response if not first else response.tracks[0] if response.tracks else None
 
-    async def get_tracks(
-        self, query: Query, first: bool = False, bypass_cache: bool = False
-    ) -> LavalinkResponseT | TrackT:
+    async def get_track_from_cache(self, query: Query, first: bool = False) -> LavalinkResponseT:
+        if response := await self.node_manager.client.query_cache_manager.fetch_query(query):
+            load_type = (
+                "PLAYLIST_LOADED"
+                if query.is_playlist or query.is_album
+                else "SEARCH_RESULT"
+                if query.is_search
+                else "TRACK_LOADED"
+            )
+            tracks = await response.fetch_tracks()
+            tracks = [{"track": track} async for track in AsyncIter([tracks[0]] if first else tracks)] if tracks else []
+            data = {
+                "loadType": load_type,
+                "tracks": tracks,
+            }
+            if load_type == "PLAYLIST_LOADED":
+                data["playlistInfo"] = {"name": await response.fetch_name(), "selectedTrack": -1}
+            return typing.cast(data, LavalinkResponseT)
+
+    async def get_tracks(self, query: Query, first: bool = False, bypass_cache: bool = False) -> LavalinkResponseT:
         """|coro|
         Gets all tracks associated with the given query.
 
@@ -884,83 +1050,70 @@ class Node:
             Whether to bypass the cache.
         Returns
         -------
-        :class:`dict`
-            A dict representing tracks.
+        LavalinkResponseT
+            Lavalink LoadTrack Response dict
         """
-        if not bypass_cache and (response := await self.node_manager.client.query_cache_manager.fetch_query(query)):
-            return typing.cast(
-                LavalinkResponseT,
-                {"track": await response.fetch_first()}
-                if first
-                else {
-                    "playlistInfo": {
-                        "name": await response.fetch_name(),
-                    },
-                    "loadType": "PLAYLIST_LOADED"
-                    if query.is_playlist or query.is_album
-                    else "SEARCH_RESULT"
-                    if query.is_search
-                    else "TRACK_LOADED",
-                    "tracks": [{"track": track} async for track in AsyncIter(await response.fetch_tracks())],
-                },
-            )
+        if not bypass_cache:
+            if cached_entry := await self.get_track_from_cache(query=query, first=first):
+                return cached_entry
+        if not self.available:
+            data = {
+                "loadType": "NO_MATCHES",
+            }
+        else:
+            async with self._session.get(
+                self.get_endpoint_loadtracks(),
+                headers={"Authorization": self.password},
+                params={"identifier": query.query_identifier},
+            ) as res:
+                if res.status == 200:
+                    result = await res.json(loads=ujson.loads)
+                    asyncio.create_task(self.node_manager.client.query_cache_manager.add_query(query, result))
+                    return result
+                elif res.status in [401, 403]:
+                    raise Unauthorized
+                else:
+                    data = {
+                        "loadType": "NO_MATCHES",
+                    }
+        return data
 
-        destination = f"{self.connection_protocol}://{self.host}:{self.port}/loadtracks"
-        async with self._session.get(
-            destination, headers={"Authorization": self.password}, params={"identifier": query.query_identifier}
-        ) as res:
-            if res.status == 200:
-                result = await res.json(loads=ujson.loads)
-                asyncio.create_task(self.node_manager.client.query_cache_manager.add_query(query, result))
-                if first:
-                    return await asyncstdlib.anext(  # type:ignore
-                        asyncstdlib.iter(result.get("tracks", [])), default={}
-                    )
-                return result
-            if res.status in [401, 403]:
-                raise Unauthorized
-            return {}
-
-    async def decode_track(self, track: str) -> TrackT | None:
-        destination = f"{self.connection_protocol}://{self.host}:{self.port}/decodetrack"
+    async def decode_track(self, track: str) -> TrackObject:
         async with self.session.get(
-            destination, headers={"Authorization": self.password}, params={"track": track}
+            self.get_endpoint_decodetrack(), headers={"Authorization": self.password}, params={"track": track}
         ) as res:
             if res.status == 200:
-                return await res.json(loads=ujson.loads)
+                return from_dict(data_class=TrackObject, data=await res.json(loads=ujson.loads))
 
             if res.status in [401, 403]:
                 raise Unauthorized
 
-            return None
-
-    async def decode_tracks(self, tracks: list[str]) -> list[TrackT]:
-        destination = f"{self.connection_protocol}://{self.host}:{self.port}/decodetracks"
-        async with self.session.get(destination, headers={"Authorization": self.password}, json=tracks) as res:
+    async def decode_tracks(self, tracks: list[str]) -> list[TrackObject]:
+        async with self.session.get(
+            self.get_endpoint_decodetracks(), headers={"Authorization": self.password}, json=tracks
+        ) as res:
             if res.status == 200:
-                return await res.json(loads=ujson.loads)
-
+                return [from_dict(data_class=TrackObject, data=t) for t in await res.json(loads=ujson.loads)]
             if res.status in [401, 403]:
                 raise Unauthorized
-            return []
 
-    async def routeplanner_status(self) -> dict | None:
+    async def routeplanner_status(self) -> RoutePlannerStatusResponseObject:
         """|coro|
         Gets the route-planner status of the target node.
 
         Returns
         -------
-        :class:`dict`
-            A dict representing the route-planner information.
+        RoutePlannerStatusResponseObject
+            An object representing the route-planner information.
         """
-        destination = f"{self.connection_protocol}://{self.host}:{self.port}/routeplanner/status"
-        async with self._session.get(destination, headers={"Authorization": self.password}) as res:
+        async with self._session.get(
+            self.get_endpoint_routeplanner_status(), headers={"Authorization": self.password}
+        ) as res:
             if res.status == 200:
-                return await res.json(loads=ujson.loads)
+                return from_dict(data_class=RoutePlannerStatusResponseObject, data=await res.json(loads=ujson.loads))
 
             if res.status in [401, 403]:
                 raise Unauthorized
-            return None
 
     async def routeplanner_free_address(self, address: str) -> bool:
         """|coro|
@@ -976,10 +1129,10 @@ class Node:
         :class:`bool`
             True if the address was freed, False otherwise.
         """
-        destination = f"{self.connection_protocol}://{self.host}:{self.port}/routeplanner/free/address"
-
         async with self._session.post(
-            destination, headers={"Authorization": self.password}, json={"address": address}
+            self.get_endpoint_routeplanner_free_address(),
+            headers={"Authorization": self.password},
+            json={"address": address},
         ) as res:
             if res.status in [401, 403]:
                 raise Unauthorized
@@ -994,58 +1147,27 @@ class Node:
         :class:`bool`
             True if all failing addresses were freed, False otherwise.
         """
-        destination = f"{self.connection_protocol}://{self.host}:{self.port}/routeplanner/free/all"
-
-        async with self._session.post(destination, headers={"Authorization": self.password}) as res:
+        async with self._session.post(
+            self.get_endpoint_routeplanner_free_all(), headers={"Authorization": self.password}
+        ) as res:
             if res.status in [401, 403]:
                 raise Unauthorized
             return res.status == 204
 
-    async def get_plugins(self) -> list[dict]:
+    async def get_info(self) -> RestGetInfoResponse:
         """|coro|
         Gets the plugins of the target node.
 
         Returns
         -------
-        :class:`list` of :class:`dict`
-            A dict representing the plugins.
+        RestGetInfoResponse
+            A object representing Lavalink information
         """
-        destination = f"{self.connection_protocol}://{self.host}:{self.port}/plugins"
-        async with self._session.get(destination, headers={"Authorization": self.password}) as res:
+        async with self._session.get(self.get_endpoint_info(), headers={"Authorization": self.password}) as res:
             if res.status == 200:
-                return await res.json(loads=ujson.loads)
-
+                return from_dict(data_class=RestGetInfoResponse, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
                 raise Unauthorized
-        return []
-
-    async def get_sources(self) -> dict:
-        """|coro|
-        Gets the sources of the target node.
-
-        Returns
-        -------
-        :class:`dict`
-            A dict representing the sources.
-        """
-        # TODO:
-        #  https://github.com/freyacodes/Lavalink/blob/new-api-draft/IMPLEMENTATION.md#get-lavalink-info
-        #  f"{self.connection_protocol}://{self.host}:{self.port}/v3/info"
-        # sourceManagers
-
-        # TODO:
-        #  merge this with get_plugins
-
-        # TODO:
-        #  Expose version, buildTime, git, jvm, lavaplayer
-        destination = f"{self.connection_protocol}://{self.host}:{self.port}/sources"
-        async with self._session.get(destination, headers={"Authorization": self.password}) as res:
-            if res.status == 200:
-                return await res.json(loads=ujson.loads)
-
-            if res.status in [401, 403]:
-                raise Unauthorized
-        return {}
 
     async def filters(
         self,
@@ -1100,68 +1222,20 @@ class Node:
         """|coro|
         Updates the features of the target node.
         """
-        # This is pending a pr being merged until it is it will not provide any useful info
-        #    However once it is merged this should be the only method to get capabilities
-        #    from the node.
-        for source_origin, source_data in (await self.get_sources()).items():
-            if source_origin == "defaults":
-                for source_name, source_state in source_data.items():
-                    if source_state:
-                        self._sources.add(source_name)
-            elif source_origin == "plugins":
-                for _, plugin_data in source_data.items():
-                    for source_name, source_state in plugin_data.items():
-                        if source_state:
-                            self._sources.add(source_name)
-        if not self._sources:
+        info = await self.get_info()
+        for source in info.sourceManagers:
+            self._capabilities.add(source)
+        if not self._capabilities:
             if self.managed:
                 self._capabilities.add("local")
-            # FIXME: Remove me when the PR upstream is merged (3.7)
-            # This only exists as the above does not provide any useful info currently.
-            #    However once it is merged this should be removed as it is not a good way to assess capabilities.
-            #    As even though a plugin may be enable the source it adds may be disabled.
-
-            #   Since this assumes everything is enable is bound to cause track exceptions to be thrown when
-            #   a source required but assumed enabled is in actuality disabled.
-            for feature in await self.get_plugins():
-                if feature["name"] == "Topis-Source-Managers-Plugin":
-                    self._capabilities.update(["spotify", "applemusic"])
-                elif feature["name"] == "lavasrc":
-                    self._capabilities.update(["spotify", "applemusic", "deezer"])
-                elif feature["name"] == "DuncteBot-plugin":
-                    self._capabilities.update(
-                        [
-                            "getyarn",
-                            "clypit",
-                            "speak",
-                            "pornhub",
-                            "reddit",
-                            "ocremix",
-                            "tiktok",
-                            "mixcloud",
-                            "soundgasm",
-                        ]
-                    )
-                elif feature["name"] == "Google Cloud TTS":
-                    self._capabilities.update(
-                        "gcloud-tts",
-                    )
-                elif feature["name"] == "sponsorblock":
-                    self._capabilities.add(
-                        "sponsorblock",
-                    )
-            self._capabilities.update(["youtube", "soundcloud", "twitch", "bandcamp", "vimeo", "http"])
-        # Give that remove files will not play nice with local files lets disable it for all but the managed node
-        #    While this locks out some remove nodes with the correct setup it ensures that we are consistently
-        #    using the correct node which will support local files instead of trying and failing most of the time.
         if not self.managed:
             self._capabilities.discard("local")
         if self.identifier in PYLAV_NODES:
             self._capabilities.discard("http")
             self._capabilities.discard("local")
         # If not setup says these should be disabled remove them to trick the node to think they are disabled
-        if self._sources:
-            self._sources.difference_update(self._disabled_sources)
+        if self._capabilities:
+            self._capabilities.difference_update(self._disabled_sources)
 
     def has_source(self, source: str) -> bool:
         """
@@ -1231,7 +1305,7 @@ class Node:
         :class:`set`
             The sources of the target node.
         """
-        return self._sources.copy()
+        return self._capabilities.copy()
 
     @property
     def supports_spotify(self) -> bool:
