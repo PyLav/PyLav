@@ -861,24 +861,25 @@ class Query:
         source = source.lower()
         if source not in (allowed := {"ytm", "yt", "sp", "sc", "am", "local", "speak", "tts://", "dz"}):
             raise ValueError(f"Invalid source: {source} - Allowed: {allowed}")
-        if source == "ytm":
-            source = "YouTube Music"
-        if source == "yt":
-            source = "YouTube"
-        elif source == "sp":
-            source = "Spotify"
-        elif source == "sc":
-            source = "SoundCloud"
-        elif source == "am":
-            source = "Apple Music"
-        elif source == "local":
-            source = "Local Files"
-        elif source == "speak":
-            source = "speak"
-        elif source == "tts://":
-            source = "Google TTS"
-        elif source == "dz":
-            source = "Deezer"
+        match source:
+            case "ytm":
+                source = "YouTube Music"
+            case "yt":
+                source = "YouTube"
+            case "sp":
+                source = "Spotify"
+            case "sc":
+                source = "SoundCloud"
+            case "am":
+                source = "Apple Music"
+            case "local":
+                source = "Local Files"
+            case "speak":
+                source = "speak"
+            case "tts://":
+                source = "Google TTS"
+            case "dz":
+                source = "Deezer"
         self._source = source
 
     def with_index(self, index: int) -> Query:
@@ -902,50 +903,51 @@ class Query:
 
     @classmethod
     def __get_source_from_str(cls, source: str) -> str:
-        if source == "spotify":
-            return "Spotify"
-        elif source == "youtube":
-            return "YouTube Music"
-        elif source == "soundcloud":
-            return "SoundCloud"
-        elif source == "applemusic":
-            return "Apple Music"
-        elif source == "local":
-            return "Local Files"
-        elif source == "speak":
-            return "speak"
-        elif source == "gcloud-tts":
-            return "Google TTS"
-        elif source == "http":
-            return "HTTP"
-        elif source == "twitch":
-            return "Twitch"
-        elif source == "vimeo":
-            return "Vimeo"
-        elif source == "bandcamp":
-            return "Bandcamp"
-        elif source == "mixcloud":
-            return "Mixcloud"
-        elif source == "getyarn":
-            return "GetYarn"
-        elif source == "ocremix":
-            return "OverClocked ReMix"
-        elif source == "reddit":
-            return "Reddit"
-        elif source == "clypit":
-            return "Clyp.it"
-        elif source == "pornhub":
-            return "PornHub"
-        elif source == "soundgasm":
-            return "SoundGasm"
-        elif source == "tiktok":
-            return "TikTok"
-        elif source == "niconico":
-            return "Niconico"
-        elif source == "deezer":
-            return "Deezer"
-        else:
-            return "YouTube"
+        match source:
+            case "spotify":
+                return "Spotify"
+            case "youtube":
+                return "YouTube Music"
+            case "soundcloud":
+                return "SoundCloud"
+            case "deezer":
+                return "Deezer"
+            case "applemusic":
+                return "Apple Music"
+            case "local":
+                return "Local Files"
+            case "speak":
+                return "speak"
+            case "gcloud-tts":
+                return "Google TTS"
+            case "http":
+                return "HTTP"
+            case "twitch":
+                return "Twitch"
+            case "vimeo":
+                return "Vimeo"
+            case "bandcamp":
+                return "Bandcamp"
+            case "mixcloud":
+                return "Mixcloud"
+            case "getyarn":
+                return "GetYarn"
+            case "ocremix":
+                return "OverClocked ReMix"
+            case "reddit":
+                return "Reddit"
+            case "clypit":
+                return "Clyp.it"
+            case "pornhub":
+                return "PornHub"
+            case "soundgasm":
+                return "SoundGasm"
+            case "tiktok":
+                return "TikTok"
+            case "niconico":
+                return "Niconico"
+            case __:
+                return "YouTube"
 
     @property
     def requires_capability(self) -> str:
