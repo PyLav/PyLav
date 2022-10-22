@@ -3,14 +3,17 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import datetime
+import typing
 from typing import TYPE_CHECKING, Any
 
 import aiohttp
 import ujson
+from dacite import from_dict
 from discord.utils import utcnow
 
 from pylav._logging import getLogger
 from pylav.constants import PYLAV_NODES
+from pylav.endpoints.response_objects import LavalinkEventOpObjects, TrackStartEventOpObject
 from pylav.events import (
     SegmentSkippedEvent,
     SegmentsLoadedEvent,
@@ -45,7 +48,19 @@ from pylav.events import (
 from pylav.exceptions import WebsocketNotConnectedError
 from pylav.location import get_closest_discord_region
 from pylav.node import Stats
-from pylav.types import LavalinkEventT, LavalinkPlayerUpdateT, LavalinkReadyT, LavalinkStatsT
+from pylav.types import (
+    LavalinkEventT,
+    LavalinkPlayerUpdateT,
+    LavalinkReadyT,
+    LavalinkStatsT,
+    SegmentSkippedT,
+    SegmentsLoadedEventT,
+    TrackEndEventT,
+    TrackExceptionEventT,
+    TrackStartEventT,
+    TrackStuckEventT,
+    WebSocketClosedEventT,
+)
 from pylav.utils import AsyncIter, ExponentialBackoffWithReset
 
 if TYPE_CHECKING:
@@ -221,7 +236,7 @@ class WebSocket:
                     attempt,
                     max_attempts_str,
                 )
-                ws_uri = await self.node.get_endpoint(websocket=True)
+                ws_uri = self.node.get_endpoint_websocket()
                 try:
                     self._ws = await self._session.ws_connect(url=ws_uri, headers=headers, heartbeat=60, timeout=600)
                     await self._node.update_features()
@@ -447,55 +462,58 @@ class WebSocket:
                 data["guildId"],
             )
             return
+        event_object = from_dict(data_class=LavalinkEventOpObjects, data=data)
+        match data["type"]:
+            case "TrackEndEvent":
+                data = typing.cast(TrackEndEventT, data)
+                from pylav.query import Query
+                from pylav.tracks import Track
 
-        event_type = data["type"]
-        if event_type == "TrackEndEvent":
-            from pylav.query import Query
-            from pylav.tracks import Track
+                requester = None
+                track = None
+                if player.current and player.current.track == data["track"]:
+                    player.current.timestamp = 0
+                    requester = player.current.requester
+                    track = player.current
 
-            requester = None
-            track = None
-            if player.current and player.current.track == data["track"]:
-                player.current.timestamp = 0
-                requester = player.current.requester
-                track = player.current
-
-            event = TrackEndEvent(
-                player,
-                track
-                or Track(
-                    data=data["track"],
-                    requester=requester.id if requester else self._client.bot.user.id,
-                    query=await Query.from_base64(data["track"]),
-                    node=self.node,
-                ),
-                data["reason"],
-                self.node,
-            )
-
-            await player._handle_event(event)
-        elif event_type == "TrackExceptionEvent":
-            event = TrackExceptionEvent(player, player.current, data["error"], node=self.node)
-            if self.node.identifier == player.node.identifier:
+                event = TrackEndEvent(
+                    player,
+                    track
+                    or Track(
+                        data=data["track"],
+                        requester=requester.id if requester else self._client.bot.user.id,
+                        query=await Query.from_base64(data["track"]),
+                        node=self.node,
+                    ),
+                    self.node,
+                    event_object=event_object,
+                )
                 await player._handle_event(event)
-        elif event_type == "TrackStartEvent":
-            track = player.current
-            event = TrackStartEvent(player, track, self.node)
-            await self._process_track_event(player, track, self.node)
-        elif event_type == "TrackStuckEvent":
-            event = TrackStuckEvent(player, player.current, data["thresholdMs"], self.node)
-            await player._handle_event(event)
-        elif event_type == "WebSocketClosedEvent":
-            event = WebSocketClosedEvent(
-                player, data["code"], data["reason"], data["byRemote"], self.node, player.channel
-            )
-        elif event_type == "SegmentsLoaded":
-            event = SegmentsLoadedEvent(player, data["segments"], self.node)
-        elif event_type == "SegmentSkipped":
-            event = SegmentSkippedEvent(player, node=self.node, **data["segment"])
-        else:
-            LOGGER.warning("[NODE-%s] Unknown event received: %s", self.node.name, event_type)
-            return
+            case "TrackExceptionEvent":
+                if self.node.identifier == player.node.identifier:
+                    data = typing.cast(TrackExceptionEventT, data)
+                    event = TrackExceptionEvent(player, player.current, node=self.node, event_object=event_object)
+                    await player._handle_event(event)
+            case "TrackStartEvent":
+                data = typing.cast(TrackStartEventT, data)
+                track = player.current
+                event = TrackStartEvent(player, track, self.node, event_object=event_object)
+                await self._process_track_event(player, track, self.node, event_object)
+            case "TrackStuckEvent":
+                data = typing.cast(TrackStuckEventT, data)
+                event = TrackStuckEvent(player, player.current, self.node, event_object=event_object)
+                await player._handle_event(event)
+            case "WebSocketClosedEvent":
+                data = typing.cast(WebSocketClosedEventT, data)
+                event = WebSocketClosedEvent(player, self.node, player.channel, event_object=event_object)
+            case "SegmentsLoaded":
+                data = typing.cast(SegmentsLoadedEventT, data)
+                event = SegmentsLoadedEvent(player, data["segments"], self.node, event_object=event_object)
+            case "SegmentSkipped":
+                data = typing.cast(SegmentSkippedT, data)
+                event = SegmentSkippedEvent(player, node=self.node, event_object=event_object)
+            case _:
+                LOGGER.warning("[NODE-%s] Received unknown event: %s", self.node.name, data["type"])
 
         self.client.dispatch_event(event)
 
@@ -521,60 +539,62 @@ class WebSocket:
             LOGGER.debug("[NODE-%s] Send called before WebSocket ready!", self.node.name)
             self._message_queue.append(data)
 
-    async def _process_track_event(self, player: Player, track: Track, node: Node) -> None:
+    async def _process_track_event(
+        self, player: Player, track: Track, node: Node, event_object: TrackStartEventOpObject
+    ) -> None:
         # sourcery no-metrics
         query = await track.query()
 
         match query.source:
             case "YouTube Music":
-                event = TrackStartYouTubeMusicEvent(player, track, node)
+                event = TrackStartYouTubeMusicEvent(player, track, node, event_object)
             case "YouTube":
-                event = TrackStartYouTubeEvent(player, track, node)
+                event = TrackStartYouTubeEvent(player, track, node, event_object)
             case "Spotify":
-                event = TrackStartSpotifyEvent(player, track, node)
+                event = TrackStartSpotifyEvent(player, track, node, event_object)
             case "Deezer":
-                event = TrackStartDeezerEvent(player, track, node)
+                event = TrackStartDeezerEvent(player, track, node, event_object)
             case "Apple Music":
-                event = TrackStartAppleMusicEvent(player, track, node)
+                event = TrackStartAppleMusicEvent(player, track, node, event_object)
             case "HTTP":
-                event = TrackStartHTTPEvent(player, track, node)
+                event = TrackStartHTTPEvent(player, track, node, event_object)
             case "SoundCloud":
-                event = TrackStartSoundCloudEvent(player, track, node)
+                event = TrackStartSoundCloudEvent(player, track, node, event_object)
             case "Clyp.it":
-                event = TrackStartClypitEvent(player, track, node)
+                event = TrackStartClypitEvent(player, track, node, event_object)
             case "Twitch":
-                event = TrackStartTwitchEvent(player, track, node)
+                event = TrackStartTwitchEvent(player, track, node, event_object)
             case "Bandcamp":
-                event = TrackStartBandcampEvent(player, track, node)
+                event = TrackStartBandcampEvent(player, track, node, event_object)
             case "Vimeo":
-                event = TrackStartVimeoEvent(player, track, node)
+                event = TrackStartVimeoEvent(player, track, node, event_object)
             case "speak":
-                event = TrackStartSpeakEvent(player, track, node)
+                event = TrackStartSpeakEvent(player, track, node, event_object)
             case "GetYarn":
-                event = TrackStartGetYarnEvent(player, track, node)
+                event = TrackStartGetYarnEvent(player, track, node, event_object)
             case "Mixcloud":
-                event = TrackStartMixCloudEvent(player, track, node)
+                event = TrackStartMixCloudEvent(player, track, node, event_object)
             case "OverClocked ReMix":
-                event = TrackStartOCRMixEvent(player, track, node)
+                event = TrackStartOCRMixEvent(player, track, node, event_object)
             case "Pornhub":
-                event = TrackStartPornHubEvent(player, track, node)
+                event = TrackStartPornHubEvent(player, track, node, event_object)
             case "Reddit":
-                event = TrackStartRedditEvent(player, track, node)
+                event = TrackStartRedditEvent(player, track, node, event_object)
             case "SoundGasm":
-                event = TrackStartSoundgasmEvent(player, track, node)
+                event = TrackStartSoundgasmEvent(player, track, node, event_object)
             case "TikTok":
-                event = TrackStartTikTokEvent(player, track, node)
+                event = TrackStartTikTokEvent(player, track, node, event_object)
             case "Google TTS":
-                event = TrackStartGCTTSEvent(player, track, node)
+                event = TrackStartGCTTSEvent(player, track, node, event_object)
             case "Niconico":
-                event = TrackStartNicoNicoEvent(player, track, node)
+                event = TrackStartNicoNicoEvent(player, track, node, event_object)
             case _:
                 if query.source == "Local Files" or (
                     query._special_local and (query.is_m3u or query.is_pls or query.is_pylav)
                 ):
-                    event = TrackStartLocalFileEvent(player, track, node)
+                    event = TrackStartLocalFileEvent(player, track, node, event_object)
                 else:
-                    event = TrackStartEvent(player, track, node)
+                    event = TrackStartEvent(player, track, node, event_object)
         self.client.dispatch_event(event)
 
     async def close(self):

@@ -108,10 +108,11 @@ class TrackInfoT(TypedDict):
     author: str
     length: int
     title: str
+    isStream: bool
     uri: str | None
     position: int | None
-    isStream: bool
     sourceName: str | None
+    source: NotRequired[str | None]
 
 
 class TrackT(TypedDict):
@@ -222,12 +223,34 @@ class WebSocketClosedEventT(TypedDict):
     byRemote: bool
 
 
+class SegmentT(TypedDict):
+    category: str
+    start: str
+    end: str
+
+
+class SegmentsLoadedEventT(TypedDict):
+    op: Literal["event"]
+    guildId: str
+    type: Literal["SegmentsLoadedEvent"]
+    segments: list[SegmentT]
+
+
+class SegmentSkippedT(TypedDict):
+    op: Literal["event"]
+    guildId: str
+    type: Literal["SegmentSkippedEvent"]
+    segment: SegmentT
+
+
 LavalinkEventT = Union[
     TrackStartEventT,
     TrackEndEventT,
     TrackExceptionEventT,
     TrackStuckEventT,
     WebSocketClosedEventT,
+    SegmentsLoadedEventT,
+    SegmentSkippedT,
 ]
 
 
@@ -444,3 +467,31 @@ DeprecatedRestGetVersionResponseT = TypeVar("DeprecatedRestGetVersionResponseT",
 # TODO:
 #  1: Add the rest of the RoutePlanner endpoints types
 #  2: Typing the payloads, responses and params for Resuming Lavalink Sessions rest calls
+
+
+class IPBlockT(TypedDict):
+    type: Literal["Inet4Address", "Inet6Address"]
+    size: str
+
+
+class FailingAddressT(TypedDict):
+    address: str
+    failingTimestamp: int
+    failingTimes: str
+
+
+class RoutePlannerDetailT(TypedDict):
+    ipBlock: IPBlockT
+    failingAddresses: list[FailingAddressT]
+    rotateIndex: str
+    ipIndex: str
+    currentAddress: str
+    currentAddressIndex: str
+    blockIndex: str
+
+
+class RoutePlannerStatusResponseT(TypedDict):
+    type: Literal[
+        "RotatingIpRoutePlanner", "NanoIpRoutePlanner", "RotatingNanoIpRoutePlanner"
+    ]  # replacement for class name
+    details: RoutePlannerDetailT

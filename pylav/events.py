@@ -5,6 +5,15 @@ from typing import TYPE_CHECKING, Literal
 
 import discord
 
+from pylav.endpoints.response_objects import (
+    SegmentSkippedEventOpObject,
+    SegmentsLoadedEventObject,
+    TrackEndEventOpObject,
+    TrackExceptionEventOpObject,
+    TrackStartEventOpObject,
+    TrackStuckEventOpObject,
+    WebSocketClosedEventOpObject,
+)
 from pylav.filters import (
     ChannelMix,
     Distortion,
@@ -18,7 +27,6 @@ from pylav.filters import (
     Volume,
 )
 from pylav.filters.tremolo import Tremolo
-from pylav.utils import Segment
 
 if TYPE_CHECKING:
     from pylav.node import Node
@@ -72,19 +80,20 @@ class TrackStuckEvent(Event):
         The player that has the playing track being stuck.
     track: :class:`Track`
         The track is stuck from playing.
-    threshold: :class:`float`
-        The amount of time the track had while being stuck.
     node: :class:`Node`
         The node that the stuck track is playing on.
+    event_object: :class:`TrackStuckEventOpObject`
+        The event object that was received from Lavalink.
     """
 
-    __slots__ = ("player", "track", "threshold", "node")
+    __slots__ = ("player", "track", "threshold", "node", "event")
 
-    def __init__(self, player: Player, track: Track, threshold: float, node: Node):
+    def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStuckEventOpObject):
         self.player = player
         self.track = track
-        self.threshold = threshold
+        self.threshold = event_object.thresholdMs
         self.node = node
+        self.event = event_object
 
 
 class TrackExceptionEvent(Event):
@@ -107,19 +116,20 @@ class TrackExceptionEvent(Event):
         The player that had the exception occur while playing a track.
     track: :class:`Track`
         The track that had the exception while playing.
-    exception: :class:`Exception`
-        The type of exception that the track had while playing.
     node: :class:`Node`
         The node that the exception occurred on.
+    event_object: :class:`TrackExceptionEventOpObject`
+        The event object that was received from Lavalink.
     """
 
-    __slots__ = ("player", "track", "exception", "node")
+    __slots__ = ("player", "track", "exception", "node", "event")
 
-    def __init__(self, player: Player, track: Track, exception: Exception, node: Node):
+    def __init__(self, player: Player, track: Track, node: Node, event_object: TrackExceptionEventOpObject):
         self.player = player
         self.track = track
-        self.exception = exception
+        self.exception = event_object.exception.cause
         self.node = node
+        self.event = event_object
 
 
 class TrackEndEvent(Event):
@@ -142,19 +152,20 @@ class TrackEndEvent(Event):
         The player that finished playing a track.
     track: :class:`Track`
         The track that finished playing.
-    reason: :class:`str`
-        The reason why the track stopped playing.
     node: :class:`Node`
         The node that the track finished playing on.
+    event_object: TrackEndEventOpObject:
+        The event object that was sent from the websocket.
     """
 
-    __slots__ = ("player", "track", "reason", "node")
+    __slots__ = ("player", "track", "reason", "node", "event")
 
-    def __init__(self, player: Player, track: Track, reason: str, node: Node):
+    def __init__(self, player: Player, track: Track, node: Node, event_object: TrackEndEventOpObject):
         self.player = player
         self.track = track
-        self.reason = reason
+        self.reason = event_object.reason
         self.node = node
+        self.event = event_object
 
 
 class TrackStartEvent(Event):
@@ -187,11 +198,13 @@ class TrackStartEvent(Event):
         The track that started playing.
     node: :class:`Node`
         The node that the track started playing on.
+    event_object: TrackStartEventOpObject:
+        The event object that was sent from the websocket.
     """
 
-    __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
+    __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node", "event")
 
-    def __init__(self, player: Player, track: Track, node: Node):
+    def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStartEventOpObject):
         self.player = player
         self.track = track
         self.url = track.uri
@@ -200,6 +213,7 @@ class TrackStartEvent(Event):
         self.title = track.title
         self.author = track.author
         self.node = node
+        self.event = event_object
 
 
 class TrackAutoPlayEvent(Event):
@@ -291,8 +305,8 @@ class TrackStartYouTubeEvent(TrackStartEvent):
 
     __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
 
-    def __init__(self, player: Player, track: Track, node: Node):
-        super().__init__(player, track, node)
+    def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStartEventOpObject):
+        super().__init__(player, track, node, event_object)
         self.url = track.uri
         self.identifier = track.identifier
         self.duration = track.duration
@@ -334,8 +348,8 @@ class TrackStartClypitEvent(TrackStartEvent):
 
     __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
 
-    def __init__(self, player: Player, track: Track, node: Node):
-        super().__init__(player, track, node)
+    def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStartEventOpObject):
+        super().__init__(player, track, node, event_object)
         self.url = track.uri
         self.identifier = track.identifier
         self.duration = track.duration
@@ -377,8 +391,8 @@ class TrackStartGetYarnEvent(TrackStartEvent):
 
     __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
 
-    def __init__(self, player: Player, track: Track, node: Node):
-        super().__init__(player, track, node)
+    def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStartEventOpObject):
+        super().__init__(player, track, node, event_object)
         self.url = track.uri
         self.identifier = track.identifier
         self.duration = track.duration
@@ -420,8 +434,8 @@ class TrackStartMixCloudEvent(TrackStartEvent):
 
     __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
 
-    def __init__(self, player: Player, track: Track, node: Node):
-        super().__init__(player, track, node)
+    def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStartEventOpObject):
+        super().__init__(player, track, node, event_object)
         self.url = track.uri
         self.identifier = track.identifier
         self.duration = track.duration
@@ -463,8 +477,8 @@ class TrackStartOCRMixEvent(TrackStartEvent):
 
     __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
 
-    def __init__(self, player: Player, track: Track, node: Node):
-        super().__init__(player, track, node)
+    def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStartEventOpObject):
+        super().__init__(player, track, node, event_object)
         self.url = track.uri
         self.identifier = track.identifier
         self.duration = track.duration
@@ -506,8 +520,8 @@ class TrackStartPornHubEvent(TrackStartEvent):
 
     __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
 
-    def __init__(self, player: Player, track: Track, node: Node):
-        super().__init__(player, track, node)
+    def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStartEventOpObject):
+        super().__init__(player, track, node, event_object)
         self.url = track.uri
         self.identifier = track.identifier
         self.duration = track.duration
@@ -549,8 +563,8 @@ class TrackStartRedditEvent(TrackStartEvent):
 
     __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
 
-    def __init__(self, player: Player, track: Track, node: Node):
-        super().__init__(player, track, node)
+    def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStartEventOpObject):
+        super().__init__(player, track, node, event_object)
         self.url = track.uri
         self.identifier = track.identifier
         self.duration = track.duration
@@ -592,8 +606,8 @@ class TrackStartSoundgasmEvent(TrackStartEvent):
 
     __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
 
-    def __init__(self, player: Player, track: Track, node: Node):
-        super().__init__(player, track, node)
+    def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStartEventOpObject):
+        super().__init__(player, track, node, event_object)
         self.url = track.uri
         self.identifier = track.identifier
         self.duration = track.duration
@@ -635,8 +649,8 @@ class TrackStartTikTokEvent(TrackStartEvent):
 
     __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
 
-    def __init__(self, player: Player, track: Track, node: Node):
-        super().__init__(player, track, node)
+    def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStartEventOpObject):
+        super().__init__(player, track, node, event_object)
         self.url = track.uri
         self.identifier = track.identifier
         self.duration = track.duration
@@ -678,8 +692,8 @@ class TrackStartSpotifyEvent(TrackStartEvent):
 
     __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
 
-    def __init__(self, player: Player, track: Track, node: Node):
-        super().__init__(player, track, node)
+    def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStartEventOpObject):
+        super().__init__(player, track, node, event_object)
         self.url = track.uri
         self.identifier = track.identifier
         self.duration = track.duration
@@ -708,8 +722,8 @@ class TrackStartDeezerEvent(TrackStartEvent):
 
     __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
 
-    def __init__(self, player: Player, track: Track, node: Node):
-        super().__init__(player, track, node)
+    def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStartEventOpObject):
+        super().__init__(player, track, node, event_object)
         self.url = track.uri
         self.identifier = track.identifier
         self.duration = track.duration
@@ -718,7 +732,7 @@ class TrackStartDeezerEvent(TrackStartEvent):
 
 
 class TrackStartAppleMusicEvent(TrackStartEvent):
-    """This event is dispatched when the player starts to play a Apple Music track.
+    """This event is dispatched when the player starts to play an Apple Music track.
 
     Attributes
     ----------
@@ -751,8 +765,8 @@ class TrackStartAppleMusicEvent(TrackStartEvent):
 
     __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
 
-    def __init__(self, player: Player, track: Track, node: Node):
-        super().__init__(player, track, node)
+    def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStartEventOpObject):
+        super().__init__(player, track, node, event_object)
         self.url = track.uri
         self.identifier = track.identifier
         self.duration = track.duration
@@ -794,8 +808,8 @@ class TrackStartBandcampEvent(TrackStartEvent):
 
     __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
 
-    def __init__(self, player: Player, track: Track, node: Node):
-        super().__init__(player, track, node)
+    def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStartEventOpObject):
+        super().__init__(player, track, node, event_object)
         self.url = track.uri
         self.identifier = track.identifier
         self.duration = track.duration
@@ -837,8 +851,8 @@ class TrackStartYouTubeMusicEvent(TrackStartEvent):
 
     __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
 
-    def __init__(self, player: Player, track: Track, node: Node):
-        super().__init__(player, track, node)
+    def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStartEventOpObject):
+        super().__init__(player, track, node, event_object)
         self.url = track.uri
         self.identifier = track.identifier
         self.duration = track.duration
@@ -880,8 +894,8 @@ class TrackStartSoundCloudEvent(TrackStartEvent):
 
     __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
 
-    def __init__(self, player: Player, track: Track, node: Node):
-        super().__init__(player, track, node)
+    def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStartEventOpObject):
+        super().__init__(player, track, node, event_object)
         self.url = track.uri
         self.identifier = track.identifier
         self.duration = track.duration
@@ -923,8 +937,8 @@ class TrackStartTwitchEvent(TrackStartEvent):
 
     __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
 
-    def __init__(self, player: Player, track: Track, node: Node):
-        super().__init__(player, track, node)
+    def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStartEventOpObject):
+        super().__init__(player, track, node, event_object)
         self.url = track.uri
         self.identifier = track.identifier
         self.duration = track.duration
@@ -933,7 +947,7 @@ class TrackStartTwitchEvent(TrackStartEvent):
 
 
 class TrackStartHTTPEvent(TrackStartEvent):
-    """This event is dispatched when the player starts to play a HTTP track.
+    """This event is dispatched when the player starts to play an HTTP track.
 
     Attributes
     ----------
@@ -966,8 +980,8 @@ class TrackStartHTTPEvent(TrackStartEvent):
 
     __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
 
-    def __init__(self, player: Player, track: Track, node: Node):
-        super().__init__(player, track, node)
+    def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStartEventOpObject):
+        super().__init__(player, track, node, event_object)
         self.url = track.uri
         self.identifier = track.identifier
         self.duration = track.duration
@@ -1009,8 +1023,8 @@ class TrackStartLocalFileEvent(TrackStartEvent):
 
     __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
 
-    def __init__(self, player: Player, track: Track, node: Node):
-        super().__init__(player, track, node)
+    def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStartEventOpObject):
+        super().__init__(player, track, node, event_object)
         self.url = track.uri
         self.identifier = track.identifier
         self.duration = track.duration
@@ -1052,8 +1066,8 @@ class TrackStartNicoNicoEvent(TrackStartEvent):
 
     __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
 
-    def __init__(self, player: Player, track: Track, node: Node):
-        super().__init__(player, track, node)
+    def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStartEventOpObject):
+        super().__init__(player, track, node, event_object)
         self.url = track.uri
         self.identifier = track.identifier
         self.duration = track.duration
@@ -1095,8 +1109,8 @@ class TrackStartVimeoEvent(TrackStartEvent):
 
     __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
 
-    def __init__(self, player: Player, track: Track, node: Node):
-        super().__init__(player, track, node)
+    def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStartEventOpObject):
+        super().__init__(player, track, node, event_object)
         self.url = track.uri
         self.identifier = track.identifier
         self.duration = track.duration
@@ -1105,7 +1119,7 @@ class TrackStartVimeoEvent(TrackStartEvent):
 
 
 class TrackStartSpeakEvent(TrackStartEvent):
-    """This event is dispatched when t he player starts to play a Speak track.
+    """This event is dispatched when the player starts to play a Speak track.
 
     Attributes
     ----------
@@ -1138,8 +1152,8 @@ class TrackStartSpeakEvent(TrackStartEvent):
 
     __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
 
-    def __init__(self, player: Player, track: Track, node: Node):
-        super().__init__(player, track, node)
+    def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStartEventOpObject):
+        super().__init__(player, track, node, event_object)
         self.url = track.uri
         self.identifier = track.identifier
         self.duration = track.duration
@@ -1181,8 +1195,8 @@ class TrackStartGCTTSEvent(TrackStartEvent):
 
     __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
 
-    def __init__(self, player: Player, track: Track, node: Node):
-        super().__init__(player, track, node)
+    def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStartEventOpObject):
+        super().__init__(player, track, node, event_object)
         self.url = track.uri
         self.identifier = track.identifier
         self.duration = track.duration
@@ -1327,35 +1341,30 @@ class WebSocketClosedEvent(Event):
     ----------
     player: :class:`Player`
         The player whose audio websocket was closed.
-    code: :class:`int`
-        The node the player was moved from.
-    reason: :class:`str`
-        The node the player was moved to.
-    by_remote: :class:`bool`
-        If the websocket was closed remotely.
     channel: :class:`discord.channel.VocalGuildChannel`
         The voice channel the player was in.
     node: :class:`Node`
         The node the player was in.
+    event_object: :class:`WebSocketClosedEventOpObject`
+        The event object that was received from Lavalink.
     """
 
-    __slots__ = ("player", "code", "reason", "by_remote", "node", "channel")
+    __slots__ = ("player", "code", "reason", "by_remote", "node", "channel", "event")
 
     def __init__(
         self,
         player: Player,
-        code: int,
-        reason: str,
-        by_remote: bool,
         node: Node,
         channel: discord.channel.VocalGuildChannel,
+        event_object: WebSocketClosedEventOpObject,
     ):
         self.player = player
-        self.code = code
-        self.reason = reason
-        self.by_remote = by_remote
+        self.code = event_object.code
+        self.reason = event_object.reason
+        self.by_remote = event_object.byRemote
         self.node = node
         self.channel = channel
+        self.event = event_object
 
 
 class SegmentSkippedEvent(Event):
@@ -1365,7 +1374,7 @@ class SegmentSkippedEvent(Event):
     ----------
     player: :class:`Player`
         The player whose segment was skipped.
-    segment: :class:`Segment`
+    segment: :class:`SegmentObject`
         The segment that was skipped.
     node: :class:`Node`
         The node the player was in.
@@ -1374,18 +1383,17 @@ class SegmentSkippedEvent(Event):
     ----------
     player: :class:`Player`
         The player whose segment was skipped.
-    segment: :class:`Segment`
-        The segment that was skipped.
     node: :class:`Node`
         The node the player was in.
     """
 
-    __slots__ = ("player", "segment", "node")
+    __slots__ = ("player", "segment", "node", "event")
 
-    def __init__(self, player: Player, category: str, start: float, end: float, node: Node):
+    def __init__(self, player: Player, node: Node, event_object: SegmentSkippedEventOpObject):
         self.player = player
-        self.segment = Segment(category=category, start=start, end=end)
+        self.segment = event_object.segment
         self.node = node
+        self.event = event_object
 
 
 class SegmentsLoadedEvent(Event):
@@ -1395,7 +1403,7 @@ class SegmentsLoadedEvent(Event):
     ----------
     player: :class:`Player`
         The player whose segments were loaded.
-    segments: :class:`list` of :class:`Segment`
+    segments: :class:`list` of :class:`SegmentObject`
         The segments that were loaded.
     node: :class:`Node`
         The node the player was in.
@@ -1404,18 +1412,17 @@ class SegmentsLoadedEvent(Event):
     ----------
     player: :class:`Player`
         The player whose segments were loaded.
-    segments: :class:`list` of :class:`Segment`
-        The segments that were loaded.
     node: :class:`Node`
         The node the player was in.
     """
 
-    __slots__ = ("player", "segments", "node")
+    __slots__ = ("player", "segments", "node", "event")
 
-    def __init__(self, player: Player, segments: list[dict], node: Node):
+    def __init__(self, player: Player, node: Node, event_object: SegmentsLoadedEventObject):
         self.player = player
-        self.segments = [Segment(**segment) for segment in segments]
+        self.segments = event_object.segments
         self.node = node
+        self.event = event_object
 
 
 class PlayerPausedEvent(Event):
