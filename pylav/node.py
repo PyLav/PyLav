@@ -361,11 +361,11 @@ class Node:
     async def fetch_api_version(self):
         if self.version is None:
             await self.fetch_node_version()
-        if self.version < (v370 := Version("3.7.0.rc0")):
+        if self.version < (v370 := Version("3.7.0-alpha")):
             self._api_version = None
-        elif v370 <= self.version < (v400 := Version("4.0.0.rc0")):
+        elif v370 <= self.version < (v400 := Version("4.0.0-alpha")):
             self._api_version = 3
-        elif v400 <= self.version < Version("5.0.0.rc0"):
+        elif v400 <= self.version < Version("5.0.0-alpha"):
             self._api_version = 4
         else:
             raise UnsupportedNodeAPI()
