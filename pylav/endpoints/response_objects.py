@@ -24,7 +24,7 @@ class PlaylistInfoObject:  # noqa
 
 
 @dataclasses.dataclass
-class TrackObject:
+class LavalinkTrackObject:
     info: TrackInfoObject
     encoded: str
     track: str = None
@@ -291,36 +291,36 @@ class LavalinkPlayerObject:
     paused: bool
     voice: VoiceStateObject
     filters: FiltersObject
-    track: TrackObject = None
+    track: LavalinkTrackObject = None
 
 
 @dataclasses.dataclass
-class TrackLoadedObject:
+class LavalinkTrackLoadedObject:
     loadType: Literal["TRACK_LOADED"]
-    tracks: list[TrackObject]
+    tracks: list[LavalinkTrackObject]
 
 
 @dataclasses.dataclass
-class PlaylistLoadedObject:
+class LavalinkPlaylistLoadedObject:
     loadType: Literal["PLAYLIST_LOADED"]
     playlistInfo: PlaylistInfoObject
-    tracks: list[TrackObject]
+    tracks: list[LavalinkTrackObject]
 
 
 @dataclasses.dataclass
-class SearchResultObject:
+class LavalinkSearchResultObject:
     loadType: Literal["SEARCH_RESULT"]
-    tracks: list[TrackObject]
+    tracks: list[LavalinkTrackObject]
 
 
 @dataclasses.dataclass
-class NoMatchesObject:
+class LavalinkNoMatchesObject:
     loadType: Literal["NO_MATCHES"]
     tracks: list = dataclasses.field(default_factory=list)
 
 
 @dataclasses.dataclass
-class LoadFailedObject:
+class LavalinkLoadFailedObject:
     loadType: Literal["LOAD_FAILED"]
     exception: LoadExceptionObject
     tracks: list = dataclasses.field(default_factory=list)
@@ -348,7 +348,7 @@ class PluginObject:
 
 
 @dataclasses.dataclass
-class RestGetInfoResponse:
+class LavalinkInfoObject:
     version: VersionObject
     builtTime: int
     git: GitObject
@@ -388,3 +388,12 @@ class RoutePlannerStatusResponseObject:
         "RotatingIpRoutePlanner", "NanoIpRoutePlanner", "RotatingNanoIpRoutePlanner"
     ]  # replacement for class name
     details: RoutePlannerDetailObject
+
+
+LavalinkLoadTrackObjects = Union[
+    LavalinkTrackLoadedObject
+    | LavalinkPlaylistLoadedObject
+    | LavalinkNoMatchesObject
+    | LavalinkLoadFailedObject
+    | LavalinkSearchResultObject
+]

@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import struct
-import typing
 from base64 import b64decode
 from io import BytesIO
 
-from pylav.types import TrackT
+from dacite import from_dict
+
+from pylav.endpoints.response_objects import LavalinkTrackObject
 
 
 class DataReader:
@@ -46,7 +47,7 @@ class DataReader:
         return read_utfm(text_length, utf_string)
 
 
-def decode_track(track: str) -> tuple[TrackT, int]:
+def decode_track(track: str) -> tuple[LavalinkTrackObject, int]:
     """Decodes a base64 track string into a Track object.
 
     Parameters
@@ -56,8 +57,8 @@ def decode_track(track: str) -> tuple[TrackT, int]:
 
     Returns
     -------
-    :class:`tuple` of :class:`dict` and :class:`int`
-    The first element is a dictionary of track properties and the second element is encoding version.
+    :class:`tuple` of :class:`LavalinkTrackObject` and :class:`int`
+    The first element is a LavalinkTrackObject and the second element is encoding version.
     """
     reader = DataReader(track)
 
@@ -75,9 +76,9 @@ def decode_track(track: str) -> tuple[TrackT, int]:
     # Position
     _ = reader.read_long()
 
-    track_object = typing.cast(
-        TrackT,
-        {
+    track_object = from_dict(
+        data_class=LavalinkTrackObject,
+        data={
             "encoded": track,
             "info": {
                 "title": title,
