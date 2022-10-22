@@ -5,6 +5,7 @@ import hashlib
 import operator
 import re
 import struct
+import typing
 import uuid
 from functools import total_ordering
 from typing import TYPE_CHECKING, Any
@@ -12,8 +13,10 @@ from typing import TYPE_CHECKING, Any
 import asyncstdlib
 import discord
 from cached_property import cached_property, cached_property_with_ttl
+from dacite import from_dict
 
 from pylav._logging import getLogger
+from pylav.endpoints.response_objects import LavalinkTrackObject
 from pylav.exceptions import InvalidTrack, TrackNotFound
 from pylav.query import Query
 from pylav.track_encoding import decode_track
@@ -75,7 +78,7 @@ class Track:
         "_updated_query",
         "__clear_cache_task",
         "__clear_thumbnail_cache_task",
-        "track",
+        "encoded",
         "skip_segments",
         "extra",
         "__dict__",
@@ -100,7 +103,7 @@ class Track:
         self._unique_id = hashlib.md5()
         self._extra = extra
         if data is None or (isinstance(data, str) and data == MISSING):
-            self.track = None
+            self.encoded = None
             self._is_partial = True
             if query is None:
                 raise InvalidTrack("Cannot create a partial Track without a query")
@@ -109,25 +112,25 @@ class Track:
             self._raw_data = extra.get("raw_data", {})
         elif isinstance(data, dict):
             try:
-                self.track = data["track"]
+                self.encoded = data["encoded"]
                 self._raw_data = data.get("raw_data", {}) or extra.get("raw_data", {})
                 self.extra = extra
-                self._unique_id.update(self.track.encode())
+                self._unique_id.update(self.encoded.encode())
             except KeyError as ke:
                 (missing_key,) = ke.args
                 raise InvalidTrack(f"Cannot build a track from partial data! (Missing key: {missing_key})") from None
         elif isinstance(data, Track):
-            self.track = data.track
+            self.encoded = data.encoded
             self._is_partial = data._is_partial
             self.extra = {**data.extra, **extra}
             self._raw_data = data._raw_data
             self._query = data._query or self._query
             self._unique_id = data._unique_id
         elif isinstance(data, str):
-            self.track = data
+            self.encoded = data
             self.extra = extra
             self._raw_data = extra.get("raw_data", {})
-            self._unique_id.update(self.track.encode())  # type: ignore
+            self._unique_id.update(self.encoded.encode())  # type: ignore
         if self._query is not None:
             self.timestamp = self.timestamp or self._query.start_time
         self._requester = requester or self._node.node_manager.client.bot.user.id
@@ -137,14 +140,16 @@ class Track:
     @cached_property_with_ttl(ttl=60)
     def full_track(
         self,
-    ) -> dict[str, str | dict[str, str | bool | int | None]]:
+    ) -> LavalinkTrackObject:
         if self.__clear_cache_task is not None and not self.__clear_cache_task.cancelled():
             self.__clear_cache_task.cancel()
-        response, _ = (self._raw_data, None)
-        if not response:
-            response, _ = decode_track(self.track)
+        response_, _ = (self._raw_data, None)
+        if not response_:
+            response, _ = decode_track(self.encoded)
+        else:
+            response = from_dict(data_class=LavalinkTrackObject, data=response_)
         self.__clear_cache_task = asyncio.create_task(self.clear_cache(65, "full_track"))
-        return response
+        return typing.cast(LavalinkTrackObject, response)
 
     @property
     def id(self) -> str:
@@ -156,44 +161,46 @@ class Track:
 
     @property
     def is_partial(self) -> bool:
-        return self._is_partial and not self.track
+        return self._is_partial and not self.encoded
 
     async def query(self) -> Query:
-        if self.track and self._updated_query is None:
-            self._updated_query = self._query = await Query.from_base64(self.track)
+        if self.encoded and self._updated_query is None:
+            self._updated_query = self._query = await Query.from_base64(self.encoded)
         return self._query
 
     @property
     def identifier(self) -> str | None:
-        return MISSING if self.is_partial else self.full_track["info"]["identifier"]
+        return MISSING if self.is_partial else self.full_track.info.identifier
 
     @property
     def is_seekable(self) -> bool:
-        return MISSING if self.is_partial else self.full_track["info"]["isSeekable"]
+        return MISSING if self.is_partial else self.full_track.info.isSeekable
 
     @property
     def duration(self) -> int:
-        return MISSING if self.is_partial else self.full_track["info"]["length"]
+        return MISSING if self.is_partial else self.full_track.info.length
+
+    length = duration
 
     @property
     def stream(self) -> bool:
-        return MISSING if self.is_partial else self.full_track["info"]["isStream"]
+        return MISSING if self.is_partial else self.full_track.info.isStream
 
     @property
     def title(self) -> str:
-        return MISSING if self.is_partial else self.full_track["info"]["title"]
+        return MISSING if self.is_partial else self.full_track.info.title
 
     @property
     def uri(self) -> str:
-        return MISSING if self.is_partial else self.full_track["info"]["uri"]
+        return MISSING if self.is_partial else self.full_track.info.uri
 
     @property
     def author(self) -> str:
-        return MISSING if self.is_partial else self.full_track["info"]["author"]
+        return MISSING if self.is_partial else self.full_track.info.author
 
     @property
     def source(self) -> str:
-        return MISSING if self.is_partial else self.full_track["info"]["source"]
+        return MISSING if self.is_partial else self.full_track.info.sourceName
 
     @property
     def requester_id(self) -> int:
@@ -310,20 +317,22 @@ class Track:
         """Optional[str]: Returns a thumbnail URL for YouTube and Spotify tracks"""
         if not self.identifier:
             return
-        if self.source == "youtube":
-            return f"https://img.youtube.com/vi/{self.identifier}/mqdefault.jpg"
-        elif self.source == "spotify":
-            async with self._node.node_manager.client.spotify_client as sp_client:
-                track = await sp_client.get_track(self.identifier)
-                images = track.album.images
-                image = await asyncstdlib.max(images, key=operator.attrgetter("width"))
-                return image.url
+        match self.source:
+            case "youtube":
+                return f"https://img.youtube.com/vi/{self.identifier}/mqdefault.jpg"
+            case "spotify":
+                async with self._node.node_manager.client.spotify_client as sp_client:
+                    track = await sp_client.get_track(self.identifier)
+                    images = track.album.images
+                    image = await asyncstdlib.max(images, key=operator.attrgetter("width"))
+                    return image.url
 
     async def mix_playlist_url(self) -> str | None:
         if not self.identifier:
             return
-        if self.source == "youtube":
-            return f"https://www.youtube.com/watch?v={self.identifier}&list=RD{self.identifier}"
+        match self.source:
+            case "youtube":
+                return f"https://www.youtube.com/watch?v={self.identifier}&list=RD{self.identifier}"
 
     def __getitem__(self, name) -> Any:
         return super().__getattribute__(name)
@@ -340,7 +349,7 @@ class Track:
             The dict representation of this Track.
         """
         return {
-            "track": self.track,
+            "encoded": self.encoded,
             "query": await self.query_identifier() if await self.query() else None,
             "requester": self.requester.id if self.requester else self.requester_id,
             "skip_segments": self.skip_segments,
@@ -357,12 +366,12 @@ class Track:
 
     async def search(self, player: Player, bypass_cache: bool = False) -> None:
         self._query = await Query.from_string(self._query)
-        response = await player.node.get_tracks(await self.query(), first=True, bypass_cache=bypass_cache)
-        if not response or "track" not in response:
+        response = await player.node.get_track(await self.query(), first=True, bypass_cache=bypass_cache)
+        if not response or "encoded" not in response:
             raise TrackNotFound(f"No tracks found for query {await self.query_identifier()}")
-        self.track = response["track"]
+        self.encoded = response["encoded"]
         self._unique_id = hashlib.md5()
-        self._unique_id.update(self.track.encode())
+        self._unique_id.update(self.encoded.encode())
         if "unique_identifier" in self.__dict__:
             del self.__dict__["unique_identifier"]
 

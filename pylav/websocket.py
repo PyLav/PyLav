@@ -390,7 +390,7 @@ class WebSocket:
                 await self.handle_event(data)
             case "ready":
                 await self.handle_ready(data)
-            case _:
+            case __:
                 LOGGER.warning("[NODE-%s] Received unknown op: %s", self.node.name, op)
 
     async def handle_stats(self, data: LavalinkStatsT):
@@ -512,7 +512,7 @@ class WebSocket:
             case "SegmentSkipped":
                 data = typing.cast(SegmentSkippedT, data)
                 event = SegmentSkippedEvent(player, node=self.node, event_object=event_object)
-            case _:
+            case __:
                 LOGGER.warning("[NODE-%s] Received unknown event: %s", self.node.name, data["type"])
 
         self.client.dispatch_event(event)
@@ -588,7 +588,7 @@ class WebSocket:
                 event = TrackStartGCTTSEvent(player, track, node, event_object)
             case "Niconico":
                 event = TrackStartNicoNicoEvent(player, track, node, event_object)
-            case _:
+            case __:
                 if query.source == "Local Files" or (
                     query._special_local and (query.is_m3u or query.is_pls or query.is_pylav)
                 ):

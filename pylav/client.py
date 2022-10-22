@@ -30,6 +30,11 @@ from pylav import __VERSION__
 from pylav._config import CONFIG_DIR
 from pylav._logging import getLogger
 from pylav.dispatcher import DispatchManager
+from pylav.endpoints.response_objects import (
+    LavalinkLoadTrackObjects,
+    LavalinkTrackObject,
+    RoutePlannerStatusResponseObject,
+)
 from pylav.envvars import (
     EXTERNAL_UNMANAGED_HOST,
     EXTERNAL_UNMANAGED_PASSWORD,
@@ -68,7 +73,7 @@ from pylav.sql.clients.query_manager import QueryCacheManager
 from pylav.sql.clients.updater import UpdateSchemaManager
 from pylav.sql.models import LibConfigModel, NodeModel
 from pylav.tracks import Track
-from pylav.types import BotT, CogT, ContextT, InteractionT, LavalinkResponseT
+from pylav.types import BotT, CogT, ContextT, InteractionT
 from pylav.utils import PyLavContext, SingletonMethods, _get_context, _process_commands, _Singleton, add_property
 from pylav.vendored import aiopath
 
@@ -590,7 +595,7 @@ class Client(metaclass=_Singleton):
             temporary=temporary,
         )
 
-    async def decode_track(self, track: str, feature: str = None) -> dict | None:
+    async def decode_track(self, track: str, feature: str = None) -> LavalinkTrackObject:
         """|coro|
         Decodes a base64-encoded track string into a dict.
 
@@ -603,8 +608,8 @@ class Client(metaclass=_Singleton):
 
         Returns
         -------
-        :class:`dict`
-            A dict representing the track's information.
+        LavalinkTrackObject
+            An object representing the track's information.
         """
         if not self.node_manager.available_nodes:
             raise NoNodeAvailable(_("No available nodes!"))
@@ -613,9 +618,9 @@ class Client(metaclass=_Singleton):
             raise NoNodeWithRequestFunctionalityAvailable(
                 _("No node with {feature} functionality available!").format(feature=feature), feature=feature
             )
-        return await node.decode_track(track)
+        return await node.get_decodetrack(track)
 
-    async def decode_tracks(self, tracks: list, feature: str = None) -> list[dict]:
+    async def decode_tracks(self, tracks: list, feature: str = None) -> list[LavalinkTrackObject]:
         """|coro|
         Decodes a list of base64-encoded track strings into a dict.
 
@@ -628,8 +633,8 @@ class Client(metaclass=_Singleton):
 
         Returns
         -------
-        List[:class:`dict`]
-            A list of dicts representing track information.
+        List[LavalinkTrackObject]
+            A list of LavalinkTrackObject representing track information.
         """
         if not self.node_manager.available_nodes:
             raise NoNodeAvailable(_("No available nodes!"))
@@ -638,10 +643,10 @@ class Client(metaclass=_Singleton):
             raise NoNodeWithRequestFunctionalityAvailable(
                 _("No node with {feature} functionality available!").format(feature=feature), feature=feature
             )
-        return await node.decode_tracks(tracks)
+        return await node.post_decodetracks(tracks)
 
     @staticmethod
-    async def routeplanner_status(node: Node) -> dict | None:
+    async def routeplanner_status(node: Node) -> RoutePlannerStatusResponseObject:
         """|coro|
         Gets the route-planner status of the target node.
 
@@ -652,13 +657,13 @@ class Client(metaclass=_Singleton):
 
         Returns
         -------
-        :class:`dict`
-            A dict representing the route-planner information.
+        RoutePlannerStatusResponseObject
+            An object representing the route-planner information.
         """
-        return await node.routeplanner_status()
+        return await node.get_routeplanner_status()
 
     @staticmethod
-    async def routeplanner_free_address(node: Node, address: str) -> bool:
+    async def routeplanner_free_address(node: Node, address: str) -> None:
         """|coro|
         Gets the route-planner status of the target node.
 
@@ -668,16 +673,11 @@ class Client(metaclass=_Singleton):
             The node to use for the query.
         address: :class:`str`
             The address to free.
-
-        Returns
-        -------
-        :class:`bool`
-            True if the address was freed, False otherwise.
         """
-        return await node.routeplanner_free_address(address)
+        return await node.post_routeplanner_free_address(address)
 
     @staticmethod
-    async def routeplanner_free_all_failing(node: Node) -> bool:
+    async def routeplanner_free_all_failing(node: Node) -> None:
         """|coro|
         Gets the route-planner status of the target node.
 
@@ -685,13 +685,8 @@ class Client(metaclass=_Singleton):
         ----------
         node: :class:`Node`
             The node to use for the query.
-
-        Returns
-        -------
-        :class:`bool`
-            True if all failing addresses were freed, False otherwise.
         """
-        return await node.routeplanner_free_all_failing()
+        return await node.post_routeplanner_free_all()
 
     def dispatch_event(self, event: Event):
         asyncio.create_task(self._dispatch_event(event))
@@ -900,7 +895,7 @@ class Client(metaclass=_Singleton):
         first: bool = False,
         bypass_cache: bool = False,
         player: Player | None = None,
-    ) -> dict:
+    ) -> LavalinkLoadTrackObjects:
         """|coro|
         Gets all tracks associated with the given query.
 
@@ -915,8 +910,8 @@ class Client(metaclass=_Singleton):
 
         Returns
         -------
-        :class:`dict`
-            A dict representing tracks.
+        :class:`LavalinkLoadTrackObjects`
+            A LavalinkLoadTrackObjects representing Lavalink response.
         """
         if not self.node_manager.available_nodes:
             raise NoNodeAvailable("No available nodes!")
@@ -930,7 +925,7 @@ class Client(metaclass=_Singleton):
                 _("No node with {query.requires_capability} functionality available!").format(query=query),
                 query.requires_capability,
             )
-        return await node.get_tracks(query, first=first, bypass_cache=bypass_cache)
+        return await node.get_track(query, first=first, bypass_cache=bypass_cache)
 
     async def get_all_tracks_for_queries(
         self,
@@ -984,6 +979,7 @@ class Client(metaclass=_Singleton):
                 )
                 if node is None:
                     queries_failed.append(sub_query)
+                    continue
                 # Query tracks as the queue builds as this may be a slow operation
                 if enqueue and successful_tracks and not player.is_playing and not player.paused:
                     track = successful_tracks.pop()
@@ -1006,10 +1002,10 @@ class Client(metaclass=_Singleton):
                         )
                     )
                 elif sub_query.is_search or sub_query.is_single:
-                    track = await self._get_tracks(
+                    response = await self._get_tracks(
                         player=player, query=sub_query, first=True, bypass_cache=bypass_cache
                     )
-                    track_b64 = track.get("track")
+                    track_b64 = response.tracks[0].encoded
                     if not track_b64:
                         queries_failed.append(sub_query)
                     if track_b64:
@@ -1029,12 +1025,12 @@ class Client(metaclass=_Singleton):
                     and not sub_query.is_local
                     and not sub_query.is_custom_playlist
                 ):
-                    tracks: dict = await self._get_tracks(player=player, query=sub_query, bypass_cache=bypass_cache)
-                    track_list = tracks.get("tracks", [])
+                    response = await self._get_tracks(player=player, query=sub_query, bypass_cache=bypass_cache)
+                    track_list = response.tracks
                     if not track_list:
                         queries_failed.append(sub_query)
                     for track in track_list:
-                        if track_b64 := track.get("track"):
+                        if track_b64 := track.encoded:
                             track_count += 1
                             successful_tracks.append(
                                 Track(
@@ -1052,8 +1048,10 @@ class Client(metaclass=_Singleton):
                     yielded = False
                     async for local_track in sub_query.get_all_tracks_in_folder():
                         yielded = True
-                        track = await self._get_tracks(player=player, query=local_track, first=True, bypass_cache=True)
-                        if track_b64 := track.get("track"):
+                        response = await self._get_tracks(
+                            player=player, query=local_track, first=True, bypass_cache=True
+                        )
+                        if track_b64 := response.tracks[0].encoded:
                             track_count += 1
                             successful_tracks.append(
                                 Track(
@@ -1114,10 +1112,10 @@ class Client(metaclass=_Singleton):
         fullsearch: bool = False,
         region: str | None = None,
         player: Player | None = None,
-    ) -> LavalinkResponseT:
+    ) -> LavalinkLoadTrackObjects:
         """This method can be rather slow as it recursibly queries all queries and their associated entries.
 
-        Thus if you are processing user input  you may be interested in using
+        Thus, if you are processing user input  you may be interested in using
         the :meth:`get_all_tracks_for_queries` where it can enqueue tracks as needed to the player.
 
 
@@ -1142,26 +1140,25 @@ class Client(metaclass=_Singleton):
 
         if region is None:
             region = "us_east"
-
+        node = await self.node_manager.find_best_node()
         for query in queries:
             async for response in self._yield_recursive_queries(query):
                 node = await self.node_manager.find_best_node(region=region, feature=response.requires_capability)
                 if node is None:
                     continue
                 if response.is_playlist or response.is_album:
-                    _response = await node.get_tracks(response, bypass_cache=bypass_cache)
-                    playlist_name = _response.get("playlistInfo", {}).get("name", "")
-                    output_tracks.extend(_response["tracks"])
+                    _response = await node.get_track(response, bypass_cache=bypass_cache)
+                    playlist_name = _response.playlistInfo.name
+                    output_tracks.extend(_response.tracks)
                 elif fullsearch and response.is_search:
-                    _response = await node.get_tracks(response, bypass_cache=bypass_cache)
-                    output_tracks.extend(_response["tracks"])
+                    _response = await node.get_track(response, bypass_cache=bypass_cache)
+                    output_tracks.extend(_response.tracks)
                 elif response.is_single:
-                    _response = await node.get_tracks(response, first=True, bypass_cache=bypass_cache)
-                    output_tracks.append(_response)
+                    _response = await node.get_track(response, first=True, bypass_cache=bypass_cache)
+                    output_tracks.append(_response.tracks)
                 else:
                     LOGGER.critical("Unknown query type: %s", response)
-
-        return {
+        data = {
             "playlistInfo": {
                 "name": playlist_name if len(queries) == 1 else "",
                 "selectedTrack": -1,
@@ -1169,6 +1166,7 @@ class Client(metaclass=_Singleton):
             "loadType": "PLAYLIST_LOADED" if playlist_name else "SEARCH_RESULT" if output_tracks else "LOAD_FAILED",  # type: ignore
             "tracks": output_tracks,
         }
+        return node.parse_loadtrack_response(data)
 
     async def remove_node(self, node_id: int):
         """Removes a node from the node manager"""
