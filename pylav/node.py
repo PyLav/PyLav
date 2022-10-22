@@ -826,14 +826,16 @@ class Node:
         TrackLoadedObject | PlaylistLoadedObject | NoMatchesObject | LoadFailedObject | SearchResultObject
             Lavalink LoadTrack Response Object
         """
-        if not self.available:
-            data = {
+        data = (
+            await self.get_tracks(
+                await self._query_cls.from_string(f"ytmsearch:{query}"),
+                bypass_cache=bypass_cache,
+            )
+            if self.available
+            else {
                 "loadType": "NO_MATCHES",
             }
-        else:
-            data = await self.get_tracks(
-                await self._query_cls.from_string(f"ytmsearch:{query}"), bypass_cache=bypass_cache
-            )
+        )
 
         return self.parse_loadtrack_response(data)
 
@@ -853,14 +855,16 @@ class Node:
         TrackLoadedObject | PlaylistLoadedObject | NoMatchesObject | LoadFailedObject | SearchResultObject
             Lavalink LoadTrack Response Object
         """
-        if not self.available:
-            data = {
+        data = (
+            await self.get_tracks(
+                await self._query_cls.from_string(f"ytsearch:{query}"),
+                bypass_cache=bypass_cache,
+            )
+            if self.available
+            else {
                 "loadType": "NO_MATCHES",
             }
-        else:
-            data = await self.get_tracks(
-                await self._query_cls.from_string(f"ytsearch:{query}"), bypass_cache=bypass_cache
-            )
+        )
 
         return self.parse_loadtrack_response(data)
 
@@ -880,14 +884,16 @@ class Node:
         TrackLoadedObject | PlaylistLoadedObject | NoMatchesObject | LoadFailedObject | SearchResultObject
             Lavalink LoadTrack Response Object
         """
-        if not self.available:
-            data = {
+        data = (
+            await self.get_tracks(
+                await self._query_cls.from_string(f"scsearch:{query}"),
+                bypass_cache=bypass_cache,
+            )
+            if self.available
+            else {
                 "loadType": "NO_MATCHES",
             }
-        else:
-            data = await self.get_tracks(
-                await self._query_cls.from_string(f"scsearch:{query}"), bypass_cache=bypass_cache
-            )
+        )
 
         return self.parse_loadtrack_response(data)
 
@@ -933,14 +939,16 @@ class Node:
         TrackLoadedObject | PlaylistLoadedObject | NoMatchesObject | LoadFailedObject | SearchResultObject
             Lavalink LoadTrack Response Object
         """
-        if not self.available:
-            data = {
+        data = (
+            await self.get_tracks(
+                await self._query_cls.from_string(f"spsearch:{query}"),
+                bypass_cache=bypass_cache,
+            )
+            if self.available
+            else {
                 "loadType": "NO_MATCHES",
             }
-        else:
-            data = await self.get_tracks(
-                await self._query_cls.from_string(f"spsearch:{query}"), bypass_cache=bypass_cache
-            )
+        )
 
         return self.parse_loadtrack_response(data)
 
@@ -961,14 +969,16 @@ class Node:
         TrackLoadedObject | PlaylistLoadedObject | NoMatchesObject | LoadFailedObject | SearchResultObject
             Lavalink LoadTrack Response Object
         """
-        if not self.available:
-            data = {
+        data = (
+            await self.get_tracks(
+                await self._query_cls.from_string(f"amsearch:{query}"),
+                bypass_cache=bypass_cache,
+            )
+            if self.available
+            else {
                 "loadType": "NO_MATCHES",
             }
-        else:
-            data = await self.get_tracks(
-                await self._query_cls.from_string(f"amsearch:{query}"), bypass_cache=bypass_cache
-            )
+        )
 
         return self.parse_loadtrack_response(data)
 
@@ -989,14 +999,16 @@ class Node:
         TrackLoadedObject | PlaylistLoadedObject | NoMatchesObject | LoadFailedObject | SearchResultObject
             Lavalink LoadTrack Response Object
         """
-        if not self.available:
-            data = {
+        data = (
+            await self.get_tracks(
+                await self._query_cls.from_string(f"dzsearch:{query}"),
+                bypass_cache=bypass_cache,
+            )
+            if self.available
+            else {
                 "loadType": "NO_MATCHES",
             }
-        else:
-            data = await self.get_tracks(
-                await self._query_cls.from_string(f"dzsearch:{query}"), bypass_cache=bypass_cache
-            )
+        )
 
         return self.parse_loadtrack_response(data)
 
@@ -1019,14 +1031,16 @@ class Node:
         TrackLoadedObject | PlaylistLoadedObject | NoMatchesObject | LoadFailedObject | SearchResultObject
             Lavalink LoadTrack Response Object
         """
-        if not self.available:
-            data = {
+        data = (
+            await self.get_tracks(await self._query_cls.from_string(query), bypass_cache=bypass_cache)
+            if self.available
+            else {
                 "loadType": "NO_MATCHES",
             }
-        else:
-            data = await self.get_tracks(await self._query_cls.from_string(query), bypass_cache=bypass_cache)
+        )
+
         response = self.parse_loadtrack_response(data)
-        return response if not first else response.tracks[0] if response.tracks else None
+        return (response.tracks[0] if response.tracks else None) if first else response
 
     async def get_track_from_cache(self, query: Query, first: bool = False) -> LavalinkResponseT:
         if response := await self.node_manager.client.query_cache_manager.fetch_query(query):
@@ -1236,9 +1250,8 @@ class Node:
         info = await self.get_info()
         for source in info.sourceManagers:
             self._capabilities.add(source)
-        if not self._capabilities:
-            if self.managed:
-                self._capabilities.add("local")
+        if not self._capabilities and self.managed:
+            self._capabilities.add("local")
         if not self.managed:
             self._capabilities.discard("local")
         if self.identifier in PYLAV_NODES:
