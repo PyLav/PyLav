@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import struct
+import typing
 from base64 import b64decode
 from io import BytesIO
+
+from pylav.types import TrackT
 
 
 class DataReader:
@@ -43,8 +46,8 @@ class DataReader:
         return read_utfm(text_length, utf_string)
 
 
-def decode_track(track: str) -> tuple[dict[str, str | dict[str, str | bool | int | None]], int]:
-    """Decodes a base64 track string into an Track object.
+def decode_track(track: str) -> tuple[TrackT, int]:
+    """Decodes a base64 track string into a Track object.
 
     Parameters
     ----------
@@ -72,20 +75,22 @@ def decode_track(track: str) -> tuple[dict[str, str | dict[str, str | bool | int
     # Position
     _ = reader.read_long()
 
-    track_object = {
-        "track": track,
-        "info": {
-            "title": title,
-            "author": author,
-            "length": length,
-            "identifier": identifier,
-            "isStream": is_stream,
-            "uri": uri,
-            "isSeekable": not is_stream,
-            "source": source,
+    track_object = typing.cast(
+        TrackT,
+        {
+            "encoded": track,
+            "info": {
+                "title": title,
+                "author": author,
+                "length": length,
+                "identifier": identifier,
+                "isStream": is_stream,
+                "uri": uri,
+                "isSeekable": not is_stream,
+                "sourceName": source,
+            },
         },
-    }
-
+    )
     return track_object, version
 
 
