@@ -53,7 +53,9 @@ try:
 
     _ = Translator("PyLavPlayer", pathlib.Path(__file__))
 except ImportError:
-    _ = lambda x: x
+
+    def _(string: str) -> str:
+        return string
 
 
 BRACKETS: re.Pattern = re.compile(r"[\[\]]")
@@ -435,7 +437,8 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
         await pylav.sql.tables.nodes.NodeRow.raw(
             """
             INSERT INTO node (id, disabled_sources) VALUES ({}, {})
-            ON CONFLICT (id) DO UPDATE SET disabled_sources = ARRAY_CAT(node.disabled_sources, EXCLUDED.disabled_sources);
+            ON CONFLICT (id)
+            DO UPDATE SET disabled_sources = ARRAY_CAT(node.disabled_sources, EXCLUDED.disabled_sources);
             """,
             self.id,
             [source],
@@ -495,10 +498,10 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
         disabled_sources: list[str] = None,
     ) -> None:
         """Update the node's data in the database"""
-        yaml = yaml or {"server": {}, "lavalink": {"server": {}}}
-        yaml["server"]["address"] = host  # type: ignore
-        yaml["server"]["port"] = port  # type: ignore
-        yaml["lavalink"]["server"]["password"] = password
+        yaml_data = yaml or {"server": {}, "lavalink": {"server": {}}}
+        yaml_data["server"]["address"] = host  # type: ignore
+        yaml_data["server"]["port"] = port  # type: ignore
+        yaml_data["lavalink"]["server"]["password"] = password
         if disabled_sources is None:
             disabled_sources = []
         if extras is None:
@@ -543,7 +546,7 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
             managed,
             disabled_sources,
             ujson.dumps(extras),
-            ujson.dumps(yaml),
+            ujson.dumps(yaml_data),
         )
         await self.invalidate_cache()
 
@@ -840,7 +843,10 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
         await pylav.sql.tables.players.PlayerRow.raw(
             """
             INSERT INTO player
-            (id, bot, volume, max_volume, shuffle, auto_shuffle, auto_play, self_deaf, empty_queue_dc, alone_dc, alone_pause)
+            (id, bot, volume,
+            max_volume, shuffle, auto_shuffle,
+            auto_play, self_deaf, empty_queue_dc,
+            alone_dc, alone_pause)
             VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})
             ON CONFLICT (id, bot) DO NOTHING;
             ;
@@ -2209,7 +2215,8 @@ class LibConfigModel(CachedModel, metaclass=_SingletonByKey):
             INSERT INTO lib_config (id, bot, next_execution_update_bundled_external_playlists)
             VALUES ({}, {}, {})
             ON CONFLICT (id, bot)
-            DO UPDATE SET next_execution_update_bundled_external_playlists = EXCLUDED.next_execution_update_bundled_external_playlists
+            DO UPDATE
+            SET next_execution_update_bundled_external_playlists = EXCLUDED.next_execution_update_bundled_external_playlists
             """,
             self.id,
             self.bot,
@@ -2524,7 +2531,10 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await pylav.sql.tables.playlists.PlaylistRow.raw(
-            "INSERT INTO playlist (id, author) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET author = EXCLUDED.author;",
+            "INSERT INTO playlist (id, author) "
+            "VALUES ({}, {}) "
+            "ON CONFLICT (id) "
+            "DO UPDATE SET author = EXCLUDED.author;",
             self.id,
             author,
         )
@@ -2629,7 +2639,10 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await pylav.sql.tables.playlists.PlaylistRow.raw(
-            "INSERT INTO playlist (id, tracks) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET tracks = EXCLUDED.tracks;",
+            "INSERT INTO playlist (id, tracks) "
+            "VALUES ({}, {}) "
+            "ON CONFLICT (id) "
+            "DO UPDATE SET tracks = EXCLUDED.tracks;",
             self.id,
             ujson.dumps(tracks),
         )
@@ -2844,17 +2857,17 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
             bio.seek(0)
             LOGGER.debug("SIZE UNCOMPRESSED playlist (%s): %s", name, sys.getsizeof(bio))
             if sys.getsizeof(bio) > guild.filesize_limit:
-                with io.BytesIO() as bio:
+                with io.BytesIO() as cbio:
                     if BROTLI_ENABLED:
                         compression = "brotli"
-                        bio.write(brotli.compress(yaml.dump(data, encoding="utf-8")))
+                        cbio.write(brotli.compress(yaml.dump(data, encoding="utf-8")))
                     else:
                         compression = "gzip"
-                        with gzip.GzipFile(fileobj=bio, mode="wb", compresslevel=9) as gfile:
+                        with gzip.GzipFile(fileobj=cbio, mode="wb", compresslevel=9) as gfile:
                             yaml.safe_dump(data, gfile, default_flow_style=False, sort_keys=False, encoding="utf-8")
-                    bio.seek(0)
-                    LOGGER.debug("SIZE COMPRESSED playlist [%s] (%s): %s", compression, name, sys.getsizeof(bio))
-                    yield bio, compression
+                    cbio.seek(0)
+                    LOGGER.debug("SIZE COMPRESSED playlist [%s] (%s): %s", compression, name, sys.getsizeof(cbio))
+                    yield cbio, compression
                     return
             yield bio, compression
 
@@ -3424,7 +3437,7 @@ class EqualizerModel:
         }
         playlist = (
             await pylav.sql.tables.equalizers.EqualizerRow.objects()
-            .output(load_json=True, nested=True)
+            .output(load_json=True)
             .get_or_create(pylav.sql.tables.equalizers.EqualizerRow.id == self.id, defaults=values)
         )
         if not playlist._was_created:
@@ -3587,17 +3600,17 @@ class EqualizerModel:
             bio.seek(0)
             LOGGER.debug(f"SIZE UNCOMPRESSED EQ ({self.name}): {sys.getsizeof(bio)}")
             if sys.getsizeof(bio) > guild.filesize_limit:
-                with io.BytesIO() as bio:
+                with io.BytesIO() as cbio:
                     if BROTLI_ENABLED:
                         compression = "brotli"
-                        bio.write(brotli.compress(yaml.dump(data, encoding="utf-8")))
+                        cbio.write(brotli.compress(yaml.dump(data, encoding="utf-8")))
                     else:
                         compression = "gzip"
-                        with gzip.GzipFile(fileobj=bio, mode="wb", compresslevel=9) as gfile:
+                        with gzip.GzipFile(fileobj=cbio, mode="wb", compresslevel=9) as gfile:
                             yaml.safe_dump(data, gfile, default_flow_style=False, sort_keys=False, encoding="utf-8")
-                    bio.seek(0)
-                    LOGGER.debug(f"SIZE COMPRESSED EQ [{compression}] ({self.name}): {sys.getsizeof(bio)}")
-                    yield bio, compression
+                    cbio.seek(0)
+                    LOGGER.debug(f"SIZE COMPRESSED EQ [{compression}] ({self.name}): {sys.getsizeof(cbio)}")
+                    yield cbio, compression
                     return
             yield bio, compression
 

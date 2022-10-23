@@ -262,7 +262,7 @@ class RadioBrowser:
 
         Args:
             name (str): The name of the station.
-            reverse (bool): Reverse the result list if set to True.
+            exact (bool): if the search should search for a station with the exact `name`
 
         Returns:
             list: Stations.
@@ -281,6 +281,7 @@ class RadioBrowser:
 
         Args:
             codec (str): The name of the codec.
+            exact (bool): if the search should search for a station with the exact `codec`
 
         Returns:
             list: Stations.
@@ -299,6 +300,7 @@ class RadioBrowser:
 
         Args:
             country (str): The name of the country.
+            exact (bool): if the search should search for a station with the exact `country`
 
         Returns:
             list: Stations.
@@ -315,6 +317,7 @@ class RadioBrowser:
 
         Args:
             code (str): Official countrycodes as in ISO 3166-1 alpha-2.
+            exact (bool): if the search should search for a station with the exact `code`
 
         Returns:
             list: Stations.
@@ -333,6 +336,7 @@ class RadioBrowser:
 
         Args:
             state (str): The name of the state.
+            exact (bool): if the search should search for a station with the exact `state`
 
         Returns:
             list: Stations.
@@ -351,6 +355,7 @@ class RadioBrowser:
 
         Args:
             language (str): The name of the language.
+            exact (bool): if the search should search for a station with the exact `language`
 
         Returns:
             list: Stations.
