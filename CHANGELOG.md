@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.11.8.0 (23/10/2022)
+- [[patch] disable yandee source which is enabled by default](https://github.com/Drapersniper/PyLav/commit/1e9f8767de00ef614878621901fcb85d4c263858) - @Drapersniper
+
+---
+
 ## v0.11.7.0 (21/10/2022)
 - [[patch] KeyError: 'track'](https://github.com/Drapersniper/PyLav/commit/4f1a0edf2f07439a9813b66bc089b2d3b829799e) - @Drapersniper
 
@@ -138,7 +143,3 @@
 ---
 
 ## v0.9.5.0 (12/09/2022)
-
----
-
-## v0.9.4.1 (12/09/2022)
