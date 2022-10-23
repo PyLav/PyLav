@@ -201,6 +201,12 @@ class WebSocket:
     async def wait_until_ready(self, timeout: float | None = None):
         await asyncio.wait_for(self.ready.wait(), timeout=timeout)
 
+    async def configure_resume_and_timeout(self):
+        if not self._resuming_configured and self._resume_key and (self._resume_timeout and self._resume_timeout > 0):
+            await self.node.patch_session(payload={"resumingKey": self._resume_key, "timeout": self._resume_timeout})
+            self._resuming_configured = True
+            LOGGER.info("[NODE-%s] Node resume has been configured with key: %s", self.node.name, self._resume_key)
+
     async def connect(self):  # sourcery no-metrics
         """Attempts to establish a connection to Lavalink"""
         try:
@@ -282,17 +288,7 @@ class WebSocket:
                     await asyncio.sleep(backoff.delay())
                 else:
                     #  asyncio.ensure_future(self._listen())
-                    if (
-                        not self._resuming_configured
-                        and self._resume_key
-                        and (self._resume_timeout and self._resume_timeout > 0)
-                    ):
-                        await self.send(
-                            op="configureResuming",
-                            key=self._resume_key,
-                            timeout=self._resume_timeout,
-                        )
-                        self._resuming_configured = True
+
                     await self.node.node_manager.node_connect(self.node)
                     if self._message_queue:
                         async for message in AsyncIter(self._message_queue):
@@ -442,6 +438,7 @@ class WebSocket:
         self.ready.set()
         self.node._ready.set()
         LOGGER.info("[NODE-%s] Node connected successfully and is now ready to accept commands", self.node.name)
+        await self.configure_resume_and_timeout()
 
     async def handle_event(self, data: LavalinkEventT):
         """
@@ -471,7 +468,7 @@ class WebSocket:
 
                 requester = None
                 track = None
-                if player.current and player.current.track == data["track"]:
+                if player.current and player.current.encoded == data["encodedTrack"]:
                     player.current.timestamp = 0
                     requester = player.current.requester
                     track = player.current
@@ -480,9 +477,9 @@ class WebSocket:
                     player,
                     track
                     or Track(
-                        data=data["track"],
+                        data=data["encodedTrack"],
                         requester=requester.id if requester else self._client.bot.user.id,
-                        query=await Query.from_base64(data["track"]),
+                        query=await Query.from_base64(data["encodedTrack"]),
                         node=self.node,
                     ),
                     self.node,
@@ -494,6 +491,8 @@ class WebSocket:
                     data = typing.cast(TrackExceptionEventT, data)
                     event = TrackExceptionEvent(player, player.current, node=self.node, event_object=event_object)
                     await player._handle_event(event)
+                    self.client.dispatch_event(event)
+                return
             case "TrackStartEvent":
                 data = typing.cast(TrackStartEventT, data)
                 track = player.current
@@ -508,12 +507,13 @@ class WebSocket:
                 event = WebSocketClosedEvent(player, self.node, player.channel, event_object=event_object)
             case "SegmentsLoaded":
                 data = typing.cast(SegmentsLoadedEventT, data)
-                event = SegmentsLoadedEvent(player, data["segments"], self.node, event_object=event_object)
+                event = SegmentsLoadedEvent(player, self.node, event_object=event_object)
             case "SegmentSkipped":
                 data = typing.cast(SegmentSkippedT, data)
                 event = SegmentSkippedEvent(player, node=self.node, event_object=event_object)
             case __:
                 LOGGER.warning("[NODE-%s] Received unknown event: %s", self.node.name, data["type"])
+                return
 
         self.client.dispatch_event(event)
 

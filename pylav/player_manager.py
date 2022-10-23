@@ -137,7 +137,7 @@ class PlayerManager:
         player = self.players.pop(guild_id)
 
         if player.node and player.node.available:
-            await player.node.send(op="destroy", guildId=player.guild_id)
+            await player.node.delete_session_player(player.guild.id)
         await player.disconnect(requester=requester)
         LOGGER.debug("[NODE-%s] Successfully destroyed player %s", player.node.name, guild_id)
 
@@ -294,7 +294,7 @@ class PlayerManager:
             discord_player = await self.create(
                 channel=channel,
                 requester=requester,
-                feature=(await Query.from_base64(player_state.current["track"])).requires_capability
+                feature=(await Query.from_base64(player_state.current["encoded"])).requires_capability
                 if player_state.current
                 else None,
                 self_deaf=player_state.self_deaf,
