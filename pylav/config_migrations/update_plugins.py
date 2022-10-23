@@ -16,32 +16,38 @@ async def update_plugins(client: "Client") -> None:
         data = await config.fetch_yaml()
         new_plugin_data = []
         _temp = set()
+        existing_plugins = set()
         for plugin in data["lavalink"]["plugins"].copy():
             dependency = ":".join(plugin["dependency"].split(":")[:-1])
             if dependency in _temp:
                 continue
             _temp.add(dependency)
             if plugin["dependency"].startswith("com.github.TopiSenpai.LavaSrc:lavasrc-plugin:"):
+                existing_plugins.add("lavasrc-plugin-")
                 org = "TopiSenpai"
                 repo = "LavaSrc"
                 repository = "https://jitpack.io"
                 dependency += ":"
             elif plugin["dependency"].startswith("com.dunctebot:skybot-lavalink-plugin:"):
+                existing_plugins.add("skybot-lavalink-plugin-")
                 org = "DuncteBot"
                 repo = "skybot-lavalink-plugin"
                 repository = "https://m2.duncte123.dev/releases"
                 dependency += ":"
             elif plugin["dependency"].startswith("com.github.topisenpai:sponsorblock-plugin:"):
+                existing_plugins.add("sponsorblock-plugin-")
                 org = "Topis-Lavalink-Plugins"
                 repo = "Sponsorblock-Plugin"
                 repository = "https://jitpack.io"
                 dependency += ":"
             elif plugin["dependency"].startswith("com.github.esmBot:lava-xm-plugin:"):
+                existing_plugins.add("lava-xm-plugin-")
                 org = "esmBot"
                 repo = "lava-xm-plugin"
                 repository = "https://jitpack.io"
                 dependency += ":"
             elif plugin["dependency"].startswith("me.rohank05:lavalink-filter-plugin:"):
+                existing_plugins.add("lavalink-filter-plugin-")
                 org = "rohank05"
                 repo = "lavalink-filter-plugin"
                 repository = "https://jitpack.io"
@@ -69,5 +75,16 @@ async def update_plugins(client: "Client") -> None:
             await config.update_yaml(data)
         else:
             LOGGER.info("No plugin updates required")
+
+        from pylav.managed_node import LAVALINK_DOWNLOAD_DIR
+
+        folder = LAVALINK_DOWNLOAD_DIR / "plugins"
+        async for file in folder.iterdir():
+            if file.is_file() and file.name.endswith(".jar") and not file.name.startswith(tuple(existing_plugins)):
+                try:
+                    await file.unlink()
+                    LOGGER.warning("Removed old plugin: %s", file.name)
+                except Exception as exc:
+                    LOGGER.error("Failed to remove old plugin: %s", file.name, exc_info=exc)
     except Exception as exc:
         LOGGER.error("Failed to update plugins", exc_info=exc)

@@ -1,4 +1,3 @@
-import contextlib
 from typing import TYPE_CHECKING
 
 from packaging.version import LegacyVersion, Version
@@ -51,7 +50,9 @@ async def run_migration_01050(client: "Client", current_version: LegacyVersion |
         if x.name.startswith("Topis-Source-Managers-Plugin-") and x.suffix == ".jar" and x.is_file()
     ]
     for file in plugin_files:
-        with contextlib.suppress(Exception):
+        try:
             await file.unlink()
+        except Exception as exc:
+            LOGGER.error("Failed to remove plugin: %s", file.name, exc_info=exc)
 
     await client.lib_db_manager.update_bot_dv_version("0.10.5")
