@@ -58,7 +58,7 @@ class QueryCacheManager:
             return False
         name = result.get("playlistInfo", {}).get("name", None)
         query = self.get(query.query_identifier)
-        await query.bulk_update(name=name, tracks=[t["track"] async for t in AsyncIter(tracks)])
+        await query.bulk_update(name=name, tracks=[t["encoded"] async for t in AsyncIter(tracks)])
         return True
 
     @staticmethod

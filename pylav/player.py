@@ -8,6 +8,7 @@ import pathlib
 import random
 import re
 import time
+import typing
 from collections.abc import Coroutine
 from typing import TYPE_CHECKING, Any, Literal
 
@@ -63,7 +64,7 @@ from pylav.filters.tremolo import Tremolo
 from pylav.query import Query
 from pylav.sql.models import PlayerModel, PlayerStateModel, PlaylistModel
 from pylav.tracks import Track
-from pylav.types import BotT, InteractionT
+from pylav.types import BotT, InteractionT, RestPatchPlayerPayloadT
 from pylav.utils import (
     _LOCK,
     AsyncIter,
@@ -105,7 +106,6 @@ class Player(VoiceProtocol):
         "ready",
         "bot",
         "client",
-        "guild_id",
         "_channel",
         "channel_id",
         "node",
@@ -165,7 +165,6 @@ class Player(VoiceProtocol):
     ):
         self.ready = asyncio.Event()
         self.bot = self.client = client
-        self.guild_id = str(channel.guild.id)
         self._channel = None
         self.channel = channel
         self.channel_id = channel.id
@@ -277,6 +276,7 @@ class Player(VoiceProtocol):
                 self._channel_mix = f
             if (echo := effects.get("echo", None)) and (f := Echo.from_dict(echo)):
                 self._echo = f
+            payload = {}
             if await asyncstdlib.any(
                 f.changed
                 for f in [
@@ -292,8 +292,8 @@ class Player(VoiceProtocol):
                     self.echo,
                 ]
             ):
-                await self.node.filters(
-                    guild_id=self.channel.guild.id,
+                payload["filters"] = self.node.get_filter_payload(
+                    player=self,
                     equalizer=self.equalizer,
                     karaoke=self.karaoke,
                     timescale=self.timescale,
@@ -305,9 +305,12 @@ class Player(VoiceProtocol):
                     channel_mix=self.channel_mix,
                     echo=self.echo,
                 )
-
             if self.volume_filter:
-                await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
+                payload["volume"] = self.volume
+            if payload:
+                await self.node.patch_session_player(
+                    guild_id=self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, payload)
+                )
 
         now_time = utcnow()
         self.player_manager.client.scheduler.add_job(
@@ -808,8 +811,10 @@ class Player(VoiceProtocol):
             del self._user_data[key]
 
     async def on_voice_server_update(self, data: dict) -> None:
-        self._voice_state.update({"event": data})
+        if "token" in data:
+            self._voice_state.update({"token": data["token"]})
         if "endpoint" in data:
+            self._voice_state.update({"endpoint": data["endpoint"]})
             if match := ENDPONT_REGEX.match(data["endpoint"]):
                 self._region = match.group("region").replace("-", "_")
                 self._coordinates = REGION_TO_COUNTRY_COORDINATE_MAPPING.get(self._region, (0, 0))
@@ -835,8 +840,10 @@ class Player(VoiceProtocol):
         await self._dispatch_voice_update()
 
     async def _dispatch_voice_update(self) -> None:
-        if {"sessionId", "event"} == self._voice_state.keys():
-            await self.node.send(op="voiceUpdate", guildId=self.guild_id, **self._voice_state)
+        if {"sessionId", "token", "endpoint"} == self._voice_state.keys():
+            await self.node.patch_session_player(
+                self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, {"voice": self._voice_state})
+            )
 
     async def _query_to_track(
         self,
@@ -934,10 +941,13 @@ class Player(VoiceProtocol):
             await self.change_to_best_node(await track.requires_capability())
 
         self.current = track
-        options = {"noReplace": False}
+        payload = {"encodedTrack": track.encoded}
         if track.skip_segments and self.node.supports_sponsorblock:
-            options["skipSegments"] = track.skip_segments
-        await self.node.send(op="play", guildId=self.guild_id, track=track.track, **options)
+            payload["skipSegments"] = track.skip_segments
+        await self.node.patch_session_player(
+            guild_id=self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, payload), no_replace=False
+        )
+
         self.node.dispatch_event(TrackPreviousRequestedEvent(self, requester, track))
 
     async def quick_play(
@@ -977,10 +987,12 @@ class Player(VoiceProtocol):
         self.current = track
         if self.next_track is None and not self.queue.empty():
             self.next_track = self.queue.raw_queue.popleft()
-        options = {"noReplace": no_replace}
+        payload = {"encodedTrack": track.encoded}
         if track.skip_segments and self.node.supports_sponsorblock:
-            options["skipSegments"] = track.skip_segments
-        await self.node.send(op="play", guildId=self.guild_id, track=track.track, **options)
+            payload["skipSegments"] = track.skip_segments
+        await self.node.patch_session_player(
+            guild_id=self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, payload), no_replace=no_replace
+        )
         self.node.dispatch_event(QuickPlayEvent(self, requester, track))
 
     def next(self, requester: discord.Member = None, node: Node = None) -> Coroutine[Any, Any, None]:
@@ -1030,7 +1042,7 @@ class Player(VoiceProtocol):
             The node to use. Defaults the best available node with the needed feature.
         """
         # sourcery no-metrics
-        options = {}
+        payload = {}
         skip_segments = self._process_skip_segments(skip_segments)
         self._last_update = 0
         self._last_position = 0
@@ -1087,7 +1099,7 @@ class Player(VoiceProtocol):
                 track = await self.queue.get()
 
         if await track.query() is None:
-            track._query = await Query.from_base64(track.track)
+            track._query = await Query.from_base64(track.encoded)
         if node:
             if self.node != node:
                 await self.change_node(node)
@@ -1111,44 +1123,47 @@ class Player(VoiceProtocol):
                 await self._handle_event(event)
                 return
         if self.node.supports_sponsorblock:
-            options["skipSegments"] = skip_segments or track.skip_segments
+            payload["skipSegments"] = skip_segments or track.skip_segments
         if start_time or track.timestamp:
             if not isinstance(start_time, int) or not 0 <= start_time <= track.duration:
                 raise ValueError(
                     "start_time must be an int with a value equal to, "
                     "or greater than 0, and less than the track duration"
                 )
-            options["startTime"] = start_time or track.timestamp
+            payload["position"] = start_time or track.timestamp
 
         if end_time is not None:
             if not isinstance(end_time, int) or not 0 <= end_time <= track.duration:
                 raise ValueError(
                     "end_time must be an int with a value equal to, or greater than 0, and less than the track duration"
                 )
-            options["endTime"] = end_time
+            payload["endTime"] = end_time
 
         if no_replace is None:
             no_replace = False
         if not isinstance(no_replace, bool):
             raise TypeError("no_replace must be a bool")
-        options["noReplace"] = no_replace
 
         self.current = track
         self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
-        await self.node.send(op="play", guildId=self.guild_id, track=track.track, **options)
+        payload["encodedTrack"] = track.encoded
+        await self.node.patch_session_player(
+            guild_id=self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, payload), no_replace=no_replace
+        )
         if auto_play:
             self.node.dispatch_event(TrackAutoPlayEvent(player=self, track=track))
 
     async def resume(self, requester: discord.Member = None):
-        options = {}
+        payload = {"encodedTrack": self.current.encoded}
         self._last_update = 0
         self.stopped = False
         self._last_position = 0
         if self.node.supports_sponsorblock:
-            options["skipSegments"] = self.current.skip_segments if self.current else []
-        options["startTime"] = self.current.last_known_position if self.current else self.position
-        options["noReplace"] = False
-        await self.node.send(op="play", guildId=self.guild_id, track=self.current.track, **options)
+            payload["skipSegments"] = self.current.skip_segments if self.current else []
+        payload["position"] = self.current.last_known_position if self.current else self.position
+        await self.node.patch_session_player(
+            guild_id=self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, payload), no_replace=False
+        )
         self.node.dispatch_event(PlayerResumedEvent(player=self, requester=requester or self.client.user.id))
 
     async def skip(self, requester: discord.Member) -> None:
@@ -1230,8 +1245,9 @@ class Player(VoiceProtocol):
         requester: :class:`discord.Member`
             The member who requested the pause.
         """
-        await self.node.send(op="pause", guildId=self.guild_id, pause=pause)
-
+        await self.node.patch_session_player(
+            guild_id=self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, {"paused": pause})
+        )
         self.paused = pause
         self._was_alone_paused = False
         if self.paused:
@@ -1258,7 +1274,7 @@ class Player(VoiceProtocol):
             return
         await self.config.update_volume(volume)
         self._volume = Volume(volume)
-        await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
+        await self.node.patch_session_player(guild_id=self.guild.id, payload={"volume": self.volume})
         self.node.dispatch_event(PlayerVolumeChangedEvent(self, requester, self.volume, volume))
 
     async def seek(self, position: float, requester: discord.Member, with_filter: bool = False) -> None:
@@ -1280,7 +1296,9 @@ class Player(VoiceProtocol):
             self.node.dispatch_event(
                 TrackSeekEvent(self, requester, self.current, before=self.position, after=position)
             )
-            await self.node.send(op="seek", guildId=self.guild_id, position=position)
+            await self.node.patch_session_player(
+                guild_id=self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, {"position": position})
+            )
             self._last_update = time.time() * 1000
             self._last_position = position
 
@@ -1334,25 +1352,27 @@ class Player(VoiceProtocol):
         if node == self.node and self.node.available and ops:
             return
         if self.node.available:
-            await self.node.send(op="destroy", guildId=self.guild_id)
+            await self.node.delete_session_player(self.guild.id)
+        payload = {}
         old_node = self.node
         self.node = node
         if self._voice_state:
             await self._dispatch_voice_update()
         if self.current:
-            options = {}
-            if self.current.skip_segments and self.node.supports_sponsorblock:
-                options["skipSegments"] = self.current.skip_segments
-            await self.node.send(
-                op="play", guildId=self.guild_id, track=self.current.track, startTime=self.position, **options
+            payload = typing.cast(
+                RestPatchPlayerPayloadT, {"encodedTrack": self.current.encoded, "position": self.position}
             )
-            self._last_update = time.time() * 1000
+            if self.current.skip_segments and self.node.supports_sponsorblock:
+                payload["skipSegments"] = self.current.skip_segments
             if self.paused:
-                await self.node.send(op="pause", guildId=self.guild_id, pause=self.paused)
+                payload["paused"] = self.paused
+
+            self._last_update = time.time() * 1000
+
         if ops:
             if self.has_effects:
-                await self.set_filters(
-                    requester=self.guild.me,
+                payload["filters"] = self.node.get_filter_payload(
+                    player=self,
                     equalizer=self.equalizer,
                     karaoke=self.karaoke,
                     timescale=self.timescale,
@@ -1363,11 +1383,11 @@ class Player(VoiceProtocol):
                     low_pass=self.low_pass,
                     channel_mix=self.channel_mix,
                     echo=self.echo,
-                    reset_not_set=True,
                 )
-
             if self.volume_filter:
-                await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
+                payload["volume"] = self.volume
+        if payload:
+            await self.node.patch_session_player(guild_id=self.guild.id, payload=payload)
         self.node.dispatch_event(NodeChangedEvent(self, old_node, node))
 
     async def connect(
@@ -1440,7 +1460,7 @@ class Player(VoiceProtocol):
             self.current = None
             with contextlib.suppress(ValueError):
                 await self.player_manager.remove(self.channel.guild.id)
-            await self.node.send(op="destroy", guildId=self.guild_id)
+            await self.node.delete_session_player(self.guild.id)
             self.player_manager.client.scheduler.remove_job(job_id=f"{self.bot.user.id}-{self.guild.id}-auto_dc_task")
             self.player_manager.client.scheduler.remove_job(
                 job_id=f"{self.bot.user.id}-{self.guild.id}-auto_empty_queue_task"
@@ -1453,7 +1473,9 @@ class Player(VoiceProtocol):
 
     async def stop(self, requester: discord.Member) -> None:
         """Stops the player"""
-        await self.node.send(op="stop", guildId=self.guild_id)
+        await self.node.patch_session_player(
+            guild_id=self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, {"encodedTrack": None})
+        )
         self.node.dispatch_event(PlayerStoppedEvent(self, requester))
         self.current = None
         self.queue.clear()
@@ -1891,8 +1913,14 @@ class Player(VoiceProtocol):
             }
         if not volume:
             kwargs.pop("volume", None)
-        await self.node.filters(guild_id=self.channel.guild.id, **kwargs)
-        await self.seek(self.position, with_filter=True, requester=requester)
+        payload = {
+            "filters": self.node.get_filter_payload(
+                player=self,
+                reset_no_set=reset_not_set**kwargs,
+            ),
+            "position": self.position,
+        }
+        await self.node.patch_session_player(self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, payload))
         kwargs.pop("reset_not_set", None)
         kwargs.pop("requester", None)
         self.node.dispatch_event(FiltersAppliedEvent(player=self, requester=requester, node=self.node, **kwargs))
@@ -2232,11 +2260,12 @@ class Player(VoiceProtocol):
         # sourcery no-metrics
         if self._restored is True:
             return
+        payload = {}
         self._was_alone_paused = player.extras.get("was_alone_paused", False)
         current = (
             Track(
                 node=self.node,
-                data=player.current.pop("track"),
+                data=player.current.pop("encoded"),
                 query=await Query.from_string(player.current.pop("query")),
                 **player.current.pop("extra"),
                 **player.current,
@@ -2247,7 +2276,7 @@ class Player(VoiceProtocol):
         next_track = (
             Track(
                 node=self.node,
-                data=n_track.pop("track"),
+                data=n_track.pop("encoded"),
                 query=await Query.from_string(n_track.pop("query")),
                 **n_track.pop("extra"),
                 **n_track,
@@ -2258,7 +2287,7 @@ class Player(VoiceProtocol):
         last_track = (
             Track(
                 node=self.node,
-                data=l_track.pop("track"),
+                data=l_track.pop("encoded"),
                 query=await Query.from_string(l_track.pop("query")),
                 **l_track.pop("extra"),
                 **l_track,
@@ -2270,6 +2299,8 @@ class Player(VoiceProtocol):
         self.next_track = next_track
         self.current = None
         self.paused = player.paused
+        if self.paused:
+            payload["paused"] = self.paused
         if self._autoplay_playlist is None:
             self._autoplay_playlist = (
                 await self.player_manager.client.playlist_db_manager.get_playlist_by_id(player.auto_play_playlist_id)
@@ -2281,7 +2312,7 @@ class Player(VoiceProtocol):
             [
                 Track(
                     node=self.node,
-                    data=t.pop("track"),
+                    data=t.pop("encoded"),
                     query=await Query.from_string(t.pop("query")),
                     **t.pop("extra"),
                     **t,
@@ -2295,7 +2326,7 @@ class Player(VoiceProtocol):
             [
                 Track(
                     node=self.node,
-                    data=t.pop("track"),
+                    data=t.pop("encoded"),
                     query=await Query.from_string(t.pop("query")),
                     **t.pop("extra"),
                     **t,
@@ -2306,9 +2337,9 @@ class Player(VoiceProtocol):
             else []
         )
         self.queue.raw_queue = collections.deque(queue)
-        self.queue.raw_b64s = [t.track for t in queue if t.track]
+        self.queue.raw_b64s = [t.encoded for t in queue if t.encoded]
         self.history.raw_queue = collections.deque(history)
-        self.history.raw_b64s = [t.track for t in history]
+        self.history.raw_b64s = [t.encoded for t in history]
         self._effect_enabled = player.effect_enabled
         effects = player.effects
         if (v := effects.get("volume", None)) and (f := Volume.from_dict(v)):
@@ -2337,9 +2368,11 @@ class Player(VoiceProtocol):
             current.timestamp = int(player.position)
             self.queue.put_nowait([current], index=0)
         await self.change_to_best_node(ops=False)
+        if current:
+            payload.update({"encodedTrack": current.encoded, "startTime": player.position})
         if self.has_effects:
-            await self.node.filters(
-                guild_id=self.channel.guild.id,
+            payload["filters"] = self.node.get_filter_payload(
+                player=self,
                 equalizer=self.equalizer,
                 karaoke=self.karaoke,
                 timescale=self.timescale,
@@ -2352,7 +2385,11 @@ class Player(VoiceProtocol):
                 echo=self.echo,
             )
         if self.volume_filter:
-            await self.node.send(op="volume", guildId=self.guild_id, volume=self.volume)
+            payload["volume"] = self.volume
+        if payload:
+            await self.node.patch_session_player(
+                guild_id=self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, payload)
+            )
         if player.playing:
             await self.next(requester)  # type: ignore
         self.last_track = last_track

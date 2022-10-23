@@ -6,6 +6,7 @@ import dataclasses
 import datetime
 import functools
 import pathlib
+import typing
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
@@ -50,7 +51,13 @@ from pylav.filters import (
 from pylav.filters.tremolo import Tremolo
 from pylav.location import distance
 from pylav.sql.models import NodeModel, NodeModelMock
-from pylav.types import LoadTracksResponseT, RestGetPlayerResponseT, RestPatchPlayerPayloadT, RestPatchSessionPayloadT
+from pylav.types import (
+    FiltersT,
+    LoadTracksResponseT,
+    RestGetPlayerResponseT,
+    RestPatchPlayerPayloadT,
+    RestPatchSessionPayloadT,
+)
 from pylav.utils import AsyncIter
 
 if TYPE_CHECKING:
@@ -1044,7 +1051,9 @@ class Node:
                 else "TRACK_LOADED"
             )
             tracks = await response.fetch_tracks()
-            tracks = [{"track": track} async for track in AsyncIter([tracks[0]] if first else tracks)] if tracks else []
+            tracks = (
+                [{"encoded": track} async for track in AsyncIter([tracks[0]] if first else tracks)] if tracks else []
+            )
             data = {
                 "loadType": load_type,
                 "tracks": tracks,
@@ -1473,6 +1482,83 @@ class Node:
         response = await self.get_track(await self._query_cls.from_string(query), bypass_cache=bypass_cache)
         return (response.tracks[0] if response.tracks else None) if first else response
 
+    @staticmethod
+    def get_filter_payload(
+        *,
+        player: Player,
+        volume: Volume = None,
+        equalizer: Equalizer = None,
+        karaoke: Karaoke = None,
+        timescale: Timescale = None,
+        tremolo: Tremolo = None,
+        vibrato: Vibrato = None,
+        rotation: Rotation = None,
+        distortion: Distortion = None,
+        low_pass: LowPass = None,
+        channel_mix: ChannelMix = None,
+        echo: Echo = None,
+        reset_no_set: bool = False,
+        reset: bool = False,
+    ) -> FiltersT | None:
+        if reset:
+            return None
+
+        payload: FiltersT = {}
+        if volume:
+            payload["volume"] = volume.get()
+
+        if equalizer:
+            payload["equalizer"] = equalizer.get()
+        elif not reset_no_set and player.equalizer.changed:
+            payload["equalizer"] = player.equalizer.get()
+
+        if karaoke:
+            payload["karaoke"] = karaoke.get()
+        elif not reset_no_set and player.karaoke.changed:
+            payload["karaoke"] = player.karaoke.get()
+
+        if timescale:
+            payload["timescale"] = timescale.get()
+        elif not reset_no_set and player.timescale.changed:
+            payload["timescale"] = player.timescale.get()
+
+        if tremolo:
+            payload["tremolo"] = tremolo.get()
+        elif not reset_no_set and player.timescale.changed:
+            payload["timescale"] = player.timescale.get()
+
+        if vibrato:
+            payload["vibrato"] = vibrato.get()
+        elif not reset_no_set and player.vibrato.changed:
+            payload["vibrato"] = player.vibrato.get()
+
+        if rotation:
+            payload["rotation"] = rotation.get()
+        elif not reset_no_set and player.rotation.changed:
+            payload["rotation"] = player.rotation.get()
+
+        if distortion:
+            payload["distortion"] = distortion.get()
+        elif not reset_no_set and player.distortion.changed:
+            payload["distortion"] = player.distortion.get()
+
+        if low_pass:
+            payload["lowPass"] = low_pass.get()
+        elif not reset_no_set and player.low_pass.changed:
+            payload["lowPass"] = player.low_pass.get()
+
+        if channel_mix:
+            payload["channelMix"] = channel_mix.get()
+        elif not reset_no_set and player.channel_mix.changed:
+            payload["channelMix"] = player.channel_mix.get()
+
+        if echo:
+            payload["echo"] = echo.get()
+        elif not reset_no_set and player.echo.changed:
+            payload["echo"] = player.echo.get()
+
+        return payload
+
     async def filters(
         self,
         *,
@@ -1489,28 +1575,20 @@ class Node:
         channel_mix: ChannelMix = None,
         echo: Echo = None,
     ):
-        op = {}
-        if volume:
-            op["volume"] = volume.get()
-        if equalizer:
-            op["equalizer"] = equalizer.get()
-        if karaoke:
-            op["karaoke"] = karaoke.get()
-        if timescale:
-            op["timescale"] = timescale.get()
-        if tremolo:
-            op["tremolo"] = tremolo.get()
-        if vibrato:
-            op["vibrato"] = vibrato.get()
-        if rotation:
-            op["rotation"] = rotation.get()
-        if distortion:
-            op["distortion"] = distortion.get()
-        if low_pass:
-            op["lowPass"] = low_pass.get()
-        if channel_mix:
-            op["channelMix"] = channel_mix.get()
-        if echo:
-            op["echo"] = echo.get()
-
-        await self.patch_session_player(guild_id=guild_id, payload={"filters": op})
+        payload = self.get_filter_payload(
+            player=self.node_manager.client.player_manager.get(guild_id),
+            volume=volume,
+            equalizer=equalizer,
+            karaoke=karaoke,
+            timescale=timescale,
+            tremolo=tremolo,
+            vibrato=vibrato,
+            rotation=rotation,
+            distortion=distortion,
+            low_pass=low_pass,
+            channel_mix=channel_mix,
+            echo=echo,
+        )
+        await self.patch_session_player(
+            guild_id=guild_id, payload=typing.cast(RestPatchPlayerPayloadT, {"filters": payload})
+        )

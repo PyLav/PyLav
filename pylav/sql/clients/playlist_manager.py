@@ -354,7 +354,7 @@ class PlaylistConfigManager:
                     data = await self.client.get_tracks(await Query.from_string(url), bypass_cache=True)
                     name = data.get("playlistInfo", {}).get("name") or name
                     tracks_raw = data.get("tracks", [])
-                    track_list = [t_ for t in tracks_raw if (t_ := t.get("track"))]
+                    track_list = [t_ for t in tracks_raw if (t_ := t.get("encoded"))]
                 except Exception as exc:
                     LOGGER.error(
                         "Built-in external playlist couldn't be parsed - %s, report this error", name, exc_info=exc
@@ -391,7 +391,7 @@ class PlaylistConfigManager:
                         bypass_cache=True,
                     )
                     tracks_raw = query.get("tracks", [])
-                    track_list = [t_ for t in tracks_raw if (t_ := t.get("track"))]
+                    track_list = [t_ for t in tracks_raw if (t_ := t.get("encoded"))]
                     name = query.get("playlistInfo", {}).get("name")
                     if track_list:
                         await playlist.update_tracks(tracks=track_list)
