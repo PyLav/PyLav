@@ -323,7 +323,7 @@ class Client(metaclass=_Singleton):
                 self.ready.clear()
                 await self._wait_until_ready()
                 await tables.DB.start_connection_pool(max_size=100)
-                client_id, client_secret, deezer_token = await self._get_service_tokens()
+                client_id, client_secret, deezer_token, yandex_access_token = await self._get_service_tokens()
                 await self._initialise_modules()
                 config_data = await self._config.fetch_all()
                 java_path = config_data["java_path"]
@@ -337,7 +337,7 @@ class Client(metaclass=_Singleton):
                 localtrack_folder = aiopath.AsyncPath(localtrack_folder)
                 bundled_node_config = self._node_config_manager.bundled_node_config()
                 client_id, client_secret = await self._initialize_yaml_config(
-                    bundled_node_config, client_id, client_secret, deezer_token
+                    bundled_node_config, client_id, client_secret, deezer_token, yandex_access_token
                 )
                 self._spotify_auth = ClientCredentialsFlow(client_id=client_id, client_secret=client_secret)
 
@@ -414,15 +414,20 @@ class Client(metaclass=_Singleton):
             if client_id and client_secret:
                 LOGGER.debug("Existing Spotify tokens found; Using clientID - %s", client_id)
             deezer = await self.bot.get_shared_api_tokens("deezer")
-            deezer_token = deezer.get("token")
+            deezer_token = deezer.get("master_token")
             if deezer_token:
                 LOGGER.debug("Existing Deezer token found; Using it")
+            yandex = await self.bot.get_shared_api_tokens("yandex")
+            yandex_access_token = yandex.get("access_token")
+            if yandex_access_token:
+                LOGGER.debug("Existing Yandex Music token found; Using it")
         else:
             LOGGER.info("PyLav being run from a non Red bot")
             client_id = None
             client_secret = None
             deezer_token = "..."
-        return client_id, client_secret, deezer_token
+            yandex_access_token = ""
+        return client_id, client_secret, deezer_token, yandex_access_token
 
     async def _add_scheduler_job_external_playlists(self):
         next_execution_update_external_playlists = await self._config.fetch_next_execution_update_external_playlists()
@@ -508,7 +513,9 @@ class Client(metaclass=_Singleton):
                 time_now + datetime.timedelta(minutes=5, days=1)
             )
 
-    async def _initialize_yaml_config(self, bundled_node_config, client_id, client_secret, deezer_token):
+    async def _initialize_yaml_config(
+        self, bundled_node_config, client_id, client_secret, deezer_token, yandex_access_token
+    ):
         yaml_data = await bundled_node_config.fetch_yaml()
         if not await asyncstdlib.all([client_id, client_secret]):
             spotify_data = yaml_data["plugins"]["lavasrc"]["spotify"]
@@ -525,6 +532,9 @@ class Client(metaclass=_Singleton):
         if deezer_token:
             yaml_data["plugins"]["lavasrc"]["deezer"]["masterDecryptionKey"] = deezer_token
             await bundled_node_config.update_yaml(yaml_data)
+        if yandex_access_token:
+            yaml_data["plugins"]["lavasrc"]["yandexmusic"]["accessToken"] = yandex_access_token
+            await bundled_node_config.update_yaml(yaml_data)
         return client_id, client_secret
 
     async def register(self, cog: CogT) -> None:
@@ -535,7 +545,7 @@ class Client(metaclass=_Singleton):
             )
         self.__cogs_registered.add(cog.__cog_name__)
 
-    async def update_spotify_tokens(self, client_id: str, client_secret: str) -> None:
+    async def update_spotify_tokens(self, client_id: str, client_secret: str, **kwargs) -> None:
         LOGGER.info("Updating Spotify Tokens")
         LOGGER.debug("New Spotify token: ClientId: %s || ClientSecret: %s", client_id, client_secret)
         self._spotify_auth = ClientCredentialsFlow(client_id=client_id, client_secret=client_secret)
@@ -543,6 +553,22 @@ class Client(metaclass=_Singleton):
         bundled_node_config_yaml = await bundled_node_config.fetch_yaml()
         bundled_node_config_yaml["plugins"]["lavasrc"]["spotify"]["clientId"] = client_id
         bundled_node_config_yaml["plugins"]["lavasrc"]["spotify"]["clientSecret"] = client_secret
+        await bundled_node_config.update_yaml(bundled_node_config_yaml)
+
+    async def update_deezer_tokens(self, master_token: str, **kwargs) -> None:
+        LOGGER.info("Updating Deezer Tokens")
+        LOGGER.debug("New Deezer token: %s", master_token)
+        bundled_node_config = self._node_config_manager.bundled_node_config()
+        bundled_node_config_yaml = await bundled_node_config.fetch_yaml()
+        bundled_node_config_yaml["plugins"]["lavasrc"]["deezer"]["masterDecryptionKey"] = master_token
+        await bundled_node_config.update_yaml(bundled_node_config_yaml)
+
+    async def update_yandex_tokens(self, access_token: str, **kwargs) -> None:
+        LOGGER.info("Updating Yandex Tokens")
+        LOGGER.debug("New Yandex token: %s", access_token)
+        bundled_node_config = self._node_config_manager.bundled_node_config()
+        bundled_node_config_yaml = await bundled_node_config.fetch_yaml()
+        bundled_node_config_yaml["plugins"]["lavasrc"]["yandexmusic"]["accessToken"] = access_token
         await bundled_node_config.update_yaml(bundled_node_config_yaml)
 
     async def add_node(
