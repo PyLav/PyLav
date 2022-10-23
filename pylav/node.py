@@ -973,6 +973,18 @@ class Node:
         return self.has_source("deezer")
 
     @property
+    def supports_yandex_music(self) -> bool:
+        """
+        Checks if the target node supports Yandex Music.
+
+        Returns
+        -------
+        :class:`bool`
+            True if the target node supports Yandex Music, False otherwise.
+        """
+        return self.has_source("yandexmusic")
+
+    @property
     def supports_vimeo(self) -> bool:
         """
         Checks if the target node supports Vimeo.
