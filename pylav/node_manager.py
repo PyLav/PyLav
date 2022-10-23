@@ -465,29 +465,83 @@ class NodeManager:
     async def connect_to_all_nodes(self) -> None:
         nodes_list = []
         async for node in asyncstdlib.iter(await self.client.node_db_manager.get_all_unmanaged_nodes()):
-            if node.id == self.client.bot.user.id:
-                LOGGER.debug("Skipping node %s as it is the managed node", node.id)
-                continue
-            node_data = await node.fetch_all()
-            try:
-                if node in nodes_list:
-                    LOGGER.warning(
-                        "%s Node already added to connection pool - skipping duplicated connection - (%s:%s)",
-                        node_data["name"],
-                        node_data["yaml"]["server"]["address"],
-                        node_data["yaml"]["server"]["port"],
-                    )
-                    continue
-                if node_data["yaml"]["server"]["address"] in PYLAV_BUNDLED_NODES_SETTINGS:
-                    connection_arguments = PYLAV_BUNDLED_NODES_SETTINGS[node_data["yaml"]["server"]["address"]]
-                else:
-                    connection_arguments = await node.get_connection_args()
-                nodes_list.append(await self.add_node(**connection_arguments))
-            except (ValueError, KeyError) as exc:
-                LOGGER.warning(
-                    "[NODE-%s] Invalid node, skipping ... id: %s - Original error: %s", node_data["name"], node.id, exc
+            await self._process_single_unamanaged_node_connection(node, nodes_list)
+        await self._process_envvar_node(nodes_list)
+        config_data = typing.cast(LibConfigModel, self.client._lib_config_manager.get_config())
+        all_data = await config_data.fetch_all()
+
+        if all_data["java_path"] != JAVA_EXECUTABLE and os.path.exists(JAVA_EXECUTABLE):
+            await config_data.update_java_path(JAVA_EXECUTABLE)
+
+        if all_data["use_bundled_pylav_external"]:
+            await self._process_bundled_node_london(nodes_list)
+            await self._process_bundled_node_ny(nodes_list)
+
+        if all_data["use_bundled_lava_link_external"] and not self.get_node_by_id(
+            PYLAV_BUNDLED_NODES_SETTINGS["lava.link"]["unique_identifier"]
+        ):
+            await self._process_bundled_node_lava_link(nodes_list)
+        tasks = [asyncio.create_task(n.wait_until_ready()) for n in nodes_list]
+        if not tasks:
+            if (
+                not (self._unmanaged_external_password and self._unmanaged_external_host)
+                and await self.client.lib_db_manager.get_config().fetch_enable_managed_node()
+            ):
+                self._adding_nodes.set()
+                return
+            LOGGER.warning("No nodes found, please add some nodes")
+            return
+        done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+        for task in pending:
+            task.cancel()
+        for result in done:
+            result.result()
+        if not self._adding_nodes.is_set():
+            self._adding_nodes.set()
+
+    async def _process_bundled_node_lava_link(self, nodes_list):
+        if await asyncstdlib.all(True async for n in asyncstdlib.iter(nodes_list) if n.host != "lava.link"):
+            nodes_list.append(
+                await self.add_node(
+                    password=f"PyLav/{self.client.lib_version}",
+                    resume_key=f"PyLav/{self.client.lib_version}-{self.client.bot_id}",
+                    **PYLAV_BUNDLED_NODES_SETTINGS["lava.link"],
                 )
-                continue
+            )
+        else:
+            LOGGER.debug(
+                "%s already added to connection pool - skipping duplicated connection",
+                PYLAV_BUNDLED_NODES_SETTINGS["lava.link"]["name"],
+            )
+
+    async def _process_bundled_node_ny(self, nodes_list):
+        if await asyncstdlib.all(
+            True async for n in asyncstdlib.iter(nodes_list) if n.host != "ll-us-ny.draper.wtf"
+        ) and not self.get_node_by_id(PYLAV_BUNDLED_NODES_SETTINGS["ll-us-ny.draper.wtf"]["unique_identifier"]):
+            base_settings = PYLAV_BUNDLED_NODES_SETTINGS["ll-us-ny.draper.wtf"]
+            base_settings["resume_key"] = f"PyLav/{self.client.lib_version}-{self.client.bot_id}"
+            nodes_list.append(await self.add_node(**base_settings))
+        else:
+            LOGGER.debug(
+                "%s already added to connection pool - skipping duplicated connection",
+                PYLAV_BUNDLED_NODES_SETTINGS["ll-us-ny.draper.wtf"]["name"],
+            )
+
+    async def _process_bundled_node_london(self, nodes_list):
+        if await asyncstdlib.all(
+            True async for n in asyncstdlib.iter(nodes_list) if n.host != "ll-gb.draper.wtf"
+        ) and not self.get_node_by_id(PYLAV_BUNDLED_NODES_SETTINGS["ll-gb.draper.wtf"]["unique_identifier"]):
+            base_settings = PYLAV_BUNDLED_NODES_SETTINGS["ll-gb.draper.wtf"]
+            base_settings["host"] = "ll-gb.draper.wtf"
+            base_settings["resume_key"] = f"PyLav/{self.client.lib_version}-{self.client.bot_id}"
+            nodes_list.append(await self.add_node(**base_settings))
+        else:
+            LOGGER.debug(
+                "%s already added to connection pool - skipping duplicated connection",
+                PYLAV_BUNDLED_NODES_SETTINGS["ll-gb.draper.wtf"]["name"],
+            )
+
+    async def _process_envvar_node(self, nodes_list):
         if self._unmanaged_external_host and self._unmanaged_external_password:
             if await asyncstdlib.all(True for n in nodes_list if n.host != self._unmanaged_external_host):
                 if self._unmanaged_external_host in PYLAV_BUNDLED_NODES_SETTINGS:
@@ -516,70 +570,30 @@ class NodeManager:
                     self._unmanaged_external_host,
                     self._unmanaged_external_port,
                 )
-        config_data = typing.cast(LibConfigModel, self.client._lib_config_manager.get_config())
-        all_data = await config_data.fetch_all()
 
-        if all_data["java_path"] != JAVA_EXECUTABLE and os.path.exists(JAVA_EXECUTABLE):
-            await config_data.update_java_path(JAVA_EXECUTABLE)
-
-        if all_data["use_bundled_pylav_external"]:
-            if await asyncstdlib.all(
-                True async for n in asyncstdlib.iter(nodes_list) if n.host != "ll-gb.draper.wtf"
-            ) and not self.get_node_by_id(PYLAV_BUNDLED_NODES_SETTINGS["ll-gb.draper.wtf"]["unique_identifier"]):
-                base_settings = PYLAV_BUNDLED_NODES_SETTINGS["ll-gb.draper.wtf"]
-                base_settings["host"] = "ll-gb.draper.wtf"
-                base_settings["resume_key"] = f"PyLav/{self.client.lib_version}-{self.client.bot_id}"
-                nodes_list.append(await self.add_node(**base_settings))
-            else:
-                LOGGER.debug(
-                    "%s already added to connection pool - skipping duplicated connection",
-                    PYLAV_BUNDLED_NODES_SETTINGS["ll-gb.draper.wtf"]["name"],
-                )
-
-            if await asyncstdlib.all(
-                True async for n in asyncstdlib.iter(nodes_list) if n.host != "ll-us-ny.draper.wtf"
-            ) and not self.get_node_by_id(PYLAV_BUNDLED_NODES_SETTINGS["ll-us-ny.draper.wtf"]["unique_identifier"]):
-                base_settings = PYLAV_BUNDLED_NODES_SETTINGS["ll-us-ny.draper.wtf"]
-                base_settings["resume_key"] = f"PyLav/{self.client.lib_version}-{self.client.bot_id}"
-                nodes_list.append(await self.add_node(**base_settings))
-            else:
-                LOGGER.debug(
-                    "%s already added to connection pool - skipping duplicated connection",
-                    PYLAV_BUNDLED_NODES_SETTINGS["ll-us-ny.draper.wtf"]["name"],
-                )
-        if all_data["use_bundled_lava_link_external"] and not self.get_node_by_id(
-            PYLAV_BUNDLED_NODES_SETTINGS["lava.link"]["unique_identifier"]
-        ):
-            if await asyncstdlib.all(True async for n in asyncstdlib.iter(nodes_list) if n.host != "lava.link"):
-                nodes_list.append(
-                    await self.add_node(
-                        password=f"PyLav/{self.client.lib_version}",
-                        resume_key=f"PyLav/{self.client.lib_version}-{self.client.bot_id}",
-                        **PYLAV_BUNDLED_NODES_SETTINGS["lava.link"],
-                    )
-                )
-            else:
-                LOGGER.debug(
-                    "%s already added to connection pool - skipping duplicated connection",
-                    PYLAV_BUNDLED_NODES_SETTINGS["lava.link"]["name"],
-                )
-        tasks = [asyncio.create_task(n.wait_until_ready()) for n in nodes_list]
-        if not tasks:
-            if (
-                not (self._unmanaged_external_password and self._unmanaged_external_host)
-                and await self.client.lib_db_manager.get_config().fetch_enable_managed_node()
-            ):
-                self._adding_nodes.set()
-                return
-            LOGGER.warning("No nodes found, please add some nodes")
+    async def _process_single_unamanaged_node_connection(self, node, nodes_list):
+        if node.id == self.client.bot.user.id:
+            LOGGER.debug("Skipping node %s as it is the managed node", node.id)
             return
-        done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
-        for task in pending:
-            task.cancel()
-        for result in done:
-            result.result()
-        if not self._adding_nodes.is_set():
-            self._adding_nodes.set()
+        node_data = await node.fetch_all()
+        try:
+            if node in nodes_list:
+                LOGGER.warning(
+                    "%s Node already added to connection pool - skipping duplicated connection - (%s:%s)",
+                    node_data["name"],
+                    node_data["yaml"]["server"]["address"],
+                    node_data["yaml"]["server"]["port"],
+                )
+                return
+            if node_data["yaml"]["server"]["address"] in PYLAV_BUNDLED_NODES_SETTINGS:
+                connection_arguments = PYLAV_BUNDLED_NODES_SETTINGS[node_data["yaml"]["server"]["address"]]
+            else:
+                connection_arguments = await node.get_connection_args()
+            nodes_list.append(await self.add_node(**connection_arguments))
+        except (ValueError, KeyError) as exc:
+            LOGGER.warning(
+                "[NODE-%s] Invalid node, skipping ... id: %s - Original error: %s", node_data["name"], node.id, exc
+            )
 
     async def wait_until_ready(self, timeout: float | None = None):
         await asyncio.wait_for(self._adding_nodes.wait(), timeout=timeout)
