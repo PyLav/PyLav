@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.11.9.0 (23/10/2022)
+- [[patch] Don't specify track endTime if 0](https://github.com/Drapersniper/PyLav/commit/76726906d242d1a92a70428f27843026905e7066) - @Drapersniper
+
+---
+
 ## v0.11.8.0 (23/10/2022)
 - [[patch] disable yandee source which is enabled by default](https://github.com/Drapersniper/PyLav/commit/1e9f8767de00ef614878621901fcb85d4c263858) - @Drapersniper
 
@@ -139,7 +144,3 @@
 ---
 
 ## v0.9.5.1 (12/09/2022)
-
----
-
-## v0.9.5.0 (12/09/2022)
