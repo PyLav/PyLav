@@ -509,13 +509,12 @@ class Client(metaclass=_Singleton):
             )
 
     async def _initialize_yaml_config(self, bundled_node_config, client_id, client_secret, deezer_token):
+        yaml_data = await bundled_node_config.fetch_yaml()
         if not await asyncstdlib.all([client_id, client_secret]):
-            yaml_data = await bundled_node_config.fetch_yaml()
             spotify_data = yaml_data["plugins"]["lavasrc"]["spotify"]
             client_id = spotify_data["clientId"]
             client_secret = spotify_data["clientSecret"]
         elif await asyncstdlib.all([client_id, client_secret]):
-            yaml_data = await bundled_node_config.fetch_yaml()
             if (
                 yaml_data["plugins"]["lavasrc"]["spotify"]["clientId"] != client_id
                 or yaml_data["plugins"]["lavasrc"]["spotify"]["clientSecret"] != client_secret

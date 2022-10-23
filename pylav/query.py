@@ -112,6 +112,15 @@ DEEZER_REGEX = re.compile(
     r"^(https?://)?(www\.)?deezer\.page\.link/.*$",
     re.IGNORECASE,
 )
+
+YANDEX_TRACK_REGEX = re.compile(
+    r"^(https?://)?music\.yandex\.ru/(?P<ymtype1>artist|album)/"
+    r"(?P<ymidentifier>[0-9]+)/?((?P<ymtype2>track/)(?P<ymidentifier2>[0-9]+)/?)?$"
+)
+YANDEX_PLAYLIST_REGEX = re.compile(
+    r"^(https?://)?music\.yandex\.ru/users/(?P<ympidentifier>[0-9A-Za-z@.-]+)/playlists/(?P<ympidentifier2>[0-9]+)/?$"
+)
+
 YOUTUBE_TIMESTAMP = re.compile(r"[&|?]t=(\d+)s?")
 YOUTUBE_INDEX = re.compile(r"&index=(\d+)")
 SPOTIFY_TIMESTAMP = re.compile(r"#(\d+):(\d+)")
@@ -149,6 +158,8 @@ MERGED_REGEX = re.compile(
                 TWITCH_REGEX,
                 VIMEO_REGEX,
                 SOUND_CLOUD_REGEX,
+                YANDEX_TRACK_REGEX,
+                YANDEX_PLAYLIST_REGEX,
                 M3U_REGEX,
                 PLS_REGEX,
                 PYLAV_REGEX,
@@ -222,6 +233,15 @@ def process_soundcloud(cls: QueryT, query: str):
 def process_bandcamp(cls: QueryT, query: str) -> Query:
     query_type = "album" if "/album/" in query else "single"
     return cls(query, "Bandcamp", query_type=query_type)
+
+
+def process_yandex_music(cls: QueryT, query: str) -> Query:
+    query_type = "single"
+    if "/album/" in query:
+        query_type = "album"
+    elif "/playlist/" in query:
+        query_type = "playlist"
+    return cls(query, "Yandex Music", query_type=query_type)
 
 
 class Query:
@@ -384,6 +404,10 @@ class Query:
         return self.source == "Deezer"
 
     @property
+    def is_yandex_music(self) -> bool:
+        return self.source == "Yandex Music"
+
+    @property
     def is_search(self) -> bool:
         return self._search
 
@@ -450,6 +474,8 @@ class Query:
                 return f"speak:{self._query[:200]}"
             elif self.is_gctts:
                 return f"tts://{self._query}"
+            elif self.is_yandex_music:
+                return f"ymsearch:{self._query}"
             else:
                 return f"ytsearch:{self._query}"
         elif self.is_local:
@@ -499,6 +525,8 @@ class Query:
             return cls(query, "Niconico")
         elif VIMEO_REGEX.match(query):
             return cls(query, "Vimeo")
+        elif YANDEX_TRACK_REGEX.match(query):
+            return process_yandex_music(cls, query)
         elif HTTP_REGEX.match(query):
             return cls(query, "HTTP")
 
@@ -522,6 +550,8 @@ class Query:
                 return cls(query, "Apple Music", search=True)
             elif match.group("search_source") == "dz":
                 return cls(query, "Deezer", search=True)
+            elif match.group("search_source") == "ym":
+                return cls(query, "Yandex Music", search=True)
             else:
                 return cls(query, "YouTube Music", search=True)  # Fallback to YouTube
 
@@ -881,6 +911,8 @@ class Query:
                 source = "Google TTS"
             case "dz":
                 source = "Deezer"
+            case "ym":
+                source = "Yandex Music"
         self._source = source
 
     def with_index(self, index: int) -> Query:
@@ -947,6 +979,8 @@ class Query:
                 return "TikTok"
             case "niconico":
                 return "Niconico"
+            case "yandexmusic":
+                return "Yandex Music"
             case __:
                 return "YouTube"
 
@@ -992,5 +1026,7 @@ class Query:
             return "vimeo"
         elif self.is_deezer:
             return "deezer"
+        elif self.is_yandex_music:
+            return "yandexmusic"
         else:
             return "youtube"
