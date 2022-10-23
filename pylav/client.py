@@ -311,195 +311,222 @@ class Client(metaclass=_Singleton):
     async def initialize(self) -> None:
         try:
             if not self._initiated:
-                async with self._asyncio_lock:
-                    if not self._initiated:
-                        self._initiated = True
-                        self.ready.clear()
-                        if hasattr(self.bot, "wait_until_red_ready"):
-                            LOGGER.info("Running on a Red bot, waiting for Red to be ready")
-                            await self.bot.wait_until_red_ready()
-                        else:
-                            LOGGER.info("Running a discord.py bot waiting for bot to be ready")
-                            await self.bot.wait_until_ready()
-                        await tables.DB.start_connection_pool(max_size=100)
-                        if hasattr(self.bot, "get_shared_api_tokens") and callable(
-                            getattr(self.bot, "get_shared_api_tokens")
-                        ):
-                            spotify = await self.bot.get_shared_api_tokens("spotify")
-                            client_id = spotify.get("client_id")
-                            client_secret = spotify.get("client_secret")
-                            if client_id and client_secret:
-                                LOGGER.debug("Existing Spotify tokens found; Using clientID - %s", client_id)
-                            deezer = await self.bot.get_shared_api_tokens("deezer")
-                            deezer_token = deezer.get("token")
-                            if deezer_token:
-                                LOGGER.debug("Existing Deezer token found; Using it")
-                        else:
-                            LOGGER.info("PyLav being run from a non Red bot")
-                            client_id = None
-                            client_secret = None
-                            deezer_token = "..."
-                        await self._lib_config_manager.initialize()
-                        self._config = self._lib_config_manager.get_config()
-                        await NodeModel.create_managed(id=self.bot.user.id)
-                        await self._update_schema_manager.run_updates()
-                        await self._radio_manager.initialize()
-                        await self._player_manager.initialize()
-                        await self.player_config_manager.initialize_global_config()
-                        config_data = await self._config.fetch_all()
-                        java_path = config_data["java_path"]
-                        config_folder = config_data["config_folder"]
-                        localtrack_folder = config_data["localtrack_folder"]
-                        if java_path != JAVA_EXECUTABLE and os.path.exists(JAVA_EXECUTABLE):
-                            await self._config.update_java_path(JAVA_EXECUTABLE)
-                        LOGGER.info("Config folder: %s", config_folder)
-                        LOGGER.info("Localtracks folder: %s", localtrack_folder)
-                        self._config_folder = aiopath.AsyncPath(config_folder)
-                        localtrack_folder = aiopath.AsyncPath(localtrack_folder)
-                        bundled_node_config = self._node_config_manager.bundled_node_config()
-                        if not await asyncstdlib.all([client_id, client_secret]):
-                            yaml_data = await bundled_node_config.fetch_yaml()
-                            spotify_data = yaml_data["plugins"]["lavasrc"]["spotify"]
-                            client_id = spotify_data["clientId"]
-                            client_secret = spotify_data["clientSecret"]
-                        elif await asyncstdlib.all([client_id, client_secret]):
-                            yaml_data = await bundled_node_config.fetch_yaml()
-                            if (
-                                yaml_data["plugins"]["lavasrc"]["spotify"]["clientId"] != client_id
-                                or yaml_data["plugins"]["lavasrc"]["spotify"]["clientSecret"] != client_secret
-                            ):
-                                yaml_data["plugins"]["lavasrc"]["spotify"]["clientId"] = client_id
-                                yaml_data["plugins"]["lavasrc"]["spotify"]["clientSecret"] = client_secret
-                                await bundled_node_config.update_yaml(yaml_data)
-                        if deezer_token:
-                            yaml_data["plugins"]["lavasrc"]["deezer"]["masterDecryptionKey"] = deezer_token
-                            await bundled_node_config.update_yaml(yaml_data)
-                        self._spotify_auth = ClientCredentialsFlow(client_id=client_id, client_secret=client_secret)
-
-                        from pylav.localfiles import LocalFile
-
-                        await LocalFile.add_root_folder(path=localtrack_folder, create=True)
-                        self._user_id = str(self._bot.user.id)
-                        self._local_node_manager = LocalNodeManager(self)
-
-                        enable_managed_node = await self.lib_db_manager.get_config().fetch_enable_managed_node()
-
-                        if (
-                            not (
-                                self._node_manager._unmanaged_external_password
-                                and self._node_manager._unmanaged_external_host
-                            )
-                            and enable_managed_node
-                        ):
-                            await self._local_node_manager.start(java_path=java_path)
-                        else:
-                            self._local_node_manager.ready.set()
-                        await self.node_manager.connect_to_all_nodes()
-                        await self.node_manager.wait_until_ready()
-                        if (
-                            not (
-                                self._node_manager._unmanaged_external_password
-                                and self._node_manager._unmanaged_external_host
-                            )
-                            and enable_managed_node
-                        ):
-                            await self._local_node_manager.wait_until_connected()
-                        time_now = utcnow()
-                        if await self._config.fetch_next_execution_update_bundled_playlists() is None:
-                            await self._config.update_next_execution_update_bundled_playlists(
-                                time_now + datetime.timedelta(minutes=5, days=1)
-                            )
-
-                        if await self._config.fetch_next_execution_update_bundled_external_playlists() is None:
-                            await self._config.update_next_execution_update_bundled_external_playlists(
-                                time_now + datetime.timedelta(minutes=10, days=7)
-                            )
-
-                        if await self._config.fetch_next_execution_update_external_playlists() is None:
-                            await self._config.update_next_execution_update_external_playlists(
-                                time_now + datetime.timedelta(minutes=30)
-                            )
-                        if await self.playlist_db_manager.count() == 0:
-                            await self.playlist_db_manager.update_bundled_playlists()
-                            await self.playlist_db_manager.update_bundled_external_playlists()
-
-                        await self.player_manager.restore_player_states()
-
-                        self._scheduler.add_job(
-                            self._query_cache_manager.delete_old,
-                            trigger="interval",
-                            seconds=600,
-                            max_instances=1,
-                            replace_existing=True,
-                            name="cache_delete_old",
-                            coalesce=True,
-                            id=f"{self.bot.user.id}-cache_delete_old",
-                        )
-
-                        next_execution_update_bundled_playlists = (
-                            await self._config.fetch_next_execution_update_bundled_playlists()
-                        )
-                        self._scheduler.add_job(
-                            self.playlist_db_manager.update_bundled_playlists,
-                            trigger="interval",
-                            days=TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS,
-                            max_instances=1,
-                            next_run_time=next_execution_update_bundled_playlists,
-                            replace_existing=True,
-                            name="update_bundled_playlists",
-                            coalesce=True,
-                            id=f"{self.bot.user.id}-update_bundled_playlists",
-                        )
-
-                        LOGGER.info(
-                            "Scheduling first run of Bundled Playlist update task to: %s",
-                            next_execution_update_bundled_playlists,
-                        )
-                        next_execution_update_bundled_external_playlists = (
-                            await self._config.fetch_next_execution_update_bundled_external_playlists()
-                        )
-                        self._scheduler.add_job(
-                            self.playlist_db_manager.update_bundled_external_playlists,
-                            trigger="interval",
-                            days=TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS,
-                            max_instances=1,
-                            next_run_time=next_execution_update_bundled_external_playlists,
-                            replace_existing=True,
-                            name="update_bundled_external_playlists",
-                            coalesce=True,
-                            id=f"{self.bot.user.id}-update_bundled_external_playlists",
-                        )
-
-                        LOGGER.info(
-                            "Scheduling first run of Bundled External Playlist update task to: %s",
-                            next_execution_update_bundled_external_playlists,
-                        )
-
-                        next_execution_update_external_playlists = (
-                            await self._config.fetch_next_execution_update_external_playlists()
-                        )
-                        self._scheduler.add_job(
-                            self.playlist_db_manager.update_external_playlists,
-                            trigger="interval",
-                            days=TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS,
-                            max_instances=1,
-                            next_run_time=next_execution_update_external_playlists,
-                            replace_existing=True,
-                            name="update_external_playlists",
-                            coalesce=True,
-                            id=f"{self.bot.user.id}-update_external_playlists",
-                        )
-
-                        LOGGER.info(
-                            "Scheduling first run of External Playlist update task to: %s",
-                            next_execution_update_external_playlists,
-                        )
-                        self._scheduler.start()
-                        self.ready.set()
-                        LOGGER.info("PyLav is ready")
+                await self._maybe_start_pylav()
         except Exception as exc:
             LOGGER.critical("Failed start up", exc_info=exc)
             raise exc
+
+    async def _maybe_start_pylav(self):
+        async with self._asyncio_lock:
+            if not self._initiated:
+                self._initiated = True
+                self.ready.clear()
+                await self._wait_until_ready()
+                await tables.DB.start_connection_pool(max_size=100)
+                client_id, client_secret, deezer_token = await self._get_service_tokens()
+                await self._initialise_modules()
+                config_data = await self._config.fetch_all()
+                java_path = config_data["java_path"]
+                config_folder = config_data["config_folder"]
+                localtrack_folder = config_data["localtrack_folder"]
+                if java_path != JAVA_EXECUTABLE and os.path.exists(JAVA_EXECUTABLE):
+                    await self._config.update_java_path(JAVA_EXECUTABLE)
+                LOGGER.info("Config folder: %s", config_folder)
+                LOGGER.info("Localtracks folder: %s", localtrack_folder)
+                self._config_folder = aiopath.AsyncPath(config_folder)
+                localtrack_folder = aiopath.AsyncPath(localtrack_folder)
+                bundled_node_config = self._node_config_manager.bundled_node_config()
+                client_id, client_secret = await self._initialize_yaml_config(
+                    bundled_node_config, client_id, client_secret, deezer_token
+                )
+                self._spotify_auth = ClientCredentialsFlow(client_id=client_id, client_secret=client_secret)
+
+                await self._run_post_init_jobs(java_path, localtrack_folder)
+
+                self._scheduler.start()
+                self.ready.set()
+                LOGGER.info("PyLav is ready")
+
+    async def _initialise_modules(self):
+        await self._lib_config_manager.initialize()
+        self._config = self._lib_config_manager.get_config()
+        await NodeModel.create_managed(id=self.bot.user.id)
+        await self._update_schema_manager.run_updates()
+        await self._radio_manager.initialize()
+        await self._player_manager.initialize()
+        await self.player_config_manager.initialize_global_config()
+
+    async def _run_post_init_jobs(self, java_path, localtrack_folder):
+        from pylav.localfiles import LocalFile
+
+        await LocalFile.add_root_folder(path=localtrack_folder, create=True)
+        self._user_id = str(self._bot.user.id)
+        self._local_node_manager = LocalNodeManager(self)
+        enable_managed_node = await self.lib_db_manager.get_config().fetch_enable_managed_node()
+        time_now = utcnow()
+        await self._maybe_start_bundled_node(enable_managed_node, java_path)
+        await self.node_manager.connect_to_all_nodes()
+        await self.node_manager.wait_until_ready()
+        await self._maybe_wait_until_bundled_node(enable_managed_node)
+        await self._maybe_update_next_execution_bundled_playlist(time_now)
+        await self._maybe_update_next_execution_bundled_external_playlists(time_now)
+        await self._maybe_update_next_execution_external_playlists(time_now)
+        await self._maybe_force_update_bundled_playlists()
+        await self.player_manager.restore_player_states()
+        await self._add_scheduler_job_bundled_playlist()
+        await self._add_scheduler_job_bundled_external_playlists()
+        await self._add_scheduler_job_external_playlists()
+
+    async def _maybe_start_bundled_node(self, enable_managed_node, java_path):
+        if (
+            not (self._node_manager._unmanaged_external_password and self._node_manager._unmanaged_external_host)
+            and enable_managed_node
+        ):
+            await self._local_node_manager.start(java_path=java_path)
+        else:
+            self._local_node_manager.ready.set()
+
+    async def _maybe_force_update_bundled_playlists(self):
+        if await self.playlist_db_manager.count() == 0:
+            await self.playlist_db_manager.update_bundled_playlists()
+            await self.playlist_db_manager.update_bundled_external_playlists()
+
+    async def _maybe_wait_until_bundled_node(self, enable_managed_node):
+        if (
+            not (self._node_manager._unmanaged_external_password and self._node_manager._unmanaged_external_host)
+            and enable_managed_node
+        ):
+            await self._local_node_manager.wait_until_connected()
+
+    async def _wait_until_ready(self):
+        if hasattr(self.bot, "wait_until_red_ready"):
+            LOGGER.info("Running on a Red bot, waiting for Red to be ready")
+            await self.bot.wait_until_red_ready()
+        else:
+            LOGGER.info("Running a discord.py bot waiting for bot to be ready")
+            await self.bot.wait_until_ready()
+
+    async def _get_service_tokens(self):
+        if hasattr(self.bot, "get_shared_api_tokens") and callable(getattr(self.bot, "get_shared_api_tokens")):
+            spotify = await self.bot.get_shared_api_tokens("spotify")
+            client_id = spotify.get("client_id")
+            client_secret = spotify.get("client_secret")
+            if client_id and client_secret:
+                LOGGER.debug("Existing Spotify tokens found; Using clientID - %s", client_id)
+            deezer = await self.bot.get_shared_api_tokens("deezer")
+            deezer_token = deezer.get("token")
+            if deezer_token:
+                LOGGER.debug("Existing Deezer token found; Using it")
+        else:
+            LOGGER.info("PyLav being run from a non Red bot")
+            client_id = None
+            client_secret = None
+            deezer_token = "..."
+        return client_id, client_secret, deezer_token
+
+    async def _add_scheduler_job_external_playlists(self):
+        next_execution_update_external_playlists = await self._config.fetch_next_execution_update_external_playlists()
+        self._scheduler.add_job(
+            self.playlist_db_manager.update_external_playlists,
+            trigger="interval",
+            days=TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS,
+            max_instances=1,
+            next_run_time=next_execution_update_external_playlists,
+            replace_existing=True,
+            name="update_external_playlists",
+            coalesce=True,
+            id=f"{self.bot.user.id}-update_external_playlists",
+        )
+        LOGGER.info(
+            "Scheduling first run of External Playlist update task to: %s",
+            next_execution_update_external_playlists,
+        )
+
+    async def _add_scheduler_job_bundled_external_playlists(self):
+        next_execution_update_bundled_external_playlists = (
+            await self._config.fetch_next_execution_update_bundled_external_playlists()
+        )
+        self._scheduler.add_job(
+            self.playlist_db_manager.update_bundled_external_playlists,
+            trigger="interval",
+            days=TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS,
+            max_instances=1,
+            next_run_time=next_execution_update_bundled_external_playlists,
+            replace_existing=True,
+            name="update_bundled_external_playlists",
+            coalesce=True,
+            id=f"{self.bot.user.id}-update_bundled_external_playlists",
+        )
+        LOGGER.info(
+            "Scheduling first run of Bundled External Playlist update task to: %s",
+            next_execution_update_bundled_external_playlists,
+        )
+
+    async def _add_scheduler_job_bundled_playlist(self):
+        self._scheduler.add_job(
+            self._query_cache_manager.delete_old,
+            trigger="interval",
+            seconds=600,
+            max_instances=1,
+            replace_existing=True,
+            name="cache_delete_old",
+            coalesce=True,
+            id=f"{self.bot.user.id}-cache_delete_old",
+        )
+        next_execution_update_bundled_playlists = await self._config.fetch_next_execution_update_bundled_playlists()
+        self._scheduler.add_job(
+            self.playlist_db_manager.update_bundled_playlists,
+            trigger="interval",
+            days=TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS,
+            max_instances=1,
+            next_run_time=next_execution_update_bundled_playlists,
+            replace_existing=True,
+            name="update_bundled_playlists",
+            coalesce=True,
+            id=f"{self.bot.user.id}-update_bundled_playlists",
+        )
+        LOGGER.info(
+            "Scheduling first run of Bundled Playlist update task to: %s",
+            next_execution_update_bundled_playlists,
+        )
+
+    async def _maybe_update_next_execution_external_playlists(self, time_now):
+        if await self._config.fetch_next_execution_update_external_playlists() is None:
+            await self._config.update_next_execution_update_external_playlists(
+                time_now + datetime.timedelta(minutes=30)
+            )
+
+    async def _maybe_update_next_execution_bundled_external_playlists(self, time_now):
+        if await self._config.fetch_next_execution_update_bundled_external_playlists() is None:
+            await self._config.update_next_execution_update_bundled_external_playlists(
+                time_now + datetime.timedelta(minutes=10, days=7)
+            )
+
+    async def _maybe_update_next_execution_bundled_playlist(self, time_now):
+        if await self._config.fetch_next_execution_update_bundled_playlists() is None:
+            await self._config.update_next_execution_update_bundled_playlists(
+                time_now + datetime.timedelta(minutes=5, days=1)
+            )
+
+    async def _initialize_yaml_config(self, bundled_node_config, client_id, client_secret, deezer_token):
+        if not await asyncstdlib.all([client_id, client_secret]):
+            yaml_data = await bundled_node_config.fetch_yaml()
+            spotify_data = yaml_data["plugins"]["lavasrc"]["spotify"]
+            client_id = spotify_data["clientId"]
+            client_secret = spotify_data["clientSecret"]
+        elif await asyncstdlib.all([client_id, client_secret]):
+            yaml_data = await bundled_node_config.fetch_yaml()
+            if (
+                yaml_data["plugins"]["lavasrc"]["spotify"]["clientId"] != client_id
+                or yaml_data["plugins"]["lavasrc"]["spotify"]["clientSecret"] != client_secret
+            ):
+                yaml_data["plugins"]["lavasrc"]["spotify"]["clientId"] = client_id
+                yaml_data["plugins"]["lavasrc"]["spotify"]["clientSecret"] = client_secret
+                await bundled_node_config.update_yaml(yaml_data)
+        if deezer_token:
+            yaml_data["plugins"]["lavasrc"]["deezer"]["masterDecryptionKey"] = deezer_token
+            await bundled_node_config.update_yaml(yaml_data)
+        return client_id, client_secret
 
     async def register(self, cog: CogT) -> None:
         LOGGER.info("Registering cog %s", cog.__cog_name__)
@@ -947,13 +974,13 @@ class Client(metaclass=_Singleton):
         bypass_cache : `bool`, optional
             Whether to bypass the cache and force a new search.
             Local files will always be bypassed.
-        requester : `discord.Nember`
+        requester : `discord.Member`
             The user who requested the op.
         player : `Player`
             The player requesting the op.
         enqueue : `bool`, optional
             Whether to enqueue the tracks as needed
-            while try are processed so users dont sit waiting for the bot to finish.
+            while try are processed so users don't sit waiting for the bot to finish.
         partial : `bool`, optional
             Whether to return partial results if some queries fail.
 
@@ -971,106 +998,142 @@ class Client(metaclass=_Singleton):
         queries_failed = []
         track_count = 0
         for query in queries:
-            async for sub_query in self._yield_recursive_queries(query):
-                node = await self.node_manager.find_best_node(
-                    region=player.region if player else None,
-                    coordinates=player.coordinates if player else None,
-                    feature=sub_query.requires_capability,
+            track_count = await self._get_tracks_single_query(
+                bypass_cache, enqueue, player, queries_failed, query, requester, successful_tracks, track_count, partial
+            )
+        return successful_tracks, track_count, queries_failed
+
+    async def _get_tracks_single_query(
+        self, bypass_cache, enqueue, player, queries_failed, query, requester, successful_tracks, track_count, partial
+    ):
+        async for sub_query in self._yield_recursive_queries(query):
+            node = await self.node_manager.find_best_node(
+                region=player.region if player else None,
+                coordinates=player.coordinates if player else None,
+                feature=sub_query.requires_capability,
+            )
+            if node is None:
+                queries_failed.append(sub_query)
+                continue
+            # Query tracks as the queue builds as this may be a slow operation
+            if enqueue and successful_tracks and not player.is_playing and not player.paused:
+                track = successful_tracks.pop()
+                await player.play(track, await track.query(), requester)
+            elif successful_tracks and player.is_playing and player.queue.empty():
+                track = successful_tracks.pop()
+                await player.add(requester.id, track, query=await track.query())
+            if partial and sub_query.is_single:
+                track_count += 1
+                if cached_query := await self.node_manager.client.query_cache_manager.fetch_query(sub_query):
+                    data = (await cached_query.fetch_tracks())[0]
+                else:
+                    data = None
+                successful_tracks.append(
+                    Track(
+                        data=data,
+                        node=node,
+                        query=sub_query,
+                        requester=requester.id,
+                    )
                 )
-                if node is None:
-                    queries_failed.append(sub_query)
-                    continue
+            elif sub_query.is_search or sub_query.is_single:
+                track_count = await self._get_tracks_search_or_single(
+                    bypass_cache, node, player, queries_failed, requester, sub_query, successful_tracks, track_count
+                )
+            elif (
+                (sub_query.is_playlist or sub_query.is_album)
+                and not sub_query.is_local
+                and not sub_query.is_custom_playlist
+            ):
+                track_count = await self._get_tracks_playlist_or_album_no_local(
+                    bypass_cache,
+                    enqueue,
+                    node,
+                    player,
+                    queries_failed,
+                    requester,
+                    sub_query,
+                    successful_tracks,
+                    track_count,
+                )
+            elif (sub_query.is_local or sub_query.is_custom_playlist) and sub_query.is_album:
+                track_count = await self._get_tracks_local_album(
+                    enqueue, node, player, queries_failed, requester, sub_query, successful_tracks, track_count
+                )
+            else:
+                queries_failed.append(sub_query)
+                LOGGER.warning("Unhandled query: %s, %s", sub_query.to_dict(), sub_query.query_identifier)
+        return track_count
+
+    async def _get_tracks_local_album(
+        self, enqueue, node, player, queries_failed, requester, sub_query, successful_tracks, track_count
+    ):
+        yielded = False
+        async for local_track in sub_query.get_all_tracks_in_folder():
+            yielded = True
+            response = await self._get_tracks(player=player, query=local_track, first=True, bypass_cache=True)
+            if track_b64 := response.tracks[0].encoded:
+                track_count += 1
+                successful_tracks.append(
+                    Track(
+                        data=track_b64,
+                        node=node,
+                        query=await Query.from_base64(track_b64),
+                        requester=requester.id,
+                    )
+                )
                 # Query tracks as the queue builds as this may be a slow operation
                 if enqueue and successful_tracks and not player.is_playing and not player.paused:
                     track = successful_tracks.pop()
                     await player.play(track, await track.query(), requester)
-                elif successful_tracks and player.is_playing and player.queue.empty():
+        if not yielded:
+            queries_failed.append(sub_query)
+        return track_count
+
+    async def _get_tracks_playlist_or_album_no_local(
+        self, bypass_cache, enqueue, node, player, queries_failed, requester, sub_query, successful_tracks, track_count
+    ):
+        response = await self._get_tracks(player=player, query=sub_query, bypass_cache=bypass_cache)
+        track_list = response.tracks
+        if not track_list:
+            queries_failed.append(sub_query)
+        for track in track_list:
+            if track_b64 := track.encoded:
+                track_count += 1
+                successful_tracks.append(
+                    Track(
+                        data=track_b64,
+                        node=node,
+                        query=await Query.from_base64(track_b64),
+                        requester=requester.id,
+                    )
+                )
+                # Query tracks as the queue builds as this may be a slow operation
+                if enqueue and successful_tracks and not player.is_playing and not player.paused:
                     track = successful_tracks.pop()
-                    await player.add(requester.id, track, query=await track.query())
-                if partial and sub_query.is_single:
-                    track_count += 1
-                    if cached_query := await self.node_manager.client.query_cache_manager.fetch_query(sub_query):
-                        data = (await cached_query.fetch_tracks())[0]
-                    else:
-                        data = None
-                    successful_tracks.append(
-                        Track(
-                            data=data,
-                            node=node,
-                            query=sub_query,
-                            requester=requester.id,
-                        )
-                    )
-                elif sub_query.is_search or sub_query.is_single:
-                    response = await self._get_tracks(
-                        player=player, query=sub_query, first=True, bypass_cache=bypass_cache
-                    )
-                    track_b64 = response.tracks[0].encoded
-                    if not track_b64:
-                        queries_failed.append(sub_query)
-                    if track_b64:
-                        track_count += 1
-                        new_query = await Query.from_base64(track_b64)
-                        new_query.merge(sub_query, start_time=True)
-                        successful_tracks.append(
-                            Track(
-                                data=track_b64,
-                                node=node,
-                                query=new_query,
-                                requester=requester.id,
-                            )
-                        )
-                elif (
-                    (sub_query.is_playlist or sub_query.is_album)
-                    and not sub_query.is_local
-                    and not sub_query.is_custom_playlist
-                ):
-                    response = await self._get_tracks(player=player, query=sub_query, bypass_cache=bypass_cache)
-                    track_list = response.tracks
-                    if not track_list:
-                        queries_failed.append(sub_query)
-                    for track in track_list:
-                        if track_b64 := track.encoded:
-                            track_count += 1
-                            successful_tracks.append(
-                                Track(
-                                    data=track_b64,
-                                    node=node,
-                                    query=await Query.from_base64(track_b64),
-                                    requester=requester.id,
-                                )
-                            )
-                            # Query tracks as the queue builds as this may be a slow operation
-                            if enqueue and successful_tracks and not player.is_playing and not player.paused:
-                                track = successful_tracks.pop()
-                                await player.play(track, await track.query(), requester)
-                elif (sub_query.is_local or sub_query.is_custom_playlist) and sub_query.is_album:
-                    yielded = False
-                    async for local_track in sub_query.get_all_tracks_in_folder():
-                        yielded = True
-                        response = await self._get_tracks(
-                            player=player, query=local_track, first=True, bypass_cache=True
-                        )
-                        if track_b64 := response.tracks[0].encoded:
-                            track_count += 1
-                            successful_tracks.append(
-                                Track(
-                                    data=track_b64,
-                                    node=node,
-                                    query=await Query.from_base64(track_b64),
-                                    requester=requester.id,
-                                )
-                            )
-                            # Query tracks as the queue builds as this may be a slow operation
-                            if enqueue and successful_tracks and not player.is_playing and not player.paused:
-                                track = successful_tracks.pop()
-                                await player.play(track, await track.query(), requester)
-                    if not yielded:
-                        queries_failed.append(sub_query)
-                else:
-                    queries_failed.append(sub_query)
-                    LOGGER.warning("Unhandled query: %s, %s", sub_query.to_dict(), sub_query.query_identifier)
-        return successful_tracks, track_count, queries_failed
+                    await player.play(track, await track.query(), requester)
+        return track_count
+
+    async def _get_tracks_search_or_single(
+        self, bypass_cache, node, player, queries_failed, requester, sub_query, successful_tracks, track_count
+    ):
+        response = await self._get_tracks(player=player, query=sub_query, first=True, bypass_cache=bypass_cache)
+        track_b64 = response.tracks[0].encoded
+        if not track_b64:
+            queries_failed.append(sub_query)
+        if track_b64:
+            track_count += 1
+            new_query = await Query.from_base64(track_b64)
+            new_query.merge(sub_query, start_time=True)
+            successful_tracks.append(
+                Track(
+                    data=track_b64,
+                    node=node,
+                    query=new_query,
+                    requester=requester.id,
+                )
+            )
+        return track_count
 
     @staticmethod
     async def _yield_recursive_queries(query: Query, recursion_depth: int = 0) -> AsyncIterator[Query]:

@@ -986,20 +986,7 @@ class Player(VoiceProtocol):
             except TrackNotFound as exc:
                 if not track:
                     raise TrackNotFound from exc
-                event = TrackExceptionEvent(
-                    self,
-                    track,
-                    self.node,
-                    event_object=TrackExceptionEventOpObject(
-                        op="event",
-                        guildId=str(self.guild.id),
-                        type="TrackExceptionEvent",
-                        encodedTrack="",
-                        exception=TrackExceptionObject(cause=str(exc), message=str(exc), severity="SUSPICIOUS"),
-                    ),
-                )
-                self.node.dispatch_event(event)
-                await self._handle_event(event)
+                await self._process_error_on_play(exc, track)
                 return
         self.current = track
         if self.next_track is None and not self.queue.empty():
@@ -1072,10 +1059,7 @@ class Player(VoiceProtocol):
         if track is not None and isinstance(track, (Track, dict, str, type(None))):
             track = Track(node=self.node, data=track, query=query, skip_segments=skip_segments, requester=requester.id)
         if self.current:
-            if await self.config.fetch_repeat_current():
-                await self.add(self.current.requester_id, self.current)
-            elif await self.config.fetch_repeat_queue():
-                await self.add(self.current.requester_id, self.current, index=-1)
+            await self._process_repeat_on_play()
         if self.current:
             self.current.timestamp = 0
             self.history.put_nowait([self.current])
@@ -1086,24 +1070,9 @@ class Player(VoiceProtocol):
                 if await self.autoplay_enabled() and (
                     available_tracks := await (await self.get_auto_playlist()).fetch_tracks()
                 ):
-                    if tracks_not_in_history := list(set(available_tracks) - set(self.history.raw_b64s)):
-                        track = Track(
-                            node=self.node,
-                            data=(b64 := random.choice(tracks_not_in_history)),
-                            query=await Query.from_base64(b64),
-                            skip_segments=skip_segments,
-                            requester=self.client.user.id,
-                        )
-                    else:
-                        track = Track(
-                            node=self.node,
-                            data=(b64 := random.choice(available_tracks)),
-                            query=await Query.from_base64(b64),
-                            skip_segments=skip_segments,
-                            requester=self.client.user.id,
-                        )
-                    auto_play = True
-                    self.next_track = None
+                    auto_play, track = await self._process_autoplay_on_play(
+                        auto_play, available_tracks, skip_segments, track
+                    )
                 else:
                     await self.stop(
                         requester=self.guild.get_member(self.node.node_manager.client.bot.user.id)
@@ -1124,20 +1093,7 @@ class Player(VoiceProtocol):
             try:
                 await self.change_to_best_node(feature=await track.requires_capability())
             except NoNodeWithRequestFunctionalityAvailable as exc:
-                event = TrackExceptionEvent(
-                    self,
-                    track,
-                    self.node,
-                    event_object=TrackExceptionEventOpObject(
-                        op="event",
-                        guildId=str(self.guild.id),
-                        type="TrackExceptionEvent",
-                        encodedTrack="",
-                        exception=TrackExceptionObject(cause=str(exc), message=str(exc), severity="SUSPICIOUS"),
-                    ),
-                )
-                self.node.dispatch_event(event)
-                await self._handle_event(event)
+                await self._process_error_on_play(exc, track)
                 return
         track._node = self.node
         if track.is_partial:
@@ -1146,20 +1102,7 @@ class Player(VoiceProtocol):
             except TrackNotFound as exc:
                 if not track:
                     raise TrackNotFound from exc
-                event = TrackExceptionEvent(
-                    self,
-                    track,
-                    self.node,
-                    event_object=TrackExceptionEventOpObject(
-                        op="event",
-                        guildId=str(self.guild.id),
-                        type="TrackExceptionEvent",
-                        encodedTrack="",
-                        exception=TrackExceptionObject(cause=str(exc), message=str(exc), severity="SUSPICIOUS"),
-                    ),
-                )
-                self.node.dispatch_event(event)
-                await self._handle_event(event)
+                await self._process_error_on_play(exc, track)
                 return
         if self.node.supports_sponsorblock and await track.is_youtube():
             payload["skipSegments"] = skip_segments or track.skip_segments
@@ -1191,6 +1134,49 @@ class Player(VoiceProtocol):
         )
         if auto_play:
             self.node.dispatch_event(TrackAutoPlayEvent(player=self, track=track))
+
+    async def _process_error_on_play(self, exc, track):
+        event = TrackExceptionEvent(
+            self,
+            track,
+            self.node,
+            event_object=TrackExceptionEventOpObject(
+                op="event",
+                guildId=str(self.guild.id),
+                type="TrackExceptionEvent",
+                encodedTrack="",
+                exception=TrackExceptionObject(cause=str(exc), message=str(exc), severity="SUSPICIOUS"),
+            ),
+        )
+        self.node.dispatch_event(event)
+        await self._handle_event(event)
+
+    async def _process_autoplay_on_play(self, auto_play, available_tracks, skip_segments, track):
+        if tracks_not_in_history := list(set(available_tracks) - set(self.history.raw_b64s)):
+            track = Track(
+                node=self.node,
+                data=(b64 := random.choice(tracks_not_in_history)),
+                query=await Query.from_base64(b64),
+                skip_segments=skip_segments,
+                requester=self.client.user.id,
+            )
+        else:
+            track = Track(
+                node=self.node,
+                data=(b64 := random.choice(available_tracks)),
+                query=await Query.from_base64(b64),
+                skip_segments=skip_segments,
+                requester=self.client.user.id,
+            )
+        auto_play = True
+        self.next_track = None
+        return auto_play, track
+
+    async def _process_repeat_on_play(self):
+        if await self.config.fetch_repeat_current():
+            await self.add(self.current.requester_id, self.current)
+        elif await self.config.fetch_repeat_queue():
+            await self.add(self.current.requester_id, self.current, index=-1)
 
     async def resume(self, requester: discord.Member = None):
         payload = {"encodedTrack": self.current.encoded}
@@ -1869,7 +1855,118 @@ class Player(VoiceProtocol):
         requester : discord.Member
             Member who requested the filters to be set
         """
-        changed = False
+        changed = await self._set_filter_variables(
+            False,
+            channel_mix,
+            distortion,
+            echo,
+            equalizer,
+            karaoke,
+            low_pass,
+            rotation,
+            timescale,
+            tremolo,
+            vibrato,
+            volume,
+        )
+
+        self._effect_enabled = changed
+        if reset_not_set:
+            kwargs = await self._process_filters_reset_not_set(
+                channel_mix,
+                distortion,
+                echo,
+                equalizer,
+                karaoke,
+                low_pass,
+                rotation,
+                timescale,
+                tremolo,
+                vibrato,
+                volume,
+            )
+        else:
+            kwargs = {
+                "volume": volume or self.volume_filter or None,
+                "equalizer": equalizer or self.equalizer or None,
+                "karaoke": karaoke or self.karaoke or None,
+                "timescale": timescale or self.timescale or None,
+                "tremolo": tremolo or self.tremolo or None,
+                "vibrato": vibrato or self.vibrato or None,
+                "rotation": rotation or self.rotation or None,
+                "distortion": distortion or self.distortion or None,
+                "low_pass": low_pass or self.low_pass or None,
+                "channel_mix": channel_mix or self.channel_mix or None,
+                "echo": echo or self.echo or None,
+            }
+        if not volume:
+            kwargs.pop("volume", None)
+        payload = {
+            "filters": self.node.get_filter_payload(
+                player=self,
+                reset_no_set=reset_not_set,
+                **kwargs,
+            ),
+            "position": self.position,
+        }
+        await self.node.patch_session_player(self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, payload))
+        kwargs.pop("reset_not_set", None)
+        kwargs.pop("requester", None)
+        self.node.dispatch_event(FiltersAppliedEvent(player=self, requester=requester, node=self.node, **kwargs))
+
+    async def _process_filters_reset_not_set(
+        self, channel_mix, distortion, echo, equalizer, karaoke, low_pass, rotation, timescale, tremolo, vibrato, volume
+    ):
+        kwargs = {
+            "volume": volume or self.volume_filter,
+            "equalizer": equalizer,
+            "karaoke": karaoke,
+            "timescale": timescale,
+            "tremolo": tremolo,
+            "vibrato": vibrato,
+            "rotation": rotation,
+            "distortion": distortion,
+            "low_pass": low_pass,
+            "channel_mix": channel_mix,
+            "echo": echo,
+        }
+        if not equalizer:
+            self._equalizer = self._equalizer.default()
+        if not karaoke:
+            self._karaoke = self._karaoke.default()
+        if not timescale:
+            self._timescale = self._timescale.default()
+        if not tremolo:
+            self._tremolo = self._tremolo.default()
+        if not vibrato:
+            self._vibrato = self._vibrato.default()
+        if not rotation:
+            self._rotation = self._rotation.default()
+        if not distortion:
+            self._distortion = self._distortion.default()
+        if not low_pass:
+            self._low_pass = self._low_pass.default()
+        if not channel_mix:
+            self._channel_mix = self._channel_mix.default()
+        if not echo:
+            self._echo = self._echo.default()
+        return kwargs
+
+    async def _set_filter_variables(
+        self,
+        changed,
+        channel_mix,
+        distortion,
+        echo,
+        equalizer,
+        karaoke,
+        low_pass,
+        rotation,
+        timescale,
+        tremolo,
+        vibrato,
+        volume,
+    ):
         if volume:
             self._volume = volume
         if equalizer:
@@ -1902,69 +1999,7 @@ class Player(VoiceProtocol):
         if echo:
             self._echo = echo
             changed = True
-
-        self._effect_enabled = changed
-        if reset_not_set:
-            kwargs = {
-                "volume": volume or self.volume_filter,
-                "equalizer": equalizer,
-                "karaoke": karaoke,
-                "timescale": timescale,
-                "tremolo": tremolo,
-                "vibrato": vibrato,
-                "rotation": rotation,
-                "distortion": distortion,
-                "low_pass": low_pass,
-                "channel_mix": channel_mix,
-                "echo": echo,
-            }
-            if not equalizer:
-                self._equalizer = self._equalizer.default()
-            if not karaoke:
-                self._karaoke = self._karaoke.default()
-            if not timescale:
-                self._timescale = self._timescale.default()
-            if not tremolo:
-                self._tremolo = self._tremolo.default()
-            if not vibrato:
-                self._vibrato = self._vibrato.default()
-            if not rotation:
-                self._rotation = self._rotation.default()
-            if not distortion:
-                self._distortion = self._distortion.default()
-            if not low_pass:
-                self._low_pass = self._low_pass.default()
-            if not channel_mix:
-                self._channel_mix = self._channel_mix.default()
-            if not echo:
-                self._echo = self._echo.default()
-        else:
-            kwargs = {
-                "volume": volume or self.volume_filter or None,
-                "equalizer": equalizer or self.equalizer or None,
-                "karaoke": karaoke or self.karaoke or None,
-                "timescale": timescale or self.timescale or None,
-                "tremolo": tremolo or self.tremolo or None,
-                "vibrato": vibrato or self.vibrato or None,
-                "rotation": rotation or self.rotation or None,
-                "distortion": distortion or self.distortion or None,
-                "low_pass": low_pass or self.low_pass or None,
-                "channel_mix": channel_mix or self.channel_mix or None,
-                "echo": echo or self.echo or None,
-            }
-        if not volume:
-            kwargs.pop("volume", None)
-        payload = {
-            "filters": self.node.get_filter_payload(
-                player=self,
-                reset_no_set=reset_not_set**kwargs,
-            ),
-            "position": self.position,
-        }
-        await self.node.patch_session_player(self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, payload))
-        kwargs.pop("reset_not_set", None)
-        kwargs.pop("requester", None)
-        self.node.dispatch_event(FiltersAppliedEvent(player=self, requester=requester, node=self.node, **kwargs))
+        return changed
 
     def _process_skip_segments(self, skip_segments: list[str] | str | None):
         if skip_segments is not None and self.node.supports_sponsorblock:
