@@ -763,6 +763,9 @@ class LocalNodeManager:
             self.__buffer_task.cancel()
             self.__buffer_task = None
         self._wait_for.clear()
+        from pylav.config_migrations.update_plugins import update_plugins
+
+        await update_plugins(self._client)
         self.start_monitor_task = asyncio.create_task(self.start_monitor(java_path))
         self.start_monitor_task.set_name("LavalinkManagedNode.health_monitor")
 
