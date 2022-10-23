@@ -1512,8 +1512,8 @@ class Node:
         response = await self.get_track(await self._query_cls.from_string(query), bypass_cache=bypass_cache)
         return (response.tracks[0] if response.tracks else None) if first else response
 
-    @staticmethod
     def get_filter_payload(
+        self,
         *,
         player: Player,
         volume: Volume = None,
@@ -1534,60 +1534,94 @@ class Node:
             return None
 
         payload: FiltersT = {}
+        self._get_filter_payload_volume(payload, volume)
+        self._get_filter_payload_equalizer(equalizer, payload, player, reset_no_set)
+        self._get_filter_payload_karaoke(karaoke, payload, player, reset_no_set)
+        self._get_filter_payload_timescale(payload, player, reset_no_set, timescale)
+        self._get_filter_payload_tremolo(payload, player, reset_no_set, tremolo)
+        self._get_filter_payload_vibrato(payload, player, reset_no_set, vibrato)
+        self._get_filter_payload_rotation(payload, player, reset_no_set, rotation)
+        self._get_filter_payload_distortion(distortion, payload, player, reset_no_set)
+        self._get_filter_payload_low_pass(low_pass, payload, player, reset_no_set)
+        self._get_filter_payload_channel_mix(channel_mix, payload, player, reset_no_set)
+        self._get_filter_payload_echo(echo, payload, player, reset_no_set)
+
+        return payload
+
+    @staticmethod
+    def _get_filter_payload_volume(payload, volume):
         if volume:
             payload["volume"] = volume.get()
 
-        if equalizer:
-            payload["equalizer"] = equalizer.get()
-        elif not reset_no_set and player.equalizer.changed:
-            payload["equalizer"] = player.equalizer.get()
-
-        if karaoke:
-            payload["karaoke"] = karaoke.get()
-        elif not reset_no_set and player.karaoke.changed:
-            payload["karaoke"] = player.karaoke.get()
-
-        if timescale:
-            payload["timescale"] = timescale.get()
-        elif not reset_no_set and player.timescale.changed:
-            payload["timescale"] = player.timescale.get()
-
-        if tremolo:
-            payload["tremolo"] = tremolo.get()
-        elif not reset_no_set and player.timescale.changed:
-            payload["timescale"] = player.timescale.get()
-
-        if vibrato:
-            payload["vibrato"] = vibrato.get()
-        elif not reset_no_set and player.vibrato.changed:
-            payload["vibrato"] = player.vibrato.get()
-
-        if rotation:
-            payload["rotation"] = rotation.get()
-        elif not reset_no_set and player.rotation.changed:
-            payload["rotation"] = player.rotation.get()
-
-        if distortion:
-            payload["distortion"] = distortion.get()
-        elif not reset_no_set and player.distortion.changed:
-            payload["distortion"] = player.distortion.get()
-
-        if low_pass:
-            payload["lowPass"] = low_pass.get()
-        elif not reset_no_set and player.low_pass.changed:
-            payload["lowPass"] = player.low_pass.get()
-
-        if channel_mix:
-            payload["channelMix"] = channel_mix.get()
-        elif not reset_no_set and player.channel_mix.changed:
-            payload["channelMix"] = player.channel_mix.get()
-
+    @staticmethod
+    def _get_filter_payload_echo(echo, payload, player, reset_no_set):
         if echo:
             payload["echo"] = echo.get()
         elif not reset_no_set and player.echo.changed:
             payload["echo"] = player.echo.get()
 
-        return payload
+    @staticmethod
+    def _get_filter_payload_channel_mix(channel_mix, payload, player, reset_no_set):
+        if channel_mix:
+            payload["channelMix"] = channel_mix.get()
+        elif not reset_no_set and player.channel_mix.changed:
+            payload["channelMix"] = player.channel_mix.get()
+
+    @staticmethod
+    def _get_filter_payload_low_pass(low_pass, payload, player, reset_no_set):
+        if low_pass:
+            payload["lowPass"] = low_pass.get()
+        elif not reset_no_set and player.low_pass.changed:
+            payload["lowPass"] = player.low_pass.get()
+
+    @staticmethod
+    def _get_filter_payload_distortion(distortion, payload, player, reset_no_set):
+        if distortion:
+            payload["distortion"] = distortion.get()
+        elif not reset_no_set and player.distortion.changed:
+            payload["distortion"] = player.distortion.get()
+
+    @staticmethod
+    def _get_filter_payload_rotation(payload, player, reset_no_set, rotation):
+        if rotation:
+            payload["rotation"] = rotation.get()
+        elif not reset_no_set and player.rotation.changed:
+            payload["rotation"] = player.rotation.get()
+
+    @staticmethod
+    def _get_filter_payload_vibrato(payload, player, reset_no_set, vibrato):
+        if vibrato:
+            payload["vibrato"] = vibrato.get()
+        elif not reset_no_set and player.vibrato.changed:
+            payload["vibrato"] = player.vibrato.get()
+
+    @staticmethod
+    def _get_filter_payload_tremolo(payload, player, reset_no_set, tremolo):
+        if tremolo:
+            payload["tremolo"] = tremolo.get()
+        elif not reset_no_set and player.timescale.changed:
+            payload["timescale"] = player.timescale.get()
+
+    @staticmethod
+    def _get_filter_payload_timescale(payload, player, reset_no_set, timescale):
+        if timescale:
+            payload["timescale"] = timescale.get()
+        elif not reset_no_set and player.timescale.changed:
+            payload["timescale"] = player.timescale.get()
+
+    @staticmethod
+    def _get_filter_payload_karaoke(karaoke, payload, player, reset_no_set):
+        if karaoke:
+            payload["karaoke"] = karaoke.get()
+        elif not reset_no_set and player.karaoke.changed:
+            payload["karaoke"] = player.karaoke.get()
+
+    @staticmethod
+    def _get_filter_payload_equalizer(equalizer, payload, player, reset_no_set):
+        if equalizer:
+            payload["equalizer"] = equalizer.get()
+        elif not reset_no_set and player.equalizer.changed:
+            payload["equalizer"] = player.equalizer.get()
 
     async def filters(
         self,
