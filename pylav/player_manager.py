@@ -24,7 +24,11 @@ try:
 
     _ = Translator("PyLavPlayer", pathlib.Path(__file__))
 except ImportError:
-    _ = lambda x: x
+
+    def _(string: str) -> str:
+        return string
+
+
 LOGGER = getLogger("PyLav.PlayerManager")
 
 
@@ -38,8 +42,6 @@ class PlayerManager:
 
     Attributes
     ----------
-    players: :class:`dict`
-        Cache of all the players that Lavalink has created.
     default_player_class: :class:`BasePlayer`
         The player that the player manager is initialized with.
     bot: :class:`discord.Client`

@@ -29,13 +29,15 @@ class QueryCacheManager:
     def client(self) -> Client:
         return self._client
 
-    async def exists(self, query: Query) -> bool:
+    @staticmethod
+    async def exists(query: Query) -> bool:
         return await pylav.sql.tables.queries.QueryRow.exists().where(
             (pylav.sql.tables.queries.QueryRow.identifier == query.query_identifier)
             & (pylav.sql.tables.queries.QueryRow.last_updated > utcnow() - datetime.timedelta(days=30))
         )
 
-    def get(self, identifier: str) -> QueryModel:
+    @staticmethod
+    def get(identifier: str) -> QueryModel:
         """Get a query object"""
         return QueryModel(id=identifier)
 
