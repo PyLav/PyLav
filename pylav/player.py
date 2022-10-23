@@ -992,7 +992,7 @@ class Player(VoiceProtocol):
         query: Query,
         requester: discord.Member,
         start_time: int = 0,
-        end_time: int = 0,
+        end_time: int = None,
         no_replace: bool = False,
         skip_segments: list[str] | str = None,
         bypass_cache: bool = False,
