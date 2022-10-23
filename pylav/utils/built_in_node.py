@@ -68,7 +68,8 @@ NODE_DEFAULT_SETTINGS = {
                 "dzisrc:%ISRC%",
                 "dzsearch:%QUERY%",
             ],
-            "sources": {"spotify": True, "applemusic": True, "deezer": True},
+            # TODO: Add logic to yandex music source
+            "sources": {"spotify": True, "applemusic": True, "deezer": True, "yandexmusic": False},
             "spotify": {
                 "clientId": "3d5cd36c73924786aa290798b2131c58",
                 "clientSecret": "edee5eb255a846fbac8297069debea2e",
@@ -76,6 +77,7 @@ NODE_DEFAULT_SETTINGS = {
             },
             "applemusic": {"countryCode": "US"},
             "deezer": {"masterDecryptionKey": "".join([base64.b64decode(r).decode() for r in _ANIME.split(b"|")])},
+            "yandexmusic": {"accessToken": ""},
         },
         "dunctebot": {
             "ttsLanguage": "en-US",
