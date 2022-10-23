@@ -94,7 +94,8 @@ async def invalidate_cache_multi(methods: Iterable[Callable], instance: object):
 
 
 class CachedModel:
-    def _predicate(self, member: typing.Callable) -> bool:
+    @staticmethod
+    def _predicate(member: typing.Callable) -> bool:
         """Check if the method is a cached method"""
         if member.__name__.startswith("_"):
             return False

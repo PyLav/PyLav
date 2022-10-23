@@ -511,7 +511,8 @@ class NodeManager:
                 nodes_list.append(await self.add_node(**base_settings))
             else:
                 LOGGER.warning(
-                    "ENVAR Node (Unmanaged) already added to connection pool - skipping duplicated connection - (%s:%s)",
+                    "ENVAR Node (Unmanaged) already added to connection pool "
+                    "- skipping duplicated connection - (%s:%s)",
                     self._unmanaged_external_host,
                     self._unmanaged_external_port,
                 )

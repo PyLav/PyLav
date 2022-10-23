@@ -144,7 +144,7 @@ class EqualizerConfigManager:
         }
         equalizer = (
             await pylav.sql.tables.equalizers.EqualizerRow.objects()
-            .output(load_json=True, nested=True)
+            .output(load_json=True)
             .get_or_create(pylav.sql.tables.equalizers.EqualizerRow.id == id, defaults=values)
         )
         if not equalizer._was_created:
