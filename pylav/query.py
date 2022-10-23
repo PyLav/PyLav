@@ -237,7 +237,7 @@ def process_bandcamp(cls: QueryT, query: str) -> Query:
 
 def process_yandex_music(cls: QueryT, query: str) -> Query:
     query_type = "single"
-    if "/album/" in query:
+    if "/album/" in query and "/track/" not in query:
         query_type = "album"
     elif "/playlist/" in query:
         query_type = "playlist"
