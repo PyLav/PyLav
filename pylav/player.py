@@ -1046,16 +1046,7 @@ class Player(VoiceProtocol):
             The node to use. Defaults the best available node with the needed feature.
         """
         # sourcery no-metrics
-        payload = {}
-        skip_segments = self._process_skip_segments(skip_segments)
-        self._last_update = 0
-        self._last_position = 0
-        self.position_timestamp = 0
-        self.paused = False
-        self.stopped = False
-        auto_play = False
-        self.next_track = None
-        self.last_track = None
+        auto_play, payload, skip_segments = await self._on_play_reset(skip_segments)
         if track is not None and isinstance(track, (Track, dict, str, type(None))):
             track = Track(node=self.node, data=track, query=query, skip_segments=skip_segments, requester=requester.id)
         if self.current:
@@ -1066,24 +1057,9 @@ class Player(VoiceProtocol):
             self.last_track = self.current
         self.current = None
         if not track:
-            if self.queue.empty():
-                if await self.autoplay_enabled() and (
-                    available_tracks := await (await self.get_auto_playlist()).fetch_tracks()
-                ):
-                    auto_play, track = await self._process_autoplay_on_play(
-                        auto_play, available_tracks, skip_segments, track
-                    )
-                else:
-                    await self.stop(
-                        requester=self.guild.get_member(self.node.node_manager.client.bot.user.id)
-                    )  # Also sets current to None.
-                    self.history.clear()
-                    self.last_track = None
-                    self.node.dispatch_event(QueueEndEvent(self))
-                    return
-            else:
-                track = await self.queue.get()
-
+            auto_play, track, returned = await self._process_play_no_track(auto_play, skip_segments, track)
+            if returned:
+                return
         if await track.query() is None:
             track._query = await Query.from_base64(track.encoded)
         if node:
@@ -1097,29 +1073,10 @@ class Player(VoiceProtocol):
                 return
         track._node = self.node
         if track.is_partial:
-            try:
-                await track.search(self, bypass_cache=bypass_cache)
-            except TrackNotFound as exc:
-                if not track:
-                    raise TrackNotFound from exc
-                await self._process_error_on_play(exc, track)
+            returned = await self._process_partial_track(track, bypass_cache)
+            if returned:
                 return
-        if self.node.supports_sponsorblock and await track.is_youtube():
-            payload["skipSegments"] = skip_segments or track.skip_segments
-        if start_time or track.timestamp:
-            if not isinstance(start_time, int) or not 0 <= start_time <= track.duration:
-                raise ValueError(
-                    "start_time must be an int with a value equal to, "
-                    "or greater than 0, and less than the track duration"
-                )
-            payload["position"] = start_time or track.timestamp
-
-        if end_time is not None:
-            if not isinstance(end_time, int) or not 0 <= end_time <= track.duration:
-                raise ValueError(
-                    "end_time must be an int with a value equal to, or greater than 0, and less than the track duration"
-                )
-            payload["endTime"] = end_time
+        await self._process_partial_payload(end_time, payload, skip_segments, start_time, track)
 
         if no_replace is None:
             no_replace = False
@@ -1134,6 +1091,74 @@ class Player(VoiceProtocol):
         )
         if auto_play:
             self.node.dispatch_event(TrackAutoPlayEvent(player=self, track=track))
+
+    async def _process_partial_payload(self, end_time, payload, skip_segments, start_time, track):
+        if self.node.supports_sponsorblock and await track.is_youtube():
+            payload["skipSegments"] = skip_segments or track.skip_segments
+        if start_time or track.timestamp:
+            await self._process_payload_position(payload, start_time, track)
+        if end_time is not None:
+            await self._process_payload_end_time(end_time, payload, track)
+
+    @staticmethod
+    async def _process_payload_end_time(end_time, payload, track):
+        if not isinstance(end_time, int) or not 0 <= end_time <= track.duration:
+            raise ValueError(
+                "end_time must be an int with a value equal to, or greater than 0, and less than the track duration"
+            )
+        payload["endTime"] = end_time
+
+    @staticmethod
+    async def _process_payload_position(payload, start_time, track):
+        if not isinstance(start_time, int) or not 0 <= start_time <= track.duration:
+            raise ValueError(
+                "start_time must be an int with a value equal to, "
+                "or greater than 0, and less than the track duration"
+            )
+        payload["position"] = start_time or track.timestamp
+
+    async def _process_partial_track(self, track, bypass_cache):
+        try:
+            await track.search(self, bypass_cache=bypass_cache)
+        except TrackNotFound as exc:
+            if not track:
+                raise TrackNotFound from exc
+            await self._process_error_on_play(exc, track)
+            return True
+        return False
+
+    async def _on_play_reset(self, skip_segments):
+        payload = {}
+        skip_segments = self._process_skip_segments(skip_segments)
+        self._last_update = 0
+        self._last_position = 0
+        self.position_timestamp = 0
+        self.paused = False
+        self.stopped = False
+        auto_play = False
+        self.next_track = None
+        self.last_track = None
+        return auto_play, payload, skip_segments
+
+    async def _process_play_no_track(self, auto_play, skip_segments, track):
+        if self.queue.empty():
+            if await self.autoplay_enabled() and (
+                available_tracks := await (await self.get_auto_playlist()).fetch_tracks()
+            ):
+                auto_play, track = await self._process_autoplay_on_play(
+                    auto_play, available_tracks, skip_segments, track
+                )
+            else:
+                await self.stop(
+                    requester=self.guild.get_member(self.node.node_manager.client.bot.user.id)
+                )  # Also sets current to None.
+                self.history.clear()
+                self.last_track = None
+                self.node.dispatch_event(QueueEndEvent(self))
+                return auto_play, track, True
+        else:
+            track = await self.queue.get()
+        return auto_play, track, False
 
     async def _process_error_on_play(self, exc, track):
         event = TrackExceptionEvent(
@@ -2053,15 +2078,9 @@ class Player(VoiceProtocol):
         previous_track_description = (
             await self.last_track.get_track_display_name(with_url=True) if self.last_track else None
         )
-        if current.stream:
-            queue_list += "**{}:**\n".format(discord.utils.escape_markdown(_("Currently livestreaming")))
-        else:
-            queue_list += _("Playing: ")
-        queue_list += f"{current_track_description}\n"
-        queue_list += "{translation}: **{current}**".format(
-            current=current.requester.mention, translation=discord.utils.escape_markdown(_("Requester"))
+        queue_list = await self._process_np_embed_initial_description(
+            arrow, current, current_track_description, dur, pos, queue_list
         )
-        queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
         page = await self.node.node_manager.client.construct_embed(
             title="{translation} __{guild}__".format(
                 guild=self.guild.name, translation=discord.utils.escape_markdown(_("Now Playing in"))
@@ -2072,6 +2091,28 @@ class Player(VoiceProtocol):
         if url := await current.thumbnail():
             page.set_thumbnail(url=url)
 
+        await self._process_np_embed_prev_track(page, previous_track_description)
+        await self._process_np_embed_next_track(next_track_description, page)
+
+        await self._process_now_playing_embed_footer(page)
+        return page
+
+    async def _process_np_embed_initial_description(
+        self, arrow, current, current_track_description, dur, pos, queue_list
+    ):
+        # sourcery skip: use-fstring-for-formatting
+        if current.stream:
+            queue_list += "**{}:**\n".format(discord.utils.escape_markdown(_("Currently livestreaming")))
+        else:
+            queue_list += _("Playing: ")
+        queue_list += f"{current_track_description}\n"
+        queue_list += "{translation}: **{current}**".format(
+            current=current.requester.mention, translation=discord.utils.escape_markdown(_("Requester"))
+        )
+        queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
+        return queue_list
+
+    async def _process_np_embed_prev_track(self, page, previous_track_description):
         if previous_track_description:
             val = f"{previous_track_description}\n"
             val += "{translation}: `{duration}`\n".format(
@@ -2083,6 +2124,8 @@ class Player(VoiceProtocol):
                     rq=rq.mention, translation=discord.utils.escape_markdown(_("Requester"))
                 )
             page.add_field(name=_("Previous Track"), value=val)
+
+    async def _process_np_embed_next_track(self, next_track_description, page):
         if next_track_description:
             val = f"{next_track_description}\n"
             val += "{translation}: `{duration}`\n".format(
@@ -2095,20 +2138,13 @@ class Player(VoiceProtocol):
                 )
             page.add_field(name=_("Next Track"), value=val)
 
+    async def _process_now_playing_embed_footer(self, page):
         queue_dur = await self.queue_duration()
         queue_total_duration = get_time_string(queue_dur // 1000)
         text = _("{track_count} tracks, {queue_total_duration} remaining\n").format(
             track_count=self.queue.qsize(), queue_total_duration=queue_total_duration
         )
-        if not await self.is_repeating():
-            repeat_emoji = "\N{CROSS MARK}"
-        elif await self.config.fetch_repeat_queue():
-            repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS}"
-        else:
-            repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS WITH CIRCLED ONE OVERLAY}"
-
-        autoplay_emoji = "\N{WHITE HEAVY CHECK MARK}" if await self.autoplay_enabled() else "\N{CROSS MARK}"
-
+        autoplay_emoji, repeat_emoji = await self._process_embed_emojis()
         text += _("{translation}: {repeat_emoji}").format(repeat_emoji=repeat_emoji, translation=_("Repeating"))
         text += _("{space}{translation}: {autoplay_emoji}").format(
             space=(" | " if text else ""), autoplay_emoji=autoplay_emoji, translation=_("Auto Play")
@@ -2117,7 +2153,16 @@ class Player(VoiceProtocol):
             space=(" | " if text else ""), volume=self.volume, translation=_("Volume")
         )
         page.set_footer(text=text)
-        return page
+
+    async def _process_embed_emojis(self):
+        if not await self.is_repeating():
+            repeat_emoji = "\N{CROSS MARK}"
+        elif await self.config.fetch_repeat_queue():
+            repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS}"
+        else:
+            repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS WITH CIRCLED ONE OVERLAY}"
+        autoplay_emoji = "\N{WHITE HEAVY CHECK MARK}" if await self.autoplay_enabled() else "\N{CROSS MARK}"
+        return autoplay_emoji, repeat_emoji
 
     async def get_queue_page(
         self,
@@ -2139,37 +2184,9 @@ class Player(VoiceProtocol):
         pos = format_time(self.position)
         current = self.current
         dur = "LIVE" if current.stream else format_time(current.duration)
-        current_track_description = await current.get_track_display_name(with_url=True)
-        if current.stream:
-            queue_list += "**{translation}:**\n".format(
-                translation=discord.utils.escape_markdown(_("Currently livestreaming"))
-            )
-        else:
-            queue_list += "{translation}: ".format(translation=discord.utils.escape_markdown(_("Playing")))
-        queue_list += f"{current_track_description}\n"
-        queue_list += "{translation}: **{current}**".format(
-            current=current.requester.mention, translation=discord.utils.escape_markdown(_("Requester"))
-        )
-        queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
-        if (
-            len(tracks)
-            and not history
-            and (await self.player_manager.client.player_config_manager.get_auto_shuffle(self.guild.id)) is True
-        ):
-            queue_list += "__{translation}__\n\n".format(
-                translation=discord.utils.escape_markdown(
-                    _("Queue order is may not be accurate due to auto-shuffle being enabled")
-                )
-            )
-        if tracks:
-            padding = len(str(start_index + len(tracks)))
-            async for track_idx, track in AsyncIter(tracks).enumerate(start=start_index + 1):
-                track_description = await track.get_track_display_name(max_length=50, with_url=True)
-                diff = padding - len(str(track_idx))
-                queue_list += f"`{track_idx}.{' '*diff}` {track_description}"
-                if history and track.requester:
-                    queue_list += f" - **{track.requester.mention}**"
-                queue_list += "\n"
+        queue_list = await self._process_queue_embed_initial_description(arrow, current, dur, pos, queue_list)
+        queue_list = await self._process_queue_embed_maybe_shuffle(history, queue_list, tracks)
+        queue_list = await self._process_queue_tracks(history, queue_list, start_index, tracks)
         page = await self.node.node_manager.client.construct_embed(
             title="{translation} __{guild}__".format(
                 guild=self.guild.name,
@@ -2182,6 +2199,39 @@ class Player(VoiceProtocol):
             page.set_thumbnail(url=url)
         queue_dur = await self.queue_duration(history=history)
         queue_total_duration = get_time_string(queue_dur // 1000)
+        await self._process_queue_embed_footer(page, page_index, queue, queue_total_duration, total_pages)
+        return page
+
+    @staticmethod
+    async def _process_queue_embed_initial_description(arrow, current, dur, pos, queue_list):
+        current_track_description = await current.get_track_display_name(with_url=True)
+        if current.stream:
+            queue_list += "**{translation}:**\n".format(
+                translation=discord.utils.escape_markdown(_("Currently livestreaming"))
+            )
+        else:
+            queue_list += "{translation}: ".format(translation=discord.utils.escape_markdown(_("Playing")))
+        queue_list += f"{current_track_description}\n"
+        queue_list += "{translation}: **{current}**".format(
+            current=current.requester.mention, translation=discord.utils.escape_markdown(_("Requester"))
+        )
+        queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
+        return queue_list
+
+    async def _process_queue_embed_maybe_shuffle(self, history, queue_list, tracks):
+        if (
+            len(tracks)
+            and not history
+            and (await self.player_manager.client.player_config_manager.get_auto_shuffle(self.guild.id)) is True
+        ):
+            queue_list += "__{translation}__\n\n".format(
+                translation=discord.utils.escape_markdown(
+                    _("Queue order is may not be accurate due to auto-shuffle being enabled")
+                )
+            )
+        return queue_list
+
+    async def _process_queue_embed_footer(self, page, page_index, queue, queue_total_duration, total_pages):
         text = _(
             "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
         ).format(
@@ -2190,15 +2240,7 @@ class Player(VoiceProtocol):
             track_number=queue.qsize(),
             queue_total_duration=queue_total_duration,
         )
-        if not await self.is_repeating():
-            repeat_emoji = "\N{CROSS MARK}"
-        elif await self.config.fetch_repeat_queue():
-            repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS}"
-        else:
-            repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS WITH CIRCLED ONE OVERLAY}"
-
-        autoplay_emoji = "\N{WHITE HEAVY CHECK MARK}" if await self.autoplay_enabled() else "\N{CROSS MARK}"
-
+        autoplay_emoji, repeat_emoji = await self._process_embed_emojis()
         text += _("{translation}: {repeat_emoji}").format(repeat_emoji=repeat_emoji, translation=_("Repeating"))
         text += _("{space}{translation}: {autoplay_emoji}").format(
             space=(" | " if text else ""), autoplay_emoji=autoplay_emoji, translation=_("Auto Play")
@@ -2207,7 +2249,22 @@ class Player(VoiceProtocol):
             space=(" | " if text else ""), volume=self.volume, translation=_("Volume")
         )
         page.set_footer(text=text)
-        return page
+
+    async def _process_queue_tracks(self, history, queue_list, start_index, tracks):
+        if tracks:
+            padding = len(str(start_index + len(tracks)))
+            async for track_idx, track in AsyncIter(tracks).enumerate(start=start_index + 1):
+                queue_list = await self._process_single_queue_track(history, padding, queue_list, track, track_idx)
+        return queue_list
+
+    async def _process_single_queue_track(self, history, padding, queue_list, track, track_idx):
+        track_description = await track.get_track_display_name(max_length=50, with_url=True)
+        diff = padding - len(str(track_idx))
+        queue_list += f"`{track_idx}.{' ' * diff}` {track_description}"
+        if history and track.requester:
+            queue_list += f" - **{track.requester.mention}**"
+        queue_list += "\n"
+        return queue_list
 
     async def queue_duration(self, history: bool = False) -> int:
         queue = self.history if history else self.queue
@@ -2336,8 +2393,104 @@ class Player(VoiceProtocol):
         # sourcery no-metrics
         if self._restored is True:
             return
-        payload = {}
+
         self._was_alone_paused = player.extras.get("was_alone_paused", False)
+        current, last_track, next_track = await self._process_restore_current_tracks(player)
+        self.last_track = last_track
+        self.next_track = next_track
+        self.current = None
+        self.paused = player.paused
+
+        await self._process_restore_autoplaylist(player)
+        self._last_position = player.position
+        history, queue = await self._process_restore_queues(player)
+        self.queue.raw_queue = collections.deque(queue)
+        self.queue.raw_b64s = [t.encoded for t in queue if t.encoded]
+        self.history.raw_queue = collections.deque(history)
+        self.history.raw_b64s = [t.encoded for t in history]
+        self._effect_enabled = player.effect_enabled
+        await self._process_restore_filters(player)
+        if current:
+            current.timestamp = int(player.position)
+            self.queue.put_nowait([current], index=0)
+        await self.change_to_best_node(ops=False)
+        await self._process_restore_rest_call(current, player)
+        if player.playing:
+            await self.next(requester)  # type: ignore
+        self.last_track = last_track
+        self._restored = True
+        await self.player_manager.client.player_state_db_manager.delete_player(guild_id=self.guild.id)
+        self.node.dispatch_event(PlayerRestoredEvent(self, requester))
+        self.stopped = (not await self.autoplay_enabled()) and not self.queue.qsize() and not self.current
+        LOGGER.info("Player restored - %s", self)
+
+    async def _process_restore_autoplaylist(self, player):
+        if self._autoplay_playlist is None:
+            self._autoplay_playlist = (
+                await self.player_manager.client.playlist_db_manager.get_playlist_by_id(player.auto_play_playlist_id)
+                if player.auto_play_playlist_id
+                else None
+            )
+
+    async def _process_restore_rest_call(self, current, player):
+        payload = {}
+        if self.paused:
+            payload["paused"] = self.paused
+        if current:
+            payload |= {"encodedTrack": current.encoded, "startTime": player.position}
+        if self.has_effects:
+            payload["filters"] = self.node.get_filter_payload(
+                player=self,
+                equalizer=self.equalizer,
+                karaoke=self.karaoke,
+                timescale=self.timescale,
+                tremolo=self.tremolo,
+                vibrato=self.vibrato,
+                rotation=self.rotation,
+                distortion=self.distortion,
+                low_pass=self.low_pass,
+                channel_mix=self.channel_mix,
+                echo=self.echo,
+            )
+        if self.volume_filter:
+            payload["volume"] = self.volume
+        if payload:
+            await self.node.patch_session_player(
+                guild_id=self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, payload)
+            )
+
+    async def _process_restore_queues(self, player):
+        queue = (
+            [
+                Track(
+                    node=self.node,
+                    data=t.pop("encoded"),
+                    query=await Query.from_string(t.pop("query")),
+                    **t.pop("extra"),
+                    **t,
+                )
+                async for t in AsyncIter(player.queue, steps=200)
+            ]
+            if player.queue
+            else []
+        )
+        history = (
+            [
+                Track(
+                    node=self.node,
+                    data=t.pop("encoded"),
+                    query=await Query.from_string(t.pop("query")),
+                    **t.pop("extra"),
+                    **t,
+                )
+                async for t in AsyncIter(player.history)
+            ]
+            if player.history
+            else []
+        )
+        return history, queue
+
+    async def _process_restore_current_tracks(self, player):
         current = (
             Track(
                 node=self.node,
@@ -2371,52 +2524,9 @@ class Player(VoiceProtocol):
             if (l_track := player.extras.get("last_track", {}))
             else None
         )
-        self.last_track = last_track
-        self.next_track = next_track
-        self.current = None
-        self.paused = player.paused
-        if self.paused:
-            payload["paused"] = self.paused
-        if self._autoplay_playlist is None:
-            self._autoplay_playlist = (
-                await self.player_manager.client.playlist_db_manager.get_playlist_by_id(player.auto_play_playlist_id)
-                if player.auto_play_playlist_id
-                else None
-            )
-        self._last_position = player.position
-        queue = (
-            [
-                Track(
-                    node=self.node,
-                    data=t.pop("encoded"),
-                    query=await Query.from_string(t.pop("query")),
-                    **t.pop("extra"),
-                    **t,
-                )
-                async for t in AsyncIter(player.queue, steps=200)
-            ]
-            if player.queue
-            else []
-        )
-        history = (
-            [
-                Track(
-                    node=self.node,
-                    data=t.pop("encoded"),
-                    query=await Query.from_string(t.pop("query")),
-                    **t.pop("extra"),
-                    **t,
-                )
-                async for t in AsyncIter(player.history)
-            ]
-            if player.history
-            else []
-        )
-        self.queue.raw_queue = collections.deque(queue)
-        self.queue.raw_b64s = [t.encoded for t in queue if t.encoded]
-        self.history.raw_queue = collections.deque(history)
-        self.history.raw_b64s = [t.encoded for t in history]
-        self._effect_enabled = player.effect_enabled
+        return current, last_track, next_track
+
+    async def _process_restore_filters(self, player):
         effects = player.effects
         if (v := effects.get("volume", None)) and (f := Volume.from_dict(v)):
             self._volume = f
@@ -2440,37 +2550,3 @@ class Player(VoiceProtocol):
             self._channel_mix = f
         if (v := effects.get("echo", None)) and (f := Echo.from_dict(v)):
             self._echo = f
-        if current:
-            current.timestamp = int(player.position)
-            self.queue.put_nowait([current], index=0)
-        await self.change_to_best_node(ops=False)
-        if current:
-            payload.update({"encodedTrack": current.encoded, "startTime": player.position})
-        if self.has_effects:
-            payload["filters"] = self.node.get_filter_payload(
-                player=self,
-                equalizer=self.equalizer,
-                karaoke=self.karaoke,
-                timescale=self.timescale,
-                tremolo=self.tremolo,
-                vibrato=self.vibrato,
-                rotation=self.rotation,
-                distortion=self.distortion,
-                low_pass=self.low_pass,
-                channel_mix=self.channel_mix,
-                echo=self.echo,
-            )
-        if self.volume_filter:
-            payload["volume"] = self.volume
-        if payload:
-            await self.node.patch_session_player(
-                guild_id=self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, payload)
-            )
-        if player.playing:
-            await self.next(requester)  # type: ignore
-        self.last_track = last_track
-        self._restored = True
-        await self.player_manager.client.player_state_db_manager.delete_player(guild_id=self.guild.id)
-        self.node.dispatch_event(PlayerRestoredEvent(self, requester))
-        self.stopped = (not await self.autoplay_enabled()) and not self.queue.qsize() and not self.current
-        LOGGER.info("Player restored - %s", self)
