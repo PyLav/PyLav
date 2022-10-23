@@ -61,7 +61,7 @@ async def update_plugins(client: "Client") -> None:
                 }
             )
 
-        if diff := DeepDiff(
+        if __ := DeepDiff(
             data["lavalink"]["plugins"], new_plugin_data, ignore_order=True, max_passes=3, cache_size=10000
         ):
             data["lavalink"]["plugins"] = new_plugin_data

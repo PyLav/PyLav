@@ -20,6 +20,7 @@ from discord.utils import utcnow
 
 from pylav._logging import getLogger
 from pylav.constants import REGION_TO_COUNTRY_COORDINATE_MAPPING
+from pylav.endpoints.response_objects import TrackExceptionEventOpObject, TrackExceptionObject
 from pylav.events import (
     FiltersAppliedEvent,
     NodeChangedEvent,
@@ -87,7 +88,10 @@ try:
 
     _ = Translator("PyLavPlayer", pathlib.Path(__file__))
 except ImportError:
-    _ = lambda x: x
+
+    def _(string: str) -> str:
+        return string
+
 
 LOGGER = getLogger("PyLav.Player")
 
@@ -163,6 +167,7 @@ class Player(VoiceProtocol):
         *,
         node: Node = None,
     ):
+        super().__init__(client, channel)
         self.ready = asyncio.Event()
         self.bot = self.client = client
         self._channel = None
@@ -980,7 +985,18 @@ class Player(VoiceProtocol):
             except TrackNotFound as exc:
                 if not track:
                     raise TrackNotFound from exc
-                event = TrackExceptionEvent(self, track, exc, self.node)
+                event = TrackExceptionEvent(
+                    self,
+                    track,
+                    self.node,
+                    event_object=TrackExceptionEventOpObject(
+                        op="event",
+                        guildId=str(self.guild.id),
+                        type="TrackExceptionEvent",
+                        encodedTrack="",
+                        exception=TrackExceptionObject(cause=str(exc), message=str(exc), severity="SUSPICIOUS"),
+                    ),
+                )
                 self.node.dispatch_event(event)
                 await self._handle_event(event)
                 return
@@ -1107,7 +1123,18 @@ class Player(VoiceProtocol):
             try:
                 await self.change_to_best_node(feature=await track.requires_capability())
             except NoNodeWithRequestFunctionalityAvailable as exc:
-                event = TrackExceptionEvent(self, track, exc, self.node)
+                event = TrackExceptionEvent(
+                    self,
+                    track,
+                    self.node,
+                    event_object=TrackExceptionEventOpObject(
+                        op="event",
+                        guildId=str(self.guild.id),
+                        type="TrackExceptionEvent",
+                        encodedTrack="",
+                        exception=TrackExceptionObject(cause=str(exc), message=str(exc), severity="SUSPICIOUS"),
+                    ),
+                )
                 self.node.dispatch_event(event)
                 await self._handle_event(event)
                 return
@@ -1118,7 +1145,18 @@ class Player(VoiceProtocol):
             except TrackNotFound as exc:
                 if not track:
                     raise TrackNotFound from exc
-                event = TrackExceptionEvent(self, track, exc, self.node)
+                event = TrackExceptionEvent(
+                    self,
+                    track,
+                    self.node,
+                    event_object=TrackExceptionEventOpObject(
+                        op="event",
+                        guildId=str(self.guild.id),
+                        type="TrackExceptionEvent",
+                        encodedTrack="",
+                        exception=TrackExceptionObject(cause=str(exc), message=str(exc), severity="SUSPICIOUS"),
+                    ),
+                )
                 self.node.dispatch_event(event)
                 await self._handle_event(event)
                 return

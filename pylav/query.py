@@ -635,7 +635,8 @@ class Query:
     @classmethod
     def from_string_noawait(cls, query: Query | str) -> Query:
         """
-        Same as from_string but synchronous - which makes it unable to process localtracks, base64 queries or playlists (M3U, PLS, PyLav).
+        Same as from_string but synchronous
+        - which makes it unable to process localtracks, base64 queries or playlists (M3U, PLS, PyLav).
         """
         if isinstance(query, Query):
             return query

@@ -13,7 +13,10 @@ try:
 
     _ = Translator("PyLavPlayer", Path(__file__))
 except ImportError:
-    _ = lambda x: x
+
+    def _(string: str) -> str:
+        return string
+
 
 if TYPE_CHECKING:
     from pylav.query import Query

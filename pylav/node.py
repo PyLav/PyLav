@@ -71,7 +71,9 @@ try:
 
     _ = Translator("PyLavPlayer", pathlib.Path(__file__))
 except ImportError:
-    _ = lambda x: x
+
+    def _(string: str) -> str:
+        return string
 
 
 LOGGER = getLogger("PyLav.Node")
@@ -651,7 +653,8 @@ class Node:
     def __hash__(self) -> int:
         return hash((self.host, self.port))
 
-    def parse_loadtrack_response(self, data: LoadTracksResponseT) -> LavalinkLoadTrackObjects:
+    @staticmethod
+    def parse_loadtrack_response(data: LoadTracksResponseT) -> LavalinkLoadTrackObjects:
         """Parses the loadtrack response.
          Parameters
          ----------
@@ -1082,25 +1085,41 @@ class Node:
     def get_endpoint_session_players(self) -> str:
         match self.api_version:
             case 3:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v3/sessions/{self.websocket.session_id}/players"
+                return (
+                    f"{self.connection_protocol}://{self.host}:{self.port}/v3"
+                    f"/sessions/{self.websocket.session_id}/players"
+                )
             case 4:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v4/sessions/{self.websocket.session_id}/players"
+                return (
+                    f"{self.connection_protocol}://{self.host}:{self.port}/v4"
+                    f"/sessions/{self.websocket.session_id}/players"
+                )
         raise UnsupportedNodeAPI()
 
     def get_endpoint_session_player_by_guild_id(self, guild_id: int) -> str:
         match self.api_version:
             case 3:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v3/sessions/{self.websocket.session_id}/players/{guild_id}"
+                return (
+                    f"{self.connection_protocol}://{self.host}:{self.port}/v3"
+                    f"/sessions/{self.websocket.session_id}/players/{guild_id}"
+                )
             case 4:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v4/sessions/{self.websocket.session_id}/players/{guild_id}"
+                return (
+                    f"{self.connection_protocol}://{self.host}:{self.port}/v4"
+                    f"/sessions/{self.websocket.session_id}/players/{guild_id}"
+                )
         raise UnsupportedNodeAPI()
 
     def get_endpoint_session(self) -> str:
         match self.api_version:
             case 3:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v3/sessions/{self.websocket.session_id}"
+                return (
+                    f"{self.connection_protocol}://{self.host}:{self.port}/v3" f"/sessions/{self.websocket.session_id}"
+                )
             case 4:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v4/sessions/{self.websocket.session_id}"
+                return (
+                    f"{self.connection_protocol}://{self.host}:{self.port}/v4" f"/sessions/{self.websocket.session_id}"
+                )
         raise UnsupportedNodeAPI()
 
     def get_endpoint_loadtracks(self) -> str:

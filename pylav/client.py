@@ -82,7 +82,10 @@ try:
 
     _ = Translator("PyLavPlayer", pathlib.Path(__file__))
 except ImportError:
-    _ = lambda x: x
+
+    def _(string: str) -> str:
+        return string
+
 
 LOGGER = getLogger("PyLav.Client")
 
@@ -446,7 +449,6 @@ class Client(metaclass=_Singleton):
                             name="update_bundled_playlists",
                             coalesce=True,
                             id=f"{self.bot.user.id}-update_bundled_playlists",
-                            misfire_grace_time=None,
                         )
 
                         LOGGER.info(
@@ -466,7 +468,6 @@ class Client(metaclass=_Singleton):
                             name="update_bundled_external_playlists",
                             coalesce=True,
                             id=f"{self.bot.user.id}-update_bundled_external_playlists",
-                            misfire_grace_time=None,
                         )
 
                         LOGGER.info(
@@ -487,7 +488,6 @@ class Client(metaclass=_Singleton):
                             name="update_external_playlists",
                             coalesce=True,
                             id=f"{self.bot.user.id}-update_external_playlists",
-                            misfire_grace_time=None,
                         )
 
                         LOGGER.info(

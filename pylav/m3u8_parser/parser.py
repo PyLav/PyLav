@@ -23,11 +23,11 @@ ATTRIBUTELISTPATTERN = re.compile(r"""((?:[^,"']|"[^"]*"|'[^']*')+)""")
 URI_PREFIXES = ("https://", "http://", "s3://", "s3a://", "s3n://")
 
 
-def cast_date_time(value):
+def cast_date_time(value: str) -> datetime.datetime:
     return iso8601.parse_date(value)
 
 
-def format_date_time(value: str):
+def format_date_time(value: datetime.datetime) -> str:
     return value.isoformat()
 
 

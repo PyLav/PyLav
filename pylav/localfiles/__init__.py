@@ -16,7 +16,10 @@ try:
 
     _ = Translator("PyLavPlayer", pathlib.Path(__file__))
 except ImportError:
-    _ = lambda x: x
+
+    def _(string: str) -> str:
+        return string
+
 
 __FULLY_SUPPORTED_MUSIC: Final[tuple[str, ...]] = (".mp3", ".flac", ".ogg")
 __PARTIALLY_SUPPORTED_MUSIC_EXT: tuple[str, ...] = (
@@ -144,6 +147,27 @@ class LocalFile:
     def initialized(self) -> bool:
         return self.__init
 
+    async def _to_string_user_no_string(
+        self,
+        path: aiopath.AsyncPath,
+        length: int = None,
+        ellipsis: bool = False,
+        with_emoji: bool = False,
+        no_extension: bool = False,
+        is_album: bool = False,
+    ) -> str:
+        string = path.name if await self.path.is_dir() else path.stem if no_extension else path.name
+        if string.startswith("/") or string.startswith("\\"):
+            string = string[1:]
+        if length:
+            string = string[length * -1 :]
+        if ellipsis and len(string) > length:
+            string = "\N{HORIZONTAL ELLIPSIS}" + f"{string[3:].strip()}"
+        if with_emoji:
+            emoji = "\N{FILE FOLDER}" if is_album else "\N{MULTIPLE MUSICAL NOTES}"
+            string = emoji + string
+        return string
+
     async def to_string_user(
         self,
         length: int = None,
@@ -164,38 +188,38 @@ class LocalFile:
             if no_extension:
                 string = string.removesuffix(path.suffix)
         if not string:
-            string = path.name if await self.path.is_dir() else path.stem if no_extension else path.name
-            if string.startswith("/") or string.startswith("\\"):
-                string = string[1:]
-            if length:
-                string = string[length * -1 :]
-            if ellipsis and len(string) > length:
-                string = "\N{HORIZONTAL ELLIPSIS}" + f"{string[3:].strip()}"
-            if with_emoji:
-                emoji = "\N{FILE FOLDER}" if is_album else "\N{MULTIPLE MUSICAL NOTES}"
-                string = emoji + string
-            return string
-
-        temp_path = aiopath.AsyncPath(string)
+            return await self._to_string_user_no_string(path, length, ellipsis, with_emoji, no_extension, is_album)
         if length is not None:
-            parts = list(temp_path.parts)
-            parts_reversed = list(parts[::-1])
-            if await temp_path.is_file():
-                parts_reversed[0] = temp_path.stem if no_extension else temp_path.name
-            string_list = parts_reversed[::-1]
-            if name_only:
-                string = os.path.join(*string_list[-2:])  # Folder and file only
-            else:
-                string = os.path.join(*string_list)
-            if string.startswith("/") or string.startswith("\\"):
-                string = string[1:]
-            if len(string) > length:
-                string = string[length * -1 :]
-            if ellipsis and len(string) > length:
-                string = "\N{HORIZONTAL ELLIPSIS}" + f"{string[length * -1:].strip()}"
+            string = await self._to_string_user_no_length(string, ellipsis, length, name_only, no_extension)
         if with_emoji:
             emoji = "\N{FILE FOLDER}" if is_album else "\N{MULTIPLE MUSICAL NOTES}"
             string = emoji + string
+        return string
+
+    async def _to_string_user_no_length(
+        self,
+        string: str,
+        ellipsis: bool = False,
+        length: int = None,
+        name_only: bool = False,
+        no_extension: bool = False,
+    ) -> str:
+        temp_path = aiopath.AsyncPath(string)
+        parts = list(temp_path.parts)
+        parts_reversed = list(parts[::-1])
+        if await temp_path.is_file():
+            parts_reversed[0] = temp_path.stem if no_extension else temp_path.name
+        string_list = parts_reversed[::-1]
+        if name_only:
+            string = os.path.join(*string_list[-2:])  # Folder and file only
+        else:
+            string = os.path.join(*string_list)
+        if string.startswith("/") or string.startswith("\\"):
+            string = string[1:]
+        if len(string) > length:
+            string = string[length * -1 :]
+        if ellipsis and len(string) > length:
+            string = "\N{HORIZONTAL ELLIPSIS}" + f"{string[length * -1:].strip()}"
         return string
 
     async def files_in_folder(self, show_folders: bool = False) -> AsyncIterator[Query]:

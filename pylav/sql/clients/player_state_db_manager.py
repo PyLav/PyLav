@@ -37,8 +37,10 @@ class PlayerStateDBManager:
 
     async def fetch_all_players(self) -> AsyncIterator[PlayerStateModel]:
         for entry in await pylav.sql.tables.player_states.PlayerStateRow.select(
-            pylav.sql.tables.player_states.PlayerStateRow.all_columns(
-                exclude=[pylav.sql.tables.player_states.PlayerStateRow.primary_key]
+            *(
+                pylav.sql.tables.player_states.PlayerStateRow.all_columns(
+                    exclude=[pylav.sql.tables.player_states.PlayerStateRow.primary_key]
+                )
             )
         ).where(
             pylav.sql.tables.player_states.PlayerStateRow.bot == self.client.bot.user.id

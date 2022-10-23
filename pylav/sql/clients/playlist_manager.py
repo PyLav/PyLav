@@ -35,7 +35,9 @@ try:
 
     _ = Translator("PyLavPlayer", pathlib.Path(__file__))
 except ImportError:
-    _ = lambda x: x
+
+    def _(string: str) -> str:
+        return string
 
 
 class PlaylistConfigManager:
@@ -48,7 +50,8 @@ class PlaylistConfigManager:
     def client(self) -> Client:
         return self._client
 
-    def get_playlist(self, id: int) -> PlaylistModel:
+    @staticmethod
+    def get_playlist(id: int) -> PlaylistModel:
         return PlaylistModel(id=id)
 
     async def get_bundled_playlists(self) -> list[PlaylistModel]:
@@ -289,11 +292,13 @@ class PlaylistConfigManager:
             curated_data = {
                 1: (
                     "Aikaterna's curated tracks",
-                    "https://gist.githubusercontent.com/Drapersniper/cbe10d7053c844f8c69637bb4fd9c5c3/raw/playlist.pylav",
+                    "https://gist.githubusercontent.com/Drapersniper/"
+                    "cbe10d7053c844f8c69637bb4fd9c5c3/raw/playlist.pylav",
                 ),
                 2: (
                     "Anime OPs/EDs",
-                    "https://gist.githubusercontent.com/Drapersniper/2ad7c4cdd4519d9707f1a65d685fb95f/raw/anime_pl.pylav",
+                    "https://gist.githubusercontent.com/Drapersniper/"
+                    "2ad7c4cdd4519d9707f1a65d685fb95f/raw/anime_pl.pylav",
                 ),
             }
             id_filtered = {id: curated_data[id] for id in ids}
@@ -405,6 +410,7 @@ class PlaylistConfigManager:
                         exc_info=exc,
                     )
 
-    async def count(self) -> int:
+    @staticmethod
+    async def count() -> int:
         """Returns the number of playlists in the database."""
         return await pylav.sql.tables.playlists.PlaylistRow.count()

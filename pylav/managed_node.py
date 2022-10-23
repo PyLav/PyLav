@@ -51,7 +51,10 @@ try:
 
     _ = Translator("PyLavPlayer", pathlib.Path(__file__))
 except ImportError:
-    _ = lambda x: x
+
+    def _(string: str) -> str:
+        return string
+
 
 LOGGER = getLogger("PyLav.ManagedNode")
 
@@ -777,7 +780,8 @@ class LocalNodeManager:
         if (node := self._client.node_manager.get_node_by_id(self._node_id)) is None:
             data = await self._client.node_db_manager.bundled_node_config().fetch_all()
             resume_key = (
-                f"PyLav/{self._client.lib_version}/PyLavPortConflictRecovery-{self._client.bot.user.id}-{self._node_pid}"
+                f"PyLav/{self._client.lib_version}/"
+                f"PyLavPortConflictRecovery-{self._client.bot.user.id}-{self._node_pid}"
                 if external_fallback
                 else f"PyLav/{self._client.lib_version}/PyLavManagedNode-{self._client.bot.user.id}-{self._node_pid}"
             )

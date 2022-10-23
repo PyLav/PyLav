@@ -219,7 +219,7 @@ class WebSocket:
                 "User-Id": str(self.bot_id),
                 "Client-Name": f"PyLav/{self.lib_version}",
             }
-            self._api_version = await self.node.fetch_api_version()
+
             if self._resuming_configured and self._resume_key:
                 headers["Resume-Key"] = self._resume_key
             if self._node.identifier in PYLAV_NODES:
@@ -242,8 +242,9 @@ class WebSocket:
                     attempt,
                     max_attempts_str,
                 )
-                ws_uri = self.node.get_endpoint_websocket()
                 try:
+                    self._api_version = await self.node.fetch_api_version()
+                    ws_uri = self.node.get_endpoint_websocket()
                     self._ws = await self._session.ws_connect(url=ws_uri, headers=headers, heartbeat=60, timeout=600)
                     await self._node.update_features()
                     backoff.reset()

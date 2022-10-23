@@ -103,7 +103,10 @@ try:
 
     _ = Translator("PyLavPlayer", pathlib.Path(__file__))
 except ImportError:
-    _ = lambda x: x
+
+    def _(string: str) -> str:
+        return string
+
 
 T = TypeVar("T")
 
@@ -287,10 +290,10 @@ class MissingSentinel(str):
         return None
 
     def __divmod__(self, other):
-        return (0, 0)
+        return 0, 0
 
     def __rdivmod__(self, other):
-        return (0, 0)
+        return 0, 0
 
     def __floor__(self):
         return 0
