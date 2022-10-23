@@ -112,30 +112,39 @@ class Track:
             self._raw_data = extra.get("raw_data", {})
         elif isinstance(data, dict):
             try:
-                self.encoded = data["encoded"]
-                self._raw_data = data.get("raw_data", {}) or extra.get("raw_data", {})
-                self.extra = extra
-                self._unique_id.update(self.encoded.encode())
+                self._build_from_track_dict(data, extra)
             except KeyError as ke:
                 (missing_key,) = ke.args
                 raise InvalidTrack(f"Cannot build a track from partial data! (Missing key: {missing_key})") from None
         elif isinstance(data, Track):
-            self.encoded = data.encoded
-            self._is_partial = data._is_partial
-            self.extra = {**data.extra, **extra}
-            self._raw_data = data._raw_data
-            self._query = data._query or self._query
-            self._unique_id = data._unique_id
+            self._build_from_track_object(data, extra)
         elif isinstance(data, str):
-            self.encoded = data
-            self.extra = extra
-            self._raw_data = extra.get("raw_data", {})
-            self._unique_id.update(self.encoded.encode())  # type: ignore
+            self._build_from_track_string(data, extra)
         if self._query is not None:
             self.timestamp = self.timestamp or self._query.start_time
         self._requester = requester or self._node.node_manager.client.bot.user.id
         self._id = str(uuid.uuid4())
         self._updated_query = None
+
+    def _build_from_track_dict(self, data, extra):
+        self.encoded = data["encoded"]
+        self._raw_data = data.get("raw_data", {}) or extra.get("raw_data", {})
+        self.extra = extra
+        self._unique_id.update(self.encoded.encode())
+
+    def _build_from_track_string(self, data, extra):
+        self.encoded = data
+        self.extra = extra
+        self._raw_data = extra.get("raw_data", {})
+        self._unique_id.update(self.encoded.encode())  # type: ignore
+
+    def _build_from_track_object(self, data, extra):
+        self.encoded = data.encoded
+        self._is_partial = data._is_partial
+        self.extra = {**data.extra, **extra}
+        self._raw_data = data._raw_data
+        self._query = data._query or self._query
+        self._unique_id = data._unique_id
 
     @cached_property_with_ttl(ttl=60)
     def full_track(
@@ -317,22 +326,20 @@ class Track:
         """Optional[str]: Returns a thumbnail URL for YouTube and Spotify tracks"""
         if not self.identifier:
             return
-        match self.source:
-            case "youtube":
-                return f"https://img.youtube.com/vi/{self.identifier}/mqdefault.jpg"
-            case "spotify":
-                async with self._node.node_manager.client.spotify_client as sp_client:
-                    track = await sp_client.get_track(self.identifier)
-                    images = track.album.images
-                    image = await asyncstdlib.max(images, key=operator.attrgetter("width"))
-                    return image.url
+        if self.source == "youtube":
+            return f"https://img.youtube.com/vi/{self.identifier}/mqdefault.jpg"
+        elif self.source == "spotify":
+            async with self._node.node_manager.client.spotify_client as sp_client:
+                track = await sp_client.get_track(self.identifier)
+                images = track.album.images
+                image = await asyncstdlib.max(images, key=operator.attrgetter("width"))
+                return image.url
 
     async def mix_playlist_url(self) -> str | None:
         if not self.identifier:
             return
-        match self.source:
-            case "youtube":
-                return f"https://www.youtube.com/watch?v={self.identifier}&list=RD{self.identifier}"
+        if self.source == "youtube":
+            return f"https://www.youtube.com/watch?v={self.identifier}&list=RD{self.identifier}"
 
     def __getitem__(self, name) -> Any:
         return super().__getattribute__(name)
@@ -409,57 +416,90 @@ class Track:
         unformatted: bool = False,
         with_url: bool = False,
         escape: bool = True,
-    ) -> str:  # sourcery skip: low-code-quality
+    ) -> str:
         if self.is_partial:
-            base = await (await self.query()).query_to_queue(max_length, partial=True)
-            base = SQUARE_BRACKETS.sub("", base).strip()
-            if max_length and len(base) > (actual_length := max_length - 1):
-                base = f"{base[:actual_length]}" + "\N{HORIZONTAL ELLIPSIS}"
+            base = await self._get_track_display_name_partial_track(max_length)
             return discord.utils.escape_markdown(base) if escape else base
         else:
-            length_to_trim = 7
-            if unformatted:
-                bold = ""
-                url_start = url_end = ""
-                length_to_trim = 3
-            elif with_url:
-                bold = "**"
-                url_start = "["
-                url_end = f"]({self.uri})"
-            else:
-                bold = "**"
-                url_start = url_end = ""
-            if max_length:
-                max_length -= length_to_trim
-            unknown_author = self.author != "Unknown artist"
-            unknown_title = self.title != "Unknown title"
-            author_string = f" - {self.author}" if author else ""
-            if await self.query() and await self.is_local():
-                url_start = url_end = ""
-                if not (unknown_title and unknown_author):
-                    base = f"{self.title}{author_string}"
-                    base = SQUARE_BRACKETS.sub("", base).strip()
-                    if max_length and len(base) > max_length:
-                        base = base = "\N{HORIZONTAL ELLIPSIS}" + f"{base[-max_length:]}"
-                    elif not max_length:
-                        base += f"\n{await  (await self.query()).query_to_string(ellipsis=False)} "
-                else:
-                    base = await (await self.query()).query_to_string(max_length, name_only=True)
-                    base = SQUARE_BRACKETS.sub("", base).strip()
-            else:
-                if self.stream:
-                    icy = await self._icyparser(self.uri)
-                    base = icy or f"{self.title}{author_string}"
-                elif self.author.lower() not in self.title.lower():
-                    base = f"{self.title}{author_string}"
-                else:
-                    base = self.title
-                base = SQUARE_BRACKETS.sub("", base).strip()
-                if max_length and len(base) > max_length:
-                    base = f"{base[:max_length]}" + "\N{HORIZONTAL ELLIPSIS}"
-
+            base, bold, url_end, url_start = await self._get_track_display_name_non_partial_track(
+                author, max_length, unformatted, with_url
+            )
             base = discord.utils.escape_markdown(base) if escape else base
             return f"{bold}{url_start}{base}{url_end}{bold}"
+
+    async def _get_track_display_name_partial_track(self, max_length):
+        base = await (await self.query()).query_to_queue(max_length, partial=True)
+        base = SQUARE_BRACKETS.sub("", base).strip()
+        if max_length and len(base) > (actual_length := max_length - 1):
+            base = f"{base[:actual_length]}" + "\N{HORIZONTAL ELLIPSIS}"
+        return base
+
+    async def _get_track_display_name_non_partial_track(self, author, max_length, unformatted, with_url):
+        (
+            author_string,
+            bold,
+            max_length,
+            unknown_author,
+            unknown_title,
+            url_end,
+            url_start,
+        ) = await self._get_track_display_name_non_partial_setup(author, max_length, unformatted, with_url)
+        if await self.query() and await self.is_local():
+            base, url_end, url_start = await self._get_track_display_name_local_query(
+                author_string, max_length, unknown_author, unknown_title, url_end, url_start
+            )
+        else:
+            base = await self._get_track_display_name_non_local_query(author_string, max_length)
+        return base, bold, url_end, url_start
+
+    async def _get_track_display_name_non_partial_setup(self, author, max_length, unformatted, with_url):
+        length_to_trim = 7
+        if unformatted:
+            bold = ""
+            url_start = url_end = ""
+            length_to_trim = 3
+        elif with_url:
+            bold = "**"
+            url_start = "["
+            url_end = f"]({self.uri})"
+        else:
+            bold = "**"
+            url_start = url_end = ""
+        if max_length:
+            max_length -= length_to_trim
+        unknown_author = self.author != "Unknown artist"
+        unknown_title = self.title != "Unknown title"
+        author_string = f" - {self.author}" if author else ""
+        return author_string, bold, max_length, unknown_author, unknown_title, url_end, url_start
+
+    async def _get_track_display_name_non_local_query(self, author_string, max_length):
+        if self.stream:
+            icy = await self._icyparser(self.uri)
+            base = icy or f"{self.title}{author_string}"
+        elif self.author.lower() not in self.title.lower():
+            base = f"{self.title}{author_string}"
+        else:
+            base = self.title
+        base = SQUARE_BRACKETS.sub("", base).strip()
+        if max_length and len(base) > max_length:
+            base = f"{base[:max_length]}" + "\N{HORIZONTAL ELLIPSIS}"
+        return base
+
+    async def _get_track_display_name_local_query(
+        self, author_string, max_length, unknown_author, unknown_title, url_end, url_start
+    ):
+        url_start = url_end = ""
+        if not (unknown_title and unknown_author):
+            base = f"{self.title}{author_string}"
+            base = SQUARE_BRACKETS.sub("", base).strip()
+            if max_length and len(base) > max_length:
+                base = base = "\N{HORIZONTAL ELLIPSIS}" + f"{base[-max_length:]}"
+            elif not max_length:
+                base += f"\n{await  (await self.query()).query_to_string(ellipsis=False)} "
+        else:
+            base = await (await self.query()).query_to_string(max_length, name_only=True)
+            base = SQUARE_BRACKETS.sub("", base).strip()
+        return base, url_end, url_start
 
     async def _icyparser(self, url: str) -> str | None:
         try:
