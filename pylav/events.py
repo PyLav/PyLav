@@ -1414,6 +1414,8 @@ class SegmentsLoadedEvent(Event):
         The player whose segments were loaded.
     node: :class:`Node`
         The node the player was in.
+    event_object: :class:`SegmentsLoadedEventOpObject`
+        The event object that was received from Lavalink.
     """
 
     __slots__ = ("player", "segments", "node", "event")

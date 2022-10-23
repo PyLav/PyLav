@@ -411,7 +411,7 @@ class NodeManager:
 
         async for player in asyncstdlib.iter(self.player_queue):
             await player.change_node(node)
-            LOGGER.debug("[NODE-%s] Successfully moved %s", node.name, player.guild_id)
+            LOGGER.debug("[NODE-%s] Successfully moved %s", node.name, player.guild.id)
 
         if self.client._connect_back:
             async for player in asyncstdlib.iter(node._original_players):

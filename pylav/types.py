@@ -335,17 +335,17 @@ class EchoT(TypedDict):
 
 
 class FiltersT(TypedDict):
-    volume: NotRequired[float]
-    equalizer: NotRequired[EqualizerT]
-    karaoke: NotRequired[KaraokeT]
-    timescale: NotRequired[TimescaleT]
-    tremolo: NotRequired[TremoloT]
-    vibrato: NotRequired[VibratoT]
-    rotation: NotRequired[RotationT]
-    distortion: NotRequired[DistortionT]
-    channelMix: NotRequired[ChannelMixT]
-    lowPass: NotRequired[LowPassT]
-    echo: NotRequired[EchoT]
+    volume: NotRequired[float | None]
+    equalizer: NotRequired[EqualizerT | None]
+    karaoke: NotRequired[KaraokeT | None]
+    timescale: NotRequired[TimescaleT | None]
+    tremolo: NotRequired[TremoloT | None]
+    vibrato: NotRequired[VibratoT | None]
+    rotation: NotRequired[RotationT | None]
+    distortion: NotRequired[DistortionT | None]
+    channelMix: NotRequired[ChannelMixT | None]
+    lowPass: NotRequired[LowPassT | None]
+    echo: NotRequired[EchoT | None]
 
 
 class LavalinkPlayerT(TypedDict):
@@ -374,6 +374,7 @@ class RestPatchPlayerPayloadT(TypedDict):
     paused: NotRequired[bool]
     filters: NotRequired[FiltersT]
     voice: NotRequired[VoiceStateT]
+    skipSegments: NotRequired[list[SegmentT]]
 
 
 RestPatchPlayerResponseT = TypeVar("RestPatchPlayerResponseT", bound="Type[LavalinkPlayerT]")

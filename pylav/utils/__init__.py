@@ -563,8 +563,8 @@ class PlayerQueue(asyncio.Queue[T]):
 
     def _get(self, index: int = None) -> T:
         r = self.popindex(index) if index is not None else self._queue.popleft()
-        if r.track:
-            self.raw_b64s.remove(r.track)
+        if r.encoded:
+            self.raw_b64s.remove(r.encoded)
         return r
 
     def _put(self, items: list[T], index: int = None):
@@ -572,16 +572,16 @@ class PlayerQueue(asyncio.Queue[T]):
             for i in items:
                 if index < 0:
                     self._queue.append(i)
-                    if i.track:
-                        self.raw_b64s.append(i.track)
+                    if i.encoded:
+                        self.raw_b64s.append(i.encoded)
                 else:
                     self._queue.insert(index, i)
-                    if i.track:
-                        self.raw_b64s.append(i.track)
+                    if i.encoded:
+                        self.raw_b64s.append(i.encoded)
                     index += 1
         else:
             self._queue.extend(items)
-            self.raw_b64s.extend([i.track for i in items if i.track])
+            self.raw_b64s.extend([i.encoded for i in items if i.encoded])
 
     # End of the overridable methods.
 
@@ -753,15 +753,15 @@ class TrackHistoryQueue(PlayerQueue[T]):
             for i in items:
                 if index < 0:
                     self._queue.append(i)
-                    self.raw_b64s.append(i.track)
+                    self.raw_b64s.append(i.encoded)
                 else:
                     self._queue.insert(index, i)
-                    self.raw_b64s.insert(index, i.track)
+                    self.raw_b64s.insert(index, i.encoded)
                     index += 1
         else:
             self._queue.extendleft(items)
             for i, t in enumerate(items):
-                self.raw_b64s.insert(i, t.track)
+                self.raw_b64s.insert(i, t.encoded)
 
     def _get(self, index: int = None) -> T:
         r = self.popindex(index) if index is not None else self._queue.popleft()
