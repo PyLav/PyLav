@@ -317,22 +317,10 @@ class Track:
         """Optional[str]: Returns a thumbnail URL for YouTube and Spotify tracks"""
         if not self.identifier:
             return
-        match self.source:
-            case "youtube":
-                return f"https://img.youtube.com/vi/{self.identifier}/mqdefault.jpg"
-            case "spotify":
-                async with self._node.node_manager.client.spotify_client as sp_client:
-                    track = await sp_client.get_track(self.identifier)
-                    images = track.album.images
-                    image = await asyncstdlib.max(images, key=operator.attrgetter("width"))
-                    return image.url
 
     async def mix_playlist_url(self) -> str | None:
         if not self.identifier:
             return
-        match self.source:
-            case "youtube":
-                return f"https://www.youtube.com/watch?v={self.identifier}&list=RD{self.identifier}"
 
     def __getitem__(self, name) -> Any:
         return super().__getattribute__(name)
