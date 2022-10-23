@@ -40,6 +40,7 @@ from pylav.events import (
     TrackStartTikTokEvent,
     TrackStartTwitchEvent,
     TrackStartVimeoEvent,
+    TrackStartYandexMusicEvent,
     TrackStartYouTubeEvent,
     TrackStartYouTubeMusicEvent,
     TrackStuckEvent,
@@ -589,6 +590,8 @@ class WebSocket:
                 event = TrackStartGCTTSEvent(player, track, node, event_object)
             case "Niconico":
                 event = TrackStartNicoNicoEvent(player, track, node, event_object)
+            case "Yandex Music":
+                event = TrackStartYandexMusicEvent(player, track, node, event_object)
             case __:
                 if query.source == "Local Files" or (
                     query._special_local and (query.is_m3u or query.is_pls or query.is_pylav)

@@ -731,6 +731,36 @@ class TrackStartDeezerEvent(TrackStartEvent):
         self.author = track.author
 
 
+class TrackStartYandexMusicEvent(TrackStartEvent):
+    """This event is dispatched when the player starts to play a Yandex Music track.
+
+    Attributes
+    ----------
+    player: :class:`Player`
+        The player that started to play a track.
+    track: :class:`Track`
+        The track that started playing.
+    url: :class:`str`
+        The url of the track that started playing.
+    identifier: :class:`str`
+        The identifier of the track that started playing.
+    duration: :class:`int`
+        The duration of the track that started playing.
+    title: :class:`str`
+        The title of the track that started playing.
+    """
+
+    __slots__ = ("player", "track", "url", "identifier", "duration", "title", "author", "node")
+
+    def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStartEventOpObject):
+        super().__init__(player, track, node, event_object)
+        self.url = track.uri
+        self.identifier = track.identifier
+        self.duration = track.duration
+        self.title = track.title
+        self.author = track.author
+
+
 class TrackStartAppleMusicEvent(TrackStartEvent):
     """This event is dispatched when the player starts to play an Apple Music track.
 
