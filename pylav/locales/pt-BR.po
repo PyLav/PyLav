@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-10-24 16:09+0000\n"
-"PO-Revision-Date: 2022-10-24 16:13\n"
+"POT-Creation-Date: 2022-10-24 17:16+0000\n"
+"PO-Revision-Date: 2022-10-24 17:19\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -29,11 +29,11 @@ msgstr "Nenhum nó com a funcionalidade {feature} disponível!"
 msgid "No node with {query.requires_capability} functionality available!"
 msgstr "Nenhum nó com a funcionalidade {query.requires_capability} disponível!"
 
-#: pylav/client.py:1201
+#: pylav/client.py:1205
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
 msgstr "Para gerar uma playlist de mix é necessário um vídeo, usuário, canal ou ID da lista de reprodução"
 
-#: pylav/client.py:1206
+#: pylav/client.py:1210
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
 msgstr "Para gerar uma playlist de mix um vídeo, usuário, canal ou ID da lista de reprodução é necessário. No entanto, você forneceu múltiplos"
 
