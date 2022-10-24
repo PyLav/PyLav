@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.11.14.1 (24/10/2022)
+- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/24ae78c02e818abfd72b396d2c32676dc21dc62d) - @Drapersniper
+- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/459958059156e959d67f6e47a0f32429a9baf18e) - @crowdin-bot
+
+---
+
 ## v0.11.14.0 (24/10/2022)
 
 
@@ -150,7 +156,3 @@
 ---
 
 ## v0.10.1.1 (14/09/2022)
-
----
-
-## v0.10.1.0 (14/09/2022)
