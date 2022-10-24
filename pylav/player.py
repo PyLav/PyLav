@@ -935,7 +935,7 @@ class Player(VoiceProtocol):
 
         self.current = track
         options = {"noReplace": False}
-        if track.skip_segments and self.node.supports_sponsorblock:
+        if track.skip_segments and self.node.supports_sponsorblock and await track.is_youtube():
             options["skipSegments"] = track.skip_segments
         await self.node.send(op="play", guildId=self.guild_id, track=track.track, **options)
         self.node.dispatch_event(TrackPreviousRequestedEvent(self, requester, track))
@@ -978,7 +978,7 @@ class Player(VoiceProtocol):
         if self.next_track is None and not self.queue.empty():
             self.next_track = self.queue.raw_queue.popleft()
         options = {"noReplace": no_replace}
-        if track.skip_segments and self.node.supports_sponsorblock:
+        if track.skip_segments and self.node.supports_sponsorblock and await track.is_youtube():
             options["skipSegments"] = track.skip_segments
         await self.node.send(op="play", guildId=self.guild_id, track=track.track, **options)
         self.node.dispatch_event(QuickPlayEvent(self, requester, track))
@@ -1110,7 +1110,7 @@ class Player(VoiceProtocol):
                 self.node.dispatch_event(event)
                 await self._handle_event(event)
                 return
-        if self.node.supports_sponsorblock:
+        if self.node.supports_sponsorblock and await track.is_youtube():
             options["skipSegments"] = skip_segments or track.skip_segments
         if start_time or track.timestamp:
             if not isinstance(start_time, int) or not 0 <= start_time <= track.duration:
@@ -1144,7 +1144,7 @@ class Player(VoiceProtocol):
         self._last_update = 0
         self.stopped = False
         self._last_position = 0
-        if self.node.supports_sponsorblock:
+        if self.node.supports_sponsorblock and await self.current.is_youtube():
             options["skipSegments"] = self.current.skip_segments if self.current else []
         options["startTime"] = self.current.last_known_position if self.current else self.position
         options["noReplace"] = False
@@ -1341,7 +1341,7 @@ class Player(VoiceProtocol):
             await self._dispatch_voice_update()
         if self.current:
             options = {}
-            if self.current.skip_segments and self.node.supports_sponsorblock:
+            if self.current.skip_segments and self.node.supports_sponsorblock and await self.current.is_youtube():
                 options["skipSegments"] = self.current.skip_segments
             await self.node.send(
                 op="play", guildId=self.guild_id, track=self.current.track, startTime=self.position, **options
