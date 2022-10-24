@@ -630,8 +630,8 @@ class Query:
         if len(query) > 20 and BASE64_TEST_REGEX.match(query):
             with contextlib.suppress(Exception):
                 data, _ = await asyncio.to_thread(decode_track, query)
-                source = data["info"]["source"]
-                query = data["info"]["uri"]
+                source = data.info.sourceName
+                query = data.info.uri
         try:
             if not dont_search and (output := await cls.__process_playlist(query)):
                 if source:
@@ -928,8 +928,8 @@ class Query:
     @classmethod
     async def from_base64(cls, base64_string: str) -> Query:
         data, _ = await asyncio.to_thread(decode_track, base64_string)
-        source = data["info"]["source"]
-        url = data["info"]["uri"]
+        source = data.info.sourceName
+        url = data.info.uri
         response = await cls.from_string(url)
         response._source = cls.__get_source_from_str(source)
         return response

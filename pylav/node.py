@@ -1490,6 +1490,23 @@ class Node:
         """
         return await self.get_track(await self._query_cls.from_string(f"dzsearch:{query}"), bypass_cache=bypass_cache)
 
+    async def search_yandex(self, query: str, bypass_cache: bool = False) -> LavalinkLoadTrackObjects:
+        """|coro|
+        Gets the query from Yandex Music.
+        Parameters
+        ----------
+        query: :class:`str`
+            The query to search for.
+        bypass_cache: :class:`bool`
+            Whether to bypass the cache.
+
+        Returns
+        -------
+        LavalinkLoadTrackObjects
+            Lavalink LoadTrack Response Object
+        """
+        return await self.get_track(await self._query_cls.from_string(f"ymsearch:{query}"), bypass_cache=bypass_cache)
+
     async def get_query_speak(self, query: str, bypass_cache: bool = False) -> LavalinkLoadTrackObjects:
         """|coro|
         Gets the query for speak.
