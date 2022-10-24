@@ -74,7 +74,15 @@ from pylav.sql.clients.updater import UpdateSchemaManager
 from pylav.sql.models import LibConfigModel, NodeModel
 from pylav.tracks import Track
 from pylav.types import BotT, CogT, ContextT, InteractionT
-from pylav.utils import PyLavContext, SingletonMethods, _get_context, _process_commands, _Singleton, add_property
+from pylav.utils import (
+    MISSING,
+    PyLavContext,
+    SingletonMethods,
+    _get_context,
+    _process_commands,
+    _Singleton,
+    add_property,
+)
 from pylav.vendored import aiopath
 
 try:
@@ -1006,8 +1014,8 @@ class Client(metaclass=_Singleton):
         enqueue : `bool`, optional
             Whether to enqueue the tracks as needed
             while try are processed so users don't sit waiting for the bot to finish.
-        partial : `bool`, optional
-            Whether to return partial results if some queries fail.
+        partial: `bool`, optional
+            Whether to return partial tracks
 
         Returns
         -------
@@ -1032,6 +1040,7 @@ class Client(metaclass=_Singleton):
         self, bypass_cache, enqueue, player, queries_failed, query, requester, successful_tracks, track_count, partial
     ):
         async for sub_query in self._yield_recursive_queries(query):
+
             node = await self.node_manager.find_best_node(
                 region=player.region if player else None,
                 coordinates=player.coordinates if player else None,
@@ -1063,7 +1072,15 @@ class Client(metaclass=_Singleton):
                 )
             elif sub_query.is_search or sub_query.is_single:
                 track_count = await self._get_tracks_search_or_single(
-                    bypass_cache, node, player, queries_failed, requester, sub_query, successful_tracks, track_count
+                    bypass_cache,
+                    node,
+                    player,
+                    queries_failed,
+                    requester,
+                    sub_query,
+                    successful_tracks,
+                    track_count,
+                    partial,
                 )
             elif (
                 (sub_query.is_playlist or sub_query.is_album)
@@ -1080,10 +1097,11 @@ class Client(metaclass=_Singleton):
                     sub_query,
                     successful_tracks,
                     track_count,
+                    partial,
                 )
             elif (sub_query.is_local or sub_query.is_custom_playlist) and sub_query.is_album:
                 track_count = await self._get_tracks_local_album(
-                    enqueue, node, player, queries_failed, requester, sub_query, successful_tracks, track_count
+                    enqueue, node, player, queries_failed, requester, sub_query, successful_tracks, track_count, partial
                 )
             else:
                 queries_failed.append(sub_query)
@@ -1091,11 +1109,22 @@ class Client(metaclass=_Singleton):
         return track_count
 
     async def _get_tracks_local_album(
-        self, enqueue, node, player, queries_failed, requester, sub_query, successful_tracks, track_count
+        self, enqueue, node, player, queries_failed, requester, sub_query, successful_tracks, track_count, partial
     ):
         yielded = False
         async for local_track in sub_query.get_all_tracks_in_folder():
             yielded = True
+            if partial:
+                track_count += 1
+                successful_tracks.append(
+                    Track(
+                        data=MISSING,
+                        node=node,
+                        query=local_track,
+                        requester=requester.id,
+                    )
+                )
+                continue
             response = await self._get_tracks(player=player, query=local_track, first=True, bypass_cache=True)
             if track_b64 := response.tracks[0].encoded:
                 track_count += 1
@@ -1116,7 +1145,17 @@ class Client(metaclass=_Singleton):
         return track_count
 
     async def _get_tracks_playlist_or_album_no_local(
-        self, bypass_cache, enqueue, node, player, queries_failed, requester, sub_query, successful_tracks, track_count
+        self,
+        bypass_cache,
+        enqueue,
+        node,
+        player,
+        queries_failed,
+        requester,
+        sub_query,
+        successful_tracks,
+        track_count,
+        partial,
     ):
         response = await self._get_tracks(player=player, query=sub_query, bypass_cache=bypass_cache)
         track_list = response.tracks
@@ -1140,7 +1179,7 @@ class Client(metaclass=_Singleton):
         return track_count
 
     async def _get_tracks_search_or_single(
-        self, bypass_cache, node, player, queries_failed, requester, sub_query, successful_tracks, track_count
+        self, bypass_cache, node, player, queries_failed, requester, sub_query, successful_tracks, track_count, partial
     ):
         response = await self._get_tracks(player=player, query=sub_query, first=True, bypass_cache=bypass_cache)
         track_b64 = response.tracks[0].encoded
@@ -1251,7 +1290,7 @@ class Client(metaclass=_Singleton):
                 "name": playlist_name if len(queries) == 1 else "",
                 "selectedTrack": -1,
             },
-            "loadType": "PLAYLIST_LOADED" if playlist_name else "SEARCH_RESULT" if output_tracks else "LOAD_FAILED",  # type: ignore
+            "loadType": "PLAYLIST_LOADED" if playlist_name else "SEARCH_RESULT" if output_tracks else "LOAD_FAILED",
             "tracks": output_tracks,
         }
         return node.parse_loadtrack_response(data)

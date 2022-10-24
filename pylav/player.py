@@ -1382,7 +1382,7 @@ class Player(VoiceProtocol):
         self._last_update = time.time() * 1000
         self._last_position = state.get("position", 0)
         self.position_timestamp = state.get("time", 0)
-        self._ping = state.get("ping", 0)
+        self._ping = state.get("ping", -1)
         if self.current:
             self.current.last_known_position = self._last_position
 
