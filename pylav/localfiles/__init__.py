@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import os
 import pathlib
+import sys
 import typing
 from collections.abc import AsyncIterator
 from typing import Final
 
+import asyncstdlib
 from discord.utils import maybe_coroutine
 
 from pylav.query import Query
@@ -206,7 +208,10 @@ class LocalFile:
     async def _get_entries_in_folder(
         self, folder: aiopath.AsyncPath, recursive: bool = False, show_folders: bool = False, folder_only: bool = False
     ) -> AsyncIterator[Query]:
-        async for path in folder.iterdir():
+        async def _key(path: aiopath.AsyncPath) -> str:
+            return f"{path}"
+
+        for path in await asyncstdlib.heapq.nsmallest(asyncstdlib.iter(folder.iterdir()), n=sys.maxsize, key=_key):
             if await path.is_dir():
                 if recursive:
                     yield await Query.from_string(path)
