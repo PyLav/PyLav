@@ -993,9 +993,13 @@ class Client(metaclass=_Singleton):
                     await player.add(requester.id, track, query=await track.query())
                 if partial and sub_query.is_single:
                     track_count += 1
+                    if cached_query := await self.node_manager.client.query_cache_manager.fetch_query(sub_query):
+                        data = (await cached_query.fetch_tracks())[0]
+                    else:
+                        data = None
                     successful_tracks.append(
                         Track(
-                            data=None,
+                            data=data,
                             node=node,
                             query=sub_query,
                             requester=requester.id,
