@@ -100,7 +100,8 @@ YOUTUBE_REGEX = re.compile(
 SPEAK_REGEX = re.compile(r"^(?P<speak_source>speak):\s*?(?P<speak_query>.*)$", re.IGNORECASE)
 GCTSS_REGEX = re.compile(r"^(?P<gctts_source>tts://)\s*?(?P<gctts_query>.*)$", re.IGNORECASE)
 SEARCH_REGEX = re.compile(
-    r"^((?P<search_source>ytm|yt|sp|sc|am|dz)search|(?P<search_deezer>dzisrc)):\s*?(?P<search_query>.*)$", re.IGNORECASE
+    r"^((?P<search_source>ytm|yt|sp|sc|am|dz)search|(?P<search_deezer_isrc>dzisrc)):\s*?(?P<search_query>.*)$",
+    re.IGNORECASE,
 )
 HTTP_REGEX = re.compile(r"^http(s)?://", re.IGNORECASE)
 DEEZER_REGEX = re.compile(
@@ -505,7 +506,7 @@ class Query:
     def __process_search(cls, query: str) -> Query | None:
         if match := SEARCH_REGEX.match(query):
             query = match.group("search_query")
-            deezer = (not query) and (query := match.group("search_deezer"))
+            deezer = (not query) and (query := match.group("search_deezer_isrc"))
             query = query.strip()
             if deezer:
                 return cls(query, "Deezer", search=True)
@@ -570,14 +571,15 @@ class Query:
 
     @classmethod
     async def __process_playlist(cls, query: str) -> Query | None:
-        url = is_url(query)
-        query_final = query if url else await cls.__process_local_playlist(query)
-        if __ := M3U_REGEX.match(query):
-            return cls(query_final, "M3U", query_type="album", special_local=not url)
-        elif __ := PLS_REGEX.match(query):
-            return cls(query_final, "PLS", query_type="album", special_local=not url)
-        elif __ := PYLAV_REGEX.match(query):
-            return cls(query_final, "PyLav", query_type="album", special_local=not url)
+        with contextlib.suppress(ValueError):
+            url = is_url(query)
+            query_final = query if url else await cls.__process_local_playlist(query)
+            if __ := M3U_REGEX.match(query):
+                return cls(query_final, "M3U", query_type="album", special_local=not url)
+            elif __ := PLS_REGEX.match(query):
+                return cls(query_final, "PLS", query_type="album", special_local=not url)
+            elif __ := PYLAV_REGEX.match(query):
+                return cls(query_final, "PyLav", query_type="album", special_local=not url)
 
     @classmethod
     async def from_string(
@@ -624,7 +626,8 @@ class Query:
                     if source:
                         output._source = cls.__get_source_from_str(source)
                     return output  # Fallback to YouTube Music
-        except Exception:
+        except Exception as e:
+            LOGGER.verbose(e)
             if dont_search:
                 return cls("invalid", "invalid")
             output = cls(query, "YouTube Music", search=True)

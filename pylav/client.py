@@ -939,6 +939,7 @@ class Client(metaclass=_Singleton):
         player: Player | None = None,
         bypass_cache: bool = False,
         enqueue: bool = True,
+        partial: bool = True,
     ) -> tuple[list[Track], int, list[Query]]:  # sourcery no-metrics
         """High level interface to get and return all tracks for a list of queries.
 
@@ -958,6 +959,8 @@ class Client(metaclass=_Singleton):
         enqueue : `bool`, optional
             Whether to enqueue the tracks as needed
             while try are processed so users dont sit waiting for the bot to finish.
+        partial : `bool`, optional
+            Whether to return partial results if some queries fail.
 
         Returns
         -------
@@ -988,7 +991,17 @@ class Client(metaclass=_Singleton):
                 elif successful_tracks and player.is_playing and player.queue.empty():
                     track = successful_tracks.pop()
                     await player.add(requester.id, track, query=await track.query())
-                if sub_query.is_search or sub_query.is_single:
+                if partial and sub_query.is_single:
+                    track_count += 1
+                    successful_tracks.append(
+                        Track(
+                            data=None,
+                            node=node,
+                            query=sub_query,
+                            requester=requester.id,
+                        )
+                    )
+                elif sub_query.is_search or sub_query.is_single:
                     track = await self._get_tracks(
                         player=player, query=sub_query, first=True, bypass_cache=bypass_cache
                     )
