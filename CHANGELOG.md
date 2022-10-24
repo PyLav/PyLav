@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.11.12.0 (24/10/2022)
+- [[patch] fix an instance of where `Player.play()` was being called instead of `Player.add()` causing all songs in the enqueue op to be fast skipped](https://github.com/Drapersniper/PyLav/commit/1f4a09db7777a660b8a3ee1bad69c8d539552f62) - @Drapersniper
+- [fix  RuntimeWarning: coroutine 'AsyncPath.is_file' was never awaited](https://github.com/Drapersniper/PyLav/commit/efd82c1366b8d5ff8fa19c09c1d099ea4f37ed33) - @Drapersniper
+
+---
+
 ## v0.11.11.0 (24/10/2022)
 - [[patch] fix skipSegments being sent to non YouTube tracks causing playback failures](https://github.com/Drapersniper/PyLav/commit/ad0a93e285f0e45301bceaa68f4d22548c457f09) - @Drapersniper
 
@@ -142,7 +148,3 @@
 ---
 
 ## v0.9.6.1 (13/09/2022)
-
----
-
-## v0.9.6.0 (13/09/2022)
