@@ -398,6 +398,9 @@ class Node:
                 )
                 LOGGER.trace("Node %s is healthy", self.name)
             except Exception:
+                if self.websocket._connecting is True:
+                    LOGGER.debug("Node %s is already connecting - skipping reconnect on unhealthy", self.name)
+                    return
                 LOGGER.warning("Node %s is unhealthy - Triggering a state reset", self.name)
                 await self._unhealthy()
 
@@ -405,6 +408,9 @@ class Node:
             if playing_players == 0:
                 return
             if (self.down_votes / playing_players) >= 0.5:
+                if self.websocket._connecting is True:
+                    LOGGER.debug("Node %s is already connecting - skipping reconnect on unhealthy", self.name)
+                    return
                 await self._unhealthy()
 
     @property

@@ -104,6 +104,7 @@ class WebSocket:
         "_session_id",
         "_resumed",
         "_api_version",
+        "_connecting",
     )
 
     def __init__(
@@ -146,6 +147,7 @@ class WebSocket:
         self._connect_task = asyncio.ensure_future(self.connect())
         self._connect_task.add_done_callback(_done_callback)
         self._manual_shutdown = False
+        self._connecting = False
 
     @property
     def is_ready(self) -> bool:
@@ -215,6 +217,7 @@ class WebSocket:
             self.node._ready.clear()
             if self.client.is_shutting_down:
                 return
+            self._connecting = True
             headers = {
                 "Authorization": self._password,
                 "User-Id": str(self.bot_id),
@@ -235,6 +238,7 @@ class WebSocket:
             backoff = ExponentialBackoffWithReset(base=3)
             while not self.connected and (not is_finite_retry or attempt < self._max_reconnect_attempts):
                 if self._manual_shutdown:
+                    self._connecting = False
                     return
                 attempt += 1
                 LOGGER.info(
@@ -243,9 +247,9 @@ class WebSocket:
                     attempt,
                     max_attempts_str,
                 )
+                self._api_version = await self.node.fetch_api_version()
+                ws_uri = self.node.get_endpoint_websocket()
                 try:
-                    self._api_version = await self.node.fetch_api_version()
-                    ws_uri = self.node.get_endpoint_websocket()
                     self._ws = await self._session.ws_connect(url=ws_uri, headers=headers, heartbeat=60, timeout=600)
                     await self._node.update_features()
                     backoff.reset()
@@ -255,6 +259,7 @@ class WebSocket:
                     aiohttp.ServerDisconnectedError,
                 ) as ce:
                     if self.client.is_shutting_down:
+                        self._connecting = False
                         return
                     if isinstance(ce, aiohttp.ClientConnectorError):
                         LOGGER.warning(
@@ -277,6 +282,7 @@ class WebSocket:
                             # We shouldn't try to establish any more connections as correcting this particular error
                             # would require the cog to be reloaded (or the bot to be rebooted), so further attempts
                             # would be futile, and a waste of resources.
+                            self._connecting = False
                             return
 
                         LOGGER.warning(
@@ -301,6 +307,7 @@ class WebSocket:
                     LOGGER.debug("[NODE-%s] _listen returned", self.node.name)
                     # Ensure this loop doesn't proceed if _listen returns control back to this
                     # function.
+                    self._connecting = False
                     return
 
             LOGGER.warning(
