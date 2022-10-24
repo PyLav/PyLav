@@ -89,6 +89,7 @@ def decode_track(track: str) -> tuple[LavalinkTrackObject, int]:
                 "uri": uri,
                 "isSeekable": not is_stream,
                 "sourceName": source,
+                "position": 0,
             },
         },
     )
