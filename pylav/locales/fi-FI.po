@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-10-24 16:09+0000\n"
-"PO-Revision-Date: 2022-10-24 16:13\n"
+"POT-Creation-Date: 2022-10-24 17:16+0000\n"
+"PO-Revision-Date: 2022-10-24 17:19\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -29,11 +29,11 @@ msgstr "Ei solmua {feature} toiminnallisuudella käytettävissä!"
 msgid "No node with {query.requires_capability} functionality available!"
 msgstr "Ei solmua {query.requires_capability} toiminnallisuudella käytettävissä!"
 
-#: pylav/client.py:1201
+#: pylav/client.py:1205
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
 msgstr "Jos haluat luoda sekoitussoittolistan, tarvitaan video, käyttäjä, kanava tai soittolista ID."
 
-#: pylav/client.py:1206
+#: pylav/client.py:1210
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
 msgstr "Voit luoda sekoitussoittolistan video, käyttäjä, kanava tai soittolista ID on välttämätön, mutta olet antanut useita"
 
