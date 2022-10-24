@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.11.11.0 (24/10/2022)
+- [[patch] fix skipSegments being sent to non YouTube tracks causing playback failures](https://github.com/Drapersniper/PyLav/commit/ad0a93e285f0e45301bceaa68f4d22548c457f09) - @Drapersniper
+
+---
+
 ## v0.11.10.0 (23/10/2022)
 - [[patch] cleanup plugins on init sequence](https://github.com/Drapersniper/PyLav/commit/56427d4f763b59e713da234e524d2e54c3cf8b03) - @Drapersniper
 
@@ -141,7 +146,3 @@
 ---
 
 ## v0.9.6.0 (13/09/2022)
-
----
-
-## v0.9.5.2 (12/09/2022)
