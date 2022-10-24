@@ -1013,9 +1013,9 @@ class Client(metaclass=_Singleton):
             The player requesting the op.
         enqueue : `bool`, optional
             Whether to enqueue the tracks as needed
-            while try are processed so users don't sit waiting for the bot to finish.
-        partial: `bool`, optional
-            Whether to return partial tracks
+            while try are processed so users dont sit waiting for the bot to finish.
+        partial : `bool`, optional
+            Whether to return partial results
 
         Returns
         -------
@@ -1070,6 +1070,9 @@ class Client(metaclass=_Singleton):
                         requester=requester.id,
                     )
                 )
+                if enqueue and successful_tracks and not player.is_playing and not player.paused:
+                    track = successful_tracks.pop()
+                    await player.play(track, await track.query(), requester)
             elif sub_query.is_search or sub_query.is_single:
                 track_count = await self._get_tracks_search_or_single(
                     bypass_cache,
