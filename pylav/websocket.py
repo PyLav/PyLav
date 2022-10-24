@@ -293,7 +293,7 @@ class WebSocket:
 
                     await self.node.node_manager.node_connect(self.node)
                     if self._message_queue:
-                        async for message in AsyncIter(self._message_queue):
+                        async for message in AsyncIter(self._message_queue.copy()):
                             await self.send(**message)
 
                         self._message_queue.clear()
