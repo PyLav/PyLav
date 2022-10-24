@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-10-16 17:11+0000\n"
-"PO-Revision-Date: 2022-10-16 17:14\n"
+"POT-Creation-Date: 2022-10-24 16:09+0000\n"
+"PO-Revision-Date: 2022-10-24 16:13\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -29,11 +29,11 @@ msgstr "Geen node met {feature} functionaliteit beschikbaar!"
 msgid "No node with {query.requires_capability} functionality available!"
 msgstr "Geen node met {query.requires_capability} functionaliteit beschikbaar!"
 
-#: pylav/client.py:1188
+#: pylav/client.py:1201
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
 msgstr "Om een mix afspeellijst te genereren is een Video, Gebruiker, Kanaal of Afspeellijst ID noodzakelijk"
 
-#: pylav/client.py:1193
+#: pylav/client.py:1206
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
 msgstr "Om een mix afspeellijst te genereren is een Video, Gebruiker, Kanaal of Afspeellijst ID nodig. Je hebt echter meerdere opgegeven"
 

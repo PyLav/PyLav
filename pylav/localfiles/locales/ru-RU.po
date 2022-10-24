@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-09-10 19:18+0000\n"
-"PO-Revision-Date: 2022-10-14 10:09\n"
+"POT-Creation-Date: 2022-10-24 16:09+0000\n"
+"PO-Revision-Date: 2022-10-24 16:13\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 "X-Crowdin-File-ID: 484\n"
 "Language: ru_RU\n"
 
-#: pylav/localfiles/__init__.py:97
+#: pylav/localfiles/__init__.py:99
 msgid "Root folder not initialized, call Client.update_localtracks_folder(folder: str | pathlib.Path)"
 msgstr "Корневая папка не инициализирована, клиент вызова.update_localtracks_folder(папка: str | pathlib.Path)"
 
