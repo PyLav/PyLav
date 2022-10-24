@@ -80,7 +80,11 @@ async def update_plugins(client: "Client") -> None:
 
         folder = LAVALINK_DOWNLOAD_DIR / "plugins"
         async for file in folder.iterdir():
-            if file.is_file() and file.name.endswith(".jar") and not file.name.startswith(tuple(existing_plugins)):
+            if (
+                await file.is_file()
+                and file.name.endswith(".jar")
+                and not file.name.startswith(tuple(existing_plugins))
+            ):
                 try:
                     await file.unlink()
                     LOGGER.warning("Removed old plugin: %s", file.name)
