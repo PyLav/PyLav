@@ -391,13 +391,13 @@ class PlaylistConfigManager:
                 url = await playlist.fetch_url()
                 try:
                     LOGGER.info("Updating external playlist - %s (%s)", name, playlist.id)
-                    query = await self.client.get_tracks(
+                    response = await self.client.get_tracks(
                         await Query.from_string(url),
                         bypass_cache=True,
                     )
-                    tracks_raw = query.get("tracks", [])
-                    track_list = [t_ for t in tracks_raw if (t_ := t.get("encoded"))]
-                    name = query.get("playlistInfo", {}).get("name")
+                    tracks_raw = response.tracks
+                    track_list = [t_ for t in tracks_raw if (t_ := t.encoded)]
+                    name = response.playlistInfo.name
                     if track_list:
                         await playlist.update_tracks(tracks=track_list)
                     if name:

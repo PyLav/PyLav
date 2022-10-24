@@ -5,7 +5,6 @@ import hashlib
 import operator
 import re
 import struct
-import typing
 import uuid
 from functools import total_ordering
 from typing import TYPE_CHECKING, Any
@@ -88,7 +87,7 @@ class Track:
         self,
         *,
         node: Node,
-        data: Track | dict | str | None,
+        data: Track | LavalinkTrackObject | dict | str | None,
         query: Query,
         skip_segments: list | None = None,
         requester: int = None,
@@ -118,6 +117,8 @@ class Track:
                 raise InvalidTrack(f"Cannot build a track from partial data! (Missing key: {missing_key})") from None
         elif isinstance(data, Track):
             self._build_from_track_object(data, extra)
+        elif isinstance(data, LavalinkTrackObject):
+            self._build_from_lavalink_track_object(data, extra)
         elif isinstance(data, str):
             self._build_from_track_string(data, extra)
         if self._query is not None:
@@ -146,6 +147,12 @@ class Track:
         self._query = data._query or self._query
         self._unique_id = data._unique_id
 
+    def _build_from_lavalink_track_object(self, data, extra):
+        self.encoded = data.encoded
+        self.extra = extra
+        self._raw_data = extra.get("raw_data", {})
+        self._unique_id.update(self.encoded.encode())
+
     @cached_property_with_ttl(ttl=60)
     def full_track(
         self,
@@ -158,7 +165,7 @@ class Track:
         else:
             response = from_dict(data_class=LavalinkTrackObject, data=response_)
         self.__clear_cache_task = asyncio.create_task(self.clear_cache(65, "full_track"))
-        return typing.cast(LavalinkTrackObject, response)
+        return response
 
     @property
     def id(self) -> str:
@@ -374,9 +381,9 @@ class Track:
     async def search(self, player: Player, bypass_cache: bool = False) -> None:
         self._query = await Query.from_string(self._query)
         response = await player.node.get_track(await self.query(), first=True, bypass_cache=bypass_cache)
-        if not response or "encoded" not in response:
+        if not response or not response.tracks:
             raise TrackNotFound(f"No tracks found for query {await self.query_identifier()}")
-        self.encoded = response["encoded"]
+        self.encoded = response.tracks[0]
         self._unique_id = hashlib.md5()
         self._unique_id.update(self.encoded.encode())
         if "unique_identifier" in self.__dict__:
