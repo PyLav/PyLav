@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-10-16 17:11+0000\n"
-"PO-Revision-Date: 2022-10-16 17:14\n"
+"POT-Creation-Date: 2022-10-24 16:09+0000\n"
+"PO-Revision-Date: 2022-10-24 16:13\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
@@ -29,11 +29,11 @@ msgstr "Κανένας κόμβος με τη λειτουργία {feature} δ�
 msgid "No node with {query.requires_capability} functionality available!"
 msgstr "Κανένας κόμβος με τη λειτουργία {query.requires_capability} διαθέσιμη!"
 
-#: pylav/client.py:1188
+#: pylav/client.py:1201
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
 msgstr "Για να δημιουργήσετε μια λίστα αναπαραγωγής ενός μίγματος είναι απαραίτητο ένα βίντεο, ένα χρήστη, ένα κανάλι ή ένα αναγνωριστικό λίστας αναπαραγωγής"
 
-#: pylav/client.py:1193
+#: pylav/client.py:1206
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
 msgstr "Για να δημιουργήσετε μια λίστα αναπαραγωγής μίγματος είναι απαραίτητη μια ταυτότητα βίντεο, χρήστη, καναλιού ή λίστας αναπαραγωγής. Ωστόσο, παρείχατε πολλαπλάσια"
 
