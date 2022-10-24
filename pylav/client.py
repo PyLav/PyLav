@@ -987,7 +987,7 @@ class Client(metaclass=_Singleton):
                     await player.play(track, await track.query(), requester)
                 elif successful_tracks and player.is_playing and player.queue.empty():
                     track = successful_tracks.pop()
-                    await player.play(track, await track.query(), requester)
+                    await player.add(requester.id, track, query=await track.query())
                 if sub_query.is_search or sub_query.is_single:
                     track = await self._get_tracks(
                         player=player, query=sub_query, first=True, bypass_cache=bypass_cache
