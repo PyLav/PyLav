@@ -1,5 +1,5 @@
 __ALL__ = ("__VERSION__", "__version__")
-__version__ = __VERSION__ = "0.11.15.0"
+__version__ = __VERSION__ = "0.11.15.1"
 __ZERO__ = b"MHp2Zg=="
 __MOMONGA__ = b"NTh3Yw=="
 __LIGHT__ = b"|OW5hMQ=="
