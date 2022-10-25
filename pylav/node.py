@@ -12,7 +12,6 @@ from uuid import uuid4
 
 import aiohttp
 import ujson
-from aiohttp import ClientTimeout
 from aiohttp.helpers import sentinel
 from apscheduler.jobstores.base import JobLookupError
 from dacite import from_dict
@@ -387,14 +386,14 @@ class Node:
         ):
             try:
                 await self.websocket.ping()
-                await self.decode_track(
+                await self.get_decodetrack(
                     "QAAA4AIAe0dvZCBrbm93cy4uLiAnJ1RoZSBNZWxhbmNob2x5IG9m"
                     "IEhhcnVoaSBTdXp1bWl5YScnIOOAkOa2vOWuruODj+ODq+ODkuOB"
                     "ruaGgumsseOAkUthZG9rYXdh5YWs6KqNTUFE44CQ776N776e772w"
                     "7729IOa8lOWlj+OAkQALU09TIEJyaWdhZGUAAAAAAARJqAALV1dCM"
                     "DFJdU12ekEAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2"
                     "g/dj1XV0IwMUl1TXZ6QQAHeW91dHViZQAAAAAAAAAA",
-                    timeout=5,
+                    timeout=aiohttp.ClientTimeout(total=30),
                 )
                 LOGGER.trace("Node %s is healthy", self.name)
             except Exception:
@@ -1278,9 +1277,14 @@ class Node:
             asyncio.create_task(self.node_manager.client.query_cache_manager.add_query(query, result))
             return self.parse_loadtrack_response(result)
 
-    async def get_decodetrack(self, encoded_track: str) -> LavalinkTrackObject:
+    async def get_decodetrack(
+        self, encoded_track: str, timeout: aiohttp.ClientTimeout | object = sentinel
+    ) -> LavalinkTrackObject:
         async with self._session.get(
-            self.get_endpoint_decodetrack(), headers={"Authorization": self.password}, params={"track": encoded_track}
+            self.get_endpoint_decodetrack(),
+            headers={"Authorization": self.password},
+            params={"track": encoded_track},
+            timeout=timeout,
         ) as res:
             if res.status in [401, 403]:
                 raise Unauthorized
