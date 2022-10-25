@@ -12,6 +12,8 @@ from uuid import uuid4
 import aiohttp
 import asyncstdlib
 import ujson
+from aiohttp import ClientTimeout
+from aiohttp.helpers import sentinel
 from apscheduler.jobstores.base import JobLookupError
 from discord.utils import utcnow
 from expiringdict import ExpiringDict
@@ -19,7 +21,7 @@ from expiringdict import ExpiringDict
 from pylav._logging import getLogger
 from pylav.constants import BUNDLED_NODES_IDS, PYLAV_NODES, REGION_TO_COUNTRY_COORDINATE_MAPPING, SUPPORTED_SOURCES
 from pylav.events import Event
-from pylav.exceptions import Unauthorized, WebsocketNotConnectedError
+from pylav.exceptions import Unauthorized
 from pylav.filters import (
     ChannelMix,
     Distortion,
@@ -332,7 +334,7 @@ class Node:
         self._manager.client.scheduler.add_job(
             self.node_monitor_task,
             trigger="interval",
-            seconds=5,
+            seconds=15,
             max_instances=1,
             id=f"{self.identifier}-{self._manager.client.bot.user.id}-node_monitor_task",
             replace_existing=True,
@@ -357,8 +359,17 @@ class Node:
         ):
             try:
                 await self.websocket.ping()
+                await self.decode_track(
+                    "QAAA4AIAe0dvZCBrbm93cy4uLiAnJ1RoZSBNZWxhbmNob2x5IG9m"
+                    "IEhhcnVoaSBTdXp1bWl5YScnIOOAkOa2vOWuruODj+ODq+ODkuOB"
+                    "ruaGgumsseOAkUthZG9rYXdh5YWs6KqNTUFE44CQ776N776e772w"
+                    "7729IOa8lOWlj+OAkQALU09TIEJyaWdhZGUAAAAAAARJqAALV1dCM"
+                    "DFJdU12ekEAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2"
+                    "g/dj1XV0IwMUl1TXZ6QQAHeW91dHViZQAAAAAAAAAA",
+                    timeout=5,
+                )
                 LOGGER.trace("Node %s is healthy", self.name)
-            except (WebsocketNotConnectedError, ConnectionResetError):
+            except Exception:
                 LOGGER.warning("Node %s is unhealthy - Triggering a state reset", self.name)
                 await self._unhealthy()
 
@@ -848,10 +859,10 @@ class Node:
                 raise Unauthorized
             return {}
 
-    async def decode_track(self, track: str) -> TrackT | None:
+    async def decode_track(self, track: str, timeout: ClientTimeout | object = sentinel) -> TrackT | None:
         destination = f"{self.connection_protocol}://{self.host}:{self.port}/decodetrack"
         async with self.session.get(
-            destination, headers={"Authorization": self.password}, params={"track": track}
+            destination, headers={"Authorization": self.password}, params={"track": track}, timeout=timeout
         ) as res:
             if res.status == 200:
                 return await res.json(loads=ujson.loads)
