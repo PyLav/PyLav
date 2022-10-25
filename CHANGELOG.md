@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.11.15.0 (25/10/2022)
+- [[patch] Add a logic to avoid race condition on a player reconnect](https://github.com/Drapersniper/PyLav/commit/07faa0b4d1528b8a17e19aee45877d3f70fe72a7) - @Drapersniper
+- [Add a `/decodetrack` call to node healthyness check as sometimes the node can get in a bad state where the ws is pingable but the endpoints timeout](https://github.com/Drapersniper/PyLav/commit/ddf899a1f77521a90d3b2df54b2306dc70cb9f97) - @Drapersniper
+
+---
+
 ## v0.11.14.1 (24/10/2022)
 - [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/24ae78c02e818abfd72b396d2c32676dc21dc62d) - @Drapersniper
 - [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/459958059156e959d67f6e47a0f32429a9baf18e) - @crowdin-bot
@@ -152,7 +158,3 @@
 ---
 
 ## v0.10.2.0 (14/09/2022)
-
----
-
-## v0.10.1.1 (14/09/2022)
