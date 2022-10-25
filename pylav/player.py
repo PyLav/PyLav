@@ -837,6 +837,7 @@ class Player(VoiceProtocol):
     async def _dispatch_voice_update(self) -> None:
         if {"sessionId", "event"} == self._voice_state.keys():
             await self.node.send(op="voiceUpdate", guildId=self.guild_id, **self._voice_state)
+            self._waiting_for_node.set()
 
     async def _query_to_track(
         self,
@@ -1405,6 +1406,7 @@ class Player(VoiceProtocol):
 
     @_synchronized(_LOCK, discard=True)
     async def reconnect(self):
+        self._waiting_for_node.clear()
         shard = self.bot.get_shard(self.guild.shard_id)
         while shard.is_closed():
             await asyncio.sleep(1)
@@ -1422,6 +1424,7 @@ class Player(VoiceProtocol):
         self._connected = True
         self.connected_at = utcnow()
         LOGGER.debug("[Player-%s] Reconnected to voice channel", self.channel.guild.id)
+        await asyncio.wait_for(self._waiting_for_node.wait(), timeout=None)
 
     async def disconnect(self, *, force: bool = False, requester: discord.Member | None) -> None:
         try:
