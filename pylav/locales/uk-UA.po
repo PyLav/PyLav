@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-10-24 17:16+0000\n"
-"PO-Revision-Date: 2022-10-24 17:19\n"
+"POT-Creation-Date: 2022-10-25 18:23+0000\n"
+"PO-Revision-Date: 2022-10-25 18:27\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "MIME-Version: 1.0\n"
@@ -55,88 +55,88 @@ msgstr "Порт {port} вже використовується. Керован�
 msgid "Lavalink failed to start: {line}"
 msgstr "Не вдалося запустити Лавалінк: {line}"
 
-#: pylav/player.py:923
+#: pylav/player.py:924
 msgid "There are no tracks currently in the player history"
 msgstr "Наразі немає маршрутів в історії гравців"
 
-#: pylav/player.py:1944 pylav/player.py:1974 pylav/player.py:1985
+#: pylav/player.py:1947 pylav/player.py:1977 pylav/player.py:1988
 msgid "LIVE"
 msgstr "ОПЕРАТИВНА"
 
-#: pylav/player.py:1953 pylav/player.py:2041
+#: pylav/player.py:1956 pylav/player.py:2044
 msgid "Currently livestreaming"
 msgstr "Триває трансляція"
 
-#: pylav/player.py:1955
+#: pylav/player.py:1958
 msgid "Playing: "
 msgstr "Грає: "
 
-#: pylav/player.py:1958 pylav/player.py:1979 pylav/player.py:1990
-#: pylav/player.py:2047
+#: pylav/player.py:1961 pylav/player.py:1982 pylav/player.py:1993
+#: pylav/player.py:2050
 msgid "Requester"
 msgstr "Замовник"
 
-#: pylav/player.py:1963
+#: pylav/player.py:1966
 msgid "Now Playing in"
 msgstr "Зараз грає у"
 
-#: pylav/player.py:1975 pylav/player.py:1986
+#: pylav/player.py:1978 pylav/player.py:1989
 msgid "Duration"
 msgstr "Тривалість"
 
-#: pylav/player.py:1981
+#: pylav/player.py:1984
 msgid "Previous Track"
 msgstr "Попередня композиція"
 
-#: pylav/player.py:1992
+#: pylav/player.py:1995
 msgid "Next Track"
 msgstr "Наступна композиція"
 
-#: pylav/player.py:1996
+#: pylav/player.py:1999
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
 msgstr "{track_count} треків, {queue_total_duration} залишилось\n"
 
-#: pylav/player.py:2008 pylav/player.py:2098
+#: pylav/player.py:2011 pylav/player.py:2101
 msgid "{translation}: {repeat_emoji}"
 msgstr "{translation}: {repeat_emoji}"
 
-#: pylav/player.py:2008 pylav/player.py:2098
+#: pylav/player.py:2011 pylav/player.py:2101
 msgid "Repeating"
 msgstr "Повторення"
 
-#: pylav/player.py:2009 pylav/player.py:2099
+#: pylav/player.py:2012 pylav/player.py:2102
 msgid "{space}{translation}: {autoplay_emoji}"
 msgstr "{space}{translation}: {autoplay_emoji}"
 
-#: pylav/player.py:2010 pylav/player.py:2100
+#: pylav/player.py:2013 pylav/player.py:2103
 msgid "Auto Play"
 msgstr "Автовідтворення"
 
-#: pylav/player.py:2012 pylav/player.py:2102
+#: pylav/player.py:2015 pylav/player.py:2105
 msgid "{space}{translation}: {volume}%"
 msgstr "{space}{translation}: {volume}%"
 
-#: pylav/player.py:2013 pylav/player.py:2103
+#: pylav/player.py:2016 pylav/player.py:2106
 msgid "Volume"
 msgstr "Об'єм"
 
-#: pylav/player.py:2044
+#: pylav/player.py:2047
 msgid "Playing"
 msgstr "Відтворюється"
 
-#: pylav/player.py:2057
+#: pylav/player.py:2060
 msgid "Queue order is may not be accurate due to auto-shuffle being enabled"
 msgstr "Порядок черги може бути неточним через ввімкнення автоматичного перемішування"
 
-#: pylav/player.py:2072
+#: pylav/player.py:2075
 msgid "Recently Played for"
 msgstr "Нещодавно зіграно за"
 
-#: pylav/player.py:2072
+#: pylav/player.py:2075
 msgid "Queue for"
 msgstr "Черга"
 
-#: pylav/player.py:2081
+#: pylav/player.py:2084
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
 msgstr "Сторінка {current_page}/{total_pages} | {track_number} треки, {queue_total_duration} залишилася\n"
 
