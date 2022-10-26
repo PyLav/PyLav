@@ -180,6 +180,7 @@ class LocalNodeManager:
         "_buildtime",
         "_commit",
         "_version",
+        "__buffer_task",
     )
 
     def __init__(self, client: Client, timeout: int | None = None) -> None:
@@ -214,6 +215,7 @@ class LocalNodeManager:
         self._args = []
         self._wait_for = asyncio.Event()
         self._java_path = None
+        self.__buffer_task = None
 
     @property
     def node(self) -> Node | None:
@@ -318,7 +320,7 @@ class LocalNodeManager:
                 *args,
                 cwd=str(LAVALINK_DOWNLOAD_DIR),
                 stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.STDOUT,
+                stderr=asyncio.subprocess.DEVNULL,
             )
             self._node_pid = self._proc.pid
             LOGGER.info("Managed Lavalink node started. PID: %s", self._node_pid)
@@ -435,13 +437,17 @@ class LocalNodeManager:
             )
         )
 
+    async def __consume_buffer(self):
+        async for line in self._proc.stdout:
+            pass
+
     async def _wait_for_launcher(self) -> None:
         LOGGER.info("Waiting for Managed Lavalink node to be ready")
-        async for __ in asyncstdlib.cycle("."):
-            line = await self._proc.stdout.readline()
+        async for line in self._proc.stdout:
             if _RE_READY_LINE.search(line):
                 self.ready.set()
                 LOGGER.info("Managed Lavalink node is ready to receive requests")
+                self.__buffer_task = asyncio.create_task(self.__consume_buffer())
                 break
             if _FAILED_TO_START.search(line):
                 if f"Port {self._current_config['server']['port']} was already in use".encode() in line:
@@ -475,6 +481,9 @@ class LocalNodeManager:
             # For convenience, calling this method more than once or calling it before starting it
             # does nothing.
             return
+        if self.__buffer_task is not None:
+            self.__buffer_task.cancel()
+            self.__buffer_task = None
         if self._node_pid:
             with contextlib.suppress(psutil.Error):
                 p = psutil.Process(self._node_pid)
@@ -747,6 +756,9 @@ class LocalNodeManager:
         if self.start_monitor_task is not None:
             await self.shutdown()
             self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
+        if self.__buffer_task is not None:
+            self.__buffer_task.cancel()
+            self.__buffer_task = None
         self._wait_for.clear()
         self.start_monitor_task = asyncio.create_task(self.start_monitor(java_path))
         self.start_monitor_task.set_name("LavalinkManagedNode.health_monitor")
@@ -844,6 +856,9 @@ class LocalNodeManager:
             if self.start_monitor_task is not None:
                 self.start_monitor_task.cancel()
                 self.start_monitor_task = None
+            if self.__buffer_task is not None:
+                self.__buffer_task.cancel()
+                self.__buffer_task = None
             if not node.websocket._manual_shutdown:
                 await node.websocket.manual_closure(managed_node=True)
             with contextlib.suppress(Exception):
