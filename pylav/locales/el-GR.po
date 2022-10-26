@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-10-25 18:23+0000\n"
-"PO-Revision-Date: 2022-10-25 18:27\n"
+"POT-Creation-Date: 2022-10-26 12:09+0000\n"
+"PO-Revision-Date: 2022-10-26 12:14\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
@@ -37,21 +37,21 @@ msgstr "Για να δημιουργήσετε μια λίστα αναπαρα�
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
 msgstr "Για να δημιουργήσετε μια λίστα αναπαραγωγής μίγματος είναι απαραίτητη μια ταυτότητα βίντεο, χρήστη, καναλιού ή λίστας αναπαραγωγής. Ωστόσο, παρείχατε πολλαπλάσια"
 
-#: pylav/managed_node.py:271
+#: pylav/managed_node.py:273
 msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture"
 msgstr "Προσπαθείτε να εκτελέσετε τον διαχειριζόμενο κόμβο Lavalink σε μια μη υποστηριζόμενη αρχιτεκτονική μηχανών"
 
-#: pylav/managed_node.py:433
+#: pylav/managed_node.py:435
 msgid "The output of `{java_exc} -version` was unexpected\n"
 "{version_info}"
 msgstr "Η έξοδος του `{java_exc} -έκδοση` ήταν απρόσμενη\n"
 "{version_info}"
 
-#: pylav/managed_node.py:449
+#: pylav/managed_node.py:455
 msgid "Port {port} already in use. Managed Lavalink startup aborted"
 msgstr "Η θύρα {port} ήδη σε χρήση. Η διαχείριση της εκκίνησης Lavalink ματαιώθηκε"
 
-#: pylav/managed_node.py:454
+#: pylav/managed_node.py:460
 msgid "Lavalink failed to start: {line}"
 msgstr "Αποτυχία εκκίνησης του Lavalink: {line}"
 

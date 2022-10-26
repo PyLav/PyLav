@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-10-25 18:23+0000\n"
-"PO-Revision-Date: 2022-10-25 18:27\n"
+"POT-Creation-Date: 2022-10-26 12:09+0000\n"
+"PO-Revision-Date: 2022-10-26 12:14\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -37,21 +37,21 @@ msgstr "ミックスプレイリストを生成するには、ビデオ、ユー
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
 msgstr "ミックスプレイリストを生成するには、ビデオ、ユーザー、チャンネル、プレイリストIDが必要です。ただし、複数指定されています"
 
-#: pylav/managed_node.py:271
+#: pylav/managed_node.py:273
 msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture"
 msgstr "サポートされていないマシンアーキテクチャで管理されているLavalinkノードを実行しようとしています"
 
-#: pylav/managed_node.py:433
+#: pylav/managed_node.py:435
 msgid "The output of `{java_exc} -version` was unexpected\n"
 "{version_info}"
 msgstr "`{java_exc} -version` の出力が予期しないものでした\n"
 "{version_info}"
 
-#: pylav/managed_node.py:449
+#: pylav/managed_node.py:455
 msgid "Port {port} already in use. Managed Lavalink startup aborted"
 msgstr "ポート {port} は既に使用されています。管理された Lavalink 起動は中止されました。"
 
-#: pylav/managed_node.py:454
+#: pylav/managed_node.py:460
 msgid "Lavalink failed to start: {line}"
 msgstr "ラバリンクの開始に失敗しました: {line}"
 
