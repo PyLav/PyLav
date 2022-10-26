@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.11.16.0 (26/10/2022)
+- [[patch] Consume Managed node pipe to avoid deadlocks](https://github.com/Drapersniper/PyLav/commit/64abbed223db2d052d33de09957ef2b12fd942da) - @Drapersniper
+
+---
+
 ## v0.11.15.1 (25/10/2022)
 - [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/197760bc34dc44c28b6f6d993cfdd63c4c599ada) - @Drapersniper
 - [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/1af8f24bc806006706e43b98cfb471ca6d3cc343) - @crowdin-bot
@@ -156,7 +161,3 @@
 ---
 
 ## v0.10.4.0 (15/09/2022)
-
----
-
-## v0.10.3.0 (14/09/2022)
