@@ -40,6 +40,7 @@ from pylav.endpoints.response_objects import (
     LavalinkStatsOpObject,
     LavalinkTrackLoadedObject,
     LavalinkTrackObject,
+    PlaylistInfoObject,
     RoutePlannerStatusResponseObject,
 )
 from pylav.events import Event
@@ -85,7 +86,9 @@ except ImportError:
 
 
 LOGGER = getLogger("PyLav.Node")
-NO_MATCHES = LavalinkNoMatchesObject(loadType="NO_MATCHES")
+NO_MATCHES = LavalinkNoMatchesObject(
+    loadType="NO_MATCHES", tracks=[], playlistInfo=PlaylistInfoObject(name="", selectedTrack=-1)
+)
 SNAPSHOT_REGEX = re.compile(r"^(?P<commit>.*?)-SNAPSHOT$")
 
 
@@ -598,6 +601,11 @@ class Node:
         if not self.available or not self.stats:
             return float("inf")
         return self.stats.penalty.total
+
+    @property
+    def session_id(self) -> str:
+        """Returns the session id of the node"""
+        return self.websocket.session_id if self.websocket else ""
 
     def down_vote(self, player: Player) -> int:
         """Adds a down vote for this node"""
@@ -1133,15 +1141,9 @@ class Node:
     def get_endpoint_session_players(self) -> str:
         match self.api_version:
             case 3:
-                return (
-                    f"{self.connection_protocol}://{self.host}:{self.port}/v3"
-                    f"/sessions/{self.websocket.session_id}/players"
-                )
+                return f"{self.connection_protocol}://{self.host}:{self.port}/v3" f"/sessions/{self.session_id}/players"
             case 4:
-                return (
-                    f"{self.connection_protocol}://{self.host}:{self.port}/v4"
-                    f"/sessions/{self.websocket.session_id}/players"
-                )
+                return f"{self.connection_protocol}://{self.host}:{self.port}/v4" f"/sessions/{self.session_id}/players"
         raise UnsupportedNodeAPI()
 
     def get_endpoint_session_player_by_guild_id(self, guild_id: int) -> str:
@@ -1149,25 +1151,21 @@ class Node:
             case 3:
                 return (
                     f"{self.connection_protocol}://{self.host}:{self.port}/v3"
-                    f"/sessions/{self.websocket.session_id}/players/{guild_id}"
+                    f"/sessions/{self.session_id}/players/{guild_id}"
                 )
             case 4:
                 return (
                     f"{self.connection_protocol}://{self.host}:{self.port}/v4"
-                    f"/sessions/{self.websocket.session_id}/players/{guild_id}"
+                    f"/sessions/{self.session_id}/players/{guild_id}"
                 )
         raise UnsupportedNodeAPI()
 
     def get_endpoint_session(self) -> str:
         match self.api_version:
             case 3:
-                return (
-                    f"{self.connection_protocol}://{self.host}:{self.port}/v3" f"/sessions/{self.websocket.session_id}"
-                )
+                return f"{self.connection_protocol}://{self.host}:{self.port}/v3/sessions/{self.session_id}"
             case 4:
-                return (
-                    f"{self.connection_protocol}://{self.host}:{self.port}/v4" f"/sessions/{self.websocket.session_id}"
-                )
+                return f"{self.connection_protocol}://{self.host}:{self.port}/v4/sessions/{self.session_id}"
         raise UnsupportedNodeAPI()
 
     def get_endpoint_loadtracks(self) -> str:
@@ -1336,6 +1334,10 @@ class Node:
         ) as res:
             if res.status in [401, 403]:
                 raise Unauthorized
+            text = await res.text()
+            # TODO:  Have a better implementation for this
+            if match := SNAPSHOT_REGEX.match(text):
+                return Version(f"3.999.0-alpha+{match.group('commit')}")
             return parse_version(await res.text())
 
     async def get_routeplanner_status(self) -> RoutePlannerStatusResponseObject:
