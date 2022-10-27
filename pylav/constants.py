@@ -30,13 +30,16 @@ REGION_TO_COUNTRY_COORDINATE_MAPPING |= {
 DEFAULT_REGIONS = list(REGION_TO_COUNTRY_COORDINATE_MAPPING.keys())
 
 SUPPORTED_SOURCES = {
+    # https://github.com/freyacodes/Lavalink
     "youtube",
     "soundcloud",
-    "twitch",
     "bandcamp",
+    "twitch",
     "vimeo",
-    "http",
-    "getyarn",
+    "local",
+    "http"
+    # https://github.com/DuncteBot/skybot-lavalink-plugin
+    "getyarn.io",
     "clypit",
     "speak",
     "pornhub",
@@ -45,11 +48,18 @@ SUPPORTED_SOURCES = {
     "tiktok",
     "mixcloud",
     "soundgasm",
-    "gcloud-tts",
-    "sponsorblock",
-    "local",
+    # https://github.com/TopiSenpai/LavaSrc
     "spotify",
     "applemusic",
+    "deezer",
+    "yandexmusic",
+    # https://github.com/DuncteBot/tts-plugin
+    "gcloud-tts",
+}
+
+SUPPORTED_FEATURES = {
+    # https://github.com/Topis-Lavalink-Plugins/Sponsorblock-Plugin
+    "sponsorblock",
 }
 
 BUNDLED_PLAYLIST_IDS = {1, 2, 1000001, 1000002, 1000003, 1000004}
@@ -96,22 +106,7 @@ PYLAV_BUNDLED_NODES_SETTINGS = {
         "ssl": False,
         "search_only": False,
         "managed": False,
-        "disabled_sources": [
-            "clypit",
-            "reddit",
-            "local",
-            "tiktok",
-            "speak",
-            "pornhub",
-            "soundgasm",
-            "applemusic",
-            "mixcloud",
-            "sponsorblock",
-            "getyarn",
-            "spotify",
-            "gcloud-tts",
-            "ocremix",
-        ],
+        "disabled_sources": [],
         "temporary": True,
     },
 }

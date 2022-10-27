@@ -26,16 +26,20 @@ class PlaylistInfoObject:  # noqa
 @dataclasses.dataclass
 class LavalinkTrackObject:
     info: TrackInfoObject
-    encoded: str
-    track: str = None
+    encoded: str | None = None
+    track: str | None = None
+
+    def __post_init__(self):
+        if self.encoded is None:
+            self.encoded = self.track
 
 
 @dataclasses.dataclass
 class PlayerStateObject:
-    time: int
-    connected: bool
-    ping: int
-    position: int = None
+    time: int = 0
+    connected: bool = False
+    ping: int = -1
+    position: int | None = 0
 
 
 @dataclasses.dataclass
@@ -46,7 +50,7 @@ class LavalinkOpObject:
 @dataclasses.dataclass
 class LavalinkReadyOpObject(LavalinkOpObject):
     sessionId: str
-    resumed: bool = None
+    resumed: bool | None = False
 
 
 @dataclasses.dataclass
@@ -78,11 +82,11 @@ class LavalinkStatsOpObject(LavalinkOpObject):
     uptime: int
     memory: LavalinkStatsMemoryObject
     cpu: LavalinkStatCPUObject
-    frameStats: LavalinkStatsFrameStatsObject
+    frameStats: LavalinkStatsFrameStatsObject | None = None
 
 
 @dataclasses.dataclass
-class LavalinkPlayerUpdateT(LavalinkOpObject):
+class LavalinkPlayerUpdateObject(LavalinkOpObject):
     guildId: str
     state: PlayerStateObject
 
@@ -93,7 +97,7 @@ class TrackStartEventOpObject(LavalinkOpObject):
     guildId: str
     type: Literal["TrackStartEvent"]
     encodedTrack: str
-    track: str = None
+    track: str | None = None
 
 
 @dataclasses.dataclass
@@ -103,18 +107,18 @@ class TrackEndEventOpObject(LavalinkOpObject):
     type: Literal["TrackEndEvent"]
     reason: Literal["FINISHED", "LOAD_FAILED", "STOPPED", "REPLACED", "CLEANUP"]
     encodedTrack: str
-    track: str = None
+    track: str | None = None
 
 
 @dataclasses.dataclass
 class LoadExceptionObject:
-    message: str
     severity: Literal["COMMON", "SUSPICIOUS", "FAULT"]
+    message: str | None = None
 
 
 @dataclasses.dataclass
 class TrackExceptionObject(LoadExceptionObject):
-    cause: str
+    cause: str = None  # This is only optional so that inheritance in python works
 
 
 @dataclasses.dataclass
@@ -124,7 +128,7 @@ class TrackExceptionEventOpObject:
     type: Literal["TrackExceptionEvent"]
     exception: TrackExceptionObject
     encodedTrack: str
-    track: str = None
+    track: str | None = None
 
 
 @dataclasses.dataclass
@@ -134,7 +138,7 @@ class TrackStuckEventOpObject:
     type: Literal["TrackStuckEvent"]
     thresholdMs: int
     encodedTrack: str
-    track: str = None
+    track: str | None = None
 
 
 @dataclasses.dataclass
@@ -186,8 +190,8 @@ class VoiceStateObject:
     token: str
     endpoint: str
     sessionId: str
-    connected: bool = None
-    ping: int = None
+    connected: bool | None = None
+    ping: int | None = None
 
 
 @dataclasses.dataclass
@@ -202,86 +206,86 @@ class ValueRangeObject:
 
 @dataclasses.dataclass
 class EqualizerBandObject:
-    band: Annotated[int, ValueRange(min=0, max=14)]
-    gain: Annotated[float, ValueRange(min=-0.25, max=1.0)]
+    band: Annotated[int | None, ValueRange(min=0, max=14)]
+    gain: Annotated[float | None, ValueRange(min=-0.25, max=1.0)]
 
 
 @dataclasses.dataclass
 class KaraokeObject:
-    level: Annotated[float, ValueRange(min=0.0, max=1.0)] = None
-    monoLevel: Annotated[float, ValueRange(min=0.0, max=1.0)] = None
-    filterBand: float = None
-    filterWidth: float = None
+    level: Annotated[float | None, ValueRange(min=0.0, max=1.0)] = None
+    monoLevel: Annotated[float | None, ValueRange(min=0.0, max=1.0)] = None
+    filterBand: float | None = None
+    filterWidth: float | None = None
 
 
 @dataclasses.dataclass
 class TimescaleObject:
-    speed: Annotated[float, ValueRange(min=0.0, max=float("inf"))] = None
-    pitch: Annotated[float, ValueRange(min=0.0, max=float("inf"))] = None
-    rate: Annotated[float, ValueRange(min=0.0, max=float("inf"))] = None
+    speed: Annotated[float | None, ValueRange(min=0.0, max=float("inf"))] = None
+    pitch: Annotated[float | None, ValueRange(min=0.0, max=float("inf"))] = None
+    rate: Annotated[float | None, ValueRange(min=0.0, max=float("inf"))] = None
 
 
 @dataclasses.dataclass
 class TremoloObject:
-    frequency: Annotated[float, ValueRange(min=0.0, max=float("inf"))] = None
-    depth: Annotated[float, ValueRange(min=0.0, max=1.0)] = None
+    frequency: Annotated[float | None, ValueRange(min=0.0, max=float("inf"))] = None
+    depth: Annotated[float | None, ValueRange(min=0.0, max=1.0)] = None
 
 
 @dataclasses.dataclass
 class VibratoObject:
-    frequency: Annotated[float, ValueRange(min=0, max=14)] = None
-    depth: Annotated[float, ValueRange(min=0.0, max=1.0)] = None
+    frequency: Annotated[float | None, ValueRange(min=0, max=14)] = None
+    depth: Annotated[float | None, ValueRange(min=0.0, max=1.0)] = None
 
 
 @dataclasses.dataclass
 class RotationObject:
-    rotationHz: Annotated[float, ValueRange(min=0.0, max=float("inf"))] = None
+    rotationHz: Annotated[float | None, ValueRange(min=0.0, max=float("inf"))] = None
 
 
 @dataclasses.dataclass
 class DistortionObject:
-    sinOffset: float = None
-    sinScale: float = None
-    cosOffset: float = None
-    cosScale: float = None
-    tanOffset: float = None
-    tanScale: float = None
-    offset: float = None
-    scale: float = None
+    sinOffset: float | None = None
+    sinScale: float | None = None
+    cosOffset: float | None = None
+    cosScale: float | None = None
+    tanOffset: float | None = None
+    tanScale: float | None = None
+    offset: float | None = None
+    scale: float | None = None
 
 
 @dataclasses.dataclass
 class ChannelMixObject:
-    leftToLeft: Annotated[float, ValueRange(min=0.0, max=1.0)] = None
-    leftToRight: Annotated[float, ValueRange(min=0.0, max=1.0)] = None
-    rightToLeft: Annotated[float, ValueRange(min=0.0, max=1.0)] = None
-    rightToRight: Annotated[float, ValueRange(min=0.0, max=1.0)] = None
+    leftToLeft: Annotated[float | None, ValueRange(min=0.0, max=1.0)] = None
+    leftToRight: Annotated[float | None, ValueRange(min=0.0, max=1.0)] = None
+    rightToLeft: Annotated[float | None, ValueRange(min=0.0, max=1.0)] = None
+    rightToRight: Annotated[float | None, ValueRange(min=0.0, max=1.0)] = None
 
 
 @dataclasses.dataclass
 class LowPassObject:
-    smoothing: Annotated[float, ValueRange(min=1.0, max=float("inf"))] = None
+    smoothing: Annotated[float | None, ValueRange(min=1.0, max=float("inf"))] = None
 
 
 @dataclasses.dataclass
 class EchoObject:
-    delay: Annotated[int, ValueRange(min=0, max=float("inf"))] = None
-    decay: Annotated[float, ValueRange(min=0.0, max=1.0)] = None
+    delay: Annotated[int | None, ValueRange(min=0, max=float("inf"))] = None
+    decay: Annotated[float | None, ValueRange(min=0.0, max=1.0)] = None
 
 
 @dataclasses.dataclass
 class FiltersObject:
     volume: float = None
     equalizer: list[EqualizerBandObject] = dataclasses.field(default_factory=list)
-    karaoke: KaraokeObject = dataclasses.field(default_factory=dict)
-    timescale: TimescaleObject = dataclasses.field(default_factory=dict)
-    tremolo: TremoloObject = dataclasses.field(default_factory=dict)
-    vibrato: VibratoObject = dataclasses.field(default_factory=dict)
-    rotation: RotationObject = dataclasses.field(default_factory=dict)
-    distortion: DistortionObject = dataclasses.field(default_factory=dict)
-    channelMix: ChannelMixObject = dataclasses.field(default_factory=dict)
-    lowPass: LowPassObject = dataclasses.field(default_factory=dict)
-    echo: EchoObject = dataclasses.field(default_factory=dict)
+    karaoke: KaraokeObject | dict = dataclasses.field(default_factory=dict)
+    timescale: TimescaleObject | dict = dataclasses.field(default_factory=dict)
+    tremolo: TremoloObject | dict = dataclasses.field(default_factory=dict)
+    vibrato: VibratoObject | dict = dataclasses.field(default_factory=dict)
+    rotation: RotationObject | dict = dataclasses.field(default_factory=dict)
+    distortion: DistortionObject | dict = dataclasses.field(default_factory=dict)
+    channelMix: ChannelMixObject | dict = dataclasses.field(default_factory=dict)
+    lowPass: LowPassObject | dict = dataclasses.field(default_factory=dict)
+    echo: EchoObject | dict = dataclasses.field(default_factory=dict)
 
 
 @dataclasses.dataclass
@@ -291,31 +295,34 @@ class LavalinkPlayerObject:
     paused: bool
     voice: VoiceStateObject
     filters: FiltersObject
-    track: LavalinkTrackObject = None
+    track: LavalinkTrackObject | None = None
 
 
 @dataclasses.dataclass
 class LavalinkTrackLoadedObject:
     loadType: Literal["TRACK_LOADED"]
-    tracks: list[LavalinkTrackObject]
+    playlistInfo: PlaylistInfoObject | dict = dataclasses.field(default_factory=dict)
+    tracks: list[LavalinkTrackObject] = dataclasses.field(default_factory=list)
 
 
 @dataclasses.dataclass
 class LavalinkPlaylistLoadedObject:
     loadType: Literal["PLAYLIST_LOADED"]
-    playlistInfo: PlaylistInfoObject
-    tracks: list[LavalinkTrackObject]
+    playlistInfo: PlaylistInfoObject | dict = dataclasses.field(default_factory=dict)
+    tracks: list[LavalinkTrackObject] = dataclasses.field(default_factory=list)
 
 
 @dataclasses.dataclass
 class LavalinkSearchResultObject:
     loadType: Literal["SEARCH_RESULT"]
-    tracks: list[LavalinkTrackObject]
+    playlistInfo: PlaylistInfoObject | dict = dataclasses.field(default_factory=dict)
+    tracks: list[LavalinkTrackObject] = dataclasses.field(default_factory=list)
 
 
 @dataclasses.dataclass
 class LavalinkNoMatchesObject:
     loadType: Literal["NO_MATCHES"]
+    playlistInfo: PlaylistInfoObject | dict = dataclasses.field(default_factory=dict)
     tracks: list = dataclasses.field(default_factory=list)
 
 
@@ -323,15 +330,17 @@ class LavalinkNoMatchesObject:
 class LavalinkLoadFailedObject:
     loadType: Literal["LOAD_FAILED"]
     exception: LoadExceptionObject
+    playlistInfo: PlaylistInfoObject | dict = dataclasses.field(default_factory=dict)
     tracks: list = dataclasses.field(default_factory=list)
 
 
 @dataclasses.dataclass
 class VersionObject:
-    string: str
+    semver: str
     major: int
     minor: int
     patch: int
+    preRelease: str | None = None
 
 
 @dataclasses.dataclass
@@ -350,7 +359,7 @@ class PluginObject:
 @dataclasses.dataclass
 class LavalinkInfoObject:
     version: VersionObject
-    builtTime: int
+    buildTime: int
     git: GitObject
     jvm: str
     lavaplayer: str
@@ -384,10 +393,8 @@ class RoutePlannerDetailObject:
 
 @dataclasses.dataclass
 class RoutePlannerStatusResponseObject:
-    type: Literal[
-        "RotatingIpRoutePlanner", "NanoIpRoutePlanner", "RotatingNanoIpRoutePlanner"
-    ]  # replacement for class name
-    details: RoutePlannerDetailObject
+    type: Literal["RotatingIpRoutePlanner", "NanoIpRoutePlanner", "RotatingNanoIpRoutePlanner"] | None = None
+    details: RoutePlannerDetailObject | None = None
 
 
 LavalinkLoadTrackObjects = Union[

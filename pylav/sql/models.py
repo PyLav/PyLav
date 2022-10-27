@@ -43,7 +43,7 @@ except ImportError:
     BROTLI_ENABLED = False
 
 from pylav._logging import getLogger
-from pylav.constants import BUNDLED_PLAYLIST_IDS, SUPPORTED_SOURCES
+from pylav.constants import BUNDLED_PLAYLIST_IDS, SUPPORTED_FEATURES, SUPPORTED_SOURCES
 from pylav.exceptions import InvalidPlaylist
 from pylav.filters import Equalizer
 from pylav.types import BotT
@@ -417,7 +417,7 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
     async def update_disabled_sources(self, disabled_sources: list[str]) -> None:
         """Update the node's disabled sources in the database"""
         source = set(map(str.strip, map(str.lower, disabled_sources)))
-        intersection = list(source & SUPPORTED_SOURCES)
+        intersection = list(source & SUPPORTED_SOURCES.union(SUPPORTED_FEATURES))
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await pylav.sql.tables.nodes.NodeRow.raw(
@@ -461,7 +461,7 @@ class NodeModel(CachedModel, metaclass=_SingletonByKey):
     async def bulk_add_to_disabled_sources(self, sources: list[str]) -> None:
         """Add sources to the node's disabled sources in the database"""
         source = set(map(str.strip, map(str.lower, [sources])))
-        intersection = list(source & SUPPORTED_SOURCES)
+        intersection = list(source & SUPPORTED_SOURCES.union(SUPPORTED_FEATURES))
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await pylav.sql.tables.nodes.NodeRow.raw(
@@ -765,7 +765,7 @@ class NodeModelMock(metaclass=_SingletonByKey):
     async def update_disabled_sources(self, disabled_sources: list[str]) -> None:
         """Update the node's disabled sources in the database"""
         source = set(map(str.strip, map(str.lower, disabled_sources)))
-        intersection = list(source & SUPPORTED_SOURCES)
+        intersection = list(source & SUPPORTED_SOURCES.union(SUPPORTED_FEATURES))
         self.data["disabled_sources"] = intersection
 
     async def add_to_disabled_sources(self, source: str) -> None:
@@ -784,7 +784,7 @@ class NodeModelMock(metaclass=_SingletonByKey):
         """Add sources to the node's disabled sources in the database"""
         source = set(map(str.strip, map(str.lower, [sources])))
         source.update(self.data["disabled_sources"])
-        intersection = list(source & SUPPORTED_SOURCES)
+        intersection = list(source & SUPPORTED_SOURCES.union(SUPPORTED_FEATURES))
         self.data["disabled_sources"] = intersection
 
     async def bulk_remove_from_disabled_sources(self, sources: list[str]) -> None:

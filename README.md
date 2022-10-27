@@ -56,8 +56,8 @@ An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml
 ### [Built-in](https://github.com/freyacodes/Lavalink):
   - youtube
   - soundcloud
-  - twitch
   - bandcamp
+  - twitch
   - vimeo
   - http
   - local
@@ -66,7 +66,7 @@ An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml
   - applemusic
   - deezer
 ### With [DuncteBot-plugin](https://github.com/DuncteBot/skybot-lavalink-plugin):
-  - getyarn
+  - getyarn.io
   - clypit
   - tts
   - pornhub
@@ -74,6 +74,7 @@ An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml
   - ocremix
   - tiktok
   - mixcloud
+  - soundgasm
 ### With [Google Cloud TTS](https://github.com/DuncteBot/tts-plugin):
   - gcloud-tts
 ### With [Sponsorblock-Plugin](https://github.com/Topis-Lavalink-Plugins/Sponsorblock-Plugin):

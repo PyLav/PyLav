@@ -13,6 +13,8 @@ LOGGER = getLogger("PyLav.Environment")
 
 ENV_FILE = pathlib.Path.home() / "pylav.yaml"
 
+LOCAL_DEBUGGING = os.getenv("PYLAV_DEBUGGING", True)  # TODO Remove this in the future
+
 
 def __get_path(path: str) -> str:
     from pylav.utils import get_true_path

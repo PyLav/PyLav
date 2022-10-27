@@ -13,7 +13,19 @@ from discord.utils import utcnow
 
 from pylav._logging import getLogger
 from pylav.constants import PYLAV_NODES
-from pylav.endpoints.response_objects import LavalinkEventOpObjects, TrackStartEventOpObject
+from pylav.endpoints.response_objects import (
+    LavalinkEventOpObjects,
+    LavalinkPlayerUpdateObject,
+    LavalinkReadyOpObject,
+    LavalinkStatsOpObject,
+    SegmentSkippedEventOpObject,
+    SegmentsLoadedEventObject,
+    TrackEndEventOpObject,
+    TrackExceptionEventOpObject,
+    TrackStartEventOpObject,
+    TrackStuckEventOpObject,
+    WebSocketClosedEventOpObject,
+)
 from pylav.events import (
     SegmentSkippedEvent,
     SegmentsLoadedEvent,
@@ -49,19 +61,7 @@ from pylav.events import (
 from pylav.exceptions import WebsocketNotConnectedError
 from pylav.location import get_closest_discord_region
 from pylav.node import Stats
-from pylav.types import (
-    LavalinkEventT,
-    LavalinkPlayerUpdateT,
-    LavalinkReadyT,
-    LavalinkStatsT,
-    SegmentSkippedT,
-    SegmentsLoadedEventT,
-    TrackEndEventT,
-    TrackExceptionEventT,
-    TrackStartEventT,
-    TrackStuckEventT,
-    WebSocketClosedEventT,
-)
+from pylav.types import LavalinkEventT, LavalinkPlayerUpdateT, LavalinkReadyT, LavalinkStatsT
 from pylav.utils import AsyncIter, ExponentialBackoffWithReset
 
 if TYPE_CHECKING:
@@ -223,9 +223,6 @@ class WebSocket:
                 "User-Id": str(self.bot_id),
                 "Client-Name": f"PyLav/{self.lib_version}",
             }
-
-            if self._resuming_configured and self._resume_key:
-                headers["Resume-Key"] = self._resume_key
             if self._node.identifier in PYLAV_NODES:
                 # Since these nodes are proxied by Cloudflare - lets add a special case to properly identify them.
                 self._node._region, self._node._coordinates = PYLAV_NODES[self._node.identifier]
@@ -388,29 +385,33 @@ class WebSocket:
 
         match op:
             case "playerUpdate":
+                data = from_dict(data_class=LavalinkPlayerUpdateObject, data=data)
                 await self.handle_player_update(data)
             case "stats":
+                data = from_dict(data_class=LavalinkStatsOpObject, data=data)
                 await self.handle_stats(data)
             case "event":
+                data = from_dict(data_class=LavalinkEventOpObjects, data=data)
                 await self.handle_event(data)
             case "ready":
+                data = from_dict(data_class=LavalinkReadyOpObject, data=data)
                 await self.handle_ready(data)
             case __:
                 LOGGER.warning("[NODE-%s] Received unknown op: %s", self.node.name, op)
 
-    async def handle_stats(self, data: LavalinkStatsT):
+    async def handle_stats(self, data: LavalinkStatsOpObject):
         """
         Handles the stats message from the websocket.
 
         Parameters
         ----------
-        data: LavalinkStatsT
+        data: LavalinkStatsOpObject
             The data given from Lavalink.
         """
 
         self.node.stats = Stats(self.node, data)
 
-    async def handle_player_update(self, data: LavalinkPlayerUpdateT):
+    async def handle_player_update(self, data: LavalinkPlayerUpdateObject):
         """
         Handles the player update message  from the websocket.
 
@@ -420,20 +421,20 @@ class WebSocket:
             The data given from Lavalink.
         """
 
-        if player := self.client.player_manager.get(int(data["guildId"])):
+        if player := self.client.player_manager.get(int(data.guildId)):
             if (
-                (not data["state"]["connected"])
+                (not data.state.connected)
                 and player.is_playing
                 and self.ready.is_set()
                 and player.connected_at < utcnow() - datetime.timedelta(minutes=15)
             ):
                 await player.reconnect()
                 return
-            await player._update_state(data["state"])
+            await player._update_state(data.state)
         else:
             return
 
-    async def handle_ready(self, data: LavalinkReadyT):
+    async def handle_ready(self, data: LavalinkReadyOpObject):
         """
         Handles the ready message from the websocket.
 
@@ -442,14 +443,14 @@ class WebSocket:
         data: LavalinkReadyT
             The data given from Lavalink.
         """
-        self._session_id = data["sessionId"]
-        self._resumed = data.get("resumed", False)
+        self._session_id = data.sessionId
+        self._resumed = data.resumed
         self.ready.set()
         self.node._ready.set()
         LOGGER.info("[NODE-%s] Node connected successfully and is now ready to accept commands", self.node.name)
         await self.configure_resume_and_timeout()
 
-    async def handle_event(self, data: LavalinkEventT):
+    async def handle_event(self, data: LavalinkEventOpObjects):
         """
         Handles the event message from Lavalink.
 
@@ -460,24 +461,24 @@ class WebSocket:
         """
         if self.client.is_shutting_down:
             return
-        player = self.client.player_manager.get(int(data["guildId"]))
+        player = self.client.player_manager.get(int(data.guildId))
         if not player:
             LOGGER.debug(
                 "[NODE-%s] Received event for non-existent player! Guild ID: %s",
                 self.node.name,
-                data["guildId"],
+                data.guildId,
             )
             return
-        event_object = from_dict(data_class=LavalinkEventOpObjects, data=data)
-        match data["type"]:
+
+        match data.type:
             case "TrackEndEvent":
-                data = typing.cast(TrackEndEventT, data)
+                data = typing.cast(TrackEndEventOpObject, data)
                 from pylav.query import Query
                 from pylav.tracks import Track
 
                 requester = None
                 track = None
-                if player.current and player.current.encoded == data["encodedTrack"]:
+                if player.current and player.current.encoded == data.encodedTrack:
                     player.current.timestamp = 0
                     requester = player.current.requester
                     track = player.current
@@ -486,42 +487,42 @@ class WebSocket:
                     player,
                     track
                     or Track(
-                        data=data["encodedTrack"],
+                        data=data.encodedTrack,
                         requester=requester.id if requester else self._client.bot.user.id,
-                        query=await Query.from_base64(data["encodedTrack"]),
+                        query=await Query.from_base64(data.encodedTrack),
                         node=self.node,
                     ),
                     self.node,
-                    event_object=event_object,
+                    event_object=data,
                 )
                 await player._handle_event(event)
             case "TrackExceptionEvent":
                 if self.node.identifier == player.node.identifier:
-                    data = typing.cast(TrackExceptionEventT, data)
-                    event = TrackExceptionEvent(player, player.current, node=self.node, event_object=event_object)
+                    data = typing.cast(TrackExceptionEventOpObject, data)
+                    event = TrackExceptionEvent(player, player.current, node=self.node, event_object=data)
                     await player._handle_event(event)
                     self.client.dispatch_event(event)
                 return
             case "TrackStartEvent":
-                data = typing.cast(TrackStartEventT, data)
+                data = typing.cast(TrackStartEventOpObject, data)
                 track = player.current
-                event = TrackStartEvent(player, track, self.node, event_object=event_object)
-                await self._process_track_event(player, track, self.node, event_object)
+                event = TrackStartEvent(player, track, self.node, event_object=data)
+                await self._process_track_event(player, track, self.node, data)
             case "TrackStuckEvent":
-                data = typing.cast(TrackStuckEventT, data)
-                event = TrackStuckEvent(player, player.current, self.node, event_object=event_object)
+                data = typing.cast(TrackStuckEventOpObject, data)
+                event = TrackStuckEvent(player, player.current, self.node, event_object=data)
                 await player._handle_event(event)
             case "WebSocketClosedEvent":
-                data = typing.cast(WebSocketClosedEventT, data)
-                event = WebSocketClosedEvent(player, self.node, player.channel, event_object=event_object)
+                data = typing.cast(WebSocketClosedEventOpObject, data)
+                event = WebSocketClosedEvent(player, self.node, player.channel, event_object=data)
             case "SegmentsLoaded":
-                data = typing.cast(SegmentsLoadedEventT, data)
-                event = SegmentsLoadedEvent(player, self.node, event_object=event_object)
+                data = typing.cast(SegmentsLoadedEventObject, data)
+                event = SegmentsLoadedEvent(player, self.node, event_object=data)
             case "SegmentSkipped":
-                data = typing.cast(SegmentSkippedT, data)
-                event = SegmentSkippedEvent(player, node=self.node, event_object=event_object)
+                data = typing.cast(SegmentSkippedEventOpObject, data)
+                event = SegmentSkippedEvent(player, node=self.node, event_object=data)
             case __:
-                LOGGER.warning("[NODE-%s] Received unknown event: %s", self.node.name, data["type"])
+                LOGGER.warning("[NODE-%s] Received unknown event: %s", self.node.name, data.type)
                 return
 
         self.client.dispatch_event(event)
