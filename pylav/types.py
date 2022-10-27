@@ -381,8 +381,8 @@ RestPatchPlayerResponseT = TypeVar("RestPatchPlayerResponseT", bound="Type[Laval
 
 
 class RestPatchSessionPayloadT(TypedDict):
-    resumingKey: str
-    timeout: int
+    resumingKey: NotRequired[str]
+    timeout: NotRequired[int]
 
 
 class TrackLoadedT(TypedDict):
@@ -452,7 +452,7 @@ class PluginT(TypedDict):
 
 class RestGetInfoResponseT(TypedDict):
     version: VersionT
-    builtTime: int
+    buildTime: int
     git: GitT
     jvm: str
     lavaplayer: str

@@ -963,7 +963,7 @@ class Query:
                 return "Bandcamp"
             case "mixcloud":
                 return "Mixcloud"
-            case "getyarn":
+            case "getyarn.io":
                 return "GetYarn"
             case "ocremix":
                 return "OverClocked ReMix"
@@ -1007,7 +1007,7 @@ class Query:
         elif self.is_gctts:
             return "gcloud-tts"
         elif self.is_getyarn:
-            return "getyarn"
+            return "getyarn.io"
         elif self.is_clypit:
             return "clypit"
         elif self.is_pornhub:
