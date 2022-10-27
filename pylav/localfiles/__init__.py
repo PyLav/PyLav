@@ -158,15 +158,16 @@ class LocalFile:
         if with_emoji:
             length -= 1
         path = typing.cast(aiopath.AsyncPath, await maybe_coroutine(self.path.absolute))
+        is_dir = await self.path.is_dir()
         if name_only:
-            string = path.name if await self.path.is_dir() else path.stem if no_extension else path.name
+            string = path.name if is_dir else path.stem if no_extension else path.name
         else:
             root = typing.cast(aiopath.AsyncPath, await maybe_coroutine(self.root_folder.absolute))
             string = str(path).replace(str(root), "")
-            if no_extension:
+            if no_extension and not is_dir:
                 string = string.removesuffix(path.suffix)
         if not string:
-            string = path.name if await self.path.is_dir() else path.stem if no_extension else path.name
+            string = path.name if is_dir else path.stem if no_extension else path.name
             if string.startswith("/") or string.startswith("\\"):
                 string = string[1:]
             if length:
