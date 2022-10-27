@@ -4,7 +4,7 @@ from typing import Annotated, Literal, Union
 from pylav.types import ValueRange
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class TrackInfoObject:
     identifier: str
     isSeekable: bool
@@ -13,17 +13,17 @@ class TrackInfoObject:
     title: str
     isStream: bool
     uri: str | None = None
-    position: int | None = None
+    position: int | None = 0
     sourceName: str | None = None
 
 
-@dataclasses.dataclass
-class PlaylistInfoObject:  # noqa
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
+class PlaylistInfoObject:
     name: str
-    selectedTrack: int
+    selectedTrack: int = -1
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkTrackObject:
     info: TrackInfoObject
     encoded: str | None = None
@@ -31,10 +31,10 @@ class LavalinkTrackObject:
 
     def __post_init__(self):
         if self.encoded is None:
-            self.encoded = self.track
+            object.__setattr__(self, "encoded", self.track)
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class PlayerStateObject:
     time: int = 0
     connected: bool = False
@@ -42,25 +42,25 @@ class PlayerStateObject:
     position: int | None = 0
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkOpObject:
     op: str
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkReadyOpObject(LavalinkOpObject):
     sessionId: str
     resumed: bool | None = False
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkStatCPUObject:
     cores: int
     systemLoad: float
     lavalinkLoad: float
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkStatsMemoryObject:
     free: int
     allocated: int
@@ -68,14 +68,14 @@ class LavalinkStatsMemoryObject:
     used: int
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkStatsFrameStatsObject:
     sent: int
     nulled: int
     deficit: int
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkStatsOpObject(LavalinkOpObject):
     players: int
     playingPlayers: int
@@ -85,63 +85,79 @@ class LavalinkStatsOpObject(LavalinkOpObject):
     frameStats: LavalinkStatsFrameStatsObject | None = None
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkPlayerUpdateObject(LavalinkOpObject):
     guildId: str
     state: PlayerStateObject
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class TrackStartEventOpObject(LavalinkOpObject):
     op: Literal["event"]
     guildId: str
     type: Literal["TrackStartEvent"]
-    encodedTrack: str
+    encodedTrack: str = None
     track: str | None = None
 
+    def __post_init__(self):
+        if self.encodedTrack is None:
+            object.__setattr__(self, "encodedTrack", self.track)
 
-@dataclasses.dataclass
+
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class TrackEndEventOpObject(LavalinkOpObject):
     op: Literal["event"]
     guildId: str
     type: Literal["TrackEndEvent"]
     reason: Literal["FINISHED", "LOAD_FAILED", "STOPPED", "REPLACED", "CLEANUP"]
-    encodedTrack: str
+    encodedTrack: str = None
     track: str | None = None
 
+    def __post_init__(self):
+        if self.encodedTrack is None:
+            object.__setattr__(self, "encodedTrack", self.track)
 
-@dataclasses.dataclass
+
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LoadExceptionObject:
     severity: Literal["COMMON", "SUSPICIOUS", "FAULT"]
     message: str | None = None
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class TrackExceptionObject(LoadExceptionObject):
     cause: str = None  # This is only optional so that inheritance in python works
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class TrackExceptionEventOpObject:
     op: Literal["event"]
     guildId: str
     type: Literal["TrackExceptionEvent"]
     exception: TrackExceptionObject
-    encodedTrack: str
+    encodedTrack: str = None
     track: str | None = None
 
+    def __post_init__(self):
+        if self.encodedTrack is None:
+            object.__setattr__(self, "encodedTrack", self.track)
 
-@dataclasses.dataclass
+
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class TrackStuckEventOpObject:
     op: Literal["event"]
     guildId: str
     type: Literal["TrackStuckEvent"]
     thresholdMs: int
-    encodedTrack: str
+    encodedTrack: str = None
     track: str | None = None
 
+    def __post_init__(self):
+        if self.encodedTrack is None:
+            object.__setattr__(self, "encodedTrack", self.track)
 
-@dataclasses.dataclass
+
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class WebSocketClosedEventOpObject:
     op: Literal["event"]
     guildId: str
@@ -151,14 +167,14 @@ class WebSocketClosedEventOpObject:
     byRemote: bool
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class SegmentObject:
     category: str
     start: str
     end: str
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class SegmentsLoadedEventObject:
     op: Literal["event"]
     guildId: str
@@ -166,7 +182,7 @@ class SegmentsLoadedEventObject:
     segments: list[SegmentObject]
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class SegmentSkippedEventOpObject:
     op: Literal["event"]
     guildId: str
@@ -185,16 +201,16 @@ LavalinkEventOpObjects = Union[
 ]
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class VoiceStateObject:
     token: str
     endpoint: str
     sessionId: str
     connected: bool | None = None
-    ping: int | None = None
+    ping: int | None = -1
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class ValueRangeObject:
     min: float
     max: float
@@ -204,13 +220,13 @@ class ValueRangeObject:
             raise ValueError(f"{x} must be in range({self.min}, {self.max})")
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class EqualizerBandObject:
     band: Annotated[int | None, ValueRange(min=0, max=14)]
     gain: Annotated[float | None, ValueRange(min=-0.25, max=1.0)]
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class KaraokeObject:
     level: Annotated[float | None, ValueRange(min=0.0, max=1.0)] = None
     monoLevel: Annotated[float | None, ValueRange(min=0.0, max=1.0)] = None
@@ -218,31 +234,31 @@ class KaraokeObject:
     filterWidth: float | None = None
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class TimescaleObject:
     speed: Annotated[float | None, ValueRange(min=0.0, max=float("inf"))] = None
     pitch: Annotated[float | None, ValueRange(min=0.0, max=float("inf"))] = None
     rate: Annotated[float | None, ValueRange(min=0.0, max=float("inf"))] = None
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class TremoloObject:
     frequency: Annotated[float | None, ValueRange(min=0.0, max=float("inf"))] = None
     depth: Annotated[float | None, ValueRange(min=0.0, max=1.0)] = None
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class VibratoObject:
     frequency: Annotated[float | None, ValueRange(min=0, max=14)] = None
     depth: Annotated[float | None, ValueRange(min=0.0, max=1.0)] = None
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class RotationObject:
     rotationHz: Annotated[float | None, ValueRange(min=0.0, max=float("inf"))] = None
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class DistortionObject:
     sinOffset: float | None = None
     sinScale: float | None = None
@@ -254,7 +270,7 @@ class DistortionObject:
     scale: float | None = None
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class ChannelMixObject:
     leftToLeft: Annotated[float | None, ValueRange(min=0.0, max=1.0)] = None
     leftToRight: Annotated[float | None, ValueRange(min=0.0, max=1.0)] = None
@@ -262,79 +278,79 @@ class ChannelMixObject:
     rightToRight: Annotated[float | None, ValueRange(min=0.0, max=1.0)] = None
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LowPassObject:
     smoothing: Annotated[float | None, ValueRange(min=1.0, max=float("inf"))] = None
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class EchoObject:
     delay: Annotated[int | None, ValueRange(min=0, max=float("inf"))] = None
     decay: Annotated[float | None, ValueRange(min=0.0, max=1.0)] = None
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class FiltersObject:
-    volume: float = None
-    equalizer: list[EqualizerBandObject] = dataclasses.field(default_factory=list)
-    karaoke: KaraokeObject | dict = dataclasses.field(default_factory=dict)
-    timescale: TimescaleObject | dict = dataclasses.field(default_factory=dict)
-    tremolo: TremoloObject | dict = dataclasses.field(default_factory=dict)
-    vibrato: VibratoObject | dict = dataclasses.field(default_factory=dict)
-    rotation: RotationObject | dict = dataclasses.field(default_factory=dict)
-    distortion: DistortionObject | dict = dataclasses.field(default_factory=dict)
-    channelMix: ChannelMixObject | dict = dataclasses.field(default_factory=dict)
-    lowPass: LowPassObject | dict = dataclasses.field(default_factory=dict)
-    echo: EchoObject | dict = dataclasses.field(default_factory=dict)
+    volume: float | None = None
+    equalizer: list[EqualizerBandObject] | None = dataclasses.field(default_factory=list)
+    karaoke: KaraokeObject | None = dataclasses.field(default_factory=dict)
+    timescale: TimescaleObject | None = dataclasses.field(default_factory=dict)
+    tremolo: TremoloObject | None = dataclasses.field(default_factory=dict)
+    vibrato: VibratoObject | None = dataclasses.field(default_factory=dict)
+    rotation: RotationObject | None = dataclasses.field(default_factory=dict)
+    distortion: DistortionObject | None = dataclasses.field(default_factory=dict)
+    channelMix: ChannelMixObject | None = dataclasses.field(default_factory=dict)
+    lowPass: LowPassObject | None = dataclasses.field(default_factory=dict)
+    echo: EchoObject | None = dataclasses.field(default_factory=dict)
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkPlayerObject:
     guildId: str
     volume: int
     paused: bool
     voice: VoiceStateObject
-    filters: FiltersObject
+    filters: FiltersObject | None = None
     track: LavalinkTrackObject | None = None
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkTrackLoadedObject:
     loadType: Literal["TRACK_LOADED"]
-    playlistInfo: PlaylistInfoObject | dict = dataclasses.field(default_factory=dict)
+    playlistInfo: PlaylistInfoObject
     tracks: list[LavalinkTrackObject] = dataclasses.field(default_factory=list)
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkPlaylistLoadedObject:
     loadType: Literal["PLAYLIST_LOADED"]
-    playlistInfo: PlaylistInfoObject | dict = dataclasses.field(default_factory=dict)
+    playlistInfo: PlaylistInfoObject
     tracks: list[LavalinkTrackObject] = dataclasses.field(default_factory=list)
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkSearchResultObject:
     loadType: Literal["SEARCH_RESULT"]
-    playlistInfo: PlaylistInfoObject | dict = dataclasses.field(default_factory=dict)
+    playlistInfo: PlaylistInfoObject
     tracks: list[LavalinkTrackObject] = dataclasses.field(default_factory=list)
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkNoMatchesObject:
     loadType: Literal["NO_MATCHES"]
-    playlistInfo: PlaylistInfoObject | dict = dataclasses.field(default_factory=dict)
+    playlistInfo: PlaylistInfoObject
     tracks: list = dataclasses.field(default_factory=list)
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkLoadFailedObject:
     loadType: Literal["LOAD_FAILED"]
     exception: LoadExceptionObject
-    playlistInfo: PlaylistInfoObject | dict = dataclasses.field(default_factory=dict)
+    playlistInfo: PlaylistInfoObject
     tracks: list = dataclasses.field(default_factory=list)
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class VersionObject:
     semver: str
     major: int
@@ -343,20 +359,20 @@ class VersionObject:
     preRelease: str | None = None
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class GitObject:
     branch: str
     commit: str
     commitTime: int
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class PluginObject:
     name: str
     version: str
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkInfoObject:
     version: VersionObject
     buildTime: int
@@ -367,20 +383,20 @@ class LavalinkInfoObject:
     plugins: list[PluginObject]
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class IPBlockObject:
     type: Literal["Inet4Address", "Inet6Address"]
     size: str
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class FailingAddressObject:
     address: str
     failingTimestamp: int
     failingTimes: str
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class RoutePlannerDetailObject:
     ipBlock: IPBlockObject
     failingAddresses: list[FailingAddressObject]
@@ -391,7 +407,7 @@ class RoutePlannerDetailObject:
     blockIndex: str
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class RoutePlannerStatusResponseObject:
     type: Literal["RotatingIpRoutePlanner", "NanoIpRoutePlanner", "RotatingNanoIpRoutePlanner"] | None = None
     details: RoutePlannerDetailObject | None = None
