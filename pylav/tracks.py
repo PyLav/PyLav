@@ -126,9 +126,10 @@ class Track:
         self._requester = requester or self._node.node_manager.client.bot.user.id
         self._id = str(uuid.uuid4())
         self._updated_query = None
+        self.extra.pop("track", None)
 
     def _build_from_track_dict(self, data, extra):
-        self.encoded = data["encoded"]
+        self.encoded = data.get("encoded", data["track"])
         self._raw_data = data.get("raw_data", {}) or extra.get("raw_data", {})
         self.extra = extra
         self._unique_id.update(self.encoded.encode())

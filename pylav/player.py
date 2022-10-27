@@ -20,7 +20,7 @@ from discord.utils import utcnow
 
 from pylav._logging import getLogger
 from pylav.constants import REGION_TO_COUNTRY_COORDINATE_MAPPING
-from pylav.endpoints.response_objects import TrackExceptionEventOpObject, TrackExceptionObject
+from pylav.endpoints.response_objects import PlayerStateObject, TrackExceptionEventOpObject, TrackExceptionObject
 from pylav.events import (
     FiltersAppliedEvent,
     NodeChangedEvent,
@@ -1371,7 +1371,7 @@ class Player(VoiceProtocol):
             await self.next()
             self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
 
-    async def _update_state(self, state: dict) -> None:
+    async def _update_state(self, state: PlayerStateObject) -> None:
         """
         Updates the position of the player.
         Parameters
@@ -1380,9 +1380,9 @@ class Player(VoiceProtocol):
             The state that is given to update.
         """
         self._last_update = time.time() * 1000
-        self._last_position = state.get("position", 0)
-        self.position_timestamp = state.get("time", 0)
-        self._ping = state.get("ping", -1)
+        self._last_position = state.position
+        self.position_timestamp = state.time
+        self._ping = state.ping
         if self.current:
             self.current.last_known_position = self._last_position
 
@@ -2432,12 +2432,12 @@ class Player(VoiceProtocol):
                 else None
             )
 
-    async def _process_restore_rest_call(self, current, player):
+    async def _process_restore_rest_call(self, current: Track, player: PlayerStateModel):
         payload = {}
         if self.paused:
             payload["paused"] = self.paused
         if current:
-            payload |= {"encodedTrack": current.encoded, "startTime": player.position}
+            payload |= {"encodedTrack": current.encoded, "startTime": int(player.position)}
         if self.has_effects:
             payload["filters"] = self.node.get_filter_payload(
                 player=self,
@@ -2464,7 +2464,7 @@ class Player(VoiceProtocol):
             [
                 Track(
                     node=self.node,
-                    data=t.pop("encoded"),
+                    data=t.pop("encoded", None) or t.pop("track", None),
                     query=await Query.from_string(t.pop("query")),
                     **t.pop("extra"),
                     **t,
@@ -2478,7 +2478,7 @@ class Player(VoiceProtocol):
             [
                 Track(
                     node=self.node,
-                    data=t.pop("encoded"),
+                    data=t.pop("encoded", None) or t.pop("track", None),
                     query=await Query.from_string(t.pop("query")),
                     **t.pop("extra"),
                     **t,
@@ -2494,7 +2494,7 @@ class Player(VoiceProtocol):
         current = (
             Track(
                 node=self.node,
-                data=player.current.pop("encoded"),
+                data=player.current.pop("encoded", None) or player.current.pop("track", None),
                 query=await Query.from_string(player.current.pop("query")),
                 **player.current.pop("extra"),
                 **player.current,
@@ -2505,7 +2505,7 @@ class Player(VoiceProtocol):
         next_track = (
             Track(
                 node=self.node,
-                data=n_track.pop("encoded"),
+                data=n_track.pop("encoded", None) or n_track.pop("track", None),
                 query=await Query.from_string(n_track.pop("query")),
                 **n_track.pop("extra"),
                 **n_track,
@@ -2516,7 +2516,7 @@ class Player(VoiceProtocol):
         last_track = (
             Track(
                 node=self.node,
-                data=l_track.pop("encoded"),
+                data=l_track.pop("encoded", None) or l_track.pop("track", None),
                 query=await Query.from_string(l_track.pop("query")),
                 **l_track.pop("extra"),
                 **l_track,

@@ -296,7 +296,9 @@ class PlayerManager:
             discord_player = await self.create(
                 channel=channel,
                 requester=requester,
-                feature=(await Query.from_base64(player_state.current["encoded"])).requires_capability
+                feature=(
+                    await Query.from_base64(player_state.current.get("encoded", player_state.current.get("track")))
+                ).requires_capability
                 if player_state.current
                 else None,
                 self_deaf=player_state.self_deaf,
