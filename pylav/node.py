@@ -145,7 +145,7 @@ class Penalty:
         )
 
     def __repr__(self):
-        return f"<Penalty player={self.player_penalty} cpu={self.cpu_penalty} null_frame={self.null_frame_penalty} deficit_frame={self.deficit_frame_penalty} votes={self._stats._node._down_votes * 100} total={self.total}>"
+        return f"<Penalty player={self.player_penalty} cpu={self.cpu_penalty} null_frame={self.null_frame_penalty} deficit_frame={self.deficit_frame_penalty} votes={self._stats._node.down_votes * 100} total={self.total}>"
 
 
 class Stats:
