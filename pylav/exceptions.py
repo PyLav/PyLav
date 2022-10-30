@@ -39,6 +39,7 @@ __all__ = (
     "ManagedLinkStartAbortedUseExternal",
     "AbortPlayerRestoreDueUnavailableNode",
     "NoNodeWithRequestFunctionalityAvailable",
+    "UnsupportedNodeAPI",
 )
 
 
