@@ -1042,7 +1042,6 @@ class Client(metaclass=_Singleton):
         self, bypass_cache, enqueue, player, queries_failed, query, requester, successful_tracks, track_count, partial
     ):
         async for sub_query in self._yield_recursive_queries(query):
-
             node = await self.node_manager.find_best_node(
                 region=player.region if player else None,
                 coordinates=player.coordinates if player else None,
@@ -1051,30 +1050,11 @@ class Client(metaclass=_Singleton):
             if node is None:
                 queries_failed.append(sub_query)
                 continue
-            # Query tracks as the queue builds as this may be a slow operation
-            if enqueue and successful_tracks and not player.is_playing and not player.paused:
-                track = successful_tracks.pop()
-                await player.play(track, await track.query(), requester)
-            elif successful_tracks and player.is_playing and player.queue.empty():
-                track = successful_tracks.pop()
-                await player.add(requester.id, track, query=await track.query())
+            await self._get_tracks_play_or_enqueue(enqueue, player, requester, successful_tracks)
             if partial and sub_query.is_single:
-                track_count += 1
-                if cached_query := await self.node_manager.client.query_cache_manager.fetch_query(sub_query):
-                    data = (await cached_query.fetch_tracks())[0]
-                else:
-                    data = None
-                successful_tracks.append(
-                    Track(
-                        data=data,
-                        node=node,
-                        query=sub_query,
-                        requester=requester.id,
-                    )
+                track_count = await self._get_tracks_partial_single(
+                    enqueue, node, player, requester, sub_query, successful_tracks, track_count
                 )
-                if enqueue and successful_tracks and not player.is_playing and not player.paused:
-                    track = successful_tracks.pop()
-                    await player.play(track, await track.query(), requester)
             elif sub_query.is_search or sub_query.is_single:
                 track_count = await self._get_tracks_search_or_single(
                     bypass_cache,
@@ -1112,6 +1092,36 @@ class Client(metaclass=_Singleton):
                 queries_failed.append(sub_query)
                 LOGGER.warning("Unhandled query: %s, %s", sub_query.to_dict(), sub_query.query_identifier)
         return track_count
+
+    async def _get_tracks_partial_single(
+        self, enqueue, node, player, requester, sub_query, successful_tracks, track_count
+    ):
+        track_count += 1
+        if cached_query := await self.node_manager.client.query_cache_manager.fetch_query(sub_query):
+            data = (await cached_query.fetch_tracks())[0]
+        else:
+            data = None
+        successful_tracks.append(
+            Track(
+                data=data,
+                node=node,
+                query=sub_query,
+                requester=requester.id,
+            )
+        )
+        if enqueue and successful_tracks and not player.is_playing and not player.paused:
+            track = successful_tracks.pop()
+            await player.play(track, await track.query(), requester)
+        return track_count
+
+    async def _get_tracks_play_or_enqueue(self, enqueue, player, requester, successful_tracks):
+        # Query tracks as the queue builds as this may be a slow operation
+        if enqueue and successful_tracks and not player.is_playing and not player.paused:
+            track = successful_tracks.pop()
+            await player.play(track, await track.query(), requester)
+        elif successful_tracks and player.is_playing and player.queue.empty():
+            track = successful_tracks.pop()
+            await player.add(requester.id, track, query=await track.query())
 
     async def _get_tracks_local_album(
         self, enqueue, node, player, queries_failed, requester, sub_query, successful_tracks, track_count, partial

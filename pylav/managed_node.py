@@ -632,51 +632,7 @@ class LocalNodeManager:
         backoff = ExponentialBackoffWithReset(base=3)
         while True:
             try:
-                self._shutdown = False
-                if self._node_pid is None or not psutil.pid_exists(self._node_pid):
-                    self.ready.clear()
-                    await self._start(java_path=java_path)
-                while True:
-                    await self.wait_until_ready(timeout=self.timeout)
-                    if not psutil.pid_exists(self._node_pid):
-                        raise NoProcessFound
-                    if self._node is None or not self._node.websocket.connected and not self._node.websocket.connecting:
-                        await self.connect_node(reconnect=retry_count != 0, wait_for=3)
-                    try:
-                        node = self._client.node_manager.get_node_by_id(self._node_id)
-                        if node is not None:
-                            await node.wait_until_ready(timeout=30)
-                        if node.websocket.connected:
-                            try:
-                                # Hoping this throws an exception which will then trigger a restart
-                                await node.websocket.ping()
-                                backoff.reset()
-                                await asyncio.sleep(1)
-                            except WebsocketNotConnectedError:
-                                await asyncio.sleep(5)
-                            except ConnectionResetError:
-                                raise AttributeError
-                        elif node.websocket.connecting:
-                            await node.websocket.wait_until_ready(timeout=30)
-                        else:
-                            raise AttributeError
-                    except AttributeError as e:
-                        try:
-                            LOGGER.debug(
-                                "Managed node monitor detected RLL is not connected to any nodes -%s", exc_info=e
-                            )
-                            while True:
-                                node = self._client.node_manager.get_node_by_id(self._node_id)
-                                if node is not None:
-                                    await node.wait_until_ready(timeout=30)
-                                if node and node.websocket.connected:
-                                    break
-                                await asyncio.sleep(1)
-                        except asyncio.TimeoutError:
-                            raise
-                    except Exception as exc:
-                        LOGGER.debug(exc, exc_info=exc)
-                        raise NodeUnhealthy(str(exc)) from exc
+                await self._monitor_primary_healthy_flow(backoff, java_path, retry_count)
             except (TooManyProcessFound, IncorrectProcessFound, NoProcessFound):
                 await self._partial_shutdown()
             except asyncio.TimeoutError:
@@ -688,26 +644,9 @@ class LocalNodeManager:
                 )
                 await asyncio.sleep(delay)
             except ManagedLavalinkStartFailure:
-                LOGGER.warning("Lavalink Managed node failed to start, restarting")
-                await self._partial_shutdown()
-                async for process in asyncstdlib.iter(
-                    await self.get_lavalink_process(
-                        "-Djdk.tls.client.protocols=TLSv1.2", "-Xms64M", "-jar", cwd=str(LAVALINK_DOWNLOAD_DIR)
-                    )
-                ):
-                    with contextlib.suppress(psutil.Error):
-                        pid = process["pid"]
-                        p = psutil.Process(pid)
-                        p.terminate()
-                        p.kill()
+                await self._monitor_managed_start_failure()
             except NodeUnhealthy:
-                delay = backoff.delay()
-                await self._partial_shutdown()
-                LOGGER.warning(
-                    "Lavalink Managed node health check failed, restarting in %s seconds",
-                    delay,
-                )
-                await asyncio.sleep(delay)
+                await self._monitor_handle_unhealthy(backoff)
             except LavalinkDownloadFailed as exc:
                 delay = backoff.delay()
                 if exc.should_retry:
@@ -736,16 +675,9 @@ class LocalNodeManager:
                 return await self.shutdown()
             except ManagedLinkStartAbortedUseExternal:
                 LOGGER.warning("Lavalink Managed node start aborted, using the detected external Lavalink node")
-                await self.connect_node(reconnect=False, wait_for=0, external_fallback=True)
-                return
+                return await self.connect_node(reconnect=False, wait_for=0, external_fallback=True)
             except ManagedLavalinkNodeError as exc:
-                delay = backoff.delay()
-                LOGGER.critical(
-                    exc,
-                )
-                await self._partial_shutdown()
-                LOGGER.warning("Lavalink Managed node startup failed retrying in %s seconds", delay, exc_info=exc)
-                await asyncio.sleep(delay)
+                await self._monitor_managed_node_error(backoff, exc)
             except asyncio.CancelledError:
                 LOGGER.warning("Lavalink Managed monitor task cancelled")
                 return
@@ -754,6 +686,89 @@ class LocalNodeManager:
                 LOGGER.warning("Lavalink Managed node startup failed retrying in %s seconds", delay, exc_info=exc)
                 await self._partial_shutdown()
                 await asyncio.sleep(delay)
+
+    async def _monitor_primary_healthy_flow(self, backoff, java_path, retry_count):
+        self._shutdown = False
+        if self._node_pid is None or not psutil.pid_exists(self._node_pid):
+            self.ready.clear()
+            await self._start(java_path=java_path)
+        while True:
+            await self.wait_until_ready(timeout=self.timeout)
+            if not psutil.pid_exists(self._node_pid):
+                raise NoProcessFound
+            if self._node is None or not self._node.websocket.connected and not self._node.websocket.connecting:
+                await self.connect_node(reconnect=retry_count != 0, wait_for=3)
+            try:
+                await self._monitor_connect_to_node(backoff)
+            except AttributeError as e:
+                await self._monitor_wait_for_connection(e)
+            except Exception as exc:
+                LOGGER.debug(exc, exc_info=exc)
+                raise NodeUnhealthy(str(exc)) from exc
+
+    async def _monitor_managed_node_error(self, backoff, exc):
+        delay = backoff.delay()
+        LOGGER.critical(
+            exc,
+        )
+        await self._partial_shutdown()
+        LOGGER.warning("Lavalink Managed node startup failed retrying in %s seconds", delay, exc_info=exc)
+        await asyncio.sleep(delay)
+
+    async def _monitor_handle_unhealthy(self, backoff):
+        delay = backoff.delay()
+        await self._partial_shutdown()
+        LOGGER.warning(
+            "Lavalink Managed node health check failed, restarting in %s seconds",
+            delay,
+        )
+        await asyncio.sleep(delay)
+
+    async def _monitor_managed_start_failure(self):
+        LOGGER.warning("Lavalink Managed node failed to start, restarting")
+        await self._partial_shutdown()
+        async for process in asyncstdlib.iter(
+            await self.get_lavalink_process(
+                "-Djdk.tls.client.protocols=TLSv1.2", "-Xms64M", "-jar", cwd=str(LAVALINK_DOWNLOAD_DIR)
+            )
+        ):
+            with contextlib.suppress(psutil.Error):
+                pid = process["pid"]
+                p = psutil.Process(pid)
+                p.terminate()
+                p.kill()
+
+    async def _monitor_wait_for_connection(self, e):
+        try:
+            LOGGER.debug("Managed node monitor detected PyLav is not connected to any nodes -%s", exc_info=e)
+            while True:
+                node = self._client.node_manager.get_node_by_id(self._node_id)
+                if node is not None:
+                    await node.wait_until_ready(timeout=30)
+                if node and node.websocket.connected:
+                    break
+                await asyncio.sleep(1)
+        except asyncio.TimeoutError:
+            raise
+
+    async def _monitor_connect_to_node(self, backoff):
+        node = self._client.node_manager.get_node_by_id(self._node_id)
+        if node is not None:
+            await node.wait_until_ready(timeout=30)
+        if node.websocket.connected:
+            try:
+                # Hoping this throws an exception which will then trigger a restart
+                await node.websocket.ping()
+                backoff.reset()
+                await asyncio.sleep(1)
+            except WebsocketNotConnectedError:
+                await asyncio.sleep(5)
+            except ConnectionResetError:
+                raise AttributeError
+        elif node.websocket.connecting:
+            await node.websocket.wait_until_ready(timeout=30)
+        else:
+            raise AttributeError
 
     async def start(self, java_path: str):
         self._java_path = java_path
