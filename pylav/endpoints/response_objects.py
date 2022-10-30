@@ -9,11 +9,11 @@ class TrackInfoObject:
     identifier: str
     isSeekable: bool
     author: str
-    length: int
-    title: str
-    isStream: bool
-    uri: str | None = None
+    length: int = 0
+    isStream: bool = False
     position: int | None = 0
+    title: str = ""
+    uri: str | None = None
     sourceName: str | None = None
 
 
@@ -25,13 +25,22 @@ class PlaylistInfoObject:
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkTrackObject:
-    info: TrackInfoObject
+    info: TrackInfoObject | dict
     encoded: str | None = None
     track: str | None = None
 
     def __post_init__(self):
         if self.encoded is None:
             object.__setattr__(self, "encoded", self.track)
+        if isinstance(self.info, dict):
+            object.__setattr__(self, "info", TrackInfoObject(**self.info))
+
+    def to_dict(self):
+        return {
+            "info": dataclasses.asdict(self.info),
+            "encoded": self.encoded,
+            "track": self.track,
+        }
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
@@ -80,15 +89,27 @@ class LavalinkStatsOpObject(LavalinkOpObject):
     players: int
     playingPlayers: int
     uptime: int
-    memory: LavalinkStatsMemoryObject
-    cpu: LavalinkStatCPUObject
-    frameStats: LavalinkStatsFrameStatsObject | None = None
+    memory: LavalinkStatsMemoryObject | dict
+    cpu: LavalinkStatCPUObject | dict
+    frameStats: LavalinkStatsFrameStatsObject | dict | None = None
+
+    def __post_init__(self):
+        if isinstance(self.memory, dict):
+            object.__setattr__(self, "memory", LavalinkStatsMemoryObject(**self.memory))
+        if isinstance(self.cpu, dict):
+            object.__setattr__(self, "cpu", LavalinkStatCPUObject(**self.cpu))
+        if isinstance(self.frameStats, dict):
+            object.__setattr__(self, "frameStats", LavalinkStatsFrameStatsObject(**self.frameStats))
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkPlayerUpdateObject(LavalinkOpObject):
     guildId: str
-    state: PlayerStateObject
+    state: PlayerStateObject | dict
+
+    def __post_init__(self):
+        if isinstance(self.state, dict):
+            object.__setattr__(self, "state", PlayerStateObject(**self.state))
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
@@ -134,13 +155,15 @@ class TrackExceptionEventOpObject:
     op: Literal["event"]
     guildId: str
     type: Literal["TrackExceptionEvent"]
-    exception: TrackExceptionObject
+    exception: TrackExceptionObject | dict
     encodedTrack: str = None
     track: str | None = None
 
     def __post_init__(self):
         if self.encodedTrack is None:
             object.__setattr__(self, "encodedTrack", self.track)
+        if isinstance(self.exception, dict):
+            object.__setattr__(self, "exception", TrackExceptionObject(**self.exception))
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
@@ -179,7 +202,14 @@ class SegmentsLoadedEventObject:
     op: Literal["event"]
     guildId: str
     type: Literal["SegmentsLoadedEvent"]
-    segments: list[SegmentObject]
+    segments: list[SegmentObject | dict]
+
+    def __post_init__(self):
+        temp = []
+        for s in self.segments:
+            if isinstance(s, SegmentObject) or (isinstance(s, dict) and (s := SegmentObject(**s))):
+                temp.append(s)
+        object.__setattr__(self, "segments", temp)
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
@@ -187,18 +217,11 @@ class SegmentSkippedEventOpObject:
     op: Literal["event"]
     guildId: str
     type: Literal["SegmentSkippedEvent"]
-    segment: SegmentObject
+    segment: SegmentObject | dict
 
-
-LavalinkEventOpObjects = Union[
-    TrackStartEventOpObject,
-    TrackEndEventOpObject,
-    TrackExceptionEventOpObject,
-    TrackStuckEventOpObject,
-    WebSocketClosedEventOpObject,
-    SegmentsLoadedEventObject,
-    SegmentSkippedEventOpObject,
-]
+    def __post_init__(self):
+        if isinstance(self.segment, dict):
+            object.__setattr__(self, "segment", SegmentObject(**self.segment))
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
@@ -292,16 +315,40 @@ class EchoObject:
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class FiltersObject:
     volume: float | None = None
-    equalizer: list[EqualizerBandObject] | None = dataclasses.field(default_factory=list)
-    karaoke: KaraokeObject | None = dataclasses.field(default_factory=dict)
-    timescale: TimescaleObject | None = dataclasses.field(default_factory=dict)
-    tremolo: TremoloObject | None = dataclasses.field(default_factory=dict)
-    vibrato: VibratoObject | None = dataclasses.field(default_factory=dict)
-    rotation: RotationObject | None = dataclasses.field(default_factory=dict)
-    distortion: DistortionObject | None = dataclasses.field(default_factory=dict)
-    channelMix: ChannelMixObject | None = dataclasses.field(default_factory=dict)
-    lowPass: LowPassObject | None = dataclasses.field(default_factory=dict)
-    echo: EchoObject | None = dataclasses.field(default_factory=dict)
+    equalizer: list[EqualizerBandObject | dict] | None = dataclasses.field(default_factory=list)
+    karaoke: KaraokeObject | dict | None = dataclasses.field(default_factory=dict)
+    timescale: TimescaleObject | dict | None = dataclasses.field(default_factory=dict)
+    tremolo: TremoloObject | dict | None = dataclasses.field(default_factory=dict)
+    vibrato: VibratoObject | dict | None = dataclasses.field(default_factory=dict)
+    rotation: RotationObject | dict | None = dataclasses.field(default_factory=dict)
+    distortion: DistortionObject | dict | None = dataclasses.field(default_factory=dict)
+    channelMix: ChannelMixObject | dict | None = dataclasses.field(default_factory=dict)
+    lowPass: LowPassObject | dict | None = dataclasses.field(default_factory=dict)
+    echo: EchoObject | dict | None = dataclasses.field(default_factory=dict)
+
+    def __post_init__(self):
+        if isinstance(self.equalizer, list):
+            object.__setattr__(
+                self, "equalizer", [EqualizerBandObject(**band) for band in self.equalizer] if self.equalizer else None
+            )
+        if isinstance(self.karaoke, dict):
+            object.__setattr__(self, "karaoke", KaraokeObject(**self.karaoke) if self.karaoke else None)
+        if isinstance(self.timescale, dict):
+            object.__setattr__(self, "timescale", TimescaleObject(**self.timescale) if self.timescale else None)
+        if isinstance(self.tremolo, dict):
+            object.__setattr__(self, "tremolo", TremoloObject(**self.tremolo) if self.tremolo else None)
+        if isinstance(self.vibrato, dict):
+            object.__setattr__(self, "vibrato", VibratoObject(**self.vibrato) if self.vibrato else None)
+        if isinstance(self.rotation, dict):
+            object.__setattr__(self, "rotation", RotationObject(**self.rotation) if self.rotation else None)
+        if isinstance(self.distortion, dict):
+            object.__setattr__(self, "distortion", DistortionObject(**self.distortion) if self.distortion else None)
+        if isinstance(self.channelMix, dict):
+            object.__setattr__(self, "channelMix", ChannelMixObject(**self.channelMix) if self.channelMix else None)
+        if isinstance(self.lowPass, dict):
+            object.__setattr__(self, "lowPass", LowPassObject(**self.lowPass) if self.lowPass else None)
+        if isinstance(self.echo, dict):
+            object.__setattr__(self, "echo", EchoObject(**self.echo) if self.echo else None)
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
@@ -309,45 +356,98 @@ class LavalinkPlayerObject:
     guildId: str
     volume: int
     paused: bool
-    voice: VoiceStateObject
-    filters: FiltersObject | None = None
-    track: LavalinkTrackObject | None = None
+    voice: VoiceStateObject | dict
+    filters: FiltersObject | dict | None = None
+    track: LavalinkTrackObject | dict | None = None
+
+    def __post_init__(self):
+        if isinstance(self.voice, dict):
+            object.__setattr__(self, "voice", VoiceStateObject(**self.voice))
+        if isinstance(self.filters, dict):
+            object.__setattr__(self, "filters", FiltersObject(**self.filters))
+        if isinstance(self.track, dict):
+            object.__setattr__(self, "track", LavalinkTrackObject(**self.track))
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkTrackLoadedObject:
     loadType: Literal["TRACK_LOADED"]
-    playlistInfo: PlaylistInfoObject
-    tracks: list[LavalinkTrackObject] = dataclasses.field(default_factory=list)
+    playlistInfo: PlaylistInfoObject | dict
+    tracks: list[LavalinkTrackObject | dict] = dataclasses.field(default_factory=list)
+
+    def __post_init__(self):
+        if isinstance(self.playlistInfo, dict):
+            object.__setattr__(self, "playlistInfo", PlaylistInfoObject(**self.playlistInfo))
+        temp = []
+        for t in self.tracks:
+            if isinstance(t, LavalinkTrackObject) or (isinstance(t, dict) and (t := LavalinkTrackObject(**t))):
+                temp.append(t)
+        object.__setattr__(self, "tracks", temp)
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkPlaylistLoadedObject:
     loadType: Literal["PLAYLIST_LOADED"]
-    playlistInfo: PlaylistInfoObject
-    tracks: list[LavalinkTrackObject] = dataclasses.field(default_factory=list)
+    playlistInfo: PlaylistInfoObject | dict
+    tracks: list[LavalinkTrackObject | dict] = dataclasses.field(default_factory=list)
+
+    def __post_init__(self):
+        if isinstance(self.playlistInfo, dict):
+            object.__setattr__(self, "playlistInfo", PlaylistInfoObject(**self.playlistInfo))
+        temp = []
+        for t in self.tracks:
+            if isinstance(t, LavalinkTrackObject) or (isinstance(t, dict) and (t := LavalinkTrackObject(**t))):
+                temp.append(t)
+        object.__setattr__(self, "tracks", temp)
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkSearchResultObject:
     loadType: Literal["SEARCH_RESULT"]
-    playlistInfo: PlaylistInfoObject
-    tracks: list[LavalinkTrackObject] = dataclasses.field(default_factory=list)
+    playlistInfo: PlaylistInfoObject | dict
+    tracks: list[LavalinkTrackObject | dict] = dataclasses.field(default_factory=list)
+
+    def __post_init__(self):
+        if isinstance(self.playlistInfo, dict):
+            object.__setattr__(self, "playlistInfo", PlaylistInfoObject(**self.playlistInfo))
+        temp = []
+        for t in self.tracks:
+            if isinstance(t, LavalinkTrackObject) or (isinstance(t, dict) and (t := LavalinkTrackObject(**t))):
+                temp.append(t)
+        object.__setattr__(self, "tracks", temp)
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkNoMatchesObject:
     loadType: Literal["NO_MATCHES"]
-    playlistInfo: PlaylistInfoObject
-    tracks: list = dataclasses.field(default_factory=list)
+    playlistInfo: PlaylistInfoObject | dict
+    tracks: list[LavalinkTrackObject | dict] = dataclasses.field(default_factory=list)
+
+    def __post_init__(self):
+        if isinstance(self.playlistInfo, dict):
+            object.__setattr__(self, "playlistInfo", PlaylistInfoObject(**self.playlistInfo))
+        temp = []
+        for t in self.tracks:
+            if isinstance(t, LavalinkTrackObject) or (isinstance(t, dict) and (t := LavalinkTrackObject(**t))):
+                temp.append(t)
+        object.__setattr__(self, "tracks", temp)
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkLoadFailedObject:
     loadType: Literal["LOAD_FAILED"]
-    exception: LoadExceptionObject
-    playlistInfo: PlaylistInfoObject
-    tracks: list = dataclasses.field(default_factory=list)
+    exception: LoadExceptionObject | dict
+    playlistInfo: PlaylistInfoObject | dict
+    tracks: list[LavalinkTrackObject | dict] = dataclasses.field(default_factory=list)
+
+    def __post_init__(self):
+        if isinstance(self.playlistInfo, dict):
+            object.__setattr__(self, "playlistInfo", PlaylistInfoObject(**self.playlistInfo))
+        temp = []
+        for t in self.tracks:
+            if isinstance(t, LavalinkTrackObject) or (isinstance(t, dict) and (t := LavalinkTrackObject(**t))):
+                temp.append(t)
+        object.__setattr__(self, "tracks", temp)
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
@@ -382,6 +482,18 @@ class LavalinkInfoObject:
     sourceManagers: list[str]
     plugins: list[PluginObject]
 
+    def __post_init__(self):
+
+        if isinstance(self.version, dict):
+            object.__setattr__(self, "version", VersionObject(**self.version))
+        if isinstance(self.git, dict):
+            object.__setattr__(self, "git", GitObject(**self.git))
+        temp = []
+        for p in self.plugins:
+            if isinstance(p, PluginObject) or (isinstance(p, dict) and (p := PluginObject(**p))):
+                temp.append(p)
+        object.__setattr__(self, "plugins", temp)
+
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class IPBlockObject:
@@ -398,19 +510,32 @@ class FailingAddressObject:
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class RoutePlannerDetailObject:
-    ipBlock: IPBlockObject
-    failingAddresses: list[FailingAddressObject]
+    ipBlock: IPBlockObject | dict
+    failingAddresses: list[FailingAddressObject | dict]
     rotateIndex: str
     ipIndex: str
     currentAddress: str
     currentAddressIndex: str
     blockIndex: str
 
+    def __post_init__(self):
+        if isinstance(self.ipBlock, dict):
+            object.__setattr__(self, "ipBlock", IPBlockObject(**self.ipBlock))
+        temp = []
+        for f in self.failingAddresses:
+            if isinstance(f, FailingAddressObject) or (isinstance(f, dict) and (f := FailingAddressObject(**f))):
+                temp.append(f)
+        object.__setattr__(self, "failingAddresses", temp)
+
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class RoutePlannerStatusResponseObject:
     type: Literal["RotatingIpRoutePlanner", "NanoIpRoutePlanner", "RotatingNanoIpRoutePlanner"] | None = None
-    details: RoutePlannerDetailObject | None = None
+    details: RoutePlannerDetailObject | dict | None = None
+
+    def __post_init__(self):
+        if isinstance(self.details, dict):
+            object.__setattr__(self, "details", RoutePlannerDetailObject(**self.details))
 
 
 LavalinkLoadTrackObjects = Union[

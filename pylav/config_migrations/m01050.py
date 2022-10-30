@@ -44,15 +44,16 @@ async def run_migration_01050(client: "Client", current_version: LegacyVersion |
     from pylav.managed_node import LAVALINK_DOWNLOAD_DIR
 
     folder = LAVALINK_DOWNLOAD_DIR / "plugins"
-    plugin_files = [
-        x
-        async for x in folder.iterdir()
-        if x.name.startswith("Topis-Source-Managers-Plugin-") and x.suffix == ".jar" and x.is_file()
-    ]
-    for file in plugin_files:
-        try:
-            await file.unlink()
-        except Exception as exc:
-            LOGGER.error("Failed to remove plugin: %s", file.name, exc_info=exc)
+    if await folder.exists():
+        plugin_files = [
+            x
+            async for x in folder.iterdir()
+            if x.name.startswith("Topis-Source-Managers-Plugin-") and x.suffix == ".jar" and x.is_file()
+        ]
+        for file in plugin_files:
+            try:
+                await file.unlink()
+            except Exception as exc:
+                LOGGER.error("Failed to remove plugin: %s", file.name, exc_info=exc)
 
     await client.lib_db_manager.update_bot_dv_version("0.10.5")

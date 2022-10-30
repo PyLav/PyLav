@@ -979,15 +979,9 @@ class Player(VoiceProtocol):
         if await track.query() and not self.node.has_source(await track.requires_capability()):
             self.current = None
             await self.change_to_best_node(await track.requires_capability())
-
-        if track.is_partial:
-            try:
-                await track.search(self, bypass_cache=bypass_cache)
-            except TrackNotFound as exc:
-                if not track:
-                    raise TrackNotFound from exc
-                await self._process_error_on_play(exc, track)
-                return
+        returning = await self._process_partial_track(track, bypass_cache)
+        if returning:
+            return
         self.current = track
         if self.next_track is None and not self.queue.empty():
             self.next_track = self.queue.raw_queue.popleft()
