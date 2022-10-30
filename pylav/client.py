@@ -866,8 +866,7 @@ class Client(metaclass=_Singleton):
         :class:`Player`
             The player for the target guild.
         """
-        p = await self.player_manager.create(channel, channel.rtc_region, node, self_deaf, requester)
-        return p
+        return await self.player_manager.create(channel, channel.rtc_region, node, self_deaf, requester)
 
     async def construct_embed(
         self,
