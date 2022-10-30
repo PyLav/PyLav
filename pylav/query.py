@@ -656,8 +656,7 @@ class Query:
                     if source:
                         output._source = cls.__get_source_from_str(source)
                     return output  # Fallback to YouTube Music
-        except Exception as e:
-            LOGGER.verbose(e)
+        except Exception:
             if dont_search:
                 return cls("invalid", "invalid")
             output = cls(query, "YouTube Music", search=True)

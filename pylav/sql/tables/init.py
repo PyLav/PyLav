@@ -17,8 +17,10 @@ LOGGER = getLogger("PyLav.Postgres")
 
 if os.getenv("BUILDING_DOCS", False):
     DB = SQLiteEngine()
+    IS_POSTGRES = False
 else:
     LOGGER.info("Connecting to Postgres server using %r", config)
     DB = PostgresEngine(config=config)
+    IS_POSTGRES = True
 
 run_low_level_migrations(DB)

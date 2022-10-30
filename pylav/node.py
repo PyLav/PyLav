@@ -60,6 +60,7 @@ from pylav.filters import (
 from pylav.filters.tremolo import Tremolo
 from pylav.location import distance
 from pylav.sql.models import NodeModel, NodeModelMock
+from pylav.track_encoding import decode_track
 from pylav.types import (
     FiltersT,
     LoadTracksResponseT,
@@ -142,6 +143,9 @@ class Penalty:
             + self.deficit_frame_penalty
             + self._stats._node.down_votes * 100
         )
+
+    def __repr__(self):
+        return f"<Penalty player={self.player_penalty} cpu={self.cpu_penalty} null_frame={self.null_frame_penalty} deficit_frame={self.deficit_frame_penalty} votes={self._stats._node._down_votes * 100} total={self.total}>"
 
 
 class Stats:
@@ -245,6 +249,25 @@ class Stats:
     def penalty(self) -> Penalty:
         """The penalty for the node"""
         return self._penalty
+
+    def __repr__(self):
+        return (
+            f"<Stats node_id={self._node.identifier} "
+            f"uptime={self.uptime} "
+            f"players={self.players} "
+            f"playing_players={self.playing_players} "
+            f"memory_free={self.memory_free} "
+            f"memory_used={self.memory_used} "
+            f"memory_allocated={self.memory_allocated} "
+            f"memory_reservable={self.memory_reservable} "
+            f"cpu_cores={self.cpu_cores} "
+            f"system_load={self.system_load} "
+            f"lavalink_load={self.lavalink_load} "
+            f"frames_sent={self.frames_sent} "
+            f"frames_nulled={self.frames_nulled} "
+            f"frames_deficit={self.frames_deficit}> "
+            f"penalty={self.penalty}>"
+        )
 
 
 class Node:
@@ -653,7 +676,7 @@ class Node:
 
     def __repr__(self):
         return (
-            f"<Node id={self.identifier} name={self.name} "
+            f"<Node id={self.identifier} name={self.name} session_id={self.session_id} "
             f"region={self.region} ssl={self.ssl} "
             f"search_only={self.search_only} connected={self.websocket.connected if self._ws else False} "
             f"votes={self.down_votes} "
@@ -1111,14 +1134,15 @@ class Node:
             )
             tracks = await response.fetch_tracks()
             tracks = (
-                [{"encoded": track} async for track in AsyncIter([tracks[0]] if first else tracks)] if tracks else []
+                [decode_track(track)[0].to_dict() async for track in AsyncIter([tracks[0]] if first else tracks)]
+                if tracks
+                else []
             )
             data = {
                 "loadType": load_type,
                 "tracks": tracks,
+                "playlistInfo": {"selectedTrack": -1, "name": await response.fetch_name()},
             }
-            if load_type == "PLAYLIST_LOADED":
-                data["playlistInfo"] = {"name": await response.fetch_name(), "selectedTrack": -1}
             return self.parse_loadtrack_response(data)
 
     # ENDPOINTS
@@ -1255,7 +1279,7 @@ class Node:
 
     async def patch_session_player(
         self, guild_id: int, no_replace: bool = False, payload: RestPatchPlayerPayloadT = None
-    ) -> LavalinkPlayerObject:
+    ):
         async with self._session.patch(
             self.get_endpoint_session_player_by_guild_id(guild_id=guild_id),
             headers={"Authorization": self.password},
@@ -1264,6 +1288,8 @@ class Node:
         ) as res:
             if res.status in [401, 403]:
                 raise Unauthorized
+            if res.status != 200:
+                LOGGER.warning(f"Failed to patch session player: {res.status} {res.reason}")
             return from_dict(data_class=LavalinkPlayerObject, data=await res.json(loads=ujson.loads))
 
     async def delete_session_player(self, guild_id: int) -> None:

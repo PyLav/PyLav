@@ -79,6 +79,8 @@ async def update_plugins(client: "Client") -> None:
         from pylav.managed_node import LAVALINK_DOWNLOAD_DIR
 
         folder = LAVALINK_DOWNLOAD_DIR / "plugins"
+        if not await folder.exists():
+            return
         async for file in folder.iterdir():
             if (
                 await file.is_file()

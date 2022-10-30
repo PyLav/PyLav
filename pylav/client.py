@@ -72,6 +72,7 @@ from pylav.sql.clients.playlist_manager import PlaylistConfigManager
 from pylav.sql.clients.query_manager import QueryCacheManager
 from pylav.sql.clients.updater import UpdateSchemaManager
 from pylav.sql.models import LibConfigModel, NodeModel
+from pylav.sql.tables.init import IS_POSTGRES
 from pylav.tracks import Track
 from pylav.types import BotT, CogT, ContextT, InteractionT
 from pylav.utils import (
@@ -330,7 +331,8 @@ class Client(metaclass=_Singleton):
                 self._initiated = True
                 self.ready.clear()
                 await self._wait_until_ready()
-                await tables.DB.start_connection_pool(max_size=100)
+                if IS_POSTGRES:
+                    await tables.DB.start_connection_pool(max_size=100)
                 client_id, client_secret, deezer_token, yandex_access_token = await self._get_service_tokens()
                 await self._initialise_modules()
                 config_data = await self._config.fetch_all()

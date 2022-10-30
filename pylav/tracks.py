@@ -384,7 +384,7 @@ class Track:
         response = await player.node.get_track(await self.query(), first=True, bypass_cache=bypass_cache)
         if not response or not response.tracks:
             raise TrackNotFound(f"No tracks found for query {await self.query_identifier()}")
-        self.encoded = response.tracks[0]
+        self.encoded = response.tracks[0].encoded
         self._unique_id = hashlib.md5()
         self._unique_id.update(self.encoded.encode())
         if "unique_identifier" in self.__dict__:

@@ -285,7 +285,7 @@ class LocalNodeManager:
             valid_working_dirs = [
                 cwd
                 async for d in asyncstdlib.iter(possible_lavalink_processes)
-                if d.get("name") == "java" and (cwd := d.get("cwd"))
+                if d.get("name") in ["java", "java.exe"] and (cwd := d.get("cwd"))
             ]
             LOGGER.debug("Found %s java processed with a cwd set", len(valid_working_dirs))
             async for cwd in asyncstdlib.iter(valid_working_dirs):
