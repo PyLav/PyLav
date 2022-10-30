@@ -245,21 +245,28 @@ class PlayerManager:
         player: Player = await act_channel.connect(
             cls=Player, self_deaf=self_deafen if self_deaf is None else self_deaf
         )
-        best_node = node or await self.client.node_manager.find_best_node(
-            region, feature=feature or None, coordinates=player.coordinates
-        )
-        if not best_node:
-            raise NoNodeAvailable(_("No available nodes!"))
-        await player.post_init(
-            node=best_node, player_manager=self, config=player_config, pylav=self.client, requester=requester
-        )
-        await player.move_to(
-            requester, channel=player.channel, self_deaf=self_deafen if self_deaf is None else self_deaf
-        )
-        best_node.dispatch_event(PlayerConnectedEvent(player, requester or self.client.bot.user))
         self.players[channel.guild.id] = player
-        LOGGER.info("[NODE-%s] Successfully created player for %s", best_node.name, channel.guild.id)
-        return player
+        try:
+            best_node = node or await self.client.node_manager.find_best_node(
+                region, feature=feature or None, coordinates=player.coordinates
+            )
+            if not best_node:
+                raise NoNodeAvailable(_("No available nodes!"))
+            await player.post_init(
+                node=best_node, player_manager=self, config=player_config, pylav=self.client, requester=requester
+            )
+            await player.move_to(
+                requester, channel=player.channel, self_deaf=self_deafen if self_deaf is None else self_deaf
+            )
+            best_node.dispatch_event(PlayerConnectedEvent(player, requester or self.client.bot.user))
+
+            LOGGER.info("[NODE-%s] Successfully created player for %s", best_node.name, channel.guild.id)
+            return player
+        except Exception:
+            LOGGER.error("Failed to create player for %s", channel.guild.id)
+            LOGGER.debug("Error in create player for %s", channel.guild.id, exc_info=True)
+            await player.disconnect(requester=requester)
+            raise
 
     async def save_all_players(self) -> None:
         LOGGER.debug("Saving player states")
