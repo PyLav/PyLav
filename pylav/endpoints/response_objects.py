@@ -185,9 +185,9 @@ class WebSocketClosedEventOpObject:
     op: Literal["event"]
     guildId: str
     type: Literal["WebSocketClosedEvent"]
-    code: int
-    reason: str
-    byRemote: bool
+    code: int = None
+    reason: str = None
+    byRemote: bool = False
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)

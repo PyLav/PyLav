@@ -2404,18 +2404,14 @@ class Player(VoiceProtocol):
         self.history.raw_b64s = [t.encoded for t in history]
         self._effect_enabled = player.effect_enabled
         await self._process_restore_filters(player)
-        if current:
-            current.timestamp = int(player.position)
-            self.queue.put_nowait([current], index=0)
+        self.current = current
         await self.change_to_best_node(ops=False)
-        await self._process_restore_rest_call(current, player)
-        if player.playing:
-            await self.next(requester)  # type: ignore
+        self.stopped = (not await self.autoplay_enabled()) and not self.queue.qsize() and not self.current
+        await self._process_restore_rest_call()
         self.last_track = last_track
         self._restored = True
         await self.player_manager.client.player_state_db_manager.delete_player(guild_id=self.guild.id)
         self.node.dispatch_event(PlayerRestoredEvent(self, requester))
-        self.stopped = (not await self.autoplay_enabled()) and not self.queue.qsize() and not self.current
         LOGGER.info("Player restored - %s", self)
 
     async def _process_restore_autoplaylist(self, player):
@@ -2426,12 +2422,14 @@ class Player(VoiceProtocol):
                 else None
             )
 
-    async def _process_restore_rest_call(self, current: Track, player: PlayerStateModel):
+    async def _process_restore_rest_call(self):
         payload = {}
         if self.paused:
             payload["paused"] = self.paused
-        if current:
-            payload |= {"encodedTrack": current.encoded, "startTime": int(player.position)}
+        if self.current:
+            payload |= {"encodedTrack": self.current.encoded, "position": self._last_position}
+        if self.stopped:
+            payload |= {"encodedTrack": None}
         if self.has_effects:
             payload["filters"] = self.node.get_filter_payload(
                 player=self,
