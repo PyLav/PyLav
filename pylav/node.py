@@ -61,13 +61,7 @@ from pylav.filters.tremolo import Tremolo
 from pylav.location import distance
 from pylav.sql.models import NodeModel, NodeModelMock
 from pylav.track_encoding import decode_track
-from pylav.types import (
-    FiltersT,
-    LoadTracksResponseT,
-    RestGetPlayerResponseT,
-    RestPatchPlayerPayloadT,
-    RestPatchSessionPayloadT,
-)
+from pylav.types import FiltersT, LoadTracksResponseT, RestPatchPlayerPayloadT, RestPatchSessionPayloadT
 from pylav.utils import AsyncIter
 
 if TYPE_CHECKING:
@@ -1411,13 +1405,12 @@ class Node:
         else:
             raise UnsupportedNodeAPI()
 
-    async def get_guild_player(self, guild_id: int) -> RestGetPlayerResponseT:
+    async def get_guild_player(self, guild_id: int) -> LavalinkPlayerObject:
         async with self._session.get(
             self.get_endpoint_session_player_by_guild_id(guild_id=guild_id), headers={"Authorization": self.password}
         ) as res:
             if res.status == 200:
-                data = await res.json(loads=ujson.loads)
-                return data
+                return from_dict(data_class=LavalinkPlayerObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
                 raise Unauthorized
         raise ValueError(f"Server returned an unexpected return code: {res.status}")
