@@ -62,7 +62,6 @@ def get_true_path(executable: str, fallback: T = None) -> str | T | None:
     return executable or fallback
 
 
-from pylav.envvars import JAVA_EXECUTABLE  # isort:skip
 from pylav.types import BotT, CogT, ContextT, InteractionT  # isort:skip
 
 try:
@@ -171,6 +170,8 @@ def get_jar_ram_defaults() -> tuple[str, str, int, int]:
 
 def get_jar_ram_actual(executable: str) -> tuple[str, str, int, int]:
     if not executable:
+        from pylav.envvars import JAVA_EXECUTABLE  # isort:skip
+
         executable = JAVA_EXECUTABLE
     executable = get_true_path(executable, sys.executable)
     max_allocation, is_64bit = get_max_allocation_size(executable)
