@@ -16,6 +16,8 @@ import yaml
 from discord.utils import maybe_coroutine
 
 from pylav._logging import getLogger
+from pylav.constants import SUPPORTED_SEARCHES
+from pylav.envvars import DEFAULT_SEARCH_SOURCE
 from pylav.m3u8_parser._init__ import load as load_m3u8
 from pylav.m3u8_parser.parser import is_url
 from pylav.track_encoding import decode_track
@@ -477,7 +479,7 @@ class Query:
             elif self.is_yandex_music:
                 return f"ymsearch:{self._query}"
             else:
-                return f"ytsearch:{self._query}"
+                return f"{DEFAULT_SEARCH_SOURCE}:{self._query}"
         elif self.is_local:
             return f"{getattr(self._query, 'path', self._query)}"
         return self._query
@@ -541,7 +543,7 @@ class Query:
             elif match.group("search_source") == "ytm":
                 return cls(query, "YouTube Music", search=True)
             elif match.group("search_source") == "yt":
-                return cls(query, "YouTube Music", search=True)
+                return cls(query, "YouTube", search=True)
             elif match.group("search_source") == "sp":
                 return cls(query, "Spotify", search=True)
             elif match.group("search_source") == "sc":
@@ -553,7 +555,7 @@ class Query:
             elif match.group("search_source") == "ym":
                 return cls(query, "Yandex Music", search=True)
             else:
-                return cls(query, "YouTube Music", search=True)  # Fallback to YouTube
+                return cls(query, SUPPORTED_SEARCHES[DEFAULT_SEARCH_SOURCE], search=True)
 
     @classmethod
     async def __process_local_playlist(cls, query: str) -> LocalFile:
@@ -623,7 +625,7 @@ class Query:
             except Exception:
                 if dont_search:
                     return cls("invalid", "invalid")
-                return cls(aiopath.AsyncPath(query), "YouTube Music", search=True)
+                return cls(aiopath.AsyncPath(query), SUPPORTED_SEARCHES[DEFAULT_SEARCH_SOURCE], search=True)
         elif query is None:
             raise ValueError("Query cannot be None")
         source = None
@@ -652,17 +654,17 @@ class Query:
                 except Exception:
                     if dont_search:
                         return cls("invalid", "invalid")
-                    output = cls(query, "YouTube Music", search=True)
+                    output = cls(query, SUPPORTED_SEARCHES[DEFAULT_SEARCH_SOURCE], search=True)
                     if source:
                         output._source = cls.__get_source_from_str(source)
-                    return output  # Fallback to YouTube Music
+                    return output  # Fallback to Configured search source
         except Exception:
             if dont_search:
                 return cls("invalid", "invalid")
-            output = cls(query, "YouTube Music", search=True)
+            output = cls(query, SUPPORTED_SEARCHES[DEFAULT_SEARCH_SOURCE], search=True)
             if source:
                 output._source = cls.__get_source_from_str(source)
-            return output  # Fallback to YouTube Music
+            return output  # Fallback to Configured search source
 
     @classmethod
     def from_string_noawait(cls, query: Query | str) -> Query:
@@ -679,7 +681,7 @@ class Query:
         elif output := cls.__process_search(query):
             return output
         else:
-            return cls(query, "YouTube Music", search=True)  # Fallback to YouTube Music
+            return cls(query, SUPPORTED_SEARCHES[DEFAULT_SEARCH_SOURCE], search=True)
 
     async def query_to_string(
         self,
@@ -981,7 +983,7 @@ class Query:
             case "yandexmusic":
                 return "Yandex Music"
             case __:
-                return "YouTube"
+                return SUPPORTED_SEARCHES[DEFAULT_SEARCH_SOURCE]
 
     @property
     def requires_capability(self) -> str:

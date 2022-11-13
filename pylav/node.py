@@ -30,6 +30,7 @@ from pylav.constants import (
     SUPPORTED_SOURCES,
 )
 from pylav.endpoints.response_objects import (
+    LavalinkErrorResponseObject,
     LavalinkInfoObject,
     LavalinkLoadFailedObject,
     LavalinkLoadTrackObjects,
@@ -44,7 +45,7 @@ from pylav.endpoints.response_objects import (
     RoutePlannerStatusResponseObject,
 )
 from pylav.events import Event
-from pylav.exceptions import Unauthorized, UnsupportedNodeAPI
+from pylav.exceptions import HTTPError, Unauthorized, UnsupportedNodeAPI
 from pylav.filters import (
     ChannelMix,
     Distortion,
@@ -85,6 +86,7 @@ NO_MATCHES = LavalinkNoMatchesObject(
     loadType="NO_MATCHES", tracks=[], playlistInfo=PlaylistInfoObject(name="", selectedTrack=-1)
 )
 SNAPSHOT_REGEX = re.compile(r"^(?P<commit>.*?)-SNAPSHOT$")
+GOOD_RESPONSE_RANGE = range(200, 299)
 
 
 class Penalty:
@@ -1246,7 +1248,7 @@ class Node:
         raise UnsupportedNodeAPI()
 
     # REST API - Direct calls
-    async def get_session_players(self) -> list[LavalinkPlayerObject]:
+    async def get_session_players(self) -> list[LavalinkPlayerObject] | HTTPError:
         """|coro|
         Gets all players associated with the target node.
 
@@ -1258,49 +1260,69 @@ class Node:
         async with self._session.get(
             self.get_endpoint_session_players(), headers={"Authorization": self.password}
         ) as res:
-            if res.status == 200:
+            if res.status in GOOD_RESPONSE_RANGE:
                 return [from_dict(data_class=LavalinkPlayerObject, data=t) for t in await res.json(loads=ujson.loads)]
+            failure = from_dict(data_class=LavalinkErrorResponseObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
-                raise Unauthorized
+                raise Unauthorized(failure)
+            LOGGER.warning(f"Failed to get session players: {failure.status} {failure.message}")
+            return HTTPError(failure)
 
-    async def get_session_player(self, guild_id: int) -> LavalinkPlayerObject:
+    async def get_session_player(self, guild_id: int) -> LavalinkPlayerObject | HTTPError:
         async with self._session.get(
             self.get_endpoint_session_player_by_guild_id(guild_id=guild_id), headers={"Authorization": self.password}
         ) as res:
+            if res.status in GOOD_RESPONSE_RANGE:
+                return from_dict(data_class=LavalinkPlayerObject, data=await res.json(loads=ujson.loads))
+            failure = from_dict(data_class=LavalinkErrorResponseObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
-                raise Unauthorized
-            return from_dict(data_class=LavalinkPlayerObject, data=await res.json(loads=ujson.loads))
+                raise Unauthorized(failure)
+            LOGGER.warning(f"Failed to get session player: {failure.status} {failure.message}")
+            return HTTPError(failure)
 
     async def patch_session_player(
         self, guild_id: int, no_replace: bool = False, payload: RestPatchPlayerPayloadT = None
-    ):
+    ) -> LavalinkPlayerObject | HTTPError:
         async with self._session.patch(
             self.get_endpoint_session_player_by_guild_id(guild_id=guild_id),
             headers={"Authorization": self.password},
             params={"noReplace": "true" if no_replace else "false"},
             json=payload,
         ) as res:
+            if res.status in GOOD_RESPONSE_RANGE:
+                return from_dict(data_class=LavalinkPlayerObject, data=await res.json(loads=ujson.loads))
+            failure = from_dict(data_class=LavalinkErrorResponseObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
-                raise Unauthorized
-            if res.status != 200:
-                LOGGER.warning(f"Failed to patch session player: {res.status} {res.reason}")
-            return from_dict(data_class=LavalinkPlayerObject, data=await res.json(loads=ujson.loads))
+                raise Unauthorized(failure)
+            LOGGER.warning(f"Failed to patch session player: {failure.status} {failure.message}")
+            return HTTPError(failure)
 
-    async def delete_session_player(self, guild_id: int) -> None:
+    async def delete_session_player(self, guild_id: int) -> None | HTTPError:
         async with self._session.delete(
             self.get_endpoint_session_player_by_guild_id(guild_id=guild_id), headers={"Authorization": self.password}
         ) as res:
+            if res.status in GOOD_RESPONSE_RANGE:
+                return
+            response = await res.json(loads=ujson.loads)
+            failure = from_dict(data_class=LavalinkErrorResponseObject, data=response)
             if res.status in [401, 403]:
-                raise Unauthorized
+                raise Unauthorized(failure)
+            LOGGER.warning(f"Failed to delete session player: {failure.status} {failure.message}")
+            return HTTPError(failure)
 
-    async def patch_session(self, payload: RestPatchSessionPayloadT) -> None:
+    async def patch_session(self, payload: RestPatchSessionPayloadT) -> None | HTTPError:
         async with self._session.patch(
             self.get_endpoint_session(), headers={"Authorization": self.password}, json=payload
         ) as res:
+            if res.status in GOOD_RESPONSE_RANGE:
+                return
+            failure = from_dict(data_class=LavalinkErrorResponseObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
-                raise Unauthorized
+                raise Unauthorized(failure)
+            LOGGER.warning(f"Failed to delete session player: {failure.status} {failure.message}")
+            return HTTPError(failure)
 
-    async def get_loadtracks(self, query: Query) -> LavalinkLoadTrackObjects:
+    async def get_loadtracks(self, query: Query) -> LavalinkLoadTrackObjects | HTTPError:
         if not self.available or not self.has_source(query.requires_capability):
             return dataclasses.replace(NO_MATCHES)
 
@@ -1309,83 +1331,121 @@ class Node:
             headers={"Authorization": self.password},
             params={"identifier": query.query_identifier},
         ) as res:
+            if res.status in GOOD_RESPONSE_RANGE:
+                result = await res.json(loads=ujson.loads)
+                asyncio.create_task(self.node_manager.client.query_cache_manager.add_query(query, result))
+                return self.parse_loadtrack_response(result)
+            failure = from_dict(data_class=LavalinkErrorResponseObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
-                raise Unauthorized
-            result = await res.json(loads=ujson.loads)
-            asyncio.create_task(self.node_manager.client.query_cache_manager.add_query(query, result))
-            return self.parse_loadtrack_response(result)
+                raise Unauthorized(failure)
+            LOGGER.warning(f"Failed to load track: {failure.status} {failure.message}")
+            return HTTPError(failure)
 
     async def get_decodetrack(
         self, encoded_track: str, timeout: aiohttp.ClientTimeout | object = sentinel
-    ) -> LavalinkTrackObject:
+    ) -> LavalinkTrackObject | HTTPError:
         async with self._session.get(
             self.get_endpoint_decodetrack(),
             headers={"Authorization": self.password},
             params={"encodedTrack": encoded_track},
             timeout=timeout,
         ) as res:
+            if res.status in GOOD_RESPONSE_RANGE:
+                return from_dict(data_class=LavalinkTrackObject, data=await res.json(loads=ujson.loads))
+            failure = from_dict(data_class=LavalinkErrorResponseObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
-                raise Unauthorized
-            return from_dict(data_class=LavalinkTrackObject, data=await res.json(loads=ujson.loads))
+                raise Unauthorized(failure)
+            LOGGER.warning(f"Failed to decode track: {failure.status} {failure.message}")
+            return HTTPError(failure)
 
-    async def post_decodetracks(self, encoded_tracks: list[str]) -> list[LavalinkTrackObject]:
+    async def post_decodetracks(self, encoded_tracks: list[str]) -> list[LavalinkTrackObject] | HTTPError:
         async with self._session.post(
             self.get_endpoint_decodetracks(), headers={"Authorization": self.password}, json=encoded_tracks
         ) as res:
+            if res.status in GOOD_RESPONSE_RANGE:
+                return [from_dict(data_class=LavalinkTrackObject, data=t) for t in await res.json(loads=ujson.loads)]
+            failure = from_dict(data_class=LavalinkErrorResponseObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
-                raise Unauthorized
-            return [from_dict(data_class=LavalinkTrackObject, data=t) for t in await res.json(loads=ujson.loads)]
+                raise Unauthorized(failure)
+            LOGGER.warning(f"Failed to decode tracks: {failure.status} {failure.message}")
+            return HTTPError(failure)
 
-    async def get_info(self) -> LavalinkInfoObject:
+    async def get_info(self) -> LavalinkInfoObject | HTTPError:
         async with self._session.get(self.get_endpoint_info(), headers={"Authorization": self.password}) as res:
+            if res.status in GOOD_RESPONSE_RANGE:
+                return from_dict(data_class=LavalinkInfoObject, data=await res.json(loads=ujson.loads))
+            failure = from_dict(data_class=LavalinkErrorResponseObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
-                raise Unauthorized
-            return from_dict(data_class=LavalinkInfoObject, data=await res.json(loads=ujson.loads))
+                raise Unauthorized(failure)
+            LOGGER.warning(f"Failed to get info: {failure.status} {failure.message}")
+            return HTTPError(failure)
 
-    async def get_stats(self) -> LavalinkStatsOpObject:
+    async def get_stats(self) -> LavalinkStatsOpObject | HTTPError:
         async with self._session.get(self.get_endpoint_stats(), headers={"Authorization": self.password}) as res:
+            if res.status in GOOD_RESPONSE_RANGE:
+                return from_dict(data_class=LavalinkStatsOpObject, data=await res.json(loads=ujson.loads))
+            failure = from_dict(data_class=LavalinkErrorResponseObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
-                raise Unauthorized
-            return from_dict(data_class=LavalinkStatsOpObject, data=await res.json(loads=ujson.loads))
+                raise Unauthorized(failure)
+            LOGGER.warning(f"Failed to get stats: {failure.status} {failure.message}")
+            return HTTPError(failure)
 
-    async def get_version(self) -> Version | LegacyVersion:
+    async def get_version(self) -> Version | LegacyVersion | HTTPError:
         async with self._session.get(
             self.get_endpoint_version(), headers={"Authorization": self.password, "Content-Type": "text/plain"}
         ) as res:
+            if res.status in GOOD_RESPONSE_RANGE:
+                text = await res.text()
+                # TODO:  Have a better implementation for this
+                if match := SNAPSHOT_REGEX.match(text):
+                    return Version(f"3.999.0-alpha+{match.group('commit')}")
+                return parse_version(await res.text())
+            failure = from_dict(data_class=LavalinkErrorResponseObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
-                raise Unauthorized
-            text = await res.text()
-            # TODO:  Have a better implementation for this
-            if match := SNAPSHOT_REGEX.match(text):
-                return Version(f"3.999.0-alpha+{match.group('commit')}")
-            return parse_version(await res.text())
+                raise Unauthorized(failure)
+            LOGGER.warning(f"Failed to get info: {failure.status} {failure.message}")
+            return HTTPError(failure)
 
-    async def get_routeplanner_status(self) -> RoutePlannerStatusResponseObject:
+    async def get_routeplanner_status(self) -> RoutePlannerStatusResponseObject | HTTPError:
         async with self._session.get(
             self.get_endpoint_routeplanner_status(), headers={"Authorization": self.password}
         ) as res:
+            if res.status in GOOD_RESPONSE_RANGE:
+                data = await res.json(loads=ujson.loads)
+                data["type"] = data["class"]
+                del data["class"]
+                return from_dict(data_class=RoutePlannerStatusResponseObject, data=data)
+            failure = from_dict(data_class=LavalinkErrorResponseObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
-                raise Unauthorized
-            data = await res.json(loads=ujson.loads)
-            data["type"] = data["class"]
-            del data["class"]
-            return from_dict(data_class=RoutePlannerStatusResponseObject, data=data)
+                raise Unauthorized(failure)
+            LOGGER.warning(f"Failed to get info: {failure.status} {failure.message}")
+            return HTTPError(failure)
 
-    async def post_routeplanner_free_address(self, address: str) -> None:
+    async def post_routeplanner_free_address(self, address: str) -> None | HTTPError:
         async with self._session.post(
             self.get_endpoint_routeplanner_free_address(),
             headers={"Authorization": self.password},
             json={"address": address},
         ) as res:
+            if res.status in GOOD_RESPONSE_RANGE:
+                return
+            failure = from_dict(data_class=LavalinkErrorResponseObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
-                raise Unauthorized
+                raise Unauthorized(failure)
+            LOGGER.warning(f"Failed to get info: {failure.status} {failure.message}")
+            return HTTPError(failure)
 
-    async def post_routeplanner_free_all(self) -> None:
+    async def post_routeplanner_free_all(self) -> None | HTTPError:
         async with self._session.post(
             self.get_endpoint_routeplanner_free_all(), headers={"Authorization": self.password}
         ) as res:
+            if res.status in GOOD_RESPONSE_RANGE:
+                return
+            failure = from_dict(data_class=LavalinkErrorResponseObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
-                raise Unauthorized
+                raise Unauthorized(failure)
+            LOGGER.warning(f"Failed to get info: {failure.status} {failure.message}")
+            return HTTPError(failure)
 
     # REST API - Wrappers
 
@@ -1409,7 +1469,7 @@ class Node:
         async with self._session.get(
             self.get_endpoint_session_player_by_guild_id(guild_id=guild_id), headers={"Authorization": self.password}
         ) as res:
-            if res.status == 200:
+            if res.status in GOOD_RESPONSE_RANGE:
                 return from_dict(data_class=LavalinkPlayerObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
                 raise Unauthorized
@@ -1521,7 +1581,7 @@ class Node:
         LavalinkLoadTrackObjects
             Lavalink LoadTrack Response Object
         """
-        return await self.get_track(await self._query_cls.from_string(f"spsearch:{query}"), bypass_cache=bypass_cache)
+        return await self.get_track(await self._query_cls.from_string(f"amsearch:{query}"), bypass_cache=bypass_cache)
 
     async def search_deezer(self, query: str, bypass_cache: bool = False) -> LavalinkLoadTrackObjects:
         """|coro|

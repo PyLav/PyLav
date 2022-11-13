@@ -8,6 +8,7 @@ import yaml
 from deepdiff import DeepDiff
 
 from pylav._logging import getLogger
+from pylav.constants import SUPPORTED_SEARCHES
 
 LOGGER = getLogger("PyLav.Environment")
 
@@ -61,6 +62,12 @@ if not ENV_FILE.exists():
         int(os.getenv("PYLAV__TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS", "7")), 7
     )
 
+    DEFAULT_SEARCH_SOURCE = os.getenv("PYLAV__DEFAULT_MANAGED_NODE_SEARCH_SOURCE", "dzsearch")
+    if DEFAULT_SEARCH_SOURCE not in SUPPORTED_SEARCHES:
+        LOGGER.warning("Invalid search source %s, defaulting to dzsearch", DEFAULT_SEARCH_SOURCE)
+        LOGGER.info("Valid search sources are %s", ", ".join(DEFAULT_SEARCH_SOURCE.keys()))
+        DEFAULT_SEARCH_SOURCE = "dzsearch"
+
     data = {
         "PYLAV__POSTGRES_PORT": POSTGRES_PORT,
         "PYLAV__POSTGRES_PASSWORD": POSTGRES_PASSWORD,
@@ -81,6 +88,7 @@ if not ENV_FILE.exists():
         "PYLAV__TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS": TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS,
         "PYLAV__TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS": TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS,
         "PYLAV__CACHING_ENABLED": CACHING_ENABLED,
+        "PYLAV__DEFAULT_MANAGED_NODE_SEARCH_SOURCE": DEFAULT_SEARCH_SOURCE,
     }
     with ENV_FILE.open(mode="w") as file:
         LOGGER.debug("Creating %s with the following content: %r", ENV_FILE, data)
@@ -186,6 +194,15 @@ else:
                 int(os.getenv("PYLAV__TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS", "7")), 7
             )
             data_new["PYLAV__TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS"] = TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS
+
+        if (DEFAULT_SEARCH_SOURCE := data.get("PYLAV__DEFAULT_MANAGED_NODE_SEARCH_SOURCE")) is None:
+            DEFAULT_SEARCH_SOURCE = os.getenv("PYLAV__DEFAULT_MANAGED_NODE_SEARCH_SOURCE")
+
+        if DEFAULT_SEARCH_SOURCE not in SUPPORTED_SEARCHES:
+            LOGGER.warning("Invalid search source %s, defaulting to dzsearch", DEFAULT_SEARCH_SOURCE)
+            LOGGER.info("Valid search sources are %s", ", ".join(DEFAULT_SEARCH_SOURCE.keys()))
+            DEFAULT_SEARCH_SOURCE = "dzsearch"
+        data_new["PYLAV__DEFAULT_MANAGED_NODE_SEARCH_SOURCE"] = DEFAULT_SEARCH_SOURCE
 
     if DeepDiff(data, data_new, ignore_order=True, max_passes=2, cache_size=1000):
         with ENV_FILE.open(mode="w") as file:
