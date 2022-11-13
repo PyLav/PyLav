@@ -34,7 +34,8 @@ async def run_migration_01050(client: "Client", current_version: LegacyVersion |
     if "topissourcemanagers" in yaml_data["plugins"]:
         yaml_data["plugins"]["lavasrc"] = yaml_data["plugins"]["topissourcemanagers"]
         del yaml_data["plugins"]["topissourcemanagers"]
-    yaml_data["plugins"]["lavasrc"]["providers"].append("dzisrc:%ISRC%")
+    if "dzisrc:%ISRC%" not in yaml_data["plugins"]["lavasrc"]["providers"]:
+        yaml_data["plugins"]["lavasrc"]["providers"].append("dzisrc:%ISRC%")
     yaml_data["plugins"]["lavasrc"]["sources"]["deezer"] = NODE_DEFAULT_SETTINGS["plugins"]["lavasrc"]["sources"][
         "deezer"
     ]

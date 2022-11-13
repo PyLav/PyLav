@@ -19,6 +19,9 @@ class TrackInfoObject:
     uri: Union[str, None] = None
     sourceName: Union[str, None] = None
 
+    def to_dict(self) -> dict:
+        return dataclasses.asdict(self)
+
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class PlaylistInfoObject:
@@ -330,10 +333,6 @@ class FiltersObject:
     echo: Union[EchoObject, dict, None] = dataclasses.field(default_factory=dict)
 
     def __post_init__(self):
-        if isinstance(self.equalizer, list):
-            object.__setattr__(
-                self, "equalizer", [EqualizerBandObject(**band) for band in self.equalizer] if self.equalizer else None
-            )
         if isinstance(self.karaoke, dict):
             object.__setattr__(self, "karaoke", KaraokeObject(**self.karaoke) if self.karaoke else None)
         if isinstance(self.timescale, dict):

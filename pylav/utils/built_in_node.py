@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-import base64
 import secrets
 
-from pylav import __VERSION__, _ANIME
+from pylav import __VERSION__
 
 NODE_DEFAULT_SETTINGS = {
     "server": {"port": 2154, "address": "localhost"},
@@ -60,23 +59,22 @@ NODE_DEFAULT_SETTINGS = {
     "plugins": {
         "lavasrc": {
             "providers": [
+                "dzisrc:%ISRC%",
                 'ytmsearch:"%ISRC%"',
                 'ytsearch:"%ISRC%"',
-                "ytmsearch:%QUERY%",
                 "ytsearch:%QUERY%",
-                "scsearch:%QUERY%",
-                "dzisrc:%ISRC%",
                 "dzsearch:%QUERY%",
+                "ytmsearch:%QUERY%",
+                "scsearch:%QUERY%",
             ],
-            # TODO: Add logic to yandex music source
-            "sources": {"spotify": True, "applemusic": True, "deezer": True, "yandexmusic": False},
+            "sources": {"spotify": False, "applemusic": True, "deezer": False, "yandexmusic": False},
             "spotify": {
-                "clientId": "3d5cd36c73924786aa290798b2131c58",
-                "clientSecret": "edee5eb255a846fbac8297069debea2e",
+                "clientId": "",
+                "clientSecret": "",
                 "countryCode": "US",
             },
-            "applemusic": {"countryCode": "US"},
-            "deezer": {"masterDecryptionKey": "".join([base64.b64decode(r).decode() for r in _ANIME.split(b"|")])},
+            "applemusic": {"countryCode": "US", "mediaAPIToken": None},
+            "deezer": {"masterDecryptionKey": ""},
             "yandexmusic": {"accessToken": ""},
         },
         "dunctebot": {
@@ -102,5 +100,13 @@ NODE_DEFAULT_SETTINGS = {
             "rollingpolicy": {"max-history": 7, "max-file-size": "25MB", "total-size-cap": "1GB"},
         },
         "level": {"root": "INFO", "lavalink": "INFO"},
+        "request": {
+            "enabled": True,
+            "includeClientInfo": True,
+            "includeHeaders": False,
+            "includeQueryString": True,
+            "includePayload": True,
+            "maxPayloadLength": 10000,
+        },
     },
 }

@@ -416,15 +416,7 @@ class Node:
         ):
             try:
                 await self.websocket.ping()
-                await self.get_decodetrack(
-                    "QAAA4AIAe0dvZCBrbm93cy4uLiAnJ1RoZSBNZWxhbmNob2x5IG9m"
-                    "IEhhcnVoaSBTdXp1bWl5YScnIOOAkOa2vOWuruODj+ODq+ODkuOB"
-                    "ruaGgumsseOAkUthZG9rYXdh5YWs6KqNTUFE44CQ776N776e772w"
-                    "7729IOa8lOWlj+OAkQALU09TIEJyaWdhZGUAAAAAAARJqAALV1dCM"
-                    "DFJdU12ekEAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2"
-                    "g/dj1XV0IwMUl1TXZ6QQAHeW91dHViZQAAAAAAAAAA",
-                    timeout=aiohttp.ClientTimeout(total=30),
-                )
+                await self.get_version()
                 LOGGER.trace("Node %s is healthy", self.name)
             except Exception:
                 if self.websocket._connecting is True:
@@ -719,9 +711,9 @@ class Node:
 
         match data["loadType"]:
             case "LOAD_FAILED":
-                raise from_dict(data_class=LavalinkLoadFailedObject, data=data)
+                return from_dict(data_class=LavalinkLoadFailedObject, data=data)
             case "NO_MATCHES":
-                raise from_dict(data_class=LavalinkNoMatchesObject, data=data)
+                return from_dict(data_class=LavalinkNoMatchesObject, data=data)
             case "PLAYLIST_LOADED":
                 return from_dict(data_class=LavalinkPlaylistLoadedObject, data=data)
             case "TRACK_LOADED":
@@ -1161,9 +1153,9 @@ class Node:
     def get_endpoint_session_players(self) -> str:
         match self.api_version:
             case 3:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v3" f"/sessions/{self.session_id}/players"
+                return f"{self.connection_protocol}://{self.host}:{self.port}/v3/sessions/{self.session_id}/players"
             case 4:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v4" f"/sessions/{self.session_id}/players"
+                return f"{self.connection_protocol}://{self.host}:{self.port}/v4/sessions/{self.session_id}/players"
         raise UnsupportedNodeAPI()
 
     def get_endpoint_session_player_by_guild_id(self, guild_id: int) -> str:
@@ -1286,7 +1278,7 @@ class Node:
         async with self._session.patch(
             self.get_endpoint_session_player_by_guild_id(guild_id=guild_id),
             headers={"Authorization": self.password},
-            params={"noReplace": "true" if no_replace else "false"},
+            params={"noReplace": "true" if no_replace else "false", "trace": "true"},
             json=payload,
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
@@ -1301,7 +1293,7 @@ class Node:
         async with self._session.delete(
             self.get_endpoint_session_player_by_guild_id(guild_id=guild_id), headers={"Authorization": self.password}
         ) as res:
-            if res.status in GOOD_RESPONSE_RANGE:
+            if res.status in GOOD_RESPONSE_RANGE or res.status in [404]:
                 return
             response = await res.json(loads=ujson.loads)
             failure = from_dict(data_class=LavalinkErrorResponseObject, data=response)
