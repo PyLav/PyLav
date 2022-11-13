@@ -41,6 +41,13 @@ from pylav.envvars import (
     EXTERNAL_UNMANAGED_PORT,
     EXTERNAL_UNMANAGED_SSL,
     JAVA_EXECUTABLE,
+    MANAGED_NODE_APPLE_MUSIC_API_KEY,
+    MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE,
+    MANAGED_NODE_DEEZER_KEY,
+    MANAGED_NODE_SPOTIFY_CLIENT_ID,
+    MANAGED_NODE_SPOTIFY_CLIENT_SECRET,
+    MANAGED_NODE_SPOTIFY_COUNTRY_CODE,
+    MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN,
     REDIS_FULL_ADDRESS_RESPONSE_CACHE,
     TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS,
     TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS,
@@ -218,6 +225,19 @@ class Client(metaclass=_Singleton):
             LOGGER.exception("Failed to initialize Lavalink")
             raise
 
+    async def on_red_api_tokens_update(self, service_name: str, api_tokens: dict[str, str]) -> None:
+        match service_name:
+            case "spotify" if "client_id" in api_tokens and "client_secret" in api_tokens:
+                await self.update_spotify_tokens(**api_tokens)
+            case "apple_music" if "api_token" in api_tokens and "country_code" in api_tokens:
+                await self.update_applemusic_tokens(**api_tokens)
+            case "deezer" if "master_token" in api_tokens:
+                await self.update_deezer_tokens(**api_tokens)
+            case "yandexmusic" if "token" in api_tokens:
+                await self.update_yandex_tokens(**api_tokens)
+            case "google" if ("email" in api_tokens and "password" in api_tokens):
+                await self.update_google_account(**api_tokens)
+
     async def wait_until_ready(self, timeout: float | None = None) -> None:
         await asyncio.wait_for(self.ready.wait(), timeout=timeout)
 
@@ -242,9 +262,9 @@ class Client(metaclass=_Singleton):
         return self._player_config_manager
 
     @property
-    def spotify_client(self) -> SpotifyClient:
+    def spotify_client(self) -> SpotifyClient | None:
         """Returns the spotify client"""
-        return SpotifyClient(self._spotify_auth)
+        return SpotifyClient(self._spotify_auth) if self._spotify_auth else None
 
     @property
     def is_shutting_down(self) -> bool:
@@ -333,7 +353,15 @@ class Client(metaclass=_Singleton):
                 await self._wait_until_ready()
                 if IS_POSTGRES:
                     await tables.DB.start_connection_pool(max_size=100)
-                client_id, client_secret, deezer_token, yandex_access_token = await self._get_service_tokens()
+                (
+                    spotify_client_id,
+                    spotify_client_secret,
+                    deezer_token,
+                    yandex_access_token,
+                    apple_music_token,
+                ) = await self._get_service_tokens()
+
+                self.bot.add_listener(self.on_red_api_tokens_update, "on_red_api_tokens_update")
                 await self._initialise_modules()
                 config_data = await self._config.fetch_all()
                 java_path = config_data["java_path"]
@@ -346,13 +374,27 @@ class Client(metaclass=_Singleton):
                 self._config_folder = aiopath.AsyncPath(config_folder)
                 localtrack_folder = aiopath.AsyncPath(localtrack_folder)
                 bundled_node_config = self._node_config_manager.bundled_node_config()
-                client_id, client_secret = await self._initialize_yaml_config(
-                    bundled_node_config, client_id, client_secret, deezer_token, yandex_access_token
+                spotify_client_id, spotify_client_secret = await self._initialize_yaml_config(
+                    bundled_node_config,
+                    spotify_client_id,
+                    spotify_client_secret,
+                    deezer_token,
+                    yandex_access_token,
+                    apple_music_token,
                 )
-                self._spotify_auth = ClientCredentialsFlow(client_id=client_id, client_secret=client_secret)
-
+                if spotify_client_id and spotify_client_secret:
+                    self._spotify_auth = ClientCredentialsFlow(
+                        client_id=spotify_client_id, client_secret=spotify_client_secret
+                    )
+                    if spotify_client_id != MANAGED_NODE_SPOTIFY_CLIENT_ID:
+                        await self.update_spotify_tokens(spotify_client_id, spotify_client_secret)
+                if yandex_access_token and yandex_access_token != MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN:
+                    await self.update_yandex_tokens(token=yandex_access_token)
+                if apple_music_token and apple_music_token != MANAGED_NODE_APPLE_MUSIC_API_KEY:
+                    await self.update_applemusic_tokens(
+                        api_token=apple_music_token, country_code=MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE
+                    )
                 await self._run_post_init_jobs(java_path, localtrack_folder)
-
                 self._scheduler.start()
                 self.ready.set()
                 LOGGER.info("PyLav is ready")
@@ -383,6 +425,7 @@ class Client(metaclass=_Singleton):
         await self._maybe_update_next_execution_external_playlists(time_now)
         await self._maybe_force_update_bundled_playlists()
         await self.player_manager.restore_player_states()
+        await self._add_scheduler_job_cache_cleanup()
         await self._add_scheduler_job_bundled_playlist()
         await self._add_scheduler_job_bundled_external_playlists()
         await self._add_scheduler_job_external_playlists()
@@ -398,8 +441,11 @@ class Client(metaclass=_Singleton):
 
     async def _maybe_force_update_bundled_playlists(self):
         if await self.playlist_db_manager.count() == 0:
-            await self.playlist_db_manager.update_bundled_playlists()
-            await self.playlist_db_manager.update_bundled_external_playlists()
+            time_now = utcnow()
+            await self._config.update_next_execution_update_bundled_playlists(time_now - datetime.timedelta(days=7))
+            await self._config.update_next_execution_update_bundled_external_playlists(
+                time_now - datetime.timedelta(days=7)
+            )
 
     async def _maybe_wait_until_bundled_node(self, enable_managed_node):
         if (
@@ -423,21 +469,38 @@ class Client(metaclass=_Singleton):
             client_secret = spotify.get("client_secret")
             if client_id and client_secret:
                 LOGGER.debug("Existing Spotify tokens found; Using clientID - %s", client_id)
+            else:
+                client_id = MANAGED_NODE_SPOTIFY_CLIENT_ID
+                client_secret = MANAGED_NODE_SPOTIFY_CLIENT_SECRET
             deezer = await self.bot.get_shared_api_tokens("deezer")
             deezer_token = deezer.get("master_token")
             if deezer_token:
                 LOGGER.debug("Existing Deezer token found; Using it")
-            yandex = await self.bot.get_shared_api_tokens("yandex")
-            yandex_access_token = yandex.get("access_token")
+            else:
+                deezer_token = MANAGED_NODE_DEEZER_KEY
+
+            yandex = await self.bot.get_shared_api_tokens("yandexmusic")
+            yandex_access_token = yandex.get("token")
             if yandex_access_token:
                 LOGGER.debug("Existing Yandex Music token found; Using it")
+            else:
+                yandex_access_token = MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN
+
+            apple_music = await self.bot.get_shared_api_tokens("apple_music")
+            apple_music_token = apple_music.get("token")
+            if apple_music_token:
+                LOGGER.debug("Existing Apple Music token found; Using it")
+            else:
+                apple_music_token = MANAGED_NODE_APPLE_MUSIC_API_KEY
         else:
             LOGGER.info("PyLav being run from a non Red bot")
-            client_id = None
-            client_secret = None
-            deezer_token = "..."
-            yandex_access_token = ""
-        return client_id, client_secret, deezer_token, yandex_access_token
+            client_id = MANAGED_NODE_SPOTIFY_CLIENT_ID
+            client_secret = MANAGED_NODE_SPOTIFY_CLIENT_SECRET
+            deezer_token = MANAGED_NODE_DEEZER_KEY
+            yandex_access_token = MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN
+            apple_music_token = MANAGED_NODE_APPLE_MUSIC_API_KEY
+
+        return client_id, client_secret, deezer_token, yandex_access_token, apple_music_token
 
     async def _add_scheduler_job_external_playlists(self):
         next_execution_update_external_playlists = await self._config.fetch_next_execution_update_external_playlists()
@@ -451,6 +514,7 @@ class Client(metaclass=_Singleton):
             name="update_external_playlists",
             coalesce=True,
             id=f"{self.bot.user.id}-update_external_playlists",
+            misfire_grace_time=None,
         )
         LOGGER.info(
             "Scheduling first run of External Playlist update task to: %s",
@@ -471,6 +535,7 @@ class Client(metaclass=_Singleton):
             name="update_bundled_external_playlists",
             coalesce=True,
             id=f"{self.bot.user.id}-update_bundled_external_playlists",
+            misfire_grace_time=None,
         )
         LOGGER.info(
             "Scheduling first run of Bundled External Playlist update task to: %s",
@@ -478,16 +543,6 @@ class Client(metaclass=_Singleton):
         )
 
     async def _add_scheduler_job_bundled_playlist(self):
-        self._scheduler.add_job(
-            self._query_cache_manager.delete_old,
-            trigger="interval",
-            seconds=600,
-            max_instances=1,
-            replace_existing=True,
-            name="cache_delete_old",
-            coalesce=True,
-            id=f"{self.bot.user.id}-cache_delete_old",
-        )
         next_execution_update_bundled_playlists = await self._config.fetch_next_execution_update_bundled_playlists()
         self._scheduler.add_job(
             self.playlist_db_manager.update_bundled_playlists,
@@ -499,10 +554,23 @@ class Client(metaclass=_Singleton):
             name="update_bundled_playlists",
             coalesce=True,
             id=f"{self.bot.user.id}-update_bundled_playlists",
+            misfire_grace_time=None,
         )
         LOGGER.info(
             "Scheduling first run of Bundled Playlist update task to: %s",
             next_execution_update_bundled_playlists,
+        )
+
+    async def _add_scheduler_job_cache_cleanup(self):
+        self._scheduler.add_job(
+            self._query_cache_manager.delete_old,
+            trigger="interval",
+            seconds=600,
+            max_instances=1,
+            replace_existing=True,
+            name="cache_delete_old",
+            coalesce=True,
+            id=f"{self.bot.user.id}-cache_delete_old",
         )
 
     async def _maybe_update_next_execution_external_playlists(self, time_now):
@@ -524,28 +592,38 @@ class Client(metaclass=_Singleton):
             )
 
     async def _initialize_yaml_config(
-        self, bundled_node_config, client_id, client_secret, deezer_token, yandex_access_token
+        self,
+        bundled_node_config,
+        spotify_client_id,
+        spotify_client_secret,
+        deezer_token,
+        yandex_access_token,
+        apple_music_token,
     ):
         yaml_data = await bundled_node_config.fetch_yaml()
-        if not await asyncstdlib.all([client_id, client_secret]):
-            spotify_data = yaml_data["plugins"]["lavasrc"]["spotify"]
-            client_id = spotify_data["clientId"]
-            client_secret = spotify_data["clientSecret"]
-        elif await asyncstdlib.all([client_id, client_secret]):
-            if (
-                yaml_data["plugins"]["lavasrc"]["spotify"]["clientId"] != client_id
-                or yaml_data["plugins"]["lavasrc"]["spotify"]["clientSecret"] != client_secret
-            ):
-                yaml_data["plugins"]["lavasrc"]["spotify"]["clientId"] = client_id
-                yaml_data["plugins"]["lavasrc"]["spotify"]["clientSecret"] = client_secret
-                await bundled_node_config.update_yaml(yaml_data)
+        need_update = False
+        if not await asyncstdlib.all([spotify_client_id, spotify_client_secret]):
+            yaml_data["plugins"]["lavasrc"]["sources"]["spotify"] = False
+            need_update = True
+        elif await asyncstdlib.all([spotify_client_id, spotify_client_secret]):
+            yaml_data["plugins"]["lavasrc"]["spotify"]["clientId"] = spotify_client_id
+            yaml_data["plugins"]["lavasrc"]["spotify"]["clientSecret"] = spotify_client_secret
+            yaml_data["plugins"]["lavasrc"]["sources"]["spotify"] = True
+            need_update = True
         if deezer_token:
             yaml_data["plugins"]["lavasrc"]["deezer"]["masterDecryptionKey"] = deezer_token
-            await bundled_node_config.update_yaml(yaml_data)
+            yaml_data["plugins"]["lavasrc"]["sources"]["deezer"] = True
+            need_update = True
         if yandex_access_token:
             yaml_data["plugins"]["lavasrc"]["yandexmusic"]["accessToken"] = yandex_access_token
+            yaml_data["plugins"]["lavasrc"]["sources"]["yandexmusic"] = True
+            need_update = True
+        if apple_music_token:
+            yaml_data["plugins"]["lavasrc"]["applemusic"]["mediaAPIToken"] = apple_music_token
+            yaml_data["plugins"]["lavasrc"]["sources"]["applemusic"] = True
+        if need_update:
             await bundled_node_config.update_yaml(yaml_data)
-        return client_id, client_secret
+        return spotify_client_id, spotify_client_secret
 
     async def register(self, cog: CogT) -> None:
         LOGGER.info("Registering cog %s", cog.__cog_name__)
@@ -561,8 +639,12 @@ class Client(metaclass=_Singleton):
         self._spotify_auth = ClientCredentialsFlow(client_id=client_id, client_secret=client_secret)
         bundled_node_config = self._node_config_manager.bundled_node_config()
         bundled_node_config_yaml = await bundled_node_config.fetch_yaml()
+        bundled_node_config_yaml["plugins"]["lavasrc"]["sources"]["spotify"] = True
         bundled_node_config_yaml["plugins"]["lavasrc"]["spotify"]["clientId"] = client_id
         bundled_node_config_yaml["plugins"]["lavasrc"]["spotify"]["clientSecret"] = client_secret
+        bundled_node_config_yaml["plugins"]["lavasrc"]["spotify"]["countryCode"] = kwargs.get(
+            "country_code", MANAGED_NODE_SPOTIFY_COUNTRY_CODE
+        )
         await bundled_node_config.update_yaml(bundled_node_config_yaml)
 
     async def update_deezer_tokens(self, master_token: str, **kwargs) -> None:
@@ -570,15 +652,38 @@ class Client(metaclass=_Singleton):
         LOGGER.debug("New Deezer token: %s", master_token)
         bundled_node_config = self._node_config_manager.bundled_node_config()
         bundled_node_config_yaml = await bundled_node_config.fetch_yaml()
+        bundled_node_config_yaml["plugins"]["lavasrc"]["sources"]["deezer"] = True
         bundled_node_config_yaml["plugins"]["lavasrc"]["deezer"]["masterDecryptionKey"] = master_token
         await bundled_node_config.update_yaml(bundled_node_config_yaml)
 
-    async def update_yandex_tokens(self, access_token: str, **kwargs) -> None:
+    async def update_yandex_tokens(self, token: str, **kwargs) -> None:
         LOGGER.info("Updating Yandex Tokens")
-        LOGGER.debug("New Yandex token: %s", access_token)
+        LOGGER.debug("New Yandex token: %s", token)
         bundled_node_config = self._node_config_manager.bundled_node_config()
         bundled_node_config_yaml = await bundled_node_config.fetch_yaml()
-        bundled_node_config_yaml["plugins"]["lavasrc"]["yandexmusic"]["accessToken"] = access_token
+        bundled_node_config_yaml["plugins"]["lavasrc"]["sources"]["yandexmusic"] = True
+        bundled_node_config_yaml["plugins"]["lavasrc"]["yandexmusic"]["accessToken"] = token
+        await bundled_node_config.update_yaml(bundled_node_config_yaml)
+
+    async def update_applemusic_tokens(self, api_token: str, country_code: str, **kwargs) -> None:
+        LOGGER.info("Updating Apple Music Tokens")
+        LOGGER.debug("New Apple Music tokens: mediaAPIToken %s || countryCode %s", api_token, country_code)
+        bundled_node_config = self._node_config_manager.bundled_node_config()
+        bundled_node_config_yaml = await bundled_node_config.fetch_yaml()
+        bundled_node_config_yaml["plugins"]["lavasrc"]["sources"]["applemusic"] = True
+        bundled_node_config_yaml["plugins"]["lavasrc"]["applemusic"]["mediaAPIToken"] = api_token
+        bundled_node_config_yaml["plugins"]["lavasrc"]["applemusic"]["countryCode"] = kwargs.get(
+            "country_code", MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE
+        )
+        await bundled_node_config.update_yaml(bundled_node_config_yaml)
+
+    async def update_google_account(self, email: str, password: str, **kwargs) -> None:
+        LOGGER.info("Updating Google Account")
+        LOGGER.debug("New Google Account: %s", email)
+        bundled_node_config = self._node_config_manager.bundled_node_config()
+        bundled_node_config_yaml = await bundled_node_config.fetch_yaml()
+        bundled_node_config_yaml["lavalink"]["server"]["youtubeConfig"]["email"] = email
+        bundled_node_config_yaml["lavalink"]["server"]["youtubeConfig"]["password"] = password
         await bundled_node_config.update_yaml(bundled_node_config_yaml)
 
     async def add_node(
@@ -1307,6 +1412,9 @@ class Client(metaclass=_Singleton):
             "loadType": "PLAYLIST_LOADED" if playlist_name else "SEARCH_RESULT" if output_tracks else "LOAD_FAILED",
             "tracks": output_tracks,
         }
+        if data["loadType"] == "LOAD_FAILED":
+            data["exception"] = {"cause": "No tracks returned", "severity": "COMMON", "message": "No tracks found"}
+        node = await self.node_manager.find_best_node()
         return node.parse_loadtrack_response(data)
 
     async def remove_node(self, node_id: int):
