@@ -55,7 +55,7 @@ class NodeManager:
     ):
         self._client = client
         self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
-        self._player_queue = []
+        self._player_queue = set()
         self._unmanaged_external_host = external_host
         self._unmanaged_external_password = external_password
         self._unmanaged_external_port = external_port
@@ -98,12 +98,12 @@ class NodeManager:
     @property
     def player_queue(self) -> list[Player]:
         """Returns a list of players that are queued to be played"""
-        return self._player_queue
+        return list(self._player_queue)
 
     @player_queue.setter
     def player_queue(self, players: list[Player]) -> None:
         """Sets the player queue"""
-        self._player_queue = players
+        self._player_queue = set(players)
 
     @player_queue.deleter
     def player_queue(self):
@@ -408,7 +408,10 @@ class NodeManager:
         """
         LOGGER.info("[NODE-%s] Successfully established connection", node.name)
         del node.down_votes
+        asyncio.create_task(self._player_change_node_task(node))
+        self.client.dispatch_event(NodeConnectedEvent(node))
 
+    async def _player_change_node_task(self, node):
         async for player in asyncstdlib.iter(self.player_queue):
             await player.change_node(node)
             LOGGER.debug("[NODE-%s] Successfully moved %s", node.name, player.guild.id)
@@ -417,9 +420,7 @@ class NodeManager:
             async for player in asyncstdlib.iter(node._original_players):
                 await player.change_node(node)
                 player._original_node = None
-
         del self.player_queue
-        self.client.dispatch_event(NodeConnectedEvent(node))
 
     async def node_disconnect(self, node: Node, code: int, reason: str) -> None:
         """
@@ -447,13 +448,12 @@ class NodeManager:
         best_node = await self.find_best_node(region=node.region)
 
         if not best_node or not best_node.available:
-            self.player_queue.extend(node.players)
+            self.player_queue = self.player_queue + node.players
             LOGGER.error("Unable to move players, no available nodes! Waiting for a node to become available")
             return
 
         async for player in asyncstdlib.iter(node.players):
             await player.change_node(best_node)
-
             if self.client._connect_back:
                 player._original_node = node
 

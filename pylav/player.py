@@ -183,6 +183,7 @@ class Player(VoiceProtocol):
         self.connected_at = utcnow()
         self.last_track = None
         self.next_track = None
+        self._hashed_voice_state = None
 
         self._user_data = {}
 
@@ -222,6 +223,12 @@ class Player(VoiceProtocol):
         self._last_empty_queue_check = 0
 
         self._waiting_for_node = asyncio.Event()
+
+    def __hash__(self):
+        return hash((self.channel.guild.id, self.channel_id))
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__hash__() == other.__hash__()
 
     def __repr__(self):
         return (
@@ -557,10 +564,28 @@ class Player(VoiceProtocol):
 
     async def fetch_position(self) -> float:
         """Returns the position in the track"""
-        player = await self.node.get_session_player(self.guild.id)
+        try:
+            player = await self.node.get_session_player(self.guild.id)
+            print(
+                "player.position",
+                self.position,
+                "fetch_position",
+                player.track.info.position,
+                "final",
+                (
+                    min(
+                        (self._last_position + (time.time() * 1000 - self._last_update)),
+                        player.track.info.position,
+                    )
+                    if player.track
+                    else self.position
+                ),
+            )
+        except Exception:
+            return int(self.position)
         if isinstance(player, HTTPError):
-            return self.position
-        return (
+            return int(self.position)
+        return int(
             min(
                 (self._last_position + (time.time() * 1000 - self._last_update)),
                 player.track.info.position,
@@ -859,11 +884,14 @@ class Player(VoiceProtocol):
         await self._dispatch_voice_update()
 
     async def _dispatch_voice_update(self) -> None:
-        if {"sessionId", "token", "endpoint"} == self._voice_state.keys():
+        if {"sessionId", "token", "endpoint"} == self._voice_state.keys() and (
+            (not self._hashed_voice_state) or self._hashed_voice_state != hash(tuple(self._voice_state.items()))
+        ):
             await self.node.patch_session_player(
                 self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, {"voice": self._voice_state})
             )
             self._waiting_for_node.set()
+            self._hashed_voice_state = hash(tuple(self._voice_state.items()))
 
     async def _query_to_track(
         self,
@@ -1413,14 +1441,15 @@ class Player(VoiceProtocol):
             await self.node.delete_session_player(self.guild.id)
         payload = {}
         old_node = self.node
+        position = await self.fetch_position() if self.current else 0
         self.node = node
+        await asyncio.wait_for(self._waiting_for_node.wait(), timeout=None)
+        await node.websocket.wait_until_ready()
         if self._voice_state:
             await self._dispatch_voice_update()
         if self.current:
-            payload = typing.cast(
-                RestPatchPlayerPayloadT, {"encodedTrack": self.current.encoded, "position": await self.fetch_position()}
-            )
-            if self.current.skip_segments and self.node.supports_sponsorblock and await self.current.is_youtube():
+            payload = typing.cast(RestPatchPlayerPayloadT, {"encodedTrack": self.current.encoded, "position": position})
+            if self.current.skip_segments and node.supports_sponsorblock and await self.current.is_youtube():
                 payload["skipSegments"] = self.current.skip_segments
             if self.paused:
                 payload["paused"] = self.paused
@@ -1429,7 +1458,7 @@ class Player(VoiceProtocol):
 
         if ops:
             if self.has_effects:
-                payload["filters"] = self.node.get_filter_payload(
+                payload["filters"] = node.get_filter_payload(
                     player=self,
                     equalizer=self.equalizer,
                     karaoke=self.karaoke,
@@ -1444,9 +1473,10 @@ class Player(VoiceProtocol):
                 )
             if self.volume_filter:
                 payload["volume"] = self.volume
+
         if payload:
-            await self.node.patch_session_player(guild_id=self.guild.id, payload=payload)
-        self.node.dispatch_event(NodeChangedEvent(self, old_node, node))
+            await node.patch_session_player(guild_id=self.guild.id, payload=payload)
+        node.dispatch_event(NodeChangedEvent(self, old_node, node))
 
     async def connect(
         self,
@@ -2286,7 +2316,7 @@ class Player(VoiceProtocol):
         if history:
             return queue_dur
         try:
-            remain = 0 if self.current.stream else self.current.duration - await self.fetch_position()
+            remain = 0 if self.current.stream else (self.current.duration - await self.fetch_position())
         except AttributeError:
             remain = 0
         return remain + queue_dur

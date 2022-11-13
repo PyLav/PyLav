@@ -360,6 +360,30 @@ class LocalNodeManager:
             data["sentry"]["tags"]["pylav_version"] = self._client.lib_version
         if not data["lavalink"]["server"]["httpConfig"].get("proxyHost"):
             del data["lavalink"]["server"]["httpConfig"]
+        if (
+            "mediaAPIToken" not in data["plugins"]["lavasrc"]["applemusic"]
+            or not data["plugins"]["lavasrc"]["applemusic"]["mediaAPIToken"]
+        ):
+            del data["plugins"]["lavasrc"]["applemusic"]["mediaAPIToken"]
+        if (
+            "accessToken" not in data["plugins"]["lavasrc"]["yandexmusic"]
+            or not data["plugins"]["lavasrc"]["yandexmusic"]["accessToken"]
+        ):
+            del data["plugins"]["lavasrc"]["yandexmusic"]
+        data["plugins"]["lavasrc"]["providers"] = list(dict.fromkeys(data["plugins"]["lavasrc"]["providers"]))
+        if len(data["plugins"]["lavasrc"]["applemusic"]["countryCode"]) != 2:
+            data["plugins"]["lavasrc"]["applemusic"]["countryCode"] = "US"
+            LOGGER.warning(
+                "Apple Music country code is not set to a valid ISO 3166-1 alpha-2 code and has been defaulted to US"
+            )
+        if len(data["plugins"]["lavasrc"]["spotify"]["countryCode"]) != 2:
+            data["plugins"]["lavasrc"]["spotify"]["countryCode"] = "US"
+            LOGGER.warning(
+                "Spotify country code is not set to a valid ISO 3166-1 alpha-2 code and has been defaulted to US"
+            )
+        if len(data["plugins"]["dunctebot"]["ttsLanguage"]) != 5:
+            data["plugins"]["dunctebot"]["ttsLanguage"] = "en-US"
+            LOGGER.warning("Invalid TTS language code provided for dunctebot plugin, defaulting to en-US")
         self._current_config = data
         async with LAVALINK_APP_YML.open("w") as f:
             await f.write(yaml.safe_dump(data))

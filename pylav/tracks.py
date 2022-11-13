@@ -127,20 +127,22 @@ class Track:
         self._id = str(uuid.uuid4())
         self._updated_query = None
         self.extra.pop("track", None)
+        if self.skip_segments and self.source != "youtube":
+            self.skip_segments = []
 
-    def _build_from_track_dict(self, data, extra):
+    def _build_from_track_dict(self, data: dict, extra: dict):
         self.encoded = data.get("encoded", data["track"])
         self._raw_data = data.get("raw_data", {}) or extra.get("raw_data", {})
         self.extra = extra
         self._unique_id.update(self.encoded.encode())
 
-    def _build_from_track_string(self, data, extra):
+    def _build_from_track_string(self, data: str, extra: dict):
         self.encoded = data
         self.extra = extra
         self._raw_data = extra.get("raw_data", {})
         self._unique_id.update(self.encoded.encode())  # type: ignore
 
-    def _build_from_track_object(self, data, extra):
+    def _build_from_track_object(self, data: Track, extra: dict):
         self.encoded = data.encoded
         self._is_partial = data._is_partial
         self.extra = {**data.extra, **extra}
@@ -148,7 +150,7 @@ class Track:
         self._query = data._query or self._query
         self._unique_id = data._unique_id
 
-    def _build_from_lavalink_track_object(self, data, extra):
+    def _build_from_lavalink_track_object(self, data: LavalinkTrackObject, extra: dict):
         self.encoded = data.encoded
         self.extra = extra
         self._raw_data = extra.get("raw_data", {})
@@ -337,11 +339,12 @@ class Track:
         if self.source == "youtube":
             return f"https://img.youtube.com/vi/{self.identifier}/mqdefault.jpg"
         elif self.source == "spotify":
-            async with self._node.node_manager.client.spotify_client as sp_client:
-                track = await sp_client.get_track(self.identifier)
-                images = track.album.images
-                image = await asyncstdlib.max(images, key=operator.attrgetter("width"))
-                return image.url
+            if spotify_client := self._node.node_manager.client.spotify_client:
+                async with spotify_client as sp_client:
+                    track = await sp_client.get_track(self.identifier)
+                    images = track.album.images
+                    image = await asyncstdlib.max(images, key=operator.attrgetter("width"))
+                    return image.url
 
     async def mix_playlist_url(self) -> str | None:
         if not self.identifier:

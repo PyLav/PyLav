@@ -55,7 +55,7 @@ class PlaylistConfigManager:
         return PlaylistModel(id=id)
 
     async def get_bundled_playlists(self) -> list[PlaylistModel]:
-        return [self.get_playlist(playlist) for playlist in BUNDLED_PLAYLIST_IDS]
+        return [p for playlist in BUNDLED_PLAYLIST_IDS if (p := self.get_playlist(playlist))]
 
     async def get_playlist_by_name(self, playlist_name: str, limit: int = None) -> list[PlaylistModel]:
         query = (
@@ -283,12 +283,11 @@ class PlaylistConfigManager:
         with contextlib.suppress(
             asyncio.exceptions.CancelledError,
         ):
-            old_time_stamp = await self.client._config.fetch_next_execution_update_bundled_playlists()
-
-            await self.client._config.update_next_execution_update_bundled_playlists(
-                utcnow() + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS)
+            await self.client.node_manager.wait_until_ready()
+            await self.client._maybe_wait_until_bundled_node(
+                await self.client.lib_db_manager.get_config().fetch_enable_managed_node()
             )
-
+            old_time_stamp = await self.client._config.fetch_next_execution_update_bundled_playlists()
             curated_data = {
                 1: (
                     "Aikaterna's curated tracks",
@@ -319,6 +318,9 @@ class PlaylistConfigManager:
                 if not playlist:
                     await self.client._config.update_next_execution_update_bundled_playlists(old_time_stamp)
                     continue
+            await self.client._config.update_next_execution_update_bundled_playlists(
+                utcnow() + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS)
+            )
 
     async def update_bundled_external_playlists(self, *ids: int) -> None:
         from pylav.query import Query
@@ -326,11 +328,11 @@ class PlaylistConfigManager:
         with contextlib.suppress(
             asyncio.exceptions.CancelledError,
         ):
-            old_time_stamp = await self.client._config.fetch_next_execution_update_bundled_external_playlists()
-            await self.client._config.update_next_execution_update_bundled_external_playlists(
-                utcnow() + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS)
+            await self.client.node_manager.wait_until_ready()
+            await self.client._maybe_wait_until_bundled_node(
+                await self.client.lib_db_manager.get_config().fetch_enable_managed_node()
             )
-
+            old_time_stamp = await self.client._config.fetch_next_execution_update_bundled_external_playlists()
             # NOTICE: Update the BUNDLED_PLAYLIST_IDS constant in the constants.py file
             curated_data = {
                 1000001: (
@@ -357,9 +359,9 @@ class PlaylistConfigManager:
                 try:
                     LOGGER.info("Updating bundled external playlist - %s", id)
                     data = await self.client.get_tracks(await Query.from_string(url), bypass_cache=True)
-                    name = data.get("playlistInfo", {}).get("name") or name
-                    tracks_raw = data.get("tracks", [])
-                    track_list = [t_ for t in tracks_raw if (t_ := t.get("encoded"))]
+                    name = data.playlistInfo.name or name
+                    tracks_raw = data.tracks
+                    track_list = [t_ for t in tracks_raw if (t_ := t.encoded)]
                 except Exception as exc:
                     LOGGER.error(
                         "Built-in external playlist couldn't be parsed - %s, report this error", name, exc_info=exc
@@ -374,6 +376,9 @@ class PlaylistConfigManager:
                     )
                 else:
                     await self.delete_playlist(playlist_id=id)
+            await self.client._config.update_next_execution_update_bundled_external_playlists(
+                utcnow() + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS)
+            )
 
     async def update_external_playlists(self, *ids: int) -> None:
         from pylav.constants import BUNDLED_PLAYLIST_IDS
@@ -382,8 +387,9 @@ class PlaylistConfigManager:
         with contextlib.suppress(
             asyncio.exceptions.CancelledError,
         ):
-            await self.client._config.update_next_execution_update_external_playlists(
-                utcnow() + datetime.timedelta(days=TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS)
+            await self.client.node_manager.wait_until_ready()
+            await self.client._maybe_wait_until_bundled_node(
+                await self.client.lib_db_manager.get_config().fetch_enable_managed_node()
             )
 
             async for playlist in self.get_external_playlists(*ids, ignore_ids=BUNDLED_PLAYLIST_IDS):
@@ -409,6 +415,9 @@ class PlaylistConfigManager:
                         playlist.id,
                         exc_info=exc,
                     )
+            await self.client._config.update_next_execution_update_external_playlists(
+                utcnow() + datetime.timedelta(days=TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS)
+            )
 
     @staticmethod
     async def count() -> int:
