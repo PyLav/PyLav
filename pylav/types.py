@@ -162,7 +162,7 @@ class LavalinkStatsT(LavalinkOpT):
     uptime: int
     memory: LavalinkStatsMemoryT
     cpu: LavalinkStatCPUT
-    frameStats: LavalinkStatsFrameStatsT
+    frameStats: LavalinkStatsFrameStatsT | None
 
 
 class LavalinkPlayerUpdateT(LavalinkOpT):

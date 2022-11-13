@@ -29,6 +29,15 @@ REGION_TO_COUNTRY_COORDINATE_MAPPING |= {
 
 DEFAULT_REGIONS = list(REGION_TO_COUNTRY_COORDINATE_MAPPING.keys())
 
+SUPPORTED_SEARCHES = {
+    "ytmsearch": "YouTube Music",
+    "ytsearch": "YouTube",
+    "spsearch": "Spotify",
+    "scsearch": "SoundCloud",
+    "amsearch": "Apple Music",
+    "dzsearch": "Deezer",
+}
+
 SUPPORTED_SOURCES = {
     # https://github.com/freyacodes/Lavalink
     "youtube",

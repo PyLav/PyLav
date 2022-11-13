@@ -42,6 +42,8 @@ __all__ = (
     "UnsupportedNodeAPI",
 )
 
+from pylav.endpoints.response_objects import LavalinkErrorResponseObject
+
 
 class PyLavError(CommandError, AppCommandError):
     """Base exception for errors in the library"""
@@ -93,6 +95,9 @@ class ManagedLavalinkNodeError(NodeError):
 
 class HTTPError(PyLavError):
     """Base exception for HTTP request errors"""
+
+    def __init__(self, response: LavalinkErrorResponseObject):
+        self.response = response
 
 
 class Unauthorized(HTTPError):
