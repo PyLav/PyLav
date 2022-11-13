@@ -15,6 +15,7 @@ from pylav.config_migrations.m0920 import run_migration_0920
 from pylav.config_migrations.m01050 import run_migration_01050
 from pylav.config_migrations.m01130 import run_migration_01130
 from pylav.config_migrations.m01180 import run_migration_01180
+from pylav.config_migrations.m010000 import run_migration_010000
 from pylav.config_migrations.set_current_version import set_current_version
 
 if TYPE_CHECKING:
@@ -45,4 +46,5 @@ class UpdateSchemaManager:
         await run_migration_01050(self._client, current_version)
         await run_migration_01130(self._client, current_version)
         await run_migration_01180(self._client, current_version)
+        await run_migration_010000(self._client, current_version)
         await set_current_version(self._client)

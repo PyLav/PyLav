@@ -48,7 +48,7 @@ from pylav.events import (
     TracksRequestedEvent,
     TrackStuckEvent,
 )
-from pylav.exceptions import EntryNotFoundError, NoNodeWithRequestFunctionalityAvailable, TrackNotFound
+from pylav.exceptions import EntryNotFoundError, HTTPError, NoNodeWithRequestFunctionalityAvailable, TrackNotFound
 from pylav.filters import (
     ChannelMix,
     Distortion,
@@ -555,6 +555,20 @@ class Player(VoiceProtocol):
         difference = time.time() * 1000 - self._last_update
         return min(self._last_position + difference, self.current.duration)
 
+    async def fetch_position(self) -> float:
+        """Returns the position in the track"""
+        player = await self.node.get_session_player(self.guild.id)
+        if isinstance(player, HTTPError):
+            return self.position
+        return (
+            min(
+                (self._last_position + (time.time() * 1000 - self._last_update)),
+                player.track.info.position,
+            )
+            if player.track
+            else self.position
+        )
+
     async def auto_pause_task(self):
         with contextlib.suppress(
             asyncio.exceptions.CancelledError,
@@ -971,7 +985,7 @@ class Player(VoiceProtocol):
         self.last_track = None
         self.stopped = False
         if self.current:
-            self.current.timestamp = self.position
+            self.current.timestamp = self.fetch_position()
             self.queue.put_nowait([self.current], 0)
             self.next_track = self.current
             self.last_track = self.current
@@ -1204,7 +1218,7 @@ class Player(VoiceProtocol):
         self._last_position = 0
         if self.node.supports_sponsorblock and await self.current.is_youtube():
             payload["skipSegments"] = self.current.skip_segments if self.current else []
-        payload["position"] = self.current.last_known_position if self.current else self.position
+        payload["position"] = self.current.last_known_position if self.current else await self.fetch_position()
         await self.node.patch_session_player(
             guild_id=self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, payload), no_replace=False
         )
@@ -1213,7 +1227,7 @@ class Player(VoiceProtocol):
     async def skip(self, requester: discord.Member) -> None:
         """Plays the next track in the queue, if any"""
         previous_track = self.current
-        previous_position = self.position
+        previous_position = await self.fetch_position()
         op = self.next(requester=requester)
         await op
         if previous_track:
@@ -1335,10 +1349,10 @@ class Player(VoiceProtocol):
         """
         if self.current and self.current.is_seekable:
             if with_filter:
-                position = self.position
+                position = await self.fetch_position()
             position = await asyncstdlib.max([await asyncstdlib.min([position, self.current.duration]), 0])
             self.node.dispatch_event(
-                TrackSeekEvent(self, requester, self.current, before=self.position, after=position)
+                TrackSeekEvent(self, requester, self.current, before=await self.fetch_position(), after=position)
             )
             await self.node.patch_session_player(
                 guild_id=self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, {"position": position})
@@ -1404,7 +1418,7 @@ class Player(VoiceProtocol):
             await self._dispatch_voice_update()
         if self.current:
             payload = typing.cast(
-                RestPatchPlayerPayloadT, {"encodedTrack": self.current.encoded, "position": self.position}
+                RestPatchPlayerPayloadT, {"encodedTrack": self.current.encoded, "position": await self.fetch_position()}
             )
             if self.current.skip_segments and self.node.supports_sponsorblock and await self.current.is_youtube():
                 payload["skipSegments"] = self.current.skip_segments
@@ -1926,7 +1940,7 @@ class Player(VoiceProtocol):
                 reset_no_set=reset_not_set,
                 **kwargs,
             ),
-            "position": self.position,
+            "position": await self.fetch_position(),
         }
         await self.node.patch_session_player(self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, payload))
         kwargs.pop("reset_not_set", None)
@@ -2037,9 +2051,9 @@ class Player(VoiceProtocol):
             skip_segments = []
         return skip_segments
 
-    def draw_time(self) -> str:
+    async def draw_time(self) -> str:
         paused = self.paused
-        pos = self.position
+        pos = await self.fetch_position()
         dur = getattr(self.current, "duration", pos)
         sections = 12
         loc_time = round((pos / dur if dur != 0 else pos) * sections)
@@ -2061,8 +2075,8 @@ class Player(VoiceProtocol):
         if not embed:
             return ""
         queue_list = ""
-        arrow = self.draw_time()
-        pos = format_time(self.position)
+        arrow = await self.draw_time()
+        pos = format_time(await self.fetch_position())
         current = self.current
         dur = _("LIVE") if current.stream else format_time(current.duration)
         current_track_description = await current.get_track_display_name(with_url=True)
@@ -2174,8 +2188,8 @@ class Player(VoiceProtocol):
         start_index = page_index * per_page
         end_index = start_index + per_page
         tracks = await asyncstdlib.list(asyncstdlib.islice(queue.raw_queue, start_index, end_index))
-        arrow = self.draw_time()
-        pos = format_time(self.position)
+        arrow = await self.draw_time()
+        pos = format_time(await self.fetch_position())
         current = self.current
         dur = "LIVE" if current.stream else format_time(current.duration)
         queue_list = await self._process_queue_embed_initial_description(arrow, current, dur, pos, queue_list)
@@ -2272,7 +2286,7 @@ class Player(VoiceProtocol):
         if history:
             return queue_dur
         try:
-            remain = 0 if self.current.stream else self.current.duration - self.position
+            remain = 0 if self.current.stream else self.current.duration - await self.fetch_position()
         except AttributeError:
             remain = 0
         return remain + queue_dur
@@ -2354,7 +2368,7 @@ class Player(VoiceProtocol):
             "auto_play": data["auto_play"],
             "auto_play_playlist_id": data["auto_play_playlist_id"],
             "volume": self.volume,
-            "position": self.position,
+            "position": await self.fetch_position(),
             "playing": self.is_playing,
             "queue": [] if self.queue.empty() else [await t.to_json() for t in self.queue.raw_queue],
             "history": [] if self.history.empty() else [await t.to_json() for t in self.history.raw_queue],
