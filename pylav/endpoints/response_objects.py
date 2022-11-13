@@ -56,12 +56,12 @@ class PlayerStateObject:
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkOpObject:
-    op: str
+    op: str = None
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkReadyOpObject(LavalinkOpObject):
-    sessionId: str
+    sessionId: str = None
     resumed: Union[bool, None] = False
 
 
@@ -89,11 +89,11 @@ class LavalinkStatsFrameStatsObject:
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkStatsOpObject(LavalinkOpObject):
-    players: int
-    playingPlayers: int
-    uptime: int
-    memory: Union[LavalinkStatsMemoryObject, dict]
-    cpu: Union[LavalinkStatCPUObject, dict]
+    players: int = 0
+    playingPlayers: int = 0
+    uptime: int = 0
+    memory: Union[LavalinkStatsMemoryObject, dict] = None
+    cpu: Union[LavalinkStatCPUObject, dict] = None
     frameStats: Union[LavalinkStatsFrameStatsObject, dict, None] = None
 
     def __post_init__(self):
@@ -107,8 +107,8 @@ class LavalinkStatsOpObject(LavalinkOpObject):
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkPlayerUpdateObject(LavalinkOpObject):
-    guildId: str
-    state: Union[PlayerStateObject, dict]
+    guildId: str = None
+    state: Union[PlayerStateObject, dict] = None
 
     def __post_init__(self):
         if isinstance(self.state, dict):
@@ -117,9 +117,9 @@ class LavalinkPlayerUpdateObject(LavalinkOpObject):
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class TrackStartEventOpObject(LavalinkOpObject):
-    op: Literal["event"]
-    guildId: str
-    type: Literal["TrackStartEvent"]
+    op: Literal["event"] = None
+    guildId: str = None
+    type: Literal["TrackStartEvent"] = None
     encodedTrack: str = None
     track: Union[str, None] = None
 
@@ -130,10 +130,10 @@ class TrackStartEventOpObject(LavalinkOpObject):
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class TrackEndEventOpObject(LavalinkOpObject):
-    op: Literal["event"]
-    guildId: str
-    type: Literal["TrackEndEvent"]
-    reason: Literal["FINISHED", "LOAD_FAILED", "STOPPED", "REPLACED", "CLEANUP"]
+    op: Literal["event"] = None
+    guildId: str = None
+    type: Literal["TrackEndEvent"] = None
+    reason: Literal["FINISHED", "LOAD_FAILED", "STOPPED", "REPLACED", "CLEANUP"] = None
     encodedTrack: str = None
     track: Union[str, None] = None
 
