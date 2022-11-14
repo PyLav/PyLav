@@ -552,7 +552,7 @@ class Player(VoiceProtocol):
 
     @property
     def position(self) -> float:
-        """Returns the position in the track, adjusted for Lavalink's 5-second stats' interval"""
+        """Returns the position in the track, adjusted for delta since last update"""
         if not self.is_playing:
             return 0
 
@@ -562,37 +562,29 @@ class Player(VoiceProtocol):
         difference = time.time() * 1000 - self._last_update
         return min(self._last_position + difference, self.current.duration)
 
+    async def fetch_player_stats(self):
+        try:
+            player = await self.node.get_session_player(self.guild.id)
+        except Exception:
+            return
+        if isinstance(player, HTTPError):
+            return
+        self._last_position = player.track.info.position if player.track else 0
+        self._last_update = time.time() * 1000
+        self.paused = player.paused
+        self._volume = Volume(player.volume)
+        self._connected = player.voice.connected
+        self._ping = player.voice.ping
+        if self.current:
+            self.current.last_known_position = self._last_position
+
     async def fetch_position(self) -> float:
         """Returns the position in the track"""
         try:
-            player = await self.node.get_session_player(self.guild.id)
-            print(
-                "player.position",
-                self.position,
-                "fetch_position",
-                player.track.info.position,
-                "final",
-                (
-                    min(
-                        (self._last_position + (time.time() * 1000 - self._last_update)),
-                        player.track.info.position,
-                    )
-                    if player.track
-                    else self.position
-                ),
-            )
+            await self.fetch_player_stats()
         except Exception:
-            return int(self.position)
-        if isinstance(player, HTTPError):
-            return int(self.position)
-        return int(
-            min(
-                (self._last_position + (time.time() * 1000 - self._last_update)),
-                player.track.info.position,
-            )
-            if player.track
-            else self.position
-        )
+            return self.position
+        return self.position
 
     async def auto_pause_task(self):
         with contextlib.suppress(
@@ -1447,16 +1439,18 @@ class Player(VoiceProtocol):
         await node.websocket.wait_until_ready()
         if self._voice_state:
             await self._dispatch_voice_update()
-        if self.current:
-            payload = typing.cast(RestPatchPlayerPayloadT, {"encodedTrack": self.current.encoded, "position": position})
-            if self.current.skip_segments and node.supports_sponsorblock and await self.current.is_youtube():
-                payload["skipSegments"] = self.current.skip_segments
-            if self.paused:
-                payload["paused"] = self.paused
-
-            self._last_update = time.time() * 1000
-
         if ops:
+            if self.current:
+                payload = typing.cast(
+                    RestPatchPlayerPayloadT, {"encodedTrack": self.current.encoded, "position": position}
+                )
+                if self.current.skip_segments and node.supports_sponsorblock and await self.current.is_youtube():
+                    payload["skipSegments"] = self.current.skip_segments
+                if self.paused:
+                    payload["paused"] = self.paused
+
+                self._last_update = time.time() * 1000
+
             if self.has_effects:
                 payload["filters"] = node.get_filter_payload(
                     player=self,
@@ -2449,8 +2443,9 @@ class Player(VoiceProtocol):
         self._effect_enabled = player.effect_enabled
         await self._process_restore_filters(player)
         self.current = current
-        await self.change_to_best_node(ops=False)
+
         self.stopped = (not await self.autoplay_enabled()) and not self.queue.qsize() and not self.current
+        await self.change_to_best_node(ops=False)
         await self._process_restore_rest_call()
         self.last_track = last_track
         self._restored = True
@@ -2472,8 +2467,10 @@ class Player(VoiceProtocol):
             payload["paused"] = self.paused
         if self.current:
             payload |= {"encodedTrack": self.current.encoded, "position": self._last_position}
+            self._last_update = time.time() * 1000
         if self.stopped:
             payload |= {"encodedTrack": None}
+            self._last_update = time.time() * 1000
         if self.has_effects:
             payload["filters"] = self.node.get_filter_payload(
                 player=self,
