@@ -225,7 +225,7 @@ class Client(metaclass=_Singleton):
             LOGGER.exception("Failed to initialize Lavalink")
             raise
 
-    async def on_red_api_tokens_update(self, service_name: str, api_tokens: dict[str, str]) -> None:
+    async def on_pylav_red_api_tokens_update(self, service_name: str, api_tokens: dict[str, str]) -> None:
         match service_name:
             case "spotify" if "client_id" in api_tokens and "client_secret" in api_tokens:
                 await self.update_spotify_tokens(**api_tokens)
@@ -237,6 +237,41 @@ class Client(metaclass=_Singleton):
                 await self.update_yandex_tokens(**api_tokens)
             case "google" if ("email" in api_tokens and "password" in api_tokens):
                 await self.update_google_account(**api_tokens)
+
+    async def on_pylav_shard_resumed(self, shard_id: int) -> None:
+        if self._shutting_down or not self.initialized:
+            return
+        LOGGER.debug("Shard %s resumed, checking for affected players", shard_id)
+        players = filter(lambda p: p.guild.shard_id == shard_id, self.player_manager.players.values())
+        for player in players:
+            await player.reconnect()
+            await player.change_to_best_node(forced=True)
+
+    async def on_pylav_shard_ready(self, shard_id: int) -> None:
+        if self._shutting_down or not self.initialized:
+            return
+        LOGGER.debug("Shard %s ready, checking for affected players", shard_id)
+        players = filter(lambda p: p.guild.shard_id == shard_id, self.player_manager.players.values())
+        for player in players:
+            await player.reconnect()
+            await player.change_to_best_node(forced=True)
+
+    async def on_pylav_resumed(self) -> None:
+        if self._shutting_down or not self.initialized:
+            return
+        LOGGER.debug("Resumed, checking for affected players")
+
+        for player in self.player_manager.players.values():
+            await player.reconnect()
+            await player.change_to_best_node(forced=True)
+
+    async def on_pylav_ready(self) -> None:
+        if self._shutting_down or not self.initialized:
+            return
+        LOGGER.debug("Ready, checking for affected players")
+        for player in self.player_manager.players.values():
+            await player.reconnect()
+            await player.change_to_best_node(forced=True)
 
     async def wait_until_ready(self, timeout: float | None = None) -> None:
         await asyncio.wait_for(self.ready.wait(), timeout=timeout)
@@ -361,7 +396,14 @@ class Client(metaclass=_Singleton):
                     apple_music_token,
                 ) = await self._get_service_tokens()
 
-                self.bot.add_listener(self.on_red_api_tokens_update, "on_red_api_tokens_update")
+                self.bot.add_listener(self.on_pylav_red_api_tokens_update, name="on_pylav_red_api_tokens_update")
+
+                if isinstance(self.bot, discord.AutoShardedClient):
+                    self.bot.add_listener(self.on_pylav_shard_resumed, name="on_pylav_shard_resumed")
+                    self.bot.add_listener(self.on_pylav_shard_ready, name="on_pylav_shard_ready")
+                else:
+                    self.bot.add_listener(self.on_pylav_ready, name="on_pylav_ready")
+                    self.bot.add_listener(self.on_pylav_resumed, name="on_pylav_resumed")
                 await self._initialise_modules()
                 config_data = await self._config.fetch_all()
                 java_path = config_data["java_path"]
@@ -903,6 +945,11 @@ class Client(metaclass=_Singleton):
                 self.__cogs_registered.discard(cog.__cog_name__)
                 LOGGER.info("%s has been unregistered", cog.__cog_name__)
                 if not self.__cogs_registered:
+                    self.bot.remove_listener(self.on_pylav_red_api_tokens_update, name="on_pylav_red_api_tokens_update")
+                    self.bot.remove_listener(self.on_pylav_shard_resumed, name="on_pylav_shard_resumed")
+                    self.bot.remove_listener(self.on_pylav_shard_ready, name="on_pylav_shard_ready")
+                    self.bot.remove_listener(self.on_pylav_ready, name="on_pylav_ready")
+                    self.bot.remove_listener(self.on_pylav_resumed, name="on_pylav_resumed")
                     self._shutting_down = True
                     self.ready.clear()
                     try:
@@ -915,6 +962,7 @@ class Client(metaclass=_Singleton):
                         await self._local_node_manager.shutdown()
                         await self._session.close()
                         await self._cached_session.close()
+
                         if self._scheduler:
                             self._scheduler.shutdown(wait=True)
                     except Exception as e:

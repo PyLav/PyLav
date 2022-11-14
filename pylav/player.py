@@ -580,9 +580,13 @@ class Player(VoiceProtocol):
         if self.current:
             self.current.last_known_position = self._last_position
 
-    async def fetch_position(self) -> float:
+    async def fetch_position(self, skip_fetch: bool = False) -> float:
         """Returns the position in the track"""
+        if skip_fetch:
+            return self.position
         try:
+            if not self.current:
+                return self.position
             await self.fetch_player_stats()
         except Exception:
             return self.position
@@ -755,7 +759,9 @@ class Player(VoiceProtocol):
             LOGGER.trace("Auto save task for %s - Saving the player at %s", self, utcnow())
             await self.save()
 
-    async def change_to_best_node(self, feature: str = None, ops: bool = True) -> Node | None:
+    async def change_to_best_node(
+        self, feature: str = None, ops: bool = True, forced: bool = True, skip_position_fetch: bool = False
+    ) -> Node | None:
         """
         Returns the best node to play the current track.
         Returns
@@ -776,11 +782,13 @@ class Player(VoiceProtocol):
         if feature and not node:
             LOGGER.warning("No node with %s functionality available after one temporarily became available!", feature)
             raise NoNodeWithRequestFunctionalityAvailable(f"No node with {feature} functionality available", feature)
-        if node != self.node or not ops:
-            await self.change_node(node, ops=ops)
+        if node != self.node or not ops or forced:
+            await self.change_node(node, ops=ops, skip_position_fetch=skip_position_fetch)
             return node
 
-    async def change_to_best_node_diff_region(self, feature: str = None, ops: bool = True) -> Node | None:
+    async def change_to_best_node_diff_region(
+        self, feature: str = None, ops: bool = True, skip_position_fetch: bool = False
+    ) -> Node | None:
         """
         Returns the best node to play the current track in a different region.
         Returns
@@ -803,7 +811,7 @@ class Player(VoiceProtocol):
             raise NoNodeWithRequestFunctionalityAvailable(f"No node with {feature} functionality available", feature)
 
         if node != self.node or not ops:
-            await self.change_node(node, ops=ops)
+            await self.change_node(node, ops=ops, skip_position_fetch=skip_position_fetch)
             return node
 
     def store(
@@ -1421,7 +1429,9 @@ class Player(VoiceProtocol):
         event = PlayerUpdateEvent(self, self._last_position, self.position_timestamp)
         self.node.dispatch_event(event)
 
-    async def change_node(self, node: Node, ops: bool = True) -> None:
+    async def change_node(
+        self, node: Node, ops: bool = True, forced: bool = False, skip_position_fetch: bool = False
+    ) -> None:
         """
         Changes the player's node
         Parameters
@@ -1430,12 +1440,16 @@ class Player(VoiceProtocol):
             The node the player is changed to.
         ops: :class:`bool`
             Whether to change apply the volume and filter ops on change.
+        forced: :class:`bool`
+            Whether to force the change
+        skip_position_fetch: :class:`bool`
+            Whether to skip the position fetch.
         """
-        if node == self.node and self.node.available and ops:
+        if node == self.node and self.node.available and ops and not forced:
             return
         payload = {}
         old_node = self.node
-        position = await self.fetch_position() if self.current else 0
+        position = await self.fetch_position(skip_fetch=skip_position_fetch)
         self.node = node
         await asyncio.wait_for(self._waiting_for_node.wait(), timeout=None)
         await node.websocket.wait_until_ready()
@@ -2449,7 +2463,7 @@ class Player(VoiceProtocol):
         self.current = current
 
         self.stopped = (not await self.autoplay_enabled()) and not self.queue.qsize() and not self.current
-        await self.change_to_best_node(ops=False)
+        await self.change_to_best_node(ops=False, skip_position_fetch=True)
         await self._process_restore_rest_call()
         self.last_track = last_track
         self._restored = True
