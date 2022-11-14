@@ -1542,8 +1542,9 @@ class Player(VoiceProtocol):
         )
         self._connected = True
         self.connected_at = utcnow()
-        LOGGER.debug("[Player-%s] Reconnected to voice channel", self.channel.guild.id)
         await asyncio.wait_for(self._waiting_for_node.wait(), timeout=None)
+        await self.change_to_best_node(forced=True)
+        LOGGER.debug("[Player-%s] Reconnected to voice channel", self.channel.guild.id)
 
     async def disconnect(self, *, force: bool = False, requester: discord.Member | None) -> None:
         try:
