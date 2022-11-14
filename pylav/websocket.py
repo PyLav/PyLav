@@ -442,7 +442,6 @@ class WebSocket:
                 and player.connected_at < utcnow() - datetime.timedelta(minutes=15)
             ):
                 await player.reconnect()
-                await player.change_to_best_node(forced=True)
                 return
             await player._update_state(data.state)
         else:

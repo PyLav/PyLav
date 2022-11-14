@@ -229,7 +229,7 @@ class Client(metaclass=_Singleton):
         match service_name:
             case "spotify" if "client_id" in api_tokens and "client_secret" in api_tokens:
                 await self.update_spotify_tokens(**api_tokens)
-            case "apple_music" if "api_token" in api_tokens and "country_code" in api_tokens:
+            case "apple_music" if "token" in api_tokens and "country_code" in api_tokens:
                 await self.update_applemusic_tokens(**api_tokens)
             case "deezer" if "master_token" in api_tokens:
                 await self.update_deezer_tokens(**api_tokens)
@@ -245,7 +245,6 @@ class Client(metaclass=_Singleton):
         players = filter(lambda p: p.guild.shard_id == shard_id, self.player_manager.players.values())
         for player in players:
             await player.reconnect()
-            await player.change_to_best_node(forced=True)
 
     async def on_pylav_shard_ready(self, shard_id: int) -> None:
         if self._shutting_down or not self.initialized:
@@ -254,7 +253,6 @@ class Client(metaclass=_Singleton):
         players = filter(lambda p: p.guild.shard_id == shard_id, self.player_manager.players.values())
         for player in players:
             await player.reconnect()
-            await player.change_to_best_node(forced=True)
 
     async def on_pylav_resumed(self) -> None:
         if self._shutting_down or not self.initialized:
@@ -263,7 +261,6 @@ class Client(metaclass=_Singleton):
 
         for player in self.player_manager.players.values():
             await player.reconnect()
-            await player.change_to_best_node(forced=True)
 
     async def on_pylav_ready(self) -> None:
         if self._shutting_down or not self.initialized:
@@ -271,7 +268,6 @@ class Client(metaclass=_Singleton):
         LOGGER.debug("Ready, checking for affected players")
         for player in self.player_manager.players.values():
             await player.reconnect()
-            await player.change_to_best_node(forced=True)
 
     async def wait_until_ready(self, timeout: float | None = None) -> None:
         await asyncio.wait_for(self.ready.wait(), timeout=timeout)
@@ -396,14 +392,13 @@ class Client(metaclass=_Singleton):
                     apple_music_token,
                 ) = await self._get_service_tokens()
 
-                self.bot.add_listener(self.on_pylav_red_api_tokens_update, name="on_pylav_red_api_tokens_update")
-
+                self.bot.add_listener(self.on_pylav_red_api_tokens_update, name="on_red_api_tokens_update")
                 if isinstance(self.bot, discord.AutoShardedClient):
-                    self.bot.add_listener(self.on_pylav_shard_resumed, name="on_pylav_shard_resumed")
-                    self.bot.add_listener(self.on_pylav_shard_ready, name="on_pylav_shard_ready")
+                    self.bot.add_listener(self.on_pylav_shard_resumed, name="on_shard_resumed")
+                    self.bot.add_listener(self.on_pylav_shard_ready, name="on_shard_ready")
                 else:
-                    self.bot.add_listener(self.on_pylav_ready, name="on_pylav_ready")
-                    self.bot.add_listener(self.on_pylav_resumed, name="on_pylav_resumed")
+                    self.bot.add_listener(self.on_pylav_ready, name="on_ready")
+                    self.bot.add_listener(self.on_pylav_resumed, name="on_resumed")
                 await self._initialise_modules()
                 config_data = await self._config.fetch_all()
                 java_path = config_data["java_path"]
@@ -707,13 +702,13 @@ class Client(metaclass=_Singleton):
         bundled_node_config_yaml["plugins"]["lavasrc"]["yandexmusic"]["accessToken"] = token
         await bundled_node_config.update_yaml(bundled_node_config_yaml)
 
-    async def update_applemusic_tokens(self, api_token: str, country_code: str, **kwargs) -> None:
+    async def update_applemusic_tokens(self, token: str, country_code: str, **kwargs) -> None:
         LOGGER.info("Updating Apple Music Tokens")
-        LOGGER.debug("New Apple Music tokens: mediaAPIToken %s || countryCode %s", api_token, country_code)
+        LOGGER.debug("New Apple Music tokens: mediaAPIToken %s || countryCode %s", token, country_code)
         bundled_node_config = self._node_config_manager.bundled_node_config()
         bundled_node_config_yaml = await bundled_node_config.fetch_yaml()
         bundled_node_config_yaml["plugins"]["lavasrc"]["sources"]["applemusic"] = True
-        bundled_node_config_yaml["plugins"]["lavasrc"]["applemusic"]["mediaAPIToken"] = api_token
+        bundled_node_config_yaml["plugins"]["lavasrc"]["applemusic"]["mediaAPIToken"] = token
         bundled_node_config_yaml["plugins"]["lavasrc"]["applemusic"]["countryCode"] = kwargs.get(
             "country_code", MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE
         )
@@ -945,11 +940,11 @@ class Client(metaclass=_Singleton):
                 self.__cogs_registered.discard(cog.__cog_name__)
                 LOGGER.info("%s has been unregistered", cog.__cog_name__)
                 if not self.__cogs_registered:
-                    self.bot.remove_listener(self.on_pylav_red_api_tokens_update, name="on_pylav_red_api_tokens_update")
-                    self.bot.remove_listener(self.on_pylav_shard_resumed, name="on_pylav_shard_resumed")
-                    self.bot.remove_listener(self.on_pylav_shard_ready, name="on_pylav_shard_ready")
-                    self.bot.remove_listener(self.on_pylav_ready, name="on_pylav_ready")
-                    self.bot.remove_listener(self.on_pylav_resumed, name="on_pylav_resumed")
+                    self.bot.remove_listener(self.on_pylav_red_api_tokens_update, name="on_red_api_tokens_update")
+                    self.bot.remove_listener(self.on_pylav_shard_resumed, name="on_shard_resumed")
+                    self.bot.remove_listener(self.on_pylav_shard_ready, name="on_shard_ready")
+                    self.bot.remove_listener(self.on_pylav_ready, name="on_ready")
+                    self.bot.remove_listener(self.on_pylav_resumed, name="on_resumed")
                     self._shutting_down = True
                     self.ready.clear()
                     try:
