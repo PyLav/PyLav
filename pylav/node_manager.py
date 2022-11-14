@@ -13,7 +13,7 @@ import ujson
 
 from pylav._logging import getLogger
 from pylav.constants import (
-    BUNDLED_NODES_IDS,
+    BUNDLED_NODES_IDS_HOST_MAPPING,
     DEFAULT_REGIONS,
     PYLAV_BUNDLED_NODES_SETTINGS,
     REGION_TO_COUNTRY_COORDINATE_MAPPING,
@@ -43,6 +43,7 @@ class NodeManager:
         "_unmanaged_external_ssl",
         "_nodes",
         "_adding_nodes",
+        "_player_migrate_task",
     )
 
     def __init__(
@@ -62,6 +63,7 @@ class NodeManager:
         self._unmanaged_external_ssl = external_ssl
         self._nodes = []
         self._adding_nodes = asyncio.Event()
+        self._player_migrate_task = None
 
     def __iter__(self):
         yield from self._nodes
@@ -246,7 +248,7 @@ class NodeManager:
         self.nodes.remove(node)
         LOGGER.info("[NODE-%s] Successfully removed Node", node.name)
         LOGGER.verbose("[NODE-%s] Successfully removed Node -- %r", node.name, node)
-        if node.identifier and not node.managed and node.identifier not in BUNDLED_NODES_IDS:
+        if node.identifier and not node.managed and node.identifier not in BUNDLED_NODES_IDS_HOST_MAPPING:
             await self.client.node_db_manager.delete(node.identifier)
             LOGGER.debug("[NODE-%s] Successfully deleted Node from database", node.name)
 
@@ -408,7 +410,7 @@ class NodeManager:
         """
         LOGGER.info("[NODE-%s] Successfully established connection", node.name)
         del node.down_votes
-        asyncio.create_task(self._player_change_node_task(node))
+        self._player_migrate_task = asyncio.create_task(self._player_change_node_task(node))
         self.client.dispatch_event(NodeConnectedEvent(node))
 
     async def _player_change_node_task(self, node):
@@ -421,6 +423,7 @@ class NodeManager:
                 await player.change_node(node)
                 player._original_node = None
         del self.player_queue
+        self._player_migrate_task = None
 
     async def node_disconnect(self, node: Node, code: int, reason: str) -> None:
         """
@@ -446,7 +449,6 @@ class NodeManager:
         )
         self.client.dispatch_event(NodeDisconnectedEvent(node, code, reason))
         best_node = await self.find_best_node(region=node.region)
-
         if not best_node or not best_node.available:
             self.player_queue = self.player_queue + node.players
             LOGGER.error("Unable to move players, no available nodes! Waiting for a node to become available")
@@ -458,6 +460,8 @@ class NodeManager:
                 player._original_node = node
 
     async def close(self) -> None:
+        if self._player_migrate_task is not None:
+            self._player_migrate_task.cancel()
         await self.session.close()
         async for node in asyncstdlib.iter(self.nodes):
             await node.close()

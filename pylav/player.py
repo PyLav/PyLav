@@ -155,6 +155,7 @@ class Player(VoiceProtocol):
         "next_track",
         "_global_config",
         "_lavalink",
+        "_discord_session_id",
     )
     _config: PlayerModel
     _global_config: PlayerModel
@@ -184,6 +185,7 @@ class Player(VoiceProtocol):
         self.last_track = None
         self.next_track = None
         self._hashed_voice_state = None
+        self._discord_session_id = None
 
         self._user_data = {}
 
@@ -868,6 +870,7 @@ class Player(VoiceProtocol):
             The raw :ddocs:`voice state payload <resources/voice#voice-state-object>`.
         """
         self._voice_state.update({"sessionId": data["session_id"]})
+        self._discord_session_id = data["session_id"]
         self.channel_id = data["channel_id"]
         if not self.channel_id:  # We're disconnecting
             self._voice_state.clear()
@@ -876,12 +879,13 @@ class Player(VoiceProtocol):
         await self._dispatch_voice_update()
 
     async def _dispatch_voice_update(self) -> None:
-        if {"sessionId", "token", "endpoint"} == self._voice_state.keys() and (
-            (not self._hashed_voice_state) or self._hashed_voice_state != hash(tuple(self._voice_state.items()))
-        ):
-            await self.node.patch_session_player(
-                self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, {"voice": self._voice_state})
-            )
+        if {"sessionId", "token", "endpoint"} == self._voice_state.keys():
+            existing_session = await self.node.get_session_player(self.guild.id)
+
+            if isinstance(existing_session, HTTPError) or existing_session.voice.sessionId != self._discord_session_id:
+                await self.node.patch_session_player(
+                    self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, {"voice": self._voice_state})
+                )
             self._waiting_for_node.set()
             self._hashed_voice_state = hash(tuple(self._voice_state.items()))
 
@@ -1429,8 +1433,6 @@ class Player(VoiceProtocol):
         """
         if node == self.node and self.node.available and ops:
             return
-        if self.node.available:
-            await self.node.delete_session_player(self.guild.id)
         payload = {}
         old_node = self.node
         position = await self.fetch_position() if self.current else 0
@@ -1439,6 +1441,7 @@ class Player(VoiceProtocol):
         await node.websocket.wait_until_ready()
         if self._voice_state:
             await self._dispatch_voice_update()
+
         if ops:
             if self.current:
                 payload = typing.cast(
@@ -1467,9 +1470,10 @@ class Player(VoiceProtocol):
                 )
             if self.volume_filter:
                 payload["volume"] = self.volume
-
         if payload:
             await node.patch_session_player(guild_id=self.guild.id, payload=payload)
+        if old_node.available and node.session_id != old_node.session_id:
+            await old_node.delete_session_player(self.guild.id)
         node.dispatch_event(NodeChangedEvent(self, old_node, node))
 
     async def connect(

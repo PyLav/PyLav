@@ -14,9 +14,12 @@ from pylav.constants import SUPPORTED_SEARCHES
 
 LOGGER = getLogger("PyLav.Environment")
 
-ENV_FILE = pathlib.Path.home() / "pylav.yaml"
+if full_path := os.getenv("PYLAV__YAML_CONFIG"):
+    ENV_FILE = pathlib.Path(full_path)
+else:
+    ENV_FILE = pathlib.Path.home() / "pylav.yaml"
 
-LOCAL_DEBUGGING = os.getenv("PYLAV_DEBUGGING", True)  # TODO Remove this in the future
+LOCAL_DEBUGGING = os.getenv("PYLAV__DEBUGGING", False)
 
 
 def __get_path(path: str) -> str:
