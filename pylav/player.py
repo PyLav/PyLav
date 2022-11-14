@@ -890,7 +890,11 @@ class Player(VoiceProtocol):
         if {"sessionId", "token", "endpoint"} == self._voice_state.keys():
             existing_session = await self.node.get_session_player(self.guild.id)
 
-            if isinstance(existing_session, HTTPError) or existing_session.voice.sessionId != self._discord_session_id:
+            if isinstance(existing_session, HTTPError) or (
+                existing_session.voice.sessionId != self._voice_state["sessionId"]
+                or existing_session.voice.token != self._voice_state["token"]
+                or existing_session.voice.endpoint != self._voice_state["endpoint"]
+            ):
                 await self.node.patch_session_player(
                     self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, {"voice": self._voice_state})
                 )
