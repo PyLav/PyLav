@@ -31,3 +31,4 @@ async def set_correct_ram_cap(client: "Client") -> None:
         LOGGER.debug(f"Updating maximum RAM allocation from {current_max_ram} to {max_ram}")
         extras["max_ram"] = max_ram
         await config.update_extras(extras)
+    LOGGER.debug("RAM cap limiter complete")

@@ -22,6 +22,8 @@
 Note - All environment variables except `PYLAV__LOGGER_PREFIX` can be configured from the `pylav.yaml` file which should reside in the home directory of the user running the bot.
 An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml), if you don't create the file yourself pylav will do so on the first run, and once the file exists it will be preferred over the Environment Variable set.
 #### Required
+- PyLav has a configuration file usually stored on the users home directory, this file is called `pylav.yaml`.
+  -  For environments where the home directory is not writable or an existing file should be used instead, the file specified via the `PYLAV__YAML_CONFIG` environment variable (Note: this should be a valid YAML file).
 - Env Vars to connect the lib to the PostgresSQL server
   All Envvars default to AsyncPG [defaults](https://magicstack.github.io/asyncpg/current/api/index.html#connection)
   - PYLAV__POSTGRES_PORT
@@ -51,6 +53,16 @@ An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml
   - PYLAV__TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS: Defaults to  1  # How many days to wait between updates - Minimum 1 Day.
   - PYLAV__TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS: Defaults to  7 # How many days to wait between updates - Minimum 7 Days.
   - PYLAV__TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS: Defaults to  7 # How many days to wait between updates - Minimum 7 Days.
+- Node Configuration
+  - PYLAV__DEFAULT_SEARCH_SOURCE: Defaults to dzsearch - Possible values are dzsearch (Deezer), spsearch (Spotify), amsearch (Apple Music), ytmsearch (YouTube Music), ytsearch (YouTube)
+  - PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_ID: Defaults to None - Required if you want to use Spotify
+  - PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_SECRET: Defaults to None - Required if you want to use Spotify
+  - PYLAV__MANAGED_NODE_SPOTIFY_COUNTRY_CODE: Defaults to US
+  - PYLAV__MANAGED_NODE_APPLE_MUSIC_API_KEY - Defaults to None
+  - PYLAV__MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE : Defaults to US
+  - PYLAV__MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN - Defaults to None
+  - PYLAV__MANAGED_NODE_DEEZER_KEY - Required if you want to use Deezer
+
 ---------------------------
 ## Supported sources
 ### [Built-in](https://github.com/freyacodes/Lavalink):

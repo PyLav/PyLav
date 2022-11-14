@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 import pylav.sql.tables.nodes
 from pylav._logging import getLogger
-from pylav.constants import BUNDLED_NODES_IDS, BUNDLED_NODES_IDS_HOST_MAPPING, PYLAV_BUNDLED_NODES_SETTINGS
+from pylav.constants import BUNDLED_NODES_IDS_HOST_MAPPING, PYLAV_BUNDLED_NODES_SETTINGS
 from pylav.sql.models import NodeModel, NodeModelMock
 
 if TYPE_CHECKING:
@@ -30,7 +30,7 @@ class NodeConfigManager:
         return NodeModel(id=self._client.bot.user.id)
 
     def get_node_config(self, node_id: int) -> NodeModel:
-        if node_id not in BUNDLED_NODES_IDS:
+        if node_id not in BUNDLED_NODES_IDS_HOST_MAPPING:
             node = NodeModel(id=node_id)
         else:
             node = NodeModelMock(id=node_id, data=PYLAV_BUNDLED_NODES_SETTINGS[BUNDLED_NODES_IDS_HOST_MAPPING[node_id]])
@@ -43,7 +43,7 @@ class NodeConfigManager:
             for node in await pylav.sql.tables.nodes.NodeRow.select(pylav.sql.tables.nodes.NodeRow.id)
             .where(
                 (pylav.sql.tables.nodes.NodeRow.managed == False)
-                & (pylav.sql.tables.nodes.NodeRow.id.not_in(BUNDLED_NODES_IDS))
+                & (pylav.sql.tables.nodes.NodeRow.id.not_in(set(BUNDLED_NODES_IDS_HOST_MAPPING.keys())))
             )
             .output(nested=True, load_json=True)
         ]
@@ -150,5 +150,5 @@ class NodeConfigManager:
     async def count() -> int:
         """Return the number of unbundled nodes in the database."""
         return await pylav.sql.tables.nodes.NodeRow.count().where(
-            pylav.sql.tables.nodes.NodeRow.id.not_in(BUNDLED_NODES_IDS)
+            pylav.sql.tables.nodes.NodeRow.id.not_in(set(BUNDLED_NODES_IDS_HOST_MAPPING.keys()))
         )
