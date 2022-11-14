@@ -13,8 +13,8 @@ async def run_migration_0880(client: "Client", current_version: LegacyVersion | 
     from pylav.config_migrations import LOGGER
 
     LOGGER.info("Running 0.8.8.0 migration")
-    from pylav.constants import BUNDLED_NODES_IDS
+    from pylav.constants import BUNDLED_NODES_IDS_HOST_MAPPING
 
-    for node_id in BUNDLED_NODES_IDS:
+    for node_id in BUNDLED_NODES_IDS_HOST_MAPPING:
         await client.node_db_manager.delete(node_id)
     await client.lib_db_manager.update_bot_dv_version("0.8.8")
