@@ -465,7 +465,7 @@ class LocalNodeManager:
         )
 
     async def __consume_buffer(self):
-        async for line in self._proc.stdout:
+        async for __ in self._proc.stdout:
             pass
 
     async def _wait_for_launcher(self) -> None:

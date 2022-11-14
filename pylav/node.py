@@ -1212,9 +1212,6 @@ class Node:
                 return f"{self.connection_protocol}://{self.host}:{self.port}/v4/stats"
         raise UnsupportedNodeAPI()
 
-    def get_endpoint_version(self) -> str:
-        return f"{self.connection_protocol}://{self.host}:{self.port}/version"
-
     def get_endpoint_routeplanner_status(self) -> str:
         match self.api_version:
             case 3:
@@ -1239,6 +1236,9 @@ class Node:
                 return f"{self.connection_protocol}://{self.host}:{self.port}/v4/routeplanner/free/all"
         raise UnsupportedNodeAPI()
 
+    def get_endpoint_version(self) -> str:
+        return f"{self.connection_protocol}://{self.host}:{self.port}/version"
+
     # REST API - Direct calls
     async def get_session_players(self) -> list[LavalinkPlayerObject] | HTTPError:
         """|coro|
@@ -1257,7 +1257,7 @@ class Node:
             failure = from_dict(data_class=LavalinkErrorResponseObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
                 raise Unauthorized(failure)
-            LOGGER.warning(f"Failed to get session players: {failure.status} {failure.message}")
+            LOGGER.debug("Failed to get session players: %d %s", failure.status, failure.message)
             return HTTPError(failure)
 
     async def get_session_player(self, guild_id: int) -> LavalinkPlayerObject | HTTPError:
@@ -1269,7 +1269,7 @@ class Node:
             failure = from_dict(data_class=LavalinkErrorResponseObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
                 raise Unauthorized(failure)
-            LOGGER.warning(f"Failed to get session player: {failure.status} {failure.message}")
+            LOGGER.debug("Failed to get session player: %d %s", failure.status, failure.message)
             return HTTPError(failure)
 
     async def patch_session_player(
@@ -1286,7 +1286,7 @@ class Node:
             failure = from_dict(data_class=LavalinkErrorResponseObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
                 raise Unauthorized(failure)
-            LOGGER.warning(f"Failed to patch session player: {failure.status} {failure.message}")
+            LOGGER.debug("Failed to patch session player: %d %s", failure.status, failure.message)
             return HTTPError(failure)
 
     async def delete_session_player(self, guild_id: int) -> None | HTTPError:
@@ -1299,7 +1299,7 @@ class Node:
             failure = from_dict(data_class=LavalinkErrorResponseObject, data=response)
             if res.status in [401, 403]:
                 raise Unauthorized(failure)
-            LOGGER.warning(f"Failed to delete session player: {failure.status} {failure.message}")
+            LOGGER.debug("Failed to delete session player: %d %s", failure.status, failure.message)
             return HTTPError(failure)
 
     async def patch_session(self, payload: RestPatchSessionPayloadT) -> None | HTTPError:
@@ -1311,7 +1311,7 @@ class Node:
             failure = from_dict(data_class=LavalinkErrorResponseObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
                 raise Unauthorized(failure)
-            LOGGER.warning(f"Failed to delete session player: {failure.status} {failure.message}")
+            LOGGER.debug("Failed to delete session player: %d %s", failure.status, failure.message)
             return HTTPError(failure)
 
     async def get_loadtracks(self, query: Query) -> LavalinkLoadTrackObjects | HTTPError:
@@ -1330,7 +1330,7 @@ class Node:
             failure = from_dict(data_class=LavalinkErrorResponseObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
                 raise Unauthorized(failure)
-            LOGGER.warning(f"Failed to load track: {failure.status} {failure.message}")
+            LOGGER.debug("Failed to load track: %d %s", failure.status, failure.message)
             return HTTPError(failure)
 
     async def get_decodetrack(
@@ -1347,7 +1347,7 @@ class Node:
             failure = from_dict(data_class=LavalinkErrorResponseObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
                 raise Unauthorized(failure)
-            LOGGER.warning(f"Failed to decode track: {failure.status} {failure.message}")
+            LOGGER.debug("Failed to decode track: %d %s", failure.status, failure.message)
             return HTTPError(failure)
 
     async def post_decodetracks(self, encoded_tracks: list[str]) -> list[LavalinkTrackObject] | HTTPError:
@@ -1359,7 +1359,7 @@ class Node:
             failure = from_dict(data_class=LavalinkErrorResponseObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
                 raise Unauthorized(failure)
-            LOGGER.warning(f"Failed to decode tracks: {failure.status} {failure.message}")
+            LOGGER.debug("Failed to decode tracks: %d %s", failure.status, failure.message)
             return HTTPError(failure)
 
     async def get_info(self) -> LavalinkInfoObject | HTTPError:
@@ -1369,7 +1369,7 @@ class Node:
             failure = from_dict(data_class=LavalinkErrorResponseObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
                 raise Unauthorized(failure)
-            LOGGER.warning(f"Failed to get info: {failure.status} {failure.message}")
+            LOGGER.debug("Failed to get info: %d %s", failure.status, failure.message)
             return HTTPError(failure)
 
     async def get_stats(self) -> LavalinkStatsOpObject | HTTPError:
@@ -1379,7 +1379,7 @@ class Node:
             failure = from_dict(data_class=LavalinkErrorResponseObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
                 raise Unauthorized(failure)
-            LOGGER.warning(f"Failed to get stats: {failure.status} {failure.message}")
+            LOGGER.debug("Failed to get stats: %d %s", failure.status, failure.message)
             return HTTPError(failure)
 
     async def get_version(self) -> Version | LegacyVersion | HTTPError:
@@ -1395,7 +1395,7 @@ class Node:
             failure = from_dict(data_class=LavalinkErrorResponseObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
                 raise Unauthorized(failure)
-            LOGGER.warning(f"Failed to get info: {failure.status} {failure.message}")
+            LOGGER.debug("Failed to get version: %d %s", failure.status, failure.message)
             return HTTPError(failure)
 
     async def get_routeplanner_status(self) -> RoutePlannerStatusResponseObject | HTTPError:
@@ -1410,7 +1410,7 @@ class Node:
             failure = from_dict(data_class=LavalinkErrorResponseObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
                 raise Unauthorized(failure)
-            LOGGER.warning(f"Failed to get info: {failure.status} {failure.message}")
+            LOGGER.debug("Failed to get routeplanner status: %d %s", failure.status, failure.message)
             return HTTPError(failure)
 
     async def post_routeplanner_free_address(self, address: str) -> None | HTTPError:
@@ -1424,7 +1424,7 @@ class Node:
             failure = from_dict(data_class=LavalinkErrorResponseObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
                 raise Unauthorized(failure)
-            LOGGER.warning(f"Failed to get info: {failure.status} {failure.message}")
+            LOGGER.debug("Failed to free routeplanner address: %d %s", failure.status, failure.message)
             return HTTPError(failure)
 
     async def post_routeplanner_free_all(self) -> None | HTTPError:
@@ -1436,7 +1436,7 @@ class Node:
             failure = from_dict(data_class=LavalinkErrorResponseObject, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
                 raise Unauthorized(failure)
-            LOGGER.warning(f"Failed to get info: {failure.status} {failure.message}")
+            LOGGER.debug("Failed to free all routeplanner addresses: %d %s", failure.status, failure.message)
             return HTTPError(failure)
 
     # REST API - Wrappers
