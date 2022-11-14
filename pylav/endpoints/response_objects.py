@@ -65,7 +65,7 @@ class LavalinkOpObject:
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkReadyOpObject(LavalinkOpObject):
     sessionId: str = None
-    resumed: Union[bool, None] = False
+    resumed: bool = False
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
