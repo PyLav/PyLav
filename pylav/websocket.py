@@ -57,7 +57,7 @@ from pylav.events import (
     TrackStuckEvent,
     WebSocketClosedEvent,
 )
-from pylav.exceptions import WebsocketNotConnectedError
+from pylav.exceptions import HTTPError, WebsocketNotConnectedError
 from pylav.location import get_closest_discord_region
 from pylav.node import Stats
 from pylav.types import LavalinkEventT, LavalinkPlayerUpdateT, LavalinkReadyT, LavalinkStatsT
@@ -104,6 +104,7 @@ class WebSocket:
         "_resumed",
         "_api_version",
         "_connecting",
+        "_player_reconnect_tasks",
     )
 
     def __init__(
@@ -147,6 +148,7 @@ class WebSocket:
         self._connect_task.add_done_callback(_done_callback)
         self._manual_shutdown = False
         self._connecting = False
+        self._player_reconnect_tasks: dict[int : asyncio.Task] = {}
 
     @property
     def is_ready(self) -> bool:
@@ -439,12 +441,38 @@ class WebSocket:
                 (not data.state.connected)
                 and player.is_playing
                 and self.ready.is_set()
-                and player.connected_at < utcnow() - datetime.timedelta(minutes=15)
+                and player.connected_at < utcnow() - datetime.timedelta(minutes=5)
             ):
-                await player.reconnect()
+                if player.guild.id in self._player_reconnect_tasks:
+                    self._player_reconnect_tasks[player.guild.id].cancel()
+                LOGGER.verbose("Creating reconnect task for %s", player.guild.id)
+                self._player_reconnect_tasks[player.guild.id] = asyncio.create_task(self.maybe_reconnect_player(player))
                 return
             await player._update_state(data.state)
         else:
+            return
+
+    async def maybe_reconnect_player(self, player: Player):
+        """
+        Attempts to reconnect the player if it is not connected.
+
+        Parameters
+        ----------
+        player: :class:`Player`
+            The player to reconnect.
+        """
+        await asyncio.sleep(5)
+        session = await player.node.get_session_player(player.guild.id)
+        if isinstance(session, HTTPError):
+            return
+
+        if (
+            (not session.voice.connected)
+            and player.is_playing
+            and self.ready.is_set()
+            and player.connected_at < utcnow() - datetime.timedelta(minutes=5)
+        ):
+            await player.reconnect()
             return
 
     async def handle_ready(self, data: LavalinkReadyOpObject):
