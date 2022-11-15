@@ -238,6 +238,15 @@ class VoiceStateObject:
     connected: Union[bool, None] = None
     ping: Union[int, None] = -1
 
+    def to_dict(self) -> dict:
+        return {
+            "token": self.token,
+            "endpoint": self.endpoint,
+            "sessionId": self.sessionId,
+            "connected": self.connected,
+            "ping": self.ping,
+        }
+
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class ValueRangeObject:
@@ -254,6 +263,9 @@ class EqualizerBandObject:
     band: Annotated[Union[int, None], ValueRange(min=0, max=14)]
     gain: Annotated[Union[float, None], ValueRange(min=-0.25, max=1.0)]
 
+    def to_dict(self) -> dict:
+        return {"band": self.band, "gain": self.gain}
+
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class KaraokeObject:
@@ -262,6 +274,14 @@ class KaraokeObject:
     filterBand: Union[float, None] = None
     filterWidth: Union[float, None] = None
 
+    def to_dict(self) -> dict:
+        return {
+            "level": self.level,
+            "monoLevel": self.monoLevel,
+            "filterBand": self.filterBand,
+            "filterWidth": self.filterWidth,
+        }
+
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class TimescaleObject:
@@ -269,11 +289,24 @@ class TimescaleObject:
     pitch: Annotated[Union[float, None], ValueRange(min=0.0, max=float("inf"))] = None
     rate: Annotated[Union[float, None], ValueRange(min=0.0, max=float("inf"))] = None
 
+    def to_dict(self) -> dict:
+        return {
+            "speed": self.speed,
+            "pitch": self.pitch,
+            "rate": self.rate,
+        }
+
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class TremoloObject:
     frequency: Annotated[Union[float, None], ValueRange(min=0.0, max=float("inf"))] = None
     depth: Annotated[Union[float, None], ValueRange(min=0.0, max=1.0)] = None
+
+    def to_dict(self) -> dict:
+        return {
+            "frequency": self.frequency,
+            "depth": self.depth,
+        }
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
@@ -281,10 +314,19 @@ class VibratoObject:
     frequency: Annotated[Union[float, None], ValueRange(min=0, max=14)] = None
     depth: Annotated[Union[float, None], ValueRange(min=0.0, max=1.0)] = None
 
+    def to_dict(self) -> dict:
+        return {
+            "frequency": self.frequency,
+            "depth": self.depth,
+        }
+
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class RotationObject:
     rotationHz: Annotated[Union[float, None], ValueRange(min=0.0, max=float("inf"))] = None
+
+    def to_dict(self) -> dict:
+        return {"rotationHz": self.rotationHz}
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
@@ -298,6 +340,18 @@ class DistortionObject:
     offset: Union[float, None] = None
     scale: Union[float, None] = None
 
+    def to_dict(self) -> dict:
+        return {
+            "sinOffset": self.sinOffset,
+            "sinScale": self.sinScale,
+            "cosOffset": self.cosOffset,
+            "cosScale": self.cosScale,
+            "tanOffset": self.tanOffset,
+            "tanScale": self.tanScale,
+            "offset": self.offset,
+            "scale": self.scale,
+        }
+
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class ChannelMixObject:
@@ -306,16 +360,33 @@ class ChannelMixObject:
     rightToLeft: Annotated[Union[float, None], ValueRange(min=0.0, max=1.0)] = None
     rightToRight: Annotated[Union[float, None], ValueRange(min=0.0, max=1.0)] = None
 
+    def to_dict(self) -> dict:
+        return {
+            "leftToLeft": self.leftToLeft,
+            "leftToRight": self.leftToRight,
+            "rightToLeft": self.rightToLeft,
+            "rightToRight": self.rightToRight,
+        }
+
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LowPassObject:
     smoothing: Annotated[Union[float, None], ValueRange(min=1.0, max=float("inf"))] = None
+
+    def to_dict(self) -> dict:
+        return {"smoothing": self.smoothing}
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class EchoObject:
     delay: Annotated[Union[int, None], ValueRange(min=0, max=float("inf"))] = None
     decay: Annotated[Union[float, None], ValueRange(min=0.0, max=1.0)] = None
+
+    def to_dict(self) -> dict:
+        return {
+            "delay": self.delay,
+            "decay": self.decay,
+        }
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
@@ -352,6 +423,21 @@ class FiltersObject:
         if isinstance(self.echo, dict):
             object.__setattr__(self, "echo", EchoObject(**self.echo) if self.echo else None)
 
+    def to_dict(self) -> dict:
+        return {
+            "volume": self.volume,
+            "equalizer": [band.to_dict() if isinstance(band, EqualizerBandObject) else band for band in self.equalizer],
+            "karaoke": self.karaoke.to_dict() if self.karaoke else None,
+            "timescale": self.timescale.to_dict() if self.timescale else None,
+            "tremolo": self.tremolo.to_dict() if self.tremolo else None,
+            "vibrato": self.vibrato.to_dict() if self.vibrato else None,
+            "rotation": self.rotation.to_dict() if self.rotation else None,
+            "distortion": self.distortion.to_dict() if self.distortion else None,
+            "channelMix": self.channelMix.to_dict() if self.channelMix else None,
+            "lowPass": self.lowPass.to_dict() if self.lowPass else None,
+            "echo": self.echo.to_dict() if self.echo else None,
+        }
+
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LavalinkPlayerObject:
@@ -369,6 +455,16 @@ class LavalinkPlayerObject:
             object.__setattr__(self, "filters", FiltersObject(**self.filters))
         if isinstance(self.track, dict):
             object.__setattr__(self, "track", LavalinkTrackObject(**self.track))
+
+    def to_dict(self) -> dict:
+        return {
+            "guildId": self.guildId,
+            "volume": self.volume,
+            "paused": self.paused,
+            "voice": self.voice.to_dict(),
+            "filters": self.filters.to_dict(),
+            "track": self.track.to_dict() if self.track else None,
+        }
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)

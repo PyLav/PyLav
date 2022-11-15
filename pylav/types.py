@@ -465,10 +465,6 @@ RestGetStatsResponseT = TypeVar("RestGetStatsResponseT", bound="Type[StatsT]")
 DeprecatedRestGetPluginsResponseT = TypeVar("DeprecatedRestGetPluginsResponseT", bound="Type[List[PluginT]]")
 DeprecatedRestGetVersionResponseT = TypeVar("DeprecatedRestGetVersionResponseT", bound="Type[str]")
 
-# TODO:
-#  1: Add the rest of the RoutePlanner endpoints types
-#  2: Typing the payloads, responses and params for Resuming Lavalink Sessions rest calls
-
 
 class IPBlockT(TypedDict):
     type: Literal["Inet4Address", "Inet6Address"]
