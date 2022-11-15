@@ -21,7 +21,7 @@ if LOGGER_PREFIX is None:
     try:
         from redbot.core.utils import AsyncIter  # noqa:
 
-        LOGGER_PREFIX = "red."
+        LOGGER_PREFIX = ""  # TODO: Verify if Red 3.5 hasn't reverted this
     except ImportError:
         LOGGER_PREFIX = ""
 

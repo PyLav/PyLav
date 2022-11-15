@@ -13,7 +13,7 @@ async def set_correct_ram_cap(client: "Client") -> None:
     from pylav.config_migrations import LOGGER
     from pylav.utils import get_jar_ram_actual
 
-    LOGGER.info("Running Managed node RAM cap limiter")
+    LOGGER.debug("Running Managed node RAM cap limiter")
     config = client.node_db_manager.bundled_node_config()
     extras = await config.fetch_extras()
     current_max_ram = extras.get("max_ram")

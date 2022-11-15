@@ -61,7 +61,7 @@ from pylav.exceptions import (
     PyLavInvalidArguments,
 )
 from pylav.m3u8_parser import M3U8Parser
-from pylav.managed_node import LocalNodeManager
+from pylav.managed_node import LAVALINK_DOWNLOAD_DIR, LocalNodeManager
 from pylav.node import Node
 from pylav.node_manager import NodeManager
 from pylav.player import Player
@@ -404,6 +404,7 @@ class Client(metaclass=_Singleton):
                 localtrack_folder = config_data["localtrack_folder"]
                 if java_path != JAVA_EXECUTABLE and os.path.exists(JAVA_EXECUTABLE):
                     await self._config.update_java_path(JAVA_EXECUTABLE)
+                LOGGER.info("Lavalink folder: %s", LAVALINK_DOWNLOAD_DIR)
                 LOGGER.info("Config folder: %s", config_folder)
                 LOGGER.info("Localtracks folder: %s", localtrack_folder)
                 self._config_folder = aiopath.AsyncPath(config_folder)
@@ -491,10 +492,10 @@ class Client(metaclass=_Singleton):
 
     async def _wait_until_ready(self):
         if hasattr(self.bot, "wait_until_red_ready"):
-            LOGGER.info("Running on a Red bot, waiting for Red to be ready")
+            LOGGER.debug("Running on a Red bot, waiting for Red to be ready")
             await self.bot.wait_until_red_ready()
         else:
-            LOGGER.info("Running a discord.py bot waiting for bot to be ready")
+            LOGGER.debug("Running a discord.py bot waiting for bot to be ready")
             await self.bot.wait_until_ready()
 
     async def _get_service_tokens(self):
@@ -661,7 +662,7 @@ class Client(metaclass=_Singleton):
         return spotify_client_id, spotify_client_secret
 
     async def register(self, cog: CogT) -> None:
-        LOGGER.info("Registering cog %s", cog.__cog_name__)
+        LOGGER.debug("Registering cog %s", cog.__cog_name__)
         if (instance := getattr(self.bot, "lavalink", None)) and not isinstance(instance, Client):
             raise AnotherClientAlreadyRegistered(
                 f"Another client instance has already been registered to bot.lavalink with type: {type(instance)}"

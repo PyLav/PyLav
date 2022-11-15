@@ -25,7 +25,7 @@ except ImportError:
         return string
 
 
-LOGGER = getLogger("red.3pt.PyLav-Shared.converters.radio")
+LOGGER = getLogger("PyLav.ext.Shared.converters.radio")
 
 if TYPE_CHECKING:
     from pylav.radio.objects import Codec, Country, CountryCode, Language, State, Station, Tag

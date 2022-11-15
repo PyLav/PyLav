@@ -20,7 +20,12 @@ from discord.utils import utcnow
 
 from pylav._logging import getLogger
 from pylav.constants import REGION_TO_COUNTRY_COORDINATE_MAPPING
-from pylav.endpoints.response_objects import PlayerStateObject, TrackExceptionEventOpObject, TrackExceptionObject
+from pylav.endpoints.response_objects import (
+    LavalinkPlayerObject,
+    PlayerStateObject,
+    TrackExceptionEventOpObject,
+    TrackExceptionObject,
+)
 from pylav.events import (
     FiltersAppliedEvent,
     NodeChangedEvent,
@@ -93,16 +98,7 @@ except ImportError:
         return string
 
 
-LOGGER = getLogger("PyLav.Player")
-
 ENDPONT_REGEX = re.compile(r"^(?P<region>.*?)\d+.discord.media:\d+$")
-
-
-def _done_callback(task: asyncio.Task) -> None:
-    with contextlib.suppress(asyncio.CancelledError):
-        exc = task.exception()
-        if exc is not None:
-            LOGGER.error("Error in task %s", task.get_name(), exc_info=exc)
 
 
 class Player(VoiceProtocol):
@@ -156,6 +152,7 @@ class Player(VoiceProtocol):
         "_global_config",
         "_lavalink",
         "_discord_session_id",
+        "_logger",
     )
     _config: PlayerModel
     _global_config: PlayerModel
@@ -175,6 +172,7 @@ class Player(VoiceProtocol):
         self.channel = channel
         self.channel_id = channel.id
         self.node: Node = node
+        self._logger = getLogger(f"PyLav.Player-{channel.guild.id}")
         self.player_manager: PlayerManager = None  # type: ignore
         self._original_node: Node = None  # type: ignore
         self._voice_state = {}
@@ -264,7 +262,7 @@ class Player(VoiceProtocol):
         if player_state:
             await self.restore(player=player_state, requester=requester or self.guild.me)
             await self.player_manager.client.player_state_db_manager.delete_player(self.channel.guild.id)
-            LOGGER.info("Player restored in postinit - %s", self)
+            self._logger.verbose("Player restored in postinit - %s", self)
         else:
             self._volume = Volume(await player_manager.client.player_config_manager.get_volume(self.guild.id))
             effects = await config.fetch_effects()
@@ -566,7 +564,7 @@ class Player(VoiceProtocol):
 
     async def fetch_player_stats(self):
         try:
-            player = await self.node.get_session_player(self.guild.id)
+            player = await self.fetch_node_player()
         except Exception:
             return
         if isinstance(player, HTTPError):
@@ -599,7 +597,7 @@ class Player(VoiceProtocol):
             if not self.ready.is_set():
                 return
             if not self.is_connected:
-                LOGGER.trace(
+                self._logger.trace(
                     "Auto Pause task for %s fired while player is not connected to a voice channel - discarding",
                     self,
                 )
@@ -614,13 +612,13 @@ class Player(VoiceProtocol):
                 ).enabled
             ):
                 if not self._last_alone_paused_check:
-                    LOGGER.verbose(
+                    self._logger.verbose(
                         "Auto Pause task for %s - Player is alone - starting countdown",
                         self,
                     )
                     self._last_alone_paused_check = time.time()
                 if (self._last_alone_paused_check + feature.time) <= time.time():
-                    LOGGER.info(
+                    self._logger.info(
                         "Auto Pause task for %s - Player in an empty channel for longer than %s seconds - Pausing",
                         self,
                         feature.time,
@@ -638,7 +636,7 @@ class Player(VoiceProtocol):
             if not self.ready.is_set():
                 return
             if not self._was_alone_paused:
-                LOGGER.trace(
+                self._logger.trace(
                     "Auto Resume task for %s fired while player is auto paused - discarding",
                     self,
                 )
@@ -652,7 +650,7 @@ class Player(VoiceProtocol):
                     )
                 ).enabled
             ):
-                LOGGER.info(
+                self._logger.info(
                     "Auto Resume task for %s - Player in an non-empty channel - Resuming",
                     self,
                     feature.time,
@@ -667,7 +665,7 @@ class Player(VoiceProtocol):
             if not self.ready.is_set():
                 return
             if not self.is_connected:
-                LOGGER.trace(
+                self._logger.trace(
                     "Auto Disconnect task for %s fired while player is not connected to a voice channel - discarding",
                     self,
                 )
@@ -681,13 +679,13 @@ class Player(VoiceProtocol):
                 ).enabled
             ):
                 if not self._last_alone_dc_check:
-                    LOGGER.verbose(
+                    self._logger.verbose(
                         "Auto Disconnect task for %s - Player is alone - starting countdown",
                         self,
                     )
                     self._last_alone_dc_check = time.time()
                 if (self._last_alone_dc_check + feature.time) <= time.time():
-                    LOGGER.info(
+                    self._logger.info(
                         "Auto Disconnect task for %s - Player in an empty channel for longer than %s seconds "
                         "- Disconnecting",
                         self,
@@ -705,13 +703,13 @@ class Player(VoiceProtocol):
             if not self.ready.is_set():
                 return
             if not self.is_connected:
-                LOGGER.trace(
+                self._logger.trace(
                     "Auto Empty Queue task for %s fired while player is not connected to a voice channel - discarding",
                     self,
                 )
                 return
             if self.current:
-                LOGGER.trace("Auto Empty Queue task for %s - Current track is not empty - discarding", self)
+                self._logger.trace("Auto Empty Queue task for %s - Current track is not empty - discarding", self)
                 return
             if (
                 self.queue.empty()
@@ -722,13 +720,13 @@ class Player(VoiceProtocol):
                 ).enabled
             ):
                 if not self._last_empty_queue_check:
-                    LOGGER.verbose(
+                    self._logger.verbose(
                         "Auto Empty Queue task for %s - Queue is empty - starting countdown",
                         self,
                     )
                     self._last_empty_queue_check = time.time()
                 if (self._last_empty_queue_check + feature.time) <= time.time():
-                    LOGGER.info(
+                    self._logger.info(
                         "Auto Empty Queue task for %s - Queue is empty for longer than %s seconds "
                         "- Stopping and disconnecting",
                         self,
@@ -745,18 +743,18 @@ class Player(VoiceProtocol):
             asyncio.exceptions.CancelledError,
         ):
             if not self.is_connected:
-                LOGGER.trace(
+                self._logger.trace(
                     "Auto save task for %s fired while player is not connected to a voice channel - discarding",
                     self,
                 )
                 return
             if self.stopped:
-                LOGGER.trace(
+                self._logger.trace(
                     "Auto save task for %s fired while player that has been stopped - discarding",
                     self,
                 )
                 return
-            LOGGER.trace("Auto save task for %s - Saving the player at %s", self, utcnow())
+            self._logger.trace("Auto save task for %s - Saving the player at %s", self, utcnow())
             await self.save()
 
     async def change_to_best_node(
@@ -774,13 +772,17 @@ class Player(VoiceProtocol):
             region=self.region, feature=feature, coordinates=self.coordinates
         )
         if not node:
-            LOGGER.warning("No node with %s functionality available - Waiting for one to become available!", feature)
+            self._logger.warning(
+                "No node with %s functionality available - Waiting for one to become available!", feature
+            )
             node = await self.node.node_manager.find_best_node(
                 region=self.region, feature=feature, coordinates=self.coordinates, wait=True
             )
 
         if feature and not node:
-            LOGGER.warning("No node with %s functionality available after one temporarily became available!", feature)
+            self._logger.warning(
+                "No node with %s functionality available after one temporarily became available!", feature
+            )
             raise NoNodeWithRequestFunctionalityAvailable(f"No node with {feature} functionality available", feature)
         if node != self.node or not ops or forced:
             await self.change_node(node, ops=ops, skip_position_fetch=skip_position_fetch)
@@ -801,13 +803,17 @@ class Player(VoiceProtocol):
             not_region=self.region, feature=feature, coordinates=self.coordinates
         )
         if not node:
-            LOGGER.warning("No node with %s functionality available - Waiting for one to become available!", feature)
+            self._logger.warning(
+                "No node with %s functionality available - Waiting for one to become available!", feature
+            )
             node = await self.node.node_manager.find_best_node(
                 region=self.region, feature=feature, coordinates=self.coordinates, wait=True
             )
 
         if feature and not node:
-            LOGGER.warning("No node with %s functionality available after one temporarily became available!", feature)
+            self._logger.warning(
+                "No node with %s functionality available after one temporarily became available!", feature
+            )
             raise NoNodeWithRequestFunctionalityAvailable(f"No node with {feature} functionality available", feature)
 
         if node != self.node or not ops:
@@ -888,7 +894,7 @@ class Player(VoiceProtocol):
 
     async def _dispatch_voice_update(self) -> None:
         if {"sessionId", "token", "endpoint"} == self._voice_state.keys():
-            existing_session = await self.node.get_session_player(self.guild.id)
+            existing_session = await self.fetch_node_player()
 
             if isinstance(existing_session, HTTPError) or (
                 existing_session.voice.sessionId != self._voice_state["sessionId"]
@@ -1525,7 +1531,7 @@ class Player(VoiceProtocol):
         )
         self._connected = True
         self.connected_at = utcnow()
-        LOGGER.debug("[Player-%s] Connected to voice channel", self.channel.guild.id)
+        self._logger.debug("Connected to voice channel")
 
     @_synchronized(_LOCK, discard=True)
     async def reconnect(self):
@@ -1548,7 +1554,7 @@ class Player(VoiceProtocol):
         self.connected_at = utcnow()
         await asyncio.wait_for(self._waiting_for_node.wait(), timeout=None)
         await self.change_to_best_node(forced=True)
-        LOGGER.debug("[Player-%s] Reconnected to voice channel", self.channel.guild.id)
+        self._logger.debug("Reconnected to voice channel")
 
     async def disconnect(self, *, force: bool = False, requester: discord.Member | None) -> None:
         try:
@@ -1556,7 +1562,7 @@ class Player(VoiceProtocol):
                 await self.save()
             await self.guild.change_voice_state(channel=None)
             self.node.dispatch_event(PlayerDisconnectedEvent(self, requester))
-            LOGGER.debug("[Player-%s] Disconnected from voice channel", self.channel.guild.id)
+            self._logger.debug("Disconnected from voice channel")
         finally:
             self._connected = False
             self.queue.clear()
@@ -1612,15 +1618,11 @@ class Player(VoiceProtocol):
         """
         if self.config and (vc := await self.forced_vc()) and channel.id != vc.id:
             channel = vc
-            LOGGER.debug(
-                "[Player-%s] Player has a forced VC enabled replacing channel arg with it", self.channel.guild.id
-            )
+            self._logger.debug("Player has a forced VC enabled replacing channel arg with it")
         if channel == self.channel:
             return
         old_channel = self.channel
-        LOGGER.debug(
-            "[Player-%s] Moving from %s to voice channel: %s", self.channel.guild.id, self.channel.id, channel.id
-        )
+        self._logger.debug("Moving from %s to voice channel: %s", self.channel.id, channel.id)
         self.channel = channel
         self_deaf = deaf if (deaf := await self.self_deaf()) is True else self_deaf
         await self.guild.change_voice_state(channel=self.channel, self_mute=self_mute, self_deaf=self_deaf)
@@ -2474,7 +2476,7 @@ class Player(VoiceProtocol):
         self._restored = True
         await self.player_manager.client.player_state_db_manager.delete_player(guild_id=self.guild.id)
         self.node.dispatch_event(PlayerRestoredEvent(self, requester))
-        LOGGER.info("Player restored - %s", self)
+        self._logger.verbose("Player restored - %s", self)
 
     async def _process_restore_autoplaylist(self, player):
         if self._autoplay_playlist is None:
@@ -2606,3 +2608,6 @@ class Player(VoiceProtocol):
             self._channel_mix = f
         if (v := effects.get("echo", None)) and (f := Echo.from_dict(v)):
             self._echo = f
+
+    async def fetch_node_player(self) -> LavalinkPlayerObject | HTTPError:
+        return await self.node.get_session_player(self.guild.id)
