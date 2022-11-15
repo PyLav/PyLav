@@ -195,8 +195,8 @@ class NodeManager:
         )
         self._nodes.append(node)
 
-        LOGGER.info("[NODE-%s] Successfully added to Node Manager", node.name)
-        LOGGER.verbose("[NODE-%s] Successfully added to Node Manager -- %r", node.name, node)
+        node._logger.info("Successfully added to Node Manager")
+        node._logger.verbose("Successfully added to Node Manager -- %r", node)
 
         if temporary:
             yaml = yaml or {"server": {}, "lavalink": {"server": {}}}
@@ -246,11 +246,11 @@ class NodeManager:
         """
         await node.close()
         self.nodes.remove(node)
-        LOGGER.info("[NODE-%s] Successfully removed Node", node.name)
-        LOGGER.verbose("[NODE-%s] Successfully removed Node -- %r", node.name, node)
+        node._logger.info("Successfully removed Node")
+        node._logger.verbose("Successfully removed Node -- %r", node)
         if node.identifier and not node.managed and node.identifier not in BUNDLED_NODES_IDS_HOST_MAPPING:
             await self.client.node_db_manager.delete(node.identifier)
-            LOGGER.debug("[NODE-%s] Successfully deleted Node from database", node.name)
+            node._logger.debug("Successfully deleted Node from database")
 
     def get_region(self, endpoint: str | None) -> str | None:
         """
@@ -408,7 +408,7 @@ class NodeManager:
         node: :class:`Node`
             The node that has just connected.
         """
-        LOGGER.info("[NODE-%s] Successfully established connection", node.name)
+        node._logger.debug("Successfully established connection")
         del node.down_votes
         self._player_migrate_task = asyncio.create_task(self._player_change_node_task(node))
         self.client.dispatch_event(NodeConnectedEvent(node))
@@ -416,7 +416,7 @@ class NodeManager:
     async def _player_change_node_task(self, node):
         async for player in asyncstdlib.iter(self.player_queue):
             await player.change_node(node)
-            LOGGER.debug("[NODE-%s] Successfully moved %s", node.name, player.guild.id)
+            node._logger.debug("Successfully moved %s", player.guild.id)
 
         if self.client._connect_back:
             async for player in asyncstdlib.iter(node._original_players):
@@ -439,10 +439,9 @@ class NodeManager:
         """
         if self.client.is_shutting_down:
             return
-        LOGGER.warning("[NODE-%s] Disconnected with code %s and reason %s", node.name, code, reason)
-        LOGGER.verbose(
-            "[NODE-%s] Disconnected with code %s and reason %s -- %r",
-            node.name,
+        node._logger.warning("Disconnected with code %s and reason %s", code, reason)
+        node._logger.verbose(
+            "Disconnected with code %s and reason %s -- %r",
             code,
             reason,
             node,
@@ -595,9 +594,7 @@ class NodeManager:
                 connection_arguments = await node.get_connection_args()
             nodes_list.append(await self.add_node(**connection_arguments))
         except (ValueError, KeyError) as exc:
-            LOGGER.warning(
-                "[NODE-%s] Invalid node, skipping ... id: %s - Original error: %s", node_data["name"], node.id, exc
-            )
+            LOGGER.warning("Invalid node, skipping ... id: %s - Original error: %s", node.id, exc)
 
     async def wait_until_ready(self, timeout: float | None = None):
         await asyncio.wait_for(self._adding_nodes.wait(), timeout=timeout)

@@ -141,7 +141,7 @@ class PlayerManager:
         if player.node and player.node.available:
             await player.node.delete_session_player(player.guild.id)
         await player.disconnect(requester=requester)
-        LOGGER.debug("[NODE-%s] Successfully destroyed player %s", player.node.name, guild_id)
+        player.node._logger.debug("Successfully destroyed player %s", guild_id)
 
     async def save_and_restore(self, guild_id: int):
         await asyncio.sleep(5)
@@ -260,7 +260,7 @@ class PlayerManager:
             )
             best_node.dispatch_event(PlayerConnectedEvent(player, requester or self.client.bot.user))
 
-            LOGGER.info("[NODE-%s] Successfully created player for %s", best_node.name, channel.guild.id)
+            best_node._logger.debug("Successfully created player for %s", channel.guild.id)
             return player
         except Exception:
             LOGGER.error("Failed to create player for %s", channel.guild.id)
@@ -341,7 +341,8 @@ class PlayerManager:
                     LOGGER.debug("Updating bot activity to %s", f"Listening to Music in {playing_players} servers")
                     await self.bot.change_presence(
                         activity=discord.Activity(
-                            type=discord.ActivityType.listening, name=f"Music in {playing_players} servers"
+                            type=discord.ActivityType.listening,
+                            name=_("Music in {count} servers").format(count=playing_players),
                         )
                     )
             elif playing_players == 1:

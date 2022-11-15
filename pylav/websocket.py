@@ -69,15 +69,6 @@ if TYPE_CHECKING:
     from pylav.player import Player
     from pylav.tracks import Track
 
-LOGGER = getLogger("PyLav.WebSocket")
-
-
-def _done_callback(task: asyncio.Task) -> None:
-    with contextlib.suppress(asyncio.CancelledError):
-        exc = task.exception()
-        if exc is not None:
-            LOGGER.error("Error in connect task", exc_info=exc)
-
 
 class WebSocket:
     """Represents the WebSocket connection with Lavalink"""
@@ -105,6 +96,7 @@ class WebSocket:
         "_api_version",
         "_connecting",
         "_player_reconnect_tasks",
+        "_logger",
     )
 
     def __init__(
@@ -120,6 +112,7 @@ class WebSocket:
         ssl: bool,
     ):
         self._node = node
+        self._logger = getLogger(f"PyLav.WebSocket-{self.node.name}")
         self._client = self._node.node_manager.client
 
         self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=120), json_serialize=ujson.dumps)
@@ -145,10 +138,16 @@ class WebSocket:
         )
         self.ready = asyncio.Event()
         self._connect_task = asyncio.ensure_future(self.connect())
-        self._connect_task.add_done_callback(_done_callback)
+        self._connect_task.add_done_callback(self._done_callback)
         self._manual_shutdown = False
         self._connecting = False
         self._player_reconnect_tasks: dict[int : asyncio.Task] = {}
+
+    def _done_callback(self, task: asyncio.Task) -> None:
+        with contextlib.suppress(asyncio.CancelledError):
+            exc = task.exception()
+            if exc is not None:
+                self._logger.error("Error in connect task", exc_info=exc)
 
     @property
     def is_ready(self) -> bool:
@@ -209,7 +208,7 @@ class WebSocket:
         if not self._resuming_configured and self._resume_key and (self._resume_timeout and self._resume_timeout > 0):
             await self.node.patch_session(payload={"resumingKey": self._resume_key, "timeout": self._resume_timeout})
             self._resuming_configured = True
-            LOGGER.info("[NODE-%s] Node resume has been configured with key: %s", self.node.name, self._resume_key)
+            self._logger.info("Node resume has been configured with key: %s", self._resume_key)
 
     async def connect(self):  # sourcery no-metrics
         """Attempts to establish a connection to Lavalink"""
@@ -239,9 +238,8 @@ class WebSocket:
                     self._connecting = False
                     return
                 attempt += 1
-                LOGGER.info(
-                    "[NODE-%s] Attempting to establish WebSocket connection (%s/%s)",
-                    self._node.name,
+                self._logger.info(
+                    "Attempting to establish WebSocket connection (%s/%s)",
                     attempt,
                     max_attempts_str,
                 )
@@ -260,11 +258,10 @@ class WebSocket:
                         self._connecting = False
                         return
                     if isinstance(ce, aiohttp.ClientConnectorError):
-                        LOGGER.warning(
-                            "[NODE-%s] Invalid response received; this may indicate that "
+                        self._logger.warning(
+                            "Invalid response received; this may indicate that "
                             "Lavalink is not running, or is running on a port different "
                             "to the one you passed to `add_node` (%s - %s)",
-                            self.node.name,
                             ws_uri,
                             headers,
                         )
@@ -273,9 +270,8 @@ class WebSocket:
                             401,
                             403,
                         ):  # Special handling for 401/403 (Unauthorized/Forbidden).
-                            LOGGER.warning(
-                                "[NODE-%s] Authentication failed while trying to establish a connection to the node",
-                                self.node.name,
+                            self._logger.warning(
+                                "Authentication failed while trying to establish a connection to the node",
                             )
                             # We shouldn't try to establish any more connections as correcting this particular error
                             # would require the cog to be reloaded (or the bot to be rebooted), so further attempts
@@ -283,12 +279,11 @@ class WebSocket:
                             self._connecting = False
                             return
 
-                        LOGGER.warning(
-                            "[NODE-%s] The remote server returned code %s, "
+                        self._logger.warning(
+                            "The remote server returned code %s, "
                             "the expected code was 101. This usually "
                             "indicates that the remote server is a webserver "
                             "and not Lavalink. Check your ports, and try again",
-                            self.node.name,
                             ce.status,
                         )
                     await asyncio.sleep(backoff.delay())
@@ -302,21 +297,19 @@ class WebSocket:
 
                         self._message_queue.clear()
                     await self._listen()
-                    LOGGER.debug("[NODE-%s] _listen returned", self.node.name)
+                    self._logger.debug("_listen returned")
                     # Ensure this loop doesn't proceed if _listen returns control back to this
                     # function.
                     self._connecting = False
                     return
 
-            LOGGER.warning(
-                "[NODE-%s] A WebSocket connection could not be established within %s attempts",
-                self.node.name,
+            self._logger.warning(
+                "A WebSocket connection could not be established within %s attempts",
                 attempt,
             )
         except Exception:
-            LOGGER.exception(
-                "[NODE-%s] An exception occurred while attempting to connect to the node",
-                self.node.name,
+            self._logger.exception(
+                "An exception occurred while attempting to connect to the node",
             )
 
     async def _listen(self):
@@ -325,11 +318,10 @@ class WebSocket:
             async for msg in self._ws:
                 if self._manual_shutdown:
                     return
-                LOGGER.trace("[NODE-%s] Received WebSocket message: %s", self.node.name, msg.data)
+                self._logger.trace("Received WebSocket message: %s", msg.data)
                 if msg.type == aiohttp.WSMsgType.CLOSED:
-                    LOGGER.info(
-                        "[NODE-%s] Received close frame with code %s",
-                        self.node.name,
+                    self._logger.info(
+                        "Received close frame with code %s",
                         msg.data,
                     )
                     await self._websocket_closed(msg.data, msg.extra)
@@ -338,12 +330,12 @@ class WebSocket:
                     await self.handle_message(msg.json(loads=ujson.loads))
                 # elif msg.type == aiohttp.WSMsgType.ERROR and not self.client.is_shutting_down:
                 #     exc = self._ws.exception()
-                #     LOGGER.error("[NODE-%s] Exception in WebSocket! %s", self.node.name, exc)
+                #     self._logger.error("Exception in WebSocket! %s", exc)
                 #     break
             await self._websocket_closed()
         except Exception:
             if not self.client.is_shutting_down:
-                LOGGER.exception("[NODE-%s] Exception in WebSocket!", self.node.name)
+                self._logger.exception("Exception in WebSocket!")
                 await self._websocket_closed()
 
     async def _websocket_closed(self, code: int = None, reason: str = None):
@@ -357,9 +349,8 @@ class WebSocket:
         reason: :class:`str`
             Reason why the websocket was closed. Defaults to `None`
         """
-        LOGGER.info(
-            "[NODE-%s] WebSocket disconnected with the following: code=%s reason=%s",
-            self.node.name,
+        self._logger.info(
+            "WebSocket disconnected with the following: code=%s reason=%s",
             code,
             reason,
         )
@@ -371,7 +362,7 @@ class WebSocket:
             await self.close()
             return
         self._connect_task = asyncio.ensure_future(self.connect())
-        self._connect_task.add_done_callback(_done_callback)
+        self._connect_task.add_done_callback(self._done_callback)
 
     async def handle_message(self, data: LavalinkPlayerUpdateT | LavalinkEventT | LavalinkStatsT | LavalinkReadyT):
         """
@@ -406,13 +397,13 @@ class WebSocket:
                     case "SegmentSkippedEvent":
                         data = from_dict(data_class=SegmentSkippedEventOpObject, data=data)
                     case __:
-                        LOGGER.warning("[NODE-%s] Received unknown event: %s", self.node.name, data["type"])
+                        self._logger.warning("Received unknown event: %s", data["type"])
                 await self.handle_event(data)
             case "ready":
                 data = from_dict(data_class=LavalinkReadyOpObject, data=data)
                 await self.handle_ready(data)
             case __:
-                LOGGER.warning("[NODE-%s] Received unknown op: %s", self.node.name, data["op"])
+                self._logger.warning("Received unknown op: %s", data["op"])
 
     async def handle_stats(self, data: LavalinkStatsOpObject):
         """
@@ -445,7 +436,7 @@ class WebSocket:
             ):
                 if player.guild.id in self._player_reconnect_tasks:
                     self._player_reconnect_tasks[player.guild.id].cancel()
-                LOGGER.verbose("Creating reconnect task for %s", player.guild.id)
+                self._logger.verbose("Creating reconnect task for %s", player.guild.id)
                 self._player_reconnect_tasks[player.guild.id] = asyncio.create_task(self.maybe_reconnect_player(player))
                 return
             await player._update_state(data.state)
@@ -488,9 +479,8 @@ class WebSocket:
         self._resumed = data.resumed
         self.ready.set()
         self.node._ready.set()
-        LOGGER.info(
-            "[NODE-%s] Node connected successfully and is now ready to accept commands: Session ID: %s",
-            self.node.name,
+        self._logger.info(
+            "Node connected successfully and is now ready to accept commands: Session ID: %s",
             self._session_id,
         )
         await self.configure_resume_and_timeout()
@@ -522,9 +512,8 @@ class WebSocket:
             await asyncio.sleep(3)
             player = self.client.player_manager.get(int(data.guildId))
             if not player:
-                LOGGER.debug(
-                    "[NODE-%s] Received event for non-existent player! Guild ID: %s",
-                    self.node.name,
+                self._logger.debug(
+                    "Received event for non-existent player! Guild ID: %s",
                     data.guildId,
                 )
                 return
@@ -581,7 +570,7 @@ class WebSocket:
                 data = typing.cast(SegmentSkippedEventOpObject, data)
                 event = SegmentSkippedEvent(player, node=self.node, event_object=data)
             case __:
-                LOGGER.warning("[NODE-%s] Received unknown event: %s", self.node.name, data.type)
+                self._logger.warning("Received unknown event: %s", data.type)
                 return
 
         self.client.dispatch_event(event)
@@ -598,14 +587,14 @@ class WebSocket:
         if self._manual_shutdown:
             return
         if self.connected:
-            LOGGER.trace("[NODE-%s] Sending payload %s", self.node.name, data)
+            self._logger.trace("Sending payload %s", data)
             try:
                 await self._ws.send_json(data)
             except ConnectionResetError:
-                LOGGER.debug("[NODE-%s] Send called before WebSocket ready!", self.node.name)
+                self._logger.debug("Send called before WebSocket ready!")
                 self._message_queue.append(data)
         else:
-            LOGGER.debug("[NODE-%s] Send called before WebSocket ready!", self.node.name)
+            self._logger.debug("Send called before WebSocket ready!")
             self._message_queue.append(data)
 
     async def _process_track_event(
