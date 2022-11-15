@@ -394,11 +394,9 @@ class Client(metaclass=_Singleton):
 
                 self.bot.add_listener(self.on_pylav_red_api_tokens_update, name="on_red_api_tokens_update")
                 if isinstance(self.bot, discord.AutoShardedClient):
-                    self.bot.add_listener(self.on_pylav_shard_resumed, name="on_shard_resumed")
                     self.bot.add_listener(self.on_pylav_shard_ready, name="on_shard_ready")
                 else:
                     self.bot.add_listener(self.on_pylav_ready, name="on_ready")
-                    self.bot.add_listener(self.on_pylav_resumed, name="on_resumed")
                 await self._initialise_modules()
                 config_data = await self._config.fetch_all()
                 java_path = config_data["java_path"]
