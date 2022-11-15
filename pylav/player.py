@@ -2415,7 +2415,7 @@ class Player(VoiceProtocol):
             "auto_play": data["auto_play"],
             "auto_play_playlist_id": data["auto_play_playlist_id"],
             "volume": self.volume,
-            "position": await self.fetch_position(),
+            "position": self.position,
             "playing": self.is_playing,
             "queue": [] if self.queue.empty() else [await t.to_json() for t in self.queue.raw_queue],
             "history": [] if self.history.empty() else [await t.to_json() for t in self.history.raw_queue],
