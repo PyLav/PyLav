@@ -553,7 +553,7 @@ class Client(metaclass=_Singleton):
             misfire_grace_time=None,
         )
         LOGGER.info(
-            "Scheduling first run of External Playlist update task to: %s",
+            "Scheduling next run of External Playlist update task to: %s",
             next_execution_update_external_playlists,
         )
 
@@ -574,7 +574,7 @@ class Client(metaclass=_Singleton):
             misfire_grace_time=None,
         )
         LOGGER.info(
-            "Scheduling first run of Bundled External Playlist update task to: %s",
+            "Scheduling next run of Bundled External Playlist update task to: %s",
             next_execution_update_bundled_external_playlists,
         )
 
@@ -593,7 +593,7 @@ class Client(metaclass=_Singleton):
             misfire_grace_time=None,
         )
         LOGGER.info(
-            "Scheduling first run of Bundled Playlist update task to: %s",
+            "Scheduling next run of Bundled Playlist update task to: %s",
             next_execution_update_bundled_playlists,
         )
 
@@ -937,7 +937,7 @@ class Client(metaclass=_Singleton):
         async with self._asyncio_lock:
             if not self._shutting_down:
                 self.__cogs_registered.discard(cog.__cog_name__)
-                LOGGER.info("%s has been unregistered", cog.__cog_name__)
+                LOGGER.debug("%s has been unregistered", cog.__cog_name__)
                 if not self.__cogs_registered:
                     self.bot.remove_listener(self.on_pylav_red_api_tokens_update, name="on_red_api_tokens_update")
                     self.bot.remove_listener(self.on_pylav_shard_resumed, name="on_shard_resumed")
