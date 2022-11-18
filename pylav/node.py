@@ -738,15 +738,16 @@ class Node:
         info = await self.get_info()
         for source in info.sourceManagers:
             self._capabilities.add(source)
-        if not self.managed:
-            self._capabilities.discard("local")
-        if self.identifier in PYLAV_NODES:
-            self._capabilities.discard("http")
+        if not self.managed or self.host != "localhost":
             self._capabilities.discard("local")
         for plugin in info.plugins:
             match plugin.name:
                 case "SponsorBlock-Plugin":
                     self._capabilities.add("sponsorblock")
+        if self.identifier in PYLAV_NODES:
+            self._capabilities.discard("http")
+            self._capabilities.discard("local")
+            self._capabilities.discard("sponsorblock")
         # If not setup says these should be disabled remove them to trick the node to think they are disabled
         if self._capabilities:
             self._capabilities.difference_update(self._disabled_sources)
