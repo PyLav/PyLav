@@ -46,7 +46,7 @@ SUPPORTED_SOURCES = {
     "twitch",
     "vimeo",
     "local",
-    "http"
+    "http",
     # https://github.com/DuncteBot/skybot-lavalink-plugin
     "getyarn.io",
     "clypit",
@@ -88,7 +88,7 @@ PYLAV_NODE_SETTINGS = {
     "reconnect_attempts": -1,
     "search_only": False,
     "managed": False,
-    "disabled_sources": ["local", "http", "sponsorblock"],
+    "disabled_sources": ["local", "http"],
     "temporary": True,
 }
 
