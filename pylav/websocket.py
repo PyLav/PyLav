@@ -511,12 +511,12 @@ class WebSocket:
         if not player:
             await asyncio.sleep(3)
             player = self.client.player_manager.get(int(data.guildId))
-            if not player:
-                self._logger.debug(
-                    "Received event for non-existent player! Guild ID: %s",
-                    data.guildId,
-                )
-                return
+        if not player:
+            self._logger.debug(
+                "Received event for non-existent player! Guild ID: %s",
+                data.guildId,
+            )
+            return
 
         match data.type:
             case "TrackEndEvent":
