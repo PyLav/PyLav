@@ -1240,7 +1240,7 @@ class Player(VoiceProtocol):
     async def _process_partial_query(
         self, track: Track, requester: discord.Member | None, bypass_cache: bool, add_to_queue: bool
     ):
-        requester = track.requester if track.requester else requester
+        requester = track.requester or requester
         if await track.is_single():
             returned = await self._process_partial_track(track, bypass_cache)
             if returned:
