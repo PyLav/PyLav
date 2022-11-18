@@ -123,6 +123,8 @@ class Track:
             self._build_from_track_string(data, extra)
         if self._query is not None:
             self.timestamp = self.timestamp or self._query.start_time
+        if "partial" in self.extra:
+            self._is_partial = self.extra["partial"]
         self._requester = requester or self._node.node_manager.client.bot.user.id
         self._id = str(uuid.uuid4())
         self._updated_query = None
@@ -374,6 +376,7 @@ class Track:
             "extra": {
                 "timestamp": self.timestamp,
                 "last_known_position": self.last_known_position,
+                "partial": self._is_partial,
             },
             "raw_data": self._raw_data,
         }
@@ -392,6 +395,16 @@ class Track:
         self._unique_id.update(self.encoded.encode())
         if "unique_identifier" in self.__dict__:
             del self.__dict__["unique_identifier"]
+
+    async def search_all(self, player: Player, requester: int, bypass_cache: bool = False) -> list[Track]:
+        self._query = await Query.from_string(self._query)
+        response = await player.node.get_track(await self.query(), bypass_cache=bypass_cache)
+        if not response or not response.tracks:
+            raise TrackNotFound(f"No tracks found for query {await self.query_identifier()}")
+        return [
+            Track(data=track, node=player.node, query=await Query.from_base64(track.encoded), requester=requester)
+            for track in response.tracks
+        ]
 
     def __int__(self):
         return 0
@@ -430,7 +443,11 @@ class Track:
     ) -> str:
         if self.is_partial:
             base = await self._get_track_display_name_partial_track(max_length)
-            return discord.utils.escape_markdown(base) if escape else base
+            base = discord.utils.escape_markdown(base) if escape else base
+            query = await self.query()
+            if not query.is_single and not query.is_custom_playlist:
+                base = f"[{base}]({query.query_identifier})"
+            return base
         else:
             base, bold, url_end, url_start = await self._get_track_display_name_non_partial_track(
                 author, max_length, unformatted, with_url
@@ -439,7 +456,8 @@ class Track:
             return f"{bold}{url_start}{base}{url_end}{bold}"
 
     async def _get_track_display_name_partial_track(self, max_length):
-        base = await (await self.query()).query_to_queue(max_length, partial=True)
+        query = await self.query()
+        base = await query.query_to_queue(max_length, partial=True)
         base = SQUARE_BRACKETS.sub("", base).strip()
         if max_length and len(base) > (actual_length := max_length - 1):
             base = f"{base[:actual_length]}" + "\N{HORIZONTAL ELLIPSIS}"
