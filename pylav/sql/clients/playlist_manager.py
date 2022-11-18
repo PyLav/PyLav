@@ -423,6 +423,7 @@ class PlaylistConfigManager:
                     "[DZ] Best Anime Openings, Endings & Inserts",
                     "DZ",
                 ),
+                2000072: ("{dz_pl}5206929684", "[DZ] Japan Anime Hits", "DZ"),
             }
             id_filtered = {id: curated_data[id] for id in ids}
             if not id_filtered:
