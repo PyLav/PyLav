@@ -444,8 +444,7 @@ class Track:
         if self.is_partial:
             base = await self._get_track_display_name_partial_track(max_length)
             base = discord.utils.escape_markdown(base) if escape else base
-            query = await self.query()
-            if not query.is_single and not query.is_custom_playlist:
+            if with_url and (query := await self.query()) and not query.is_single and not query.is_custom_playlist:
                 base = f"[{base}]({query.query_identifier})"
             return base
         else:
