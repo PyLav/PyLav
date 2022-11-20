@@ -70,7 +70,7 @@ from pylav.filters.tremolo import Tremolo
 from pylav.query import Query
 from pylav.sql.models import PlayerModel, PlayerStateModel, PlaylistModel
 from pylav.tracks import Track
-from pylav.types import BotT, InteractionT, RestPatchPlayerPayloadT
+from pylav.types import BotT, InteractionT, RestPatchPlayerPayloadT, VoiceStateT
 from pylav.utils import (
     _LOCK,
     AsyncIter,
@@ -239,6 +239,13 @@ class Player(VoiceProtocol):
             f"node={self.node}>"
         )
 
+    def add_voice_to_payload(self, payload: dict) -> RestPatchPlayerPayloadT:
+        if not payload:
+            payload = {}
+        if {"sessionId", "token", "endpoint"} == self._voice_state.keys():
+            payload["voice"] = typing.cast(VoiceStateT, self._voice_state)
+        return payload
+
     async def post_init(
         self,
         node: Node,
@@ -320,6 +327,7 @@ class Player(VoiceProtocol):
             if self.volume_filter:
                 payload["volume"] = self.volume
             if payload:
+                self.add_voice_to_payload(payload)
                 await self.node.patch_session_player(
                     guild_id=self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, payload)
                 )
@@ -1052,6 +1060,7 @@ class Player(VoiceProtocol):
         payload = {"encodedTrack": track.encoded}
         if track.skip_segments and self.node.supports_sponsorblock and await track.is_youtube():
             payload["skipSegments"] = track.skip_segments
+        self.add_voice_to_payload(payload)
         await self.node.patch_session_player(
             guild_id=self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, payload), no_replace=False
         )
@@ -1090,6 +1099,7 @@ class Player(VoiceProtocol):
         payload = {"encodedTrack": track.encoded}
         if track.skip_segments and self.node.supports_sponsorblock and await track.is_youtube():
             payload["skipSegments"] = track.skip_segments
+        self.add_voice_to_payload(payload)
         await self.node.patch_session_player(
             guild_id=self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, payload), no_replace=no_replace
         )
@@ -1184,6 +1194,7 @@ class Player(VoiceProtocol):
         self.current = track
         self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
         payload["encodedTrack"] = track.encoded
+        self.add_voice_to_payload(payload)
         await self.node.patch_session_player(
             guild_id=self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, payload), no_replace=no_replace
         )
@@ -1339,6 +1350,7 @@ class Player(VoiceProtocol):
         if self.node.supports_sponsorblock and await self.current.is_youtube():
             payload["skipSegments"] = self.current.skip_segments if self.current else []
         payload["position"] = self.current.last_known_position if self.current else await self.fetch_position()
+        self.add_voice_to_payload(payload)
         await self.node.patch_session_player(
             guild_id=self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, payload), no_replace=False
         )
@@ -1423,8 +1435,10 @@ class Player(VoiceProtocol):
         requester: :class:`discord.Member`
             The member who requested the pause.
         """
+        payload = {"paused": pause}
+        self.add_voice_to_payload(payload)
         await self.node.patch_session_player(
-            guild_id=self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, {"paused": pause})
+            guild_id=self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, payload)
         )
         self.paused = pause
         self._was_alone_paused = False
@@ -1452,7 +1466,11 @@ class Player(VoiceProtocol):
             return
         await self.config.update_volume(volume)
         self._volume = Volume(volume)
-        await self.node.patch_session_player(guild_id=self.guild.id, payload={"volume": self.volume})
+        payload = {"volume": volume}
+        self.add_voice_to_payload(payload)
+        await self.node.patch_session_player(
+            guild_id=self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, payload)
+        )
         self.node.dispatch_event(PlayerVolumeChangedEvent(self, requester, self.volume, volume))
 
     async def seek(self, position: float, requester: discord.Member, with_filter: bool = False) -> None:
@@ -1474,8 +1492,10 @@ class Player(VoiceProtocol):
             self.node.dispatch_event(
                 TrackSeekEvent(self, requester, self.current, before=await self.fetch_position(), after=position)
             )
+            payload = {"position": position}
+            self.add_voice_to_payload(payload)
             await self.node.patch_session_player(
-                guild_id=self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, {"position": position})
+                guild_id=self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, payload)
             )
             self._last_update = time.time() * 1000
             self._last_position = position
@@ -1541,9 +1561,10 @@ class Player(VoiceProtocol):
         self.node = node
         await asyncio.wait_for(self._waiting_for_node.wait(), timeout=None)
         await node.websocket.wait_until_ready()
+        if old_node.available and node.session_id != old_node.session_id:
+            await old_node.delete_session_player(self.guild.id)
         if self._voice_state:
             await self._dispatch_voice_update()
-
         if ops:
             if self.current:
                 payload = typing.cast(
@@ -1573,9 +1594,8 @@ class Player(VoiceProtocol):
             if self.volume_filter:
                 payload["volume"] = self.volume
         if payload:
+            self.add_voice_to_payload(payload)
             await node.patch_session_player(guild_id=self.guild.id, payload=payload)
-        if old_node.available and node.session_id != old_node.session_id:
-            await old_node.delete_session_player(self.guild.id)
         node.dispatch_event(NodeChangedEvent(self, old_node, node))
 
     async def connect(
@@ -1668,8 +1688,10 @@ class Player(VoiceProtocol):
 
     async def stop(self, requester: discord.Member) -> None:
         """Stops the player"""
+        payload = {"encodedTrack": None}
+        self.add_voice_to_payload(payload)
         await self.node.patch_session_player(
-            guild_id=self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, {"encodedTrack": None})
+            guild_id=self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, payload)
         )
         self.node.dispatch_event(PlayerStoppedEvent(self, requester))
         self.current = None
@@ -2073,6 +2095,7 @@ class Player(VoiceProtocol):
             ),
             "position": await self.fetch_position(),
         }
+        self.add_voice_to_payload(payload)
         await self.node.patch_session_player(self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, payload))
         kwargs.pop("reset_not_set", None)
         kwargs.pop("requester", None)
@@ -2595,6 +2618,7 @@ class Player(VoiceProtocol):
         if self.volume_filter:
             payload["volume"] = self.volume
         if payload:
+            self.add_voice_to_payload(payload)
             await self.node.patch_session_player(
                 guild_id=self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, payload)
             )
