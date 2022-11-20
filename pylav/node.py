@@ -1718,9 +1718,9 @@ class Node:
         echo: Echo = None,
         reset_no_set: bool = False,
         reset: bool = False,
-    ) -> FiltersT | None:
+    ) -> FiltersT | dict:
         if reset:
-            return None
+            return {}
 
         payload: FiltersT = {}
         self._get_filter_payload_volume(payload, volume)
@@ -1815,7 +1815,7 @@ class Node:
     async def filters(
         self,
         *,
-        guild_id: int,
+        player: Player,
         volume: Volume = None,
         equalizer: Equalizer = None,
         karaoke: Karaoke = None,
@@ -1829,7 +1829,7 @@ class Node:
         echo: Echo = None,
     ):
         payload = self.get_filter_payload(
-            player=self.node_manager.client.player_manager.get(guild_id),
+            player=self.node_manager.client.player_manager.get(player.guild.id),
             volume=volume,
             equalizer=equalizer,
             karaoke=karaoke,
@@ -1842,6 +1842,7 @@ class Node:
             channel_mix=channel_mix,
             echo=echo,
         )
+        player.add_voice_to_payload(payload)
         await self.patch_session_player(
-            guild_id=guild_id, payload=typing.cast(RestPatchPlayerPayloadT, {"filters": payload})
+            guild_id=player.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, {"filters": payload})
         )
