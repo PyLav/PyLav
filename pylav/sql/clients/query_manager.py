@@ -8,8 +8,10 @@ from typing import TYPE_CHECKING
 from discord.utils import utcnow
 
 import pylav.sql.tables.queries
+import pylav.sql.tables.tracks
 from pylav._logging import getLogger
 from pylav.sql.models import QueryModel
+from pylav.sql.tables import DB
 from pylav.utils import AsyncIter
 
 if TYPE_CHECKING:
@@ -59,9 +61,28 @@ class QueryCacheManager:
         if not tracks:
             return False
         name = result.get("playlistInfo", {}).get("name", None)
-        query = self.get(query.query_identifier)
-        await query.bulk_update(name=name, tracks=[t["encoded"] async for t in AsyncIter(tracks)])
-        return True
+        defaults = {pylav.sql.tables.queries.QueryRow.name: name}
+        query_row = await pylav.sql.tables.queries.QueryRow.objects().get_or_create(
+            pylav.sql.tables.queries.QueryRow.identifier == query.query_identifier, defaults
+        )
+        if not query_row._was_created:
+            await pylav.sql.tables.queries.QueryRow.update(defaults).where(
+                pylav.sql.tables.queries.QueryRow.identifier == query.query_identifier
+            )
+        new_tracks = []
+        # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
+        async with DB.transaction():
+            async for track in AsyncIter(tracks):
+                with contextlib.suppress(Exception):
+                    new_tracks.append(
+                        await pylav.sql.tables.tracks.TrackRow.objects().get_or_create(
+                            pylav.sql.tables.tracks.TrackRow.encoded == track["encoded"], track["info"]
+                        )
+                    )
+        if new_tracks:
+            await query_row.add_m2m(*new_tracks, m2m=pylav.sql.tables.queries.QueryRow.tracks)
+            return True
+        return False
 
     @staticmethod
     async def delete_old() -> None:

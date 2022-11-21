@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import asyncio
+import contextlib
 import datetime
 import gzip
 import io
@@ -32,7 +34,9 @@ import pylav.sql.tables.players
 import pylav.sql.tables.playlists
 import pylav.sql.tables.queries
 from pylav.envvars import CACHING_ENABLED, JAVA_EXECUTABLE
+from pylav.sql import tables
 from pylav.sql.caching import CachedModel, _SingletonByKey, maybe_cached
+from pylav.sql.tables import DB
 from pylav.vendored import aiopath
 
 try:
@@ -46,8 +50,9 @@ from pylav._logging import getLogger
 from pylav.constants import BUNDLED_PLAYLIST_IDS, SUPPORTED_FEATURES, SUPPORTED_SOURCES
 from pylav.exceptions import InvalidPlaylist
 from pylav.filters import Equalizer
+from pylav.track_encoding import decode_track
 from pylav.types import BotT
-from pylav.utils import PyLavContext, TimedFeature, get_jar_ram_actual, get_true_path
+from pylav.utils import AsyncIter, PyLavContext, TimedFeature, get_jar_ram_actual, get_true_path
 
 try:
     from redbot.core.i18n import Translator
@@ -2455,7 +2460,16 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
             The playlists.
         """
         data = (
-            await pylav.sql.tables.playlists.PlaylistRow.select()
+            await pylav.sql.tables.playlists.PlaylistRow.select(
+                pylav.sql.tables.playlists.PlaylistRow.id,
+                pylav.sql.tables.playlists.PlaylistRow.name,
+                pylav.sql.tables.playlists.PlaylistRow.tracks(
+                    pylav.sql.tables.tracks.TrackRow.encoded, as_list=True, load_json=True
+                ),
+                pylav.sql.tables.playlists.PlaylistRow.scope,
+                pylav.sql.tables.playlists.PlaylistRow.author,
+                pylav.sql.tables.playlists.PlaylistRow.url,
+            )
             .where(pylav.sql.tables.playlists.PlaylistRow.id == self.id)
             .first()
             .output(load_json=True, nested=True)
@@ -2622,12 +2636,16 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
             The tracks of the playlist.
         """
         response = (
-            await pylav.sql.tables.playlists.PlaylistRow.select(pylav.sql.tables.playlists.PlaylistRow.tracks)
+            await pylav.sql.tables.playlists.PlaylistRow.select(
+                pylav.sql.tables.playlists.PlaylistRow.tracks(
+                    pylav.sql.tables.tracks.TrackRow.encoded, as_list=True, load_json=True
+                )
+            )
             .where(pylav.sql.tables.playlists.PlaylistRow.id == self.id)
             .first()
             .output(load_json=True, nested=True)
         )
-        return response["tracks"] if response else ujson.loads(pylav.sql.tables.playlists.PlaylistRow.tracks.default)
+        return response["tracks"] if response else []
 
     async def update_tracks(self, tracks: list[str]):
         """Update the tracks of the playlist.
@@ -2637,16 +2655,30 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         tracks : list[str]
             The new tracks of the playlist.
         """
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await pylav.sql.tables.playlists.PlaylistRow.raw(
-            "INSERT INTO playlist (id, tracks) "
-            "VALUES ({}, {}) "
-            "ON CONFLICT (id) "
-            "DO UPDATE SET tracks = EXCLUDED.tracks;",
-            self.id,
-            ujson.dumps(tracks),
+        playlist_row = await pylav.sql.tables.playlists.PlaylistRow.objects().get_or_create(
+            pylav.sql.tables.playlists.PlaylistRow.id == self.id
         )
+        try:
+            old_tracks = await playlist_row.get_m2m(pylav.sql.tables.playlists.PlaylistRow.tracks)
+        except ValueError:
+            old_tracks = []
+        new_tracks = []
+        # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
+        async with DB.transaction():
+            async for track in AsyncIter(tracks):
+                with contextlib.suppress(Exception):
+                    track_object, __ = await asyncio.to_thread(decode_track, track)
+                    new_tracks.append(
+                        await pylav.sql.tables.tracks.TrackRow.objects().get_or_create(
+                            pylav.sql.tables.tracks.TrackRow.encoded == track, track_object.info.to_dict()
+                        )
+                    )
+
+        if old_tracks:
+            await playlist_row.remove_m2m(*old_tracks, m2m=pylav.sql.tables.playlists.PlaylistRow.tracks)
+        if new_tracks:
+            await playlist_row.add_m2m(*new_tracks, m2m=pylav.sql.tables.playlists.PlaylistRow.tracks)
+
         await self.update_cache(
             (self.fetch_tracks, tracks),
             (self.exists, True),
@@ -2664,11 +2696,8 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         int
             The number of tracks in the playlist.
         """
-        # TODO: When piccolo add support to more JSON operations replace this with ORM version
-        response = await pylav.sql.tables.playlists.PlaylistRow.raw(
-            "SELECT jsonb_array_length(tracks) as size FROM playlist WHERE id = {} LIMIT 1;", self.id
-        )
-        return response[0]["size"] if response else 0
+        tracks = await self.fetch_tracks()
+        return len(tracks) if tracks else 0
 
     async def add_track(self, tracks: list[str]):
         """Add a track to the playlist.
@@ -2678,14 +2707,22 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         tracks : list[str]
             The tracks to add.
         """
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await pylav.sql.tables.playlists.PlaylistRow.raw(
-            "INSERT INTO playlist (id, tracks) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET tracks = array_cat("
-            "playlist.tracks, EXCLUDED.tracks);",
-            self.id,
-            tracks,
+        playlist_row = await pylav.sql.tables.playlists.PlaylistRow.objects().get_or_create(
+            pylav.sql.tables.playlists.PlaylistRow.id == self.id
         )
+        new_tracks = []
+        # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
+        async with DB.transaction():
+            async for track in AsyncIter(tracks):
+                with contextlib.suppress(Exception):
+                    track_object, __ = await asyncio.to_thread(decode_track, track)
+                    new_tracks.append(
+                        await pylav.sql.tables.tracks.TrackRow.objects().get_or_create(
+                            pylav.sql.tables.tracks.TrackRow.encoded == track, track_object.info.to_dict()
+                        )
+                    )
+        if new_tracks:
+            await playlist_row.add_m2m(*new_tracks, m2m=pylav.sql.tables.playlists.PlaylistRow.tracks)
         await self.invalidate_cache(self.fetch_tracks, self.fetch_all, self.size, self.fetch_first, self.exists)
 
     async def bulk_remove_tracks(self, tracks: list[str]) -> None:
@@ -2698,9 +2735,17 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         """
         if not tracks:
             return
-        async with pylav.sql.tables.DB.transaction():
-            for track in tracks:
-                await self.remove_track(track)
+        playlist = (
+            await pylav.sql.tables.playlists.PlaylistRow.objects()
+            .where(pylav.sql.tables.playlists.PlaylistRow.id == self.id)
+            .first()
+        )
+        tracks = await pylav.sql.tables.tracks.TrackRow.objects().where(
+            pylav.sql.tables.tracks.TrackRow.encoded.is_in(tracks)
+        )
+        if tracks:
+            await playlist.remove_m2m(*tracks, m2m=pylav.sql.tables.playlists.PlaylistRow.tracks)
+        await self.invalidate_cache(self.fetch_tracks, self.fetch_all, self.size, self.fetch_first, self.exists)
 
     async def remove_track(self, track: str) -> None:
         """Remove a track from the playlist.
@@ -2710,18 +2755,21 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         track : str
             The track to remove
         """
-        # TODO: When piccolo add support to more Array operations replace this with ORM version
-
-        await pylav.sql.tables.playlists.PlaylistRow.raw(
-            "UPDATE playlist SET tracks = array_remove(tracks, {}) WHERE id = {};", self.id, track
-        )
-        await self.invalidate_cache(self.fetch_tracks, self.fetch_all, self.size, self.fetch_first, self.exists)
+        return await self.bulk_remove_tracks([track])
 
     async def remove_all_tracks(self) -> None:
         """Remove all tracks from the playlist."""
-        await pylav.sql.tables.playlists.PlaylistRow.update({pylav.sql.tables.playlists.PlaylistRow.tracks: []}).where(
-            pylav.sql.tables.playlists.PlaylistRow.id == self.id
+        playlist = (
+            await pylav.sql.tables.playlists.PlaylistRow.objects()
+            .where(pylav.sql.tables.playlists.PlaylistRow.id == self.id)
+            .first()
         )
+        try:
+            tracks = await playlist.get_m2m(pylav.sql.tables.playlists.PlaylistRow.tracks)
+        except ValueError:
+            tracks = []
+        if tracks:
+            await playlist.remove_m2m(*tracks, m2m=pylav.sql.tables.playlists.PlaylistRow.tracks)
         await self.update_cache((self.fetch_tracks, []), (self.size, 0), (self.exists, True), (self.fetch_first, None))
         await self.invalidate_cache(self.fetch_all)
 
@@ -2874,19 +2922,39 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
 
     async def bulk_update(self, scope: int, name: str, author: int, url: str | None, tracks: list[str]) -> None:
         """Bulk update the playlist."""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await pylav.sql.tables.playlists.PlaylistRow.raw(
-            "INSERT INTO playlist  (id, name, author, scope, url, tracks) VALUES ({}, {}, {}, {}, {}, {}) "
-            "ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, author = EXCLUDED.author, scope = EXCLUDED.scope, "
-            "url = EXCLUDED.url, tracks = EXCLUDED.tracks",
-            self.id,
-            name,
-            author,
-            scope,
-            url,
-            ujson.dumps(tracks),
+        defaults = {
+            pylav.sql.tables.playlists.PlaylistRow.name: name,
+            pylav.sql.tables.playlists.PlaylistRow.author: author,
+            pylav.sql.tables.playlists.PlaylistRow.scope: scope,
+            pylav.sql.tables.playlists.PlaylistRow.url: url,
+        }
+
+        playlist_row = await pylav.sql.tables.playlists.PlaylistRow.objects().get_or_create(
+            pylav.sql.tables.playlists.PlaylistRow.id == self.id, defaults
         )
+        if not playlist_row._was_created:
+            await pylav.sql.tables.playlists.PlaylistRow.update(defaults).where(
+                pylav.sql.tables.playlists.PlaylistRow.id == self.id
+            )
+        try:
+            old_tracks = await playlist_row.get_m2m(pylav.sql.tables.playlists.PlaylistRow.tracks)
+        except ValueError:
+            old_tracks = []
+        new_tracks = []
+        # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
+        async with DB.transaction():
+            async for track in AsyncIter(tracks):
+                with contextlib.suppress(Exception):
+                    track_object, __ = await asyncio.to_thread(decode_track, track)
+                    new_tracks.append(
+                        await pylav.sql.tables.tracks.TrackRow.objects().get_or_create(
+                            pylav.sql.tables.tracks.TrackRow.encoded == track, track_object.info.to_dict()
+                        )
+                    )
+        if old_tracks:
+            await playlist_row.remove_m2m(*old_tracks, m2m=pylav.sql.tables.playlists.PlaylistRow.tracks)
+        if new_tracks:
+            await playlist_row.add_m2m(*new_tracks, m2m=pylav.sql.tables.playlists.PlaylistRow.tracks)
         await self.invalidate_cache()
 
     @classmethod
@@ -2943,14 +3011,9 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
             tracks = await self.fetch_tracks()
             return tracks[index] if index < len(tracks) else None
         else:
-            response = (
-                await pylav.sql.tables.playlists.PlaylistRow.select(pylav.sql.tables.playlists.PlaylistRow.tracks)
-                .first()
-                .where(pylav.sql.tables.playlists.PlaylistRow.id == self.id)
-                .output(load_json=True, nested=True)
-            )
-            if response and len(response["tracks"]) > index:
-                return response["tracks"][index]
+            tracks = await self.fetch_tracks()
+            if tracks and len(tracks) > index:
+                return tracks[index]
 
     @maybe_cached
     async def fetch_first(self) -> str | None:
@@ -3006,15 +3069,8 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
         int
             The number of tracks in the playlist.
         """
-        # TODO: When piccolo add support to more JSON operations replace this with ORM version
-        response = await pylav.sql.tables.queries.QueryRow.raw(
-            """SELECT jsonb_array_length(tracks) as size
-        FROM query
-        WHERE identifier = {}
-        LIMIT 1;""",
-            self.id,
-        )
-        return response[0]["size"] if response else 0
+        tracks = await self.fetch_tracks()
+        return len(tracks) if tracks else 0
 
     @maybe_cached
     async def fetch_tracks(self) -> list[str]:
@@ -3026,12 +3082,16 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
             The tracks of the playlist.
         """
         response = (
-            await pylav.sql.tables.queries.QueryRow.select(pylav.sql.tables.queries.QueryRow.tracks)
+            await pylav.sql.tables.queries.QueryRow.select(
+                pylav.sql.tables.queries.QueryRow.tracks(
+                    pylav.sql.tables.tracks.TrackRow.encoded, as_list=True, load_json=True
+                )
+            )
             .where(pylav.sql.tables.queries.QueryRow.identifier == self.id)
             .first()
             .output(load_json=True, nested=True)
         )
-        return response["tracks"] if response else ujson.loads(pylav.sql.tables.queries.QueryRow.tracks.default)
+        return response["tracks"] if response else []
 
     async def update_tracks(self, tracks: list[str]):
         """Update the tracks of the playlist.
@@ -3041,14 +3101,28 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
         tracks: list[str]
             The tracks of the playlist.
         """
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await pylav.sql.tables.queries.QueryRow.raw(
-            "INSERT INTO playlist (identifier, tracks) VALUES ({}, {}) ON CONFLICT (identifier) DO UPDATE SET tracks = "
-            "EXCLUDED.tracks;",
-            self.id,
-            ujson.dumps(tracks),
+        query_row = await pylav.sql.tables.queries.QueryRow.objects().get_or_create(
+            pylav.sql.tables.queries.QueryRow.identifier == self.id
         )
+        try:
+            old_tracks = await query_row.get_m2m(pylav.sql.tables.queries.QueryRow.tracks)
+        except ValueError:
+            old_tracks = []
+        new_tracks = []
+        # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
+        async with DB.transaction():
+            async for track in AsyncIter(tracks):
+                with contextlib.suppress(Exception):
+                    track_object, __ = await asyncio.to_thread(decode_track, track)
+                    new_tracks.append(
+                        await pylav.sql.tables.tracks.TrackRow.objects().get_or_create(
+                            pylav.sql.tables.tracks.TrackRow.encoded == track, track_object.info.to_dict()
+                        )
+                    )
+        if old_tracks:
+            await query_row.remove_m2m(*old_tracks, m2m=pylav.sql.tables.queries.QueryRow.tracks)
+        if new_tracks:
+            await query_row.add_m2m(*new_tracks, m2m=pylav.sql.tables.queries.QueryRow.tracks)
         await self.update_cache(
             (self.fetch_tracks, tracks),
             (self.size, len(tracks)),
@@ -3134,17 +3208,33 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
         name: str
             The name of the playlist
         """
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await pylav.sql.tables.queries.QueryRow.raw(
-            "INSERT INTO query (identifier, tracks, name, last_updated) "
-            "VALUES ({}, {}, {}, {}) ON CONFLICT (identifier) "
-            "DO UPDATE SET tracks = EXCLUDED.tracks, name = EXCLUDED.name, last_updated = EXCLUDED.last_updated;",
-            self.id,
-            ujson.dumps(tracks),
-            name,
-            pylav.sql.tables.queries.QueryRow.last_updated.default.python(),
+        defaults = {pylav.sql.tables.queries.QueryRow.name: name}
+        query_row = await pylav.sql.tables.queries.QueryRow.objects().get_or_create(
+            pylav.sql.tables.queries.QueryRow.identifier == self.id, defaults
         )
+        if not query_row._was_created:
+            await pylav.sql.tables.queries.QueryRow.update(defaults).where(
+                pylav.sql.tables.queries.QueryRow.identifier == self.id
+            )
+        try:
+            old_tracks = await query_row.get_m2m(pylav.sql.tables.queries.QueryRow.tracks)
+        except ValueError:
+            old_tracks = []
+        new_tracks = []
+        # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
+        async with DB.transaction():
+            async for track in AsyncIter(tracks):
+                with contextlib.suppress(Exception):
+                    track_object, __ = await asyncio.to_thread(decode_track, track)
+                    new_tracks.append(
+                        await pylav.sql.tables.tracks.TrackRow.objects().get_or_create(
+                            pylav.sql.tables.tracks.TrackRow.encoded == track, track_object.info.to_dict()
+                        )
+                    )
+        if old_tracks:
+            await query_row.remove_m2m(*old_tracks, m2m=pylav.sql.tables.queries.QueryRow.tracks)
+        if new_tracks:
+            await query_row.add_m2m(*new_tracks, m2m=pylav.sql.tables.queries.QueryRow.tracks)
         await self.update_cache(
             (self.fetch_tracks, tracks),
             (self.size, len(tracks)),
@@ -3171,14 +3261,9 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
             tracks = await self.fetch_tracks()
             return tracks[index] if index < len(tracks) else None
         else:
-            response = (
-                await pylav.sql.tables.queries.QueryRow.select(pylav.sql.tables.queries.QueryRow.tracks)
-                .first()
-                .where(pylav.sql.tables.queries.QueryRow.identifier == self.id)
-                .output(load_json=True, nested=True)
-            )
-            if response and len(response["tracks"]) > index:
-                return response["tracks"][index]
+            tracks = await self.fetch_tracks()
+            if tracks and len(tracks) > index:
+                return tracks[index]
 
     @maybe_cached
     async def fetch_first(self) -> str | None:
@@ -3436,16 +3521,16 @@ class EqualizerModel:
             pylav.sql.tables.equalizers.EqualizerRow.band_10000: self.band_10000,
             pylav.sql.tables.equalizers.EqualizerRow.band_16000: self.band_16000,
         }
-        playlist = (
+        eq = (
             await pylav.sql.tables.equalizers.EqualizerRow.objects()
             .output(load_json=True)
             .get_or_create(pylav.sql.tables.equalizers.EqualizerRow.id == self.id, defaults=values)
         )
-        if not playlist._was_created:
+        if not eq._was_created:
             await pylav.sql.tables.equalizers.EqualizerRow.update(values).where(
                 pylav.sql.tables.equalizers.EqualizerRow.id == self.id
             )
-        return EqualizerModel(**playlist.to_dict())
+        return EqualizerModel(**eq.to_dict())
 
     @classmethod
     async def get(cls, id: int) -> EqualizerModel | None:
