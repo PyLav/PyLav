@@ -68,6 +68,9 @@ class LibConfigManager:
         await pylav.sql.tables.queries.QueryRow.create_table(if_not_exists=True)
         await pylav.sql.tables.bot.BotVersionRow.create_table(if_not_exists=True)
         await pylav.sql.tables.cache.AioHttpCacheRow.create_table(if_not_exists=True)
+        await pylav.sql.tables.tracks.TrackRow.create_table(if_not_exists=True)
+        await pylav.sql.tables.m2m.TrackToPlaylists.create_table(if_not_exists=True)
+        await pylav.sql.tables.m2m.TrackToQueries.create_table(if_not_exists=True)
 
     async def reset_database(self) -> None:
         await pylav.sql.tables.playlists.PlaylistRow.raw(
@@ -80,7 +83,11 @@ class LibConfigManager:
             f"{pylav.sql.tables.nodes.NodeRow._meta.tablename}, "
             f"{pylav.sql.tables.queries.QueryRow._meta.tablename}, "
             f"{pylav.sql.tables.bot.BotVersionRow._meta.tablename}, "
-            f"{pylav.sql.tables.cache.AioHttpCacheRow._meta.tablename};"
+            f"{pylav.sql.tables.cache.AioHttpCacheRow._meta.tablename}"
+            f"{pylav.sql.tables.tracks.TrackRow._meta.tablename}"
+            f"{pylav.sql.tables.m2m.TrackToQueries._meta.tablename}"
+            f"{pylav.sql.tables.m2m.TrackToPlaylists._meta.tablename}"
+            ";"
         )
         await self.create_tables()
 
