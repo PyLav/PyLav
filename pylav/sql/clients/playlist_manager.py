@@ -321,6 +321,7 @@ class PlaylistConfigManager:
             await self.client._config.update_next_execution_update_bundled_playlists(
                 utcnow() + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS)
             )
+            self.client._wait_for_playlists.set()
 
     async def update_bundled_external_playlists(self, *ids: int) -> None:
         from pylav.query import Query

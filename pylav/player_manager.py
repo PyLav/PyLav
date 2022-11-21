@@ -273,6 +273,7 @@ class PlayerManager:
         await self.client.player_state_db_manager.save_players([await p.to_dict() for p in self.connected_players])
 
     async def restore_player_states(self) -> None:
+        await asyncio.wait_for(self.client._wait_for_playlists.wait(), timeout=600)
         LOGGER.info("Restoring player states")
         while not self.client.node_manager.available_nodes:
             await asyncio.sleep(1)

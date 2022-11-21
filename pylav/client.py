@@ -29,6 +29,7 @@ from pytz import utc
 from pylav import __VERSION__
 from pylav._config import CONFIG_DIR
 from pylav._logging import getLogger
+from pylav.constants import BUNDLED_PLAYLIST_IDS
 from pylav.dispatcher import DispatchManager
 from pylav.endpoints.response_objects import (
     LavalinkLoadTrackObjects,
@@ -221,6 +222,7 @@ class Client(metaclass=_Singleton):
             self._shutting_down = False
             self._scheduler = AsyncIOScheduler()
             self._scheduler.configure(timezone=utc)
+            self._wait_for_playlists = asyncio.Event()
         except Exception:
             LOGGER.exception("Failed to initialize Lavalink")
             raise
@@ -431,7 +433,6 @@ class Client(metaclass=_Singleton):
                         api_token=apple_music_token, country_code=MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE
                     )
                 await self._run_post_init_jobs(java_path, localtrack_folder)
-                self._scheduler.start()
                 self.ready.set()
                 LOGGER.info("PyLav is ready")
 
@@ -460,11 +461,12 @@ class Client(metaclass=_Singleton):
         await self._maybe_update_next_execution_bundled_external_playlists(time_now)
         await self._maybe_update_next_execution_external_playlists(time_now)
         await self._maybe_force_update_bundled_playlists()
-        await self.player_manager.restore_player_states()
         await self._add_scheduler_job_cache_cleanup()
         await self._add_scheduler_job_bundled_playlist()
         await self._add_scheduler_job_bundled_external_playlists()
         await self._add_scheduler_job_external_playlists()
+        self._scheduler.start()
+        await self.player_manager.restore_player_states()
 
     async def _maybe_start_bundled_node(self, enable_managed_node, java_path):
         if (
@@ -476,8 +478,9 @@ class Client(metaclass=_Singleton):
             self._local_node_manager.ready.set()
 
     async def _maybe_force_update_bundled_playlists(self):
-        if await self.playlist_db_manager.count() == 0:
+        if await self.playlist_db_manager.count() < len(BUNDLED_PLAYLIST_IDS):
             time_now = utcnow()
+            self._wait_for_playlists.clear()
             await self._config.update_next_execution_update_bundled_playlists(time_now - datetime.timedelta(days=7))
             await self._config.update_next_execution_update_bundled_external_playlists(
                 time_now - datetime.timedelta(days=7)

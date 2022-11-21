@@ -8,11 +8,13 @@ from pylav.sql.tables.cache import AioHttpCacheRow
 from pylav.sql.tables.equalizers import EqualizerRow
 from pylav.sql.tables.init import DB, run_low_level_migrations
 from pylav.sql.tables.lib_config import LibConfigRow
+from pylav.sql.tables.m2m import TrackToPlaylists, TrackToQueries
 from pylav.sql.tables.nodes import NodeRow
 from pylav.sql.tables.player_states import PlayerStateRow
 from pylav.sql.tables.players import PlayerRow
 from pylav.sql.tables.playlists import PlaylistRow
 from pylav.sql.tables.queries import QueryRow
+from pylav.sql.tables.tracks import TrackRow
 
 __ALL__ = (
     "bot",
@@ -36,6 +38,9 @@ __ALL__ = (
     "PlayerRow",
     "PlaylistRow",
     "QueryRow",
+    "TrackRow",
+    "TrackToPlaylists",
+    "TrackToQueries",
 )
 
 PlaylistPDModel = create_pydantic_model(PlaylistRow, nested=True, deserialize_json=True)
@@ -47,3 +52,4 @@ NodePDModel = create_pydantic_model(NodeRow, nested=True, deserialize_json=True)
 QueryPDModel = create_pydantic_model(QueryRow, nested=True, deserialize_json=True)
 BotVersioPDModel = create_pydantic_model(BotVersionRow, nested=True, deserialize_json=True)
 AioHttpCachePDModel = create_pydantic_model(AioHttpCacheRow, nested=True, deserialize_json=True)
+TrackPDModel = create_pydantic_model(TrackRow, nested=True, deserialize_json=True)

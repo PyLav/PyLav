@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from piccolo.columns import JSONB, BigInt, Text
+from piccolo.columns import M2M, BigInt, LazyTableReference, Text
 from piccolo.table import Table
 
 from pylav.sql.tables.init import DB
@@ -12,4 +12,4 @@ class PlaylistRow(Table, db=DB, tablename="playlist"):
     author = BigInt(null=True, default=None)
     name = Text(null=True, default=None)
     url = Text(null=True, default=None)
-    tracks = JSONB(null=False, default=[])
+    tracks = M2M(LazyTableReference("TrackToPlaylists", module_path="pylav.sql.tables.m2m"))
