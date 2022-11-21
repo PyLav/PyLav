@@ -224,38 +224,37 @@ class PlaylistConfigManager:
         Globals, User specific, Guild specific, Channel specific, VC specific.
 
         """
-        async with pylav.sql.tables.init.DB.transaction():
-            global_playlists = [
+        global_playlists = [
+            p
+            for p in await self.get_playlists_by_scope(scope=self._client.bot.user.id, return_empty=True)
+            if (not empty or await p.size())
+        ]
+        user_playlists = [
+            p
+            for p in await self.get_playlists_by_scope(scope=requester, return_empty=True)
+            if (not empty or await p.size())
+        ]
+        vc_playlists = []
+        guild_playlists = []
+        channel_playlists = []
+        if vc is not None:
+            vc_playlists = [
                 p
-                for p in await self.get_playlists_by_scope(scope=self._client.bot.user.id, return_empty=True)
+                for p in await self.get_playlists_by_scope(scope=vc.id, return_empty=True)
                 if (not empty or await p.size())
             ]
-            user_playlists = [
+        if guild is not None:
+            guild_playlists = [
                 p
-                for p in await self.get_playlists_by_scope(scope=requester, return_empty=True)
+                for p in await self.get_playlists_by_scope(scope=guild.id, return_empty=True)
                 if (not empty or await p.size())
             ]
-            vc_playlists = []
-            guild_playlists = []
-            channel_playlists = []
-            if vc is not None:
-                vc_playlists = [
-                    p
-                    for p in await self.get_playlists_by_scope(scope=vc.id, return_empty=True)
-                    if (not empty or await p.size())
-                ]
-            if guild is not None:
-                guild_playlists = [
-                    p
-                    for p in await self.get_playlists_by_scope(scope=guild.id, return_empty=True)
-                    if (not empty or await p.size())
-                ]
-            if channel is not None:
-                channel_playlists = [
-                    p
-                    for p in await self.get_playlists_by_scope(scope=channel.id, return_empty=True)
-                    if (not empty or await p.size())
-                ]
+        if channel is not None:
+            channel_playlists = [
+                p
+                for p in await self.get_playlists_by_scope(scope=channel.id, return_empty=True)
+                if (not empty or await p.size())
+            ]
         return global_playlists, user_playlists, guild_playlists, channel_playlists, vc_playlists
 
     async def get_manageable_playlists(

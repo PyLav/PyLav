@@ -11,7 +11,6 @@ from discord.ext import commands
 from rapidfuzz import fuzz
 
 from pylav.exceptions import EntryNotFoundError
-from pylav.sql.tables import DB
 from pylav.types import ContextT, InteractionT
 from pylav.utils import shorten_string
 
@@ -75,9 +74,7 @@ else:
                     [-ord(i) for i in name],
                 )
 
-            async with DB.transaction():
-                extracted = await heapq.nlargest(asyncstdlib.iter(playlists), n=25, key=_filter)
-                return [
-                    Choice(name=shorten_string(await e.fetch_name(), max_length=100), value=f"{e.id}")
-                    for e in extracted
-                ]
+            extracted = await heapq.nlargest(asyncstdlib.iter(playlists), n=25, key=_filter)
+            return [
+                Choice(name=shorten_string(await e.fetch_name(), max_length=100), value=f"{e.id}") for e in extracted
+            ]

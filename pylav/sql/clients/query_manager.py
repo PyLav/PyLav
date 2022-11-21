@@ -11,7 +11,6 @@ import pylav.sql.tables.queries
 import pylav.sql.tables.tracks
 from pylav._logging import getLogger
 from pylav.sql.models import QueryModel
-from pylav.sql.tables import DB
 from pylav.utils import AsyncIter
 
 if TYPE_CHECKING:
@@ -71,14 +70,9 @@ class QueryCacheManager:
             )
         new_tracks = []
         # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
-        async with DB.transaction():
-            async for track in AsyncIter(tracks):
-                with contextlib.suppress(Exception):
-                    new_tracks.append(
-                        await pylav.sql.tables.tracks.TrackRow.objects().get_or_create(
-                            pylav.sql.tables.tracks.TrackRow.encoded == track["encoded"], track["info"]
-                        )
-                    )
+        async for track in AsyncIter(tracks):
+            with contextlib.suppress(Exception):
+                new_tracks.append(await pylav.sql.tables.tracks.TrackRow.get_or_create(track["encoded"], track["info"]))
         if new_tracks:
             await query_row.add_m2m(*new_tracks, m2m=pylav.sql.tables.queries.QueryRow.tracks)
             return True

@@ -24,7 +24,6 @@ from discord.utils import utcnow
 from packaging.version import LegacyVersion, Version
 from packaging.version import parse as parse_version
 
-import pylav.sql.tables
 import pylav.sql.tables.bot
 import pylav.sql.tables.equalizers
 import pylav.sql.tables.lib_config
@@ -34,9 +33,7 @@ import pylav.sql.tables.players
 import pylav.sql.tables.playlists
 import pylav.sql.tables.queries
 from pylav.envvars import CACHING_ENABLED, JAVA_EXECUTABLE
-from pylav.sql import tables
 from pylav.sql.caching import CachedModel, _SingletonByKey, maybe_cached
-from pylav.sql.tables import DB
 from pylav.vendored import aiopath
 
 try:
@@ -1524,9 +1521,8 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
         """
         if not users:
             return
-        async with pylav.sql.tables.DB.transaction():
-            for user in users:
-                await self.remove_from_dj_users(user)
+        for user in users:
+            await self.remove_from_dj_users(user)
 
     async def dj_users_reset(self) -> None:
         """Reset the dj users of the player"""
@@ -1622,9 +1618,8 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
         """
         if not roles:
             return
-        async with pylav.sql.tables.DB.transaction():
-            for role in roles:
-                await self.remove_from_dj_roles(role)
+        for role in roles:
+            await self.remove_from_dj_roles(role)
 
     async def dj_roles_reset(self) -> None:
         """Reset the dj roles of the player"""
@@ -2664,15 +2659,12 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
             old_tracks = []
         new_tracks = []
         # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
-        async with DB.transaction():
-            async for track in AsyncIter(tracks):
-                with contextlib.suppress(Exception):
-                    track_object, __ = await asyncio.to_thread(decode_track, track)
-                    new_tracks.append(
-                        await pylav.sql.tables.tracks.TrackRow.objects().get_or_create(
-                            pylav.sql.tables.tracks.TrackRow.encoded == track, track_object.info.to_dict()
-                        )
-                    )
+        async for track in AsyncIter(tracks):
+            with contextlib.suppress(Exception):
+                track_object, __ = await asyncio.to_thread(decode_track, track)
+                new_tracks.append(
+                    await pylav.sql.tables.tracks.TrackRow.get_or_create(track, track_object.info.to_dict())
+                )
 
         if old_tracks:
             await playlist_row.remove_m2m(*old_tracks, m2m=pylav.sql.tables.playlists.PlaylistRow.tracks)
@@ -2712,15 +2704,12 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         )
         new_tracks = []
         # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
-        async with DB.transaction():
-            async for track in AsyncIter(tracks):
-                with contextlib.suppress(Exception):
-                    track_object, __ = await asyncio.to_thread(decode_track, track)
-                    new_tracks.append(
-                        await pylav.sql.tables.tracks.TrackRow.objects().get_or_create(
-                            pylav.sql.tables.tracks.TrackRow.encoded == track, track_object.info.to_dict()
-                        )
-                    )
+        async for track in AsyncIter(tracks):
+            with contextlib.suppress(Exception):
+                track_object, __ = await asyncio.to_thread(decode_track, track)
+                new_tracks.append(
+                    await pylav.sql.tables.tracks.TrackRow.get_or_create(track, track_object.info.to_dict())
+                )
         if new_tracks:
             await playlist_row.add_m2m(*new_tracks, m2m=pylav.sql.tables.playlists.PlaylistRow.tracks)
         await self.invalidate_cache(self.fetch_tracks, self.fetch_all, self.size, self.fetch_first, self.exists)
@@ -2797,14 +2786,13 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         bool
             Whether the requester can manage the playlist.
         """
-        async with pylav.sql.tables.DB.transaction():
-            if self.id in BUNDLED_PLAYLIST_IDS:
-                return False
-            if requester.id in ((ids := getattr(bot, "owner_ids")) or ()) or requester.id == bot.owner_id:  # noqa
-                return True
-            elif await self.fetch_scope() == bot.user.id:
-                return False
-            return await self.fetch_author() == requester.id
+        if self.id in BUNDLED_PLAYLIST_IDS:
+            return False
+        if requester.id in ((ids := getattr(bot, "owner_ids")) or ()) or requester.id == bot.owner_id:  # noqa
+            return True
+        if await self.fetch_scope() == bot.user.id:
+            return False
+        return await self.fetch_author() == requester.id
 
     async def get_scope_name(self, bot: BotT, mention: bool = True, guild: discord.Guild = None) -> str:
         """Get the name of the scope of the playlist.
@@ -2942,15 +2930,12 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
             old_tracks = []
         new_tracks = []
         # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
-        async with DB.transaction():
-            async for track in AsyncIter(tracks):
-                with contextlib.suppress(Exception):
-                    track_object, __ = await asyncio.to_thread(decode_track, track)
-                    new_tracks.append(
-                        await pylav.sql.tables.tracks.TrackRow.objects().get_or_create(
-                            pylav.sql.tables.tracks.TrackRow.encoded == track, track_object.info.to_dict()
-                        )
-                    )
+        async for track in AsyncIter(tracks):
+            with contextlib.suppress(Exception):
+                track_object, __ = await asyncio.to_thread(decode_track, track)
+                new_tracks.append(
+                    await pylav.sql.tables.tracks.TrackRow.get_or_create(track, track_object.info.to_dict())
+                )
         if old_tracks:
             await playlist_row.remove_m2m(*old_tracks, m2m=pylav.sql.tables.playlists.PlaylistRow.tracks)
         if new_tracks:
@@ -3110,15 +3095,12 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
             old_tracks = []
         new_tracks = []
         # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
-        async with DB.transaction():
-            async for track in AsyncIter(tracks):
-                with contextlib.suppress(Exception):
-                    track_object, __ = await asyncio.to_thread(decode_track, track)
-                    new_tracks.append(
-                        await pylav.sql.tables.tracks.TrackRow.objects().get_or_create(
-                            pylav.sql.tables.tracks.TrackRow.encoded == track, track_object.info.to_dict()
-                        )
-                    )
+        async for track in AsyncIter(tracks):
+            with contextlib.suppress(Exception):
+                track_object, __ = await asyncio.to_thread(decode_track, track)
+                new_tracks.append(
+                    await pylav.sql.tables.tracks.TrackRow.get_or_create(track, track_object.info.to_dict())
+                )
         if old_tracks:
             await query_row.remove_m2m(*old_tracks, m2m=pylav.sql.tables.queries.QueryRow.tracks)
         if new_tracks:
@@ -3222,15 +3204,12 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
             old_tracks = []
         new_tracks = []
         # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
-        async with DB.transaction():
-            async for track in AsyncIter(tracks):
-                with contextlib.suppress(Exception):
-                    track_object, __ = await asyncio.to_thread(decode_track, track)
-                    new_tracks.append(
-                        await pylav.sql.tables.tracks.TrackRow.objects().get_or_create(
-                            pylav.sql.tables.tracks.TrackRow.encoded == track, track_object.info.to_dict()
-                        )
-                    )
+        async for track in AsyncIter(tracks):
+            with contextlib.suppress(Exception):
+                track_object, __ = await asyncio.to_thread(decode_track, track)
+                new_tracks.append(
+                    await pylav.sql.tables.tracks.TrackRow.get_or_create(track, track_object.info.to_dict())
+                )
         if old_tracks:
             await query_row.remove_m2m(*old_tracks, m2m=pylav.sql.tables.queries.QueryRow.tracks)
         if new_tracks:
