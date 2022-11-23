@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.11.17.1 (23/11/2022)
+- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/72e281057e99ba376c3f42bf93e6ad18fac932ea) - @Drapersniper
+- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/cf3f37148889129747a6216c1ef03bd63b041469) - @crowdin-bot
+
+---
+
 ## v0.11.17.0 (27/10/2022)
 - [[patch] Fix incorrect logic on local track folder names if a dot is used in the name](https://github.com/Drapersniper/PyLav/commit/fd889a5fa0b3e3adbc2f128804ae599e509915cd) - @Drapersniper
 
@@ -160,7 +166,3 @@
 ---
 
 ## v0.10.4.3 (04/10/2022)
-
----
-
-## v0.10.4.2 (30/09/2022)
