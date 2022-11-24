@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-10-26 12:09+0000\n"
-"PO-Revision-Date: 2022-11-23 17:09\n"
+"PO-Revision-Date: 2022-11-24 01:36\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -35,105 +35,106 @@ msgstr "要生成混合播放列表，需要影片、使用者、頻道或播放
 
 #: pylav/client.py:1210
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
-msgstr ""
+msgstr "要生成混合播放列表，需要視頻、用戶、頻道或播放列表 ID。 但是您提供太多個了"
 
 #: pylav/managed_node.py:273
 msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture"
-msgstr ""
+msgstr "您正在嘗試在不受支持的機器架構上運行託管的 Lavalink 節點"
 
 #: pylav/managed_node.py:435
 msgid "The output of `{java_exc} -version` was unexpected\n"
 "{version_info}"
-msgstr ""
+msgstr "由 `{java_exc} -version` 的輸出是有問題的\n"
+"{version_info}"
 
 #: pylav/managed_node.py:455
 msgid "Port {port} already in use. Managed Lavalink startup aborted"
-msgstr ""
+msgstr "端口 {port} 已在使用中。託管的 Lavalink 將啟動中止"
 
 #: pylav/managed_node.py:460
 msgid "Lavalink failed to start: {line}"
-msgstr ""
+msgstr "Lavalink 啟動失敗：{line}"
 
 #: pylav/player.py:924
 msgid "There are no tracks currently in the player history"
-msgstr ""
+msgstr "播放歷史記錄中當前沒有曲目"
 
 #: pylav/player.py:1947 pylav/player.py:1977 pylav/player.py:1988
 msgid "LIVE"
-msgstr ""
+msgstr "直播"
 
 #: pylav/player.py:1956 pylav/player.py:2044
 msgid "Currently livestreaming"
-msgstr ""
+msgstr "正在直播中"
 
 #: pylav/player.py:1958
 msgid "Playing: "
-msgstr ""
+msgstr "正在播放： "
 
 #: pylav/player.py:1961 pylav/player.py:1982 pylav/player.py:1993
 #: pylav/player.py:2050
 msgid "Requester"
-msgstr ""
+msgstr "請求者"
 
 #: pylav/player.py:1966
 msgid "Now Playing in"
-msgstr ""
+msgstr "正在播放"
 
 #: pylav/player.py:1978 pylav/player.py:1989
 msgid "Duration"
-msgstr ""
+msgstr "時長"
 
 #: pylav/player.py:1984
 msgid "Previous Track"
-msgstr ""
+msgstr "上一首歌曲"
 
 #: pylav/player.py:1995
 msgid "Next Track"
-msgstr ""
+msgstr "下一首歌曲"
 
 #: pylav/player.py:1999
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
-msgstr ""
+msgstr "{track_count} 首曲目，剩下 {queue_total_duration} 首"
 
 #: pylav/player.py:2011 pylav/player.py:2101
 msgid "{translation}: {repeat_emoji}"
-msgstr ""
+msgstr "{translation}：{repeat_emoji}"
 
 #: pylav/player.py:2011 pylav/player.py:2101
 msgid "Repeating"
-msgstr ""
+msgstr "正在重複播放"
 
 #: pylav/player.py:2012 pylav/player.py:2102
 msgid "{space}{translation}: {autoplay_emoji}"
-msgstr ""
+msgstr "{space}{translation}：{autoplay_emoji}"
 
 #: pylav/player.py:2013 pylav/player.py:2103
 msgid "Auto Play"
-msgstr ""
+msgstr "自動播放"
 
 #: pylav/player.py:2015 pylav/player.py:2105
 msgid "{space}{translation}: {volume}%"
-msgstr ""
+msgstr "{space}{translation}：{volume} %"
 
 #: pylav/player.py:2016 pylav/player.py:2106
 msgid "Volume"
-msgstr ""
+msgstr "音量"
 
 #: pylav/player.py:2047
 msgid "Playing"
-msgstr ""
+msgstr "正在播放"
 
 #: pylav/player.py:2060
 msgid "Queue order is may not be accurate due to auto-shuffle being enabled"
-msgstr ""
+msgstr "由於啟用了自動隨機播放，所以舊待播清單順序可能不準確"
 
 #: pylav/player.py:2075
 msgid "Recently Played for"
-msgstr ""
+msgstr "最近播放的歌曲"
 
 #: pylav/player.py:2075
 msgid "Queue for"
-msgstr ""
+msgstr "播放清單"
 
 #: pylav/player.py:2084
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
