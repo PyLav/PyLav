@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-10-16 19:09+0000\n"
-"PO-Revision-Date: 2022-11-24 01:36\n"
+"PO-Revision-Date: 2022-11-24 02:36\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -19,54 +19,54 @@ msgstr ""
 
 #: pylav/utils/__init__.py:382
 msgid "hour"
-msgstr ""
+msgstr "小時"
 
 #: pylav/utils/__init__.py:383
 msgid "minute"
-msgstr ""
+msgstr "分鐘"
 
 #: pylav/utils/__init__.py:384
 msgid "second"
-msgstr ""
+msgstr "秒"
 
 #: pylav/utils/__init__.py:385
 msgid "day"
-msgstr ""
+msgstr "天"
 
 #: pylav/utils/__init__.py:386
 msgid "days"
-msgstr ""
+msgstr "天"
 
 #: pylav/utils/__init__.py:387
 msgid "hours"
-msgstr ""
+msgstr "小時"
 
 #: pylav/utils/__init__.py:388
 msgid "minutes"
-msgstr ""
+msgstr "分鐘"
 
 #: pylav/utils/__init__.py:389
 msgid "seconds"
-msgstr ""
+msgstr "秒"
 
 #: pylav/utils/__init__.py:410
 msgid "Unknown"
-msgstr ""
+msgstr "未知"
 
 #: pylav/utils/__init__.py:1089
 msgid "{} remaining. Type `more` to continue."
-msgstr ""
+msgstr "{} 其餘的。 輸入 `more` 繼續。"
 
 #: pylav/utils/__init__.py:1090
 msgid "There is still 1 message"
-msgstr ""
+msgstr "還有1則訊息"
 
 #: pylav/utils/__init__.py:1092
 msgid "There are still {remaning} messages"
-msgstr ""
+msgstr "還有 {remaning} 則訊息"
 
 #: pylav/utils/__init__.py:1147
 #, docstring
 msgid "Does nothing"
-msgstr ""
+msgstr "不做任何動作"
 

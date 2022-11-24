@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-10-16 15:05+0000\n"
-"PO-Revision-Date: 2022-11-24 01:36\n"
+"PO-Revision-Date: 2022-11-24 02:36\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -19,5 +19,5 @@ msgstr ""
 
 #: pylav/sql/clients/playlist_manager.py:68
 msgid "Playlist with name {playlist_name} not found"
-msgstr ""
+msgstr "找不到名為 {playlist_name} 的播放列表"
 

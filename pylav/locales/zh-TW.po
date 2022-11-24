@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-10-26 12:09+0000\n"
-"PO-Revision-Date: 2022-11-24 01:36\n"
+"PO-Revision-Date: 2022-11-24 02:36\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -138,5 +138,5 @@ msgstr "播放清單"
 
 #: pylav/player.py:2084
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
-msgstr ""
+msgstr " 第{current_page}頁 / 共{total_pages}頁 | {track_number} 首曲目，剩餘 {queue_total_duration} 首"
 
