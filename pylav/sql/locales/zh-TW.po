@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-10-21 21:05+0000\n"
-"PO-Revision-Date: 2022-11-24 01:36\n"
+"PO-Revision-Date: 2022-11-24 02:36\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -19,21 +19,21 @@ msgstr ""
 
 #: pylav/sql/models.py:2766
 msgid "(Global) {user_name}"
-msgstr ""
+msgstr "(全域) {user_name}"
 
 #: pylav/sql/models.py:2770
 msgid "(Server) {guild_name}"
-msgstr ""
+msgstr "(伺服器) {guild_name}"
 
 #: pylav/sql/models.py:2772
 msgid "(Channel) {channel}"
-msgstr ""
+msgstr "(頻道) {channel}"
 
 #: pylav/sql/models.py:2778
 msgid "(User) {user_name}"
-msgstr ""
+msgstr "(用戶) {user_name}"
 
 #: pylav/sql/models.py:2780
 msgid "(Invalid) {scope}"
-msgstr ""
+msgstr "(無效的) {scope}"
 
