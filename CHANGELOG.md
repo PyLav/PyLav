@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.11.17.3 (24/11/2022)
+- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/7848668966b1a511d5648548dfac5d420969fde3) - @Drapersniper
+- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/b6c434083bb4e50b1859870fba5bf6729a6ec06f) - @crowdin-bot
+
+---
+
 ## v0.11.17.2 (24/11/2022)
 - [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/a6b80d71b39fc1527ea9a02ceeb30a823d10c74c) - @Drapersniper
 - [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/79efb5dbc975602675b8b5db4724bef94cb7b98f) - @crowdin-bot
@@ -164,7 +170,3 @@
 - [Change raw requies to ORM where it makes sense to (#66)](https://github.com/Drapersniper/PyLav/commit/c2d92accd6f531fbf418603b41970440fa474450) - @Drapersniper
 - [Update release.yml](https://github.com/Drapersniper/PyLav/commit/85eeb3b28fbd57a6d13ce51703c4372078d4569b) - @Drapersniper
 - [Update release.yml](https://github.com/Drapersniper/PyLav/commit/13f502e2ed196a40e1d248cf5d698feea29eced7) - @Drapersniper
-
----
-
-## v0.10.4.4 (14/10/2022)
