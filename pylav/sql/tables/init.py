@@ -4,7 +4,6 @@ from piccolo.engine import PostgresEngine, SQLiteEngine
 
 from pylav._logging import getLogger
 from pylav.envvars import POSTGRES_DATABASE, POSTGRES_HOST, POSTGRES_PASSWORD, POSTGRES_PORT, POSTGRES_USER
-from pylav.migrations import run_low_level_migrations
 
 config = {
     "host": POSTGRES_HOST,
@@ -22,5 +21,3 @@ else:
     LOGGER.verbose("Connecting to Postgres server using %r", config)
     DB = PostgresEngine(config=config)
     IS_POSTGRES = True
-
-run_low_level_migrations(DB)

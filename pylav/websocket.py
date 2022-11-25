@@ -244,10 +244,20 @@ class WebSocket:
                     max_attempts_str,
                 )
                 self._api_version = await self.node.fetch_api_version()
+                if not self._api_version:
+                    self._logger.critical(
+                        "Node %s is not running a supported Lavalink version (%s:%s - %s)",
+                        self._node.identifier,
+                        self._host,
+                        self._port,
+                        self.node.version,
+                    )
+                    raise OSError
                 ws_uri = self.node.get_endpoint_websocket()
                 try:
                     self._ws = await self._session.ws_connect(url=ws_uri, headers=headers, heartbeat=60, timeout=600)
                     await self._node.update_features()
+                    self._connecting = False
                     backoff.reset()
                 except (
                     aiohttp.ClientConnectorError,
@@ -300,7 +310,6 @@ class WebSocket:
                     self._logger.debug("_listen returned")
                     # Ensure this loop doesn't proceed if _listen returns control back to this
                     # function.
-                    self._connecting = False
                     return
 
             self._logger.warning(
@@ -600,7 +609,6 @@ class WebSocket:
     async def _process_track_event(
         self, player: Player, track: Track, node: Node, event_object: TrackStartEventOpObject
     ) -> None:
-        # sourcery no-metrics
         query = await track.query()
 
         match query.source:

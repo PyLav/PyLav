@@ -223,6 +223,7 @@ class Client(metaclass=_Singleton):
             self._scheduler = AsyncIOScheduler()
             self._scheduler.configure(timezone=utc)
             self._wait_for_playlists = asyncio.Event()
+            self._wait_for_playlists.set()
         except Exception:
             LOGGER.exception("Failed to initialize Lavalink")
             raise

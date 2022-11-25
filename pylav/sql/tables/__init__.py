@@ -6,7 +6,7 @@ from pylav.sql.tables import bot, cache, equalizers, init, lib_config, nodes, pl
 from pylav.sql.tables.bot import BotVersionRow
 from pylav.sql.tables.cache import AioHttpCacheRow
 from pylav.sql.tables.equalizers import EqualizerRow
-from pylav.sql.tables.init import DB, run_low_level_migrations
+from pylav.sql.tables.init import DB
 from pylav.sql.tables.lib_config import LibConfigRow
 from pylav.sql.tables.m2m import TrackToPlaylists, TrackToQueries
 from pylav.sql.tables.nodes import NodeRow
@@ -31,7 +31,6 @@ __ALL__ = (
     "AioHttpCacheRow",
     "EqualizerRow",
     "DB",
-    "run_low_level_migrations",
     "LibConfigRow",
     "PlayerStateRow",
     "NodeRow",

@@ -581,6 +581,7 @@ class LavalinkInfoObject:
     jvm: str
     lavaplayer: str
     sourceManagers: list[str]
+    filters: list[str]
     plugins: Union[list[PluginObject], dict]
 
     def __post_init__(self):

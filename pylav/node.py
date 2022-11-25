@@ -317,6 +317,7 @@ class Node:
         "_api_version",
         "trace",
         "_logger",
+        "_filters",
     )
 
     def __init__(
@@ -375,6 +376,7 @@ class Node:
         self._reconnect_attempts = reconnect_attempts
         self._search_only = search_only
         self._capabilities: set[str] = set()
+        self._filters = set[str] = set()
         self._coordinates = (0, 0)
         self._down_votes = ExpiringDict(max_len=float("inf"), max_age_seconds=600)  # type: ignore
         cli_flags = getattr("manager._client.bot", "_cli_flags", None)
@@ -740,6 +742,8 @@ class Node:
             self._capabilities.add(source)
         if not self.managed or self.host != "localhost":
             self._capabilities.discard("local")
+        for filterName in info.filters:
+            self._filters.add(filterName)
         for plugin in info.plugins:
             match plugin.name:
                 case "SponsorBlock-Plugin":
@@ -770,6 +774,22 @@ class Node:
         return source.lower() in self.sources
 
     has_capability = has_source
+
+    def has_filter(self, filter_name: str) -> bool:
+        """
+        Checks if the target node has the specified filter.
+
+        Parameters
+        ----------
+        filter_name: :class:`str`
+            The filter to check.
+
+        Returns
+        -------
+        :class:`bool`
+            True if the target node has the specified filter, False otherwise.
+        """
+        return filter_name.lower() in self.filters
 
     async def update_disabled_sources(self, sources: set[str]) -> None:
         """
