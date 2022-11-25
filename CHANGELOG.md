@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.11.18.0 (25/11/2022)
+- [[patch] Fix an incorrect import usage](https://github.com/Drapersniper/PyLav/commit/af17f87cec7e776ae36b73bd81d5cc73ad0bf417) - @Drapersniper
+
+---
+
 ## v0.11.17.3 (24/11/2022)
 - [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/7848668966b1a511d5648548dfac5d420969fde3) - @Drapersniper
 - [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/b6c434083bb4e50b1859870fba5bf6729a6ec06f) - @crowdin-bot
@@ -161,12 +166,3 @@
 - [Fix deezer matching](https://github.com/Drapersniper/PyLav/commit/c9428c86fd7348227f16f5a0592d8346dd196e6f) - @Drapersniper
 - [trigger reconnect on shard reconnects](https://github.com/Drapersniper/PyLav/commit/983949fda6dfa9fd1ec576b70ee9de84a094f357) - @Drapersniper
 - [fix DJ being forced on](https://github.com/Drapersniper/PyLav/commit/bcfd895a532d2722e25decc291a4210566cdd1c4) - @Drapersniper
-
----
-
-## v0.10.5.1 (16/10/2022)
-- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/7f082d7980f9c1e41cc26c17e38dd56dc4cf7d3a) - @Drapersniper
-- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/88be3dd3010fa352b94d1cc231deda79e5943331) - @crowdin-bot
-- [Change raw requies to ORM where it makes sense to (#66)](https://github.com/Drapersniper/PyLav/commit/c2d92accd6f531fbf418603b41970440fa474450) - @Drapersniper
-- [Update release.yml](https://github.com/Drapersniper/PyLav/commit/85eeb3b28fbd57a6d13ce51703c4372078d4569b) - @Drapersniper
-- [Update release.yml](https://github.com/Drapersniper/PyLav/commit/13f502e2ed196a40e1d248cf5d698feea29eced7) - @Drapersniper
