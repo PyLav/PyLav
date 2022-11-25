@@ -13,6 +13,7 @@ async def run_migration_010000(client: "Client", current_version: LegacyVersion 
     if current_version >= parse_version("1.0.0"):
         return
     from pylav.config_migrations import LOGGER
+    from pylav.envvars import ENV_FILE
     from pylav.utils.built_in_node import NODE_DEFAULT_SETTINGS
 
     LOGGER.info("Running 1.0.0 migration")
@@ -21,6 +22,7 @@ async def run_migration_010000(client: "Client", current_version: LegacyVersion 
     yaml_data["lavalink"]["server"]["playerUpdateInterval"] = NODE_DEFAULT_SETTINGS["lavalink"]["server"][
         "playerUpdateInterval"
     ]
+    yaml_data["lavalink"]["server"]["filters"] = NODE_DEFAULT_SETTINGS["lavalink"]["server"]["filters"]
     yaml_data["plugins"]["lavasrc"]["providers"] = list(
         dict.fromkeys(NODE_DEFAULT_SETTINGS["plugins"]["lavasrc"]["providers"])
     )
@@ -33,10 +35,11 @@ async def run_migration_010000(client: "Client", current_version: LegacyVersion 
         yaml_data["plugins"]["lavasrc"]["spotify"]["clientId"] = ""
         yaml_data["plugins"]["lavasrc"]["spotify"]["clientSecret"] = ""
         yaml_data["plugins"]["lavasrc"]["sources"]["spotify"] = False
-        LOGGER.warning(
+        LOGGER.error(
             "You are using the default Spotify client ID and secret. "
             "Please register your own client ID and secret at https://developer.spotify.com/dashboard/applications "
-            "and set them in your pylav.yaml config file."
+            "and set them in your %s config file.",
+            ENV_FILE,
         )
 
     await config.update_yaml(yaml_data)

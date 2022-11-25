@@ -13,6 +13,7 @@ import pylav.sql.tables.playlists
 import pylav.sql.tables.queries
 from pylav._config import CONFIG_DIR
 from pylav._logging import getLogger
+from pylav.migrations import migrate_data, run_low_level_migrations
 from pylav.sql.models import BotVersion, LibConfigModel
 
 if TYPE_CHECKING:
@@ -29,7 +30,9 @@ class LibConfigManager:
         self._config_folder = CONFIG_DIR
 
     async def initialize(self) -> None:
+        data_to_migrate = await run_low_level_migrations()
         await self.create_tables()
+        await migrate_data(data_to_migrate)
 
     @property
     def client(self) -> Client:
