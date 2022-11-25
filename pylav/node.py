@@ -376,7 +376,7 @@ class Node:
         self._reconnect_attempts = reconnect_attempts
         self._search_only = search_only
         self._capabilities: set[str] = set()
-        self._filters = set[str] = set()
+        self._filters: set[str] = set()
         self._coordinates = (0, 0)
         self._down_votes = ExpiringDict(max_len=float("inf"), max_age_seconds=600)  # type: ignore
         cli_flags = getattr("manager._client.bot", "_cli_flags", None)
@@ -738,12 +738,14 @@ class Node:
         Updates the features of the target node.
         """
         info = await self.get_info()
+        self._capabilities.clear()
+        self._filters.clear()
         for source in info.sourceManagers:
             self._capabilities.add(source)
         if not self.managed or self.host != "localhost":
             self._capabilities.discard("local")
         for filterName in info.filters:
-            self._filters.add(filterName)
+            self._filters.add(filterName.lower())
         for plugin in info.plugins:
             match plugin.name:
                 case "SponsorBlock-Plugin":

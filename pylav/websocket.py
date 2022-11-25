@@ -243,7 +243,8 @@ class WebSocket:
                     attempt,
                     max_attempts_str,
                 )
-                self._api_version = await self.node.fetch_api_version()
+                await self.node.fetch_api_version()
+                self._api_version = self.node.api_version
                 if not self._api_version:
                     self._logger.critical(
                         "Node %s is not running a supported Lavalink version (%s:%s - %s)",
@@ -252,7 +253,7 @@ class WebSocket:
                         self._port,
                         self.node.version,
                     )
-                    raise OSError
+                    raise Exception
                 ws_uri = self.node.get_endpoint_websocket()
                 try:
                     self._ws = await self._session.ws_connect(url=ws_uri, headers=headers, heartbeat=60, timeout=600)
