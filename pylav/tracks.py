@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import hashlib
 import operator
 import re
@@ -11,6 +12,7 @@ from typing import TYPE_CHECKING, Any
 
 import asyncstdlib
 import discord
+import ujson
 from cached_property import cached_property, cached_property_with_ttl
 from dacite import from_dict
 
@@ -338,15 +340,27 @@ class Track:
         """Optional[str]: Returns a thumbnail URL for YouTube and Spotify tracks"""
         if not self.identifier:
             return
-        if self.source == "youtube":
-            return f"https://img.youtube.com/vi/{self.identifier}/mqdefault.jpg"
-        elif self.source == "spotify":
-            if spotify_client := self._node.node_manager.client.spotify_client:
-                async with spotify_client as sp_client:
-                    track = await sp_client.get_track(self.identifier)
-                    images = track.album.images
-                    image = await asyncstdlib.max(images, key=operator.attrgetter("width"))
-                    return image.url
+        match self.source:
+            case "youtube":
+                return f"https://img.youtube.com/vi/{self.identifier}/mqdefault.jpg"
+            case "spotify" if (spotify_client := self._node.node_manager.client.spotify_client):
+                with contextlib.suppress(Exception):
+                    async with spotify_client as sp_client:
+                        track = await sp_client.get_track(self.identifier)
+                        images = track.album.images
+                        image = await asyncstdlib.max(images, key=operator.attrgetter("width"))
+                        return image.url
+            case "deezer":
+                with contextlib.suppress(Exception):
+                    data = await (
+                        await self._node.node_manager.client.cached_session.get(
+                            f"https://api.deezer.com/track/{self.identifier}"
+                        )
+                    ).json(loads=ujson.loads)
+                    if "album" in data and "md5_image" in data["album"]:
+                        return f"https://e-cdn-images.dzcdn.net/images/cover/{data['album']['md5_image']}/1000x1000-000000-80-0-0.jpg"
+            case __:
+                return
 
     async def mix_playlist_url(self) -> str | None:
         if not self.identifier:
