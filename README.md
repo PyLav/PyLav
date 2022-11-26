@@ -15,7 +15,7 @@
   - MacOS: [PostgresSQL](https://www.postgresql.org/download/macosx/)
   - Windows: [PostgresSQL](https://www.postgresql.org/download/windows/)
   - Linux: [PostgresSQL](https://www.postgresql.org/download/linux/)
-- Python 3.11 (On initial release - during pre-alpha phase 3.10+)
+- Python 3.11
 - [Discord.py](https://github.com/Rapptz/discord.py) 2.1.0+ bot
 
 ### Environment Variables

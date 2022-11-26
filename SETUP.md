@@ -4,27 +4,27 @@
   - If you are a Red user, PyLav does not require your Red instance to be running a Postgres Config, however PyLav will still need its own Postgres server.
 
 **NOTICE**:
-  - PyLav assumes you are using PostgresSQL server running version 14  and it also requires Python3.10 any other version for these will not work/be supported.
+  - PyLav assumes you are using PostgresSQL server running version 14  and it also requires Python3.11 any other version for these will not work/be supported.
   - If you have docker; Setting up a postgres container for it would likely be the simplest option to setup the necessary server.
 
 # Linux (Ubuntu 20.04) <a name="Linux"></a>
 If you are not on Ubuntu 20.04 you just have to follow the instructions below to install the dependencies and set them up for your Linux distro (Google is your friend).
 - #### [libaio](https://pagure.io/libaio)
   - `sudo apt install libaio1 libaio-dev`
-- #### [Python 3.10](https://www.python.org/downloads/release/python-3106/)
+- #### [Python 3.11](https://www.python.org/downloads/release/python-3110/)
   - ##### Ubuntu
     - `sudo apt update -y && sudo apt upgrade -y`
     - `sudo apt install software-properties-common -y`
     - `sudo add-apt-repository ppa:deadsnakes/ppa -y`
     - `sudo apt update -y`
-    - `sudo apt install python3.10 -y`
-    - `sudo apt install python3.10-dev python3.10-venv python3.10-distutils -y`
+    - `sudo apt install python3.11 -y`
+    - `sudo apt install python3.11-dev python3.11-venv python3.11-distutils -y`
 
 - #### [Python VENV](https://docs.python.org/3/tutorial/venv.html#introduction)
   - A VENV is a self-contained directory tree that contains a Python installation for a particular version of Python, plus a number of additional packages.
-  - `python3.10 -m venv ~/p310`
+  - `python3.11 -m venv ~/p311`
 - #### Python Packages
-  - First activate the previous created VENV by running `source ~/p310/bin/activate`
+  - First activate the previous created VENV by running `source ~/p311/bin/activate`
   - Install the package download dependencies - `python -m pip install -U pip setuptools wheel`
   - ##### For non Red users
     - Install PyLav -`python -m pip install Py-Lav`
@@ -47,13 +47,13 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
     - When prompted to run `sudo apt-get install zulu11-jdk` make sure to run `sudo apt-get install zulu13-ca-jdk-headless` instead.
 
 ## Mac <a name="Mac"></a>
-- #### [Python 3.10](https://www.python.org/downloads/release/python-3106/)
-  - Download and run the [MacOS Installer](https://www.python.org/ftp/python/3.10.6/python-3.10.6-macos11.pkg)
+- #### [Python 3.11](https://www.python.org/downloads/release/python-3110/)
+  - Download and run the [MacOS Installer](https://www.python.org/ftp/python/3.11.0/python-3.11.0-macos11.pkg)
 - #### [Python VENV](https://docs.python.org/3/tutorial/venv.html#introduction)
   - A VENV is a self-contained directory tree that contains a Python installation for a particular version of Python, plus a number of additional packages.
-  - `python3.10 -m venv ~/p310`
+  - `python3.11 -m venv ~/p311`
 - #### Python Packages
-  - First activate the previous created VENV by running `source ~/p310/bin/activate`
+  - First activate the previous created VENV by running `source ~/p311/bin/activate`
   - Install the package download dependencies - `python -m pip install -U pip setuptools wheel`
   - ##### For non Red users
     - Install PyLav -`python -m pip install Py-Lav`
@@ -75,15 +75,15 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
   - Download and run the dmg executable [here](https://cdn.azul.com/zulu/bin/zulu13.50.15-ca-jdk13.0.12-macosx_x64.dmg)
 
 ## Windows <a name="Windows"></a>
-- #### [Python 3.10](https://www.python.org/downloads/release/python-3106/)
-  - Download the [Windows installer (64-bit)](https://www.python.org/ftp/python/3.10.6/python-3.10.6-amd64.exe)
-  - Once you're given the option to run the installer, select both the checkboxes – "Install launcher for all users" and "Add Python Python 3.10 to PATH" – at the bottom of the dialog box. Then click on "Install Now."
+- #### [Python 3.11](https://www.python.org/downloads/release/python-3110/)
+  - Download the [Windows installer (64-bit)](https://www.python.org/ftp/python/3.11.0/python-3.11.0-amd64.exe)
+  - Once you're given the option to run the installer, select both the checkboxes – "Install launcher for all users" and "Add Python Python 3.11 to PATH" – at the bottom of the dialog box. Then click on "Install Now."
 
 - #### [Python VENV](https://docs.python.org/3/tutorial/venv.html#introduction)
   - A VENV is a self-contained directory tree that contains a Python installation for a particular version of Python, plus a number of additional packages.
-  - `py -3.10 -m venv "%userprofile%\p310"`
+  - `py -3.11 -m venv "%userprofile%\p311"`
 - #### Python Packages
-  - First activate the previous created VENV by running `source "%userprofile%\p310\Scripts\activate.bat"`
+  - First activate the previous created VENV by running `source "%userprofile%\p311\Scripts\activate.bat"`
   - Install the package download dependencies - `python -m pip install -U pip setuptools wheel`
   - ##### For non Red users
     - Install PyLav -`python -m pip install Py-Lav`
