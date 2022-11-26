@@ -16,7 +16,7 @@ from pylav.sql.tables.playlists import PlaylistRow
 from pylav.sql.tables.queries import QueryRow
 from pylav.sql.tables.tracks import TrackRow
 
-__ALL__ = (
+__all__ = (
     "bot",
     "cache",
     "equalizers",
