@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.11.19.1 (26/11/2022)
+- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/b6a70d2af59d3593532a89e2a3af705180151f24) - @Drapersniper
+- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/170d8c09d834c952c5018e517ec877a96675929c) - @crowdin-bot
+
+---
+
 ## v0.11.19.0 (26/11/2022)
 - [[patch] Properly fix  NameError: name 'tables' is not defined](https://github.com/Drapersniper/PyLav/commit/ee9521e95e40a97245dab038634101e0359b866f) - @Drapersniper
 
@@ -157,9 +163,3 @@
 
 ## v0.11.1.0 (16/10/2022)
 - [[patch] several fixes to the resuming logic](https://github.com/Drapersniper/PyLav/commit/6a09ca8852e46d3158765d8f89bdc19bf7863ea2) - @Drapersniper
-
----
-
-## v0.11.0.1 (16/10/2022)
-- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/104082eb10828e4c12348d38dcd10b985da06c59) - @Drapersniper
-- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/759a235a30937a0707c01036b0789901ab30860b) - @crowdin-bot
