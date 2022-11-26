@@ -15,6 +15,7 @@ logging.getLogger("deepdiff.diff").setLevel(logging.FATAL)
 logging.getLogger("apscheduler").setLevel(logging.ERROR)
 logging.getLogger("aiohttp_client_cache").setLevel(logging.ERROR)
 logging.getLogger("aiocache").setLevel(logging.ERROR)
+logging.getLogger("pylav.vendored.aiocache").setLevel(logging.ERROR)
 
 
 if LOGGER_PREFIX is None:

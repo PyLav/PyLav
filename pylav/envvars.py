@@ -79,8 +79,8 @@ if not ENV_FILE.exists():
     MANAGED_NODE_APPLE_MUSIC_API_KEY = os.getenv("PYLAV__MANAGED_NODE_APPLE_MUSIC_API_KEY", "")
     MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE = os.getenv("PYLAV__MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE", "US")
     MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN = os.getenv("PYLAV__MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN", "")
-    MANAGED_NODE_DEEZER_KEY = os.getenv(
-        "PYLAV__MANAGED_NODE_DEEZER_KEY", "".join([base64.b64decode(r).decode() for r in _ANIME.split(b"|")])
+    MANAGED_NODE_DEEZER_KEY = os.getenv("PYLAV__MANAGED_NODE_DEEZER_KEY") or "".join(
+        [base64.b64decode(r).decode() for r in _ANIME.split(b"|")]
     )
 
     data = {

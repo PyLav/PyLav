@@ -13,6 +13,7 @@ from re import Pattern
 from typing import TYPE_CHECKING, Final
 
 import aiohttp
+import aiopath
 import asyncstdlib
 import dateutil.parser
 import psutil
@@ -41,7 +42,6 @@ from pylav.exceptions import (
 )
 from pylav.node import Node
 from pylav.utils import AsyncIter, ExponentialBackoffWithReset, get_jar_ram_actual, get_true_path
-from pylav.vendored import aiopath
 
 if TYPE_CHECKING:
     from pylav.client import Client

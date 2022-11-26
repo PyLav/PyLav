@@ -16,6 +16,7 @@ from dataclasses import dataclass
 from functools import _make_key  # type: ignore
 
 import aiohttp
+import aiopath
 import asyncstdlib
 import discord
 import ujson
@@ -34,7 +35,6 @@ import pylav.sql.tables.playlists
 import pylav.sql.tables.queries
 from pylav.envvars import CACHING_ENABLED, JAVA_EXECUTABLE
 from pylav.sql.caching import CachedModel, _SingletonByKey, maybe_cached
-from pylav.vendored import aiopath
 
 try:
     import brotli

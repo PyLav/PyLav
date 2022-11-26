@@ -4,11 +4,10 @@ import typing
 from collections.abc import Iterable, Iterator
 from typing import Any, Callable
 
-from aiocache import Cache, cached
-
 from pylav._logging import getLogger
 from pylav.envvars import CACHING_ENABLED
 from pylav.utils import _LOCK, _synchronized
+from pylav.vendored.aiocache import Cache, cached
 
 LOGGER = getLogger("PyLav.Caching")
 
