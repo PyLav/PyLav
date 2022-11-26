@@ -143,6 +143,16 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
   ### **DO NOTE**: If this is set to true multiple bots should not share the same database, as reads and writes will be out of sync.
   - If this is turned off every read from the database will be a direct query to the database, if this is turned on PyLav will cache the results in memory after the first query.
     - If you have a remote server, this will likely be a good idea to turn on, however you loose the ability to manually or otherwise edit the db and changes to be reflected in PyLav. - I would recommend enabling this **ONLY** if you notice slow operation with a remove Postgres server.
+- Optional configuration values
+  - PYLAV__DEFAULT_SEARCH_SOURCE: Defaults to dzsearch - Possible values are dzsearch (Deezer), spsearch (Spotify), amsearch (Apple Music), ytmsearch (YouTube Music), ytsearch (YouTube)
+  - PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_ID: Defaults to None - Required if you want to use Spotify with the managed node
+  - PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_SECRET: Defaults to None - Required if you want to use Spotify with the managed node
+  - PYLAV__MANAGED_NODE_SPOTIFY_COUNTRY_CODE: Defaults to US
+  - PYLAV__MANAGED_NODE_APPLE_MUSIC_API_KEY - Defaults to None
+  - PYLAV__MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE : Defaults to US
+  - PYLAV__MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN - Defaults to None - Required if you want to use Yandex with the managed node
+  - PYLAV__MANAGED_NODE_DEEZER_KEY - Required if you want to use Deezer
+-------------
 ## Red Users (PyLav Cogs) Setup
 ### Starting up your bot
   - Activate your VENV created above
