@@ -22,6 +22,7 @@ from discord.utils import utcnow
 from packaging.version import LegacyVersion, Version
 from packaging.version import parse as parse_version
 
+import pylav.sql.tables
 import pylav.sql.tables.bot
 import pylav.sql.tables.equalizers
 import pylav.sql.tables.lib_config
@@ -1512,7 +1513,7 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
         """
         if not users:
             return
-        async with tables.DB.transaction():
+        async with pylav.sql.tables.DB.transaction():
             for user in users:
                 await self.remove_from_dj_users(user)
 
@@ -1610,7 +1611,7 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
         """
         if not roles:
             return
-        async with tables.DB.transaction():
+        async with pylav.sql.tables.DB.transaction():
             for role in roles:
                 await self.remove_from_dj_roles(role)
 
@@ -2684,7 +2685,7 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         """
         if not tracks:
             return
-        async with tables.DB.transaction():
+        async with pylav.sql.tables.DB.transaction():
             for track in tracks:
                 await self.remove_track(track)
 
@@ -2735,7 +2736,7 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         bool
             Whether the requester can manage the playlist.
         """
-        async with tables.DB.transaction():
+        async with pylav.sql.tables.DB.transaction():
             if self.id in BUNDLED_PLAYLIST_IDS:
                 return False
             if requester.id in ((ids := getattr(bot, "owner_ids")) or ()) or requester.id == bot.owner_id:  # noqa
