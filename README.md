@@ -15,8 +15,8 @@
   - MacOS: [PostgresSQL](https://www.postgresql.org/download/macosx/)
   - Windows: [PostgresSQL](https://www.postgresql.org/download/windows/)
   - Linux: [PostgresSQL](https://www.postgresql.org/download/linux/)
-- Python 3.10+ (On initial release - during pre-alpha phase 3.9+)
-- [Discord.py](https://github.com/Rapptz/discord.py) 2.0.0+ bot
+- Python 3.11 (On initial release - during pre-alpha phase 3.10+)
+- [Discord.py](https://github.com/Rapptz/discord.py) 2.1.0+ bot
 
 ### Environment Variables
 Note - All environment variables except `PYLAV__LOGGER_PREFIX` can be configured from the `pylav.yaml` file which should reside in the home directory of the user running the bot.
@@ -55,12 +55,12 @@ An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml
   - PYLAV__TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS: Defaults to  7 # How many days to wait between updates - Minimum 7 Days.
 - Node Configuration
   - PYLAV__DEFAULT_SEARCH_SOURCE: Defaults to dzsearch - Possible values are dzsearch (Deezer), spsearch (Spotify), amsearch (Apple Music), ytmsearch (YouTube Music), ytsearch (YouTube)
-  - PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_ID: Defaults to None - Required if you want to use Spotify
-  - PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_SECRET: Defaults to None - Required if you want to use Spotify
+  - PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_ID: Defaults to None - Required if you want to use Spotify with the managed node
+  - PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_SECRET: Defaults to None - Required if you want to use Spotify with the managed node
   - PYLAV__MANAGED_NODE_SPOTIFY_COUNTRY_CODE: Defaults to US
   - PYLAV__MANAGED_NODE_APPLE_MUSIC_API_KEY - Defaults to None
   - PYLAV__MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE : Defaults to US
-  - PYLAV__MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN - Defaults to None
+  - PYLAV__MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN - Defaults to None - Required if you want to use Yandex with the managed node
   - PYLAV__MANAGED_NODE_DEEZER_KEY - Required if you want to use Deezer
 
 ---------------------------

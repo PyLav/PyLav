@@ -9,6 +9,7 @@ from collections.abc import AsyncIterator
 from typing import TYPE_CHECKING, Literal
 
 import aiohttp
+import aiopath
 import asyncstdlib
 import brotli
 import ujson
@@ -22,7 +23,6 @@ from pylav.m3u8_parser._init__ import load as load_m3u8
 from pylav.m3u8_parser.parser import is_url
 from pylav.track_encoding import decode_track
 from pylav.types import QueryT
-from pylav.vendored import aiopath
 
 if TYPE_CHECKING:
     from pylav.localfiles import LocalFile

@@ -14,6 +14,7 @@ from typing import Callable
 
 import aiohttp
 import aiohttp_client_cache
+import aiopath
 import asyncstdlib
 import discord
 import ujson
@@ -92,7 +93,6 @@ from pylav.utils import (
     _Singleton,
     add_property,
 )
-from pylav.vendored import aiopath
 
 try:
     from redbot.core.i18n import Translator

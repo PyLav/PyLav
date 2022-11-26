@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 import os
 
-from aiocache import Cache, cached
+import aiopath
 
 from pylav.m3u8_parser.httpclient import DefaultHTTPClient, _parsed_url
 from pylav.m3u8_parser.model import (
@@ -30,7 +30,7 @@ from pylav.m3u8_parser.model import (
     Start,
 )
 from pylav.m3u8_parser.parser import ParseError, is_url, parse
-from pylav.vendored import aiopath
+from pylav.vendored.aiocache import Cache, cached
 
 # coding: utf-8
 # Copyright 2014 Globo.com Player authors. All rights reserved.

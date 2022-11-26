@@ -7,11 +7,11 @@ import typing
 from collections.abc import AsyncIterator
 from typing import Final
 
+import aiopath
 import asyncstdlib
 from discord.utils import maybe_coroutine
 
 from pylav.query import Query
-from pylav.vendored import aiopath
 
 try:
     from redbot.core.i18n import Translator
