@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-10-21 21:05+0000\n"
-"PO-Revision-Date: 2022-10-21 21:09\n"
+"POT-Creation-Date: 2022-11-26 13:09+0000\n"
+"PO-Revision-Date: 2022-11-26 13:12\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -17,23 +17,23 @@ msgstr ""
 "X-Crowdin-File-ID: 506\n"
 "Language: ja_JP\n"
 
-#: pylav/sql/models.py:2766
+#: pylav/sql/models.py:2767
 msgid "(Global) {user_name}"
 msgstr "（グローバル） {user_name}"
 
-#: pylav/sql/models.py:2770
+#: pylav/sql/models.py:2771
 msgid "(Server) {guild_name}"
 msgstr "(サーバー) {guild_name}"
 
-#: pylav/sql/models.py:2772
+#: pylav/sql/models.py:2773
 msgid "(Channel) {channel}"
 msgstr "(チャンネル) {channel}"
 
-#: pylav/sql/models.py:2778
+#: pylav/sql/models.py:2779
 msgid "(User) {user_name}"
 msgstr "(ユーザー) {user_name}"
 
-#: pylav/sql/models.py:2780
+#: pylav/sql/models.py:2781
 msgid "(Invalid) {scope}"
 msgstr "{scope} が無効です"
 
