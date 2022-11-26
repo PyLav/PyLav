@@ -40,6 +40,7 @@ __all__ = (
     "AbortPlayerRestoreDueUnavailableNode",
     "NoNodeWithRequestFunctionalityAvailable",
     "UnsupportedNodeAPI",
+    "NodeHasNoFilters",
 )
 
 from pylav.endpoints.response_objects import LavalinkErrorResponseObject
@@ -211,6 +212,15 @@ class NoNodeWithRequestFunctionalityAvailable(NodeError):
 
         self.message = message
         self.feature = feature
+
+
+class NodeHasNoFilters(NodeError):
+    """Raised when a node has no filters"""
+
+    def __init__(self, message: str, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.message = message
 
 
 class PlaylistError(PyLavError):

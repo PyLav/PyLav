@@ -685,8 +685,8 @@ class Node:
                 lambda x, y: x and y,
                 map(
                     lambda p, q: p == q,
-                    [self.identifier, self.websocket.connected, self.name, self._resume_key],
-                    [other.identifier, self.websocket.connected, self.name, self._resume_key],
+                    [self.identifier, self.websocket.connected, self.name, self._resume_key, self.session_id],
+                    [other.identifier, self.websocket.connected, self.name, self._resume_key, other.session_id],
                 ),
                 True,
             )
@@ -745,7 +745,7 @@ class Node:
         if not self.managed or self.host != "localhost":
             self._capabilities.discard("local")
         for filterName in info.filters:
-            self._filters.add(filterName.lower())
+            self._filters.add(filterName)
         for plugin in info.plugins:
             match plugin.name:
                 case "SponsorBlock-Plugin":
@@ -791,7 +791,7 @@ class Node:
         :class:`bool`
             True if the target node has the specified filter, False otherwise.
         """
-        return filter_name.lower() in self.filters
+        return filter_name in self._filters
 
     async def update_disabled_sources(self, sources: set[str]) -> None:
         """
@@ -1745,17 +1745,28 @@ class Node:
             return {}
 
         payload: FiltersT = {}
-        self._get_filter_payload_volume(payload, volume)
-        self._get_filter_payload_equalizer(equalizer, payload, player, reset_no_set)
-        self._get_filter_payload_karaoke(karaoke, payload, player, reset_no_set)
-        self._get_filter_payload_timescale(payload, player, reset_no_set, timescale)
-        self._get_filter_payload_tremolo(payload, player, reset_no_set, tremolo)
-        self._get_filter_payload_vibrato(payload, player, reset_no_set, vibrato)
-        self._get_filter_payload_rotation(payload, player, reset_no_set, rotation)
-        self._get_filter_payload_distortion(distortion, payload, player, reset_no_set)
-        self._get_filter_payload_low_pass(low_pass, payload, player, reset_no_set)
-        self._get_filter_payload_channel_mix(channel_mix, payload, player, reset_no_set)
-        self._get_filter_payload_echo(echo, payload, player, reset_no_set)
+        if self.has_filter("volume"):
+            self._get_filter_payload_volume(payload, volume)
+        if self.has_filter("equalizer"):
+            self._get_filter_payload_equalizer(equalizer, payload, player, reset_no_set)
+        if self.has_filter("karaoke"):
+            self._get_filter_payload_karaoke(karaoke, payload, player, reset_no_set)
+        if self.has_filter("timescale"):
+            self._get_filter_payload_timescale(payload, player, reset_no_set, timescale)
+        if self.has_filter("tremolo"):
+            self._get_filter_payload_tremolo(payload, player, reset_no_set, tremolo)
+        if self.has_filter("vibrato"):
+            self._get_filter_payload_vibrato(payload, player, reset_no_set, vibrato)
+        if self.has_filter("rotation"):
+            self._get_filter_payload_rotation(payload, player, reset_no_set, rotation)
+        if self.has_filter("distortion"):
+            self._get_filter_payload_distortion(distortion, payload, player, reset_no_set)
+        if self.has_filter("lowPass"):
+            self._get_filter_payload_low_pass(low_pass, payload, player, reset_no_set)
+        if self.has_filter("channelMix"):
+            self._get_filter_payload_channel_mix(channel_mix, payload, player, reset_no_set)
+        if self.has_filter("echo"):
+            self._get_filter_payload_echo(echo, payload, player, reset_no_set)
 
         return payload
 

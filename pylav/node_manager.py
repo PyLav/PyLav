@@ -415,12 +415,12 @@ class NodeManager:
 
     async def _player_change_node_task(self, node):
         async for player in asyncstdlib.iter(self.player_queue):
-            await player.change_node(node)
+            await player.change_node(node, forced=True)
             node._logger.debug("Successfully moved %s", player.guild.id)
 
         if self.client._connect_back:
             async for player in asyncstdlib.iter(node._original_players):
-                await player.change_node(node)
+                await player.change_node(node, forced=True)
                 player._original_node = None
         del self.player_queue
         self._player_migrate_task = None
@@ -454,7 +454,7 @@ class NodeManager:
             return
 
         async for player in asyncstdlib.iter(node.players):
-            await player.change_node(best_node)
+            await player.change_node(best_node, forced=True)
             if self.client._connect_back:
                 player._original_node = node
 
