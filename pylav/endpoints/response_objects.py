@@ -2,8 +2,10 @@ import dataclasses
 import datetime
 from typing import Annotated, Literal, Union
 
+from packaging.version import Version
 from packaging.version import parse as parse_version
 
+from pylav.constants import SNAPSHOT_REGEX
 from pylav.types import ValueRange
 
 
@@ -560,7 +562,11 @@ class VersionObject:
     preRelease: Union[str, None] = None
 
     def __post_init__(self):
-        object.__setattr__(self, "semver", parse_version(self.semver))
+        if match := SNAPSHOT_REGEX.match(self.semver):
+            version = Version(f"3.999.0-alpha+{match.group('commit')}")
+        else:
+            version = parse_version(self.semver)
+        object.__setattr__(self, "semver", version)
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
