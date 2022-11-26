@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.11.19.0 (26/11/2022)
+- [[patch] Properly fix  NameError: name 'tables' is not defined](https://github.com/Drapersniper/PyLav/commit/ee9521e95e40a97245dab038634101e0359b866f) - @Drapersniper
+
+---
+
 ## v0.11.18.0 (25/11/2022)
 - [[patch] Fix an incorrect import usage](https://github.com/Drapersniper/PyLav/commit/af17f87cec7e776ae36b73bd81d5cc73ad0bf417) - @Drapersniper
 
@@ -158,11 +163,3 @@
 ## v0.11.0.1 (16/10/2022)
 - [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/104082eb10828e4c12348d38dcd10b985da06c59) - @Drapersniper
 - [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/759a235a30937a0707c01036b0789901ab30860b) - @crowdin-bot
-
----
-
-## v0.11.0.0 (16/10/2022)
-- [[minor] Add todos for LL v3.7](https://github.com/Drapersniper/PyLav/commit/9c411262f6b74117413576dc7e8d6732e5944766) - @Drapersniper
-- [Fix deezer matching](https://github.com/Drapersniper/PyLav/commit/c9428c86fd7348227f16f5a0592d8346dd196e6f) - @Drapersniper
-- [trigger reconnect on shard reconnects](https://github.com/Drapersniper/PyLav/commit/983949fda6dfa9fd1ec576b70ee9de84a094f357) - @Drapersniper
-- [fix DJ being forced on](https://github.com/Drapersniper/PyLav/commit/bcfd895a532d2722e25decc291a4210566cdd1c4) - @Drapersniper
