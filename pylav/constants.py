@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import re
+
 from pylav._city_dump import US_CITY_DUMP
 
 REGION_TO_COUNTRY_COORDINATE_MAPPING = {}
@@ -119,3 +121,5 @@ PYLAV_BUNDLED_NODES_SETTINGS = {
         "temporary": True,
     },
 }
+
+SNAPSHOT_REGEX = re.compile(r"^(?P<commit>.*?)-SNAPSHOT$")

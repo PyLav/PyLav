@@ -7,7 +7,6 @@ import datetime
 import functools
 import logging
 import pathlib
-import re
 import typing
 from typing import TYPE_CHECKING
 from uuid import uuid4
@@ -19,7 +18,7 @@ from apscheduler.jobstores.base import JobLookupError
 from dacite import from_dict
 from discord.utils import utcnow
 from expiringdict import ExpiringDict
-from packaging.version import LegacyVersion, Version
+from packaging.version import Version
 from packaging.version import parse as parse_version
 
 from pylav._logging import getLogger
@@ -27,6 +26,7 @@ from pylav.constants import (
     BUNDLED_NODES_IDS_HOST_MAPPING,
     PYLAV_NODES,
     REGION_TO_COUNTRY_COORDINATE_MAPPING,
+    SNAPSHOT_REGEX,
     SUPPORTED_FEATURES,
     SUPPORTED_SOURCES,
 )
@@ -85,7 +85,6 @@ except ImportError:
 NO_MATCHES = LavalinkNoMatchesObject(
     loadType="NO_MATCHES", tracks=[], playlistInfo=PlaylistInfoObject(name="", selectedTrack=-1)
 )
-SNAPSHOT_REGEX = re.compile(r"^(?P<commit>.*?)-SNAPSHOT$")
 GOOD_RESPONSE_RANGE = range(200, 299)
 
 
@@ -341,7 +340,7 @@ class Node:
         from pylav.query import Query
 
         self._query_cls: Query = Query  # type: ignore
-        self._version: Version | LegacyVersion | None = None
+        self._version: Version | None = None
         self._api_version: int | None = None
         self._manager = manager
         self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
@@ -443,7 +442,7 @@ class Node:
                 await self._unhealthy()
 
     @property
-    def version(self) -> Version | LegacyVersion | None:
+    def version(self) -> Version | None:
         return self._version
 
     @property
@@ -1443,7 +1442,7 @@ class Node:
                 raise HTTPError(failure)
             return HTTPError(failure)
 
-    async def fetch_version(self, raise_on_error: bool = False) -> Version | LegacyVersion | HTTPError:
+    async def fetch_version(self, raise_on_error: bool = False) -> Version | HTTPError:
         async with self._session.get(
             self.get_endpoint_version(),
             headers={"Authorization": self.password, "Content-Type": "text/plain"},
@@ -1513,7 +1512,7 @@ class Node:
 
     # REST API - Wrappers
 
-    async def fetch_node_version(self) -> Version | LegacyVersion:
+    async def fetch_node_version(self) -> Version:
         self._version = await self.fetch_version()
         return self._version
 

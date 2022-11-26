@@ -21,7 +21,7 @@ import discord
 import ujson
 import yaml
 from discord.utils import utcnow
-from packaging.version import LegacyVersion, Version
+from packaging.version import Version
 from packaging.version import parse as parse_version
 
 import pylav.sql.tables.bot
@@ -1699,7 +1699,7 @@ class BotVersion(CachedModel, metaclass=_SingletonByKey):
     id: int
 
     @maybe_cached
-    async def fetch_version(self) -> LegacyVersion | Version:
+    async def fetch_version(self) -> Version:
         """Fetch the version of the bot from the database"""
         data = (
             await pylav.sql.tables.bot.BotVersionRow.select(pylav.sql.tables.bot.BotVersionRow.version)
@@ -1709,7 +1709,7 @@ class BotVersion(CachedModel, metaclass=_SingletonByKey):
         )
         return parse_version(data["version"] if data else pylav.sql.tables.bot.BotVersionRow.version.default)
 
-    async def update_version(self, version: LegacyVersion | Version | str):
+    async def update_version(self, version: Version | str):
         """Update the version of the bot in the database"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
