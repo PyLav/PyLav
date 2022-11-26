@@ -159,6 +159,7 @@ class Player(VoiceProtocol):
         "_lavalink",
         "_discord_session_id",
         "_logger",
+        "_last_track_stuck_check",
     )
     _config: PlayerModel
     _global_config: PlayerModel
@@ -227,7 +228,7 @@ class Player(VoiceProtocol):
         self._was_alone_paused = False
         self._last_alone_dc_check = 0
         self._last_empty_queue_check = 0
-
+        self._last_track_stuck_check = 0
         self._waiting_for_node = asyncio.Event()
 
     def __hash__(self):
@@ -397,6 +398,16 @@ class Player(VoiceProtocol):
             seconds=10,
             max_instances=1,
             id=f"{self.bot.user.id}-{self.guild.id}-auto_save_task",
+            replace_existing=True,
+            coalesce=True,
+            next_run_time=now_time + datetime.timedelta(seconds=10),
+        )
+        self.player_manager.client.scheduler.add_job(
+            self.auto_track_stuck_fixer_track,
+            trigger="interval",
+            seconds=10,
+            max_instances=1,
+            id=f"{self.bot.user.id}-{self.guild.id}-auto_track_stuck_fixer_track",
             replace_existing=True,
             coalesce=True,
             next_run_time=now_time + datetime.timedelta(seconds=10),
@@ -812,6 +823,50 @@ class Player(VoiceProtocol):
             self._logger.trace("Auto save task for %s - Saving the player at %s", self, utcnow())
             await self.save()
 
+    async def auto_track_stuck_fixer_track(self):
+        with contextlib.suppress(
+            asyncio.exceptions.CancelledError,
+        ):
+            if self.position != 0:
+                return
+            if not self.ready.is_set():
+                return
+            if not self.is_connected:
+                self._logger.trace(
+                    "Auto track stuck fixer task fired while player is not connected to a voice channel - discarding",
+                )
+                return
+            if self.current:
+                self._logger.trace("Auto track stuck fixer task - Current track is not empty - discarding")
+                return
+            if self.stopped:
+                self._logger.trace(
+                    "Auto track stuck fixer for %s fired while player that has been stopped - discarding",
+                    self,
+                )
+                return
+            if self.paused:
+                self._logger.trace(
+                    "Auto track stuck fixer for %s fired while player that has been paused - discarding",
+                    self,
+                )
+                return
+            if self.fetch_position() != 0:
+                self._last_track_stuck_check = 0
+                return
+            if not self._last_track_stuck_check:
+                self._logger.verbose(
+                    "Auto track stuck fixer - Player appears to be stuck - starting countdown",
+                )
+                self._last_track_stuck_check = time.time()
+            if (self._last_track_stuck_check + 10) <= time.time():
+                self._logger.info(
+                    "Auto track stuck fixer for %s - Player appears to be stuck - attempting to fix",
+                    self,
+                )
+                await self.change_to_best_node(forced=True, skip_position_fetch=True)
+                self._last_track_stuck_check = 0
+
     async def change_to_best_node(
         self, feature: str = None, ops: bool = True, forced: bool = True, skip_position_fetch: bool = False
     ) -> Node | None:
@@ -839,7 +894,7 @@ class Player(VoiceProtocol):
                 "No node with %s functionality available after one temporarily became available!", feature
             )
             raise NoNodeWithRequestFunctionalityAvailable(f"No node with {feature} functionality available", feature)
-        if node != self.node or not ops or forced:
+        if node != self.node or (not ops) or forced:
             await self.change_node(node, ops=ops, skip_position_fetch=skip_position_fetch, forced=forced)
             return node
 
@@ -871,7 +926,7 @@ class Player(VoiceProtocol):
             )
             raise NoNodeWithRequestFunctionalityAvailable(f"No node with {feature} functionality available", feature)
 
-        if node != self.node or not ops or forced:
+        if node != self.node or (not ops) or forced:
             await self.change_node(node, ops=ops, skip_position_fetch=skip_position_fetch, forced=forced)
             return node
 
@@ -1060,7 +1115,7 @@ class Player(VoiceProtocol):
 
         if await track.query() and not self.node.has_source(await track.requires_capability()):
             self.current = None
-            await self.change_to_best_node(await track.requires_capability())
+            await self.change_to_best_node(feature=await track.requires_capability(), skip_position_fetch=True)
 
         self.current = track
         payload = {"encodedTrack": track.encoded}
@@ -1095,7 +1150,7 @@ class Player(VoiceProtocol):
 
         if await track.query() and not self.node.has_source(await track.requires_capability()):
             self.current = None
-            await self.change_to_best_node(await track.requires_capability())
+            await self.change_to_best_node(feature=await track.requires_capability(), skip_position_fetch=True)
         returning = await self._process_partial_track(track, bypass_cache)
         if returning:
             return
@@ -1179,7 +1234,7 @@ class Player(VoiceProtocol):
                 await self.change_node(node)
         else:
             try:
-                await self.change_to_best_node(feature=await track.requires_capability())
+                await self.change_to_best_node(feature=await track.requires_capability(), skip_position_fetch=True)
             except NoNodeWithRequestFunctionalityAvailable as exc:
                 await self._process_error_on_play(exc, track)
                 return
@@ -1657,7 +1712,7 @@ class Player(VoiceProtocol):
         self._connected = True
         self.connected_at = utcnow()
         await asyncio.wait_for(self._waiting_for_node.wait(), timeout=None)
-        await self.change_to_best_node(forced=True)
+        await self.change_to_best_node(forced=True, skip_position_fetch=True)
         self._logger.debug("Reconnected to voice channel")
 
     async def disconnect(self, *, force: bool = False, requester: discord.Member | None) -> None:
@@ -1686,6 +1741,9 @@ class Player(VoiceProtocol):
                 job_id=f"{self.bot.user.id}-{self.guild.id}-auto_pause_task"
             )
             self.player_manager.client.scheduler.remove_job(job_id=f"{self.bot.user.id}-{self.guild.id}-auto_save_task")
+            self.player_manager.client.scheduler.remove_job(
+                job_id=f"{self.bot.user.id}-{self.guild.id}-auto_track_stuck_fixer_track"
+            )
             self.player_manager.client.scheduler.remove_job(
                 job_id=f"{self.bot.user.id}-{self.guild.id}-queue_resolver_task"
             )
@@ -2755,4 +2813,4 @@ class Player(VoiceProtocol):
             self._echo = f
 
     async def fetch_node_player(self) -> LavalinkPlayerObject | HTTPError:
-        return await self.node.get_session_player(self.guild.id)
+        return await self.node.fetch_session_player(self.guild.id)

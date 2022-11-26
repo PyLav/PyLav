@@ -682,18 +682,18 @@ class LocalNodeManager:
                     await self._partial_shutdown()
                     await asyncio.sleep(delay)
                 else:
-                    LOGGER.critical(
+                    LOGGER.error(
                         "Fatal exception whilst starting managed Lavalink node, aborting...\n%s",
                         exc.response,
                     )
                     # lavalink_connection_aborted
                     return await self.shutdown()
             except InvalidArchitectureError:
-                LOGGER.critical("Invalid machine architecture, cannot run a managed Lavalink node")
+                LOGGER.error("Invalid machine architecture, cannot run a managed Lavalink node")
                 # lavalink_connection_aborted
                 return await self.shutdown()
             except (UnsupportedJavaError, UnexpectedJavaResponseError) as exc:
-                LOGGER.critical(exc)
+                LOGGER.error(exc)
                 # lavalink_connection_aborted
                 return await self.shutdown()
             except ManagedLinkStartAbortedUseExternal:
@@ -731,7 +731,7 @@ class LocalNodeManager:
 
     async def _monitor_managed_node_error(self, backoff, exc):
         delay = backoff.delay()
-        LOGGER.critical(
+        LOGGER.error(
             exc,
         )
         await self._partial_shutdown()

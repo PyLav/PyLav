@@ -825,7 +825,7 @@ class Client(metaclass=_Singleton):
             raise NoNodeWithRequestFunctionalityAvailable(
                 _("No node with {feature} functionality available!").format(feature=feature), feature=feature
             )
-        return await node.get_decodetrack(track)
+        return await node.fetch_decodetrack(track)
 
     async def decode_tracks(self, tracks: list, feature: str = None) -> list[LavalinkTrackObject]:
         """|coro|
@@ -867,7 +867,7 @@ class Client(metaclass=_Singleton):
         RoutePlannerStatusResponseObject
             An object representing the route-planner information.
         """
-        return await node.get_routeplanner_status()
+        return await node.fetch_routeplanner_status()
 
     @staticmethod
     async def routeplanner_free_address(node: Node, address: str) -> None:
@@ -1449,7 +1449,7 @@ class Client(metaclass=_Singleton):
                     _response = await node.get_track(response, first=True, bypass_cache=bypass_cache)
                     output_tracks.append(_response.tracks)
                 else:
-                    LOGGER.critical("Unknown query type: %s", response)
+                    LOGGER.error("Unknown query type: %s", response)
         data = {
             "playlistInfo": {
                 "name": playlist_name if len(queries) == 1 else "",

@@ -463,7 +463,7 @@ class WebSocket:
             The player to reconnect.
         """
         await asyncio.sleep(5)
-        session = await player.node.get_session_player(player.guild.id)
+        session = await player.node.fetch_session_player(player.guild.id)
         if isinstance(session, HTTPError):
             return
 
