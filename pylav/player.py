@@ -851,7 +851,7 @@ class Player(VoiceProtocol):
                     self,
                 )
                 return
-            if self.fetch_position() != 0:
+            if await self.fetch_position() != 0:
                 self._last_track_stuck_check = 0
                 return
             if not self._last_track_stuck_check:
