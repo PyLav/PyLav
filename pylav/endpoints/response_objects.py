@@ -247,6 +247,9 @@ class VoiceStateObject:
             "ping": self.ping,
         }
 
+    def __repr__(self):
+        return f"<VoiceStateObject(token={None if not self.token else 'OBFUSCATED'} endpoint={self.endpoint} sessionId={self.sessionId} connected={self.connected} ping={self.ping})"
+
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class ValueRangeObject:

@@ -53,7 +53,13 @@ from pylav.events import (
     TracksRequestedEvent,
     TrackStuckEvent,
 )
-from pylav.exceptions import EntryNotFoundError, HTTPError, NoNodeWithRequestFunctionalityAvailable, TrackNotFound
+from pylav.exceptions import (
+    EntryNotFoundError,
+    HTTPError,
+    NodeHasNoFilters,
+    NoNodeWithRequestFunctionalityAvailable,
+    TrackNotFound,
+)
 from pylav.filters import (
     ChannelMix,
     Distortion,
@@ -834,11 +840,11 @@ class Player(VoiceProtocol):
             )
             raise NoNodeWithRequestFunctionalityAvailable(f"No node with {feature} functionality available", feature)
         if node != self.node or not ops or forced:
-            await self.change_node(node, ops=ops, skip_position_fetch=skip_position_fetch)
+            await self.change_node(node, ops=ops, skip_position_fetch=skip_position_fetch, forced=forced)
             return node
 
     async def change_to_best_node_diff_region(
-        self, feature: str = None, ops: bool = True, skip_position_fetch: bool = False
+        self, feature: str = None, ops: bool = True, skip_position_fetch: bool = False, forced: bool = False
     ) -> Node | None:
         """
         Returns the best node to play the current track in a different region.
@@ -865,8 +871,8 @@ class Player(VoiceProtocol):
             )
             raise NoNodeWithRequestFunctionalityAvailable(f"No node with {feature} functionality available", feature)
 
-        if node != self.node or not ops:
-            await self.change_node(node, ops=ops, skip_position_fetch=skip_position_fetch)
+        if node != self.node or not ops or forced:
+            await self.change_node(node, ops=ops, skip_position_fetch=skip_position_fetch, forced=forced)
             return node
 
     def store(
@@ -1753,7 +1759,16 @@ class Player(VoiceProtocol):
         volume : Volume
             Volume to set
         requester : discord.Member
+
+        Raises
+        ------
+        ValueError
+            If the volume is not between 0 and 1000
+        NodeHasNoFilters
+            If the node does not have specified filter enabled
         """
+        if not self.node.has_filter("volume"):
+            raise NodeHasNoFilters(_("Current node has the Volume filter functionality disabled"))
         max_volume = await self.player_manager.client.player_config_manager.get_max_volume(self.guild.id)
         if volume.get_int_value() > max_volume:
             volume = Volume(max_volume)
@@ -1774,6 +1789,8 @@ class Player(VoiceProtocol):
         requester : discord.Member
             The member who requested the equalizer to be set
         """
+        if not self.node.has_filter("equalizer"):
+            raise NodeHasNoFilters(_("Current node has the Equalizer functionality disabled"))
         await self.set_filters(
             equalizer=equalizer,
             reset_not_set=forced,
@@ -1792,6 +1809,8 @@ class Player(VoiceProtocol):
         requester: discord.Member
             The member who requested the karaoke
         """
+        if not self.node.has_filter("karaoke"):
+            raise NodeHasNoFilters(_("Current node has the Karaoke functionality disabled"))
         await self.set_filters(
             karaoke=karaoke,
             reset_not_set=forced,
@@ -1810,6 +1829,8 @@ class Player(VoiceProtocol):
         requester: discord.Member
             The member who requested the timescale
         """
+        if not self.node.has_filter("timescale"):
+            raise NodeHasNoFilters(_("Current node has the Timescale functionality disabled"))
         await self.set_filters(
             timescale=timescale,
             reset_not_set=forced,
@@ -1828,6 +1849,8 @@ class Player(VoiceProtocol):
         requester: discord.Member
             The member who requested the tremolo
         """
+        if not self.node.has_filter("tremolo"):
+            raise NodeHasNoFilters(_("Current node has the Tremolo functionality disabled"))
         await self.set_filters(
             tremolo=tremolo,
             reset_not_set=forced,
@@ -1846,6 +1869,8 @@ class Player(VoiceProtocol):
         requester: discord.Member
             The member who requested the vibrato
         """
+        if not self.node.has_filter("vibrato"):
+            raise NodeHasNoFilters(_("Current node has the Vibrato functionality disabled"))
         await self.set_filters(
             vibrato=vibrato,
             reset_not_set=forced,
@@ -1864,6 +1889,8 @@ class Player(VoiceProtocol):
         requester: discord.Member
             The member who requested the rotation
         """
+        if not self.node.has_filter("rotation"):
+            raise NodeHasNoFilters(_("Current node has the Rotation functionality disabled"))
         await self.set_filters(
             rotation=rotation,
             reset_not_set=forced,
@@ -1882,6 +1909,8 @@ class Player(VoiceProtocol):
         requester: discord.Member
             The member who requested the distortion
         """
+        if not self.node.has_filter("distortion"):
+            raise NodeHasNoFilters(_("Current node has the Distortion functionality disabled"))
         await self.set_filters(
             distortion=distortion,
             reset_not_set=forced,
@@ -1900,6 +1929,8 @@ class Player(VoiceProtocol):
         requester : discord.Member
             Member who requested the filter change
         """
+        if not self.node.has_filter("lowPass"):
+            raise NodeHasNoFilters(_("Current node has the LowPass functionality disabled"))
         await self.set_filters(
             low_pass=low_pass,
             reset_not_set=forced,
@@ -1918,6 +1949,8 @@ class Player(VoiceProtocol):
         requester : discord.Member
             Member who requested the filter change
         """
+        if not self.node.has_filter("echo"):
+            raise NodeHasNoFilters(_("Current node has the Echo functionality disabled"))
         await self.set_filters(
             echo=echo,
             reset_not_set=forced,
@@ -1932,6 +1965,10 @@ class Player(VoiceProtocol):
         requester : discord.Member
             Member who requested the filter change
         """
+        if not self.node.has_filter("equalizer"):
+            raise NodeHasNoFilters(_("Current node has the Equalizer functionality disabled"))
+        if not self.node.has_filter("timescale"):
+            raise NodeHasNoFilters(_("Current node has the Timescale functionality disabled"))
         await self.set_filters(
             requester=requester,
             low_pass=None,
@@ -1987,6 +2024,8 @@ class Player(VoiceProtocol):
         requester : discord.Member
             The member who requested the channel_mix
         """
+        if not self.node.has_filter("channelMix"):
+            raise NodeHasNoFilters(_("Current node has the ChannelMix functionality disabled"))
         await self.set_filters(
             channel_mix=channel_mix,
             reset_not_set=forced,

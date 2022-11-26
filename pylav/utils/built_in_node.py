@@ -42,6 +42,7 @@ NODE_DEFAULT_SETTINGS = {
                 "rotation": True,
                 "channelMix": True,
                 "lowPass": True,
+                "echo": True,
             },
             "bufferDurationMs": 400,
             "frameBufferDurationMs": 1000,
