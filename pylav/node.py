@@ -424,7 +424,7 @@ class Node:
         ):
             try:
                 await self.websocket.ping()
-                await self.get_version(raise_on_error=True)
+                await self.fetch_version(raise_on_error=True)
                 self._logger.trace("Healthy")
             except Exception:
                 if self.websocket._connecting is True:
@@ -737,7 +737,7 @@ class Node:
         """|coro|
         Updates the features of the target node.
         """
-        info = await self.get_info()
+        info = await self.fetch_info()
         self._capabilities.clear()
         self._filters.clear()
         for source in info.sourceManagers:
@@ -1273,7 +1273,7 @@ class Node:
         return f"{self.connection_protocol}://{self.host}:{self.port}/version"
 
     # REST API - Direct calls
-    async def get_session_players(self) -> list[LavalinkPlayerObject] | HTTPError:
+    async def fetch_session_players(self) -> list[LavalinkPlayerObject] | HTTPError:
         """|coro|
         Gets all players associated with the target node.
 
@@ -1295,7 +1295,7 @@ class Node:
             self._logger.trace("Failed to get session players: %d %s", failure.status, failure.message)
             return HTTPError(failure)
 
-    async def get_session_player(self, guild_id: int) -> LavalinkPlayerObject | HTTPError:
+    async def fetch_session_player(self, guild_id: int) -> LavalinkPlayerObject | HTTPError:
         async with self._session.get(
             self.get_endpoint_session_player_by_guild_id(guild_id=guild_id),
             headers={"Authorization": self.password},
@@ -1356,7 +1356,7 @@ class Node:
             self._logger.trace("Failed to delete session player: %d %s", failure.status, failure.message)
             return HTTPError(failure)
 
-    async def get_loadtracks(self, query: Query) -> LavalinkLoadTrackObjects | HTTPError:
+    async def fetch_loadtracks(self, query: Query) -> LavalinkLoadTrackObjects | HTTPError:
         if not self.available or not self.has_source(query.requires_capability):
             return dataclasses.replace(NO_MATCHES)
 
@@ -1375,7 +1375,7 @@ class Node:
             self._logger.trace("Failed to load track: %d %s", failure.status, failure.message)
             return HTTPError(failure)
 
-    async def get_decodetrack(
+    async def fetch_decodetrack(
         self, encoded_track: str, timeout: aiohttp.ClientTimeout | object = sentinel
     ) -> LavalinkTrackObject | HTTPError:
         async with self._session.get(
@@ -1407,7 +1407,7 @@ class Node:
             self._logger.trace("Failed to decode tracks: %d %s", failure.status, failure.message)
             return HTTPError(failure)
 
-    async def get_info(self, raise_on_error: bool = False) -> LavalinkInfoObject | HTTPError:
+    async def fetch_info(self, raise_on_error: bool = False) -> LavalinkInfoObject | HTTPError:
         async with self._session.get(
             self.get_endpoint_info(),
             headers={"Authorization": self.password},
@@ -1425,7 +1425,7 @@ class Node:
                 raise HTTPError(failure)
             return HTTPError(failure)
 
-    async def get_stats(self, raise_on_error: bool = False) -> LavalinkStatsOpObject | HTTPError:
+    async def fetch_stats(self, raise_on_error: bool = False) -> LavalinkStatsOpObject | HTTPError:
         async with self._session.get(
             self.get_endpoint_stats(),
             headers={"Authorization": self.password},
@@ -1443,7 +1443,7 @@ class Node:
                 raise HTTPError(failure)
             return HTTPError(failure)
 
-    async def get_version(self, raise_on_error: bool = False) -> Version | LegacyVersion | HTTPError:
+    async def fetch_version(self, raise_on_error: bool = False) -> Version | LegacyVersion | HTTPError:
         async with self._session.get(
             self.get_endpoint_version(),
             headers={"Authorization": self.password, "Content-Type": "text/plain"},
@@ -1465,7 +1465,7 @@ class Node:
                 raise HTTPError(failure)
             return HTTPError(failure)
 
-    async def get_routeplanner_status(self) -> RoutePlannerStatusResponseObject | HTTPError:
+    async def fetch_routeplanner_status(self) -> RoutePlannerStatusResponseObject | HTTPError:
         async with self._session.get(
             self.get_endpoint_routeplanner_status(),
             headers={"Authorization": self.password},
@@ -1514,7 +1514,7 @@ class Node:
     # REST API - Wrappers
 
     async def fetch_node_version(self) -> Version | LegacyVersion:
-        self._version = await self.get_version()
+        self._version = await self.fetch_version()
         return self._version
 
     async def fetch_api_version(self):
@@ -1563,7 +1563,7 @@ class Node:
         if not bypass_cache:
             if cached_entry := await self.get_track_from_cache(query=query, first=first):
                 return cached_entry
-        response = await self.get_loadtracks(query=query)
+        response = await self.fetch_loadtracks(query=query)
         if first:
             return dataclasses.replace(response, tracks=response.tracks[:1])
         return response
