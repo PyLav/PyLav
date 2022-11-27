@@ -115,8 +115,8 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
 - Make a copy of [`pylav.example.yaml`](https://github.com/Drapersniper/PyLav/blob/master/pylav.example.yaml) to your home directory and name it `pylav.yaml`
 - Change the values inside the `pylav.yaml` to the desired values
   - Change `PYLAV__POSTGRES_PASSWORD` from `changeme` to to the password of the Postgres user you created above.
-  - Change `PYLAV__POSTGRES_USER` from `postgres` to the user you created above.
-  - Change `PYLAV__POSTGRES_DB` from `py_lav` to the name of the database you created above (if you followed the commands above it should be `pylav_db`).
+  - Change `PYLAV__POSTGRES_USER` from `changeme` to the user you created above.
+  - Change `PYLAV__POSTGRES_DB` from `pylav_db` to the name of the database you created above (if you followed the commands above it should be `pylav_db`).
   - Change `PYLAV__POSTGRES_PORT` and `PYLAV__POSTGRES_HOST` to the connection host and port for the Postgres server.
   - `PYLAV__JAVA_EXECUTABLE` can be changed from java to the full path of the Azul Zulu 18 Java executable installed above.
     - By default it will use `java` to ensure you have the correct version under `java` run `java --version` if it says "OpenJDK Runtime Environment Zulu18..." then this is not needed to be changed.
