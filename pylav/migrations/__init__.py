@@ -56,7 +56,6 @@ async def run_query_migration_1000(connection: Connection):
 
 
 async def migrate_playlists(playlists: list[asyncpg.Record]):
-    from pylav import getLogger
     from pylav.constants import BUNDLED_PLAYLIST_IDS
     from pylav.sql.tables.playlists import PlaylistRow
     from pylav.sql.tables.tracks import TrackRow
@@ -88,7 +87,6 @@ async def migrate_playlists(playlists: list[asyncpg.Record]):
 
 
 async def migrate_queries(queries: list[asyncpg.Record]):
-    from pylav import getLogger
     from pylav.sql.tables.queries import QueryRow
     from pylav.sql.tables.tracks import TrackRow
     from pylav.track_encoding import decode_track
@@ -138,7 +136,6 @@ async def migrate_data(data: dict) -> None:
     from pylav import getLogger
 
     LOGGER = getLogger("PyLav.sql.migrations")
-    LOGGER.info("Migrating data...")
     if data["query_1000"]:
         LOGGER.info("Migrating queries to new schema...")
         await migrate_queries(data["query_1000"])
