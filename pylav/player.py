@@ -2074,7 +2074,7 @@ class Player(VoiceProtocol):
             tremolo=self.tremolo or None,
             vibrato=self.vibrato or None,
             distortion=self.distortion or None,
-            timescale=Timescale(speed=1.0, pitch=1.1, rate=1.1),
+            timescale=Timescale(speed=1.0, pitch=1.2, rate=1.2),
             channel_mix=self.channel_mix or None,
             echo=self.echo or None,
             reset_not_set=True,
