@@ -1,0 +1,59 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: pylavcogs-shared\n"
+"POT-Creation-Date: 2022-09-04 12:33+0000\n"
+"PO-Revision-Date: 2022-09-12 23:04\n"
+"Last-Translator: \n"
+"Language-Team: Italian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.4.2\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: pylavcogs-shared\n"
+"X-Crowdin-Project-ID: 535248\n"
+"X-Crowdin-Language: it\n"
+"X-Crowdin-File: /pylavcogs_shared/converters/locales/messages.pot\n"
+"X-Crowdin-File-ID: 622\n"
+"Language: it_IT\n"
+
+#: pylavcogs_shared/converters/equalizer.py:47
+msgid "Bass boost with name `{arg}` not found"
+msgstr "Bass boost con nome `{arg}` non trovato"
+
+#: pylavcogs_shared/converters/equalizer.py:61
+msgid "Maximum"
+msgstr "Massimo"
+
+#: pylavcogs_shared/converters/equalizer.py:62
+msgid "Insane"
+msgstr "Insane"
+
+#: pylavcogs_shared/converters/equalizer.py:63
+msgid "Extreme"
+msgstr "Estremo"
+
+#: pylavcogs_shared/converters/equalizer.py:64
+msgid "Very High"
+msgstr "Molto Alto"
+
+#: pylavcogs_shared/converters/equalizer.py:65
+msgid "High"
+msgstr "Alto"
+
+#: pylavcogs_shared/converters/equalizer.py:66
+msgid "Medium"
+msgstr "Medio"
+
+#: pylavcogs_shared/converters/equalizer.py:67
+msgid "Fine Tuned"
+msgstr "Fine Tuned"
+
+#: pylavcogs_shared/converters/equalizer.py:68
+msgid "Cut-off"
+msgstr "Taglia"
+
+#: pylavcogs_shared/converters/equalizer.py:69
+msgid "Off"
+msgstr "Off"
+

@@ -1,0 +1,59 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: pylavcogs-shared\n"
+"POT-Creation-Date: 2022-09-04 12:33+0000\n"
+"PO-Revision-Date: 2022-09-12 23:04\n"
+"Last-Translator: \n"
+"Language-Team: Russian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.4.2\n"
+"Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
+"X-Crowdin-Project: pylavcogs-shared\n"
+"X-Crowdin-Project-ID: 535248\n"
+"X-Crowdin-Language: ru\n"
+"X-Crowdin-File: /pylavcogs_shared/converters/locales/messages.pot\n"
+"X-Crowdin-File-ID: 622\n"
+"Language: ru_RU\n"
+
+#: pylavcogs_shared/converters/equalizer.py:47
+msgid "Bass boost with name `{arg}` not found"
+msgstr "Усиление басов с именем `{arg}` не найдено"
+
+#: pylavcogs_shared/converters/equalizer.py:61
+msgid "Maximum"
+msgstr "Максимум"
+
+#: pylavcogs_shared/converters/equalizer.py:62
+msgid "Insane"
+msgstr "Безумный"
+
+#: pylavcogs_shared/converters/equalizer.py:63
+msgid "Extreme"
+msgstr "Экстремальная"
+
+#: pylavcogs_shared/converters/equalizer.py:64
+msgid "Very High"
+msgstr "Очень высокий"
+
+#: pylavcogs_shared/converters/equalizer.py:65
+msgid "High"
+msgstr "Высокий"
+
+#: pylavcogs_shared/converters/equalizer.py:66
+msgid "Medium"
+msgstr "Средний"
+
+#: pylavcogs_shared/converters/equalizer.py:67
+msgid "Fine Tuned"
+msgstr "Прекрасная Настроенная"
+
+#: pylavcogs_shared/converters/equalizer.py:68
+msgid "Cut-off"
+msgstr "4.2.4.2.4.2 Частота подачи топлива"
+
+#: pylavcogs_shared/converters/equalizer.py:69
+msgid "Off"
+msgstr "Выкл"
+
