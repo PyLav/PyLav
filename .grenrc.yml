@@ -11,5 +11,6 @@ ignoreCommitsWith:
 -   \[skip ci\]
 -   \[ci skip\]
 -   \[pre-commit.ci\]
+-   \[post\] Update translations
 changelogFilename: CHANGELOG.md
 override: true

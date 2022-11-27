@@ -3,8 +3,8 @@ ignore:
 -   docs/
 -   tools/
 -   build/
--   pylav/m3u8_parser
--   pylav/vendored
+-   pylav/m3u8_parser/**
+-   pylav/vendored/**
 -   .github/workflows
 
 refactor:
