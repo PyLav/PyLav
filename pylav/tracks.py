@@ -227,8 +227,8 @@ class Track:
         return MISSING if self.is_partial else self.full_track.info.thumbnail
 
     @property
-    def irsc(self) -> str | None:
-        return MISSING if self.is_partial else self.full_track.info.irsc
+    def isrc(self) -> str | None:
+        return MISSING if self.is_partial else self.full_track.info.isrc
 
     @property
     def probe_info(self) -> str | None:

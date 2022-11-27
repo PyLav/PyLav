@@ -73,7 +73,7 @@ class QueryCacheManager:
         async for track in AsyncIter(tracks):
             with contextlib.suppress(Exception):
                 for key in track["info"].keys():
-                    if key not in {"identifier", "sourceName", "title", "uri", "irsc"}:
+                    if key not in {"identifier", "sourceName", "title", "uri", "isrc"}:
                         track["info"].pop(key, None)
                 new_tracks.append(await pylav.sql.tables.tracks.TrackRow.get_or_create(track["encoded"], track["info"]))
         if new_tracks:

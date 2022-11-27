@@ -13,7 +13,7 @@ class TrackRow(Table, db=DB, tablename="track"):
     sourceName = Text(null=True, default=None, index=True)
     title = Text(null=True, default=None, index=True)
     uri = Text(null=True, default=None, index=True)
-    irsc = Text(null=True, default=None, index=True)
+    isrc = Text(null=True, default=None, index=True)
     encoded = Text(null=False, index=True, primary_key=True)
     queries = M2M(LazyTableReference("TrackToQueries", module_path="pylav.sql.tables.m2m"))
     playlists = M2M(LazyTableReference("TrackToPlaylists", module_path="pylav.sql.tables.m2m"))
