@@ -1,0 +1,28 @@
+'Category: Vendor':
+  # Source
+-   pylav/vendored/*
+'Category: Red Utils':
+  # Source
+-   pylav/red_utils/*
+'Category: M3U Parser':
+  # Source
+-   pylav/m3u8_parser/*
+'Category: Database':
+  # Source
+-   pylav/config_migrations/*
+-   pylav/migrations/*
+-   pylav/sql/*
+'Category: Radio':
+-   pylav/radio/*
+'Category: CI':
+-   .github/workflows/*
+'Category: Lavalink':
+-   pylav/node.py
+-   pylav/websocket.py
+-   pylav/endpoints/*
+'Category: i18n':
+  # Locale files
+-   pylav/**/locales/*
+'Category: Filters':
+  # Locale files
+-   pylav/filters/*
