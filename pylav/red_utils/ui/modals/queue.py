@@ -5,7 +5,7 @@ from pathlib import Path
 import discord
 from redbot.core.i18n import Translator
 
-from pylav import getLogger
+from pylav._logging import getLogger
 from pylav.types import CogT, InteractionT
 
 LOGGER = getLogger("PyLav.ext.Shared.ui.modals.queue")

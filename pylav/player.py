@@ -18,7 +18,7 @@ from discord import VoiceProtocol
 from discord.abc import Messageable
 from discord.utils import utcnow
 
-from pylav import getLogger
+from pylav._logging import getLogger
 from pylav.constants import REGION_TO_COUNTRY_COORDINATE_MAPPING
 from pylav.endpoints.response_objects import (
     LavalinkPlayerObject,
@@ -2074,7 +2074,7 @@ class Player(VoiceProtocol):
             tremolo=self.tremolo or None,
             vibrato=self.vibrato or None,
             distortion=self.distortion or None,
-            timescale=Timescale(speed=1.05, pitch=1.15, rate=1),
+            timescale=Timescale(speed=1.0, pitch=1.1, rate=1.1),
             channel_mix=self.channel_mix or None,
             echo=self.echo or None,
             reset_not_set=True,

@@ -9,7 +9,7 @@ from discord.utils import utcnow
 
 import pylav.sql.tables.queries
 import pylav.sql.tables.tracks
-from pylav import getLogger
+from pylav._logging import getLogger
 from pylav.sql.models import QueryModel
 from pylav.utils import AsyncIter
 

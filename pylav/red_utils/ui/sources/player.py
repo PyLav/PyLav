@@ -9,7 +9,7 @@ from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_number
 from redbot.vendored.discord.ext import menus
 
-from pylav import getLogger
+from pylav._logging import getLogger
 from pylav.player import Player
 from pylav.red_utils.utils import rgetattr
 from pylav.types import CogT

@@ -21,8 +21,8 @@ import rich.progress
 import ujson
 import yaml
 
-from pylav import getLogger
 from pylav._config import CONFIG_DIR
+from pylav._logging import getLogger
 from pylav.envvars import JAVA_EXECUTABLE
 from pylav.exceptions import (
     EarlyExitError,

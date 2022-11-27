@@ -1,4 +1,4 @@
-from pylav import getLogger
+from pylav._logging import getLogger
 
 LOGGER = getLogger("PyLav.migrator")
 

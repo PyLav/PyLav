@@ -13,7 +13,7 @@ import discord
 from cached_property import cached_property, cached_property_with_ttl
 from dacite import from_dict
 
-from pylav import getLogger
+from pylav._logging import getLogger
 from pylav.endpoints.response_objects import LavalinkTrackObject
 from pylav.exceptions import InvalidTrack, TrackNotFound
 from pylav.query import Query

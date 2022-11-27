@@ -6,7 +6,7 @@ from io import BytesIO
 
 from dacite import from_dict
 
-from pylav import getLogger
+from pylav._logging import getLogger
 from pylav.endpoints.response_objects import LavalinkTrackObject
 
 LOGGER = getLogger("PyLav.TrackParser")

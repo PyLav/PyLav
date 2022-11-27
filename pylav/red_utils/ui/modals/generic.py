@@ -4,7 +4,7 @@ import asyncio
 
 import discord
 
-from pylav import getLogger
+from pylav._logging import getLogger
 from pylav.types import CogT, InteractionT
 
 LOGGER = getLogger("PyLav.ext.Shared.ui.modals.generic")

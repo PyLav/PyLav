@@ -16,7 +16,7 @@ from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box
 from tabulate import tabulate
 
-from pylav import getLogger
+from pylav._logging import getLogger
 from pylav.client import Client
 from pylav.exceptions import NoNodeAvailable, NoNodeWithRequestFunctionalityAvailable
 from pylav.red_utils.errors import IncompatibleException, MediaPlayerNotFoundError, NotDJError, UnauthorizedChannelError
