@@ -10,7 +10,7 @@ from discord.app_commands import Choice, Transformer
 from discord.ext import commands
 from rapidfuzz import fuzz
 
-from pylav import getLogger
+from pylav._logging import getLogger
 from pylav.exceptions import EntryNotFoundError
 from pylav.types import ContextT, InteractionT
 from pylav.utils import shorten_string

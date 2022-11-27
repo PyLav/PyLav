@@ -132,7 +132,7 @@ async def migrate_data(data: dict) -> None:
     """
     Migrates data.
     """
-    from pylav import getLogger
+    from pylav._logging import getLogger
 
     LOGGER = getLogger("PyLav.sql.migrations")
     if data["query_1000"]:

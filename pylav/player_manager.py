@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 
 import discord
 
-from pylav import getLogger
+from pylav._logging import getLogger
 from pylav.events import PlayerConnectedEvent
 from pylav.player import Player
 from pylav.sql.models import PlayerModel, PlayerStateModel

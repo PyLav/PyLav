@@ -5,7 +5,7 @@ from collections.abc import AsyncIterator
 from typing import TYPE_CHECKING
 
 import pylav.sql.tables.player_states
-from pylav import getLogger
+from pylav._logging import getLogger
 from pylav.sql.models import PlayerStateModel
 
 if TYPE_CHECKING:

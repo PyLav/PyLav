@@ -25,6 +25,13 @@ from discord.utils import utcnow
 from packaging.version import Version
 from packaging.version import parse as parse_version
 
+try:
+    import brotli
+
+    BROTLI_ENABLED = False
+except ImportError:
+    BROTLI_ENABLED = False
+
 import pylav.sql.tables.bot
 import pylav.sql.tables.equalizers
 import pylav.sql.tables.lib_config
@@ -33,20 +40,12 @@ import pylav.sql.tables.player_states
 import pylav.sql.tables.players
 import pylav.sql.tables.playlists
 import pylav.sql.tables.queries
-from pylav.envvars import CACHING_ENABLED, JAVA_EXECUTABLE
-from pylav.sql.caching import CachedModel, _SingletonByKey, maybe_cached
-
-try:
-    import brotli
-
-    BROTLI_ENABLED = False
-except ImportError:
-    BROTLI_ENABLED = False
-
-from pylav import getLogger
+from pylav._logging import getLogger
 from pylav.constants import BUNDLED_PLAYLIST_IDS, SUPPORTED_FEATURES, SUPPORTED_SOURCES
+from pylav.envvars import CACHING_ENABLED, JAVA_EXECUTABLE
 from pylav.exceptions import InvalidPlaylist
 from pylav.filters import Equalizer
+from pylav.sql.caching import CachedModel, _SingletonByKey, maybe_cached
 from pylav.track_encoding import decode_track
 from pylav.types import BotT
 from pylav.utils import AsyncIter, PyLavContext, TimedFeature, get_jar_ram_actual, get_true_path

@@ -11,7 +11,7 @@ import ujson
 from dacite import from_dict
 from discord.utils import utcnow
 
-from pylav import getLogger
+from pylav._logging import getLogger
 from pylav.constants import PYLAV_NODES
 from pylav.endpoints.response_objects import (
     LavalinkPlayerUpdateObject,

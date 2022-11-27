@@ -13,7 +13,7 @@ from redbot.core.utils.chat_formatting import box, humanize_number
 from redbot.vendored.discord.ext import menus
 from tabulate import tabulate
 
-from pylav import getLogger
+from pylav._logging import getLogger
 from pylav.node import Node
 from pylav.red_utils.ui.selectors.options.nodes import NodeOption
 from pylav.sql.models import NodeModel

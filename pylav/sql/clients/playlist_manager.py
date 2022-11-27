@@ -14,7 +14,7 @@ from discord.utils import utcnow
 
 import pylav.sql.tables.init
 import pylav.sql.tables.playlists
-from pylav import getLogger
+from pylav._logging import getLogger
 from pylav.constants import BUNDLED_PLAYLIST_IDS
 from pylav.envvars import (
     TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS,

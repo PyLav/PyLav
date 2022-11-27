@@ -8,7 +8,7 @@ import aiohttp
 import aiohttp_client_cache
 import ujson
 
-from pylav import getLogger
+from pylav._logging import getLogger
 from pylav.radio.base_url import pick_base_url
 from pylav.radio.objects import Codec, Country, CountryCode, Language, State, Station, Tag
 from pylav.radio.utils import type_check

@@ -9,7 +9,7 @@ from redbot.core.utils.chat_formatting import box
 from redbot.vendored.discord.ext import menus
 from tabulate import tabulate
 
-from pylav import getLogger
+from pylav._logging import getLogger
 from pylav.types import CogT
 from pylav.utils.theme import EightBitANSI
 

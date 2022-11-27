@@ -11,7 +11,7 @@ import aiohttp
 import asyncstdlib
 import ujson
 
-from pylav import getLogger
+from pylav._logging import getLogger
 from pylav.constants import (
     BUNDLED_NODES_IDS_HOST_MAPPING,
     DEFAULT_REGIONS,

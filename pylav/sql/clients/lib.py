@@ -11,8 +11,8 @@ import pylav.sql.tables.player_states
 import pylav.sql.tables.players
 import pylav.sql.tables.playlists
 import pylav.sql.tables.queries
-from pylav import getLogger
 from pylav._config import CONFIG_DIR
+from pylav._logging import getLogger
 from pylav.migrations import migrate_data, run_low_level_migrations
 from pylav.sql.models import BotVersion, LibConfigModel
 
