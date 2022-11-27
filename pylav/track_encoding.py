@@ -79,14 +79,14 @@ def decode_track(track: str) -> tuple[LavalinkTrackObject, int]:
     uri = reader.read_utf().decode() if reader.read_boolean() else None
     source = reader.read_utf().decode()
     thumbnail = None
-    irsc = None
+    isrc = None
     probe = None
     try:
         match source:
             case "youtube":
                 thumbnail = f"https://img.youtube.com/vi/{identifier}/mqdefault.jpg"
             case "deezer" | "spotify" | "applemusic":
-                irsc = reader.read_utf().decode() if reader.read_boolean() else None
+                isrc = reader.read_utf().decode() if reader.read_boolean() else None
                 thumbnail = reader.read_utfm() if reader.read_boolean() else None
             case "yandexmusic":
                 thumbnail = reader.read_utfm() if reader.read_boolean() else None
@@ -115,7 +115,7 @@ def decode_track(track: str) -> tuple[LavalinkTrackObject, int]:
                 "sourceName": source,
                 "position": 0,
                 "thumbnail": thumbnail,
-                "irsc": irsc,
+                "isrc": isrc,
                 "probeInfo": probe,
             },
         },

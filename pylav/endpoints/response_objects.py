@@ -21,7 +21,7 @@ class TrackInfoObject:
     uri: Union[str, None] = None
     sourceName: Union[str, None] = None
     thumbnail: Union[str, None] = None
-    irsc: Union[str, None] = None
+    isrc: Union[str, None] = None
     probeInfo: Union[str, None] = None
 
     def to_dict(self) -> dict:
@@ -33,7 +33,7 @@ class TrackInfoObject:
             "title": self.title,
             "uri": self.uri,
             "sourceName": self.sourceName,
-            "irsc": self.irsc,
+            "isrc": self.isrc,
         }
 
 

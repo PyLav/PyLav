@@ -114,7 +114,7 @@ class TrackInfoT(TypedDict):
     sourceName: str | None
     source: NotRequired[str | None]
     thumbnail: NotRequired[str | None]
-    irsc: NotRequired[str | None]
+    isrc: NotRequired[str | None]
     probeInfo: NotRequired[str | None]
 
 
