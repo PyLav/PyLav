@@ -101,7 +101,7 @@ async def pylav_version(context: PyLavContext) -> None:
 
 @commands.command(
     cls=commands.commands._AlwaysAvailableCommand,
-    name="plsynchslash",
+    name="plsyncslash",
     aliases=["plss"],
     i18n=_,
 )
