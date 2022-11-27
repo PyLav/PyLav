@@ -2102,6 +2102,61 @@ class Player(VoiceProtocol):
             echo=self.echo or None,
         )
 
+    async def apply_vaporwave(self, requester: discord.Member) -> None:
+        """
+        Applies the Vaporwave filter to the player.
+        Parameters
+        ----------
+        requester : discord.Member
+            Member who requested the filter change
+        """
+        if not self.node.has_filter("equalizer"):
+            raise NodeHasNoFilters(_("Current node has the Equalizer functionality disabled"))
+        if not self.node.has_filter("timescale"):
+            raise NodeHasNoFilters(_("Current node has the Timescale functionality disabled"))
+        await self.set_filters(
+            requester=requester,
+            low_pass=None,
+            equalizer=Equalizer(
+                levels=[
+                    {"band": 0, "gain": -0.075},
+                    {"band": 1, "gain": 0.125},
+                    {"band": 2, "gain": 0.125},
+                ],
+                name="Vaporwave",
+            ),
+            karaoke=self.karaoke or None,
+            tremolo=self.tremolo or None,
+            vibrato=self.vibrato or None,
+            distortion=self.distortion or None,
+            timescale=Timescale(speed=1.0, pitch=1.0, rate=0.66),
+            channel_mix=self.channel_mix or None,
+            echo=self.echo or None,
+            reset_not_set=True,
+        )
+
+    async def remove_vaporwave(self, requester: discord.Member) -> None:
+        """
+        Removes the Vaporwave filter from the player.
+        Parameters
+        ----------
+        requester : discord.Member
+            Member who requested the filter change
+        """
+        await self.set_filters(
+            requester=requester,
+            low_pass=self.low_pass or None,
+            equalizer=None,
+            timescale=None,
+            reset_not_set=True,
+            karaoke=self.karaoke or None,
+            tremolo=self.tremolo or None,
+            vibrato=self.vibrato or None,
+            distortion=self.distortion or None,
+            channel_mix=self.channel_mix or None,
+            echo=self.echo or None,
+        )
+
     async def set_channel_mix(self, requester: discord.Member, channel_mix: ChannelMix, forced: bool = False) -> None:
         """
         Sets the ChannelMix of Lavalink.
