@@ -86,12 +86,9 @@ def decode_track(track: str) -> tuple[LavalinkTrackObject, int]:
             case "youtube":
                 thumbnail = f"https://img.youtube.com/vi/{identifier}/mqdefault.jpg"
             case "deezer" | "spotify" | "applemusic":
-                # IRSC
                 irsc = reader.read_utf().decode() if reader.read_boolean() else None
-                # Thumbnail
                 thumbnail = reader.read_utfm() if reader.read_boolean() else None
             case "yandexmusic":
-                # Yandex Thumbnail
                 thumbnail = reader.read_utfm() if reader.read_boolean() else None
             case "local" | "http":
                 # Probe info
@@ -100,6 +97,7 @@ def decode_track(track: str) -> tuple[LavalinkTrackObject, int]:
         # Position
         _ = reader.read_long()
     except Exception as exc:
+        # TODO: Downgrade log to trace for final release
         LOGGER.debug("Failed to decode track", exc_info=exc)
 
     track_object = from_dict(
