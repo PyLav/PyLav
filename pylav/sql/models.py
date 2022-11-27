@@ -2663,7 +2663,9 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
             with contextlib.suppress(Exception):
                 track_object, __ = await asyncio.to_thread(decode_track, track)
                 new_tracks.append(
-                    await pylav.sql.tables.tracks.TrackRow.get_or_create(track, track_object.info.to_dict())
+                    await pylav.sql.tables.tracks.TrackRow.get_or_create(
+                        track_object.encoded, track_object.info.to_database()
+                    )
                 )
 
         if old_tracks:
@@ -2708,7 +2710,9 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
             with contextlib.suppress(Exception):
                 track_object, __ = await asyncio.to_thread(decode_track, track)
                 new_tracks.append(
-                    await pylav.sql.tables.tracks.TrackRow.get_or_create(track, track_object.info.to_dict())
+                    await pylav.sql.tables.tracks.TrackRow.get_or_create(
+                        track_object.encoded, track_object.info.to_database()
+                    )
                 )
         if new_tracks:
             await playlist_row.add_m2m(*new_tracks, m2m=pylav.sql.tables.playlists.PlaylistRow.tracks)
@@ -2934,7 +2938,9 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
             with contextlib.suppress(Exception):
                 track_object, __ = await asyncio.to_thread(decode_track, track)
                 new_tracks.append(
-                    await pylav.sql.tables.tracks.TrackRow.get_or_create(track, track_object.info.to_dict())
+                    await pylav.sql.tables.tracks.TrackRow.get_or_create(
+                        track_object.encoded, track_object.info.to_database()
+                    )
                 )
         if old_tracks:
             await playlist_row.remove_m2m(*old_tracks, m2m=pylav.sql.tables.playlists.PlaylistRow.tracks)
@@ -3099,7 +3105,9 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
             with contextlib.suppress(Exception):
                 track_object, __ = await asyncio.to_thread(decode_track, track)
                 new_tracks.append(
-                    await pylav.sql.tables.tracks.TrackRow.get_or_create(track, track_object.info.to_dict())
+                    await pylav.sql.tables.tracks.TrackRow.get_or_create(
+                        track_object.encoded, track_object.info.to_database()
+                    )
                 )
         if old_tracks:
             await query_row.remove_m2m(*old_tracks, m2m=pylav.sql.tables.queries.QueryRow.tracks)
@@ -3208,7 +3216,9 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
             with contextlib.suppress(Exception):
                 track_object, __ = await asyncio.to_thread(decode_track, track)
                 new_tracks.append(
-                    await pylav.sql.tables.tracks.TrackRow.get_or_create(track, track_object.info.to_dict())
+                    await pylav.sql.tables.tracks.TrackRow.get_or_create(
+                        track_object.encoded, track_object.info.to_database()
+                    )
                 )
         if old_tracks:
             await query_row.remove_m2m(*old_tracks, m2m=pylav.sql.tables.queries.QueryRow.tracks)

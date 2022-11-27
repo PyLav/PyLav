@@ -72,6 +72,9 @@ class QueryCacheManager:
         # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
         async for track in AsyncIter(tracks):
             with contextlib.suppress(Exception):
+                for key in track["info"].keys():
+                    if key not in {"identifier", "sourceName", "title", "uri", "irsc"}:
+                        track["info"].pop(key, None)
                 new_tracks.append(await pylav.sql.tables.tracks.TrackRow.get_or_create(track["encoded"], track["info"]))
         if new_tracks:
             await query_row.add_m2m(*new_tracks, m2m=pylav.sql.tables.queries.QueryRow.tracks)

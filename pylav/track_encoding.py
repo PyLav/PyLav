@@ -21,6 +21,9 @@ class DataReader:
     def read_byte(self) -> bytes:
         return self._read(1)
 
+    def read_bytes(self, length: int) -> bytes:
+        return self._read(length)
+
     def read_boolean(self) -> bool:
         (result,) = struct.unpack("B", self.read_byte())
         return result != 0
@@ -72,9 +75,34 @@ def decode_track(track: str) -> tuple[LavalinkTrackObject, int]:
     is_stream = reader.read_boolean()
     uri = reader.read_utf().decode() if reader.read_boolean() else None
     source = reader.read_utf().decode()
+    thumbnail = None
+    irsc = None
+    probe = None
+    try:
+        match source:
+            case "youtube":
+                thumbnail = f"https://img.youtube.com/vi/{identifier}/mqdefault.jpg"
+            case "deezer":
+                # Deezer IRSC
+                irsc = reader.read_utf().decode() if reader.read_boolean() else None
+                # Deezer Thumbnail
+                thumbnail = reader.read_utfm() if reader.read_boolean() else None
+            case "spotify":
+                # Spotify IRSC
+                irsc = reader.read_utfm() if reader.read_boolean() else None
+                # Spotify Thumbnail
+                thumbnail = reader.read_utfm() if reader.read_boolean() else None
+            case "yandexmusic":
+                # Yandex Thumbnail
+                thumbnail = reader.read_utfm() if reader.read_boolean() else None
+            case "local" | "http":
+                # Probe info
+                probe = reader.read_utfm()
 
-    # Position
-    _ = reader.read_long()
+        # Position
+        _ = reader.read_long()
+    except Exception:
+        pass
 
     track_object = from_dict(
         data_class=LavalinkTrackObject,
@@ -90,6 +118,9 @@ def decode_track(track: str) -> tuple[LavalinkTrackObject, int]:
                 "isSeekable": not is_stream,
                 "sourceName": source,
                 "position": 0,
+                "thumbnail": thumbnail,
+                "irsc": irsc,
+                "probeInfo": probe,
             },
         },
     )

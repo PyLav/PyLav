@@ -80,8 +80,7 @@ async def migrate_playlists(playlists: list[asyncpg.Record]):
         async for track in AsyncIter(playlist["tracks"]):
             with contextlib.suppress(Exception):
                 data, _ = await asyncio.to_thread(decode_track, track)
-                track = data.to_dict()
-                new_tracks.append(await TrackRow.get_or_create(track["encoded"], track["info"]))
+                new_tracks.append(await TrackRow.get_or_create(data.encoded, data.info.to_database()))
         if new_tracks:
             await playlist_row.add_m2m(*new_tracks, m2m=PlaylistRow.tracks)
 
@@ -103,8 +102,7 @@ async def migrate_queries(queries: list[asyncpg.Record]):
         async for track in AsyncIter(query["tracks"]):
             with contextlib.suppress(Exception):
                 data, _ = await asyncio.to_thread(decode_track, track)
-                track = data.to_dict()
-                new_tracks.append(await TrackRow.get_or_create(track["encoded"], track["info"]))
+                new_tracks.append(await TrackRow.get_or_create(data.encoded, data.info.to_database()))
         if new_tracks:
             await query_row.add_m2m(*new_tracks, m2m=QueryRow.tracks)
 
