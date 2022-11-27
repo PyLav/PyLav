@@ -1,9 +1,7 @@
 from __future__ import annotations
 
 import asyncio
-import contextlib
 import hashlib
-import operator
 import re
 import struct
 import uuid
@@ -12,7 +10,6 @@ from typing import TYPE_CHECKING, Any
 
 import asyncstdlib
 import discord
-import ujson
 from cached_property import cached_property, cached_property_with_ttl
 from dacite import from_dict
 
@@ -226,6 +223,18 @@ class Track:
         return MISSING if self.is_partial else self.full_track.info.sourceName
 
     @property
+    def thumbnail(self) -> str | None:
+        return MISSING if self.is_partial else self.full_track.info.thumbnail
+
+    @property
+    def irsc(self) -> str | None:
+        return MISSING if self.is_partial else self.full_track.info.irsc
+
+    @property
+    def probe_info(self) -> str | None:
+        return MISSING if self.is_partial else self.full_track.info.probeInfo
+
+    @property
     def requester_id(self) -> int:
         return self._requester
 
@@ -335,32 +344,6 @@ class Track:
 
     async def query_source(self) -> str:
         return (await self.query()).source
-
-    async def thumbnail(self) -> str | None:
-        """Optional[str]: Returns a thumbnail URL for YouTube and Spotify tracks"""
-        if not self.identifier:
-            return
-        match self.source:
-            case "youtube":
-                return f"https://img.youtube.com/vi/{self.identifier}/mqdefault.jpg"
-            case "spotify" if (spotify_client := self._node.node_manager.client.spotify_client):
-                with contextlib.suppress(Exception):
-                    async with spotify_client as sp_client:
-                        track = await sp_client.get_track(self.identifier)
-                        images = track.album.images
-                        image = await asyncstdlib.max(images, key=operator.attrgetter("width"))
-                        return image.url
-            case "deezer":
-                with contextlib.suppress(Exception):
-                    data = await (
-                        await self._node.node_manager.client.cached_session.get(
-                            f"https://api.deezer.com/track/{self.identifier}"
-                        )
-                    ).json(loads=ujson.loads)
-                    if "album" in data and "md5_image" in data["album"]:
-                        return f"https://e-cdn-images.dzcdn.net/images/cover/{data['album']['md5_image']}/1000x1000-000000-80-0-0.jpg"
-            case __:
-                return
 
     async def mix_playlist_url(self) -> str | None:
         if not self.identifier:

@@ -20,9 +20,21 @@ class TrackInfoObject:
     title: str = ""
     uri: Union[str, None] = None
     sourceName: Union[str, None] = None
+    thumbnail: Union[str, None] = None
+    irsc: Union[str, None] = None
+    probeInfo: Union[str, None] = None
 
     def to_dict(self) -> dict:
         return dataclasses.asdict(self)
+
+    def to_database(self) -> dict:
+        return {
+            "identifier": self.identifier,
+            "title": self.title,
+            "uri": self.uri,
+            "sourceName": self.sourceName,
+            "irsc": self.irsc,
+        }
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)

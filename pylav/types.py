@@ -113,6 +113,9 @@ class TrackInfoT(TypedDict):
     position: int | None
     sourceName: str | None
     source: NotRequired[str | None]
+    thumbnail: NotRequired[str | None]
+    irsc: NotRequired[str | None]
+    probeInfo: NotRequired[str | None]
 
 
 class TrackT(TypedDict):
