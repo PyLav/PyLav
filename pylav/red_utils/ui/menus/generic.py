@@ -6,10 +6,10 @@ from pathlib import Path
 from typing import Any
 
 import discord
-from red_commons.logging import getLogger
 from redbot.core.i18n import Translator
 from redbot.vendored.discord.ext import menus
 
+from pylav import getLogger
 from pylav.red_utils.types import GenericT, SourcesT
 from pylav.red_utils.ui.buttons.generic import CloseButton, NavigateButton, NoButton, RefreshButton, YesButton
 from pylav.red_utils.ui.selectors.generic import EntrySelectSelector

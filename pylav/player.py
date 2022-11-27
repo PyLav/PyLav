@@ -18,7 +18,7 @@ from discord import VoiceProtocol
 from discord.abc import Messageable
 from discord.utils import utcnow
 
-from pylav._logging import getLogger
+from pylav import getLogger
 from pylav.constants import REGION_TO_COUNTRY_COORDINATE_MAPPING
 from pylav.endpoints.response_objects import (
     LavalinkPlayerObject,

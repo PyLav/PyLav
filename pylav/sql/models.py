@@ -43,7 +43,7 @@ try:
 except ImportError:
     BROTLI_ENABLED = False
 
-from pylav._logging import getLogger
+from pylav import getLogger
 from pylav.constants import BUNDLED_PLAYLIST_IDS, SUPPORTED_FEATURES, SUPPORTED_SOURCES
 from pylav.exceptions import InvalidPlaylist
 from pylav.filters import Equalizer

@@ -6,10 +6,9 @@ from typing import TYPE_CHECKING, Literal
 import asyncstdlib
 import discord
 from discord import Emoji, PartialEmoji
-from red_commons.logging import getLogger
 from redbot.core.i18n import Translator
 
-from pylav import emojis
+from pylav import emojis, getLogger
 from pylav.types import CogT, InteractionT
 
 if TYPE_CHECKING:

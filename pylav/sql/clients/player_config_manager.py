@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 import asyncstdlib
 import discord
 
-from pylav._logging import getLogger
+from pylav import getLogger
 from pylav.sql.models import PlayerModel
 from pylav.types import BotT
 from pylav.utils import TimedFeature

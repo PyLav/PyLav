@@ -21,7 +21,7 @@ from expiringdict import ExpiringDict
 from packaging.version import Version
 from packaging.version import parse as parse_version
 
-from pylav._logging import getLogger
+from pylav import getLogger
 from pylav.constants import (
     BUNDLED_NODES_IDS_HOST_MAPPING,
     PYLAV_NODES,

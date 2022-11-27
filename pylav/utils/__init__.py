@@ -95,7 +95,7 @@ __all__ = (
     "TimedFeature",
 )
 
-from pylav._logging import getLogger
+from pylav import getLogger
 
 try:
     from redbot.core.i18n import Translator

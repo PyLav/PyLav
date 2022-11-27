@@ -6,11 +6,11 @@ from typing import TYPE_CHECKING
 
 import asyncstdlib
 import discord
-from red_commons.logging import getLogger
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_number
 from redbot.vendored.discord.ext import menus
 
+from pylav import getLogger
 from pylav.query import Query
 from pylav.red_utils.ui.selectors.options.playlist import PlaylistOption
 from pylav.sql.models import PlaylistModel

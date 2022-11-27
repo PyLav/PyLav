@@ -7,7 +7,7 @@ import typing
 
 import aiohttp
 
-from pylav._logging import getLogger
+from pylav import getLogger
 from pylav.vendored.aiocache import Cache, cached
 
 LOGGER = getLogger("PyLav.RadioBrowser")

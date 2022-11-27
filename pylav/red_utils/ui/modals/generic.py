@@ -3,8 +3,8 @@ from __future__ import annotations
 import asyncio
 
 import discord
-from red_commons.logging import getLogger
 
+from pylav import getLogger
 from pylav.types import CogT, InteractionT
 
 LOGGER = getLogger("PyLav.ext.Shared.ui.modals.generic")

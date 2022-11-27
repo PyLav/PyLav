@@ -10,13 +10,13 @@ from types import MethodType
 import asyncstdlib
 import discord
 from discord.ext.commands import CheckFailure
-from red_commons.logging import getLogger
 from redbot.core import commands
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box
 from tabulate import tabulate
 
+from pylav import getLogger
 from pylav.client import Client
 from pylav.exceptions import NoNodeAvailable, NoNodeWithRequestFunctionalityAvailable
 from pylav.red_utils.errors import IncompatibleException, MediaPlayerNotFoundError, NotDJError, UnauthorizedChannelError

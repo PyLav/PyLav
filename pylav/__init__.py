@@ -1,4 +1,4 @@
-__all__ = ("__VERSION__", "__version__", "sql")
+__all__ = ("__VERSION__", "__version__", "getLogger", "sql")
 __version__ = __VERSION__ = "0.11.19.1"
 __ZERO__ = b"MHp2Zg=="
 __MOMONGA__ = b"NTh3Yw=="
