@@ -51,7 +51,6 @@ async def pylav_credits(context: PyLavContext) -> None:
                 "\n\n"
                 "You can help translate PyLav by contributing to our Crowdin projects at:\n"
                 "https://crowdin.com/project/pylav and "
-                "https://crowdin.com/project/pylavcogs-shared and "
                 "https://crowdin.com/project/pylavcogs\n\n\n"
                 "Contributors:\n"
                 "- https://github.com/Drapersniper/PyLav/graphs/contributors\n"
@@ -72,7 +71,7 @@ async def pylav_credits(context: PyLavContext) -> None:
     i18n=_,
 )
 async def pylav_version(context: PyLavContext) -> None:
-    """Show the version of PyLav and PyLavCogs-Shared libraries"""
+    """Show the version of PyLav library"""
     if isinstance(context, discord.Interaction):
         context = await context.client.get_context(context)
     if context.interaction and not context.interaction.response.is_done():
