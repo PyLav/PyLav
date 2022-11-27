@@ -6,7 +6,10 @@ from io import BytesIO
 
 from dacite import from_dict
 
+from pylav import getLogger
 from pylav.endpoints.response_objects import LavalinkTrackObject
+
+LOGGER = getLogger("PyLav.TrackParser")
 
 
 class DataReader:
@@ -101,8 +104,8 @@ def decode_track(track: str) -> tuple[LavalinkTrackObject, int]:
 
         # Position
         _ = reader.read_long()
-    except Exception:
-        pass
+    except Exception as exc:
+        LOGGER.debug("Failed to decode track", exc_info=exc)
 
     track_object = from_dict(
         data_class=LavalinkTrackObject,

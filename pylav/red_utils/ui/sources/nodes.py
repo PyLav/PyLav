@@ -7,13 +7,13 @@ from typing import TYPE_CHECKING
 import asyncstdlib
 import discord
 import humanize
-from red_commons.logging import getLogger
 from redbot.core import i18n
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box, humanize_number
 from redbot.vendored.discord.ext import menus
 from tabulate import tabulate
 
+from pylav import getLogger
 from pylav.node import Node
 from pylav.red_utils.ui.selectors.options.nodes import NodeOption
 from pylav.sql.models import NodeModel

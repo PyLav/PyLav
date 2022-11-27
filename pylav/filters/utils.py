@@ -4,7 +4,7 @@ from abc import abstractmethod
 
 from deepdiff import DeepDiff
 
-from pylav._logging import getLogger
+from pylav import getLogger
 
 LOGGER = getLogger("PyLav.Filters")
 

@@ -4,12 +4,12 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import discord
-from red_commons.logging import getLogger
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box
 from redbot.vendored.discord.ext import menus
 from tabulate import tabulate
 
+from pylav import getLogger
 from pylav.types import CogT
 from pylav.utils.theme import EightBitANSI
 

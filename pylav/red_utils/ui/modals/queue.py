@@ -3,9 +3,9 @@ from __future__ import annotations
 from pathlib import Path
 
 import discord
-from red_commons.logging import getLogger
 from redbot.core.i18n import Translator
 
+from pylav import getLogger
 from pylav.types import CogT, InteractionT
 
 LOGGER = getLogger("PyLav.ext.Shared.ui.modals.queue")

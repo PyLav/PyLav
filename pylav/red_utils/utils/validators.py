@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import re
 
-from red_commons.logging import getLogger
-
+from pylav import getLogger
 from pylav.localfiles import _ALL_EXTENSIONS
 
 LOGGER = getLogger("PyLav.ext.Shared.utils.validators")

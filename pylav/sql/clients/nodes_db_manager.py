@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import pylav.sql.tables.nodes
-from pylav._logging import getLogger
+from pylav import getLogger
 from pylav.constants import BUNDLED_NODES_IDS_HOST_MAPPING, PYLAV_BUNDLED_NODES_SETTINGS
 from pylav.sql.models import NodeModel, NodeModelMock
 

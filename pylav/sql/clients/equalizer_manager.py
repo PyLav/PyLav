@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 import discord
 
 import pylav.sql.tables.equalizers
-from pylav._logging import getLogger
+from pylav import getLogger
 from pylav.exceptions import EntryNotFoundError
 from pylav.sql.models import EqualizerModel
 from pylav.types import BotT

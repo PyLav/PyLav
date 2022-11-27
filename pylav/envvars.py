@@ -8,8 +8,7 @@ from copy import deepcopy
 import yaml
 from deepdiff import DeepDiff
 
-from pylav import _ANIME
-from pylav._logging import getLogger
+from pylav import _ANIME, getLogger
 from pylav.constants import SUPPORTED_SEARCHES
 
 LOGGER = getLogger("PyLav.Environment")

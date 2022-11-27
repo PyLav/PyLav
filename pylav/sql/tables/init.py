@@ -2,7 +2,7 @@ import os
 
 from piccolo.engine import PostgresEngine, SQLiteEngine
 
-from pylav._logging import getLogger
+from pylav import getLogger
 from pylav.envvars import POSTGRES_DATABASE, POSTGRES_HOST, POSTGRES_PASSWORD, POSTGRES_PORT, POSTGRES_USER
 
 config = {

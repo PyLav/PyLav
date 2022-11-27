@@ -120,7 +120,8 @@ async def run_low_level_migrations():
     con: Connection = await DB.get_new_connection()
     playlist_data_1000 = await run_playlist_migration_1000(con)
     query_data_1000 = await run_query_migration_1000(con)
-    await run_player_state_migration_1000(con)
+    if playlist_data_1000 or query_data_1000:
+        await run_player_state_migration_1000(con)
     return {
         "playlist_1000": playlist_data_1000,
         "query_1000": query_data_1000,

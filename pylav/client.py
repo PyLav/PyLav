@@ -27,9 +27,8 @@ from discord.types.embed import EmbedType
 from discord.utils import utcnow
 from pytz import utc
 
-from pylav import __VERSION__
+from pylav import __VERSION__, getLogger
 from pylav._config import CONFIG_DIR
-from pylav._logging import getLogger
 from pylav.constants import BUNDLED_PLAYLIST_IDS
 from pylav.dispatcher import DispatchManager
 from pylav.endpoints.response_objects import (

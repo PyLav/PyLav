@@ -16,7 +16,7 @@ import ujson
 import yaml
 from discord.utils import maybe_coroutine
 
-from pylav._logging import getLogger
+from pylav import getLogger
 from pylav.constants import SUPPORTED_SEARCHES
 from pylav.envvars import DEFAULT_SEARCH_SOURCE
 from pylav.m3u8_parser._init__ import load as load_m3u8
