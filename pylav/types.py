@@ -3,14 +3,14 @@ from __future__ import annotations
 from abc import ABC
 from collections.abc import Awaitable, Coroutine
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Annotated, Any, Callable, Literal, TypedDict, TypeVar, Union
+from typing import TYPE_CHECKING, Annotated, Any, Callable, List, Literal, Optional, Type, TypedDict, TypeVar, Union
 
 import discord
 from typing_extensions import NotRequired
 
 if TYPE_CHECKING:
     from discord import app_commands
-    from discord.ext.commands import AutoShardedBot, Bot, Cog, Context
+    from discord.ext.commands import AutoShardedBot, Bot, Cog, CommandError, Context
 
     try:
         from redbot.core.bot import Red
@@ -460,7 +460,7 @@ class RestGetInfoResponseT(TypedDict):
     plugins: list[PluginT]
 
 
-RestGetStatsResponseT = TypeVar("RestGetStatsResponseT", bound="Type[StatsT]")
+RestGetStatsResponseT = TypeVar("RestGetStatsResponseT", bound="Type[LavalinkStatsT]")
 
 DeprecatedRestGetPluginsResponseT = TypeVar("DeprecatedRestGetPluginsResponseT", bound="Type[List[PluginT]]")
 DeprecatedRestGetVersionResponseT = TypeVar("DeprecatedRestGetVersionResponseT", bound="Type[str]")
