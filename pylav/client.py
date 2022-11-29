@@ -457,6 +457,7 @@ class Client(metaclass=_Singleton):
         await self.node_manager.connect_to_all_nodes()
         await self.node_manager.wait_until_ready()
         await self._maybe_wait_until_bundled_node(enable_managed_node)
+        await self._update_schema_manager.run_deferred_tasks_which_depend_on_node()
         await self._maybe_update_next_execution_bundled_playlist(time_now)
         await self._maybe_update_next_execution_bundled_external_playlists(time_now)
         await self._maybe_update_next_execution_external_playlists(time_now)
