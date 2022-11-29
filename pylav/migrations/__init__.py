@@ -76,8 +76,8 @@ async def migrate_playlists(playlists: list[asyncpg.Record]):
             await PlaylistRow.update(defaults).where(PlaylistRow.id == playlist["id"])
         new_tracks = []
         # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
-        playlist["tracks"] = json.loads(playlist["tracks"]) if playlist["tracks"] else []
-        async for track in AsyncIter(playlist["tracks"]):
+        tracks = json.loads(playlist["tracks"]) if playlist["tracks"] else []
+        async for track in AsyncIter(tracks):
             with contextlib.suppress(Exception):
                 data, _ = await asyncio.to_thread(decode_track, track)
                 new_tracks.append(await TrackRow.get_or_create(data.encoded, data.info.to_database()))
@@ -98,8 +98,8 @@ async def migrate_queries(queries: list[asyncpg.Record]):
             await QueryRow.update(defaults).where(QueryRow.identifier == query["identifier"])
         new_tracks = []
         # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
-        query["tracks"] = json.loads(query["tracks"]) if query["tracks"] else []
-        async for track in AsyncIter(query["tracks"]):
+        tracks = json.loads(query["tracks"]) if query["tracks"] else []
+        async for track in AsyncIter(tracks):
             with contextlib.suppress(Exception):
                 data, _ = await asyncio.to_thread(decode_track, track)
                 new_tracks.append(await TrackRow.get_or_create(data.encoded, data.info.to_database()))
