@@ -1143,8 +1143,12 @@ class Node:
 
     async def get_track_from_cache(
         self, query: Query, first: bool = False
-    ) -> LavalinkTrackLoadedObject | LavalinkPlaylistLoadedObject | LavalinkSearchResultObject:
-        if response := await self.node_manager.client.query_cache_manager.fetch_query(query):
+    ) -> LavalinkTrackLoadedObject | LavalinkPlaylistLoadedObject | LavalinkSearchResultObject | None:
+        response = await self.node_manager.client.query_cache_manager.fetch_query(query)
+        if not response:
+            return
+
+        if tracks := await response.fetch_tracks():
             load_type = (
                 "PLAYLIST_LOADED"
                 if query.is_playlist or query.is_album
@@ -1152,7 +1156,6 @@ class Node:
                 if query.is_search
                 else "TRACK_LOADED"
             )
-            tracks = await response.fetch_tracks()
             tracks = (
                 [decode_track(track)[0].to_dict() async for track in AsyncIter([tracks[0]] if first else tracks)]
                 if tracks
