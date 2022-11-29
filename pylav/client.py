@@ -29,7 +29,7 @@ from pytz import utc
 
 from pylav import __VERSION__, getLogger
 from pylav._config import CONFIG_DIR
-from pylav.constants import BUNDLED_PLAYLIST_IDS
+from pylav.constants import BUNDLED_DEEZER_PLAYLIST_IDS, BUNDLED_PLAYLIST_IDS, BUNDLED_SPOTIFY_PLAYLIST_IDS
 from pylav.dispatcher import DispatchManager
 from pylav.endpoints.response_objects import (
     LavalinkLoadTrackObjects,
@@ -489,8 +489,10 @@ class Client(metaclass=_Singleton):
 
     async def _maybe_force_update_bundled_playlists(self):
         total_bundled_playlists = len(BUNDLED_PLAYLIST_IDS)
-        if (self._spotify_auth and self._spotify_auth.client_id) or not self._spotify_auth:
-            total_bundled_playlists -= 4
+        if not self._has_deezer_support:
+            total_bundled_playlists -= len(BUNDLED_DEEZER_PLAYLIST_IDS)
+        if not self._has_spotify_support:
+            total_bundled_playlists -= len(BUNDLED_SPOTIFY_PLAYLIST_IDS)
 
         if await self.playlist_db_manager.count() < total_bundled_playlists:
             time_now = utcnow()
