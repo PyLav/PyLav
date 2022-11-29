@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from piccolo.columns import BigInt, Float, Text
+from piccolo.columns.indexes import IndexMethod
 from piccolo.table import Table
 
 from pylav.sql.tables.init import DB
@@ -8,10 +9,10 @@ from pylav.sql.tables.init import DB
 
 class EqualizerRow(Table, db=DB, tablename="equalizer"):
     id = BigInt(primary_key=True, index=True)
-    scope = BigInt(null=True, default=None)
-    name = Text(null=True, default=None)
+    scope = BigInt(null=True, default=None, index=True)
+    name = Text(null=True, default=None, index_method=IndexMethod.gin)
     description = Text(null=True, default=None)
-    author = BigInt(null=True, default=None)
+    author = BigInt(null=True, default=None, index=True)
     band_25 = Float(null=False, default=0.0)
     band_40 = Float(null=False, default=0.0)
     band_63 = Float(null=False, default=0.0)
