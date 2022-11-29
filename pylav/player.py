@@ -1459,8 +1459,13 @@ class Player(VoiceProtocol):
         """Plays the next track in the queue, if any"""
         previous_track = self.current
         previous_position = await self.fetch_position()
-        op = self.next(requester=requester)
-        await op
+        # Send a Stop OP to clear the buffer for avoid a small continuation on playback after skip fires
+        payload = {"encodedTrack": None}
+        self.add_voice_to_payload(payload)
+        await self.node.patch_session_player(
+            guild_id=self.guild.id, payload=typing.cast(RestPatchPlayerPayloadT, payload)
+        )
+        await self.next(requester=requester)
         if previous_track:
             self.node.dispatch_event(TrackSkippedEvent(self, requester, previous_track, previous_position))
 
