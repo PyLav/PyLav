@@ -23,7 +23,6 @@ else:
         config=config,
         extensions=(
             "uuid-ossp",
-            "pg_trgm",
             "btree_gin",
         ),
     )

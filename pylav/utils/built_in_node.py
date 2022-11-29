@@ -49,7 +49,7 @@ NODE_DEFAULT_SETTINGS = {
             "trackStuckThresholdMs": 10000,
             "youtubePlaylistLoadLimit": 100,
             "opusEncodingQuality": 10,
-            "resamplingQuality": "LOW",
+            "resamplingQuality": "HIGH",
             "useSeekGhosting": True,
             "playerUpdateInterval": 5,
             "youtubeSearchEnabled": True,
