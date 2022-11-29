@@ -478,7 +478,11 @@ class Client(metaclass=_Singleton):
             self._local_node_manager.ready.set()
 
     async def _maybe_force_update_bundled_playlists(self):
-        if await self.playlist_db_manager.count() < len(BUNDLED_PLAYLIST_IDS):
+        total_bundled_playlists = len(BUNDLED_PLAYLIST_IDS)
+        if (self._spotify_auth and self._spotify_auth.client_id) or not self._spotify_auth:
+            total_bundled_playlists -= 4
+
+        if await self.playlist_db_manager.count() < total_bundled_playlists:
             time_now = utcnow()
             self._wait_for_playlists.clear()
             await self._config.update_next_execution_update_bundled_playlists(time_now - datetime.timedelta(days=7))
