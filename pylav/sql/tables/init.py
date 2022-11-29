@@ -19,5 +19,12 @@ if os.getenv("BUILDING_DOCS", False):
     IS_POSTGRES = False
 else:
     LOGGER.verbose("Connecting to Postgres server using %r", config)
-    DB = PostgresEngine(config=config)
+    DB = PostgresEngine(
+        config=config,
+        extensions=(
+            "uuid-ossp",
+            "pg_trgm",
+            "btree_gin",
+        ),
+    )
     IS_POSTGRES = True
