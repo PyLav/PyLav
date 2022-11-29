@@ -2085,8 +2085,7 @@ class Player(VoiceProtocol):
             tremolo=self.tremolo or None,
             vibrato=self.vibrato or None,
             distortion=self.distortion or None,
-            # Changing the rate also changes the pitch so we dont want to double apply the gains there
-            timescale=Timescale(speed=1.0, pitch=1.0, rate=1.2),
+            timescale=Timescale(speed=1.2, pitch=1.0, rate=1.0),
             channel_mix=self.channel_mix or None,
             echo=self.echo or None,
             reset_not_set=True,
@@ -2141,9 +2140,7 @@ class Player(VoiceProtocol):
             tremolo=self.tremolo or None,
             vibrato=self.vibrato or None,
             distortion=self.distortion or None,
-            # Changing the rate also changes the pitch so we want to compensate it here
-            #   to level out the pitch at roughly 1.0
-            timescale=Timescale(speed=1.0, pitch=1.15, rate=0.85),
+            timescale=Timescale(speed=0.8, pitch=1.0, rate=1.0),
             channel_mix=self.channel_mix or None,
             echo=self.echo or None,
             reset_not_set=True,
