@@ -5,12 +5,14 @@ from typing import TYPE_CHECKING
 from packaging.version import Version
 from packaging.version import parse as parse_version
 
+from pylav.constants import VERSION_ZERO
+
 if TYPE_CHECKING:
     from pylav.client import Client
 
 
 async def run_migration_01130(client: "Client", current_version: Version) -> None:
-    if current_version >= parse_version("0.11.3"):
+    if current_version >= parse_version("0.11.3") or current_version == VERSION_ZERO:
         return
     from pylav.config_migrations import LOGGER
 

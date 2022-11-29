@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import re
 
+from packaging.version import parse as parse_version
+
 from pylav._city_dump import US_CITY_DUMP
 
 REGION_TO_COUNTRY_COORDINATE_MAPPING = {}
@@ -72,11 +74,6 @@ SUPPORTED_FEATURES = {
     # https://github.com/Topis-Lavalink-Plugins/Sponsorblock-Plugin
     "sponsorblock",
 }
-BUNDLED_PYLAV_PLAYLISTS = {1, 2}
-BUNDLED_SPOTIFY_PLAYLIST_IDS = {1, 2, 1000001, 1000002, 1000003, 1000004}
-BUNDLED_DEEZER_PLAYLIST_IDS = set(range(2000001, 2000073))
-
-BUNDLED_PLAYLIST_IDS = BUNDLED_PYLAV_PLAYLISTS.union(BUNDLED_SPOTIFY_PLAYLIST_IDS).union(BUNDLED_DEEZER_PLAYLIST_IDS)
 
 
 # Mapping of the PyLav public nodes
@@ -124,5 +121,6 @@ PYLAV_BUNDLED_NODES_SETTINGS = {
         "temporary": True,
     },
 }
+VERSION_ZERO = parse_version("0.0.0")
 
 SNAPSHOT_REGEX = re.compile(r"^(?P<commit>.*?)-SNAPSHOT$")
