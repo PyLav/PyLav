@@ -22,7 +22,7 @@ PYLAV__TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS: 7 # How many days to w
 PYLAV__TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS: 7 # How many days to wait between updates - Minimum 7 Days.
 
 # Please note that if this is enable, multiple bots should not share the same database, as reads/writes will not be synced.
-PYLAV__CACHING_ENABLED: false # Whether to cache the postgres queries - Values are `true` or `false` - case sensitive
+PYLAV__READ_CACHING_ENABLEDD: false # Whether to cache the postgres queries - Values are `true` or `false` - case sensitive
 
 PYLAV__DEFAULT_SEARCH_SOURCE: dzsearch # Defaults to dzsearch - Possible values are dzsearch (Deezer), spsearch (Spotify), amsearch (Apple Music), ytmsearch (YouTube Music), ytsearch (YouTube)
 PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_ID:                # Spotify Client ID - Required for Spotify tracks to work with the managed node
