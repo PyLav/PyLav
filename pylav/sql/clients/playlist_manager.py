@@ -61,7 +61,7 @@ class PlaylistConfigManager:
         return PlaylistModel(id=id)
 
     async def get_bundled_playlists(self) -> list[PlaylistModel]:
-        return [p for playlist in BUNDLED_PLAYLIST_IDS if (p := self.get_playlist(playlist))]
+        return [p for playlist in BUNDLED_PLAYLIST_IDS if (p := self.get_playlist(playlist)) and await p.exists()]
 
     async def get_playlist_by_name(self, playlist_name: str, limit: int = None) -> list[PlaylistModel]:
         query = (
