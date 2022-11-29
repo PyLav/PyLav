@@ -43,6 +43,8 @@ async def run_migration_010000(client: "Client", current_version: Version) -> No
             "and set them in your %s config file.",
             ENV_FILE,
         )
-
+    yaml_data["lavalink"]["server"]["resamplingQuality"] = NODE_DEFAULT_SETTINGS["lavalink"]["server"][
+        "resamplingQuality"
+    ]
     await config.update_yaml(yaml_data)
     await client.lib_db_manager.update_bot_dv_version("1.0.0")
