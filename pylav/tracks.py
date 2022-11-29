@@ -130,6 +130,8 @@ class Track:
         self.extra.pop("track", None)
         if self.skip_segments and self.source != "youtube":
             self.skip_segments = []
+        if self.encoded is None:
+            self._is_partial = True
 
     def _build_from_track_dict(self, data: dict, extra: dict):
         self.encoded = data.get("encoded", data["track"])
@@ -194,17 +196,17 @@ class Track:
 
     @property
     def is_seekable(self) -> bool:
-        return MISSING if self.is_partial else self.full_track.info.isSeekable
+        return False if self.is_partial else self.full_track.info.isSeekable
 
     @property
     def duration(self) -> int:
-        return MISSING if self.is_partial else self.full_track.info.length
+        return 0 if self.is_partial else self.full_track.info.length
 
     length = duration
 
     @property
     def stream(self) -> bool:
-        return MISSING if self.is_partial else self.full_track.info.isStream
+        return False if self.is_partial else self.full_track.info.isStream
 
     @property
     def title(self) -> str:
@@ -392,10 +394,13 @@ class Track:
         self._unique_id.update(self.encoded.encode())
         if "unique_identifier" in self.__dict__:
             del self.__dict__["unique_identifier"]
+        self._is_partial = False
 
     async def search_all(self, player: Player, requester: int, bypass_cache: bool = False) -> list[Track]:
         self._query = await Query.from_string(self._query)
-        response = await player.node.get_track(await self.query(), bypass_cache=bypass_cache)
+        response = await player.node.get_track(
+            await self.query(), bypass_cache=bypass_cache, first=self._query.is_search
+        )
         if not response or not response.tracks:
             raise TrackNotFound(f"No tracks found for query {await self.query_identifier()}")
         return [

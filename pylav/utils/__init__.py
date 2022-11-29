@@ -368,6 +368,30 @@ class MissingSentinel(str):
     def __rlshift__(self, other):
         return 0
 
+    def __le__(self, other):
+        return True
+
+    def __lt__(self, other):
+        return True
+
+    def __ge__(self, other):
+        return False
+
+    def __gt__(self, other):
+        return False
+
+    def __eq__(self, other):
+        return False
+
+    def __ne__(self, other):
+        return True
+
+    def __hash__(self):
+        return 0
+
+    def __contains__(self, item):
+        return False
+
 
 MISSING: Any = MissingSentinel("MISSING")
 

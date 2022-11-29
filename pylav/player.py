@@ -7,6 +7,7 @@ import datetime
 import pathlib
 import random
 import re
+import threading
 import time
 import typing
 from collections.abc import Coroutine
@@ -78,7 +79,6 @@ from pylav.sql.models import PlayerModel, PlayerStateModel, PlaylistModel
 from pylav.tracks import Track
 from pylav.types import BotT, InteractionT, RestPatchPlayerPayloadT, VoiceStateT
 from pylav.utils import (
-    _LOCK,
     AsyncIter,
     PlayerQueue,
     SegmentCategory,
@@ -105,6 +105,7 @@ except ImportError:
 
 
 ENDPONT_REGEX = re.compile(r"^(?P<region>.*?)\d+.discord.media:\d+$")
+PLAYER_LOCK = threading.Lock()
 
 
 class Player(VoiceProtocol):
@@ -749,13 +750,13 @@ class Player(VoiceProtocol):
             track = await self.queue.get()
             requester = track.requester
             if await track.is_single():
-                returned = await self._process_partial_track(track, False)
+                track, returned = await self._process_partial_track(track, False)
                 if returned:
                     return
                 tracks = [track]
             else:
                 tracks = await track.search_all(self, requester.id if requester else self.client.user.id)
-            self.queue.put_nowait(tracks, index=0)
+            await self.queue.put(tracks, index=0)
             self._logger.verbose(
                 "Queue Resolver task - Resolved partial track %s - Added %s tracks to queue",
                 track.identifier,
@@ -1067,6 +1068,7 @@ class Player(VoiceProtocol):
             track._requester = requester
         return track
 
+    @_synchronized(PLAYER_LOCK)
     async def add(
         self,
         requester: int,
@@ -1104,6 +1106,7 @@ class Player(VoiceProtocol):
         self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
         self.node.dispatch_event(TracksRequestedEvent(self, self.guild.get_member(requester), [at]))
 
+    @_synchronized(PLAYER_LOCK)
     async def bulk_add(
         self,
         tracks_and_queries: list[Track | dict | str | list[tuple[Track | dict | str, Query]]],
@@ -1141,7 +1144,7 @@ class Player(VoiceProtocol):
         self.stopped = False
         track = await self.history.get()
         if track.is_partial:
-            tracks = await self._process_partial_query(
+            track, tracks = await self._process_partial_query(
                 track, requester=track.requester, bypass_cache=bypass_cache, add_to_queue=False
             )
             if tracks:
@@ -1189,7 +1192,7 @@ class Player(VoiceProtocol):
         if await track.query() and not self.node.has_source(await track.requires_capability()):
             self.current = None
             await self.change_to_best_node(feature=await track.requires_capability(), skip_position_fetch=True)
-        returning = await self._process_partial_track(track, bypass_cache)
+        track, returning = await self._process_partial_track(track, bypass_cache)
         if returning:
             return
         self.current = track
@@ -1207,10 +1210,11 @@ class Player(VoiceProtocol):
     def next(self, requester: discord.Member = None, node: Node = None) -> Coroutine[Any, Any, None]:
         return self.play(None, None, requester or self.bot.user, node=node)  # type: ignore
 
+    @_synchronized(PLAYER_LOCK)
     async def play(
         self,
-        track: Track | dict | str,
-        query: Query,
+        track: Track | dict | str | None,
+        query: Query | None,
         requester: discord.Member,
         start_time: int = 0,
         end_time: int = None,
@@ -1281,15 +1285,15 @@ class Player(VoiceProtocol):
             await self._process_partial_query(
                 track, requester=track.requester, bypass_cache=bypass_cache, add_to_queue=True
             )
-            track = await self.queue.get()
-            track._node = self.node
+            return await self.play(None, None, requester or self.bot.user, node=node)
         await self._process_partial_payload(end_time, payload, skip_segments, start_time, track)
 
         if no_replace is None:
             no_replace = False
         if not isinstance(no_replace, bool):
             raise TypeError("no_replace must be a bool")
-
+        if not track.encoded:
+            return await self.play(None, None, requester or self.bot.user, node=node)
         self.current = track
         self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
         payload["encodedTrack"] = track.encoded
@@ -1337,24 +1341,23 @@ class Player(VoiceProtocol):
             return False
         return tracks
 
-    async def _process_partial_track(self, track: Track, bypass_cache: bool) -> bool:
+    async def _process_partial_track(self, track: Track, bypass_cache: bool) -> tuple[Track, bool]:
         try:
             await track.search(self, bypass_cache=bypass_cache)
         except TrackNotFound as exc:
             if not track:
                 raise TrackNotFound from exc
-            await self._process_error_on_play(exc, track)
-            return True
-        return False
+            return track, True
+        return track, False
 
     async def _process_partial_query(
         self, track: Track, requester: discord.Member | None, bypass_cache: bool, add_to_queue: bool
-    ):
+    ) -> tuple[Track, list[Track]] | tuple[None, None]:
         requester = track.requester or requester
         if await track.is_single():
-            returned = await self._process_partial_track(track, bypass_cache)
+            track, returned = await self._process_partial_track(track, bypass_cache)
             if returned:
-                return
+                return None, None
             tracks = [track]
         else:
             tracks = await track.search_all(
@@ -1363,7 +1366,7 @@ class Player(VoiceProtocol):
         if add_to_queue:
             await self.queue.put(tracks)
             await self.maybe_shuffle_queue(requester=requester.id if requester else self.client.user.id)
-        return tracks
+        return track, tracks
 
     async def _on_play_reset(self, skip_segments):
         payload = {}
@@ -1735,7 +1738,7 @@ class Player(VoiceProtocol):
         self.connected_at = utcnow()
         self._logger.debug("Connected to voice channel")
 
-    @_synchronized(_LOCK, discard=True)
+    @_synchronized(PLAYER_LOCK, discard=True)
     async def reconnect(self):
         self._waiting_for_node.clear()
         shard = self.bot.get_shard(self.guild.shard_id)
