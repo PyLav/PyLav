@@ -42,7 +42,7 @@ import pylav.sql.tables.playlists
 import pylav.sql.tables.queries
 from pylav._logging import getLogger
 from pylav.constants import BUNDLED_PLAYLIST_IDS, SUPPORTED_FEATURES, SUPPORTED_SOURCES
-from pylav.envvars import CACHING_ENABLED, JAVA_EXECUTABLE
+from pylav.envvars import JAVA_EXECUTABLE, READ_CACHING_ENABLED
 from pylav.exceptions import InvalidPlaylist
 from pylav.filters import Equalizer
 from pylav.sql.caching import CachedModel, _SingletonByKey, maybe_cached
@@ -2997,7 +2997,7 @@ class PlaylistModel(CachedModel, metaclass=_SingletonByKey):
         str
             The track at the index
         """
-        if CACHING_ENABLED:
+        if READ_CACHING_ENABLED:
             tracks = await self.fetch_tracks()
             return tracks[index] if index < len(tracks) else None
         else:
@@ -3245,7 +3245,7 @@ class QueryModel(CachedModel, metaclass=_SingletonByKey):
         str
             The track at the index
         """
-        if CACHING_ENABLED:
+        if READ_CACHING_ENABLED:
             tracks = await self.fetch_tracks()
             return tracks[index] if index < len(tracks) else None
         else:

@@ -5,13 +5,13 @@ from collections.abc import Iterable, Iterator
 from typing import Any, Callable
 
 from pylav._logging import getLogger
-from pylav.envvars import CACHING_ENABLED
+from pylav.envvars import READ_CACHING_ENABLED
 from pylav.utils import _LOCK, _synchronized
 from pylav.vendored.aiocache import Cache, cached
 
 LOGGER = getLogger("PyLav.Caching")
 
-if CACHING_ENABLED:
+if READ_CACHING_ENABLED:
     LOGGER.warning(
         "Caching is enabled, "
         "this will make it so live edits to the database will not be reflected "
@@ -66,28 +66,28 @@ CACHE = cached(ttl=None, cache=Cache.MEMORY, key_builder=key_builder)
 def maybe_cached(func: Callable) -> Callable:
     @functools.wraps(func)
     async def wrapper(*args, **kwargs):
-        return await CACHE(func)(*args, **kwargs) if CACHING_ENABLED else await func(*args, **kwargs)
+        return await CACHE(func)(*args, **kwargs) if READ_CACHING_ENABLED else await func(*args, **kwargs)
 
     return wrapper
 
 
 async def invalidate_cache(method: Callable, instance: object):
-    if CACHING_ENABLED:
+    if READ_CACHING_ENABLED:
         await CACHE.cache.delete(key_builder(method, instance))  # type: ignore
 
 
 async def update_cache(method: Callable, instance: object, value: Any):
-    if CACHING_ENABLED:
+    if READ_CACHING_ENABLED:
         await CACHE.cache.set(key_builder(method, instance), value)  # type: ignore
 
 
 async def update_cache_multi(pairs: Iterable[tuple[Callable, Any]], instance: object):
-    if CACHING_ENABLED:
+    if READ_CACHING_ENABLED:
         await CACHE.cache.multi_set([(key_builder(method, instance), value) for method, value in pairs])  # type: ignore
 
 
 async def invalidate_cache_multi(methods: Iterable[Callable], instance: object):
-    if CACHING_ENABLED:
+    if READ_CACHING_ENABLED:
         for method in methods:
             await CACHE.cache.delete(key_builder(method, instance))
 
@@ -107,7 +107,7 @@ class CachedModel:
 
     async def invalidate_cache(self, *methods: typing.Callable) -> None:
         """Invalidate the cache for the given methods if not specify all"""
-        if not CACHING_ENABLED:
+        if not READ_CACHING_ENABLED:
             return
         if methods:
             await invalidate_cache_multi(methods, self)
@@ -116,6 +116,6 @@ class CachedModel:
 
     async def update_cache(self, *pairs: tuple[typing.Callable, typing.Any]) -> None:
         """Update the cache for the specified method"""
-        if not CACHING_ENABLED:
+        if not READ_CACHING_ENABLED:
             return
         await update_cache_multi(pairs, self)
