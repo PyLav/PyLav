@@ -96,7 +96,7 @@ class CachedModel:
     @staticmethod
     def _predicate(member: typing.Callable) -> bool:
         """Check if the method is a cached method"""
-        if member.__name__.startswith("_"):
+        if getattr(member, "__name__", "_").startswith("_"):
             return False
         return bool(hasattr(member, "cache")) if inspect.ismethod(member) else False
 
