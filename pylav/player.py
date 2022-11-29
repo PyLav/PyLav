@@ -860,28 +860,34 @@ class Player(VoiceProtocol):
             asyncio.exceptions.CancelledError,
         ):
             if self.position != 0:
+                self._last_track_stuck_check = 0
                 return
             if not self.ready.is_set():
+                self._last_track_stuck_check = 0
                 return
             if not self.is_connected:
                 self._logger.trace(
                     "Auto track stuck fixer task fired while player is not connected to a voice channel - discarding",
                 )
+                self._last_track_stuck_check = 0
                 return
             if self.current:
                 self._logger.trace("Auto track stuck fixer task - Current track is not empty - discarding")
+                self._last_track_stuck_check = 0
                 return
             if self.stopped:
                 self._logger.trace(
                     "Auto track stuck fixer for %s fired while player that has been stopped - discarding",
                     self,
                 )
+                self._last_track_stuck_check = 0
                 return
             if self.paused:
                 self._logger.trace(
                     "Auto track stuck fixer for %s fired while player that has been paused - discarding",
                     self,
                 )
+                self._last_track_stuck_check = 0
                 return
             if await self.fetch_position() != 0:
                 self._last_track_stuck_check = 0
@@ -891,7 +897,7 @@ class Player(VoiceProtocol):
                     "Auto track stuck fixer - Player appears to be stuck - starting countdown",
                 )
                 self._last_track_stuck_check = time.time()
-            if (self._last_track_stuck_check + 10) <= time.time():
+            if (self._last_track_stuck_check + 15) <= time.time():
                 self._logger.info(
                     "Auto track stuck fixer for %s - Player appears to be stuck - attempting to fix",
                     self,
