@@ -18,7 +18,9 @@ async def run_migration_0850(client: "Client", current_version: Version) -> None
     from pylav.constants import BUNDLED_PYLAV_PLAYLISTS_IDS
 
     LOGGER.info("Running 0.8.5.0 migration")
-    playlists = [p for p in await client.playlist_db_manager.get_bundled_playlists() if p.id in {1, 2}]
+    playlists = [
+        p for p in await client.playlist_db_manager.get_bundled_playlists() if p.id in BUNDLED_PYLAV_PLAYLISTS_IDS
+    ]
     for playlist in playlists:
         await playlist.delete()
     t = asyncio.create_task(client.playlist_db_manager.update_bundled_playlists(*BUNDLED_PYLAV_PLAYLISTS_IDS))

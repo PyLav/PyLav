@@ -420,17 +420,26 @@ class Client(metaclass=_Singleton):
                     yandex_access_token,
                     apple_music_token,
                 )
+                self._has_deezer_support = True
+                self._has_apm_support = True
+                self._has_spotify_support = False
+                self._has_yandex_support = False
+
                 if spotify_client_id and spotify_client_secret:
-                    self._spotify_auth = ClientCredentialsFlow(
-                        client_id=spotify_client_id, client_secret=spotify_client_secret
-                    )
                     if spotify_client_id != MANAGED_NODE_SPOTIFY_CLIENT_ID:
-                        await self.update_spotify_tokens(spotify_client_id, spotify_client_secret)
+                        self._spotify_auth = ClientCredentialsFlow(
+                            client_id=spotify_client_id, client_secret=spotify_client_secret
+                        )
+                        self._has_spotify_support = True
+                        await self.update_spotify_tokens(
+                            client_id=spotify_client_id, client_secret=spotify_client_secret
+                        )
                 if yandex_access_token and yandex_access_token != MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN:
+                    self._has_yandex_support = True
                     await self.update_yandex_tokens(token=yandex_access_token)
                 if apple_music_token and apple_music_token != MANAGED_NODE_APPLE_MUSIC_API_KEY:
                     await self.update_applemusic_tokens(
-                        api_token=apple_music_token, country_code=MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE
+                        token=apple_music_token, country_code=MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE
                     )
                 await self._run_post_init_jobs(java_path, localtrack_folder)
                 self.ready.set()
