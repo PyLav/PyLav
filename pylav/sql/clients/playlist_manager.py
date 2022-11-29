@@ -15,7 +15,13 @@ from discord.utils import utcnow
 import pylav.sql.tables.init
 import pylav.sql.tables.playlists
 from pylav._logging import getLogger
-from pylav.constants import BUNDLED_PLAYLIST_IDS, BUNDLED_SPOTIFY_PLAYLIST_IDS
+from pylav.constants import (
+    BUNDLED_DEEZER_PLAYLIST_IDS,
+    BUNDLED_EXTERNAL_PLAYLISTS,
+    BUNDLED_PLAYLIST_IDS,
+    BUNDLED_PYLAV_PLAYLISTS,
+    BUNDLED_SPOTIFY_PLAYLIST_IDS,
+)
 from pylav.envvars import (
     TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS,
     TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS,
@@ -287,21 +293,9 @@ class PlaylistConfigManager:
                 await self.client.lib_db_manager.get_config().fetch_enable_managed_node()
             )
             old_time_stamp = await self.client._config.fetch_next_execution_update_bundled_playlists()
-            curated_data = {
-                1: (
-                    "[YT] Aikaterna's curated tracks",
-                    "https://gist.githubusercontent.com/Drapersniper/"
-                    "cbe10d7053c844f8c69637bb4fd9c5c3/raw/playlist.pylav",
-                ),
-                2: (
-                    "[YT] Anime OPs/EDs",
-                    "https://gist.githubusercontent.com/Drapersniper/"
-                    "2ad7c4cdd4519d9707f1a65d685fb95f/raw/anime_pl.pylav",
-                ),
-            }
-            id_filtered = {id: curated_data[id] for id in ids}
+            id_filtered = {id: BUNDLED_PYLAV_PLAYLISTS[id] for id in ids if id in BUNDLED_PYLAV_PLAYLISTS}
             if not id_filtered:
-                id_filtered = curated_data
+                id_filtered = BUNDLED_PYLAV_PLAYLISTS
             for playlist_id, (name, url) in id_filtered.items():
                 try:
                     ctx = typing.cast(
@@ -322,6 +316,8 @@ class PlaylistConfigManager:
             )
             self.client._wait_for_playlists.set()
 
+            LOGGER.info("Finished updating bundled playlists")
+
     async def update_bundled_external_playlists(self, *ids: int) -> None:
         from pylav.query import Query
 
@@ -334,112 +330,23 @@ class PlaylistConfigManager:
             )
             old_time_stamp = await self.client._config.fetch_next_execution_update_bundled_external_playlists()
             # NOTICE: Update the BUNDLED_PLAYLIST_IDS constant in the constants.py file
-            curated_data = {
-                1000001: (
-                    # Predä
-                    ("{sp_pl}2seaovjQuA2cMgltyLQUtd", "[SP] CYBER//", "SP")
-                ),
-                1000002: (
-                    # Predä
-                    ("{sp_pl}0rSd8LoXBD5tEBbSsbXqbc", "[SP] PHONK//", "SP")
-                ),
-                1000003: (
-                    # Predä
-                    ("{sp_pl}21trhbHm5hVgosPS1YpwSM", "[SP] bangers", "SP")
-                ),
-                1000004: ("{sp_pl}0BbMjMQZ43vtdz7al266XH", "[SP] ???", "SP"),
-                2000001: ("{dz_pl}3155776842", "[DZ] Top Worldwide", "DZ"),
-                2000002: ("{dz_pl}1652248171", "[DZ] Top Canada", "DZ"),
-                2000003: ("{dz_pl}1362528775", "[DZ] Top South Africa", "DZ"),
-                2000004: ("{dz_pl}1362527605", "[DZ] Top Venezuela", "DZ"),
-                2000005: ("{dz_pl}1362526495", "[DZ] Top Ukraine", "DZ"),
-                2000006: ("{dz_pl}1362525375", "[DZ] Top Tunisia", "DZ"),
-                2000007: ("{dz_pl}1362524475", "[DZ] Top Thailand", "DZ"),
-                2000008: ("{dz_pl}1362523615", "[DZ] Top El Salvador", "DZ"),
-                2000009: ("{dz_pl}1362523075", "[DZ] Top Senegal", "DZ"),
-                2000010: ("{dz_pl}1362522355", "[DZ] Top Slovenia", "DZ"),
-                2000011: ("{dz_pl}1362521285", "[DZ] Top Saudi Arabia", "DZ"),
-                2000012: ("{dz_pl}1362520135", "[DZ] Top Paraguay", "DZ"),
-                2000013: ("{dz_pl}1362519755", "[DZ] Top Portugal", "DZ"),
-                2000014: ("{dz_pl}1362518895", "[DZ] Top Philippines", "DZ"),
-                2000015: ("{dz_pl}1362518525", "[DZ] Top Peru", "DZ"),
-                2000016: ("{dz_pl}1362516565", "[DZ] Top Nigeria", "DZ"),
-                2000017: ("{dz_pl}1362510315", "[DZ] Top South Korea", "DZ"),
-                2000018: ("{dz_pl}1362511155", "[DZ] Top Lebanon", "DZ"),
-                2000019: ("{dz_pl}1362512715", "[DZ] Top Morocco", "DZ"),
-                2000020: ("{dz_pl}1362515675", "[DZ] Top Malaysia", "DZ"),
-                2000021: ("{dz_pl}1362509215", "[DZ] Top Kenya", "DZ"),
-                2000022: ("{dz_pl}1362508955", "[DZ] Top Japan", "DZ"),
-                2000023: ("{dz_pl}1362508765", "[DZ] Top Jordan", "DZ"),
-                2000024: ("{dz_pl}1362508575", "[DZ] Top Jamaica", "DZ"),
-                2000025: ("{dz_pl}1362501235", "[DZ] Top Ecuador", "DZ"),
-                2000026: ("{dz_pl}1362501615", "[DZ] Top Egypt", "DZ"),
-                2000027: ("{dz_pl}1362506695", "[DZ] Top Hungary", "DZ"),
-                2000028: ("{dz_pl}1362507345", "[DZ] Top Israel", "DZ"),
-                2000029: ("{dz_pl}1362501015", "[DZ] Top Algeria", "DZ"),
-                2000030: ("{dz_pl}1362497945", "[DZ] Top Ivory Coast", "DZ"),
-                2000031: ("{dz_pl}1362495515", "[DZ] Top Bolivia", "DZ"),
-                2000032: ("{dz_pl}1362494565", "[DZ] Top Bulgaria", "DZ"),
-                2000033: ("{dz_pl}1362491345", "[DZ] Top United Arab Emirates", "DZ"),
-                2000034: ("{dz_pl}1313621735", "[DZ] Top USA", "DZ"),
-                2000035: ("{dz_pl}1313620765", "[DZ] Top Singapore", "DZ"),
-                2000036: ("{dz_pl}1313620305", "[DZ] Top Sweden", "DZ"),
-                2000037: ("{dz_pl}1313619885", "[DZ] Top Norway", "DZ"),
-                2000038: ("{dz_pl}1313619455", "[DZ] Top Ireland", "DZ"),
-                2000039: ("{dz_pl}1313618905", "[DZ] Top Denmark", "DZ"),
-                2000040: ("{dz_pl}1313618455", "[DZ] Top Costa Rica", "DZ"),
-                2000041: ("{dz_pl}1313617925", "[DZ] Top Switzerland", "DZ"),
-                2000042: ("{dz_pl}1313616925", "[DZ] Top Australia", "DZ"),
-                2000043: ("{dz_pl}1313615765", "[DZ] Top Austria", "DZ"),
-                2000044: ("{dz_pl}1279119721", "[DZ] Top Argentina", "DZ"),
-                2000045: ("{dz_pl}1279119121", "[DZ] Top Chile", "DZ"),
-                2000046: ("{dz_pl}1279118671", "[DZ] Top Guatemala", "DZ"),
-                2000047: ("{dz_pl}1279117071", "[DZ] Top Romania", "DZ"),
-                2000048: ("{dz_pl}1266973701", "[DZ] Top Slovakia", "DZ"),
-                2000049: ("{dz_pl}1266972981", "[DZ] Top Serbia", "DZ"),
-                2000050: ("{dz_pl}1266972311", "[DZ] Top Poland", "DZ"),
-                2000051: ("{dz_pl}1266971851", "[DZ] Top Netherlands", "DZ"),
-                2000052: ("{dz_pl}1266971131", "[DZ] Top Croatia", "DZ"),
-                2000053: ("{dz_pl}1266969571", "[DZ] Top Czech Republic", "DZ"),
-                2000054: ("{dz_pl}1266968331", "[DZ] Top Belgium", "DZ"),
-                2000055: ("{dz_pl}1221037511", "[DZ] Top Latvia", "DZ"),
-                2000056: ("{dz_pl}1221037371", "[DZ] Top Lithuania", "DZ"),
-                2000057: ("{dz_pl}1221037201", "[DZ] Top Estonia", "DZ"),
-                2000058: ("{dz_pl}1221034071", "[DZ] Top Finland", "DZ"),
-                2000059: ("{dz_pl}1116190301", "[DZ] Top Honduras", "DZ"),
-                2000060: ("{dz_pl}1116190041", "[DZ] Top Spain", "DZ"),
-                2000061: ("{dz_pl}1116189381", "[DZ] Top Russia", "DZ"),
-                2000062: ("{dz_pl}1116189071", "[DZ] Top Turkey", "DZ"),
-                2000063: ("{dz_pl}1116188761", "[DZ] Top Indonesia", "DZ"),
-                2000064: ("{dz_pl}1116188451", "[DZ] Top Colombia", "DZ"),
-                2000065: ("{dz_pl}1116187241", "[DZ] Top Italy", "DZ"),
-                2000066: ("{dz_pl}1111143121", "[DZ] Top Germany", "DZ"),
-                2000067: ("{dz_pl}1111142361", "[DZ] Top Mexico", "DZ"),
-                2000068: ("{dz_pl}1111142221", "[DZ] Top UK", "DZ"),
-                2000069: ("{dz_pl}1111141961", "[DZ] Top Brazil", "DZ"),
-                2000070: ("{dz_pl}1111141961", "[DZ] Top France", "DZ"),
-                2000071: (
-                    "{dz_pl}7490833544",
-                    "[DZ] Best Anime Openings, Endings & Inserts",
-                    "DZ",
-                ),
-                2000072: ("{dz_pl}5206929684", "[DZ] Japan Anime Hits", "DZ"),
-            }
-            id_filtered = {id: curated_data[id] for id in ids}
-            if not id_filtered:
-                id_filtered = curated_data
-            for id, (url, name, source) in id_filtered.items():
-                if (
-                    id in BUNDLED_SPOTIFY_PLAYLIST_IDS
-                    and (self.client._spotify_auth and self.client._spotify_auth.client_id)
-                    or not self.client._spotify_auth
-                ):
-                    continue
-                if "dz_pl" in url:
-                    url = url.replace("{dz_pl}", "https://www.deezer.com/en/playlist/")
-                elif "sp_pl" in url:
-                    url = url.replace("{sp_pl}", "https://open.spotify.com/playlist/")
 
+            id_filtered = {id: BUNDLED_EXTERNAL_PLAYLISTS[id] for id in ids}
+            if not id_filtered:
+                id_filtered = BUNDLED_EXTERNAL_PLAYLISTS
+            for id, (identifier, name, source) in id_filtered.items():
+                if id in BUNDLED_SPOTIFY_PLAYLIST_IDS:
+                    if not self.client._spotify_auth:
+                        continue
+                    else:
+                        url = f"https://open.spotify.com/playlist/{identifier}"
+                elif id in BUNDLED_DEEZER_PLAYLIST_IDS:
+                    if not self.client._has_deezer_support:
+                        continue
+                    else:
+                        url = f"https://www.deezer.com/en/playlist/{identifier}"
+                else:
+                    LOGGER.debug("Unknown playlist id: %s", id)
                 track_list = []
                 try:
                     LOGGER.info("Updating bundled external playlist - %s", id)
@@ -464,6 +371,7 @@ class PlaylistConfigManager:
             await self.client._config.update_next_execution_update_bundled_external_playlists(
                 utcnow() + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS)
             )
+            LOGGER.info("Finished updating bundled external playlists")
 
     async def update_external_playlists(self, *ids: int) -> None:
         from pylav.constants import BUNDLED_PLAYLIST_IDS
@@ -503,6 +411,7 @@ class PlaylistConfigManager:
             await self.client._config.update_next_execution_update_external_playlists(
                 utcnow() + datetime.timedelta(days=TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS)
             )
+            LOGGER.info("Finished updating external playlists")
 
     @staticmethod
     async def count() -> int:
