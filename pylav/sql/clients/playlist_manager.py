@@ -15,7 +15,7 @@ from discord.utils import utcnow
 import pylav.sql.tables.init
 import pylav.sql.tables.playlists
 from pylav._logging import getLogger
-from pylav.constants import BUNDLED_PLAYLIST_IDS
+from pylav.constants import BUNDLED_PLAYLIST_IDS, BUNDLED_SPOTIFY_PLAYLIST_IDS
 from pylav.envvars import (
     TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS,
     TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS,
@@ -429,6 +429,12 @@ class PlaylistConfigManager:
             if not id_filtered:
                 id_filtered = curated_data
             for id, (url, name, source) in id_filtered.items():
+                if (
+                    id in BUNDLED_SPOTIFY_PLAYLIST_IDS
+                    and (self.client._spotify_auth and self.client._spotify_auth.client_id)
+                    or not self.client._spotify_auth
+                ):
+                    continue
                 if "dz_pl" in url:
                     url = url.replace("{dz_pl}", "https://www.deezer.com/en/playlist/")
                 elif "sp_pl" in url:
