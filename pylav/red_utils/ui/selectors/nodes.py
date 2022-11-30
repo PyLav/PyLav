@@ -12,11 +12,12 @@ from pylav.constants import SUPPORTED_FEATURES, SUPPORTED_SOURCES
 from pylav.red_utils.ui.selectors.options.nodes import SOURCE_OPTIONS, NodeOption
 from pylav.sql.models import NodeModel
 from pylav.types import CogT, InteractionT
+from pylav.utils import translation_shortener
 
 if TYPE_CHECKING:
     from pylav.red_utils.ui.menus.nodes import AddNodeFlow
 
-_ = Translator("PyLavShared", Path(__file__))
+_ = Translator("PyLav", Path(__file__))
 
 
 class SourceSelector(discord.ui.Select):
@@ -32,7 +33,7 @@ class SourceSelector(discord.ui.Select):
             min_values=1,
             max_values=len(SUPPORTED_SOURCES.union(SUPPORTED_FEATURES)),
             options=SOURCE_OPTIONS,
-            placeholder=placeholder,
+            placeholder=translation_shortener(max_length=100, translation=placeholder),
             row=row,
         )
         self.cog = cog
@@ -62,7 +63,12 @@ class NodeSelectSelector(discord.ui.Select):
         placeholder: str,
         mapping: dict[str, NodeModel],
     ):
-        super().__init__(min_values=1, max_values=1, options=options, placeholder=placeholder)
+        super().__init__(
+            min_values=1,
+            max_values=1,
+            options=options,
+            placeholder=translation_shortener(max_length=100, translation=placeholder),
+        )
         self.cog = cog
         self.mapping = mapping
         self.node: NodeModel = None  # type:ignore

@@ -9,8 +9,9 @@ from redbot.core.i18n import Translator
 from pylav.red_utils.ui.selectors.options.queue import QueueTrackOption, SearchTrackOption
 from pylav.tracks import Track
 from pylav.types import CogT, InteractionT
+from pylav.utils import translation_shortener
 
-_ = Translator("PyLavShared", Path(__file__))
+_ = Translator("PyLav", Path(__file__))
 
 
 class QueueSelectTrack(discord.ui.Select):
@@ -22,7 +23,12 @@ class QueueSelectTrack(discord.ui.Select):
         interaction_type: Literal["remove", "play"],
         mapping: dict[str, Track],
     ):
-        super().__init__(min_values=1, max_values=1, options=options, placeholder=placeholder)
+        super().__init__(
+            min_values=1,
+            max_values=1,
+            options=options,
+            placeholder=translation_shortener(max_length=100, translation=placeholder),
+        )
         self.cog = cog
         self.interaction_type = interaction_type
         self.mapping = mapping
@@ -72,7 +78,12 @@ class SearchSelectTrack(discord.ui.Select):
         placeholder: str,
         mapping: dict[str, Track],
     ):
-        super().__init__(min_values=1, max_values=1, options=options, placeholder=placeholder)
+        super().__init__(
+            min_values=1,
+            max_values=1,
+            options=options,
+            placeholder=translation_shortener(max_length=100, translation=placeholder),
+        )
         self.cog = cog
         self.mapping = mapping
 

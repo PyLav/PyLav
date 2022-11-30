@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 
 LOGGER = getLogger("PyLav.ext.Shared.ui.sources.playlist")
 
-_ = Translator("PyLavShared", Path(__file__))
+_ = Translator("PyLav", Path(__file__))
 INF = float("inf")
 ASCII_ORDER_SORT = "~" * 100
 

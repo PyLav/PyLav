@@ -12,9 +12,9 @@ from pylav.red_utils.ui.buttons.player import DisconnectAllButton, DisconnectBut
 from pylav.red_utils.ui.menus.generic import BaseMenu
 from pylav.red_utils.ui.sources.player import PlayersSource
 from pylav.types import BotT, CogT, InteractionT
-from pylav.utils import PyLavContext
+from pylav.utils import PyLavContext, translation_shortener
 
-_ = Translator("PyLavShared", Path(__file__))
+_ = Translator("PyLav", Path(__file__))
 
 
 class StatsMenu(BaseMenu):
@@ -90,14 +90,18 @@ class StatsMenu(BaseMenu):
             row=1,
             cog=cog,
         )
-        self.queue_disconnect_label = LabelButton(disconnect_type_translation=_("selected"), row=2, multiple=False)
+        self.queue_disconnect_label = LabelButton(
+            disconnect_type_translation=translation_shortener(max_length=100, translation=_("selected")),
+            row=2,
+            multiple=False,
+        )
         self.queue_disconnect = DisconnectButton(
             style=discord.ButtonStyle.red,
             row=2,
             cog=cog,
         )
         self.queue_disconnect_inactive_label = LabelButton(
-            disconnect_type_translation=_("inactive"),
+            disconnect_type_translation=translation_shortener(max_length=100, translation=_("inactive")),
             row=3,
         )
         self.queue_disconnect_inactive = DisconnectAllButton(
@@ -107,7 +111,7 @@ class StatsMenu(BaseMenu):
             cog=cog,
         )
         self.queue_disconnect_all_label = LabelButton(
-            disconnect_type_translation=_("all"),
+            disconnect_type_translation=translation_shortener(max_length=100, translation=_("all")),
             row=4,
         )
         self.queue_disconnect_all = DisconnectAllButton(
@@ -203,7 +207,8 @@ class StatsMenu(BaseMenu):
             return {
                 "content": None,
                 "embed": await self.cog.lavalink.construct_embed(
-                    messageable=self.ctx, title=_("Not connected anywhere")
+                    messageable=self.ctx,
+                    title=translation_shortener(max_length=100, translation=_("Not connected anywhere")),
                 ),
             }
         try:

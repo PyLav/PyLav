@@ -96,7 +96,7 @@ from pylav.utils import (
 try:
     from redbot.core.i18n import Translator
 
-    _ = Translator("PyLavPlayer", pathlib.Path(__file__))
+    _ = Translator("PyLav", pathlib.Path(__file__))
 except ImportError:
 
     def _(string: str) -> str:

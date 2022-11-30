@@ -34,7 +34,7 @@ from pylav.red_utils.utils.decorators import is_dj_logic
 from pylav.types import BotT, CogT, InteractionT
 from pylav.utils import PyLavContext
 
-_ = Translator("PyLavShared", Path(__file__))
+_ = Translator("PyLav", Path(__file__))
 
 
 class QueueMenu(BaseMenu):

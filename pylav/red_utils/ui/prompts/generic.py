@@ -10,9 +10,9 @@ from pylav.red_utils.ui.menus.generic import EntryPickerMenu
 from pylav.red_utils.ui.selectors.generic import EntrySelectSelector
 from pylav.red_utils.ui.sources.generic import EntryPickerSource
 from pylav.types import CogT
-from pylav.utils import PyLavContext
+from pylav.utils import PyLavContext, translation_shortener
 
-_ = Translator("PyLavShared", Path(__file__))
+_ = Translator("PyLav", Path(__file__))
 
 
 async def maybe_prompt_for_entry(
@@ -42,7 +42,7 @@ async def maybe_prompt_for_entry(
             delete_after_timeout=True,
             clear_buttons_after=True,
             starting_page=0,
-            selector_text=selector_text,
+            selector_text=translation_shortener(max_length=100, translation=selector_text),
             original_author=context.interaction.user if context.interaction else context.author,
         )
 

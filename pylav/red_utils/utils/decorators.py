@@ -12,7 +12,7 @@ from pylav.red_utils.errors import NotDJError, UnauthorizedChannelError
 from pylav.types import InteractionT
 from pylav.utils import PyLavContext
 
-_ = Translator("PyLavShared", Path(__file__))
+_ = Translator("PyLav", Path(__file__))
 
 
 def always_hidden(slash: bool = False):

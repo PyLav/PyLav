@@ -86,6 +86,7 @@ from pylav.utils import (
     _synchronized,
     format_time,
     get_time_string,
+    translation_shortener,
 )
 
 if TYPE_CHECKING:
@@ -2500,7 +2501,9 @@ class Player(VoiceProtocol):
         if previous_track_description:
             val = f"{previous_track_description}\n"
             val += "{translation}: `{duration}`\n".format(
-                duration=_("LIVE") if self.last_track.stream else format_time(self.last_track.duration),
+                duration=translation_shortener(max_length=100, translation=_("LIVE"))
+                if self.last_track.stream
+                else format_time(self.last_track.duration),
                 translation=discord.utils.escape_markdown(_("Duration")),
             )
             if rq := self.last_track.requester:

@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 LOGGER = getLogger("PyLav.ext.Shared.ui.button.nodes")
 
 
-_ = Translator("PyLavShared", Path(__file__))
+_ = Translator("PyLav", Path(__file__))
 
 
 class SSLNodeToggleButton(discord.ui.Button):

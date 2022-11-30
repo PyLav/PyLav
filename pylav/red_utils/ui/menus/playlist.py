@@ -28,9 +28,9 @@ from pylav.red_utils.ui.selectors.playlist import PlaylistPlaySelector, Playlist
 from pylav.red_utils.ui.sources.playlist import PlaylistPickerSource
 from pylav.sql.models import PlaylistModel
 from pylav.types import BotT, CogT, ContextT, InteractionT
-from pylav.utils import PyLavContext
+from pylav.utils import PyLavContext, translation_shortener
 
-_ = Translator("PyLavShared", Path(__file__))
+_ = Translator("PyLav", Path(__file__))
 
 
 class PlaylistPickerMenu(BaseMenu):
@@ -66,7 +66,7 @@ class PlaylistPickerMenu(BaseMenu):
         )
         self.result: PlaylistModel = None  # type: ignore
         self.selector_cls = selector_cls
-        self.selector_text = selector_text
+        self.selector_text = translation_shortener(max_length=100, translation=selector_text)
         self.forward_button = NavigateButton(
             style=discord.ButtonStyle.grey,
             emoji="\N{BLACK RIGHT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}",
@@ -181,13 +181,16 @@ class PlaylistCreationFlow(discord.ui.View):
         self.author = original_author
         self.url_prompt = PromptForInput(
             cog=self.cog,
-            title=_("Please enter the playlist URL"),
-            label=_("Playlist URL"),
+            title=translation_shortener(max_length=100, translation=_("Please enter the playlist URL")),
+            label=translation_shortener(max_length=100, translation=_("Playlist URL")),
             style=discord.TextStyle.paragraph,
             max_length=4000,
         )
         self.name_prompt = PromptForInput(
-            cog=self.cog, title=_("Please enter the playlist name"), label=_("Playlist Name"), max_length=64
+            cog=self.cog,
+            title=translation_shortener(max_length=100, translation=_("Please enter the playlist name")),
+            label=translation_shortener(max_length=100, translation=_("Playlist Name")),
+            max_length=64,
         )
 
         self.name_button = PlaylistUpsertButton(
@@ -311,13 +314,16 @@ class PlaylistManageFlow(discord.ui.View):
         self.playlist = playlist
         self.url_prompt = PromptForInput(
             cog=self.cog,
-            title=_("Please enter the playlist URL"),
-            label=_("Playlist URL"),
+            title=translation_shortener(max_length=100, translation=_("Please enter the playlist URL")),
+            label=translation_shortener(max_length=100, translation=_("Playlist URL")),
             style=discord.TextStyle.paragraph,
             max_length=4000,
         )
         self.name_prompt = PromptForInput(
-            cog=self.cog, title=_("Please enter the new playlist name"), label=_("Playlist Name"), max_length=64
+            cog=self.cog,
+            title=translation_shortener(max_length=100, translation=_("Please enter the new playlist name")),
+            label=translation_shortener(max_length=100, translation=_("Playlist Name")),
+            max_length=64,
         )
 
         self.add_prompt = PromptForInput(

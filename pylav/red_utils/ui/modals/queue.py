@@ -7,9 +7,10 @@ from redbot.core.i18n import Translator
 
 from pylav._logging import getLogger
 from pylav.types import CogT, InteractionT
+from pylav.utils import translation_shortener
 
 LOGGER = getLogger("PyLav.ext.Shared.ui.modals.queue")
-_ = Translator("PyLavShared", Path(__file__))
+_ = Translator("PyLav", Path(__file__))
 
 
 class EnqueueModal(discord.ui.Modal):
@@ -23,8 +24,11 @@ class EnqueueModal(discord.ui.Modal):
         self.cog = cog
         self.text = discord.ui.TextInput(
             style=discord.TextStyle.paragraph,
-            label=_("Search for a song to add to the queue"),
-            placeholder=_("Hello by Adele, speak:Hello, https://open.spotify.com/playlist/37i9dQZF1DX6XceWZP1znY"),
+            label=translation_shortener(max_length=100, translation=_("Search for a song to add to the queue")),
+            placeholder=translation_shortener(
+                max_length=100,
+                translation=_("Hello by Adele, speak:Hello, https://open.spotify.com/playlist/37i9dQZF1DX6XceWZP1znY"),
+            ),
         )
         self.add_item(self.text)
 

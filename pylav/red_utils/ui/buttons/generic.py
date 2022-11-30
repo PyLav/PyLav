@@ -9,8 +9,9 @@ from redbot.core.i18n import Translator
 
 from pylav import emojis
 from pylav.types import CogT, InteractionT
+from pylav.utils import translation_shortener
 
-_ = Translator("PyLavShared", Path(__file__))
+_ = Translator("PyLav", Path(__file__))
 
 
 class NavigateButton(discord.ui.Button):
@@ -80,7 +81,9 @@ class YesButton(discord.ui.Button):
     interaction: InteractionT
 
     def __init__(self, cog: CogT, style: discord.ButtonStyle, row: int = None):
-        super().__init__(style=style, emoji=None, row=row, label=_("Yes"))
+        super().__init__(
+            style=style, emoji=None, row=row, label=translation_shortener(max_length=100, translation=_("Yes"))
+        )
         self.responded = asyncio.Event()
         self.cog = cog
         self.interaction = None  # type: ignore
@@ -103,7 +106,9 @@ class NoButton(discord.ui.Button):
     interaction: InteractionT
 
     def __init__(self, cog: CogT, style: discord.ButtonStyle, row: int = None):
-        super().__init__(style=style, emoji=None, row=row, label=_("No"))
+        super().__init__(
+            style=style, emoji=None, row=row, label=translation_shortener(max_length=100, translation=_("No"))
+        )
         self.responded = asyncio.Event()
         self.cog = cog
         self.interaction = None  # type: ignore

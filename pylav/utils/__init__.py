@@ -38,6 +38,16 @@ from discord.utils import MISSING as D_MISSING  # noqa
 from discord.utils import maybe_coroutine
 
 
+def translation_shortener(translation: str, max_length: int = 0) -> str | None:
+    if max_length <= 0:
+        return translation
+    if not translation:
+        return translation
+    if len(translation) > max_length:
+        return translation[: max_length - 1] + "\N{HORIZONTAL ELLIPSIS}"
+    return translation
+
+
 @contextlib.contextmanager
 def add_env_path(path: str | os.PathLike) -> Iterator[str]:
     path = os.fspath(path)
@@ -100,7 +110,7 @@ from pylav._logging import getLogger
 try:
     from redbot.core.i18n import Translator
 
-    _ = Translator("PyLavPlayer", pathlib.Path(__file__))
+    _ = Translator("PyLav", pathlib.Path(__file__))
 except ImportError:
 
     def _(string: str) -> str:
