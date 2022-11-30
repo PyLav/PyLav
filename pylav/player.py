@@ -104,7 +104,7 @@ except ImportError:
         return string
 
 
-ENDPONT_REGEX = re.compile(r"^(?P<region>.*?)\d+.discord.media:\d+$")
+ENDPOINT_REGEX = re.compile(r"^(?P<region>.*?)\d+.discord.media:\d+$")
 PLAYER_LOCK = threading.Lock()
 
 
@@ -1016,7 +1016,7 @@ class Player(VoiceProtocol):
             self._voice_state.update({"token": data["token"]})
         if "endpoint" in data:
             self._voice_state.update({"endpoint": data["endpoint"]})
-            if match := ENDPONT_REGEX.match(data["endpoint"]):
+            if match := ENDPOINT_REGEX.match(data["endpoint"]):
                 self._region = match.group("region").replace("-", "_")
                 self._coordinates = REGION_TO_COUNTRY_COORDINATE_MAPPING.get(self._region, (0, 0))
             await self._dispatch_voice_update()
