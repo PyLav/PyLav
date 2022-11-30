@@ -9,8 +9,9 @@ from redbot.core.i18n import Translator
 from pylav.red_utils.ui.selectors.options.playlist import PlaylistOption
 from pylav.sql.models import PlaylistModel
 from pylav.types import CogT, InteractionT
+from pylav.utils import translation_shortener
 
-_ = Translator("PyLavShared", Path(__file__))
+_ = Translator("PyLav", Path(__file__))
 
 
 class PlaylistSelectSelector(discord.ui.Select):
@@ -21,7 +22,12 @@ class PlaylistSelectSelector(discord.ui.Select):
         placeholder: str,
         mapping: dict[str, PlaylistModel],
     ):
-        super().__init__(min_values=1, max_values=1, options=options, placeholder=placeholder)
+        super().__init__(
+            min_values=1,
+            max_values=1,
+            options=options,
+            placeholder=translation_shortener(max_length=100, translation=placeholder),
+        )
         self.cog = cog
         self.mapping = mapping
         self.playlist: PlaylistModel = None  # type:ignore
@@ -51,7 +57,12 @@ class PlaylistPlaySelector(discord.ui.Select):
         placeholder: str,
         mapping: dict[str, PlaylistModel],
     ):
-        super().__init__(min_values=1, max_values=1, options=options, placeholder=placeholder)
+        super().__init__(
+            min_values=1,
+            max_values=1,
+            options=options,
+            placeholder=translation_shortener(max_length=100, translation=placeholder),
+        )
         self.cog = cog
         self.mapping = mapping
 

@@ -15,10 +15,10 @@ from pylav.red_utils.ui.buttons.generic import CloseButton, NavigateButton, NoBu
 from pylav.red_utils.ui.selectors.generic import EntrySelectSelector
 from pylav.red_utils.ui.sources.generic import EntryPickerSource
 from pylav.types import BotT, CogT, ContextT, InteractionT
-from pylav.utils import PyLavContext
+from pylav.utils import PyLavContext, translation_shortener
 
 LOGGER = getLogger("PyLav.ext.Shared.ui.menu.generic")
-_ = Translator("PyLavShared", Path(__file__))
+_ = Translator("PyLav", Path(__file__))
 
 
 class BaseMenu(discord.ui.View):
@@ -328,7 +328,7 @@ class EntryPickerMenu(BaseMenu):
         )
         self.result: GenericT = None  # type: ignore
         self.selector_cls = selector_cls
-        self.selector_text = selector_text
+        self.selector_text = translation_shortener(max_length=100, translation=selector_text)
         self.forward_button = NavigateButton(
             style=discord.ButtonStyle.grey,
             emoji="\N{BLACK RIGHT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}",

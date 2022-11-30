@@ -24,7 +24,7 @@ if TYPE_CHECKING:
     from pylav.red_utils.ui.menus.nodes import NodeManagerMenu, NodePickerMenu
 
 LOGGER = getLogger("PyLav.ext.Shared.ui.sources.node")
-_ = Translator("PyLavShared", Path(__file__))
+_ = Translator("PyLav", Path(__file__))
 
 
 class NodePickerSource(menus.ListPageSource):

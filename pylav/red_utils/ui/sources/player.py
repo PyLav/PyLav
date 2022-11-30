@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from pylav.red_utils.ui.menus.generic import BaseMenu
 
 LOGGER = getLogger("PyLav.ext.Shared.ui.sources.player")
-_ = Translator("PyLavShared", Path(__file__))
+_ = Translator("PyLav", Path(__file__))
 
 
 class PlayersSource(menus.ListPageSource):

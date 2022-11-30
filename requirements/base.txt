@@ -1,5 +1,3 @@
-aiocache[memcached,msgpack,redis]==0.11.1
-    # via -r base.in
 aiodns==3.0.0
     # via
     #   aiohttp
@@ -18,8 +16,6 @@ aiomcache==0.7.0
     # via aiocache
 aiopath==0.6.11
     # via -r base.in
-aioredis==2.0.1
-    # via aiocache
 aiosignal==1.3.1
     # via aiohttp
 aiosqlite==0.17.0
@@ -37,7 +33,6 @@ async-lru==1.0.3
 async-timeout==4.0.2
     # via
     #   aiohttp
-    #   aioredis
     #   redis
 asyncpg==0.27.0
     # via
@@ -226,7 +221,6 @@ traitlets==5.5.0
 typing-extensions==4.4.0
     # via
     #   -r base.in
-    #   aioredis
     #   aiosqlite
     #   piccolo
     #   pydantic

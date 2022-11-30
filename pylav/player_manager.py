@@ -12,6 +12,7 @@ from pylav._logging import getLogger
 from pylav.events import PlayerConnectedEvent
 from pylav.player import Player
 from pylav.sql.models import PlayerModel, PlayerStateModel
+from pylav.utils import translation_shortener
 
 if TYPE_CHECKING:
     from pylav.client import Client
@@ -343,7 +344,9 @@ class PlayerManager:
                     await self.bot.change_presence(
                         activity=discord.Activity(
                             type=discord.ActivityType.listening,
-                            name=_("Music in {count} servers").format(count=playing_players),
+                            name=translation_shortener(
+                                max_length=100, translation=_("Music in {count} servers").format(count=playing_players)
+                            ),
                         )
                     )
             elif playing_players == 1:

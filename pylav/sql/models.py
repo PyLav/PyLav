@@ -53,7 +53,7 @@ from pylav.utils import AsyncIter, PyLavContext, TimedFeature, get_jar_ram_actua
 try:
     from redbot.core.i18n import Translator
 
-    _ = Translator("PyLavPlayer", pathlib.Path(__file__))
+    _ = Translator("PyLav", pathlib.Path(__file__))
 except ImportError:
 
     def _(string: str) -> str:

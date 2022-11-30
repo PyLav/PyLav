@@ -11,7 +11,7 @@ from pylav.exceptions import EntryNotFoundError
 from pylav.types import InteractionT
 from pylav.utils import PyLavContext
 
-_ = Translator("PyLavShared", Path(__file__))
+_ = Translator("PyLav", Path(__file__))
 
 if TYPE_CHECKING:
     BassBoostConverter = str

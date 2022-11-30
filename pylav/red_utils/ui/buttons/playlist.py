@@ -16,11 +16,12 @@ from pylav.red_utils.ui.selectors.playlist import PlaylistPlaySelector
 from pylav.red_utils.utils import rgetattr
 from pylav.sql.models import PlaylistModel
 from pylav.types import CogT, InteractionT
+from pylav.utils import translation_shortener
 
 if TYPE_CHECKING:
     from pylav.red_utils.ui.menus.playlist import PlaylistCreationFlow, PlaylistManageFlow
 
-_ = Translator("PyLavShared", Path(__file__))
+_ = Translator("PyLav", Path(__file__))
 
 
 class PlaylistDeleteButton(discord.ui.Button):
@@ -409,7 +410,7 @@ class EnqueuePlaylistButton(discord.ui.Button):
                 clear_buttons_after=True,
                 starting_page=0,
                 original_author=context.author,
-                selector_text=_("Pick a playlist"),
+                selector_text=translation_shortener(max_length=100, translation=_("Pick a playlist")),
             ).start(context)
         else:
             await self.cog.command_playlist_play.callback(self.cog, interaction, playlist=[self.playlist])

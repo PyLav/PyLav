@@ -4,4 +4,4 @@ from pathlib import Path
 
 from redbot.core.i18n import Translator
 
-_ = Translator("PyLavShared", Path(__file__))
+_ = Translator("PyLav", Path(__file__))

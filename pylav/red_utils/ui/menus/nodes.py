@@ -27,10 +27,10 @@ from pylav.red_utils.ui.selectors.nodes import NodeSelectSelector, SourceSelecto
 from pylav.red_utils.ui.sources.nodes import NodeManageSource, NodePickerSource
 from pylav.sql.models import NodeModel
 from pylav.types import BotT, CogT, ContextT, InteractionT
-from pylav.utils import PyLavContext
+from pylav.utils import PyLavContext, translation_shortener
 
 URL_REGEX = re.compile(r"^(https?)://(\S+)$")
-_ = Translator("PyLavShared", Path(__file__))
+_ = Translator("PyLav", Path(__file__))
 
 
 class AddNodeFlow(discord.ui.View):
@@ -56,40 +56,40 @@ class AddNodeFlow(discord.ui.View):
         )
         self.host_prompt = PromptForInput(
             cog=self.cog,
-            title=_("Enter the domain or IP address of the host"),
-            label=_("Host"),
+            title=translation_shortener(max_length=100, translation=_("Enter the domain or IP address of the host")),
+            label=translation_shortener(max_length=100, translation=_("Host")),
             style=discord.TextStyle.short,
             min_length=4,
             max_length=200,
         )
         self.port_prompt = PromptForInput(
             cog=self.cog,
-            title=_("Enter the host port to connect to"),
-            label=_("Port"),
+            title=translation_shortener(max_length=100, translation=_("Enter the host port to connect to")),
+            label=translation_shortener(max_length=100, translation=_("Port")),
             style=discord.TextStyle.short,
             min_length=2,
             max_length=5,
         )
         self.password_prompt = PromptForInput(
             cog=self.cog,
-            title=_("Enter the node's password"),
-            label=_("Password"),
+            title=translation_shortener(max_length=100, translation=_("Enter the node's password")),
+            label=translation_shortener(max_length=100, translation=_("Password")),
             style=discord.TextStyle.short,
             min_length=1,
             max_length=64,
         )
         self.name_prompt = PromptForInput(
             cog=self.cog,
-            title=_("Enter an easy to know name for the node"),
-            label=_("Name"),
+            title=translation_shortener(max_length=100, translation=_("Enter an easy to know name for the node")),
+            label=translation_shortener(max_length=100, translation=_("Name")),
             style=discord.TextStyle.short,
             min_length=8,
             max_length=64,
         )
         self.resume_timeout_prompt = PromptForInput(
             cog=self.cog,
-            title=_("Enter a timeout in seconds"),
-            label=_("Timeout"),
+            title=translation_shortener(max_length=100, translation=_("Enter a timeout in seconds")),
+            label=translation_shortener(max_length=100, translation=_("Timeout")),
             style=discord.TextStyle.short,
             min_length=2,
             max_length=4,
@@ -104,7 +104,9 @@ class AddNodeFlow(discord.ui.View):
             style=discord.ButtonStyle.blurple,
             emoji=emojis.SSL,
         )
-        self.disabled_sources_selector = SourceSelector(cog=self.cog, placeholder=_("Source to disable"), row=2)
+        self.disabled_sources_selector = SourceSelector(
+            cog=self.cog, placeholder=translation_shortener(max_length=100, translation=_("Source to disable")), row=2
+        )
         self.name_button = NodeButton(
             cog=self.cog,
             style=discord.ButtonStyle.blurple,
@@ -335,7 +337,7 @@ class NodePickerMenu(BaseMenu):
         )
         self.result: NodeModel = None  # type: ignore
         self.selector_cls = selector_cls
-        self.selector_text = selector_text
+        self.selector_text = translation_shortener(max_length=100, translation=selector_text)
         self.forward_button = NavigateButton(
             style=discord.ButtonStyle.grey,
             emoji="\N{BLACK RIGHT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}",
@@ -488,40 +490,40 @@ class NodeManagerMenu(BaseMenu):
         self.close_button = CloseButton(style=discord.ButtonStyle.red, cog=cog, row=0)
         self.host_prompt = PromptForInput(
             cog=self.cog,
-            title=_("Change the domain or IP address of the host"),
-            label=_("Host"),
+            title=translation_shortener(max_length=100, translation=_("Change the domain or IP address of the host")),
+            label=translation_shortener(max_length=100, translation=_("Host")),
             style=discord.TextStyle.short,
             min_length=4,
             max_length=200,
         )
         self.port_prompt = PromptForInput(
             cog=self.cog,
-            title=_("Change the host port to connect to"),
-            label=_("Port"),
+            title=translation_shortener(max_length=100, translation=_("Change the host port to connect to")),
+            label=translation_shortener(max_length=100, translation=_("Port")),
             style=discord.TextStyle.short,
             min_length=2,
             max_length=5,
         )
         self.password_prompt = PromptForInput(
             cog=self.cog,
-            title=_("Change the node's password"),
-            label=_("Password"),
+            title=translation_shortener(max_length=100, translation=_("Change the node's password")),
+            label=translation_shortener(max_length=100, translation=_("Password")),
             style=discord.TextStyle.short,
             min_length=1,
             max_length=64,
         )
         self.name_prompt = PromptForInput(
             cog=self.cog,
-            title=_("Change the name of this node"),
-            label=_("Name"),
+            title=translation_shortener(max_length=100, translation=_("Change the name of this node")),
+            label=translation_shortener(max_length=100, translation=_("Name")),
             style=discord.TextStyle.short,
             min_length=8,
             max_length=64,
         )
         self.resume_timeout_prompt = PromptForInput(
             cog=self.cog,
-            title=_("Enter the new timeout for this node"),
-            label=_("Timeout"),
+            title=translation_shortener(max_length=100, translation=_("Enter the new timeout for this node")),
+            label=translation_shortener(max_length=100, translation=_("Timeout")),
             style=discord.TextStyle.short,
             min_length=2,
             max_length=4,
@@ -549,7 +551,9 @@ class NodeManagerMenu(BaseMenu):
             cog=self.cog, style=discord.ButtonStyle.blurple, emoji=emojis.TIMEOUT, op="timeout", row=2
         )
         self.delete_button = NodeDeleteButton(cog=self.cog, style=discord.ButtonStyle.red, row=2)
-        self.disabled_sources_selector = SourceSelector(cog=self.cog, placeholder=_("Source to disable"), row=3)
+        self.disabled_sources_selector = SourceSelector(
+            cog=self.cog, placeholder=translation_shortener(max_length=100, translation=_("Source to disable")), row=3
+        )
 
         self.cancelled = True
 

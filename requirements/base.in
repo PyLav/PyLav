@@ -1,6 +1,6 @@
-aiocache[memcached,redis,msgpack]
 aiohttp[speedups]
 aiohttp-client-cache
+aiomcache
 aiopath
 APScheduler
 apsw

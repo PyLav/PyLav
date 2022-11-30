@@ -13,7 +13,7 @@ from rapidfuzz import fuzz
 from pylav._logging import getLogger
 from pylav.exceptions import EntryNotFoundError
 from pylav.types import ContextT, InteractionT
-from pylav.utils import shorten_string
+from pylav.utils import shorten_string, translation_shortener
 
 try:
     from redbot.core.i18n import Translator
@@ -67,7 +67,7 @@ else:
             if interaction.client.lavalink.radio_browser.disabled:
                 return [
                     Choice(
-                        name=_("Radio Browser is disabled"),
+                        name=translation_shortener(max_length=100, translation=_("Radio Browser is disabled")),
                         value="???",
                     )
                 ]
@@ -111,7 +111,9 @@ else:
             if not current:
                 return [
                     Choice(
-                        name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"),
+                        name=shorten_string(e.name, max_length=100)
+                        if e.name
+                        else translation_shortener(max_length=100, translation=_("Unnamed")),
                         value=f"{e.stationuuid}",
                     )
                     for e in await interaction.client.lavalink.radio_browser.stations_by_votes(limit=25)
@@ -165,14 +167,19 @@ else:
             if interaction.client.lavalink.radio_browser.disabled:
                 return [
                     Choice(
-                        name=_("Radio Browser is disabled"),
+                        name=translation_shortener(max_length=100, translation=_("Radio Browser is disabled")),
                         value="???",
                     )
                 ]
             tags = await interaction.client.lavalink.radio_browser.tags()
             if not current:
                 return [
-                    Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
+                    Choice(
+                        name=shorten_string(e.name, max_length=100)
+                        if e.name
+                        else translation_shortener(max_length=100, translation=_("Unnamed")),
+                        value=f"{e.name}",
+                    )
                     for e in tags
                 ][:25]
 
@@ -182,7 +189,12 @@ else:
             extracted = await heapq.nlargest(asyncstdlib.iter(tags), n=25, key=_filter)
 
             return [
-                Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
+                Choice(
+                    name=shorten_string(e.name, max_length=100)
+                    if e.name
+                    else translation_shortener(max_length=100, translation=_("Unnamed")),
+                    value=f"{e.name}",
+                )
                 for e in extracted
             ]
 
@@ -212,14 +224,19 @@ else:
             if interaction.client.lavalink.radio_browser.disabled:
                 return [
                     Choice(
-                        name=_("Radio Browser is disabled"),
+                        name=translation_shortener(max_length=100, translation=_("Radio Browser is disabled")),
                         value="???",
                     )
                 ]
             languages = await interaction.client.lavalink.radio_browser.languages()
             if not current:
                 return [
-                    Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
+                    Choice(
+                        name=shorten_string(e.name, max_length=100)
+                        if e.name
+                        else translation_shortener(max_length=100, translation=_("Unnamed")),
+                        value=f"{e.name}",
+                    )
                     for e in languages
                 ][:25]
 
@@ -229,7 +246,12 @@ else:
             extracted = await heapq.nlargest(asyncstdlib.iter(languages), n=25, key=_filter)
 
             return [
-                Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
+                Choice(
+                    name=shorten_string(e.name, max_length=100)
+                    if e.name
+                    else translation_shortener(max_length=100, translation=_("Unnamed")),
+                    value=f"{e.name}",
+                )
                 for e in extracted
             ]
 
@@ -258,7 +280,7 @@ else:
             if interaction.client.lavalink.radio_browser.disabled:
                 return [
                     Choice(
-                        name=_("Radio Browser is disabled"),
+                        name=translation_shortener(max_length=100, translation=_("Radio Browser is disabled")),
                         value="???",
                     )
                 ]
@@ -313,14 +335,19 @@ else:
             if interaction.client.lavalink.radio_browser.disabled:
                 return [
                     Choice(
-                        name=_("Radio Browser is disabled"),
+                        name=translation_shortener(max_length=100, translation=_("Radio Browser is disabled")),
                         value="???",
                     )
                 ]
             codecs = await interaction.client.lavalink.radio_browser.codecs()
             if not current:
                 return [
-                    Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
+                    Choice(
+                        name=shorten_string(e.name, max_length=100)
+                        if e.name
+                        else translation_shortener(max_length=100, translation=_("Unnamed")),
+                        value=f"{e.name}",
+                    )
                     for e in codecs
                 ][:25]
 
@@ -360,7 +387,7 @@ else:
             if interaction.client.lavalink.radio_browser.disabled:
                 return [
                     Choice(
-                        name=_("Radio Browser is disabled"),
+                        name=translation_shortener(max_length=100, translation=_("Radio Browser is disabled")),
                         value="???",
                     )
                 ]
@@ -413,7 +440,7 @@ else:
             if interaction.client.lavalink.radio_browser.disabled:
                 return [
                     Choice(
-                        name=_("Radio Browser is disabled"),
+                        name=translation_shortener(max_length=100, translation=_("Radio Browser is disabled")),
                         value="???",
                     )
                 ]

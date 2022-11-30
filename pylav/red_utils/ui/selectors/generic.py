@@ -7,6 +7,7 @@ import discord
 from pylav.red_utils.types import GenericT
 from pylav.red_utils.ui.selectors.options.generic import EntryOption
 from pylav.types import CogT, InteractionT
+from pylav.utils import translation_shortener
 
 
 class EntrySelectSelector(discord.ui.Select):
@@ -17,7 +18,12 @@ class EntrySelectSelector(discord.ui.Select):
         placeholder: str,
         mapping: dict[str, GenericT],
     ):
-        super().__init__(min_values=1, max_values=1, options=options, placeholder=placeholder)
+        super().__init__(
+            min_values=1,
+            max_values=1,
+            options=options,
+            placeholder=translation_shortener(max_length=100, translation=placeholder),
+        )
         self.cog = cog
         self.mapping = mapping
         self.entry: GenericT = None  # type:ignore

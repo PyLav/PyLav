@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 
 LOGGER = getLogger("PyLav.ext.Shared.ui.sources.equalizer")
-_ = Translator("PyLavShared", Path(__file__))
+_ = Translator("PyLav", Path(__file__))
 
 
 class EQPresetsSource(menus.ListPageSource):

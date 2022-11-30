@@ -11,7 +11,7 @@ from pylav import emojis
 from pylav.types import CogT, InteractionT
 from pylav.utils import AsyncIter
 
-_ = Translator("PyLavShared", Path(__file__))
+_ = Translator("PyLav", Path(__file__))
 
 
 class DisconnectButton(discord.ui.Button):

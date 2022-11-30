@@ -6,8 +6,9 @@ import discord
 from redbot.core.i18n import Translator
 
 from pylav.types import CogT, InteractionT
+from pylav.utils import translation_shortener
 
-_ = Translator("PyLavShared", Path(__file__))
+_ = Translator("PyLav", Path(__file__))
 
 
 class PlaylistSaveModal(discord.ui.Modal):
@@ -23,8 +24,8 @@ class PlaylistSaveModal(discord.ui.Modal):
         super().__init__(title=title, timeout=timeout)
         self.text = discord.ui.TextInput(
             style=discord.TextStyle.short,
-            label=_("Enter the name for the new playlist"),
-            placeholder=_("My awesome new playlist"),
+            label=translation_shortener(max_length=100, translation=_("Enter the name for the new playlist")),
+            placeholder=translation_shortener(max_length=100, translation=_("My awesome new playlist")),
             min_length=3,
             max_length=64,
         )
