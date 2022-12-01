@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import contextlib
 import itertools
 from io import BytesIO
 from pathlib import Path
@@ -417,8 +416,7 @@ class EnqueuePlaylistButton(discord.ui.Button):
         if hasattr(self.view, "prepare"):
             await self.view.prepare()
             kwargs = await self.view.get_page(self.view.current_page)
-            with contextlib.suppress(discord.HTTPException):
-                await context.message.edit(view=self.view, **kwargs)
+            await self.view.message.edit(view=self.view, **kwargs)
 
 
 class SaveQueuePlaylistButton(discord.ui.Button):

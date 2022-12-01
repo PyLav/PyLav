@@ -21,9 +21,8 @@ class EqualizerButton(discord.ui.Button):
         self.cog = cog
 
     async def callback(self, interaction: InteractionT):
+        if not interaction.response.is_done():
+            await interaction.response.defer(ephemeral=True)
         kwargs = await self.view.get_page(self.view.current_page)
         await self.view.prepare()
-        if not interaction.response.is_done():
-            await interaction.response.edit_message(view=self.view, **kwargs)
-        else:
-            await interaction.edit_original_response(view=self.view, **kwargs)
+        await self.view.message.edit(view=self.view, **kwargs)

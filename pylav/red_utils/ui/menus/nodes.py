@@ -424,10 +424,12 @@ class NodePickerMenu(BaseMenu):
         await self._source.get_page(page_number)
         await self.prepare()
         self.current_page = page_number
-        if not interaction.response.is_done():
-            await interaction.response.edit_message(view=self)
-        elif self.message is not None:
+        if self.message is not None:
+            if not interaction.response.is_done():
+                await interaction.response.pong()
             await self.message.edit(view=self)
+        elif not interaction.response.is_done():
+            await interaction.response.edit_message(view=self)
 
     async def wait_for_response(self):
         if isinstance(self.select_view, NodeSelectSelector):
