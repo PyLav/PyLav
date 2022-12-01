@@ -92,7 +92,13 @@ PYLAV_NODE_SETTINGS = {
     "managed": False,
     "disabled_sources": ["local", "http"],
     "temporary": True,
+    "extras": {},
+    "yaml": {
+        "server": {},
+        "lavalink": {"server": {"password": "..."}},
+    },
 }
+PYLAV_NODE_SETTINGS["yaml"]["server"]["port"] = PYLAV_NODE_SETTINGS["port"]
 
 BUNDLED_NODES_IDS_HOST_MAPPING = {
     1: "ll-gb.draper.wtf",
@@ -117,10 +123,24 @@ PYLAV_BUNDLED_NODES_SETTINGS = {
         "ssl": False,
         "search_only": False,
         "managed": False,
-        "disabled_sources": [],
+        "disabled_sources": ["local"],
         "temporary": True,
+        "extras": {},
+        "yaml": {
+            "server": {},
+            "lavalink": {"server": {"password": "..."}},
+        },
     },
 }
+PYLAV_BUNDLED_NODES_SETTINGS["ll-gb.draper.wtf"]["yaml"]["server"]["address"] = PYLAV_BUNDLED_NODES_SETTINGS["ll-gb.draper.wtf"]["host"]  # type: ignore
+
+
+PYLAV_BUNDLED_NODES_SETTINGS["ll-us-ny.draper.wtf"]["yaml"]["server"]["address"] = PYLAV_BUNDLED_NODES_SETTINGS["ll-us-ny.draper.wtf"]["host"]  # type: ignore
+
+PYLAV_BUNDLED_NODES_SETTINGS["lava.link"]["yaml"]["server"]["address"] = PYLAV_BUNDLED_NODES_SETTINGS["lava.link"]["host"]  # type: ignore
+PYLAV_BUNDLED_NODES_SETTINGS["lava.link"]["yaml"]["server"]["port"] = PYLAV_BUNDLED_NODES_SETTINGS["lava.link"]["port"]  # type: ignore
+
+
 VERSION_ZERO = parse_version("0.0.0")
 
 SNAPSHOT_REGEX = re.compile(r"^(?P<commit>.*?)-SNAPSHOT$")
