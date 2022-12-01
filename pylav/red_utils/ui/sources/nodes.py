@@ -114,7 +114,7 @@ class NodeListSource(menus.ListPageSource):
                 frames_sent = 0
                 frames_nulled = 0
                 frames_deficit = 0
-            uptime = humanize.naturaldelta(node_stats.uptime)
+            uptime = humanize.naturaldelta(node_stats.uptime_seconds)
             system_load = humanize_number(round(node_stats.cpu.systemLoad, 2))
             lavalink_load = humanize_number(round(node_stats.cpu.lavalinkLoad, 2))
             free = humanize.naturalsize(node_stats.memory.free, binary=True)
@@ -275,7 +275,7 @@ class NodeManageSource(menus.ListPageSource):
                 frames_sent = 0
                 frames_nulled = 0
                 frames_deficit = 0
-            uptime = humanize.naturaldelta(node_stats.uptime)
+            uptime = humanize.naturaldelta(node_stats.uptime_seconds)
             system_load = humanize_number(round(node_stats.cpu.systemLoad, 2))
             lavalink_load = humanize_number(round(node_stats.cpu.lavalinkLoad, 2))
             free = humanize.naturalsize(node_stats.memory.free, binary=True)
