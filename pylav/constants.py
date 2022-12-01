@@ -74,6 +74,19 @@ SUPPORTED_FEATURES = {
     # https://github.com/Topis-Lavalink-Plugins/Sponsorblock-Plugin
     "sponsorblock",
 }
+SUPPORTED_FILTERS = {
+    "distortion",
+    "volume",
+    "karaoke",
+    "echo",
+    "equalizer",
+    "timescale",
+    "tremolo",
+    "lowPass",
+    "rotation",
+    "channelMix",
+    "vibrato",
+}
 
 
 # Mapping of the PyLav public nodes

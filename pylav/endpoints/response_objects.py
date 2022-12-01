@@ -112,6 +112,7 @@ class LavalinkStatsOpObject(LavalinkOpObject):
     memory: Union[LavalinkStatsMemoryObject, dict] = None
     cpu: Union[LavalinkStatCPUObject, dict] = None
     frameStats: Union[LavalinkStatsFrameStatsObject, dict, None] = None
+    uptime_seconds: int = dataclasses.field(init=False)
 
     def __post_init__(self):
         if isinstance(self.memory, dict):
@@ -120,6 +121,7 @@ class LavalinkStatsOpObject(LavalinkOpObject):
             object.__setattr__(self, "cpu", LavalinkStatCPUObject(**self.cpu))
         if isinstance(self.frameStats, dict):
             object.__setattr__(self, "frameStats", LavalinkStatsFrameStatsObject(**self.frameStats))
+        object.__setattr__(self, "uptime_seconds", self.uptime / 1000)
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
