@@ -873,8 +873,8 @@ class Player(VoiceProtocol):
                 )
                 self._last_track_stuck_check = 0
                 return
-            if self.current:
-                self._logger.trace("Auto track stuck fixer task - Current track is not empty - discarding")
+            if not self.current:
+                self._logger.trace("Auto track stuck fixer task - Current track is empty - discarding")
                 self._last_track_stuck_check = 0
                 return
             if self.stopped:
