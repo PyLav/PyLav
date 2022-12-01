@@ -512,7 +512,7 @@ class Track:
             base = self.title
         base = SQUARE_BRACKETS.sub("", base).strip()
         if max_length and len(base) > max_length:
-            base = f"{base[:max_length]}" + "\N{HORIZONTAL ELLIPSIS}"
+            base = f"{base[:max_length]}\N{HORIZONTAL ELLIPSIS}"
         return base
 
     async def _get_track_display_name_local_query(
@@ -523,7 +523,7 @@ class Track:
             base = f"{self.title}{author_string}"
             base = SQUARE_BRACKETS.sub("", base).strip()
             if max_length and len(base) > max_length:
-                base = base = "\N{HORIZONTAL ELLIPSIS}" + f"{base[-max_length:]}"
+                base = f"{base[:max_length]}\N{HORIZONTAL ELLIPSIS}"
             elif not max_length:
                 base += f"\n{await  (await self.query()).query_to_string(ellipsis=False)} "
         else:
