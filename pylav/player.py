@@ -861,9 +861,6 @@ class Player(VoiceProtocol):
         with contextlib.suppress(
             asyncio.exceptions.CancelledError,
         ):
-            if self.position != 0:
-                self._last_track_stuck_check = 0
-                return
             if not self.ready.is_set():
                 self._last_track_stuck_check = 0
                 return
