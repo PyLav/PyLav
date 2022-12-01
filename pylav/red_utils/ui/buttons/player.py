@@ -60,8 +60,7 @@ class DisconnectButton(discord.ui.Button):
 
         await self.view.prepare()
         kwargs = await self.view.get_page(self.view.current_page)
-        with contextlib.suppress(discord.HTTPException):
-            await context.message.edit(view=self.view, **kwargs)
+        await self.view.message.edit(view=self.view, **kwargs)
 
 
 class StopTrackButton(discord.ui.Button):
@@ -111,8 +110,7 @@ class StopTrackButton(discord.ui.Button):
 
         await self.view.prepare()
         kwargs = await self.view.get_page(self.view.current_page)
-        with contextlib.suppress(discord.HTTPException):
-            await context.message.edit(view=self.view, **kwargs)
+        await self.view.message.edit(view=self.view, **kwargs)
 
 
 class DisconnectAllButton(discord.ui.Button):
@@ -170,5 +168,4 @@ class DisconnectAllButton(discord.ui.Button):
 
         await self.view.prepare()
         kwargs = await self.view.get_page(self.view.current_page)
-        with contextlib.suppress(discord.HTTPException):
-            await context.message.edit(view=self.view, **kwargs)
+        await self.view.message.edit(view=self.view, **kwargs)

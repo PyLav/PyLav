@@ -89,10 +89,12 @@ class BaseMenu(discord.ui.View):
         self.current_page = page_number
         kwargs = await self.get_page(self.current_page)
         await self.prepare()
-        if not interaction.response.is_done():
-            await interaction.response.edit_message(**kwargs, view=self)
-        else:
-            await interaction.edit_original_response(**kwargs, view=self)
+        if self.message is not None:
+            if not interaction.response.is_done():
+                await interaction.response.pong()
+            await self.message.edit(view=self, **kwargs)
+        elif not interaction.response.is_done():
+            await interaction.response.edit_message(view=self, **kwargs)
 
     async def show_checked_page(self, page_number: int, interaction: InteractionT) -> None:
         max_pages = self._source.get_max_pages()
@@ -415,10 +417,12 @@ class EntryPickerMenu(BaseMenu):
         await self._source.get_page(page_number)
         await self.prepare()
         self.current_page = page_number
-        if not interaction.response.is_done():
-            await interaction.response.edit_message(view=self)
-        elif self.message is not None:
+        if self.message is not None:
+            if not interaction.response.is_done():
+                await interaction.response.pong()
             await self.message.edit(view=self)
+        elif not interaction.response.is_done():
+            await interaction.response.edit_message(view=self)
 
     async def wait_for_response(self):
 

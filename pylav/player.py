@@ -1099,7 +1099,7 @@ class Player(VoiceProtocol):
         """
 
         at = await self._query_to_track(requester, track, query)
-        self.queue.put_nowait([at], index=index)
+        await self.queue.put([at], index=index)
         if index is None and (
             await self.player_manager.client.player_config_manager.get_auto_shuffle(self.guild.id) is True
         ):
@@ -1131,7 +1131,7 @@ class Player(VoiceProtocol):
             track, query = entry if is_list else (entry, None)
             track = await self._query_to_track(requester, track, query)
             output.append(track)
-        self.queue.put_nowait(output, index=index)
+        await self.queue.put(output, index=index)
         if index is None and (
             await self.player_manager.client.player_config_manager.get_auto_shuffle(self.guild.id) is True
         ):
@@ -1149,10 +1149,9 @@ class Player(VoiceProtocol):
                 track, requester=track.requester, bypass_cache=bypass_cache, add_to_queue=False
             )
             if tracks:
-                self.history.put_nowait(tracks, 0)
+                await self.history.put(tracks, 0)
             track = self.history.get()
         if self.current:
-            self.history.put_nowait([self.current])
             self.last_track = self.current
 
         if await track.query() and not self.node.has_source(await track.requires_capability()):
@@ -1186,7 +1185,7 @@ class Player(VoiceProtocol):
         self.stopped = False
         if self.current:
             self.current.timestamp = self.fetch_position()
-            self.queue.put_nowait([self.current], 0)
+            await self.queue.put([self.current], 0)
             self.next_track = self.current
             self.last_track = self.current
 
@@ -1263,7 +1262,7 @@ class Player(VoiceProtocol):
             await self._process_repeat_on_play()
         if self.current:
             self.current.timestamp = 0
-            self.history.put_nowait([self.current])
+            await self.history.put([self.current])
             self.last_track = self.current
         self.current = None
         if not track:
@@ -1352,7 +1351,11 @@ class Player(VoiceProtocol):
         return track, False
 
     async def _process_partial_query(
-        self, track: Track, requester: discord.Member | None, bypass_cache: bool, add_to_queue: bool
+        self,
+        track: Track,
+        requester: discord.Member | None,
+        bypass_cache: bool,
+        add_to_queue: bool,
     ) -> tuple[Track, list[Track]] | tuple[None, None]:
         requester = track.requester or requester
         if await track.is_single():
@@ -2693,7 +2696,7 @@ class Player(VoiceProtocol):
             return False
         index = self.queue.index(track)
         track = await self.queue.get(index)
-        self.queue.put_nowait([track], new_index)
+        await self.queue.put([track], new_index)
         self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
         self.node.dispatch_event(
             QueueTrackPositionChangedEvent(before=index, after=new_index, track=track, player=self, requester=requester)

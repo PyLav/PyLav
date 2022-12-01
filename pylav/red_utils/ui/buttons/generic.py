@@ -34,6 +34,8 @@ class NavigateButton(discord.ui.Button):
         return self._direction if isinstance(self._direction, int) else self._direction()
 
     async def callback(self, interaction: InteractionT):
+        if not interaction.response.is_done():
+            await interaction.response.defer(ephemeral=True)
         max_pages = self.view.source.get_max_pages()
         if self.direction == 0:
             self.view.current_page = 0
@@ -49,10 +51,7 @@ class NavigateButton(discord.ui.Button):
 
         kwargs = await self.view.get_page(self.view.current_page)
         await self.view.prepare()
-        if not interaction.response.is_done():
-            await interaction.response.edit_message(view=self.view, **kwargs)
-        else:
-            await interaction.edit_original_response(view=self.view, **kwargs)
+        await self.view.message.edit(view=self.view, **kwargs)
 
 
 class CloseButton(discord.ui.Button):
@@ -72,6 +71,8 @@ class CloseButton(discord.ui.Button):
                 ),
                 ephemeral=True,
             )
+        if not interaction.response.is_done():
+            await interaction.response.defer(ephemeral=True)
         self.view.cancelled = True
         self.view.stop()
         await self.view.on_timeout()
@@ -97,7 +98,8 @@ class YesButton(discord.ui.Button):
                 ephemeral=True,
             )
             return
-
+        if not interaction.response.is_done():
+            await interaction.response.defer(ephemeral=True)
         self.responded.set()
         self.interaction = interaction
 
@@ -122,6 +124,8 @@ class NoButton(discord.ui.Button):
                 ephemeral=True,
             )
             return
+        if not interaction.response.is_done():
+            await interaction.response.defer(ephemeral=True)
         self.responded.set()
         self.interaction = interaction
 
@@ -176,9 +180,8 @@ class RefreshButton(discord.ui.Button):
         self.cog = cog
 
     async def callback(self, interaction: InteractionT):
+        if not interaction.response.is_done():
+            await interaction.response.defer(ephemeral=True)
         await self.view.prepare()
         kwargs = await self.view.get_page(self.view.current_page)
-        if not interaction.response.is_done():
-            await interaction.response.edit_message(view=self.view, **kwargs)
-        else:
-            await interaction.edit_original_response(view=self.view, **kwargs)
+        await self.view.message.edit(view=self.view, **kwargs)
