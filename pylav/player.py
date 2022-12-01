@@ -687,7 +687,7 @@ class Player(VoiceProtocol):
                     )
                     self._last_alone_paused_check = time.time()
                 if (self._last_alone_paused_check + feature.time) <= time.time():
-                    self._logger.info(
+                    self._logger.debug(
                         "Auto Pause task for %s - Player in an empty channel for longer than %s seconds - Pausing",
                         self,
                         feature.time,
@@ -719,7 +719,7 @@ class Player(VoiceProtocol):
                     )
                 ).enabled
             ):
-                self._logger.info(
+                self._logger.debug(
                     "Auto Resume task for %s - Player in an non-empty channel - Resuming",
                     self,
                     feature.time,
@@ -758,7 +758,7 @@ class Player(VoiceProtocol):
             else:
                 tracks = await track.search_all(self, requester.id if requester else self.client.user.id)
             await self.queue.put(tracks, index=0)
-            self._logger.verbose(
+            self._logger.trace(
                 "Queue Resolver task - Resolved partial track %s - Added %s tracks to queue",
                 track.identifier,
                 len(tracks),
@@ -789,7 +789,7 @@ class Player(VoiceProtocol):
                     )
                     self._last_alone_dc_check = time.time()
                 if (self._last_alone_dc_check + feature.time) <= time.time():
-                    self._logger.info(
+                    self._logger.debug(
                         "Auto Disconnect task - Player in an empty channel for longer than %s seconds "
                         "- Disconnecting",
                         feature.time,
@@ -827,7 +827,7 @@ class Player(VoiceProtocol):
                     )
                     self._last_empty_queue_check = time.time()
                 if (self._last_empty_queue_check + feature.time) <= time.time():
-                    self._logger.info(
+                    self._logger.debug(
                         "Auto Empty Queue task - Queue is empty for longer than %s seconds "
                         "- Stopping and disconnecting",
                         feature.time,
@@ -900,7 +900,7 @@ class Player(VoiceProtocol):
                 )
                 self._last_track_stuck_check = time.time()
             if (self._last_track_stuck_check + 15) <= time.time():
-                self._logger.info(
+                self._logger.debug(
                     "Auto track stuck fixer for %s - Player appears to be stuck - attempting to fix",
                     self,
                 )
