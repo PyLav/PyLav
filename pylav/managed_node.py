@@ -183,6 +183,7 @@ class LocalNodeManager:
         "_commit",
         "_version",
         "__buffer_task",
+        "_disabled",
     )
 
     def __init__(self, client: Client, timeout: int | None = None) -> None:
@@ -218,6 +219,11 @@ class LocalNodeManager:
         self._wait_for = asyncio.Event()
         self._java_path = None
         self.__buffer_task = None
+        self._disabled = True
+
+    @property
+    def disabled(self) -> bool:
+        return self._disabled
 
     @property
     def node(self) -> Node | None:
@@ -490,6 +496,7 @@ class LocalNodeManager:
                 raise EarlyExitError("Managed Lavalink node server exited early")
 
     async def shutdown(self) -> None:
+        self._disabled = True
         if self.start_monitor_task is not None:
             self.start_monitor_task.cancel()
         if self.node:
@@ -794,6 +801,7 @@ class LocalNodeManager:
             raise AttributeError
 
     async def start(self, java_path: str):
+        self._disabled = False
         self._java_path = java_path
         if self.start_monitor_task is not None:
             await self.shutdown()
