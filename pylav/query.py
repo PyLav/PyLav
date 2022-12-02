@@ -107,7 +107,7 @@ XSPF_REGEX = re.compile(r"^.*\.xspf$", re.IGNORECASE)
 PYLAV_REGEX = re.compile(r"^.*\.pylav$", re.IGNORECASE)
 
 YOUTUBE_REGEX = re.compile(
-    r"(?:http://|https://|)(?:www\.|)(?P<youtube_music>music\.)?youtu(be\.com|\.be)", re.IGNORECASE
+    r"(?:http://|https://|)(?:www\.|m\.)(?P<youtube_music>music\.)?youtu(be\.com|\.be)", re.IGNORECASE
 )
 SPEAK_REGEX = re.compile(r"^(?P<speak_source>speak):\s*?(?P<speak_query>.*)$", re.IGNORECASE)
 GCTSS_REGEX = re.compile(r"^(?P<gctts_source>tts://)\s*?(?P<gctts_query>.*)$", re.IGNORECASE)
