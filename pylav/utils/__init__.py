@@ -675,12 +675,15 @@ class PlayerQueue(asyncio.Queue[T]):
         """
         return False if self._maxsize <= 0 else self.qsize() >= self._maxsize
 
-    async def put(self, items: list[T], index: int = None) -> None:
+    async def put(self, items: list[T], index: int = None, discard: bool = False) -> None:
         """Put an item into the queue.
 
         Put an item into the queue. If the queue is full, wait until a free
         slot is available before adding item.
         """
+        if discard and self.full():
+            for __ in range(len(items)):
+                await self.get_oldest()
         while self.full():
             putter = self._loop.create_future()
             self._putters.append(putter)
@@ -728,6 +731,25 @@ class PlayerQueue(asyncio.Queue[T]):
                     self._wakeup_next(self._getters)
                 raise
         return self.get_nowait(index=index)
+
+    async def get_oldest(self) -> T:
+        """Remove and return an item from the queue.
+
+        If queue is empty, wait until an item is available.
+        """
+        while self.empty():
+            getter = self._loop.create_future()
+            self._getters.append(getter)
+            try:
+                await getter
+            except BaseException:
+                getter.cancel()
+                with contextlib.suppress(ValueError):
+                    self._getters.remove(getter)
+                if not self.empty() and not getter.cancelled():
+                    self._wakeup_next(self._getters)
+                raise
+        return self.get_nowait(index=-1)
 
     def get_nowait(self, index: int = None) -> T:
         """Remove and return an item from the queue.

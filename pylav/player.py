@@ -162,6 +162,7 @@ class Player(VoiceProtocol):
         "_discord_session_id",
         "_logger",
         "_last_track_stuck_check",
+        "_last_track_stuck_position",
     )
     _config: PlayerModel
     _global_config: PlayerModel
@@ -231,6 +232,7 @@ class Player(VoiceProtocol):
         self._last_alone_dc_check = 0
         self._last_empty_queue_check = 0
         self._last_track_stuck_check = 0
+        self._last_track_stuck_position = -1
         self._waiting_for_node = asyncio.Event()
 
     def __hash__(self):
@@ -442,9 +444,10 @@ class Player(VoiceProtocol):
             seconds=10,
             max_instances=1,
             id=f"{self.bot.user.id}-{self.guild.id}-auto_track_stuck_fixer_track",
-            replace_existing=True,
             coalesce=True,
             next_run_time=now_time + datetime.timedelta(seconds=10),
+            misfire_grace_time=1,
+            replace_existing=False,
         )
         self.ready.set()
 
@@ -631,7 +634,7 @@ class Player(VoiceProtocol):
         difference = time.time() * 1000 - self._last_update
         return min(self._last_position + difference, self.current.duration)
 
-    async def fetch_player_stats(self):
+    async def fetch_player_stats(self, return_position: bool = False):
         try:
             player = await self.fetch_node_player()
         except Exception:
@@ -646,6 +649,8 @@ class Player(VoiceProtocol):
         self._ping = player.voice.ping
         if self.current:
             self.current.last_known_position = self._last_position
+        if return_position:
+            return player.track.info.position if player.track else 0
 
     async def fetch_position(self, skip_fetch: bool = False) -> float:
         """Returns the position in the track"""
@@ -862,47 +867,41 @@ class Player(VoiceProtocol):
             asyncio.exceptions.CancelledError,
         ):
             if not self.ready.is_set():
-                self._last_track_stuck_check = 0
                 return
-            if not self.is_connected:
-                self._logger.trace(
-                    "Auto track stuck fixer task fired while player is not connected to a voice channel - discarding",
-                )
-                self._last_track_stuck_check = 0
-                return
-            if not self.current:
-                self._logger.trace("Auto track stuck fixer task - Current track is empty - discarding")
-                self._last_track_stuck_check = 0
+            if not self.is_playing:
+                self._logger.trace("Auto track stuck fixer task - Not Playing - discarding")
                 return
             if self.stopped:
                 self._logger.trace(
                     "Auto track stuck fixer for %s fired while player that has been stopped - discarding",
                     self,
                 )
-                self._last_track_stuck_check = 0
                 return
             if self.paused:
                 self._logger.trace(
                     "Auto track stuck fixer for %s fired while player that has been paused - discarding",
                     self,
                 )
-                self._last_track_stuck_check = 0
                 return
-            if await self.fetch_position() != 0:
-                self._last_track_stuck_check = 0
-                return
-            if not self._last_track_stuck_check:
+            position = await self.fetch_player_stats(return_position=True)
+            if position == self._last_track_stuck_position:
+                self._last_track_stuck_position = position
+                self._last_track_stuck_check = time.time()
                 self._logger.verbose(
                     "Auto track stuck fixer - Player appears to be stuck - starting countdown",
                 )
-                self._last_track_stuck_check = time.time()
-            if (self._last_track_stuck_check + 15) <= time.time():
+                return
+            else:
+                self._last_track_stuck_check = 0
+                self._last_track_stuck_position = position
+            if self._last_track_stuck_check and (self._last_track_stuck_check + 15) <= time.time():
                 self._logger.debug(
                     "Auto track stuck fixer for %s - Player appears to be stuck - attempting to fix",
                     self,
                 )
-                await self.change_to_best_node(forced=True, skip_position_fetch=True)
+                await self.reconnect()
                 self._last_track_stuck_check = 0
+                self._last_track_stuck_position = await self.fetch_player_stats(return_position=True)
 
     async def change_to_best_node(
         self, feature: str = None, ops: bool = True, forced: bool = True, skip_position_fetch: bool = False
@@ -1146,7 +1145,7 @@ class Player(VoiceProtocol):
                 track, requester=track.requester, bypass_cache=bypass_cache, add_to_queue=False
             )
             if tracks:
-                await self.history.put(tracks, 0)
+                await self.history.put(tracks, 0, discard=True)
             track = self.history.get()
         if self.current:
             self.last_track = self.current
@@ -1259,7 +1258,7 @@ class Player(VoiceProtocol):
             await self._process_repeat_on_play()
         if self.current:
             self.current.timestamp = 0
-            await self.history.put([self.current])
+            await self.history.put([self.current], discard=True)
             self.last_track = self.current
         self.current = None
         if not track:
