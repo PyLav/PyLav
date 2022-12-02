@@ -1,6 +1,5 @@
 aiohttp[speedups]
 aiohttp-client-cache
-aiomcache
 aiopath
 APScheduler
 apsw
@@ -10,6 +9,7 @@ asyncspotify
 asyncstdlib
 Brotli
 cached-property
+cashews[dill]
 dacite
 discord.py[speed]
 deepdiff6
