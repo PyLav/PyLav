@@ -4,6 +4,7 @@ import asyncio
 import os
 
 import aiopath
+from cashews import Cache
 
 from pylav.m3u8_parser.httpclient import DefaultHTTPClient, _parsed_url
 from pylav.m3u8_parser.model import (
@@ -30,7 +31,6 @@ from pylav.m3u8_parser.model import (
     Start,
 )
 from pylav.m3u8_parser.parser import ParseError, is_url, parse
-from pylav.vendored.aiocache import Cache, cached
 
 # coding: utf-8
 # Copyright 2014 Globo.com Player authors. All rights reserved.
@@ -66,8 +66,11 @@ __all__ = (
     "ParseError",
 )
 
+CACHE = Cache("M3U3CACHE")
+CACHE.setup("mem://?check_interval=10&size=10000", enable=True)
 
-@cached(ttl=600, cache=Cache.MEMORY, namespace="m3u8_loads")
+
+@CACHE(ttl=600, prefix="m3u8_loads")
 async def loads(self, content: str, uri: str = None, custom_tags_parser=None):
     """
     Given a string with a m3u8 content, returns a M3U8 object.
@@ -81,7 +84,7 @@ async def loads(self, content: str, uri: str = None, custom_tags_parser=None):
         _parsed_url(uri)
 
 
-@cached(ttl=600, cache=Cache.MEMORY, namespace="m3u8_load")
+@CACHE(ttl=600, prefix="m3u8_load")
 async def load(
     self,
     uri: str,
