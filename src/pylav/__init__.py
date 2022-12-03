@@ -2,4 +2,6 @@ import importlib.metadata
 
 __version__ = importlib.metadata.version("Py-Lav")
 
-print(__version__)
+from pylav import constants
+
+___all__ = ("constants",)
