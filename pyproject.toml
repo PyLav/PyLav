@@ -68,7 +68,7 @@ version = "0.11.19.post1.dev0"
 description = " A Lavalink WebSocket & API wrapper for discord.py"
 authors = ["Draper <27962761+Drapersniper@users.noreply.github.com>"]
 readme = "README.md"
-packages = [{include = "pylav", from = "src" }]
+packages = [{include = "pylav"}]
 license = "AGPL-3.0-or-later"
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -142,6 +142,9 @@ click = "^8.1.3"
 importlib-metadata = "^5.1.0"
 pygments = "^2.13.0"
 zipp = "^3.11.0"
+
+[tool.poetry.extras]
+typed = []
 
 [tool.poetry.urls]
 "Bug Tracker" = "https://github.com/Drapersniper/PyLav/issues"

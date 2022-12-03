@@ -70,13 +70,18 @@ repos:
     hooks:
     -   id: isort
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v3.2.2
+    rev: v3.3.0
     hooks:
     -   id: pyupgrade
         args: [--py39-plus]
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v0.991
+    hooks:
+    -   id: mypy
+        args: [--show-error-codes, --show-column-numbers, --pretty, --show-traceback, --config-file, mypy.ini]
 ci:
     autofix_commit_msg: |
-        [pre-commit.ci] auto fixes from pre-commit.com hooks
+        [skip ci] auto fixes from pre-commit.com hooks
         for more information, see https://pre-commit.ci
     autofix_prs: true
     autoupdate_commit_msg: '[skip ci] pre-commit autoupdate'

@@ -14,7 +14,7 @@ LOGGER = getLogger("PyLav.Environment")
 
 
 def build_from_envvars() -> None:
-    from pylav.constants.config import (
+    from pylav.constants.config.env_var import (
         DEFAULT_SEARCH_SOURCE,
         EXTERNAL_UNMANAGED_HOST,
         EXTERNAL_UNMANAGED_PASSWORD,
