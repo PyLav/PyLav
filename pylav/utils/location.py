@@ -16,7 +16,7 @@ def distance(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
 
 
 async def closest(
-    data: dict[str, tuple[float, float]], v: tuple[float, float], *, region_pool: set[str] = None
+    data: dict[str, tuple[float, float]], v: tuple[float, float], *, region_pool: set[str] | None = None
 ) -> tuple[str, tuple[float, float]]:
     if region_pool is None:
         region_pool = set()
@@ -28,7 +28,7 @@ async def closest(
 
 
 async def get_closest_region_name_and_coordinate(
-    lat: float, lon: float, region_pool: set[str] = None
+    lat: float, lon: float, region_pool: set[str] | None = None
 ) -> tuple[str, tuple[float, float]]:
     closest_region, closest_coordinates = await closest(
         REGION_TO_COUNTRY_COORDINATE_MAPPING, (lat, lon), region_pool=region_pool
@@ -39,7 +39,7 @@ async def get_closest_region_name_and_coordinate(
     return name, coordinate
 
 
-async def get_coordinates(ip: str | None = None):
+async def get_coordinates(ip: str | None = None) -> tuple[float, ...]:
     url = f"https://ipinfo.io/{ip}/json" if ip else "https://ipinfo.io/json"
     async with aiohttp.ClientSession(json_serialize=ujson.dumps) as session:
         async with session.get(url) as response:
@@ -49,7 +49,7 @@ async def get_coordinates(ip: str | None = None):
 
 async def get_closest_discord_region(host: str | None = None) -> tuple[str, tuple[float, float]]:
     try:
-        if host in ["localhost", "127.0.0.1", "::1", "0.0.0.0", "::"]:
+        if host is None or host in ["localhost", "127.0.0.1", "::1", "0.0.0.0", "::"]:
             host_ip = None
         else:
             host_ip = await asyncio.to_thread(socket.gethostbyname, host)
@@ -57,6 +57,7 @@ async def get_closest_discord_region(host: str | None = None) -> tuple[str, tupl
         host_ip = None  # If there's any issues getting the ip from the hostname, just use the host ip
     try:
         loc = await get_coordinates(host_ip)
-        return await get_closest_region_name_and_coordinate(*loc)
+        longitude, latitude = loc
+        return await get_closest_region_name_and_coordinate(lat=latitude, lon=longitude)
     except Exception:  # noqa
         return "unknown_pylav", (0, 0)

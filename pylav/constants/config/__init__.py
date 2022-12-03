@@ -2,7 +2,7 @@ import os
 import pathlib
 import sys
 
-import aiopath
+import aiopath  # type: ignore
 import platformdirs
 
 from pylav._internals.pylav_yaml_builder import build_from_envvars
@@ -21,10 +21,7 @@ __CONFIG_DIR.mkdir(parents=True, exist_ok=True)
 CONFIG_DIR = aiopath.AsyncPath(__CONFIG_DIR)
 
 
-if full_path := os.getenv("PYLAV__YAML_CONFIG"):
-    ENV_FILE = pathlib.Path(full_path)
-else:
-    ENV_FILE = pathlib.Path.home() / "pylav.yaml"
+ENV_FILE: pathlib.Path = pathlib.Path(os.getenv("PYLAV__YAML_CONFIG", pathlib.Path.home() / "pylav.yaml"))
 
 
 if not ENV_FILE.exists():

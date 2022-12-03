@@ -4,6 +4,7 @@ from typing import Literal
 import discord
 
 from pylav.events.base import PyLavEvent
+from pylav.players.tracks.obj import Track
 
 
 class PlayerUpdateEvent(PyLavEvent):
@@ -204,7 +205,7 @@ class PlayerDisconnectedEvent(PyLavEvent):
         self.requester = requester
         self.current_track: Track | None = player.current
         self.position: float = player.position
-        self.queue: collections.deque = player.queue.raw_queue
+        self.queue: collections.deque[Track] = player.queue.raw_queue
 
 
 class PlayerConnectedEvent(PyLavEvent):
@@ -444,17 +445,17 @@ class FiltersAppliedEvent(PyLavEvent):
         player: Player,
         requester: discord.Member,
         node: Node,
-        volume: Volume = None,
-        equalizer: Equalizer = None,
-        karaoke: Karaoke = None,
-        timescale: Timescale = None,
-        tremolo: Tremolo = None,
-        vibrato: Vibrato = None,
-        rotation: Rotation = None,
-        distortion: Distortion = None,
-        low_pass: LowPass = None,
-        channel_mix: ChannelMix = None,
-        echo: Echo = None,
+        volume: Volume | None = None,
+        equalizer: Equalizer | None = None,
+        karaoke: Karaoke | None = None,
+        timescale: Timescale | None = None,
+        tremolo: Tremolo | None = None,
+        vibrato: Vibrato | None = None,
+        rotation: Rotation | None = None,
+        distortion: Distortion | None = None,
+        low_pass: LowPass | None = None,
+        channel_mix: ChannelMix | None = None,
+        echo: Echo | None = None,
     ) -> None:
         self.player = player
         self.requester = requester

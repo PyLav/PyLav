@@ -21,6 +21,10 @@ except ImportError:
         return string
 
 
+if typing.TYPE_CHECKING:
+    from pylav.players.query.obj import Query
+
+
 __FULLY_SUPPORTED_MUSIC = (".mp3", ".flac", ".ogg")
 __PARTIALLY_SUPPORTED_MUSIC_EXT = (
     ".m3u",
@@ -83,7 +87,7 @@ __PARTIALLY_SUPPORTED_EXTENSION = (
 
 _ALL_EXTENSIONS = __FULLY_SUPPORTED_MUSIC + __PARTIALLY_SUPPORTED_EXTENSION
 
-_ROOT_FOLDER: aiopath.AsyncPath = None  # type: ignore
+_ROOT_FOLDER: aiopath.AsyncPath | None = None
 
 
 class LocalFile:
@@ -117,7 +121,7 @@ class LocalFile:
         self.__init = True
 
     @classmethod
-    async def add_root_folder(cls, path: str | pathlib.Path | aiopath.AsyncPath, *, create: bool = True):
+    async def add_root_folder(cls, path: str | pathlib.Path | aiopath.AsyncPath, *, create: bool = True) -> None:
         global _ROOT_FOLDER
         _ROOT_FOLDER = cls._ROOT_FOLDER = aiopath.AsyncPath(path)
         if create:
@@ -137,11 +141,11 @@ class LocalFile:
 
     @property
     def name(self) -> str:
-        return self._path.name if pathlib.Path(self._path).is_dir() else self._path.stem
+        return typing.cast(str, self._path.name if pathlib.Path(self._path).is_dir() else self._path.stem)
 
     @property
     def extension(self) -> str:
-        return self._path.suffix
+        return typing.cast(str, self._path.suffix)
 
     @property
     def initialized(self) -> bool:
@@ -150,18 +154,18 @@ class LocalFile:
     async def _to_string_user_no_string(
         self,
         path: aiopath.AsyncPath,
-        length: int = None,
+        length: int | None = None,
         add_ellipsis: bool = False,
         with_emoji: bool = False,
         no_extension: bool = False,
         is_album: bool = False,
     ) -> str:
-        string = path.name if await self.path.is_dir() else path.stem if no_extension else path.name
+        string = typing.cast(str, path.name if await self.path.is_dir() else path.stem if no_extension else path.name)
         if string.startswith("/") or string.startswith("\\"):
             string = string[1:]
-        if length:
+        if length is not None:
             string = string[length * -1 :]
-        if add_ellipsis and len(string) > length:
+        if add_ellipsis and length is not None and len(string) > length:
             string = f"\N{HORIZONTAL ELLIPSIS}{string[3:].strip()}"
         if with_emoji:
             emoji = "\N{FILE FOLDER}" if is_album else "\N{MULTIPLE MUSICAL NOTES}"
@@ -170,19 +174,19 @@ class LocalFile:
 
     async def to_string_user(
         self,
-        length: int = None,
+        length: int | None = None,
         name_only: bool = False,
         add_ellipsis: bool = False,
         with_emoji: bool = False,
         no_extension: bool = False,
         is_album: bool = False,
     ) -> str:
-        if with_emoji:
+        if with_emoji and length is not None:
             length -= 1
         path = typing.cast(aiopath.AsyncPath, await maybe_coroutine(self.path.absolute))
         is_dir = await self.path.is_dir()
         if name_only:
-            string = path.name if is_dir else path.stem if no_extension else path.name
+            string = typing.cast(str, path.name if is_dir else path.stem if no_extension else path.name)
         else:
             root = typing.cast(aiopath.AsyncPath, await maybe_coroutine(self.root_folder.absolute))
             string = str(path).replace(str(root), "")
@@ -201,7 +205,7 @@ class LocalFile:
     async def _to_string_user_no_length(
         string: str,
         add_ellipsis: bool = False,
-        length: int = None,
+        length: int | None = None,
         name_only: bool = False,
         no_extension: bool = False,
     ) -> str:
@@ -217,9 +221,9 @@ class LocalFile:
             string = os.path.join(*string_list)
         if string.startswith("/") or string.startswith("\\"):
             string = string[1:]
-        if len(string) > length:
+        if length is not None and len(string) > length:
             string = string[length * -1 :]
-        if add_ellipsis and len(string) > length:
+        if length is not None and add_ellipsis and len(string) > length:
             string = f"\N{HORIZONTAL ELLIPSIS}{string[length * -1:].strip()}"
         return string
 
@@ -233,6 +237,8 @@ class LocalFile:
     ) -> AsyncIterator[Query]:
         async def _key(path_file: aiopath.AsyncPath) -> str:
             return f"{path_file}"
+
+        from pylav.players.query.obj import Query
 
         for path in await asyncstdlib.heapq.nsmallest(asyncstdlib.iter(folder.iterdir()), n=sys.maxsize, key=_key):
             if await path.is_dir():
@@ -259,4 +265,4 @@ class LocalFile:
             yield path
 
 
-from pylav.players.query.obj import Query  # noqa: E305
+# noqa: E305

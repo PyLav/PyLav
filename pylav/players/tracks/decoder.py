@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import asyncio
 import struct
 
-from dacite import from_dict
+from dacite import from_dict  # type: ignore
 
 from pylav.logging import getLogger
 from pylav.utils.vendored.lavalink_py.datarw import DataReader

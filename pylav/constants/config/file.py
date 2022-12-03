@@ -1,6 +1,7 @@
 import base64
 import os
 from copy import deepcopy
+from typing import Any, cast
 
 import yaml
 from deepdiff import DeepDiff  # type: ignore
@@ -14,7 +15,7 @@ from pylav.logging import getLogger
 LOGGER = getLogger("PyLav.Environment")
 
 with ENV_FILE.open(mode="r") as file:
-    data = yaml.safe_load(file.read())
+    data = cast(dict[str, Any], yaml.safe_load(file.read()))
     data_new = deepcopy(data)
     if (POSTGRES_PORT := data.get("PYLAV__POSTGRES_PORT")) is None:
         POSTGRES_PORT = os.getenv("PYLAV__POSTGRES_PORT", os.getenv("PGPORT"))

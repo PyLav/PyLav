@@ -1,4 +1,5 @@
 from pylav.events.base import PyLavEvent
+from pylav.players.tracks.obj import Track
 
 
 class TrackStartEvent(PyLavEvent):

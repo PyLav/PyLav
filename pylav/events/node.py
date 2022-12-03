@@ -28,6 +28,7 @@ class NodeDisconnectedEvent(PyLavEvent):
     __slots__ = ("node", "code", "reason")
 
     def __init__(self, node: Node, code: int, reason: str) -> None:
+        super().__init__()
         self.node = node
         self.code = code
         self.reason = reason
@@ -50,6 +51,7 @@ class NodeConnectedEvent(PyLavEvent):
     __slots__ = ("node",)
 
     def __init__(self, node: Node) -> None:
+        super().__init__()
         self.node = node
 
 
@@ -81,6 +83,7 @@ class NodeChangedEvent(PyLavEvent):
     __slots__ = ("player", "old_node", "new_node")
 
     def __init__(self, player: Player, old_node: Node, new_node: Node) -> None:
+        super().__init__()
         self.player = player
         self.old_node = old_node
         self.new_node = new_node
@@ -127,6 +130,7 @@ class WebSocketClosedEvent(PyLavEvent):
         channel: discord.channel.VocalGuildChannel,
         event_object: WebSocketClosedEventOpObject,
     ) -> None:
+        super().__init__()
         self.player = player
         self.code = event_object.code
         self.reason = event_object.reason
