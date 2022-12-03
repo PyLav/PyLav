@@ -26,7 +26,7 @@ class NoNodeAvailableException(NodeException):
 class NoNodeWithRequestFunctionalityAvailableException(NodeException):
     """Raised when no node with request functionality is available"""
 
-    def __init__(self, message: str, feature: str, *args, **kwargs):
+    def __init__(self, message: str, feature: str, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
         self.message = message
@@ -36,7 +36,7 @@ class NoNodeWithRequestFunctionalityAvailableException(NodeException):
 class NodeHasNoFiltersException(NodeException):
     """Raised when a node has no filters"""
 
-    def __init__(self, message: str, *args, **kwargs):
+    def __init__(self, message: str, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
         self.message = message
@@ -109,7 +109,7 @@ class LavalinkDownloadFailedException(ManagedLavalinkNodeException, RuntimeError
         Whether the lib should retry downloading the jar.
     """
 
-    def __init__(self, *args, response: aiohttp.ClientResponse, should_retry: bool = False):
+    def __init__(self, *args, response: aiohttp.ClientResponse, should_retry: bool = False) -> None:
         super().__init__(*args)
         self.response = response
         self.should_retry = should_retry

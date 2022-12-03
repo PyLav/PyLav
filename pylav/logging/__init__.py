@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import os
 
-from red_commons.logging import RedTraceLogger
+from red_commons.logging import RedTraceLogger  # type: ignore
 from red_commons.logging import getLogger as redgetLogger
 from red_commons.logging import maybe_update_logger_class
 
