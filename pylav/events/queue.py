@@ -1,11 +1,7 @@
-from typing import TYPE_CHECKING
-
 import discord
 
 from pylav.events.base import PyLavEvent
-
-if TYPE_CHECKING:
-    from pylav.player import Player
+from pylav.players.tracks.obj import Track
 
 
 class QueueEndEvent(PyLavEvent):
@@ -62,6 +58,7 @@ class QueueTrackPositionChangedEvent(PyLavEvent):
     __slots__ = ("player", "before", "after", "requester", "track")
 
     def __init__(self, player: Player, before: int, after: int, requester: discord.Member, track: Track) -> None:
+        super().__init__()
         self.player = player
         self.requester = requester
         self.before = before
@@ -90,6 +87,7 @@ class QueueShuffledEvent(PyLavEvent):
     __slots__ = ("player", "requester")
 
     def __init__(self, player: Player, requester: discord.Member) -> None:
+        super().__init__()
         self.player = player
         self.requester = requester
 
@@ -119,6 +117,7 @@ class QueueTracksRemovedEvent(PyLavEvent):
     __slots__ = ("player", "requester", "tracks")
 
     def __init__(self, player: Player, requester: discord.Member, tracks: list[Track]) -> None:
+        super().__init__()
         self.player = player
         self.requester = requester
         self.tracks = tracks

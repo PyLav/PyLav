@@ -3,7 +3,9 @@ from __future__ import annotations
 import contextlib
 import gzip
 import pathlib
+import typing
 from collections.abc import AsyncIterator
+from os import PathLike
 from typing import Literal
 
 import aiohttp
@@ -77,11 +79,11 @@ class Query:
         search: bool = False,
         start_time=0,
         index=0,
-        query_type: Literal["single", "playlist", "album"] = None,
+        query_type: Literal["single", "playlist", "album"] | None = None,
         recursive: bool = False,
         special_local: bool = False,
         partial: bool = False,
-    ):
+    ) -> None:
         self._query = query
         self._source = source
         self._search = search
@@ -96,10 +98,10 @@ class Query:
         self.update_local_file_cls(LocalFile)
 
     @classmethod
-    def update_local_file_cls(cls, local_file_cls: type[LocalFile]):
+    def update_local_file_cls(cls, local_file_cls: type[LocalFile]) -> None:
         cls.__local_file_cls = local_file_cls
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, typing.Any]:
         return {
             "query": self._query,
             "source": self._source,
@@ -120,7 +122,7 @@ class Query:
         index: bool = False,
         recursive: bool = False,
         partial: bool = False,
-    ):
+    ) -> None:
         if source:
             self._source = query.source
         if search:
@@ -276,6 +278,7 @@ class Query:
     @property
     def query_identifier(self) -> str:
         if self.is_search:
+            assert isinstance(self._query, str)
             if self.is_youtube_music:
                 return f"ytmsearch:{self._query}"
             elif self.is_youtube:
@@ -298,6 +301,7 @@ class Query:
                 return f"{DEFAULT_SEARCH_SOURCE}:{self._query}"
         elif self.is_local:
             return f"{getattr(self._query, 'path', self._query)}"
+        assert isinstance(self._query, str)
         return self._query
 
     @classmethod
@@ -347,6 +351,7 @@ class Query:
             return process_yandex_music(cls, query, partial=partial)
         elif SOURCE_INPUT_MATCH_HTTP.match(query):
             return cls(query, "HTTP", partial=partial)
+        return None
 
     @classmethod
     def __process_search(cls, query: str) -> Query | None:
@@ -372,12 +377,17 @@ class Query:
                 return cls(query, "Yandex Music", search=True)
             else:
                 return cls(query, SUPPORTED_SEARCHES[DEFAULT_SEARCH_SOURCE], search=True)
+        return None
 
     @classmethod
     async def __process_local_playlist(cls, query: str) -> LocalFile:
+        assert cls.__local_file_cls._ROOT_FOLDER is not None
+
         path: aiopath.AsyncPath = aiopath.AsyncPath(query)
         if not await path.exists():
-            path_paths = path.parts[1:] if await maybe_coroutine(path.is_absolute) else path.parts
+            path_paths = typing.cast(
+                list[str | PathLike[str]], path.parts[1:] if await maybe_coroutine(path.is_absolute) else path.parts
+            )
             path = cls.__local_file_cls._ROOT_FOLDER.joinpath(*path_paths)
             if not await path.exists():
                 raise ValueError(f"{path} does not exist")
@@ -392,6 +402,7 @@ class Query:
     async def __process_local(cls, query: str | pathlib.Path | aiopath.AsyncPath, partial: bool = False) -> Query:
         if cls.__local_file_cls is None:
             cls.__local_file_cls = LocalFile
+        assert cls.__local_file_cls._ROOT_FOLDER is not None
         recursively = False
         query = f"{query}"
         if playlist_cls := await cls.__process_playlist(query, partial):
@@ -403,7 +414,9 @@ class Query:
             query = match.group("local_query").strip()
         path: aiopath.AsyncPath = aiopath.AsyncPath(query)
         if not await path.exists():
-            path_paths = path.parts[1:] if await maybe_coroutine(path.is_absolute) else path.parts
+            path_paths = typing.cast(
+                list[str | PathLike[str]], path.parts[1:] if await maybe_coroutine(path.is_absolute) else path.parts
+            )
             path = cls.__local_file_cls._ROOT_FOLDER.joinpath(*path_paths)
             if not await path.exists():
                 raise ValueError(f"{path} does not exist")
@@ -426,6 +439,7 @@ class Query:
                 return cls(query_final, "PLS", query_type="album", special_local=not url, partial=partial)
             elif __ := SOURCE_INPUT_MATCH_PYLAV.match(query):
                 return cls(query_final, "PyLav", query_type="album", special_local=not url, partial=partial)
+        return None
 
     @classmethod
     async def from_string(
@@ -499,7 +513,7 @@ class Query:
 
     async def query_to_string(
         self,
-        max_length: int = None,
+        max_length: int | None = None,
         name_only: bool = False,
         add_ellipsis: bool = True,
         with_emoji: bool = False,
@@ -524,6 +538,7 @@ class Query:
         """
 
         if self.is_local:
+            assert isinstance(self._query, self.__local_file_cls)
             return await self._query.to_string_user(
                 max_length,
                 name_only=name_only,
@@ -532,6 +547,7 @@ class Query:
                 no_extension=no_extension,
                 is_album=self.is_album,
             )
+        assert isinstance(self._query, str)
         if max_length and len(self._query) > max_length:
             if add_ellipsis:
                 return f"{self._query[: max_length - 1].strip()}\N{HORIZONTAL ELLIPSIS}"
@@ -543,6 +559,7 @@ class Query:
         if not self.is_pylav or not self.is_album:
             return
         if self._special_local:
+            assert isinstance(self._query, LocalFile)
             file = self._query.path
         else:
             file = aiopath.AsyncPath(self._query)
@@ -553,10 +570,11 @@ class Query:
                     contents = gzip.decompress(contents)
                 elif ".br" in file.suffixes:
                     contents = brotli.decompress(contents)
-                contents = yaml.safe_load(contents)
-                async for track in asyncstdlib.iter(contents.get("tracks", [])):
+                data_dict = typing.cast(dict[str, typing.Any], yaml.safe_load(contents))
+                async for track in asyncstdlib.iter(data_dict.get("tracks", [])):
                     yield await Query.from_base64(track)
         elif is_url(self._query):
+            assert not isinstance(self._query, LocalFile)
             async with aiohttp.ClientSession(auto_decompress=False, json_serialize=ujson.dumps) as session:
                 async with session.get(self._query) as response:
                     data = await response.read()
@@ -564,13 +582,14 @@ class Query:
                         data = gzip.decompress(data)
                     elif ".br.pylav" in self._query:
                         data = brotli.decompress(data)
-                    data = yaml.safe_load(data)
-                    async for track in asyncstdlib.iter(data.get("tracks", [])):
+                    data_dict = typing.cast(dict[str, typing.Any], yaml.safe_load(data))
+                    async for track in asyncstdlib.iter(data_dict.get("tracks", [])):
                         yield await Query.from_base64(track)
 
     async def _yield_local_tracks(self) -> AsyncIterator[Query]:
         if self.is_album:
             if self.is_local:
+                assert isinstance(self._query, LocalFile)
                 op = self._query.files_in_tree if self._recursive else self._query.files_in_folder
 
                 async for entry in op():
@@ -584,6 +603,7 @@ class Query:
             return
         m3u8 = await load_m3u8(None, uri=f"{self._query}")
         if self._special_local:
+            assert isinstance(self._query, LocalFile)
             file = self._query.path
         else:
             file = aiopath.AsyncPath(self._query)
@@ -591,29 +611,30 @@ class Query:
             if is_url(track):
                 yield await Query.from_string(track, dont_search=True)
             else:
-                path: aiopath.AsyncPath = aiopath.AsyncPath(track)
-                if await path.exists():
-                    yield await Query.from_string(path, dont_search=True)
+                file_path: aiopath.AsyncPath = aiopath.AsyncPath(track)
+                if await file_path.exists():
+                    yield await Query.from_string(file_path, dont_search=True)
                 else:
-                    path = file.parent / path.relative_to(path.anchor)
-                    if await path.exists():
-                        yield await Query.from_string(path, dont_search=True)
+                    file_path_alt = file.parent / file_path.relative_to(file_path.anchor)
+                    if await file_path_alt.exists():
+                        yield await Query.from_string(file_path_alt, dont_search=True)
         async for playlist in asyncstdlib.iter(m3u8.playlists):
             if is_url(playlist.uri):
                 yield await Query.from_string(playlist.uri, dont_search=True)
             else:
-                path: aiopath.AsyncPath = aiopath.AsyncPath(playlist.uri)
-                if await path.exists():
-                    yield await Query.from_string(path, dont_search=True)
+                playlist_path: aiopath.AsyncPath = aiopath.AsyncPath(playlist.uri)
+                if await playlist_path.exists():
+                    yield await Query.from_string(playlist_path, dont_search=True)
                 else:
-                    path = file.parent / path.relative_to(path.anchor)
-                    if await path.exists():
-                        yield await Query.from_string(path, dont_search=True)
+                    playlist_path_alt = file.parent / playlist_path.relative_to(playlist_path.anchor)
+                    if await playlist_path_alt.exists():
+                        yield await Query.from_string(playlist_path_alt, dont_search=True)
 
     async def _yield_pls_tracks(self) -> AsyncIterator[Query]:
         if not self.is_pls or not self.is_album:
             return
         if self._special_local:
+            assert isinstance(self._query, LocalFile)
             file = self._query.path
         else:
             file = aiopath.AsyncPath(self._query)
@@ -634,6 +655,7 @@ class Query:
                                 if await path.exists():
                                     yield await Query.from_string(path, dont_search=True)
         elif is_url(self._query):
+            assert not isinstance(self._query, LocalFile)
             async with aiohttp.ClientSession(json_serialize=ujson.dumps) as session:
                 async with session.get(self._query) as resp:
                     contents = await resp.text()
@@ -686,7 +708,9 @@ class Query:
                 return self._query
         return None
 
-    async def query_to_queue(self, max_length: int = None, partial: bool = False, name_only: bool = False) -> str:
+    async def query_to_queue(
+        self, max_length: int | None = None, partial: bool = False, name_only: bool = False
+    ) -> str:
         if not partial:
             return await self.query_to_string(max_length, name_only=name_only)
         source = len(self.source) + 3
@@ -700,7 +724,7 @@ class Query:
         return self._source
 
     @source.setter
-    def source(self, source: str):
+    def source(self, source: str) -> None:
         if not self.is_search:
             raise ValueError("Source can only be set for search queries")
 

@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import struct
+import typing
 from base64 import b64decode, b64encode
 from io import BytesIO
 
@@ -40,19 +41,19 @@ class DataReader:
 
     def read_boolean(self) -> bool:
         (result,) = struct.unpack("B", self.read_byte())
-        return result != 0
+        return typing.cast(bool, result)
 
     def read_unsigned_short(self) -> int:
         (result,) = struct.unpack(">H", self._read(2))
-        return result
+        return typing.cast(int, result)
 
     def read_int(self) -> int:
         (result,) = struct.unpack(">i", self._read(4))
-        return result
+        return typing.cast(int, result)
 
     def read_long(self) -> int:
         (result,) = struct.unpack(">Q", self._read(8))
-        return result
+        return typing.cast(int, result)
 
     def read_utf(self) -> str:
         text_length = self.read_unsigned_short()

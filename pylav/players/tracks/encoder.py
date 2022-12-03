@@ -34,7 +34,7 @@ def encode_track(
             writer.write_nullable_utf(thumbnail)
         case "yandexmusic":
             writer.write_nullable_utf(thumbnail)
-        case "local" | "http":
+        case "local" | "http" if probe is not None:
             writer.write_utf(probe)
     writer.write_long(0)
     return writer.to_base64()
