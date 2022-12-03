@@ -28,8 +28,8 @@ jobs:
                 pip install bump2version setuptools wheel poetry
         -   name: Retrieve current version
             run: |
-                echo "Current version: $(python setup.py --version)"
-                echo "::set-output name=VERSION::$(python setup.py --version)"
+                echo "Current version: $(poetry version --short)"
+                echo "::set-output name=VERSION::$(poetry version --short)"
             id: current_version
         -   name: Bump Version
             run: |
