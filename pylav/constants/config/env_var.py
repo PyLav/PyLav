@@ -8,6 +8,7 @@ from pylav.logging import getLogger
 
 LOGGER = getLogger("PyLav.Environment")
 
+LOCAL_DEBUGGING = os.getenv("PYLAV__DEBUGGING", False)
 
 POSTGRES_HOST = os.getenv("PYLAV__POSTGRES_HOST", os.getenv("PGHOST"))
 POSTGRES_PORT = os.getenv("PYLAV__POSTGRES_PORT", os.getenv("PGPORT"))

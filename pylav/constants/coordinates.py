@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from src.pylav.constants.city_dump import US_CITY_DUMP
+from pylav.constants.city_dump import US_CITY_DUMP
 
 __all__ = ("REGION_TO_COUNTRY_COORDINATE_MAPPING", "DEFAULT_REGIONS")
 REGION_TO_COUNTRY_COORDINATE_MAPPING: dict[str, tuple[float, float]] = {}
