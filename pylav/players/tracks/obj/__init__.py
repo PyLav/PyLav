@@ -1,18 +1,20 @@
 from __future__ import annotations
 
-import asyncio
 import hashlib
+import struct
 import uuid
 from datetime import timedelta
 from functools import total_ordering
 from typing import Any, Self
 
+import asyncstdlib
 import discord
 from cached_property import cached_property
 from cashews import Cache
-from dacite import from_dict
 
-from pylav.exceptions.track import TrackNotFoundException
+from pylav.constants.regex import SQUARE_BRACKETS, STREAM_TITLE
+from pylav.exceptions.track import InvalidTrackException, TrackNotFoundException
+from pylav.players.query.obj import Query
 from pylav.players.tracks.decoder import async_decoder
 
 CACHE = Cache(name="TrackCache")
@@ -150,7 +152,13 @@ class Track:
             return cls._from_lavalink_track_object(node, data, query, skip_segments, requester, **extra)
 
         if isinstance(data, dict):
-            return cls._from_mapping(node, data, query, skip_segments, requester, **extra)
+            try:
+                return cls._from_mapping(node, data, query, skip_segments, requester, **extra)
+            except KeyError as ke:
+                (missing_key,) = ke.args
+                raise InvalidTrackException(
+                    f"Cannot build a track from partial data! (Missing key: {missing_key})"
+                ) from ke
 
         if data is None or (isinstance(data, str) and data == MISSING):
             return cls._from_query(node, query, skip_segments, requester, **extra)
@@ -229,13 +237,12 @@ class Track:
         return instance
 
     def _copy_with_extras(self, node: None, **extra: Any) -> Self:
-        instance = self.__class__(node, None, None, None)
+        instance = self.__class__(node, self._query, None, None)
         instance._extra = {**self._extra, **extra}
         instance._encoded = self._encoded
         instance._raw_data = self._raw_data
         instance._unique_id = self._unique_id
         instance._is_partial = self._is_partial
-        instance._query = self._query
         return instance
 
     @property
@@ -420,7 +427,7 @@ class Track:
         else:
             return await self.search()
 
-    async def to_json(self) -> dict:
+    async def to_dict(self) -> dict:
         """
         Returns a dict representation of this Track.
         Returns
@@ -441,9 +448,11 @@ class Track:
             "raw_data": self._raw_data,
         }
 
-    async def search(self, player: Player, bypass_cache: bool = False) -> Self:
+    async def search(self, bypass_cache: bool = False) -> Self:
         self._query = await Query.from_string(self._query)
-        response = await player.node.get_track(await self.query(), first=True, bypass_cache=bypass_cache)
+        response = await self._node.node_manager.client.search_query(
+            await self.query(), first=True, bypass_cache=bypass_cache
+        )
         if not response or not response.tracks:
             raise TrackNotFoundException(f"No tracks found for query {await self.query_identifier()}")
         self._encoded = response.tracks[0].encoded
@@ -465,3 +474,135 @@ class Track:
             )
             for track in response.tracks
         ]
+
+    async def _icyparser(self, url: str) -> str | None:
+        try:
+            async with self._node.session.get(url, headers={"Icy-MetaData": "1"}) as resp:
+                metaint = int(resp.headers["icy-metaint"])
+                async for __ in asyncstdlib.iter(range(5)):
+                    await resp.content.readexactly(metaint)
+                    metadata_length = struct.unpack("B", await resp.content.readexactly(1))[0] * 16
+                    metadata = await resp.content.readexactly(metadata_length)
+                    if not (m := STREAM_TITLE.search(metadata.rstrip(b"\0"))):
+                        return None
+                    if title := m.group(1):
+                        title = title.decode("utf-8", errors="replace")
+                        return title
+        except Exception:  # noqa
+            return None
+
+    async def get_track_display_name(
+        self,
+        max_length: int = None,
+        author: bool = True,
+        unformatted: bool = False,
+        with_url: bool = False,
+        escape: bool = True,
+    ) -> str:
+        if unformatted:
+            return await self.get_track_display_name_unformatted(max_length=max_length, author=author, escape=escape)
+        else:
+            return await self.get_track_display_name_formatted(
+                max_length=max_length, author=author, with_url=with_url, escape=escape
+            )
+
+    async def get_track_display_name_unformatted(
+        self,
+        max_length: int = None,
+        author: bool = True,
+        escape: bool = True,
+    ) -> str:
+        if self.is_partial:
+            track_name = await self.get_partial_track_display_name(max_length=max_length)
+        else:
+            track_name = await self.get_full_track_display_name(max_length=max_length, author=author)
+        return self._maybe_escape_markdown(text=track_name, escape=escape)
+
+    async def get_track_display_name_formatted(
+        self,
+        max_length: int = None,
+        author: bool = True,
+        with_url: bool = False,
+        escape: bool = True,
+    ) -> str:
+
+        if self.is_partial:
+            track_name = await self.get_partial_track_display_name(
+                max_length=(max_length - 8) if with_url else max_length
+            )
+            track_name = self._maybe_escape_markdown(text=track_name, escape=escape)
+            if with_url and (query := await self.query()):
+                if not query.is_single and not query.is_custom_playlist:
+                    track_name = f"**[{track_name}]({query.query_identifier})**"
+        else:
+            track_name = await self.get_full_track_display_name(
+                max_length=(max_length - 8) if with_url else max_length, author=author
+            )
+            track_name = self._maybe_escape_markdown(text=track_name, escape=escape)
+            if with_url:
+                track_name = f"**[{track_name}]({await self.uri()})**"
+
+        return track_name
+
+    async def get_partial_track_display_name(self, max_length: int = None) -> str:
+        query = await self.query()
+        track_name = await query.query_to_queue(max_length, partial=True)
+        track_name = SQUARE_BRACKETS.sub("", track_name).strip()
+        if max_length and len(track_name) > (max_length - 1):
+            max_length -= 1
+            return f"{track_name[:max_length]}\N{HORIZONTAL ELLIPSIS}"
+        return track_name
+
+    async def get_full_track_display_name(self, max_length: int = None, author: bool = True) -> str:
+        author_string = f" - {self.author}" if author else ""
+        if await self.query() and await self.is_local():
+            track_name = await self.get_local_query_track_display_name(
+                max_length=max_length,
+                author_string=author_string,
+                unknown_author=self.author != "Unknown artist",
+                unknown_title=self.title != "Unknown title",
+            )
+        else:
+            track_name = await self.get_external_query_track_display_name(
+                max_length=max_length, author_string=author_string
+            )
+        return track_name
+
+    async def get_local_query_track_display_name(
+        self,
+        author_string: str,
+        unknown_author: bool,
+        unknown_title: bool,
+        max_length: int = None,
+    ) -> str:
+        if not (unknown_title and unknown_author):
+            track_name = f"{self.title}{author_string}"
+            track_name = SQUARE_BRACKETS.sub("", track_name).strip()
+            if max_length and len(track_name) > max_length:
+                track_name = f"{track_name[:max_length]}\N{HORIZONTAL ELLIPSIS}"
+            elif not max_length:
+                track_name += f"\n{await (await self.query()).query_to_string(add_ellipsis=False)} "
+        else:
+            track_name = await (await self.query()).query_to_string(max_length, name_only=True)
+            track_name = SQUARE_BRACKETS.sub("", track_name).strip()
+        return track_name
+
+    async def get_external_query_track_display_name(self, author_string: str, max_length: int = None):
+        title = await self.title()
+
+        if await self.stream():
+            icy = await self._icyparser(await self.uri())
+            track_name = icy or f"{title}{author_string}"
+        elif (await self.author()).lower() not in title.lower():
+            track_name = f"{title}{author_string}"
+        else:
+            track_name = title
+
+        track_name = SQUARE_BRACKETS.sub("", track_name).strip()
+        if max_length and len(track_name) > (max_length - 1):
+            max_length -= 1
+            return f"{track_name[:max_length]}\N{HORIZONTAL ELLIPSIS}"
+        return track_name
+
+    def _maybe_escape_markdown(self, text: str, escape: bool = True) -> str:
+        return discord.utils.escape_markdown(text) if escape else text

@@ -3,7 +3,7 @@ import os
 from copy import deepcopy
 
 import yaml
-from deepdiff import DeepDiff
+from deepdiff import DeepDiff  # type: ignore
 
 from pylav._internals.functions import _get_path
 from pylav.constants.config import ENV_FILE
@@ -42,7 +42,10 @@ with ENV_FILE.open(mode="r") as file:
 
     if POSTGRES_SOCKET is not None:
         POSTGRES_PORT = None
+        FALLBACK_POSTGREST_HOST = POSTGRES_HOST
         POSTGRES_HOST = POSTGRES_SOCKET
+    else:
+        FALLBACK_POSTGREST_HOST = POSTGRES_HOST
 
     if (REDIS_FULL_ADDRESS_RESPONSE_CACHE := data.get("PYLAV__REDIS_FULL_ADDRESS_RESPONSE_CACHE")) is None:
         REDIS_FULL_ADDRESS_RESPONSE_CACHE = os.getenv("PYLAV__REDIS_FULL_ADDRESS_RESPONSE_CACHE")

@@ -1,7 +1,6 @@
 import asyncio
 import socket
 from math import asin, cos, sqrt
-from typing import cast
 
 import aiohttp
 import asyncstdlib
@@ -54,10 +53,10 @@ async def get_closest_discord_region(host: str | None = None) -> tuple[str, tupl
             host_ip = None
         else:
             host_ip = await asyncio.to_thread(socket.gethostbyname, host)
-    except Exception:
+    except Exception:  # noqa
         host_ip = None  # If there's any issues getting the ip from the hostname, just use the host ip
     try:
         loc = await get_coordinates(host_ip)
         return await get_closest_region_name_and_coordinate(*loc)
-    except Exception:
+    except Exception:  # noqa
         return "unknown_pylav", (0, 0)
