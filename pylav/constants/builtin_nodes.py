@@ -6,7 +6,7 @@ __all__ = (
 )
 
 from collections.abc import Mapping
-from typing import Any, TypedDict
+from typing import Any, NotRequired, TypedDict
 
 
 class NodeYaml(TypedDict):
@@ -15,9 +15,9 @@ class NodeYaml(TypedDict):
 
 
 class NodeInfo(TypedDict):
-    unique_identifier: int
-    name: str
-    host: str
+    unique_identifier: NotRequired[int]
+    name: NotRequired[str]
+    host: NotRequired[str]
     port: int
     ssl: bool
     password: str
@@ -55,6 +55,15 @@ PYLAV_NODE_SETTINGS: NodeInfo = {
 }
 PYLAV_NODE_SETTINGS["yaml"]["server"]["port"] = PYLAV_NODE_SETTINGS["port"]
 
+PYLAV_LONDON_NODE_SETTINGS: NodeInfo = PYLAV_NODE_SETTINGS.copy()
+PYLAV_LONDON_NODE_SETTINGS["host"] = "ll-gb.draper.wtf"
+PYLAV_LONDON_NODE_SETTINGS["name"] = "PyLav London (Bundled)"
+
+PYLAV_NY_NODE_SETTINGS: NodeInfo = PYLAV_NODE_SETTINGS.copy()
+PYLAV_NY_NODE_SETTINGS["host"] = "ll-us-ny.draper.wtf"
+PYLAV_NY_NODE_SETTINGS["name"] = "PyLav US-NY (Bundled)"
+
+
 BUNDLED_NODES_IDS_HOST_MAPPING: Mapping[int, str] = {
     1: "ll-gb.draper.wtf",
     2: "ll-us-ny.draper.wtf",
@@ -62,16 +71,13 @@ BUNDLED_NODES_IDS_HOST_MAPPING: Mapping[int, str] = {
 }
 
 PYLAV_BUNDLED_NODES_SETTINGS: Mapping[str, NodeInfo] = {
-    "ll-gb.draper.wtf": NodeInfo(
-        **dict(**PYLAV_NODE_SETTINGS, host="ll-gb.draper.wtf", unique_identifier=1, name="PyLav London (Bundled)")
-    ),
-    "ll-us-ny.draper.wtf": NodeInfo(
-        **dict(**PYLAV_NODE_SETTINGS, host="ll-us-ny.draper.wtf", unique_identifier=2, name="PyLav US-NY (Bundled)")
-    ),
+    "ll-gb.draper.wtf": PYLAV_LONDON_NODE_SETTINGS,
+    "ll-us-ny.draper.wtf": PYLAV_NY_NODE_SETTINGS,
     "lava.link": {
         "host": "lava.link",
         "unique_identifier": 1001,
         "name": "Lava.Link (Bundled)",
+        "password": "...",
         "port": 80,
         "resume_timeout": 600,
         "reconnect_attempts": -1,
