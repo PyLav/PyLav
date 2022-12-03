@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 __all__ = (
     "PYLAV_NODES",
     "PYLAV_NODE_SETTINGS",
@@ -7,14 +5,39 @@ __all__ = (
     "PYLAV_BUNDLED_NODES_SETTINGS",
 )
 
+from collections.abc import Mapping
+from typing import Any, TypedDict
+
+
+class NodeYaml(TypedDict):
+    server: dict[str, Any]
+    lavalink: dict[str, Any]
+
+
+class NodeInfo(TypedDict):
+    unique_identifier: int
+    name: str
+    host: str
+    port: int
+    ssl: bool
+    password: str
+    resume_timeout: int
+    reconnect_attempts: int
+    search_only: bool
+    managed: bool
+    disabled_sources: list[str]
+    temporary: bool
+    extras: dict[str, Any]
+    yaml: NodeYaml
+
 
 # Mapping of the PyLav public nodes
-PYLAV_NODES: dict[int, tuple[str, tuple[float, float]]] = {
+PYLAV_NODES: Mapping[int, tuple[str, tuple[float, float]]] = {
     1: ("london", (1.3213765, 103.6956208)),
     2: ("new_york_city", (40.606872, -74.1769477)),
 }
 
-PYLAV_NODE_SETTINGS: dict[str, int | bool | str | list[str] | dict[str, dict]] = {
+PYLAV_NODE_SETTINGS: NodeInfo = {
     "port": 443,
     "ssl": True,
     "password": "default",
@@ -32,18 +55,18 @@ PYLAV_NODE_SETTINGS: dict[str, int | bool | str | list[str] | dict[str, dict]] =
 }
 PYLAV_NODE_SETTINGS["yaml"]["server"]["port"] = PYLAV_NODE_SETTINGS["port"]
 
-BUNDLED_NODES_IDS_HOST_MAPPING: dict[int, str] = {
+BUNDLED_NODES_IDS_HOST_MAPPING: Mapping[int, str] = {
     1: "ll-gb.draper.wtf",
     2: "ll-us-ny.draper.wtf",
     1001: "lava.link",
 }
 
-PYLAV_BUNDLED_NODES_SETTINGS: dict[str, int | bool | str | list[str] | dict[str, dict]] = {
-    "ll-gb.draper.wtf": dict(
-        **PYLAV_NODE_SETTINGS, host="ll-gb.draper.wtf", unique_identifier=1, name="PyLav London (Bundled)"
+PYLAV_BUNDLED_NODES_SETTINGS: Mapping[str, NodeInfo] = {
+    "ll-gb.draper.wtf": NodeInfo(
+        **dict(**PYLAV_NODE_SETTINGS, host="ll-gb.draper.wtf", unique_identifier=1, name="PyLav London (Bundled)")
     ),
-    "ll-us-ny.draper.wtf": dict(
-        **PYLAV_NODE_SETTINGS, host="ll-us-ny.draper.wtf", unique_identifier=2, name="PyLav US-NY (Bundled)"
+    "ll-us-ny.draper.wtf": NodeInfo(
+        **dict(**PYLAV_NODE_SETTINGS, host="ll-us-ny.draper.wtf", unique_identifier=2, name="PyLav US-NY (Bundled)")
     ),
     "lava.link": {
         "host": "lava.link",
