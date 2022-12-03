@@ -39,7 +39,9 @@ SOURCE_INPUT_MATCH_MIXCLOUD = re.compile(
     r"https?://(?:(?:www|beta|m)\.)?mixcloud.com/([^/]+)/(?!stream|uploads|favorites|listens|playlists)([^/]+)/?",
     re.IGNORECASE,
 )
-OCRREMIX_PATTERN = re.compile(r"(?:https?://(?:www\.)?ocremix\.org/remix/)?(?P<ocrmix_id>OCR\d+)(?:.*)?", re.IGNORECASE)
+SOURCE_INPUT_MATCH_OCRREMIX = re.compile(
+    r"(?:https?://(?:www\.)?ocremix\.org/remix/)?(?P<ocrmix_id>OCR\d+)(?:.*)?", re.IGNORECASE
+)
 SOURCE_INPUT_MATCH_PORNHUB = re.compile(
     r"^https?://([a-z]+.)?pornhub\.(com|net)/view_video\.php\?viewkey=([a-zA-Z\d]+).*$", re.IGNORECASE
 )
@@ -128,6 +130,9 @@ SOURCE_INPUT_MATCH_YANDEX_TRACK = re.compile(
 SOURCE_INPUT_MATCH_YANDEX_PLAYLIST = re.compile(
     r"^(https?://)?music\.yandex\.ru/users/(?P<ympidentifier>[0-9A-Za-z@.-]+)/playlists/(?P<ympidentifier2>[0-9]+)/?$"
 )
+SOURCE_INPUT_MATCH_YANDEX = re.compile(
+    "|".join([SOURCE_INPUT_MATCH_YANDEX_TRACK.pattern, SOURCE_INPUT_MATCH_YANDEX_PLAYLIST.pattern])
+)
 
 LOCAL_TRACK_NESTED = re.compile(
     r"^(?P<local_recursive>all|nested|recursive|tree):\s*?(?P<local_query>.*)$", re.IGNORECASE
@@ -149,7 +154,7 @@ SOURCE_INPUT_MATCH_MERGED = re.compile(
                 SOURCE_INPUT_MATCH_CLYPIT,
                 SOURCE_INPUT_MATCH_GETYARN,
                 SOURCE_INPUT_MATCH_MIXCLOUD,
-                OCRREMIX_PATTERN,
+                SOURCE_INPUT_MATCH_OCRREMIX,
                 SOURCE_INPUT_MATCH_PORNHUB,
                 SOURCE_INPUT_MATCH_REDDIT,
                 SOURCE_INPUT_MATCH_SOUNDGASM,
@@ -159,8 +164,7 @@ SOURCE_INPUT_MATCH_MERGED = re.compile(
                 SOURCE_INPUT_MATCH_TWITCH,
                 SOURCE_INPUT_MATCH_VIMEO,
                 SOURCE_INPUT_MATCH_SOUND_CLOUD,
-                SOURCE_INPUT_MATCH_YANDEX_TRACK,
-                SOURCE_INPUT_MATCH_YANDEX_PLAYLIST,
+                SOURCE_INPUT_MATCH_YANDEX,
                 SOURCE_INPUT_MATCH_M3U,
                 SOURCE_INPUT_MATCH_PLS,
                 SOURCE_INPUT_MATCH_PYLAV,
