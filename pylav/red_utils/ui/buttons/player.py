@@ -49,7 +49,7 @@ class DisconnectButton(discord.ui.Button):
                 ephemeral=True,
             )
             return
-        if notify_channel := player.notify_channel:
+        if notify_channel := await player.notify_channel():
             with contextlib.suppress(discord.HTTPException):
                 await notify_channel.send(
                     embed=await self.cog.lavalink.construct_embed(
@@ -100,7 +100,7 @@ class StopTrackButton(discord.ui.Button):
             return
 
         await player.stop()
-        if notify_channel := player.notify_channel:
+        if notify_channel := await player.notify_channel():
             with contextlib.suppress(discord.HTTPException):
                 await notify_channel.send(
                     embed=await self.cog.lavalink.construct_embed(
@@ -157,7 +157,7 @@ class DisconnectAllButton(discord.ui.Button):
             )
             return
         async for player in AsyncIter(players):
-            if notify_channel := player.notify_channel:
+            if notify_channel := await player.notify_channel():
                 with contextlib.suppress(discord.HTTPException):
                     await notify_channel.send(
                         embed=await self.cog.lavalink.construct_embed(
