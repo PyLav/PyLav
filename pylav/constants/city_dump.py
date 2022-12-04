@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __all__ = ("US_CITY_DUMP",)
 
 US_CITY_DUMP = {

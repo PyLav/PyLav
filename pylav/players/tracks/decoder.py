@@ -6,12 +6,13 @@ import struct
 from dacite import from_dict  # type: ignore
 
 from pylav.logging import getLogger
+from pylav.nodes.api.responses.track import Track
 from pylav.utils.vendored.lavalink_py.datarw import DataReader
 
 LOGGER = getLogger("PyLav.Track.Decoder")
 
 
-def decode_track(track: str) -> LavalinkTrackObject:
+def decode_track(track: str) -> Track:
     """Decodes a base64 track string into a Track object.
 
     Parameters
@@ -21,13 +22,13 @@ def decode_track(track: str) -> LavalinkTrackObject:
 
     Returns
     -------
-    :class:`tuple` of :class:`LavalinkTrackObject` and :class:`int`
-    The first element is a LavalinkTrackObject and the second element is encoding version.
+    :class:`Track`
+    The decoded Track object
     """
     reader = DataReader(track)
 
     flags = (reader.read_int() & 0xC0000000) >> 30
-    version = struct.unpack("B", reader.read_byte()) if flags & 1 != 0 else 1
+    __ = struct.unpack("B", reader.read_byte()) if flags & 1 != 0 else 1
 
     title = reader.read_utfm()
     author = reader.read_utfm()
@@ -53,13 +54,13 @@ def decode_track(track: str) -> LavalinkTrackObject:
                 probe = reader.read_utfm()
 
         # Position
-        _ = reader.read_long()
+        reader.read_long()
     except Exception as exc:
         # TODO: Downgrade log to trace for final release
         LOGGER.debug("Failed to decode track", exc_info=exc)
 
     return from_dict(
-        data_class=LavalinkTrackObject,
+        data_class=Track,
         data={
             "encoded": track,
             "info": {
@@ -80,5 +81,5 @@ def decode_track(track: str) -> LavalinkTrackObject:
     )
 
 
-async def async_decoder(track: str) -> LavalinkTrackObject:
-    return await asyncio.to_thread(decode_track, track)
+async def async_decoder(track: str) -> Track:
+    return await asyncio.to_thread(decode_track, track=track)

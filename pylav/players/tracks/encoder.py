@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 
 from pylav.logging import getLogger
@@ -54,5 +56,15 @@ async def async_encoder(
 ) -> str:
 
     return await asyncio.to_thread(
-        encode_track, title, author, length, identifier, is_stream, uri, source, thumbnail, isrc, probe
+        encode_track,
+        title=title,
+        author=author,
+        length=length,
+        identifier=identifier,
+        is_stream=is_stream,
+        uri=uri,
+        source=source,
+        thumbnail=thumbnail,
+        isrc=isrc,
+        probe=probe,
     )

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __ZERO__ = b"MHp2Zg=="
 __MOMONGA__ = b"NTh3Yw=="
 __LIGHT__ = b"|OW5hMQ=="

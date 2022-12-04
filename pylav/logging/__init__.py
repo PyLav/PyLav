@@ -18,5 +18,5 @@ logging.getLogger("apscheduler").setLevel(logging.ERROR)
 logging.getLogger("aiohttp_client_cache").setLevel(logging.ERROR)
 
 
-def getLogger(name: str) -> RedTraceLogger:
+def getLogger(name: str) -> RedTraceLogger:  # noqa: N802
     return redgetLogger(f"{LOGGER_PREFIX}{name}")
