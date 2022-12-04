@@ -11,7 +11,7 @@
   # Source
 -   pylav/config_migrations/*
 -   pylav/migrations/*
--   pylav/sql/*
+-   pylav/database/*
 'Category: Radio':
 -   pylav/radio/*
 'Category: CI':
