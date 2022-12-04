@@ -6,7 +6,7 @@ import typing
 import uuid
 from datetime import timedelta
 from functools import total_ordering
-from typing import Any, Dict, Self
+from typing import Any, Self
 
 import asyncstdlib
 import discord
@@ -15,6 +15,7 @@ from cashews import Cache  # type: ignore
 
 from pylav.constants.regex import SQUARE_BRACKETS, STREAM_TITLE
 from pylav.exceptions.track import InvalidTrackException, TrackNotFoundException
+from pylav.nodes.api.responses.track import Track as APITrack
 from pylav.players.query.obj import Query
 from pylav.players.tracks.decoder import async_decoder
 
@@ -120,7 +121,7 @@ class Track:
     def build_track(
         cls,
         node: None,
-        data: Track | LavalinkTrackObject | dict[str, Any] | str | None,
+        data: Track | APITrack | dict[str, Any] | str | None,
         query: Query,
         skip_segments: list[str] | None = None,
         requester: discord.abc.User | int | None = None,
@@ -149,7 +150,7 @@ class Track:
             return data
 
         # Check if data is a LavalinkTrackObject and process it.
-        if isinstance(data, LavalinkTrackObject):
+        if isinstance(data, APITrack):
             return cls._from_lavalink_track_object(node, data, query, skip_segments, requester, **extra)
 
         if isinstance(data, dict):
@@ -173,7 +174,7 @@ class Track:
     def _from_lavalink_track_object(
         cls,
         node: None,
-        data: LavalinkTrackObject,
+        data: APITrack,
         query: Query,
         skip_segments: list[str] | None = None,
         requester: discord.abc.User | int | None = None,
@@ -428,7 +429,7 @@ class Track:
     @CACHE.cache(ttl=timedelta(minutes=10), key="user:{self.unique_identifier}")
     async def fetch_full_track_data(
         self,
-    ) -> LavalinkTrackObject:
+    ) -> APITrack:
         if self.encoded:
             return await async_decoder(self.encoded)
         else:
@@ -455,7 +456,7 @@ class Track:
             "raw_data": self._raw_data,
         }
 
-    async def search(self, bypass_cache: bool = False) -> Track:
+    async def search(self, bypass_cache: bool = False) -> Self:
         self._query = await Query.from_string(self._query)
         response = await self._node.node_manager.client.search_query(
             await self.query(), first=True, bypass_cache=bypass_cache
@@ -467,7 +468,7 @@ class Track:
         self._unique_id = hashlib.md5()
         self._unique_id.update(self.encoded.encode())
         self._is_partial = False
-        return self
+        return response
 
     async def search_all(self, player: Player, requester: int, bypass_cache: bool = False) -> list[Track]:
         self._query = await Query.from_string(self._query)
@@ -613,5 +614,6 @@ class Track:
             return f"{track_name[:max_length]}\N{HORIZONTAL ELLIPSIS}"
         return track_name
 
-    def _maybe_escape_markdown(self, text: str, escape: bool = True) -> str:
+    @staticmethod
+    def _maybe_escape_markdown(text: str, escape: bool = True) -> str:
         return discord.utils.escape_markdown(text) if escape else text

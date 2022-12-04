@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import discord
 
 from pylav.events.base import PyLavEvent
@@ -21,7 +23,6 @@ class QueueEndEvent(PyLavEvent):
     __slots__ = ("player",)
 
     def __init__(self, player: Player) -> None:
-        super().__init__()
         self.player = player
 
 
@@ -58,7 +59,6 @@ class QueueTrackPositionChangedEvent(PyLavEvent):
     __slots__ = ("player", "before", "after", "requester", "track")
 
     def __init__(self, player: Player, before: int, after: int, requester: discord.Member, track: Track) -> None:
-        super().__init__()
         self.player = player
         self.requester = requester
         self.before = before
@@ -87,7 +87,6 @@ class QueueShuffledEvent(PyLavEvent):
     __slots__ = ("player", "requester")
 
     def __init__(self, player: Player, requester: discord.Member) -> None:
-        super().__init__()
         self.player = player
         self.requester = requester
 
@@ -117,7 +116,6 @@ class QueueTracksRemovedEvent(PyLavEvent):
     __slots__ = ("player", "requester", "tracks")
 
     def __init__(self, player: Player, requester: discord.Member, tracks: list[Track]) -> None:
-        super().__init__()
         self.player = player
         self.requester = requester
         self.tracks = tracks

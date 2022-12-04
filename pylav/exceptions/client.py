@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pylav.exceptions.base import PyLavException
 
 

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import discord
 
 MINUS = discord.PartialEmoji(name="minus", animated=False, id=965672202013925447)

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import re
 
 VERSION_SNAPSHOT = re.compile(r"^(?P<commit>.*?)-SNAPSHOT$")
