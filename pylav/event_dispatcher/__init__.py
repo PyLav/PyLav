@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import inspect
 from typing import TYPE_CHECKING
 
-from pylav.managers.event_dispatcher.utils import get_event_name
+from pylav.event_dispatcher.utils import get_event_name
 
 if TYPE_CHECKING:
     from pylav.events.base import PyLavEvent

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import pathlib
 import sys
@@ -50,6 +52,7 @@ if not ENV_FILE.exists():
         MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN as MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN,
     )
     from pylav.constants.config.env_var import POSTGRES_DATABASE as POSTGRES_DATABASE
+    from pylav.constants.config.env_var import POSTGRES_HOST as POSTGRES_HOST
     from pylav.constants.config.env_var import POSTGRES_PASSWORD as POSTGRES_PASSWORD
     from pylav.constants.config.env_var import POSTGRES_PORT as POSTGRES_PORT
     from pylav.constants.config.env_var import POSTGRES_SOCKET as POSTGRES_SOCKET
@@ -91,6 +94,7 @@ else:
         MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN as MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN,
     )
     from pylav.constants.config.file import POSTGRES_DATABASE as POSTGRES_DATABASE
+    from pylav.constants.config.file import POSTGRES_HOST as POSTGRES_HOST
     from pylav.constants.config.file import POSTGRES_PASSWORD as POSTGRES_PASSWORD
     from pylav.constants.config.file import POSTGRES_PORT as POSTGRES_PORT
     from pylav.constants.config.file import POSTGRES_SOCKET as POSTGRES_SOCKET
@@ -108,3 +112,5 @@ else:
     )
     from pylav.constants.config.file import USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE as USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE
     from pylav.constants.config.file import USE_BUNDLED_EXTERNAL_PYLAV_NODE as USE_BUNDLED_EXTERNAL_PYLAV_NODE
+
+BROTLI_ENABLED = False
