@@ -1,9 +1,9 @@
 import inspect
+from typing import TYPE_CHECKING
 
 from pylav.managers.event_dispatcher.utils import get_event_name
 
 if TYPE_CHECKING:
-    from pylav.core.client import Client
     from pylav.events.base import PyLavEvent
     from pylav.events.queue import QueueEndEvent
     from pylav.events.track import TrackStuckEvent
@@ -35,7 +35,7 @@ class DispatchManager:
 
     __slots__ = ("_client", "dispatcher", "mapping")
 
-    def __init__(self, client: Client):
+    def __init__(self, client: Client) -> None:
         from pylav import events
         from pylav.events.base import PyLavEvent
 

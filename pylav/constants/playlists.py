@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __all__ = (
     "BUNDLED_PYLAV_PLAYLISTS_IDS",
     "BUNDLED_SPOTIFY_PLAYLIST_IDS",

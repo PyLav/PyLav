@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from discord.app_commands import AppCommandError
 from discord.ext.commands import CommandError
 

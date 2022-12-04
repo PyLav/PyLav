@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __all__ = (
     "PYLAV_NODES",
     "PYLAV_NODE_SETTINGS",
