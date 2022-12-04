@@ -74,7 +74,7 @@ class Equalizer(FilterMixin):
         _dict: dict[str, float] = collections.defaultdict(float)
         for level in levels:
             _dict[str(level["band"])] = level["gain"]
-        equalizer = [{"band": i, "gain": _dict[str(i)]} for i in range(_SUPPORTED_BANDS) if _dict[str(i)] != 0.0]
+        equalizer = [{"band": i, "gain": _dict[str(i)]} for i in range(_SUPPORTED_BANDS) if _dict[str(i)]]
         return equalizer
 
     @classmethod
