@@ -8,6 +8,7 @@ from pylav.utils.vendored.lavalink_py.datarw import DataWriter
 LOGGER = getLogger("PyLav.Track.Decoder")
 
 
+# noinspection SpellCheckingInspection
 def encode_track(
     title: str,
     author: str,
@@ -42,6 +43,7 @@ def encode_track(
     return writer.to_base64()
 
 
+# noinspection SpellCheckingInspection
 async def async_encoder(
     title: str,
     author: str,

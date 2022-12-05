@@ -5,6 +5,7 @@ from pylav.constants.city_dump import US_CITY_DUMP
 __all__ = ("REGION_TO_COUNTRY_COORDINATE_MAPPING", "DEFAULT_REGIONS")
 REGION_TO_COUNTRY_COORDINATE_MAPPING: dict[str, tuple[float, float]] = {}
 REGION_TO_COUNTRY_COORDINATE_MAPPING |= US_CITY_DUMP
+# noinspection SpellCheckingInspection
 REGION_TO_COUNTRY_COORDINATE_MAPPING |= {
     "hongkong": (22.2793278, 114.1628131),
     "singapore": (1.357107, 103.8194992),

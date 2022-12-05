@@ -7,6 +7,7 @@ __all__ = (
     "SUPPORTED_FILTERS",
 )
 
+# noinspection SpellCheckingInspection
 SUPPORTED_SEARCHES = {
     "ytmsearch": "YouTube Music",
     "ytsearch": "YouTube",
@@ -16,6 +17,7 @@ SUPPORTED_SEARCHES = {
     "dzsearch": "Deezer",
 }
 
+# noinspection SpellCheckingInspection
 SUPPORTED_SOURCES = {
     # https://github.com/freyacodes/Lavalink
     "youtube",

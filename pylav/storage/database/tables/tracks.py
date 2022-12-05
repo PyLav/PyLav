@@ -19,6 +19,7 @@ class TrackRow(Table, db=DATABASE_ENGINE, tablename="track"):
     sourceName = Text(null=True, default=None, index=True)
     title = Text(null=True, default=None, index=True, index_method=IndexMethod.gin)
     uri = Text(null=True, default=None, index=True)
+    # noinspection SpellCheckingInspection
     isrc = Text(null=True, default=None, index=True)
     encoded = Text(null=False, index=True, primary_key=True)
     queries = M2M(LazyTableReference("TrackToQueries", module_path="pylav.sql.tables.m2m"))

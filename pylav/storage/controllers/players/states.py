@@ -1,0 +1,53 @@
+from __future__ import annotations
+
+import asyncio
+from collections.abc import AsyncIterator
+from typing import Any
+
+from pylav.logging import getLogger
+from pylav.storage.database.tables.player_state import PlayerStateRow
+from pylav.storage.modals.player.state import PlayerStateModel
+
+LOGGER = getLogger("PyLav.Database.Controller.Player.State")
+
+
+class PlayerStateController:
+    __slots__ = ("_client",)
+
+    def __init__(self, client: Client) -> None:
+        self._client = client
+
+    @property
+    def client(self) -> Client:
+        return self._client
+
+    async def save_players(
+        self, players: list[dict[str, int | float | bool | dict[str, Any] | None | list[dict[str, Any]]]]
+    ) -> None:
+        await asyncio.gather(*[self.save_player(player) for player in players])
+        LOGGER.debug("Saved %s players", len(players))
+
+    async def save_player(
+        self, player: dict[str, int | float | bool | dict[str, Any] | None | list[dict[str, Any]]]
+    ) -> None:
+        await PlayerStateModel(bot=self.client.bot.user.id, **player).save()
+        LOGGER.trace("Saved player %s", player.get("id"))
+
+    async def fetch_player(self, guild_id: int) -> PlayerStateModel | None:
+        return await PlayerStateModel.get(bot_id=self._client.bot.user.id, guild_id=guild_id)
+
+    async def fetch_all_players(self) -> AsyncIterator[PlayerStateModel]:
+        for entry in await PlayerStateRow.select(
+            *(PlayerStateRow.all_columns(exclude=[PlayerStateRow.primary_key]))
+        ).where(
+            PlayerStateRow.bot == self.client.bot.user.id  # type: ignore
+        ):
+            yield PlayerStateModel(**entry)
+
+    async def delete_player(self, guild_id: int) -> None:
+        await PlayerStateRow.delete().where(
+            (PlayerStateRow.bot == self.client.bot.user.id) & (PlayerStateRow.id == guild_id)
+        )
+
+    async def delete_all_players(self) -> None:
+        await PlayerStateRow.delete().where(PlayerStateRow.bot == self.client.bot.user.id)  # type: ignore

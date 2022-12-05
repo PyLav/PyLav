@@ -7,6 +7,7 @@ import sys
 import aiopath  # type: ignore
 import platformdirs
 
+# noinspection PyProtectedMember
 from pylav._internals.pylav_yaml_builder import build_from_envvars
 from pylav.logging import getLogger
 
@@ -14,11 +15,11 @@ LOGGER = getLogger("PyLav.Environment")
 
 INSTANCE_NAME = None
 
-APPDIR = platformdirs.PlatformDirs("PyLav")
-__CONFIG_DIR = pathlib.Path(APPDIR.user_config_path)
+LIB_DIR = platformdirs.PlatformDirs("PyLav")
+__CONFIG_DIR = pathlib.Path(LIB_DIR.user_config_path)
 _system_user = sys.platform == "linux" and 0 < os.getuid() < 1000
 if _system_user:
-    __CONFIG_DIR = pathlib.Path(APPDIR.site_data_path)
+    __CONFIG_DIR = pathlib.Path(LIB_DIR.site_data_path)
 __CONFIG_DIR.mkdir(parents=True, exist_ok=True)
 CONFIG_DIR = aiopath.AsyncPath(__CONFIG_DIR)
 

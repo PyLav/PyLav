@@ -15,6 +15,7 @@ class Info:
     uri: str | None = None
     sourceName: str | None = None
     thumbnail: str | None = None
+    # noinspection SpellCheckingInspection
     isrc: str | None = None
     probeInfo: str | None = None
 
@@ -22,6 +23,7 @@ class Info:
         return dataclasses.asdict(self)
 
     def to_database(self) -> dict[str, str | int | bool | None]:
+        # noinspection SpellCheckingInspection
         return {
             "identifier": self.identifier,
             "title": self.title,

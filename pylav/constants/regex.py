@@ -35,12 +35,15 @@ LAVALINK_VERSION_LINE = re.compile(rb"Version:\s+(?P<version>.+?)\n")
 LAVALINK__READY_LINE = re.compile(rb"Lavalink is ready to accept connections")
 LAVALINK_FAILED_TO_START = re.compile(rb"Web server failed to start\. (.*)")
 
+# noinspection SpellCheckingInspection
 SOURCE_INPUT_MATCH_CLYPIT = re.compile(r"(http://|https://(www.)?)?clyp\.it/(.*)", re.IGNORECASE)
+# noinspection SpellCheckingInspection
 SOURCE_INPUT_MATCH_GETYARN = re.compile(r"(?:http://|https://(?:www.)?)?getyarn.io/yarn-clip/(.*)", re.IGNORECASE)
 SOURCE_INPUT_MATCH_MIXCLOUD = re.compile(
     r"https?://(?:(?:www|beta|m)\.)?mixcloud.com/([^/]+)/(?!stream|uploads|favorites|listens|playlists)([^/]+)/?",
     re.IGNORECASE,
 )
+# noinspection SpellCheckingInspection
 SOURCE_INPUT_MATCH_OCRREMIX = re.compile(
     r"(?:https?://(?:www\.)?ocremix\.org/remix/)?(?P<ocrmix_id>OCR\d+)(?:.*)?", re.IGNORECASE
 )
@@ -54,6 +57,7 @@ SOURCE_INPUT_MATCH_REDDIT = re.compile(
     r"https://v\.redd\.it/([^/]+)(?:.*)?",
     re.IGNORECASE,
 )
+# noinspection SpellCheckingInspection
 SOURCE_INPUT_MATCH_SOUNDGASM = re.compile(
     r"https?://soundgasm\.net/u/(?P<soundgasm_path>(?P<soundgasm_author>[^/]+)/[^/]+)", re.IGNORECASE
 )
@@ -110,6 +114,7 @@ SOURCE_INPUT_MATCH_YOUTUBE = re.compile(
     r"(?:http://|https://|)(?:www\.|m\.)(?P<youtube_music>music\.)?youtu(be\.com|\.be)", re.IGNORECASE
 )
 SOURCE_INPUT_MATCH_SPEAK = re.compile(r"^(?P<speak_source>speak):\s*?(?P<speak_query>.*)$", re.IGNORECASE)
+# noinspection SpellCheckingInspection
 SOURCE_INPUT_MATCH_GCTSS = re.compile(r"^(?P<gctts_source>tts://)\s*?(?P<gctts_query>.*)$", re.IGNORECASE)
 SOURCE_INPUT_MATCH_SEARCH = re.compile(
     r"^((?P<search_source>ytm|yt|sp|sc|am|dz)search|(?P<search_deezer_isrc>dzisrc)):\s*?(?P<search_query>.*)$",

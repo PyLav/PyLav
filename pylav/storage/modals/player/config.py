@@ -747,7 +747,7 @@ class PlayerModel(CachedModel, metaclass=CachedSingletonByKey):
         await self.update_cache((self.fetch_dj_roles, set()), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
 
-    async def _roleid_in_dj_roles(self, role_id: int) -> bool:
+    async def _role_id_in_dj_roles(self, role_id: int) -> bool:
         return await PlayerRow.exists().where(
             (PlayerRow.id == self.id) & (PlayerRow.bot == self.bot) & PlayerRow.dj_roles.any(role_id)
         )

@@ -3,6 +3,7 @@ from __future__ import annotations
 import base64
 import os
 
+# noinspection PyProtectedMember
 from pylav._internals.functions import _get_path
 from pylav.constants.node_features import SUPPORTED_SEARCHES
 from pylav.constants.specials import ANIME
@@ -13,9 +14,13 @@ LOGGER = getLogger("PyLav.Environment")
 LOCAL_DEBUGGING = os.getenv("PYLAV__DEBUGGING", False)
 
 POSTGRES_HOST = os.getenv("PYLAV__POSTGRES_HOST", os.getenv("PGHOST"))
+# noinspection SpellCheckingInspection
 POSTGRES_PORT = os.getenv("PYLAV__POSTGRES_PORT", os.getenv("PGPORT"))
+# noinspection SpellCheckingInspection
 POSTGRES_PASSWORD = os.getenv("PYLAV__POSTGRES_PASSWORD", os.getenv("PGPASSWORD"))
+# noinspection SpellCheckingInspection
 POSTGRES_USER = os.getenv("PYLAV__POSTGRES_USER", os.getenv("PGUSER"))
+# noinspection SpellCheckingInspection
 POSTGRES_DATABASE = os.getenv("PYLAV__POSTGRES_DB", os.getenv("PGDATABASE"))
 POSTGRES_SOCKET = os.getenv("PYLAV__POSTGRES_SOCKET")
 if POSTGRES_SOCKET is not None:
@@ -47,10 +52,13 @@ TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS = max(
     int(os.getenv("PYLAV__TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS", "7")), 7
 )
 
+# noinspection SpellCheckingInspection
 DEFAULT_SEARCH_SOURCE = os.getenv("PYLAV__DEFAULT_SEARCH_SOURCE", "dzsearch")
 if DEFAULT_SEARCH_SOURCE not in SUPPORTED_SEARCHES:
+    # noinspection SpellCheckingInspection
     LOGGER.warning("Invalid search source %s, defaulting to dzsearch", DEFAULT_SEARCH_SOURCE)
     LOGGER.info("Valid search sources are %s", ", ".join(SUPPORTED_SEARCHES.keys()))
+    # noinspection SpellCheckingInspection
     DEFAULT_SEARCH_SOURCE = "dzsearch"
 
 MANAGED_NODE_SPOTIFY_CLIENT_ID = os.getenv("PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_ID", "")

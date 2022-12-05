@@ -8,7 +8,7 @@
 
 # Documentation
 ### Installation
- - [Click Here](./SETUP.md)
+ - [Click Here](SETUP.md)
 ---------------------------
 ### Requirements
 - PostgresSQL 14 server
@@ -20,7 +20,7 @@
 
 ### Environment Variables
 Note - All environment variables except `PYLAV__LOGGER_PREFIX` can be configured from the `pylav.yaml` file which should reside in the home directory of the user running the bot.
-An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml), if you don't create the file yourself pylav will do so on the first run, and once the file exists it will be preferred over the Environment Variable set.
+An example of the file can be found at [pylav.example.yaml](pylav.example.yaml), if you don't create the file yourself pylav will do so on the first run, and once the file exists it will be preferred over the Environment Variable set.
 #### Required
 - PyLav has a configuration file usually stored on the users home directory, this file is called `pylav.yaml`.
   -  For environments where the home directory is not writable or an existing file should be used instead, the file specified via the `PYLAV__YAML_CONFIG` environment variable (Note: this should be a valid YAML file).

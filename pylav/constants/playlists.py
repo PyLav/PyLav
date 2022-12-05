@@ -19,6 +19,7 @@ BUNDLED_DEEZER_PLAYLIST_IDS = set(range(2000001, 2000074))
 
 BUNDLED_PLAYLIST_IDS = BUNDLED_PYLAV_PLAYLISTS_IDS | BUNDLED_SPOTIFY_PLAYLIST_IDS | BUNDLED_DEEZER_PLAYLIST_IDS
 
+# noinspection SpellCheckingInspection
 BUNDLED_PYLAV_PLAYLISTS = {
     1: (
         "Aikaterna's curated tracks",
@@ -31,6 +32,7 @@ BUNDLED_PYLAV_PLAYLISTS = {
         "YT",
     ),
 }
+# noinspection SpellCheckingInspection
 BUNDLED_SPOTIFY_PLAYLIST = {
     1000001: ("2seaovjQuA2cMgltyLQUtd", "CYBER//", "playlist"),  # Predä
     1000002: ("0rSd8LoXBD5tEBbSsbXqbc", "PHONK//", "playlist"),  # Predä
