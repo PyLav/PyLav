@@ -53,6 +53,7 @@ def process_deezer(cls: type[Query], query: str, partial: bool = False) -> Query
     if search is None:
         raise ValueError("Invalid Deezer query")
     data = search.groupdict()
+    # noinspection SpellCheckingInspection
     query_type = data.get("dztype")
     return cls(
         query,

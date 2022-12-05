@@ -8,6 +8,8 @@ from collections.abc import AsyncIterator
 
 import aiopath
 import asyncstdlib
+
+# noinspection PyProtectedMember
 from discord.utils import maybe_coroutine
 
 try:
@@ -100,6 +102,7 @@ class LocalFile:
 
     def __init__(self, path: str | pathlib.Path | aiopath.AsyncPath):
         if self._ROOT_FOLDER is None:
+            # noinspection SpellCheckingInspection
             raise RuntimeError(
                 _("Root folder not initialized, call Client.update_localtracks_folder(folder: str | pathlib.Path)")
             )
@@ -164,7 +167,7 @@ class LocalFile:
         if string.startswith("/") or string.startswith("\\"):
             string = string[1:]
         if length is not None:
-            string = string[length * -1 :]
+            string = string[length * -1 :]  # noqa: E203
         if add_ellipsis and length is not None and len(string) > length:
             string = f"\N{HORIZONTAL ELLIPSIS}{string[3:].strip()}"
         if with_emoji:
@@ -221,8 +224,9 @@ class LocalFile:
             string = os.path.join(*string_list)
         if string.startswith("/") or string.startswith("\\"):
             string = string[1:]
+
         if length is not None and len(string) > length:
-            string = string[length * -1 :]
+            string = string[length * -1 :]  # noqa: E203
         if length is not None and add_ellipsis and len(string) > length:
             string = f"\N{HORIZONTAL ELLIPSIS}{string[length * -1:].strip()}"
         return string
@@ -263,6 +267,3 @@ class LocalFile:
         parent = self.path if await self.path.is_dir() else self.path.parent
         async for path in self._get_entries_in_folder(parent, recursive=True, show_folders=True, folder_only=True):
             yield path
-
-
-# noqa: E305

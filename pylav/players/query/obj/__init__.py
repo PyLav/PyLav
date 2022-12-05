@@ -14,6 +14,8 @@ import asyncstdlib
 import brotli
 import ujson
 import yaml
+
+# noinspection PyProtectedMember
 from discord.utils import maybe_coroutine
 
 from pylav.constants import MAX_RECURSION_DEPTH
@@ -56,6 +58,7 @@ from pylav.players.tracks.decoder import async_decoder
 from pylav.utils.validators import is_url
 
 
+# noinspection SpellCheckingInspection
 class Query:
     __slots__ = (
         "_query",
@@ -381,6 +384,7 @@ class Query:
 
     @classmethod
     async def __process_local_playlist(cls, query: str) -> LocalFile:
+        # noinspection PyProtectedMember
         assert cls.__local_file_cls._ROOT_FOLDER is not None
 
         path: aiopath.AsyncPath = aiopath.AsyncPath(query)
@@ -388,6 +392,7 @@ class Query:
             path_paths = typing.cast(
                 list[str | PathLike[str]], path.parts[1:] if await maybe_coroutine(path.is_absolute) else path.parts
             )
+            # noinspection PyProtectedMember
             path = cls.__local_file_cls._ROOT_FOLDER.joinpath(*path_paths)
             if not await path.exists():
                 raise ValueError(f"{path} does not exist")
@@ -402,6 +407,7 @@ class Query:
     async def __process_local(cls, query: str | pathlib.Path | aiopath.AsyncPath, partial: bool = False) -> Query:
         if cls.__local_file_cls is None:
             cls.__local_file_cls = LocalFile
+        # noinspection PyProtectedMember
         assert cls.__local_file_cls._ROOT_FOLDER is not None
         recursively = False
         query = f"{query}"
@@ -417,6 +423,7 @@ class Query:
             path_paths = typing.cast(
                 list[str | PathLike[str]], path.parts[1:] if await maybe_coroutine(path.is_absolute) else path.parts
             )
+            # noinspection PyProtectedMember
             path = cls.__local_file_cls._ROOT_FOLDER.joinpath(*path_paths)
             if not await path.exists():
                 raise ValueError(f"{path} does not exist")

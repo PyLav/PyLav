@@ -171,6 +171,7 @@ class QueryModel(CachedModel, metaclass=CachedSingletonByKey):
         """
         defaults = {QueryRow.name: name}
         query_row = await QueryRow.objects().get_or_create(QueryRow.identifier == self.id, defaults)
+        # noinspection PyProtectedMember
         if not query_row._was_created:
             await QueryRow.update(defaults).where(QueryRow.identifier == self.id)
         try:

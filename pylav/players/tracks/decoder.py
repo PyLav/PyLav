@@ -12,6 +12,7 @@ from pylav.utils.vendored.lavalink_py.datarw import DataReader
 LOGGER = getLogger("PyLav.Track.Decoder")
 
 
+# noinspection SpellCheckingInspection
 def decode_track(track: str) -> Track:
     """Decodes a base64 track string into a Track object.
 

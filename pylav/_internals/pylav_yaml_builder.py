@@ -46,6 +46,7 @@ def build_from_envvars() -> None:
         USE_BUNDLED_EXTERNAL_PYLAV_NODE,
     )
 
+    # noinspection SpellCheckingInspection
     data = {
         "PYLAV__POSTGRES_PORT": POSTGRES_PORT,
         "PYLAV__POSTGRES_PASSWORD": POSTGRES_PASSWORD,

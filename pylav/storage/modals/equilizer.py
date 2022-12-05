@@ -81,6 +81,7 @@ class EqualizerModel:
             .output(load_json=True)
             .get_or_create(EqualizerRow.id == self.id, defaults=values)
         )
+        # noinspection PyProtectedMember
         if not eq._was_created:
             await EqualizerRow.update(values).where(EqualizerRow.id == self.id)
         return EqualizerModel(**eq.to_dict())
@@ -240,8 +241,8 @@ class EqualizerModel:
                         cbio.write(brotli.compress(yaml.dump(data, encoding="utf-8")))
                     else:
                         compression = "gzip"
-                        with gzip.GzipFile(fileobj=cbio, mode="wb", compresslevel=9) as gfile:
-                            yaml.safe_dump(data, gfile, default_flow_style=False, sort_keys=False, encoding="utf-8")
+                        with gzip.GzipFile(fileobj=cbio, mode="wb", compresslevel=9) as gzip_file:
+                            yaml.safe_dump(data, gzip_file, default_flow_style=False, sort_keys=False, encoding="utf-8")
                     cbio.seek(0)
                     LOGGER.debug("SIZE COMPRESSED playlist [%s] (%s): %s", compression, self.name, sys.getsizeof(cbio))
                     yield cbio, compression

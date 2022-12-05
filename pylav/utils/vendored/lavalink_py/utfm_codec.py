@@ -69,4 +69,5 @@ def read_utfm(utf_len: int, utf_bytes: bytes) -> str:
         else:
             raise UnicodeError(f"malformed input around byte {count}")
 
+    # noinspection SpellCheckingInspection
     return "".join(chars).encode("utf-16", "surrogatepass").decode("utf-16")

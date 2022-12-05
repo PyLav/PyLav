@@ -4,6 +4,7 @@ import secrets
 
 from pylav import __version__
 
+# noinspection SpellCheckingInspection
 NODE_DEFAULT_SETTINGS = {
     "server": {"port": 2154, "address": "localhost"},
     "lavalink": {

@@ -440,6 +440,8 @@ class LibConfigModel(CachedModel, metaclass=CachedSingletonByKey):
         """
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
+
+        # noinspection PyPep8
         await LibConfigRow.raw(
             """
             INSERT INTO lib_config (id, bot, next_execution_update_bundled_external_playlists)
@@ -605,6 +607,7 @@ class LibConfigModel(CachedModel, metaclass=CachedSingletonByKey):
         if data:
             data["java_path"] = get_true_path(data["java_path"], data["java_path"])
             return data
+        # noinspection PyPep8
         return {
             "id": self.id,
             "bot": self.bot,
