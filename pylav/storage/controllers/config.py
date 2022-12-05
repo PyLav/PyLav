@@ -10,8 +10,8 @@ from pylav.storage.database.tables.playlists import PlaylistRow
 from pylav.storage.database.tables.queries import QueryRow
 from pylav.storage.database.tables.tracks import TrackRow
 from pylav.storage.database.tables.version import BotVersionRow
-from pylav.storage.modals.config import LibConfigModel
-from pylav.storage.modals.version import BotVersion
+from pylav.storage.models.config import Config
+from pylav.storage.models.version import BotVersion
 
 
 class ConfigController:
@@ -79,8 +79,8 @@ class ConfigController:
 
     def get_config(
         self,
-    ) -> LibConfigModel:
-        return LibConfigModel(id=1, bot=self.client.bot.user.id)
+    ) -> Config:
+        return Config(id=1, bot=self.client.bot.user.id)
 
     def get_bot_db_version(self) -> BotVersion:
         return BotVersion(id=self._client.bot.user.id)

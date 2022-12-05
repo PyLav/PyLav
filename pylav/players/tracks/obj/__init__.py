@@ -18,6 +18,7 @@ from pylav.exceptions.track import InvalidTrackException, TrackNotFoundException
 from pylav.nodes.api.responses.track import Track as APITrack
 from pylav.players.query.obj import Query
 from pylav.players.tracks.decoder import async_decoder
+from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 CACHE = Cache(name="TrackCache")
 CACHE.setup("mem://?check_interval=10&size=10000")
@@ -62,7 +63,7 @@ class Track:
         self._unique_id = hashlib.md5()
         self._updated_query = None
         self._id = str(uuid.uuid4())
-        self._raw_data: dict[Any, Any] = {}
+        self._raw_data: JSON_DICT_TYPE = {}
 
         self._process_init()
 

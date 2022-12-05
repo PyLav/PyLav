@@ -3,6 +3,8 @@ from __future__ import annotations
 import dataclasses
 from typing import Literal
 
+from pylav.type_hints.dict_typing import JSON_DICT_TYPE
+
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class IPBlock:
@@ -19,8 +21,8 @@ class FailingAddress:
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class Details:
-    ipBlock: IPBlock | dict
-    failingAddresses: list[FailingAddress | dict]
+    ipBlock: IPBlock | JSON_DICT_TYPE
+    failingAddresses: list[FailingAddress | JSON_DICT_TYPE]
     rotateIndex: str
     ipIndex: str
     currentAddress: str
@@ -40,7 +42,7 @@ class Details:
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class Status:
     type: Literal["RotatingIpRoutePlanner", "NanoIpRoutePlanner", "RotatingNanoIpRoutePlanner"] | None = None
-    details: Details | dict | None = None
+    details: Details | JSON_DICT_TYPE | None = None
 
     def __post_init__(self) -> None:
         if isinstance(self.details, dict):

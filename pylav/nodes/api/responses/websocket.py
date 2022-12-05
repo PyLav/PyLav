@@ -5,6 +5,7 @@ from typing import Literal
 
 from pylav.nodes.api.responses.player import State
 from pylav.nodes.api.responses.rest_api import Exception as TrackExceptionClass
+from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
@@ -45,9 +46,9 @@ class Stats(Message):
     players: int = 0
     playingPlayers: int = 0
     uptime: int = 0
-    memory: Memory | dict | None = None
-    cpu: CPU | dict | None = None
-    frameStats: Frame | dict | None = None
+    memory: Memory | JSON_DICT_TYPE | None = None
+    cpu: CPU | JSON_DICT_TYPE | None = None
+    frameStats: Frame | JSON_DICT_TYPE | None = None
     uptime_seconds: int = dataclasses.field(init=False)
 
     def __post_init__(self) -> None:
@@ -63,7 +64,7 @@ class Stats(Message):
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class PlayerUpdate(Message):
     guildId: str | None = None
-    state: State | dict | None = None
+    state: State | JSON_DICT_TYPE | None = None
 
     def __post_init__(self) -> None:
         if isinstance(self.state, dict):
@@ -116,7 +117,7 @@ class TrackException(Message):
     op: Literal["event"] = "event"
     guildId: str | None = None
     type: Literal["TrackExceptionEvent"] = "TrackExceptionEvent"
-    exception: TrackExceptionClass | dict | None = None
+    exception: TrackExceptionClass | JSON_DICT_TYPE | None = None
     encodedTrack: str | None = None
     track: str | None = None
 

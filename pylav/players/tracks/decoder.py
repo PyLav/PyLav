@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import struct
+import typing
 
 from dacite import from_dict  # type: ignore
 
@@ -60,25 +61,28 @@ def decode_track(track: str) -> Track:
         # TODO: Downgrade log to trace for final release
         LOGGER.debug("Failed to decode track", exc_info=exc)
 
-    return from_dict(
-        data_class=Track,
-        data={
-            "encoded": track,
-            "info": {
-                "title": title,
-                "author": author,
-                "length": length,
-                "identifier": identifier,
-                "isStream": is_stream,
-                "uri": uri,
-                "isSeekable": not is_stream,
-                "sourceName": source,
-                "position": 0,
-                "thumbnail": thumbnail,
-                "isrc": isrc,
-                "probeInfo": probe,
+    return typing.cast(
+        Track,
+        from_dict(
+            data_class=Track,
+            data={
+                "encoded": track,
+                "info": {
+                    "title": title,
+                    "author": author,
+                    "length": length,
+                    "identifier": identifier,
+                    "isStream": is_stream,
+                    "uri": uri,
+                    "isSeekable": not is_stream,
+                    "sourceName": source,
+                    "position": 0,
+                    "thumbnail": thumbnail,
+                    "isrc": isrc,
+                    "probeInfo": probe,
+                },
             },
-        },
+        ),
     )
 
 

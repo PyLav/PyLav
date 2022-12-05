@@ -8,7 +8,7 @@ from piccolo.columns import Float
 from pylav.exceptions.database import EntryNotFoundException
 from pylav.logging import getLogger
 from pylav.storage.database.tables.equalizer import EqualizerRow
-from pylav.storage.modals.equilizer import EqualizerModel
+from pylav.storage.models import equilizer
 
 LOGGER = getLogger("PyLav.Database.Controller.Equalizer")
 
@@ -24,7 +24,7 @@ class EqualizerController:
         return self._client
 
     @staticmethod
-    async def get_equalizer_by_name(equalizer_name: str, limit: int = None) -> list[EqualizerModel]:
+    async def get_equalizer_by_name(equalizer_name: str, limit: int = None) -> list[equilizer.Equalizer]:
         if limit is None:
             equalizers = (
                 await EqualizerRow.select()
@@ -38,10 +38,10 @@ class EqualizerController:
 
         if not equalizers:
             raise EntryNotFoundException(f"Equalizer with name {equalizer_name} not found")
-        return [EqualizerModel(**equalizer) for equalizer in equalizers]
+        return [equilizer.Equalizer(**equalizer) for equalizer in equalizers]
 
     @staticmethod
-    async def get_equalizer_by_id(identifier: int | str) -> EqualizerModel:
+    async def get_equalizer_by_id(identifier: int | str) -> equilizer.Equalizer:
         try:
             identifier = int(identifier)
         except ValueError as e:
@@ -51,36 +51,36 @@ class EqualizerController:
         )
         if not equalizer:
             raise EntryNotFoundException(f"Equalizer with ID {identifier} not found")
-        return EqualizerModel(**equalizer)
+        return equilizer.Equalizer(**equalizer)
 
     async def get_equalizer_by_name_or_id(
         self, equalizer_name_or_id: int | str, limit: int = None
-    ) -> list[EqualizerModel]:
+    ) -> list[equilizer.Equalizer]:
         try:
             return [await self.get_equalizer_by_id(equalizer_name_or_id)]
         except EntryNotFoundException:
             return await self.get_equalizer_by_name(equalizer_name_or_id, limit=limit)
 
     @staticmethod
-    async def get_equalizers_by_author(author: int) -> list[EqualizerModel]:
+    async def get_equalizers_by_author(author: int) -> list[equilizer.Equalizer]:
         equalizers = (
             await EqualizerRow.select().where(EqualizerRow.author == author).output(load_json=True, nested=True)
         )
         if not equalizers:
             raise EntryNotFoundException(f"Equalizer with author {author} not found")
-        return [EqualizerModel(**equalizer) for equalizer in equalizers]
+        return [equilizer.Equalizer(**equalizer) for equalizer in equalizers]
 
     @staticmethod
-    async def get_equalizers_by_scope(scope: int) -> list[EqualizerModel]:
+    async def get_equalizers_by_scope(scope: int) -> list[equilizer.Equalizer]:
         equalizers = await EqualizerRow.select().where(EqualizerRow.scope == scope).output(load_json=True, nested=True)
         if not equalizers:
             raise EntryNotFoundException(f"Equalizer with scope {scope} not found")
-        return [EqualizerModel(**equalizer) for equalizer in equalizers]
+        return [equilizer.Equalizer(**equalizer) for equalizer in equalizers]
 
     @staticmethod
-    async def get_all_equalizers() -> AsyncIterator[EqualizerModel]:
+    async def get_all_equalizers() -> AsyncIterator[equilizer.Equalizer]:
         for entry in await EqualizerRow.select().output(load_json=True, nested=True):
-            yield EqualizerModel(**entry)
+            yield equilizer.Equalizer(**entry)
 
     @staticmethod
     def _get_equalizer_band_defaults(*args: tuple[Float, float | None]) -> dict[Float, float]:
@@ -113,7 +113,7 @@ class EqualizerController:
         band_6300: float | None = None,
         band_10000: float | None = None,
         band_16000: float | None = None,
-    ) -> EqualizerModel:
+    ) -> equilizer.Equalizer:
         values = {
             EqualizerRow.scope: scope,
             EqualizerRow.author: author,
@@ -147,26 +147,26 @@ class EqualizerController:
         # noinspection PyProtectedMember
         if not equalizer._was_created:
             await EqualizerRow.update(values).where(EqualizerRow.id == identifier)
-        return EqualizerModel(**equalizer.to_dict())
+        return equilizer.Equalizer(**equalizer.to_dict())
 
     @staticmethod
     async def delete_equalizer(equalizer_id: int) -> None:
         await EqualizerRow.delete().where(EqualizerRow.id == equalizer_id)
 
     @staticmethod
-    async def get_all_equalizers_by_author(author: int) -> AsyncIterator[EqualizerModel]:
+    async def get_all_equalizers_by_author(author: int) -> AsyncIterator[equilizer.Equalizer]:
         for entry in (
             await EqualizerRow.select().where(EqualizerRow.author == author).output(load_json=True, nested=True)
         ):
-            yield EqualizerModel(**entry)
+            yield equilizer.Equalizer(**entry)
 
     @staticmethod
-    async def get_all_equalizers_by_scope(scope: int) -> AsyncIterator[EqualizerModel]:
+    async def get_all_equalizers_by_scope(scope: int) -> AsyncIterator[equilizer.Equalizer]:
         for entry in await EqualizerRow.select().where(EqualizerRow.scope == scope).output(load_json=True, nested=True):
-            yield EqualizerModel(**entry)
+            yield equilizer.Equalizer(**entry)
 
     @staticmethod
-    async def get_all_equalizers_by_scope_and_author(scope: int, author: int) -> AsyncIterator[EqualizerModel]:
+    async def get_all_equalizers_by_scope_and_author(scope: int, author: int) -> AsyncIterator[equilizer.Equalizer]:
         for entry in (
             await EqualizerRow.select()
             .where(
@@ -175,15 +175,15 @@ class EqualizerController:
             )
             .output(load_json=True, nested=True)
         ):
-            yield EqualizerModel(**entry)
+            yield equilizer.Equalizer(**entry)
 
-    async def get_global_equalizers(self) -> AsyncIterator[EqualizerModel]:
+    async def get_global_equalizers(self) -> AsyncIterator[equilizer.Equalizer]:
         for entry in (
             await EqualizerRow.select()
-            .where(EqualizerRow.scope == self._client.bot.user.id)  # type: ignore
+            .where(EqualizerRow.scope == self._client.bot.user.id)
             .output(load_json=True, nested=True)
-        ):  # type: ignore
-            yield EqualizerModel(**entry)
+        ):
+            yield equilizer.Equalizer(**entry)
 
     async def create_or_update_global_equalizer(
         self,
@@ -206,7 +206,7 @@ class EqualizerController:
         band_6300: float | None = None,
         band_10000: float | None = None,
         band_16000: float | None = None,
-    ) -> EqualizerModel:
+    ) -> equilizer.Equalizer:
         return await self.create_or_update_equalizer(
             identifier=identifier,
             scope=self._client.bot.user.id,
@@ -251,7 +251,7 @@ class EqualizerController:
         band_6300: float | None = None,
         band_10000: float | None = None,
         band_16000: float | None = None,
-    ) -> EqualizerModel:
+    ) -> equilizer.Equalizer:
         return await self.create_or_update_equalizer(
             identifier=user_id,
             scope=author,
@@ -297,7 +297,7 @@ class EqualizerController:
         band_6300: float | None = None,
         band_10000: float | None = None,
         band_16000: float | None = None,
-    ) -> EqualizerModel:
+    ) -> equilizer.Equalizer:
         return await self.create_or_update_equalizer(
             identifier=identifier,
             scope=text_channel.id,
@@ -343,7 +343,7 @@ class EqualizerController:
         band_6300: float | None = None,
         band_10000: float | None = None,
         band_16000: float | None = None,
-    ) -> EqualizerModel:
+    ) -> equilizer.Equalizer:
         return await self.create_or_update_equalizer(
             identifier=identifier,
             scope=guild.id,
@@ -389,7 +389,7 @@ class EqualizerController:
         band_6300: float | None = None,
         band_10000: float | None = None,
         band_16000: float | None = None,
-    ) -> EqualizerModel:
+    ) -> equilizer.Equalizer:
         return await self.create_or_update_equalizer(
             identifier=identifier,
             scope=voice_channel.id,
@@ -421,7 +421,11 @@ class EqualizerController:
         guild: discord.Guild = None,
         channel: discord.abc.MessageableChannel = None,
     ) -> tuple[
-        list[EqualizerModel], list[EqualizerModel], list[EqualizerModel], list[EqualizerModel], list[EqualizerModel]
+        list[equilizer.Equalizer],
+        list[equilizer.Equalizer],
+        list[equilizer.Equalizer],
+        list[equilizer.Equalizer],
+        list[equilizer.Equalizer],
     ]:
         """
         Gets all equalizers a user has access to in a given context.
@@ -444,7 +448,7 @@ class EqualizerController:
 
     async def get_manageable_equalizers(
         self, requester: discord.abc.User, bot: BotType, *, name_or_id: str | None = None
-    ) -> list[EqualizerModel]:
+    ) -> list[equilizer.Equalizer]:
         if name_or_id:
             try:
                 equalizers = await self.get_equalizer_by_name_or_id(name_or_id)

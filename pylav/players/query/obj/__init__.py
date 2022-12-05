@@ -9,9 +9,9 @@ from os import PathLike
 from typing import Literal
 
 import aiohttp
-import aiopath
+import aiopath  # type: ignore
 import asyncstdlib
-import brotli
+import brotli  # type: ignore
 import ujson
 import yaml
 

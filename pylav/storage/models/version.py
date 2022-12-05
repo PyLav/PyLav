@@ -26,7 +26,7 @@ class BotVersion(CachedModel, metaclass=CachedSingletonByKey):
         )
         return typing.cast(Version, parse(data["version"] if data else BotVersionRow.version.default))
 
-    async def update_version(self, version: Version | str):
+    async def update_version(self, version: Version | str) -> None:
         """Update the version of the bot in the database"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252

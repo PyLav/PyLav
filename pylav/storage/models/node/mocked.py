@@ -4,12 +4,13 @@ from dataclasses import dataclass
 
 from pylav.constants.node_features import SUPPORTED_FEATURES, SUPPORTED_SOURCES
 from pylav.storage.database.caching import CachedSingletonByKey
+from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
-class NodeModelMock(metaclass=CachedSingletonByKey):
+class NodeMock(metaclass=CachedSingletonByKey):
     id: int
-    data: dict
+    data: JSON_DICT_TYPE
 
     @staticmethod
     async def exists() -> bool:
@@ -25,7 +26,7 @@ class NodeModelMock(metaclass=CachedSingletonByKey):
     async def delete(self) -> None:
         """Delete the node from the database"""
 
-    async def fetch_all(self) -> dict:
+    async def fetch_all(self) -> JSON_DICT_TYPE:
         return {"id": self.id, **self.data}
 
     async def fetch_name(self) -> str:
@@ -125,7 +126,7 @@ class NodeModelMock(metaclass=CachedSingletonByKey):
         """Update the node's managed setting in the database"""
         self.data["managed"] = managed
 
-    async def fetch_extras(self) -> dict:
+    async def fetch_extras(self) -> JSON_DICT_TYPE:
         """Fetch the node's extras from the database.
 
         Returns
@@ -135,11 +136,11 @@ class NodeModelMock(metaclass=CachedSingletonByKey):
         """
         return self.data["extras"]
 
-    async def update_extras(self, extras: dict) -> None:
+    async def update_extras(self, extras: JSON_DICT_TYPE) -> None:
         """Update the node's extras in the database"""
         self.data["extras"] = extras
 
-    async def fetch_yaml(self) -> dict:
+    async def fetch_yaml(self) -> JSON_DICT_TYPE:
         """Fetch the node's yaml from the database.
 
         Returns
@@ -149,7 +150,7 @@ class NodeModelMock(metaclass=CachedSingletonByKey):
         """
         return self.data["yaml"]
 
-    async def update_yaml(self, yaml_data: dict) -> None:
+    async def update_yaml(self, yaml_data: JSON_DICT_TYPE) -> None:
         """Update the node's yaml in the database"""
         self.data["yaml"] = yaml_data
 
@@ -195,7 +196,7 @@ class NodeModelMock(metaclass=CachedSingletonByKey):
         for source in sources:
             await self.remove_from_disabled_sources(source)
 
-    async def get_connection_args(self) -> dict:
+    async def get_connection_args(self) -> dict[str, int | str | bool | None, list[str]]:
         """Get the connection args for the node.
 
         Returns
