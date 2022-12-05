@@ -10,7 +10,7 @@ from collections.abc import Iterator
 from dataclasses import dataclass
 
 import aiohttp
-import brotli
+import brotli  # type: ignore
 import discord
 import ujson
 import yaml
@@ -26,12 +26,13 @@ from pylav.storage.database.caching.decodators import maybe_cached
 from pylav.storage.database.caching.model import CachedModel
 from pylav.storage.database.tables.playlists import PlaylistRow
 from pylav.storage.database.tables.tracks import TrackRow
+from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 LOGGER = getLogger("PyLav.Database.Playlist")
 
 
 try:
-    from redbot.core.i18n import Translator
+    from redbot.core.i18n import Translator  # type: ignore
 
     _ = Translator("PyLav", pathlib.Path(__file__))
 except ImportError:
@@ -42,7 +43,7 @@ except ImportError:
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
-class PlaylistModel(CachedModel, metaclass=CachedSingletonByKey):
+class Playlist(CachedModel, metaclass=CachedSingletonByKey):
     id: int
 
     @maybe_cached
@@ -58,7 +59,7 @@ class PlaylistModel(CachedModel, metaclass=CachedSingletonByKey):
         return await PlaylistRow.exists().where(PlaylistRow.id == self.id)
 
     @maybe_cached
-    async def fetch_all(self) -> dict:
+    async def fetch_all(self) -> JSON_DICT_TYPE:
         """Fetch all playlists from the database.
 
         Returns
@@ -140,7 +141,7 @@ class PlaylistModel(CachedModel, metaclass=CachedSingletonByKey):
         )
         return response["author"] if response else PlaylistRow.author.default
 
-    async def update_author(self, author: int):
+    async def update_author(self, author: int) -> None:
         """Update the author of the playlist.
 
         Parameters
@@ -178,7 +179,7 @@ class PlaylistModel(CachedModel, metaclass=CachedSingletonByKey):
         )
         return response["name"] if response else PlaylistRow.name.default
 
-    async def update_name(self, name: str):
+    async def update_name(self, name: str) -> None:
         """Update the name of the playlist.
 
         Parameters
@@ -213,7 +214,7 @@ class PlaylistModel(CachedModel, metaclass=CachedSingletonByKey):
         )
         return response["url"] if response else PlaylistRow.url.default
 
-    async def update_url(self, url: str):
+    async def update_url(self, url: str) -> None:
         """Update the url of the playlist.
 
         Parameters
@@ -248,7 +249,7 @@ class PlaylistModel(CachedModel, metaclass=CachedSingletonByKey):
         )
         return response["tracks"] if response else []
 
-    async def update_tracks(self, tracks: list[str]):
+    async def update_tracks(self, tracks: list[str]) -> None:
         """Update the tracks of the playlist.
 
         Parameters
@@ -282,7 +283,7 @@ class PlaylistModel(CachedModel, metaclass=CachedSingletonByKey):
         await self.invalidate_cache(self.fetch_all)
 
     @maybe_cached
-    async def size(self):
+    async def size(self) -> int:
         """Count the tracks of the playlist.
 
         Returns
@@ -293,7 +294,7 @@ class PlaylistModel(CachedModel, metaclass=CachedSingletonByKey):
         tracks = await self.fetch_tracks()
         return len(tracks) if tracks else 0
 
-    async def add_track(self, tracks: list[str]):
+    async def add_track(self, tracks: list[str]) -> None:
         """Add a track to the playlist.
 
         Parameters
@@ -524,7 +525,7 @@ class PlaylistModel(CachedModel, metaclass=CachedSingletonByKey):
         await self.invalidate_cache()
 
     @classmethod
-    async def from_yaml(cls, context: PyLavContext, scope: int, url: str) -> PlaylistModel:
+    async def from_yaml(cls, context: PyLavContext, scope: int, url: str) -> Playlist:
         """Deserialize a playlist from a YAML file.
 
         Parameters
@@ -538,7 +539,7 @@ class PlaylistModel(CachedModel, metaclass=CachedSingletonByKey):
 
         Returns
         -------
-        PlaylistModel
+        Playlist
             The playlist.
         """
         try:

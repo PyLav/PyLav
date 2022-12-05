@@ -5,10 +5,11 @@ from dataclasses import dataclass
 import ujson
 
 from pylav.storage.database.tables.player_state import PlayerStateRow
+from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 
 @dataclass(eq=True)
-class PlayerStateModel:
+class PlayerState:
     id: int
     bot: int
     channel_id: int
@@ -29,14 +30,14 @@ class PlayerStateModel:
     effect_enabled: bool
     self_deaf: bool
 
-    current: dict | None
-    queue: list
-    history: list
-    effects: dict
-    extras: dict
-    pk = None
+    current: JSON_DICT_TYPE | None
+    queue: list[JSON_DICT_TYPE]
+    history: list[JSON_DICT_TYPE]
+    effects: JSON_DICT_TYPE
+    extras: JSON_DICT_TYPE
+    pk: None = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if isinstance(self.current, str):
             self.current = ujson.loads(self.current)
         if isinstance(self.queue, str):
@@ -134,7 +135,7 @@ class PlayerStateModel:
         )
 
     @classmethod
-    async def get(cls, bot_id: int, guild_id: int) -> PlayerStateModel | None:
+    async def get(cls, bot_id: int, guild_id: int) -> PlayerState | None:
         """Get the player state from the database.
 
         Parameters
@@ -146,7 +147,7 @@ class PlayerStateModel:
 
         Returns
         -------
-        PlayerStateModel | None
+        PlayerState | None
             The player state if found, otherwise None.
         """
         player = (

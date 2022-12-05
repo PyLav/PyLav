@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import dataclasses
 
+from pylav.type_hints.dict_typing import JSON_DICT_TYPE
+
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class Info:
@@ -19,10 +21,10 @@ class Info:
     isrc: str | None = None
     probeInfo: str | None = None
 
-    def to_dict(self) -> dict[str, str | int | bool | None]:
+    def to_dict(self) -> JSON_DICT_TYPE:
         return dataclasses.asdict(self)
 
-    def to_database(self) -> dict[str, str | int | bool | None]:
+    def to_database(self) -> JSON_DICT_TYPE:
         # noinspection SpellCheckingInspection
         return {
             "identifier": self.identifier,
@@ -35,7 +37,7 @@ class Info:
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class Track:
-    info: Info | dict
+    info: Info | JSON_DICT_TYPE
     encoded: str | None = None
     track: str | None = None
 
@@ -45,7 +47,7 @@ class Track:
         if isinstance(self.info, dict):
             object.__setattr__(self, "info", Info(**self.info))
 
-    def to_dict(self) -> dict[str, str | int | bool | None | dict[str, str | int | bool | None]]:
+    def to_dict(self) -> JSON_DICT_TYPE:
         return {
             "info": dataclasses.asdict(self.info),
             "encoded": self.encoded,

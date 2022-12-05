@@ -27,7 +27,7 @@ class LowPass(FilterMixin):
         return self._smoothing
 
     @smoothing.setter
-    def smoothing(self, v: float | None):
+    def smoothing(self, v: float | None) -> None:
         self._smoothing = v
 
     @classmethod

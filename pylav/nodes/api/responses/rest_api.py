@@ -7,6 +7,7 @@ from pylav.nodes.api.responses.filters import Filters
 from pylav.nodes.api.responses.misc import Git, Plugin, Version
 from pylav.nodes.api.responses.playlists import Info
 from pylav.nodes.api.responses.track import Track
+from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
@@ -23,8 +24,8 @@ class Exception(LoadException):  # noqa
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class TrackLoaded:
     loadType: Literal["TRACK_LOADED"]
-    playlistInfo: Info | dict
-    tracks: list[Track | dict] = dataclasses.field(default_factory=list)
+    playlistInfo: Info | JSON_DICT_TYPE
+    tracks: list[Track | JSON_DICT_TYPE] = dataclasses.field(default_factory=list)
 
     def __post_init__(self) -> None:
         if isinstance(self.playlistInfo, dict):
@@ -39,8 +40,8 @@ class TrackLoaded:
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class PlaylistLoaded:
     loadType: Literal["PLAYLIST_LOADED"]
-    playlistInfo: Info | dict
-    tracks: list[Track | dict] = dataclasses.field(default_factory=list)
+    playlistInfo: Info | JSON_DICT_TYPE
+    tracks: list[Track | JSON_DICT_TYPE] = dataclasses.field(default_factory=list)
 
     def __post_init__(self) -> None:
         if isinstance(self.playlistInfo, dict):
@@ -55,8 +56,8 @@ class PlaylistLoaded:
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class SearchResult:
     loadType: Literal["SEARCH_RESULT"]
-    playlistInfo: Info | dict
-    tracks: list[Track | dict] = dataclasses.field(default_factory=list)
+    playlistInfo: Info | JSON_DICT_TYPE
+    tracks: list[Track | JSON_DICT_TYPE] = dataclasses.field(default_factory=list)
 
     def __post_init__(self) -> None:
         if isinstance(self.playlistInfo, dict):
@@ -71,8 +72,8 @@ class SearchResult:
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class NoMatches:
     loadType: Literal["NO_MATCHES"]
-    playlistInfo: Info | dict
-    tracks: list[Track | dict] = dataclasses.field(default_factory=list)
+    playlistInfo: Info | JSON_DICT_TYPE
+    tracks: list[Track | JSON_DICT_TYPE] = dataclasses.field(default_factory=list)
 
     def __post_init__(self) -> None:
         if isinstance(self.playlistInfo, dict):
@@ -87,9 +88,9 @@ class NoMatches:
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LoadFailed:
     loadType: Literal["LOAD_FAILED"]
-    exception: LoadException | dict
-    playlistInfo: Info | dict
-    tracks: list[Track | dict] = dataclasses.field(default_factory=list)
+    exception: LoadException | JSON_DICT_TYPE
+    playlistInfo: Info | JSON_DICT_TYPE
+    tracks: list[Track | JSON_DICT_TYPE] = dataclasses.field(default_factory=list)
 
     def __post_init__(self) -> None:
         if isinstance(self.playlistInfo, dict):
@@ -119,7 +120,7 @@ class LavalinkInfo:
     lavaplayer: str
     sourceManagers: list[str]
     filters: list[str]
-    plugins: list[Plugin] | dict
+    plugins: list[Plugin] | JSON_DICT_TYPE
 
     def __post_init__(self):
 
@@ -128,10 +129,11 @@ class LavalinkInfo:
         if isinstance(self.git, dict):
             object.__setattr__(self, "git", Git(**self.git))
         temp = []
-        for p in self.plugins.get("plugins", []):
-            if isinstance(p, Plugin) or (isinstance(p, dict) and (p := Plugin(**p))):
-                temp.append(p)
-        object.__setattr__(self, "plugins", temp)
+        if isinstance(self.plugins, dict):
+            for p in self.plugins.get("plugins", []):
+                if isinstance(p, Plugin) or (isinstance(p, dict) and (p := Plugin(**p))):
+                    temp.append(p)
+            object.__setattr__(self, "plugins", temp)
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
@@ -142,7 +144,7 @@ class VoiceState:
     connected: bool | None = None
     ping: int | None = -1
 
-    def to_dict(self) -> dict[str, str | bool | int | None]:
+    def to_dict(self) -> JSON_DICT_TYPE:
         return {
             "token": self.token,
             "endpoint": self.endpoint,
@@ -166,9 +168,9 @@ class LavalinkPlayer:
     guildId: str
     volume: int
     paused: bool
-    voice: VoiceState | dict
-    filters: Filters | dict
-    track: Track | dict | None = None
+    voice: VoiceState | JSON_DICT_TYPE
+    filters: Filters | JSON_DICT_TYPE
+    track: Track | JSON_DICT_TYPE | None = None
 
     def __post_init__(self):
         if isinstance(self.voice, dict):
@@ -180,16 +182,7 @@ class LavalinkPlayer:
 
     def to_dict(
         self,
-    ) -> dict[
-        str,
-        str  # guildId
-        | int  # volume
-        | bool  # Paused
-        | None  # Track
-        | dict[str, str | bool | int | None]  # Voice
-        | dict[str, dict[str, float | int] | float | list[dict[str, float | int]] | None]  # Filters
-        | dict[str, str | int | bool | None | dict[str, str | int | bool | None]],  # Track
-    ]:
+    ) -> JSON_DICT_TYPE:
         assert (
             isinstance(self.voice, VoiceState)
             and isinstance(self.filters, Filters)

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
 
 import ujson
 
@@ -12,10 +11,11 @@ from pylav.storage.database.caching import CachedSingletonByKey
 from pylav.storage.database.caching.decodators import maybe_cached
 from pylav.storage.database.caching.model import CachedModel
 from pylav.storage.database.tables.nodes import NodeRow
+from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
-class NodeModel(CachedModel, metaclass=CachedSingletonByKey):
+class Node(CachedModel, metaclass=CachedSingletonByKey):
     id: int
 
     @maybe_cached
@@ -35,7 +35,7 @@ class NodeModel(CachedModel, metaclass=CachedSingletonByKey):
         await self.invalidate_cache()
 
     @maybe_cached
-    async def fetch_all(self) -> dict[str, Any]:
+    async def fetch_all(self) -> JSON_DICT_TYPE:
         data = await NodeRow.select().where(NodeRow.id == self.id).first().output(load_json=True, nested=True)
         return data or {
             "id": self.id,
@@ -273,7 +273,7 @@ class NodeModel(CachedModel, metaclass=CachedSingletonByKey):
         await self.invalidate_cache(self.fetch_all)
 
     @maybe_cached
-    async def fetch_extras(self) -> dict:
+    async def fetch_extras(self) -> JSON_DICT_TYPE:
         """Fetch the node's extras from the database.
 
         Returns
@@ -289,7 +289,7 @@ class NodeModel(CachedModel, metaclass=CachedSingletonByKey):
         )
         return data["extras"] if data else ujson.loads(NodeRow.extras.default)
 
-    async def update_extras(self, extras: dict) -> None:
+    async def update_extras(self, extras: JSON_DICT_TYPE) -> None:
         """Update the node's extras in the database"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
@@ -305,7 +305,7 @@ class NodeModel(CachedModel, metaclass=CachedSingletonByKey):
         await self.invalidate_cache(self.fetch_all)
 
     @maybe_cached
-    async def fetch_yaml(self) -> dict:
+    async def fetch_yaml(self) -> JSON_DICT_TYPE:
         """Fetch the node's yaml from the database.
 
         Returns
@@ -318,7 +318,7 @@ class NodeModel(CachedModel, metaclass=CachedSingletonByKey):
         )
         return data["yaml"] if data else ujson.loads(NodeRow.yaml.default)
 
-    async def update_yaml(self, yaml_data: dict) -> None:
+    async def update_yaml(self, yaml_data: JSON_DICT_TYPE) -> None:
         """Update the node's yaml in the database"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
@@ -430,8 +430,8 @@ class NodeModel(CachedModel, metaclass=CachedSingletonByKey):
         ssl: bool = False,
         search_only: bool = False,
         managed: bool = False,
-        extras: dict[str, Any] | None = None,
-        yaml: dict[str, Any] | None = None,
+        extras: JSON_DICT_TYPE | None = None,
+        yaml: JSON_DICT_TYPE | None = None,
         disabled_sources: list[str] | None = None,
     ) -> None:
         """Update the node's data in the database"""
@@ -487,7 +487,7 @@ class NodeModel(CachedModel, metaclass=CachedSingletonByKey):
         )
         await self.invalidate_cache()
 
-    async def get_connection_args(self) -> dict:
+    async def get_connection_args(self) -> dict[str, int | str | bool | None, list[str]]:
         """Get the connection args for the node.
 
         Returns

@@ -3,8 +3,8 @@ from __future__ import annotations
 from pylav.constants.builtin_nodes import BUNDLED_NODES_IDS_HOST_MAPPING, PYLAV_BUNDLED_NODES_SETTINGS
 from pylav.logging import getLogger
 from pylav.storage.database.tables.nodes import NodeRow
-from pylav.storage.modals.node.mocked import NodeModelMock
-from pylav.storage.modals.node.real import NodeModel
+from pylav.storage.models.node.mocked import NodeMock
+from pylav.storage.models.node.real import Node
 
 LOGGER = getLogger("PyLav.Database.Controller.Node")
 
@@ -22,25 +22,25 @@ class NodeController:
     def client(self) -> Client:
         return self._client
 
-    def bundled_node_config(self) -> NodeModel:
-        return NodeModel(id=self._client.bot.user.id)
+    def bundled_node_config(self) -> Node:
+        return Node(id=self._client.bot.user.id)
 
-    def get_node_config(self, node_id: int) -> NodeModel:
+    def get_node_config(self, node_id: int) -> Node:
         if node_id not in BUNDLED_NODES_IDS_HOST_MAPPING:
-            node = NodeModel(id=node_id)
+            node = Node(id=node_id)
         else:
-            node = NodeModelMock(id=node_id, data=PYLAV_BUNDLED_NODES_SETTINGS[BUNDLED_NODES_IDS_HOST_MAPPING[node_id]])
+            node = NodeMock(id=node_id, data=PYLAV_BUNDLED_NODES_SETTINGS[BUNDLED_NODES_IDS_HOST_MAPPING[node_id]])
         self.currently_in_db.add(node.id)
         return node
 
-    async def get_all_unmanaged_nodes(self, dedupe: bool = True) -> list[NodeModel]:
+    async def get_all_unmanaged_nodes(self, dedupe: bool = True) -> list[Node]:
 
         model_list = [
-            NodeModel(**node)
+            Node(**node)
             for node in await NodeRow.select(NodeRow.id)
             .where(
                 (NodeRow.managed == False)  # noqa: E712
-                & (NodeRow.id.not_in(set(BUNDLED_NODES_IDS_HOST_MAPPING.keys())))
+                & (NodeRow.id.not_in(list(BUNDLED_NODES_IDS_HOST_MAPPING.keys())))
             )
             .output(nested=True, load_json=True)
         ]
@@ -49,19 +49,19 @@ class NodeController:
             self.currently_in_db.add(n.id)
         return new_model_list
 
-    async def get_all_nodes(self) -> list[NodeModel]:
+    async def get_all_nodes(self) -> list[Node]:
         model_list = await self.get_all_unmanaged_nodes(dedupe=True)
         if mn := self.bundled_node_config():
             model_list.append(mn)
         return model_list
 
-    async def get_bundled_node_config(self) -> NodeModel | None:
+    async def get_bundled_node_config(self) -> Node | None:
         response = (
             await NodeRow.select(NodeRow.id)
             .where((NodeRow.id == self._client.bot.user.id) & (NodeRow.managed is True))
             .first()
         )
-        return NodeModel(**response) if response else None
+        return Node(**response) if response else None
 
     async def update_node(
         self,
@@ -69,7 +69,7 @@ class NodeController:
         port: int,
         password: str,
         unique_identifier: int,
-        resume_key: str = None,
+        resume_key: str | None = None,
         resume_timeout: int = 60,
         name: str = None,
         reconnect_attempts: int = -1,
@@ -79,7 +79,7 @@ class NodeController:
         extras: dict = None,
         yaml: dict = None,
         disabled_sources: list[str] = None,
-    ) -> NodeModel:
+    ) -> Node:
 
         """
         Add a new node to the database.
@@ -116,7 +116,7 @@ class NodeController:
             The yaml of the node.
         """
 
-        node = NodeModel(id=unique_identifier)
+        node = Node(id=unique_identifier)
         self.currently_in_db.add(node.id)
         await node.bulk_update(
             host=host,

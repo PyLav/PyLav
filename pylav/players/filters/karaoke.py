@@ -47,7 +47,7 @@ class Karaoke(FilterMixin):
         return self._level
 
     @level.setter
-    def level(self, v: float | None):
+    def level(self, v: float | None) -> None:
         self._level = v
 
     @property
@@ -55,7 +55,7 @@ class Karaoke(FilterMixin):
         return self._mono_level
 
     @mono_level.setter
-    def mono_level(self, v: float | None):
+    def mono_level(self, v: float | None) -> None:
         self._mono_level = v
 
     @property
@@ -63,7 +63,7 @@ class Karaoke(FilterMixin):
         return self._filter_band
 
     @filter_band.setter
-    def filter_band(self, v: float | None):
+    def filter_band(self, v: float | None) -> None:
         self._filter_band = v
 
     @property
@@ -71,7 +71,7 @@ class Karaoke(FilterMixin):
         return self._filter_width
 
     @filter_width.setter
-    def filter_width(self, v: float | None):
+    def filter_width(self, v: float | None) -> None:
         self._filter_width = v
 
     @classmethod

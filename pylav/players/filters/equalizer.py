@@ -23,17 +23,17 @@ class Equalizer(FilterMixin):
 
     __slots__ = ("_eq", "_name", "_default")
 
-    def __init__(self, *, levels: list, name: str = "CustomEqualizer") -> None:
+    def __init__(self, *, levels: list[dict[str, int | float | None]], name: str = "CustomEqualizer") -> None:
         super().__init__()
         self._eq = self._factory(levels)
         self._name = name
 
-    def to_dict(self) -> dict[str, list[dict[str, int | float]] | str | bool]:
+    def to_dict(self) -> dict[str, list[dict[str, int | float | None]] | str | bool]:
         """Returns a dictionary representation of the Equalizer"""
         return {"equalizer": self._eq, "name": self._name}
 
     @classmethod
-    def from_dict(cls, data: dict) -> Equalizer:
+    def from_dict(cls, data: dict[str, list[dict[str, int | float | None]] | str | bool]) -> Equalizer:
         """Creates an Equalizer from a dictionary"""
         return cls(levels=data["equalizer"], name=data["name"])
 
@@ -78,12 +78,12 @@ class Equalizer(FilterMixin):
         return equalizer
 
     @classmethod
-    def build(cls, *, levels: list, name: str = "CustomEqualizer") -> Equalizer:
+    def build(cls, *, levels: list[dict[str, int | float]], name: str = "CustomEqualizer") -> Equalizer:
         """Build a custom Equalizer class with the provided levels.
 
         Parameters
         ------------
-        levels: List[Dict[str, Union[int, float]]]
+        levels: list[dict[str, int | float]]
             A list of dictionaries containing the band and gain for each band.
         name: str
             An Optional string to name this Equalizer. Defaults to 'CustomEqualizer'

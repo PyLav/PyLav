@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import datetime
 import pathlib
+import typing
 from dataclasses import dataclass
 
-import aiopath
+import aiopath  # type: ignore
 import ujson
 from discord.utils import utcnow
 
@@ -12,10 +13,11 @@ from pylav.storage.database.caching import CachedSingletonByKey
 from pylav.storage.database.caching.decodators import maybe_cached
 from pylav.storage.database.caching.model import CachedModel
 from pylav.storage.database.tables.config import LibConfigRow
+from pylav.type_hints.dict_typing import JSON_DICT_TYPE, JSON_DICT_WITH_DATE_TYPE
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
-class LibConfigModel(CachedModel, metaclass=CachedSingletonByKey):
+class Config(CachedModel, metaclass=CachedSingletonByKey):
     bot: int
     id: int = 1
 
@@ -590,32 +592,30 @@ class LibConfigModel(CachedModel, metaclass=CachedSingletonByKey):
         await self.invalidate_cache()
 
     @maybe_cached
-    async def fetch_all(self) -> dict:
+    async def fetch_all(self) -> JSON_DICT_WITH_DATE_TYPE:
         """Update all attributed for the config from the database.
 
         Returns
         -------
-        LibConfigModel
+        Config
             The updated config.
         """
-        data = (
+        data = typing.cast(
+            JSON_DICT_TYPE,
             await LibConfigRow.select()
             .where((LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot))
             .first()
-            .output(load_json=True, nested=True)
+            .output(load_json=True, nested=True),
         )
         if data:
             data["java_path"] = get_true_path(data["java_path"], data["java_path"])
             return data
-        # noinspection PyPep8
+
         return {
             "id": self.id,
             "bot": self.bot,
             "config_folder": LibConfigRow.config_folder.default,
-            "java_path": get_true_path(
-                LibConfigRow.java_path.default,
-                LibConfigRow.java_path.default,
-            ),
+            "java_path": get_true_path(LibConfigRow.java_path.default),
             "enable_managed_node": LibConfigRow.enable_managed_node.default,
             "auto_update_managed_nodes": LibConfigRow.auto_update_managed_nodes.default,
             "localtrack_folder": LibConfigRow.localtrack_folder.default,

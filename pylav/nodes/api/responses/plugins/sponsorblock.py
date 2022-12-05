@@ -7,6 +7,8 @@ from pylav.nodes.api.responses.websocket import Message
 
 __all__ = ("Segment", "SegmentsLoaded", "SegmentSkipped")
 
+from pylav.type_hints.dict_typing import JSON_DICT_TYPE
+
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class Segment:
@@ -20,7 +22,7 @@ class SegmentsLoaded(Message):
     op: Literal["event"] = "event"
     guildId: str | None = None
     type: Literal["SegmentsLoadedEvent"] = "SegmentsLoadedEvent"
-    segments: list[Segment | dict] = dataclasses.field(default_factory=list)
+    segments: list[Segment | JSON_DICT_TYPE] = dataclasses.field(default_factory=list)
 
     def __post_init__(self) -> None:
         temp = []
@@ -35,7 +37,7 @@ class SegmentSkipped(Message):
     op: Literal["event"] = "event"
     guildId: str | None = None
     type: Literal["SegmentSkippedEvent"] = "SegmentSkippedEvent"
-    segment: Segment | dict = dataclasses.field(default_factory=dict)
+    segment: Segment | JSON_DICT_TYPE = dataclasses.field(default_factory=dict)
 
     def __post_init__(self) -> None:
         if isinstance(self.segment, dict):

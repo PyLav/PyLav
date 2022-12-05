@@ -49,7 +49,7 @@ class ChannelMix(FilterMixin):
         return self._left_to_left
 
     @left_to_left.setter
-    def left_to_left(self, v: float | None):
+    def left_to_left(self, v: float | None) -> None:
         self._left_to_left = v
 
     @property
@@ -57,7 +57,7 @@ class ChannelMix(FilterMixin):
         return self._left_to_right
 
     @left_to_right.setter
-    def left_to_right(self, v: float | None):
+    def left_to_right(self, v: float | None) -> None:
         self._left_to_right = v
 
     @property
@@ -65,7 +65,7 @@ class ChannelMix(FilterMixin):
         return self._right_to_left
 
     @right_to_left.setter
-    def right_to_left(self, v: float | None):
+    def right_to_left(self, v: float | None) -> None:
         self._right_to_left = v
 
     @property
@@ -73,7 +73,7 @@ class ChannelMix(FilterMixin):
         return self._right_to_right
 
     @right_to_right.setter
-    def right_to_right(self, v: float | None):
+    def right_to_right(self, v: float | None) -> None:
         self._right_to_right = v
 
     @classmethod

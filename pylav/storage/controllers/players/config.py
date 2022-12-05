@@ -4,7 +4,7 @@ import asyncstdlib
 import discord
 
 from pylav.logging import getLogger
-from pylav.storage.modals.player.config import PlayerModel
+from pylav.storage.models.player.config import PlayerConfig
 
 LOGGER = getLogger("PyLav.Database.Controller.Player.Config")
 
@@ -20,13 +20,13 @@ class PlayerConfigController:
         return self._client
 
     async def initialize_global_config(self) -> None:
-        await PlayerModel.create_global(bot=self.client.bot.user.id)
+        await PlayerConfig.create_global(bot=self.client.bot.user.id)
 
-    def get_global_config(self) -> PlayerModel:
-        return PlayerModel(bot=self.client.bot.user.id, id=0)
+    def get_global_config(self) -> PlayerConfig:
+        return PlayerConfig(bot=self.client.bot.user.id, id=0)
 
-    def get_config(self, guild_id: int) -> PlayerModel:
-        return PlayerModel(bot=self.client.bot.user.id, id=guild_id)
+    def get_config(self, guild_id: int) -> PlayerConfig:
+        return PlayerConfig(bot=self.client.bot.user.id, id=guild_id)
 
     async def reset_to_default(self, guild_id: int) -> None:
         await self.get_config(guild_id=guild_id).delete()

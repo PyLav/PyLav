@@ -6,14 +6,14 @@ import sys
 import typing
 from collections.abc import AsyncIterator
 
-import aiopath
+import aiopath  # type: ignore
 import asyncstdlib
 
 # noinspection PyProtectedMember
 from discord.utils import maybe_coroutine
 
 try:
-    from redbot.core.i18n import Translator
+    from redbot.core.i18n import Translator  # type: ignore
 
     _ = Translator("PyLavPlayer", pathlib.Path(__file__))
 except ImportError:

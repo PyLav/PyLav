@@ -29,7 +29,7 @@ class Vibrato(FilterMixin):
         return self._frequency
 
     @frequency.setter
-    def frequency(self, v: float | None):
+    def frequency(self, v: float | None) -> None:
         if v is None or v == 0:
             self._frequency = v
             return
@@ -42,7 +42,7 @@ class Vibrato(FilterMixin):
         return self._depth
 
     @depth.setter
-    def depth(self, v: float | None):
+    def depth(self, v: float | None) -> None:
         if v is None:
             self._depth = v
             return
