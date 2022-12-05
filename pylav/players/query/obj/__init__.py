@@ -870,6 +870,53 @@ class Query:
         else:
             return "youtube"
 
+    @property
+    def source_abbreviation(self) -> str:
+        if self.is_spotify:
+            return "SP"
+        elif self.is_apple_music:
+            return "AM"
+        elif self.is_youtube:
+            return "YT"
+        elif self.is_soundcloud:
+            return "SC"
+        elif self.is_local:
+            return "LC"
+        elif self.is_twitch:
+            return "TW"
+        elif self.is_bandcamp:
+            return "BC"
+        elif self.is_http:
+            return "HTTP"
+        elif self.is_speak:
+            return "TTS"
+        elif self.is_gctts:
+            return "TTS"
+        elif self.is_getyarn:
+            return "GY"
+        elif self.is_clypit:
+            return "CI"
+        elif self.is_pornhub:
+            return "PH"
+        elif self.is_reddit:
+            return "RD"
+        elif self.is_ocremix:
+            return "OCR"
+        elif self.is_tiktok:
+            return "TT"
+        elif self.is_mixcloud:
+            return "MX"
+        elif self.is_soundgasm:
+            return "SG"
+        elif self.is_vimeo:
+            return "VM"
+        elif self.is_deezer:
+            return "DZ"
+        elif self.is_yandex_music:
+            return "YDM"
+        else:
+            return "YT"
+
 
 from pylav.players.query.utils import (  # noqa: E305
     process_bandcamp,
