@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from cashews import Cache
+from cashews import Cache  # type: ignore
 
 from pylav.constants.config import READ_CACHING_ENABLED
 from pylav.storage.database.caching.logging import LOGGER

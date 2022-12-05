@@ -11,10 +11,11 @@ from pylav.storage.database.caching import CachedSingletonByKey
 from pylav.storage.database.caching.decodators import maybe_cached
 from pylav.storage.database.caching.model import CachedModel
 from pylav.storage.database.tables.players import PlayerRow
+from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
-class PlayerModel(CachedModel, metaclass=CachedSingletonByKey):
+class PlayerConfig(CachedModel, metaclass=CachedSingletonByKey):
     id: int
     bot: int
 
@@ -59,7 +60,7 @@ class PlayerModel(CachedModel, metaclass=CachedSingletonByKey):
         await self.invalidate_cache()
 
     @maybe_cached
-    async def fetch_all(self) -> dict:
+    async def fetch_all(self) -> JSON_DICT_TYPE:
         """Get all players from the database"""
         data = (
             await PlayerRow.select()
@@ -430,7 +431,7 @@ class PlayerModel(CachedModel, metaclass=CachedSingletonByKey):
         await self.invalidate_cache(self.fetch_all)
 
     @maybe_cached
-    async def fetch_extras(self) -> dict:
+    async def fetch_extras(self) -> JSON_DICT_TYPE:
         """Fetch the extras of the player"""
         player = (
             await PlayerRow.select(PlayerRow.extras)
@@ -440,7 +441,7 @@ class PlayerModel(CachedModel, metaclass=CachedSingletonByKey):
         )
         return player["extras"] if player else ujson.loads(PlayerRow.extras.default)
 
-    async def update_extras(self, extras: dict) -> None:
+    async def update_extras(self, extras: JSON_DICT_TYPE) -> None:
         """Update the extras of the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
@@ -457,7 +458,9 @@ class PlayerModel(CachedModel, metaclass=CachedSingletonByKey):
         await self.invalidate_cache(self.fetch_all)
 
     @maybe_cached
-    async def fetch_effects(self) -> dict:
+    async def fetch_effects(
+        self,
+    ) -> dict[str, int | None | dict[str, int | float | list[dict[str, float | None]] | None]]:
         """Fetch the effects of the player"""
         player = (
             await PlayerRow.select(PlayerRow.effects)
@@ -467,7 +470,9 @@ class PlayerModel(CachedModel, metaclass=CachedSingletonByKey):
         )
         return player["effects"] if player else ujson.loads(PlayerRow.effects.default)
 
-    async def update_effects(self, effects: dict) -> None:
+    async def update_effects(
+        self, effects: dict[str, int | None | dict[str, int | float | list[dict[str, float | None]] | None]]
+    ) -> None:
         """Update the effects of the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
@@ -496,7 +501,7 @@ class PlayerModel(CachedModel, metaclass=CachedSingletonByKey):
             player["empty_queue_dc"] if player else ujson.loads(PlayerRow.empty_queue_dc.default)
         )
 
-    async def update_empty_queue_dc(self, empty_queue_dc: dict) -> None:
+    async def update_empty_queue_dc(self, empty_queue_dc: dict[str, int | bool]) -> None:
         """Update the empty queue dc of the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
@@ -523,7 +528,7 @@ class PlayerModel(CachedModel, metaclass=CachedSingletonByKey):
         )
         return TimedFeature.from_json(player["alone_dc"] if player else ujson.loads(PlayerRow.alone_dc.default))
 
-    async def update_alone_dc(self, alone_dc: dict) -> None:
+    async def update_alone_dc(self, alone_dc: dict[str, int | bool]) -> None:
         """Update the alone dc of the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
@@ -550,7 +555,7 @@ class PlayerModel(CachedModel, metaclass=CachedSingletonByKey):
         )
         return TimedFeature.from_json(player["alone_pause"] if player else ujson.loads(PlayerRow.alone_pause.default))
 
-    async def update_alone_pause(self, alone_pause: dict) -> None:
+    async def update_alone_pause(self, alone_pause: dict[str, int | bool]) -> None:
         """Update the alone pause of the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
@@ -761,8 +766,8 @@ class PlayerModel(CachedModel, metaclass=CachedSingletonByKey):
         self,
         user: discord.Member,
         *,
-        additional_role_ids: list = None,
-        additional_user_ids: list = None,
+        additional_role_ids: list | None = None,
+        additional_user_ids: list | None = None,
         bot: BotType = None,
     ) -> bool:
         """Check if a user is a dj.

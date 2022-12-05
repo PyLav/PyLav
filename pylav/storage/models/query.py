@@ -13,7 +13,7 @@ from pylav.storage.database.tables.tracks import TrackRow
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
-class QueryModel(CachedModel, metaclass=CachedSingletonByKey):
+class Query(CachedModel, metaclass=CachedSingletonByKey):
     id: str
 
     @maybe_cached
@@ -27,13 +27,13 @@ class QueryModel(CachedModel, metaclass=CachedSingletonByKey):
         """
         return await QueryRow.exists().where(QueryRow.identifier == self.id)
 
-    async def delete(self):
+    async def delete(self) -> None:
         """Delete the query from the database"""
         await QueryRow.delete().where(QueryRow.identifier == self.id)
         await self.invalidate_cache()
 
     @maybe_cached
-    async def size(self):
+    async def size(self) -> int:
         """Count the tracks of the playlist.
 
         Returns
@@ -108,7 +108,7 @@ class QueryModel(CachedModel, metaclass=CachedSingletonByKey):
         )
         return response["name"] if response else QueryRow.name.default
 
-    async def update_name(self, name: str):
+    async def update_name(self, name: str) -> None:
         """Update the name of the playlist.
 
         Parameters
@@ -143,7 +143,7 @@ class QueryModel(CachedModel, metaclass=CachedSingletonByKey):
         )
         return response["last_updated"] if response else QueryRow.last_updated.default
 
-    async def update_last_updated(self):
+    async def update_last_updated(self) -> None:
         """Update the last updated time of the playlist"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
@@ -159,7 +159,7 @@ class QueryModel(CachedModel, metaclass=CachedSingletonByKey):
             (self.exists, True),
         )
 
-    async def bulk_update(self, tracks: list[str], name: str):
+    async def bulk_update(self, tracks: list[str], name: str) -> None:
         """Bulk update the query.
 
         Parameters

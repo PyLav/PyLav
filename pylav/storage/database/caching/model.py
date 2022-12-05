@@ -25,7 +25,7 @@ class CachedModel:
         if methods:
             await invalidate_cache_multi(methods, self)
         else:
-            await invalidate_cache_multi(self.get_all_methods(), self)  # type: ignore
+            await invalidate_cache_multi(self.get_all_methods(), self)
 
     async def update_cache(self, *pairs: tuple[Callable, Any]) -> None:
         """Update the cache for the specified method"""

@@ -4,6 +4,7 @@ import dataclasses
 from typing import Annotated, Union
 
 from pylav.nodes.api.responses.filters.misc import ValueRange
+from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
@@ -20,4 +21,4 @@ class EqualizerBand:
         return response
 
 
-Equalizer = list[Union[EqualizerBand, dict]]
+Equalizer = list[Union[EqualizerBand, JSON_DICT_TYPE]]

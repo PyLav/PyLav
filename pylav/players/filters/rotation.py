@@ -27,7 +27,7 @@ class Rotation(FilterMixin):
         return self._hertz
 
     @hertz.setter
-    def hertz(self, v: float | None):
+    def hertz(self, v: float | None) -> None:
         self._hertz = v
 
     @classmethod

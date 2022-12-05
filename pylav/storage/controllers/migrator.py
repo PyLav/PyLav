@@ -12,7 +12,7 @@ class MigrationController:
 
     def __init__(self, client: Client):
         self._client = client
-        self._tasks_depend_on_node: list[asyncio.Task] = []
+        self._tasks_depend_on_node: list[asyncio.Task[None]] = []
 
     async def run_updates(self) -> None:
         """Run through schema migrations"""

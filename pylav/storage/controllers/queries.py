@@ -10,7 +10,7 @@ from pylav.logging import getLogger
 from pylav.players.query.obj import Query
 from pylav.storage.database.tables.queries import QueryRow
 from pylav.storage.database.tables.tracks import TrackRow
-from pylav.storage.modals.query import QueryModel
+from pylav.storage.models.query import Query
 
 LOGGER = getLogger("PyLav.Database.Controller.Query")
 
@@ -33,11 +33,11 @@ class QueryController:
         )
 
     @staticmethod
-    def get(identifier: str) -> QueryModel:
+    def get(identifier: str) -> Query:
         """Get a query object"""
-        return QueryModel(id=identifier)
+        return Query(id=identifier)
 
-    async def fetch_query(self, query: Query) -> QueryModel | None:
+    async def fetch_query(self, query: Query) -> Query | None:
         if query.is_local or query.is_custom_playlist or query.is_http:
             # Do not cache local queries and single track urls or http source entries
             return None
@@ -57,13 +57,11 @@ class QueryController:
             return False
         name = result.get("playlistInfo", {}).get("name", None)
         defaults = {QueryRow.name: name}
-        query_row = await QueryRow.objects().get_or_create(
-            QueryRow.identifier == query.query_identifier, defaults  # type: ignore
-        )
+        query_row = await QueryRow.objects().get_or_create(QueryRow.identifier == query.query_identifier, defaults)
 
         # noinspection PyProtectedMember
         if not query_row._was_created:
-            await QueryRow.update(defaults).where(QueryRow.identifier == query.query_identifier)  # type: ignore
+            await QueryRow.update(defaults).where(QueryRow.identifier == query.query_identifier)
         new_tracks = []
         # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
         async for track in AsyncIter(tracks):
@@ -101,7 +99,7 @@ class QueryController:
 
     @staticmethod
     async def delete_query(query: Query) -> None:
-        await QueryRow.delete().where(QueryRow.identifier == query.query_identifier)  # type: ignore
+        await QueryRow.delete().where(QueryRow.identifier == query.query_identifier)
 
     @staticmethod
     async def size() -> int:

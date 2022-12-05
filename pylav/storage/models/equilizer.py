@@ -8,23 +8,25 @@ from contextlib import asynccontextmanager
 from dataclasses import dataclass
 
 import aiohttp
-import brotli
+import brotli  # type: ignore
 import discord
 import ujson
 import yaml
+from piccolo.columns import Float
 
 from pylav.constants.config import BROTLI_ENABLED
 from pylav.constants.playlists import BUNDLED_PLAYLIST_IDS
 from pylav.exceptions.playlist import InvalidPlaylistException
 from pylav.logging import getLogger
-from pylav.players.filters import Equalizer
+from pylav.players import filters
 from pylav.storage.database.tables.equalizer import EqualizerRow
 
 LOGGER = getLogger("PyLav.Database.Equalizer")
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
-class EqualizerModel:
+class Equalizer:
+
     id: int
     scope: int
     author: int
@@ -46,12 +48,12 @@ class EqualizerModel:
     band_10000: float | None = None
     band_16000: float | None = None
 
-    async def save(self) -> EqualizerModel:
+    async def save(self) -> Equalizer:
         """Save the Equalizer to the database.
 
         Returns
         -------
-        EqualizerModel
+        Equalizer
             The Equalizer.
         """
 
@@ -60,22 +62,9 @@ class EqualizerModel:
             EqualizerRow.author: self.author,
             EqualizerRow.name: self.name,
             EqualizerRow.description: self.description,
-            EqualizerRow.band_25: self.band_25,
-            EqualizerRow.band_40: self.band_40,
-            EqualizerRow.band_63: self.band_63,
-            EqualizerRow.band_100: self.band_100,
-            EqualizerRow.band_160: self.band_160,
-            EqualizerRow.band_250: self.band_250,
-            EqualizerRow.band_400: self.band_400,
-            EqualizerRow.band_630: self.band_630,
-            EqualizerRow.band_1000: self.band_1000,
-            EqualizerRow.band_1600: self.band_1600,
-            EqualizerRow.band_2500: self.band_2500,
-            EqualizerRow.band_4000: self.band_4000,
-            EqualizerRow.band_6300: self.band_6300,
-            EqualizerRow.band_10000: self.band_10000,
-            EqualizerRow.band_16000: self.band_16000,
         }
+        values.update(self._get_save_defaults())
+
         eq = (
             await EqualizerRow.objects()
             .output(load_json=True)
@@ -84,10 +73,10 @@ class EqualizerModel:
         # noinspection PyProtectedMember
         if not eq._was_created:
             await EqualizerRow.update(values).where(EqualizerRow.id == self.id)
-        return EqualizerModel(**eq.to_dict())
+        return Equalizer(**eq.to_dict())
 
     @classmethod
-    async def get(cls, identifier: int) -> EqualizerModel | None:
+    async def get(cls, identifier: int) -> Equalizer | None:
         """Get an equalizer from the database.
 
         Parameters
@@ -97,15 +86,15 @@ class EqualizerModel:
 
         Returns
         -------
-        EqualizerModel | None
+        Equalizer | None
             The equalizer if found, else None.
         """
         equalizer = (
             await EqualizerRow.select().where(EqualizerRow.id == identifier).first().output(load_json=True, nested=True)
         )
-        return EqualizerModel(**equalizer) if equalizer else None
+        return Equalizer(**equalizer) if equalizer else None
 
-    async def delete(self):
+    async def delete(self) -> None:
         """Delete the equalizer from the database"""
         await EqualizerRow.delete().where(EqualizerRow.id == self.id)
 
@@ -211,23 +200,7 @@ class EqualizerModel:
             "author": self.author,
             "description": self.description,
             "scope": self.scope,
-            "bands": {
-                "25": self.band_25,
-                "40": self.band_40,
-                "63": self.band_63,
-                "100": self.band_100,
-                "160": self.band_160,
-                "250": self.band_250,
-                "400": self.band_400,
-                "630": self.band_630,
-                "1000": self.band_1000,
-                "1600": self.band_1600,
-                "2500": self.band_2500,
-                "4000": self.band_4000,
-                "6300": self.band_6300,
-                "10000": self.band_10000,
-                "16000": self.band_16000,
-            },
+            "bands": self._get_band_dict(),
         }
         compression = None
         with io.BytesIO() as bio:
@@ -250,7 +223,7 @@ class EqualizerModel:
             yield bio, compression
 
     @classmethod
-    async def from_yaml(cls, context: PyLavContext, scope: int, url: str) -> EqualizerModel:
+    async def from_yaml(cls, context: PyLavContext, scope: int, url: str) -> Equalizer:
         """Deserialize a Equalizer from a YAML file.
 
         Parameters
@@ -264,7 +237,7 @@ class EqualizerModel:
 
         Returns
         -------
-        EqualizerModel
+        Equalizer
             The Equalizer.
 
         """
@@ -279,30 +252,10 @@ class EqualizerModel:
                     data = yaml.safe_load(data)
         except Exception as e:
             raise InvalidPlaylistException(f"Invalid equalizer file - {e}") from e
-        return cls(
-            id=context.message.id,
-            scope=scope,
-            name=data["name"],
-            author=data["author"],
-            description=data["description"],
-            band_25=data["bands"]["25"],
-            band_40=data["bands"]["40"],
-            band_63=data["bands"]["63"],
-            band_100=data["bands"]["100"],
-            band_160=data["bands"]["160"],
-            band_250=data["bands"]["250"],
-            band_400=data["bands"]["400"],
-            band_630=data["bands"]["630"],
-            band_1000=data["bands"]["1000"],
-            band_1600=data["bands"]["1600"],
-            band_2500=data["bands"]["2500"],
-            band_4000=data["bands"]["4000"],
-            band_6300=data["bands"]["6300"],
-            band_10000=data["bands"]["10000"],
-            band_16000=data["bands"]["16000"],
-        )
 
-    def to_dict(self) -> dict:
+        return cls(**cls._get_args(identifier=context.message.id, scope=scope, data=data))
+
+    def to_dict(self) -> dict[str, int | str | float | dict[str, float]]:
         """Serialize the Equalizer to a dict.
 
         Returns
@@ -317,27 +270,11 @@ class EqualizerModel:
             "author": self.author,
             "description": self.description,
             "scope": self.scope,
-            "bands": {
-                "25": self.band_25,
-                "40": self.band_40,
-                "63": self.band_63,
-                "100": self.band_100,
-                "160": self.band_160,
-                "250": self.band_250,
-                "400": self.band_400,
-                "630": self.band_630,
-                "1000": self.band_1000,
-                "1600": self.band_1600,
-                "2500": self.band_2500,
-                "4000": self.band_4000,
-                "6300": self.band_6300,
-                "10000": self.band_10000,
-                "16000": self.band_16000,
-            },
+            "bands": self._get_band_dict(),
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> EqualizerModel:
+    def from_dict(cls, data: dict) -> Equalizer:
         """Deserialize a Equalizer from a dict.
 
         Parameters
@@ -347,30 +284,11 @@ class EqualizerModel:
 
         Returns
         -------
-        EqualizerModel
+        Equalizer
             The Equalizer
         """
         return cls(
-            id=data["id"],
-            scope=data["scope"],
-            name=data["name"],
-            author=data["author"],
-            description=data["description"],
-            band_25=data["bands"]["25"],
-            band_40=data["bands"]["40"],
-            band_63=data["bands"]["63"],
-            band_100=data["bands"]["100"],
-            band_160=data["bands"]["160"],
-            band_250=data["bands"]["250"],
-            band_400=data["bands"]["400"],
-            band_630=data["bands"]["630"],
-            band_1000=data["bands"]["1000"],
-            band_1600=data["bands"]["1600"],
-            band_2500=data["bands"]["2500"],
-            band_4000=data["bands"]["4000"],
-            band_6300=data["bands"]["6300"],
-            band_10000=data["bands"]["10000"],
-            band_16000=data["bands"]["16000"],
+            **cls._get_args(data=data),
         )
 
     def to_filter(self) -> Equalizer:
@@ -381,31 +299,16 @@ class EqualizerModel:
         Equalizer
             The filter representation of the Equalizer
         """
-        return Equalizer(
+
+        return filters.Equalizer(
             name=self.name or "CustomEqualizer",
-            levels=[
-                {"band": 0, "gain": self.band_25},
-                {"band": 1, "gain": self.band_40},
-                {"band": 2, "gain": self.band_63},
-                {"band": 3, "gain": self.band_100},
-                {"band": 4, "gain": self.band_160},
-                {"band": 5, "gain": self.band_250},
-                {"band": 6, "gain": self.band_400},
-                {"band": 7, "gain": self.band_630},
-                {"band": 8, "gain": self.band_1000},
-                {"band": 9, "gain": self.band_1600},
-                {"band": 10, "gain": self.band_2500},
-                {"band": 11, "gain": self.band_4000},
-                {"band": 12, "gain": self.band_6300},
-                {"band": 13, "gain": self.band_10000},
-                {"band": 14, "gain": self.band_16000},
-            ],
+            levels=self._get_band_list(),
         )
 
     @classmethod
     def from_filter(
-        cls, equalizer: Equalizer, context: PyLavContext, scope: int, description: str = None
-    ) -> EqualizerModel:
+        cls, equalizer: filters.Equalizer, context: PyLavContext, scope: int, description: str = None
+    ) -> filters.Equalizer:
         """Deserialize a Equalizer from a Filter.
 
         Parameters
@@ -421,10 +324,10 @@ class EqualizerModel:
 
         Returns
         -------
-        EqualizerModel
-            The EqualizerModel built from the Equalizer object
+        Equalizer
+            The Equalizer built from the Equalizer object
         """
-        return EqualizerModel(
+        return Equalizer(
             id=context.message.id,
             scope=scope,
             name=equalizer.name,
@@ -446,3 +349,126 @@ class EqualizerModel:
             band_10000=equalizer.index[13],
             band_16000=equalizer.index[14],
         )
+
+    def _get_band_dict(self) -> dict[str, float]:
+        bands = {}
+        null_values = [None, 0.0]
+        if self.band_25 not in null_values:
+            bands["25"] = self.band_25
+        if self.band_40 not in null_values:
+            bands["40"] = self.band_40
+        if self.band_63 not in null_values:
+            bands["63"] = self.band_63
+        if self.band_100 not in null_values:
+            bands["100"] = self.band_100
+        if self.band_160 not in null_values:
+            bands["160"] = self.band_160
+        if self.band_250 not in null_values:
+            bands["250"] = self.band_250
+        if self.band_400 not in null_values:
+            bands["400"] = self.band_400
+        if self.band_630 not in null_values:
+            bands["630"] = self.band_630
+        if self.band_1000 not in null_values:
+            bands["1000"] = self.band_1000
+        if self.band_1600 not in null_values:
+            bands["1600"] = self.band_1600
+        if self.band_2500 not in null_values:
+            bands["2500"] = self.band_2500
+        if self.band_4000 not in null_values:
+            bands["4000"] = self.band_4000
+        if self.band_6300 not in null_values:
+            bands["6300"] = self.band_6300
+        if self.band_10000 not in null_values:
+            bands["10000"] = self.band_10000
+        if self.band_16000 not in null_values:
+            bands["16000"] = self.band_16000
+        return bands
+
+    def _get_save_defaults(self) -> dict[Float, float]:
+        bands = {
+            EqualizerRow.band_25: self.band_25 or None,
+            EqualizerRow.band_40: self.band_40 or None,
+            EqualizerRow.band_63: self.band_63 or None,
+            EqualizerRow.band_100: self.band_100 or None,
+            EqualizerRow.band_160: self.band_160 or None,
+            EqualizerRow.band_250: self.band_250 or None,
+            EqualizerRow.band_400: self.band_400 or None,
+            EqualizerRow.band_630: self.band_630 or None,
+            EqualizerRow.band_1000: self.band_1000 or None,
+            EqualizerRow.band_1600: self.band_1600 or None,
+            EqualizerRow.band_2500: self.band_2500 or None,
+            EqualizerRow.band_4000: self.band_4000 or None,
+            EqualizerRow.band_6300: self.band_6300 or None,
+            EqualizerRow.band_10000: self.band_10000 or None,
+            EqualizerRow.band_16000: self.band_16000 or None,
+        }
+        return bands
+
+    def _get_band_list(self) -> list[dict[str, float]]:
+        levels = []
+        null_values = [None, 0.0]
+        if self.band_25 not in null_values:
+            levels.append({"band": 0, "gain": self.band_25})
+        if self.band_40 not in null_values:
+            levels.append({"band": 1, "gain": self.band_40})
+        if self.band_63 not in null_values:
+            levels.append({"band": 2, "gain": self.band_63})
+        if self.band_100 not in null_values:
+            levels.append({"band": 3, "gain": self.band_100})
+        if self.band_160 not in null_values:
+            levels.append({"band": 4, "gain": self.band_160})
+        if self.band_250 not in null_values:
+            levels.append({"band": 5, "gain": self.band_250})
+        if self.band_400 not in null_values:
+            levels.append({"band": 6, "gain": self.band_400})
+        if self.band_630 not in null_values:
+            levels.append({"band": 7, "gain": self.band_630})
+        if self.band_1000 not in null_values:
+            levels.append({"band": 8, "gain": self.band_1000})
+        if self.band_1600 not in null_values:
+            levels.append({"band": 9, "gain": self.band_1600})
+        if self.band_2500 not in null_values:
+            levels.append({"band": 10, "gain": self.band_2500})
+        if self.band_4000 not in null_values:
+            levels.append({"band": 11, "gain": self.band_4000})
+        if self.band_6300 not in null_values:
+            levels.append({"band": 12, "gain": self.band_6300})
+        if self.band_10000 not in null_values:
+            levels.append({"band": 13, "gain": self.band_10000})
+        if self.band_16000 not in null_values:
+            levels.append({"band": 14, "gain": self.band_16000})
+        return levels
+
+    @staticmethod
+    def _get_args(
+        data: dict[str, dict[str, float]],
+        identifier: int | None = None,
+        scope: int | None = None,
+        name: str | None = None,
+        author: int | None = None,
+        description: str | None = None,
+    ) -> dict[str, int | str | float | None]:
+        response = dict(
+            band_25=data["bands"]["25"] if "25" in data["bands"] else None,
+            band_40=data["bands"]["40"] if "40" in data["bands"] else None,
+            band_63=data["bands"]["63"] if "63" in data["bands"] else None,
+            band_100=data["bands"]["100"] if "100" in data["bands"] else None,
+            band_160=data["bands"]["160"] if "160" in data["bands"] else None,
+            band_250=data["bands"]["250"] if "250" in data["bands"] else None,
+            band_400=data["bands"]["400"] if "400" in data["bands"] else None,
+            band_630=data["bands"]["630"] if "630" in data["bands"] else None,
+            band_1000=data["bands"]["1000"] if "1000" in data["bands"] else None,
+            band_1600=data["bands"]["1600"] if "1600" in data["bands"] else None,
+            band_2500=data["bands"]["2500"] if "2500" in data["bands"] else None,
+            band_4000=data["bands"]["4000"] if "4000" in data["bands"] else None,
+            band_6300=data["bands"]["6300"] if "6300" in data["bands"] else None,
+            band_10000=data["bands"]["10000"] if "10000" in data["bands"] else None,
+            band_16000=data["bands"]["16000"] if "16000" in data["bands"] else None,
+            id=identifier or data["id"],
+            scope=scope or data["scope"],
+            name=name or data["name"],
+            author=author or data["author"],
+            description=description or data["description"],
+        )
+        return response
