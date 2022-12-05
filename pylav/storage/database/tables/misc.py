@@ -21,6 +21,7 @@ if os.getenv("PYLAV__SQL", False):
     IS_POSTGRES = False
 else:
     LOGGER.verbose("Connecting to Postgres server using %r", _CONFIG)
+    # noinspection SpellCheckingInspection
     DATABASE_ENGINE = PostgresEngine(
         config=_CONFIG,
         extensions=(

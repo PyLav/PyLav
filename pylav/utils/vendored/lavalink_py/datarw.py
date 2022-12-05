@@ -31,6 +31,7 @@ from io import BytesIO
 from pylav.utils.vendored.lavalink_py.utfm_codec import read_utfm
 
 
+# noinspection SpellCheckingInspection
 class DataReader:
     def __init__(self, ts: str) -> None:
         self._buf = BytesIO(b64decode(ts))

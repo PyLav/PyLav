@@ -486,8 +486,8 @@ class PlaylistModel(CachedModel, metaclass=CachedSingletonByKey):
                         cbio.write(brotli.compress(yaml.dump(data, encoding="utf-8")))
                     else:
                         compression = "gzip"
-                        with gzip.GzipFile(fileobj=cbio, mode="wb", compresslevel=9) as gfile:
-                            yaml.safe_dump(data, gfile, default_flow_style=False, sort_keys=False, encoding="utf-8")
+                        with gzip.GzipFile(fileobj=cbio, mode="wb", compresslevel=9) as gzip_file:
+                            yaml.safe_dump(data, gzip_file, default_flow_style=False, sort_keys=False, encoding="utf-8")
                     cbio.seek(0)
                     LOGGER.debug("SIZE COMPRESSED playlist [%s] (%s): %s", compression, name, sys.getsizeof(cbio))
                     yield cbio, compression
@@ -504,6 +504,7 @@ class PlaylistModel(CachedModel, metaclass=CachedSingletonByKey):
         }
 
         playlist_row = await PlaylistRow.objects().get_or_create(PlaylistRow.id == self.id, defaults)
+        # noinspection PyProtectedMember
         if not playlist_row._was_created:
             await PlaylistRow.update(defaults).where(PlaylistRow.id == self.id)
         try:

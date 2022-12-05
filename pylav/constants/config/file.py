@@ -8,6 +8,7 @@ from typing import Any, cast
 import yaml
 from deepdiff import DeepDiff  # type: ignore
 
+# noinspection PyProtectedMember
 from pylav._internals.functions import _get_path
 from pylav.constants.config import ENV_FILE
 from pylav.constants.node_features import SUPPORTED_SEARCHES
@@ -20,18 +21,22 @@ data = cast(dict[str, Any], yaml.safe_load(ENV_FILE.open(mode="r").read()))
 data_new = deepcopy(data)
 
 if (POSTGRES_PORT := data.get("PYLAV__POSTGRES_PORT")) is None:
+    # noinspection SpellCheckingInspection
     POSTGRES_PORT = os.getenv("PYLAV__POSTGRES_PORT", os.getenv("PGPORT"))
     data_new["PYLAV__POSTGRES_PORT"] = POSTGRES_PORT
 
 if (POSTGRES_PASSWORD := data.get("PYLAV__POSTGRES_PASSWORD")) is None:
+    # noinspection SpellCheckingInspection
     POSTGRES_PASSWORD = os.getenv("PYLAV__POSTGRES_PASSWORD", os.getenv("PGPASSWORD"))
     data_new["PYLAV__POSTGRES_PASSWORD"] = POSTGRES_PASSWORD
 
 if (POSTGRES_USER := data.get("PYLAV__POSTGRES_USER")) is None:
+    # noinspection SpellCheckingInspection
     POSTGRES_USER = os.getenv("PYLAV__POSTGRES_USER", os.getenv("PGUSER"))
     data_new["PYLAV__POSTGRES_USER"] = POSTGRES_USER
 
 if (POSTGRES_DATABASE := data.get("PYLAV__POSTGRES_DB")) is None:
+    # noinspection SpellCheckingInspection
     POSTGRES_DATABASE = os.getenv("PYLAV__POSTGRES_DB", os.getenv("PGDATABASE"))
     data_new["PYLAV__POSTGRES_DB"] = POSTGRES_DATABASE
 
@@ -116,8 +121,10 @@ if (DEFAULT_SEARCH_SOURCE := data.get("PYLAV__DEFAULT_SEARCH_SOURCE")) is None:
     DEFAULT_SEARCH_SOURCE = os.getenv("PYLAV__DEFAULT_SEARCH_SOURCE")
 
 if DEFAULT_SEARCH_SOURCE not in SUPPORTED_SEARCHES:
+    # noinspection SpellCheckingInspection
     LOGGER.warning("Invalid search source %s, defaulting to dzsearch", DEFAULT_SEARCH_SOURCE)
     LOGGER.info("Valid search sources are %s", ", ".join(SUPPORTED_SEARCHES.keys()))
+    # noinspection SpellCheckingInspection
     DEFAULT_SEARCH_SOURCE = "dzsearch"
 data_new["PYLAV__DEFAULT_SEARCH_SOURCE"] = DEFAULT_SEARCH_SOURCE
 

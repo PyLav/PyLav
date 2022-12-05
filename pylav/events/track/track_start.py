@@ -36,6 +36,7 @@ class TrackStartYouTubeEvent(TrackStartEvent):
         self.author = track.author
 
 
+# noinspection SpellCheckingInspection
 class TrackStartClypitEvent(TrackStartEvent):
     """This event is dispatched when the player starts to play a Clyp.it track."""
 
@@ -120,6 +121,7 @@ class TrackStartRedditEvent(TrackStartEvent):
         self.author = track.author
 
 
+# noinspection SpellCheckingInspection
 class TrackStartSoundgasmEvent(TrackStartEvent):
     """This event is dispatched when the player starts to play a Soundgasm track."""
 

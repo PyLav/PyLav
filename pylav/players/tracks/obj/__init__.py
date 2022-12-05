@@ -23,6 +23,7 @@ CACHE = Cache(name="TrackCache")
 CACHE.setup("mem://?check_interval=10&size=10000")
 
 
+# noinspection SpellCheckingInspection
 @total_ordering
 class Track:
     __slots__ = (
