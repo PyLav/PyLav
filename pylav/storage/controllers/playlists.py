@@ -25,6 +25,7 @@ from pylav.logging import getLogger
 from pylav.players.query.obj import Query
 from pylav.storage.database.tables.playlists import PlaylistRow
 from pylav.storage.models.playlist import Playlist
+from pylav.type_hints.bot import DISCORD_BOT_TYPE
 
 LOGGER = getLogger("PyLav.Database.Controller.Playlist")
 
@@ -242,7 +243,7 @@ class PlaylistController:
         return global_playlists, user_playlists, guild_playlists, channel_playlists, vc_playlists
 
     async def get_manageable_playlists(
-        self, requester: discord.abc.User, bot: BotType, *, name_or_id: str | None = None
+        self, requester: discord.abc.User, bot: DISCORD_BOT_TYPE, *, name_or_id: str | None = None
     ) -> list[Playlist]:
         if name_or_id:
             try:

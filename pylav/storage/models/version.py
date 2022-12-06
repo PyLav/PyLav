@@ -5,14 +5,14 @@ from dataclasses import dataclass
 
 from packaging.version import Version, parse
 
-from pylav.storage.database.caching import CachedSingletonByKey
+from pylav.helpers.singleton import SingletonCachedByKey
 from pylav.storage.database.caching.decodators import maybe_cached
 from pylav.storage.database.caching.model import CachedModel
 from pylav.storage.database.tables.version import BotVersionRow
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
-class BotVersion(CachedModel, metaclass=CachedSingletonByKey):
+class BotVersion(CachedModel, metaclass=SingletonCachedByKey):
     id: int
 
     @maybe_cached
