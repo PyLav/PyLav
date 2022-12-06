@@ -218,8 +218,8 @@ class PlayerQueue(asyncio.Queue[ANY_GENERIC_TYPE]):
         Put an item into the queue. If the queue is full, wait until a free
         slot is available before adding item.
         """
-        if discard and self.full():
-            for __ in range(len(items)):
+        if discard:
+            while self.full():
                 await self.get_oldest()
         while self.full():
             putter = self._loop.create_future()
