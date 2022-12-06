@@ -4,8 +4,8 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from pylav.constants.config import READ_CACHING_ENABLED
+from pylav.helpers.singleton import SingletonCachedByKey
 from pylav.players.tracks.decoder import async_decoder
-from pylav.storage.database.caching import CachedSingletonByKey
 from pylav.storage.database.caching.decodators import maybe_cached
 from pylav.storage.database.caching.model import CachedModel
 from pylav.storage.database.tables.queries import QueryRow
@@ -13,7 +13,7 @@ from pylav.storage.database.tables.tracks import TrackRow
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
-class Query(CachedModel, metaclass=CachedSingletonByKey):
+class Query(CachedModel, metaclass=SingletonCachedByKey):
     id: str
 
     @maybe_cached

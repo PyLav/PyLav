@@ -9,7 +9,7 @@ import aiopath  # type: ignore
 import ujson
 from discord.utils import utcnow
 
-from pylav.storage.database.caching import CachedSingletonByKey
+from pylav.helpers.singleton import SingletonCachedByKey
 from pylav.storage.database.caching.decodators import maybe_cached
 from pylav.storage.database.caching.model import CachedModel
 from pylav.storage.database.tables.config import LibConfigRow
@@ -17,7 +17,7 @@ from pylav.type_hints.dict_typing import JSON_DICT_TYPE, JSON_DICT_WITH_DATE_TYP
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
-class Config(CachedModel, metaclass=CachedSingletonByKey):
+class Config(CachedModel, metaclass=SingletonCachedByKey):
     bot: int
     id: int = 1
 

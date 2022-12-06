@@ -20,6 +20,7 @@ from pylav.exceptions.playlist import InvalidPlaylistException
 from pylav.logging import getLogger
 from pylav.players import filters
 from pylav.storage.database.tables.equalizer import EqualizerRow
+from pylav.type_hints.bot import DISCORD_BOT_TYPE
 
 LOGGER = getLogger("PyLav.Database.Equalizer")
 
@@ -98,12 +99,14 @@ class Equalizer:
         """Delete the equalizer from the database"""
         await EqualizerRow.delete().where(EqualizerRow.id == self.id)
 
-    async def can_manage(self, bot: BotType, requester: discord.abc.User, guild: discord.Guild = None) -> bool:  # noqa
+    async def can_manage(
+        self, bot: DISCORD_BOT_TYPE, requester: discord.abc.User, guild: discord.Guild = None
+    ) -> bool:  # noqa
         """Check if the requester can manage the equalizer.
 
         Parameters
         ----------
-        bot: BotType
+        bot: DISCORD_BOT_TYPE
             The bot.
         requester: discord.abc.User
             The requester.
@@ -123,12 +126,12 @@ class Equalizer:
             return False
         return self.author == requester.id
 
-    async def get_scope_name(self, bot: BotType, mention: bool = True, guild: discord.Guild = None) -> str:
+    async def get_scope_name(self, bot: DISCORD_BOT_TYPE, mention: bool = True, guild: discord.Guild = None) -> str:
         """Get the name of the scope.
 
         Parameters
         ----------
-        bot: BotType
+        bot: DISCORD_BOT_TYPE
             The bot.
         mention: bool
             If the name should be mentionable.
@@ -158,12 +161,12 @@ class Equalizer:
         else:
             return f"(Invalid) {self.scope}"
 
-    async def get_author_name(self, bot: BotType, mention: bool = True) -> str | None:
+    async def get_author_name(self, bot: DISCORD_BOT_TYPE, mention: bool = True) -> str | None:
         """Get the name of the author.
 
         Parameters
         ----------
-        bot: BotType
+        bot: DISCORD_BOT_TYPE
             The bot.
         mention: bool
             If the name should be mentionable.

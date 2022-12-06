@@ -15,6 +15,7 @@ from cashews import Cache  # type: ignore
 
 from pylav.constants.regex import SQUARE_BRACKETS, STREAM_TITLE
 from pylav.exceptions.track import InvalidTrackException, TrackNotFoundException
+from pylav.helpers.misc import MISSING
 from pylav.nodes.api.responses.track import Track as APITrack
 from pylav.players.query.obj import Query
 from pylav.players.tracks.decoder import async_decoder
