@@ -9,6 +9,7 @@ from pylav.exceptions.database import EntryNotFoundException
 from pylav.logging import getLogger
 from pylav.storage.database.tables.equalizer import EqualizerRow
 from pylav.storage.models import equilizer
+from pylav.type_hints.bot import DISCORD_BOT_TYPE
 
 LOGGER = getLogger("PyLav.Database.Controller.Equalizer")
 
@@ -121,7 +122,7 @@ class EqualizerController:
             EqualizerRow.description: description,
         }
         values.update(
-            EqualizerConfigManager._get_equalizer_band_defaults(
+            EqualizerController._get_equalizer_band_defaults(
                 (EqualizerRow.band_25, band_25),
                 (EqualizerRow.band_40, band_40),
                 (EqualizerRow.band_63, band_63),
@@ -447,7 +448,7 @@ class EqualizerController:
         return global_equalizers, user_equalizers, guild_equalizers, channel_equalizers, vc_equalizers
 
     async def get_manageable_equalizers(
-        self, requester: discord.abc.User, bot: BotType, *, name_or_id: str | None = None
+        self, requester: discord.abc.User, bot: DISCORD_BOT_TYPE, *, name_or_id: str | None = None
     ) -> list[equilizer.Equalizer]:
         if name_or_id:
             try:

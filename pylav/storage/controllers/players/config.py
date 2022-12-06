@@ -3,8 +3,10 @@ from __future__ import annotations
 import asyncstdlib
 import discord
 
+from pylav.helpers.misc import TimedFeature
 from pylav.logging import getLogger
 from pylav.storage.models.player.config import PlayerConfig
+from pylav.type_hints.bot import DISCORD_BOT_TYPE
 
 LOGGER = getLogger("PyLav.Database.Controller.Player.Config")
 
@@ -83,7 +85,7 @@ class PlayerConfigController:
         *,
         additional_role_ids: list = None,
         additional_user_ids: list = None,
-        bot: BotType = None,
+        bot: DISCORD_BOT_TYPE = None,
     ) -> bool:
         if additional_user_ids and user.id in additional_user_ids:
             return True

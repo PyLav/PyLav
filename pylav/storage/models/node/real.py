@@ -7,7 +7,7 @@ import ujson
 from pylav.constants.config import JAVA_EXECUTABLE
 from pylav.constants.node import NODE_DEFAULT_SETTINGS
 from pylav.constants.node_features import SUPPORTED_FEATURES, SUPPORTED_SOURCES
-from pylav.storage.database.caching import CachedSingletonByKey
+from pylav.helpers.singleton import SingletonCachedByKey
 from pylav.storage.database.caching.decodators import maybe_cached
 from pylav.storage.database.caching.model import CachedModel
 from pylav.storage.database.tables.nodes import NodeRow
@@ -15,7 +15,7 @@ from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
-class Node(CachedModel, metaclass=CachedSingletonByKey):
+class Node(CachedModel, metaclass=SingletonCachedByKey):
     id: int
 
     @maybe_cached

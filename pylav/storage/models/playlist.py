@@ -19,13 +19,14 @@ from pylav.constants.config import BROTLI_ENABLED, READ_CACHING_ENABLED
 from pylav.constants.playlists import BUNDLED_PLAYLIST_IDS
 from pylav.constants.regex import SQUARE_BRACKETS
 from pylav.exceptions.playlist import InvalidPlaylistException
+from pylav.helpers.singleton import SingletonCachedByKey
 from pylav.logging import getLogger
 from pylav.players.tracks.decoder import async_decoder
-from pylav.storage.database.caching import CachedSingletonByKey
 from pylav.storage.database.caching.decodators import maybe_cached
 from pylav.storage.database.caching.model import CachedModel
 from pylav.storage.database.tables.playlists import PlaylistRow
 from pylav.storage.database.tables.tracks import TrackRow
+from pylav.type_hints.bot import DISCORD_BOT_TYPE
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 LOGGER = getLogger("PyLav.Database.Playlist")
@@ -43,7 +44,7 @@ except ImportError:
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
-class Playlist(CachedModel, metaclass=CachedSingletonByKey):
+class Playlist(CachedModel, metaclass=SingletonCachedByKey):
     id: int
 
     @maybe_cached
@@ -356,12 +357,14 @@ class Playlist(CachedModel, metaclass=CachedSingletonByKey):
         await PlaylistRow.delete().where(PlaylistRow.id == self.id)
         await self.invalidate_cache()
 
-    async def can_manage(self, bot: BotType, requester: discord.abc.User, guild: discord.Guild = None) -> bool:  # noqa
+    async def can_manage(
+        self, bot: DISCORD_BOT_TYPE, requester: discord.abc.User, guild: discord.Guild = None
+    ) -> bool:  # noqa
         """Check if the requester can manage the playlist.
 
         Parameters
         ----------
-        bot : BotType
+        bot : DISCORD_BOT_TYPE
             The bot instance.
         requester : discord.abc.User
             The requester.
@@ -381,12 +384,12 @@ class Playlist(CachedModel, metaclass=CachedSingletonByKey):
             return False
         return await self.fetch_author() == requester.id
 
-    async def get_scope_name(self, bot: BotType, mention: bool = True, guild: discord.Guild = None) -> str:
+    async def get_scope_name(self, bot: DISCORD_BOT_TYPE, mention: bool = True, guild: discord.Guild = None) -> str:
         """Get the name of the scope of the playlist.
 
         Parameters
         ----------
-        bot : BotType
+        bot : DISCORD_BOT_TYPE
             The bot instance.
         mention : bool
             Whether to add a mention if it is mentionable.
@@ -416,12 +419,12 @@ class Playlist(CachedModel, metaclass=CachedSingletonByKey):
         else:
             return _("(Invalid) {scope}").format(scope=original_scope)
 
-    async def get_author_name(self, bot: BotType, mention: bool = True) -> str | None:
+    async def get_author_name(self, bot: DISCORD_BOT_TYPE, mention: bool = True) -> str | None:
         """Get the name of the author of the playlist.
 
         Parameters
         ----------
-        bot : BotType
+        bot : DISCORD_BOT_TYPE
             The bot instance.
         mention : bool
             Whether to add a mention if it is mentionable.

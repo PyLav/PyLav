@@ -7,15 +7,17 @@ import asyncstdlib
 import discord
 import ujson
 
-from pylav.storage.database.caching import CachedSingletonByKey
+from pylav.helpers.misc import TimedFeature
+from pylav.helpers.singleton import SingletonCachedByKey
 from pylav.storage.database.caching.decodators import maybe_cached
 from pylav.storage.database.caching.model import CachedModel
 from pylav.storage.database.tables.players import PlayerRow
+from pylav.type_hints.bot import DISCORD_BOT_TYPE
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
-class PlayerConfig(CachedModel, metaclass=CachedSingletonByKey):
+class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
     id: int
     bot: int
 
@@ -70,9 +72,9 @@ class PlayerConfig(CachedModel, metaclass=CachedSingletonByKey):
         )
         if data:
             del data["primary_key"]
-            data["empty_queue_dc"] = TimedFeature.from_json(data["empty_queue_dc"])
-            data["alone_dc"] = TimedFeature.from_json(data["alone_dc"])
-            data["alone_pause"] = TimedFeature.from_json(data["alone_pause"])
+            data["empty_queue_dc"] = TimedFeature.from_dict(data["empty_queue_dc"])
+            data["alone_dc"] = TimedFeature.from_dict(data["alone_dc"])
+            data["alone_pause"] = TimedFeature.from_dict(data["alone_pause"])
             data["extras"] = data["extras"]
             data["effects"] = data["effects"]
             return data
@@ -91,9 +93,9 @@ class PlayerConfig(CachedModel, metaclass=CachedSingletonByKey):
             "auto_shuffle": PlayerRow.auto_shuffle.default,
             "auto_play": PlayerRow.auto_play.default,
             "self_deaf": PlayerRow.self_deaf.default,
-            "empty_queue_dc": TimedFeature.from_json(ujson.loads(PlayerRow.empty_queue_dc.default)),
-            "alone_dc": TimedFeature.from_json(ujson.loads(PlayerRow.alone_dc.default)),
-            "alone_pause": TimedFeature.from_json(ujson.loads(PlayerRow.alone_pause.default)),
+            "empty_queue_dc": TimedFeature.from_dict(ujson.loads(PlayerRow.empty_queue_dc.default)),
+            "alone_dc": TimedFeature.from_dict(ujson.loads(PlayerRow.alone_dc.default)),
+            "alone_pause": TimedFeature.from_dict(ujson.loads(PlayerRow.alone_pause.default)),
             "extras": ujson.loads(PlayerRow.extras.default),
             "effects": ujson.loads(PlayerRow.effects.default),
             "dj_users": PlayerRow.dj_users.default,
@@ -497,7 +499,7 @@ class PlayerConfig(CachedModel, metaclass=CachedSingletonByKey):
             .first()
             .output(load_json=True, nested=True)
         )
-        return TimedFeature.from_json(
+        return TimedFeature.from_dict(
             player["empty_queue_dc"] if player else ujson.loads(PlayerRow.empty_queue_dc.default)
         )
 
@@ -526,7 +528,7 @@ class PlayerConfig(CachedModel, metaclass=CachedSingletonByKey):
             .first()
             .output(load_json=True, nested=True)
         )
-        return TimedFeature.from_json(player["alone_dc"] if player else ujson.loads(PlayerRow.alone_dc.default))
+        return TimedFeature.from_dict(player["alone_dc"] if player else ujson.loads(PlayerRow.alone_dc.default))
 
     async def update_alone_dc(self, alone_dc: dict[str, int | bool]) -> None:
         """Update the alone dc of the player"""
@@ -553,7 +555,7 @@ class PlayerConfig(CachedModel, metaclass=CachedSingletonByKey):
             .first()
             .output(load_json=True, nested=True)
         )
-        return TimedFeature.from_json(player["alone_pause"] if player else ujson.loads(PlayerRow.alone_pause.default))
+        return TimedFeature.from_dict(player["alone_pause"] if player else ujson.loads(PlayerRow.alone_pause.default))
 
     async def update_alone_pause(self, alone_pause: dict[str, int | bool]) -> None:
         """Update the alone pause of the player"""
@@ -768,7 +770,7 @@ class PlayerConfig(CachedModel, metaclass=CachedSingletonByKey):
         *,
         additional_role_ids: list | None = None,
         additional_user_ids: list | None = None,
-        bot: BotType = None,
+        bot: DISCORD_BOT_TYPE = None,
     ) -> bool:
         """Check if a user is a dj.
 
@@ -780,7 +782,7 @@ class PlayerConfig(CachedModel, metaclass=CachedSingletonByKey):
             The additional dj role ids to check.
         additional_user_ids : list
             The additional dj user ids to check.
-        bot : BotT
+        bot : DISCORD_BOT_TYPE
             The bot instance to check for owners, admins or mods.
 
         Returns

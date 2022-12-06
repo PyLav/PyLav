@@ -2,6 +2,7 @@ from __future__ import annotations
 
 __all__ = ("US_CITY_DUMP",)
 
+# noinspection SpellCheckingInspection
 US_CITY_DUMP = {
     "bay_minette": (30.88296, -87.77305),
     "edna": (28.97859, -96.64609),

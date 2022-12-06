@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import AsyncIterable
+from typing import Any
 
 from aiohttp_client_cache import BaseCache, CacheBackend, ResponseOrKey
 from aiohttp_client_cache.docs import extend_init_signature
@@ -8,7 +9,7 @@ from aiohttp_client_cache.docs import extend_init_signature
 from pylav.storage.database.tables.aiohttp_cache import AioHttpCacheRow
 
 
-def postgres_template():
+def postgres_template() -> None:
     pass
 
 
@@ -17,7 +18,7 @@ class PostgresCacheBackend(CacheBackend):
     """Wrapper for higher-level cache operations.
     In most cases, the only thing you need to specify here is which storage class(es) to use"""
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.redirects = PostgresStorage(**kwargs)
         self.responses = PostgresStorage(**kwargs)
@@ -26,7 +27,7 @@ class PostgresCacheBackend(CacheBackend):
 class PostgresStorage(BaseCache):
     """interface for lower-level backend storage operations"""
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
 
     async def contains(self, key: str) -> bool:
@@ -68,7 +69,7 @@ class PostgresStorage(BaseCache):
         for entry in await AioHttpCacheRow.select(AioHttpCacheRow.value).output(load_json=True, nested=True):
             yield self.deserialize(entry["value"])
 
-    async def write(self, key: str, item: ResponseOrKey):
+    async def write(self, key: str, item: ResponseOrKey) -> None:
         """Write an item to the cache"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252

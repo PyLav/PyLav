@@ -1,5 +1,5 @@
 import dataclasses
-from typing import Any, Union
+from typing import Union
 
 from pylav.nodes.api.responses.filters import plugins
 from pylav.nodes.api.responses.filters.channel_mix import ChannelMix as ChannelMix
