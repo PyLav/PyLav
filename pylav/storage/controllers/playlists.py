@@ -307,8 +307,8 @@ class PlaylistController:
 
     async def update_bundled_external_playlists(self, *playlist_ids: int) -> None:
         with contextlib.suppress(
-            asyncio.exceptions.CancelledError,
-        ):
+                asyncio.exceptions.CancelledError,
+            ):
             await self.client.node_manager.wait_until_ready()
             await self.client._maybe_wait_until_bundled_node(
                 await self.client.lib_db_manager.get_config().fetch_enable_managed_node()
@@ -319,16 +319,18 @@ class PlaylistController:
             if not id_filtered:
                 id_filtered = BUNDLED_EXTERNAL_PLAYLISTS
             for playlist_id, (identifier, name, album_playlist) in id_filtered.items():
-                if playlist_id in BUNDLED_SPOTIFY_PLAYLIST_IDS:
-                    if not self.client._spotify_auth:
-                        continue
-                    else:
-                        url = f"https://open.spotify.com/{album_playlist}/{identifier}"
+                if (
+                    playlist_id in BUNDLED_SPOTIFY_PLAYLIST_IDS
+                    and not self.client._spotify_auth
+                    or playlist_id not in BUNDLED_SPOTIFY_PLAYLIST_IDS
+                    and playlist_id in BUNDLED_DEEZER_PLAYLIST_IDS
+                    and not self.client._has_deezer_support
+                ):
+                    continue
+                elif playlist_id in BUNDLED_SPOTIFY_PLAYLIST_IDS:
+                    url = f"https://open.spotify.com/{album_playlist}/{identifier}"
                 elif playlist_id in BUNDLED_DEEZER_PLAYLIST_IDS:
-                    if not self.client._has_deezer_support:
-                        continue
-                    else:
-                        url = f"https://www.deezer.com/en/{album_playlist}/{identifier}"
+                    url = f"https://www.deezer.com/en/{album_playlist}/{identifier}"
                 else:
                     LOGGER.debug("Unknown playlist id: %s", playlist_id)
                 track_list = []

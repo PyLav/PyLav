@@ -568,18 +568,18 @@ class Track:
 
     async def get_full_track_display_name(self, max_length: int | None = None, author: bool = True) -> str:
         author_string = f" - {self.author}" if author else ""
-        if await self.query() and await self.is_local():
-            track_name = await self.get_local_query_track_display_name(
+        return (
+            await self.get_local_query_track_display_name(
                 max_length=max_length,
                 author_string=author_string,
                 unknown_author=self.author != "Unknown artist",
                 unknown_title=self.title != "Unknown title",
             )
-        else:
-            track_name = await self.get_external_query_track_display_name(
+            if await self.query() and await self.is_local()
+            else await self.get_external_query_track_display_name(
                 max_length=max_length, author_string=author_string
             )
-        return track_name
+        )
 
     async def get_local_query_track_display_name(
         self,

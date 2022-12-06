@@ -64,7 +64,7 @@ class Equalizer:
             EqualizerRow.name: self.name,
             EqualizerRow.description: self.description,
         }
-        values.update(self._get_save_defaults())
+        values |= self._get_save_defaults()
 
         eq = (
             await EqualizerRow.objects()
@@ -389,7 +389,7 @@ class Equalizer:
         return bands
 
     def _get_save_defaults(self) -> dict[Float, float]:
-        bands = {
+        return {
             EqualizerRow.band_25: self.band_25 or None,
             EqualizerRow.band_40: self.band_40 or None,
             EqualizerRow.band_63: self.band_63 or None,
@@ -406,7 +406,6 @@ class Equalizer:
             EqualizerRow.band_10000: self.band_10000 or None,
             EqualizerRow.band_16000: self.band_16000 or None,
         }
-        return bands
 
     def _get_band_list(self) -> list[dict[str, float]]:
         levels = []
@@ -452,7 +451,7 @@ class Equalizer:
         author: int | None = None,
         description: str | None = None,
     ) -> dict[str, int | str | float | None]:
-        response = dict(
+        return dict(
             band_25=data["bands"]["25"] if "25" in data["bands"] else None,
             band_40=data["bands"]["40"] if "40" in data["bands"] else None,
             band_63=data["bands"]["63"] if "63" in data["bands"] else None,
@@ -466,12 +465,15 @@ class Equalizer:
             band_2500=data["bands"]["2500"] if "2500" in data["bands"] else None,
             band_4000=data["bands"]["4000"] if "4000" in data["bands"] else None,
             band_6300=data["bands"]["6300"] if "6300" in data["bands"] else None,
-            band_10000=data["bands"]["10000"] if "10000" in data["bands"] else None,
-            band_16000=data["bands"]["16000"] if "16000" in data["bands"] else None,
+            band_10000=data["bands"]["10000"]
+            if "10000" in data["bands"]
+            else None,
+            band_16000=data["bands"]["16000"]
+            if "16000" in data["bands"]
+            else None,
             id=identifier or data["id"],
             scope=scope or data["scope"],
             name=name or data["name"],
             author=author or data["author"],
             description=description or data["description"],
         )
-        return response

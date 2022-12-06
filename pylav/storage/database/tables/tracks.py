@@ -35,5 +35,5 @@ class TrackRow(Table, db=DATABASE_ENGINE, tablename="track"):
             obj._exists_in_db = True
             return obj
         except Exception as e:
-            LOGGER.trace(f"Error while creating track: %s", e, exc_info=True)
+            LOGGER.trace("Error while creating track: %s", e, exc_info=True)
             raise e

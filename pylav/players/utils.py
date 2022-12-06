@@ -219,7 +219,7 @@ class PlayerQueue(asyncio.Queue[ANY_GENERIC_TYPE]):
         slot is available before adding item.
         """
         if discard and self.full():
-            for __ in range(len(items)):
+            for _ in items:
                 await self.get_oldest()
         while self.full():
             putter = self._loop.create_future()
