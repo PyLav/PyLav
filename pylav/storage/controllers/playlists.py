@@ -317,16 +317,18 @@ class PlaylistController:
             if not id_filtered:
                 id_filtered = BUNDLED_EXTERNAL_PLAYLISTS
             for playlist_id, (identifier, name, album_playlist) in id_filtered.items():
-                if playlist_id in BUNDLED_SPOTIFY_PLAYLIST_IDS:
-                    if not self.client._spotify_auth:
-                        continue
-                    else:
-                        url = f"https://open.spotify.com/{album_playlist}/{identifier}"
+                if (
+                    playlist_id in BUNDLED_SPOTIFY_PLAYLIST_IDS
+                    and not self.client._spotify_auth
+                    or playlist_id not in BUNDLED_SPOTIFY_PLAYLIST_IDS
+                    and playlist_id in BUNDLED_DEEZER_PLAYLIST_IDS
+                    and not self.client._has_deezer_support
+                ):
+                    continue
+                elif playlist_id in BUNDLED_SPOTIFY_PLAYLIST_IDS:
+                    url = f"https://open.spotify.com/{album_playlist}/{identifier}"
                 elif playlist_id in BUNDLED_DEEZER_PLAYLIST_IDS:
-                    if not self.client._has_deezer_support:
-                        continue
-                    else:
-                        url = f"https://www.deezer.com/en/{album_playlist}/{identifier}"
+                    url = f"https://www.deezer.com/en/{album_playlist}/{identifier}"
                 else:
                     LOGGER.debug("Unknown playlist id: %s", playlist_id)
                 track_list = []
