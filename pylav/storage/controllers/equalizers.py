@@ -86,11 +86,7 @@ class EqualizerController:
     @staticmethod
     def _get_equalizer_band_defaults(*args: tuple[Float, float | None]) -> dict[Float, float]:
         null_values = {None, 0.0}
-        response = {}
-        for band, value in args:
-            if value not in null_values:
-                response[band] = value
-        return response
+        return {band: value for band, value in args if value not in null_values}
 
     @staticmethod
     async def create_or_update_equalizer(
@@ -121,24 +117,22 @@ class EqualizerController:
             EqualizerRow.name: name,
             EqualizerRow.description: description,
         }
-        values.update(
-            EqualizerController._get_equalizer_band_defaults(
-                (EqualizerRow.band_25, band_25),
-                (EqualizerRow.band_40, band_40),
-                (EqualizerRow.band_63, band_63),
-                (EqualizerRow.band_100, band_100),
-                (EqualizerRow.band_160, band_160),
-                (EqualizerRow.band_250, band_250),
-                (EqualizerRow.band_400, band_400),
-                (EqualizerRow.band_630, band_630),
-                (EqualizerRow.band_1000, band_1000),
-                (EqualizerRow.band_1600, band_1600),
-                (EqualizerRow.band_2500, band_2500),
-                (EqualizerRow.band_4000, band_4000),
-                (EqualizerRow.band_6300, band_6300),
-                (EqualizerRow.band_10000, band_10000),
-                (EqualizerRow.band_16000, band_16000),
-            )
+        values |= EqualizerController._get_equalizer_band_defaults(
+            (EqualizerRow.band_25, band_25),
+            (EqualizerRow.band_40, band_40),
+            (EqualizerRow.band_63, band_63),
+            (EqualizerRow.band_100, band_100),
+            (EqualizerRow.band_160, band_160),
+            (EqualizerRow.band_250, band_250),
+            (EqualizerRow.band_400, band_400),
+            (EqualizerRow.band_630, band_630),
+            (EqualizerRow.band_1000, band_1000),
+            (EqualizerRow.band_1600, band_1600),
+            (EqualizerRow.band_2500, band_2500),
+            (EqualizerRow.band_4000, band_4000),
+            (EqualizerRow.band_6300, band_6300),
+            (EqualizerRow.band_10000, band_10000),
+            (EqualizerRow.band_16000, band_16000),
         )
         equalizer = (
             await EqualizerRow.objects()

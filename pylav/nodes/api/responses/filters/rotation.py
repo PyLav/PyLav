@@ -11,6 +11,4 @@ class Rotation:
     rotationHz: Annotated[float | None, ValueRange(min=0.0, max=float("inf"))] = None
 
     def to_dict(self) -> dict[str, float]:
-        if self.rotationHz is None:
-            return {}
-        return {"rotationHz": self.rotationHz}
+        return {} if self.rotationHz is None else {"rotationHz": self.rotationHz}

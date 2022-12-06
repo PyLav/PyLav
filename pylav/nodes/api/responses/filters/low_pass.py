@@ -11,6 +11,4 @@ class LowPass:
     smoothing: Annotated[float | None, ValueRange(min=1.0, max=float("inf"))] = None
 
     def to_dict(self) -> dict[str, float]:
-        if self.smoothing is None:
-            return {}
-        return {"smoothing": self.smoothing}
+        return {} if self.smoothing is None else {"smoothing": self.smoothing}
