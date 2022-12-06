@@ -128,8 +128,8 @@ class LavalinkInfo:
             object.__setattr__(self, "version", Version(**self.version))
         if isinstance(self.git, dict):
             object.__setattr__(self, "git", Git(**self.git))
-        temp = []
         if isinstance(self.plugins, dict):
+            temp = []
             for p in self.plugins.get("plugins", []):
                 if isinstance(p, Plugin) or (isinstance(p, dict) and (p := Plugin(**p))):
                     temp.append(p)
@@ -155,7 +155,7 @@ class VoiceState:
 
     def __repr__(self) -> str:
         return (
-            f"<VoiceStateObject(token={None if not self.token else 'OBFUSCATED'} "
+            f"<VoiceStateObject(token={'OBFUSCATED' if self.token else None} "
             f"endpoint={self.endpoint} "
             f"sessionId={self.sessionId} "
             f"connected={self.connected} "

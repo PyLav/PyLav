@@ -306,9 +306,7 @@ class PlaylistController:
             LOGGER.info("Finished updating bundled playlists")
 
     async def update_bundled_external_playlists(self, *playlist_ids: int) -> None:
-        with contextlib.suppress(
-            asyncio.exceptions.CancelledError,
-        ):
+        with contextlib.suppress(asyncio.exceptions.CancelledError):
             await self.client.node_manager.wait_until_ready()
             await self.client._maybe_wait_until_bundled_node(
                 await self.client.lib_db_manager.get_config().fetch_enable_managed_node()
