@@ -317,12 +317,8 @@ class PlaylistController:
             if not id_filtered:
                 id_filtered = BUNDLED_EXTERNAL_PLAYLISTS
             for playlist_id, (identifier, name, album_playlist) in id_filtered.items():
-                if (
-                    playlist_id in BUNDLED_SPOTIFY_PLAYLIST_IDS
-                    and not self.client._spotify_auth
-                    or playlist_id not in BUNDLED_SPOTIFY_PLAYLIST_IDS
-                    and playlist_id in BUNDLED_DEEZER_PLAYLIST_IDS
-                    and not self.client._has_deezer_support
+                if (playlist_id in BUNDLED_SPOTIFY_PLAYLIST_IDS and not self.client._spotify_auth) or (
+                    playlist_id in BUNDLED_DEEZER_PLAYLIST_IDS and not self.client._has_deezer_support
                 ):
                     continue
                 elif playlist_id in BUNDLED_SPOTIFY_PLAYLIST_IDS:
