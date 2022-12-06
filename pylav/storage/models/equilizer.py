@@ -465,12 +465,8 @@ class Equalizer:
             band_2500=data["bands"]["2500"] if "2500" in data["bands"] else None,
             band_4000=data["bands"]["4000"] if "4000" in data["bands"] else None,
             band_6300=data["bands"]["6300"] if "6300" in data["bands"] else None,
-            band_10000=data["bands"]["10000"]
-            if "10000" in data["bands"]
-            else None,
-            band_16000=data["bands"]["16000"]
-            if "16000" in data["bands"]
-            else None,
+            band_10000=data["bands"]["10000"] if "10000" in data["bands"] else None,
+            band_16000=data["bands"]["16000"] if "16000" in data["bands"] else None,
             id=identifier or data["id"],
             scope=scope or data["scope"],
             name=name or data["name"],

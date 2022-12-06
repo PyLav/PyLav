@@ -576,9 +576,7 @@ class Track:
                 unknown_title=self.title != "Unknown title",
             )
             if await self.query() and await self.is_local()
-            else await self.get_external_query_track_display_name(
-                max_length=max_length, author_string=author_string
-            )
+            else await self.get_external_query_track_display_name(max_length=max_length, author_string=author_string)
         )
 
     async def get_local_query_track_display_name(
