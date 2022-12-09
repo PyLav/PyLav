@@ -27,17 +27,17 @@ class Request:
         self._session = session
 
     async def get(self, url: str, skip_cache: bool = False, **kwargs: Any) -> list[JSON_DICT_TYPE] | None:
-        if not skip_cache:
-            async with self._session.get(url, headers=self._headers, params=kwargs) as resp:
-                if resp.status == 200:
-                    return await resp.json(loads=ujson.loads)
-        else:
-            async with aiohttp_client_cache.CachedSession(
+        if skip_cache:
+            async with aiohttp.ClientSession(
                 headers=self._headers, timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps
             ) as session:
                 async with session.get(url, params=kwargs) as resp:
                     if resp.status == 200:
                         return await resp.json(loads=ujson.loads)
+        else:
+            async with self._session.get(url, headers=self._headers, params=kwargs) as resp:
+                if resp.status == 200:
+                    return await resp.json(loads=ujson.loads)
         resp.raise_for_status()
 
 
