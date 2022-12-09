@@ -17,6 +17,6 @@ def maybe_cached(func: Callable[[PARAM_SPEC_TYPE], ANY_GENERIC_TYPE]) -> Callabl
     ) -> Awaitable[Callable[[PARAM_SPEC_TYPE], ANY_GENERIC_TYPE]]:
         if READ_CACHING_ENABLED:
             return await CACHE(ttl=None, key=key_builder(func, *args, **kwargs))(func)(*args, **kwargs)
-        return func(*args, **kwargs)
+        return await func(*args, **kwargs)
 
     return wrapper
