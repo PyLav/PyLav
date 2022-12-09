@@ -1,9 +1,13 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import discord
 
 from pylav.events.base import PyLavEvent
-from pylav.players.tracks.obj import Track
+
+if TYPE_CHECKING:
+    from pylav.players.tracks.obj import Track
 
 
 class QueueEndEvent(PyLavEvent):

@@ -1,14 +1,9 @@
 from __future__ import annotations
 
 import inspect
-from typing import TYPE_CHECKING
 
-from pylav.event_dispatcher.utils import get_event_name
-
-if TYPE_CHECKING:
-    from pylav.events.base import PyLavEvent
-    from pylav.events.queue import QueueEndEvent
-    from pylav.events.track import TrackStuckEvent
+from pylav.events import base, node, player, queue, track
+from pylav.events.utils import get_event_name
 
 
 class DispatchManager:
@@ -38,17 +33,26 @@ class DispatchManager:
     __slots__ = ("_client", "dispatcher", "mapping")
 
     def __init__(self, client: Client) -> None:
-        from pylav import events
-        from pylav.events.base import PyLavEvent
 
         self._client = client
         self.dispatcher = client.bot.dispatch
 
-        self.mapping = {
-            c: get_event_name(c) for _, c in inspect.getmembers(events, inspect.isclass) if issubclass(c, PyLavEvent)
-        }
+        self.mapping: dict[type[base.PyLavEvent], str] = {}
+        self._build_mapper(player)
+        self._build_mapper(node)
+        self._build_mapper(queue)
+        self._build_mapper(track)
 
-    async def dispatch(self, event: PyLavEvent) -> None:
+    def _build_mapper(self, module: node | player | queue | track) -> None:  # type: ignore
+        self.mapping.update(
+            {
+                c: get_event_name(c)
+                for _, c in inspect.getmembers(module, inspect.isclass)
+                if issubclass(c, base.PyLavEvent)
+            }
+        )
+
+    async def dispatch(self, event: base.PyLavEvent) -> None:
         event_name = self.mapping[type(event)]
         self.dispatcher(event_name, event)
 

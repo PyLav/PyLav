@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar, Union
 
 import discord
 
 if TYPE_CHECKING:
     from discord import app_commands  # noqa: F401
-    from discord.ext.commands import AutoShardedBot, Bot, Cog, CommandError, Context  # noqa: F401
+    from discord.ext.commands import AutoShardedBot, Cog, CommandError, Context
 
     try:
         from redbot.core.bot import Red
@@ -21,46 +21,47 @@ if TYPE_CHECKING:
 
 
 else:
+    from discord.ext.commands import Cog, CommandError
+
     try:
-        from redbot.core import commands
         from redbot.core.bot import Red as BotClient
+        from redbot.core.commands import Cog as RedCog
     except ImportError:
-        from discord.ext import commands
         from discord.ext.commands import AutoShardedBot as BotClient
 
+        RedCog = Cog
 
-class BotClientWithLavalink(BotClient):
+
+class BotClientWithLavalinkType(BotClient):
     _pylav_client: Client
     lavalink: Client
     pylav: Client
 
     async def get_context(
-        self, message: discord.abc.Message | INTERACTION_TYPE, *, cls: type[PyLavContext] = None
+        self, message: discord.abc.Message | DISCORD_INTERACTION_TYPE, *, cls: type[PyLavContext] = None
     ) -> PyLavContext[Any]:
         ...
 
 
-class _InteractionType(discord.Interaction):
-    client: BotClientWithLavalink
+class InteractionType(discord.Interaction):
+    client: BotClientWithLavalinkType
     response: discord.InteractionResponse
     followup: discord.Webhook
     command: app_commands.Command[Any, ..., Any] | app_commands.ContextMenu | None
     channel: discord.interactions.InteractionChannel | None
 
 
-class PyLavCogMixin(ABC):
+class PyLavCogType(RedCog, ABC):
     __version__: str
     bot: DISCORD_BOT_TYPE
     lavalink: Client
     pylav: Client
 
-    @commands.command()
-    async def command_play(self, context: PyLavContext, *, query: str = None):
-        ...
 
-
-DISCORD_BOT_TYPE = TypeVar("DISCORD_BOT_TYPE", bound=BotClientWithLavalink, covariant=True)
-DISCORD_CONTEXT_TYPE = TypeVar("DISCORD_CONTEXT_TYPE", bound="PyLavContext[Any] | ClientContext[Any] | Context[Any]")
-DISCORD_INTERACTION_TYPE = TypeVar("DISCORD_INTERACTION_TYPE", bound="Union[_InteractionType, discord.Interaction]")
-DISCORD_COG_TYPE = TypeVar("DISCORD_COG_TYPE", bound="PyLavCogMixin | RedCog | Cog")
-DISCORD_COMMAND_ERROR_TYPE = TypeVar("DISCORD_COMMAND_ERROR_TYPE", bound="CommandError")
+DISCORD_BOT_TYPE = TypeVar("DISCORD_BOT_TYPE", bound=BotClientWithLavalinkType, covariant=True)
+DISCORD_CONTEXT_TYPE = TypeVar("DISCORD_CONTEXT_TYPE", bound=PyLavContext, covariant=True)
+DISCORD_INTERACTION_TYPE = TypeVar("DISCORD_INTERACTION_TYPE", bound=InteractionType, covariant=True)
+DISCORD_COG_TYPE = TypeVar("DISCORD_COG_TYPE", bound=PyLavCogType, covariant=True)
+DISCORD_COMMAND_ERROR_TYPE = TypeVar(
+    "DISCORD_COMMAND_ERROR_TYPE", bound=Union[CommandError, app_commands.errors.AppCommandError], covariant=True
+)

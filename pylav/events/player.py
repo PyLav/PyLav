@@ -1,25 +1,27 @@
 from __future__ import annotations
 
 import collections
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 import discord
 
 from pylav.events.base import PyLavEvent
-from pylav.players.filters import (
-    ChannelMix,
-    Distortion,
-    Echo,
-    Equalizer,
-    Karaoke,
-    LowPass,
-    Rotation,
-    Timescale,
-    Tremolo,
-    Vibrato,
-)
-from pylav.players.filters.volume import Volume
-from pylav.players.tracks.obj import Track
+
+if TYPE_CHECKING:
+    from pylav.players.filters import (
+        ChannelMix,
+        Distortion,
+        Echo,
+        Equalizer,
+        Karaoke,
+        LowPass,
+        Rotation,
+        Timescale,
+        Tremolo,
+        Vibrato,
+        Volume,
+    )
+    from pylav.players.tracks.obj import Track
 
 
 class PlayerUpdateEvent(PyLavEvent):

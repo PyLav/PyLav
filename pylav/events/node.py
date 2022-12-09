@@ -1,9 +1,13 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import discord
 
 from pylav.events.base import PyLavEvent
-from pylav.nodes.api.responses.websocket import Closed
+
+if TYPE_CHECKING:
+    from pylav.nodes.api.responses.websocket import Closed
 
 
 class NodeDisconnectedEvent(PyLavEvent):

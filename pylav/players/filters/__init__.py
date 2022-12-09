@@ -9,6 +9,7 @@ from pylav.players.filters.rotation import Rotation as Rotation
 from pylav.players.filters.timescale import Timescale as Timescale
 from pylav.players.filters.tremolo import Tremolo as Tremolo
 from pylav.players.filters.vibrato import Vibrato as Vibrato
+from pylav.players.filters.volume import Volume as Volume
 
 __all__ = (
     "ChannelMix",
@@ -21,5 +22,6 @@ __all__ = (
     "Timescale",
     "Tremolo",
     "Vibrato",
+    "Volume",
     *plugins.__all__,
 )
