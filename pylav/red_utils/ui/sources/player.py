@@ -79,12 +79,17 @@ class PlayersSource(menus.ListPageSource):
                 (_("Server Owner"), server_owner),
                 (_("Connected"), connect_dur),
                 (_("Users in VC"), listeners),
-                (_("Queue Length"), "{} {}".format(queue_len, _("track" if queue_len == 1 else "tracks"))),
+                (
+                    _("Queue Length"),
+                    f'{queue_len} {_("track" if queue_len == 1 else "tracks")}',
+                ),
                 (
                     _("Queue History Length"),
                     "{count} {track_translation}".format(
                         count=history_queue_len,
-                        track_translation=_("track") if history_queue_len == 1 else _("tracks"),
+                        track_translation=_("track")
+                        if history_queue_len == 1
+                        else _("tracks"),
                     ),
                 ),
             ]

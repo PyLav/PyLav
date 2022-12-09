@@ -322,8 +322,8 @@ class PlaylistConfigManager:
         from pylav.query import Query
 
         with contextlib.suppress(
-            asyncio.exceptions.CancelledError,
-        ):
+                asyncio.exceptions.CancelledError,
+            ):
             await self.client.node_manager.wait_until_ready()
             await self.client._maybe_wait_until_bundled_node(
                 await self.client.lib_db_manager.get_config().fetch_enable_managed_node()
@@ -335,16 +335,18 @@ class PlaylistConfigManager:
             if not id_filtered:
                 id_filtered = BUNDLED_EXTERNAL_PLAYLISTS
             for id, (identifier, name, source) in id_filtered.items():
-                if id in BUNDLED_SPOTIFY_PLAYLIST_IDS:
-                    if not self.client._spotify_auth:
-                        continue
-                    else:
-                        url = f"https://open.spotify.com/playlist/{identifier}"
+                if (
+                    id in BUNDLED_SPOTIFY_PLAYLIST_IDS
+                    and not self.client._spotify_auth
+                    or id not in BUNDLED_SPOTIFY_PLAYLIST_IDS
+                    and id in BUNDLED_DEEZER_PLAYLIST_IDS
+                    and not self.client._has_deezer_support
+                ):
+                    continue
+                elif id in BUNDLED_SPOTIFY_PLAYLIST_IDS:
+                    url = f"https://open.spotify.com/playlist/{identifier}"
                 elif id in BUNDLED_DEEZER_PLAYLIST_IDS:
-                    if not self.client._has_deezer_support:
-                        continue
-                    else:
-                        url = f"https://www.deezer.com/en/playlist/{identifier}"
+                    url = f"https://www.deezer.com/en/playlist/{identifier}"
                 else:
                     LOGGER.debug("Unknown playlist id: %s", id)
                 track_list = []
