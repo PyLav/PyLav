@@ -15,7 +15,7 @@ from discord.utils import maybe_coroutine
 try:
     from redbot.core.i18n import Translator  # type: ignore
 
-    _ = Translator("PyLavPlayer", pathlib.Path(__file__))
+    _ = Translator("PyLav", pathlib.Path(__file__))
 except ImportError:
     Translator = None
 
