@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, Any, TypeVar, Union
 import discord
 
 if TYPE_CHECKING:
-    from discord import app_commands
     from discord.ext.commands import AutoShardedBot, Cog, CommandError, Context
 
     from pylav.core.context import PyLavContext
@@ -22,7 +21,6 @@ if TYPE_CHECKING:
 
 
 else:
-    from discord import app_commands
     from discord.ext.commands import Cog, CommandError
 
     try:
@@ -32,6 +30,8 @@ else:
         from discord.ext.commands import AutoShardedBot as BotClient
 
         RedCog = Cog
+
+from discord import app_commands
 
 
 class BotClientWithLavalinkType(BotClient):
