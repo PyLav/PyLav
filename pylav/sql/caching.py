@@ -70,7 +70,7 @@ def maybe_cached(func: Callable) -> Callable:
     async def wrapper(*args, **kwargs):
         if READ_CACHING_ENABLED:
             return await CACHE(ttl=None, key=key_builder(func, *args, **kwargs))(func)(*args, **kwargs)
-        return func(*args, **kwargs)
+        return await func(*args, **kwargs)
 
     return wrapper
 
