@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-from abc import ABC
 from typing import TYPE_CHECKING, Any, TypeVar, Union
 
 import discord
 
 if TYPE_CHECKING:
-    from discord import app_commands  # noqa: F401
+    from discord import app_commands
     from discord.ext.commands import AutoShardedBot, Cog, CommandError, Context
+
+    from pylav.core.context import PyLavContext
 
     try:
         from redbot.core.bot import Red
@@ -21,6 +22,7 @@ if TYPE_CHECKING:
 
 
 else:
+    from discord import app_commands
     from discord.ext.commands import Cog, CommandError
 
     try:
@@ -51,7 +53,7 @@ class InteractionType(discord.Interaction):
     channel: discord.interactions.InteractionChannel | None
 
 
-class PyLavCogType(RedCog, ABC):
+class PyLavCogType(RedCog):
     __version__: str
     bot: DISCORD_BOT_TYPE
     lavalink: Client
@@ -59,7 +61,7 @@ class PyLavCogType(RedCog, ABC):
 
 
 DISCORD_BOT_TYPE = TypeVar("DISCORD_BOT_TYPE", bound=BotClientWithLavalinkType, covariant=True)
-DISCORD_CONTEXT_TYPE = TypeVar("DISCORD_CONTEXT_TYPE", bound=PyLavContext, covariant=True)
+DISCORD_CONTEXT_TYPE = TypeVar("DISCORD_CONTEXT_TYPE", bound="PyLavContext", covariant=True)
 DISCORD_INTERACTION_TYPE = TypeVar("DISCORD_INTERACTION_TYPE", bound=InteractionType, covariant=True)
 DISCORD_COG_TYPE = TypeVar("DISCORD_COG_TYPE", bound=PyLavCogType, covariant=True)
 DISCORD_COMMAND_ERROR_TYPE = TypeVar(

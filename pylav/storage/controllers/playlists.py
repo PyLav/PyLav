@@ -20,6 +20,7 @@ from pylav.constants.playlists import (
     BUNDLED_PYLAV_PLAYLISTS,
     BUNDLED_SPOTIFY_PLAYLIST_IDS,
 )
+from pylav.core.context import PyLavContext
 from pylav.exceptions.database import EntryNotFoundException
 from pylav.logging import getLogger
 from pylav.players.query.obj import Query

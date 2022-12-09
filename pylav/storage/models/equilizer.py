@@ -16,6 +16,7 @@ from piccolo.columns import Float
 
 from pylav.constants.config import BROTLI_ENABLED
 from pylav.constants.playlists import BUNDLED_PLAYLIST_IDS
+from pylav.core.context import PyLavContext
 from pylav.exceptions.playlist import InvalidPlaylistException
 from pylav.logging import getLogger
 from pylav.players import filters
