@@ -1382,7 +1382,9 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
             self.bot,
             ujson.dumps(empty_queue_dc),
         )
-        await self.update_cache((self.fetch_empty_queue_dc, empty_queue_dc), (self.exists, True))
+        await self.update_cache(
+            (self.fetch_empty_queue_dc, TimedFeature.from_dict(empty_queue_dc)), (self.exists, True)
+        )
         await self.invalidate_cache(self.fetch_all)
 
     @maybe_cached
@@ -1414,7 +1416,7 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
             self.bot,
             ujson.dumps(alone_dc),
         )
-        await self.update_cache((self.fetch_alone_dc, alone_dc), (self.exists, True))
+        await self.update_cache((self.fetch_alone_dc, TimedFeature.from_dict(alone_dc)), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
 
     @maybe_cached
@@ -1446,7 +1448,7 @@ class PlayerModel(CachedModel, metaclass=_SingletonByKey):
             self.bot,
             ujson.dumps(alone_pause),
         )
-        await self.update_cache((self.fetch_alone_pause, alone_pause), (self.exists, True))
+        await self.update_cache((self.fetch_alone_pause, TimedFeature.from_dict(alone_pause)), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
 
     @maybe_cached

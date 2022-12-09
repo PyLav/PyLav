@@ -26,7 +26,7 @@ else:
 
 
 CACHE = Cache("ReadCache")
-CACHE.setup("mem://?check_interval=10&size=10000", enable=READ_CACHING_ENABLED)
+CACHE.setup("mem://?check_interval=10&size=10000", disable=not READ_CACHING_ENABLED)
 
 
 class _SingletonByKey(type):
@@ -68,7 +68,9 @@ def key_builder(method: Callable, *args: Any, **kwargs: Any) -> str:
 def maybe_cached(func: Callable) -> Callable:
     @functools.wraps(func)
     async def wrapper(*args, **kwargs):
-        return await CACHE(ttl=None, key=key_builder(func, *args, **kwargs))(func)(*args, **kwargs)
+        if READ_CACHING_ENABLED:
+            return await CACHE(ttl=None, key=key_builder(func, *args, **kwargs))(func)(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
