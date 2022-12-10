@@ -2,10 +2,14 @@ from __future__ import annotations
 
 import os
 import re
+from typing import TYPE_CHECKING
 
 from pylav.constants.config import JAVA_EXECUTABLE
 from pylav.extension.bundled_node.utils import get_jar_ram_actual
 from pylav.storage.migrations.logging import LOGGER
+
+if TYPE_CHECKING:
+    from pylav.core.client import Client
 
 
 async def set_correct_ram_cap(client: Client) -> None:

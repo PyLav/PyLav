@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 import contextlib
 import pathlib
@@ -200,10 +202,10 @@ class PlayerController:
         """
         Creates a player if one doesn't exist with the given information.
         If node is provided, a player will be created on that node.
-        If endpoint is provided, Lavalink.py will attempt to parse the region from the endpoint
+        If endpoint is provided, PyLav will attempt to parse the region from the endpoint
         and return a node in the parsed region.
         If node, region and endpoint are left unspecified, or region/endpoint selection fails,
-        Lavalink.py will fall back to the node with the lowest penalty.
+        PyLav will fall back to the node with the lowest penalty.
         Region can be omitted if node is specified and vice-versa.
         Parameters
         ----------

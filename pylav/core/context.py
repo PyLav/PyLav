@@ -6,7 +6,7 @@ import datetime
 import pathlib
 from collections.abc import Iterable
 from copy import copy
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import discord
 from discord.ext import commands as dpy_command
@@ -15,7 +15,6 @@ from discord.ext.commands.view import StringView
 from discord.types.embed import EmbedType
 from discord.utils import MISSING as D_MISSING  # noqa
 
-from pylav.players.player import Player
 from pylav.type_hints.bot import DISCORD_BOT_TYPE, DISCORD_COG_TYPE, DISCORD_CONTEXT_TYPE, DISCORD_INTERACTION_TYPE
 from pylav.utils.vendor.redbot import MessagePredicate
 
@@ -36,6 +35,10 @@ except ImportError:
 
     def _(string: str) -> str:
         return string
+
+
+if TYPE_CHECKING:
+    from pylav.players.player import Player
 
 
 class PyLavContext(OriginalContextClass):

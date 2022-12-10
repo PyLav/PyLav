@@ -1,12 +1,15 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from pylav.events.base import PyLavEvent
 from pylav.nodes.api.responses.plugins import SegmentSkipped, SegmentsLoaded
 
 __all__ = ("SegmentSkippedEvent", "SegmentsLoadedEvent")
 
-from pylav.nodes.node import Node
-from pylav.players.player import Player
+if TYPE_CHECKING:
+    from pylav.nodes.node import Node
+    from pylav.players.player import Player
 
 
 class SegmentSkippedEvent(PyLavEvent):

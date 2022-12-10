@@ -9,7 +9,7 @@ import random
 import threading
 import time
 from collections.abc import Coroutine
-from typing import Any, Literal
+from typing import TYPE_CHECKING, Any, Literal
 
 import asyncstdlib
 import discord
@@ -76,7 +76,6 @@ from pylav.players.filters import (
     Vibrato,
     Volume,
 )
-from pylav.players.manager import PlayerController
 from pylav.players.query.obj import Query
 from pylav.players.tracks.obj import Track
 from pylav.players.utils import PlayerQueue, TrackHistoryQueue
@@ -96,6 +95,11 @@ except ImportError:
 
     def _(string: str) -> str:
         return string
+
+
+if TYPE_CHECKING:
+    from pylav.core.client import Client
+    from pylav.players.manager import PlayerController
 
 
 PLAYER_LOCK = threading.Lock()
@@ -182,8 +186,8 @@ class Player(VoiceProtocol):
         self._coordinates = REGION_TO_COUNTRY_COORDINATE_MAPPING.get(self._region, (0, 0))
         self._connected = False
         self.connected_at = utcnow()
-        self.last_track = None
-        self.next_track = None
+        self.last_track: Track | None = None
+        self.next_track: Track | None = None
         self._hashed_voice_state = None
         self._discord_session_id = None
 
@@ -1305,7 +1309,7 @@ class Player(VoiceProtocol):
         if auto_play:
             self.node.dispatch_event(TrackAutoPlayEvent(player=self, track=track))
 
-    async def _process_partial_payload(self, end_time, payload, skip_segments, start_time, track):
+    async def _process_partial_payload(self, end_time, payload, skip_segments, start_time, track: Track):
         if self.node.supports_sponsorblock and await track.is_youtube():
             payload["skipSegments"] = skip_segments or track.skip_segments
         if start_time or track.timestamp:
@@ -1314,16 +1318,16 @@ class Player(VoiceProtocol):
             await self._process_payload_end_time(end_time, payload, track)
 
     @staticmethod
-    async def _process_payload_end_time(end_time, payload, track):
-        if not isinstance(end_time, int) or not 0 <= end_time <= track.duration:
+    async def _process_payload_end_time(end_time, payload, track: Track):
+        if not isinstance(end_time, int) or not 0 <= end_time <= await track.duration():
             raise ValueError(
                 "end_time must be an int with a value equal to, or greater than 0, and less than the track duration"
             )
         payload["endTime"] = end_time
 
     @staticmethod
-    async def _process_payload_position(payload, start_time, track):
-        if not isinstance(start_time, int) or not 0 <= start_time <= track.duration:
+    async def _process_payload_position(payload, start_time, track: Track):
+        if not isinstance(start_time, int) or not 0 <= start_time <= await track.duration():
             raise ValueError(
                 "start_time must be an int with a value equal to, "
                 "or greater than 0, and less than the track duration"
@@ -1588,10 +1592,10 @@ class Player(VoiceProtocol):
         requester: :class:`discord.Member`
             The member who requested the seek.
         """
-        if self.current and self.current.is_seekable:
+        if self.current and await self.current.is_seekable():
             if with_filter:
                 position = await self.fetch_position()
-            position = await asyncstdlib.max([await asyncstdlib.min([position, self.current.duration]), 0])
+            position = await asyncstdlib.max([await asyncstdlib.min([position, await self.current.duration()]), 0])
             self.node.dispatch_event(
                 TrackSeekEvent(self, requester, self.current, before=await self.fetch_position(), after=position)
             )
@@ -2420,7 +2424,11 @@ class Player(VoiceProtocol):
     async def draw_time(self) -> str:
         paused = self.paused
         pos = await self.fetch_position()
-        dur = getattr(self.current, "duration", pos)
+        if self.current:
+            duration = await self.current.duration()
+        else:
+            duration = None
+        dur = duration or pos
         sections = 12
         loc_time = round((pos / dur if dur != 0 else pos) * sections)
         bar = "\N{BOX DRAWINGS HEAVY HORIZONTAL}"
@@ -2444,7 +2452,7 @@ class Player(VoiceProtocol):
         arrow = await self.draw_time()
         pos = format_time_dd_hh_mm_ss(await self.fetch_position())
         current = self.current
-        dur = _("LIVE") if current.stream else format_time_dd_hh_mm_ss(await current.duration())
+        dur = _("LIVE") if await current.stream() else format_time_dd_hh_mm_ss(await current.duration())
         current_track_description = await current.get_track_display_name(with_url=True)
         next_track_description = (
             await self.next_track.get_track_display_name(with_url=True) if self.next_track else None
@@ -2462,7 +2470,7 @@ class Player(VoiceProtocol):
             description=queue_list,
             messageable=messageable,
         )
-        if url := current.thumbnail:
+        if url := await current.thumbnail():
             page.set_thumbnail(url=url)
 
         await self._process_np_embed_prev_track(page, previous_track_description)
@@ -2474,7 +2482,7 @@ class Player(VoiceProtocol):
     @staticmethod
     async def _process_np_embed_initial_description(arrow, current, current_track_description, dur, pos, queue_list):
         # sourcery skip: use-fstring-for-formatting
-        if current.stream:
+        if await current.stream():
             queue_list += "**{}:**\n".format(discord.utils.escape_markdown(_("Currently livestreaming")))
         else:
             queue_list += _("Playing: ")
@@ -2490,8 +2498,8 @@ class Player(VoiceProtocol):
             val = f"{previous_track_description}\n"
             val += "{translation}: `{duration}`\n".format(
                 duration=shorten_string(max_length=100, string=_("LIVE"))
-                if self.last_track.stream
-                else format_time_dd_hh_mm_ss(self.last_track.duration),
+                if await self.last_track.stream()
+                else format_time_dd_hh_mm_ss(await self.last_track.duration()),
                 translation=discord.utils.escape_markdown(_("Duration")),
             )
             if rq := self.last_track.requester:
@@ -2504,7 +2512,9 @@ class Player(VoiceProtocol):
         if next_track_description:
             val = f"{next_track_description}\n"
             val += "{translation}: `{duration}`\n".format(
-                duration=_("LIVE") if self.next_track.stream else format_time_dd_hh_mm_ss(self.next_track.duration),
+                duration=_("LIVE")
+                if await self.next_track.stream()
+                else format_time_dd_hh_mm_ss(await self.next_track.duration()),
                 translation=discord.utils.escape_markdown(_("Duration")),
             )
             if rq := self.next_track.requester:
@@ -2558,7 +2568,7 @@ class Player(VoiceProtocol):
         arrow = await self.draw_time()
         pos = format_time_dd_hh_mm_ss(await self.fetch_position())
         current = self.current
-        dur = "LIVE" if current.stream else format_time_dd_hh_mm_ss(await current.duration())
+        dur = "LIVE" if await current.stream() else format_time_dd_hh_mm_ss(await current.duration())
         queue_list = await self._process_queue_embed_initial_description(arrow, current, dur, pos, queue_list)
         queue_list = await self._process_queue_embed_maybe_shuffle(history, queue_list, tracks)
         queue_list = await self._process_queue_tracks(history, queue_list, start_index, tracks)
@@ -2570,7 +2580,7 @@ class Player(VoiceProtocol):
             description=queue_list,
             messageable=messageable,
         )
-        if url := current.thumbnail:
+        if url := await current.thumbnail():
             page.set_thumbnail(url=url)
         queue_dur = await self.queue_duration(history=history)
         queue_total_duration = format_time_string(queue_dur // 1000)
@@ -2580,7 +2590,7 @@ class Player(VoiceProtocol):
     @staticmethod
     async def _process_queue_embed_initial_description(arrow, current, dur, pos, queue_list):
         current_track_description = await current.get_track_display_name(with_url=True)
-        if current.stream:
+        if await current.stream():
             queue_list += "**{translation}:**\n".format(
                 translation=discord.utils.escape_markdown(_("Currently livestreaming"))
             )
@@ -2645,8 +2655,9 @@ class Player(VoiceProtocol):
     async def queue_duration(self, history: bool = False) -> int:
         queue = self.history if history else self.queue
         dur = [
-            track.duration  # type: ignore
-            async for track in AsyncIter(queue.raw_queue).filter(lambda x: not (x.stream or x.is_partial))
+            await track.duration()
+            async for track in AsyncIter(queue.raw_queue).filter(lambda x: not x.is_partial)
+            if not await track.stream()
         ]
         queue_dur = await asyncstdlib.sum(dur)
         if queue.empty():
@@ -2654,7 +2665,7 @@ class Player(VoiceProtocol):
         if history:
             return queue_dur
         try:
-            remain = 0 if self.current.stream else (await self.current.duration() - await self.fetch_position())
+            remain = 0 if await self.current.stream() else (await self.current.duration() - await self.fetch_position())
         except AttributeError:
             remain = 0
         return remain + queue_dur
@@ -2736,7 +2747,7 @@ class Player(VoiceProtocol):
             "auto_play": data["auto_play"],
             "auto_play_playlist_id": data["auto_play_playlist_id"],
             "volume": self.volume,
-            "position": self.position,
+            "position": await self.position(),
             "playing": self.is_playing,
             "queue": [] if self.queue.empty() else [await t.to_dict() for t in self.queue.raw_queue],
             "history": [] if self.history.empty() else [await t.to_dict() for t in self.history.raw_queue],
@@ -2756,8 +2767,8 @@ class Player(VoiceProtocol):
             },
             "self_deaf": data["self_deaf"],
             "extras": {
-                "last_track": await self.last_track.to_json() if self.last_track else None,
-                "next_track": await self.next_track.to_json() if self.next_track else None,
+                "last_track": await self.last_track.to_dict() if self.last_track else None,
+                "next_track": await self.next_track.to_dict() if self.next_track else None,
                 "was_alone_paused": self._was_alone_paused,
             },
         }

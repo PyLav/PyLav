@@ -5,11 +5,11 @@ from typing import TYPE_CHECKING
 import discord
 
 from pylav.events.base import PyLavEvent
-from pylav.nodes.node import Node
-from pylav.players.player import Player
 
 if TYPE_CHECKING:
     from pylav.nodes.api.responses.websocket import Closed
+    from pylav.nodes.node import Node
+    from pylav.players.player import Player
 
 
 class NodeDisconnectedEvent(PyLavEvent):
@@ -24,7 +24,7 @@ class NodeDisconnectedEvent(PyLavEvent):
 
 
 class NodeConnectedEvent(PyLavEvent):
-    """This event is dispatched when Lavalink.py successfully connects to a node."""
+    """This event is dispatched when PyLav successfully connects to a node."""
 
     __slots__ = ()
 

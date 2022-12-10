@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 import asyncio
 import contextlib
 import dataclasses
 import datetime
 import functools
 import logging
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
 import aiohttp
@@ -13,6 +15,7 @@ from aiohttp.helpers import sentinel  # noqa:
 from apscheduler.jobstores.base import JobLookupError
 from dacite import from_dict
 from discord.utils import utcnow
+from expiringdict import ExpiringDict
 from packaging.version import Version, parse
 
 from pylav.constants.builtin_nodes import BUNDLED_NODES_IDS_HOST_MAPPING, PYLAV_NODES
@@ -30,7 +33,6 @@ from pylav.nodes.api.responses.errors import LavalinkError
 from pylav.nodes.api.responses.rest_api import LavalinkInfo, LavalinkPlayer, LoadTrackResponses
 from pylav.nodes.api.responses.route_planner import Status as route_planner_status
 from pylav.nodes.api.responses.track import Track
-from pylav.nodes.manager import NodeManager
 from pylav.nodes.utils import NO_MATCHES, Stats
 from pylav.nodes.websocket import WebSocket
 from pylav.players.filters import (
@@ -46,7 +48,6 @@ from pylav.players.filters import (
     Vibrato,
     Volume,
 )
-from pylav.players.player import Player
 from pylav.players.query.obj import Query
 from pylav.players.tracks.decoder import async_decoder
 from pylav.storage.models.node import mocked as node_mocked
@@ -54,6 +55,10 @@ from pylav.storage.models.node import real as node_real
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 from pylav.utils.location import distance
 from pylav.utils.vendor.redbot import AsyncIter
+
+if TYPE_CHECKING:
+    from pylav.nodes.manager import NodeManager
+    from pylav.players.player import Player
 
 
 class Node:

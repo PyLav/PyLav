@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import AsyncIterator
+from typing import TYPE_CHECKING
 
 import discord
 from piccolo.columns import Float
@@ -13,6 +14,9 @@ from pylav.type_hints.bot import DISCORD_BOT_TYPE
 from pylav.utils.vendor.redbot import AsyncIter
 
 LOGGER = getLogger("PyLav.Database.Controller.Equalizer")
+
+if TYPE_CHECKING:
+    from pylav.core.client import Client
 
 
 class EqualizerController:

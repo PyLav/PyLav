@@ -2,12 +2,15 @@ from __future__ import annotations
 
 import asyncio
 from collections.abc import AsyncIterator
+from typing import TYPE_CHECKING
 
 from pylav.logging import getLogger
 from pylav.storage.database.tables.player_state import PlayerStateRow
 from pylav.storage.models.player.state import PlayerState
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
+if TYPE_CHECKING:
+    from pylav.core.client import Client
 LOGGER = getLogger("PyLav.Database.Controller.Player.State")
 
 

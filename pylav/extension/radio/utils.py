@@ -9,7 +9,7 @@ from pylav.type_hints.generics import ANY_GENERIC_TYPE, PARAM_SPEC_TYPE
 
 
 class Error(Exception):
-    """Base class for all excpetions raised by this module"""
+    """Base class for all exceptions raised by this module"""
 
 
 class IllegalArgumentError(Error):
@@ -74,7 +74,7 @@ def type_check(
     func: Callable[PARAM_SPEC_TYPE, Awaitable[ANY_GENERIC_TYPE]]  # type: ignore
 ) -> Callable[PARAM_SPEC_TYPE, Awaitable[ANY_GENERIC_TYPE]]:  # type: ignore
     @wraps(func)
-    def wrapper(self, *args: PARAM_SPEC_TYPE.args, **kwargs: PARAM_SPEC_TYPE.kwargs) -> ANY_GENERIC_TYPE:
+    def wrapper(self, *args: PARAM_SPEC_TYPE.args, **kwargs: PARAM_SPEC_TYPE.kwargs) -> Awaitable[ANY_GENERIC_TYPE]:
         validate_input(API_TYPES[func.__name__], kwargs)
         kwargs = radio_browser_adapter(**kwargs)
         return func(self, *args, **kwargs)

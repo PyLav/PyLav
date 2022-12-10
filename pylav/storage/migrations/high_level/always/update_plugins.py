@@ -1,10 +1,15 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import ujson
 from deepdiff import DeepDiff
 
 from pylav.extension.bundled_node import LAVALINK_DOWNLOAD_DIR
 from pylav.storage.migrations.logging import LOGGER
+
+if TYPE_CHECKING:
+    from pylav.core.client import Client
 
 
 async def update_plugins(client: Client) -> None:

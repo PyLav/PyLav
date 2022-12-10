@@ -37,36 +37,16 @@ from pylav.type_hints.generics import ANY_GENERIC_TYPE
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class Filters:
     volume: Union[float, None] = None
-    equalizer: Union[Equalizer, None] = dataclasses.field(default_factory=list)  # type: ignore
-    karaoke: Union[Karaoke, JSON_DICT_TYPE, None] = dataclasses.field(default_factory=dict)
-    timescale: Union[Timescale, JSON_DICT_TYPE, None] = dataclasses.field(default_factory=dict)
-    tremolo: Union[Tremolo, JSON_DICT_TYPE, None] = dataclasses.field(default_factory=dict)
-    vibrato: Union[Vibrato, JSON_DICT_TYPE, None] = dataclasses.field(default_factory=dict)
-    rotation: Union[Rotation, JSON_DICT_TYPE, None] = dataclasses.field(default_factory=dict)
-    distortion: Union[Distortion, JSON_DICT_TYPE, None] = dataclasses.field(default_factory=dict)
-    channelMix: Union[ChannelMix, JSON_DICT_TYPE, None] = dataclasses.field(default_factory=dict)
-    lowPass: Union[LowPass, JSON_DICT_TYPE, None] = dataclasses.field(default_factory=dict)
-    echo: Union[Echo, JSON_DICT_TYPE, None] = dataclasses.field(default_factory=dict)
-
-    def __post_init__(self) -> None:
-        if isinstance(self.karaoke, dict):
-            object.__setattr__(self, "karaoke", Karaoke(**self.karaoke) if self.karaoke else None)
-        if isinstance(self.timescale, dict):
-            object.__setattr__(self, "timescale", Timescale(**self.timescale) if self.timescale else None)
-        if isinstance(self.tremolo, dict):
-            object.__setattr__(self, "tremolo", Tremolo(**self.tremolo) if self.tremolo else None)
-        if isinstance(self.vibrato, dict):
-            object.__setattr__(self, "vibrato", Vibrato(**self.vibrato) if self.vibrato else None)
-        if isinstance(self.rotation, dict):
-            object.__setattr__(self, "rotation", Rotation(**self.rotation) if self.rotation else None)
-        if isinstance(self.distortion, dict):
-            object.__setattr__(self, "distortion", Distortion(**self.distortion) if self.distortion else None)
-        if isinstance(self.channelMix, dict):
-            object.__setattr__(self, "channelMix", ChannelMix(**self.channelMix) if self.channelMix else None)
-        if isinstance(self.lowPass, dict):
-            object.__setattr__(self, "lowPass", LowPass(**self.lowPass) if self.lowPass else None)
-        if isinstance(self.echo, dict):
-            object.__setattr__(self, "echo", Echo(**self.echo) if self.echo else None)
+    equalizer: Union[Equalizer, None] = dataclasses.field(default_factory=list)
+    karaoke: Union[Karaoke, None] = dataclasses.field(default_factory=dict)
+    timescale: Union[Timescale, None] = dataclasses.field(default_factory=dict)
+    tremolo: Union[Tremolo, None] = dataclasses.field(default_factory=dict)
+    vibrato: Union[Vibrato, None] = dataclasses.field(default_factory=dict)
+    rotation: Union[Rotation, None] = dataclasses.field(default_factory=dict)
+    distortion: Union[Distortion, None] = dataclasses.field(default_factory=dict)
+    channelMix: Union[ChannelMix, None] = dataclasses.field(default_factory=dict)
+    lowPass: Union[LowPass, None] = dataclasses.field(default_factory=dict)
+    echo: Union[Echo, None] = dataclasses.field(default_factory=dict)
 
     def to_dict(self) -> JSON_DICT_TYPE:
         response: JSON_DICT_TYPE = {"volume": self.volume}
@@ -122,14 +102,12 @@ class Filters:
     @staticmethod
     def _process_filter_object(
         name: str,
-        filter_name: Union[
-            Karaoke, Timescale, Tremolo, Vibrato, Rotation, Distortion, ChannelMix, LowPass, Echo | JSON_DICT_TYPE, None
-        ],
+        filter_name: Union[Karaoke, Timescale, Tremolo, Vibrato, Rotation, Distortion, ChannelMix, LowPass, Echo, None],
         cls: type[Union[Karaoke, Timescale, Tremolo, Vibrato, Rotation, Distortion, ChannelMix, LowPass, Echo]],
         response: ANY_GENERIC_TYPE,
     ) -> ANY_GENERIC_TYPE:
         if isinstance(filter_name, cls):
-            response[name] = filter_name.to_dict()  # type: ignore
+            response[name] = filter_name.to_dict()
         else:
             response[name] = None
         return response

@@ -1,4 +1,11 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from pylav.extension.m3u.base import load, loads
+
+if TYPE_CHECKING:
+    from pylav.core.client import Client
 
 
 class M3UParser:

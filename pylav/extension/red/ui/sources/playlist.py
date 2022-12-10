@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import random
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import asyncstdlib
 import discord
@@ -9,8 +10,6 @@ from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_number
 from redbot.vendored.discord.ext import menus
 
-from pylav.extension.red.ui.menus.generic import PaginatingMenu
-from pylav.extension.red.ui.menus.playlist import PlaylistPickerMenu
 from pylav.extension.red.ui.selectors.options.playlist import PlaylistOption
 from pylav.logging import getLogger
 from pylav.players.query.obj import Query
@@ -18,6 +17,10 @@ from pylav.players.tracks.obj import Track
 from pylav.storage.models.playlist import Playlist
 from pylav.type_hints.bot import DISCORD_COG_TYPE
 from pylav.utils.vendor.redbot import AsyncIter
+
+if TYPE_CHECKING:
+    from pylav.extension.red.ui.menus.generic import PaginatingMenu
+    from pylav.extension.red.ui.menus.playlist import PlaylistPickerMenu
 
 LOGGER = getLogger("PyLav.ext.Shared.ui.sources.playlist")
 

@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from pylav.constants.builtin_nodes import BUNDLED_NODES_IDS_HOST_MAPPING, PYLAV_BUNDLED_NODES_SETTINGS
 from pylav.logging import getLogger
 from pylav.storage.database.tables.nodes import NodeRow
 from pylav.storage.models.node.mocked import NodeMock
 from pylav.storage.models.node.real import Node
 
+if TYPE_CHECKING:
+    from pylav.core.client import Client
 LOGGER = getLogger("PyLav.Database.Controller.Node")
 
 

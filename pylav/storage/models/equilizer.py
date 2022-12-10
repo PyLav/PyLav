@@ -291,7 +291,7 @@ class Equalizer:
             **cls._get_args(data=data),
         )
 
-    def to_filter(self) -> Equalizer:
+    def to_filter(self) -> filters.Equalizer:
         """Serialize the Equalizer to a Filter.
 
         Returns
@@ -308,7 +308,7 @@ class Equalizer:
     @classmethod
     def from_filter(
         cls, equalizer: filters.Equalizer, context: PyLavContext, scope: int, description: str = None
-    ) -> filters.Equalizer:
+    ) -> Equalizer:
         """Deserialize a Equalizer from a Filter.
 
         Parameters

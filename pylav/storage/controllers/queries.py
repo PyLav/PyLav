@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import datetime
+from typing import TYPE_CHECKING
 
 from discord.utils import utcnow
 
@@ -13,6 +14,8 @@ from pylav.storage.database.tables.tracks import TrackRow
 from pylav.storage.models.query import Query
 from pylav.utils.vendor.redbot import AsyncIter
 
+if TYPE_CHECKING:
+    from pylav.core.client import Client
 LOGGER = getLogger("PyLav.Database.Controller.Query")
 
 

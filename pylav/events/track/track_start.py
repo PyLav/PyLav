@@ -1,10 +1,14 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from pylav.events.base import PyLavEvent
 from pylav.nodes.api.responses.websocket import TrackStart
-from pylav.nodes.node import Node
-from pylav.players.player import Player
-from pylav.players.tracks.obj import Track
+
+if TYPE_CHECKING:
+    from pylav.nodes.node import Node
+    from pylav.players.player import Player
+    from pylav.players.tracks.obj import Track
 
 
 class TrackStartEvent(PyLavEvent):
@@ -15,11 +19,6 @@ class TrackStartEvent(PyLavEvent):
     def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStart) -> None:
         self.player = player
         self.track = track
-        self.url = track.uri
-        self.identifier = track.identifier
-        self.duration = track.duration
-        self.title = track.title
-        self.author = track.author
         self.node = node
         self.event = event_object
 
@@ -31,11 +30,6 @@ class TrackStartYouTubeEvent(TrackStartEvent):
 
     def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStart) -> None:
         super().__init__(player, track, node, event_object)
-        self.url = track.uri
-        self.identifier = track.identifier
-        self.duration = track.duration
-        self.title = track.title
-        self.author = track.author
 
 
 # noinspection SpellCheckingInspection
@@ -46,11 +40,6 @@ class TrackStartClypitEvent(TrackStartEvent):
 
     def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStart) -> None:
         super().__init__(player, track, node, event_object)
-        self.url = track.uri
-        self.identifier = track.identifier
-        self.duration = track.duration
-        self.title = track.title
-        self.author = track.author
 
 
 class TrackStartGetYarnEvent(TrackStartEvent):
@@ -60,11 +49,6 @@ class TrackStartGetYarnEvent(TrackStartEvent):
 
     def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStart) -> None:
         super().__init__(player, track, node, event_object)
-        self.url = track.uri
-        self.identifier = track.identifier
-        self.duration = track.duration
-        self.title = track.title
-        self.author = track.author
 
 
 class TrackStartMixCloudEvent(TrackStartEvent):
@@ -74,11 +58,6 @@ class TrackStartMixCloudEvent(TrackStartEvent):
 
     def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStart) -> None:
         super().__init__(player, track, node, event_object)
-        self.url = track.uri
-        self.identifier = track.identifier
-        self.duration = track.duration
-        self.title = track.title
-        self.author = track.author
 
 
 class TrackStartOCRMixEvent(TrackStartEvent):
@@ -88,11 +67,6 @@ class TrackStartOCRMixEvent(TrackStartEvent):
 
     def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStart) -> None:
         super().__init__(player, track, node, event_object)
-        self.url = track.uri
-        self.identifier = track.identifier
-        self.duration = track.duration
-        self.title = track.title
-        self.author = track.author
 
 
 class TrackStartPornHubEvent(TrackStartEvent):
@@ -102,11 +76,6 @@ class TrackStartPornHubEvent(TrackStartEvent):
 
     def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStart) -> None:
         super().__init__(player, track, node, event_object)
-        self.url = track.uri
-        self.identifier = track.identifier
-        self.duration = track.duration
-        self.title = track.title
-        self.author = track.author
 
 
 class TrackStartRedditEvent(TrackStartEvent):
@@ -116,11 +85,6 @@ class TrackStartRedditEvent(TrackStartEvent):
 
     def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStart) -> None:
         super().__init__(player, track, node, event_object)
-        self.url = track.uri
-        self.identifier = track.identifier
-        self.duration = track.duration
-        self.title = track.title
-        self.author = track.author
 
 
 # noinspection SpellCheckingInspection
@@ -131,11 +95,6 @@ class TrackStartSoundgasmEvent(TrackStartEvent):
 
     def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStart) -> None:
         super().__init__(player, track, node, event_object)
-        self.url = track.uri
-        self.identifier = track.identifier
-        self.duration = track.duration
-        self.title = track.title
-        self.author = track.author
 
 
 class TrackStartTikTokEvent(TrackStartEvent):
@@ -145,11 +104,6 @@ class TrackStartTikTokEvent(TrackStartEvent):
 
     def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStart) -> None:
         super().__init__(player, track, node, event_object)
-        self.url = track.uri
-        self.identifier = track.identifier
-        self.duration = track.duration
-        self.title = track.title
-        self.author = track.author
 
 
 class TrackStartSpotifyEvent(TrackStartEvent):
@@ -159,11 +113,6 @@ class TrackStartSpotifyEvent(TrackStartEvent):
 
     def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStart) -> None:
         super().__init__(player, track, node, event_object)
-        self.url = track.uri
-        self.identifier = track.identifier
-        self.duration = track.duration
-        self.title = track.title
-        self.author = track.author
 
 
 class TrackStartDeezerEvent(TrackStartEvent):
@@ -173,11 +122,6 @@ class TrackStartDeezerEvent(TrackStartEvent):
 
     def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStart) -> None:
         super().__init__(player, track, node, event_object)
-        self.url = track.uri
-        self.identifier = track.identifier
-        self.duration = track.duration
-        self.title = track.title
-        self.author = track.author
 
 
 class TrackStartYandexMusicEvent(TrackStartEvent):
@@ -187,11 +131,6 @@ class TrackStartYandexMusicEvent(TrackStartEvent):
 
     def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStart) -> None:
         super().__init__(player, track, node, event_object)
-        self.url = track.uri
-        self.identifier = track.identifier
-        self.duration = track.duration
-        self.title = track.title
-        self.author = track.author
 
 
 class TrackStartAppleMusicEvent(TrackStartEvent):
@@ -201,11 +140,6 @@ class TrackStartAppleMusicEvent(TrackStartEvent):
 
     def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStart) -> None:
         super().__init__(player, track, node, event_object)
-        self.url = track.uri
-        self.identifier = track.identifier
-        self.duration = track.duration
-        self.title = track.title
-        self.author = track.author
 
 
 class TrackStartBandcampEvent(TrackStartEvent):
@@ -215,11 +149,6 @@ class TrackStartBandcampEvent(TrackStartEvent):
 
     def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStart) -> None:
         super().__init__(player, track, node, event_object)
-        self.url = track.uri
-        self.identifier = track.identifier
-        self.duration = track.duration
-        self.title = track.title
-        self.author = track.author
 
 
 class TrackStartYouTubeMusicEvent(TrackStartEvent):
@@ -229,11 +158,6 @@ class TrackStartYouTubeMusicEvent(TrackStartEvent):
 
     def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStart) -> None:
         super().__init__(player, track, node, event_object)
-        self.url = track.uri
-        self.identifier = track.identifier
-        self.duration = track.duration
-        self.title = track.title
-        self.author = track.author
 
 
 class TrackStartSoundCloudEvent(TrackStartEvent):
@@ -243,11 +167,6 @@ class TrackStartSoundCloudEvent(TrackStartEvent):
 
     def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStart) -> None:
         super().__init__(player, track, node, event_object)
-        self.url = track.uri
-        self.identifier = track.identifier
-        self.duration = track.duration
-        self.title = track.title
-        self.author = track.author
 
 
 class TrackStartTwitchEvent(TrackStartEvent):
@@ -257,11 +176,6 @@ class TrackStartTwitchEvent(TrackStartEvent):
 
     def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStart) -> None:
         super().__init__(player, track, node, event_object)
-        self.url = track.uri
-        self.identifier = track.identifier
-        self.duration = track.duration
-        self.title = track.title
-        self.author = track.author
 
 
 class TrackStartHTTPEvent(TrackStartEvent):
@@ -271,11 +185,6 @@ class TrackStartHTTPEvent(TrackStartEvent):
 
     def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStart) -> None:
         super().__init__(player, track, node, event_object)
-        self.url = track.uri
-        self.identifier = track.identifier
-        self.duration = track.duration
-        self.title = track.title
-        self.author = track.author
 
 
 class TrackStartLocalFileEvent(TrackStartEvent):
@@ -285,11 +194,6 @@ class TrackStartLocalFileEvent(TrackStartEvent):
 
     def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStart) -> None:
         super().__init__(player, track, node, event_object)
-        self.url = track.uri
-        self.identifier = track.identifier
-        self.duration = track.duration
-        self.title = track.title
-        self.author = track.author
 
 
 class TrackStartNicoNicoEvent(TrackStartEvent):
@@ -299,11 +203,6 @@ class TrackStartNicoNicoEvent(TrackStartEvent):
 
     def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStart) -> None:
         super().__init__(player, track, node, event_object)
-        self.url = track.uri
-        self.identifier = track.identifier
-        self.duration = track.duration
-        self.title = track.title
-        self.author = track.author
 
 
 class TrackStartVimeoEvent(TrackStartEvent):
@@ -313,11 +212,6 @@ class TrackStartVimeoEvent(TrackStartEvent):
 
     def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStart) -> None:
         super().__init__(player, track, node, event_object)
-        self.url = track.uri
-        self.identifier = track.identifier
-        self.duration = track.duration
-        self.title = track.title
-        self.author = track.author
 
 
 class TrackStartSpeakEvent(TrackStartEvent):
@@ -327,11 +221,6 @@ class TrackStartSpeakEvent(TrackStartEvent):
 
     def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStart) -> None:
         super().__init__(player, track, node, event_object)
-        self.url = track.uri
-        self.identifier = track.identifier
-        self.duration = track.duration
-        self.title = track.title
-        self.author = track.author
 
 
 class TrackStartGCTTSEvent(TrackStartEvent):
@@ -341,8 +230,3 @@ class TrackStartGCTTSEvent(TrackStartEvent):
 
     def __init__(self, player: Player, track: Track, node: Node, event_object: TrackStart) -> None:
         super().__init__(player, track, node, event_object)
-        self.url = track.uri
-        self.identifier = track.identifier
-        self.duration = track.duration
-        self.title = track.title
-        self.author = track.author

@@ -1,11 +1,17 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import discord
 
 from pylav.events.base import PyLavEvent
 from pylav.events.track.track_start import TrackStartEvent as TrackStartEvent
 from pylav.nodes.api.responses.websocket import TrackEnd, TrackException, TrackStuck
-from pylav.nodes.node import Node
-from pylav.players.player import Player
-from pylav.players.tracks.obj import Track
+
+if TYPE_CHECKING:
+    from pylav.nodes.node import Node
+    from pylav.players.player import Player
+    from pylav.players.tracks.obj import Track
 
 
 class TrackStuckEvent(PyLavEvent):

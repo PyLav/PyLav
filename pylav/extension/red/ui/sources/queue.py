@@ -2,17 +2,20 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import asyncstdlib
 import discord
 from redbot.core.i18n import Translator
 from redbot.vendored.discord.ext import menus
 
-from pylav.extension.red.ui.menus.queue import QueueMenu, QueuePickerMenu
 from pylav.extension.red.ui.selectors.options.queue import QueueTrackOption, SearchTrackOption
 from pylav.logging import getLogger
 from pylav.players.tracks.obj import Track
 from pylav.type_hints.bot import DISCORD_COG_TYPE
+
+if TYPE_CHECKING:
+    from pylav.extension.red.ui.menus.queue import QueueMenu, QueuePickerMenu
 
 LOGGER = getLogger("PyLav.ext.Shared.ui.sources.queue")
 

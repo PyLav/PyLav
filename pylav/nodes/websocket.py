@@ -55,13 +55,17 @@ from pylav.nodes.api.responses.websocket import (
     TrackStart,
     TrackStuck,
 )
-from pylav.nodes.node import Node
 from pylav.nodes.utils import Stats as NodeStats
 from pylav.players.query.obj import Query
 from pylav.players.tracks.obj import Track
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 from pylav.utils.location import get_closest_discord_region
 from pylav.utils.vendor.redbot import AsyncIter
+
+if typing.TYPE_CHECKING:
+    from pylav.core.client import Client
+    from pylav.nodes.node import Node
+    from pylav.players.player import Player
 
 
 class WebSocket:

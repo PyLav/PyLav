@@ -5,13 +5,14 @@ import pathlib
 import sys
 from typing import Callable, TypeVar, get_type_hints
 
-from pylav.extension.bundled_node.utils import get_true_path
 from pylav.type_hints.generics import ANY_GENERIC_TYPE, PARAM_SPEC_TYPE
 
 T = TypeVar("T")
 
 
 def _get_path(path: T | pathlib.Path) -> str | T | None:
+    from pylav.extension.bundled_node.utils import get_true_path
+
     return get_true_path(path, fallback=path)
 
 

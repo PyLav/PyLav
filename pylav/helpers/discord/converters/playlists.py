@@ -37,7 +37,7 @@ else:
             """Converts a playlist name or ID to a list of matching objects"""
 
             try:
-                playlists = await ctx.lavalink.db.playlist.get_playlist_by_name_or_id(arg)
+                playlists = await ctx.lavalink.playlist_db_manager.get_playlist_by_name_or_id(arg)
             except EntryNotFoundException as e:
                 raise commands.BadArgument(_("Playlist with name or id `{arg}` not found").format(arg=arg)) from e
             return playlists
@@ -53,14 +53,16 @@ else:
         async def autocomplete(cls, interaction: DISCORD_INTERACTION_TYPE, current: str) -> list[Choice]:
 
             if not current:
-                playlists = await interaction.client.lavalink.db.playlist.get_bundled_playlists()
+                playlists = await interaction.client.lavalink.playlist_db_manager.get_bundled_playlists()
                 return [
                     Choice(name=shorten_string(await e.fetch_name(), max_length=100), value=f"{e.id}")
                     for e in playlists
                 ][:25]
 
             try:
-                playlists = await interaction.client.lavalink.db.playlist.get_playlist_by_name(current, limit=50)
+                playlists = await interaction.client.lavalink.playlist_db_manager.get_playlist_by_name(
+                    current, limit=50
+                )
             except EntryNotFoundException:
                 return []
 

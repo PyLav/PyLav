@@ -44,7 +44,7 @@ class DataReader:
 
     def read_boolean(self) -> bool:
         (result,) = struct.unpack("B", self.read_byte())
-        return typing.cast(bool, result)
+        return bool(result)
 
     def read_unsigned_short(self) -> int:
         (result,) = struct.unpack(">H", self._read(2))

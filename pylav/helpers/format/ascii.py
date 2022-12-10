@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from math import sqrt
-from typing import Any
 
 from pylav.constants.misc import ASCII_COLOURS
+from pylav.type_hints.generics import SupportsStr
 
 
 class _BackgroundColourCodes:
@@ -39,7 +39,7 @@ class EightBitANSI:
     @classmethod
     def colorize(
         cls,
-        text: str,
+        text: SupportsStr,
         color: str,
         bold: bool = False,
         underline: bool = False,
@@ -64,49 +64,89 @@ class EightBitANSI:
 
     @classmethod
     def paint_black(
-        cls, text: str, bold: bool = False, underline: bool = False, background: str = None, italic: bool = False
+        cls,
+        text: SupportsStr,
+        bold: bool = False,
+        underline: bool = False,
+        background: str = None,
+        italic: bool = False,
     ) -> str:
         return cls.colorize(text, "black", bold, underline, background, italic)
 
     @classmethod
     def paint_red(
-        cls, text: str, bold: bool = False, underline: bool = False, background: str = None, italic: bool = False
+        cls,
+        text: SupportsStr,
+        bold: bool = False,
+        underline: bool = False,
+        background: str = None,
+        italic: bool = False,
     ) -> str:
         return cls.colorize(text, "red", bold, underline, background, italic)
 
     @classmethod
     def paint_green(
-        cls, text: str, bold: bool = False, underline: bool = False, background: str = None, italic: bool = False
+        cls,
+        text: SupportsStr,
+        bold: bool = False,
+        underline: bool = False,
+        background: str = None,
+        italic: bool = False,
     ) -> str:
         return cls.colorize(text, "green", bold, underline, background, italic)
 
     @classmethod
     def paint_yellow(
-        cls, text: str, bold: bool = False, underline: bool = False, background: str = None, italic: bool = False
+        cls,
+        text: SupportsStr,
+        bold: bool = False,
+        underline: bool = False,
+        background: str = None,
+        italic: bool = False,
     ) -> str:
         return cls.colorize(text, "yellow", bold, underline, background, italic)
 
     @classmethod
     def paint_blue(
-        cls, text: Any, bold: bool = False, underline: bool = False, background: str = None, italic: bool = False
+        cls,
+        text: SupportsStr,
+        bold: bool = False,
+        underline: bool = False,
+        background: str = None,
+        italic: bool = False,
     ) -> str:
         return cls.colorize(text, "blue", bold, underline, background, italic)
 
     @classmethod
     def paint_magenta(
-        cls, text: str, bold: bool = False, underline: bool = False, background: str = None, italic: bool = False
+        cls,
+        text: SupportsStr,
+        bold: bool = False,
+        underline: bool = False,
+        background: str = None,
+        italic: bool = False,
     ) -> str:
         return cls.colorize(text, "magenta", bold, underline, background, italic)
 
     @classmethod
     def paint_cyan(
-        cls, text: str, bold: bool = False, underline: bool = False, background: str = None, italic: bool = False
+        cls,
+        text: SupportsStr,
+        bold: bool = False,
+        underline: bool = False,
+        background: str = None,
+        italic: bool = False,
     ) -> str:
         return cls.colorize(text, "cyan", bold, underline, background, italic)
 
     @classmethod
     def paint_white(
-        cls, text: str, bold: bool = False, underline: bool = False, background: str = None, italic: bool = False
+        cls,
+        text: SupportsStr,
+        bold: bool = False,
+        underline: bool = False,
+        background: str = None,
+        italic: bool = False,
     ) -> str:
         return cls.colorize(text, "white", bold, underline, background, italic)
 

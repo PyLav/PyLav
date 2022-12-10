@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import functools
 import hashlib
+from abc import ABC
 from collections.abc import MutableMapping
 from typing import Any
 
-__all__ = ("decorators", "rgetattr", "rsetattr")
+from redbot.core import commands
 
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
@@ -45,3 +46,10 @@ class Mutator:
             i.update(self.name.encode())
             i.update(str(id(obj)).encode())
             self.id = str(int(i.hexdigest(), 16))[:16]
+
+
+class CompositeMetaClass(type(commands.Cog), type(ABC)):
+    """
+    This allows the metaclass used for proper type detection to
+    coexist with discord.py's metaclass
+    """

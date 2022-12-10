@@ -1,10 +1,14 @@
 from __future__ import annotations
 
 import contextlib
+from typing import TYPE_CHECKING
 
 from pylav import VERSION
 from pylav.exceptions.database import EntryNotFoundException
 from pylav.storage.migrations.logging import LOGGER
+
+if TYPE_CHECKING:
+    from pylav.core.client import Client
 
 
 async def set_current_version(client: Client) -> None:

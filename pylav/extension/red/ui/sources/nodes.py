@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import contextlib
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import asyncstdlib
 import discord
@@ -12,12 +13,15 @@ from redbot.core.utils.chat_formatting import box, humanize_number
 from redbot.vendored.discord.ext import menus
 from tabulate import tabulate
 
-from pylav.extension.red.ui.menus.nodes import NodeManagerMenu, NodePickerMenu
 from pylav.extension.red.ui.selectors.options.nodes import NodeOption
 from pylav.helpers.format.ascii import EightBitANSI
 from pylav.logging import getLogger
 from pylav.nodes.node import Node
 from pylav.type_hints.bot import DISCORD_COG_TYPE
+
+if TYPE_CHECKING:
+    from pylav.extension.red.ui.menus.nodes import NodeManagerMenu, NodePickerMenu
+
 
 LOGGER = getLogger("PyLav.ext.Shared.ui.sources.node")
 _ = Translator("PyLav", Path(__file__))
@@ -134,7 +138,7 @@ class NodeListSource(menus.ListPageSource):
             penalty = "?"
         try:
             plugins = await node.fetch_info()
-        except Exception:
+        except Exception:  # noqa
             plugins = {}
         plugins_str = ""
         for plugin in plugins.plugins:
