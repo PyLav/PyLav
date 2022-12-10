@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from typing import Any, Callable
 
-from pylav.storage.database.caching.cache import CACHE
+from pylav.storage.database.cache.cache import CACHE
 
 
 def key_builder(method: Callable, *args: Any, **kwargs: Any) -> str:  # noqa
