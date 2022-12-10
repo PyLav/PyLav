@@ -9,6 +9,7 @@ import aiopath  # type: ignore
 import ujson
 from discord.utils import utcnow
 
+from pylav.ext.bundled_node.utils import get_true_path
 from pylav.helpers.singleton import SingletonCachedByKey
 from pylav.storage.database.caching.decodators import maybe_cached
 from pylav.storage.database.caching.model import CachedModel
