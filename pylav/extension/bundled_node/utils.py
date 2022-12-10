@@ -10,6 +10,7 @@ from collections.abc import Iterator
 
 import psutil
 
+from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 from pylav.type_hints.generics import ANY_GENERIC_TYPE
 
 
@@ -81,3 +82,24 @@ def add_env_path(path: str | os.PathLike) -> Iterator[str]:
             os.environ["PATH"] = old_path
         else:
             del os.environ["PATH"]
+
+
+def convert_function(key: str) -> str:
+    return key.replace("_", "-")
+
+
+def change_dict_naming_convention(data: JSON_DICT_TYPE) -> JSON_DICT_TYPE:
+    new = {}
+    for k, v in data.items():
+        new_v = v
+        if isinstance(v, dict):
+            new_v = change_dict_naming_convention(v)
+        elif isinstance(v, list):
+            new_v = []
+            for x in v:
+                if isinstance(x, dict):
+                    new_v.append(change_dict_naming_convention(x))
+                else:
+                    new_v.append(x)
+        new[convert_function(k)] = new_v
+    return new
