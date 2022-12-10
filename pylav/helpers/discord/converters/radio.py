@@ -26,7 +26,7 @@ except ImportError:
         return string
 
 
-LOGGER = getLogger("PyLav.ext.Shared.converters.radio")
+LOGGER = getLogger("PyLav.extension.Shared.converters.radio")
 
 if TYPE_CHECKING:
 

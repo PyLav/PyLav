@@ -8,7 +8,7 @@ from dacite import from_dict  # type: ignore
 
 from pylav.logging import getLogger
 from pylav.nodes.api.responses.track import Track
-from pylav.utils.vendored.lavalink_py.datarw import DataReader
+from pylav.utils.vendor.lavalink_py.datarw import DataReader
 
 LOGGER = getLogger("PyLav.Track.Decoder")
 

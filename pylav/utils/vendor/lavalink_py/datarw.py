@@ -28,7 +28,7 @@ import typing
 from base64 import b64decode, b64encode
 from io import BytesIO
 
-from pylav.utils.vendored.lavalink_py.utfm_codec import read_utfm
+from pylav.utils.vendor.lavalink_py.utfm_codec import read_utfm
 
 
 # noinspection SpellCheckingInspection

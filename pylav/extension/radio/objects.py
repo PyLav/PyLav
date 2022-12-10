@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 from iso8601 import iso8601
 
-from pylav.ext.radio.radios import RadioBrowser
+from pylav.extension.radio.radios import RadioBrowser
 from pylav.players.query.obj import Query
 
 

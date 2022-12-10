@@ -5,14 +5,13 @@ import pathlib
 import sys
 from typing import Callable, TypeVar, get_type_hints
 
-from pylav.ext.bundled_node.utils import get_true_path
+from pylav.extension.bundled_node.utils import get_true_path
 from pylav.type_hints.generics import ANY_GENERIC_TYPE, PARAM_SPEC_TYPE
 
 T = TypeVar("T")
 
 
 def _get_path(path: T | pathlib.Path) -> str | T | None:
-
     return get_true_path(path, fallback=path)
 
 
@@ -48,3 +47,12 @@ def check_annotated(
         return func(*args, **kwargs)
 
     return wrapper
+
+
+def add_property(inst: object, name: str, method: Callable) -> None:
+    cls = type(inst)
+    if not hasattr(cls, "__per_instance"):
+        cls = type(cls.__name__, (cls,), {})
+        cls.__per_instance = True
+        inst.__class__ = cls
+    setattr(cls, name, property(method))

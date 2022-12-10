@@ -4,7 +4,7 @@ import os
 import re
 
 from pylav.constants.config import JAVA_EXECUTABLE
-from pylav.ext.bundled_node.utils import get_jar_ram_actual
+from pylav.extension.bundled_node.utils import get_jar_ram_actual
 from pylav.storage.migrations.logging import LOGGER
 
 
