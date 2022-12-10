@@ -270,9 +270,11 @@ class PlaylistController:
             asyncio.exceptions.CancelledError,
         ):
             await self.client.node_manager.wait_until_ready()
+            # noinspection PyProtectedMember
             await self.client._maybe_wait_until_bundled_node(
                 await self.client.lib_db_manager.get_config().fetch_enable_managed_node()
             )
+            # noinspection PyProtectedMember
             old_time_stamp = await self.client._config.fetch_next_execution_update_bundled_playlists()
             id_filtered = {
                 playlist_id: BUNDLED_PYLAV_PLAYLISTS[playlist_id]
@@ -298,11 +300,14 @@ class PlaylistController:
                     )
                     playlist = None
                 if not playlist:
+                    # noinspection PyProtectedMember
                     await self.client._config.update_next_execution_update_bundled_playlists(old_time_stamp)
                     continue
+            # noinspection PyProtectedMember
             await self.client._config.update_next_execution_update_bundled_playlists(
                 utcnow() + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS)
             )
+            # noinspection PyProtectedMember
             self.client._wait_for_playlists.set()
 
             LOGGER.info("Finished updating bundled playlists")
@@ -310,15 +315,18 @@ class PlaylistController:
     async def update_bundled_external_playlists(self, *playlist_ids: int) -> None:
         with contextlib.suppress(asyncio.exceptions.CancelledError):
             await self.client.node_manager.wait_until_ready()
+            # noinspection PyProtectedMember
             await self.client._maybe_wait_until_bundled_node(
                 await self.client.lib_db_manager.get_config().fetch_enable_managed_node()
             )
+            # noinspection PyProtectedMember
             old_time_stamp = await self.client._config.fetch_next_execution_update_bundled_external_playlists()
             # NOTICE: Update the BUNDLED_PLAYLIST_IDS constant in the constants.py file
             id_filtered = {playlist_id: BUNDLED_EXTERNAL_PLAYLISTS[playlist_id] for playlist_id in playlist_ids}
             if not id_filtered:
                 id_filtered = BUNDLED_EXTERNAL_PLAYLISTS
             for playlist_id, (identifier, name, album_playlist) in id_filtered.items():
+                # noinspection PyProtectedMember
                 if (playlist_id in BUNDLED_SPOTIFY_PLAYLIST_IDS and not self.client._spotify_auth) or (
                     playlist_id in BUNDLED_DEEZER_PLAYLIST_IDS and not self.client._has_deezer_support
                 ):
@@ -347,6 +355,7 @@ class PlaylistController:
                     )
                     data = None
                 if not data:
+                    # noinspection PyProtectedMember
                     await self.client._config.update_next_execution_update_bundled_external_playlists(old_time_stamp)
                     continue
                 if track_list:
@@ -355,6 +364,7 @@ class PlaylistController:
                     )
                 else:
                     await self.delete_playlist(playlist_id=identifier)
+            # noinspection PyProtectedMember
             await self.client._config.update_next_execution_update_bundled_external_playlists(
                 utcnow() + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS)
             )
@@ -366,6 +376,7 @@ class PlaylistController:
             asyncio.exceptions.CancelledError,
         ):
             await self.client.node_manager.wait_until_ready()
+            # noinspection PyProtectedMember
             await self.client._maybe_wait_until_bundled_node(
                 await self.client.lib_db_manager.get_config().fetch_enable_managed_node()
             )
@@ -395,6 +406,7 @@ class PlaylistController:
                         playlist.id,
                         exc_info=exc,
                     )
+            # noinspection PyProtectedMember
             await self.client._config.update_next_execution_update_external_playlists(
                 utcnow() + datetime.timedelta(days=TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS)
             )

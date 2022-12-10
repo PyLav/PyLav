@@ -100,9 +100,7 @@ class Equalizer:
         """Delete the equalizer from the database"""
         await EqualizerRow.delete().where(EqualizerRow.id == self.id)
 
-    async def can_manage(
-        self, bot: DISCORD_BOT_TYPE, requester: discord.abc.User, guild: discord.Guild = None
-    ) -> bool:  # noqa
+    async def can_manage(self, bot: DISCORD_BOT_TYPE, requester: discord.abc.User) -> bool:  # noqa
         """Check if the requester can manage the equalizer.
 
         Parameters
@@ -111,8 +109,6 @@ class Equalizer:
             The bot.
         requester: discord.abc.User
             The requester.
-        guild: discord.Guild | None
-            The guild.
 
         Returns
         -------

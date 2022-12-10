@@ -15,6 +15,7 @@ from discord.ext.commands.view import StringView
 from discord.types.embed import EmbedType
 from discord.utils import MISSING as D_MISSING  # noqa
 
+from pylav.players.player import Player
 from pylav.type_hints.bot import DISCORD_BOT_TYPE, DISCORD_COG_TYPE, DISCORD_CONTEXT_TYPE, DISCORD_INTERACTION_TYPE
 from pylav.utils.vendor.redbot import MessagePredicate
 
@@ -256,7 +257,7 @@ class PyLavContext(OriginalContextClass):
                     _("{} remaining. Type `more` to continue.").format(
                         _("There is still 1 message")
                         if n_remaining == 1
-                        else _("There are still {remaning} messages").format(remaning=n_remaining)
+                        else _("There are still {remaining} messages").format(remaining=n_remaining)
                     )
                 )
                 try:

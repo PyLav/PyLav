@@ -21,5 +21,6 @@ async def migration_v_0_8_5_0(client: Client, current_version: Version) -> None:
         await playlist.delete()
     t = asyncio.create_task(client.playlist_db_manager.update_bundled_playlists(*BUNDLED_PYLAV_PLAYLISTS_IDS))
     t.set_name(f"Update bundled playlists for migration {VERSION_0_8_5_0}")
+    # noinspection PyProtectedMember
     client._update_schema_manager._tasks_depend_on_node.append(t)
     await client.lib_db_manager.update_bot_dv_version(VERSION_0_8_5_0)

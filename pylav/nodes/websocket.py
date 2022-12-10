@@ -311,7 +311,7 @@ class WebSocket:
                 "A WebSocket connection could not be established within %s attempts",
                 attempt,
             )
-        except Exception:
+        except Exception:  # noqa
             self._logger.exception(
                 "An exception occurred while attempting to connect to the node",
             )
@@ -337,7 +337,7 @@ class WebSocket:
                 #     self._logger.error("Exception in WebSocket! %s", exc)
                 #     break
             await self._websocket_closed()
-        except Exception:
+        except Exception:  # noqa
             if not self.client.is_shutting_down:
                 self._logger.exception("Exception in WebSocket!")
                 await self._websocket_closed()

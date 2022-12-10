@@ -17,6 +17,7 @@ from pylav.helpers.misc import ExponentialBackoffWithReset
 from pylav.logging import getLogger
 from pylav.nodes.node import Node
 from pylav.nodes.utils import sort_key_nodes
+from pylav.players.player import Player
 from pylav.storage.models.node.mocked import NodeMock
 from pylav.utils.location import get_closest_region_name_and_coordinate
 
@@ -404,6 +405,7 @@ class NodeManager:
         node: :class:`Node`
             The node that has just connected.
         """
+        # noinspection PyProtectedMember
         node._logger.debug("Successfully established connection")
         del node.down_votes
         self._player_migrate_task = asyncio.create_task(self._player_change_node_task(node))
@@ -412,9 +414,11 @@ class NodeManager:
     async def _player_change_node_task(self, node):
         async for player in asyncstdlib.iter(self.player_queue):
             await player.change_node(node, forced=True)
+            # noinspection PyProtectedMember
             node._logger.debug("Successfully moved %s", player.guild.id)
-
+        # noinspection PyProtectedMember
         if self.client._connect_back:
+            # noinspection PyProtectedMember
             async for player in asyncstdlib.iter(node._original_players):
                 await player.change_node(node, forced=True)
                 player._original_node = None
@@ -435,7 +439,9 @@ class NodeManager:
         """
         if self.client.is_shutting_down:
             return
+        # noinspection PyProtectedMember
         node._logger.warning("Disconnected with code %s and reason %s", code, reason)
+        # noinspection PyProtectedMember
         node._logger.verbose(
             "Disconnected with code %s and reason %s -- %r",
             code,
@@ -451,6 +457,7 @@ class NodeManager:
 
         async for player in asyncstdlib.iter(node.players):
             await player.change_node(best_node, forced=True)
+            # noinspection PyProtectedMember
             if self.client._connect_back:
                 player._original_node = node
 
@@ -464,8 +471,9 @@ class NodeManager:
     async def connect_to_all_nodes(self) -> None:
         nodes_list = []
         async for node in asyncstdlib.iter(await self.client.node_db_manager.get_all_unmanaged_nodes()):
-            await self._process_single_unamanaged_node_connection(node, nodes_list)
+            await self._process_single_unmanaged_node_connection(node, nodes_list)
         await self._process_envvar_node(nodes_list)
+        # noinspection PyProtectedMember
         config_data = self.client._lib_config_manager.get_config()
         all_data = await config_data.fetch_all()
 
@@ -570,7 +578,7 @@ class NodeManager:
                     self._unmanaged_external_port,
                 )
 
-    async def _process_single_unamanaged_node_connection(self, node, nodes_list):
+    async def _process_single_unmanaged_node_connection(self, node, nodes_list):
         if node.id == self.client.bot.user.id:
             LOGGER.debug("Skipping node %s as it is the managed node", node.id)
             return

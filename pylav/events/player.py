@@ -7,6 +7,7 @@ import discord
 
 from pylav.events.base import PyLavEvent
 from pylav.nodes.node import Node
+from pylav.players.player import Player
 
 if TYPE_CHECKING:
     from pylav.players.filters import (
@@ -103,7 +104,7 @@ class PlayerDisconnectedEvent(PyLavEvent):
         self.player = player
         self.requester = requester
         self.current_track: Track | None = player.current
-        self.position: float = player.position
+        self.position: float = player.estimated_position
         self.queue: collections.deque[Track] = player.queue.raw_queue
 
 
