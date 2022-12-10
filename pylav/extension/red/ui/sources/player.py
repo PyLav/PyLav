@@ -80,9 +80,12 @@ class PlayersSource(menus.ListPageSource):
                 # sourcery skip: simplify-fstring-formatting
                 (
                     _("Queue History Length"),
+                    # sourcery skip: simplify-fstring-formatting
                     "{count} {track_translation}".format(
                         count=history_queue_len,
-                        track_translation=_("track") if history_queue_len == 1 else _("tracks"),
+                        track_translation=_("track")
+                        if history_queue_len == 1
+                        else _("tracks"),
                     ),
                 ),
             ]

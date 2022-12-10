@@ -44,7 +44,7 @@ class Mutator:
         else:
             i = hashlib.md5()
             i.update(self.name.encode())
-            i.update(str(id(obj)).encode())
+            i.update(id(obj).encode())
             self.id = str(int(i.hexdigest(), 16))[:16]
 
 
