@@ -333,7 +333,7 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
         await self.invalidate_cache(self.fetch_all)
 
     @maybe_cached
-    async def fetch_extras(self) -> dict:
+    async def fetch_extras(self) -> JSON_DICT_TYPE:
         """Fetch the extras.
 
         Returns
@@ -349,7 +349,7 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
         )
         return response["extras"] if response else ujson.loads(LibConfigRow.extras.default)
 
-    async def update_extras(self, extras: dict) -> None:
+    async def update_extras(self, extras: JSON_DICT_TYPE) -> None:
         """Update the extras.
 
         Parameters
