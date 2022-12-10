@@ -430,15 +430,18 @@ class Client(metaclass=SingletonClass):
                 self._has_spotify_support = False
                 self._has_yandex_support = False
 
-                if spotify_client_id and spotify_client_secret:
-                    if spotify_client_id != MANAGED_NODE_SPOTIFY_CLIENT_ID:
-                        self._spotify_auth = ClientCredentialsFlow(
-                            client_id=spotify_client_id, client_secret=spotify_client_secret
-                        )
-                        self._has_spotify_support = True
-                        await self.update_spotify_tokens(
-                            client_id=spotify_client_id, client_secret=spotify_client_secret
-                        )
+                if (
+                    spotify_client_id
+                    and spotify_client_secret
+                    and spotify_client_id != MANAGED_NODE_SPOTIFY_CLIENT_ID
+                ):
+                    self._spotify_auth = ClientCredentialsFlow(
+                        client_id=spotify_client_id, client_secret=spotify_client_secret
+                    )
+                    self._has_spotify_support = True
+                    await self.update_spotify_tokens(
+                        client_id=spotify_client_id, client_secret=spotify_client_secret
+                    )
                 if yandex_access_token and yandex_access_token != MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN:
                     self._has_yandex_support = True
                     await self.update_yandex_tokens(token=yandex_access_token)
