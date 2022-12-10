@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import asyncstdlib
 import discord
@@ -9,13 +10,15 @@ from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box, humanize_number
 from redbot.vendored.discord.ext import menus
 
-from pylav.extension.red.ui.menus.generic import BaseMenu, EntryPickerMenu
 from pylav.extension.red.ui.selectors.options.generic import EntryOption
 from pylav.extension.red.utils import Mutator
 from pylav.helpers.format.ascii import EightBitANSI
 from pylav.logging import getLogger
 from pylav.type_hints.bot import DISCORD_COG_TYPE
 from pylav.type_hints.generics import ANY_GENERIC_TYPE
+
+if TYPE_CHECKING:
+    from pylav.extension.red.ui.menus.generic import BaseMenu, EntryPickerMenu
 
 LOGGER = getLogger("PyLav.ext.Shared.ui.sources.generic")
 

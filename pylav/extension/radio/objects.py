@@ -2,11 +2,14 @@ from __future__ import annotations
 
 import datetime
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from iso8601 import iso8601
 
-from pylav.extension.radio.radios import RadioBrowser
 from pylav.players.query.obj import Query
+
+if TYPE_CHECKING:
+    from pylav.extension.radio.radios import RadioBrowser
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True)

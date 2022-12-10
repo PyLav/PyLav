@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 import asyncio
 import contextlib
 import datetime
 import pathlib
 import typing
 from collections import namedtuple
+from typing import TYPE_CHECKING
 
 import discord
 from discord.utils import utcnow
@@ -29,6 +32,8 @@ from pylav.storage.models.playlist import Playlist
 from pylav.type_hints.bot import DISCORD_BOT_TYPE
 from pylav.utils.vendor.redbot import AsyncIter
 
+if TYPE_CHECKING:
+    from pylav.core.client import Client
 LOGGER = getLogger("PyLav.Database.Controller.Playlist")
 
 
@@ -54,11 +59,16 @@ class PlaylistController:
         return self._client
 
     @staticmethod
-    def get_playlist(identifier: int) -> Playlist:
+    def get_playlist(**kwargs: typing.Any) -> Playlist:
+        identifier = kwargs.pop("identifier", kwargs.pop("id", None))
+        if not identifier:
+            raise ValueError("Playlist identifier not provided")
         return Playlist(id=identifier)
 
     async def get_bundled_playlists(self) -> list[Playlist]:
-        return [p for playlist in BUNDLED_PLAYLIST_IDS if (p := self.get_playlist(playlist)) and await p.exists()]
+        return [
+            p for playlist in BUNDLED_PLAYLIST_IDS if (p := self.get_playlist(identifier=playlist)) and await p.exists()
+        ]
 
     async def get_playlist_by_name(self, playlist_name: str, limit: int = None) -> list[Playlist]:
         query = (
@@ -82,7 +92,7 @@ class PlaylistController:
         except ValueError as e:
             raise EntryNotFoundException(f"Playlist with id {playlist_id} not found") from e
         if response:
-            return self.get_playlist(playlist_id)
+            return self.get_playlist(identifier=playlist_id)
         else:
             raise EntryNotFoundException(f"Playlist with id {playlist_id} not found")
 
@@ -360,10 +370,10 @@ class PlaylistController:
                     continue
                 if track_list:
                     await self.create_or_update_global_playlist(
-                        identifier=identifier, name=name, tracks=track_list, author=self._client.bot.user.id, url=url
+                        identifier=playlist_id, name=name, tracks=track_list, author=self._client.bot.user.id, url=url
                     )
                 else:
-                    await self.delete_playlist(playlist_id=identifier)
+                    await self.delete_playlist(playlist_id=playlist_id)
             # noinspection PyProtectedMember
             await self.client._config.update_next_execution_update_bundled_external_playlists(
                 utcnow() + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS)

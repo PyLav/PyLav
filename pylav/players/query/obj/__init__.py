@@ -12,11 +12,9 @@ import aiohttp
 import aiopath  # type: ignore
 import asyncstdlib
 import brotli  # type: ignore
+import discord
 import ujson
 import yaml
-
-# noinspection PyProtectedMember
-from discord.utils import maybe_coroutine
 
 from pylav.constants import MAX_RECURSION_DEPTH
 from pylav.constants.config import DEFAULT_SEARCH_SOURCE
@@ -391,14 +389,15 @@ class Query:
         path: aiopath.AsyncPath = aiopath.AsyncPath(query)
         if not await path.exists():
             path_paths = typing.cast(
-                list[str | PathLike[str]], path.parts[1:] if await maybe_coroutine(path.is_absolute) else path.parts
+                list[str | PathLike[str]],
+                path.parts[1:] if await discord.utils.maybe_coroutine(path.is_absolute) else path.parts,
             )
             # noinspection PyProtectedMember
             path = cls.__local_file_cls._ROOT_FOLDER.joinpath(*path_paths)
             if not await path.exists():
                 raise ValueError(f"{path} does not exist")
         try:
-            local_path = cls.__local_file_cls(await maybe_coroutine(path.absolute))
+            local_path = cls.__local_file_cls(await discord.utils.maybe_coroutine(path.absolute))
             await local_path.initialize()
         except Exception as e:
             raise ValueError(f"{e}") from e
@@ -422,14 +421,15 @@ class Query:
         path: aiopath.AsyncPath = aiopath.AsyncPath(query)
         if not await path.exists():
             path_paths = typing.cast(
-                list[str | PathLike[str]], path.parts[1:] if await maybe_coroutine(path.is_absolute) else path.parts
+                list[str | PathLike[str]],
+                path.parts[1:] if await discord.utils.maybe_coroutine(path.is_absolute) else path.parts,
             )
             # noinspection PyProtectedMember
             path = cls.__local_file_cls._ROOT_FOLDER.joinpath(*path_paths)
             if not await path.exists():
                 raise ValueError(f"{path} does not exist")
         try:
-            local_path = cls.__local_file_cls(await maybe_coroutine(path.absolute))
+            local_path = cls.__local_file_cls(await discord.utils.maybe_coroutine(path.absolute))
             await local_path.initialize()
         except Exception as e:
             raise ValueError(f"{e}") from e

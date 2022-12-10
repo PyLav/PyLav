@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import contextlib
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import aiohttp
 import aiohttp_client_cache
@@ -13,6 +13,9 @@ from pylav.extension.radio.utils import type_check
 from pylav.logging import getLogger
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 from pylav.utils.vendor.redbot import AsyncIter
+
+if TYPE_CHECKING:
+    from pylav.core.client import Client
 
 LOGGER = getLogger("PyLav.extension.RadioBrowser")
 

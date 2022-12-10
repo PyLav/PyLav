@@ -1,17 +1,20 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 import asyncstdlib
 import discord
 from discord import Emoji, PartialEmoji
 from redbot.core.i18n import Translator
 
-from pylav.extension.red.ui.menus.nodes import AddNodeFlow, NodeManagerMenu
 from pylav.helpers import emojis
 from pylav.logging import getLogger
 from pylav.type_hints.bot import DISCORD_COG_TYPE, DISCORD_INTERACTION_TYPE
+
+if TYPE_CHECKING:
+    from pylav.extension.red.ui.menus.nodes import AddNodeFlow, NodeManagerMenu
+
 
 LOGGER = getLogger("PyLav.ext.Shared.ui.button.nodes")
 

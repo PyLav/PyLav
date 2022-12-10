@@ -13,4 +13,4 @@ class PlaylistRow(Table, db=DATABASE_ENGINE, tablename="playlist"):
     author = BigInt(null=True, default=None, index=True)
     name = Text(null=True, default=None, index=True, index_method=IndexMethod.gin)
     url = Text(null=True, default=None, index=True)
-    tracks = M2M(LazyTableReference("TrackToPlaylists", module_path="pylav.sql.tables.m2m"))
+    tracks = M2M(LazyTableReference("TrackToPlaylists", module_path="pylav.storage.database.tables.m2m"))

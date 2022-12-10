@@ -37,7 +37,7 @@ class Info:
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class Track:
-    info: Info | JSON_DICT_TYPE
+    info: Info | dict
     encoded: str | None = None
     track: str | None = None
 

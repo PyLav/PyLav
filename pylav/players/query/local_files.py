@@ -8,9 +8,7 @@ from collections.abc import AsyncIterator
 
 import aiopath  # type: ignore
 import asyncstdlib
-
-# noinspection PyProtectedMember
-from discord.utils import maybe_coroutine
+import discord
 
 try:
     from redbot.core.i18n import Translator  # type: ignore
@@ -119,7 +117,7 @@ class LocalFile:
     async def initialize(self) -> None:
         if self.__init:
             return
-        self._path = await maybe_coroutine(self._path.absolute)
+        self._path = await discord.utils.maybe_coroutine(self._path.absolute)
         self._path.relative_to(self.root_folder)
         self.__init = True
 
@@ -186,12 +184,12 @@ class LocalFile:
     ) -> str:
         if with_emoji and length is not None:
             length -= 1
-        path = typing.cast(aiopath.AsyncPath, await maybe_coroutine(self.path.absolute))
+        path = typing.cast(aiopath.AsyncPath, await discord.utils.maybe_coroutine(self.path.absolute))
         is_dir = await self.path.is_dir()
         if name_only:
             string = typing.cast(str, path.name if is_dir else path.stem if no_extension else path.name)
         else:
-            root = typing.cast(aiopath.AsyncPath, await maybe_coroutine(self.root_folder.absolute))
+            root = typing.cast(aiopath.AsyncPath, await discord.utils.maybe_coroutine(self.root_folder.absolute))
             string = str(path).replace(str(root), "")
             if no_extension and not is_dir:
                 string = string.removesuffix(path.suffix)

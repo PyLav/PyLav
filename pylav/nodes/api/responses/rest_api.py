@@ -24,82 +24,37 @@ class LavalinkException(LoadException):
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class TrackLoaded:
     loadType: Literal["TRACK_LOADED"]
-    playlistInfo: Info | JSON_DICT_TYPE
-    tracks: list[Track | JSON_DICT_TYPE] = dataclasses.field(default_factory=list)
-
-    def __post_init__(self) -> None:
-        if isinstance(self.playlistInfo, dict):
-            object.__setattr__(self, "playlistInfo", Info(**self.playlistInfo))
-        temp = []
-        for t in self.tracks:
-            if isinstance(t, Track) or (isinstance(t, dict) and (t := Track(**t))):
-                temp.append(t)
-        object.__setattr__(self, "tracks", temp)
+    playlistInfo: Info
+    tracks: list[Track] = dataclasses.field(default_factory=list)
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class PlaylistLoaded:
     loadType: Literal["PLAYLIST_LOADED"]
-    playlistInfo: Info | JSON_DICT_TYPE
-    tracks: list[Track | JSON_DICT_TYPE] = dataclasses.field(default_factory=list)
-
-    def __post_init__(self) -> None:
-        if isinstance(self.playlistInfo, dict):
-            object.__setattr__(self, "playlistInfo", Info(**self.playlistInfo))
-        temp = []
-        for t in self.tracks:
-            if isinstance(t, Track) or (isinstance(t, dict) and (t := Track(**t))):
-                temp.append(t)
-        object.__setattr__(self, "tracks", temp)
+    playlistInfo: Info
+    tracks: list[Track] = dataclasses.field(default_factory=list)
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class SearchResult:
     loadType: Literal["SEARCH_RESULT"]
-    playlistInfo: Info | JSON_DICT_TYPE
-    tracks: list[Track | JSON_DICT_TYPE] = dataclasses.field(default_factory=list)
-
-    def __post_init__(self) -> None:
-        if isinstance(self.playlistInfo, dict):
-            object.__setattr__(self, "playlistInfo", Info(**self.playlistInfo))
-        temp = []
-        for t in self.tracks:
-            if isinstance(t, Track) or (isinstance(t, dict) and (t := Track(**t))):
-                temp.append(t)
-        object.__setattr__(self, "tracks", temp)
+    playlistInfo: Info
+    tracks: list[Track] = dataclasses.field(default_factory=list)
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class NoMatches:
     loadType: Literal["NO_MATCHES"]
-    playlistInfo: Info | JSON_DICT_TYPE
-    tracks: list[Track | JSON_DICT_TYPE] = dataclasses.field(default_factory=list)
-
-    def __post_init__(self) -> None:
-        if isinstance(self.playlistInfo, dict):
-            object.__setattr__(self, "playlistInfo", Info(**self.playlistInfo))
-        temp = []
-        for t in self.tracks:
-            if isinstance(t, Track) or (isinstance(t, dict) and (t := Track(**t))):
-                temp.append(t)
-        object.__setattr__(self, "tracks", temp)
+    playlistInfo: Info
+    tracks: list[Track] = dataclasses.field(default_factory=list)
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LoadFailed:
     loadType: Literal["LOAD_FAILED"]
-    exception: LoadException | JSON_DICT_TYPE
-    playlistInfo: Info | JSON_DICT_TYPE
-    tracks: list[Track | JSON_DICT_TYPE] = dataclasses.field(default_factory=list)
-
-    def __post_init__(self) -> None:
-        if isinstance(self.playlistInfo, dict):
-            object.__setattr__(self, "playlistInfo", Info(**self.playlistInfo))
-        temp = []
-        for t in self.tracks:
-            if isinstance(t, Track) or (isinstance(t, dict) and (t := Track(**t))):
-                temp.append(t)
-        object.__setattr__(self, "tracks", temp)
+    exception: LoadException
+    playlistInfo: Info
+    tracks: list[Track] = dataclasses.field(default_factory=list)
 
 
 LoadTrackResponses = Union[
@@ -120,20 +75,7 @@ class LavalinkInfo:
     lavaplayer: str
     sourceManagers: list[str]
     filters: list[str]
-    plugins: list[Plugin] | JSON_DICT_TYPE
-
-    def __post_init__(self):
-
-        if isinstance(self.version, dict):
-            object.__setattr__(self, "version", Version(**self.version))
-        if isinstance(self.git, dict):
-            object.__setattr__(self, "git", Git(**self.git))
-        if isinstance(self.plugins, dict):
-            temp = []
-            for p in self.plugins.get("plugins", []):
-                if isinstance(p, Plugin) or (isinstance(p, dict) and (p := Plugin(**p))):
-                    temp.append(p)
-            object.__setattr__(self, "plugins", temp)
+    plugins: list[Plugin]
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
@@ -168,11 +110,11 @@ class LavalinkPlayer:
     guildId: str
     volume: int
     paused: bool
-    voice: VoiceState | JSON_DICT_TYPE
-    filters: Filters | JSON_DICT_TYPE
-    track: Track | JSON_DICT_TYPE | None = None
+    voice: VoiceState | dict
+    filters: Filters | dict
+    track: Track | dict | None = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if isinstance(self.voice, dict):
             object.__setattr__(self, "voice", VoiceState(**self.voice))
         if isinstance(self.filters, dict):

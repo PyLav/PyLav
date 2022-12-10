@@ -27,7 +27,7 @@ class QueueTrackOption(discord.SelectOption):
         label = f"{index + 1}. {name}"
         return cls(
             name=shorten_string(max_length=100, string=label),
-            description=shorten_string(max_length=100, string=track.author),
+            description=shorten_string(max_length=100, string=await track.author()),
             value=track.id,
         )
 
@@ -56,6 +56,6 @@ class SearchTrackOption(discord.SelectOption):
         )
         return cls(
             name=shorten_string(max_length=100, string=f"{index + 1}. {name}"),
-            description=shorten_string(max_length=100, string=track.author),
+            description=shorten_string(max_length=100, string=await track.author()),
             value=track.id,
         )

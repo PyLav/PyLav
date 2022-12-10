@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from packaging.version import Version
 
 # noinspection PyProtectedMember
@@ -7,6 +9,9 @@ from pylav._internals.pylav_yaml_builder import ENV_FILE
 from pylav.constants.node import NODE_DEFAULT_SETTINGS
 from pylav.constants.versions import VERSION_0_0_0, VERSION_1_0_0_0
 from pylav.storage.migrations.logging import LOGGER
+
+if TYPE_CHECKING:
+    from pylav.core.client import Client
 
 
 async def migration_v_1_0_0_0(client: Client, current_version: Version) -> None:

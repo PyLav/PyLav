@@ -1,9 +1,13 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from pylav.nodes.api.responses.playlists import Info
 from pylav.nodes.api.responses.rest_api import NoMatches
 from pylav.nodes.api.responses.websocket import Stats as StatsMessage
-from pylav.nodes.node import Node
+
+if TYPE_CHECKING:
+    from pylav.nodes.node import Node
 
 
 async def sort_key_nodes(node: Node, region: str = None) -> float:

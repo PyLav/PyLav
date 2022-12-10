@@ -8,7 +8,7 @@ import re
 import shlex
 import shutil
 import tempfile
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import aiohttp
 import aiopath
@@ -69,6 +69,10 @@ except ImportError:
 
     def _(string: str) -> str:
         return string
+
+
+if TYPE_CHECKING:
+    from pylav.core.client import Client
 
 
 JAR_SERVER_RELEASES = "https://api.github.com/repos/freyacodes/Lavalink/releases"

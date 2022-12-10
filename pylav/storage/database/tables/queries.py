@@ -12,4 +12,4 @@ class QueryRow(Table, db=DATABASE_ENGINE, tablename="query"):
     identifier = Text(null=False, index=True, primary_key=True)
     name = Text(null=True, default=None)
     last_updated = Timestamptz(null=False, index=True, default=TimestamptzNow(), auto_update=utcnow)
-    tracks = M2M(LazyTableReference("TrackToQueries", module_path="pylav.sql.tables.m2m"))
+    tracks = M2M(LazyTableReference("TrackToQueries", module_path="pylav.storage.database.tables.m2m"))

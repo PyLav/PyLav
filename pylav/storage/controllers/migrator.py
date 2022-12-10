@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+from typing import TYPE_CHECKING
 
 from pylav.logging import getLogger
 from pylav.storage.migrations.high_level.always.set_pylav_version import set_current_version
@@ -20,6 +21,8 @@ from pylav.storage.migrations.high_level.one_offs.v0_11_3_0 import migration_v_0
 from pylav.storage.migrations.high_level.one_offs.v0_11_8_0 import migration_v_0_11_8_0
 from pylav.storage.migrations.high_level.one_offs.v1_0_0_0 import migration_v_1_0_0_0
 
+if TYPE_CHECKING:
+    from pylav.core.client import Client
 LOGGER = getLogger("PyLav.Database.Controller.Migration")
 
 

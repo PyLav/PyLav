@@ -7,6 +7,7 @@ import pathlib
 import random
 from collections.abc import AsyncIterator
 from types import MethodType
+from typing import Any, Callable
 
 import aiohttp
 import aiohttp_client_cache
@@ -59,6 +60,7 @@ from pylav.exceptions.client import AnotherClientAlreadyRegisteredException, PyL
 from pylav.exceptions.node import NoNodeAvailableException, NoNodeWithRequestFunctionalityAvailableException
 from pylav.extension.bundled_node import LAVALINK_DOWNLOAD_DIR
 from pylav.extension.bundled_node.manager import LocalNodeManager
+from pylav.extension.flowery.base import FloweryAPI
 from pylav.extension.m3u import M3UParser
 from pylav.extension.radio import RadioBrowser
 from pylav.helpers.misc import MISSING
@@ -135,8 +137,8 @@ class Client(metaclass=SingletonClass):
     _asyncio_lock = asyncio.Lock()
     _config: Config
     __cogs_registered = set()
-    __old_process_command_method: Callable = None  # type: ignore
-    __old_get_context: Callable = None  # type: ignore
+    __old_process_command_method: Callable = None
+    __old_get_context: Callable = None
     _initiated = False
 
     def __init__(
@@ -208,6 +210,7 @@ class Client(metaclass=SingletonClass):
             self._player_state_db_manager = PlayerStateController(self)
             self._player_config_manager = PlayerConfigController(self)
             self._equalizer_config_manager = EqualizerController(self)
+            self._flowery_api = FloweryAPI(self)
             self._radio_manager = RadioBrowser(self)
             self._m3u8parser = M3UParser(self)
             self._connect_back = connect_back
@@ -319,6 +322,11 @@ class Client(metaclass=SingletonClass):
     def equalizer_db_manager(self) -> EqualizerController:
         """Returns the sql equalizer config manager"""
         return self._equalizer_config_manager
+
+    @property
+    def flowery_api(self) -> FloweryAPI:
+        """Returns the flowery api"""
+        return self._flowery_api
 
     @property
     def lib_db_manager(self) -> ConfigController:
@@ -646,8 +654,8 @@ class Client(metaclass=SingletonClass):
                 time_now + datetime.timedelta(minutes=5, days=1)
             )
 
+    @staticmethod
     async def _initialize_yaml_config(
-        self,
         bundled_node_config,
         spotify_client_id,
         spotify_client_secret,
@@ -702,7 +710,7 @@ class Client(metaclass=SingletonClass):
         )
         await bundled_node_config.update_yaml(bundled_node_config_yaml)
 
-    async def update_deezer_tokens(self, master_token: str, **kwargs) -> None:
+    async def update_deezer_tokens(self, master_token: str, **kwargs: Any) -> None:
         LOGGER.info("Updating Deezer Tokens")
         LOGGER.debug("New Deezer token: %s", master_token)
         bundled_node_config = self._node_config_manager.bundled_node_config()
@@ -711,7 +719,7 @@ class Client(metaclass=SingletonClass):
         bundled_node_config_yaml["plugins"]["lavasrc"]["deezer"]["masterDecryptionKey"] = master_token
         await bundled_node_config.update_yaml(bundled_node_config_yaml)
 
-    async def update_yandex_tokens(self, token: str, **kwargs) -> None:
+    async def update_yandex_tokens(self, token: str, **kwargs: Any) -> None:
         LOGGER.info("Updating Yandex Tokens")
         LOGGER.debug("New Yandex token: %s", token)
         bundled_node_config = self._node_config_manager.bundled_node_config()
@@ -720,7 +728,7 @@ class Client(metaclass=SingletonClass):
         bundled_node_config_yaml["plugins"]["lavasrc"]["yandexmusic"]["accessToken"] = token
         await bundled_node_config.update_yaml(bundled_node_config_yaml)
 
-    async def update_applemusic_tokens(self, token: str, country_code: str, **kwargs) -> None:
+    async def update_applemusic_tokens(self, token: str, country_code: str, **kwargs: Any) -> None:
         LOGGER.info("Updating Apple Music Tokens")
         LOGGER.debug("New Apple Music tokens: mediaAPIToken %s || countryCode %s", token, country_code)
         bundled_node_config = self._node_config_manager.bundled_node_config()
@@ -732,7 +740,7 @@ class Client(metaclass=SingletonClass):
         )
         await bundled_node_config.update_yaml(bundled_node_config_yaml)
 
-    async def update_google_account(self, email: str, password: str, **kwargs) -> None:
+    async def update_google_account(self, email: str, password: str, **kwargs: Any) -> None:
         LOGGER.info("Updating Google Account")
         LOGGER.debug("New Google Account: %s", email)
         bundled_node_config = self._node_config_manager.bundled_node_config()
@@ -761,7 +769,7 @@ class Client(metaclass=SingletonClass):
         temporary: bool = False,
     ) -> Node:
         """
-        Adds a node to Lavalink's node manager.
+        Adds a node to PyLav's node manager.
 
         Parameters
         ----------
@@ -1486,6 +1494,9 @@ class Client(metaclass=SingletonClass):
         if data["loadType"] == "LOAD_FAILED":
             data["exception"] = {"cause": "No tracks returned", "severity": "COMMON", "message": "No tracks found"}
         node = await self.node_manager.find_best_node()
+        while not node:
+            await asyncio.sleep(0.1)
+            node = await self.node_manager.find_best_node()
         return node.parse_loadtrack_response(data)
 
     async def remove_node(self, node_id: int):

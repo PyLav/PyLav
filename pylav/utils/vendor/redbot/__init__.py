@@ -18,9 +18,6 @@ from typing import Any, Callable, TypeVar, cast
 import discord
 from discord.ext import commands
 
-# noinspection PyProtectedMember
-from discord.utils import maybe_coroutine
-
 from pylav.constants.regex import DISCORD_CHANNEL_MENTION, DISCORD_ID, DISCORD_ROLE_MENTION, DISCORD_USER_MENTION
 
 _T = TypeVar("_T")
@@ -290,7 +287,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=dupl
             self._i = 0
             await asyncio.sleep(self._delay)
         self._i += 1
-        return await maybe_coroutine(self._map, item) if self._map is not None else item
+        return await discord.utils.maybe_coroutine(self._map, item) if self._map is not None else item
 
     def __await__(self) -> Generator[Any, None, list[_T]]:
         """Returns a list of the iterable.
@@ -465,7 +462,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=dupl
                 elem = await self.__anext__()
             except StopAsyncIteration:
                 return default
-            ret = await maybe_coroutine(predicate, elem)
+            ret = await discord.utils.maybe_coroutine(predicate, elem)
             if ret:
                 return elem
 

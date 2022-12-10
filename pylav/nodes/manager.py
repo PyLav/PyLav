@@ -4,6 +4,7 @@ import asyncio
 import operator
 import os
 from functools import partial
+from typing import TYPE_CHECKING
 
 import aiohttp
 import asyncstdlib
@@ -20,6 +21,9 @@ from pylav.nodes.utils import sort_key_nodes
 from pylav.players.player import Player
 from pylav.storage.models.node.mocked import NodeMock
 from pylav.utils.location import get_closest_region_name_and_coordinate
+
+if TYPE_CHECKING:
+    from pylav.core.client import Client
 
 LOGGER = getLogger("PyLav.NodeManager")
 

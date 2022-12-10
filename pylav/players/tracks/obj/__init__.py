@@ -15,13 +15,16 @@ from cashews import Cache  # type: ignore
 
 from pylav.constants.regex import SQUARE_BRACKETS, STREAM_TITLE
 from pylav.exceptions.track import InvalidTrackException, TrackNotFoundException
+from pylav.extension.flowery.lyrics import Error, Lyrics
 from pylav.helpers.misc import MISSING
 from pylav.nodes.api.responses.track import Track as APITrack
-from pylav.nodes.node import Node
-from pylav.players.player import Player
 from pylav.players.query.obj import Query
 from pylav.players.tracks.decoder import async_decoder
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
+
+if typing.TYPE_CHECKING:
+    from pylav.nodes.node import Node
+    from pylav.players.player import Player
 
 CACHE = Cache(name="TrackCache")
 CACHE.setup("mem://?check_interval=10&size=10000")
@@ -87,7 +90,7 @@ class Track:
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, Track):
-            return typing.cast(bool, self.unique_identifier == other.unique_identifier)
+            return typing.cast(bool, self._id == other._id)
         raise NotImplemented
 
     def __ne__(self, other: Any) -> bool:
@@ -101,7 +104,7 @@ class Track:
         return super().__getattribute__(name)
 
     def __repr__(self) -> str:
-        return f"<Track title={self.title} identifier={self.identifier}>"
+        return f"<Track identifier={self._id} encoded={self.encoded}>"
 
     def _process_init(self) -> None:
         if self._requester is None:
@@ -116,9 +119,6 @@ class Track:
 
         if self._query is not None:
             self.timestamp = self.timestamp or self._query.start_time
-
-        if self._skip_segments and self.source != "youtube":
-            self._skip_segments = []
 
         self._extra.pop("track", None)
 
@@ -468,17 +468,17 @@ class Track:
 
     async def search(self, bypass_cache: bool = False) -> Self:
         self._query = await Query.from_string(self._query)
-        response = await self._node.node_manager.client.search_query(
+        response = await self._node.node_manager.client._get_tracks(
             await self.query(), first=True, bypass_cache=bypass_cache
         )
         if not response or not response.tracks:
             raise TrackNotFoundException(f"No tracks found for query {await self.query_identifier()}")
-        self._encoded = response.tracks[0].encoded
+        track = response.tracks[0]
+        self._encoded = track.encoded
         assert isinstance(self._encoded, str)
         self._unique_id = hashlib.md5()
         self._unique_id.update(self.encoded.encode())
         self._is_partial = False
-        return response
 
     async def search_all(self, player: Player, requester: int, bypass_cache: bool = False) -> list[Track]:
         self._query = await Query.from_string(self._query)
@@ -574,13 +574,13 @@ class Track:
         return track_name
 
     async def get_full_track_display_name(self, max_length: int | None = None, author: bool = True) -> str:
-        author_string = f" - {self.author}" if author else ""
+        author_string = f" - {await self.author()}" if author else ""
         return (
             await self.get_local_query_track_display_name(
                 max_length=max_length,
                 author_string=author_string,
-                unknown_author=self.author != "Unknown artist",
-                unknown_title=self.title != "Unknown title",
+                unknown_author=await self.author() != "Unknown artist",
+                unknown_title=await self.title() != "Unknown title",
             )
             if await self.query() and await self.is_local()
             else await self.get_external_query_track_display_name(max_length=max_length, author_string=author_string)
@@ -594,7 +594,7 @@ class Track:
         max_length: int | None = None,
     ) -> str:
         if not (unknown_title and unknown_author):
-            track_name = f"{self.title}{author_string}"
+            track_name = f"{await self.title()}{author_string}"
             track_name = SQUARE_BRACKETS.sub("", track_name).strip()
             if max_length and len(track_name) > max_length:
                 track_name = f"{track_name[:max_length]}\N{HORIZONTAL ELLIPSIS}"
@@ -625,3 +625,13 @@ class Track:
     @staticmethod
     def _maybe_escape_markdown(text: str, escape: bool = True) -> str:
         return discord.utils.escape_markdown(text) if escape else text
+
+    async def fetch_lyrics(self) -> Lyrics | Error | None:
+        if isrc := await self.isrc():
+            return await self._node.node_manager.client.flowery_api.lyrics.get_lyrics(isrc=isrc)
+        elif not self.is_partial:
+            if await self.is_spotify():
+                return await self._node.node_manager.client.flowery_api.lyrics.get_lyrics(
+                    spotify_id=await self.identifier()
+                )
+            return await self._node.node_manager.client.flowery_api.lyrics.get_lyrics(query=await self.title())

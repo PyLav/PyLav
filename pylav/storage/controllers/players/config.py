@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import asyncstdlib
 import discord
 
@@ -8,6 +10,8 @@ from pylav.logging import getLogger
 from pylav.storage.models.player.config import PlayerConfig
 from pylav.type_hints.bot import DISCORD_BOT_TYPE
 
+if TYPE_CHECKING:
+    from pylav.core.client import Client
 LOGGER = getLogger("PyLav.Database.Controller.Player.Config")
 
 

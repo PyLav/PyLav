@@ -2,17 +2,20 @@ from __future__ import annotations
 
 import asyncio
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import discord
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_list
 
 from pylav.constants.node_features import SUPPORTED_FEATURES, SUPPORTED_SOURCES
-from pylav.extension.red.ui.menus.nodes import AddNodeFlow
 from pylav.extension.red.ui.selectors.options.nodes import SOURCE_OPTIONS, NodeOption
 from pylav.helpers.format.strings import shorten_string
 from pylav.nodes.node import Node
 from pylav.type_hints.bot import DISCORD_COG_TYPE, DISCORD_INTERACTION_TYPE
+
+if TYPE_CHECKING:
+    from pylav.extension.red.ui.menus.nodes import AddNodeFlow
 
 _ = Translator("PyLav", Path(__file__))
 

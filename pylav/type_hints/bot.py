@@ -4,11 +4,10 @@ from typing import TYPE_CHECKING, Any, TypeVar, Union
 
 import discord
 
-from pylav.core.client import Client
-
 if TYPE_CHECKING:
     from discord.ext.commands import AutoShardedBot, Cog, CommandError, Context
 
+    from pylav.core.client import Client
     from pylav.core.context import PyLavContext
 
     try:
@@ -42,7 +41,7 @@ class BotClientWithLavalinkType(BotClient):
     pylav: Client
 
     async def get_context(
-        self, message: discord.abc.Message | DISCORD_INTERACTION_TYPE, *, cls: type[PyLavContext] = None
+        self, message: discord.abc.Message | DISCORD_INTERACTION_TYPE | PyLavContext, *, cls: type[PyLavContext] = None
     ) -> PyLavContext[Any]:
         ...
 
@@ -55,7 +54,7 @@ class DISCORD_INTERACTION_TYPE_BASE(discord.Interaction):
     channel: discord.interactions.InteractionChannel | None
 
 
-class PyLavDISCORD_COG_TYPEype(RedCog):
+class DISCORD_COG_TYPE_MIXIN(RedCog):
     __version__: str
     bot: DISCORD_BOT_TYPE
     lavalink: Client
@@ -65,9 +64,9 @@ class PyLavDISCORD_COG_TYPEype(RedCog):
 DISCORD_BOT_TYPE = TypeVar("DISCORD_BOT_TYPE", bound=BotClientWithLavalinkType, covariant=True)
 DISCORD_CONTEXT_TYPE = TypeVar("DISCORD_CONTEXT_TYPE", bound="PyLavContext", covariant=True)
 DISCORD_INTERACTION_TYPE = TypeVar(
-    "DISCORD_INTERACTION_TYPE", bound=DISCORD_INTERACTION_TYPE_BASE | discord.Integration, covariant=True
+    "DISCORD_INTERACTION_TYPE", bound=DISCORD_INTERACTION_TYPE_BASE | discord.Interaction, covariant=True
 )
-DISCORD_COG_TYPE = TypeVar("DISCORD_COG_TYPE", bound=PyLavDISCORD_COG_TYPEype, covariant=True)
+DISCORD_COG_TYPE = TypeVar("DISCORD_COG_TYPE", bound=DISCORD_COG_TYPE_MIXIN, covariant=True)
 DISCORD_COMMAND_ERROR_TYPE = TypeVar(
     "DISCORD_COMMAND_ERROR_TYPE", bound=Union[CommandError, app_commands.errors.AppCommandError], covariant=True
 )

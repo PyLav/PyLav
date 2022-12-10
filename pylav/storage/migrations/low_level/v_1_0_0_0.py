@@ -7,6 +7,7 @@ import asyncpg
 from asyncpg import Connection
 
 from pylav.constants.playlists import BUNDLED_PLAYLIST_IDS
+from pylav.constants.versions import VERSION_1_0_0_0
 from pylav.players.tracks.decoder import async_decoder
 from pylav.storage.database.tables.misc import DATABASE_ENGINE
 from pylav.storage.database.tables.playlists import PlaylistRow
@@ -43,7 +44,7 @@ async def run_player_state_migration_v_1_0_0_0(connection: Connection) -> None:
     await connection.execute("DROP TABLE player_state;")
 
 
-async def run_query_migration_v_1_0_0_0(connection: Connection) -> list[asyncpg.Record]:
+async def run_query_migration_v_1_0_0_0(connection: Connection) -> list[asyncpg.Record] | None:
     """
     Runs playlist migration 1000.
     """
@@ -119,7 +120,7 @@ async def run_low_level_migrations() -> dict[str, dict[str, list[asyncpg.Record]
     if playlist_data_1000 or query_data_1000:
         await run_player_state_migration_v_1_0_0_0(con)
     return {
-        "1000": {
+        VERSION_1_0_0_0: {
             "playlist": playlist_data_1000,
             "query": query_data_1000,
         }
@@ -135,5 +136,7 @@ async def migrate_data(data: dict[str, dict[str, list[asyncpg.Record]]]) -> None
         LOGGER.info(f"Running migrations for version {version}")
         match version:
             case "1000":
-                await migrate_playlists_v_1_0_0_0(migrations["playlist"])
-                await migrate_queries_v_1_0_0_0(migrations["query"])
+                if migrations["playlist"] is not None:
+                    await migrate_playlists_v_1_0_0_0(migrations["playlist"])
+                if migrations["query"] is not None:
+                    await migrate_queries_v_1_0_0_0(migrations["query"])

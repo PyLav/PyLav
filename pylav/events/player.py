@@ -7,7 +7,6 @@ import discord
 
 from pylav.events.base import PyLavEvent
 from pylav.nodes.node import Node
-from pylav.players.player import Player
 
 if TYPE_CHECKING:
     from pylav.players.filters import (
@@ -23,6 +22,7 @@ if TYPE_CHECKING:
         Vibrato,
         Volume,
     )
+    from pylav.players.player import Player
     from pylav.players.tracks.obj import Track
 
 

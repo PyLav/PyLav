@@ -1,4 +1,8 @@
-from packaging.version import LegacyVersion, Version
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+from packaging.version import Version
 
 from pylav.constants.config import CONFIG_DIR
 from pylav.storage.database.tables.aiohttp_cache import AioHttpCacheRow
@@ -15,6 +19,9 @@ from pylav.storage.database.tables.version import BotVersionRow
 from pylav.storage.migrations.low_level.v_1_0_0_0 import migrate_data, run_low_level_migrations
 from pylav.storage.models.config import Config
 from pylav.storage.models.version import BotVersion
+
+if TYPE_CHECKING:
+    from pylav.core.client import Client
 
 
 class ConfigController:
@@ -88,5 +95,5 @@ class ConfigController:
     def get_bot_db_version(self) -> BotVersion:
         return BotVersion(id=self._client.bot.user.id)
 
-    async def update_bot_dv_version(self, version: str | Version | LegacyVersion) -> None:
+    async def update_bot_dv_version(self, version: str | Version) -> None:
         await self.get_bot_db_version().update_version(version)
