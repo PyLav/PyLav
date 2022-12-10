@@ -14,7 +14,7 @@ from pylav.logging import getLogger
 CACHE = Cache("RADIOCACHE")
 CACHE.setup("mem://?check_interval=10&size=10000", enable=True)
 
-LOGGER = getLogger("PyLav.ext.RadioBrowser")
+LOGGER = getLogger("PyLav.extension.RadioBrowser")
 
 
 class Error(PyLavException):

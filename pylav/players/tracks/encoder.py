@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 
 from pylav.logging import getLogger
-from pylav.utils.vendored.lavalink_py.datarw import DataWriter
+from pylav.utils.vendor.lavalink_py.datarw import DataWriter
 
 LOGGER = getLogger("PyLav.Track.Decoder")
 

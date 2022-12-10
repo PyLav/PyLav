@@ -258,7 +258,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=dupl
 
     Examples
     --------
-    >>> from pylav.utils.vendored.redbot import AsyncIter
+    >>> from pylav.utils.vendor.redbot import AsyncIter
     >>> async for value in AsyncIter(range(3)):
     ...     print(value)
     0
@@ -297,7 +297,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=dupl
 
         Examples
         --------
-        >>> from pylav.utils.vendored.redbot import AsyncIter
+        >>> from pylav.utils.vendor.redbot import AsyncIter
         >>> iterator = AsyncIter(range(5))
         >>> await iterator
         [0, 1, 2, 3, 4]
@@ -320,7 +320,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=dupl
 
         Examples
         --------
-        >>> from pylav.utils.vendored.redbot import AsyncIter
+        >>> from pylav.utils.vendor.redbot import AsyncIter
         >>> iterator = AsyncIter(range(5))
         >>> await iterator.next()
         0
@@ -341,7 +341,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=dupl
 
         Examples
         --------
-        >>> from pylav.utils.vendored.redbot import AsyncIter
+        >>> from pylav.utils.vendor.redbot import AsyncIter
         >>> iterator = AsyncIter(range(5))
         >>> await iterator.flatten()
         [0, 1, 2, 3, 4]
@@ -366,7 +366,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=dupl
 
         Examples
         --------
-        >>> from pylav.utils.vendored.redbot import AsyncIter
+        >>> from pylav.utils.vendor.redbot import AsyncIter
         >>> def predicate(value):
         ...     return value <= 5
         >>> iterator = AsyncIter([1, 10, 5, 100])
@@ -375,7 +375,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=dupl
         1
         5
 
-        >>> from pylav.utils.vendored.redbot import AsyncIter
+        >>> from pylav.utils.vendor.redbot import AsyncIter
         >>> def predicate(value):
         ...     return value <= 5
         >>> iterator = AsyncIter([1, 10, 5, 100])
@@ -400,7 +400,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=dupl
 
         Examples
         --------
-        >>> from pylav.utils.vendored.redbot import AsyncIter
+        >>> from pylav.utils.vendor.redbot import AsyncIter
         >>> iterator = AsyncIter(['one', 'two', 'three'])
         >>> async for i in iterator.enumerate(start=10):
         ...     print(i)
@@ -417,7 +417,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=dupl
 
         Examples
         --------
-        >>> from pylav.utils.vendored.redbot import AsyncIter
+        >>> from pylav.utils.vendor.redbot import AsyncIter
         >>> iterator = AsyncIter([1,2,3,3,4,4,5])
         >>> async for i in iterator.without_duplicates():
         ...     print(i)
@@ -456,7 +456,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=dupl
 
         Examples
         --------
-        >>> from pylav.utils.vendored.redbot import AsyncIter
+        >>> from pylav.utils.vendor.redbot import AsyncIter
         >>> await AsyncIter(range(3)).find(lambda x: x == 1)
         1
         """
@@ -487,7 +487,7 @@ class AsyncIter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=dupl
 
         Examples
         --------
-        >>> from pylav.utils.vendored.redbot import AsyncIter
+        >>> from pylav.utils.vendor.redbot import AsyncIter
         >>> async for value in AsyncIter(range(3)).map(bool):
         ...     print(value)
         False

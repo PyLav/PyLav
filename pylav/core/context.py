@@ -16,7 +16,7 @@ from discord.types.embed import EmbedType
 from discord.utils import MISSING as D_MISSING  # noqa
 
 from pylav.type_hints.bot import DISCORD_BOT_TYPE, DISCORD_COG_TYPE, DISCORD_CONTEXT_TYPE, DISCORD_INTERACTION_TYPE
-from pylav.utils.vendored.redbot import MessagePredicate
+from pylav.utils.vendor.redbot import MessagePredicate
 
 try:
     from redbot.core.commands import Command

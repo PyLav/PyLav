@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import dataclasses
+import time
 from collections.abc import Iterator
 from typing import Any
+
+from discord.backoff import ExponentialBackoff
 
 from pylav.type_hints.generics import ANY_GENERIC_TYPE
 
@@ -149,3 +152,19 @@ class TimedFeature:
     @classmethod
     def from_dict(cls, data: dict[str, bool | int]) -> TimedFeature:
         return cls(enabled=data["enabled"], time=data["time"])
+
+
+class ExponentialBackoffWithReset(ExponentialBackoff):
+    """
+    Exponential backoff with reset
+    """
+
+    def __init__(self, base: int = 1, *, integral: ANY_GENERIC_TYPE = False) -> None:
+        super().__init__(base=base, integral=integral)
+
+    def reset(self) -> None:
+        """
+        Reset
+        """
+        self._last_invocation: float = time.monotonic()
+        self._exp = 0

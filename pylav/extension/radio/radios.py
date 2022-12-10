@@ -7,14 +7,14 @@ import aiohttp
 import aiohttp_client_cache
 import ujson
 
-from pylav.ext.radio.base_url import pick_base_url
-from pylav.ext.radio.objects import Codec, Country, CountryCode, Language, State, Station, Tag
-from pylav.ext.radio.utils import type_check
+from pylav.extension.radio.base_url import pick_base_url
+from pylav.extension.radio.objects import Codec, Country, CountryCode, Language, State, Station, Tag
+from pylav.extension.radio.utils import type_check
 from pylav.logging import getLogger
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
-from pylav.utils.vendored.redbot import AsyncIter
+from pylav.utils.vendor.redbot import AsyncIter
 
-LOGGER = getLogger("PyLav.ext.RadioBrowser")
+LOGGER = getLogger("PyLav.extension.RadioBrowser")
 
 
 class Request:
