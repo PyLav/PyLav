@@ -7,7 +7,7 @@ from pylav.storage.database.cache.cache import CACHE
 
 
 def key_builder(method: Callable, *args: Any, **kwargs: Any) -> str:  # noqa
-    if "LibConfigModel" in args[0].__class__.__name__:
+    if "Config" in args[0].__class__.__name__:
         _id = args[0].bot
     else:
         _id = args[0].id

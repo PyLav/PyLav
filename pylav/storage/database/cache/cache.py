@@ -3,7 +3,7 @@ from __future__ import annotations
 from cashews import Cache  # type: ignore
 
 from pylav.constants.config import READ_CACHING_ENABLED
-from pylav.storage.database.caching.logging import LOGGER
+from pylav.storage.database.cache.logging import LOGGER
 
 if READ_CACHING_ENABLED:
     LOGGER.warning(

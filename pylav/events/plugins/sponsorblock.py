@@ -5,6 +5,8 @@ from pylav.nodes.api.responses.plugins import SegmentSkipped, SegmentsLoaded
 
 __all__ = ("SegmentSkippedEvent", "SegmentsLoadedEvent")
 
+from pylav.nodes.node import Node
+
 
 class SegmentSkippedEvent(PyLavEvent):
     """This event is dispatched when a segment is skipped."""

@@ -11,8 +11,8 @@ from discord.utils import utcnow
 
 from pylav.extension.bundled_node.utils import get_true_path
 from pylav.helpers.singleton import SingletonCachedByKey
-from pylav.storage.database.caching.decodators import maybe_cached
-from pylav.storage.database.caching.model import CachedModel
+from pylav.storage.database.cache.decodators import maybe_cached
+from pylav.storage.database.cache.model import CachedModel
 from pylav.storage.database.tables.config import LibConfigRow
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE, JSON_DICT_WITH_DATE_TYPE
 

@@ -55,6 +55,7 @@ from pylav.extension.bundled_node import LAVALINK_APP_YML, LAVALINK_DOWNLOAD_DIR
 from pylav.extension.bundled_node.utils import change_dict_naming_convention, get_jar_ram_actual, get_true_path
 from pylav.helpers.misc import ExponentialBackoffWithReset
 from pylav.logging import getLogger
+from pylav.nodes.node import Node
 from pylav.storage.migrations.high_level.always.update_plugins import update_plugins
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 from pylav.utils.vendor.redbot import AsyncIter
@@ -209,37 +210,7 @@ class LocalNodeManager:
         await self.process_settings()
         possible_lavalink_processes = await self.get_lavalink_process(lazy_match=True)
         if possible_lavalink_processes:
-            LOGGER.info(
-                "Found %s processes that match potential unmanaged Lavalink nodes",
-                len(possible_lavalink_processes),
-            )
-            valid_working_dirs = [
-                cwd
-                async for d in asyncstdlib.iter(possible_lavalink_processes)
-                if d.get("name") in ["java", "java.exe"] and (cwd := d.get("cwd"))
-            ]
-            LOGGER.debug("Found %s java processed with a cwd set", len(valid_working_dirs))
-            async for cwd in asyncstdlib.iter(valid_working_dirs):
-                config = aiopath.AsyncPath(cwd) / "application.yml"
-                if await config.exists() and await config.is_file():
-                    LOGGER.debug(
-                        "The following config file exists for an unmanaged Lavalink node %s",
-                        config,
-                    )
-                    try:
-                        async with config.open(mode="r") as config_data:
-                            data = yaml.safe_load(await config_data.read())
-                            data["server"]["address"]  # noqa
-                            data["server"]["port"]  # noqa
-                            data["lavalink"]["server"]["password"]  # noqa
-                            self._node_pid = 0
-                            self._current_config = data
-                            raise ManagedLinkStartAbortedUseExternal
-                    except ManagedLinkStartAbortedUseExternal:
-                        raise
-                    except Exception:
-                        LOGGER.exception("Failed to read contents of %s", config)
-                        continue
+            await self.process_existing_lavalink_processes(possible_lavalink_processes)
 
         await self.maybe_download_jar()
         args, msg = await self._get_jar_args()
@@ -268,6 +239,38 @@ class LocalNodeManager:
         except Exception:
             await self._partial_shutdown()
             raise
+
+    async def process_existing_lavalink_processes(self, possible_lavalink_processes: list[dict[str, Any]]) -> None:
+        LOGGER.info(
+            "Found %s processes that match potential unmanaged Lavalink nodes", len(possible_lavalink_processes)
+        )
+        valid_working_dirs = [
+            cwd
+            async for d in asyncstdlib.iter(possible_lavalink_processes)
+            if d.get("name") in ["java", "java.exe"] and (cwd := d.get("cwd"))
+        ]
+        LOGGER.debug("Found %s java processed with a cwd set", len(valid_working_dirs))
+        async for cwd in asyncstdlib.iter(valid_working_dirs):
+            config = aiopath.AsyncPath(cwd) / "application.yml"
+            if await config.exists() and await config.is_file():
+                LOGGER.debug(
+                    "The following config file exists for an unmanaged Lavalink node %s",
+                    config,
+                )
+                try:
+                    async with config.open(mode="r") as config_data:
+                        data = yaml.safe_load(await config_data.read())
+                        data["server"]["address"]  # noqa
+                        data["server"]["port"]  # noqa
+                        data["lavalink"]["server"]["password"]  # noqa
+                        self._node_pid = 0
+                        self._current_config = data
+                        raise ManagedLinkStartAbortedUseExternal
+                except ManagedLinkStartAbortedUseExternal:
+                    raise
+                except Exception:
+                    LOGGER.exception("Failed to read contents of %s", config)
+                    continue
 
     async def process_settings(self) -> None:
         data = await self._client.node_db_manager.bundled_node_config().fetch_yaml()
@@ -480,21 +483,27 @@ class LocalNodeManager:
         if self.__buffer_task is not None:
             self.__buffer_task.cancel()
             self.__buffer_task = None
-        if self._node_pid:
-            with contextlib.suppress(psutil.Error):
-                p = psutil.Process(self._node_pid)
-                p.terminate()
-                p.kill()
-        if self._proc is not None and self._proc.returncode is None:
-            self._proc.terminate()
-            self._proc.kill()
-            await self._proc.wait()
+        await self.maybe_kill_existing_process()
+        await self.maybe_kill_alive_process()
         self._proc = None
         self._shutdown = True
         self._node_pid = None
         if self._node is not None:
             await self._client.remove_node(self._node_id)
             self._node = None
+
+    async def maybe_kill_alive_process(self) -> None:
+        if self._proc is not None and self._proc.returncode is None:
+            self._proc.terminate()
+            self._proc.kill()
+            await self._proc.wait()
+
+    async def maybe_kill_existing_process(self) -> None:
+        if self._node_pid:
+            with contextlib.suppress(psutil.Error):
+                p = psutil.Process(self._node_pid)
+                p.terminate()
+                p.kill()
 
     async def should_auto_update(self) -> bool:
         return (
@@ -688,18 +697,21 @@ class LocalNodeManager:
             self.ready.clear()
             await self._start(java_path=java_path)
         while True:
-            await self.wait_until_ready(timeout=self.timeout)
-            if not psutil.pid_exists(self._node_pid):
-                raise NoProcessFoundException
-            if self._node is None or not self._node.websocket.connected and not self._node.websocket.connecting:
-                await self.connect_node(reconnect=retry_count != 0, wait_for=3)
-            try:
-                await self._monitor_connect_to_node(backoff)
-            except AttributeError as e:
-                await self._monitor_wait_for_connection(e)
-            except Exception as exc:
-                LOGGER.debug(exc, exc_info=exc)
-                raise NodeUnhealthyException(str(exc)) from exc
+            await self._monitor_primary_node_iteration(backoff, retry_count)
+
+    async def _monitor_primary_node_iteration(self, backoff: ExponentialBackoffWithReset, retry_count: int) -> None:
+        await self.wait_until_ready(timeout=self.timeout)
+        if not psutil.pid_exists(self._node_pid):
+            raise NoProcessFoundException
+        if self._node is None or not self._node.websocket.connected and not self._node.websocket.connecting:
+            await self.connect_node(reconnect=retry_count != 0, wait_for=3)
+        try:
+            await self._monitor_connect_to_node(backoff)
+        except AttributeError as e:
+            await self._monitor_wait_for_connection(e)
+        except Exception as exc:
+            LOGGER.debug(exc, exc_info=exc)
+            raise NodeUnhealthyException(str(exc)) from exc
 
     async def _monitor_managed_node_error(self, backoff: ExponentialBackoffWithReset, exc: Exception) -> None:
         delay = backoff.delay()
@@ -804,34 +816,7 @@ class LocalNodeManager:
                 self._wait_for.set()
                 return
         if (node := self._client.node_manager.get_node_by_id(self._node_id)) is None:
-            data = await self._client.node_db_manager.bundled_node_config().fetch_all()
-            resume_key = (
-                f"PyLav/{self._client.lib_version}/"
-                f"PyLavPortConflictRecovery-{self._client.bot.user.id}-{self._node_pid}"
-                if external_fallback
-                else f"PyLav/{self._client.lib_version}/PyLavManagedNode-{self._client.bot.user.id}-{self._node_pid}"
-            )
-            name = (
-                f"PyLavPortConflictRecovery: {self._node_pid}"
-                if external_fallback
-                else f"PyLavManagedNode: {self._node_pid}"
-            )
-            data["yaml"]["sentry"]["tags"]["pylav_version"] = self._client.lib_version
-            node = self._node = await self._client.add_node(
-                host=self._current_config["server"]["address"],
-                port=self._current_config["server"]["port"],
-                password=self._current_config["lavalink"]["server"]["password"],
-                resume_key=resume_key,
-                resume_timeout=data["resume_timeout"],
-                name=name,
-                managed=True,
-                ssl=False,
-                search_only=False,
-                unique_identifier=self._client.node_db_manager.bundled_node_config().id,
-                temporary=True,
-            )
-            await node.config.update_name(name)
-            await node.config.update_resume_key(resume_key)
+            node = await self.connect_to_node(external_fallback)
         else:
             self._node = node
         if node.websocket.connecting:
@@ -845,6 +830,37 @@ class LocalNodeManager:
             await node.websocket._websocket_closed(reason="Managed Node restart")
             await node.wait_until_ready(timeout=60)
         self._wait_for.set()
+
+    async def connect_to_node(self, external_fallback: bool) -> Node:
+        data = await self._client.node_db_manager.bundled_node_config().fetch_all()
+        resume_key = (
+            f"PyLav/{self._client.lib_version}/"
+            f"PyLavPortConflictRecovery-{self._client.bot.user.id}-{self._node_pid}"
+            if external_fallback
+            else f"PyLav/{self._client.lib_version}/PyLavManagedNode-{self._client.bot.user.id}-" f"{self._node_pid}"
+        )
+        name = (
+            f"PyLavPortConflictRecovery: {self._node_pid}"
+            if external_fallback
+            else f"PyLavManagedN" f"ode: {self._node_pid}"
+        )
+        data["yaml"]["sentry"]["tags"]["pylav_version"] = self._client.lib_version
+        node = self._node = await self._client.add_node(
+            host=self._current_config["server"]["address"],
+            port=self._current_config["server"]["port"],
+            password=self._current_config["lavalink"]["server"]["password"],
+            resume_key=resume_key,
+            resume_timeout=data["resume_timeout"],
+            name=name,
+            managed=True,
+            ssl=False,
+            search_only=False,
+            unique_identifier=self._client.node_db_manager.bundled_node_config().id,
+            temporary=True,
+        )
+        await node.config.update_name(name)
+        await node.config.update_resume_key(resume_key)
+        return node
 
     @staticmethod
     async def get_lavalink_process(

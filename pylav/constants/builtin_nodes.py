@@ -20,6 +20,7 @@ class NodeInfo(TypedDict):
     unique_identifier: NotRequired[int]
     name: NotRequired[str]
     host: NotRequired[str]
+    resume_key: NotRequired[str | None]
     port: int
     ssl: bool
     password: str
@@ -46,6 +47,7 @@ PYLAV_NODE_SETTINGS: NodeInfo = {
     "resume_timeout": 600,
     "reconnect_attempts": -1,
     "search_only": False,
+    "resume_key": None,
     "managed": False,
     "disabled_sources": ["local", "http"],
     "temporary": True,

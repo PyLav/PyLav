@@ -104,7 +104,7 @@ class SingletonCachedByKey(type):
         for base in mro:
             if base.__module__.startswith("pylav.storage.models"):
                 key_name = base.__name__
-                if "LibConfigModel" in key_name:
+                if "Config" in key_name:
                     singleton_key += f".{kwargs.get('bot')}"
                 return singleton_key, key_name
 

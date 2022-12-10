@@ -9,8 +9,8 @@ import ujson
 
 from pylav.helpers.misc import TimedFeature
 from pylav.helpers.singleton import SingletonCachedByKey
-from pylav.storage.database.caching.decodators import maybe_cached
-from pylav.storage.database.caching.model import CachedModel
+from pylav.storage.database.cache.decodators import maybe_cached
+from pylav.storage.database.cache.model import CachedModel
 from pylav.storage.database.tables.players import PlayerRow
 from pylav.type_hints.bot import DISCORD_BOT_TYPE
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE

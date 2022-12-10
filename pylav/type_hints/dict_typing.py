@@ -6,13 +6,6 @@ JSON_TYPE = dict[str, "JSON_TYPE"] | list["JSON_TYPE"] | str | int | float | boo
 JSON_DICT_TYPE = dict[str, JSON_TYPE]
 
 JSON_WITH_DATE_TYPE = (
-    dict[str, "JSON_DICT_WITH_DATE_TYPE"]
-    | list["JSON_DICT_WITH_DATE_TYPE"]
-    | str
-    | int
-    | float
-    | bool
-    | None
-    | datetime.datetime
+    dict[str, "JSON_WITH_DATE_TYPE"] | list["JSON_WITH_DATE_TYPE"] | str | int | float | bool | None | datetime.datetime
 )
 JSON_DICT_WITH_DATE_TYPE = dict[str, JSON_WITH_DATE_TYPE]

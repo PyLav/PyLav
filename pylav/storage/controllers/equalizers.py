@@ -10,6 +10,7 @@ from pylav.logging import getLogger
 from pylav.storage.database.tables.equalizer import EqualizerRow
 from pylav.storage.models import equilizer
 from pylav.type_hints.bot import DISCORD_BOT_TYPE
+from pylav.utils.vendor.redbot import AsyncIter
 
 LOGGER = getLogger("PyLav.Database.Controller.Equalizer")
 
