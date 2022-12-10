@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 import discord
 
 from pylav.events.base import PyLavEvent
+from pylav.nodes.node import Node
 
 if TYPE_CHECKING:
     from pylav.nodes.api.responses.websocket import Closed

@@ -4,6 +4,7 @@ from packaging.version import Version
 
 from pylav.constants.node import NODE_DEFAULT_SETTINGS
 from pylav.constants.versions import VERSION_0_0_0, VERSION_0_10_5_0
+from pylav.extension.bundled_node import LAVALINK_DOWNLOAD_DIR
 from pylav.storage.migrations.logging import LOGGER
 
 

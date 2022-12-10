@@ -7,9 +7,10 @@ import ujson
 from pylav.constants.config import JAVA_EXECUTABLE
 from pylav.constants.node import NODE_DEFAULT_SETTINGS
 from pylav.constants.node_features import SUPPORTED_FEATURES, SUPPORTED_SOURCES
+from pylav.extension.bundled_node.utils import get_jar_ram_actual
 from pylav.helpers.singleton import SingletonCachedByKey
-from pylav.storage.database.caching.decodators import maybe_cached
-from pylav.storage.database.caching.model import CachedModel
+from pylav.storage.database.cache.decodators import maybe_cached
+from pylav.storage.database.cache.model import CachedModel
 from pylav.storage.database.tables.nodes import NodeRow
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 

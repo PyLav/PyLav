@@ -3,6 +3,7 @@ from __future__ import annotations
 import ujson
 from deepdiff import DeepDiff
 
+from pylav.extension.bundled_node import LAVALINK_DOWNLOAD_DIR
 from pylav.storage.migrations.logging import LOGGER
 
 

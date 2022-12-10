@@ -11,6 +11,7 @@ from discord.ext import commands
 from rapidfuzz import fuzz
 
 from pylav.exceptions.database import EntryNotFoundException
+from pylav.extension.radio.objects import Codec, Country, CountryCode, Language, State, Station, Tag
 from pylav.helpers.format.strings import shorten_string
 from pylav.logging import getLogger
 from pylav.type_hints.bot import DISCORD_CONTEXT_TYPE, DISCORD_INTERACTION_TYPE

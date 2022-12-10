@@ -12,6 +12,7 @@ from rapidfuzz import fuzz
 
 from pylav.exceptions.database import EntryNotFoundException
 from pylav.helpers.format.strings import shorten_string
+from pylav.nodes.node import Node
 from pylav.type_hints.bot import DISCORD_CONTEXT_TYPE, DISCORD_INTERACTION_TYPE
 
 try:

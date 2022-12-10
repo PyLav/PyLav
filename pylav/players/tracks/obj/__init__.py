@@ -17,6 +17,7 @@ from pylav.constants.regex import SQUARE_BRACKETS, STREAM_TITLE
 from pylav.exceptions.track import InvalidTrackException, TrackNotFoundException
 from pylav.helpers.misc import MISSING
 from pylav.nodes.api.responses.track import Track as APITrack
+from pylav.nodes.node import Node
 from pylav.players.query.obj import Query
 from pylav.players.tracks.decoder import async_decoder
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
@@ -47,7 +48,7 @@ class Track:
 
     def __init__(
         self,
-        node: None,
+        node: Node,
         query: Query,
         skip_segments: list[str] | None = None,
         requester: discord.abc.User | int | None = None,

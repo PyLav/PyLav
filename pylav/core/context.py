@@ -6,7 +6,7 @@ import datetime
 import pathlib
 from collections.abc import Iterable
 from copy import copy
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import discord
 from discord.ext import commands as dpy_command
@@ -35,10 +35,6 @@ except ImportError:
 
     def _(string: str) -> str:
         return string
-
-
-if TYPE_CHECKING:
-    from pylav.players.obj import Player
 
 
 class PyLavContext(OriginalContextClass):

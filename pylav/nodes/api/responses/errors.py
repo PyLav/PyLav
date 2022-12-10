@@ -5,7 +5,7 @@ from datetime import datetime
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
-class Error:
+class LavalinkError:
     timestamp: int | datetime
     status: int
     error: str

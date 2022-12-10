@@ -11,6 +11,7 @@ from pylav.players.query.obj import Query
 from pylav.storage.database.tables.queries import QueryRow
 from pylav.storage.database.tables.tracks import TrackRow
 from pylav.storage.models.query import Query
+from pylav.utils.vendor.redbot import AsyncIter
 
 LOGGER = getLogger("PyLav.Database.Controller.Query")
 

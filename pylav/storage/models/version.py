@@ -6,8 +6,8 @@ from dataclasses import dataclass
 from packaging.version import Version, parse
 
 from pylav.helpers.singleton import SingletonCachedByKey
-from pylav.storage.database.caching.decodators import maybe_cached
-from pylav.storage.database.caching.model import CachedModel
+from pylav.storage.database.cache.decodators import maybe_cached
+from pylav.storage.database.cache.model import CachedModel
 from pylav.storage.database.tables.version import BotVersionRow
 
 

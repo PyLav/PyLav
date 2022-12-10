@@ -53,6 +53,7 @@ from pylav.constants.regex import (
     SOURCE_INPUT_MATCH_YOUTUBE,
 )
 from pylav.constants.specials import PREFER_PARTIAL
+from pylav.extension.m3u import load as m3u_loads
 from pylav.players.query.local_files import LocalFile
 from pylav.players.tracks.decoder import async_decoder
 from pylav.utils.validators import is_url
@@ -608,7 +609,7 @@ class Query:
     async def _yield_m3u_tracks(self) -> AsyncIterator[Query]:
         if not self.is_m3u or not self.is_album:
             return
-        m3u8 = await load_m3u8(None, uri=f"{self._query}")
+        m3u8 = await m3u_loads(None, uri=f"{self._query}")
         if self._special_local:
             assert isinstance(self._query, LocalFile)
             file = self._query.path
