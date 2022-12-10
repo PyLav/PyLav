@@ -76,7 +76,7 @@ from pylav.players.filters import (
     Vibrato,
     Volume,
 )
-from pylav.players.manager import PlayerManager
+from pylav.players.manager import PlayerController
 from pylav.players.query.obj import Query
 from pylav.players.tracks.obj import Track
 from pylav.players.utils import PlayerQueue, TrackHistoryQueue
@@ -175,7 +175,7 @@ class Player(VoiceProtocol):
         self.channel_id = channel.id
         self.node: Node = node
         self._logger = getLogger(f"PyLav.Player-{channel.guild.id}")
-        self.player_manager: PlayerManager = None  # type: ignore
+        self.player_manager: PlayerController = None  # type: ignore
         self._original_node: Node = None  # type: ignore
         self._voice_state = {}
         self._region = channel.rtc_region or "unknown_pylav"
@@ -252,7 +252,7 @@ class Player(VoiceProtocol):
     async def post_init(
         self,
         node: Node,
-        player_manager: PlayerManager,
+        player_manager: PlayerController,
         config: PlayerConfig,
         pylav: Client,
         requester: discord.Member = None,

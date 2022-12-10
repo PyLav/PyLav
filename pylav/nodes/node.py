@@ -29,6 +29,7 @@ from pylav.nodes.api.responses import websocket as websocket_responses
 from pylav.nodes.api.responses.errors import LavalinkError
 from pylav.nodes.api.responses.rest_api import LavalinkInfo, LavalinkPlayer, LoadTrackResponses
 from pylav.nodes.api.responses.route_planner import Status as route_planner_status
+from pylav.nodes.api.responses.track import Track
 from pylav.nodes.manager import NodeManager
 from pylav.nodes.utils import NO_MATCHES, Stats
 from pylav.nodes.websocket import WebSocket
@@ -1166,7 +1167,7 @@ class Node:
 
     async def fetch_decodetrack(
         self, encoded_track: str, timeout: aiohttp.ClientTimeout | object = sentinel
-    ) -> LoadTrackResponses | HTTPException:
+    ) -> Track | HTTPException:
         async with self._session.get(
             self.get_endpoint_decodetrack(),
             headers={"Authorization": self.password},
@@ -1174,14 +1175,14 @@ class Node:
             timeout=timeout,
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
-                return from_dict(data_class=LoadTrackResponses, data=await res.json(loads=ujson.loads))
+                return from_dict(data_class=Track, data=await res.json(loads=ujson.loads))
             failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
                 raise UnauthorizedException(failure)
             self._logger.trace("Failed to decode track: %d %s", failure.status, failure.message)
             return HTTPException(failure)
 
-    async def post_decodetracks(self, encoded_tracks: list[str]) -> list[LoadTrackResponses] | HTTPException:
+    async def post_decodetracks(self, encoded_tracks: list[str]) -> list[Track] | HTTPException:
         async with self._session.post(
             self.get_endpoint_decodetracks(),
             headers={"Authorization": self.password},
@@ -1189,7 +1190,7 @@ class Node:
             params={"trace": "true" if self.trace else "false"},
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
-                return [from_dict(data_class=LoadTrackResponses, data=t) for t in await res.json(loads=ujson.loads)]
+                return [from_dict(data_class=Track, data=t) for t in await res.json(loads=ujson.loads)]
             failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
                 raise UnauthorizedException(failure)
