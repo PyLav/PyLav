@@ -87,7 +87,7 @@ __PARTIALLY_SUPPORTED_EXTENSION = (
     __PARTIALLY_SUPPORTED_MUSIC_EXT + __PARTIALLY_SUPPORTED_VIDEO_EXT + __PLUGIN_SUPPORTED_EXT
 )
 
-_ALL_EXTENSIONS = __FULLY_SUPPORTED_MUSIC + __PARTIALLY_SUPPORTED_EXTENSION
+ALL_EXTENSIONS = __FULLY_SUPPORTED_MUSIC + __PARTIALLY_SUPPORTED_EXTENSION
 
 _ROOT_FOLDER: aiopath.AsyncPath | None = None
 
@@ -255,7 +255,7 @@ class LocalFile:
                 elif show_folders and path.is_relative_to(self._ROOT_FOLDER):
                     yield await Query.from_string(path)
             elif (not folder_only) and await path.is_file():
-                if path.suffix.lower() in _ALL_EXTENSIONS and path.is_relative_to(self._ROOT_FOLDER):
+                if path.suffix.lower() in ALL_EXTENSIONS and path.is_relative_to(self._ROOT_FOLDER):
                     yield await Query.from_string(path)
 
     async def files_in_tree(self, show_folders: bool = False) -> AsyncIterator[Query]:

@@ -29,7 +29,7 @@ except ImportError:
 LOGGER = getLogger("PyLav.PlayerManager")
 
 
-class PlayerManager:
+class PlayerController:
     """Represents the player manager that contains all the players.
 
     len(x):

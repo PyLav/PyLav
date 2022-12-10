@@ -4,6 +4,8 @@ from typing import TYPE_CHECKING, Any, TypeVar, Union
 
 import discord
 
+from pylav.core.client import Client
+
 if TYPE_CHECKING:
     from discord.ext.commands import AutoShardedBot, Cog, CommandError, Context
 
@@ -45,7 +47,7 @@ class BotClientWithLavalinkType(BotClient):
         ...
 
 
-class InteractionType(discord.Interaction):
+class DISCORD_INTERACTION_TYPE_BASE(discord.Interaction):
     client: BotClientWithLavalinkType
     response: discord.InteractionResponse
     followup: discord.Webhook
@@ -53,7 +55,7 @@ class InteractionType(discord.Interaction):
     channel: discord.interactions.InteractionChannel | None
 
 
-class PyLavCogType(RedCog):
+class PyLavDISCORD_COG_TYPEype(RedCog):
     __version__: str
     bot: DISCORD_BOT_TYPE
     lavalink: Client
@@ -62,8 +64,10 @@ class PyLavCogType(RedCog):
 
 DISCORD_BOT_TYPE = TypeVar("DISCORD_BOT_TYPE", bound=BotClientWithLavalinkType, covariant=True)
 DISCORD_CONTEXT_TYPE = TypeVar("DISCORD_CONTEXT_TYPE", bound="PyLavContext", covariant=True)
-DISCORD_INTERACTION_TYPE = TypeVar("DISCORD_INTERACTION_TYPE", bound=InteractionType, covariant=True)
-DISCORD_COG_TYPE = TypeVar("DISCORD_COG_TYPE", bound=PyLavCogType, covariant=True)
+DISCORD_INTERACTION_TYPE = TypeVar(
+    "DISCORD_INTERACTION_TYPE", bound=DISCORD_INTERACTION_TYPE_BASE | discord.Integration, covariant=True
+)
+DISCORD_COG_TYPE = TypeVar("DISCORD_COG_TYPE", bound=PyLavDISCORD_COG_TYPEype, covariant=True)
 DISCORD_COMMAND_ERROR_TYPE = TypeVar(
     "DISCORD_COMMAND_ERROR_TYPE", bound=Union[CommandError, app_commands.errors.AppCommandError], covariant=True
 )
