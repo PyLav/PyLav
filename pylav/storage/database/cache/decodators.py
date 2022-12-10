@@ -5,8 +5,8 @@ from collections.abc import Awaitable
 from typing import Callable
 
 from pylav.constants.config import READ_CACHING_ENABLED
-from pylav.storage.database.caching.cache import CACHE
-from pylav.storage.database.caching.functions import key_builder
+from pylav.storage.database.cache.cache import CACHE
+from pylav.storage.database.cache.functions import key_builder
 from pylav.type_hints.generics import ANY_GENERIC_TYPE, PARAM_SPEC_TYPE
 
 

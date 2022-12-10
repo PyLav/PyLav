@@ -4,7 +4,7 @@ import inspect
 from collections.abc import Iterator
 from typing import Any, Callable
 
-from pylav.storage.database.caching.functions import invalidate_cache_multi, update_cache_multi
+from pylav.storage.database.cache.functions import invalidate_cache_multi, update_cache_multi
 
 
 class CachedModel:
