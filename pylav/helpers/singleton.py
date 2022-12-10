@@ -15,12 +15,16 @@ _LOCK_SINGLETON_CACHE_CALLABLE = threading.Lock()
 
 def synchronized_method_call(
     lock: threading.Lock, discard: bool = False
-) -> Callable[[Callable[[PARAM_SPEC_TYPE], ANY_GENERIC_TYPE]], Callable[[PARAM_SPEC_TYPE], ANY_GENERIC_TYPE]]:
+) -> Callable[PARAM_SPEC_TYPE, ANY_GENERIC_TYPE]:  # type: ignore
     """Synchronization decorator"""
 
-    def wrapper(f: Callable[[PARAM_SPEC_TYPE], ANY_GENERIC_TYPE]) -> Callable[[PARAM_SPEC_TYPE], ANY_GENERIC_TYPE]:
+    def wrapper(
+        f: Callable[PARAM_SPEC_TYPE, ANY_GENERIC_TYPE]  # type: ignore
+    ) -> Callable[PARAM_SPEC_TYPE, ANY_GENERIC_TYPE]:  # type: ignore
         @functools.wraps(f)
-        def inner_wrapper(*args: PARAM_SPEC_TYPE.args, **kwargs: PARAM_SPEC_TYPE.kwargs) -> ANY_GENERIC_TYPE:
+        def inner_wrapper(
+            *args: PARAM_SPEC_TYPE.args, **kwargs: PARAM_SPEC_TYPE.kwargs
+        ) -> ANY_GENERIC_TYPE | Awaitable[ANY_GENERIC_TYPE] | None:
             if lock.locked() and discard:
                 return
             with lock:
@@ -59,12 +63,10 @@ class SingletonCallable:
     @classmethod
     @synchronized_method_call(_LOCK_SINGLETON_CALLABLE)
     def run_once(
-        cls, f: Callable[[PARAM_SPEC_TYPE], ANY_GENERIC_TYPE]
-    ) -> Callable[[PARAM_SPEC_TYPE], ANY_GENERIC_TYPE]:
+        cls, f: Callable[PARAM_SPEC_TYPE, ANY_GENERIC_TYPE]  # type: ignore
+    ) -> Callable[PARAM_SPEC_TYPE, ANY_GENERIC_TYPE]:  # type: ignore
         @functools.wraps(f)
-        def wrapper(
-            *args: PARAM_SPEC_TYPE.args, **kwargs: PARAM_SPEC_TYPE.kwargs
-        ) -> Callable[[PARAM_SPEC_TYPE], ANY_GENERIC_TYPE]:
+        def wrapper(*args: PARAM_SPEC_TYPE.args, **kwargs: PARAM_SPEC_TYPE.kwargs) -> ANY_GENERIC_TYPE:
             if not cls._has_run.get(f, False):
                 cls._has_run[f] = True
                 output = f(*args, **kwargs)
@@ -79,12 +81,10 @@ class SingletonCallable:
     @classmethod
     @synchronized_method_call(_LOCK_SINGLETON_CALLABLE)
     def run_once_async(
-        cls, f: Callable[[PARAM_SPEC_TYPE], ANY_GENERIC_TYPE]
-    ) -> Callable[[PARAM_SPEC_TYPE], ANY_GENERIC_TYPE]:
+        cls, f: Callable[PARAM_SPEC_TYPE, Awaitable[ANY_GENERIC_TYPE]]  # type: ignore
+    ) -> Callable[PARAM_SPEC_TYPE, Awaitable[ANY_GENERIC_TYPE]]:  # type: ignore
         @functools.wraps(f)
-        def wrapper(
-            *args: PARAM_SPEC_TYPE.args, **kwargs: PARAM_SPEC_TYPE.kwargs
-        ) -> Awaitable[Callable[[PARAM_SPEC_TYPE], ANY_GENERIC_TYPE]]:
+        def wrapper(*args: PARAM_SPEC_TYPE.args, **kwargs: PARAM_SPEC_TYPE.kwargs) -> Awaitable[ANY_GENERIC_TYPE]:
             if not cls._has_run.get(f, False):
                 cls._has_run[f.__name__] = True
                 return f(*args, **kwargs)

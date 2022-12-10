@@ -3,6 +3,22 @@ from __future__ import annotations
 import asyncio
 
 from pylav.logging import getLogger
+from pylav.storage.migrations.high_level.always.set_pylav_version import set_current_version
+from pylav.storage.migrations.high_level.always.set_ram_value import set_correct_ram_cap
+from pylav.storage.migrations.high_level.one_offs.v0_0_0_2 import migration_v_0_0_0_2
+from pylav.storage.migrations.high_level.one_offs.v0_3_2_0 import migration_v_0_3_2_0
+from pylav.storage.migrations.high_level.one_offs.v0_3_3_0 import migration_v_0_3_3_0
+from pylav.storage.migrations.high_level.one_offs.v0_3_4_0 import migration_v_0_3_4_0
+from pylav.storage.migrations.high_level.one_offs.v0_3_5_0 import migration_v_0_3_5_0
+from pylav.storage.migrations.high_level.one_offs.v0_3_6_0 import migration_v_0_3_6_0
+from pylav.storage.migrations.high_level.one_offs.v0_7_6_0 import migration_v_0_7_6_0
+from pylav.storage.migrations.high_level.one_offs.v0_8_5_0 import migration_v_0_8_5_0
+from pylav.storage.migrations.high_level.one_offs.v0_8_8_0 import migration_v_0_8_8_0
+from pylav.storage.migrations.high_level.one_offs.v0_9_2_0 import migration_v_0_9_2_0
+from pylav.storage.migrations.high_level.one_offs.v0_10_5_0 import migration_v_0_10_5_0
+from pylav.storage.migrations.high_level.one_offs.v0_11_3_0 import migration_v_0_11_3_0
+from pylav.storage.migrations.high_level.one_offs.v0_11_8_0 import migration_v_0_11_8_0
+from pylav.storage.migrations.high_level.one_offs.v1_0_0_0 import migration_v_1_0_0_0
 
 LOGGER = getLogger("PyLav.Database.Controller.Migration")
 
@@ -18,20 +34,20 @@ class MigrationController:
         """Run through schema migrations"""
 
         current_version = await self._client.lib_db_manager.get_bot_db_version().fetch_version()
-        await run_migration_0002(self._client, current_version)
-        await run_migration_0320(self._client, current_version)
-        await run_migration_0330(self._client, current_version)
-        await run_migration_0340(self._client, current_version)
-        await run_migration_0350(self._client, current_version)
-        await run_migration_0360(self._client, current_version)
-        await run_migration_0760(self._client, current_version)
-        await run_migration_0850(self._client, current_version)
-        await run_migration_0880(self._client, current_version)
-        await run_migration_0920(self._client, current_version)
-        await run_migration_01050(self._client, current_version)
-        await run_migration_01130(self._client, current_version)
-        await run_migration_01180(self._client, current_version)
-        await run_migration_010000(self._client, current_version)
+        await migration_v_0_0_0_2(self._client, current_version)
+        await migration_v_0_3_2_0(self._client, current_version)
+        await migration_v_0_3_3_0(self._client, current_version)
+        await migration_v_0_3_4_0(self._client, current_version)
+        await migration_v_0_3_5_0(self._client, current_version)
+        await migration_v_0_3_6_0(self._client, current_version)
+        await migration_v_0_7_6_0(self._client, current_version)
+        await migration_v_0_8_5_0(self._client, current_version)
+        await migration_v_0_8_8_0(self._client, current_version)
+        await migration_v_0_9_2_0(self._client, current_version)
+        await migration_v_0_10_5_0(self._client, current_version)
+        await migration_v_0_11_3_0(self._client, current_version)
+        await migration_v_0_11_8_0(self._client, current_version)
+        await migration_v_1_0_0_0(self._client, current_version)
         await set_current_version(self._client)
         await set_correct_ram_cap(self._client)
 

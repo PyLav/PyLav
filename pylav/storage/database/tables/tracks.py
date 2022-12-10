@@ -7,6 +7,7 @@ from piccolo.columns import M2M, LazyTableReference, Text
 from piccolo.columns.indexes import IndexMethod
 from piccolo.table import Table
 
+from pylav.helpers.singleton import synchronized_method_call
 from pylav.logging import getLogger
 from pylav.storage.database.tables.misc import DATABASE_ENGINE
 

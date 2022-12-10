@@ -1,3 +1,5 @@
+from packaging.version import LegacyVersion, Version
+
 from pylav.constants.config import CONFIG_DIR
 from pylav.storage.database.tables.aiohttp_cache import AioHttpCacheRow
 from pylav.storage.database.tables.config import LibConfigRow
@@ -85,5 +87,5 @@ class ConfigController:
     def get_bot_db_version(self) -> BotVersion:
         return BotVersion(id=self._client.bot.user.id)
 
-    async def update_bot_dv_version(self, version: str) -> None:
+    async def update_bot_dv_version(self, version: str | Version | LegacyVersion) -> None:
         await self.get_bot_db_version().update_version(version)
