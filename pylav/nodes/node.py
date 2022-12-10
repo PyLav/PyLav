@@ -45,6 +45,7 @@ from pylav.players.filters import (
     Vibrato,
     Volume,
 )
+from pylav.players.player import Player
 from pylav.players.query.obj import Query
 from pylav.players.tracks.decoder import async_decoder
 from pylav.storage.models.node import mocked as node_mocked
@@ -121,6 +122,7 @@ class Node:
         self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
         self._temporary = temporary
         if not temporary:
+            # noinspection PyProtectedMember
             self._config: node_real.Node = self._manager._client.node_db_manager.get_node_config(unique_identifier)
         else:
             self._config: node_mocked.NodeMock | None = None
@@ -199,7 +201,8 @@ class Node:
                 await self.websocket.ping()
                 await self.fetch_version(raise_on_error=True)
                 self._logger.trace("Healthy")
-            except Exception:
+            except Exception:  # noqa
+                # noinspection PyProtectedMember
                 if self.websocket._connecting is True:
                     self._logger.debug("Already connecting - skipping reconnect on unhealthy")
                     return
@@ -210,6 +213,7 @@ class Node:
             if playing_players == 0:
                 return
             if (self.down_votes / playing_players) >= 0.5:
+                # noinspection PyProtectedMember
                 if self.websocket._connecting is True:
                     self._logger.debug("Already connecting - skipping reconnect on unhealthy")
                     return
@@ -345,6 +349,7 @@ class Node:
     @property
     def _original_players(self) -> list[Player]:
         """Returns a list of players that were assigned to this node, but were moved due to failover etc"""
+        # noinspection PyProtectedMember
         return [p for p in self._manager.client.player_manager.players.values() if p._original_node == self]
 
     @property

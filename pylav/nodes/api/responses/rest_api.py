@@ -17,7 +17,7 @@ class LoadException:
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
-class Exception(LoadException):  # noqa
+class LavalinkException(LoadException):
     cause: str | None = None  # This is only optional so that inheritance in python works
 
 

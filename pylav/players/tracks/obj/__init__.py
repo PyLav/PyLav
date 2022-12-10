@@ -18,6 +18,7 @@ from pylav.exceptions.track import InvalidTrackException, TrackNotFoundException
 from pylav.helpers.misc import MISSING
 from pylav.nodes.api.responses.track import Track as APITrack
 from pylav.nodes.node import Node
+from pylav.players.player import Player
 from pylav.players.query.obj import Query
 from pylav.players.tracks.decoder import async_decoder
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
@@ -124,7 +125,7 @@ class Track:
     @classmethod
     def build_track(
         cls,
-        node: None,
+        node: Node,
         data: Track | APITrack | dict[str, Any] | str | None,
         query: Query,
         skip_segments: list[str] | None = None,
@@ -177,7 +178,7 @@ class Track:
     @classmethod
     def _from_lavalink_track_object(
         cls,
-        node: None,
+        node: Node,
         data: APITrack,
         query: Query,
         skip_segments: list[str] | None = None,
@@ -196,7 +197,7 @@ class Track:
     @classmethod
     def _from_mapping(
         cls,
-        node: None,
+        node: Node,
         data: dict[str, Any],
         query: Query,
         skip_segments: list[str] | None = None,
@@ -214,7 +215,7 @@ class Track:
     @classmethod
     def _from_base64_string(
         cls,
-        node: None,
+        node: Node,
         data: str,
         query: Query,
         skip_segments: list[str] | None = None,
@@ -234,7 +235,7 @@ class Track:
     @classmethod
     def _from_query(
         cls,
-        node: None,
+        node: Node,
         query: Query,
         skip_segments: list[str] | None = None,
         requester: discord.abc.User | int | None = None,
@@ -246,7 +247,7 @@ class Track:
         instance._is_partial = True
         return instance
 
-    def _copy_with_extras(self, node: None, **extra: Any) -> Track:
+    def _copy_with_extras(self, node: Node, **extra: Any) -> Track:
         instance = self.__class__(node, self._query, None, None)
         instance._extra = {**self._extra, **extra}
         instance._encoded = self._encoded
@@ -254,6 +255,11 @@ class Track:
         instance._unique_id = self._unique_id
         instance._is_partial = self._is_partial
         return instance
+
+    @property
+    def skip_segments(self) -> list[str]:
+        """The segments to skip when playing the track."""
+        return self._skip_segments
 
     @property
     def encoded(self) -> str | None:

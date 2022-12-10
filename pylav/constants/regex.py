@@ -90,6 +90,7 @@ SOURCE_INPUT_MATCH_NICONICO = re.compile(
 SOURCE_INPUT_MATCH_TWITCH = re.compile(r"^https://(?:www\.|go\.)?twitch\.tv/([^/]+)$", re.IGNORECASE)
 SOURCE_INPUT_MATCH_VIMEO = re.compile(r"^https://vimeo.com/\d+(?:\?.*|)$", re.IGNORECASE)
 
+# noinspection LongLine
 SOURCE_INPUT_MATCH_SOUND_CLOUD = re.compile(
     r"^(?:http://|https://|)soundcloud\.app\.goo\.gl/([a-zA-Z0-9-_]+)/?(?:\?.*|)$|"
     r"^(?:http://|https://|)(?:www\\.|)(?:m\.|)soundcloud\.com/"
@@ -101,7 +102,7 @@ SOURCE_INPUT_MATCH_SOUND_CLOUD = re.compile(
     r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/"
     r"([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)(?:\?.*|)$",
     # This last line was manually added and does not exist in in lavaplayer...
-    #  https://github.com/Walkyst/lavaplayer-fork/blob/67bfdc4757947db61105c73628f2e4c2a7e4e992/main/src/main/java/com/sedmelluq/discord/lavaplayer/source/soundcloud/SoundCloudAudioSourceManager.java#L48
+    # https://github.com/Walkyst/lavaplayer-fork/blob/67bfdc4757947db61105c73628f2e4c2a7e4e992/main/src/main/java/com/sedmelluq/discord/lavaplayer/source/soundcloud/SoundCloudAudioSourceManager.java#L48
     re.IGNORECASE,
 )
 SOURCE_INPUT_MATCH_M3U = re.compile(r"^(?!http).*\.m3u8?$", re.IGNORECASE)

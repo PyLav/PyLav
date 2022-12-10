@@ -4,7 +4,7 @@ import dataclasses
 from typing import Literal
 
 from pylav.nodes.api.responses.player import State
-from pylav.nodes.api.responses.rest_api import Exception as TrackExceptionClass
+from pylav.nodes.api.responses.rest_api import LavalinkException as TrackExceptionClass
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 

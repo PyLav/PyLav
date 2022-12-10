@@ -359,9 +359,7 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
         await PlaylistRow.delete().where(PlaylistRow.id == self.id)
         await self.invalidate_cache()
 
-    async def can_manage(
-        self, bot: DISCORD_BOT_TYPE, requester: discord.abc.User, guild: discord.Guild = None
-    ) -> bool:  # noqa
+    async def can_manage(self, bot: DISCORD_BOT_TYPE, requester: discord.abc.User) -> bool:  # noqa
         """Check if the requester can manage the playlist.
 
         Parameters
@@ -370,8 +368,6 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
             The bot instance.
         requester : discord.abc.User
             The requester.
-        guild : discord.Guild
-            The guild.
 
         Returns
         -------

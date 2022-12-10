@@ -236,7 +236,7 @@ class LocalNodeManager:
                 raise
         except asyncio.TimeoutError:
             await self._partial_shutdown()
-        except Exception:
+        except Exception:  # noqa
             await self._partial_shutdown()
             raise
 
@@ -245,7 +245,7 @@ class LocalNodeManager:
             "Found %s processes that match potential unmanaged Lavalink nodes", len(possible_lavalink_processes)
         )
         valid_working_dirs = [
-            cwd
+            cwd  # noqa
             async for d in asyncstdlib.iter(possible_lavalink_processes)
             if d.get("name") in ["java", "java.exe"] and (cwd := d.get("cwd"))
         ]
@@ -268,7 +268,7 @@ class LocalNodeManager:
                         raise ManagedLinkStartAbortedUseExternal
                 except ManagedLinkStartAbortedUseExternal:
                     raise
-                except Exception:
+                except Exception:  # noqa
                     LOGGER.exception("Failed to read contents of %s", config)
                     continue
 
@@ -506,6 +506,7 @@ class LocalNodeManager:
                 p.kill()
 
     async def should_auto_update(self) -> bool:
+        # noinspection PyProtectedMember
         return (
             False
             if USING_FORCED
@@ -550,12 +551,14 @@ class LocalNodeManager:
 
         LOGGER.info("Successfully downloaded Lavalink.jar (%s bytes written)", format(nbytes, ","))
         await self._is_up_to_date(forced=forced)
+        # noinspection PyProtectedMember
         await self._client._config.update_download_id(self._ci_info["number"])
 
     async def _is_up_to_date(self, forced: bool = False) -> bool:
         if self._up_to_date is True and not forced:
             # Return cached value if we've checked this before
             return True
+        # noinspection PyProtectedMember
         last_download_id = await self._client._config.fetch_download_id()
         args, _ = await self._get_jar_args()
         args.append("--version")

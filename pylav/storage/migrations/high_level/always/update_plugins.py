@@ -11,6 +11,7 @@ async def update_plugins(client: Client) -> None:
 
     try:
         LOGGER.info("Attempting to update plugins")
+        # noinspection PyProtectedMember
         config = client._node_config_manager.bundled_node_config()
         data = await config.fetch_yaml()
         new_plugin_data = []

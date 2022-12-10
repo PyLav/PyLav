@@ -452,7 +452,7 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
             ON CONFLICT (id, bot)
             DO UPDATE
             SET next_execution_update_bundled_external_playlists = EXCLUDED.next_execution_update_bundled_external_playlists
-            """,
+            """,  # noqa
             self.id,
             self.bot,
             next_execution,
@@ -626,6 +626,6 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
             "use_bundled_lava_link_external": LibConfigRow.use_bundled_lava_link_external.default,
             "extras": ujson.loads(LibConfigRow.extras.default),
             "next_execution_update_bundled_playlists": LibConfigRow.next_execution_update_bundled_playlists.default,
-            "next_execution_update_bundled_external_playlists": LibConfigRow.next_execution_update_bundled_external_playlists.default,
+            "next_execution_update_bundled_external_playlists": LibConfigRow.next_execution_update_bundled_external_playlists.default,  # noqa
             "next_execution_update_external_playlists": LibConfigRow.next_execution_update_external_playlists.default,
         }

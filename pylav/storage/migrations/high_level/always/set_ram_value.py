@@ -16,6 +16,7 @@ async def set_correct_ram_cap(client: Client) -> None:
     current_max_ram = extras.get("max_ram")
     if current_max_ram is None:
         return
+    # noinspection PyProtectedMember
     config_data = client._lib_config_manager.get_config()
     java_executable = await config_data.fetch_java_path()
     if java_executable != JAVA_EXECUTABLE and os.path.exists(JAVA_EXECUTABLE):

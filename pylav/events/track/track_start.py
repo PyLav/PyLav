@@ -3,6 +3,7 @@ from __future__ import annotations
 from pylav.events.base import PyLavEvent
 from pylav.nodes.api.responses.websocket import TrackStart
 from pylav.nodes.node import Node
+from pylav.players.player import Player
 from pylav.players.tracks.obj import Track
 
 

@@ -310,7 +310,8 @@ class RadioBrowser:
     async def stations_by_countrycode(self, code: str, **kwargs: str | int | bool | None) -> list[Station]:
         """Lists all radio stations by country code.
 
-        Args:
+        Arguments:
+        ----------
             code (str): Official countrycodes as in ISO 3166-1 alpha-2.
             exact (bool): if the search should search for a station with the exact `code`
 
@@ -486,7 +487,8 @@ class RadioBrowser:
         It will search for the station whose attribute
         contains the search term.
 
-        Args:
+        Arguments:
+        ----------
             name (str, optional): Name of the station.
             name_exact (bool, optional): Only exact matches, otherwise all
                 matches (default: False).

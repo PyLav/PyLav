@@ -6,6 +6,7 @@ from pylav.nodes.api.responses.plugins import SegmentSkipped, SegmentsLoaded
 __all__ = ("SegmentSkippedEvent", "SegmentsLoadedEvent")
 
 from pylav.nodes.node import Node
+from pylav.players.player import Player
 
 
 class SegmentSkippedEvent(PyLavEvent):

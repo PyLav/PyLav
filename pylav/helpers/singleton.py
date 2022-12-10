@@ -99,7 +99,7 @@ class SingletonCachedByKey(type):
     _instances: Any = {}
 
     @classmethod
-    def _get_key(cls, mro, **kwargs: Any) -> tuple[str, ...] | None:
+    def _get_key(metacls, mro, **kwargs: Any) -> tuple[str, ...] | None:
         singleton_key = f'{kwargs.get("id")}'
         for base in mro:
             if base.__module__.startswith("pylav.storage.models"):

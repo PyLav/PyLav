@@ -53,6 +53,7 @@ class Penalty:
 
         This is the sum of the penalties of the node.
         """
+        # noinspection PyProtectedMember
         return (
             self.player_penalty
             + self.cpu_penalty
@@ -62,6 +63,7 @@ class Penalty:
         )
 
     def __repr__(self) -> str:
+        # noinspection PyProtectedMember
         return (
             f"<Penalty player={self.player_penalty} "
             f"cpu={self.cpu_penalty} "

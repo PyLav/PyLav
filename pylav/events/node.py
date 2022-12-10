@@ -6,6 +6,7 @@ import discord
 
 from pylav.events.base import PyLavEvent
 from pylav.nodes.node import Node
+from pylav.players.player import Player
 
 if TYPE_CHECKING:
     from pylav.nodes.api.responses.websocket import Closed
