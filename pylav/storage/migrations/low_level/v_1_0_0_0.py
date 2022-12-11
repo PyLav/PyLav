@@ -93,12 +93,11 @@ async def run_player_config_v_1_0_0_0(connection: Connection) -> list[asyncpg.Re
 
     version = parse(version)
     if version < VERSION_1_0_0_0:
-        data = await connection.fetch(
+        return await connection.fetch(
             """
         SELECT * FROM player;
         """
         )
-        return data
     return []
 
 
