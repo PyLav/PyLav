@@ -196,10 +196,30 @@ async def migrate_player_config_v_1_0_0_0(players: list[asyncpg.Record]) -> None
         }
 
         if player["id"] == 0:
-            data.pop("id")
-            data.pop("bot")
+            data = {
+                PlayerRow.volume: player["volume"],
+                PlayerRow.max_volume: player["max_volume"],
+                PlayerRow.auto_play_playlist_id: player["auto_play_playlist_id"],
+                PlayerRow.text_channel_id: player["text_channel_id"],
+                PlayerRow.notify_channel_id: player["notify_channel_id"],
+                PlayerRow.forced_channel_id: player["forced_channel_id"],
+                PlayerRow.repeat_current: player["repeat_current"],
+                PlayerRow.repeat_queue: player["repeat_queue"],
+                PlayerRow.shuffle: player["shuffle"],
+                PlayerRow.auto_shuffle: player["auto_shuffle"],
+                PlayerRow.auto_play: player["auto_play"],
+                PlayerRow.self_deaf: player["self_deaf"],
+                PlayerRow.empty_queue_dc: ujson.loads(player["empty_queue_dc"]),
+                PlayerRow.alone_dc: ujson.loads(player["alone_dc"]),
+                PlayerRow.alone_pause: ujson.loads(player["alone_pause"]),
+                PlayerRow.extras: ujson.loads(player["extras"]),
+                PlayerRow.effects: ujson.loads(player["effects"]),
+                PlayerRow.dj_users: player["dj_users"],
+                PlayerRow.dj_roles: player["dj_roles"],
+            }
+
             playerobj = await PlayerRow.objects().get_or_create(
-                (PlayerRow.id == player["id"]) & (PlayerRow.bot == player["bot"]),
+                (PlayerRow.id == player["id"]) & (PlayerRow.bot == player["bot"]), defaults=data
             )
             if not playerobj._was_created:
                 await PlayerRow.update(data).where((PlayerRow.id == player["id"]) & (PlayerRow.bot == player["bot"]))
@@ -213,20 +233,18 @@ async def migrate_player_config_v_1_0_0_0(players: list[asyncpg.Record]) -> None
 async def migrate_node_config_v_1_0_0_0(nodes: list[asyncpg.Record]) -> None:
     for node in nodes:
         data = {
-            "name": node["name"],
-            "ssl": node["ssl"],
-            "resume_key": node["resume_key"],
-            "resume_timeout": ujson.loads(node["resume_timeout"]),
-            "reconnect_attempts": ujson.loads(node["reconnect_attempts"]),
-            "search_only": ujson.loads(node["search_only"]),
-            "managed": ujson.loads(node["managed"]),
-            "disabled_sources": node["disabled_sources"],
-            "extras": ujson.loads(node["extras"]),
-            "yaml": ujson.loads(node["yaml"]),
+            NodeRow.name: node["name"],
+            NodeRow.ssl: node["ssl"],
+            NodeRow.resume_key: node["resume_key"],
+            NodeRow.resume_timeout: node["resume_timeout"],
+            NodeRow.reconnect_attempts: node["reconnect_attempts"],
+            NodeRow.search_only: node["search_only"],
+            NodeRow.managed: node["managed"],
+            NodeRow.disabled_sources: node["disabled_sources"],
+            NodeRow.extras: ujson.loads(node["extras"]),
+            NodeRow.yaml: ujson.loads(node["yaml"]),
         }
-        node_obj = await NodeRow.objects().get_or_create(
-            NodeRow.id == node["id"],
-        )
+        node_obj = await NodeRow.objects().get_or_create(NodeRow.id == node["id"], defaults=data)
         if not node_obj._was_created:
             await NodeRow.update(data).where(NodeRow.id == node["id"])
 
@@ -234,27 +252,25 @@ async def migrate_node_config_v_1_0_0_0(nodes: list[asyncpg.Record]) -> None:
 async def migrate_lib_config_v_1_0_0_0(configs: list[asyncpg.Record]) -> None:
     for config in configs:
         data = {
-            "id": config["id"],
-            "bot": config["bot"],
-            "config_folder": config["config_folder"],
-            "java_path": config["java_path"],
-            "enable_managed_node": config["enable_managed_node"],
-            "auto_update_managed_nodes": config["auto_update_managed_nodes"],
-            "localtrack_folder": config["localtrack_folder"],
-            "download_id": config["download_id"],
-            "update_bot_activity": config["update_bot_activity"],
-            "use_bundled_pylav_external": config["use_bundled_pylav_external"],
-            "use_bundled_lava_link_external": config["use_bundled_lava_link_external"],
-            "extras": ujson.loads(config["extras"]),
-            "next_execution_update_bundled_playlists": config["next_execution_update_bundled_playlists"],
-            "next_execution_update_bundled_external_playlists": config[
+            LibConfigRow.config_folder: config["config_folder"],
+            LibConfigRow.java_path: config["java_path"],
+            LibConfigRow.enable_managed_node: config["enable_managed_node"],
+            LibConfigRow.auto_update_managed_nodes: config["auto_update_managed_nodes"],
+            LibConfigRow.localtrack_folder: config["localtrack_folder"],
+            LibConfigRow.download_id: config["download_id"],
+            LibConfigRow.update_bot_activity: config["update_bot_activity"],
+            LibConfigRow.use_bundled_pylav_external: config["use_bundled_pylav_external"],
+            LibConfigRow.use_bundled_lava_link_external: config["use_bundled_lava_link_external"],
+            LibConfigRow.extras: ujson.loads(config["extras"]),
+            LibConfigRow.next_execution_update_bundled_playlists: config["next_execution_update_bundled_playlists"],
+            LibConfigRow.next_execution_update_bundled_external_playlists: config[
                 "next_execution_update_bundled_external_playlists"
             ],
-            "next_execution_update_external_playlists": config["next_execution_update_external_playlists"],
+            LibConfigRow.next_execution_update_external_playlists: config["next_execution_update_external_playlists"],
         }
 
         config_obj = await LibConfigRow.objects().get_or_create(
-            (LibConfigRow.id == config["id"]) & (LibConfigRow.bot == config["bot"]),
+            (LibConfigRow.id == config["id"]) & (LibConfigRow.bot == config["bot"]), defaults=data
         )
         if not config_obj._was_created:
             await LibConfigRow.update(data).where(
