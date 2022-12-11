@@ -10,14 +10,14 @@ NODE_DEFAULT_SETTINGS = {
     "lavalink": {
         "plugins": [
             {
-                "dependency": "com.github.TopiSenpai.LavaSrc:lavasrc-plugin:3.1.6",
+                "dependency": "com.github.TopiSenpai.LavaSrc:lavasrc-plugin:3.1.7",
                 "repository": "https://jitpack.io",
             },
             {
                 "dependency": "com.dunctebot:skybot-lavalink-plugin:1.4.1",
                 "repository": "https://m2.duncte123.dev/releases",
             },
-            {"dependency": "com.github.topisenpai:sponsorblock-plugin:1.0.4", "repository": "https://jitpack.io"},
+            {"dependency": "com.github.topisenpai:sponsorblock-plugin:1.0.5", "repository": "https://jitpack.io"},
             {"dependency": "me.rohank05:lavalink-filter-plugin:0.0.1", "repository": "https://jitpack.io"},
             {"dependency": "com.github.esmBot:lava-xm-plugin:v0.2.1", "repository": "https://jitpack.io"},
         ],
