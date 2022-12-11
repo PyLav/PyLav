@@ -345,7 +345,7 @@ async def migrate_data(data: dict[str, dict[str, list[asyncpg.Record]]]) -> None
                     await migrate_player_config_v_1_0_0_0(migrations["player"])
                 if "lib" in migrations and migrations["lib"]:
                     LOGGER.info("-----------Migrating Lib Config to PyLav 1.0.0 ---------")
-                    await migrate_lib_config_v_1_0_0_0(migrations["lib_config"])
+                    await migrate_lib_config_v_1_0_0_0(migrations["lib"])
                 if "node" in migrations and migrations["node"]:
                     LOGGER.info("-----------Migrating Node Config to PyLav 1.0.0 ---------")
-                    await migrate_node_config_v_1_0_0_0(migrations["node_config"])
+                    await migrate_node_config_v_1_0_0_0(migrations["node"])
