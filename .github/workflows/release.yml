@@ -1,136 +1,91 @@
-name: Create a Release
+name: Release
 
 on:
   push:
-    branches:
-    - master
+    tags:
+    - '*.*.*'
 
 defaults:
   run:
     shell: bash
-env:
-  project-name: PyLav
-  GREN_GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
 jobs:
-  bump_version:
-    name: Bump release version
-    runs-on: ubuntu-latest
-    if: ${{ startsWith(github.event.head_commit.message, '[post]') || startsWith(github.event.head_commit.message, '[patch]') || startsWith(github.event.head_commit.message, '[minor]') || startsWith(github.event.head_commit.message, '[major]') }}
-    env:
-      RELEASE_TYPE: ${{ startsWith(github.event.head_commit.message, '[post]') && 'post' || startsWith(github.event.head_commit.message, '[patch]') && 'patch' || startsWith(github.event.head_commit.message, '[minor]') && 'minor' || startsWith(github.event.head_commit.message, '[major]') && 'major' }}
-    steps:
-    - uses: actions/checkout@v3.1.0
-      with:
-        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.x
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install bump2version setuptools wheel twine poetry
-    - name: Retrieve current version
-      run: |
-        echo "Current version: $(poetry version --short)"
-        echo "::set-output name=VERSION::$(poetry version --short)"
-      id: current_version
-    - name: Bump Version
-      run: |
-        bump2version --current-version $(poetry version --short) ${{ env.RELEASE_TYPE }}
-    - name: Retrieve new version
-      run: |
-        echo "::set-output name=VERSION::$(poetry version --short)"
-      id: new_version
-    - name: Import GPG key
-      uses: crazy-max/ghaction-import-gpg@v5
-      with:
-        gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-        git_user_signingkey: true
-        git_commit_gpgsign: true
-        git_tag_gpgsign: true
-      id: import_gpg
-    - name: Git Auto Commit
-      uses: stefanzweifel/git-auto-commit-action@v4.15.4
-      with:
-        commit_message: '[skip ci]Automated version bump: v${{ steps.current_version.outputs.VERSION }} >> v${{ steps.new_version.outputs.VERSION }}'
-        tagging_message: v${{ steps.new_version.outputs.VERSION }}
-        commit_options: -S
-        commit_user_name: ${{ steps.import_gpg.outputs.name }}
-        commit_user_email: ${{ steps.import_gpg.outputs.email }}
-        commit_author: ${{ steps.import_gpg.outputs.name }} <${{ steps.import_gpg.outputs.email }}>
-    outputs:
-      RELEASE_TYPE: ${{ env.RELEASE_TYPE }}
-      CURRENT_RELEASE: ${{ steps.current_version.outputs.VERSION }}
-      NEW_RELEASE: ${{ steps.new_version.outputs.VERSION }}
   release:
-    name: Create a GitHub Release
-    needs: [bump_version]
-    runs-on: ubuntu-latest
+    name: Release
+    strategy:
+      fail-fast: false
+      matrix:
+        max-parallel: 1
+        python-version: [3.11]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v3.1.0
-      with:
-        ref: master
-        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-    - name: Set up Python
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Set up Python 3.11
       uses: actions/setup-python@v4
       with:
-        python-version: 3.x
-    - name: Install dependencies
+        python-version: ${{ matrix.python-version }}
+    - if: ${{ runner.os == 'Windows' }}
+      name: Use GNU tar
+      shell: cmd
       run: |
-        python -m pip install --upgrade pip
-        pip install setuptools wheel twine
-    - name: Import GPG key
-      uses: crazy-max/ghaction-import-gpg@v5
+        echo "Adding GNU tar to PATH"
+        echo C:\Program Files\Git\usr\bin>>"%GITHUB_PATH%"
+    - name: Load cached Poetry installation
+      id: cached-poetry
+      uses: actions/cache@v3
       with:
-        gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-        git_user_signingkey: true
-        git_commit_gpgsign: true
-        git_tag_gpgsign: true
-      id: import_gpg
-    - uses: marvinpinto/action-automatic-releases@latest
-      with:
-        repo_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-        prerelease: false
-        automatic_release_tag: v${{needs.bump_version.outputs.NEW_RELEASE}}
-        title: v${{needs.bump_version.outputs.NEW_RELEASE}}
-  publish:
-    name: Publish to PyPi
-    needs: [bump_version]
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3.1.0
-      with:
-        fetch-depth: 0
-        ref: master
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.x
-    - name: Install dependencies
+        path: ~/.local    # the path depends on the OS
+        key: ${{ runner.os }}-poetry
+    - name: Install Poetry
+      if: steps.cached-poetry.outputs.cache-hit != 'true'
+      uses: snok/install-poetry@v1
+      run: poetry self add "poetry-dynamic-versioning[plugin]
+    - name: Check Version
+      id: check-version
       run: |
-        python -m pip install --upgrade pip
-        pip install build wheel
-    - name: Build package
-      run: python -m build
-    - name: Publish package
-      uses: pypa/gh-action-pypi-publish@release/v1
+        [[ "$(poetry version --short)" =~ ^[0-9]+\.[0-9]+\.[0-9]+\(\.post\d+\)$ ]] || echo prerelease=true >> $GITHUB_OUTPUT
+    - name: Create Release
+      uses: ncipollo/release-action@v1
       with:
-        user: __token__
-        password: ${{ secrets.PYPI_TOKEN }}
+        artifacts: dist/*
+        token: ${{ secrets.GITHUB_TOKEN }}
+        draft: false
+        prerelease: steps.check-version.outputs.prerelease == 'true'
+        allowUpdates: true
+        omitNameDuringUpdate: true
+        omitBodyDuringUpdate: true
+        generateReleaseNotes: true
+        replacesArtifacts: false
+    - name: Publish to PyPI
+      env:
+        POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
+      run: poetry publish --build
+
   change_logs:
     name: Generate Change Logs and Release Notes
-    needs: [bump_version, release]
+    needs: [release]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
       with:
         fetch-depth: 0
         ref: master
-    - name: Set up Python
+    - name: Set up Python 3.11
       uses: actions/setup-python@v4
       with:
-        python-version: 3.x
+        python-version: '3.11'
+    - name: Load cached Poetry installation
+      id: cached-poetry
+      uses: actions/cache@v3
+      with:
+        path: ~/.local  # the path depends on the OS
+        key: poetry-0  # increment to reset cache
+    - name: Install Poetry
+      if: steps.cached-poetry.outputs.cache-hit != 'true'
+      uses: snok/install-poetry@v1
+      run: poetry self add "poetry-dynamic-versioning[plugin]
     - uses: actions/setup-node@v3
       with:
         node-version: '14'
@@ -147,10 +102,14 @@ jobs:
         git_commit_gpgsign: true
         git_tag_gpgsign: true
       id: import_gpg
+    - name: Get Version
+      id: get-version
+      run: |
+        echo version="$(poetry version --short)" >> $GITHUB_OUTPUT
     - name: Git Auto Commit
       uses: stefanzweifel/git-auto-commit-action@v4.15.4
       with:
-        commit_message: '[skip ci] Update CHANGELOG.md and Release Notes for v${{needs.bump_version.outputs.NEW_RELEASE}}'
+        commit_message: '[skip ci] Update CHANGELOG.md and Release Notes for v${{steps.get-version.outputs.version}}'
         commit_options: -S
         commit_user_name: ${{ steps.import_gpg.outputs.name }}
         commit_user_email: ${{ steps.import_gpg.outputs.email }}
