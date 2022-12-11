@@ -9,7 +9,7 @@ from pylav.helpers.format.strings import shorten_string
 from pylav.logging import getLogger
 from pylav.type_hints.bot import DISCORD_COG_TYPE, DISCORD_INTERACTION_TYPE
 
-LOGGER = getLogger("PyLav.ext.Shared.ui.modals.queue")
+LOGGER = getLogger("PyLav.ext.red.ui.modals.queue")
 _ = Translator("PyLav", Path(__file__))
 
 

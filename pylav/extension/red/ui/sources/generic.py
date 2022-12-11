@@ -20,7 +20,7 @@ from pylav.type_hints.generics import ANY_GENERIC_TYPE
 if TYPE_CHECKING:
     from pylav.extension.red.ui.menus.generic import BaseMenu, EntryPickerMenu
 
-LOGGER = getLogger("PyLav.ext.Shared.ui.sources.generic")
+LOGGER = getLogger("PyLav.ext.red.ui.sources.generic")
 
 _ = Translator("PyLav", Path(__file__))
 

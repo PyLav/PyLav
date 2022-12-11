@@ -17,7 +17,7 @@ from pylav.helpers.format.strings import shorten_string
 from pylav.logging import getLogger
 from pylav.type_hints.bot import DISCORD_BOT_TYPE, DISCORD_COG_TYPE, DISCORD_CONTEXT_TYPE, DISCORD_INTERACTION_TYPE
 
-LOGGER = getLogger("PyLav.ext.Shared.ui.menu.generic")
+LOGGER = getLogger("PyLav.ext.red.ui.menu.generic")
 _ = Translator("PyLav", Path(__file__))
 
 

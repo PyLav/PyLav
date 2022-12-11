@@ -13,7 +13,7 @@ from pylav.helpers.format.ascii import EightBitANSI
 from pylav.logging import getLogger
 from pylav.type_hints.bot import DISCORD_COG_TYPE
 
-LOGGER = getLogger("PyLav.ext.Shared.ui.sources.equalizer")
+LOGGER = getLogger("PyLav.ext.red.ui.sources.equalizer")
 _ = Translator("PyLav", Path(__file__))
 
 

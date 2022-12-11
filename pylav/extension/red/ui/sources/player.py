@@ -14,7 +14,7 @@ from pylav.logging import getLogger
 from pylav.players.player import Player
 from pylav.type_hints.bot import DISCORD_COG_TYPE
 
-LOGGER = getLogger("PyLav.ext.Shared.ui.sources.player")
+LOGGER = getLogger("PyLav.ext.red.ui.sources.player")
 _ = Translator("PyLav", Path(__file__))
 
 

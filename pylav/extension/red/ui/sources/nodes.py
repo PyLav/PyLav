@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from pylav.extension.red.ui.menus.nodes import NodeManagerMenu, NodePickerMenu
 
 
-LOGGER = getLogger("PyLav.ext.Shared.ui.sources.node")
+LOGGER = getLogger("PyLav.ext.red.ui.sources.node")
 _ = Translator("PyLav", Path(__file__))
 
 

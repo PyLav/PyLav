@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from pylav.extension.red.ui.menus.generic import PaginatingMenu
     from pylav.extension.red.ui.menus.playlist import PlaylistPickerMenu
 
-LOGGER = getLogger("PyLav.ext.Shared.ui.sources.playlist")
+LOGGER = getLogger("PyLav.ext.red.ui.sources.playlist")
 
 _ = Translator("PyLav", Path(__file__))
 INF = float("inf")

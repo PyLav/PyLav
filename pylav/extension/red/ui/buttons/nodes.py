@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from pylav.extension.red.ui.menus.nodes import AddNodeFlow, NodeManagerMenu
 
 
-LOGGER = getLogger("PyLav.ext.Shared.ui.button.nodes")
+LOGGER = getLogger("PyLav.ext.red.ui.button.nodes")
 
 
 _ = Translator("PyLav", Path(__file__))

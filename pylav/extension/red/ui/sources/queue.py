@@ -17,7 +17,7 @@ from pylav.type_hints.bot import DISCORD_COG_TYPE
 if TYPE_CHECKING:
     from pylav.extension.red.ui.menus.queue import QueueMenu, QueuePickerMenu
 
-LOGGER = getLogger("PyLav.ext.Shared.ui.sources.queue")
+LOGGER = getLogger("PyLav.ext.red.ui.sources.queue")
 
 _ = Translator("PyLav", Path(__file__))
 

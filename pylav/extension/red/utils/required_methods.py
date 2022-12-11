@@ -31,7 +31,7 @@ from pylav.type_hints.bot import DISCORD_BOT_TYPE, DISCORD_COG_TYPE
 
 _ = Translator("PyLav", Path(__file__))
 _LOCK = threading.Lock()
-LOGGER = getLogger("PyLav.ext.Shared.utils.overrides")
+LOGGER = getLogger("PyLav.ext.red.utils.overrides")
 
 INCOMPATIBLE_COGS = {}
 

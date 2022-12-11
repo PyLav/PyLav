@@ -7,7 +7,7 @@ import discord
 from pylav.logging import getLogger
 from pylav.type_hints.bot import DISCORD_COG_TYPE, DISCORD_INTERACTION_TYPE
 
-LOGGER = getLogger("PyLav.ext.Shared.ui.modals.generic")
+LOGGER = getLogger("PyLav.ext.red.ui.modals.generic")
 
 
 class PromptForInput(discord.ui.Modal):
