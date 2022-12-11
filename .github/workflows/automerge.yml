@@ -1,39 +1,39 @@
 name: Auto Merge Translations
 on:
-    pull_request:
-        types:
-        -   labeled
-        -   unlabeled
-        -   synchronize
-        -   opened
-        -   edited
-        -   ready_for_review
-        -   reopened
-        -   unlocked
-    pull_request_review:
-        types:
-        -   submitted
-    check_suite:
-        types:
-        -   completed
-    status: {}
+  pull_request:
+    types:
+    - labeled
+    - unlabeled
+    - synchronize
+    - opened
+    - edited
+    - ready_for_review
+    - reopened
+    - unlocked
+  pull_request_review:
+    types:
+    - submitted
+  check_suite:
+    types:
+    - completed
+  status: {}
 jobs:
-    automerge:
-        runs-on: ubuntu-latest
-        steps:
-        -   id: automerge
-            name: automerge
-            uses: pascalgn/automerge-action@v0.15.5
-            env:
-                GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-                MERGE_FORKS: 'false'
-                MERGE_METHOD: squash
-                UPDATE_METHOD: rebase
-                MERGE_REQUIRED_APPROVALS: '0'
-                MERGE_METHOD_LABELS: automerge=merge,autosquash=automerge
-                MERGE_COMMIT_MESSAGE: '[dev] Auto Merge'
-                MERGE_REMOVE_LABELS: automerge
-                MERGE_LABELS: automerge
-                MERGE_FILTER_AUTHOR: Drapersniper
-                MERGE_METHOD_LABEL_REQUIRED: true
-                MERGE_DELETE_BRANCH: true
+  automerge:
+    runs-on: ubuntu-latest
+    steps:
+    - id: automerge
+      name: automerge
+      uses: pascalgn/automerge-action@v0.15.5
+      env:
+        GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        MERGE_FORKS: 'false'
+        MERGE_METHOD: squash
+        UPDATE_METHOD: rebase
+        MERGE_REQUIRED_APPROVALS: '0'
+        MERGE_METHOD_LABELS: automerge=merge,autosquash=automerge
+        MERGE_COMMIT_MESSAGE: '[dev] Auto Merge'
+        MERGE_REMOVE_LABELS: automerge
+        MERGE_LABELS: automerge
+        MERGE_FILTER_AUTHOR: Drapersniper
+        MERGE_METHOD_LABEL_REQUIRED: true
+        MERGE_DELETE_BRANCH: true

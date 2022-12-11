@@ -17,7 +17,7 @@ line-length = 120
 target-version = ['py310']
 force-exclude = '''
     /(
-        pylav\/vendored
+        pylav\/vendor
     )/
     '''
 
@@ -92,6 +92,7 @@ documentation = "https://pylav.readthedocs.io/en/latest/"
 include = [
     "CHANGELOG.md",
     "LICENSE",
+    "**/LICENSE.*",
 ]
 
 [tool.poetry.dependencies]
@@ -138,7 +139,7 @@ importlib-metadata = "^5.1.0"
 [tool.poetry.extras]
 redis = ["redis"]
 speed = ["orjson"]
-all = ["redis", "speed"]
+all = ["redis", "orjson"]
 
 [tool.poetry.urls]
 "Bug Tracker" = "https://github.com/Drapersniper/PyLav/issues"

@@ -1,16 +1,16 @@
 dataSource: commits
 ignoreIssuesWith:
--   wontfix
--   duplicate
+- wontfix
+- duplicate
 prefix: ''
 includeMessages: all
 ignoreCommitsWith:
--   \[auto-changelogs\]
--   \[auto-release\]
--   \[auto-publish\]
--   \[skip ci\]
--   \[ci skip\]
--   \[pre-commit.ci\]
--   \[post\] Update translations
+- \[auto-changelogs\]
+- \[auto-release\]
+- \[auto-publish\]
+- \[skip ci\]
+- \[ci skip\]
+- \[pre-commit.ci\]
+- \[post\] Update translations
 changelogFilename: CHANGELOG.md
 override: true

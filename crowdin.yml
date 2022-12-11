@@ -4,5 +4,5 @@ base_path: ./
 preserve_hierarchy: true
 commit_message: '[post] Update translations'
 files:
--   source: pylav/**/messages.pot
-    translation: /%original_path%/%locale%.po
+- source: pylav/**/messages.pot
+  translation: /%original_path%/%locale%.po
