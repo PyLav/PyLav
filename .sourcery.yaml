@@ -9,7 +9,8 @@ ignore:
 
 refactor:
     include: []
-    skip: []
+    skip:
+    -   simplify-fstring-formatting
     rule_types:
     -   refactoring
     -   suggestion

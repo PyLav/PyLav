@@ -75,12 +75,15 @@ class PlayersSource(menus.ListPageSource):
             for i in [
                 (_("Server Owner"), server_owner),
                 (_("Connected"), connect_dur),
-                (_("Users in VC"), listeners),  # sourcery skip: simplify-fstring-formatting
-                (_("Queue Length"), "{} {}".format(queue_len, _("track" if queue_len == 1 else "tracks"))),
-                # sourcery skip: simplify-fstring-formatting
+                (_("Users in VC"), listeners),
+                (
+                    _("Queue Length"),
+                    "{queue_length} {track_translation}".format(
+                        queue_length=queue_len, track_translation=_("track" if queue_len == 1 else "tracks")
+                    ),
+                ),
                 (
                     _("Queue History Length"),
-                    # sourcery skip: simplify-fstring-formatting
                     "{count} {track_translation}".format(
                         count=history_queue_len,
                         track_translation=_("track") if history_queue_len == 1 else _("tracks"),
