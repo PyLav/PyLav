@@ -90,7 +90,7 @@ class Track:
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, Track):
-            return typing.cast(bool, self._id == other._id)
+            return self._id == other._id
         raise NotImplemented
 
     def __ne__(self, other: Any) -> bool:
@@ -123,11 +123,11 @@ class Track:
         self._extra.pop("track", None)
 
     @classmethod
-    def build_track(
+    async def build_track(
         cls,
         node: Node,
         data: Track | APITrack | dict[str, Any] | str | None,
-        query: Query,
+        query: Query | None,
         skip_segments: list[str] | None = None,
         requester: discord.abc.User | int | None = None,
         **extra: Any,
@@ -171,7 +171,7 @@ class Track:
             return cls._from_query(node, query, skip_segments, requester, **extra)
 
         if isinstance(data, str):
-            return cls._from_base64_string(node, data, query, skip_segments, requester, **extra)
+            return await cls._from_base64_string(node, data, skip_segments, requester, **extra)
 
         raise TypeError(f"Expected Track, LavalinkTrackObject, dict, or str, got {type(data).__name__}")
 
@@ -187,9 +187,9 @@ class Track:
     ) -> Track:
         instance = cls(node, query, skip_segments, requester, **extra)
         instance._encoded = data.encoded
-        assert instance._encoded is not None
         instance._extra = extra
         instance._raw_data = extra.get("raw_data", {})
+        instance._unique_id = hashlib.md5()
         instance._unique_id.update(instance._encoded.encode())
         instance._is_partial = False
         return instance
@@ -209,28 +209,24 @@ class Track:
         instance._raw_data = data.get("raw_data", {}) or extra.get("raw_data", {})
         if instance._encoded is None:
             raise InvalidTrackException("Cannot build a track from partial data! (Missing key: encoded)")
+        instance._unique_id = hashlib.md5()
         instance._unique_id.update(instance._encoded.encode())
         return instance
 
     @classmethod
-    def _from_base64_string(
+    async def _from_base64_string(
         cls,
         node: Node,
         data: str,
-        query: Query,
         skip_segments: list[str] | None = None,
         requester: discord.abc.User | int | None = None,
         **extra: Any,
     ) -> Track:
-
-        instance = cls(node, query, skip_segments, requester, **extra)
-        instance._encoded = data
-        assert instance._encoded is not None
-        instance._extra = extra
-        instance._raw_data = extra.get("raw_data", {})
-        instance._unique_id.update(instance._encoded.encode())
-        instance._is_partial = False
-        return instance
+        track_obj = await async_decoder(data)
+        query_obj = await Query.from_base64(data)
+        return cls._from_lavalink_track_object(
+            node=node, data=track_obj, query=query_obj, skip_segments=skip_segments, requester=requester, **extra
+        )
 
     @classmethod
     def _from_query(
@@ -436,7 +432,7 @@ class Track:
             return f"https://www.youtube.com/watch?v={self.identifier}&list=RD{self.identifier}"
         return None
 
-    @CACHE.cache(ttl=timedelta(minutes=10), key="user:{self.unique_identifier}")
+    @CACHE.cache(ttl=timedelta(minutes=10), key="{self.unique_identifier}:{self.encoded}")
     async def fetch_full_track_data(
         self,
     ) -> APITrack:
@@ -488,9 +484,7 @@ class Track:
         if not response or not response.tracks:
             raise TrackNotFoundException(f"No tracks found for query {await self.query_identifier()}")
         return [
-            Track.build_track(
-                data=track, node=player.node, query=await Query.from_base64(track.encoded), requester=requester
-            )
+            await Track.build_track(data=track, node=player.node, query=None, requester=requester)
             for track in response.tracks
         ]
 

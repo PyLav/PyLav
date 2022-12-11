@@ -1075,7 +1075,7 @@ class Player(VoiceProtocol):
         query: Query = None,
     ) -> Track:
         if not isinstance(track, Track):
-            track = Track(node=self.node, data=track, query=query, requester=requester)
+            track = await Track.build_track(node=self.node, data=track, query=query, requester=requester)
         else:
             track._requester = requester
         return track
@@ -1188,7 +1188,9 @@ class Player(VoiceProtocol):
         bypass_cache: bool = False,
     ) -> None:
         skip_segments = self._process_skip_segments(skip_segments)
-        track = Track(node=self.node, data=track, query=query, skip_segments=skip_segments, requester=requester.id)
+        track = await Track.build_track(
+            node=self.node, data=track, query=query, skip_segments=skip_segments, requester=requester.id
+        )
         self.next_track = None
         self.last_track = None
         self.stopped = False
@@ -1264,7 +1266,9 @@ class Player(VoiceProtocol):
         # sourcery no-metrics
         auto_play, payload, skip_segments = await self._on_play_reset(skip_segments)
         if track is not None and isinstance(track, (Track, dict, str, type(None))):
-            track = Track(node=self.node, data=track, query=query, skip_segments=skip_segments, requester=requester.id)
+            track = await Track.build_track(
+                node=self.node, data=track, query=query, skip_segments=skip_segments, requester=requester.id
+            )
         if self.current:
             await self._process_repeat_on_play()
         if self.current:
@@ -1427,18 +1431,18 @@ class Player(VoiceProtocol):
 
     async def _process_autoplay_on_play(self, available_tracks, skip_segments):
         if tracks_not_in_history := list(set(available_tracks) - set(self.history.raw_b64s)):
-            track = Track(
+            track = await Track.build_track(
                 node=self.node,
-                data=(b64 := random.choice(tracks_not_in_history)),
-                query=await Query.from_base64(b64),
+                data=random.choice(tracks_not_in_history),
+                query=None,
                 skip_segments=skip_segments,
                 requester=self.client.user.id,
             )
         else:
-            track = Track(
+            track = await Track.build_track(
                 node=self.node,
-                data=(b64 := random.choice(available_tracks)),
-                query=await Query.from_base64(b64),
+                data=random.choice(available_tracks),
+                query=None,
                 skip_segments=skip_segments,
                 requester=self.client.user.id,
             )
@@ -2849,7 +2853,7 @@ class Player(VoiceProtocol):
     async def _process_restore_queues(self, player):
         queue = (
             [
-                Track(
+                await Track.build_track(
                     node=self.node,
                     data=t.pop("encoded", None) or t.pop("track", None),
                     query=await Query.from_string(t.pop("query")),
@@ -2863,7 +2867,7 @@ class Player(VoiceProtocol):
         )
         history = (
             [
-                Track(
+                await Track.build_track(
                     node=self.node,
                     data=t.pop("encoded", None) or t.pop("track", None),
                     query=await Query.from_string(t.pop("query")),
@@ -2879,7 +2883,7 @@ class Player(VoiceProtocol):
 
     async def _process_restore_current_tracks(self, player):
         current = (
-            Track(
+            await Track.build_track(
                 node=self.node,
                 data=player.current.pop("encoded", None) or player.current.pop("track", None),
                 query=await Query.from_string(player.current.pop("query")),
@@ -2890,7 +2894,7 @@ class Player(VoiceProtocol):
             else None
         )
         next_track = (
-            Track(
+            await Track.build_track(
                 node=self.node,
                 data=n_track.pop("encoded", None) or n_track.pop("track", None),
                 query=await Query.from_string(n_track.pop("query")),
@@ -2901,7 +2905,7 @@ class Player(VoiceProtocol):
             else None
         )
         last_track = (
-            Track(
+            await Track.build_track(
                 node=self.node,
                 data=l_track.pop("encoded", None) or l_track.pop("track", None),
                 query=await Query.from_string(l_track.pop("query")),

@@ -12,7 +12,6 @@ from redbot.vendored.discord.ext import menus
 
 from pylav.extension.red.ui.selectors.options.playlist import PlaylistOption
 from pylav.logging import getLogger
-from pylav.players.query.obj import Query
 from pylav.players.tracks.obj import Track
 from pylav.storage.models.playlist import Playlist
 from pylav.type_hints.bot import DISCORD_COG_TYPE
@@ -105,11 +104,11 @@ class Base64Source(menus.ListPageSource):
         padding = len(str(start_index + len(tracks)))
         queue_list = ""
         async for track_idx, track in AsyncIter(tracks).enumerate(start=start_index + 1):
-            track = Track(
+            track = await Track.build_track(
                 node=random.choice(self.cog.lavalink.node_manager.nodes),
                 requester=self.author.id,
                 data=track,
-                query=await Query.from_base64(track),
+                query=None,
             )
             track_description = await track.get_track_display_name(max_length=50, with_url=True)
             diff = padding - len(str(track_idx))
