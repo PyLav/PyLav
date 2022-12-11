@@ -11,6 +11,7 @@ from deepdiff import DeepDiff  # type: ignore
 # noinspection PyProtectedMember
 from pylav._internals.functions import _get_path
 from pylav.constants.config import ENV_FILE
+from pylav.constants.config.utils import remove_keys
 from pylav.constants.node_features import SUPPORTED_SEARCHES
 from pylav.constants.specials import ANIME
 from pylav.logging import getLogger
@@ -155,6 +156,8 @@ if (MANAGED_NODE_DEEZER_KEY := data.get("PYLAV__MANAGED_NODE_DEEZER_KEY")) is No
         [base64.b64decode(r).decode() for r in ANIME.split(b"|")]
     )
     data_new["PYLAV__MANAGED_NODE_DEEZER_KEY"] = MANAGED_NODE_DEEZER_KEY
+
+data_new = remove_keys("PYLAV__CACHING_ENABLED", data=data_new)
 
 if DeepDiff(data, data_new, ignore_order=True, max_passes=2, cache_size=1000):
     with ENV_FILE.open(mode="w") as file:
