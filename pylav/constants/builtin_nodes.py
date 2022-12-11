@@ -62,10 +62,12 @@ PYLAV_NODE_SETTINGS["yaml"]["server"]["port"] = PYLAV_NODE_SETTINGS["port"]
 PYLAV_LONDON_NODE_SETTINGS: NodeInfo = PYLAV_NODE_SETTINGS.copy()
 PYLAV_LONDON_NODE_SETTINGS["host"] = "ll-gb.draper.wtf"
 PYLAV_LONDON_NODE_SETTINGS["name"] = "PyLav London (Bundled)"
+PYLAV_LONDON_NODE_SETTINGS["unique_identifier"] = 1
 
 PYLAV_NY_NODE_SETTINGS: NodeInfo = PYLAV_NODE_SETTINGS.copy()
 PYLAV_NY_NODE_SETTINGS["host"] = "ll-us-ny.draper.wtf"
 PYLAV_NY_NODE_SETTINGS["name"] = "PyLav US-NY (Bundled)"
+PYLAV_NY_NODE_SETTINGS["unique_identifier"] = 2
 
 
 BUNDLED_NODES_IDS_HOST_MAPPING: Mapping[int, str] = {
