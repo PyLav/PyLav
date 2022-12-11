@@ -58,8 +58,7 @@ def decode_track(track: str) -> Track:
         # Position
         reader.read_long()
     except Exception as exc:
-        # TODO: Downgrade log to trace for final release
-        LOGGER.debug("Failed to decode track", exc_info=exc)
+        LOGGER.trace("Failed to decode track", exc_info=exc)
 
     return typing.cast(
         Track,

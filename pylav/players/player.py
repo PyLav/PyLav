@@ -900,7 +900,7 @@ class Player(VoiceProtocol):
             if position == self._last_track_stuck_position:
                 self._last_track_stuck_position = position
                 self._last_track_stuck_check = time.time()
-                self._logger.verbose(
+                self._logger.trace(
                     "Auto track stuck fixer - Player appears to be stuck - starting countdown",
                 )
                 return
@@ -1026,9 +1026,9 @@ class Player(VoiceProtocol):
             del self._user_data[key]
 
     async def on_voice_server_update(self, data: dict) -> None:
-        if "token" in data:
+        if "token" in data and data["token"]:
             self._voice_state.update({"token": data["token"]})
-        if "endpoint" in data:
+        if "endpoint" in data and data["endpoint"]:
             self._voice_state.update({"endpoint": data["endpoint"]})
             if match := VOICE_CHANNEL_ENDPOINT.match(data["endpoint"]):
                 self._region = match.group("region").replace("-", "_")
