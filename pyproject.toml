@@ -64,7 +64,7 @@ known_local_folder = [
 
 [tool.poetry]
 name = "Py-Lav"
-version = "1.0.0.dev198+c75e1ee"
+version = "1.0.0.dev199+b2472d3"
 description = " A Lavalink WebSocket & API wrapper for discord.py"
 authors = ["Draper <27962761+Drapersniper@users.noreply.github.com>"]
 readme = "README.md"
@@ -146,7 +146,8 @@ all = ["redis", "orjson"]
 
 [tool.poetry-dynamic-versioning]
 enable = true
-style = "pep440"
+vcs = "git"
+bump = true
 
 [tool.poetry-dynamic-versioning.substitution]
 files = ["*.py", "*/__init__.py", "*/__version__.py", "*/_version.py"]
