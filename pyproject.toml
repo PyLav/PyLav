@@ -147,7 +147,7 @@ all = ["redis", "orjson"]
 [tool.poetry-dynamic-versioning]
 enable = true
 vcs = "git"
-bump = true
+style = "pep440"
 
 [tool.poetry-dynamic-versioning.substitution]
 files = ["pylav/__init__.py"]
