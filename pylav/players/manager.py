@@ -4,6 +4,7 @@ import asyncio
 import contextlib
 import pathlib
 from collections.abc import Iterator
+from typing import TYPE_CHECKING
 
 import discord
 
@@ -27,6 +28,9 @@ except ImportError:
     def _(string: str) -> str:
         return string
 
+
+if TYPE_CHECKING:
+    from pylav.core.client import Client
 
 LOGGER = getLogger("PyLav.PlayerManager")
 
@@ -53,7 +57,7 @@ class PlayerController:
 
     _global_player_config: PlayerConfig
 
-    def __init__(self, lavalink: Client, player: type[Player] = Player):  # type: ignore
+    def __init__(self, lavalink: Client, player: type[Player] = Player):
         if not issubclass(player, Player):
             raise ValueError("Player must implement Player")
 

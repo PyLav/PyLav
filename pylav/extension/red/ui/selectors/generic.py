@@ -26,7 +26,7 @@ class EntrySelectSelector(discord.ui.Select):
         )
         self.cog = cog
         self.mapping = mapping
-        self.entry: GenericT = None  # type:ignore
+        self.entry: ANY_GENERIC_TYPE = None
         self.responded = asyncio.Event()
 
     async def callback(self, interaction: DISCORD_INTERACTION_TYPE) -> None:

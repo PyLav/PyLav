@@ -203,7 +203,7 @@ class Player(VoiceProtocol):
         self.history: TrackHistoryQueue[Track] = TrackHistoryQueue(maxsize=100)
         self.current: Track | None = None
         self._post_init_completed = False
-        self._autoplay_playlist: PlaylistModel = None  # type: ignore
+        self._autoplay_playlist: Playlist | None = None
         self._restored = False
 
         # Filters

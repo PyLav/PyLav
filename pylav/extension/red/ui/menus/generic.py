@@ -330,7 +330,7 @@ class EntryPickerMenu(BaseMenu):
             starting_page=starting_page,
             **kwargs,
         )
-        self.result: GenericT = None  # type: ignore
+        self.result: Any = None
         self.selector_cls = selector_cls
         self.selector_text = shorten_string(max_length=100, string=selector_text)
         self.forward_button = NavigateButton(

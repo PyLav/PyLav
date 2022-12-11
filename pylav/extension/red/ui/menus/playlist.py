@@ -65,7 +65,7 @@ class PlaylistPickerMenu(BaseMenu):
             starting_page=starting_page,
             **kwargs,
         )
-        self.result: PlaylistModel = None  # type: ignore
+        self.result: Playlist | None = None
         self.selector_cls = selector_cls
         self.selector_text = shorten_string(max_length=100, string=selector_text)
         self.forward_button = NavigateButton(

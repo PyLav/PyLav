@@ -30,7 +30,7 @@ class PlaylistSelectSelector(discord.ui.Select):
         )
         self.cog = cog
         self.mapping = mapping
-        self.playlist: PlaylistModel = None  # type:ignore
+        self.playlist: Playlist | None = None
         self.responded = asyncio.Event()
 
     async def callback(self, interaction: DISCORD_INTERACTION_TYPE):

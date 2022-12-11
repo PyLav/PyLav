@@ -12,6 +12,7 @@ from pylav.constants.node_features import SUPPORTED_FEATURES, SUPPORTED_SOURCES
 from pylav.extension.red.ui.selectors.options.nodes import SOURCE_OPTIONS, NodeOption
 from pylav.helpers.format.strings import shorten_string
 from pylav.nodes.node import Node
+from pylav.storage.models.node.real import Node as NodeModel
 from pylav.type_hints.bot import DISCORD_COG_TYPE, DISCORD_INTERACTION_TYPE
 
 if TYPE_CHECKING:

@@ -338,7 +338,7 @@ class NodePickerMenu(BaseMenu):
             starting_page=starting_page,
             **kwargs,
         )
-        self.result: NodeModel = None  # type: ignore
+        self.result: Node | None = None
         self.selector_cls = selector_cls
         self.selector_text = shorten_string(max_length=100, translation=selector_text)
         self.forward_button = NavigateButton(
