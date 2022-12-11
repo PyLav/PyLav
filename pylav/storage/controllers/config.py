@@ -32,7 +32,7 @@ class ConfigController:
         self._config_folder = CONFIG_DIR
 
     async def initialize(self) -> None:
-        data_to_migrate = await run_low_level_migrations()
+        data_to_migrate = await run_low_level_migrations(self)
         await self.create_tables()
         await migrate_data(data_to_migrate)
 
@@ -70,7 +70,9 @@ class ConfigController:
     # noinspection PyProtectedMember
     async def reset_database(self) -> None:
         await PlaylistRow.raw(
-            f"DROP TABLE "
+            f"DROP TABLE IF EXISTS "
+            f"{TrackToQueries._meta.tablename}, "
+            f"{TrackToPlaylists._meta.tablename}, "
             f"{PlaylistRow._meta.tablename}, "
             f"{LibConfigRow._meta.tablename}, "
             f"{EqualizerRow._meta.tablename}, "
@@ -79,10 +81,8 @@ class ConfigController:
             f"{NodeRow._meta.tablename}, "
             f"{QueryRow._meta.tablename}, "
             f"{BotVersionRow._meta.tablename}, "
-            f"{AioHttpCacheRow._meta.tablename}"
+            f"{AioHttpCacheRow._meta.tablename}, "
             f"{TrackRow._meta.tablename}"
-            f"{TrackToQueries._meta.tablename}"
-            f"{TrackToPlaylists._meta.tablename}"
             ";"
         )
         await self.create_tables()
