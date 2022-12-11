@@ -20,7 +20,7 @@ from discord.utils import utcnow
 from pylav.constants.coordinates import REGION_TO_COUNTRY_COORDINATE_MAPPING
 from pylav.constants.regex import VOICE_CHANNEL_ENDPOINT
 from pylav.enums.plugins.sponsorblock import SegmentCategory
-from pylav.events.node import NodeChangedEvent
+from pylav.events.node import NodeChangedEvent, WebSocketClosedEvent
 from pylav.events.player import (
     FiltersAppliedEvent,
     PlayerDisconnectedEvent,
@@ -1627,6 +1627,9 @@ class Player(VoiceProtocol):
             self.last_track = self.current
             await self.next()
             self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
+        elif isinstance(event, WebSocketClosedEvent):
+            if event.code in {4016}:
+                await self.reconnect()
 
     async def _update_state(self, state: State) -> None:
         """

@@ -562,6 +562,8 @@ class WebSocket:
             case "WebSocketClosedEvent":
                 data = typing.cast(Closed, data)
                 event = WebSocketClosedEvent(player, self.node, player.channel, event_object=data)
+                if self.node.identifier == player.node.identifier:
+                    await player._handle_event(event)
             case "SegmentsLoaded":
                 data = typing.cast(SegmentsLoaded, data)
                 event = SegmentsLoadedEvent(player, self.node, event_object=data)
