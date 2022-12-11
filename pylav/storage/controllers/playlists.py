@@ -60,10 +60,10 @@ class PlaylistController:
 
     @staticmethod
     def get_playlist(**kwargs: typing.Any) -> Playlist:
-        identifier = kwargs.pop("identifier", kwargs.pop("id", None))
-        if not identifier:
+        if identifier := kwargs.pop("identifier", kwargs.pop("id", None)):
+            return Playlist(id=identifier)
+        else:
             raise ValueError("Playlist identifier not provided")
-        return Playlist(id=identifier)
 
     async def get_bundled_playlists(self) -> list[Playlist]:
         return [
