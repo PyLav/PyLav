@@ -1,6 +1,6 @@
 import asyncio
 import socket
-from math import asin, cos, sqrt
+from math import atan2, cos, radians, sin, sqrt
 
 import aiohttp
 import asyncstdlib
@@ -10,20 +10,22 @@ from pylav.constants.coordinates import REGION_TO_COUNTRY_COORDINATE_MAPPING
 
 
 def distance(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
-    p = 0.017453292519943295
-    hav = 0.5 - cos((lat2 - lat1) * p) / 2 + cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2
-    return 12742 * asin(sqrt(hav))
+    dlat = radians(lat2) - radians(lat1)
+    dlon = radians(lon2) - radians(lon1)
+    a = sin(dlat / 2) * sin(dlat / 2) + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon / 2) * sin(dlon / 2)
+    d = 6371 * 2 * atan2(sqrt(a), sqrt(1 - a))
+    return d
 
 
 async def closest(
-    data: dict[str, tuple[float, float]], v: tuple[float, float], *, region_pool: set[str] | None = None
+    data: dict[str, tuple[float, float]], compare_to: tuple[float, float], *, region_pool: set[str] | None = None
 ) -> tuple[str, tuple[float, float]]:
     if region_pool is None:
         region_pool = set()
     entries = [(k, v) for k, v in data.items() if not region_pool or k in region_pool]
     return await asyncstdlib.min(
         entries,
-        key=lambda p: distance(v[0], v[1], p[1][0], p[1][1]),
+        key=lambda p: distance(compare_to[0], compare_to[1], p[1][0], p[1][1]),
     )
 
 
@@ -31,7 +33,7 @@ async def get_closest_region_name_and_coordinate(
     lat: float, lon: float, region_pool: set[str] | None = None
 ) -> tuple[str, tuple[float, float]]:
     closest_region, closest_coordinates = await closest(
-        REGION_TO_COUNTRY_COORDINATE_MAPPING, (lat, lon), region_pool=region_pool
+        REGION_TO_COUNTRY_COORDINATE_MAPPING, compare_to=(lat, lon), region_pool=region_pool
     )
     name, coordinate = await asyncstdlib.anext(
         asyncstdlib.iter((k, v) for k, v in REGION_TO_COUNTRY_COORDINATE_MAPPING.items() if v == closest_coordinates)
@@ -56,7 +58,7 @@ async def get_closest_discord_region(host: str | None = None) -> tuple[str, tupl
     except Exception:  # noqa
         host_ip = None  # If there's any issues getting the ip from the hostname, just use the host ip
     try:
-        longitude, latitude = await get_coordinates(host_ip)
+        latitude, longitude = await get_coordinates(host_ip)
         return await get_closest_region_name_and_coordinate(lat=latitude, lon=longitude)
     except Exception:  # noqa
         return "unknown_pylav", (0, 0)

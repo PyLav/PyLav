@@ -10,6 +10,7 @@ import aiohttp
 import ujson
 from dacite import from_dict
 from discord.utils import utcnow
+from packaging.version import Version
 
 from pylav.constants.builtin_nodes import PYLAV_NODES
 from pylav.events.node import WebSocketClosedEvent
@@ -158,7 +159,7 @@ class WebSocket:
         return "wss" if self._ssl else "ws"
 
     @property
-    def lib_version(self) -> str:
+    def lib_version(self) -> Version:
         """Returns the PyLav library version"""
         return self._client.lib_version
 

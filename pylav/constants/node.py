@@ -52,7 +52,7 @@ NODE_DEFAULT_SETTINGS = {
             "opusEncodingQuality": 10,
             "resamplingQuality": "HIGH",
             "useSeekGhosting": True,
-            "playerUpdateInterval": 5,
+            "playerUpdateInterval": 30,
             "youtubeSearchEnabled": True,
             "soundcloudSearchEnabled": True,
             "gc-warnings": True,
