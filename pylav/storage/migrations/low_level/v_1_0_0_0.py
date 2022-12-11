@@ -44,13 +44,6 @@ async def run_playlist_migration_v_1_0_0_0(connection: Connection) -> list[async
         return data
 
 
-async def run_player_state_migration_v_1_0_0_0(connection: Connection) -> None:
-    """
-    Runs player_state migration 1000.
-    """
-    await connection.execute("DROP TABLE player_state;")
-
-
 async def run_query_migration_v_1_0_0_0(connection: Connection) -> list[asyncpg.Record] | None:
     """
     Runs playlist migration 1000.
@@ -83,11 +76,7 @@ async def run_player_config_v_1_0_0_0(connection: Connection) -> list[asyncpg.Re
     has_version_column = await connection.fetchval(has_column)
     if not has_version_column:
         return []
-    version = await connection.fetchval(
-        """
-                SELECT version from version;
-                """
-    )
+    version = await connection.fetchval("SELECT version from version;")
     if version is None:
         return []
 
@@ -198,9 +187,7 @@ async def run_low_level_migrations(migrator: ConfigController) -> dict[str, dict
     query_data_1000 = await run_query_migration_v_1_0_0_0(con)
     player_data_1000 = await run_player_config_v_1_0_0_0(con)
     if playlist_data_1000 or query_data_1000 or player_data_1000:
-        print(bool(playlist_data_1000), bool(query_data_1000), bool(player_data_1000))
         await migrator.reset_database()
-        await run_player_state_migration_v_1_0_0_0(con)
     return {
         str(VERSION_1_0_0_0): {
             "playlist": playlist_data_1000,
@@ -218,7 +205,7 @@ async def migrate_data(data: dict[str, dict[str, list[asyncpg.Record]]]) -> None
     for version, migrations in data.items():
         LOGGER.info(f"Running migrations for version {version}")
         match version:
-            case "1.0.0.post0":
+            case "1.0.0":
                 if migrations["playlist"]:
                     LOGGER.info("-----------Migrating Playlist data to PyLav 1.0.0 ---------")
                     await migrate_playlists_v_1_0_0_0(migrations["playlist"])
