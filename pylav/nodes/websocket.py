@@ -532,7 +532,7 @@ class WebSocket:
                 event = TrackEndEvent(
                     player,
                     track
-                    or Track(
+                    or await Track.build_track(
                         data=data.encodedTrack,
                         requester=requester.id if requester else self._client.bot.user.id,
                         query=await Query.from_base64(data.encodedTrack),

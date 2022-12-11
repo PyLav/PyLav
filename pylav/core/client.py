@@ -1278,7 +1278,7 @@ class Client(metaclass=SingletonClass):
         else:
             data = None
         successful_tracks.append(
-            Track(
+            await Track.build_track(
                 data=data,
                 node=node,
                 query=sub_query,
@@ -1308,7 +1308,7 @@ class Client(metaclass=SingletonClass):
             if partial:
                 track_count += 1
                 successful_tracks.append(
-                    Track(
+                    await Track.build_track(
                         data=MISSING,
                         node=node,
                         query=local_track,
@@ -1320,10 +1320,10 @@ class Client(metaclass=SingletonClass):
             if track_b64 := response.tracks[0].encoded:
                 track_count += 1
                 successful_tracks.append(
-                    Track(
-                        data=track_b64,
+                    await Track.build_track(
+                        data=response.tracks[0],
                         node=node,
-                        query=await Query.from_base64(track_b64),
+                        query=None,
                         requester=requester.id,
                     )
                 )
@@ -1356,10 +1356,10 @@ class Client(metaclass=SingletonClass):
             if track_b64 := track.encoded:
                 track_count += 1
                 successful_tracks.append(
-                    Track(
-                        data=track_b64,
+                    await Track.build_track(
+                        data=track,
                         node=node,
-                        query=await Query.from_base64(track_b64),
+                        query=None,
                         requester=requester.id,
                     )
                 )
@@ -1381,8 +1381,8 @@ class Client(metaclass=SingletonClass):
             new_query = await Query.from_base64(track_b64)
             new_query.merge(sub_query, start_time=True)
             successful_tracks.append(
-                Track(
-                    data=track_b64,
+                await Track.build_track(
+                    data=response.tracks[0],
                     node=node,
                     query=new_query,
                     requester=requester.id,
