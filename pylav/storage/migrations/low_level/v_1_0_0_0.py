@@ -12,7 +12,9 @@ from packaging.version import parse
 from pylav.constants.playlists import BUNDLED_PLAYLIST_IDS
 from pylav.constants.versions import VERSION_1_0_0_0
 from pylav.players.tracks.decoder import async_decoder
+from pylav.storage.database.tables.config import LibConfigRow
 from pylav.storage.database.tables.misc import DATABASE_ENGINE
+from pylav.storage.database.tables.nodes import NodeRow
 from pylav.storage.database.tables.players import PlayerRow
 from pylav.storage.database.tables.playlists import PlaylistRow
 from pylav.storage.database.tables.queries import QueryRow
@@ -76,6 +78,49 @@ async def run_player_config_v_1_0_0_0(connection: Connection) -> list[asyncpg.Re
     if (not version) or version < VERSION_1_0_0_0:
         return await connection.fetch("SELECT * FROM player;")
     return []
+
+
+async def run_node_config_v_1_0_0_0(connection: Connection) -> list[asyncpg.Record]:
+    """
+    Migrates player config.
+    """
+    has_column = """
+    SELECT EXISTS (SELECT 1
+    FROM information_schema.columns
+    WHERE table_name='version' AND column_name='version')
+    """
+    has_version_column = await connection.fetchval(has_column)
+    if not has_version_column:
+        return []
+    version = await connection.fetchval("SELECT version from version;")
+    if version is None:
+        return []
+
+    version = parse(version)
+    if (not version) or version < VERSION_1_0_0_0:
+        return await connection.fetch("SELECT * FROM node;")
+    return []
+
+
+async def run_lib_config_v_1_0_0_0(connection: Connection) -> list[asyncpg.Record]:
+    """
+    Migrates player config.
+    """
+    has_column = """
+    SELECT EXISTS (SELECT 1
+    FROM information_schema.columns
+    WHERE table_name='version' AND column_name='version')
+    """
+    has_version_column = await connection.fetchval(has_column)
+    if not has_version_column:
+        return []
+    version = await connection.fetchval("SELECT version from version;")
+    if version is None:
+        return []
+
+    version = parse(version)
+    if (not version) or version < VERSION_1_0_0_0:
+        return await connection.fetch("SELECT * FROM lib_config;")
 
 
 async def migrate_playlists_v_1_0_0_0(playlists: list[asyncpg.Record]) -> None:
@@ -165,24 +210,120 @@ async def migrate_player_config_v_1_0_0_0(players: list[asyncpg.Record]) -> None
         await PlayerRow.insert(*bulk_insert)
 
 
-async def run_low_level_migrations(migrator: ConfigController) -> dict[str, dict[str, list[asyncpg.Record]]]:
+async def migrate_node_config_v_1_0_0_0(nodes: list[asyncpg.Record]) -> None:
+    for node in nodes:
+        data = {
+            "name": node["name"],
+            "ssl": node["ssl"],
+            "resume_key": node["resume_key"],
+            "resume_timeout": ujson.loads(node["resume_timeout"]),
+            "reconnect_attempts": ujson.loads(node["reconnect_attempts"]),
+            "search_only": ujson.loads(node["search_only"]),
+            "managed": ujson.loads(node["managed"]),
+            "disabled_sources": node["disabled_sources"],
+            "extras": ujson.loads(node["extras"]),
+            "yaml": ujson.loads(node["yaml"]),
+        }
+        node_obj = await NodeRow.objects().get_or_create(
+            NodeRow.id == node["id"],
+        )
+        if not node_obj._was_created:
+            await NodeRow.update(data).where(NodeRow.id == node["id"])
+
+
+async def migrate_lib_config_v_1_0_0_0(configs: list[asyncpg.Record]) -> None:
+    for config in configs:
+        data = {
+            "id": config["id"],
+            "bot": config["bot"],
+            "config_folder": config["config_folder"],
+            "java_path": config["java_path"],
+            "enable_managed_node": config["enable_managed_node"],
+            "auto_update_managed_nodes": config["auto_update_managed_nodes"],
+            "localtrack_folder": config["localtrack_folder"],
+            "download_id": config["download_id"],
+            "update_bot_activity": config["update_bot_activity"],
+            "use_bundled_pylav_external": config["use_bundled_pylav_external"],
+            "use_bundled_lava_link_external": config["use_bundled_lava_link_external"],
+            "extras": ujson.loads(config["extras"]),
+            "next_execution_update_bundled_playlists": config["next_execution_update_bundled_playlists"],
+            "next_execution_update_bundled_external_playlists": config[
+                "next_execution_update_bundled_external_playlists"
+            ],
+            "next_execution_update_external_playlists": config["next_execution_update_external_playlists"],
+        }
+
+        config_obj = await LibConfigRow.objects().get_or_create(
+            (LibConfigRow.id == config["id"]) & (LibConfigRow.bot == config["bot"]),
+        )
+        if not config_obj._was_created:
+            await LibConfigRow.update(data).where(
+                (LibConfigRow.id == config["id"]) & (LibConfigRow.bot == config["bot"])
+            )
+
+
+async def run_low_level_migrations(migrator: ConfigController) -> dict[str, dict[str, list[asyncpg.Record] | None]]:
     """
     Runs migrations.
     """
+    migration_data = {}
+    con = await DATABASE_ENGINE.get_new_connection()
+    await low_level_v_1_0_0_migration(con, migration_data, migrator)
+    return migration_data
 
-    con: Connection = await DATABASE_ENGINE.get_new_connection()
-    playlist_data_1000 = await run_playlist_migration_v_1_0_0_0(con)
-    query_data_1000 = await run_query_migration_v_1_0_0_0(con)
-    player_data_1000 = await run_player_config_v_1_0_0_0(con)
-    if playlist_data_1000 or query_data_1000 or player_data_1000:
+
+async def low_level_v_1_0_0_migration(
+    con: Connection, migration_data: dict[str, dict[str, list[asyncpg.Record]] | None], migrator: ConfigController
+) -> None:
+    version = "1.0.0"
+    migration_data[version] = {}
+    await low_level_v_1_0_0_playlists(con, migration_data, version)
+    await low_level_v_1_0_0_queries(con, migration_data, version)
+    await low_level_v_1_0_0_players(con, migration_data, version)
+    await low_level_v_1_0_0_lib(con, migration_data, version)
+    await low_level_v_1_0_0_nodes(con, migration_data, version)
+    if migration_data[version]:
         await migrator.reset_database()
-    return {
-        str(VERSION_1_0_0_0): {
-            "playlist": playlist_data_1000,
-            "query": query_data_1000,
-            "player": player_data_1000,
-        }
-    }
+
+
+async def low_level_v_1_0_0_nodes(
+    con: Connection, migration_data: dict[str, dict[str, list[asyncpg.Record]] | None], version: str
+) -> None:
+    node_config_data_1000 = await run_node_config_v_1_0_0_0(con)
+    if node_config_data_1000:
+        migration_data[version]["node"] = node_config_data_1000
+
+
+async def low_level_v_1_0_0_lib(
+    con: Connection, migration_data: dict[str, dict[str, list[asyncpg.Record]] | None], version: str
+) -> None:
+    lib_config_data_1000 = await run_lib_config_v_1_0_0_0(con)
+    if lib_config_data_1000:
+        migration_data[version]["lib"] = lib_config_data_1000
+
+
+async def low_level_v_1_0_0_players(
+    con: Connection, migration_data: dict[str, dict[str, list[asyncpg.Record]] | None], version: str
+) -> None:
+    player_data_1000 = await run_player_config_v_1_0_0_0(con)
+    if player_data_1000:
+        migration_data[version]["player"] = player_data_1000
+
+
+async def low_level_v_1_0_0_queries(
+    con: Connection, migration_data: dict[str, dict[str, list[asyncpg.Record]] | None], version: str
+) -> None:
+    query_data_1000 = await run_query_migration_v_1_0_0_0(con)
+    if query_data_1000:
+        migration_data[version]["query"] = query_data_1000
+
+
+async def low_level_v_1_0_0_playlists(
+    con: Connection, migration_data: dict[str, dict[str, list[asyncpg.Record]] | None], version: str
+) -> None:
+    playlist_data_1000 = await run_playlist_migration_v_1_0_0_0(con)
+    if playlist_data_1000:
+        migration_data[version]["playlist"] = playlist_data_1000
 
 
 async def migrate_data(data: dict[str, dict[str, list[asyncpg.Record]]]) -> None:
@@ -191,15 +332,20 @@ async def migrate_data(data: dict[str, dict[str, list[asyncpg.Record]]]) -> None
     """
 
     for version, migrations in data.items():
-        LOGGER.info(f"Running migrations for version {version}")
         match version:
             case "1.0.0":
-                if migrations["playlist"]:
+                if "playlist" in migrations and migrations["playlist"]:
                     LOGGER.info("-----------Migrating Playlist data to PyLav 1.0.0 ---------")
                     await migrate_playlists_v_1_0_0_0(migrations["playlist"])
-                if migrations["query"]:
+                if "query" in migrations and migrations["query"]:
                     LOGGER.info("-----------Migrating Query data to PyLav 1.0.0 ---------")
                     await migrate_queries_v_1_0_0_0(migrations["query"])
-                if migrations["player"]:
+                if "player" in migrations and migrations["player"]:
                     LOGGER.info("-----------Migrating Player Config to PyLav 1.0.0 ---------")
                     await migrate_player_config_v_1_0_0_0(migrations["player"])
+                if "lib" in migrations and migrations["lib"]:
+                    LOGGER.info("-----------Migrating Lib Config to PyLav 1.0.0 ---------")
+                    await migrate_lib_config_v_1_0_0_0(migrations["lib_config"])
+                if "node" in migrations and migrations["node"]:
+                    LOGGER.info("-----------Migrating Node Config to PyLav 1.0.0 ---------")
+                    await migrate_node_config_v_1_0_0_0(migrations["node_config"])
