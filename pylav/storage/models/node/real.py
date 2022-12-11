@@ -19,6 +19,9 @@ from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 class Node(CachedModel, metaclass=SingletonCachedByKey):
     id: int
 
+    def get_cache_key(self) -> str:
+        return f"{self.id}"
+
     @maybe_cached
     async def exists(self) -> bool:
         """Check if the node exists in the database.

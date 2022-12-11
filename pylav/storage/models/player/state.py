@@ -37,6 +37,9 @@ class PlayerState:
     extras: JSON_DICT_TYPE
     pk: None = None
 
+    def get_cache_key(self) -> str:
+        return f"{self.id}:{self.bot}:{self.channel_id}"
+
     def __post_init__(self) -> None:
         if isinstance(self.current, str):
             self.current = ujson.loads(self.current)

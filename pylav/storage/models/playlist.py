@@ -49,6 +49,9 @@ except ImportError:
 class Playlist(CachedModel, metaclass=SingletonCachedByKey):
     id: int
 
+    def get_cache_key(self) -> str:
+        return f"{self.id}"
+
     @maybe_cached
     async def exists(self) -> bool:
         """Check if the config exists.

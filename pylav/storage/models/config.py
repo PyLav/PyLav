@@ -22,6 +22,9 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
     bot: int
     id: int = 1
 
+    def get_cache_key(self) -> str:
+        return f"{self.bot}:{self.id}"
+
     @maybe_cached
     async def exists(self) -> bool:
         """Check if the config exists.

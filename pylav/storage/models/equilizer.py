@@ -50,6 +50,9 @@ class Equalizer:
     band_10000: float | None = None
     band_16000: float | None = None
 
+    def get_cache_key(self) -> str:
+        return f"{self.scope}:{self.id}:{self.author}"
+
     async def save(self) -> Equalizer:
         """Save the Equalizer to the database.
 

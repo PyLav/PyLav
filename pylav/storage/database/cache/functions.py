@@ -7,8 +7,7 @@ from pylav.storage.database.cache.cache import CACHE
 
 
 def key_builder(method: Callable, *args: Any, **kwargs: Any) -> str:  # noqa
-    _id = args[0].bot if "Config" in args[0].__class__.__name__ else args[0].id
-    return f"{f'{method.__module__}'}.{args[0].__class__.__name__}.{method.__name__}.{_id}"  # noqa
+    return f"{method.__module__}:{args[0].__class__.__name__}:{method.__name__}:{args[0].get_cache_key()}"  # noqa
 
 
 async def invalidate_cache(method: Callable, instance: object) -> None:

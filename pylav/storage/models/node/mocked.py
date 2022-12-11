@@ -12,6 +12,9 @@ class NodeMock(metaclass=SingletonCachedByKey):
     id: int
     data: JSON_DICT_TYPE
 
+    def get_cache_key(self) -> str:
+        return f"{self.id}"
+
     @staticmethod
     async def exists() -> bool:
         """Check if the node exists in the database.

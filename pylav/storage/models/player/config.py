@@ -21,6 +21,9 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
     id: int
     bot: int
 
+    def get_cache_key(self) -> str:
+        return f"{self.id}:{self.bot}"
+
     @classmethod
     async def create_global(cls, bot: int) -> None:
         """Create the player in the database"""
