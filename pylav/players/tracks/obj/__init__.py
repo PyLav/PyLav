@@ -289,7 +289,7 @@ class Track:
     def id(self) -> str:
         return self._id
 
-    @cached_property
+    @property
     def unique_identifier(self) -> str:
         return self._unique_id.hexdigest()
 
@@ -432,7 +432,7 @@ class Track:
             return f"https://www.youtube.com/watch?v={self.identifier}&list=RD{self.identifier}"
         return None
 
-    @CACHE.cache(ttl=timedelta(minutes=10), key="{self.unique_identifier}:{self.encoded}")
+    @CACHE.cache(ttl=timedelta(minutes=1), key="{self.unique_identifier}:{self.encoded}")
     async def fetch_full_track_data(
         self,
     ) -> APITrack:

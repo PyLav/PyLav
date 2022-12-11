@@ -25,6 +25,7 @@ DEFAULT_REGIONS_MAPPING = {
     "brazil": (-10.3333333, -53.2),
     "rotterdam": (51.9240069, 4.4777325),
     "santa_clara": (37.3541079, -121.9552368),
+    "milan": (45.4642035, 9.189982),
     "unknown_pylav": (0, 0),
 }
 REGION_TO_COUNTRY_COORDINATE_MAPPING |= DEFAULT_REGIONS_MAPPING
