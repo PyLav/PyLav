@@ -444,7 +444,6 @@ class WebSocket:
             ):
                 if player.guild.id in self._player_reconnect_tasks:
                     self._player_reconnect_tasks[player.guild.id].cancel()
-                self._logger.verbose("Creating reconnect task for %s", player.guild.id)
                 self._player_reconnect_tasks[player.guild.id] = asyncio.create_task(self.maybe_reconnect_player(player))
                 return
             await player._update_state(data.state)
@@ -471,6 +470,7 @@ class WebSocket:
             and self.ready.is_set()
             and player.connected_at < utcnow() - datetime.timedelta(minutes=5)
         ):
+            self._logger.debug("Reconnecting stalled player for %s", player.guild.id)
             await player.reconnect()
             return
 
