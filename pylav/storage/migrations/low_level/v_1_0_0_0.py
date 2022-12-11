@@ -35,11 +35,7 @@ async def run_playlist_migration_v_1_0_0_0(connection: Connection) -> list[async
     """
     has_playlist_tracks = await connection.fetchval(HAS_COLUMN)
     if has_playlist_tracks:
-        data = await connection.fetch(
-            """
-            SELECT * FROM playlist;
-            """
-        )
+        data = await connection.fetch("SELECT * FROM playlist;")
         await connection.execute("DROP TABLE playlist;")
         return data
 
@@ -49,17 +45,13 @@ async def run_query_migration_v_1_0_0_0(connection: Connection) -> list[asyncpg.
     Runs playlist migration 1000.
     """
     HAS_COLUMN = """
-        SELECT EXISTS (SELECT 1
-        FROM information_schema.columns
-        WHERE table_name='query' AND column_name='tracks')
-        """
+    SELECT EXISTS (SELECT 1
+    FROM information_schema.columns
+    WHERE table_name='query' AND column_name='tracks')
+    """
     has_query_tracks = await connection.fetchval(HAS_COLUMN)
     if has_query_tracks:
-        data = await connection.fetch(
-            """
-        SELECT * FROM query;
-        """
-        )
+        data = await connection.fetch("SELECT * FROM query;")
         await connection.execute("DROP TABLE query;")
         return data
 
@@ -69,10 +61,10 @@ async def run_player_config_v_1_0_0_0(connection: Connection) -> list[asyncpg.Re
     Migrates player config.
     """
     has_column = """
-            SELECT EXISTS (SELECT 1
-            FROM information_schema.columns
-            WHERE table_name='version' AND column_name='version')
-            """
+    SELECT EXISTS (SELECT 1
+    FROM information_schema.columns
+    WHERE table_name='version' AND column_name='version')
+    """
     has_version_column = await connection.fetchval(has_column)
     if not has_version_column:
         return []
@@ -81,12 +73,8 @@ async def run_player_config_v_1_0_0_0(connection: Connection) -> list[asyncpg.Re
         return []
 
     version = parse(version)
-    if version < VERSION_1_0_0_0:
-        return await connection.fetch(
-            """
-        SELECT * FROM player;
-        """
-        )
+    if (not version) or version < VERSION_1_0_0_0:
+        return await connection.fetch("SELECT * FROM player;")
     return []
 
 
