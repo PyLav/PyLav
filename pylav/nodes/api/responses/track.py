@@ -17,7 +17,6 @@ class Info:
     uri: str | None = None
     sourceName: str | None = None
     thumbnail: str | None = None
-    # noinspection SpellCheckingInspection
     isrc: str | None = None
     probeInfo: str | None = None
 
