@@ -5,7 +5,7 @@ import operator
 import os
 import pathlib
 import random
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Awaitable
 from types import MethodType
 from typing import Any, Callable
 
@@ -159,6 +159,8 @@ class Client(metaclass=SingletonClass):
                 self.__old_process_command_method = bot.process_commands
             if self.__old_get_context is None:
                 self.__old_get_context = bot.get_context
+            self._disable_translations = False
+            self._context_translator: Callable[[DISCORD_BOT_TYPE, discord.Guild], Awaitable[None]] | None = None
             self.ready = asyncio.Event()
             bot.process_commands = MethodType(process_commands, bot)
             bot.get_context = MethodType(get_context, bot)
@@ -227,6 +229,18 @@ class Client(metaclass=SingletonClass):
             LOGGER.exception("Failed to initialize Lavalink")
             raise
 
+    async def set_context_locale(self, guild: discord.Guild | None) -> None:
+        if self._disable_translations:
+            return
+        try:
+            if self._context_translator is None:
+                from redbot.core.i18n import set_contextual_locales_from_guild
+
+                self._context_translator = set_contextual_locales_from_guild
+            await self._context_translator(self.bot, guild)
+        except Exception:  # noqa
+            self._disable_translations = True
+
     async def on_pylav_red_api_tokens_update(self, service_name: str, api_tokens: dict[str, str]) -> None:
         match service_name:
             case "spotify" if "client_id" in api_tokens and "client_secret" in api_tokens:
@@ -246,6 +260,7 @@ class Client(metaclass=SingletonClass):
         LOGGER.debug("Shard %s resumed, checking for affected players", shard_id)
         players = filter(lambda p: p.guild.shard_id == shard_id, self.player_manager.players.values())
         for player in players:
+            await self.set_context_locale(player.guild)
             await player.reconnect()
 
     async def on_pylav_shard_ready(self, shard_id: int) -> None:
@@ -254,6 +269,7 @@ class Client(metaclass=SingletonClass):
         LOGGER.debug("Shard %s ready, checking for affected players", shard_id)
         players = filter(lambda p: p.guild.shard_id == shard_id, self.player_manager.players.values())
         for player in players:
+            await self.set_context_locale(player.guild)
             await player.reconnect()
 
     async def on_pylav_resumed(self) -> None:
@@ -262,6 +278,7 @@ class Client(metaclass=SingletonClass):
         LOGGER.debug("Resumed, checking for affected players")
 
         for player in self.player_manager.players.values():
+            await self.set_context_locale(player.guild)
             await player.reconnect()
 
     async def on_pylav_ready(self) -> None:
@@ -269,6 +286,7 @@ class Client(metaclass=SingletonClass):
             return
         LOGGER.debug("Ready, checking for affected players")
         for player in self.player_manager.players.values():
+            await self.set_context_locale(player.guild)
             await player.reconnect()
 
     async def wait_until_ready(self, timeout: float | None = None) -> None:
