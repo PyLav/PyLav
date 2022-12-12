@@ -1706,7 +1706,8 @@ class Player(VoiceProtocol):
         if payload:
             self.add_voice_to_payload(payload)
             await node.patch_session_player(guild_id=self.guild.id, payload=payload)
-        node.dispatch_event(NodeChangedEvent(self, old_node, node))
+        if old_node.identifier != node.identifier:
+            node.dispatch_event(NodeChangedEvent(self, old_node, node))
 
     async def connect(
         self,
