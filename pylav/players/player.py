@@ -1413,7 +1413,7 @@ class Player(VoiceProtocol):
             track = await self.queue.get()
         return auto_play, track, False
 
-    async def _process_error_on_play(self, exc, track):
+    async def _process_error_on_play(self, exc: Exception, track: Track) -> None:
         event = TrackExceptionEvent(
             self,
             track,

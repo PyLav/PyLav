@@ -11,14 +11,14 @@
 If you are not on Ubuntu 20.04 you just have to follow the instructions below to install the dependencies and set them up for your Linux distro (Google is your friend).
 - #### [libaio](https://pagure.io/libaio)
   - `sudo apt install libaio1 libaio-dev`
-- #### [Python 3.11](https://www.python.org/downloads/release/python-3110/)
+- #### [Python 3.11](https://www.python.org/downloads/release/python-3111/)
   - ##### Ubuntu
     - `sudo apt update -y && sudo apt upgrade -y`
-    - `sudo apt install software-properties-common -y`
+    - `sudo apt install software-properties-common build-essential -y`
     - `sudo add-apt-repository ppa:deadsnakes/ppa -y`
     - `sudo apt update -y`
     - `sudo apt install python3.11 -y`
-    - `sudo apt install python3.11-dev python3.11-venv python3.11-distutils -y`
+    - `sudo apt install python3.11-dev python3.11-venv python3.11-distutils python3-devel -y`
 
 - #### [Python VENV](https://docs.python.org/3/tutorial/venv.html#introduction)
   - A VENV is a self-contained directory tree that contains a Python installation for a particular version of Python, plus a number of additional packages.
@@ -42,13 +42,13 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
       - Run `sudo -u postgres psql -c "CREATE DATABASE pylav_db;"`
         - This will crete a new database called `pylav_db`.
       - Run `sudo -u postgres psql -c "ALTER DATABASE pylav_db OWNER TO <username>;"`
-- #### [Install Java Azul Zulu 18](https://docs.azul.com/core/)
+- #### [Install Java Azul Zulu 19](https://docs.azul.com/core/)
   - Follow the instructions [here](https://docs.azul.com/core/zulu-openjdk/install/debian)
-    - When prompted to run `sudo apt-get install zulu11-jdk` make sure to run `sudo apt-get install zulu18-ca-jdk-headless` instead.
+    - When prompted to run `sudo apt-get install zulu11-jdk` make sure to run `sudo apt-get install zulu19-ca-jdk-headless` instead.
 
 ## Mac <a name="Mac"></a>
-- #### [Python 3.11](https://www.python.org/downloads/release/python-3110/)
-  - Download and run the [MacOS Installer](https://www.python.org/ftp/python/3.11.0/python-3.11.0-macos11.pkg)
+- #### [Python 3.11](https://www.python.org/downloads/release/python-3111/)
+  - Download and run the [MacOS Installer](https://www.python.org/ftp/python/3.11.1/python-3.11.1-macos11.pkg)
 - #### [Python VENV](https://docs.python.org/3/tutorial/venv.html#introduction)
   - A VENV is a self-contained directory tree that contains a Python installation for a particular version of Python, plus a number of additional packages.
   - `python3.11 -m venv ~/p311`
@@ -71,12 +71,12 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
     - Run `CREATE DATABASE pylav_db;`
       - This will crete a new database called `pylav_db`.
     - Run `ALTER DATABASE pylav_db OWNER TO <username>;`
-- #### [Install Java Azul Zulu 18](https://docs.azul.com/core/)
-  - Download and run the dmg executable [here](https://cdn.azul.com/zulu/bin/zulu18.32.13-ca-jdk18.0.2.1-macosx_x64.dmg)
+- #### [Install Java Azul Zulu 19](https://docs.azul.com/core/)
+  - Download and run the dmg executable [here](https://cdn.azul.com/zulu/bin/zulu19.30.11-ca-jdk19.0.1-macosx_x64.dmg)
 
 ## Windows <a name="Windows"></a>
-- #### [Python 3.11](https://www.python.org/downloads/release/python-3110/)
-  - Download the [Windows installer (64-bit)](https://www.python.org/ftp/python/3.11.0/python-3.11.0-amd64.exe)
+- #### [Python 3.11](https://www.python.org/downloads/release/python-3111/)
+  - Download the [Windows installer (64-bit)](https://www.python.org/ftp/python/3.11.1/python-3.11.1-amd64.exe)
   - Once you're given the option to run the installer, select both the checkboxes – "Install launcher for all users" and "Add Python Python 3.11 to PATH" – at the bottom of the dialog box. Then click on "Install Now."
 
 - #### [Python VENV](https://docs.python.org/3/tutorial/venv.html#introduction)
@@ -101,8 +101,8 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
     - Run `CREATE DATABASE pylav_db;`
       - This will crete a new database called `pylav_db`.
     - Run `ALTER DATABASE pylav_db OWNER TO <username>;`
-- #### [Install Java Azul Zulu 18](https://docs.azul.com/core/)
-  - Download and run the msi executable [here](https://cdn.azul.com/zulu/bin/zulu18.32.13-ca-jdk18.0.2.1-win_x64.msi)
+- #### [Install Java Azul Zulu 19](https://docs.azul.com/core/)
+  - Download and run the msi executable [here](https://cdn.azul.com/zulu/bin/zulu19.30.11-ca-jdk19.0.1-win_x64.msi)
     - Make sure to select the following when prompted `Add to PATH`, `set JAVA_HOME variable` and `JavaSoft (Oracle) registry keys`
 
 
