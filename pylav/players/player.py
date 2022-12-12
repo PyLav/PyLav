@@ -663,7 +663,7 @@ class Player(VoiceProtocol):
         if self.current:
             self.current.last_known_position = self._last_position
         if return_position:
-            return player.track.info.position if player.track else 0
+            return player.track.info.position or 0 if player.track else 0
 
     async def fetch_position(self, skip_fetch: bool = False) -> float:
         """Returns the position in the track"""
