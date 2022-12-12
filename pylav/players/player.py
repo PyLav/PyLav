@@ -1110,9 +1110,7 @@ class Player(VoiceProtocol):
 
         at = await self._query_to_track(requester, track, query)
         await self.queue.put([at], index=index)
-        if index is None and (
-            await self.player_manager.client.player_config_manager.get_auto_shuffle(self.guild.id) is True
-        ):
+        if index is None:
             await self.maybe_shuffle_queue(requester=requester)
         self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
         self.node.dispatch_event(TracksRequestedEvent(self, self.guild.get_member(requester), [at]))
@@ -1142,9 +1140,7 @@ class Player(VoiceProtocol):
             track = await self._query_to_track(requester, track, query)
             output.append(track)
         await self.queue.put(output, index=index)
-        if index is None and (
-            await self.player_manager.client.player_config_manager.get_auto_shuffle(self.guild.id) is True
-        ):
+        if index is None:
             await self.maybe_shuffle_queue(requester=requester)
         self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
         self.node.dispatch_event(TracksRequestedEvent(self, self.guild.get_member(requester), output))
