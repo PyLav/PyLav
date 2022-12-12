@@ -1629,7 +1629,9 @@ class Player(VoiceProtocol):
             self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
         elif isinstance(event, WebSocketClosedEvent):
             if event.code in {4016}:
-                await self.reconnect()
+                await self.fetch_player_stats()
+                if self._connected is False and self.is_playing and self._voice_state:
+                    await self._dispatch_voice_update()
 
     async def _update_state(self, state: State) -> None:
         """
