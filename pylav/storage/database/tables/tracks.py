@@ -10,6 +10,7 @@ from piccolo.table import Table
 from pylav.helpers.singleton import synchronized_method_call
 from pylav.logging import getLogger
 from pylav.storage.database.tables.misc import DATABASE_ENGINE
+from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 LOGGER = getLogger("PyLav.Database.Track")
 _LOCK = threading.Lock()
@@ -28,7 +29,7 @@ class TrackRow(Table, db=DATABASE_ENGINE, tablename="track"):
 
     @classmethod
     @synchronized_method_call(_LOCK)
-    async def get_or_create(cls, encoded: str, kwargs: dict):
+    async def get_or_create(cls, encoded: str, kwargs: JSON_DICT_TYPE) -> TrackRow:
         try:
             return await cls.objects().get_or_create(cls.encoded == encoded, kwargs)
         except UniqueViolationError:

@@ -12,6 +12,7 @@ from pylav.players.query.obj import Query
 from pylav.storage.database.tables.queries import QueryRow
 from pylav.storage.database.tables.tracks import TrackRow
 from pylav.storage.models.query import Query
+from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 from pylav.utils.vendor.redbot import AsyncIter
 
 if TYPE_CHECKING:
@@ -50,7 +51,7 @@ class QueryController:
             return self.get(query.query_identifier)
 
     @staticmethod
-    async def add_query(query: Query, result: dict) -> bool:
+    async def add_query(query: Query, result: JSON_DICT_TYPE) -> bool:
         if query.is_local or query.is_custom_playlist or query.is_http:
             # Do not cache local queries and single track urls or http source entries
             return False
