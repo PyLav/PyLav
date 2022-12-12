@@ -147,7 +147,6 @@ all = ["redis", "orjson"]
 [tool.poetry-dynamic-versioning]
 enable = true
 vcs = "git"
-bump = true
 
 [tool.poetry-dynamic-versioning.substitution]
 files = ["*.py", "*/__init__.py", "*/__version__.py", "*/_version.py"]
