@@ -30,7 +30,6 @@ from pylav.logging import getLogger
 from pylav.nodes.api.responses import rest_api
 from pylav.nodes.api.responses import websocket as websocket_responses
 from pylav.nodes.api.responses.errors import LavalinkError
-from pylav.nodes.api.responses.rest_api import LavalinkInfo, LavalinkPlayer, LoadTrackResponses
 from pylav.nodes.api.responses.route_planner import Status as route_planner_status
 from pylav.nodes.api.responses.track import Track
 from pylav.nodes.utils import NO_MATCHES, Stats
@@ -1068,13 +1067,13 @@ class Node:
         return f"{self.connection_protocol}://{self.host}:{self.port}/version"
 
     # REST API - Direct calls
-    async def fetch_session_players(self) -> list[LavalinkPlayer] | HTTPException:
+    async def fetch_session_players(self) -> list[rest_api.LavalinkPlayer] | HTTPException:
         """|coro|
         Gets all players associated with the target node.
 
         Returns
         -------
-        list[LavalinkPlayer]
+        list[rest_api.LavalinkPlayer]
             A list of all players associated with the target node.
         """
         async with self._session.get(
@@ -1083,21 +1082,23 @@ class Node:
             params={"trace": "true" if self.trace else "false"},
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
-                return [from_dict(data_class=LavalinkPlayer, data=t) for t in await res.json(loads=ujson.loads)]
+                return [
+                    from_dict(data_class=rest_api.LavalinkPlayer, data=t) for t in await res.json(loads=ujson.loads)
+                ]
             failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
                 raise UnauthorizedException(failure)
             self._logger.trace("Failed to get session players: %d %s", failure.status, failure.message)
             return HTTPException(failure)
 
-    async def fetch_session_player(self, guild_id: int) -> LavalinkPlayer | HTTPException:
+    async def fetch_session_player(self, guild_id: int) -> rest_api.LavalinkPlayer | HTTPException:
         async with self._session.get(
             self.get_endpoint_session_player_by_guild_id(guild_id=guild_id),
             headers={"Authorization": self.password},
             params={"trace": "true" if self.trace else "false"},
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
-                return from_dict(data_class=LavalinkPlayer, data=await res.json(loads=ujson.loads))
+                return from_dict(data_class=rest_api.LavalinkPlayer, data=await res.json(loads=ujson.loads))
             failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
                 raise UnauthorizedException(failure)
@@ -1106,7 +1107,7 @@ class Node:
 
     async def patch_session_player(
         self, guild_id: int, no_replace: bool = False, payload: JSON_DICT_TYPE = None
-    ) -> LavalinkPlayer | HTTPException:
+    ) -> rest_api.LavalinkPlayer | HTTPException:
         async with self._session.patch(
             self.get_endpoint_session_player_by_guild_id(guild_id=guild_id),
             headers={"Authorization": self.password},
@@ -1114,7 +1115,7 @@ class Node:
             json=payload,
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
-                return from_dict(data_class=LavalinkPlayer, data=await res.json(loads=ujson.loads))
+                return from_dict(data_class=rest_api.LavalinkPlayer, data=await res.json(loads=ujson.loads))
             failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
                 raise UnauthorizedException(failure)
@@ -1151,7 +1152,7 @@ class Node:
             self._logger.trace("Failed to delete session player: %d %s", failure.status, failure.message)
             return HTTPException(failure)
 
-    async def fetch_loadtracks(self, query: Query) -> LoadTrackResponses | HTTPException:
+    async def fetch_loadtracks(self, query: Query) -> rest_api.LoadTrackResponses | HTTPException:
         if not self.available or not self.has_source(query.requires_capability):
             return dataclasses.replace(NO_MATCHES)
 
@@ -1202,14 +1203,14 @@ class Node:
             self._logger.trace("Failed to decode tracks: %d %s", failure.status, failure.message)
             return HTTPException(failure)
 
-    async def fetch_info(self, raise_on_error: bool = False) -> LavalinkInfo | HTTPException:
+    async def fetch_info(self, raise_on_error: bool = False) -> rest_api.LavalinkInfo | HTTPException:
         async with self._session.get(
             self.get_endpoint_info(),
             headers={"Authorization": self.password},
             params={"trace": "true" if self.trace else "false"},
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
-                return from_dict(data_class=LavalinkInfo, data=await res.json(loads=ujson.loads))
+                return from_dict(data_class=rest_api.LavalinkInfo, data=await res.json(loads=ujson.loads))
             failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
                 if raise_on_error:
@@ -1227,7 +1228,7 @@ class Node:
             params={"trace": "true" if self.trace else "false"},
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
-                return from_dict(data_class=LoadTrackResponses, data=await res.json(loads=ujson.loads))
+                return from_dict(data_class=websocket_responses.Stats, data=await res.json(loads=ujson.loads))
             failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
                 if raise_on_error:
@@ -1324,19 +1325,21 @@ class Node:
         else:
             raise UnsupportedNodeAPIException()
 
-    async def get_guild_player(self, guild_id: int) -> LavalinkPlayer:
+    async def get_guild_player(self, guild_id: int) -> rest_api.LavalinkPlayer:
         async with self._session.get(
             self.get_endpoint_session_player_by_guild_id(guild_id=guild_id),
             headers={"Authorization": self.password},
             params={"trace": "true" if self.trace else "false"},
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
-                return from_dict(data_class=LavalinkPlayer, data=await res.json(loads=ujson.loads))
+                return from_dict(data_class=rest_api.LavalinkPlayer, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
                 raise UnauthorizedException
         raise ValueError(f"Server returned an unexpected return code: {res.status}")
 
-    async def get_track(self, query: Query, first: bool = False, bypass_cache: bool = False) -> LoadTrackResponses:
+    async def get_track(
+        self, query: Query, first: bool = False, bypass_cache: bool = False
+    ) -> rest_api.LoadTrackResponses:
         """|coro|
         Gets all tracks associated with the given query.
 
@@ -1361,7 +1364,7 @@ class Node:
             return dataclasses.replace(response, tracks=response.tracks[:1])
         return response
 
-    async def search_youtube_music(self, query: str, bypass_cache: bool = False) -> LoadTrackResponses:
+    async def search_youtube_music(self, query: str, bypass_cache: bool = False) -> rest_api.LoadTrackResponses:
         """|coro|
         Gets the query from YouTube music.
         Parameters
@@ -1377,7 +1380,7 @@ class Node:
         """
         return await self.get_track(await self._query_cls.from_string(f"ytmsearch:{query}"), bypass_cache=bypass_cache)
 
-    async def search_youtube(self, query: str, bypass_cache: bool = False) -> LoadTrackResponses:
+    async def search_youtube(self, query: str, bypass_cache: bool = False) -> rest_api.LoadTrackResponses:
         """|coro|
         Gets the query from YouTube music.
         Parameters
@@ -1393,7 +1396,7 @@ class Node:
         """
         return await self.get_track(await self._query_cls.from_string(f"ytsearch:{query}"), bypass_cache=bypass_cache)
 
-    async def search_soundcloud(self, query: str, bypass_cache: bool = False) -> LoadTrackResponses:
+    async def search_soundcloud(self, query: str, bypass_cache: bool = False) -> rest_api.LoadTrackResponses:
         """|coro|
         Gets the query from Soundcloud.
         Parameters
@@ -1409,7 +1412,7 @@ class Node:
         """
         return await self.get_track(await self._query_cls.from_string(f"scsearch:{query}"), bypass_cache=bypass_cache)
 
-    async def search_spotify(self, query: str, bypass_cache: bool = False) -> LoadTrackResponses:
+    async def search_spotify(self, query: str, bypass_cache: bool = False) -> rest_api.LoadTrackResponses:
         """|coro|
         Gets the query from Spotify.
         Parameters
@@ -1425,7 +1428,7 @@ class Node:
         """
         return await self.get_track(await self._query_cls.from_string(f"spsearch:{query}"), bypass_cache=bypass_cache)
 
-    async def search_apple_music(self, query: str, bypass_cache: bool = False) -> LoadTrackResponses:
+    async def search_apple_music(self, query: str, bypass_cache: bool = False) -> rest_api.LoadTrackResponses:
         """|coro|
         Gets the query from Apple Music.
         Parameters
@@ -1442,7 +1445,7 @@ class Node:
         """
         return await self.get_track(await self._query_cls.from_string(f"amsearch:{query}"), bypass_cache=bypass_cache)
 
-    async def search_deezer(self, query: str, bypass_cache: bool = False) -> LoadTrackResponses:
+    async def search_deezer(self, query: str, bypass_cache: bool = False) -> rest_api.LoadTrackResponses:
         """|coro|
         Gets the query from Deezer.
         Parameters
@@ -1459,7 +1462,7 @@ class Node:
         """
         return await self.get_track(await self._query_cls.from_string(f"dzsearch:{query}"), bypass_cache=bypass_cache)
 
-    async def search_yandex(self, query: str, bypass_cache: bool = False) -> LoadTrackResponses:
+    async def search_yandex(self, query: str, bypass_cache: bool = False) -> rest_api.LoadTrackResponses:
         """|coro|
         Gets the query from Yandex Music.
         Parameters
@@ -1476,7 +1479,7 @@ class Node:
         """
         return await self.get_track(await self._query_cls.from_string(f"ymsearch:{query}"), bypass_cache=bypass_cache)
 
-    async def get_query_speak(self, query: str, bypass_cache: bool = False) -> LoadTrackResponses:
+    async def get_query_speak(self, query: str, bypass_cache: bool = False) -> rest_api.LoadTrackResponses:
         """|coro|
         Gets the query for speak.
         Parameters
@@ -1496,7 +1499,7 @@ class Node:
 
     async def get_query_localfiles(
         self, query: str, bypass_cache: bool = True, first: bool = True
-    ) -> LoadTrackResponses:
+    ) -> rest_api.LoadTrackResponses:
         """|coro|
         Gets the query from Localfiles.
         Parameters
