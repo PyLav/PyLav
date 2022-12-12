@@ -2695,7 +2695,7 @@ class Player(VoiceProtocol):
         return True
 
     async def maybe_shuffle_queue(self, requester: int) -> None:
-        if (await self.player_manager.client.player_config_manager.get_shuffle(self.guild.id)) is False:
+        if (await self.player_manager.client.player_config_manager.get_auto_shuffle(self.guild.id)) is False:
             return
         await self.shuffle_queue(requester)
 
