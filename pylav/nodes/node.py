@@ -20,9 +20,10 @@ from packaging.version import Version, parse
 
 from pylav.constants.builtin_nodes import BUNDLED_NODES_IDS_HOST_MAPPING, PYLAV_NODES
 from pylav.constants.coordinates import REGION_TO_COUNTRY_COORDINATE_MAPPING
-from pylav.constants.node import GOOD_RESPONSE_RANGE
+from pylav.constants.node import GOOD_RESPONSE_RANGE, MAX_SUPPORTED_API_MAJOR_VERSION
 from pylav.constants.node_features import SUPPORTED_FEATURES, SUPPORTED_SOURCES
 from pylav.constants.regex import VERSION_SNAPSHOT
+from pylav.constants.versions import VERSION_3_7_0_FIRST, VERSION_4_0_0_FIRST, VERSION_5_0_0_FIRST
 from pylav.events.base import PyLavEvent
 from pylav.exceptions.node import UnsupportedNodeAPIException
 from pylav.exceptions.request import HTTPException, UnauthorizedException
@@ -1221,6 +1222,12 @@ class Node:
                 raise HTTPException(failure)
             return HTTPException(failure)
 
+    async def _process_version_from_info(self) -> Version:
+        self._api_version = MAX_SUPPORTED_API_MAJOR_VERSION
+        info = await self.fetch_info(raise_on_error=True)
+        version_str = f"{info.version.major or MAX_SUPPORTED_API_MAJOR_VERSION}.{info.version.minor or 9999}.{info.version.patch or 9999}"
+        return Version(version_str)
+
     async def fetch_stats(self, raise_on_error: bool = False) -> websocket_responses.Stats | HTTPException:
         async with self._session.get(
             self.get_endpoint_stats(),
@@ -1247,9 +1254,8 @@ class Node:
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
                 text = await res.text()
-                # TODO:  Have a better implementation for this
-                if match := VERSION_SNAPSHOT.match(text):
-                    return Version(f"3.999.0-alpha+{match.group('commit')}")
+                if VERSION_SNAPSHOT.match(text):
+                    return await self._process_version_from_info()
                 return parse(await res.text())
             failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
@@ -1310,17 +1316,17 @@ class Node:
     # REST API - Wrappers
 
     async def fetch_node_version(self) -> Version:
-        self._version = await self.fetch_version()
+        self._version = await self.fetch_version(raise_on_error=True)
         return self._version
 
     async def fetch_api_version(self) -> None:
         if self.version is None:
             await self.fetch_node_version()
-        if self.version < (v370 := Version("3.7.0-alpha")):
+        if self.version < VERSION_3_7_0_FIRST:
             self._api_version = None
-        elif v370 <= self.version < (v400 := Version("4.0.0-alpha")):
+        elif VERSION_3_7_0_FIRST <= self.version < VERSION_4_0_0_FIRST:
             self._api_version = 3
-        elif v400 <= self.version < Version("5.0.0-alpha"):
+        elif VERSION_4_0_0_FIRST <= self.version < VERSION_5_0_0_FIRST:
             self._api_version = 4
         else:
             raise UnsupportedNodeAPIException()

@@ -4,6 +4,8 @@ import secrets
 
 from pylav import __version__
 
+MAX_SUPPORTED_API_MAJOR_VERSION = 3
+
 # noinspection SpellCheckingInspection
 NODE_DEFAULT_SETTINGS = {
     "server": {"port": 2154, "address": "localhost"},

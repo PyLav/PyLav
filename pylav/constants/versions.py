@@ -8,7 +8,11 @@ VERSION_3_7_0 = parse("3.7.0")
 VERSION_4_0_0 = parse("4.0.0")
 VERSION_5_0_0 = parse("5.0.0")
 
-API_DEVELOPMENT_VERSION = parse("3.999.0-alpha")
+VERSION_3_7_0_FIRST = Version("3.7.0-alpha.dev")
+VERSION_4_0_0_FIRST = Version("4.0.0-alpha.dev")
+VERSION_5_0_0_FIRST = Version("5.0.0-alpha.dev")
+
+API_DEVELOPMENT_VERSION = Version("4.999.0-alpha")
 
 # Migration versions
 VERSION_0_0_0_2 = parse("0.0.0.post2.dev0")
