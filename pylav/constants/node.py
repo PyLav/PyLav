@@ -4,7 +4,7 @@ import secrets
 
 from pylav import __version__
 
-MAX_SUPPORTED_API_MAJOR_VERSION = 3
+MAX_SUPPORTED_API_MAJOR_VERSION = 4
 
 # noinspection SpellCheckingInspection
 NODE_DEFAULT_SETTINGS = {

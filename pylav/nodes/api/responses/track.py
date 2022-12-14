@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import dataclasses
 
+from pylav.nodes.api.responses.shared import PluginInfo
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 
@@ -39,8 +40,11 @@ class Track:
     info: Info | dict
     encoded: str | None = None
     track: str | None = None
+    pluginInfo: dict | None | PluginInfo = None
 
     def __post_init__(self) -> None:
+        if isinstance(self.pluginInfo, dict):
+            object.__setattr__(self, "pluginInfo", PluginInfo(kwargs=self.pluginInfo))
         if self.encoded is None:
             object.__setattr__(self, "encoded", self.track)
         if isinstance(self.info, dict):

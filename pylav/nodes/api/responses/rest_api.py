@@ -6,6 +6,7 @@ from typing import Literal, Union
 from pylav.nodes.api.responses.filters import Filters
 from pylav.nodes.api.responses.misc import Git, Plugin, Version
 from pylav.nodes.api.responses.playlists import Info
+from pylav.nodes.api.responses.shared import PluginInfo
 from pylav.nodes.api.responses.track import Track
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
@@ -25,9 +26,12 @@ class LavalinkException(LoadException):
 class TrackLoaded:
     loadType: Literal["TRACK_LOADED"]
     playlistInfo: Info
+    pluginInfo: None | dict | PluginInfo = None
     tracks: list[Track] = dataclasses.field(default_factory=list)
 
     def __post_init__(self):
+        if isinstance(self.pluginInfo, dict):
+            object.__setattr__(self, "pluginInfo", PluginInfo(kwargs=self.pluginInfo))
         temp = []
         for s in self.tracks:
             if isinstance(s, Track) or (isinstance(s, dict) and (s := Track(**s))):
@@ -39,9 +43,12 @@ class TrackLoaded:
 class PlaylistLoaded:
     loadType: Literal["PLAYLIST_LOADED"]
     playlistInfo: Info
+    pluginInfo: None | dict | PluginInfo = None
     tracks: list[Track] = dataclasses.field(default_factory=list)
 
     def __post_init__(self):
+        if isinstance(self.pluginInfo, dict):
+            object.__setattr__(self, "pluginInfo", PluginInfo(kwargs=self.pluginInfo))
         temp = []
         for s in self.tracks:
             if isinstance(s, Track) or (isinstance(s, dict) and (s := Track(**s))):
@@ -53,9 +60,12 @@ class PlaylistLoaded:
 class SearchResult:
     loadType: Literal["SEARCH_RESULT"]
     playlistInfo: Info
+    pluginInfo: None | dict | PluginInfo = None
     tracks: list[Track] = dataclasses.field(default_factory=list)
 
     def __post_init__(self):
+        if isinstance(self.pluginInfo, dict):
+            object.__setattr__(self, "pluginInfo", PluginInfo(kwargs=self.pluginInfo))
         temp = []
         for s in self.tracks:
             if isinstance(s, Track) or (isinstance(s, dict) and (s := Track(**s))):
@@ -67,9 +77,12 @@ class SearchResult:
 class NoMatches:
     loadType: Literal["NO_MATCHES"]
     playlistInfo: Info
+    pluginInfo: None | dict | PluginInfo = None
     tracks: list[Track] = dataclasses.field(default_factory=list)
 
     def __post_init__(self):
+        if isinstance(self.pluginInfo, dict):
+            object.__setattr__(self, "pluginInfo", PluginInfo(kwargs=self.pluginInfo))
         temp = []
         for s in self.tracks:
             if isinstance(s, Track) or (isinstance(s, dict) and (s := Track(**s))):
@@ -82,9 +95,12 @@ class LoadFailed:
     loadType: Literal["LOAD_FAILED"]
     exception: LoadException
     playlistInfo: Info
+    pluginInfo: None | dict | PluginInfo = None
     tracks: list[Track] = dataclasses.field(default_factory=list)
 
     def __post_init__(self):
+        if isinstance(self.pluginInfo, dict):
+            object.__setattr__(self, "pluginInfo", PluginInfo(kwargs=self.pluginInfo))
         temp = []
         for s in self.tracks:
             if isinstance(s, Track) or (isinstance(s, dict) and (s := Track(**s))):
