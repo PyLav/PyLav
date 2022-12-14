@@ -19,7 +19,7 @@ else:
 
     class BassBoostConverter(Transformer):
         @classmethod
-        async def convert(cls, ctx: PyLavContext, arg: str) -> str:  # noqa:
+        async def convert(cls, ctx: PyLavContext, arg: str) -> str:  # noqa
             """Converts user input to a valid argument for the bassboost command"""
 
             try:

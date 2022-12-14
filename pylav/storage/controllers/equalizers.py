@@ -180,7 +180,7 @@ class EqualizerController:
     async def get_global_equalizers(self) -> AsyncIterator[equilizer.Equalizer]:
         for entry in (
             await EqualizerRow.select()
-            .where(EqualizerRow.scope == self._client.bot.user.id)
+            .where(EqualizerRow.scope == self._client.bot.user.id)  # type: ignore
             .output(load_json=True, nested=True)
         ):
             yield equilizer.Equalizer(**entry)

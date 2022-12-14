@@ -1815,7 +1815,7 @@ class Player(VoiceProtocol):
         requester: :class:`discord.Member`
             The member requesting to move the player.
         """
-        if self.config and (vc := await self.forced_vc()) and channel.id != vc.id:  # noqa:
+        if self.config and (vc := await self.forced_vc()) and channel.id != vc.id:  # noqa
             channel = vc
             self._logger.debug("Player has a forced VC enabled replacing channel arg with it")
         if channel == self.channel:
