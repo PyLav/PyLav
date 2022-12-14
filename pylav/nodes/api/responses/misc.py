@@ -21,7 +21,11 @@ class Version:
     def __post_init__(self) -> None:
         if not SEMANTIC_VERSIONING.match(self.semver):
             sha1 = GIT_SHA1.search(self.semver)
-            version = _Version(f"{API_DEVELOPMENT_VERSION}+{sha1 or 'Unknown'}")
+            if sha1:
+                sha1 = sha1.group("sha1")
+            else:
+                sha1 = "unknown"
+            version = _Version(f"{API_DEVELOPMENT_VERSION}+{sha1}")
         else:
             version = typing.cast(_Version, parse(self.semver))
         object.__setattr__(self, "semver", version)
