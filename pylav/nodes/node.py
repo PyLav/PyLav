@@ -1248,16 +1248,14 @@ class Node:
 
     async def fetch_version(self, raise_on_error: bool = False) -> Version | HTTPException:
         async with self._session.get(
-                self.get_endpoint_version(),
-                headers={"Authorization": self.password, "Content-Type": "text/plain"},
-                params={"trace": "true" if self.trace else "false"},
-            ) as res:
+            self.get_endpoint_version(),
+            headers={"Authorization": self.password, "Content-Type": "text/plain"},
+            params={"trace": "true" if self.trace else "false"},
+        ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
                 text = await res.text()
                 return (
-                    parse(text)
-                    if SEMANTIC_VERSIONING.match(text)
-                    else self._process_version_from_headers(res.headers)
+                    parse(text) if SEMANTIC_VERSIONING.match(text) else self._process_version_from_headers(res.headers)
                 )
             failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
