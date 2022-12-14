@@ -204,10 +204,21 @@ class WebSocket:
         await asyncio.wait_for(self.ready.wait(), timeout=timeout)
 
     async def configure_resume_and_timeout(self) -> None:
-        if not self._resuming_configured and self._resume_key and (self._resume_timeout and self._resume_timeout > 0):
-            await self.node.patch_session(payload={"resumingKey": self._resume_key, "timeout": self._resume_timeout})
-            self._resuming_configured = True
-            self._logger.info("Node resume has been configured with key: %s", self._resume_key)
+        match self.node.api_version:
+            case 3 if not self._resuming_configured and self._resume_key and (
+                self._resume_timeout and self._resume_timeout > 0
+            ):
+                await self.node.patch_session(
+                    payload={"resumingKey": self._resume_key, "timeout": self._resume_timeout}
+                )
+                self._resuming_configured = True
+                self._logger.info("Node resume has been configured with key: %s", self._resume_key)
+            case 4 if not self._resuming_configured and self._session_id and (
+                self._resume_timeout and self._resume_timeout > 0
+            ):
+                await self.node.patch_session(payload={"sessionId": self._session_id, "timeout": self._resume_timeout})
+                self._resuming_configured = True
+                self._logger.info("Node resume has been configured with sessionId: %s", self._session_id)
 
     async def connect(self) -> None:
         """Attempts to establish a connection to Lavalink"""
