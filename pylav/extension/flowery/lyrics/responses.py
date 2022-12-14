@@ -10,7 +10,7 @@ class LyricsExternal:
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
 class LyricsMedia:
     preview: str | None
-    artwork: str
+    artwork: str | None
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
@@ -20,8 +20,8 @@ class LyricsTrack:
     album: str
     duration: int
     explicit: bool
-    external: LyricsExternal
-    media: LyricsMedia
+    external: LyricsExternal | dict
+    media: LyricsMedia | dict
 
     def __post_init__(self):
         if isinstance(self.media, dict):
@@ -58,11 +58,15 @@ class LyricsMetadata:
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
 class Lyrics:
-    track: LyricsTrack
-    task: Task | None
+    track: LyricsTrack | dict
+    task: Task | None | dict
     lyrics: LyricsMetadata | None | dict = None
 
     def __post_init__(self):
+        if isinstance(self.track, dict):
+            object.__setattr__(self, "track", LyricsTrack(**self.track))
+        if isinstance(self.task, dict):
+            object.__setattr__(self, "task", Task(**self.task))
         if isinstance(self.lyrics, dict):
             object.__setattr__(self, "lyrics", LyricsMetadata(**self.lyrics))
 
