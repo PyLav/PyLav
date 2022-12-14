@@ -2,7 +2,17 @@ from __future__ import annotations
 
 import re
 
-VERSION_SNAPSHOT = re.compile(r"^(?P<commit>.*?)-SNAPSHOT$")
+SEMANTIC_VERSIONING = re.compile(
+    r"^(?P<major>0|[1-9]\d*)\."
+    r"(?P<minor>0|[1-9]\d*)\."
+    r"(?P<patch>0|[1-9]\d*)"
+    r"(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)"
+    r"(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?"
+    r"(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$"
+)
+
+GIT_SHA1 = re.compile(r"(?P<sha1>[0-9a-f]{40})")
+
 
 BASIC_URL_REGEX = re.compile(r"^(https?)://(\S+)$")
 STREAM_TITLE = re.compile(rb"StreamTitle='([^']*)';")

@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from packaging.version import Version
 
+from pylav.constants.node import MAX_SUPPORTED_API_MAJOR_VERSION
+
 VERSION_0_0_0 = Version("0.0.0")
 VERSION_3_6_0 = Version("3.6.0")
 VERSION_3_7_0 = Version("3.7.0")
@@ -12,7 +14,7 @@ VERSION_3_7_0_FIRST = Version("3.7.0-alpha.dev")
 VERSION_4_0_0_FIRST = Version("4.0.0-alpha.dev")
 VERSION_5_0_0_FIRST = Version("5.0.0-alpha.dev")
 
-API_DEVELOPMENT_VERSION = Version("4.999.0-alpha")
+API_DEVELOPMENT_VERSION = Version(f"{MAX_SUPPORTED_API_MAJOR_VERSION}.999.0-alpha")
 
 # Migration versions
 VERSION_0_0_0_2 = Version("0.0.0.post2.dev0")

@@ -22,7 +22,7 @@ from pylav.constants.builtin_nodes import BUNDLED_NODES_IDS_HOST_MAPPING, PYLAV_
 from pylav.constants.coordinates import REGION_TO_COUNTRY_COORDINATE_MAPPING
 from pylav.constants.node import GOOD_RESPONSE_RANGE, MAX_SUPPORTED_API_MAJOR_VERSION
 from pylav.constants.node_features import SUPPORTED_FEATURES, SUPPORTED_SOURCES
-from pylav.constants.regex import VERSION_SNAPSHOT
+from pylav.constants.regex import SEMANTIC_VERSIONING
 from pylav.constants.versions import VERSION_3_7_0_FIRST, VERSION_4_0_0_FIRST, VERSION_5_0_0_FIRST
 from pylav.events.base import PyLavEvent
 from pylav.exceptions.node import UnsupportedNodeAPIException
@@ -1222,10 +1222,9 @@ class Node:
                 raise HTTPException(failure)
             return HTTPException(failure)
 
-    async def _process_version_from_info(self) -> Version:
-        self._api_version = MAX_SUPPORTED_API_MAJOR_VERSION
-        info = await self.fetch_info(raise_on_error=True)
-        version_str = f"{info.version.major or MAX_SUPPORTED_API_MAJOR_VERSION}.{info.version.minor or 9999}.{info.version.patch or 9999}"
+    def _process_version_from_headers(self, headers: CIMultiDictProxy[str]) -> Version:
+        self._api_version = int(headers.get("Lavalink-API-Version") or MAX_SUPPORTED_API_MAJOR_VERSION)
+        version_str = f"{self._api_version}.9999.9999"
         return Version(version_str)
 
     async def fetch_stats(self, raise_on_error: bool = False) -> websocket_responses.Stats | HTTPException:
@@ -1254,9 +1253,9 @@ class Node:
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
                 text = await res.text()
-                if VERSION_SNAPSHOT.match(text):
-                    return await self._process_version_from_info()
-                return parse(await res.text())
+                if not SEMANTIC_VERSIONING.match(text):
+                    return self._process_version_from_headers(res.headers)
+                return parse(text)
             failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
                 if raise_on_error:
