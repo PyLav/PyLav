@@ -16,6 +16,7 @@ from apscheduler.jobstores.base import JobLookupError
 from dacite import from_dict
 from discord.utils import utcnow
 from expiringdict import ExpiringDict
+from multidict import CIMultiDictProxy
 from packaging.version import Version, parse
 
 from pylav.constants.builtin_nodes import BUNDLED_NODES_IDS_HOST_MAPPING, PYLAV_NODES

@@ -6,7 +6,7 @@ import typing
 from packaging.version import Version as _Version
 from packaging.version import parse
 
-from pylav.constants.regex import VERSION_SNAPSHOT
+from pylav.constants.regex import GIT_SHA1, SEMANTIC_VERSIONING
 from pylav.constants.versions import API_DEVELOPMENT_VERSION
 
 
@@ -19,8 +19,9 @@ class Version:
     preRelease: str | None = None
 
     def __post_init__(self) -> None:
-        if match := VERSION_SNAPSHOT.match(self.semver):
-            version = _Version(f"{API_DEVELOPMENT_VERSION}+{match.group('commit')}")
+        if not SEMANTIC_VERSIONING.match(self.semver):
+            sha1 = GIT_SHA1.search(self.semver)
+            version = _Version(f"{API_DEVELOPMENT_VERSION}+{sha1 or 'Unknown'}")
         else:
             version = typing.cast(_Version, parse(self.semver))
         object.__setattr__(self, "semver", version)
