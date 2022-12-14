@@ -323,8 +323,8 @@ class Track:
     async def source(self) -> str:
         return MISSING if self.is_partial else (await self.fetch_full_track_data()).info.sourceName
 
-    async def thumbnail(self) -> str | None:
-        return MISSING if self.is_partial else (await self.fetch_full_track_data()).info.thumbnail
+    async def artworkUrl(self) -> str | None:  # noqa:
+        return MISSING if self.is_partial else (await self.fetch_full_track_data()).info.artworkUrl
 
     async def isrc(self) -> str | None:
         return MISSING if self.is_partial else (await self.fetch_full_track_data()).info.isrc

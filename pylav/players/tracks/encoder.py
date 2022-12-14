@@ -8,7 +8,7 @@ from pylav.utils.vendor.lavalink_py.datarw import DataWriter
 LOGGER = getLogger("PyLav.Track.Decoder")
 
 
-# noinspection SpellCheckingInspection
+# noinspection SpellCheckingInspection,PyPep8Naming
 def encode_track(
     title: str,
     author: str,
@@ -17,7 +17,7 @@ def encode_track(
     is_stream: bool,
     uri: str | None,
     source: str,
-    thumbnail: str | None = None,
+    artworkUrl: str | None = None,
     isrc: str | None = None,
     probe: str | None = None,
 ) -> str:
@@ -34,16 +34,16 @@ def encode_track(
     match source:
         case "deezer" | "spotify" | "applemusic":
             writer.write_nullable_utf(isrc)
-            writer.write_nullable_utf(thumbnail)
+            writer.write_nullable_utf(artworkUrl)
         case "yandexmusic":
-            writer.write_nullable_utf(thumbnail)
+            writer.write_nullable_utf(artworkUrl)
         case "local" | "http" if probe is not None:
             writer.write_utf(probe)
     writer.write_long(0)
     return writer.to_base64()
 
 
-# noinspection SpellCheckingInspection
+# noinspection SpellCheckingInspection,PyPep8Naming
 async def async_encoder(
     title: str,
     author: str,
@@ -52,7 +52,7 @@ async def async_encoder(
     is_stream: bool,
     uri: str | None,
     source: str,
-    thumbnail: str | None = None,
+    artworkUrl: str | None = None,
     isrc: str | None = None,
     probe: str | None = None,
 ) -> str:
@@ -66,7 +66,7 @@ async def async_encoder(
         is_stream=is_stream,
         uri=uri,
         source=source,
-        thumbnail=thumbnail,
+        artworkUrl=artworkUrl,
         isrc=isrc,
         probe=probe,
     )

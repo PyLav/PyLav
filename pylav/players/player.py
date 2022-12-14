@@ -2460,7 +2460,7 @@ class Player(VoiceProtocol):
             description=queue_list,
             messageable=messageable,
         )
-        if url := await current.thumbnail():
+        if url := await current.artworkUrl():
             page.set_thumbnail(url=url)
 
         await self._process_np_embed_prev_track(page, previous_track_description)
@@ -2570,7 +2570,7 @@ class Player(VoiceProtocol):
             description=queue_list,
             messageable=messageable,
         )
-        if url := await current.thumbnail():
+        if url := await current.artworkUrl():
             page.set_thumbnail(url=url)
         queue_dur = await self.queue_duration(history=history)
         queue_total_duration = format_time_string(queue_dur // 1000)

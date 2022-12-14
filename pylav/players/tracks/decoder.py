@@ -13,7 +13,7 @@ from pylav.utils.vendor.lavalink_py.datarw import DataReader
 LOGGER = getLogger("PyLav.Track.Decoder")
 
 
-# noinspection SpellCheckingInspection
+# noinspection SpellCheckingInspection,PyPep8Naming
 def decode_track(track: str) -> Track:
     """Decodes a base64 track string into a Track object.
 
@@ -39,18 +39,18 @@ def decode_track(track: str) -> Track:
     is_stream = reader.read_boolean()
     uri = reader.read_nullable_utf()
     source = reader.read_utf()
-    thumbnail = None
+    artworkUrl = None
     isrc = None
     probe = None
     try:
         match source:
             case "youtube":
-                thumbnail = f"https://img.youtube.com/vi/{identifier}/mqdefault.jpg"
+                artworkUrl = f"https://img.youtube.com/vi/{identifier}/mqdefault.jpg"
             case "deezer" | "spotify" | "applemusic":
                 isrc = reader.read_nullable_utfm()
-                thumbnail = reader.read_nullable_utfm()
+                artworkUrl = reader.read_nullable_utfm()
             case "yandexmusic":
-                thumbnail = reader.read_nullable_utfm()
+                artworkUrl = reader.read_nullable_utfm()
             case "local" | "http":
                 # Probe info
                 probe = reader.read_utfm()
@@ -76,7 +76,7 @@ def decode_track(track: str) -> Track:
                     "isSeekable": not is_stream,
                     "sourceName": source,
                     "position": 0,
-                    "thumbnail": thumbnail,
+                    "artworkUrl": artworkUrl,
                     "isrc": isrc,
                     "probeInfo": probe,
                 },

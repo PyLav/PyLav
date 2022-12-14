@@ -16,7 +16,7 @@ class Info:
     title: str = ""
     uri: str | None = None
     sourceName: str | None = None
-    thumbnail: str | None = None
+    artworkUrl: str | None = None
     isrc: str | None = None
     probeInfo: str | None = None
 
