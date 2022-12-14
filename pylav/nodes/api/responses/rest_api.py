@@ -27,12 +27,26 @@ class TrackLoaded:
     playlistInfo: Info
     tracks: list[Track] = dataclasses.field(default_factory=list)
 
+    def __post_init__(self):
+        temp = []
+        for s in self.tracks:
+            if isinstance(s, Track) or (isinstance(s, dict) and (s := Track(**s))):
+                temp.append(s)
+        object.__setattr__(self, "tracks", temp)
+
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class PlaylistLoaded:
     loadType: Literal["PLAYLIST_LOADED"]
     playlistInfo: Info
     tracks: list[Track] = dataclasses.field(default_factory=list)
+
+    def __post_init__(self):
+        temp = []
+        for s in self.tracks:
+            if isinstance(s, Track) or (isinstance(s, dict) and (s := Track(**s))):
+                temp.append(s)
+        object.__setattr__(self, "tracks", temp)
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
@@ -41,12 +55,26 @@ class SearchResult:
     playlistInfo: Info
     tracks: list[Track] = dataclasses.field(default_factory=list)
 
+    def __post_init__(self):
+        temp = []
+        for s in self.tracks:
+            if isinstance(s, Track) or (isinstance(s, dict) and (s := Track(**s))):
+                temp.append(s)
+        object.__setattr__(self, "tracks", temp)
+
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class NoMatches:
     loadType: Literal["NO_MATCHES"]
     playlistInfo: Info
     tracks: list[Track] = dataclasses.field(default_factory=list)
+
+    def __post_init__(self):
+        temp = []
+        for s in self.tracks:
+            if isinstance(s, Track) or (isinstance(s, dict) and (s := Track(**s))):
+                temp.append(s)
+        object.__setattr__(self, "tracks", temp)
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
@@ -55,6 +83,13 @@ class LoadFailed:
     exception: LoadException
     playlistInfo: Info
     tracks: list[Track] = dataclasses.field(default_factory=list)
+
+    def __post_init__(self):
+        temp = []
+        for s in self.tracks:
+            if isinstance(s, Track) or (isinstance(s, dict) and (s := Track(**s))):
+                temp.append(s)
+        object.__setattr__(self, "tracks", temp)
 
 
 LoadTrackResponses = Union[
@@ -76,6 +111,13 @@ class LavalinkInfo:
     sourceManagers: list[str]
     filters: list[str]
     plugins: list[Plugin]
+
+    def __post_init__(self):
+        temp = []
+        for s in self.plugins:
+            if isinstance(s, Plugin) or (isinstance(s, dict) and (s := Plugin(**s))):
+                temp.append(s)
+        object.__setattr__(self, "plugins", temp)
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
