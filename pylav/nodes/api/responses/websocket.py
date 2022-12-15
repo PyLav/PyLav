@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import dataclasses
-from typing import Literal
+from typing import Literal, NotRequired  # noqa
 
 from pylav.nodes.api.responses.player import State
 from pylav.nodes.api.responses.rest_api import LavalinkException as TrackExceptionClass
@@ -76,7 +76,7 @@ class TrackStart(Message):
     guildId: str | None = None
     type: Literal["TrackStartEvent"] = "TrackStartEvent"
     encodedTrack: str | None = None
-    track: str | None = None
+    track: NotRequired[str | None] = None
 
     def __post_init__(self) -> None:
         if self.encodedTrack is None:
@@ -90,7 +90,7 @@ class TrackStuck(Message):
     type: Literal["TrackStuckEvent"] = "TrackStuckEvent"
     thresholdMs: int | None = None
     encodedTrack: str | None = None
-    track: str | None = None
+    track: NotRequired[str | None] = None
 
     def __post_init__(self) -> None:
         if self.encodedTrack is None:
@@ -104,7 +104,7 @@ class TrackEnd(Message):
     type: Literal["TrackEndEvent"] = "TrackEndEvent"
     reason: Literal["FINISHED", "LOAD_FAILED", "STOPPED", "REPLACED", "CLEANUP"] | None = None
     encodedTrack: str | None = None
-    track: str | None = None
+    track: NotRequired[str | None] = None
 
     def __post_init__(self) -> None:
         if self.encodedTrack is None:
@@ -118,7 +118,7 @@ class TrackException(Message):
     type: Literal["TrackExceptionEvent"] = "TrackExceptionEvent"
     exception: TrackExceptionClass | dict | None = None
     encodedTrack: str | None = None
-    track: str | None = None
+    track: NotRequired[str | None] = None
 
     def __post_init__(self) -> None:
         if self.encodedTrack is None:

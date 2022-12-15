@@ -1,4 +1,5 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import NotRequired  # noqa
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
@@ -61,6 +62,9 @@ class Lyrics:
     track: LyricsTrack | dict
     task: Task | None | dict
     lyrics: LyricsMetadata | None | dict = None
+    provider: NotRequired[str] = field(
+        repr=False, compare=False, hash=False, default="Flowery API - https://flowery.pw"
+    )
 
     def __post_init__(self):
         if isinstance(self.track, dict):

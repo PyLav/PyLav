@@ -620,12 +620,13 @@ class Track:
     def _maybe_escape_markdown(text: str, escape: bool = True) -> str:
         return discord.utils.escape_markdown(text) if escape else text
 
-    async def fetch_lyrics(self) -> Lyrics | Error | None:
+    async def fetch_lyrics(self) -> tuple[bool, Lyrics | Error | None]:
         if isrc := await self.isrc():
-            return await self._node.node_manager.client.flowery_api.lyrics.get_lyrics(isrc=isrc)
+            return True, await self._node.node_manager.client.flowery_api.lyrics.get_lyrics(isrc=isrc)
         elif not self.is_partial:
             if await self.is_spotify():
-                return await self._node.node_manager.client.flowery_api.lyrics.get_lyrics(
+                return True, await self._node.node_manager.client.flowery_api.lyrics.get_lyrics(
                     spotify_id=await self.identifier()
                 )
-            return await self._node.node_manager.client.flowery_api.lyrics.get_lyrics(query=await self.title())
+            return False, await self._node.node_manager.client.flowery_api.lyrics.get_lyrics(query=await self.title())
+        return False, None

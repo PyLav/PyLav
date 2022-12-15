@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import dataclasses
+from typing import NotRequired  # noqa
 
 from pylav.nodes.api.responses.shared import PluginInfo
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
@@ -39,7 +40,7 @@ class Info:
 class Track:
     info: Info | dict
     encoded: str | None = None
-    track: str | None = None
+    track: NotRequired[str | None] = None
     pluginInfo: dict | None | PluginInfo = None
 
     def __post_init__(self) -> None:
