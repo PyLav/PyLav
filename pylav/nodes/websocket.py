@@ -13,6 +13,7 @@ from discord.utils import utcnow
 from packaging.version import Version
 
 from pylav.constants.builtin_nodes import PYLAV_NODES
+from pylav.constants.versions import VERSION_3_7_0
 from pylav.events.node import WebSocketClosedEvent
 from pylav.events.plugins import SegmentSkippedEvent, SegmentsLoadedEvent
 from pylav.events.track import TrackEndEvent, TrackExceptionEvent, TrackStartEvent, TrackStuckEvent
@@ -255,7 +256,7 @@ class WebSocket:
                 )
                 await self.node.fetch_api_version()
                 self._api_version = self.node.api_version
-                if not self._api_version:
+                if self.node.version < VERSION_3_7_0:
                     self._logger.critical(
                         "Node %s is not running a supported Lavalink version (%s:%s - %s)",
                         self._node.identifier,

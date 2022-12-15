@@ -24,9 +24,7 @@ from pylav.constants.coordinates import REGION_TO_COUNTRY_COORDINATE_MAPPING
 from pylav.constants.node import GOOD_RESPONSE_RANGE, MAX_SUPPORTED_API_MAJOR_VERSION
 from pylav.constants.node_features import SUPPORTED_FEATURES, SUPPORTED_SOURCES
 from pylav.constants.regex import SEMANTIC_VERSIONING
-from pylav.constants.versions import VERSION_3_7_0_FIRST, VERSION_4_0_0_FIRST, VERSION_5_0_0_FIRST
 from pylav.events.base import PyLavEvent
-from pylav.exceptions.node import UnsupportedNodeAPIException
 from pylav.exceptions.request import HTTPException, UnauthorizedException
 from pylav.logging import getLogger
 from pylav.nodes.api.responses import rest_api
@@ -964,106 +962,43 @@ class Node:
 
     # ENDPOINTS
     def get_endpoint_websocket(self) -> str:
-        match self.api_version:
-            case 3:
-                return f"{self.socket_protocol}://{self.host}:{self.port}/v3/websocket"
-            case 4:
-                return f"{self.socket_protocol}://{self.host}:{self.port}/v4/websocket"
-        raise UnsupportedNodeAPIException()
+        return f"{self.socket_protocol}://{self.host}:{self.port}/v{self.api_version}/websocket"
 
     def get_endpoint_info(self) -> str:
-        match self.api_version:
-            case 3:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v3/info"
-            case 4:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v4/info"
-        raise UnsupportedNodeAPIException()
+        return f"{self.connection_protocol}://{self.host}:{self.port}/v{self.api_version}/info"
 
     def get_endpoint_session_players(self) -> str:
-        match self.api_version:
-            case 3:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v3/sessions/{self.session_id}/players"
-            case 4:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v4/sessions/{self.session_id}/players"
-        raise UnsupportedNodeAPIException()
+        return f"{self.connection_protocol}://{self.host}:{self.port}/v{self.api_version}/sessions/{self.session_id}/players"
 
     def get_endpoint_session_player_by_guild_id(self, guild_id: int) -> str:
-        match self.api_version:
-            case 3:
-                return (
-                    f"{self.connection_protocol}://{self.host}:{self.port}/v3"
-                    f"/sessions/{self.session_id}/players/{guild_id}"
-                )
-            case 4:
-                return (
-                    f"{self.connection_protocol}://{self.host}:{self.port}/v4"
-                    f"/sessions/{self.session_id}/players/{guild_id}"
-                )
-        raise UnsupportedNodeAPIException()
+        return (
+            f"{self.connection_protocol}://{self.host}:{self.port}/v{self.api_version}"
+            f"/sessions/{self.session_id}/players/{guild_id}"
+        )
 
     def get_endpoint_session(self) -> str:
-        match self.api_version:
-            case 3:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v3/sessions/{self.session_id}"
-            case 4:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v4/sessions/{self.session_id}"
-        raise UnsupportedNodeAPIException()
+        return f"{self.connection_protocol}://{self.host}:{self.port}/v{self.api_version}/sessions/{self.session_id}"
 
     def get_endpoint_loadtracks(self) -> str:
-        match self.api_version:
-            case 3:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v3/loadtracks"
-            case 4:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v4/loadtracks"
-        raise UnsupportedNodeAPIException()
+        return f"{self.connection_protocol}://{self.host}:{self.port}/v{self.api_version}/loadtracks"
 
     def get_endpoint_decodetrack(self) -> str:
-        match self.api_version:
-            case 3:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v3/decodetrack"
-            case 4:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v4/decodetrack"
-        raise UnsupportedNodeAPIException()
+        return f"{self.connection_protocol}://{self.host}:{self.port}/v{self.api_version}/decodetrack"
 
     def get_endpoint_decodetracks(self) -> str:
-        match self.api_version:
-            case 3:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v3/decodetracks"
-            case 4:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v4/decodetracks"
-        raise UnsupportedNodeAPIException()
+        return f"{self.connection_protocol}://{self.host}:{self.port}/v{self.api_version}/decodetracks"
 
     def get_endpoint_stats(self) -> str:
-        match self.api_version:
-            case 3:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v3/stats"
-            case 4:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v4/stats"
-        raise UnsupportedNodeAPIException()
+        return f"{self.connection_protocol}://{self.host}:{self.port}/v{self.api_version}/stats"
 
     def get_endpoint_routeplanner_status(self) -> str:
-        match self.api_version:
-            case 3:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v3/routeplanner/status"
-            case 4:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v4/routeplanner/status"
-        raise UnsupportedNodeAPIException()
+        return f"{self.connection_protocol}://{self.host}:{self.port}/v{self.api_version}/routeplanner/status"
 
     def get_endpoint_routeplanner_free_address(self) -> str:
-        match self.api_version:
-            case 3:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v3/routeplanner/free/address"
-            case 4:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v4/routeplanner/free/address"
-        raise UnsupportedNodeAPIException()
+        return f"{self.connection_protocol}://{self.host}:{self.port}/v{self.api_version}routeplanner/free/address"
 
     def get_endpoint_routeplanner_free_all(self) -> str:
-        match self.api_version:
-            case 3:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v3/routeplanner/free/all"
-            case 4:
-                return f"{self.connection_protocol}://{self.host}:{self.port}/v4/routeplanner/free/all"
-        raise UnsupportedNodeAPIException()
+        return f"{self.connection_protocol}://{self.host}:{self.port}/v{self.api_version}/routeplanner/free/all"
 
     def get_endpoint_version(self) -> str:
         return f"{self.connection_protocol}://{self.host}:{self.port}/version"
@@ -1254,8 +1189,9 @@ class Node:
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
                 text = await res.text()
+                version_from_header = self._process_version_from_headers(res.headers)
                 if not SEMANTIC_VERSIONING.match(text):
-                    return self._process_version_from_headers(res.headers)
+                    return version_from_header
                 return parse(text)
             failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
@@ -1322,14 +1258,6 @@ class Node:
     async def fetch_api_version(self) -> None:
         if self.version is None:
             await self.fetch_node_version()
-        if self.version < VERSION_3_7_0_FIRST:
-            self._api_version = None
-        elif VERSION_3_7_0_FIRST <= self.version < VERSION_4_0_0_FIRST:
-            self._api_version = 3
-        elif VERSION_4_0_0_FIRST <= self.version < VERSION_5_0_0_FIRST:
-            self._api_version = 4
-        else:
-            raise UnsupportedNodeAPIException()
 
     async def get_guild_player(self, guild_id: int) -> rest_api.LavalinkPlayer:
         async with self._session.get(
