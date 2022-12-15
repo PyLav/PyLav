@@ -120,7 +120,7 @@ Features
 Credits
 ---------------------------
 - [Topi](https://github.com/TopiSenpai) for all the work done to Lavalink and implementing direct requests to make PyLav even better.
-- [Devoxin- Lavalink.py](https://github.com/Devoxin/Lavalink.py) for ideas for implementation.
+- [Devoxin - Lavalink.py](https://github.com/Devoxin/Lavalink.py) for ideas for implementation.
 - [Ryan](https://github.com/ryan5453) for the amazing [Lyrics API](https://flowery.pw) used for lyrics.
 - [globocom/m3u8](https://github.com/globocom/m3u8) for the M3U8 parser which I made asynchronous found in [m3u8_parser](pylav/extension/m3u).
 - [andreztz/pyradios](https://github.com/andreztz/pyradios) for the radio parser which I made asynchronous found in [radio](pylav/extension/radio).
