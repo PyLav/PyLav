@@ -1190,9 +1190,7 @@ class Node:
             if res.status in GOOD_RESPONSE_RANGE:
                 text = await res.text()
                 version_from_header = self._process_version_from_headers(res.headers)
-                if not SEMANTIC_VERSIONING.match(text):
-                    return version_from_header
-                return parse(text)
+                return parse(text) if SEMANTIC_VERSIONING.match(text) else version_from_header
             failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
                 if raise_on_error:
