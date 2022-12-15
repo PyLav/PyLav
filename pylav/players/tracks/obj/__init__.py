@@ -629,7 +629,7 @@ class Track:
                     spotify_id=await self.identifier()
                 )
             elif await self.source() in {"deezer", "applemusic"}:
-                return False, await self._node.node_manager.client.flowery_api.lyrics.get_lyrics(
+                return True, await self._node.node_manager.client.flowery_api.lyrics.get_lyrics(
                     query=f"{await self.title()} artist:{await self.author()}"
                 )
             else:
