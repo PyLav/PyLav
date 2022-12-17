@@ -205,20 +205,21 @@ class WebSocket:
         await asyncio.wait_for(self.ready.wait(), timeout=timeout)
 
     async def configure_resume_and_timeout(self) -> None:
-        match self.node.api_version:
-            case 3 if not self._resuming_configured and self._resume_key and (
-                self._resume_timeout and self._resume_timeout > 0
-            ):
-                await self.node.patch_session(
-                    payload={"resumingKey": self._resume_key, "timeout": self._resume_timeout}
-                )
-                self._resuming_configured = True
-                self._logger.info("Node resume has been configured with key: %s", self._resume_key)
-            case 4 if not self._resuming_configured and self._session_id and (
-                self._resume_timeout and self._resume_timeout > 0
-            ):
-                await self.node.patch_session(payload={"sessionId": self._session_id, "timeout": self._resume_timeout})
-                self._resuming_configured = True
+        if self._resume_timeout > 0:
+            payload = {"timeout": self._resume_timeout}
+        else:
+            payload = {}
+        if self.node.api_version < 4:
+            payload["resumingKey"] = self._resume_key
+        elif self.node.api_version == 4:
+            payload["resuming"] = self._session_id is not None
+
+        if len(list(payload.keys())) == 2:
+            await self.node.patch_session(payload=payload)
+            self._resuming_configured = True
+            if self.node.api_version < 4:
+                self._logger.info("Node resume has been configured with resumingKey: %s", self._resume_key)
+            else:
                 self._logger.info("Node resume has been configured with sessionId: %s", self._session_id)
 
     async def connect(self) -> None:
@@ -265,6 +266,10 @@ class WebSocket:
                         self.node.version,
                     )
                     raise Exception
+                if self._api_version < 4 and self._resume_key is not None:
+                    headers["Resume-Key"] = self._resume_key
+                elif self._api_version >= 4 and self._session_id is not None:
+                    headers["Session-Id"] = self._session_id
                 ws_uri = self.node.get_endpoint_websocket()
                 try:
                     self._ws = await self._session.ws_connect(url=ws_uri, headers=headers, heartbeat=60, timeout=600)

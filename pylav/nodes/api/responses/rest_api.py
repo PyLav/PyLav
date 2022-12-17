@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import dataclasses
+from typing import NotRequired  # noqa
 from typing import Literal, Union
 
 from pylav.nodes.api.responses.filters import Filters
@@ -25,7 +26,7 @@ class LavalinkException(LoadException):
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class TrackLoaded:
     loadType: Literal["TRACK_LOADED"]
-    playlistInfo: Info
+    playlistInfo: NotRequired[Info] = None
     pluginInfo: None | dict | PluginInfo = None
     tracks: list[Track] = dataclasses.field(default_factory=list)
 
@@ -59,7 +60,7 @@ class PlaylistLoaded:
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class SearchResult:
     loadType: Literal["SEARCH_RESULT"]
-    playlistInfo: Info
+    playlistInfo: NotRequired[Info] = None
     pluginInfo: None | dict | PluginInfo = None
     tracks: list[Track] = dataclasses.field(default_factory=list)
 
@@ -76,7 +77,7 @@ class SearchResult:
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class NoMatches:
     loadType: Literal["NO_MATCHES"]
-    playlistInfo: Info
+    playlistInfo: NotRequired[Info] = None
     pluginInfo: None | dict | PluginInfo = None
     tracks: list[Track] = dataclasses.field(default_factory=list)
 
@@ -94,7 +95,7 @@ class NoMatches:
 class LoadFailed:
     loadType: Literal["LOAD_FAILED"]
     exception: LoadException
-    playlistInfo: Info
+    playlistInfo: NotRequired[Info] = None
     pluginInfo: None | dict | PluginInfo = None
     tracks: list[Track] = dataclasses.field(default_factory=list)
 
