@@ -68,3 +68,10 @@ class Timescale(FilterMixin):
 
     def reset(self) -> None:
         self.speed = self.pitch = self.rate = None
+
+    def adjust_position(self, position: float | int) -> float:
+        if self.speed is None and self.rate is None:
+            return position
+        if self.rate is None:
+            return position * self.speed
+        return position + (position * (self.speed - 1))

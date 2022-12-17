@@ -624,15 +624,23 @@ class Player(VoiceProtocol):
         return sum(not i.bot for i in self.channel.members) == 0
 
     async def position(self) -> float:
-        """Returns the position in the track, adjusted for delta since last update"""
+        """Returns the position in the track, adjusted for delta since last update and the Timescale filter"""
         if not self.is_playing:
             return 0
 
         if self.paused:
-            return min(self._last_position, await self.current.duration())
+            return min(
+                self.timescale.adjust_position(self._last_position) if self.timescale.changed else self._last_position,
+                await self.current.duration(),
+            )
 
         difference = time.time() * 1000 - self._last_update
-        return min(self._last_position + difference, await self.current.duration())
+        return min(
+            self.timescale.adjust_position(self._last_position + difference)
+            if self.timescale.changed
+            else self._last_position,
+            await self.current.duration(),
+        )
 
     @property
     def estimated_position(self) -> float:
@@ -644,7 +652,8 @@ class Player(VoiceProtocol):
             return self._last_position
 
         difference = time.time() * 1000 - self._last_update
-        return self._last_position + difference
+        position = self._last_position + difference
+        return self.timescale.adjust_position(position) if self.timescale.changed else position
 
     async def fetch_player_stats(self, return_position: bool = False):
         try:
@@ -2440,7 +2449,10 @@ class Player(VoiceProtocol):
             return ""
         queue_list = ""
         arrow = await self.draw_time()
-        pos = format_time_dd_hh_mm_ss(await self.fetch_position())
+        position = await self.fetch_position()
+        if self.timescale.changed:
+            position *= self.timescale.speed
+        pos = format_time_dd_hh_mm_ss(position)
         current = self.current
         dur = _("LIVE") if await current.stream() else format_time_dd_hh_mm_ss(await current.duration())
         current_track_description = await current.get_track_display_name(with_url=True)
