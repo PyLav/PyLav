@@ -28,37 +28,26 @@ def decode_track(track: str) -> Track:
     The decoded Track object
     """
     reader = DataReader(track)
-
     flags = (reader.read_int() & 0xC0000000) >> 30
-    __ = struct.unpack("B", reader.read_byte()) if flags & 1 != 0 else 1
-
+    (version,) = (struct.unpack("B", reader.read_byte())) if flags & 1 != 0 else (1,)
+    plugin_info = {}
     title = reader.read_utfm()
     author = reader.read_utfm()
     length = reader.read_long()
     identifier = reader.read_utf()
     is_stream = reader.read_boolean()
     uri = reader.read_nullable_utf()
+    artworkUrl = reader.read_nullable_utf()
+    isrc = reader.read_nullable_utf()
     source = reader.read_utf()
-    artworkUrl = None
-    isrc = None
-    probe = None
     try:
         match source:
-            case "youtube":
-                artworkUrl = f"https://img.youtube.com/vi/{identifier}/mqdefault.jpg"
-            case "deezer" | "spotify" | "applemusic":
-                isrc = reader.read_nullable_utfm()
-                artworkUrl = reader.read_nullable_utfm()
-            case "yandexmusic":
-                artworkUrl = reader.read_nullable_utfm()
             case "local" | "http":
-                # Probe info
-                probe = reader.read_utfm()
-
+                plugin_info["probeInfo"] = reader.read_utfm()
         # Position
-        reader.read_long()
+        __ = reader.read_long()  # Discard position, we don't need it
     except Exception as exc:
-        LOGGER.trace("Failed to decode track", exc_info=exc)
+        LOGGER.verbose("Error while decoding version %d track: %s", version, track, exc_info=exc)
 
     return typing.cast(
         Track,
@@ -67,6 +56,7 @@ def decode_track(track: str) -> Track:
             data={
                 "encoded": track,
                 "info": {
+                    "version": version,
                     "title": title,
                     "author": author,
                     "length": length,
@@ -75,11 +65,11 @@ def decode_track(track: str) -> Track:
                     "uri": uri,
                     "isSeekable": not is_stream,
                     "sourceName": source,
-                    "position": 0,
                     "artworkUrl": artworkUrl,
                     "isrc": isrc,
-                    "probeInfo": probe,
+                    "position": 0,
                 },
+                "pluginInfo": plugin_info,
             },
         ),
     )

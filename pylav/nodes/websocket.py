@@ -13,7 +13,6 @@ from discord.utils import utcnow
 from packaging.version import Version
 
 from pylav.constants.builtin_nodes import PYLAV_NODES
-from pylav.constants.versions import VERSION_3_7_0
 from pylav.events.node import WebSocketClosedEvent
 from pylav.events.plugins import SegmentSkippedEvent, SegmentsLoadedEvent
 from pylav.events.track import TrackEndEvent, TrackExceptionEvent, TrackStartEvent, TrackStuckEvent
@@ -206,18 +205,10 @@ class WebSocket:
 
     async def configure_resume_and_timeout(self) -> None:
         payload = {"timeout": self._resume_timeout} if self._resume_timeout > 0 else {}
-        if self.node.api_version < 4:
-            payload["resumingKey"] = self._resume_key
-        elif self.node.api_version == 4:
-            payload["resuming"] = self._session_id is not None
-
-        if len(list(payload.keys())) == 2:
-            await self.node.patch_session(payload=payload)
-            self._resuming_configured = True
-            if self.node.api_version < 4:
-                self._logger.info("Node resume has been configured with resumingKey: %s", self._resume_key)
-            else:
-                self._logger.info("Node resume has been configured with sessionId: %s", self._session_id)
+        payload["resuming"] = self._session_id is not None
+        await self.node.patch_session(payload=payload)
+        self._resuming_configured = self._session_id is not None
+        self._logger.info("Node resume has been configured with sessionId: %s", self._session_id)
 
     async def connect(self) -> None:
         """Attempts to establish a connection to Lavalink"""
@@ -254,7 +245,7 @@ class WebSocket:
                 )
                 await self.node.fetch_api_version()
                 self._api_version = self.node.api_version
-                if self.node.version < VERSION_3_7_0:
+                if self._api_version < 4:
                     self._logger.critical(
                         "Node %s is not running a supported Lavalink version (%s:%s - %s)",
                         self._node.identifier,
@@ -262,10 +253,8 @@ class WebSocket:
                         self._port,
                         self.node.version,
                     )
-                    raise Exception
-                if self._api_version < 4 and self._resume_key is not None:
-                    headers["Resume-Key"] = self._resume_key
-                elif self._api_version >= 4 and self._session_id is not None:
+                    raise OSError
+                if self._session_id is not None:
                     headers["Session-Id"] = self._session_id
                 ws_uri = self.node.get_endpoint_websocket()
                 try:
@@ -321,7 +310,7 @@ class WebSocket:
 
                         self._message_queue.clear()
                     await self._listen()
-                    self._logger.debug("_listen returned")
+                    self._logger.debug("Websocket lister returned")
                     # Ensure this loop doesn't proceed if _listen returns control back to this
                     # function.
                     return
@@ -330,6 +319,15 @@ class WebSocket:
                 "A WebSocket connection could not be established within %s attempts",
                 attempt,
             )
+        except OSError:
+            self._connecting = False
+            if self._ws and not self._ws.closed and not self._ws._closing:
+                await self._ws.close(code=4014, message=b"Shutting down")
+            await self._session.close()
+            self.ready.set()
+            self.node._ready.set()
+            self._connect_task.cancel()
+            return
         except Exception:  # noqa
             self._logger.exception(
                 "An exception occurred while attempting to connect to the node",

@@ -502,11 +502,14 @@ class NodeManager:
                 return
             LOGGER.warning("No nodes found, please add some nodes")
             return
-        done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+        done, pending = await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
         for task in pending:
             task.cancel()
         for result in done:
             result.result()
+        len_nodes = sum(1 for node in nodes_list if node.available)
+        if len_nodes == 0:
+            raise OSError("No nodes are available")
         if not self._adding_nodes.is_set():
             self._adding_nodes.set()
 

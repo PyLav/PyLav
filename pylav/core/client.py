@@ -60,6 +60,7 @@ from pylav.events.base import PyLavEvent
 from pylav.events.manager import DispatchManager
 from pylav.exceptions.client import AnotherClientAlreadyRegisteredException, PyLavInvalidArgumentsException
 from pylav.exceptions.node import NoNodeAvailableException, NoNodeWithRequestFunctionalityAvailableException
+from pylav.exceptions.request import HTTPException
 from pylav.extension.bundled_node import LAVALINK_DOWNLOAD_DIR
 from pylav.extension.bundled_node.manager import LocalNodeManager
 from pylav.extension.flowery.base import FloweryAPI
@@ -69,13 +70,14 @@ from pylav.helpers.misc import MISSING
 from pylav.helpers.singleton import SingletonCallable, SingletonClass
 from pylav.logging import getLogger
 from pylav.nodes.api.responses.rest_api import LoadTrackResponses
-from pylav.nodes.api.responses.route_planner import Status as route_planner_status
+from pylav.nodes.api.responses.route_planner import Status as RoutePlannerStatus
 from pylav.nodes.api.responses.track import Track as TrackObject
 from pylav.nodes.manager import NodeManager
 from pylav.nodes.node import Node
 from pylav.players.manager import PlayerController
 from pylav.players.player import Player
 from pylav.players.query.obj import Query
+from pylav.players.tracks.decoder import async_decoder
 from pylav.players.tracks.obj import Track
 from pylav.storage.controllers.config import ConfigController
 from pylav.storage.controllers.equalizers import EqualizerController
@@ -85,11 +87,13 @@ from pylav.storage.controllers.players.config import PlayerConfigController
 from pylav.storage.controllers.players.states import PlayerStateController
 from pylav.storage.controllers.playlists import PlaylistController
 from pylav.storage.controllers.queries import QueryController
+from pylav.storage.database.cache.model import CachedModel
 from pylav.storage.database.tables.misc import DATABASE_ENGINE, IS_POSTGRES
 from pylav.storage.models.config import Config
 from pylav.storage.models.node.real import Node as RealNode
 from pylav.type_hints.bot import DISCORD_BOT_TYPE, DISCORD_COG_TYPE, DISCORD_CONTEXT_TYPE, DISCORD_INTERACTION_TYPE
 from pylav.utils.aiohttp_postgres_cache import PostgresCacheBackend
+from pylav.utils.vendor.redbot import AsyncIter
 
 try:
     from redbot.core.i18n import Translator
@@ -197,6 +201,10 @@ class Client(metaclass=SingletonClass):
             self._cached_session = aiohttp_client_cache.CachedSession(
                 timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps, cache=self._aiohttp_client_cache
             )
+            # Attach the Client to the necessary objects
+            CachedModel.attach_client(self)
+            Query.attach_client(self)
+            Track.attach_client(self)
             self._node_manager = NodeManager(
                 self,
                 external_host=EXTERNAL_UNMANAGED_HOST,
@@ -842,7 +850,9 @@ class Client(metaclass=SingletonClass):
             temporary=temporary,
         )
 
-    async def decode_track(self, track: str, feature: str = None) -> TrackObject:
+    async def decode_track(
+        self, track: str, feature: str = None, raise_on_failure: bool = False
+    ) -> TrackObject | HTTPException:
         """|coro|
         Decodes a base64-encoded track string into a dict.
 
@@ -852,6 +862,8 @@ class Client(metaclass=SingletonClass):
             The base64-encoded `track` string.
         feature: Optional[:class:`str`]
             The feature to decode the track for. Defaults to `None`.
+        raise_on_failure: Optional[:class:`bool`]
+            Whether to raise an exception if the track fails to decode. Defaults to `False`.
 
         Returns
         -------
@@ -865,9 +877,17 @@ class Client(metaclass=SingletonClass):
             raise NoNodeWithRequestFunctionalityAvailableException(
                 _("No node with {feature} functionality available!").format(feature=feature), feature=feature
             )
-        return await node.fetch_decodetrack(track)
+        try:
+            response = await node.fetch_decodetrack(track, raise_on_failure=raise_on_failure)
+            if isinstance(response, TrackObject):
+                return response
+            raise TypeError
+        except Exception:  # noqa
+            return await async_decoder(track)
 
-    async def decode_tracks(self, tracks: list, feature: str = None) -> list[TrackObject]:
+    async def decode_tracks(
+        self, tracks: list, feature: str = None, raise_on_failure: bool = False
+    ) -> list[TrackObject]:
         """|coro|
         Decodes a list of base64-encoded track strings into a dict.
 
@@ -877,6 +897,8 @@ class Client(metaclass=SingletonClass):
             A list of base64-encoded `track` strings.
         feature: Optional[:class:`str`]
             The feature to decode the tracks for. Defaults to `None`.
+        raise_on_failure: Optional[:class:`bool`]
+            Whether to raise an exception if the tracks fail to decode. Defaults to `False`.
 
         Returns
         -------
@@ -890,10 +912,20 @@ class Client(metaclass=SingletonClass):
             raise NoNodeWithRequestFunctionalityAvailableException(
                 _("No node with {feature} functionality available!").format(feature=feature), feature=feature
             )
-        return await node.post_decodetracks(tracks)
+        try:
+            response = await node.post_decodetracks(tracks, raise_on_failure=raise_on_failure)
+            if isinstance(response, HTTPException):
+                raise TypeError
+            return response
+        except Exception:  # noqa
+            response_tracks = []
+            async for track in AsyncIter(tracks):
+                with contextlib.suppress(Exception):
+                    response_tracks.append(await async_decoder(track))
+            return response_tracks
 
     @staticmethod
-    async def routeplanner_status(node: Node) -> route_planner_status:
+    async def routeplanner_status(node: Node) -> RoutePlannerStatus:
         """|coro|
         Gets the route-planner status of the target node.
 
@@ -1001,7 +1033,8 @@ class Client(metaclass=SingletonClass):
                         await self._cached_session.close()
 
                         if self._scheduler:
-                            self._scheduler.shutdown(wait=True)
+                            with contextlib.suppress(Exception):
+                                self._scheduler.shutdown(wait=True)
                     except Exception as e:
                         LOGGER.critical("Failed to shutdown the client", exc_info=e)
                     if self.__old_process_command_method is not None:
@@ -1274,7 +1307,6 @@ class Client(metaclass=SingletonClass):
                     sub_query,
                     successful_tracks,
                     track_count,
-                    partial,
                 )
             elif (sub_query.is_local or sub_query.is_custom_playlist) and sub_query.is_album:
                 track_count = await self._get_tracks_local_album(
@@ -1306,7 +1338,8 @@ class Client(metaclass=SingletonClass):
             await player.play(track, await track.query(), requester)
         return track_count
 
-    async def _get_tracks_play_or_enqueue(self, enqueue, player, requester, successful_tracks):
+    @staticmethod
+    async def _get_tracks_play_or_enqueue(enqueue, player, requester, successful_tracks):
         # Query tracks as the queue builds as this may be a slow operation
         if enqueue and successful_tracks and not player.is_playing and not player.paused:
             track = successful_tracks.pop()
@@ -1362,7 +1395,6 @@ class Client(metaclass=SingletonClass):
         sub_query,
         successful_tracks,
         track_count,
-        partial,
     ):
         response = await self._get_tracks(player=player, query=sub_query, bypass_cache=bypass_cache)
         track_list = response.tracks

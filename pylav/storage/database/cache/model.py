@@ -2,12 +2,30 @@ from __future__ import annotations
 
 import inspect
 from collections.abc import Callable, Iterator
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from pylav.storage.database.cache.functions import invalidate_cache_multi, update_cache_multi
 
+if TYPE_CHECKING:
+    from pylav.core.client import Client
+
+__CLIENT: Client | None = None
+
 
 class CachedModel:
+    __CLIENT: Client | None = None
+
+    @property
+    def client(self) -> Client:
+        """Get the client"""
+        global __CLIENT
+        return self.__CLIENT or __CLIENT
+
+    @classmethod
+    def attach_client(cls, client: Client) -> None:
+        global __CLIENT
+        __CLIENT = cls.__CLIENT = client
+
     @staticmethod
     def _predicate(member: Callable) -> bool:
         """Check if the method is a cached method"""

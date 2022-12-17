@@ -6,14 +6,20 @@ _JSON_TYPE = dict[str, "_JSON_TYPE"] | list["_JSON_TYPE"] | str | int | float | 
 _JSON_DICT_TYPE = dict[str, _JSON_TYPE]
 
 
-@dataclass(repr=True, kw_only=True, slots=True)
+@dataclass()
 class PluginInfo:
     kwargs: InitVar[_JSON_DICT_TYPE | None] = None
 
     def __post_init__(self, kwargs: _JSON_DICT_TYPE | None) -> None:
         if kwargs:
             for k, v in kwargs.items():
-                setattr(self, k, v)
+                object.__setattr__(self, k, v)
+
+    def __getattr__(self, item):
+        return None
+
+    def __repr__(self):
+        return f"PluginInfo({','.join([f'{key}={val!r}' for key, val in self.__dict__.items()])})"
 
     def _add_to_asdict(self, attr: str) -> None:
         f = field(repr=True)

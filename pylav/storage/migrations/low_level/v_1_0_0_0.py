@@ -142,7 +142,7 @@ async def migrate_playlists_v_1_0_0_0(playlists: list[asyncpg.Record]) -> None:
         tracks = json.loads(playlist["tracks"]) if playlist["tracks"] else []
         async for track in AsyncIter(tracks):
             with contextlib.suppress(Exception):
-                data = await async_decoder(track)
+                data = await async_decoder(track)  # TODO: Make an API call to the public node?
                 new_tracks.append(await TrackRow.get_or_create(data.encoded, data.info.to_database()))
         if new_tracks:
             await playlist_row.add_m2m(*new_tracks, m2m=PlaylistRow.tracks)
@@ -162,7 +162,7 @@ async def migrate_queries_v_1_0_0_0(queries: list[asyncpg.Record]) -> None:
         tracks = json.loads(query["tracks"]) if query["tracks"] else []
         async for track in AsyncIter(tracks):
             with contextlib.suppress(Exception):
-                data = await async_decoder(track)
+                data = await async_decoder(track)  # TODO: Make an API call to the public node?
                 new_tracks.append(await TrackRow.get_or_create(data.encoded, data.info.to_database()))
         if new_tracks:
             await query_row.add_m2m(*new_tracks, m2m=QueryRow.tracks)
@@ -268,7 +268,6 @@ async def migrate_lib_config_v_1_0_0_0(configs: list[asyncpg.Record]) -> None:
             ],
             LibConfigRow.next_execution_update_external_playlists: config["next_execution_update_external_playlists"],
         }
-
         config_obj = await LibConfigRow.objects().get_or_create(
             (LibConfigRow.id == config["id"]) & (LibConfigRow.bot == config["bot"]), defaults=data
         )

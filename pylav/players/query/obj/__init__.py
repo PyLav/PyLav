@@ -53,8 +53,12 @@ from pylav.constants.regex import (
 from pylav.constants.specials import PREFER_PARTIAL
 from pylav.extension.m3u import load as m3u_loads
 from pylav.players.query.local_files import LocalFile
-from pylav.players.tracks.decoder import async_decoder
 from pylav.utils.validators import is_url
+
+if typing.TYPE_CHECKING:
+    from pylav.core.client import Client
+
+__CLIENT: Client | None = None
 
 
 # noinspection SpellCheckingInspection
@@ -73,6 +77,7 @@ class Query:
         "_partial",
     )
     __local_file_cls: type[LocalFile] = LocalFile
+    __CLIENT: Client | None = None
 
     def __init__(
         self,
@@ -98,6 +103,17 @@ class Query:
 
         self._local_file_cls = LocalFile
         self.update_local_file_cls(LocalFile)
+
+    @property
+    def client(self) -> Client:
+        """Get the client"""
+        global __CLIENT
+        return self.__CLIENT or __CLIENT
+
+    @classmethod
+    def attach_client(cls, client: Client) -> None:
+        global __CLIENT
+        __CLIENT = cls.__CLIENT = client
 
     @classmethod
     def update_local_file_cls(cls, local_file_cls: type[LocalFile]) -> None:
@@ -467,7 +483,7 @@ class Query:
         source = None
         if len(query) > 20 and SOURCE_INPUT_MATCH_BASE64_TEST.match(query):
             with contextlib.suppress(Exception):
-                data = await async_decoder(query)
+                data = await cls.__CLIENT.decode_track(query, raise_on_failure=True)
                 source = data.info.sourceName
                 query = data.info.uri
         try:
@@ -774,7 +790,7 @@ class Query:
 
     @classmethod
     async def from_base64(cls, base64_string: str) -> Query:
-        data = await async_decoder(base64_string)
+        data = await cls.__CLIENT.decode_track(base64_string, raise_on_failure=True)
         source = data.info.sourceName
         url = data.info.uri
         response = await cls.from_string(url)

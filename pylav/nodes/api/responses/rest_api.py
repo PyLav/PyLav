@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import dataclasses
-from typing import NotRequired  # noqa
-from typing import Literal, Union
+from typing import Literal, TypeAlias, Union  # noqa
 
 from pylav.nodes.api.responses.filters import Filters
 from pylav.nodes.api.responses.misc import Git, Plugin, Version
@@ -24,92 +23,52 @@ class LavalinkException(LoadException):
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
-class TrackLoaded:
+class BaseTrackResponse:
+    playlistInfo: None | Info | dict = None
+    pluginInfo: None | PluginInfo | dict = None
+    exception: None | LoadException | dict = None
+    tracks: list[Track] = dataclasses.field(default_factory=list)
+
+    def __post_init__(self):
+        if isinstance(self.pluginInfo, dict):
+            object.__setattr__(self, "pluginInfo", PluginInfo(kwargs=self.pluginInfo))
+        if isinstance(self.exception, dict):
+            object.__setattr__(self, "exception", LoadException(**self.exception))
+        if isinstance(self.playlistInfo, dict):
+            object.__setattr__(self, "playlistInfo", Info(**self.playlistInfo))
+        temp = []
+        for s in self.tracks:
+            if isinstance(s, Track) or (isinstance(s, dict) and (s := Track(**s))):
+                temp.append(s)
+        object.__setattr__(self, "tracks", temp)
+
+
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
+class TrackLoaded(BaseTrackResponse):  # noqa
     loadType: Literal["TRACK_LOADED"]
-    playlistInfo: NotRequired[Info] = None
-    pluginInfo: None | dict | PluginInfo = None
-    tracks: list[Track] = dataclasses.field(default_factory=list)
-
-    def __post_init__(self):
-        if isinstance(self.pluginInfo, dict):
-            object.__setattr__(self, "pluginInfo", PluginInfo(kwargs=self.pluginInfo))
-        temp = []
-        for s in self.tracks:
-            if isinstance(s, Track) or (isinstance(s, dict) and (s := Track(**s))):
-                temp.append(s)
-        object.__setattr__(self, "tracks", temp)
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
-class PlaylistLoaded:
+class PlaylistLoaded(BaseTrackResponse):  # noqa
     loadType: Literal["PLAYLIST_LOADED"]
-    playlistInfo: Info
-    pluginInfo: None | dict | PluginInfo = None
-    tracks: list[Track] = dataclasses.field(default_factory=list)
-
-    def __post_init__(self):
-        if isinstance(self.pluginInfo, dict):
-            object.__setattr__(self, "pluginInfo", PluginInfo(kwargs=self.pluginInfo))
-        temp = []
-        for s in self.tracks:
-            if isinstance(s, Track) or (isinstance(s, dict) and (s := Track(**s))):
-                temp.append(s)
-        object.__setattr__(self, "tracks", temp)
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
-class SearchResult:
+class SearchResult(BaseTrackResponse):  # noqa
     loadType: Literal["SEARCH_RESULT"]
-    playlistInfo: NotRequired[Info] = None
-    pluginInfo: None | dict | PluginInfo = None
-    tracks: list[Track] = dataclasses.field(default_factory=list)
-
-    def __post_init__(self):
-        if isinstance(self.pluginInfo, dict):
-            object.__setattr__(self, "pluginInfo", PluginInfo(kwargs=self.pluginInfo))
-        temp = []
-        for s in self.tracks:
-            if isinstance(s, Track) or (isinstance(s, dict) and (s := Track(**s))):
-                temp.append(s)
-        object.__setattr__(self, "tracks", temp)
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
-class NoMatches:
+class NoMatches(BaseTrackResponse):  # noqa
     loadType: Literal["NO_MATCHES"]
-    playlistInfo: NotRequired[Info] = None
-    pluginInfo: None | dict | PluginInfo = None
-    tracks: list[Track] = dataclasses.field(default_factory=list)
-
-    def __post_init__(self):
-        if isinstance(self.pluginInfo, dict):
-            object.__setattr__(self, "pluginInfo", PluginInfo(kwargs=self.pluginInfo))
-        temp = []
-        for s in self.tracks:
-            if isinstance(s, Track) or (isinstance(s, dict) and (s := Track(**s))):
-                temp.append(s)
-        object.__setattr__(self, "tracks", temp)
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
-class LoadFailed:
+class LoadFailed(BaseTrackResponse):  # noqa
     loadType: Literal["LOAD_FAILED"]
-    exception: LoadException
-    playlistInfo: NotRequired[Info] = None
-    pluginInfo: None | dict | PluginInfo = None
-    tracks: list[Track] = dataclasses.field(default_factory=list)
-
-    def __post_init__(self):
-        if isinstance(self.pluginInfo, dict):
-            object.__setattr__(self, "pluginInfo", PluginInfo(kwargs=self.pluginInfo))
-        temp = []
-        for s in self.tracks:
-            if isinstance(s, Track) or (isinstance(s, dict) and (s := Track(**s))):
-                temp.append(s)
-        object.__setattr__(self, "tracks", temp)
 
 
-LoadTrackResponses = Union[
+LoadTrackResponses: TypeAlias = Union[
     TrackLoaded,
     PlaylistLoaded,
     NoMatches,

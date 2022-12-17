@@ -5,12 +5,10 @@ from datetime import datetime
 
 from pylav.constants.config import READ_CACHING_ENABLED
 from pylav.helpers.singleton import SingletonCachedByKey
-from pylav.players.tracks.decoder import async_decoder
 from pylav.storage.database.cache.decodators import maybe_cached
 from pylav.storage.database.cache.model import CachedModel
 from pylav.storage.database.tables.queries import QueryRow
 from pylav.storage.database.tables.tracks import TrackRow
-from pylav.utils.vendor.redbot import AsyncIter
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
@@ -80,10 +78,12 @@ class Query(CachedModel, metaclass=SingletonCachedByKey):
             old_tracks = []
         new_tracks = []
         # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
-        async for track in AsyncIter(tracks):
-            with contextlib.suppress(Exception):
-                track_object = await async_decoder(track)
-                new_tracks.append(await TrackRow.get_or_create(track_object.encoded, track_object.info.to_database()))
+        with contextlib.suppress(Exception):
+            for track_object in await self.client.decode_tracks(tracks, raise_on_failure=False):
+                with contextlib.suppress(Exception):
+                    new_tracks.append(
+                        await TrackRow.get_or_create(track_object.encoded, track_object.info.to_database())
+                    )
         if old_tracks:
             await query_row.remove_m2m(*old_tracks, m2m=QueryRow.tracks)
         if new_tracks:
@@ -184,10 +184,12 @@ class Query(CachedModel, metaclass=SingletonCachedByKey):
             old_tracks = []
         new_tracks = []
         # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
-        async for track in AsyncIter(tracks):
-            with contextlib.suppress(Exception):
-                track_object = await async_decoder(track)
-                new_tracks.append(await TrackRow.get_or_create(track_object.encoded, track_object.info.to_database()))
+        with contextlib.suppress(Exception):
+            for track_object in await self.client.decode_tracks(tracks, raise_on_failure=False):
+                with contextlib.suppress(Exception):
+                    new_tracks.append(
+                        await TrackRow.get_or_create(track_object.encoded, track_object.info.to_database())
+                    )
         if old_tracks:
             await query_row.remove_m2m(*old_tracks, m2m=QueryRow.tracks)
         if new_tracks:

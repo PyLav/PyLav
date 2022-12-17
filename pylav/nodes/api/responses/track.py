@@ -20,7 +20,7 @@ class Info:
     sourceName: str | None = None
     artworkUrl: str | None = None
     isrc: str | None = None
-    probeInfo: str | None = None
+    version: NotRequired[int] = 3
 
     def to_dict(self) -> JSON_DICT_TYPE:
         return dataclasses.asdict(self)
@@ -40,20 +40,20 @@ class Info:
 class Track:
     info: Info | dict
     encoded: str | None = None
-    track: NotRequired[str | None] = None
-    pluginInfo: dict | None | PluginInfo = None
+    pluginInfo: None | dict | PluginInfo = None
 
     def __post_init__(self) -> None:
         if isinstance(self.pluginInfo, dict):
             object.__setattr__(self, "pluginInfo", PluginInfo(kwargs=self.pluginInfo))
-        if self.encoded is None:
-            object.__setattr__(self, "encoded", self.track)
         if isinstance(self.info, dict):
             object.__setattr__(self, "info", Info(**self.info))
+
+    def set_version(self, version: int) -> None:
+        object.__setattr__(self, "version", version)
 
     def to_dict(self) -> JSON_DICT_TYPE:
         return {
             "info": dataclasses.asdict(self.info),
             "encoded": self.encoded,
-            "track": self.track,
+            "pluginInfo": dataclasses.asdict(self.pluginInfo) if self.pluginInfo else None,
         }

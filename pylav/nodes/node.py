@@ -30,7 +30,7 @@ from pylav.logging import getLogger
 from pylav.nodes.api.responses import rest_api
 from pylav.nodes.api.responses import websocket as websocket_responses
 from pylav.nodes.api.responses.errors import LavalinkError
-from pylav.nodes.api.responses.route_planner import Status as route_planner_status
+from pylav.nodes.api.responses.route_planner import Status as RoutePlannerStart
 from pylav.nodes.api.responses.track import Track
 from pylav.nodes.utils import NO_MATCHES, Stats
 from pylav.nodes.websocket import WebSocket
@@ -48,12 +48,10 @@ from pylav.players.filters import (
     Volume,
 )
 from pylav.players.query.obj import Query
-from pylav.players.tracks.decoder import async_decoder
 from pylav.storage.models.node import mocked as node_mocked
 from pylav.storage.models.node import real as node_real
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 from pylav.utils.location import distance
-from pylav.utils.vendor.redbot import AsyncIter
 
 if TYPE_CHECKING:
     from pylav.nodes.manager import NodeManager
@@ -948,11 +946,21 @@ class Node:
                 if query.is_search
                 else "TRACK_LOADED"
             )
-            tracks = (
-                [(await async_decoder(track)).to_dict() async for track in AsyncIter([tracks[0]] if first else tracks)]
-                if tracks
-                else []
-            )
+            try:
+                tracks = (
+                    [
+                        t.to_dict()
+                        for t in await self.node_manager.client.decode_tracks(
+                            [tracks[0]] if first else tracks, raise_on_failure=False
+                        )
+                        if isinstance(t, Track)
+                    ]
+                    if tracks
+                    else []
+                )
+            except Exception:  # noqa
+                tracks = []
+                load_type = "LOAD_FAILED"
             data = {
                 "loadType": load_type,
                 "tracks": tracks,
@@ -1109,7 +1117,7 @@ class Node:
             return HTTPException(failure)
 
     async def fetch_decodetrack(
-        self, encoded_track: str, timeout: aiohttp.ClientTimeout | object = sentinel
+        self, encoded_track: str, timeout: aiohttp.ClientTimeout | object = sentinel, raise_on_failure: bool = True
     ) -> Track | HTTPException:
         async with self._session.get(
             self.get_endpoint_decodetrack(),
@@ -1123,9 +1131,13 @@ class Node:
             if res.status in [401, 403]:
                 raise UnauthorizedException(failure)
             self._logger.trace("Failed to decode track: %d %s", failure.status, failure.message)
+            if raise_on_failure:
+                raise HTTPException(failure)
             return HTTPException(failure)
 
-    async def post_decodetracks(self, encoded_tracks: list[str]) -> list[Track] | HTTPException:
+    async def post_decodetracks(
+        self, encoded_tracks: list[str], raise_on_failure: bool = False
+    ) -> list[Track] | HTTPException:
         async with self._session.post(
             self.get_endpoint_decodetracks(),
             headers={"Authorization": self.password},
@@ -1138,6 +1150,8 @@ class Node:
             if res.status in [401, 403]:
                 raise UnauthorizedException(failure)
             self._logger.trace("Failed to decode tracks: %d %s", failure.status, failure.message)
+            if raise_on_failure:
+                raise HTTPException(failure)
             return HTTPException(failure)
 
     async def fetch_info(self, raise_on_error: bool = False) -> rest_api.LavalinkInfo | HTTPException:
@@ -1201,7 +1215,7 @@ class Node:
                 raise HTTPException(failure)
             return HTTPException(failure)
 
-    async def fetch_routeplanner_status(self) -> route_planner_status | HTTPException:
+    async def fetch_routeplanner_status(self) -> RoutePlannerStart | HTTPException:
         async with self._session.get(
             self.get_endpoint_routeplanner_status(),
             headers={"Authorization": self.password},
@@ -1211,7 +1225,7 @@ class Node:
                 data = await res.json(loads=ujson.loads)
                 data["type"] = data["class"]
                 del data["class"]
-                return from_dict(data_class=route_planner_status, data=data)
+                return from_dict(data_class=RoutePlannerStart, data=data)
             failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
             if res.status in [401, 403]:
                 raise UnauthorizedException(failure)

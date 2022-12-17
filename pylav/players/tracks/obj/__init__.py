@@ -19,15 +19,17 @@ from pylav.extension.flowery.lyrics import Error, Lyrics
 from pylav.helpers.misc import MISSING
 from pylav.nodes.api.responses.track import Track as APITrack
 from pylav.players.query.obj import Query
-from pylav.players.tracks.decoder import async_decoder
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 if typing.TYPE_CHECKING:
+    from pylav.core.client import Client
     from pylav.nodes.node import Node
     from pylav.players.player import Player
 
 CACHE = Cache(name="TrackCache")
 CACHE.setup("mem://?check_interval=10&size=10000")
+
+__CLIENT: Client | None = None
 
 
 # noinspection SpellCheckingInspection
@@ -49,6 +51,7 @@ class Track:
         "_encoded",
         "_raw_data",
     )
+    __CLIENT: Client | None = None
 
     def __init__(
         self,
@@ -72,6 +75,17 @@ class Track:
         self._raw_data: JSON_DICT_TYPE = {}
 
         self._process_init()
+
+    @property
+    def client(self) -> Client:
+        """Get the client"""
+        global __CLIENT
+        return self.__CLIENT or __CLIENT
+
+    @classmethod
+    def attach_client(cls, client: Client) -> None:
+        global __CLIENT
+        __CLIENT = cls.__CLIENT = client
 
     def __int__(self) -> int:
         return 0
@@ -108,7 +122,7 @@ class Track:
 
     def _process_init(self) -> None:
         if self._requester is None:
-            self._requester_id = self._node.node_manager.client.bot.user.id
+            self._requester_id = self.client.bot.user.id
         elif isinstance(self._requester, int):
             self._requester_id = self._requester
         else:
@@ -222,7 +236,7 @@ class Track:
         requester: discord.abc.User | int | None = None,
         **extra: Any,
     ) -> Track:
-        track_obj = await async_decoder(data)
+        track_obj = await cls.__CLIENT.decode_track(data, raise_on_failure=True)
         query_obj = await Query.from_base64(data)
         return cls._from_lavalink_track_object(
             node=node, data=track_obj, query=query_obj, skip_segments=skip_segments, requester=requester, **extra
@@ -275,7 +289,7 @@ class Track:
 
     @property
     def requester(self) -> discord.User | None:
-        return self._node.node_manager.client.bot.get_user(self.requester_id)
+        return self.client.bot.get_user(self.requester_id)
 
     @property
     def last_known_position(self) -> int:
@@ -330,7 +344,7 @@ class Track:
         return MISSING if self.is_partial else (await self.fetch_full_track_data()).info.isrc
 
     async def probe_info(self) -> str | None:
-        return MISSING if self.is_partial else (await self.fetch_full_track_data()).info.probeInfo
+        return MISSING if self.is_partial else (await self.fetch_full_track_data()).pluginInfo.probeInfo
 
     async def query(self) -> Query:
         if self.encoded and self._updated_query is None:
@@ -437,7 +451,7 @@ class Track:
         self,
     ) -> APITrack:
         if self.encoded:
-            return await async_decoder(self.encoded)
+            return await self.client.decode_track(self.encoded)
         else:
             return await self.search()
 
@@ -464,9 +478,7 @@ class Track:
 
     async def search(self, bypass_cache: bool = False) -> Self:
         self._query = await Query.from_string(self._query)
-        response = await self._node.node_manager.client._get_tracks(
-            await self.query(), first=True, bypass_cache=bypass_cache
-        )
+        response = await self.client._get_tracks(await self.query(), first=True, bypass_cache=bypass_cache)
         if not response or not response.tracks:
             raise TrackNotFoundException(f"No tracks found for query {await self.query_identifier()}")
         track = response.tracks[0]
@@ -622,18 +634,14 @@ class Track:
 
     async def fetch_lyrics(self) -> tuple[bool, Lyrics | Error | None]:
         if isrc := await self.isrc():
-            return True, await self._node.node_manager.client.flowery_api.lyrics.get_lyrics(isrc=isrc)
+            return True, await self.client.flowery_api.lyrics.get_lyrics(isrc=isrc)
         elif not self.is_partial:
             if await self.is_spotify():
-                return True, await self._node.node_manager.client.flowery_api.lyrics.get_lyrics(
-                    spotify_id=await self.identifier()
-                )
+                return True, await self.client.flowery_api.lyrics.get_lyrics(spotify_id=await self.identifier())
             elif await self.source() in {"deezer", "applemusic"}:
-                return True, await self._node.node_manager.client.flowery_api.lyrics.get_lyrics(
+                return True, await self.client.flowery_api.lyrics.get_lyrics(
                     query=f"{await self.title()} artist:{await self.author()}"
                 )
             else:
-                return False, await self._node.node_manager.client.flowery_api.lyrics.get_lyrics(
-                    query=await self.title()
-                )
+                return False, await self.client.flowery_api.lyrics.get_lyrics(query=await self.title())
         return False, None
