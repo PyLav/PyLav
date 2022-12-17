@@ -205,10 +205,7 @@ class WebSocket:
         await asyncio.wait_for(self.ready.wait(), timeout=timeout)
 
     async def configure_resume_and_timeout(self) -> None:
-        if self._resume_timeout > 0:
-            payload = {"timeout": self._resume_timeout}
-        else:
-            payload = {}
+        payload = {"timeout": self._resume_timeout} if self._resume_timeout > 0 else {}
         if self.node.api_version < 4:
             payload["resumingKey"] = self._resume_key
         elif self.node.api_version == 4:
