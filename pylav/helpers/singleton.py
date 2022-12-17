@@ -3,8 +3,8 @@ from __future__ import annotations
 import asyncio
 import functools
 import threading
-from collections.abc import Awaitable
-from typing import Any, Callable
+from collections.abc import Awaitable, Callable
+from typing import Any
 
 from pylav.type_hints.generics import ANY_GENERIC_TYPE, PARAM_SPEC_TYPE
 

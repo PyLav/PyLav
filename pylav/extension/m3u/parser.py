@@ -3,7 +3,8 @@ from __future__ import annotations
 import datetime
 import itertools
 import re
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 from urllib.parse import urljoin as _urljoin
 
 import iso8601

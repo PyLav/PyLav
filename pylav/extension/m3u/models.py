@@ -685,8 +685,7 @@ class Playlist(BasePathMixin):
         self.uri = uri
         self.base_uri = base_uri
 
-        resolution = stream_info.get("resolution")
-        if resolution is not None:
+        if (resolution := stream_info.get("resolution")) is not None:
             resolution = resolution.strip('"')
             values = resolution.split("x")
             resolution_pair = (int(values[0]), int(values[1]))
@@ -731,8 +730,7 @@ class IFramePlaylist(BasePathMixin):
         self.uri = uri
         self.base_uri = base_uri
 
-        resolution = iframe_stream_info.get("resolution")
-        if resolution is not None:
+        if (resolution := iframe_stream_info.get("resolution")) is not None:
             values = resolution.split("x")
             resolution_pair = (int(values[0]), int(values[1]))
         else:

@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import functools
-from collections.abc import Awaitable
-from typing import Callable
+from collections.abc import Awaitable, Callable
 
 from pylav.constants.config import READ_CACHING_ENABLED
 from pylav.storage.database.cache.cache import CACHE

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 import contextlib
 import datetime
@@ -5,9 +7,9 @@ import operator
 import os
 import pathlib
 import random
-from collections.abc import AsyncIterator, Awaitable
+from collections.abc import AsyncIterator, Awaitable, Callable
 from types import MethodType
-from typing import Any, Callable
+from typing import Any
 
 import aiohttp
 import aiohttp_client_cache
@@ -959,8 +961,7 @@ class Client(metaclass=SingletonClass):
 
     @staticmethod
     def __done_callback(task: asyncio.Task) -> None:
-        exc = task.exception()
-        if exc is not None:
+        if (exc := task.exception()) is not None:
             name = task.get_name()
             LOGGER.warning("Event hook %s encountered an exception!", name)
             LOGGER.debug("Event hook %s encountered an exception!", name, exc_info=exc)

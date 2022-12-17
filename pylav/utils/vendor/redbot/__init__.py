@@ -10,10 +10,20 @@ from __future__ import annotations
 
 import asyncio
 import re
-from collections.abc import AsyncIterable, AsyncIterator, Awaitable, Coroutine, Generator, Iterable, Iterator, Sequence
+from collections.abc import (
+    AsyncIterable,
+    AsyncIterator,
+    Awaitable,
+    Callable,
+    Coroutine,
+    Generator,
+    Iterable,
+    Iterator,
+    Sequence,
+)
 from itertools import chain
 from re import Pattern
-from typing import Any, Callable, TypeVar, cast
+from typing import Any, TypeVar, cast
 
 import discord
 from discord.ext import commands
@@ -1274,8 +1284,7 @@ class MessagePredicate(Callable[[discord.Message], bool]):
             if not same_context(m):
                 return False
             pattern_obj = re.compile(pattern) if isinstance(pattern, str) else pattern
-            match = pattern_obj.search(m.content)
-            if match:
+            if match := pattern_obj.search(m.content):
                 self.result = match
                 return True
             return False

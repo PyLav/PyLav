@@ -3,7 +3,8 @@ from __future__ import annotations
 import inspect
 import pathlib
 import sys
-from typing import Callable, TypeVar, get_type_hints
+from collections.abc import Callable
+from typing import TypeVar, get_type_hints
 
 from pylav.type_hints.generics import ANY_GENERIC_TYPE, PARAM_SPEC_TYPE
 

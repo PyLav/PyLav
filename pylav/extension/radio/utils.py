@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from collections.abc import Awaitable
+from collections.abc import Awaitable, Callable
 from functools import wraps
-from typing import Callable
 
 from pylav.constants.radio import API_TYPES
 from pylav.type_hints.generics import ANY_GENERIC_TYPE, PARAM_SPEC_TYPE

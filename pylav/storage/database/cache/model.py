@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import inspect
-from collections.abc import Iterator
-from typing import Any, Callable
+from collections.abc import Callable, Iterator
+from typing import Any
 
 from pylav.storage.database.cache.functions import invalidate_cache_multi, update_cache_multi
 
