@@ -3,7 +3,7 @@ ignore:
 - docs/
 - tools/
 - build/
-- pylav/m3u8_parser/**
+- pylav/**/vendor/**
 - pylav/vendor/**
 - .github/workflows
 
@@ -26,7 +26,7 @@ clone_detection:
   identical_clones_only: false
 
 github:
-  labels: []
+  labels: [Feat:Code Quality]
   ignore_labels:
   - sourcery-ignore
   request_review: author
