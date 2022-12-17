@@ -127,15 +127,9 @@ class LavalinkInfo:
     lavaplayer: str
     sourceManagers: list[str]
     filters: list[str]
-    # TODO: This is a list of plugins, but it's a dict in v4 due to a bug, handle both for now but remove it when v4
-    #  is stable
-    plugins: dict | list[Plugin]
+    plugins: list[Plugin]
 
     def __post_init__(self):
-        # TODO: This is a list of plugins, but it's a dict in v4 due to a bug, handle both for now but remove it when
-        #  v4 is stable
-        if isinstance(self.plugins, dict):
-            object.__setattr__(self, "plugins", self.plugins["plugins"])
         temp = []
         for s in self.plugins:
             if isinstance(s, Plugin) or (isinstance(s, dict) and (s := Plugin(**s))):
