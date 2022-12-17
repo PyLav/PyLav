@@ -1474,7 +1474,6 @@ class Player(VoiceProtocol):
         previous_position = await self.fetch_position()
         # Send a Stop OP to clear the buffer for avoid a small continuation on playback after skip fires
         payload = {"encodedTrack": None}
-        self.add_voice_to_payload(payload)
         await self.node.patch_session_player(guild_id=self.guild.id, payload=payload)
         await self.next(requester=requester)
         if previous_track:
