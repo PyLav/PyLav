@@ -418,6 +418,7 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
             (id,
             name,
             ssl,
+            resume_key,
             resume_timeout,
             reconnect_attempts,
             search_only,
@@ -425,11 +426,12 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
             disabled_sources,
             extras,
             yaml)
-            VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {})
+            VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})
             ON CONFLICT (id)
             DO UPDATE
               SET name = excluded.name,
               ssl = excluded.ssl,
+              resume_key = excluded.resume_key,
               resume_timeout = excluded.resume_timeout,
               reconnect_attempts = excluded.reconnect_attempts,
               search_only = excluded.search_only,
@@ -441,6 +443,7 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
             self.id,
             name,
             ssl,
+            None,
             resume_timeout,
             reconnect_attempts,
             search_only,
@@ -485,8 +488,8 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
         await NodeRow.raw(
             """
             INSERT INTO node
-            (id, managed, ssl, reconnect_attempts, search_only, yaml, name, resume_timeout, extras)
-            VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {})
+            (id, managed, ssl, reconnect_attempts, search_only, yaml, name, resume_key, resume_timeout, extras)
+            VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {})
             ON CONFLICT (id) DO NOTHING;
             ;
             """,

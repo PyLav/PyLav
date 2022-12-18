@@ -18,7 +18,6 @@ from pylav.constants.config import BROTLI_ENABLED
 from pylav.constants.playlists import BUNDLED_PLAYLIST_IDS
 from pylav.core.context import PyLavContext
 from pylav.exceptions.playlist import InvalidPlaylistException
-from pylav.helpers.singleton import SingletonCachedByKey
 from pylav.logging import getLogger
 from pylav.players import filters
 from pylav.storage.database.cache.model import CachedModel
@@ -28,8 +27,8 @@ from pylav.type_hints.bot import DISCORD_BOT_TYPE
 LOGGER = getLogger("PyLav.Database.Equalizer")
 
 
-@dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
-class Equalizer(CachedModel, metaclass=SingletonCachedByKey):
+@dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True)
+class Equalizer(CachedModel):
 
     id: int
     scope: int

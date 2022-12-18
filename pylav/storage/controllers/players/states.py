@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import asyncio
 from collections.abc import AsyncIterator
 from typing import TYPE_CHECKING
 
@@ -25,7 +24,8 @@ class PlayerStateController:
         return self._client
 
     async def save_players(self, players: list[JSON_DICT_TYPE]) -> None:
-        await asyncio.gather(*[self.save_player(player) for player in players])
+        for player in players:
+            await self.save_player(player)
         LOGGER.debug("Saved %s players", len(players))
 
     async def save_player(self, player: JSON_DICT_TYPE) -> None:

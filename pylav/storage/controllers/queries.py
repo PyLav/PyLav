@@ -59,7 +59,8 @@ class QueryController:
         tracks = result.get("tracks", [])
         if not tracks:
             return False
-        name = result.get("playlistInfo", {}).get("name", None)
+        playlist_info = result.get("playlistInfo", {})
+        name = playlist_info.get("name", None) if playlist_info else None
         defaults = {QueryRow.name: name}
         query_row = await QueryRow.objects().get_or_create(QueryRow.identifier == query.query_identifier, defaults)
 

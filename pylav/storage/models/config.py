@@ -23,7 +23,7 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
     id: int = 1
 
     def get_cache_key(self) -> str:
-        return f"{self.bot}:{self.id}"
+        return f"{self.id}:{self.bot}:"
 
     @maybe_cached
     async def exists(self) -> bool:

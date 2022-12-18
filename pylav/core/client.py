@@ -89,7 +89,9 @@ from pylav.storage.controllers.queries import QueryController
 from pylav.storage.database.cache.model import CachedModel
 from pylav.storage.database.tables.misc import DATABASE_ENGINE, IS_POSTGRES
 from pylav.storage.models.config import Config
+from pylav.storage.models.equilizer import Equalizer
 from pylav.storage.models.node.real import Node as RealNode
+from pylav.storage.models.player.state import PlayerState
 from pylav.type_hints.bot import DISCORD_BOT_TYPE, DISCORD_COG_TYPE, DISCORD_CONTEXT_TYPE, DISCORD_INTERACTION_TYPE
 from pylav.utils.aiohttp_postgres_cache import PostgresCacheBackend
 from pylav.utils.vendor.redbot import AsyncIter
@@ -204,6 +206,9 @@ class Client(metaclass=SingletonClass):
             CachedModel.attach_client(self)
             Query.attach_client(self)
             Track.attach_client(self)
+            PlayerState.attach_client(self)
+            Equalizer.attach_client(self)
+
             self._node_manager = NodeManager(
                 self,
                 external_host=EXTERNAL_UNMANAGED_HOST,
@@ -1508,6 +1513,7 @@ class Client(metaclass=SingletonClass):
         if region is None:
             region = "us_east"
         node = await self.node_manager.find_best_node()
+        plugin_info = {}
         for query in queries:
             async for response in self._yield_recursive_queries(query):
                 node = await self.node_manager.find_best_node(region=region, feature=response.requires_capability)
@@ -1517,6 +1523,7 @@ class Client(metaclass=SingletonClass):
                     _response = await node.get_track(response, bypass_cache=bypass_cache)
                     playlist_name = _response.playlistInfo.name
                     output_tracks.extend(_response.tracks)
+                    plugin_info |= _response.pluginInfo.to_dict()
                 elif fullsearch and response.is_search:
                     _response = await node.get_track(response, bypass_cache=bypass_cache)
                     output_tracks.extend(_response.tracks)
@@ -1530,6 +1537,7 @@ class Client(metaclass=SingletonClass):
                 "name": playlist_name if len(queries) == 1 else "",
                 "selectedTrack": -1,
             },
+            "pluginInfo": plugin_info,
             "loadType": "PLAYLIST_LOADED" if playlist_name else "SEARCH_RESULT" if output_tracks else "LOAD_FAILED",
             "tracks": output_tracks,
         }

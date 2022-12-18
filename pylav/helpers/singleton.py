@@ -104,7 +104,9 @@ class SingletonCachedByKey(type):
         for base in mro:
             if base.__module__.startswith("pylav.storage.models"):
                 key_name = base.__name__
-                if "Config" in key_name:
+                if key_name in ("PlayerState", "NodeMock", "Equalizer"):
+                    return
+                if key_name in ("PlayerConfig", "Config"):
                     singleton_key += f".{kwargs.get('bot')}"
                 return singleton_key, key_name
 
@@ -112,7 +114,9 @@ class SingletonCachedByKey(type):
         # sourcery skip: instance-method-first-arg-name
         key = cls._get_key(cls.mro(), **kwargs)
         if key not in cls._instances:
-            cls._locked_call(*args, **kwargs)
+            rps = cls._locked_call(*args, **kwargs)
+            if key is None:
+                return rps
         return cls._instances[key]
 
     @synchronized_method_call(_LOCK_SINGLETON_CACHE_CALLABLE)
@@ -120,4 +124,7 @@ class SingletonCachedByKey(type):
         key = cls._get_key(cls.mro(), **kwargs)
         if key not in cls._instances:
             singleton = super().__call__(*args, **kwargs)
-            cls._instances[key] = singleton
+            if key is not None:
+                cls._instances[key] = singleton
+            else:
+                return singleton

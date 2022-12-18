@@ -465,7 +465,7 @@ class Track:
         """
         return {
             "encoded": self.encoded,
-            "query": await self.query_identifier() if await self.query() else None,
+            "query": await self.query_identifier(),
             "requester": self.requester.id if self.requester else self.requester_id,
             "skip_segments": self._skip_segments,
             "extra": {

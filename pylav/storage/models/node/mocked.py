@@ -3,13 +3,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from pylav.constants.node_features import SUPPORTED_FEATURES, SUPPORTED_SOURCES
-from pylav.helpers.singleton import SingletonCachedByKey
 from pylav.storage.database.cache.model import CachedModel
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 
-@dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
-class NodeMock(CachedModel, metaclass=SingletonCachedByKey):
+@dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True)
+class NodeMock(CachedModel):
     id: int
     data: JSON_DICT_TYPE
 

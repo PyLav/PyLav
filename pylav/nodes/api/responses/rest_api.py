@@ -6,7 +6,7 @@ from typing import Literal, TypeAlias, Union  # noqa
 from pylav.nodes.api.responses.filters import Filters
 from pylav.nodes.api.responses.misc import Git, Plugin, Version
 from pylav.nodes.api.responses.playlists import Info
-from pylav.nodes.api.responses.shared import PluginInfo
+from pylav.nodes.api.responses.shared import PlaylistPluginInfo
 from pylav.nodes.api.responses.track import Track
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
@@ -25,13 +25,15 @@ class LavalinkException(LoadException):
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class BaseTrackResponse:
     playlistInfo: None | Info | dict = None
-    pluginInfo: None | PluginInfo | dict = None
+    pluginInfo: None | PlaylistPluginInfo | dict = None
     exception: None | LoadException | dict = None
     tracks: list[Track] = dataclasses.field(default_factory=list)
 
     def __post_init__(self):
         if isinstance(self.pluginInfo, dict):
-            object.__setattr__(self, "pluginInfo", PluginInfo(kwargs=self.pluginInfo))
+            object.__setattr__(self, "pluginInfo", PlaylistPluginInfo(kwargs=self.pluginInfo))
+        elif self.pluginInfo is None:
+            object.__setattr__(self, "pluginInfo", PlaylistPluginInfo(kwargs=None))
         if isinstance(self.exception, dict):
             object.__setattr__(self, "exception", LoadException(**self.exception))
         if isinstance(self.playlistInfo, dict):
