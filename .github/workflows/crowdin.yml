@@ -1,68 +1,68 @@
 name: Upload and Download strings
 on:
-  schedule:
-  - cron: 0 * * * *
+    schedule:
+    -   cron: 0 * * * *
 
 
 jobs:
-  crowdin-upload:
-    if: github.repository == 'Drapersniper/PyLav'
-    runs-on: ubuntu-latest
-    name: Upload the latest strings to Crowdin
-    steps:
-    - uses: actions/checkout@v3.1.0
-      with:
-        ref: master
-        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
-    - name: Install dependencies
-      run: |
-        pip install redgettext==3.4.2
-    - name: Generate source files
-      run: |
-        python3.8 -m redgettext --command-docstrings --verbose --recursive .
-    - name: crowdin action
-      uses: crowdin/github-action@1.5.1
-      with:
-        upload_translations: true
-        download_translations: false
-        commit_message: '[post] Update translations'
-        pull_request_labels: i18n, translations, automerge
-      env:
-        CROWDIN_API_KEY: ${{ secrets.crowdin_token}}
-        CROWDIN_PROJECT_ID: ${{ secrets.crowdin_identifier }}
-        GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-  crowdin-download:
-    runs-on: ubuntu-latest
-    name: Download the latest translations from Crowdin
-    needs: [crowdin-upload]
-    steps:
-    - uses: actions/checkout@v3.1.0
-      with:
-        ref: master
-        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
-    - name: Install dependencies
-      run: |
-        pip install redgettext==3.4.2
-    - name: Generate source files
-      run: |
-        python3.8 -m redgettext --command-docstrings --verbose --recursive .
-    - name: crowdin action
-      uses: crowdin/github-action@1.5.1
-      with:
-        upload_translations: false
-        download_translations: true
-        commit_message: '[post] Update translations'
-        download_translations_args: --all
-        pull_request_labels: i18n, translations, automerge
-      env:
-        CROWDIN_API_KEY: ${{ secrets.crowdin_token}}
-        CROWDIN_PROJECT_ID: ${{ secrets.crowdin_identifier }}
-        GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+    crowdin-upload:
+        if: github.repository == 'Drapersniper/PyLav'
+        runs-on: ubuntu-latest
+        name: Upload the latest strings to Crowdin
+        steps:
+        -   uses: actions/checkout@v3.1.0
+            with:
+                ref: master
+                token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        -   name: Set up Python
+            uses: actions/setup-python@v4
+            with:
+                python-version: '3.11'
+        -   name: Install dependencies
+            run: |
+                pip install redgettext==3.4.2
+        -   name: Generate source files
+            run: |
+                python3.8 -m redgettext --command-docstrings --verbose --recursive .
+        -   name: crowdin action
+            uses: crowdin/github-action@1.5.1
+            with:
+                upload_translations: true
+                download_translations: false
+                commit_message: '[post] Update translations'
+                pull_request_labels: i18n, translations, automerge
+            env:
+                CROWDIN_API_KEY: ${{ secrets.crowdin_token}}
+                CROWDIN_PROJECT_ID: ${{ secrets.crowdin_identifier }}
+                GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+    crowdin-download:
+        runs-on: ubuntu-latest
+        name: Download the latest translations from Crowdin
+        needs: [crowdin-upload]
+        steps:
+        -   uses: actions/checkout@v3.1.0
+            with:
+                ref: master
+                token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        -   name: Set up Python
+            uses: actions/setup-python@v4
+            with:
+                python-version: '3.11'
+        -   name: Install dependencies
+            run: |
+                pip install redgettext==3.4.2
+        -   name: Generate source files
+            run: |
+                python3.8 -m redgettext --command-docstrings --verbose --recursive .
+        -   name: crowdin action
+            uses: crowdin/github-action@1.5.1
+            with:
+                upload_translations: false
+                download_translations: true
+                commit_message: '[post] Update translations'
+                download_translations_args: --all
+                pull_request_labels: i18n, translations, automerge
+            env:
+                CROWDIN_API_KEY: ${{ secrets.crowdin_token}}
+                CROWDIN_PROJECT_ID: ${{ secrets.crowdin_identifier }}
+                GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
