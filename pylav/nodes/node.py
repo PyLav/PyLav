@@ -83,7 +83,6 @@ class Node:
         "_stats",
         "_disabled_sources",
         "_identifier",
-        "_resume_key",
         "_resume_timeout",
         "_reconnect_attempts",
         "_search_only",
@@ -104,7 +103,6 @@ class Node:
         manager: NodeManager,
         host: str,
         password: str,
-        resume_key: str,
         resume_timeout: int,
         port: int | None = None,
         name: str | None = None,
@@ -150,7 +148,6 @@ class Node:
             self._port = port
         self._password = password
 
-        self._resume_key = resume_key or self._identifier
         self._resume_timeout = resume_timeout
         self._reconnect_attempts = reconnect_attempts
         self._search_only = search_only
@@ -169,7 +166,6 @@ class Node:
             host=self.host,
             port=self.port,
             password=self.password,
-            resume_key=self.resume_key,
             resume_timeout=self.resume_timeout,
             reconnect_attempts=self.reconnect_attempts,
             ssl=self.ssl,
@@ -319,11 +315,6 @@ class Node:
         return self._password
 
     @property
-    def resume_key(self) -> str:
-        """The resume key of the node"""
-        return self._resume_key
-
-    @property
     def resume_timeout(self) -> int:
         """The timeout to use for resuming"""
         return self._resume_timeout
@@ -466,8 +457,8 @@ class Node:
                 lambda x, y: x and y,
                 map(
                     lambda p, q: p == q,
-                    [self.identifier, self.websocket.connected, self.name, self._resume_key, self.session_id],
-                    [other.identifier, self.websocket.connected, self.name, self._resume_key, other.session_id],
+                    [self.identifier, self.websocket.connected, self.name, self.session_id],
+                    [other.identifier, self.websocket.connected, self.name, other.session_id],
                 ),
                 True,
             )
@@ -590,7 +581,7 @@ class Node:
         -------
         :class:`None`
         """
-        if self.managed or self.identifier in BUNDLED_NODES_IDS_HOST_MAPPING:
+        if self.managed or self.identifier in BUNDLED_NODES_IDS_HOST_MAPPING or self.identifier == 31415:
             return
         unsupported = await self.get_unsupported_features()
         currently_disabled = set(await self.config.fetch_disabled_sources())

@@ -116,7 +116,6 @@ class NodeManager:
         password: str,
         unique_identifier: int,
         name: str,
-        resume_key: str = None,
         resume_timeout: int = 60,
         reconnect_attempts: int = -1,
         ssl: bool = False,
@@ -138,9 +137,6 @@ class NodeManager:
             The port to use for websocket and REST connections.
         password: :class:`str`
             The password used for authentication.
-        resume_key: Optional[:class:`str`]
-            A resume key used for resuming a session upon re-establishing a WebSocket connection to Lavalink.
-            Defaults to `None`.
         resume_timeout: Optional[:class:`int`]
             How long the node should wait for a connection while disconnected before clearing all players.
             Defaults to `60`.
@@ -177,7 +173,6 @@ class NodeManager:
             host=host,
             port=port,
             password=password,
-            resume_key=resume_key,
             resume_timeout=resume_timeout,
             name=name,
             reconnect_attempts=reconnect_attempts,
@@ -204,7 +199,6 @@ class NodeManager:
             data = {
                 "name": name,
                 "ssl": ssl,
-                "resume_key": resume_key,
                 "resume_timeout": resume_timeout,
                 "reconnect_attempts": reconnect_attempts,
                 "search_only": search_only,
@@ -220,7 +214,6 @@ class NodeManager:
                 host=host,
                 port=port,
                 password=password,
-                resume_key=resume_key,
                 resume_timeout=resume_timeout,
                 name=name,
                 reconnect_attempts=reconnect_attempts,
@@ -248,7 +241,12 @@ class NodeManager:
         node._logger.info("Successfully removed Node")
         # noinspection PyProtectedMember
         node._logger.verbose("Successfully removed Node -- %r", node)
-        if node.identifier and not node.managed and node.identifier not in BUNDLED_NODES_IDS_HOST_MAPPING:
+        if (
+            node.identifier
+            and not node.managed
+            and node.identifier not in BUNDLED_NODES_IDS_HOST_MAPPING
+            or node.identifier != 31415
+        ):
             await self.client.node_db_manager.delete(node.identifier)
             # noinspection PyProtectedMember
             node._logger.debug("Successfully deleted Node from database")
@@ -518,7 +516,6 @@ class NodeManager:
             nodes_list.append(
                 await self.add_node(
                     password=f"PyLav/{self.client.lib_version}",
-                    resume_key=f"PyLav/{self.client.lib_version}-{self.client.bot_id}",
                     **PYLAV_BUNDLED_NODES_SETTINGS["lava.link"],
                 )
             )
@@ -533,7 +530,6 @@ class NodeManager:
             True async for n in asyncstdlib.iter(nodes_list) if n.host != "ll-us-ny.draper.wtf"
         ) and not self.get_node_by_id(PYLAV_BUNDLED_NODES_SETTINGS["ll-us-ny.draper.wtf"]["unique_identifier"]):
             base_settings = PYLAV_BUNDLED_NODES_SETTINGS["ll-us-ny.draper.wtf"]
-            base_settings["resume_key"] = f"PyLav/{self.client.lib_version}-{self.client.bot_id}"
             nodes_list.append(await self.add_node(**base_settings))
         else:
             LOGGER.debug(
@@ -547,7 +543,6 @@ class NodeManager:
         ) and not self.get_node_by_id(PYLAV_BUNDLED_NODES_SETTINGS["ll-gb.draper.wtf"]["unique_identifier"]):
             base_settings = PYLAV_BUNDLED_NODES_SETTINGS["ll-gb.draper.wtf"]
             base_settings["host"] = "ll-gb.draper.wtf"
-            base_settings["resume_key"] = f"PyLav/{self.client.lib_version}-{self.client.bot_id}"
             nodes_list.append(await self.add_node(**base_settings))
         else:
             LOGGER.debug(
@@ -573,7 +568,6 @@ class NodeManager:
                         "host": self._unmanaged_external_host,
                         "unique_identifier": 31415,
                         "name": "ENVAR Node (Unmanaged)",
-                        "resume_key": f"PyLav/{self.client.lib_version}-{self.client.bot_id}",
                         "temporary": True,
                     }
                 nodes_list.append(await self.add_node(**base_settings))

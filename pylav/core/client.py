@@ -780,7 +780,6 @@ class Client(metaclass=SingletonClass):
         host: str,
         port: int,
         password: str,
-        resume_key: str = None,
         resume_timeout: int = 60,
         name: str = None,
         reconnect_attempts: int = -1,
@@ -803,9 +802,6 @@ class Client(metaclass=SingletonClass):
             The port to use for websocket and REST connections.
         password: :class:`str`
             The password used for authentication.
-        resume_key: Optional[:class:`str`]
-            A resume key used for resuming a session upon re-establishing a WebSocket connection to Lavalink.
-            Defaults to `None`.
         resume_timeout: Optional[:class:`int`]
             How long the node should wait for a connection while disconnected before clearing all players.
             Defaults to `60`.
@@ -835,7 +831,6 @@ class Client(metaclass=SingletonClass):
             host=host,
             port=port,
             password=password,
-            resume_key=resume_key,
             resume_timeout=resume_timeout,
             name=name,
             reconnect_attempts=reconnect_attempts,

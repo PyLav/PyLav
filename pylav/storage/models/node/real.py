@@ -45,7 +45,6 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
             "id": self.id,
             "name": NodeRow.name.default,
             "ssl": NodeRow.ssl.default,
-            "resume_key": NodeRow.resume_key.default,
             "resume_timeout": NodeRow.resume_timeout.default,
             "reconnect_attempts": NodeRow.reconnect_attempts.default,
             "search_only": NodeRow.search_only.default,
@@ -111,41 +110,6 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
             ssl,
         )
         await self.update_cache((self.fetch_ssl, ssl), (self.exists, True))
-        await self.invalidate_cache(self.fetch_all)
-
-    @maybe_cached
-    async def fetch_resume_key(self) -> str | None:
-        """Fetch the node's resume key from the database.
-
-        Returns
-        -------
-        str
-            The node's resume key.
-        """
-        data = (
-            await NodeRow.select(NodeRow.resume_key)
-            .where(NodeRow.id == self.id)
-            .first()
-            .output(load_json=True, nested=True)
-        )
-        return data["resume_key"] if data else None
-
-    async def update_resume_key(self, resume_key: str) -> None:
-        """Update the node's resume key in the database"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await NodeRow.raw(
-            """
-            INSERT INTO
-                node (id, resume_key)
-            VALUES
-                ({}, {})
-            ON CONFLICT (id) DO UPDATE SET resume_key = excluded.resume_key;
-            """,
-            self.id,
-            resume_key,
-        )
-        await self.update_cache((self.fetch_resume_key, resume_key), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
 
     @maybe_cached
@@ -427,7 +391,6 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
         host: str,
         port: int,
         password: str,
-        resume_key: str = None,
         resume_timeout: int = 60,
         name: str | None = None,
         reconnect_attempts: int = -1,
@@ -455,7 +418,6 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
             (id,
             name,
             ssl,
-            resume_key,
             resume_timeout,
             reconnect_attempts,
             search_only,
@@ -463,12 +425,11 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
             disabled_sources,
             extras,
             yaml)
-            VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})
+            VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {})
             ON CONFLICT (id)
             DO UPDATE
               SET name = excluded.name,
               ssl = excluded.ssl,
-              resume_key = excluded.resume_key,
               resume_timeout = excluded.resume_timeout,
               reconnect_attempts = excluded.reconnect_attempts,
               search_only = excluded.search_only,
@@ -480,7 +441,6 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
             self.id,
             name,
             ssl,
-            resume_key,
             resume_timeout,
             reconnect_attempts,
             search_only,
@@ -511,7 +471,6 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
             "reconnect_attempts": data["reconnect_attempts"],
             "search_only": data["search_only"],
             "resume_timeout": data["resume_timeout"],
-            "resume_key": data["resume_key"],
             "disabled_sources": data["disabled_sources"],
             "managed": data["managed"],
         }
@@ -526,8 +485,8 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
         await NodeRow.raw(
             """
             INSERT INTO node
-            (id, managed, ssl, reconnect_attempts, search_only, yaml, name, resume_key, resume_timeout, extras)
-            VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {})
+            (id, managed, ssl, reconnect_attempts, search_only, yaml, name, resume_timeout, extras)
+            VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {})
             ON CONFLICT (id) DO NOTHING;
             ;
             """,

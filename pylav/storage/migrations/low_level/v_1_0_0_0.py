@@ -235,7 +235,6 @@ async def migrate_node_config_v_1_0_0_0(nodes: list[asyncpg.Record]) -> None:
         data = {
             NodeRow.name: node["name"],
             NodeRow.ssl: node["ssl"],
-            NodeRow.resume_key: node["resume_key"],
             NodeRow.resume_timeout: node["resume_timeout"],
             NodeRow.reconnect_attempts: node["reconnect_attempts"],
             NodeRow.search_only: node["search_only"],

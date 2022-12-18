@@ -73,7 +73,6 @@ class NodeController:
         port: int,
         password: str,
         unique_identifier: int,
-        resume_key: str | None = None,
         resume_timeout: int = 60,
         name: str = None,
         reconnect_attempts: int = -1,
@@ -100,8 +99,6 @@ class NodeController:
             The unique identifier of the node.
         name: str
             The name of the node.
-        resume_key: str
-            The resume key of the node.
         resume_timeout: int
             The resume timeout of the node.
         reconnect_attempts: int
@@ -127,7 +124,6 @@ class NodeController:
             port=port,
             password=password,
             name=name,
-            resume_key=resume_key,
             resume_timeout=resume_timeout,
             reconnect_attempts=reconnect_attempts,
             ssl=ssl,

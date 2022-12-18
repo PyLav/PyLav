@@ -61,19 +61,6 @@ class NodeMock(CachedModel, metaclass=SingletonCachedByKey):
         """Update the node's ssl setting in the database"""
         self.data["ssl"] = ssl
 
-    async def fetch_resume_key(self) -> str | None:
-        """Fetch the node's resume key from the database.
-
-        Returns
-        -------
-        str
-            The node's resume key.
-        """
-        return self.data["resume_key"]
-
-    async def update_resume_key(self, resume_key: str) -> None:
-        """Update the node's resume key in the database"""
-
     async def fetch_resume_timeout(self) -> int:
         """Fetch the node's resume timeout from the database.
 
@@ -220,7 +207,6 @@ class NodeMock(CachedModel, metaclass=SingletonCachedByKey):
             "reconnect_attempts": data["reconnect_attempts"],
             "search_only": data["search_only"],
             "resume_timeout": data["resume_timeout"],
-            "resume_key": data["resume_key"],
             "disabled_sources": data["disabled_sources"],
             "managed": data["managed"],
             "temporary": True,

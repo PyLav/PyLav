@@ -82,7 +82,6 @@ class WebSocket:
         "_password",
         "_ssl",
         "_max_reconnect_attempts",
-        "_resume_key",
         "_resume_timeout",
         "_resuming_configured",
         "_closers",
@@ -105,7 +104,6 @@ class WebSocket:
         host: str,
         port: int,
         password: str,
-        resume_key: str,
         resume_timeout: int,
         reconnect_attempts: int,
         ssl: bool,
@@ -123,7 +121,6 @@ class WebSocket:
         self._ssl = ssl
         self._max_reconnect_attempts = reconnect_attempts
 
-        self._resume_key = resume_key
         self._resume_timeout = resume_timeout
         self._resuming_configured = False
         self._session_id: str | None = None

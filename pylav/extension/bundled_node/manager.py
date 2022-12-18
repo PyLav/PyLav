@@ -840,12 +840,6 @@ class LocalNodeManager:
 
     async def connect_to_node(self, external_fallback: bool) -> Node:
         data = await self._client.node_db_manager.bundled_node_config().fetch_all()
-        resume_key = (
-            f"PyLav/{self._client.lib_version}/"
-            f"PyLavPortConflictRecovery-{self._client.bot.user.id}-{self._node_pid}"
-            if external_fallback
-            else f"PyLav/{self._client.lib_version}/PyLavManagedNode-{self._client.bot.user.id}-" f"{self._node_pid}"
-        )
         name = (
             f"PyLavPortConflictRecovery: {self._node_pid}"
             if external_fallback
@@ -856,7 +850,6 @@ class LocalNodeManager:
             host=self._current_config["server"]["address"],
             port=self._current_config["server"]["port"],
             password=self._current_config["lavalink"]["server"]["password"],
-            resume_key=resume_key,
             resume_timeout=data["resume_timeout"],
             name=name,
             managed=True,
@@ -866,7 +859,6 @@ class LocalNodeManager:
             temporary=True,
         )
         await node.config.update_name(name)
-        await node.config.update_resume_key(resume_key)
         return node
 
     @staticmethod
