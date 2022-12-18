@@ -2856,7 +2856,7 @@ class Player(VoiceProtocol):
             [
                 await Track.build_track(
                     node=self.node,
-                    data=t.pop("encoded", None) or t.pop("track", None),
+                    data=t.pop("encoded", None),
                     query=await Query.from_string(t.pop("query")),
                     **t.pop("extra"),
                     **t,
@@ -2870,7 +2870,7 @@ class Player(VoiceProtocol):
             [
                 await Track.build_track(
                     node=self.node,
-                    data=t.pop("encoded", None) or t.pop("track", None),
+                    data=t.pop("encoded", None),
                     query=await Query.from_string(t.pop("query")),
                     **t.pop("extra"),
                     **t,
@@ -2886,7 +2886,7 @@ class Player(VoiceProtocol):
         current = (
             await Track.build_track(
                 node=self.node,
-                data=player.current.pop("encoded", None) or player.current.pop("track", None),
+                data=player.current.pop("encoded", None),
                 query=await Query.from_string(player.current.pop("query")),
                 **player.current.pop("extra"),
                 **player.current,
@@ -2897,7 +2897,7 @@ class Player(VoiceProtocol):
         next_track = (
             await Track.build_track(
                 node=self.node,
-                data=n_track.pop("encoded", None) or n_track.pop("track", None),
+                data=n_track.pop("encoded", None),
                 query=await Query.from_string(n_track.pop("query")),
                 **n_track.pop("extra"),
                 **n_track,
@@ -2908,7 +2908,7 @@ class Player(VoiceProtocol):
         last_track = (
             await Track.build_track(
                 node=self.node,
-                data=l_track.pop("encoded", None) or l_track.pop("track", None),
+                data=l_track.pop("encoded", None),
                 query=await Query.from_string(l_track.pop("query")),
                 **l_track.pop("extra"),
                 **l_track,

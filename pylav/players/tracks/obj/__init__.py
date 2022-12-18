@@ -219,7 +219,7 @@ class Track:
         **extra: Any,
     ) -> Track:
         instance = cls(node, query, skip_segments, requester, **extra)
-        instance._encoded = data.get("encoded", data["track"])
+        instance._encoded = data["encoded"]
         instance._raw_data = data.get("raw_data", {}) or extra.get("raw_data", {})
         if instance._encoded is None:
             raise InvalidTrackException("Cannot build a track from partial data! (Missing key: encoded)")
