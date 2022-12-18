@@ -4,12 +4,14 @@ from dataclasses import dataclass
 
 import ujson
 
+from pylav.helpers.singleton import SingletonCachedByKey
+from pylav.storage.database.cache.model import CachedModel
 from pylav.storage.database.tables.player_state import PlayerStateRow
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 
 @dataclass(eq=True)
-class PlayerState:
+class PlayerState(CachedModel, metaclass=SingletonCachedByKey):
     id: int
     bot: int
     channel_id: int

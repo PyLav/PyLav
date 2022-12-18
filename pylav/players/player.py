@@ -15,7 +15,6 @@ import asyncstdlib
 import discord
 from discord import VoiceProtocol
 from discord.abc import Messageable
-from discord.utils import utcnow
 
 from pylav.constants.coordinates import REGION_TO_COUNTRY_COORDINATE_MAPPING
 from pylav.constants.regex import VOICE_CHANNEL_ENDPOINT
@@ -58,6 +57,7 @@ from pylav.exceptions.track import TrackNotFoundException
 from pylav.extension.radio import RadioBrowser
 from pylav.helpers.format.strings import format_time_dd_hh_mm_ss, format_time_string, shorten_string
 from pylav.helpers.singleton import synchronized_method_call
+from pylav.helpers.time import get_now_utc
 from pylav.logging import getLogger
 from pylav.nodes.api.responses.player import State
 from pylav.nodes.api.responses.rest_api import LavalinkException, LavalinkPlayer
@@ -185,7 +185,7 @@ class Player(VoiceProtocol):
         self._region = channel.rtc_region or "unknown_pylav"
         self._coordinates = REGION_TO_COUNTRY_COORDINATE_MAPPING.get(self._region, (0, 0))
         self._connected = False
-        self.connected_at = utcnow()
+        self.connected_at = get_now_utc()
         self.last_track: Track | None = None
         self.next_track: Track | None = None
         self._hashed_voice_state = None
@@ -278,105 +278,13 @@ class Player(VoiceProtocol):
             await self.player_manager.client.player_state_db_manager.delete_player(self.channel.guild.id)
             self._logger.verbose("Player restored in postinit - %s", self)
         else:
-            self._volume = Volume(await player_manager.client.player_config_manager.get_volume(self.guild.id))
-            effects = await config.fetch_effects()
-            if (v := effects.get("volume", None)) and (f := Volume.from_dict(v)):
-                self._volume = f
-            if (
-                self.node.has_filter("equalizer")
-                and (eq := effects.get("equalizer", None))
-                and (f := Equalizer.from_dict(eq))  # noqa
-            ):
-                self._equalizer = f
-            if (
-                self.node.has_filter("karaoke")
-                and (k := effects.get("karaoke", None))
-                and (f := Karaoke.from_dict(k))  # noqa
-            ):
-                self._karaoke = f
-            if (
-                self.node.has_filter("timescale")
-                and (ts := effects.get("timescale", None))
-                and (f := Timescale.from_dict(ts))  # noqa
-            ):
-                self._timescale = f
-            if (
-                self.node.has_filter("tremolo")
-                and (tr := effects.get("tremolo", None))
-                and (f := Tremolo.from_dict(tr))  # noqa
-            ):
-                self._tremolo = f
-            if (
-                self.node.has_filter("vibrato")
-                and (vb := effects.get("vibrato", None))
-                and (f := Vibrato.from_dict(vb))  # noqa
-            ):
-                self._vibrato = f
-            if (
-                self.node.has_filter("rotation")
-                and (ro := effects.get("rotation", None))
-                and (f := Rotation.from_dict(ro))  # noqa
-            ):
-                self._rotation = f
-            if (
-                self.node.has_filter("distortion")
-                and (di := effects.get("distortion", None))
-                and (f := Distortion.from_dict(di))  # noqa
-            ):
-                self._distortion = f
-            if (
-                self.node.has_filter("lowPass")
-                and (lo := effects.get("lowpass", None))
-                and (f := LowPass.from_dict(lo))  # noqa
-            ):
-                self._low_pass = f
-            if (
-                self.node.has_filter("channelMix")
-                and (ch := effects.get("channel_mix", None))
-                and (f := ChannelMix.from_dict(ch))  # noqa
-            ):
-                self._channel_mix = f
-            if (
-                self.node.has_filter("echo")
-                and (echo := effects.get("echo", None))
-                and (f := Echo.from_dict(echo))  # noqa
-            ):
-                self._echo = f
-            payload = {}
-            if await asyncstdlib.any(
-                f.changed
-                for f in [
-                    self.equalizer,
-                    self.karaoke,
-                    self.timescale,
-                    self.tremolo,
-                    self.vibrato,
-                    self.rotation,
-                    self.distortion,
-                    self.low_pass,
-                    self.channel_mix,
-                    self.echo,
-                ]
-            ):
-                payload["filters"] = self.node.get_filter_payload(
-                    player=self,
-                    equalizer=self.equalizer,
-                    karaoke=self.karaoke,
-                    timescale=self.timescale,
-                    tremolo=self.tremolo,
-                    vibrato=self.vibrato,
-                    rotation=self.rotation,
-                    distortion=self.distortion,
-                    low_pass=self.low_pass,
-                    channel_mix=self.channel_mix,
-                    echo=self.echo,
-                )
-            if self.volume_filter:
-                payload["volume"] = self.volume
-            if payload:
-                await self.node.patch_session_player(guild_id=self.guild.id, payload=payload)
+            await self._apply_filters_to_new_player(config, player_manager)
 
-        now_time = utcnow()
+        await self._create_job_for_player()
+        self.ready.set()
+
+    async def _create_job_for_player(self) -> None:
+        now_time = get_now_utc()
         self.player_manager.client.scheduler.add_job(
             self.auto_dc_task,
             trigger="interval",
@@ -397,7 +305,6 @@ class Player(VoiceProtocol):
             coalesce=True,
             next_run_time=now_time + datetime.timedelta(seconds=3),
         )
-
         self.player_manager.client.scheduler.add_job(
             self.auto_empty_queue_task,
             trigger="interval",
@@ -428,7 +335,6 @@ class Player(VoiceProtocol):
             coalesce=True,
             next_run_time=now_time + datetime.timedelta(seconds=4),
         )
-
         self.player_manager.client.scheduler.add_job(
             self.auto_save_task,
             trigger="interval",
@@ -450,7 +356,106 @@ class Player(VoiceProtocol):
             misfire_grace_time=1,
             replace_existing=False,
         )
-        self.ready.set()
+
+    async def _apply_filters_to_new_player(self, config: PlayerConfig, player_manager: PlayerController) -> None:
+        self._volume = Volume(await player_manager.client.player_config_manager.get_volume(self.guild.id))
+        effects = await config.fetch_effects()
+        if (v := effects.get("volume", None)) and (f := Volume.from_dict(v)):
+            self._volume = f
+        if (
+            self.node.has_filter("equalizer")
+            and (eq := effects.get("equalizer", None))
+            and (f := Equalizer.from_dict(eq))  # noqa
+        ):
+            self._equalizer = f
+        if (
+            self.node.has_filter("karaoke")
+            and (k := effects.get("karaoke", None))
+            and (f := Karaoke.from_dict(k))
+            # noqa
+        ):
+            self._karaoke = f
+        if (
+            self.node.has_filter("timescale")
+            and (ts := effects.get("timescale", None))
+            and (f := Timescale.from_dict(ts))  # noqa
+        ):
+            self._timescale = f
+        if (
+            self.node.has_filter("tremolo")
+            and (tr := effects.get("tremolo", None))
+            and (f := Tremolo.from_dict(tr))
+            # noqa
+        ):
+            self._tremolo = f
+        if (
+            self.node.has_filter("vibrato")
+            and (vb := effects.get("vibrato", None))
+            and (f := Vibrato.from_dict(vb))
+            # noqa
+        ):
+            self._vibrato = f
+        if (
+            self.node.has_filter("rotation")
+            and (ro := effects.get("rotation", None))
+            and (f := Rotation.from_dict(ro))
+            # noqa
+        ):
+            self._rotation = f
+        if (
+            self.node.has_filter("distortion")
+            and (di := effects.get("distortion", None))
+            and (f := Distortion.from_dict(di))  # noqa
+        ):
+            self._distortion = f
+        if (
+            self.node.has_filter("lowPass")
+            and (lo := effects.get("lowpass", None))
+            and (f := LowPass.from_dict(lo))
+            # noqa
+        ):
+            self._low_pass = f
+        if (
+            self.node.has_filter("channelMix")
+            and (ch := effects.get("channel_mix", None))
+            and (f := ChannelMix.from_dict(ch))  # noqa
+        ):
+            self._channel_mix = f
+        if self.node.has_filter("echo") and (echo := effects.get("echo", None)) and (f := Echo.from_dict(echo)):  # noqa
+            self._echo = f
+        payload = {}
+        if await asyncstdlib.any(
+            f.changed
+            for f in [
+                self.equalizer,
+                self.karaoke,
+                self.timescale,
+                self.tremolo,
+                self.vibrato,
+                self.rotation,
+                self.distortion,
+                self.low_pass,
+                self.channel_mix,
+                self.echo,
+            ]
+        ):
+            payload["filters"] = self.node.get_filter_payload(
+                player=self,
+                equalizer=self.equalizer,
+                karaoke=self.karaoke,
+                timescale=self.timescale,
+                tremolo=self.tremolo,
+                vibrato=self.vibrato,
+                rotation=self.rotation,
+                distortion=self.distortion,
+                low_pass=self.low_pass,
+                channel_mix=self.channel_mix,
+                echo=self.echo,
+            )
+        if self.volume_filter:
+            payload["volume"] = self.volume
+        if payload:
+            await self.node.patch_session_player(guild_id=self.guild.id, payload=payload)
 
     @property
     def channel(self) -> discord.channel.VocalGuildChannel:
@@ -880,7 +885,7 @@ class Player(VoiceProtocol):
                     self,
                 )
                 return
-            self._logger.trace("Auto save task for %s - Saving the player at %s", self, utcnow())
+            self._logger.trace("Auto save task for %s - Saving the player at %s", self, get_now_utc())
             await self.save()
 
     async def auto_track_stuck_fixer_track(self):
@@ -1731,7 +1736,7 @@ class Player(VoiceProtocol):
             self_deaf=deaf if (deaf := await self.self_deaf()) is True else self_deaf,
         )
         self._connected = True
-        self.connected_at = utcnow()
+        self.connected_at = get_now_utc()
         self._logger.debug("Connected to voice channel")
 
     @synchronized_method_call(PLAYER_LOCK, discard=True)
@@ -1752,7 +1757,7 @@ class Player(VoiceProtocol):
             self_deaf=await self.self_deaf(),
         )
         self._connected = True
-        self.connected_at = utcnow()
+        self.connected_at = get_now_utc()
         await asyncio.wait_for(self._waiting_for_node.wait(), timeout=None)
         await self.change_to_best_node(forced=True, skip_position_fetch=True)
         self._logger.debug("Reconnected to voice channel")

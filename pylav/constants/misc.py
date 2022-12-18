@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 ASCII_COLOURS = {
     "black": (1, 1, 1),
     "red": (220, 50, 47),

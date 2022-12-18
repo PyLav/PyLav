@@ -36,17 +36,17 @@ from pylav.type_hints.generics import ANY_GENERIC_TYPE
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class Filters:
-    volume: Union[float, None] = None
-    equalizer: Union[Equalizer, None] = dataclasses.field(default_factory=list)
-    karaoke: Union[Karaoke, None] = dataclasses.field(default_factory=dict)
-    timescale: Union[Timescale, None] = dataclasses.field(default_factory=dict)
-    tremolo: Union[Tremolo, None] = dataclasses.field(default_factory=dict)
-    vibrato: Union[Vibrato, None] = dataclasses.field(default_factory=dict)
-    rotation: Union[Rotation, None] = dataclasses.field(default_factory=dict)
-    distortion: Union[Distortion, None] = dataclasses.field(default_factory=dict)
-    channelMix: Union[ChannelMix, None] = dataclasses.field(default_factory=dict)
-    lowPass: Union[LowPass, None] = dataclasses.field(default_factory=dict)
-    echo: Union[Echo, None] = dataclasses.field(default_factory=dict)
+    volume: float | None = None
+    equalizer: Equalizer | None = dataclasses.field(default_factory=list)
+    karaoke: Karaoke | None = dataclasses.field(default_factory=dict)
+    timescale: Timescale | None = dataclasses.field(default_factory=dict)
+    tremolo: Tremolo | None = dataclasses.field(default_factory=dict)
+    vibrato: Vibrato | None = dataclasses.field(default_factory=dict)
+    rotation: Rotation | None = dataclasses.field(default_factory=dict)
+    distortion: Distortion | None = dataclasses.field(default_factory=dict)
+    channelMix: ChannelMix | None = dataclasses.field(default_factory=dict)
+    lowPass: LowPass | None = dataclasses.field(default_factory=dict)
+    echo: Echo | None = dataclasses.field(default_factory=dict)
 
     def to_dict(self) -> JSON_DICT_TYPE:
         response: JSON_DICT_TYPE = {"volume": self.volume}
@@ -102,8 +102,17 @@ class Filters:
     @staticmethod
     def _process_filter_object(
         name: str,
-        filter_name: Union[Karaoke, Timescale, Tremolo, Vibrato, Rotation, Distortion, ChannelMix, LowPass, Echo, None],
-        cls: type[Union[Karaoke, Timescale, Tremolo, Vibrato, Rotation, Distortion, ChannelMix, LowPass, Echo]],
+        filter_name: Karaoke
+        | Timescale
+        | Tremolo
+        | Vibrato
+        | Rotation
+        | Distortion
+        | ChannelMix
+        | LowPass
+        | Echo
+        | None,
+        cls: type[Karaoke | Timescale | Tremolo | Vibrato | Rotation | Distortion | ChannelMix | LowPass | Echo],
         response: ANY_GENERIC_TYPE,
     ) -> ANY_GENERIC_TYPE:
         if isinstance(filter_name, cls):

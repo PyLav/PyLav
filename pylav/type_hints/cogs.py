@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 from pylav.type_hints.bot import DISCORD_COG_TYPE, DISCORD_COMMAND_ERROR_TYPE, DISCORD_CONTEXT_TYPE
 from pylav.type_hints.generics import CORO_TYPE, MaybeCoro

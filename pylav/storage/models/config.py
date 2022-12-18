@@ -7,10 +7,10 @@ from dataclasses import dataclass
 
 import aiopath  # type: ignore
 import ujson
-from discord.utils import utcnow
 
 from pylav.extension.bundled_node.utils import get_true_path
 from pylav.helpers.singleton import SingletonCachedByKey
+from pylav.helpers.time import get_now_utc
 from pylav.storage.database.cache.decodators import maybe_cached
 from pylav.storage.database.cache.model import CachedModel
 from pylav.storage.database.tables.config import LibConfigRow
@@ -391,7 +391,7 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
             .first()
             .output(load_json=True, nested=True)
         )
-        return response["next_execution_update_bundled_playlists"] if response else utcnow()
+        return response["next_execution_update_bundled_playlists"] if response else get_now_utc()
 
     async def update_next_execution_update_bundled_playlists(self, next_execution: datetime.datetime) -> None:
         """Update the next_execution_update_bundled_playlists.
@@ -434,7 +434,7 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
             .first()
             .output(load_json=True, nested=True)
         )
-        return response["next_execution_update_bundled_external_playlists"] if response else utcnow()
+        return response["next_execution_update_bundled_external_playlists"] if response else get_now_utc()
 
     async def update_next_execution_update_bundled_external_playlists(self, next_execution: datetime.datetime) -> None:
         """Update the next_execution_update_bundled_external_playlists.
@@ -480,7 +480,7 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
             .first()
             .output(load_json=True, nested=True)
         )
-        return response["next_execution_update_external_playlists"] if response else utcnow()
+        return response["next_execution_update_external_playlists"] if response else get_now_utc()
 
     async def update_next_execution_update_external_playlists(self, next_execution: datetime.datetime) -> None:
         """Update the next_execution_update_external_playlists.

@@ -66,7 +66,7 @@ repos:
     rev: v3.3.1
     hooks:
     -   id: pyupgrade
-        args: [--py39-plus]
+        args: [--py311-plus]
 -   repo: https://github.com/psf/black
     # The `refs/tags/<tag>:refs/tags/<tag>` is needed for black's required-version to work:
     # https://github.com/psf/black/issues/2493#issuecomment-1081987650
@@ -106,3 +106,4 @@ ci:
     autoupdate_commit_msg: '[skip ci] pre-commit autoupdate'
     autoupdate_schedule: weekly
     submodules: false
+    skip: [sourcery]

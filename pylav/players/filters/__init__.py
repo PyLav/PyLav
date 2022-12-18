@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pylav.players.filters import plugins
 from pylav.players.filters.channel_mix import ChannelMix as ChannelMix
 from pylav.players.filters.distortion import Distortion as Distortion

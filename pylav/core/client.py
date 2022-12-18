@@ -25,9 +25,7 @@ from asyncstdlib import itertools
 from discord.abc import Messageable
 from discord.ext.commands import Context
 from discord.types.embed import EmbedType
-from discord.utils import utcnow
 from packaging.version import Version
-from pytz import utc
 
 from pylav import VERSION
 
@@ -68,6 +66,7 @@ from pylav.extension.m3u import M3UParser
 from pylav.extension.radio import RadioBrowser
 from pylav.helpers.misc import MISSING
 from pylav.helpers.singleton import SingletonCallable, SingletonClass
+from pylav.helpers.time import get_now_utc, get_tz_utc
 from pylav.logging import getLogger
 from pylav.nodes.api.responses.rest_api import LoadTrackResponses
 from pylav.nodes.api.responses.route_planner import Status as RoutePlannerStatus
@@ -232,7 +231,7 @@ class Client(metaclass=SingletonClass):
             self._spotify_auth = None
             self._shutting_down = False
             self._scheduler = AsyncIOScheduler()
-            self._scheduler.configure(timezone=utc)
+            self._scheduler.configure(timezone=get_tz_utc())
             self._wait_for_playlists = asyncio.Event()
             self._wait_for_playlists.set()
         except Exception:
@@ -492,7 +491,7 @@ class Client(metaclass=SingletonClass):
         self._user_id = str(self._bot.user.id)
         self._local_node_manager = LocalNodeManager(self)
         enable_managed_node = await self.lib_db_manager.get_config().fetch_enable_managed_node()
-        time_now = utcnow()
+        time_now = get_now_utc()
         await self._maybe_start_bundled_node(enable_managed_node, java_path)
         await self.node_manager.connect_to_all_nodes()
         await self.node_manager.wait_until_ready()
@@ -527,7 +526,7 @@ class Client(metaclass=SingletonClass):
             total_bundled_playlists -= len(BUNDLED_SPOTIFY_PLAYLIST_IDS)
 
         if await self.playlist_db_manager.count() < total_bundled_playlists:
-            time_now = utcnow()
+            time_now = get_now_utc()
             self._wait_for_playlists.clear()
             await self._config.update_next_execution_update_bundled_playlists(time_now - datetime.timedelta(days=7))
             await self._config.update_next_execution_update_bundled_external_playlists(
@@ -1117,7 +1116,7 @@ class Client(metaclass=SingletonClass):
         if timestamp and isinstance(timestamp, datetime.datetime):
             timestamp = timestamp
         else:
-            timestamp = utcnow()
+            timestamp = get_now_utc()
         contents = dict(
             title=title,
             type=embed_type,

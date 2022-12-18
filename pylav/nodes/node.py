@@ -14,7 +14,6 @@ import ujson
 from aiohttp.helpers import sentinel  # noqa:
 from apscheduler.jobstores.base import JobLookupError
 from dacite import from_dict
-from discord.utils import utcnow
 from expiringdict import ExpiringDict
 from multidict import CIMultiDictProxy
 from packaging.version import Version, parse
@@ -26,6 +25,7 @@ from pylav.constants.node_features import SUPPORTED_FEATURES, SUPPORTED_SOURCES
 from pylav.constants.regex import SEMANTIC_VERSIONING
 from pylav.events.base import PyLavEvent
 from pylav.exceptions.request import HTTPException, UnauthorizedException
+from pylav.helpers.time import get_now_utc
 from pylav.logging import getLogger
 from pylav.nodes.api.responses import rest_api
 from pylav.nodes.api.responses import websocket as websocket_responses
@@ -182,7 +182,7 @@ class Node:
             id=f"{self.identifier}-{self._manager.client.bot.user.id}-node_monitor_task",
             replace_existing=True,
             coalesce=True,
-            next_run_time=utcnow() + datetime.timedelta(seconds=15),
+            next_run_time=get_now_utc() + datetime.timedelta(seconds=15),
         )
 
     async def _unhealthy(self) -> None:

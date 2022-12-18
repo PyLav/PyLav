@@ -1,5 +1,7 @@
-from collections.abc import Awaitable, Coroutine
-from typing import Any, Callable, ParamSpec, Protocol, TypeVar, Union
+from __future__ import annotations
+
+from collections.abc import Awaitable, Callable, Coroutine
+from typing import Any, ParamSpec, Protocol, TypeVar, Union
 
 ANY_GENERIC_TYPE = TypeVar("ANY_GENERIC_TYPE")
 PARAM_SPEC_TYPE = ParamSpec("PARAM_SPEC_TYPE")

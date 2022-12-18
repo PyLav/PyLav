@@ -9,7 +9,6 @@ from collections import namedtuple
 from typing import TYPE_CHECKING
 
 import discord
-from discord.utils import utcnow
 
 from pylav.constants.config import (
     TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS,
@@ -25,6 +24,7 @@ from pylav.constants.playlists import (
 )
 from pylav.core.context import PyLavContext
 from pylav.exceptions.database import EntryNotFoundException
+from pylav.helpers.time import get_now_utc
 from pylav.logging import getLogger
 from pylav.players.query.obj import Query
 from pylav.storage.database.tables.playlists import PlaylistRow
@@ -315,7 +315,7 @@ class PlaylistController:
                     continue
             # noinspection PyProtectedMember
             await self.client._config.update_next_execution_update_bundled_playlists(
-                utcnow() + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS)
+                get_now_utc() + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS)
             )
             # noinspection PyProtectedMember
             self.client._wait_for_playlists.set()
@@ -376,7 +376,7 @@ class PlaylistController:
                     await self.delete_playlist(playlist_id=playlist_id)
             # noinspection PyProtectedMember
             await self.client._config.update_next_execution_update_bundled_external_playlists(
-                utcnow() + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS)
+                get_now_utc() + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS)
             )
             LOGGER.info("Finished updating bundled external playlists")
 
@@ -418,7 +418,7 @@ class PlaylistController:
                     )
             # noinspection PyProtectedMember
             await self.client._config.update_next_execution_update_external_playlists(
-                utcnow() + datetime.timedelta(days=TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS)
+                get_now_utc() + datetime.timedelta(days=TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS)
             )
             LOGGER.info("Finished updating external playlists")
 

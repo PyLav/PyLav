@@ -9,7 +9,6 @@ from typing import Any
 import aiohttp
 import ujson
 from dacite import from_dict
-from discord.utils import utcnow
 from packaging.version import Version
 
 from pylav.constants.builtin_nodes import PYLAV_NODES
@@ -44,6 +43,7 @@ from pylav.events.track.track_start import (
 from pylav.exceptions.node import WebsocketNotConnectedException
 from pylav.exceptions.request import HTTPException
 from pylav.helpers.misc import ExponentialBackoffWithReset
+from pylav.helpers.time import get_now_utc
 from pylav.logging import getLogger
 from pylav.nodes.api.responses.plugins import SegmentSkipped, SegmentsLoaded
 from pylav.nodes.api.responses.websocket import (
@@ -453,7 +453,7 @@ class WebSocket:
                 (not data.state.connected)
                 and player.is_playing
                 and self.ready.is_set()
-                and player.connected_at < utcnow() - datetime.timedelta(minutes=5)
+                and player.connected_at < get_now_utc() - datetime.timedelta(minutes=5)
             ):
                 if player.guild.id in self._player_reconnect_tasks:
                     self._player_reconnect_tasks[player.guild.id].cancel()
@@ -481,7 +481,7 @@ class WebSocket:
             (not session.voice.connected)
             and player.is_playing
             and self.ready.is_set()
-            and player.connected_at < utcnow() - datetime.timedelta(minutes=5)
+            and player.connected_at < get_now_utc() - datetime.timedelta(minutes=5)
         ):
             self._logger.debug("Reconnecting stalled player for %s", player.guild.id)
             await player.reconnect()

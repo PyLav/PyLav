@@ -1,13 +1,13 @@
 import dataclasses
-from typing import Annotated, Union
+from typing import Annotated
 
 from pylav.nodes.api.responses.filters.misc import ValueRange
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class Tremolo:
-    frequency: Annotated[Union[float, None], ValueRange(min=0.0, max=float("inf"))] = None
-    depth: Annotated[Union[float, None], ValueRange(min=0.0, max=1.0)] = None
+    frequency: Annotated[float | None, ValueRange(min=0.0, max=float("inf"))] = None
+    depth: Annotated[float | None, ValueRange(min=0.0, max=1.0)] = None
 
     def to_dict(self) -> dict[str, float]:
         response = {}

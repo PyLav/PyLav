@@ -5,8 +5,7 @@ import contextlib
 import datetime
 from typing import TYPE_CHECKING
 
-from discord.utils import utcnow
-
+from pylav.helpers.time import get_now_utc
 from pylav.logging import getLogger
 from pylav.players.query.obj import Query
 from pylav.storage.database.tables.queries import QueryRow
@@ -34,7 +33,7 @@ class QueryController:
     async def exists(query: Query) -> bool:
         return await QueryRow.exists().where(
             (QueryRow.identifier == query.query_identifier)
-            & (QueryRow.last_updated > utcnow() - datetime.timedelta(days=30))
+            & (QueryRow.last_updated > get_now_utc() - datetime.timedelta(days=30))
         )
 
     @staticmethod
@@ -87,7 +86,7 @@ class QueryController:
             asyncio.exceptions.CancelledError,
         ):
             LOGGER.trace("Deleting old queries")
-            await QueryRow.delete().where(QueryRow.last_updated <= (utcnow() - datetime.timedelta(days=30)))
+            await QueryRow.delete().where(QueryRow.last_updated <= (get_now_utc() - datetime.timedelta(days=30)))
             LOGGER.trace("Deleted old queries")
 
     @staticmethod
@@ -100,7 +99,7 @@ class QueryController:
 
     @staticmethod
     async def delete_older_than(days: int) -> None:
-        await QueryRow.delete().where(QueryRow.last_updated <= (utcnow() - datetime.timedelta(days=days)))
+        await QueryRow.delete().where(QueryRow.last_updated <= (get_now_utc() - datetime.timedelta(days=days)))
 
     @staticmethod
     async def delete_query(query: Query) -> None:
