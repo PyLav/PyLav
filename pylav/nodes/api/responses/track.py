@@ -3,6 +3,7 @@ from __future__ import annotations
 import dataclasses
 from typing import NotRequired  # noqa
 
+from pylav.constants.node import TRACK_VERSION
 from pylav.nodes.api.responses.shared import TrackPluginInfo
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
@@ -20,7 +21,7 @@ class Info:
     sourceName: str | None = None
     artworkUrl: str | None = None
     isrc: str | None = None
-    version: NotRequired[int] = 3
+    version: NotRequired[int] = TRACK_VERSION
 
     def to_dict(self) -> JSON_DICT_TYPE:
         return dataclasses.asdict(self)

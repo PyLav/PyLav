@@ -2,10 +2,16 @@ from __future__ import annotations
 
 import asyncio
 import struct
-from typing import Any
+from collections.abc import AsyncIterator
+from typing import TYPE_CHECKING, Any
 
+from pylav.constants.node import TRACK_VERSION
 from pylav.logging import getLogger
 from pylav.utils.vendor.lavalink_py.datarw import DataWriter
+from pylav.utils.vendor.redbot import AsyncIter
+
+if TYPE_CHECKING:
+    from pylav.nodes.node import Node
 
 LOGGER = getLogger("PyLav.Track.Decoder")
 
@@ -22,7 +28,7 @@ def encode_track(
     artworkUrl: str | None = None,
     isrc: str | None = None,
     probe: str | None = None,
-    version: int = 3,
+    version: int = TRACK_VERSION,
     **kwargs: Any,
 ) -> str:
 
@@ -53,6 +59,7 @@ async def async_encoder(
     is_stream: bool,
     uri: str | None,
     source: str,
+    version: int = TRACK_VERSION,
     artworkUrl: str | None = None,
     isrc: str | None = None,
     probe: str | None = None,
@@ -71,5 +78,19 @@ async def async_encoder(
         artworkUrl=artworkUrl,
         isrc=isrc,
         probe=probe,
+        version=version,
         **kwargs,
     )
+
+
+async def async_re_encoder(track: str, node: Node) -> str:
+    track_obj = await node.fetch_decodetrack(track, raise_on_failure=True)
+    track_data = track_obj.info.to_dict()
+    return await async_encoder(**track_data)
+
+
+async def async_bulk_re_encoder(track: list[str], node: Node) -> AsyncIterator[str]:
+    track_objs = await node.post_decodetracks(track, raise_on_failure=True)
+    async for track_obj in AsyncIter(track_objs):
+        track_data = track_obj.info.to_dict()
+        yield await async_encoder(**track_data)
