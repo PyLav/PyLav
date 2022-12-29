@@ -719,9 +719,9 @@ class Client(metaclass=SingletonClass):
 
     async def register(self, cog: DISCORD_COG_TYPE) -> None:
         LOGGER.debug("Registering cog %s", cog.__cog_name__)
-        if (instance := getattr(self.bot, "lavalink", None)) and not isinstance(instance, Client):
+        if (instance := getattr(self.bot, "pylav", None)) and not isinstance(instance, Client):
             raise AnotherClientAlreadyRegisteredException(
-                f"Another client instance has already been registered to bot.lavalink with type: {type(instance)}"
+                f"Another client instance has already been registered to bot.pylav with type: {type(instance)}"
             )
         self.__cogs_registered.add(cog.__cog_name__)
 

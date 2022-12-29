@@ -43,7 +43,7 @@ class EQPresetsSource(menus.ListPageSource):
                     header_author: EightBitANSI.paint_blue(author),
                 }
             )
-        return await self.cog.lavalink.construct_embed(
+        return await self.cog.pylav.construct_embed(
             messageable=menu.ctx, description=box(tabulate(data, headers="keys"), lang="ansi")
         )
 

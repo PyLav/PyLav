@@ -44,13 +44,13 @@ else:
         @classmethod
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> list[Station]:
             """Converts a station name to a matching object"""
-            if ctx.bot.lavalink.radio_browser.disabled:
+            if ctx.bot.pylav.radio_browser.disabled:
                 return []
 
             try:
-                return await ctx.lavalink.radio_browser.station_by_uuid(
+                return await ctx.pylav.radio_browser.station_by_uuid(
                     arg
-                ) or await ctx.lavalink.radio_browser.stations_by_name(name=arg)
+                ) or await ctx.pylav.radio_browser.stations_by_name(name=arg)
             except EntryNotFoundException as e:
                 raise commands.BadArgument(_("Station with name `{arg}` not found").format(arg=arg)) from e
 
@@ -59,13 +59,13 @@ else:
             if not interaction.response.is_done():
                 await interaction.response.defer(ephemeral=True)
             ctx = await interaction.client.get_context(interaction)
-            if interaction.client.lavalink.radio_browser.disabled:
+            if interaction.client.pylav.radio_browser.disabled:
                 return []
             return await cls.convert(ctx, argument)
 
         @classmethod
         async def autocomplete(cls, interaction: DISCORD_INTERACTION_TYPE, current: str) -> list[Choice]:
-            if interaction.client.lavalink.radio_browser.disabled:
+            if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(
                         name=shorten_string(max_length=100, string=_("Radio Browser is disabled")),
@@ -86,23 +86,23 @@ else:
                 if country and (val := country[0].get("value")):
                     kwargs["country"] = val
                     kwargs["country_exact"] = any(
-                        True for c in await interaction.client.lavalink.radio_browser.countries() if c.name == val
+                        True for c in await interaction.client.pylav.radio_browser.countries() if c.name == val
                     )
                 if state and (val := state[0].get("value")):
                     kwargs["state"] = val
                     kwargs["state_exact"] = any(
-                        True for t in await interaction.client.lavalink.radio_browser.states() if t.name == val
+                        True for t in await interaction.client.pylav.radio_browser.states() if t.name == val
                     )
                 if language and (val := language[0].get("value")):
                     kwargs["language"] = val
                     kwargs["language_exact"] = any(
-                        True for t in await interaction.client.lavalink.radio_browser.languages() if t.name == val
+                        True for t in await interaction.client.pylav.radio_browser.languages() if t.name == val
                     )
                 if tags:
                     if len(tags) == 1 and (val := tags[0].get("value")):
                         kwargs["tag"] = val
                         kwargs["tag_exact"] = any(
-                            True for t in await interaction.client.lavalink.radio_browser.tags() if t.name == val
+                            True for t in await interaction.client.pylav.radio_browser.tags() if t.name == val
                         )
                     elif len(tags) > 1:
                         kwargs["tag_list"] = ",".join([tv for t in tags if (tv := t.get("value"))])
@@ -117,11 +117,11 @@ else:
                         else shorten_string(max_length=100, string=_("Unnamed")),
                         value=f"{e.stationuuid}",
                     )
-                    for e in await interaction.client.lavalink.radio_browser.stations_by_votes(limit=25)
+                    for e in await interaction.client.pylav.radio_browser.stations_by_votes(limit=25)
                 ]
             if not kwargs:
                 kwargs["limit"] = 1000
-            stations = await interaction.client.lavalink.radio_browser.search(**kwargs)
+            stations = await interaction.client.pylav.radio_browser.search(**kwargs)
 
             async def _filter(c: Station):
                 return (
@@ -146,11 +146,11 @@ else:
         @classmethod
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> list[Tag]:
             """Converts a Tag name to to a matching object"""
-            if ctx.bot.lavalink.radio_browser.disabled:
+            if ctx.bot.pylav.radio_browser.disabled:
                 return []
 
             try:
-                return await ctx.lavalink.radio_browser.tags(arg)
+                return await ctx.pylav.radio_browser.tags(arg)
             except EntryNotFoundException as e:
                 raise commands.BadArgument(_("Tag with name `{arg}` not found").format(arg=arg)) from e
 
@@ -159,20 +159,20 @@ else:
             if not interaction.response.is_done():
                 await interaction.response.defer(ephemeral=True)
             ctx = await interaction.client.get_context(interaction)
-            if interaction.client.lavalink.radio_browser.disabled:
+            if interaction.client.pylav.radio_browser.disabled:
                 return []
             return await cls.convert(ctx, argument)
 
         @classmethod
         async def autocomplete(cls, interaction: DISCORD_INTERACTION_TYPE, current: str) -> list[Choice]:
-            if interaction.client.lavalink.radio_browser.disabled:
+            if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(
                         name=shorten_string(max_length=100, string=_("Radio Browser is disabled")),
                         value="???",
                     )
                 ]
-            tags = await interaction.client.lavalink.radio_browser.tags()
+            tags = await interaction.client.pylav.radio_browser.tags()
             if not current:
                 return [
                     Choice(
@@ -203,11 +203,11 @@ else:
         @classmethod
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> list[Language]:
             """Converts a Language name to to a matching object"""
-            if ctx.bot.lavalink.radio_browser.disabled:
+            if ctx.bot.pylav.radio_browser.disabled:
                 return []
 
             try:
-                return await ctx.lavalink.radio_browser.languages(arg)
+                return await ctx.pylav.radio_browser.languages(arg)
             except EntryNotFoundException as e:
                 raise commands.BadArgument(_("Language with name `{arg}` not found").format(arg=arg)) from e
 
@@ -216,20 +216,20 @@ else:
             if not interaction.response.is_done():
                 await interaction.response.defer(ephemeral=True)
             ctx = await interaction.client.get_context(interaction)
-            if interaction.client.lavalink.radio_browser.disabled:
+            if interaction.client.pylav.radio_browser.disabled:
                 return []
             return await cls.convert(ctx, argument)
 
         @classmethod
         async def autocomplete(cls, interaction: DISCORD_INTERACTION_TYPE, current: str) -> list[Choice]:
-            if interaction.client.lavalink.radio_browser.disabled:
+            if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(
                         name=shorten_string(max_length=100, string=_("Radio Browser is disabled")),
                         value="???",
                     )
                 ]
-            languages = await interaction.client.lavalink.radio_browser.languages()
+            languages = await interaction.client.pylav.radio_browser.languages()
             if not current:
                 return [
                     Choice(
@@ -260,10 +260,10 @@ else:
         @classmethod
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> list[State]:
             """Converts a State name to to a matching object"""
-            if ctx.bot.lavalink.radio_browser.disabled:
+            if ctx.bot.pylav.radio_browser.disabled:
                 return []
             try:
-                return await ctx.lavalink.radio_browser.states(state=arg)
+                return await ctx.pylav.radio_browser.states(state=arg)
             except EntryNotFoundException as e:
                 raise commands.BadArgument(_("State with name `{arg}` not found")) from e
 
@@ -272,13 +272,13 @@ else:
             if not interaction.response.is_done():
                 await interaction.response.defer(ephemeral=True)
             ctx = await interaction.client.get_context(interaction)
-            if interaction.client.lavalink.radio_browser.disabled:
+            if interaction.client.pylav.radio_browser.disabled:
                 return []
             return await cls.convert(ctx, argument)
 
         @classmethod
         async def autocomplete(cls, interaction: DISCORD_INTERACTION_TYPE, current: str) -> list[Choice]:
-            if interaction.client.lavalink.radio_browser.disabled:
+            if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(
                         name=shorten_string(max_length=100, string=_("Radio Browser is disabled")),
@@ -293,7 +293,7 @@ else:
 
                 if country and (val := country[0].get("value")):
                     kwargs["country"] = val
-            states = await interaction.client.lavalink.radio_browser.states(**kwargs)
+            states = await interaction.client.pylav.radio_browser.states(**kwargs)
             if not current:
                 return [
                     Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
@@ -314,11 +314,11 @@ else:
         @classmethod
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> list[Codec]:
             """Converts a Codec name to to a matching object"""
-            if ctx.bot.lavalink.radio_browser.disabled:
+            if ctx.bot.pylav.radio_browser.disabled:
                 return []
 
             try:
-                return await ctx.lavalink.radio_browser.codecs(arg)
+                return await ctx.pylav.radio_browser.codecs(arg)
             except EntryNotFoundException as e:
                 raise commands.BadArgument(_("Codec with name `{arg}` not found").format(arg=arg)) from e
 
@@ -327,20 +327,20 @@ else:
             if not interaction.response.is_done():
                 await interaction.response.defer(ephemeral=True)
             ctx = await interaction.client.get_context(interaction)
-            if interaction.client.lavalink.radio_browser.disabled:
+            if interaction.client.pylav.radio_browser.disabled:
                 return []
             return await cls.convert(ctx, argument)
 
         @classmethod
         async def autocomplete(cls, interaction: DISCORD_INTERACTION_TYPE, current: str) -> list[Choice]:
-            if interaction.client.lavalink.radio_browser.disabled:
+            if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(
                         name=shorten_string(max_length=100, string=_("Radio Browser is disabled")),
                         value="???",
                     )
                 ]
-            codecs = await interaction.client.lavalink.radio_browser.codecs()
+            codecs = await interaction.client.pylav.radio_browser.codecs()
             if not current:
                 return [
                     Choice(
@@ -366,11 +366,11 @@ else:
         @classmethod
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> list[CountryCode]:
             """Converts a CountryCode name to to a matching object"""
-            if ctx.bot.lavalink.radio_browser.disabled:
+            if ctx.bot.pylav.radio_browser.disabled:
                 return []
 
             try:
-                return await ctx.lavalink.radio_browser.countrycodes(arg)
+                return await ctx.pylav.radio_browser.countrycodes(arg)
             except EntryNotFoundException as e:
                 raise commands.BadArgument(_("Country code `{arg}` not found").format(arg=arg)) from e
 
@@ -379,20 +379,20 @@ else:
             if not interaction.response.is_done():
                 await interaction.response.defer(ephemeral=True)
             ctx = await interaction.client.get_context(interaction)
-            if interaction.client.lavalink.radio_browser.disabled:
+            if interaction.client.pylav.radio_browser.disabled:
                 return []
             return await cls.convert(ctx, argument)
 
         @classmethod
         async def autocomplete(cls, interaction: DISCORD_INTERACTION_TYPE, current: str) -> list[Choice]:
-            if interaction.client.lavalink.radio_browser.disabled:
+            if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(
                         name=shorten_string(max_length=100, string=_("Radio Browser is disabled")),
                         value="???",
                     )
                 ]
-            country_codes = await interaction.client.lavalink.radio_browser.countrycodes()
+            country_codes = await interaction.client.pylav.radio_browser.countrycodes()
             if not current:
                 return [
                     Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
@@ -413,11 +413,11 @@ else:
         @classmethod
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> list[Country]:
             """Converts a Country name to to a matching object"""
-            if ctx.bot.lavalink.radio_browser.disabled:
+            if ctx.bot.pylav.radio_browser.disabled:
                 return []
 
             try:
-                countries = await ctx.lavalink.radio_browser.countries()
+                countries = await ctx.pylav.radio_browser.countries()
             except EntryNotFoundException as e:
                 raise commands.BadArgument(_("Country with name `{arg}` not found").format(arg=arg)) from e
 
@@ -432,13 +432,13 @@ else:
             if not interaction.response.is_done():
                 await interaction.response.defer(ephemeral=True)
             ctx = await interaction.client.get_context(interaction)
-            if interaction.client.lavalink.radio_browser.disabled:
+            if interaction.client.pylav.radio_browser.disabled:
                 return []
             return await cls.convert(ctx, argument)
 
         @classmethod
         async def autocomplete(cls, interaction: DISCORD_INTERACTION_TYPE, current: str) -> list[Choice]:
-            if interaction.client.lavalink.radio_browser.disabled:
+            if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(
                         name=shorten_string(max_length=100, string=_("Radio Browser is disabled")),
@@ -452,7 +452,7 @@ else:
                 code = [v for v in options if v.get("name") in ["countrycode", "code"]]
                 if code and (val := code[0].get("value")):
                     kwargs["code"] = val
-            countries = await interaction.client.lavalink.radio_browser.countries(**kwargs)
+            countries = await interaction.client.pylav.radio_browser.countries(**kwargs)
             if not current:
                 return [
                     Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")

@@ -45,7 +45,7 @@ class SSLNodeToggleButton(discord.ui.Button):
         context = await self.cog.bot.get_context(interaction)
         if self.view.author.id != interaction.user.id:
             return await context.send(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     messageable=interaction, description=_("You are not authorized to interact with this option")
                 ),
                 ephemeral=True,
@@ -53,14 +53,14 @@ class SSLNodeToggleButton(discord.ui.Button):
         self.view.ssl = not self.view.ssl
         if self.view.ssl:
             await context.send(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     messageable=interaction, description=_("Connecting to the node with SSL enabled")
                 ),
                 ephemeral=True,
             )
         else:
             await context.send(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     messageable=interaction, description=_("Connecting to the node with SSL disabled")
                 ),
                 ephemeral=True,
@@ -90,7 +90,7 @@ class SearchOnlyNodeToggleButton(discord.ui.Button):
         context = await self.cog.bot.get_context(interaction)
         if self.view.author.id != interaction.user.id:
             return await context.send(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     messageable=interaction, description=_("You are not authorized to interact with this option")
                 ),
                 ephemeral=True,
@@ -98,14 +98,14 @@ class SearchOnlyNodeToggleButton(discord.ui.Button):
         self.view.search_only = not self.view.search_only
         if self.view.search_only:
             await context.send(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     messageable=interaction, description=_("This node will only be used for searches")
                 ),
                 ephemeral=True,
             )
         else:
             await context.send(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     messageable=interaction, description=_("This node will be used for search and playback")
                 ),
                 ephemeral=True,
@@ -129,14 +129,14 @@ class AddNodeDoneButton(discord.ui.Button):
         context = await self.cog.bot.get_context(interaction)
         if self.view.author.id != interaction.user.id:
             return await context.send(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     messageable=interaction, description=_("You are not authorized to interact with this option")
                 ),
                 ephemeral=True,
             )
         if not await asyncstdlib.all([self.view.name, self.view.host, self.view.port, self.view.password]):
             await context.send(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     messageable=interaction, description=_("Please fill out all the fields before continuing")
                 ),
                 ephemeral=True,
@@ -174,7 +174,7 @@ class NodeButton(discord.ui.Button):
     async def callback(self, interaction: DISCORD_INTERACTION_TYPE):
         if self.view.author.id != interaction.user.id:
             return await interaction.response.send_message(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     messageable=interaction, description=_("You are not authorized to interact with this option")
                 ),
                 ephemeral=True,
@@ -209,7 +209,7 @@ class NodeDeleteButton(discord.ui.Button):
         context = await self.cog.bot.get_context(interaction)
         if self.view.author.id != interaction.user.id:
             return await context.send(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     messageable=interaction, description=_("You are not authorized to interact with this option")
                 ),
                 ephemeral=True,
@@ -222,7 +222,7 @@ class NodeDeleteButton(discord.ui.Button):
             response = _("This node will no longer be deleted once you press done")
 
         await context.send(
-            embed=await self.cog.lavalink.construct_embed(messageable=interaction, description=response),
+            embed=await self.cog.pylav.construct_embed(messageable=interaction, description=response),
             ephemeral=True,
         )
 
@@ -244,13 +244,13 @@ class NodeShowEnabledSourcesButton(discord.ui.Button):
         context = await self.cog.bot.get_context(interaction)
         if self.view.author.id != interaction.user.id:
             return await context.send(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     messageable=interaction, description=_("You are not authorized to interact with this option")
                 ),
                 ephemeral=True,
             )
         await context.send(
-            embed=await self.cog.lavalink.construct_embed(
+            embed=await self.cog.pylav.construct_embed(
                 messageable=interaction,
                 description=_("__Enabled sources__:\n{sources}").format(
                     sources="\n".join(map(str.title, self.view.source.target.capabilities))

@@ -366,7 +366,7 @@ class LocalNodeManager:
     async def _get_jar_args(self) -> tuple[list[str], str | None]:
         java_available, java_version = await self._has_java()
         if not java_available:
-            raise Exception(f"Pylav - Java executable not found, tried to use: '{self._java_exc}'")
+            raise OSError(f"Pylav - Java executable not found, tried to use: '{self._java_exc}'")
 
         java_xms_default, java_xmx_default, __, java_max_allowed_ram = get_jar_ram_actual(self._java_exc)
         java_xms, java_xmx = (
@@ -777,8 +777,8 @@ class LocalNodeManager:
                 await asyncio.sleep(1)
             except WebsocketNotConnectedException:
                 await asyncio.sleep(5)
-            except ConnectionResetError:
-                raise AttributeError
+            except ConnectionResetError as e:
+                raise AttributeError from e
         elif node.websocket.connecting:
             await node.websocket.wait_until_ready(timeout=30)
         else:

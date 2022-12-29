@@ -106,7 +106,7 @@ class AddNodeFlow(discord.ui.View):
             emoji=emojis.SSL,
         )
         self.disabled_sources_selector = SourceSelector(
-            cog=self.cog, placeholder=shorten_string(max_length=100, translation=_("Source to disable")), row=2
+            cog=self.cog, placeholder=shorten_string(max_length=100, string=_("Source to disable")), row=2
         )
         self.name_button = NodeButton(
             cog=self.cog,
@@ -206,7 +206,7 @@ class AddNodeFlow(discord.ui.View):
     ):
         self.ctx = ctx
         self.message = await ctx.send(
-            embed=await self.cog.lavalink.construct_embed(description=description, title=title, messageable=ctx),
+            embed=await self.cog.pylav.construct_embed(description=description, title=title, messageable=ctx),
             view=self,
             ephemeral=True,
         )
@@ -218,7 +218,7 @@ class AddNodeFlow(discord.ui.View):
         await self.name_prompt.responded.wait()
         self.name = self.name_prompt.response
         await interaction.followup.send(
-            embed=await self.cog.lavalink.construct_embed(
+            embed=await self.cog.pylav.construct_embed(
                 description=_("Name set to {name}").format(name=inline(self.name)),
                 messageable=interaction,
             ),
@@ -231,7 +231,7 @@ class AddNodeFlow(discord.ui.View):
         await self.password_prompt.responded.wait()
         self.password = self.password_prompt.response
         await interaction.followup.send(
-            embed=await self.cog.lavalink.construct_embed(
+            embed=await self.cog.pylav.construct_embed(
                 description=_("Password set to {password}").format(password=inline(self.password)),
                 messageable=interaction,
             ),
@@ -249,7 +249,7 @@ class AddNodeFlow(discord.ui.View):
         else:
             self.host = self.host_prompt.response
         await interaction.followup.send(
-            embed=await self.cog.lavalink.construct_embed(
+            embed=await self.cog.pylav.construct_embed(
                 description=_("Host set to {host}").format(host=inline(self.host)),
                 messageable=interaction,
             ),
@@ -266,7 +266,7 @@ class AddNodeFlow(discord.ui.View):
             self.port = None
         if self.port is None:
             await interaction.followup.send(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     description=_("Invalid port"),
                     messageable=interaction,
                 ),
@@ -274,7 +274,7 @@ class AddNodeFlow(discord.ui.View):
             )
         else:
             await interaction.followup.send(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     description=_("Port set to {port}").format(port=inline(f"{self.port}")),
                     messageable=interaction,
                 ),
@@ -291,7 +291,7 @@ class AddNodeFlow(discord.ui.View):
             self.resume_timeout = None
         if self.resume_timeout is None:
             await interaction.followup.send(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     description=_("Invalid timeout, it must be a number in seconds"),
                     messageable=interaction,
                 ),
@@ -299,7 +299,7 @@ class AddNodeFlow(discord.ui.View):
             )
         else:
             await interaction.followup.send(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     description=_("Timeout set to {timeout} seconds").format(timeout=inline(f"{self.resume_timeout}")),
                     messageable=interaction,
                 ),
@@ -340,7 +340,7 @@ class NodePickerMenu(BaseMenu):
         )
         self.result: Node | None = None
         self.selector_cls = selector_cls
-        self.selector_text = shorten_string(max_length=100, translation=selector_text)
+        self.selector_text = shorten_string(max_length=100, string=selector_text)
         self.forward_button = NavigateButton(
             style=discord.ButtonStyle.grey,
             emoji="\N{BLACK RIGHT-POINTING TRIANGLE}\N{VARIATION SELECTOR-16}",
@@ -655,7 +655,7 @@ class NodeManagerMenu(BaseMenu):
         self.ctx = ctx
         await self.prepare()
         self.message = await ctx.send(
-            embed=await self.cog.lavalink.construct_embed(description=description, title=title, messageable=ctx),
+            embed=await self.cog.pylav.construct_embed(description=description, title=title, messageable=ctx),
             view=self,
             ephemeral=True,
         )
@@ -667,7 +667,7 @@ class NodeManagerMenu(BaseMenu):
         await self.name_prompt.responded.wait()
         self.name = self.name_prompt.response
         await interaction.followup.send(
-            embed=await self.cog.lavalink.construct_embed(
+            embed=await self.cog.pylav.construct_embed(
                 description=_("Name set to {name}").format(name=inline(self.name)),
                 messageable=interaction,
             ),
@@ -680,7 +680,7 @@ class NodeManagerMenu(BaseMenu):
         await self.password_prompt.responded.wait()
         self.password = self.password_prompt.response
         await interaction.followup.send(
-            embed=await self.cog.lavalink.construct_embed(
+            embed=await self.cog.pylav.construct_embed(
                 description=_("Password set to {password}").format(password=inline(self.password)),
                 messageable=interaction,
             ),
@@ -698,7 +698,7 @@ class NodeManagerMenu(BaseMenu):
         else:
             self.host = self.host_prompt.response
         await interaction.followup.send(
-            embed=await self.cog.lavalink.construct_embed(
+            embed=await self.cog.pylav.construct_embed(
                 description=_("Host set to {host}").format(host=inline(self.host)),
                 messageable=interaction,
             ),
@@ -715,7 +715,7 @@ class NodeManagerMenu(BaseMenu):
             self.port = None
         if self.port is None:
             await interaction.followup.send(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     description=_("Invalid port"),
                     messageable=interaction,
                 ),
@@ -723,7 +723,7 @@ class NodeManagerMenu(BaseMenu):
             )
         else:
             await interaction.followup.send(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     description=_("Port set to {port}").format(port=inline(f"{self.port}")),
                     messageable=interaction,
                 ),
@@ -740,7 +740,7 @@ class NodeManagerMenu(BaseMenu):
             self.resume_timeout = None
         if self.resume_timeout is None:
             await interaction.followup.send(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     description=_("Invalid timeout, it must be a number in seconds"),
                     messageable=interaction,
                 ),
@@ -748,7 +748,7 @@ class NodeManagerMenu(BaseMenu):
             )
         else:
             await interaction.followup.send(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     description=_("Timeout set to {timeout} seconds").format(timeout=inline(f"{self.resume_timeout}")),
                     messageable=interaction,
                 ),

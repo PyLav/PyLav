@@ -46,7 +46,7 @@ class Equalizer(FilterMixin):
     @property
     def index(self) -> dict[int, float]:
         d: dict[Any, float] = collections.defaultdict(float)
-        d.update({d["band"]: d["gain"] for d in self._eq})
+        d |= {d["band"]: d["gain"] for d in self._eq}
         return d
 
     def __eq__(self, other: Any) -> bool:

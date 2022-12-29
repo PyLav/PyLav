@@ -154,7 +154,7 @@ class Player(VoiceProtocol):
         "last_track",
         "next_track",
         "_global_config",
-        "_lavalink",
+        "_pylav",
         "_discord_session_id",
         "_logger",
         "_last_track_stuck_check",
@@ -162,7 +162,7 @@ class Player(VoiceProtocol):
     )
     _config: PlayerConfig
     _global_config: PlayerConfig
-    _lavalink: Client
+    _pylav: Client
 
     def __init__(
         self,
@@ -264,7 +264,7 @@ class Player(VoiceProtocol):
         # sourcery no-metrics
         if self._post_init_completed:
             return
-        self._lavalink = pylav
+        self._pylav = pylav
         self.player_manager = player_manager
         self.node = node
         self._config = config
@@ -486,15 +486,15 @@ class Player(VoiceProtocol):
 
     @property
     def lavalink(self) -> Client:
-        return self._lavalink
+        return self._pylav
 
     @property
     def pylav(self) -> Client:
-        return self._lavalink
+        return self._pylav
 
     @property
     def radio(self) -> RadioBrowser:
-        return self.lavalink.radio_browser
+        return self.pylav.radio_browser
 
     def vote_node_down(self) -> int:
         return -1 if (self.node is None or not self.is_playing) else self.node.down_vote(self)

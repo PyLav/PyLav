@@ -38,16 +38,16 @@ class QueueSelectTrack(discord.ui.Select):
         track: Track = self.mapping.get(track_id)
         if track is None:
             await interaction.response.send_message(
-                embed=await self.cog.lavalink.construct_embed(description="Track not found", messageable=interaction),
+                embed=await self.cog.pylav.construct_embed(description="Track not found", messageable=interaction),
                 ephemeral=True,
             )
             self.view.stop()
             await self.view.on_timeout()
             return
-        player = self.cog.lavalink.get_player(interaction.guild)
+        player = self.cog.pylav.get_player(interaction.guild)
         if not player:
             await interaction.response.send_message(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     description="Player has been disconnected", messageable=interaction
                 ),
                 ephemeral=True,
@@ -93,7 +93,7 @@ class SearchSelectTrack(discord.ui.Select):
 
         if track is None:
             await interaction.response.send_message(
-                embed=await self.cog.lavalink.construct_embed(messageable=interaction, title=_("Track not found")),
+                embed=await self.cog.pylav.construct_embed(messageable=interaction, title=_("Track not found")),
                 ephemeral=True,
             )
             self.view.stop()

@@ -160,7 +160,7 @@ class ToggleRepeatButton(discord.ui.Button):
         player = context.player
         if not player:
             return await context.send(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     description=_("Not connected to a voice channel"), messageable=interaction
                 ),
                 ephemeral=True,
@@ -187,7 +187,7 @@ class QueueHistoryButton(discord.ui.Button):
         context = await self.cog.bot.get_context(interaction)
         if not (__ := context.player):
             return await context.send(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     description=_("Not connected to a voice channel"), messageable=interaction
                 ),
                 ephemeral=True,
@@ -220,7 +220,7 @@ class ToggleRepeatQueueButton(discord.ui.Button):
         player = context.player
         if not player:
             return await context.send(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     description=_("Not connected to a voice channel"), messageable=interaction
                 ),
                 ephemeral=True,
@@ -285,14 +285,14 @@ class EmptyQueueButton(discord.ui.Button):
         player = context.player
         if not player.queue.size():
             return await context.send(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     description=_("There's nothing in the Queue"), messageable=interaction
                 ),
                 ephemeral=True,
             )
         player.queue.clear()
         await context.send(
-            embed=await self.cog.lavalink.construct_embed(
+            embed=await self.cog.pylav.construct_embed(
                 description=_("Removed tracks from the queue"), messageable=interaction
             ),
             ephemeral=True,

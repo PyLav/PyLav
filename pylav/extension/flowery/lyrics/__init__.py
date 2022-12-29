@@ -1,11 +1,7 @@
 from __future__ import annotations
 
-import datetime
 from typing import TYPE_CHECKING
 
-import aiohttp
-import aiohttp_client_cache
-import ujson
 from dacite import from_dict
 
 from pylav.extension.flowery.lyrics.responses import Error, Lyrics, TrackList

@@ -57,7 +57,7 @@ class ListSource(menus.ListPageSource):
         )
 
         output = box(text, lang="ansi")
-        return await self.cog.lavalink.construct_embed(messageable=menu.ctx, title=self.title, description=output)
+        return await self.cog.pylav.construct_embed(messageable=menu.ctx, title=self.title, description=output)
 
     def get_max_pages(self):
         """:class:`int`: The maximum number of pages required to paginate this sequence"""
@@ -83,7 +83,7 @@ class EntryPickerSource(menus.ListPageSource):
     async def format_page(self, menu: EntryPickerMenu, entry: list[ANY_GENERIC_TYPE]) -> discord.Embed | str:
 
         idx_start, page_num = self.get_starting_index_and_page_number(menu)
-        page = await self.cog.lavalink.construct_embed(messageable=menu.ctx, title=self.message_str)
+        page = await self.cog.pylav.construct_embed(messageable=menu.ctx, title=self.message_str)
         page.set_footer(
             text=_("Page {page_num}/{total_pages} | {num} {entries}").format(
                 page_num=humanize_number(page_num + 1),

@@ -66,7 +66,7 @@ class CloseButton(discord.ui.Button):
     async def callback(self, interaction: DISCORD_INTERACTION_TYPE):
         if self.view.author.id != interaction.user.id:
             return await interaction.response.send_message(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     messageable=interaction, description=_("You are not authorized to interact with this option")
                 ),
                 ephemeral=True,
@@ -90,7 +90,7 @@ class YesButton(discord.ui.Button):
     async def callback(self, interaction: DISCORD_INTERACTION_TYPE):
         if self.view.author.id != interaction.user.id:
             await interaction.response.send_message(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     messageable=interaction, description=_("You are not authorized to interact with this option")
                 ),
                 ephemeral=True,
@@ -114,7 +114,7 @@ class NoButton(discord.ui.Button):
     async def callback(self, interaction: DISCORD_INTERACTION_TYPE):
         if self.view.author.id != interaction.user.id:
             await interaction.response.send_message(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     messageable=interaction, description=_("You are not authorized to interact with this option")
                 ),
                 ephemeral=True,
@@ -138,7 +138,7 @@ class DoneButton(discord.ui.Button):
     async def callback(self, interaction: DISCORD_INTERACTION_TYPE):
         if self.view.author.id != interaction.user.id:
             return await interaction.response.send_message(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     messageable=interaction, description=_("You are not authorized to interact with this option")
                 ),
                 ephemeral=True,

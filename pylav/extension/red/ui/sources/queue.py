@@ -62,7 +62,7 @@ class QueueSource(menus.ListPageSource):
 
     @property
     def entries(self) -> Iterable[Track]:
-        if player := self.cog.lavalink.get_player(self.guild_id):
+        if player := self.cog.pylav.get_player(self.guild_id):
             return player.history.raw_queue if self.history else player.queue.raw_queue
         else:
             return []
@@ -75,7 +75,7 @@ class QueueSource(menus.ListPageSource):
         return await asyncstdlib.list(asyncstdlib.islice(self.entries, base, base + self.per_page))
 
     def get_max_pages(self) -> int:
-        player = self.cog.lavalink.get_player(self.guild_id)
+        player = self.cog.pylav.get_player(self.guild_id)
         if not player:
             return 1
         pages, left_over = divmod(player.history.size() if self.history else player.queue.size(), self.per_page)
@@ -90,7 +90,7 @@ class QueueSource(menus.ListPageSource):
         return start, page_num
 
     async def format_page(self, menu: QueueMenu, tracks: list[Track]) -> discord.Embed:
-        if player := self.cog.lavalink.get_player(menu.ctx.guild.id):
+        if player := self.cog.pylav.get_player(menu.ctx.guild.id):
             return (
                 await player.get_queue_page(
                     page_index=menu.current_page,
@@ -101,7 +101,7 @@ class QueueSource(menus.ListPageSource):
                     history=self.history,
                 )
                 if player.current and (player.history.size() if self.history else True)
-                else await self.cog.lavalink.construct_embed(
+                else await self.cog.pylav.construct_embed(
                     description=_("There's nothing in recently played")
                     if self.history
                     else _("There's nothing currently being played"),
@@ -109,7 +109,7 @@ class QueueSource(menus.ListPageSource):
                 )
             )
         else:
-            return await self.cog.lavalink.construct_embed(
+            return await self.cog.pylav.construct_embed(
                 description=_("No active player found in server"), messageable=menu.ctx
             )
 
@@ -136,7 +136,7 @@ class QueuePickerSource(QueueSource):
         return []
 
     async def format_page(self, menu: QueuePickerMenu, tracks: list[Track]) -> discord.Embed:
-        if player := self.cog.lavalink.get_player(menu.ctx.guild.id):
+        if player := self.cog.pylav.get_player(menu.ctx.guild.id):
             return (
                 await player.get_queue_page(
                     page_index=menu.current_page,
@@ -146,12 +146,12 @@ class QueuePickerSource(QueueSource):
                     messageable=menu.ctx,
                 )
                 if player.current
-                else await self.cog.lavalink.construct_embed(
+                else await self.cog.pylav.construct_embed(
                     description=_("There's nothing currently being played"),
                     messageable=menu.ctx,
                 )
             )
         else:
-            return await self.cog.lavalink.construct_embed(
+            return await self.cog.pylav.construct_embed(
                 description=_("No active player found in server"), messageable=menu.ctx
             )

@@ -27,19 +27,19 @@ class PlayersSource(menus.ListPageSource):
 
     @property
     def entries(self) -> list[Player]:
-        if self.specified_guild is not None and (player := self.cog.lavalink.player_manager.get(self.specified_guild)):
+        if self.specified_guild is not None and (player := self.cog.pylav.player_manager.get(self.specified_guild)):
             return [player]
-        return self.cog.lavalink.player_manager.connected_players
+        return self.cog.pylav.player_manager.connected_players
 
     @entries.setter
     def entries(self, players: list[Player]):
         pass
 
     def get_max_pages(self):
-        if self.specified_guild is not None and (player := self.cog.lavalink.player_manager.get(self.specified_guild)):
+        if self.specified_guild is not None and (player := self.cog.pylav.player_manager.get(self.specified_guild)):
             players = [player]
         else:
-            players = self.cog.lavalink.player_manager.connected_players
+            players = self.cog.pylav.player_manager.connected_players
         pages, left_over = divmod(len(players), self.per_page)
         if left_over:
             pages += 1
@@ -94,15 +94,13 @@ class PlayersSource(menus.ListPageSource):
 
         current_track += field_values
 
-        embed = await self.cog.lavalink.construct_embed(
-            messageable=menu.ctx, title=guild_name, description=current_track
-        )
+        embed = await self.cog.pylav.construct_embed(messageable=menu.ctx, title=guild_name, description=current_track)
 
         embed.set_footer(
             text=_("Page {page_num}/{total_pages} | Playing in {playing} {server_translation}").format(
                 page_num=humanize_number(page_num + 1),
                 total_pages=humanize_number(self.get_max_pages()),
-                playing=humanize_number(len(self.cog.lavalink.player_manager.playing_players)),
+                playing=humanize_number(len(self.cog.pylav.player_manager.playing_players)),
                 server_translation=_("server") if history_queue_len == 1 else _("servers"),
             )
         )

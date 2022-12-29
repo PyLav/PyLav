@@ -15,8 +15,7 @@ def distance(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     dlat = radians(lat2) - radians(lat1)
     dlon = radians(lon2) - radians(lon1)
     a = sin(dlat / 2) * sin(dlat / 2) + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon / 2) * sin(dlon / 2)
-    d = 6371 * 2 * atan2(sqrt(a), sqrt(1 - a))
-    return d
+    return 6371 * 2 * atan2(sqrt(a), sqrt(1 - a))
 
 
 async def closest(

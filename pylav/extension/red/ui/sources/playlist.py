@@ -47,7 +47,7 @@ class PlaylistPickerSource(menus.ListPageSource):
     async def format_page(self, menu: PlaylistPickerMenu, playlists: list[Playlist]) -> discord.Embed | str:
 
         idx_start, page_num = self.get_starting_index_and_page_number(menu)
-        page = await self.cog.lavalink.construct_embed(messageable=menu.ctx, title=self.message_str)
+        page = await self.cog.pylav.construct_embed(messageable=menu.ctx, title=self.message_str)
         page.set_footer(
             text=_("Page {page_num}/{total_pages} | {num} playlists").format(
                 page_num=humanize_number(page_num + 1),
@@ -105,7 +105,7 @@ class Base64Source(menus.ListPageSource):
         queue_list = ""
         async for track_idx, track in AsyncIter(tracks).enumerate(start=start_index + 1):
             track = await Track.build_track(
-                node=random.choice(self.cog.lavalink.node_manager.nodes),
+                node=random.choice(self.cog.pylav.node_manager.nodes),
                 requester=self.author.id,
                 data=track,
                 query=None,
@@ -113,7 +113,7 @@ class Base64Source(menus.ListPageSource):
             track_description = await track.get_track_display_name(max_length=50, with_url=True)
             diff = padding - len(str(track_idx))
             queue_list += f"`{track_idx}.{' ' * diff}` {track_description}\n"
-        page = await self.cog.lavalink.construct_embed(
+        page = await self.cog.pylav.construct_embed(
             title="{translation} __{name}__".format(
                 name=await self.playlist.fetch_name(), translation=discord.utils.escape_markdown(_("Tracks in"))
             ),
@@ -163,7 +163,7 @@ class PlaylistListSource(menus.ListPageSource):
 
             plist += f"`{i}.` {playlist_info}"
 
-        embed = await self.cog.lavalink.construct_embed(
+        embed = await self.cog.pylav.construct_embed(
             messageable=menu.ctx,
             title=_("Playlists you can access in this server:"),
             description=plist,

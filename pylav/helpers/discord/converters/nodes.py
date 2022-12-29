@@ -36,7 +36,7 @@ else:
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> list[Node]:
             """Converts a node name or ID to a list of matching objects"""
             try:
-                nodes = ctx.lavalink.node_manager.nodes
+                nodes = ctx.pylav.node_manager.nodes
             except EntryNotFoundException as e:
                 raise commands.BadArgument(_("Node with name or id `{arg}` not found").format(arg=arg)) from e
             if r := await asyncstdlib.list(
@@ -54,7 +54,7 @@ else:
 
         @classmethod
         async def autocomplete(cls, interaction: DISCORD_INTERACTION_TYPE, current: str) -> list[Choice]:
-            nodes = interaction.client.lavalink.node_manager.nodes
+            nodes = interaction.client.pylav.node_manager.nodes
             if not current:
                 return [Choice(name=shorten_string(e.name, max_length=100), value=f"{e.identifier}") for e in nodes][
                     :25

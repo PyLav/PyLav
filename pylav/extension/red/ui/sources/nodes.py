@@ -45,7 +45,7 @@ class NodePickerSource(menus.ListPageSource):
     async def format_page(self, menu: NodePickerMenu, nodes: list[Node]) -> discord.Embed | str:
 
         idx_start, page_num = self.get_starting_index_and_page_number(menu)
-        page = await self.cog.lavalink.construct_embed(messageable=menu.ctx, title=self.message_str)
+        page = await self.cog.pylav.construct_embed(messageable=menu.ctx, title=self.message_str)
         page.set_footer(
             text=_("Page {page_num}/{total_pages} | {num} nodes").format(
                 page_num=humanize_number(page_num + 1),
@@ -190,7 +190,7 @@ class NodeListSource(menus.ListPageSource):
             tabulate([{t_property: k, t_values: v} for k, v in data.items()], headers="keys", tablefmt="fancy_grid"),
             lang="ansi",
         )
-        embed = await self.cog.lavalink.construct_embed(
+        embed = await self.cog.pylav.construct_embed(
             messageable=menu.ctx,
             title=node.name,
             description=description,
@@ -216,7 +216,7 @@ class NodeManageSource(menus.ListPageSource):
 
     @property
     def entries(self) -> list[Node]:
-        return self.cog.lavalink.node_manager.nodes
+        return self.cog.pylav.node_manager.nodes
 
     @property
     def _max_pages(self) -> int:
@@ -350,7 +350,7 @@ class NodeManageSource(menus.ListPageSource):
             tabulate([{t_property: k, t_values: v} for k, v in data.items()], headers="keys", tablefmt="fancy_grid"),
             lang="ansi",
         )
-        embed = await self.cog.lavalink.construct_embed(
+        embed = await self.cog.pylav.construct_embed(
             messageable=menu.ctx,
             title=node.name,
             description=description,

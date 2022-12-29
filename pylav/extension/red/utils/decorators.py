@@ -28,11 +28,11 @@ def requires_player(slash: bool = False):
             if not context.response.is_done():
                 await context.response.defer(ephemeral=True)
             bot = context.client
-            _lavalink = getattr(bot, "lavalink", None)
+            _lavalink = getattr(bot, "pylav", None)
             player = _lavalink.get_player(context.guild) if _lavalink else None
         else:
             bot = context.bot
-            _lavalink = getattr(bot, "lavalink", None)
+            _lavalink = getattr(bot, "pylav", None)
             player = _lavalink.get_player(context.guild) if _lavalink else None
         if not _lavalink:
             return False
@@ -49,11 +49,11 @@ def can_run_command_in_channel(slash: bool = False):
             if not context.response.is_done():
                 await context.response.defer(ephemeral=True)
             bot = context.client
-            _lavalink = getattr(bot, "lavalink", None)
+            _lavalink = getattr(bot, "pylav", None)
             player = _lavalink.get_player(context.guild) if _lavalink else None
         else:
             bot = context.bot
-            _lavalink = getattr(bot, "lavalink", None)
+            _lavalink = getattr(bot, "pylav", None)
             player = _lavalink.get_player(context.guild) if _lavalink else None
         if not _lavalink:
             return False
@@ -62,7 +62,7 @@ def can_run_command_in_channel(slash: bool = False):
         if player:
             config = player.config
         else:
-            config = bot.lavalink.player_config_manager.get_config(context.guild.id)
+            config = bot.pylav.player_config_manager.get_config(context.guild.id)
 
         if (channel_id := await config.fetch_text_channel_id()) != 0 and channel_id != context.channel.id:
             raise UnauthorizedChannelError(channel=channel_id)
@@ -81,7 +81,7 @@ async def is_dj_logic(context: PyLavContext | DISCORD_INTERACTION_TYPE) -> bool 
     else:
         bot = context.bot
         author = context.author
-    return await bot.lavalink.is_dj(user=author, guild=guild, additional_role_ids=None, additional_user_ids={*bot.owner_ids, guild.owner_id}, bot=bot) if (getattr(bot, "lavalink", None) and guild) else False  # type: ignore
+    return await bot.pylav.is_dj(user=author, guild=guild, additional_role_ids=None, additional_user_ids={*bot.owner_ids, guild.owner_id}, bot=bot) if (getattr(bot, "pylav", None) and guild) else False  # type: ignore
 
 
 def invoker_is_dj(slash: bool = False):

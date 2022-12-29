@@ -273,7 +273,7 @@ class PromptYesOrNo(discord.ui.View):
         self.author = ctx.user if isinstance(ctx, discord.Interaction) else ctx.author
         self.ctx = ctx
         self.message = await ctx.send(
-            embed=await self.cog.lavalink.construct_embed(description=self.initial_message_str, messageable=ctx),
+            embed=await self.cog.pylav.construct_embed(description=self.initial_message_str, messageable=ctx),
             view=self,
             ephemeral=True,
         )

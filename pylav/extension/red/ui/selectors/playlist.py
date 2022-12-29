@@ -38,7 +38,7 @@ class PlaylistSelectSelector(discord.ui.Select):
         self.playlist: Playlist = self.mapping.get(playlist_id)
         if self.playlist is None:
             await interaction.response.send_message(
-                embed=await self.cog.lavalink.construct_embed(messageable=interaction, title=_("Playlist not found")),
+                embed=await self.cog.pylav.construct_embed(messageable=interaction, title=_("Playlist not found")),
                 ephemeral=True,
             )
             self.view.stop()
@@ -69,7 +69,7 @@ class PlaylistPlaySelector(discord.ui.Select):
     async def callback(self, interaction: DISCORD_INTERACTION_TYPE):
         if self.view.author.id != interaction.user.id:
             await interaction.response.send_message(
-                embed=await self.cog.lavalink.construct_embed(
+                embed=await self.cog.pylav.construct_embed(
                     messageable=interaction, description=_("You are not authorized to interact with this option")
                 ),
                 ephemeral=True,
@@ -79,7 +79,7 @@ class PlaylistPlaySelector(discord.ui.Select):
         playlist: Playlist = self.mapping.get(playlist_id)
         if playlist is None:
             await interaction.response.send_message(
-                embed=await self.cog.lavalink.construct_embed(messageable=interaction, title=_("Playlist not found")),
+                embed=await self.cog.pylav.construct_embed(messageable=interaction, title=_("Playlist not found")),
                 ephemeral=True,
             )
             self.view.stop()

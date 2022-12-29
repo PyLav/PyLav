@@ -45,12 +45,11 @@ INCOMPATIBLE_COGS = {}
 async def pylav_credits(context: PyLavContext) -> None:
     """Shows the credits and translation details for the PyLav cogs and shared code"""
     await context.send(
-        embed=await context.lavalink.construct_embed(
+        embed=await context.pylav.construct_embed(
             messageable=context,
             description=_(
                 "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
                 "PyLav can be located in https://github.com/Drapersniper/PyLav\n"
-                "PyLavCog-Shared can be located in https://github.com/Drapersniper/PyLavCog-Shared\n"
                 "PyLav-Cogs can be located in https://github.com/Drapersniper/PyLav-Cogs\n\n"
                 "PyLav's support server can be found at https://discord.com/invite/Sjh2TSCYQB\n"
                 "\n\n"
@@ -59,7 +58,6 @@ async def pylav_credits(context: PyLavContext) -> None:
                 "https://crowdin.com/project/pylavcogs\n\n\n"
                 "Contributors:\n"
                 "- https://github.com/Drapersniper/PyLav/graphs/contributors\n"
-                "- https://github.com/Drapersniper/PyLavCog-Shared/graphs/contributors\n"
                 "- https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors\n"
                 "If you wish to buy me a coffee for my work, you can do so at:\n"
                 "https://www.buymeacoffee.com/draper or https://github.com/sponsors/Drapersniper"
@@ -82,11 +80,11 @@ async def pylav_version(context: PyLavContext) -> None:
     if context.interaction and not context.interaction.response.is_done():
         await context.defer(ephemeral=True)
     data = [
-        (EightBitANSI.paint_white("PyLav"), EightBitANSI.paint_blue(context.lavalink.lib_version)),
+        (EightBitANSI.paint_white("PyLav"), EightBitANSI.paint_blue(context.pylav.lib_version)),
     ]
 
     await context.send(
-        embed=await context.lavalink.construct_embed(
+        embed=await context.pylav.construct_embed(
             description=box(
                 tabulate(
                     data,
@@ -119,7 +117,7 @@ async def pylav_sync_slash(context: PyLavContext) -> None:
     await context.bot.wait_until_ready()
     await context.bot.tree.sync()
     await context.send(
-        embed=await context.lavalink.construct_embed(
+        embed=await context.pylav.construct_embed(
             description=_("Synced the bots slash commands"),
             messageable=context,
         ),
@@ -140,7 +138,7 @@ async def cog_command_error(self: DISCORD_COG_TYPE, context: PyLavContext, error
     if isinstance(error, MediaPlayerNotFoundError):
         unhandled = False
         await context.send(
-            embed=await self.lavalink.construct_embed(
+            embed=await self.pylav.construct_embed(
                 messageable=context, description=_("This command requires an existing player to be run")
             ),
             ephemeral=True,
@@ -148,7 +146,7 @@ async def cog_command_error(self: DISCORD_COG_TYPE, context: PyLavContext, error
     elif isinstance(error, NoNodeAvailableException):
         unhandled = False
         await context.send(
-            embed=await self.lavalink.construct_embed(
+            embed=await self.pylav.construct_embed(
                 messageable=context,
                 description=_(
                     "MediaPlayer cog is currently temporarily unavailable due to an outage with "
@@ -161,7 +159,7 @@ async def cog_command_error(self: DISCORD_COG_TYPE, context: PyLavContext, error
     elif isinstance(error, NoNodeWithRequestFunctionalityAvailableException):
         unhandled = False
         await context.send(
-            embed=await self.lavalink.construct_embed(
+            embed=await self.pylav.construct_embed(
                 messageable=context,
                 description=_("MediaPlayer is currently unable to process tracks belonging to {feature}").format(
                     feature=error.feature
@@ -175,7 +173,7 @@ async def cog_command_error(self: DISCORD_COG_TYPE, context: PyLavContext, error
     elif isinstance(error, UnauthorizedChannelError):
         unhandled = False
         await context.send(
-            embed=await self.lavalink.construct_embed(
+            embed=await self.pylav.construct_embed(
                 messageable=context,
                 description=_("This command is not available in this channel. Please use {channel}").format(
                     channel=channel.mention if (channel := context.guild.get_channel_or_thread(error.channel)) else None
@@ -187,7 +185,7 @@ async def cog_command_error(self: DISCORD_COG_TYPE, context: PyLavContext, error
     elif isinstance(error, NotDJError):
         unhandled = False
         await context.send(
-            embed=await self.lavalink.construct_embed(
+            embed=await self.pylav.construct_embed(
                 messageable=context,
                 description=_("This command requires you to be a DJ"),
             ),
@@ -206,7 +204,7 @@ async def cog_command_error(self: DISCORD_COG_TYPE, context: PyLavContext, error
 async def cog_unload(self: DISCORD_COG_TYPE) -> None:
     if self._init_task is not None:
         self._init_task.cancel()
-    client = self.lavalink
+    client = self.pylav
     await client.unregister(cog=self)
     if client._shutting_down:
         self.bot.remove_command(pylav_credits.qualified_name)
@@ -217,7 +215,7 @@ async def cog_unload(self: DISCORD_COG_TYPE) -> None:
 
 async def cog_before_invoke(self: DISCORD_COG_TYPE, context: PyLavContext):
     try:
-        await self.lavalink.wait_until_ready(timeout=30)
+        await self.pylav.wait_until_ready(timeout=30)
     except asyncio.TimeoutError as e:
         LOGGER.debug("Discarded command due to PyLav not being ready within 30 seconds")
 
@@ -234,8 +232,8 @@ async def cog_before_invoke(self: DISCORD_COG_TYPE, context: PyLavContext):
 
 async def initialize(self: DISCORD_COG_TYPE, *args, **kwargs) -> None:
     if not self.init_called:
-        await self.lavalink.register(self)
-        await self.lavalink.initialize()
+        await self.pylav.register(self)
+        await self.pylav.initialize()
         self.init_called = True
     if meth := getattr(self, "__pylav_original_initialize", None):
         return await discord.utils.maybe_coroutine(meth, *args, **kwargs)
@@ -247,7 +245,7 @@ async def cog_check(self: DISCORD_COG_TYPE, context: PyLavContext) -> bool:
     #   Due to the potential risk for unexpected behaviour - disabled all commands if this cog is loaded.
     if await asyncstdlib.any(context.bot.get_cog(name) is not None for name in INCOMPATIBLE_COGS):
         return False
-    if not (getattr(context.bot, "lavalink", None)):
+    if not (getattr(context.bot, "pylav", None)):
         return False
     meth = getattr(self, "__pylav_original_cog_check", None)
     if not context.guild:
@@ -255,7 +253,7 @@ async def cog_check(self: DISCORD_COG_TYPE, context: PyLavContext) -> bool:
     if getattr(context, "player", None):
         config = context.player.config
     else:
-        config = context.bot.lavalink.player_config_manager.get_config(context.guild.id)
+        config = context.bot.pylav.player_config_manager.get_config(context.guild.id)
 
     if (channel_id := await config.fetch_text_channel_id()) != 0 and channel_id != context.channel.id:
         return False
@@ -289,11 +287,11 @@ def class_factory(
     cog_instance = cls(*cogargs, **cogkwargs)
     if not hasattr(cog_instance, "__version__"):
         cog_instance.__version__ = "0.0.0"
-    cog_instance.lavalink = Client(bot=bot, cog=cog_instance, config_folder=cog_data_path(raw_name="PyLav"))
+    cog_instance.pylav = Client(bot=bot, cog=cog_instance, config_folder=cog_data_path(raw_name="PyLav"))
     cog_instance.bot = bot
     cog_instance.init_called = False
     cog_instance._init_task = cls.cog_check
-    cog_instance.pylav = cog_instance.lavalink
+    cog_instance.lavalink = cog_instance.pylav
     old_cog_on_command_error = cog_instance._get_overridden_method(cog_instance.cog_command_error)
     old_cog_unload = cog_instance._get_overridden_method(cog_instance.cog_unload)
     old_cog_before_invoke = cog_instance._get_overridden_method(cog_instance.cog_before_invoke)
@@ -330,7 +328,7 @@ async def pylav_auto_setup(
     """Injects all the methods and attributes to respect PyLav Settings and keep the user experience consistent.
 
     Adds `.bot` attribute to the cog instance.
-    Adds `.lavalink` attribute to the cog instance and starts up PyLav
+    Adds `.pylav` attribute to the cog instance and starts up PyLav
     Overwrites cog_unload method to unregister the cog from Lavalink,
         calling the original cog_unload method once the PyLav unregister code is run.
     Overwrites cog_before_invoke

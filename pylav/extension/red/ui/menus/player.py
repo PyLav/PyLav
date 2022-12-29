@@ -135,9 +135,7 @@ class StatsMenu(BaseMenu):
         self.add_item(self.forward_button)
         self.add_item(self.last_button)
         self.add_item(self.refresh_button)
-        if self.source.specified_guild is None or not (
-            self.cog.lavalink.player_manager.get(self.source.specified_guild)
-        ):
+        if self.source.specified_guild is None or not (self.cog.pylav.player_manager.get(self.source.specified_guild)):
             self.add_item(self.queue_disconnect_inactive_label)
             self.add_item(self.queue_disconnect_inactive)
             self.add_item(self.queue_disconnect_all_label)
@@ -185,9 +183,7 @@ class StatsMenu(BaseMenu):
             self.queue_disconnect_inactive.disabled = True
             self.queue_disconnect_all.disabled = True
 
-        if not [
-            p async for p in asyncstdlib.iter(self.cog.lavalink.player_manager.connected_players) if not p.is_playing
-        ]:
+        if not [p async for p in asyncstdlib.iter(self.cog.pylav.player_manager.connected_players) if not p.is_playing]:
             self.queue_disconnect_inactive.disabled = True
 
     @property
@@ -207,7 +203,7 @@ class StatsMenu(BaseMenu):
             self._source.current_player = None
             return {
                 "content": None,
-                "embed": await self.cog.lavalink.construct_embed(
+                "embed": await self.cog.pylav.construct_embed(
                     messageable=self.ctx,
                     title=shorten_string(max_length=100, string=_("Not connected anywhere")),
                 ),

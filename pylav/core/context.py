@@ -85,8 +85,8 @@ class PyLavContext(OriginalContextClass):
         )
 
         self._original_ctx_or_interaction = None
-        self.lavalink = bot.lavalink
-        self.pylav = bot.lavalink
+        self.lavalink = bot.pylav
+        self.pylav = bot.pylav
 
     @discord.utils.cached_property
     def author(self) -> discord.User | discord.Member:
@@ -130,7 +130,7 @@ class PyLavContext(OriginalContextClass):
         """
         Get player
         """
-        return self.lavalink.get_player(self.guild)
+        return self.pylav.get_player(self.guild)
 
     async def connect_player(self, channel: discord.channel.VocalGuildChannel = None, self_deaf: bool = True) -> Player:
         """
@@ -138,7 +138,7 @@ class PyLavContext(OriginalContextClass):
         """
         requester = self.author
         channel = channel or self.author.voice.channel
-        return await self.lavalink.connect_player(requester=requester, channel=channel, self_deaf=self_deaf)
+        return await self.pylav.connect_player(requester=requester, channel=channel, self_deaf=self_deaf)
 
     @property
     def original_ctx_or_interaction(self) -> DISCORD_CONTEXT_TYPE | DISCORD_INTERACTION_TYPE | None:
@@ -168,7 +168,7 @@ class PyLavContext(OriginalContextClass):
         """
         Construct embed
         """
-        return await self.lavalink.construct_embed(
+        return await self.pylav.construct_embed(
             embed=embed,
             colour=colour,
             color=color,
@@ -241,15 +241,13 @@ class PyLavContext(OriginalContextClass):
         for idx, page in enumerate(messages, 1):
             if box_lang is None:
                 msg = (
-                    await self.send(embed=await self.lavalink.construct_embed(description=page, messageable=self))
+                    await self.send(embed=await self.pylav.construct_embed(description=page, messageable=self))
                     if embed
                     else await self.send(page)
                 )
             elif embed:
                 msg = await self.send(
-                    embed=await self.lavalink.construct_embed(
-                        description=f"```{box_lang}\n{page}\n```", messageable=self
-                    )
+                    embed=await self.pylav.construct_embed(description=f"```{box_lang}\n{page}\n```", messageable=self)
                 )
             else:
                 msg = await self.send(f"```{box_lang}\n{page}\n```")

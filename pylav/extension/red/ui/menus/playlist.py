@@ -243,7 +243,7 @@ class PlaylistCreationFlow(discord.ui.View):
     ):
         self.ctx = ctx
         self.message = await ctx.send(
-            embed=await self.cog.lavalink.construct_embed(description=description, title=title, messageable=ctx),
+            embed=await self.cog.pylav.construct_embed(description=description, title=title, messageable=ctx),
             view=self,
             ephemeral=True,
         )
@@ -462,7 +462,7 @@ class PlaylistManageFlow(discord.ui.View):
         if not ctx.channel.permissions_for(ctx.me).attach_files:
             self.download_button.disabled = True
         self.message = await ctx.send(
-            embed=await self.cog.lavalink.construct_embed(description=description, title=title, messageable=ctx),
+            embed=await self.cog.pylav.construct_embed(description=description, title=title, messageable=ctx),
             view=self,
             ephemeral=True,
         )
