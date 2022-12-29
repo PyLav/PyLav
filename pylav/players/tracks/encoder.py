@@ -39,13 +39,20 @@ def encode_track(
     writer.write_long(length)
     writer.write_utf(identifier)
     writer.write_boolean(isStream)
-    writer.write_nullable_utf(uri)
+    if version >= 2:
+        writer.write_nullable_utf(uri)
+    if version >= 3:
+        writer.write_nullable_utf(artworkUrl)
+        writer.write_nullable_utf(isrc)
     writer.write_utf(sourceName)
-    writer.write_nullable_utf(artworkUrl)
-    writer.write_nullable_utf(isrc)
     match sourceName:
         case "local" | "http" if probe is not None:
             writer.write_utf(probe)
+        case "spotify" | "applemusic" | "deezer" if version == 2:
+            writer.write_nullable_utf(isrc)
+            writer.write_nullable_utf(artworkUrl)
+        case "yandexmusic" if version == 2:
+            writer.write_nullable_utf(artworkUrl)
     writer.write_long(0)
     return writer.to_base64()
 
