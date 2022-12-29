@@ -70,9 +70,9 @@ class DataReader:
         utf_string = self._read(text_length)
         return self._read_utfm(text_length, utf_string)
 
+    # Merged from utfm_codec.py
     @staticmethod
     def _read_utfm(utf_len: int, utf_bytes: bytes) -> str:
-        # Merged from utfm_codec.py
         chars = []
         count = 0
 
@@ -182,6 +182,16 @@ class DataWriter:
         self.write_unsigned_short(byte_len)
         self._write(utf)
 
+    def finish(self) -> bytes:
+        with BytesIO() as track_buf:
+            # Simplified for PyLav
+            track_buf.write(self.get_flags())
+            self._buf.seek(0)
+            track_buf.write(self._buf.read())
+            self._buf.close()
+            track_buf.seek(0)
+            return track_buf.read()
+
     # Added for PyLav
     def write_nullable_utf(self, utf_string: str | None) -> None:
         if utf_string is None:
@@ -200,15 +210,6 @@ class DataWriter:
         flags = byte_len | (1 << 30)
         return struct.pack(">i", flags)
 
-    def finish(self) -> bytes:
-        with BytesIO() as track_buf:
-            # Simplified for PyLav
-            track_buf.write(self.get_flags())
-            self._buf.seek(0)
-            track_buf.write(self._buf.read())
-            self._buf.close()
-            track_buf.seek(0)
-            return track_buf.read()
-
+    # Added for PyLav
     def to_base64(self) -> str:
         return b64encode(self.finish()).decode()
