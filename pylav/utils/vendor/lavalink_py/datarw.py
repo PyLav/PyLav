@@ -28,8 +28,6 @@ import typing
 from base64 import b64decode, b64encode
 from io import BytesIO
 
-from pylav.utils.vendor.lavalink_py.utfm_codec import read_utfm
-
 
 # noinspection SpellCheckingInspection
 class DataReader:
@@ -65,11 +63,63 @@ class DataReader:
     def read_utfm(self) -> str:
         text_length = self.read_unsigned_short()
         utf_string = self._read(text_length)
-        return read_utfm(text_length, utf_string)
+        return self._read_utfm(text_length, utf_string)
 
+    @staticmethod
+    def _read_utfm(utf_len: int, utf_bytes: bytes) -> str:
+        # Merged from utfm_codec.py
+        chars = []
+        count = 0
+
+        while count < utf_len:
+            c = utf_bytes[count] & 0xFF
+            if c > 127:
+                break
+
+            count += 1
+            chars.append(chr(c))
+
+        while count < utf_len:
+            c = utf_bytes[count] & 0xFF
+            shift = c >> 4
+
+            if 0 <= shift <= 7:
+                count += 1
+                chars.append(chr(c))
+            elif 12 <= shift <= 13:
+                count += 2
+                if count > utf_len:
+                    raise UnicodeError("Malformed input: partial character at end")
+                char2 = utf_bytes[count - 1]
+                if (char2 & 0xC0) != 0x80:
+                    raise UnicodeError(f"Malformed input around byte {count}")
+
+                char_shift = ((c & 0x1F) << 6) | (char2 & 0x3F)
+                chars.append(chr(char_shift))
+            elif shift == 14:
+                count += 3
+                if count > utf_len:
+                    raise UnicodeError("Malformed input: partial character at end")
+
+                char2 = utf_bytes[count - 2]
+                char3 = utf_bytes[count - 1]
+
+                if (char2 & 0xC0) != 0x80 or (char3 & 0xC0) != 0x80:
+                    raise UnicodeError(f"Malformed input around byte {count - 1}")
+
+                char_shift = ((c & 0x0F) << 12) | ((char2 & 0x3F) << 6) | ((char3 & 0x3F) << 0)
+                chars.append(chr(char_shift))
+            else:
+                raise UnicodeError(f"malformed input around byte {count}")
+
+        # noinspection SpellCheckingInspection
+        return "".join(chars).encode("utf-16", "surrogatepass").decode("utf-16")
+
+    # Added for PyLav
     def read_nullable_utf(self) -> str | None:
         return self.read_utf() if self.read_boolean() else None
 
+    # Added for PyLav
     def read_nullable_utfm(self) -> str | None:
         return self.read_utfm() if self.read_boolean() else None
 
@@ -110,6 +160,7 @@ class DataWriter:
         self.write_unsigned_short(byte_len)
         self._write(utf)
 
+    # Added for PyLav
     def write_nullable_utf(self, utf_string: str | None) -> None:
         if utf_string is None:
             self.write_boolean(False)
