@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-import struct
 from collections.abc import AsyncIterator
 from typing import TYPE_CHECKING, Any
 
@@ -33,7 +32,7 @@ def encode_track(
 ) -> str:
 
     writer = DataWriter()
-    writer.write_byte(struct.pack("B", version))
+    writer.write_version(version)
     writer.write_utf(title)
     writer.write_utf(author)
     writer.write_long(length)

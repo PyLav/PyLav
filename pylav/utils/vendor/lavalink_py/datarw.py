@@ -33,6 +33,11 @@ from io import BytesIO
 class DataReader:
     def __init__(self, ts: str) -> None:
         self._buf = BytesIO(b64decode(ts))
+        # Added for PyLav
+        self._flag_read = False
+        self._flags = 0
+        self._version_read = False
+        self._version = 0
 
     def _read(self, count: int) -> bytes:
         return self._buf.read(count)
@@ -123,6 +128,23 @@ class DataReader:
     def read_nullable_utfm(self) -> str | None:
         return self.read_utfm() if self.read_boolean() else None
 
+    # Added for PyLav
+    def read_flags(self) -> int:
+        if self._flag_read:
+            return self._flags
+        self._flags = (self.read_int() & 0xC0000000) >> 30
+        self._flag_read = True
+        return self._version
+
+    # Added for PyLav
+    def read_version(self) -> int:
+        if self._version_read:
+            return self._version
+        (version,) = (struct.unpack("B", self.read_byte())) if self.read_flags() & 1 != 0 else (1,)
+        self._version = version
+        self._version_read = True
+        return self._flags
+
 
 class DataWriter:
     def __init__(self) -> None:
@@ -168,17 +190,23 @@ class DataWriter:
             self.write_boolean(True)
             self.write_utf(utf_string)
 
+    # Added for PyLav
+    def write_version(self, version: int) -> None:
+        self.write_byte(struct.pack("B", version))
+
+    # Added for PyLav
+    def get_flags(self) -> bytes:
+        byte_len = self._buf.getbuffer().nbytes
+        flags = byte_len | (1 << 30)
+        return struct.pack(">i", flags)
+
     def finish(self) -> bytes:
         with BytesIO() as track_buf:
-            byte_len = self._buf.getbuffer().nbytes
-            flags = byte_len | (1 << 30)
-            enc_flags = struct.pack(">i", flags)
-            track_buf.write(enc_flags)
-
+            # Simplified for PyLav
+            track_buf.write(self.get_flags())
             self._buf.seek(0)
             track_buf.write(self._buf.read())
             self._buf.close()
-
             track_buf.seek(0)
             return track_buf.read()
 

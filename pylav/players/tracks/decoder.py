@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-import struct
 import typing
 
 from dacite import from_dict  # type: ignore
@@ -28,22 +27,30 @@ def decode_track(track: str) -> Track:
     The decoded Track object
     """
     reader = DataReader(track)
-    flags = (reader.read_int() & 0xC0000000) >> 30
-    (version,) = (struct.unpack("B", reader.read_byte())) if flags & 1 != 0 else (1,)
+    version = reader.read_version()
     plugin_info = {}
     title = reader.read_utfm()
     author = reader.read_utfm()
     length = reader.read_long()
     identifier = reader.read_utf()
     is_stream = reader.read_boolean()
-    uri = reader.read_nullable_utf()
-    artworkUrl = reader.read_nullable_utf()
-    isrc = reader.read_nullable_utf()
+    uri = reader.read_nullable_utf() if version >= 2 else None
+    if version >= 3:
+        artworkUrl = reader.read_nullable_utf()
+        isrc = reader.read_nullable_utf()
+    else:
+        artworkUrl = None
+        isrc = None
     source = reader.read_utf()
     try:
         match source:
-            case "local" | "http":
+            case "local" | "http" if version >= 2:
                 plugin_info["probeInfo"] = reader.read_utfm()
+            case "spotify" | "applemusic" | "deezer" if version == 2:
+                isrc = reader.read_nullable_utf()
+                artworkUrl = reader.read_nullable_utf()
+            case "yandexmusic" if version == 2:
+                artworkUrl = reader.read_nullable_utf()
         # Position
         __ = reader.read_long()  # Discard position, we don't need it
     except Exception as exc:
