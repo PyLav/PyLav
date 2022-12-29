@@ -340,37 +340,16 @@ class NodeManager:
             else:
                 coordinates = (0, 0)
         if region and not_region:
-            available_regions = {n.region for n in self.available_nodes if n.region not in already_attempted_regions}
-            closest_region, __ = await get_closest_region_name_and_coordinate(
-                *coordinates, region_pool=available_regions
+            nodes = await self._get_nodes_by_region_with_exclusion(
+                already_attempted_regions, coordinates, nodes, not_region, region
             )
-            nodes = [
-                n
-                for n in nodes
-                if (n.region in [region, closest_region])
-                and n.region != not_region
-                and n.region not in already_attempted_regions
-            ]
         elif region:
-            available_regions = {n.region for n in self.available_nodes if n.region not in already_attempted_regions}
-            closest_region, __ = await get_closest_region_name_and_coordinate(
-                *coordinates, region_pool=available_regions
-            )
-            nodes = [
-                n for n in nodes if (n.region in [region, closest_region]) and n.region not in already_attempted_regions
-            ]
+            nodes = await self._get_nodes_by_region_only(already_attempted_regions, coordinates, nodes, region)
         else:
             nodes = [n for n in nodes if n.region != not_region and n.region not in already_attempted_regions]
 
         if not nodes:
-            if feature:
-                nodes = [
-                    n
-                    for n in self.available_nodes
-                    if n.has_capability(feature) and n.region not in already_attempted_regions
-                ]
-            else:
-                nodes = self.available_nodes
+            nodes = await self._get_fall_back_nodes(already_attempted_regions, feature, nodes)
         node = await asyncstdlib.min(nodes, key=partial(sort_key_nodes, region=region), default=None) if nodes else None
         if node is None and wait:
             await asyncio.sleep(delay)
@@ -385,6 +364,39 @@ class NodeManager:
                 attempt=attempt + 1,
             )
         return node
+
+    async def _get_fall_back_nodes(self, already_attempted_regions, feature, nodes):
+        if feature:
+            nodes = [
+                n
+                for n in self.available_nodes
+                if n.has_capability(feature) and n.region not in already_attempted_regions
+            ]
+        else:
+            nodes = self.available_nodes
+        return nodes
+
+    async def _get_nodes_by_region_only(self, already_attempted_regions, coordinates, nodes, region):
+        available_regions = {n.region for n in self.available_nodes if n.region not in already_attempted_regions}
+        closest_region, __ = await get_closest_region_name_and_coordinate(*coordinates, region_pool=available_regions)
+        nodes = [
+            n for n in nodes if (n.region in [region, closest_region]) and n.region not in already_attempted_regions
+        ]
+        return nodes
+
+    async def _get_nodes_by_region_with_exclusion(
+        self, already_attempted_regions, coordinates, nodes, not_region, region
+    ):
+        available_regions = {n.region for n in self.available_nodes if n.region not in already_attempted_regions}
+        closest_region, __ = await get_closest_region_name_and_coordinate(*coordinates, region_pool=available_regions)
+        nodes = [
+            n
+            for n in nodes
+            if (n.region in [region, closest_region])
+            and n.region != not_region
+            and n.region not in already_attempted_regions
+        ]
+        return nodes
 
     def get_node_by_id(self, unique_identifier: int) -> Node | None:
         """

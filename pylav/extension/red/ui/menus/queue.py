@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Literal
+from typing import TYPE_CHECKING, Any, Literal
 
 import discord
 from redbot.core.i18n import Translator
@@ -33,6 +33,9 @@ from pylav.extension.red.utils.decorators import is_dj_logic
 from pylav.type_hints.bot import DISCORD_BOT_TYPE, DISCORD_COG_TYPE, DISCORD_INTERACTION_TYPE
 
 _ = Translator("PyLav", Path(__file__))
+
+if TYPE_CHECKING:
+    from pylav.players.player import Player
 
 
 class QueueMenu(BaseMenu):
@@ -218,12 +221,12 @@ class QueueMenu(BaseMenu):
         self.last_button.disabled = False
         self.refresh_button.disabled = False
 
-        if max_pages == 2:
-            self.first_button.disabled = True
-            self.last_button.disabled = True
-        elif max_pages == 1:
+        if max_pages == 1:
             self.forward_button.disabled = True
             self.backward_button.disabled = True
+            self.first_button.disabled = True
+            self.last_button.disabled = True
+        elif max_pages == 2:
             self.first_button.disabled = True
             self.last_button.disabled = True
         if self.is_history or is_dj is False:
@@ -245,57 +248,10 @@ class QueueMenu(BaseMenu):
         self.add_item(self.previous_track_button)
         self.add_item(self.stop_button)
 
-        if (player := self.cog.lavalink.get_player(self.source.guild_id)) and is_dj is not False:
-            if player.paused:
-                self.add_item(self.resume_button)
-            else:
-                self.add_item(self.paused_button)
-            if player.queue.empty():
-                self.shuffle_button.disabled = True
-                self.remove_from_queue_button.disabled = True
-                self.play_now_button.disabled = True
-                self.clear_queue_button.disabled = True
-            if not player.current:
-                self.stop_button.disabled = True
-                self.shuffle_button.disabled = True
-                self.previous_track_button.disabled = True
-                self.decrease_volume_button.disabled = True
-                self.increase_volume_button.disabled = True
-            if player.history.empty():
-                self.previous_track_button.disabled = True
-                self.show_history_button.disabled = True
-            else:
-                self.add_item(self.show_history_button)
-            if await player.config.fetch_repeat_current():
-                self.add_item(self.repeat_button_on)
-            elif await player.config.fetch_repeat_queue():
-                self.add_item(self.repeat_queue_button_on)
-            else:
-                self.add_item(self.repeat_button_off)
-
+        if (player := self.cog.pylav.get_player(self.source.guild_id)) and is_dj is not False:
+            await self._player_and_dj(player)
         else:
-            self.forward_button.disabled = True
-            self.backward_button.disabled = True
-            self.first_button.disabled = True
-            self.last_button.disabled = True
-            self.stop_button.disabled = True
-            self.skip_button.disabled = True
-            self.previous_track_button.disabled = True
-            self.repeat_button_off.disabled = True
-            self.show_history_button.disabled = True
-            self.shuffle_button.disabled = True
-            self.decrease_volume_button.disabled = True
-            self.increase_volume_button.disabled = True
-            self.resume_button.disabled = True
-            self.repeat_button_on.disabled = True
-            self.enqueue_button.disabled = True
-            self.remove_from_queue_button.disabled = True
-            self.play_now_button.disabled = True
-            self.repeat_queue_button_on.disabled = True
-            self.clear_queue_button.disabled = True
-
-            self.add_item(self.resume_button)
-            self.add_item(self.repeat_button_off)
+            await self._no_player_or_no_dj()
         self.add_item(self.skip_button)
         self.add_item(self.shuffle_button)
         self.add_item(self.decrease_volume_button)
@@ -303,6 +259,57 @@ class QueueMenu(BaseMenu):
         self.add_item(self.enqueue_button)
         self.add_item(self.remove_from_queue_button)
         self.add_item(self.play_now_button)
+
+    async def _player_and_dj(self, player: Player):
+        if player.paused:
+            self.add_item(self.resume_button)
+        else:
+            self.add_item(self.paused_button)
+        if player.queue.empty():
+            self.shuffle_button.disabled = True
+            self.remove_from_queue_button.disabled = True
+            self.play_now_button.disabled = True
+            self.clear_queue_button.disabled = True
+        if not player.current:
+            self.stop_button.disabled = True
+            self.shuffle_button.disabled = True
+            self.previous_track_button.disabled = True
+            self.decrease_volume_button.disabled = True
+            self.increase_volume_button.disabled = True
+        if player.history.empty():
+            self.previous_track_button.disabled = True
+            self.show_history_button.disabled = True
+        else:
+            self.add_item(self.show_history_button)
+        if await player.config.fetch_repeat_current():
+            self.add_item(self.repeat_button_on)
+        elif await player.config.fetch_repeat_queue():
+            self.add_item(self.repeat_queue_button_on)
+        else:
+            self.add_item(self.repeat_button_off)
+
+    async def _no_player_or_no_dj(self):
+        self.forward_button.disabled = True
+        self.backward_button.disabled = True
+        self.first_button.disabled = True
+        self.last_button.disabled = True
+        self.stop_button.disabled = True
+        self.skip_button.disabled = True
+        self.previous_track_button.disabled = True
+        self.repeat_button_off.disabled = True
+        self.show_history_button.disabled = True
+        self.shuffle_button.disabled = True
+        self.decrease_volume_button.disabled = True
+        self.increase_volume_button.disabled = True
+        self.resume_button.disabled = True
+        self.repeat_button_on.disabled = True
+        self.enqueue_button.disabled = True
+        self.remove_from_queue_button.disabled = True
+        self.play_now_button.disabled = True
+        self.repeat_queue_button_on.disabled = True
+        self.clear_queue_button.disabled = True
+        self.add_item(self.resume_button)
+        self.add_item(self.repeat_button_off)
 
     @property
     def source(self) -> QueueSource:

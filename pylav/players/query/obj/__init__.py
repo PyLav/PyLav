@@ -323,7 +323,7 @@ class Query:
         return self._query
 
     @classmethod
-    def __process_urls(cls, query: str, partial: bool = False) -> Query | None:
+    def __process_urls(cls, query: str, partial: bool = False) -> Query | None:  # sourcery skip: low-code-quality
         if match := SOURCE_INPUT_MATCH_YOUTUBE.match(query):
             music = match.group("youtube_music")
             return process_youtube(cls, query, music=bool(music), partial=partial)
@@ -663,30 +663,39 @@ class Query:
         else:
             file = aiopath.AsyncPath(self._query)
         if await file.exists():
-            async with file.open("r") as f:
-                contents = await f.read()
-                async for line in asyncstdlib.iter(contents.splitlines()):
-                    if match := SOURCE_INPUT_MATCH_PLS.match(line):
-                        track = match.group("pls_query").strip()
-                        if is_url(track):
-                            yield await Query.from_string(track, dont_search=True)
+            async for entry in self._yield_process_file(file):
+                yield entry
+        elif is_url(self._query):
+            async for entry in self._yield_process_url():
+                yield entry
+
+    @staticmethod
+    async def _yield_process_file(file):
+        async with file.open("r") as f:
+            contents = await f.read()
+            async for line in asyncstdlib.iter(contents.splitlines()):
+                if match := SOURCE_INPUT_MATCH_PLS.match(line):
+                    track = match.group("pls_query").strip()
+                    if is_url(track):
+                        yield await Query.from_string(track, dont_search=True)
+                    else:
+                        path: aiopath.AsyncPath = aiopath.AsyncPath(track)
+                        if await path.exists():
+                            yield await Query.from_string(path, dont_search=True)
                         else:
-                            path: aiopath.AsyncPath = aiopath.AsyncPath(track)
+                            path = file.parent / path.relative_to(path.anchor)
                             if await path.exists():
                                 yield await Query.from_string(path, dont_search=True)
-                            else:
-                                path = file.parent / path.relative_to(path.anchor)
-                                if await path.exists():
-                                    yield await Query.from_string(path, dont_search=True)
-        elif is_url(self._query):
-            assert not isinstance(self._query, LocalFile)
-            async with aiohttp.ClientSession(json_serialize=ujson.dumps) as session:
-                async with session.get(self._query) as resp:
-                    contents = await resp.text()
-                    async for line in asyncstdlib.iter(contents.splitlines()):
-                        with contextlib.suppress(Exception):
-                            if match := SOURCE_INPUT_MATCH_PLS_TRACK.match(line):
-                                yield await Query.from_string(match.group("pls_query").strip(), dont_search=True)
+
+    async def _yield_process_url(self) -> AsyncIterator[Query]:
+        assert not isinstance(self._query, LocalFile)
+        async with aiohttp.ClientSession(json_serialize=ujson.dumps) as session:
+            async with session.get(self._query) as resp:
+                contents = await resp.text()
+                async for line in asyncstdlib.iter(contents.splitlines()):
+                    with contextlib.suppress(Exception):
+                        if match := SOURCE_INPUT_MATCH_PLS_TRACK.match(line):
+                            yield await Query.from_string(match.group("pls_query").strip(), dont_search=True)
 
     async def _yield_xspf_tracks(self) -> AsyncIterator[Query]:  # type: ignore
         if self.is_xspf:

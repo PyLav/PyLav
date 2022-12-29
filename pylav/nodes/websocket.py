@@ -207,7 +207,7 @@ class WebSocket:
         self._resuming_configured = self._session_id is not None
         self._logger.info("Node resume has been configured with sessionId: %s", self._session_id)
 
-    async def connect(self) -> None:
+    async def connect(self) -> None:  # sourcery skip: low-code-quality
         """Attempts to establish a connection to Lavalink"""
         try:
             self.ready.clear()

@@ -91,150 +91,154 @@ def parse(content: str, strict: bool = False, custom_tags_parser: bool = None) -
             state["expect_segment"] = True
             continue
 
-        if line.startswith(protocols.EXT_X_BIT_RATE):
-            _parse_bitrate(line, state)
-
-        elif line.startswith(protocols.EXT_X_TARGET_DURATION):
-            _parse_simple_parameter(line, data, float)
-
-        elif line.startswith(protocols.EXT_X_MEDIA_SEQUENCE):
-            _parse_simple_parameter(line, data, int)
-
-        elif line.startswith(protocols.EXT_X_DISCONTINUITY_SEQUENCE):
-            _parse_simple_parameter(line, data, int)
-
-        elif line.startswith(protocols.EXT_X_PROGRAM_DATE_TIME):
-            _, program_date_time = _parse_simple_parameter_raw_value(line, cast_date_time)
-            if not data.get("program_date_time"):
-                data["program_date_time"] = program_date_time
-            state["current_program_date_time"] = program_date_time
-            state["program_date_time"] = program_date_time
-
-        elif line.startswith(protocols.EXT_X_DISCONTINUITY):
-            state["discontinuity"] = True
-
-        elif line.startswith(protocols.EXT_X_CUE_OUT_CONT):
-            _parse_cueout_cont(line, state)
-            state["cue_out"] = True
-
-        elif line.startswith(protocols.EXT_X_CUE_OUT):
-            _parse_cueout(line, state, string_to_lines(content)[lineno - 2])
-            state["cue_out_start"] = True
-            state["cue_out"] = True
-
-        elif line.startswith(protocols.EXT_X_CUE_IN):
-            state["cue_in"] = True
-
-        elif line.startswith(protocols.EXT_X_CUE_SPAN):
-            state["cue_out"] = True
-
-        elif line.startswith(protocols.EXT_X_VERSION):
-            _parse_simple_parameter(line, data, int)
-
-        elif line.startswith(protocols.EXT_X_ALLOW_CACHE):
-            _parse_simple_parameter(line, data)
-
-        elif line.startswith(protocols.EXT_X_KEY):
-            key = _parse_key(line)
-            state["current_key"] = key
-            if key not in data["keys"]:
-                data["keys"].append(key)
-
-        elif line.startswith(protocols.EXT_INF):
-            _parse_extinf(line, data, state, lineno, strict)
-            state["expect_segment"] = True
-
-        elif line.startswith(protocols.EXT_X_STREAM_INF):
-            state["expect_playlist"] = True
-            _parse_stream_inf(line, data, state)
-
-        elif line.startswith(protocols.EXT_X_I_FRAME_STREAM_INF):
-            _parse_i_frame_stream_inf(line, data)
-
-        elif line.startswith(protocols.EXT_X_MEDIA):
-            _parse_media(line, data, state)
-
-        elif line.startswith(protocols.EXT_X_PLAYLIST_TYPE):
-            _parse_simple_parameter(line, data)
-
-        elif line.startswith(protocols.EXT_I_FRAMES_ONLY):
-            data["is_i_frames_only"] = True
-
-        elif line.startswith(protocols.EXT_IS_INDEPENDENT_SEGMENTS):
-            data["is_independent_segments"] = True
-
-        elif line.startswith(protocols.EXT_X_END_LIST):
-            data["is_endlist"] = True
-
-        elif line.startswith(protocols.EXT_X_MAP):
-            quoted_parser = remove_quotes_parser("uri")
-            segment_map_info = _parse_attribute_list(protocols.EXT_X_MAP, line, quoted_parser)
-            state["current_segment_map"] = segment_map_info
-            # left for backward compatibility
-            data["segment_map"] = segment_map_info
-
-        elif line.startswith(protocols.EXT_X_START):
-            attribute_parser = {"time_offset": lambda x: float(x)}
-            start_info = _parse_attribute_list(protocols.EXT_X_START, line, attribute_parser)
-            data["start"] = start_info
-
-        elif line.startswith(protocols.EXT_X_SERVER_CONTROL):
-            _parse_server_control(line, data, state)
-
-        elif line.startswith(protocols.EXT_X_PART_INF):
-            _parse_part_inf(line, data, state)
-
-        elif line.startswith(protocols.EXT_X_RENDITION_REPORT):
-            _parse_rendition_report(line, data, state)
-
-        elif line.startswith(protocols.EXT_X_PART):
-            _parse_part(line, data, state)
-
-        elif line.startswith(protocols.EXT_X_SKIP):
-            _parse_skip(line, data, state)
-
-        elif line.startswith(protocols.EXT_X_SESSION_DATA):
-            _parse_session_data(line, data, state)
-
-        elif line.startswith(protocols.EXT_X_SESSION_KEY):
-            _parse_session_key(line, data, state)
-
-        elif line.startswith(protocols.EXT_X_PRELOAD_HINT):
-            _parse_preload_hint(line, data, state)
-
-        elif line.startswith(protocols.EXT_X_DATERANGE):
-            _parse_daterange(line, data, state)
-
-        elif line.startswith(protocols.EXT_X_GAP):
-            state["gap"] = True
-
-        elif line.startswith(protocols.EXT_X_CONTENT_STEERING):
-            _parse_content_steering(line, data, state)
-
-        elif line.startswith(protocols.EXT_M3U):
-            # We don't parse #EXTM3U, it just should to be present
-            pass
-
-        elif line.strip() == "":
-            # blank lines are legal
-            pass
-
-        elif state["expect_segment"]:
-            _parse_ts_chunk(line, data, state)
-            state["expect_segment"] = False
-
-        elif state["expect_playlist"]:
-            _parse_variant_playlist(line, data, state)
-            state["expect_playlist"] = False
-
-        elif strict:
-            raise ParseError(lineno, line)
+        _process_line(content, data, line, lineno, state, strict)
 
     # there could be remaining partial segments
     if "segment" in state:
         data["segments"].append(state.pop("segment"))
 
     return data
+
+
+def _process_line(content, data, line, lineno, state, strict):  # sourcery skip: low-code-quality
+    if line.startswith(protocols.EXT_X_BIT_RATE):
+        _parse_bitrate(line, state)
+
+    elif line.startswith(protocols.EXT_X_TARGET_DURATION):
+        _parse_simple_parameter(line, data, float)
+
+    elif line.startswith(protocols.EXT_X_MEDIA_SEQUENCE):
+        _parse_simple_parameter(line, data, int)
+
+    elif line.startswith(protocols.EXT_X_DISCONTINUITY_SEQUENCE):
+        _parse_simple_parameter(line, data, int)
+
+    elif line.startswith(protocols.EXT_X_PROGRAM_DATE_TIME):
+        _, program_date_time = _parse_simple_parameter_raw_value(line, cast_date_time)
+        if not data.get("program_date_time"):
+            data["program_date_time"] = program_date_time
+        state["current_program_date_time"] = program_date_time
+        state["program_date_time"] = program_date_time
+
+    elif line.startswith(protocols.EXT_X_DISCONTINUITY):
+        state["discontinuity"] = True
+
+    elif line.startswith(protocols.EXT_X_CUE_OUT_CONT):
+        _parse_cueout_cont(line, state)
+        state["cue_out"] = True
+
+    elif line.startswith(protocols.EXT_X_CUE_OUT):
+        _parse_cueout(line, state, string_to_lines(content)[lineno - 2])
+        state["cue_out_start"] = True
+        state["cue_out"] = True
+
+    elif line.startswith(protocols.EXT_X_CUE_IN):
+        state["cue_in"] = True
+
+    elif line.startswith(protocols.EXT_X_CUE_SPAN):
+        state["cue_out"] = True
+
+    elif line.startswith(protocols.EXT_X_VERSION):
+        _parse_simple_parameter(line, data, int)
+
+    elif line.startswith(protocols.EXT_X_ALLOW_CACHE):
+        _parse_simple_parameter(line, data)
+
+    elif line.startswith(protocols.EXT_X_KEY):
+        key = _parse_key(line)
+        state["current_key"] = key
+        if key not in data["keys"]:
+            data["keys"].append(key)
+
+    elif line.startswith(protocols.EXT_INF):
+        _parse_extinf(line, data, state, lineno, strict)
+        state["expect_segment"] = True
+
+    elif line.startswith(protocols.EXT_X_STREAM_INF):
+        state["expect_playlist"] = True
+        _parse_stream_inf(line, data, state)
+
+    elif line.startswith(protocols.EXT_X_I_FRAME_STREAM_INF):
+        _parse_i_frame_stream_inf(line, data)
+
+    elif line.startswith(protocols.EXT_X_MEDIA):
+        _parse_media(line, data, state)
+
+    elif line.startswith(protocols.EXT_X_PLAYLIST_TYPE):
+        _parse_simple_parameter(line, data)
+
+    elif line.startswith(protocols.EXT_I_FRAMES_ONLY):
+        data["is_i_frames_only"] = True
+
+    elif line.startswith(protocols.EXT_IS_INDEPENDENT_SEGMENTS):
+        data["is_independent_segments"] = True
+
+    elif line.startswith(protocols.EXT_X_END_LIST):
+        data["is_endlist"] = True
+
+    elif line.startswith(protocols.EXT_X_MAP):
+        quoted_parser = remove_quotes_parser("uri")
+        segment_map_info = _parse_attribute_list(protocols.EXT_X_MAP, line, quoted_parser)
+        state["current_segment_map"] = segment_map_info
+        # left for backward compatibility
+        data["segment_map"] = segment_map_info
+
+    elif line.startswith(protocols.EXT_X_START):
+        attribute_parser = {"time_offset": lambda x: float(x)}
+        start_info = _parse_attribute_list(protocols.EXT_X_START, line, attribute_parser)
+        data["start"] = start_info
+
+    elif line.startswith(protocols.EXT_X_SERVER_CONTROL):
+        _parse_server_control(line, data, state)
+
+    elif line.startswith(protocols.EXT_X_PART_INF):
+        _parse_part_inf(line, data, state)
+
+    elif line.startswith(protocols.EXT_X_RENDITION_REPORT):
+        _parse_rendition_report(line, data, state)
+
+    elif line.startswith(protocols.EXT_X_PART):
+        _parse_part(line, data, state)
+
+    elif line.startswith(protocols.EXT_X_SKIP):
+        _parse_skip(line, data, state)
+
+    elif line.startswith(protocols.EXT_X_SESSION_DATA):
+        _parse_session_data(line, data, state)
+
+    elif line.startswith(protocols.EXT_X_SESSION_KEY):
+        _parse_session_key(line, data, state)
+
+    elif line.startswith(protocols.EXT_X_PRELOAD_HINT):
+        _parse_preload_hint(line, data, state)
+
+    elif line.startswith(protocols.EXT_X_DATERANGE):
+        _parse_daterange(line, data, state)
+
+    elif line.startswith(protocols.EXT_X_GAP):
+        state["gap"] = True
+
+    elif line.startswith(protocols.EXT_X_CONTENT_STEERING):
+        _parse_content_steering(line, data, state)
+
+    elif line.startswith(protocols.EXT_M3U):
+        # We don't parse #EXTM3U, it just should to be present
+        pass
+
+    elif line.strip() == "":
+        # blank lines are legal
+        pass
+
+    elif state["expect_segment"]:
+        _parse_ts_chunk(line, data, state)
+        state["expect_segment"] = False
+
+    elif state["expect_playlist"]:
+        _parse_variant_playlist(line, data, state)
+        state["expect_playlist"] = False
+
+    elif strict:
+        raise ParseError(lineno, line)
 
 
 def _parse_key(line: str) -> dict[str, Any]:
