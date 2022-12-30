@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import datetime
+
 ASCII_COLOURS = {
     "black": (1, 1, 1),
     "red": (220, 50, 47),
@@ -28,3 +30,6 @@ EQ_BAND_MAPPING = {
     13: "10kHz",
     14: "16kHz",
 }
+
+
+EPOCH_DT_TZ_AWARE = datetime.datetime(1970, 1, 1, tzinfo=datetime.UTC)

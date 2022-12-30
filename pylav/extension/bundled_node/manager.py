@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
+import datetime
 import pathlib
 import platform
 import re
@@ -19,8 +20,11 @@ import psutil
 import rich.progress
 import ujson
 import yaml
+from packaging.version import Version
 
 from pylav.constants.config import JAVA_EXECUTABLE
+from pylav.constants.misc import EPOCH_DT_TZ_AWARE
+from pylav.constants.node import JAR_SERVER_RELEASES
 from pylav.constants.regex import (
     JAVA_VERSION_LINE_223,
     JAVA_VERSION_LINE_PRE223,
@@ -35,6 +39,7 @@ from pylav.constants.regex import (
     LAVALINK_VERSION_LINE,
     SEMANTIC_VERSION_LAZY,
 )
+from pylav.constants.versions import VERSION_4_0_0
 from pylav.exceptions.node import (
     EarlyExitException,
     IncorrectProcessFoundException,
@@ -74,8 +79,6 @@ except ImportError:
 if TYPE_CHECKING:
     from pylav.core.client import Client
 
-
-JAR_SERVER_RELEASES = "https://api.github.com/repos/freyacodes/Lavalink/releases"
 
 LOGGER = getLogger("PyLav.ManagedNode")
 
@@ -184,6 +187,14 @@ class LocalNodeManager:
     def build_time(self) -> str | None:
         return self._buildtime
 
+    @staticmethod
+    def _get_release_publish_dt_or_epoch(release: dict) -> datetime.datetime:
+        return (
+            dateutil.parser.parse(release["published_at"])
+            if Version(release["tag_name"]) < VERSION_4_0_0
+            else EPOCH_DT_TZ_AWARE
+        )
+
     async def get_ci_latest_info(self) -> dict[str, int | str | None]:
         async with self._client.cached_session.get(
             f"{JAR_SERVER_RELEASES}", headers={"Accept": "application/json"}
@@ -193,13 +204,17 @@ class LocalNodeManager:
                 self._ci_info["number"] = -1
                 return self._ci_info
             data = await response.json(loads=ujson.loads)
-            release = await asyncstdlib.max(data, key=lambda x: dateutil.parser.parse(x["published_at"]))
+            release = await asyncstdlib.max(data, key=self._get_release_publish_dt_or_epoch)
             assets = release.get("assets", [])
             url = None
             async for asset in asyncstdlib.iter(assets):
                 if asset["name"] != "Lavalink.jar":
                     continue
                 url = asset.get("browser_download_url")
+            if url is None:
+                LOGGER.warning("Failed to get a supported released from from GitHub")
+                self._ci_info["number"] = -1
+                return self._ci_info
             date = release.get("published_at")
             branch = release.get("target_commitish")
             return {"number": int(release.get("id")), "branchName": branch, "finishDate": date, "jar_url": url}
@@ -522,11 +537,13 @@ class LocalNodeManager:
             return
         LOGGER.info("Downloading Lavalink.jar")
         jar_url = (
-            self._ci_info["jar_url"] or "https://github.com/freyacodes/Lavalink/releases/download/3.5.1/Lavalink.jar"
+            self._ci_info["jar_url"] or "https://github.com/freyacodes/Lavalink/releases/download/4.0.0/Lavalink.jar"
         )
 
         async with self._session.get(jar_url, timeout=3600) as response:
-            if 400 <= response.status < 600:
+            if response.status == 404:
+                raise LavalinkDownloadFailedException(response=response, should_retry=False)
+            elif 400 <= response.status < 600:
                 raise LavalinkDownloadFailedException(response=response, should_retry=True)
             fd, path = tempfile.mkstemp()
             file = open(fd, "wb")
