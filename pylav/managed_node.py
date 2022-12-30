@@ -9,6 +9,7 @@ import re
 import shlex
 import shutil
 import tempfile
+from datetime import datetime, timezone
 from re import Pattern
 from typing import TYPE_CHECKING, Final
 
@@ -19,6 +20,7 @@ import psutil
 import rich.progress
 import ujson
 import yaml
+from packaging.version import Version
 
 from pylav._config import CONFIG_DIR
 from pylav._logging import getLogger
@@ -254,7 +256,12 @@ class LocalNodeManager:
                 self._ci_info["number"] = -1
                 return self._ci_info
             data = await response.json(loads=ujson.loads)
-            release = await asyncstdlib.max(data, key=lambda x: dateutil.parser.parse(x["published_at"]))
+            release = await asyncstdlib.max(
+                data,
+                key=lambda x: dateutil.parser.parse(x["published_at"])
+                if Version(x["tag_name"]) < Version("3.7.0")
+                else datetime(1970, 1, 1, tzinfo=timezone.utc),
+            )
             assets = release.get("assets", [])
             url = None
             async for asset in asyncstdlib.iter(assets):
