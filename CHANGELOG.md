@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.11.20.0 (30/12/2022)
+- [[patch] make patch release](https://github.com/Drapersniper/PyLav/commit/a04b7ca0a694e5ce43abc01400e97af981acefbb) - @Drapersniper
+- [[patch] ignore unsupported lavalink releases (3.7+)](https://github.com/Drapersniper/PyLav/commit/2a236366ca4d439c60fd402c3a6b06f6d69a40c0) - @Drapersniper
+- [add labeler.yml](https://github.com/Drapersniper/PyLav/commit/b73b4636b5ea5377d4ebec031c2e90cbbe1ec3e1) - @Drapersniper
+- [Bump actions/dependency-review-action from 2 to 3](https://github.com/Drapersniper/PyLav/commit/e7ddb46c1ea723157b4ef38f4b4fc00b90948c8f) - @dependabot[bot]
+- [Bump crowdin/github-action from 1.5.0 to 1.5.1](https://github.com/Drapersniper/PyLav/commit/012e60dd64c02d05050067e4ef96bb9c46070b66) - @dependabot[bot]
+- [workflows](https://github.com/Drapersniper/PyLav/commit/b125e84e0f235fa8b0661834d91fa3ffac3455eb) - @Drapersniper
+
+---
+
 ## v0.11.19.1 (26/11/2022)
 - [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/b6a70d2af59d3593532a89e2a3af705180151f24) - @Drapersniper
 - [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/170d8c09d834c952c5018e517ec877a96675929c) - @crowdin-bot
@@ -158,8 +168,3 @@
 ## v0.11.1.1 (16/10/2022)
 - [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/fa5f06494722fa5e64e1407cf8a8eb4b40a98b4a) - @Drapersniper
 - [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/04d86c0b39bd81516a5e76553492b9b2815e7554) - @crowdin-bot
-
----
-
-## v0.11.1.0 (16/10/2022)
-- [[patch] several fixes to the resuming logic](https://github.com/Drapersniper/PyLav/commit/6a09ca8852e46d3158765d8f89bdc19bf7863ea2) - @Drapersniper
