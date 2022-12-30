@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.0.0 (30/12/2022)
+- [fix release.yml](https://github.com/Drapersniper/PyLav/commit/08d440d79eef207a6a92b6987f394069c01befff) - @Drapersniper
+- [reexport gren token](https://github.com/Drapersniper/PyLav/commit/81b453673c0171dec1c78043cf5733549fbf1311) - @Drapersniper
+- [force token](https://github.com/Drapersniper/PyLav/commit/79447bd5213fa365b5bbf0bfe5a8f892cb644577) - @Drapersniper
+- [reuse poetry cache on changelogs](https://github.com/Drapersniper/PyLav/commit/7d0509ad2c9e9d5611913f1b74c49d01b6dddcee) - @Drapersniper
+- [don't try to publish if already existing](https://github.com/Drapersniper/PyLav/commit/cefc3e668d2c5a422f0090934f9a3c22daa4bac9) - @Drapersniper
+- [Only run release on Ubuntu-latest for now](https://github.com/Drapersniper/PyLav/commit/b2ede0799801e78ad5289d43abe74c0362a72404) - @Drapersniper
+- [Fixes release workflow](https://github.com/Drapersniper/PyLav/commit/7f4e87597d5fb910fb7f283c37ff21abedbaa7d7) - @Drapersniper
+- [Fixes release workflow](https://github.com/Drapersniper/PyLav/commit/fa323e0d5b7c60634e337876759cf1c344720dd9) - @Drapersniper
+- [1 0 0](https://github.com/Drapersniper/PyLav/commit/2b2fac3f4f3da7b790af0728292554410eda00f3) - @Drapersniper
+
+---
+
 ## v0.11.20.0 (30/12/2022)
 - [[patch] make patch release](https://github.com/Drapersniper/PyLav/commit/a04b7ca0a694e5ce43abc01400e97af981acefbb) - @Drapersniper
 - [[patch] ignore unsupported lavalink releases (3.7+)](https://github.com/Drapersniper/PyLav/commit/2a236366ca4d439c60fd402c3a6b06f6d69a40c0) - @Drapersniper
@@ -162,9 +175,3 @@
 
 ## v0.11.2.0 (16/10/2022)
 - [[patch] several fixes:](https://github.com/Drapersniper/PyLav/commit/85e906e7c33cefcec7a6021cbd47894eff2dad81) - @Drapersniper
-
----
-
-## v0.11.1.1 (16/10/2022)
-- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/fa5f06494722fa5e64e1407cf8a8eb4b40a98b4a) - @Drapersniper
-- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/04d86c0b39bd81516a5e76553492b9b2815e7554) - @crowdin-bot
