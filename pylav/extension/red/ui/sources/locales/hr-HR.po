@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2022-12-30 22:41\n"
+"PO-Revision-Date: 2022-12-30 23:16\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
 "MIME-Version: 1.0\n"
@@ -23,19 +23,19 @@ msgstr ""
 
 #: pylav/extension/red/ui/sources/equalizer.py:33
 msgid "Author"
-msgstr ""
+msgstr "Autor"
 
 #: pylav/extension/red/ui/sources/generic.py:88
 msgid "Page {page_num}/{total_pages} | {num} {entries}"
-msgstr ""
+msgstr "Stranica {page_num}/{total_pages} | {num} {entries}"
 
 #: pylav/extension/red/ui/sources/generic.py:92
 msgid "entries"
-msgstr ""
+msgstr "unosa"
 
 #: pylav/extension/red/ui/sources/generic.py:92
 msgid "entry"
-msgstr ""
+msgstr "unos"
 
 #: pylav/extension/red/ui/sources/nodes.py:50
 msgid "Page {page_num}/{total_pages} | {num} nodes"
@@ -44,17 +44,18 @@ msgstr ""
 #: pylav/extension/red/ui/sources/nodes.py:92
 #: pylav/extension/red/ui/sources/nodes.py:253
 msgid "No"
-msgstr ""
+msgstr "Ne"
 
 #: pylav/extension/red/ui/sources/nodes.py:93
 #: pylav/extension/red/ui/sources/nodes.py:254
 msgid "Yes"
-msgstr ""
+msgstr "Da"
 
 #: pylav/extension/red/ui/sources/nodes.py:145
 msgid "Name: {name}\n"
 "Version: {version}"
-msgstr ""
+msgstr "Ime: {name}\n"
+"Verzija: {version}"
 
 #: pylav/extension/red/ui/sources/nodes.py:146
 #: pylav/extension/red/ui/sources/nodes.py:147
@@ -67,7 +68,7 @@ msgstr "Nepoznato"
 #: pylav/extension/red/ui/sources/nodes.py:150
 #: pylav/extension/red/ui/sources/nodes.py:310
 msgid "None / Unknown"
-msgstr ""
+msgstr "Ništa / Nepoznato"
 
 #: pylav/extension/red/ui/sources/nodes.py:152
 #: pylav/extension/red/ui/sources/nodes.py:312
@@ -83,22 +84,23 @@ msgstr ""
 #: pylav/extension/red/ui/sources/nodes.py:314
 msgid "Latitude: {lat}\n"
 "Longitude: {lon}"
-msgstr ""
+msgstr "Geografska širina: {lat}\n"
+"Geografska dužina: {lon}"
 
 #: pylav/extension/red/ui/sources/nodes.py:160
 #: pylav/extension/red/ui/sources/nodes.py:320
 msgid "Region"
-msgstr ""
+msgstr "Regija"
 
 #: pylav/extension/red/ui/sources/nodes.py:160
 #: pylav/extension/red/ui/sources/nodes.py:320
 msgid "N/A"
-msgstr ""
+msgstr "Nema"
 
 #: pylav/extension/red/ui/sources/nodes.py:161
 #: pylav/extension/red/ui/sources/nodes.py:321
 msgid "Coordinates"
-msgstr ""
+msgstr "Koordinate"
 
 #: pylav/extension/red/ui/sources/nodes.py:162
 #: pylav/extension/red/ui/sources/nodes.py:322
@@ -118,24 +120,26 @@ msgstr ""
 #: pylav/extension/red/ui/sources/nodes.py:167
 #: pylav/extension/red/ui/sources/nodes.py:327
 msgid "SSL"
-msgstr ""
+msgstr "SSL"
 
 #: pylav/extension/red/ui/sources/nodes.py:168
 #: pylav/extension/red/ui/sources/nodes.py:328
 msgid "Available"
-msgstr ""
+msgstr "Dostupno"
 
 #: pylav/extension/red/ui/sources/nodes.py:169
 #: pylav/extension/red/ui/sources/nodes.py:329
 msgid "Search Only"
-msgstr ""
+msgstr "Samo pretraga"
 
 #: pylav/extension/red/ui/sources/nodes.py:170
 #: pylav/extension/red/ui/sources/nodes.py:330
 msgid "Players\n"
 "Connected\n"
 "Active"
-msgstr ""
+msgstr "Playeri\n"
+"Povezani\n"
+"Aktivni"
 
 #: pylav/extension/red/ui/sources/nodes.py:174
 #: pylav/extension/red/ui/sources/nodes.py:334
@@ -145,7 +149,7 @@ msgstr ""
 #: pylav/extension/red/ui/sources/nodes.py:179
 #: pylav/extension/red/ui/sources/nodes.py:339
 msgid "Uptime"
-msgstr ""
+msgstr "Ukupno vrijeme rada"
 
 #: pylav/extension/red/ui/sources/nodes.py:180
 #: pylav/extension/red/ui/sources/nodes.py:340
@@ -157,7 +161,7 @@ msgstr ""
 #: pylav/extension/red/ui/sources/nodes.py:183
 #: pylav/extension/red/ui/sources/nodes.py:343
 msgid "Penalty"
-msgstr ""
+msgstr "Penal"
 
 #: pylav/extension/red/ui/sources/nodes.py:184
 #: pylav/extension/red/ui/sources/nodes.py:344
@@ -176,7 +180,7 @@ msgstr ""
 #: pylav/extension/red/ui/sources/nodes.py:199
 #: pylav/extension/red/ui/sources/nodes.py:359
 msgid "Page {page_num}/{total_pages} | {num} {plural}"
-msgstr ""
+msgstr "Stranica {page_num}/{total_pages} | {num} {plural}"
 
 #: pylav/extension/red/ui/sources/nodes.py:203
 #: pylav/extension/red/ui/sources/nodes.py:363
@@ -191,15 +195,16 @@ msgstr ""
 #: pylav/extension/red/ui/sources/nodes.py:306
 msgid "Name: {name}\n"
 "Version: {version}\n\n"
-msgstr ""
+msgstr "Ime: {name}\n"
+"Verzija: {version}\n\n"
 
 #: pylav/extension/red/ui/sources/player.py:64
 msgid "Nothing playing"
-msgstr ""
+msgstr "Ništa ne svira"
 
 #: pylav/extension/red/ui/sources/player.py:76
 msgid "Server Owner"
-msgstr ""
+msgstr "Vlasnik servera"
 
 #: pylav/extension/red/ui/sources/player.py:77
 msgid "Connected"
@@ -207,11 +212,11 @@ msgstr ""
 
 #: pylav/extension/red/ui/sources/player.py:78
 msgid "Users in VC"
-msgstr ""
+msgstr "Korisnici u glasovnom kanalu"
 
 #: pylav/extension/red/ui/sources/player.py:80
 msgid "Queue Length"
-msgstr ""
+msgstr "Duljina reda čekanja"
 
 #: pylav/extension/red/ui/sources/player.py:86
 msgid "Queue History Length"
@@ -219,11 +224,11 @@ msgstr ""
 
 #: pylav/extension/red/ui/sources/player.py:89
 msgid "track"
-msgstr ""
+msgstr "pjesma"
 
 #: pylav/extension/red/ui/sources/player.py:89
 msgid "tracks"
-msgstr ""
+msgstr "pjesme"
 
 #: pylav/extension/red/ui/sources/player.py:100
 msgid "Page {page_num}/{total_pages} | Playing in {playing} {server_translation}"
@@ -231,16 +236,16 @@ msgstr ""
 
 #: pylav/extension/red/ui/sources/player.py:104
 msgid "server"
-msgstr ""
+msgstr "server"
 
 #: pylav/extension/red/ui/sources/player.py:104
 msgid "servers"
-msgstr ""
+msgstr "servera"
 
 #: pylav/extension/red/ui/sources/playlist.py:52
 #: pylav/extension/red/ui/sources/playlist.py:172
 msgid "Page {page_num}/{total_pages} | {num} playlists"
-msgstr ""
+msgstr "Stranica {page_num}/{total_pages} | {num} popisa za reprodukciju"
 
 #: pylav/extension/red/ui/sources/playlist.py:118
 msgid "Tracks in"
@@ -252,23 +257,23 @@ msgstr ""
 
 #: pylav/extension/red/ui/sources/playlist.py:157
 msgid "ID: {id}"
-msgstr ""
+msgstr "ID: {id}"
 
 #: pylav/extension/red/ui/sources/playlist.py:158
 msgid "Tracks: {num}"
-msgstr ""
+msgstr "Broj pjesama: {num}"
 
 #: pylav/extension/red/ui/sources/playlist.py:159
 msgid "Author: {name}"
-msgstr ""
+msgstr "Autor: {name}"
 
 #: pylav/extension/red/ui/sources/playlist.py:160
 msgid "Scope: {scope}\n"
-msgstr ""
+msgstr "Opseg: {scope}\n"
 
 #: pylav/extension/red/ui/sources/playlist.py:168
 msgid "Playlists you can access in this server:"
-msgstr ""
+msgstr "Popisi za reprodukciju kojima možete pristupiti na ovom serveru:"
 
 #: pylav/extension/red/ui/sources/queue.py:105
 msgid "There's nothing in recently played"

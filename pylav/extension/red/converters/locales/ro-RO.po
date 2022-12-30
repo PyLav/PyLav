@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2022-12-30 22:40\n"
+"PO-Revision-Date: 2022-12-30 23:16\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "MIME-Version: 1.0\n"
@@ -19,41 +19,41 @@ msgstr ""
 
 #: pylav/extension/red/converters/equalizer.py:47
 msgid "Bass boost with name `{arg}` not found"
-msgstr ""
+msgstr "Amplificare bass cu numele `{arg}` nu a fost găsită"
 
 #: pylav/extension/red/converters/equalizer.py:61
 msgid "Maximum"
-msgstr ""
+msgstr "Maxim"
 
 #: pylav/extension/red/converters/equalizer.py:62
 msgid "Insane"
-msgstr ""
+msgstr "Nebun"
 
 #: pylav/extension/red/converters/equalizer.py:63
 msgid "Extreme"
-msgstr ""
+msgstr "Extrem"
 
 #: pylav/extension/red/converters/equalizer.py:64
 msgid "Very High"
-msgstr ""
+msgstr "Foarte Mare"
 
 #: pylav/extension/red/converters/equalizer.py:65
 msgid "High"
-msgstr ""
+msgstr "Ridicat"
 
 #: pylav/extension/red/converters/equalizer.py:66
 msgid "Medium"
-msgstr ""
+msgstr "Medie"
 
 #: pylav/extension/red/converters/equalizer.py:67
 msgid "Fine Tuned"
-msgstr ""
+msgstr "Ajustat fin"
 
 #: pylav/extension/red/converters/equalizer.py:68
 msgid "Cut-off"
-msgstr ""
+msgstr "Oprire"
 
 #: pylav/extension/red/converters/equalizer.py:69
 msgid "Off"
-msgstr ""
+msgstr "Dezactivat"
 

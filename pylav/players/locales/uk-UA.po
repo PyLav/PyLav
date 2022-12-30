@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2022-12-30 22:41\n"
+"PO-Revision-Date: 2022-12-30 23:16\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "MIME-Version: 1.0\n"
@@ -23,137 +23,137 @@ msgstr "Немає доступних вузлів!"
 
 #: pylav/players/manager.py:350
 msgid "Music in {count} servers"
-msgstr ""
+msgstr "Музика на {count} серверах"
 
 #: pylav/players/player.py:1164
 msgid "There are no tracks currently in the player history"
-msgstr ""
+msgstr "Наразі немає маршрутів в історії гравців"
 
 #: pylav/players/player.py:1873
 msgid "Current node has the Volume filter functionality disabled"
-msgstr ""
+msgstr "Поточний вузол вимкнено функціональність фільтру Тома"
 
 #: pylav/players/player.py:1895 pylav/players/player.py:2071
 #: pylav/players/player.py:2126
 msgid "Current node has the Equalizer functionality disabled"
-msgstr ""
+msgstr "Поточний вузол не має можливості еквалайзера"
 
 #: pylav/players/player.py:1915
 msgid "Current node has the Karaoke functionality disabled"
-msgstr ""
+msgstr "Поточний вузол не має можливості Караоке"
 
 #: pylav/players/player.py:1935 pylav/players/player.py:2073
 #: pylav/players/player.py:2128
 msgid "Current node has the Timescale functionality disabled"
-msgstr ""
+msgstr "Поточний вузол не має можливості Timescale"
 
 #: pylav/players/player.py:1955
 msgid "Current node has the Tremolo functionality disabled"
-msgstr ""
+msgstr "Поточний вузол не має можливості Tremolo"
 
 #: pylav/players/player.py:1975
 msgid "Current node has the Vibrato functionality disabled"
-msgstr ""
+msgstr "Поточний вузол не має можливості Вібрації"
 
 #: pylav/players/player.py:1995
 msgid "Current node has the Rotation functionality disabled"
-msgstr ""
+msgstr "Поточний вузол відключено можливості обертання"
 
 #: pylav/players/player.py:2015
 msgid "Current node has the Distortion functionality disabled"
-msgstr ""
+msgstr "Поточний вузол вимкнено функціональність дистрибуції"
 
 #: pylav/players/player.py:2035
 msgid "Current node has the LowPass functionality disabled"
-msgstr ""
+msgstr "Поточний вузол вимкнено з функціями низькопередача"
 
 #: pylav/players/player.py:2055
 msgid "Current node has the Echo functionality disabled"
-msgstr ""
+msgstr "Поточний вузол відключено функцію Echo"
 
 #: pylav/players/player.py:2185
 msgid "Current node has the ChannelMix functionality disabled"
-msgstr ""
+msgstr "Поточний вузол відключено функціональність ChannelMix"
 
 #: pylav/players/player.py:2461 pylav/players/player.py:2506
 #: pylav/players/player.py:2521
 msgid "LIVE"
-msgstr ""
+msgstr "ОПЕРАТИВНА"
 
 #: pylav/players/player.py:2474
 msgid "Now Playing in"
-msgstr ""
+msgstr "Зараз грає у"
 
 #: pylav/players/player.py:2492 pylav/players/player.py:2601
 msgid "Currently livestreaming"
-msgstr ""
+msgstr "Триває трансляція"
 
 #: pylav/players/player.py:2494
 msgid "Playing: "
-msgstr ""
+msgstr "Грає: "
 
 #: pylav/players/player.py:2497 pylav/players/player.py:2513
 #: pylav/players/player.py:2528 pylav/players/player.py:2607
 msgid "Requester"
-msgstr ""
+msgstr "Замовник"
 
 #: pylav/players/player.py:2509 pylav/players/player.py:2524
 msgid "Duration"
-msgstr ""
+msgstr "Тривалість"
 
 #: pylav/players/player.py:2515
 msgid "Previous Track"
-msgstr ""
+msgstr "Попередня композиція"
 
 #: pylav/players/player.py:2530
 msgid "Next Track"
-msgstr ""
+msgstr "Наступна композиція"
 
 #: pylav/players/player.py:2535
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
-msgstr ""
+msgstr "{track_count} треків, {queue_total_duration} залишилось\n"
 
 #: pylav/players/player.py:2539 pylav/players/player.py:2635
 msgid "{translation}: {repeat_emoji}"
-msgstr ""
+msgstr "{translation}: {repeat_emoji}"
 
 #: pylav/players/player.py:2539 pylav/players/player.py:2635
 msgid "Repeating"
-msgstr ""
+msgstr "Повторення"
 
 #: pylav/players/player.py:2540 pylav/players/player.py:2636
 msgid "{space}{translation}: {autoplay_emoji}"
-msgstr ""
+msgstr "{space}{translation}: {autoplay_emoji}"
 
 #: pylav/players/player.py:2541 pylav/players/player.py:2637
 msgid "Auto Play"
-msgstr ""
+msgstr "Автовідтворення"
 
 #: pylav/players/player.py:2543 pylav/players/player.py:2639
 msgid "{space}{translation}: {volume}%"
-msgstr ""
+msgstr "{space}{translation}: {volume}%"
 
 #: pylav/players/player.py:2544 pylav/players/player.py:2640
 msgid "Volume"
-msgstr ""
+msgstr "Об'єм"
 
 #: pylav/players/player.py:2584
 msgid "Recently Played for"
-msgstr ""
+msgstr "Нещодавно зіграно за"
 
 #: pylav/players/player.py:2584
 msgid "Queue for"
-msgstr ""
+msgstr "Черга"
 
 #: pylav/players/player.py:2604
 msgid "Playing"
-msgstr ""
+msgstr "Відтворюється"
 
 #: pylav/players/player.py:2620
 msgid "Queue order is may not be accurate due to auto-shuffle being enabled"
-msgstr ""
+msgstr "Порядок черги може бути неточним через ввімкнення автоматичного перемішування"
 
 #: pylav/players/player.py:2626
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
-msgstr ""
+msgstr "Сторінка {current_page}/{total_pages} | {track_number} треки, {queue_total_duration} залишилася\n"
 
