@@ -2,7 +2,7 @@
 **NOTICE**:
   - PyLav assumes you are using PostgresSQL server running version 14  and it also requires Python3.11 any other version for these will not work/be supported.
   - If you have docker; Setting up a postgres container for it would likely be the simplest option to setup the necessary server.
--------------
+  - If you have docker you can use the Lavalink v4 image instead of installing Java for more info [see discord](https://discord.com/channels/970987707834720266/970987936063561738/1054069164148539422)
 # Linux (Ubuntu 22.04) <a name="Linux"></a>
 If you are not on Ubuntu 20.04 you just have to follow the instructions below to install the dependencies and set them up for your Linux distro (Google is your friend).
 - #### [libaio](https://pagure.io/libaio)
@@ -122,6 +122,7 @@ An example of the file can be found at [pylav.example.yaml](pylav.example.yaml),
 - This major release requires Lavalink 4.0.0 which has not yet been released.
 - You will need will need to complete the following steps before you can successfully use this version, these will only be necessary until Lavalink 4.0.0 is released.
   - Download the latest Lavalink.jar from this [GitHub action](https://github.com/TopiSenpai/Lavalink/suites/9936879296/artifacts/481780568)
+    - Can be skipped if you would rather use a Docker container [see discord for more info](https://discord.com/channels/970987707834720266/970987936063561738/1054069164148539422)
   - Download the [`application.yml`](./application.yml) from this repo.
   - Place these a directory of your choice.
   - Edit the `application.yml` to your liking changing the `CHANGE_ME` values, if you need help with this please join the [Discord support server](https://discord.com/invite/Sjh2TSCYQB)
