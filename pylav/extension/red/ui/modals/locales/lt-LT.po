@@ -1,0 +1,35 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: pylav\n"
+"POT-Creation-Date: 2022-12-30 22:38+0000\n"
+"PO-Revision-Date: 2022-12-30 22:40\n"
+"Last-Translator: \n"
+"Language-Team: Lithuanian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.4.2\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && (n%100>19 || n%100<11) ? 0 : (n%10>=2 && n%10<=9) && (n%100>19 || n%100<11) ? 1 : n%1!=0 ? 2: 3);\n"
+"X-Crowdin-Project: pylav\n"
+"X-Crowdin-Project-ID: 535244\n"
+"X-Crowdin-Language: lt\n"
+"X-Crowdin-File: /pylav/extension/red/ui/modals/locales/messages.pot\n"
+"X-Crowdin-File-ID: 985\n"
+"Language: lt_LT\n"
+
+#: pylav/extension/red/ui/modals/playlist.py:27
+msgid "Enter the name for the new playlist"
+msgstr ""
+
+#: pylav/extension/red/ui/modals/playlist.py:28
+msgid "My awesome new playlist"
+msgstr ""
+
+#: pylav/extension/red/ui/modals/queue.py:27
+msgid "Search for a song to add to the queue"
+msgstr ""
+
+#: pylav/extension/red/ui/modals/queue.py:30
+msgid "Hello by Adele, speak:Hello, https://open.spotify.com/playlist/37i9dQZF1DX6XceWZP1znY"
+msgstr ""
+

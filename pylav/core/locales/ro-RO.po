@@ -1,0 +1,56 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: pylav\n"
+"POT-Creation-Date: 2022-12-30 22:38+0000\n"
+"PO-Revision-Date: 2022-12-30 22:40\n"
+"Last-Translator: \n"
+"Language-Team: Romanian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.4.2\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2);\n"
+"X-Crowdin-Project: pylav\n"
+"X-Crowdin-Project-ID: 535244\n"
+"X-Crowdin-Language: ro\n"
+"X-Crowdin-File: /pylav/core/locales/messages.pot\n"
+"X-Crowdin-File-ID: 795\n"
+"Language: ro_RO\n"
+
+#: pylav/core/client.py:873 pylav/core/client.py:908
+msgid "No available nodes!"
+msgstr "Nu sunt noduri disponibile!"
+
+#: pylav/core/client.py:877 pylav/core/client.py:912
+msgid "No node with {feature} functionality available!"
+msgstr "Niciun nod cu funcționalitatea {feature} disponibil!"
+
+#: pylav/core/client.py:1211
+msgid "No node with {query.requires_capability} functionality available!"
+msgstr "Niciun nod cu funcționalitatea {query.requires_capability} disponibil!"
+
+#: pylav/core/client.py:1584
+msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
+msgstr "Pentru a genera un mix playlist este necesar un Video, Utilizator, Canal sau Playlist ID"
+
+#: pylav/core/client.py:1589
+msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
+msgstr "Pentru a genera un mix playlist este necesar un video, un utilizator, un canal sau un ID Playlist. Cu toate acestea, ați furnizat mai multe"
+
+#: pylav/core/context.py:258
+msgid "{} remaining. Type `more` to continue."
+msgstr "{} rămas. Tastați `mai multe` pentru a continua."
+
+#: pylav/core/context.py:259
+msgid "There is still 1 message"
+msgstr "Mai este încă un mesaj"
+
+#: pylav/core/context.py:261
+msgid "There are still {remaining} messages"
+msgstr ""
+
+#: pylav/core/context.py:288
+#, docstring
+msgid "Does nothing"
+msgstr "Nu face nimic"
+

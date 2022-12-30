@@ -1,0 +1,87 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: pylav\n"
+"POT-Creation-Date: 2022-12-30 22:38+0000\n"
+"PO-Revision-Date: 2022-12-30 22:41\n"
+"Last-Translator: \n"
+"Language-Team: Chinese Simplified\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.4.2\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Crowdin-Project: pylav\n"
+"X-Crowdin-Project-ID: 535244\n"
+"X-Crowdin-Language: zh-CN\n"
+"X-Crowdin-File: /pylav/helpers/discord/converters/locales/messages.pot\n"
+"X-Crowdin-File-ID: 909\n"
+"Language: zh_CN\n"
+
+#: pylav/helpers/discord/converters/nodes.py:41
+#: pylav/helpers/discord/converters/nodes.py:46
+msgid "Node with name or id `{arg}` not found"
+msgstr "未找到名称或ID为{arg}的节点"
+
+#: pylav/helpers/discord/converters/playlists.py:42
+msgid "Playlist with name or id `{arg}` not found"
+msgstr "未找到名字或ID为{arg}的播放列表"
+
+#: pylav/helpers/discord/converters/queries.py:52
+msgid "Query must be a playlist or album"
+msgstr "查询必须是播放列表或相册"
+
+#: pylav/helpers/discord/converters/radio.py:55
+msgid "Station with name `{arg}` not found"
+msgstr "未找到名字为 `{arg}` 的位置"
+
+#: pylav/helpers/discord/converters/radio.py:71
+#: pylav/helpers/discord/converters/radio.py:171
+#: pylav/helpers/discord/converters/radio.py:228
+#: pylav/helpers/discord/converters/radio.py:284
+#: pylav/helpers/discord/converters/radio.py:339
+#: pylav/helpers/discord/converters/radio.py:391
+#: pylav/helpers/discord/converters/radio.py:444
+msgid "Radio Browser is disabled"
+msgstr "无线电浏览器已禁用"
+
+#: pylav/helpers/discord/converters/radio.py:117
+#: pylav/helpers/discord/converters/radio.py:140
+#: pylav/helpers/discord/converters/radio.py:181
+#: pylav/helpers/discord/converters/radio.py:196
+#: pylav/helpers/discord/converters/radio.py:238
+#: pylav/helpers/discord/converters/radio.py:253
+#: pylav/helpers/discord/converters/radio.py:299
+#: pylav/helpers/discord/converters/radio.py:309
+#: pylav/helpers/discord/converters/radio.py:349
+#: pylav/helpers/discord/converters/radio.py:361
+#: pylav/helpers/discord/converters/radio.py:398
+#: pylav/helpers/discord/converters/radio.py:408
+#: pylav/helpers/discord/converters/radio.py:458
+#: pylav/helpers/discord/converters/radio.py:468
+msgid "Unnamed"
+msgstr "未命名的"
+
+#: pylav/helpers/discord/converters/radio.py:155
+msgid "Tag with name `{arg}` not found"
+msgstr "找不到名字为 `{arg}` 的标签"
+
+#: pylav/helpers/discord/converters/radio.py:212
+msgid "Language with name `{arg}` not found"
+msgstr "未找到名字为 `{arg}` 的语言"
+
+#: pylav/helpers/discord/converters/radio.py:268
+msgid "State with name `{arg}` not found"
+msgstr "未找到名字为 `{arg}` 的状态"
+
+#: pylav/helpers/discord/converters/radio.py:323
+msgid "Codec with name `{arg}` not found"
+msgstr "未找到名为 `{arg}` 的编解码器"
+
+#: pylav/helpers/discord/converters/radio.py:375
+msgid "Country code `{arg}` not found"
+msgstr "找不到国家代码{arg}`"
+
+#: pylav/helpers/discord/converters/radio.py:422
+msgid "Country with name `{arg}` not found"
+msgstr "未找到名字为 `{arg}` 的国家"
+

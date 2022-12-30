@@ -1,0 +1,76 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: pylav\n"
+"POT-Creation-Date: 2022-09-15 18:38+0000\n"
+"PO-Revision-Date: 2022-12-30 22:41\n"
+"Last-Translator: \n"
+"Language-Team: Russian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.4.2\n"
+"Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
+"X-Crowdin-Project: pylav\n"
+"X-Crowdin-Project-ID: 535244\n"
+"X-Crowdin-Language: ru\n"
+"X-Crowdin-File: /pylav/converters/locales/messages.pot\n"
+"X-Crowdin-File-ID: 528\n"
+"Language: ru_RU\n"
+
+#: pylav/converters/nodes.py:37 pylav/converters/nodes.py:42
+msgid "Node with name or id `{arg}` not found"
+msgstr "Узел с именем или идентификатором `{arg}` не найден"
+
+#: pylav/converters/playlist.py:39
+msgid "Playlist with name or id `{arg}` not found"
+msgstr "Плейлист с именем или идентификатором `{arg}` не найден"
+
+#: pylav/converters/query.py:51
+msgid "Query must be a playlist or album"
+msgstr "Запрос должен быть плейлистом или альбомом"
+
+#: pylav/converters/radio.py:51
+msgid "Station with name `{arg}` not found"
+msgstr "Станция с именем `{arg}` не найдена"
+
+#: pylav/converters/radio.py:67 pylav/converters/radio.py:165
+#: pylav/converters/radio.py:212 pylav/converters/radio.py:258
+#: pylav/converters/radio.py:313 pylav/converters/radio.py:360
+#: pylav/converters/radio.py:413
+msgid "Radio Browser is disabled"
+msgstr "Радиообозреватель отключен"
+
+#: pylav/converters/radio.py:111 pylav/converters/radio.py:134
+#: pylav/converters/radio.py:172 pylav/converters/radio.py:182
+#: pylav/converters/radio.py:219 pylav/converters/radio.py:229
+#: pylav/converters/radio.py:273 pylav/converters/radio.py:283
+#: pylav/converters/radio.py:320 pylav/converters/radio.py:330
+#: pylav/converters/radio.py:367 pylav/converters/radio.py:377
+#: pylav/converters/radio.py:427 pylav/converters/radio.py:437
+msgid "Unnamed"
+msgstr "Без имени"
+
+#: pylav/converters/radio.py:149
+msgid "Tag with name `{arg}` not found"
+msgstr "Тег с именем `{arg}` не найден"
+
+#: pylav/converters/radio.py:196
+msgid "Language with name `{arg}` not found"
+msgstr "Язык с именем `{arg}` не найден"
+
+#: pylav/converters/radio.py:242
+msgid "State with name `{arg}` not found"
+msgstr "Состояние с именем `{arg}` не найдено"
+
+#: pylav/converters/radio.py:297
+msgid "Codec with name `{arg}` not found"
+msgstr "Кодек с именем `{arg}` не найден"
+
+#: pylav/converters/radio.py:344
+msgid "Country code `{arg}` not found"
+msgstr "Код страны `{arg}` не найден"
+
+#: pylav/converters/radio.py:391
+msgid "Country with name `{arg}` not found"
+msgstr "Страна с именем `{arg}` не найдена"
+

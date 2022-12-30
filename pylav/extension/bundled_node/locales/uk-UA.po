@@ -1,0 +1,37 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: pylav\n"
+"POT-Creation-Date: 2022-12-30 22:38+0000\n"
+"PO-Revision-Date: 2022-12-30 22:41\n"
+"Last-Translator: \n"
+"Language-Team: Ukrainian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.4.2\n"
+"Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
+"X-Crowdin-Project: pylav\n"
+"X-Crowdin-Project-ID: 535244\n"
+"X-Crowdin-Language: uk\n"
+"X-Crowdin-File: /pylav/extension/bundled_node/locales/messages.pot\n"
+"X-Crowdin-File-ID: 721\n"
+"Language: uk_UA\n"
+
+#: pylav/extension/bundled_node/manager.py:227
+msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture"
+msgstr "Ви намагаєтеся запустити керований вузол Lavalink на непідтримуваній архітектурі машин"
+
+#: pylav/extension/bundled_node/manager.py:452
+msgid "The output of `{java_exc} -version` was unexpected\n"
+"{version_info}"
+msgstr "Вивід `{java_exc} -version` був несподіваний\n"
+"{version_info}"
+
+#: pylav/extension/bundled_node/manager.py:472
+msgid "Port {port} already in use. Managed Lavalink startup aborted"
+msgstr "Порт {port} вже використовується. Керований автозапуск Лавалінка перервано"
+
+#: pylav/extension/bundled_node/manager.py:477
+msgid "Lavalink failed to start: {line}"
+msgstr "Не вдалося запустити Лавалінк: {line}"
+

@@ -1,0 +1,55 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: pylav\n"
+"POT-Creation-Date: 2022-12-30 22:38+0000\n"
+"PO-Revision-Date: 2022-12-30 22:41\n"
+"Last-Translator: \n"
+"Language-Team: Polish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.4.2\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"X-Crowdin-Project: pylav\n"
+"X-Crowdin-Project-ID: 535244\n"
+"X-Crowdin-Language: pl\n"
+"X-Crowdin-File: /pylav/helpers/format/locales/messages.pot\n"
+"X-Crowdin-File-ID: 1077\n"
+"Language: pl_PL\n"
+
+#: pylav/helpers/format/strings.py:31
+msgid "Unknown"
+msgstr "Nieznane"
+
+#: pylav/helpers/format/strings.py:57
+msgid "hour"
+msgstr "godzina"
+
+#: pylav/helpers/format/strings.py:58
+msgid "minute"
+msgstr "minuta"
+
+#: pylav/helpers/format/strings.py:59
+msgid "second"
+msgstr "sekunda"
+
+#: pylav/helpers/format/strings.py:60
+msgid "day"
+msgstr "dzień"
+
+#: pylav/helpers/format/strings.py:61
+msgid "days"
+msgstr "dni"
+
+#: pylav/helpers/format/strings.py:62
+msgid "hours"
+msgstr "godziny"
+
+#: pylav/helpers/format/strings.py:63
+msgid "minutes"
+msgstr "minuty"
+
+#: pylav/helpers/format/strings.py:64
+msgid "seconds"
+msgstr "sekundy"
+
