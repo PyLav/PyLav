@@ -17,52 +17,7 @@
   - Linux: [PostgresSQL](https://www.postgresql.org/download/linux/)
 - Python 3.11
 - [Discord.py](https://github.com/Rapptz/discord.py) 2.1.0+ bot
-
-### Environment Variables
-Note - All environment variables except `PYLAV__LOGGER_PREFIX` can be configured from the `pylav.yaml` file which should reside in the home directory of the user running the bot.
-An example of the file can be found at [pylav.example.yaml](pylav.example.yaml), if you don't create the file yourself pylav will do so on the first run, and once the file exists it will be preferred over the Environment Variable set.
-#### Required
-- PyLav has a configuration file usually stored on the users home directory, this file is called `pylav.yaml`.
-  -  For environments where the home directory is not writable or an existing file should be used instead, the file specified via the `PYLAV__YAML_CONFIG` environment variable (Note: this should be a valid YAML file).
-- Env Vars to connect the lib to the PostgresSQL server
-  All Envvars default to AsyncPG [defaults](https://magicstack.github.io/asyncpg/current/api/index.html#connection)
-  - PYLAV__POSTGRES_PORT
-  - PYLAV__POSTGRES_PASSWORD
-  - PYLAV__POSTGRES_USER
-  - PYLAV__POSTGRES_DB
-  - PYLAV__POSTGRES_HOST
-- Unix Socket env var.
-  - `PYLAV__POSTGRES_SOCKET` If this is provided `PYLAV__POSTGRES_HOST` and `PYLAV__POSTGRES_PORT` will be ignored.
-#### Optional
-- Env Vars to connect the lib cache to Redis, note if these are missing the library will default to PostgresSQL, therefore they are not necessary.
-    - This will be used by the aiohttp cached client session for storing cached responses for 1 day, this reduces stress on some of the requests the lib makes such as to RadioBrowser.
-      - PYLAV__REDIS_FULL_ADDRESS_RESPONSE_CACHE
-        - e.g. redis://[[username]:[password]]@localhost:6379/0
-        - e.g. unix://[[username]:[password]]@/path/to/socket.sock?db=0
-- Misc
-  - PYLAV__LOGGER_PREFIX - Sets the logger prefix, defaults to None, or "red." if [redbot](https://github.com/Cog-Creators/Red-DiscordBot) is installed.
-  - PYLAV__JAVA_EXECUTABLE - Sets the Java executable to be used by PyLav for the managed Lavalink node
-  - PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE - Enabled the bundled PyLav external nodes, this is enabled by default as it is not recommended to disable this option.
-  - PYLAV__USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE - Enabled the bundled lava.link node, this is disabled by default as it is not recommended to enable this option.
-- Unmanaged External Node - If both PYLAV__EXTERNAL_UNMANAGED_HOST and PYLAV__EXTERNAL_UNMANAGED_PASSWORD are set then the managed node is not started up
-  - PYLAV__EXTERNAL_UNMANAGED_HOST - No Default - Required (Should not contain the protocol i.e "http" or "https", this is determined by PYLAV__EXTERNAL_UNMANAGED_SSL)
-  - PYLAV__EXTERNAL_UNMANAGED_PASSWORD - No Default - Required
-  - PYLAV__EXTERNAL_UNMANAGED_PORT - Defaults to 80
-  - PYLAV__EXTERNAL_UNMANAGED_SSL - Defaults to 0 (i.e False) - Possible values are 0 - 1
-- Tasks Timers
-  - PYLAV__TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS: Defaults to  1  # How many days to wait between updates - Minimum 1 Day.
-  - PYLAV__TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS: Defaults to  7 # How many days to wait between updates - Minimum 7 Days.
-  - PYLAV__TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS: Defaults to  7 # How many days to wait between updates - Minimum 7 Days.
-- Node Configuration
-  - PYLAV__DEFAULT_SEARCH_SOURCE: Defaults to dzsearch - Possible values are dzsearch (Deezer), spsearch (Spotify), amsearch (Apple Music), ytmsearch (YouTube Music), ytsearch (YouTube)
-  - PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_ID: Defaults to None - Required if you want to use Spotify with the managed node
-  - PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_SECRET: Defaults to None - Required if you want to use Spotify with the managed node
-  - PYLAV__MANAGED_NODE_SPOTIFY_COUNTRY_CODE: Defaults to US
-  - PYLAV__MANAGED_NODE_APPLE_MUSIC_API_KEY - Defaults to None
-  - PYLAV__MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE : Defaults to US
-  - PYLAV__MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN - Defaults to None - Required if you want to use Yandex with the managed node
-  - PYLAV__MANAGED_NODE_DEEZER_KEY - Required if you want to use Deezer
-
+- [Lavalink](https://github.com/freyacodes/Lavalink) v4.0.0+ server
 ---------------------------
 ## Supported sources
 ### [Built-in](https://github.com/freyacodes/Lavalink):
@@ -91,9 +46,6 @@ An example of the file can be found at [pylav.example.yaml](pylav.example.yaml),
   - gcloud-tts
 ### With [Sponsorblock-Plugin](https://github.com/Topis-Lavalink-Plugins/Sponsorblock-Plugin):
   - sponsorblock
-### With [Topis-Source-Managers-Plugin](https://github.com/Topis-Lavalink-Plugins/Topis-Source-Managers-Plugin) - Deprecated, use LavaSrc instead:
-  - spotify
-  - applemusic
 
 ## Supported Lavalink features
   - Supports all features of [Lavalink](https://github.com/freyacodes/Lavalink)
@@ -114,13 +66,14 @@ Features
     - Upon library state being shutdown all player states are saved and restored on library startup
 - History of played tracks available for players
 - RadioBrowser.org API to retrieve radio stations available for players
+- Lyrics API to retrieve lyrics for tracks provided by [Flowery](https://flowery.pw)
 - M3U, PLS and PYLAV text file parser to convert contents into a playlist (p.s. Lavalink must support the format/coded of files still)
 
 
 Credits
 ---------------------------
 - [Topi](https://github.com/TopiSenpai) for all the work done to Lavalink and implementing direct requests to make PyLav even better.
-- [Devoxin - Lavalink.py](https://github.com/Devoxin/Lavalink.py) for ideas for implementation.
+- [Devoxin - Lavalink.py](https://github.com/Devoxin/Lavalink.py) for the original ideas for implementation.
 - [Ryan](https://github.com/ryan5453) for the amazing [Lyrics API](https://flowery.pw) used for lyrics.
 - [globocom/m3u8](https://github.com/globocom/m3u8) for the M3U8 parser which I made asynchronous found in [m3u8_parser](pylav/extension/m3u).
 - [andreztz/pyradios](https://github.com/andreztz/pyradios) for the radio parser which I made asynchronous found in [radio](pylav/extension/radio).

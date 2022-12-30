@@ -94,52 +94,60 @@ include = [
     "LICENSE",
     "**/LICENSE.*",
 ]
-
+exclude = [
+    "**/__pycache__",
+    "build",
+    "dist",
+    "docs",
+]
 [tool.poetry.dependencies]
 python = "^3.11"
 pip = "^22.3.1"
 setuptools = "^65.6.3"
 wheel = "^0.38.4"
-aiohttp = {extras = ["speedups"], version = "^3.8.3"}
-aiohttp-client-cache = "^0.7.3"
-aiopath = "^0.6.11"
 APScheduler = "^3.9.1.post1"
-apsw = "^3.40.0.0"
+Brotli = "^1.0.9"
+PyYAML = "^6.0"
+aiohttp-client-cache = "^0.8.0"
+aiopath = "^0.6.11"
 asyncpg = "^0.27.0"
 asyncspotify = "^0.12.1"
 asyncstdlib = "^3.10.5"
-Brotli = "^1.0.9"
 cached-property = "^1.5.2"
 cashews = {extras = ["dill", "redis"], version = "^5.0.0"}
-dacite = "^1.6.0"
-"discord.py" = {extras = ["speed"], version = "^2.1.0"}
+dacite = "^1.7.0"
 deepdiff6 = "^6.2.0"
 expiringdict = "^1.2.2"
 humanize = "^4.4.0"
 iso8601 = "^1.1.0"
 netaddr = "^0.8.0"
-numpy = "^1.23.5"
-orjson = "^3.8.3"
-packaging = "^22.0"
-piccolo = {extras = ["all"], version = "^0.101.0"}
-platformdirs = "^2.6.0"
-psutil = "^5.9.4"
-python-dateutil = "^2.8.2"
-pytz = "^2022.6"
-PyYAML = "^6.0"
-Red-Commons = "^1.0.0"
+numpy = "^1.24.1"
+piccolo = {extras = ["all"], version = "^0.103.0"}
 redis = "^4.4.0"
-rich = "^12.6.0"
 tabulate = {extras = ["widechars"], version = "^0.9.0"}
-typing-extensions = "^4.4.0"
 ujson = "^5.6.0"
-uvloop = { version = "^0.17.0", markers = "sys_platform != 'win32' and platform_python_implementation == 'CPython'" }
-importlib-metadata = "^5.1.0"
+# Dependencies pre-installed with Red, only required if using PyLav on a Non-Red bot
+Red-Commons = { version = "^1.0.0", optional = true}
+aiohttp = {extras = ["speedups"], version = "^3.8.3", optional = true}
+apsw = { version = "^3.40.0.0", optional = true}
+importlib-metadata = { version = "^5.2.0", optional = true}
+orjson = { version = "^3.8.3", optional = true}
+packaging = { version = "^22.0", optional = true}
+platformdirs = { version = "^2.6.2", optional = true}
+psutil =  { version = "^5.9.4", optional = true}
+python-dateutil = { version = "^2.8.2", optional = true}
+pytz = { version = "^2022.7", optional = true}
+rich = { version = "^13.0.0", optional = true}
+typing-extensions = { version = "^4.4.0", optional = true}
+uvloop = { version = "^0.17.0", markers = "sys_platform != 'win32' and platform_python_implementation == 'CPython'", optional = true}
+
 
 [tool.poetry.extras]
 redis = ["redis"]
 speed = ["orjson"]
-all = ["redis", "orjson"]
+all = ["orjson","redis"]
+nored = ["Red-Commons","aiohttp","apsw","importlib-metadata","orjson","packaging","platformdirs","psutil","python-dateutil","pytz","rich","typing-extensions", "uvloop"]
+all-nored = ["Red-Commons","aiohttp","apsw","importlib-metadata","orjson","orjson","packaging","platformdirs","psutil","python-dateutil","pytz","redis","rich","typing-extensions", "uvloop"]
 
 [tool.poetry.urls]
 "Bug Tracker" = "https://github.com/Drapersniper/PyLav/issues"

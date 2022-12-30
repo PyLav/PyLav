@@ -1,9 +1,5 @@
 # Setup
 **NOTICE**:
-  - **These instructions are only applicable until Red 3.5 release.**
-  - If you are a Red user, PyLav does not require your Red instance to be running a Postgres Config, however PyLav will still need its own Postgres server.
-
-**NOTICE**:
   - PyLav assumes you are using PostgresSQL server running version 14  and it also requires Python3.11 any other version for these will not work/be supported.
   - If you have docker; Setting up a postgres container for it would likely be the simplest option to setup the necessary server.
 
@@ -11,26 +7,6 @@
 If you are not on Ubuntu 20.04 you just have to follow the instructions below to install the dependencies and set them up for your Linux distro (Google is your friend).
 - #### [libaio](https://pagure.io/libaio)
   - `sudo apt install libaio1 libaio-dev`
-- #### [Python 3.11](https://www.python.org/downloads/release/python-3111/)
-  - ##### Ubuntu
-    - `sudo apt update -y && sudo apt upgrade -y`
-    - `sudo apt install software-properties-common build-essential -y`
-    - `sudo add-apt-repository ppa:deadsnakes/ppa -y`
-    - `sudo apt update -y`
-    - `sudo apt install python3.11 -y`
-    - `sudo apt install python3.11-dev python3.11-venv python3.11-distutils python3-devel -y`
-
-- #### [Python VENV](https://docs.python.org/3/tutorial/venv.html#introduction)
-  - A VENV is a self-contained directory tree that contains a Python installation for a particular version of Python, plus a number of additional packages.
-  - `python3.11 -m venv ~/p311`
-- #### Python Packages
-  - First activate the previous created VENV by running `source ~/p311/bin/activate`
-  - Install the package download dependencies - `python -m pip install -U pip setuptools wheel`
-  - ##### For non Red users
-    - Install PyLav -`python -m pip install Py-Lav`
-  - ##### For Red users
-    - Complete the "Installing the pre-requirements" section of the [Red Docs](https://docs.discord.red/en/stable/install_guides/index.html)
-    - Install a custom build of Red - `python -m pip install --force-reinstall git+https://github.com/Drapersniper/Red-DiscordBot@hybrid#egg=Red-DiscordBot`
 - #### [Postgres14](https://www.postgresql.org/)
   - Follow the install instruction [here](https://www.postgresql.org/download/linux/#generic)
     - Note: When prompted to run `sudo apt-get -y install postgresql` make sure to run `sudo apt-get -y install postgresql-14` instead.
@@ -47,19 +23,6 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
     - When prompted to run `sudo apt-get install zulu11-jdk` make sure to run `sudo apt-get install zulu19-ca-jdk-headless` instead.
 
 ## Mac <a name="Mac"></a>
-- #### [Python 3.11](https://www.python.org/downloads/release/python-3111/)
-  - Download and run the [MacOS Installer](https://www.python.org/ftp/python/3.11.1/python-3.11.1-macos11.pkg)
-- #### [Python VENV](https://docs.python.org/3/tutorial/venv.html#introduction)
-  - A VENV is a self-contained directory tree that contains a Python installation for a particular version of Python, plus a number of additional packages.
-  - `python3.11 -m venv ~/p311`
-- #### Python Packages
-  - First activate the previous created VENV by running `source ~/p311/bin/activate`
-  - Install the package download dependencies - `python -m pip install -U pip setuptools wheel`
-  - ##### For non Red users
-    - Install PyLav -`python -m pip install Py-Lav`
-  - ##### For Red users
-    - Complete the "Installing the pre-requirements" section of the [Red Docs](https://docs.discord.red/en/stable/install_guides/index.html)
-    - Install a custom build of Red - `python -m pip install --force-reinstall git+https://github.com/Drapersniper/Red-DiscordBot@hybrid#egg=Red-DiscordBot`
 - #### [Postgres14](https://www.postgresql.org/)
   - Follow the install instruction [here](https://postgresapp.com/)
   - ##### Create a new Postgres user
@@ -75,21 +38,6 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
   - Download and run the dmg executable [here](https://cdn.azul.com/zulu/bin/zulu19.30.11-ca-jdk19.0.1-macosx_x64.dmg)
 
 ## Windows <a name="Windows"></a>
-- #### [Python 3.11](https://www.python.org/downloads/release/python-3111/)
-  - Download the [Windows installer (64-bit)](https://www.python.org/ftp/python/3.11.1/python-3.11.1-amd64.exe)
-  - Once you're given the option to run the installer, select both the checkboxes – "Install launcher for all users" and "Add Python Python 3.11 to PATH" – at the bottom of the dialog box. Then click on "Install Now."
-
-- #### [Python VENV](https://docs.python.org/3/tutorial/venv.html#introduction)
-  - A VENV is a self-contained directory tree that contains a Python installation for a particular version of Python, plus a number of additional packages.
-  - `py -3.11 -m venv "%userprofile%\p311"`
-- #### Python Packages
-  - First activate the previous created VENV by running `source "%userprofile%\p311\Scripts\activate.bat"`
-  - Install the package download dependencies - `python -m pip install -U pip setuptools wheel`
-  - ##### For non Red users
-    - Install PyLav -`python -m pip install Py-Lav`
-  - ##### For Red users
-    - Complete the "Installing the pre-requirements" section of the [Red Docs](https://docs.discord.red/en/stable/install_guides/index.html)
-    - Install a custom build of Red - `python -m pip install --force-reinstall git+https://github.com/Drapersniper/Red-DiscordBot@hybrid#egg=Red-DiscordBot`
 - #### [Postgres14](https://www.postgresql.org/)
   - Follow the install instruction [here](https://www.postgresql.org/download/windows/)
   - ##### Create a new Postgres user
@@ -105,6 +53,14 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
   - Download and run the msi executable [here](https://cdn.azul.com/zulu/bin/zulu19.30.11-ca-jdk19.0.1-win_x64.msi)
     - Make sure to select the following when prompted `Add to PATH`, `set JAVA_HOME variable` and `JavaSoft (Oracle) registry keys`
 
+##  Environment Variables
+Note - All environment variables except `PYLAV__LOGGER_PREFIX` and `PYLAV__YAML_CONFIG` can be configured from the `pylav.yaml` file which should reside in the home directory of the user running the bot.
+An example of the file can be found at [pylav.example.yaml](pylav.example.yaml), if you don't create the file yourself pylav will do so on the first run, and once the file exists it will be preferred over the Environment Variable set.
+ - `PYLAV__YAML_CONFIG`:
+   - If you are in an environment where the home directory is not available you can specify a path to the config file using the `PYLAV__YAML_CONFIG` environment variable.
+   - This should be the absolute path to the `pylav.yaml` file i.e `/config/pylav.yaml`.
+ - `PYLAV__LOGGER_PREFIX`:
+   - The prefix to use for the logger, defaults nothing, if provided all loggers used by PyLav will be prefixed with this value.
 
 ## pylav.yaml Setup
  - Go to your home directory for the user which will run the bot.
@@ -118,6 +74,8 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
   - Change `PYLAV__POSTGRES_USER` from `changeme` to the user you created above.
   - Change `PYLAV__POSTGRES_DB` from `pylav_db` to the name of the database you created above (if you followed the commands above it should be `pylav_db`).
   - Change `PYLAV__POSTGRES_PORT` and `PYLAV__POSTGRES_HOST` to the connection host and port for the Postgres server.
+  -  To use a Unix socket instead of TCP
+    - Provide the `PYLAV__POSTGRES_SOCKET` variable. If this is provided `PYLAV__POSTGRES_HOST` and `PYLAV__POSTGRES_PORT` will be ignored.
   - `PYLAV__JAVA_EXECUTABLE` can be changed from java to the full path of the Azul Zulu 18 Java executable installed above.
     - By default it will use `java` to ensure you have the correct version under `java` run `java --version` if it says "OpenJDK Runtime Environment Zulu18..." then this is not needed to be changed.
   - PyLav bundled an external unmanaged public lavalink Node - The node used is a public node (lava.link) unaffiliated with PyLav or Draper, this will expose you IP to the server hosting the node for communication purposes.
@@ -151,15 +109,11 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
   - `PYLAV__MANAGED_NODE_APPLE_MUSIC_API_KEY` - Defaults to None
   - `PYLAV__MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE` : Defaults to US
   - `PYLAV__MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN` - Defaults to None - Required if you want to use Yandex with the managed node
-  - `PYLAV__MANAGED_NODE_DEEZER_KEY` - Required if you want to use Deezer
+  - `PYLAV__MANAGED_NODE_DEEZER_KEY` - Required if you want to use Deezer, leave empty unless you know what you are doing
 -------------
 ## Red Users (PyLav Cogs) Setup
-### Starting up your bot
-  - Activate your VENV created above
-  - Run `python -O -m redbot <instance name> -vv`
 ### Install [PyLav Cogs](https://github.com/Drapersniper/PyLav-Cogs)
 - Now that you have your env fully setup you can process to installing the desired cogs.
   - `[p]load downloader`
   - `[p]repo add PyLav https://github.com/Drapersniper/PyLav-Cogs`
-  - `[p]cog install PyLav audio`
-  - `[p]load audio`
+ - For a list of all available cogs visit the [PyLav Cogs](https://github.com/Drapersniper/PyLav-Cogs) repo
