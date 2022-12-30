@@ -4,7 +4,7 @@ from collections.abc import AsyncIterable
 from typing import Any
 
 from aiohttp_client_cache import BaseCache, CacheBackend, ResponseOrKey
-from aiohttp_client_cache.docs import extend_init_signature
+from aiohttp_client_cache.signatures import extend_init_signature
 
 from pylav.storage.database.tables.aiohttp_cache import AioHttpCacheRow
 
