@@ -1,0 +1,11 @@
+include LICENSE
+recursive-include pylav *.LICENSE
+
+# include requirements files
+include requirements/base.in
+include requirements/base.txt
+include requirements/extra-*.in
+include requirements/extra-*.txt
+
+# include locale files
+recursive-include pylav locales/*.po

@@ -2,8 +2,8 @@ PYLAV__POSTGRES_HOST: localhost # The full connection domain of the Postgres ser
 PYLAV__POSTGRES_PORT: 5432 # The port the Postgres server is using
 PYLAV__POSTGRES_SOCKET:      # Full path to socket directory i.e /var/run/postgresql, if this is provided the port and host args are discarded
 PYLAV__POSTGRES_PASSWORD: changeme # The password for the user pylav should use
-PYLAV__POSTGRES_USER: postgres # The Postgres user that pylav should login as
-PYLAV__POSTGRES_DB: py_lav  # The user created Postgres DB which pylav should use
+PYLAV__POSTGRES_USER: changeme # The Postgres user that pylav should login as
+PYLAV__POSTGRES_DB: pylav_db  # The user created Postgres DB which pylav should use
 
 PYLAV__REDIS_FULL_ADDRESS_RESPONSE_CACHE:      # Optional Leave "null" so that it is not used.
 PYLAV__JAVA_EXECUTABLE: java   # The full path to the java executable to be used by the managed node - defaults to `java`
@@ -22,4 +22,13 @@ PYLAV__TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS: 7 # How many days to w
 PYLAV__TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS: 7 # How many days to wait between updates - Minimum 7 Days.
 
 # Please note that if this is enable, multiple bots should not share the same database, as reads/writes will not be synced.
-PYLAV__CACHING_ENABLED: false # Whether to cache the postgres queries - Values are `true` or `false` - case sensitive
+PYLAV__READ_CACHING_ENABLED: false # Whether to cache the postgres queries - Values are `true` or `false` - case sensitive
+
+PYLAV__DEFAULT_SEARCH_SOURCE: dzsearch # Defaults to dzsearch - Possible values are dzsearch (Deezer), spsearch (Spotify), amsearch (Apple Music), ytmsearch (YouTube Music), ytsearch (YouTube)
+PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_ID:                # Spotify Client ID - Required for Spotify tracks to work with the managed node
+PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_SECRET:           # Spotify Client Secret - Required for Spotify tracks to work with the managed node
+PYLAV__MANAGED_NODE_SPOTIFY_COUNTRY_CODE: US         # Spotify Country Code
+PYLAV__MANAGED_NODE_APPLE_MUSIC_API_KEY:             # Apple Music API Key - Optional - Useful if you already have an Apple developer account
+PYLAV__MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE: US     # Apple Music Country Code
+PYLAV__MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN:       # Yandex Music Access Token - Required for Yandex Music tracks to work with the managed node
+PYLAV__MANAGED_NODE_DEEZER_KEY:                      # Deezer Key - Required for Deezer tracks to work with the managed node, leave empty unless you know what you are doing

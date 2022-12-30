@@ -1,13 +1,19 @@
-__ALL__ = ("__VERSION__", "__version__")
-__version__ = __VERSION__ = "0.11.20.0"
-__ZERO__ = b"MHp2Zg=="
-__MOMONGA__ = b"NTh3Yw=="
-__LIGHT__ = b"|OW5hMQ=="
-__SEPHIROTH__ = b"ZzRlbA=="
-_ANIME = b"|".join([__SEPHIROTH__, __MOMONGA__, __ZERO__, __LIGHT__])
+from __future__ import annotations
 
-from pylav import sql
-from pylav._config import CONFIG_DIR as CONFIG_DIR
-from pylav._logging import getLogger as getLogger
+import typing
 
-__ALL__ = ("sql",)
+import importlib_metadata
+from packaging.version import Version, parse
+
+from pylav.__version__ import __version__ as __version__
+
+VERSION: Version = typing.cast(Version, parse(__version__))
+__PATH = None if (__PATHS := importlib_metadata.files("Py-Lav")) is None else next(iter(__PATHS), None)
+LOCATION = __PATH.locate() if __PATH else None
+
+
+__all__ = (
+    "__version__",
+    "VERSION",
+    "LOCATION",
+)

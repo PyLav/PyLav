@@ -1,36 +1,12 @@
 # Setup
 **NOTICE**:
-  - **These instructions are only applicable until Red 3.5 release.**
-  - If you are a Red user, PyLav does not require your Red instance to be running a Postgres Config, however PyLav will still need its own Postgres server.
-
-**NOTICE**:
-  - PyLav assumes you are using PostgresSQL server running version 14  and it also requires Python3.10 any other version for these will not work/be supported.
+  - PyLav assumes you are using PostgresSQL server running version 14  and it also requires Python3.11 any other version for these will not work/be supported.
   - If you have docker; Setting up a postgres container for it would likely be the simplest option to setup the necessary server.
-
-# Linux (Ubuntu 20.04) <a name="Linux"></a>
+-------------
+# Linux (Ubuntu 22.04) <a name="Linux"></a>
 If you are not on Ubuntu 20.04 you just have to follow the instructions below to install the dependencies and set them up for your Linux distro (Google is your friend).
 - #### [libaio](https://pagure.io/libaio)
   - `sudo apt install libaio1 libaio-dev`
-- #### [Python 3.10](https://www.python.org/downloads/release/python-3106/)
-  - ##### Ubuntu
-    - `sudo apt update -y && sudo apt upgrade -y`
-    - `sudo apt install software-properties-common -y`
-    - `sudo add-apt-repository ppa:deadsnakes/ppa -y`
-    - `sudo apt update -y`
-    - `sudo apt install python3.10 -y`
-    - `sudo apt install python3.10-dev python3.10-venv python3.10-distutils -y`
-
-- #### [Python VENV](https://docs.python.org/3/tutorial/venv.html#introduction)
-  - A VENV is a self-contained directory tree that contains a Python installation for a particular version of Python, plus a number of additional packages.
-  - `python3.10 -m venv ~/p310`
-- #### Python Packages
-  - First activate the previous created VENV by running `source ~/p310/bin/activate`
-  - Install the package download dependencies - `python -m pip install -U pip setuptools wheel`
-  - ##### For non Red users
-    - Install PyLav -`python -m pip install Py-Lav`
-  - ##### For Red users
-    - Complete the "Installing the pre-requirements" section of the [Red Docs](https://docs.discord.red/en/stable/install_guides/index.html)
-    - Install a custom build of Red - `python -m pip install --force-reinstall git+https://github.com/Drapersniper/Red-DiscordBot@hybrid#egg=Red-DiscordBot`
 - #### [Postgres14](https://www.postgresql.org/)
   - Follow the install instruction [here](https://www.postgresql.org/download/linux/#generic)
     - Note: When prompted to run `sudo apt-get -y install postgresql` make sure to run `sudo apt-get -y install postgresql-14` instead.
@@ -42,24 +18,11 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
       - Run `sudo -u postgres psql -c "CREATE DATABASE pylav_db;"`
         - This will crete a new database called `pylav_db`.
       - Run `sudo -u postgres psql -c "ALTER DATABASE pylav_db OWNER TO <username>;"`
-- #### [Install Java Azul Zulu 13](https://docs.azul.com/core/)
+- #### [Install Java Azul Zulu 19](https://docs.azul.com/core/)
   - Follow the instructions [here](https://docs.azul.com/core/zulu-openjdk/install/debian)
-    - When prompted to run `sudo apt-get install zulu11-jdk` make sure to run `sudo apt-get install zulu13-ca-jdk-headless` instead.
-
+    - When prompted to run `sudo apt-get install zulu11-jdk` make sure to run `sudo apt-get install zulu19-ca-jdk-headless` instead.
+-------------
 ## Mac <a name="Mac"></a>
-- #### [Python 3.10](https://www.python.org/downloads/release/python-3106/)
-  - Download and run the [MacOS Installer](https://www.python.org/ftp/python/3.10.6/python-3.10.6-macos11.pkg)
-- #### [Python VENV](https://docs.python.org/3/tutorial/venv.html#introduction)
-  - A VENV is a self-contained directory tree that contains a Python installation for a particular version of Python, plus a number of additional packages.
-  - `python3.10 -m venv ~/p310`
-- #### Python Packages
-  - First activate the previous created VENV by running `source ~/p310/bin/activate`
-  - Install the package download dependencies - `python -m pip install -U pip setuptools wheel`
-  - ##### For non Red users
-    - Install PyLav -`python -m pip install Py-Lav`
-  - ##### For Red users
-    - Complete the "Installing the pre-requirements" section of the [Red Docs](https://docs.discord.red/en/stable/install_guides/index.html)
-    - Install a custom build of Red - `python -m pip install --force-reinstall git+https://github.com/Drapersniper/Red-DiscordBot@hybrid#egg=Red-DiscordBot`
 - #### [Postgres14](https://www.postgresql.org/)
   - Follow the install instruction [here](https://postgresapp.com/)
   - ##### Create a new Postgres user
@@ -71,25 +34,10 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
     - Run `CREATE DATABASE pylav_db;`
       - This will crete a new database called `pylav_db`.
     - Run `ALTER DATABASE pylav_db OWNER TO <username>;`
-- #### [Install Java Azul Zulu 13](https://docs.azul.com/core/)
-  - Download and run the dmg executable [here](https://cdn.azul.com/zulu/bin/zulu13.50.15-ca-jdk13.0.12-macosx_x64.dmg)
-
+- #### [Install Java Azul Zulu 19](https://docs.azul.com/core/)
+  - Download and run the dmg executable [here](https://cdn.azul.com/zulu/bin/zulu19.30.11-ca-jdk19.0.1-macosx_x64.dmg)
+-------------
 ## Windows <a name="Windows"></a>
-- #### [Python 3.10](https://www.python.org/downloads/release/python-3106/)
-  - Download the [Windows installer (64-bit)](https://www.python.org/ftp/python/3.10.6/python-3.10.6-amd64.exe)
-  - Once you're given the option to run the installer, select both the checkboxes – "Install launcher for all users" and "Add Python Python 3.10 to PATH" – at the bottom of the dialog box. Then click on "Install Now."
-
-- #### [Python VENV](https://docs.python.org/3/tutorial/venv.html#introduction)
-  - A VENV is a self-contained directory tree that contains a Python installation for a particular version of Python, plus a number of additional packages.
-  - `py -3.10 -m venv "%userprofile%\p310"`
-- #### Python Packages
-  - First activate the previous created VENV by running `source "%userprofile%\p310\Scripts\activate.bat"`
-  - Install the package download dependencies - `python -m pip install -U pip setuptools wheel`
-  - ##### For non Red users
-    - Install PyLav -`python -m pip install Py-Lav`
-  - ##### For Red users
-    - Complete the "Installing the pre-requirements" section of the [Red Docs](https://docs.discord.red/en/stable/install_guides/index.html)
-    - Install a custom build of Red - `python -m pip install --force-reinstall git+https://github.com/Drapersniper/Red-DiscordBot@hybrid#egg=Red-DiscordBot`
 - #### [Postgres14](https://www.postgresql.org/)
   - Follow the install instruction [here](https://www.postgresql.org/download/windows/)
   - ##### Create a new Postgres user
@@ -101,11 +49,19 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
     - Run `CREATE DATABASE pylav_db;`
       - This will crete a new database called `pylav_db`.
     - Run `ALTER DATABASE pylav_db OWNER TO <username>;`
-- #### [Install Java Azul Zulu 13](https://docs.azul.com/core/)
-  - Download and run the msi executable [here](https://cdn.azul.com/zulu/bin/zulu13.50.15-ca-jdk13.0.12-win_x64.msi)
+- #### [Install Java Azul Zulu 19](https://docs.azul.com/core/)
+  - Download and run the msi executable [here](https://cdn.azul.com/zulu/bin/zulu19.30.11-ca-jdk19.0.1-win_x64.msi)
     - Make sure to select the following when prompted `Add to PATH`, `set JAVA_HOME variable` and `JavaSoft (Oracle) registry keys`
-
-
+-------------
+##  Environment Variables
+Note - All environment variables except `PYLAV__LOGGER_PREFIX` and `PYLAV__YAML_CONFIG` can be configured from the `pylav.yaml` file which should reside in the home directory of the user running the bot.
+An example of the file can be found at [pylav.example.yaml](pylav.example.yaml), if you don't create the file yourself pylav will do so on the first run, and once the file exists it will be preferred over the Environment Variable set.
+ - `PYLAV__YAML_CONFIG`:
+   - If you are in an environment where the home directory is not available you can specify a path to the config file using the `PYLAV__YAML_CONFIG` environment variable.
+   - This should be the absolute path to the `pylav.yaml` file i.e `/config/pylav.yaml`.
+ - `PYLAV__LOGGER_PREFIX`:
+   - The prefix to use for the logger, defaults nothing, if provided all loggers used by PyLav will be prefixed with this value.
+-------------
 ## pylav.yaml Setup
  - Go to your home directory for the user which will run the bot.
    - Windows
@@ -115,11 +71,13 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
 - Make a copy of [`pylav.example.yaml`](https://github.com/Drapersniper/PyLav/blob/master/pylav.example.yaml) to your home directory and name it `pylav.yaml`
 - Change the values inside the `pylav.yaml` to the desired values
   - Change `PYLAV__POSTGRES_PASSWORD` from `changeme` to to the password of the Postgres user you created above.
-  - Change `PYLAV__POSTGRES_USER` from `postgres` to the user you created above.
-  - Change `PYLAV__POSTGRES_DB` from `py_lav` to the name of the database you created above (if you followed the commands above it should be `pylav_db`).
+  - Change `PYLAV__POSTGRES_USER` from `changeme` to the user you created above.
+  - Change `PYLAV__POSTGRES_DB` from `pylav_db` to the name of the database you created above (if you followed the commands above it should be `pylav_db`).
   - Change `PYLAV__POSTGRES_PORT` and `PYLAV__POSTGRES_HOST` to the connection host and port for the Postgres server.
-  - `PYLAV__JAVA_EXECUTABLE` can be changed from java to the full path of the Azul Zulu 13 Java executable installed above.
-    - By default it will use `java` to ensure you have the correct version under `java` run `java --version` if it says "OpenJDK Runtime Environment Zulu13..." then this is not needed to be changed.
+  -  To use a Unix socket instead of TCP
+    - Provide the `PYLAV__POSTGRES_SOCKET` variable. If this is provided `PYLAV__POSTGRES_HOST` and `PYLAV__POSTGRES_PORT` will be ignored.
+  - `PYLAV__JAVA_EXECUTABLE` can be changed from java to the full path of the Azul Zulu 18 Java executable installed above.
+    - By default it will use `java` to ensure you have the correct version under `java` run `java --version` if it says "OpenJDK Runtime Environment Zulu18..." then this is not needed to be changed.
   - PyLav bundled an external unmanaged public lavalink Node - The node used is a public node (lava.link) unaffiliated with PyLav or Draper, this will expose you IP to the server hosting the node for communication purposes.
     - To disable this set `PYLAV__USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE` to `false`
     - To enable this set `PYLAV__USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE` to `true`
@@ -139,17 +97,46 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
   - `PYLAV__TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS`: Defaults to  1  # How many days to wait between updates - Minimum 1 Day.
   - `PYLAV__TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS`: Defaults to  7 # How many days to wait between updates - Minimum 7 Days.
   - `PYLAV__TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS`: Defaults to  7 # How many days to wait between updates - Minimum 7 Days.
-- If you want PyLav to cache most of the queries from the Postgres server you can use `PYLAV__CACHING_ENABLED`
-  ### ** DO NOTE**: If this is set to true multiple bots should not share the same database, as reads and writes will be out of sync.
+- If you want PyLav to cache most of the queries from the Postgres server you can use `PYLAV__READ_CACHING_ENABLED`
+  ### **DO NOTE**: If this is set to true multiple bots should not share the same database (The can still share the same Postgres server, just not the same database), as reads and writes will be out of sync.
   - If this is turned off every read from the database will be a direct query to the database, if this is turned on PyLav will cache the results in memory after the first query.
-    - If you have a remote server, this will likely be a good idea to turn on, however you look the ability to manually or otherwise edit the db and changes to be reflected in PyLav.
+    - If you have a remote server, this will likely be a good idea to turn on, however you loose the ability to manually or otherwise edit the db and changes to be reflected in PyLav. - I would recommend enabling this **ONLY** if you notice slow operation with a remove Postgres server.
+- Optional configuration values
+  - `PYLAV__DEFAULT_SEARCH_SOURCE`: Defaults to dzsearch - Possible values are dzsearch (Deezer), spsearch (Spotify), amsearch (Apple Music), ytmsearch (YouTube Music), ytsearch (YouTube)
+  - `PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_ID`: Defaults to None - Required if you want to use Spotify with the managed node
+  - `PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_SECRET`: Defaults to None - Required if you want to use Spotify with the managed node
+  - `PYLAV__MANAGED_NODE_SPOTIFY_COUNTRY_CODE`: Defaults to US
+  - `PYLAV__MANAGED_NODE_APPLE_MUSIC_API_KEY` - Defaults to None
+  - `PYLAV__MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE` : Defaults to US
+  - `PYLAV__MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN` - Defaults to None - Required if you want to use Yandex with the managed node
+  - `PYLAV__MANAGED_NODE_DEEZER_KEY` - Required if you want to use Deezer, leave empty unless you know what you are doing
+-------------
 ## Red Users (PyLav Cogs) Setup
-### Starting up your bot
-  - Activate your VENV created above
-  - Run `python -O -m redbot <instance name> -vv`
 ### Install [PyLav Cogs](https://github.com/Drapersniper/PyLav-Cogs)
 - Now that you have your env fully setup you can process to installing the desired cogs.
   - `[p]load downloader`
   - `[p]repo add PyLav https://github.com/Drapersniper/PyLav-Cogs`
-  - `[p]cog install PyLav audio`
-  - `[p]load audio`
+ - For a list of all available cogs visit the [PyLav Cogs](https://github.com/Drapersniper/PyLav-Cogs) repo
+-------------
+# Note for 1.0.0 release until Lavalink 4.0.0 is released
+- This major release requires Lavalink 4.0.0 which has not yet been released.
+- You will need will need to complete the following steps before you can successfully use this version, these will only be necessary until Lavalink 4.0.0 is released.
+  - Download the latest Lavalink.jar from this [GitHub action](https://github.com/TopiSenpai/Lavalink/suites/9936879296/artifacts/481780568)
+  - Download the [`application.yml`](./application.yml) from this repo.
+  - Place these a directory of your choice.
+  - Edit the `application.yml` to your liking changing the `CHANGE_ME` values, if you need help with this please join the [Discord support server](https://discord.com/invite/Sjh2TSCYQB)
+ - Start an unmanaged Lavalink node using the `application.yml` you just edited and the `Lavalink.jar` you just downloaded.
+ - Make the following changes to your `pylav.yaml` config file
+   - Set `PYLAV__EXTERNAL_UNMANAGED_HOST` to `localhost`
+   - Set `PYLAV__EXTERNAL_UNMANAGED_PASSWORD` to the `password` in the `lavalink.server` section of the `application.yml` file
+   - Set `PYLAV__EXTERNAL_UNMANAGED_PORT` to the `port` in the `server` section of thee `application.yml` file (Default is `2155`)
+   - Set `PYLAV__EXTERNAL_UNMANAGED_SSL` to `false`
+   - Set `PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE` to `false`
+   - Set `PYLAV__USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE` to `false`
+   - Set `PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_ID` to the `clientId` in the `plugins.lavasrc.potify` section of the `application.yml` file
+   - Set `PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_SECRET` to the `clientSecret` in the `plugins.lavasrc.spotify` section of the `application.yml` file
+   - Set `PYLAV__MANAGED_NODE_SPOTIFY_COUNTRY_CODE` to the `countryCode` in the `plugins.lavasrc.spotify` section of the `application.yml` file
+   - Set `PYLAV__MANAGED_NODE_APPLE_MUSIC_API_KEY` to the `mediaAPIToken` in the `plugins.lavasrc.applemusic` section of the `application.yml` file or if none leave it as `''`
+   - Set `PYLAV__MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE` to the `countryCode` in the `plugins.lavasrc.applemusic` section of the `application.yml` file
+   - Set `PYLAV__MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN` to the `accessToken` in the `plugins.lavasrc.yandexmusic` section of the `application.yml` file or if none leave it as `''`
+   - Set `PYLAV__MANAGED_NODE_DEEZER_KEY` to the `masterDecryptionKey` in the `plugins.lavasrc.deezer` section of the `application.yml` file
