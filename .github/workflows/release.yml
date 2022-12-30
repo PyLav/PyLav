@@ -41,7 +41,7 @@ jobs:
         -   name: Install Poetry
             if: steps.cached-poetry.outputs.cache-hit != 'true'
             uses: snok/install-poetry@v1
-            run: poetry self add "poetry-dynamic-versioning[plugin]
+        -   run: poetry self add "poetry-dynamic-versioning[plugin]"
         -   name: Check Version
             id: check-version
             run: |
@@ -85,7 +85,7 @@ jobs:
         -   name: Install Poetry
             if: steps.cached-poetry.outputs.cache-hit != 'true'
             uses: snok/install-poetry@v1
-            run: poetry self add "poetry-dynamic-versioning[plugin]
+        -   run: poetry self add "poetry-dynamic-versioning[plugin]"
         -   uses: actions/setup-node@v3
             with:
                 node-version: '14'
