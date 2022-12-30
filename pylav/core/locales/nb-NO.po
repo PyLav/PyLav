@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2022-12-30 22:41\n"
+"PO-Revision-Date: 2022-12-30 23:16\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "MIME-Version: 1.0\n"
@@ -47,7 +47,7 @@ msgstr "Det er fortsatt 1 melding"
 
 #: pylav/core/context.py:261
 msgid "There are still {remaining} messages"
-msgstr ""
+msgstr "Det er fortsatt {remaining} meldinger"
 
 #: pylav/core/context.py:288
 #, docstring

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2022-12-30 22:41\n"
+"PO-Revision-Date: 2022-12-30 23:16\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -19,42 +19,43 @@ msgstr ""
 
 #: pylav/extension/red/ui/sources/equalizer.py:32
 msgid "Preset Name"
-msgstr ""
+msgstr "預設名稱"
 
 #: pylav/extension/red/ui/sources/equalizer.py:33
 msgid "Author"
-msgstr ""
+msgstr "作者"
 
 #: pylav/extension/red/ui/sources/generic.py:88
 msgid "Page {page_num}/{total_pages} | {num} {entries}"
-msgstr ""
+msgstr "第 {page_num} 頁/ 共{total_pages} 頁 | {num} {entries}"
 
 #: pylav/extension/red/ui/sources/generic.py:92
 msgid "entries"
-msgstr ""
+msgstr "項目"
 
 #: pylav/extension/red/ui/sources/generic.py:92
 msgid "entry"
-msgstr ""
+msgstr "項目"
 
 #: pylav/extension/red/ui/sources/nodes.py:50
 msgid "Page {page_num}/{total_pages} | {num} nodes"
-msgstr ""
+msgstr "第 {page_num} 頁/ 共{total_pages} 頁 | {num} 個節點"
 
 #: pylav/extension/red/ui/sources/nodes.py:92
 #: pylav/extension/red/ui/sources/nodes.py:253
 msgid "No"
-msgstr ""
+msgstr "否"
 
 #: pylav/extension/red/ui/sources/nodes.py:93
 #: pylav/extension/red/ui/sources/nodes.py:254
 msgid "Yes"
-msgstr ""
+msgstr "是"
 
 #: pylav/extension/red/ui/sources/nodes.py:145
 msgid "Name: {name}\n"
 "Version: {version}"
-msgstr ""
+msgstr "名稱：{name}\n"
+"版本：{version}"
 
 #: pylav/extension/red/ui/sources/nodes.py:146
 #: pylav/extension/red/ui/sources/nodes.py:147
@@ -67,97 +68,102 @@ msgstr "未知"
 #: pylav/extension/red/ui/sources/nodes.py:150
 #: pylav/extension/red/ui/sources/nodes.py:310
 msgid "None / Unknown"
-msgstr ""
+msgstr "無/未知"
 
 #: pylav/extension/red/ui/sources/nodes.py:152
 #: pylav/extension/red/ui/sources/nodes.py:312
 msgid "Property"
-msgstr ""
+msgstr "屬性"
 
 #: pylav/extension/red/ui/sources/nodes.py:153
 #: pylav/extension/red/ui/sources/nodes.py:313
 msgid "Value"
-msgstr ""
+msgstr "數值"
 
 #: pylav/extension/red/ui/sources/nodes.py:154
 #: pylav/extension/red/ui/sources/nodes.py:314
 msgid "Latitude: {lat}\n"
 "Longitude: {lon}"
-msgstr ""
+msgstr "緯度：{lat}\n"
+"經度：{lon}"
 
 #: pylav/extension/red/ui/sources/nodes.py:160
 #: pylav/extension/red/ui/sources/nodes.py:320
 msgid "Region"
-msgstr ""
+msgstr "區域"
 
 #: pylav/extension/red/ui/sources/nodes.py:160
 #: pylav/extension/red/ui/sources/nodes.py:320
 msgid "N/A"
-msgstr ""
+msgstr "N/A"
 
 #: pylav/extension/red/ui/sources/nodes.py:161
 #: pylav/extension/red/ui/sources/nodes.py:321
 msgid "Coordinates"
-msgstr ""
+msgstr "座標"
 
 #: pylav/extension/red/ui/sources/nodes.py:162
 #: pylav/extension/red/ui/sources/nodes.py:322
 msgid "Host"
-msgstr ""
+msgstr "主機"
 
 #: pylav/extension/red/ui/sources/nodes.py:163
 #: pylav/extension/red/ui/sources/nodes.py:323
 msgid "Port"
-msgstr ""
+msgstr "端口"
 
 #: pylav/extension/red/ui/sources/nodes.py:164
 #: pylav/extension/red/ui/sources/nodes.py:324
 msgid "Password"
-msgstr ""
+msgstr "密碼"
 
 #: pylav/extension/red/ui/sources/nodes.py:167
 #: pylav/extension/red/ui/sources/nodes.py:327
 msgid "SSL"
-msgstr ""
+msgstr "SSL"
 
 #: pylav/extension/red/ui/sources/nodes.py:168
 #: pylav/extension/red/ui/sources/nodes.py:328
 msgid "Available"
-msgstr ""
+msgstr "可使用"
 
 #: pylav/extension/red/ui/sources/nodes.py:169
 #: pylav/extension/red/ui/sources/nodes.py:329
 msgid "Search Only"
-msgstr ""
+msgstr "僅能搜尋"
 
 #: pylav/extension/red/ui/sources/nodes.py:170
 #: pylav/extension/red/ui/sources/nodes.py:330
 msgid "Players\n"
 "Connected\n"
 "Active"
-msgstr ""
+msgstr "播放器\n"
+"已連接\n"
+"積極的"
 
 #: pylav/extension/red/ui/sources/nodes.py:174
 #: pylav/extension/red/ui/sources/nodes.py:334
 msgid "Frames Lost"
-msgstr ""
+msgstr "丟幀"
 
 #: pylav/extension/red/ui/sources/nodes.py:179
 #: pylav/extension/red/ui/sources/nodes.py:339
 msgid "Uptime"
-msgstr ""
+msgstr "上線時間"
 
 #: pylav/extension/red/ui/sources/nodes.py:180
 #: pylav/extension/red/ui/sources/nodes.py:340
 msgid "CPU Load\n"
 "Lavalink\n"
 "System"
-msgstr ""
+msgstr "CPU負載\n"
+"Lavalink\n"
+"系統"
 
 #: pylav/extension/red/ui/sources/nodes.py:183
 #: pylav/extension/red/ui/sources/nodes.py:343
 msgid "Penalty"
-msgstr ""
+msgstr "懲罰"
 
 #: pylav/extension/red/ui/sources/nodes.py:184
 #: pylav/extension/red/ui/sources/nodes.py:344
@@ -166,27 +172,31 @@ msgid "Memory\n"
 "Free\n"
 "Allocated\n"
 "Reservable"
-msgstr ""
+msgstr "記憶\n"
+"已使用\n"
+"空閒的\n"
+"已分配\n"
+"可分配"
 
 #: pylav/extension/red/ui/sources/nodes.py:187
 #: pylav/extension/red/ui/sources/nodes.py:347
 msgid "Plugins"
-msgstr ""
+msgstr "插件"
 
 #: pylav/extension/red/ui/sources/nodes.py:199
 #: pylav/extension/red/ui/sources/nodes.py:359
 msgid "Page {page_num}/{total_pages} | {num} {plural}"
-msgstr ""
+msgstr "第 {page_num} 頁/ 共{total_pages} 頁 | {num} {plural}"
 
 #: pylav/extension/red/ui/sources/nodes.py:203
 #: pylav/extension/red/ui/sources/nodes.py:363
 msgid "nodes"
-msgstr ""
+msgstr "節點"
 
 #: pylav/extension/red/ui/sources/nodes.py:203
 #: pylav/extension/red/ui/sources/nodes.py:363
 msgid "node"
-msgstr ""
+msgstr "節點"
 
 #: pylav/extension/red/ui/sources/nodes.py:306
 msgid "Name: {name}\n"
@@ -195,56 +205,56 @@ msgstr ""
 
 #: pylav/extension/red/ui/sources/player.py:64
 msgid "Nothing playing"
-msgstr ""
+msgstr "沒有正在播放的曲目"
 
 #: pylav/extension/red/ui/sources/player.py:76
 msgid "Server Owner"
-msgstr ""
+msgstr "伺服器擁有者"
 
 #: pylav/extension/red/ui/sources/player.py:77
 msgid "Connected"
-msgstr ""
+msgstr "已連線"
 
 #: pylav/extension/red/ui/sources/player.py:78
 msgid "Users in VC"
-msgstr ""
+msgstr "使用者在語音頻道"
 
 #: pylav/extension/red/ui/sources/player.py:80
 msgid "Queue Length"
-msgstr ""
+msgstr "清單長度"
 
 #: pylav/extension/red/ui/sources/player.py:86
 msgid "Queue History Length"
-msgstr ""
+msgstr "清單歷史長度"
 
 #: pylav/extension/red/ui/sources/player.py:89
 msgid "track"
-msgstr ""
+msgstr "曲目"
 
 #: pylav/extension/red/ui/sources/player.py:89
 msgid "tracks"
-msgstr ""
+msgstr "首歌曲"
 
 #: pylav/extension/red/ui/sources/player.py:100
 msgid "Page {page_num}/{total_pages} | Playing in {playing} {server_translation}"
-msgstr ""
+msgstr "第 {page_num} 頁 / 共 {total_pages} 頁 | 在{playing} {server_translation} 中播放"
 
 #: pylav/extension/red/ui/sources/player.py:104
 msgid "server"
-msgstr ""
+msgstr "伺服器"
 
 #: pylav/extension/red/ui/sources/player.py:104
 msgid "servers"
-msgstr ""
+msgstr "伺服器"
 
 #: pylav/extension/red/ui/sources/playlist.py:52
 #: pylav/extension/red/ui/sources/playlist.py:172
 msgid "Page {page_num}/{total_pages} | {num} playlists"
-msgstr ""
+msgstr "第{page_num}頁/共{total_pages}頁 | {num}個播放清單。"
 
 #: pylav/extension/red/ui/sources/playlist.py:118
 msgid "Tracks in"
-msgstr ""
+msgstr "曲目在"
 
 #: pylav/extension/red/ui/sources/playlist.py:123
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks\n"
@@ -252,35 +262,35 @@ msgstr ""
 
 #: pylav/extension/red/ui/sources/playlist.py:157
 msgid "ID: {id}"
-msgstr ""
+msgstr "ID: {id}"
 
 #: pylav/extension/red/ui/sources/playlist.py:158
 msgid "Tracks: {num}"
-msgstr ""
+msgstr "歌曲: {num}"
 
 #: pylav/extension/red/ui/sources/playlist.py:159
 msgid "Author: {name}"
-msgstr ""
+msgstr "作者: {name}"
 
 #: pylav/extension/red/ui/sources/playlist.py:160
 msgid "Scope: {scope}\n"
-msgstr ""
+msgstr "範圍：{scope}\n"
 
 #: pylav/extension/red/ui/sources/playlist.py:168
 msgid "Playlists you can access in this server:"
-msgstr ""
+msgstr "您可以在此伺務器中訪問的播放列表："
 
 #: pylav/extension/red/ui/sources/queue.py:105
 msgid "There's nothing in recently played"
-msgstr ""
+msgstr "沒有最近播放的內容"
 
 #: pylav/extension/red/ui/sources/queue.py:107
 #: pylav/extension/red/ui/sources/queue.py:150
 msgid "There's nothing currently being played"
-msgstr ""
+msgstr "現在沒有正在播放的內容"
 
 #: pylav/extension/red/ui/sources/queue.py:113
 #: pylav/extension/red/ui/sources/queue.py:156
 msgid "No active player found in server"
-msgstr ""
+msgstr "在伺務器中找不到活動的播放器"
 

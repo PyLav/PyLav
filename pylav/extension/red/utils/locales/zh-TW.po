@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2022-12-30 22:41\n"
+"PO-Revision-Date: 2022-12-30 23:16\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgstr ""
 #: pylav/extension/red/utils/required_methods.py:46
 #, docstring
 msgid "Shows the credits and translation details for the PyLav cogs and shared code"
-msgstr ""
+msgstr "顯示 PyLav 齒輪和shared code的學分和翻譯詳細信息"
 
 #: pylav/extension/red/utils/required_methods.py:50
 msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
@@ -43,50 +43,50 @@ msgstr ""
 
 #: pylav/extension/red/utils/required_methods.py:92
 msgid "Library"
-msgstr ""
+msgstr "資料庫"
 
 #: pylav/extension/red/utils/required_methods.py:93
 msgid "Version"
-msgstr ""
+msgstr "版本"
 
 #: pylav/extension/red/utils/required_methods.py:112
 #, docstring
 msgid "Sync the Bots slash commands"
-msgstr ""
+msgstr "同步機器人斜線指令"
 
 #: pylav/extension/red/utils/required_methods.py:121
 msgid "Synced the bots slash commands"
-msgstr ""
+msgstr "已同步機器人斜線指令"
 
 #: pylav/extension/red/utils/required_methods.py:142
 msgid "This command requires an existing player to be run"
-msgstr ""
+msgstr "此指令需要運行現有的播放器"
 
 #: pylav/extension/red/utils/required_methods.py:151
 msgid "MediaPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later"
-msgstr ""
+msgstr "由於後端服務中斷，MediaPlayer cog 目前暫時不可用，請稍後重試"
 
 #: pylav/extension/red/utils/required_methods.py:155
 msgid "No Lavalink node currently available"
-msgstr ""
+msgstr "當前沒有可用的 Lavalink 節點"
 
 #: pylav/extension/red/utils/required_methods.py:164
 msgid "MediaPlayer is currently unable to process tracks belonging to {feature}"
-msgstr ""
+msgstr "MediaPlayer 目前無法處理來自 {feature} 的曲目"
 
 #: pylav/extension/red/utils/required_methods.py:167
 msgid "No Lavalink node currently available with feature {feature}"
-msgstr ""
+msgstr "當前沒有可用的 Lavalink 節點具有 {feature} 功能"
 
 #: pylav/extension/red/utils/required_methods.py:178
 msgid "This command is not available in this channel. Please use {channel}"
-msgstr ""
+msgstr "此指令在此頻道中不可用。 請至 {channel} 中使用"
 
 #: pylav/extension/red/utils/required_methods.py:190
 msgid "This command requires you to be a DJ"
-msgstr ""
+msgstr "此命令要求您成為 DJ"
 
 #: pylav/extension/red/utils/required_methods.py:228
 msgid "PyLav is not ready - Please try again shortly"
-msgstr ""
+msgstr "PyLav 尚未準備好 - 請稍後重試"
 

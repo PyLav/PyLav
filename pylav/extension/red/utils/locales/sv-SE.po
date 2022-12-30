@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2022-12-30 22:41\n"
+"PO-Revision-Date: 2022-12-30 23:16\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgstr ""
 #: pylav/extension/red/utils/required_methods.py:46
 #, docstring
 msgid "Shows the credits and translation details for the PyLav cogs and shared code"
-msgstr ""
+msgstr "Visar krediter och översättningsdetaljer för PyLav kuggar och delad kod"
 
 #: pylav/extension/red/utils/required_methods.py:50
 msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
@@ -34,59 +34,69 @@ msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
 "- https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors\n"
 "If you wish to buy me a coffee for my work, you can do so at:\n"
 "https://www.buymeacoffee.com/draper or https://github.com/sponsors/Drapersniper"
-msgstr ""
+msgstr "PyLav skapades av [Draper#6666](https://github.com/Drapersniper).\n\n"
+"PyLav kan hittas i https://github.com/Drapersniper/PyLav\n"
+"PyLav-Cogs kan hittas i https://github. om/Drapersniper/PyLav-Cogs\n\n"
+"PyLavs supportserver finns på https://discord.com/invite/Sjh2TSCYQB\n\n\n"
+"Du kan hjälpa till att översätta PyLav genom att bidra till våra Crowdin-projekt på:\n"
+"https://crowdin. om/project/pylav och https://crowdin.com/project/pylavcogs\n\n\n"
+"bidragsgivare:\n"
+"- https://github.com/Drapersniper/PyLav/graphs/contributors\n"
+"- https://github. om/Drapersniper/PyLav-Cogs/graphs/contributors\n"
+"Om du vill köpa mig en fika till mitt arbete, kan du göra det på:\n"
+"https://www.buymeacoffee.com/draper eller https://github.com/sponsors/Drapersniper"
 
 #: pylav/extension/red/utils/required_methods.py:77
 #, docstring
 msgid "Show the version of PyLav library"
-msgstr ""
+msgstr "Visa versionen av PyLav bibliotek"
 
 #: pylav/extension/red/utils/required_methods.py:92
 msgid "Library"
-msgstr ""
+msgstr "Bibliotek"
 
 #: pylav/extension/red/utils/required_methods.py:93
 msgid "Version"
-msgstr ""
+msgstr "Version"
 
 #: pylav/extension/red/utils/required_methods.py:112
 #, docstring
 msgid "Sync the Bots slash commands"
-msgstr ""
+msgstr "Synkronisera bots snedstreck kommandon"
 
 #: pylav/extension/red/utils/required_methods.py:121
 msgid "Synced the bots slash commands"
-msgstr ""
+msgstr "Synkroniserade robotarnas snedstreck kommandon"
 
 #: pylav/extension/red/utils/required_methods.py:142
 msgid "This command requires an existing player to be run"
-msgstr ""
+msgstr "Detta kommando kräver att en befintlig spelare köras"
 
 #: pylav/extension/red/utils/required_methods.py:151
 msgid "MediaPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later"
-msgstr ""
+msgstr "MediaPlayer-cog är för närvarande inte tillgänglig på grund av ett driftavbrott i backend-tjänsterna, försök igen senare"
 
 #: pylav/extension/red/utils/required_methods.py:155
 msgid "No Lavalink node currently available"
-msgstr ""
+msgstr "Ingen Lavalink-nod tillgänglig just nu"
 
 #: pylav/extension/red/utils/required_methods.py:164
 msgid "MediaPlayer is currently unable to process tracks belonging to {feature}"
-msgstr ""
+msgstr "MediaPlayer kan för närvarande inte bearbeta spår som tillhör {feature}"
 
 #: pylav/extension/red/utils/required_methods.py:167
 msgid "No Lavalink node currently available with feature {feature}"
-msgstr ""
+msgstr "Ingen Lavalink-nod finns för närvarande med funktionen {feature}"
 
 #: pylav/extension/red/utils/required_methods.py:178
 msgid "This command is not available in this channel. Please use {channel}"
-msgstr ""
+msgstr "Detta kommando är inte tillgängligt i denna kanal. Använd {channel}"
 
 #: pylav/extension/red/utils/required_methods.py:190
 msgid "This command requires you to be a DJ"
-msgstr ""
+msgstr "Detta kommando kräver att du är en DJ"
 
 #: pylav/extension/red/utils/required_methods.py:228
 msgid "PyLav is not ready - Please try again shortly"
-msgstr ""
+msgstr "PyLav är inte redo - Försök igen inom kort"
 

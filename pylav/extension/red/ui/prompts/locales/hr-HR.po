@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2022-12-30 22:41\n"
+"PO-Revision-Date: 2022-12-30 23:16\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
 "MIME-Version: 1.0\n"
@@ -27,7 +27,7 @@ msgstr ""
 
 #: pylav/extension/red/ui/prompts/playlists.py:31
 msgid "Multiple playlist matched, pick the one which you meant"
-msgstr ""
+msgstr "Pronađeno više popisa za reprodukciju, odaberite onaj na koji ste mislili"
 
 #: pylav/extension/red/ui/prompts/playlists.py:38
 msgid "Pick a playlist"

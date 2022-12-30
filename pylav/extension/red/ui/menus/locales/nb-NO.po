@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2022-12-30 22:40\n"
+"PO-Revision-Date: 2022-12-30 23:16\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "MIME-Version: 1.0\n"
@@ -22,170 +22,170 @@ msgstr ""
 #: pylav/extension/red/ui/menus/playlist.py:261
 #: pylav/extension/red/ui/menus/playlist.py:480
 msgid "You are not authorized to interact with this"
-msgstr ""
+msgstr "Du er ikke autorisert til å samhandle med dette"
 
 #: pylav/extension/red/ui/menus/nodes.py:60
 msgid "Enter the domain or IP address of the host"
-msgstr ""
+msgstr "Angi domenet eller IP-adressen til verten"
 
 #: pylav/extension/red/ui/menus/nodes.py:61
 #: pylav/extension/red/ui/menus/nodes.py:499
 msgid "Host"
-msgstr ""
+msgstr "Vert"
 
 #: pylav/extension/red/ui/menus/nodes.py:68
 msgid "Enter the host port to connect to"
-msgstr ""
+msgstr "Skriv inn vertsporten for å koble til"
 
 #: pylav/extension/red/ui/menus/nodes.py:69
 #: pylav/extension/red/ui/menus/nodes.py:507
 msgid "Port"
-msgstr ""
+msgstr "Port"
 
 #: pylav/extension/red/ui/menus/nodes.py:76
 msgid "Enter the node's password"
-msgstr ""
+msgstr "Skriv inn nodens passord"
 
 #: pylav/extension/red/ui/menus/nodes.py:77
 #: pylav/extension/red/ui/menus/nodes.py:515
 msgid "Password"
-msgstr ""
+msgstr "Passord"
 
 #: pylav/extension/red/ui/menus/nodes.py:84
 msgid "Enter an easy to know name for the node"
-msgstr ""
+msgstr "Skriv inn et enkelt navn for EK-gruppen"
 
 #: pylav/extension/red/ui/menus/nodes.py:85
 #: pylav/extension/red/ui/menus/nodes.py:523
 msgid "Name"
-msgstr ""
+msgstr "Navn"
 
 #: pylav/extension/red/ui/menus/nodes.py:92
 msgid "Enter a timeout in seconds"
-msgstr ""
+msgstr "Skriv et tidsavbrudd i sekunder"
 
 #: pylav/extension/red/ui/menus/nodes.py:93
 #: pylav/extension/red/ui/menus/nodes.py:531
 msgid "Timeout"
-msgstr ""
+msgstr "Tidsavbrudd"
 
 #: pylav/extension/red/ui/menus/nodes.py:109
 #: pylav/extension/red/ui/menus/nodes.py:560
 msgid "Source to disable"
-msgstr ""
+msgstr "Kilde som skal deaktiveres"
 
 #: pylav/extension/red/ui/menus/nodes.py:222
 #: pylav/extension/red/ui/menus/nodes.py:671
 msgid "Name set to {name}"
-msgstr ""
+msgstr "Navn satt til {name}"
 
 #: pylav/extension/red/ui/menus/nodes.py:235
 #: pylav/extension/red/ui/menus/nodes.py:684
 msgid "Password set to {password}"
-msgstr ""
+msgstr "Passord satt til {password}"
 
 #: pylav/extension/red/ui/menus/nodes.py:253
 #: pylav/extension/red/ui/menus/nodes.py:702
 msgid "Host set to {host}"
-msgstr ""
+msgstr "Vert satt til {host}"
 
 #: pylav/extension/red/ui/menus/nodes.py:270
 #: pylav/extension/red/ui/menus/nodes.py:719
 msgid "Invalid port"
-msgstr ""
+msgstr "Ugyldig port"
 
 #: pylav/extension/red/ui/menus/nodes.py:278
 #: pylav/extension/red/ui/menus/nodes.py:727
 msgid "Port set to {port}"
-msgstr ""
+msgstr "Port satt til {port}"
 
 #: pylav/extension/red/ui/menus/nodes.py:295
 #: pylav/extension/red/ui/menus/nodes.py:744
 msgid "Invalid timeout, it must be a number in seconds"
-msgstr ""
+msgstr "Ugyldig tidsavbrudd, det må være et tall i sekunder"
 
 #: pylav/extension/red/ui/menus/nodes.py:303
 #: pylav/extension/red/ui/menus/nodes.py:752
 msgid "Timeout set to {timeout} seconds"
-msgstr ""
+msgstr "Tidsavbrudd er satt til {timeout} sekunder"
 
 #: pylav/extension/red/ui/menus/nodes.py:498
 msgid "Change the domain or IP address of the host"
-msgstr ""
+msgstr "Endre domenet eller IP-adressen til verten"
 
 #: pylav/extension/red/ui/menus/nodes.py:506
 msgid "Change the host port to connect to"
-msgstr ""
+msgstr "Endre vertsporten for å koble til"
 
 #: pylav/extension/red/ui/menus/nodes.py:514
 msgid "Change the node's password"
-msgstr ""
+msgstr "Endre passordet til denne noden"
 
 #: pylav/extension/red/ui/menus/nodes.py:522
 msgid "Change the name of this node"
-msgstr ""
+msgstr "Endre navnet på denne noden"
 
 #: pylav/extension/red/ui/menus/nodes.py:530
 msgid "Enter the new timeout for this node"
-msgstr ""
+msgstr "Skriv inn den nye tidsavbruddet for denne noden"
 
 #: pylav/extension/red/ui/menus/player.py:95
 msgid "selected"
-msgstr ""
+msgstr "valgt"
 
 #: pylav/extension/red/ui/menus/player.py:105
 msgid "inactive"
-msgstr ""
+msgstr "inaktiv"
 
 #: pylav/extension/red/ui/menus/player.py:115
 msgid "all"
-msgstr ""
+msgstr "alle"
 
 #: pylav/extension/red/ui/menus/player.py:208
 msgid "Not connected anywhere"
-msgstr ""
+msgstr "Ikke tilkoblet hvor som helst"
 
 #: pylav/extension/red/ui/menus/playlist.py:187
 #: pylav/extension/red/ui/menus/playlist.py:322
 msgid "Please enter the playlist URL"
-msgstr ""
+msgstr "Vennligst skriv inn spillelistens URL"
 
 #: pylav/extension/red/ui/menus/playlist.py:188
 #: pylav/extension/red/ui/menus/playlist.py:323
 msgid "Playlist URL"
-msgstr ""
+msgstr "Spilleliste URL"
 
 #: pylav/extension/red/ui/menus/playlist.py:194
 msgid "Please enter the playlist name"
-msgstr ""
+msgstr "Vennligst skriv inn navnet på spillelisten"
 
 #: pylav/extension/red/ui/menus/playlist.py:195
 #: pylav/extension/red/ui/menus/playlist.py:330
 msgid "Playlist Name"
-msgstr ""
+msgstr "Navn på spilleliste"
 
 #: pylav/extension/red/ui/menus/playlist.py:329
 msgid "Please enter the new playlist name"
-msgstr ""
+msgstr "Vennligst angi nytt navn på spillelisten"
 
 #: pylav/extension/red/ui/menus/playlist.py:336
 msgid "What query to add to the playlist"
-msgstr ""
+msgstr "Hvilken spørring du vil legge til i spillelisten"
 
 #: pylav/extension/red/ui/menus/playlist.py:337
 #: pylav/extension/red/ui/menus/playlist.py:345
 msgid "Query"
-msgstr ""
+msgstr "Spørring"
 
 #: pylav/extension/red/ui/menus/playlist.py:344
 msgid "What query to remove from the playlist"
-msgstr ""
+msgstr "Hvilken spørring du skal fjerne fra spillelisten"
 
 #: pylav/extension/red/ui/menus/queue.py:456
 msgid "Select Track To Remove"
-msgstr ""
+msgstr "Velg slepestrek som skal fjernes"
 
 #: pylav/extension/red/ui/menus/queue.py:458
 msgid "Select Track To Play Now"
-msgstr ""
+msgstr "Velg spor for å spille nå"
 

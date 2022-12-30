@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2022-12-30 22:41\n"
+"PO-Revision-Date: 2022-12-30 23:16\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -22,170 +22,170 @@ msgstr ""
 #: pylav/extension/red/ui/menus/playlist.py:261
 #: pylav/extension/red/ui/menus/playlist.py:480
 msgid "You are not authorized to interact with this"
-msgstr ""
+msgstr "您無權限與此互動"
 
 #: pylav/extension/red/ui/menus/nodes.py:60
 msgid "Enter the domain or IP address of the host"
-msgstr ""
+msgstr "輸入主機的域名或IP地址"
 
 #: pylav/extension/red/ui/menus/nodes.py:61
 #: pylav/extension/red/ui/menus/nodes.py:499
 msgid "Host"
-msgstr ""
+msgstr "主機"
 
 #: pylav/extension/red/ui/menus/nodes.py:68
 msgid "Enter the host port to connect to"
-msgstr ""
+msgstr "輸入要連接的主機端口"
 
 #: pylav/extension/red/ui/menus/nodes.py:69
 #: pylav/extension/red/ui/menus/nodes.py:507
 msgid "Port"
-msgstr ""
+msgstr "端口"
 
 #: pylav/extension/red/ui/menus/nodes.py:76
 msgid "Enter the node's password"
-msgstr ""
+msgstr "輸入節點密碼"
 
 #: pylav/extension/red/ui/menus/nodes.py:77
 #: pylav/extension/red/ui/menus/nodes.py:515
 msgid "Password"
-msgstr ""
+msgstr "密碼"
 
 #: pylav/extension/red/ui/menus/nodes.py:84
 msgid "Enter an easy to know name for the node"
-msgstr ""
+msgstr "為節點輸入一個簡單的名稱"
 
 #: pylav/extension/red/ui/menus/nodes.py:85
 #: pylav/extension/red/ui/menus/nodes.py:523
 msgid "Name"
-msgstr ""
+msgstr "名稱"
 
 #: pylav/extension/red/ui/menus/nodes.py:92
 msgid "Enter a timeout in seconds"
-msgstr ""
+msgstr "輸入以秒為單位的逾時秒數"
 
 #: pylav/extension/red/ui/menus/nodes.py:93
 #: pylav/extension/red/ui/menus/nodes.py:531
 msgid "Timeout"
-msgstr ""
+msgstr "逾時"
 
 #: pylav/extension/red/ui/menus/nodes.py:109
 #: pylav/extension/red/ui/menus/nodes.py:560
 msgid "Source to disable"
-msgstr ""
+msgstr "要禁用的來源"
 
 #: pylav/extension/red/ui/menus/nodes.py:222
 #: pylav/extension/red/ui/menus/nodes.py:671
 msgid "Name set to {name}"
-msgstr ""
+msgstr "名稱設置為{name}"
 
 #: pylav/extension/red/ui/menus/nodes.py:235
 #: pylav/extension/red/ui/menus/nodes.py:684
 msgid "Password set to {password}"
-msgstr ""
+msgstr "密碼設置為 {password}"
 
 #: pylav/extension/red/ui/menus/nodes.py:253
 #: pylav/extension/red/ui/menus/nodes.py:702
 msgid "Host set to {host}"
-msgstr ""
+msgstr "主機設置為 {host}"
 
 #: pylav/extension/red/ui/menus/nodes.py:270
 #: pylav/extension/red/ui/menus/nodes.py:719
 msgid "Invalid port"
-msgstr ""
+msgstr "端口無效"
 
 #: pylav/extension/red/ui/menus/nodes.py:278
 #: pylav/extension/red/ui/menus/nodes.py:727
 msgid "Port set to {port}"
-msgstr ""
+msgstr "端口設置為 {port}"
 
 #: pylav/extension/red/ui/menus/nodes.py:295
 #: pylav/extension/red/ui/menus/nodes.py:744
 msgid "Invalid timeout, it must be a number in seconds"
-msgstr ""
+msgstr "逾時設定無效，單位必須是秒數"
 
 #: pylav/extension/red/ui/menus/nodes.py:303
 #: pylav/extension/red/ui/menus/nodes.py:752
 msgid "Timeout set to {timeout} seconds"
-msgstr ""
+msgstr "逾時秒數設置為 {timeout} 秒"
 
 #: pylav/extension/red/ui/menus/nodes.py:498
 msgid "Change the domain or IP address of the host"
-msgstr ""
+msgstr "更改主機的域名或 IP 地址"
 
 #: pylav/extension/red/ui/menus/nodes.py:506
 msgid "Change the host port to connect to"
-msgstr ""
+msgstr "更改要連接的主機端口"
 
 #: pylav/extension/red/ui/menus/nodes.py:514
 msgid "Change the node's password"
-msgstr ""
+msgstr "更改節點密碼"
 
 #: pylav/extension/red/ui/menus/nodes.py:522
 msgid "Change the name of this node"
-msgstr ""
+msgstr "更改此節點的名稱"
 
 #: pylav/extension/red/ui/menus/nodes.py:530
 msgid "Enter the new timeout for this node"
-msgstr ""
+msgstr "輸入此節點的新逾時秒數"
 
 #: pylav/extension/red/ui/menus/player.py:95
 msgid "selected"
-msgstr ""
+msgstr "已選擇"
 
 #: pylav/extension/red/ui/menus/player.py:105
 msgid "inactive"
-msgstr ""
+msgstr "非使用中"
 
 #: pylav/extension/red/ui/menus/player.py:115
 msgid "all"
-msgstr ""
+msgstr "全部"
 
 #: pylav/extension/red/ui/menus/player.py:208
 msgid "Not connected anywhere"
-msgstr ""
+msgstr "沒有在任何伺服器連接"
 
 #: pylav/extension/red/ui/menus/playlist.py:187
 #: pylav/extension/red/ui/menus/playlist.py:322
 msgid "Please enter the playlist URL"
-msgstr ""
+msgstr "請輸入播放列表網址"
 
 #: pylav/extension/red/ui/menus/playlist.py:188
 #: pylav/extension/red/ui/menus/playlist.py:323
 msgid "Playlist URL"
-msgstr ""
+msgstr "播放清單網址"
 
 #: pylav/extension/red/ui/menus/playlist.py:194
 msgid "Please enter the playlist name"
-msgstr ""
+msgstr "請輸入播放清單名稱"
 
 #: pylav/extension/red/ui/menus/playlist.py:195
 #: pylav/extension/red/ui/menus/playlist.py:330
 msgid "Playlist Name"
-msgstr ""
+msgstr "播放清單名稱"
 
 #: pylav/extension/red/ui/menus/playlist.py:329
 msgid "Please enter the new playlist name"
-msgstr ""
+msgstr "請輸入新的播放清單名稱"
 
 #: pylav/extension/red/ui/menus/playlist.py:336
 msgid "What query to add to the playlist"
-msgstr ""
+msgstr "查詢的歌曲將添加到播放列表"
 
 #: pylav/extension/red/ui/menus/playlist.py:337
 #: pylav/extension/red/ui/menus/playlist.py:345
 msgid "Query"
-msgstr ""
+msgstr "查詢"
 
 #: pylav/extension/red/ui/menus/playlist.py:344
 msgid "What query to remove from the playlist"
-msgstr ""
+msgstr "查詢的歌曲將從播放列表中刪除"
 
 #: pylav/extension/red/ui/menus/queue.py:456
 msgid "Select Track To Remove"
-msgstr ""
+msgstr "選擇要刪除的歌曲"
 
 #: pylav/extension/red/ui/menus/queue.py:458
 msgid "Select Track To Play Now"
-msgstr ""
+msgstr "選擇想要播放的歌曲"
 

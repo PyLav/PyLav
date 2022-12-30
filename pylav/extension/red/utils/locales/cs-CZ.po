@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2022-12-30 22:40\n"
+"PO-Revision-Date: 2022-12-30 23:16\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgstr ""
 #: pylav/extension/red/utils/required_methods.py:46
 #, docstring
 msgid "Shows the credits and translation details for the PyLav cogs and shared code"
-msgstr ""
+msgstr "Zobrazí kredity a detaily překladu pro PyLav ozdobení a sdílený kód"
 
 #: pylav/extension/red/utils/required_methods.py:50
 msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
@@ -34,59 +34,69 @@ msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
 "- https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors\n"
 "If you wish to buy me a coffee for my work, you can do so at:\n"
 "https://www.buymeacoffee.com/draper or https://github.com/sponsors/Drapersniper"
-msgstr ""
+msgstr "PyLav byl vytvořen [Draper#6666](https://github.com/Drapersniper).\n\n"
+"PyLav může být umístěn v https://github.com/Drapersniper/PyLav\n"
+"PyLav-Cogs může být umístěn v https://github. om/Drapersniper/PyLav-Cogs\n\n"
+"podporuje PyLav's support server na https://discord.com/invite/Sjh2TSCYQB\n\n\n"
+"Můžete pomoci přeložit PyLav tím, že přispějete k našim Crowdin projektům na:\n"
+"https://crowdin. om/project/pylav a https://crowdin.com/project/pylavcogs\n\n\n"
+"Přispěvatelé:\n"
+"- https://github.com/Drapersniper/PyLav/graphs/contributors\n"
+"- https://github. om/Drapersniper/PyLav-Cogs/graphs/contributors\n"
+"Pokud si přejete koupit kávu pro mou práci, můžete to udělat na:\n"
+"https://www.buymeacoffee.com/draper nebo https://github.com/sponsors/Drapersniper"
 
 #: pylav/extension/red/utils/required_methods.py:77
 #, docstring
 msgid "Show the version of PyLav library"
-msgstr ""
+msgstr "Zobrazit verzi PyLav knihovny"
 
 #: pylav/extension/red/utils/required_methods.py:92
 msgid "Library"
-msgstr ""
+msgstr "Knihovna"
 
 #: pylav/extension/red/utils/required_methods.py:93
 msgid "Version"
-msgstr ""
+msgstr "Verze"
 
 #: pylav/extension/red/utils/required_methods.py:112
 #, docstring
 msgid "Sync the Bots slash commands"
-msgstr ""
+msgstr "Synchronizovat příkazy lomítka"
 
 #: pylav/extension/red/utils/required_methods.py:121
 msgid "Synced the bots slash commands"
-msgstr ""
+msgstr "Synchronizované příkazy botů"
 
 #: pylav/extension/red/utils/required_methods.py:142
 msgid "This command requires an existing player to be run"
-msgstr ""
+msgstr "Tento příkaz vyžaduje spuštění existujícího hráče"
 
 #: pylav/extension/red/utils/required_methods.py:151
 msgid "MediaPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later"
-msgstr ""
+msgstr "MediaPlayer cog je v současné době dočasně nedostupný z důvodu nedostatku služeb backend, zkuste to prosím později"
 
 #: pylav/extension/red/utils/required_methods.py:155
 msgid "No Lavalink node currently available"
-msgstr ""
+msgstr "Není dostupný žádný Lavalink uzel"
 
 #: pylav/extension/red/utils/required_methods.py:164
 msgid "MediaPlayer is currently unable to process tracks belonging to {feature}"
-msgstr ""
+msgstr "MediaPlayer momentálně není schopen zpracovávat skladby patřící k {feature}"
 
 #: pylav/extension/red/utils/required_methods.py:167
 msgid "No Lavalink node currently available with feature {feature}"
-msgstr ""
+msgstr "Žádný Lavalink uzel není momentálně k dispozici s funkcí {feature}"
 
 #: pylav/extension/red/utils/required_methods.py:178
 msgid "This command is not available in this channel. Please use {channel}"
-msgstr ""
+msgstr "Tento příkaz není v tomto kanálu k dispozici. Použijte prosím {channel}"
 
 #: pylav/extension/red/utils/required_methods.py:190
 msgid "This command requires you to be a DJ"
-msgstr ""
+msgstr "Tento příkaz vyžaduje, aby jsi DJ"
 
 #: pylav/extension/red/utils/required_methods.py:228
 msgid "PyLav is not ready - Please try again shortly"
-msgstr ""
+msgstr "PyLav není připraven - zkuste to prosím za chvíli znovu"
 
