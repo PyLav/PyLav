@@ -14,7 +14,7 @@ exclude = "pylav/_city_dump.py"
 
 [tool.black]
 line-length = 120
-target-version = ['py310']
+target-version = ['py311']
 force-exclude = '''
     /(
         pylav\/vendor
@@ -24,13 +24,12 @@ force-exclude = '''
 [tool.isort]
 profile = "black"
 line_length = 120
-py_version = 310
+py_version = 311
 known_third_party = [
     "aiofile",
     "aiohttp",
     "aiohttp_client_cache",
     "aiopath",
-    "anyio",
     "apscheduler",
     "apsw",
     "asyncpg",
@@ -38,25 +37,31 @@ known_third_party = [
     "asyncstdlib",
     "brotli",
     "cached_property",
+    "cashews",
+    "dacite",
+    "dateutil",
+    "deepdiff",
     "discord",
-    "deepdiff6",
     "expiringdict",
     "humanize",
+    "importlib_metadata",
     "iso8601",
+    "netaddr",
+    "numpy",
+    "orjson",
     "packaging",
     "piccolo",
     "platformdirs",
     "psutil",
     "pytz",
-    "yaml",
     "red_commons",
     "redis",
     "rich",
     "tabulate",
     "typing_extensions",
     "ujson",
-    "uvloop"
-
+    "uvloop",
+    "yaml"
 ]
 known_local_folder = [
     "pylav"
@@ -71,7 +76,7 @@ readme = "README.md"
 packages = [{include = "pylav"}]
 license = "AGPL-3.0-or-later"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Libraries",
     "Topic :: Software Development :: Libraries :: Python Modules",
