@@ -22,7 +22,7 @@ jobs:
         steps:
         -   name: Checkout code
             uses: actions/checkout@v3
-        -   name: Set up Python 3.11
+        -   name: Set up Python
             uses: actions/setup-python@v4
             with:
                 python-version: ${{ matrix.python-version }}
@@ -81,7 +81,7 @@ jobs:
             uses: actions/cache@v3
             with:
                 path: ~/.local # the path depends on the OS
-                key: poetry-0 # increment to reset cache
+                key: ${{ runner.os }}-poetry
         -   name: Install Poetry
             if: steps.cached-poetry.outputs.cache-hit != 'true'
             uses: snok/install-poetry@v1
