@@ -1,0 +1,56 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: pylav\n"
+"POT-Creation-Date: 2022-12-30 22:38+0000\n"
+"PO-Revision-Date: 2022-12-30 22:40\n"
+"Last-Translator: \n"
+"Language-Team: Danish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.4.2\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: pylav\n"
+"X-Crowdin-Project-ID: 535244\n"
+"X-Crowdin-Language: da\n"
+"X-Crowdin-File: /pylav/core/locales/messages.pot\n"
+"X-Crowdin-File-ID: 795\n"
+"Language: da_DK\n"
+
+#: pylav/core/client.py:873 pylav/core/client.py:908
+msgid "No available nodes!"
+msgstr "Ingen tilgængelige noder!"
+
+#: pylav/core/client.py:877 pylav/core/client.py:912
+msgid "No node with {feature} functionality available!"
+msgstr "Ingen node med {feature} funktionalitet tilgængelig!"
+
+#: pylav/core/client.py:1211
+msgid "No node with {query.requires_capability} functionality available!"
+msgstr "Ingen node med {query.requires_capability} funktionalitet tilgængelig!"
+
+#: pylav/core/client.py:1584
+msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
+msgstr "For at generere en mix afspilningsliste er et video, bruger, kanal eller Playlist ID nødvendig"
+
+#: pylav/core/client.py:1589
+msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
+msgstr "For at generere en mix afspilningsliste en Video, bruger, kanal eller Playlist ID er nødvendig. Dog har du leveret flere"
+
+#: pylav/core/context.py:258
+msgid "{} remaining. Type `more` to continue."
+msgstr "{} tilbage. Skriv `more` for at fortsætte."
+
+#: pylav/core/context.py:259
+msgid "There is still 1 message"
+msgstr "Der er stadig 1 besked"
+
+#: pylav/core/context.py:261
+msgid "There are still {remaining} messages"
+msgstr ""
+
+#: pylav/core/context.py:288
+#, docstring
+msgid "Does nothing"
+msgstr "Gør intet"
+

@@ -1,0 +1,59 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: pylav\n"
+"POT-Creation-Date: 2022-12-30 22:38+0000\n"
+"PO-Revision-Date: 2022-12-30 22:41\n"
+"Last-Translator: \n"
+"Language-Team: Vietnamese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.4.2\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Crowdin-Project: pylav\n"
+"X-Crowdin-Project-ID: 535244\n"
+"X-Crowdin-Language: vi\n"
+"X-Crowdin-File: /pylav/extension/red/converters/locales/messages.pot\n"
+"X-Crowdin-File-ID: 727\n"
+"Language: vi_VN\n"
+
+#: pylav/extension/red/converters/equalizer.py:47
+msgid "Bass boost with name `{arg}` not found"
+msgstr ""
+
+#: pylav/extension/red/converters/equalizer.py:61
+msgid "Maximum"
+msgstr ""
+
+#: pylav/extension/red/converters/equalizer.py:62
+msgid "Insane"
+msgstr ""
+
+#: pylav/extension/red/converters/equalizer.py:63
+msgid "Extreme"
+msgstr ""
+
+#: pylav/extension/red/converters/equalizer.py:64
+msgid "Very High"
+msgstr ""
+
+#: pylav/extension/red/converters/equalizer.py:65
+msgid "High"
+msgstr ""
+
+#: pylav/extension/red/converters/equalizer.py:66
+msgid "Medium"
+msgstr ""
+
+#: pylav/extension/red/converters/equalizer.py:67
+msgid "Fine Tuned"
+msgstr ""
+
+#: pylav/extension/red/converters/equalizer.py:68
+msgid "Cut-off"
+msgstr ""
+
+#: pylav/extension/red/converters/equalizer.py:69
+msgid "Off"
+msgstr ""
+

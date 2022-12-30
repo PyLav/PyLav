@@ -1,0 +1,92 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: pylav\n"
+"POT-Creation-Date: 2022-12-30 22:38+0000\n"
+"PO-Revision-Date: 2022-12-30 22:40\n"
+"Last-Translator: \n"
+"Language-Team: Hungarian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.4.2\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: pylav\n"
+"X-Crowdin-Project-ID: 535244\n"
+"X-Crowdin-Language: hu\n"
+"X-Crowdin-File: /pylav/extension/red/utils/locales/messages.pot\n"
+"X-Crowdin-File-ID: 751\n"
+"Language: hu_HU\n"
+
+#: pylav/extension/red/utils/required_methods.py:46
+#, docstring
+msgid "Shows the credits and translation details for the PyLav cogs and shared code"
+msgstr ""
+
+#: pylav/extension/red/utils/required_methods.py:50
+msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
+"PyLav can be located in https://github.com/Drapersniper/PyLav\n"
+"PyLav-Cogs can be located in https://github.com/Drapersniper/PyLav-Cogs\n\n"
+"PyLav's support server can be found at https://discord.com/invite/Sjh2TSCYQB\n\n\n"
+"You can help translate PyLav by contributing to our Crowdin projects at:\n"
+"https://crowdin.com/project/pylav and https://crowdin.com/project/pylavcogs\n\n\n"
+"Contributors:\n"
+"- https://github.com/Drapersniper/PyLav/graphs/contributors\n"
+"- https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors\n"
+"If you wish to buy me a coffee for my work, you can do so at:\n"
+"https://www.buymeacoffee.com/draper or https://github.com/sponsors/Drapersniper"
+msgstr ""
+
+#: pylav/extension/red/utils/required_methods.py:77
+#, docstring
+msgid "Show the version of PyLav library"
+msgstr ""
+
+#: pylav/extension/red/utils/required_methods.py:92
+msgid "Library"
+msgstr ""
+
+#: pylav/extension/red/utils/required_methods.py:93
+msgid "Version"
+msgstr ""
+
+#: pylav/extension/red/utils/required_methods.py:112
+#, docstring
+msgid "Sync the Bots slash commands"
+msgstr ""
+
+#: pylav/extension/red/utils/required_methods.py:121
+msgid "Synced the bots slash commands"
+msgstr ""
+
+#: pylav/extension/red/utils/required_methods.py:142
+msgid "This command requires an existing player to be run"
+msgstr ""
+
+#: pylav/extension/red/utils/required_methods.py:151
+msgid "MediaPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later"
+msgstr ""
+
+#: pylav/extension/red/utils/required_methods.py:155
+msgid "No Lavalink node currently available"
+msgstr ""
+
+#: pylav/extension/red/utils/required_methods.py:164
+msgid "MediaPlayer is currently unable to process tracks belonging to {feature}"
+msgstr ""
+
+#: pylav/extension/red/utils/required_methods.py:167
+msgid "No Lavalink node currently available with feature {feature}"
+msgstr ""
+
+#: pylav/extension/red/utils/required_methods.py:178
+msgid "This command is not available in this channel. Please use {channel}"
+msgstr ""
+
+#: pylav/extension/red/utils/required_methods.py:190
+msgid "This command requires you to be a DJ"
+msgstr ""
+
+#: pylav/extension/red/utils/required_methods.py:228
+msgid "PyLav is not ready - Please try again shortly"
+msgstr ""
+

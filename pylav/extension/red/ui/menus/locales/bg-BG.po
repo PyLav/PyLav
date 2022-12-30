@@ -1,0 +1,191 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: pylav\n"
+"POT-Creation-Date: 2022-12-30 22:38+0000\n"
+"PO-Revision-Date: 2022-12-30 22:40\n"
+"Last-Translator: \n"
+"Language-Team: Bulgarian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.4.2\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: pylav\n"
+"X-Crowdin-Project-ID: 535244\n"
+"X-Crowdin-Language: bg\n"
+"X-Crowdin-File: /pylav/extension/red/ui/menus/locales/messages.pot\n"
+"X-Crowdin-File-ID: 1027\n"
+"Language: bg_BG\n"
+
+#: pylav/extension/red/ui/menus/generic.py:116
+#: pylav/extension/red/ui/menus/nodes.py:199
+#: pylav/extension/red/ui/menus/playlist.py:261
+#: pylav/extension/red/ui/menus/playlist.py:480
+msgid "You are not authorized to interact with this"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/nodes.py:60
+msgid "Enter the domain or IP address of the host"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/nodes.py:61
+#: pylav/extension/red/ui/menus/nodes.py:499
+msgid "Host"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/nodes.py:68
+msgid "Enter the host port to connect to"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/nodes.py:69
+#: pylav/extension/red/ui/menus/nodes.py:507
+msgid "Port"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/nodes.py:76
+msgid "Enter the node's password"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/nodes.py:77
+#: pylav/extension/red/ui/menus/nodes.py:515
+msgid "Password"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/nodes.py:84
+msgid "Enter an easy to know name for the node"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/nodes.py:85
+#: pylav/extension/red/ui/menus/nodes.py:523
+msgid "Name"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/nodes.py:92
+msgid "Enter a timeout in seconds"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/nodes.py:93
+#: pylav/extension/red/ui/menus/nodes.py:531
+msgid "Timeout"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/nodes.py:109
+#: pylav/extension/red/ui/menus/nodes.py:560
+msgid "Source to disable"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/nodes.py:222
+#: pylav/extension/red/ui/menus/nodes.py:671
+msgid "Name set to {name}"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/nodes.py:235
+#: pylav/extension/red/ui/menus/nodes.py:684
+msgid "Password set to {password}"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/nodes.py:253
+#: pylav/extension/red/ui/menus/nodes.py:702
+msgid "Host set to {host}"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/nodes.py:270
+#: pylav/extension/red/ui/menus/nodes.py:719
+msgid "Invalid port"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/nodes.py:278
+#: pylav/extension/red/ui/menus/nodes.py:727
+msgid "Port set to {port}"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/nodes.py:295
+#: pylav/extension/red/ui/menus/nodes.py:744
+msgid "Invalid timeout, it must be a number in seconds"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/nodes.py:303
+#: pylav/extension/red/ui/menus/nodes.py:752
+msgid "Timeout set to {timeout} seconds"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/nodes.py:498
+msgid "Change the domain or IP address of the host"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/nodes.py:506
+msgid "Change the host port to connect to"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/nodes.py:514
+msgid "Change the node's password"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/nodes.py:522
+msgid "Change the name of this node"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/nodes.py:530
+msgid "Enter the new timeout for this node"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/player.py:95
+msgid "selected"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/player.py:105
+msgid "inactive"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/player.py:115
+msgid "all"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/player.py:208
+msgid "Not connected anywhere"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/playlist.py:187
+#: pylav/extension/red/ui/menus/playlist.py:322
+msgid "Please enter the playlist URL"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/playlist.py:188
+#: pylav/extension/red/ui/menus/playlist.py:323
+msgid "Playlist URL"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/playlist.py:194
+msgid "Please enter the playlist name"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/playlist.py:195
+#: pylav/extension/red/ui/menus/playlist.py:330
+msgid "Playlist Name"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/playlist.py:329
+msgid "Please enter the new playlist name"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/playlist.py:336
+msgid "What query to add to the playlist"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/playlist.py:337
+#: pylav/extension/red/ui/menus/playlist.py:345
+msgid "Query"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/playlist.py:344
+msgid "What query to remove from the playlist"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/queue.py:456
+msgid "Select Track To Remove"
+msgstr ""
+
+#: pylav/extension/red/ui/menus/queue.py:458
+msgid "Select Track To Play Now"
+msgstr ""
+
