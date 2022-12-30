@@ -92,8 +92,8 @@ jobs:
         -   run: npm install github-release-notes -g
         -   name: Release Notes and Change logs
             run: |
-                gren release
-                gren changelog
+                gren release --token $GREN_GITHUB_TOKEN
+                gren changelog --token $GREN_GITHUB_TOKEN
         -   name: Import GPG key
             uses: crazy-max/ghaction-import-gpg@v5
             with:
