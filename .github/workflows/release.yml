@@ -61,7 +61,7 @@ jobs:
         -   name: Publish to PyPI
             env:
                 POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
-            run: poetry publish --build
+            run: poetry publish --build --skip-existing
 
     change_logs:
         name: Generate Change Logs and Release Notes
