@@ -91,6 +91,8 @@ jobs:
                 node-version: '14'
         -   run: npm install github-release-notes -g
         -   name: Release Notes and Change logs
+            env:
+                GREN_GITHUB_TOKEN: ${{ secrets.$GREN_GITHUB_TOKEN }}
             run: |
                 gren release --token $GREN_GITHUB_TOKEN
                 gren changelog --token $GREN_GITHUB_TOKEN
