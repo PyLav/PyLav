@@ -2,7 +2,7 @@
 **NOTICE**:
   - PyLav assumes you are using PostgresSQL server running version 14  and it also requires Python3.11 any other version for these will not work/be supported.
   - If you have docker; Setting up a postgres container for it would likely be the simplest option to setup the necessary server.
-
+-------------
 # Linux (Ubuntu 22.04) <a name="Linux"></a>
 If you are not on Ubuntu 20.04 you just have to follow the instructions below to install the dependencies and set them up for your Linux distro (Google is your friend).
 - #### [libaio](https://pagure.io/libaio)
@@ -21,7 +21,7 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
 - #### [Install Java Azul Zulu 19](https://docs.azul.com/core/)
   - Follow the instructions [here](https://docs.azul.com/core/zulu-openjdk/install/debian)
     - When prompted to run `sudo apt-get install zulu11-jdk` make sure to run `sudo apt-get install zulu19-ca-jdk-headless` instead.
-
+-------------
 ## Mac <a name="Mac"></a>
 - #### [Postgres14](https://www.postgresql.org/)
   - Follow the install instruction [here](https://postgresapp.com/)
@@ -36,7 +36,7 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
     - Run `ALTER DATABASE pylav_db OWNER TO <username>;`
 - #### [Install Java Azul Zulu 19](https://docs.azul.com/core/)
   - Download and run the dmg executable [here](https://cdn.azul.com/zulu/bin/zulu19.30.11-ca-jdk19.0.1-macosx_x64.dmg)
-
+-------------
 ## Windows <a name="Windows"></a>
 - #### [Postgres14](https://www.postgresql.org/)
   - Follow the install instruction [here](https://www.postgresql.org/download/windows/)
@@ -52,7 +52,7 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
 - #### [Install Java Azul Zulu 19](https://docs.azul.com/core/)
   - Download and run the msi executable [here](https://cdn.azul.com/zulu/bin/zulu19.30.11-ca-jdk19.0.1-win_x64.msi)
     - Make sure to select the following when prompted `Add to PATH`, `set JAVA_HOME variable` and `JavaSoft (Oracle) registry keys`
-
+-------------
 ##  Environment Variables
 Note - All environment variables except `PYLAV__LOGGER_PREFIX` and `PYLAV__YAML_CONFIG` can be configured from the `pylav.yaml` file which should reside in the home directory of the user running the bot.
 An example of the file can be found at [pylav.example.yaml](pylav.example.yaml), if you don't create the file yourself pylav will do so on the first run, and once the file exists it will be preferred over the Environment Variable set.
@@ -61,7 +61,7 @@ An example of the file can be found at [pylav.example.yaml](pylav.example.yaml),
    - This should be the absolute path to the `pylav.yaml` file i.e `/config/pylav.yaml`.
  - `PYLAV__LOGGER_PREFIX`:
    - The prefix to use for the logger, defaults nothing, if provided all loggers used by PyLav will be prefixed with this value.
-
+-------------
 ## pylav.yaml Setup
  - Go to your home directory for the user which will run the bot.
    - Windows
@@ -117,3 +117,26 @@ An example of the file can be found at [pylav.example.yaml](pylav.example.yaml),
   - `[p]load downloader`
   - `[p]repo add PyLav https://github.com/Drapersniper/PyLav-Cogs`
  - For a list of all available cogs visit the [PyLav Cogs](https://github.com/Drapersniper/PyLav-Cogs) repo
+-------------
+# Note for 1.0.0 release until Lavalink 4.0.0 is released
+- This major release requires Lavalink 4.0.0 which has not yet been released.
+- You will need will need to complete the following steps before you can successfully use this version, these will only be necessary until Lavalink 4.0.0 is released.
+  - Download the latest Lavalink.jar from this [GitHub action](https://github.com/TopiSenpai/Lavalink/suites/9936879296/artifacts/481780568)
+  - Download the [`application.yml`](./application.yml) from this repo.
+  - Place these a directory of your choice.
+  - Edit the `application.yml` to your liking changing the `CHANGE_ME` values, if you need help with this please join the [Discord support server](https://discord.com/invite/Sjh2TSCYQB)
+ - Start an unmanaged Lavalink node using the `application.yml` you just edited and the `Lavalink.jar` you just downloaded.
+ - Make the following changes to your `pylav.yaml` config file
+   - Set `PYLAV__EXTERNAL_UNMANAGED_HOST` to `localhost`
+   - Set `PYLAV__EXTERNAL_UNMANAGED_PASSWORD` to the `password` in the `lavalink.server` section of the `application.yml` file
+   - Set `PYLAV__EXTERNAL_UNMANAGED_PORT` to the `port` in the `server` section of thee `application.yml` file (Default is `2155`)
+   - Set `PYLAV__EXTERNAL_UNMANAGED_SSL` to `false`
+   - Set `PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE` to `false`
+   - Set `PYLAV__USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE` to `false`
+   - Set `PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_ID` to the `clientId` in the `plugins.lavasrc.potify` section of the `application.yml` file
+   - Set `PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_SECRET` to the `clientSecret` in the `plugins.lavasrc.spotify` section of the `application.yml` file
+   - Set `PYLAV__MANAGED_NODE_SPOTIFY_COUNTRY_CODE` to the `countryCode` in the `plugins.lavasrc.spotify` section of the `application.yml` file
+   - Set `PYLAV__MANAGED_NODE_APPLE_MUSIC_API_KEY` to the `mediaAPIToken` in the `plugins.lavasrc.applemusic` section of the `application.yml` file or if none leave it as `''`
+   - Set `PYLAV__MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE` to the `countryCode` in the `plugins.lavasrc.applemusic` section of the `application.yml` file
+   - Set `PYLAV__MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN` to the `accessToken` in the `plugins.lavasrc.yandexmusic` section of the `application.yml` file or if none leave it as `''`
+   - Set `PYLAV__MANAGED_NODE_DEEZER_KEY` to the `masterDecryptionKey` in the `plugins.lavasrc.deezer` section of the `application.yml` file

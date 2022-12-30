@@ -17,8 +17,7 @@ INSTANCE_NAME = None
 
 LIB_DIR = platformdirs.PlatformDirs("PyLav")
 __CONFIG_DIR = pathlib.Path(LIB_DIR.user_config_path)
-_system_user = sys.platform == "linux" and 0 < os.getuid() < 1000
-if _system_user:
+if sys.platform == "linux" and 0 < os.getuid() < 1000 and not pathlib.Path.home().exists():
     __CONFIG_DIR = pathlib.Path(LIB_DIR.site_data_path)
 __CONFIG_DIR.mkdir(parents=True, exist_ok=True)
 CONFIG_DIR = aiopath.AsyncPath(__CONFIG_DIR)
