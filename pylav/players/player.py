@@ -51,7 +51,11 @@ from pylav.events.track import (
     TrackStuckEvent,
 )
 from pylav.exceptions.database import EntryNotFoundException
-from pylav.exceptions.node import NodeHasNoFiltersException, NoNodeWithRequestFunctionalityAvailableException
+from pylav.exceptions.node import (
+    NodeHasNoFiltersException,
+    NoNodeAvailableException,
+    NoNodeWithRequestFunctionalityAvailableException,
+)
 from pylav.exceptions.request import HTTPException
 from pylav.exceptions.track import TrackNotFoundException
 from pylav.extension.radio import RadioBrowser
@@ -870,9 +874,7 @@ class Player(VoiceProtocol):
                 self._last_empty_queue_check = 0
 
     async def auto_save_task(self):
-        with contextlib.suppress(
-            asyncio.exceptions.CancelledError,
-        ):
+        with contextlib.suppress(asyncio.exceptions.CancelledError, NoNodeAvailableException):
             if not self.is_connected:
                 self._logger.trace(
                     "Auto save task for %s fired while player is not connected to a voice channel - discarding",
