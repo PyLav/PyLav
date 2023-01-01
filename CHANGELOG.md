@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.0.1 (01/01/2023)
+- [Properly parse applemusic and mixcloud queries](https://github.com/Drapersniper/PyLav/commit/e5beceed727b733bb497afef58fbb14ff65df5fe) - @Drapersniper
+- [Fix regex for Spotify, apple music, bandcamp and soundcloud](https://github.com/Drapersniper/PyLav/commit/ee915ea302c324ca899150e197b35a5b5d918e82) - @Drapersniper
+- [Some clarification of docker usage](https://github.com/Drapersniper/PyLav/commit/9810baa4807b50da70c86caee2f4ff439607e8fe) - @Drapersniper
+- [Add a mention to discord to use docker container](https://github.com/Drapersniper/PyLav/commit/20de69c33fce4ada25aadf0dff408870c3981564) - @Drapersniper
+- [add workflow_dispatch: to certain workflows](https://github.com/Drapersniper/PyLav/commit/ea99e761e98570fc719aa8c05202938b54e78f23) - @Drapersniper
+- [Fix crowdin workflows](https://github.com/Drapersniper/PyLav/commit/706c842847a6a9e4e363c67f6698f168e454bb1e) - @Drapersniper
+
+---
+
 ## v1.0.0 (30/12/2022)
 - [fix release.yml](https://github.com/Drapersniper/PyLav/commit/08d440d79eef207a6a92b6987f394069c01befff) - @Drapersniper
 - [reexport gren token](https://github.com/Drapersniper/PyLav/commit/81b453673c0171dec1c78043cf5733549fbf1311) - @Drapersniper
@@ -170,8 +180,3 @@
 ## v0.11.2.1 (16/10/2022)
 - [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/804e2266b5c88a56584c7d3f82715a01e179f5c7) - @Drapersniper
 - [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/befa8e004487297371ef0dcb114b02d42f28faa9) - @crowdin-bot
-
----
-
-## v0.11.2.0 (16/10/2022)
-- [[patch] several fixes:](https://github.com/Drapersniper/PyLav/commit/85e906e7c33cefcec7a6021cbd47894eff2dad81) - @Drapersniper
