@@ -124,9 +124,11 @@ An example of the file can be found at [pylav.example.yaml](pylav.example.yaml),
   - Download the latest Lavalink.jar from this [GitHub action](https://github.com/TopiSenpai/Lavalink/suites/9936879296/artifacts/481780568)
     - Can be skipped if you would rather use a Docker container [see discord for more info](https://discord.com/channels/970987707834720266/970987936063561738/1054069164148539422)
   - Download the [`application.yml`](./application.yml) from this repo.
+    - Can be skipped if you would rather use a Docker container [see discord for more info](https://discord.com/channels/970987707834720266/970987936063561738/1054069164148539422)
   - Place these a directory of your choice.
   - Edit the `application.yml` to your liking changing the `CHANGE_ME` values, if you need help with this please join the [Discord support server](https://discord.com/invite/Sjh2TSCYQB)
- - Start an unmanaged Lavalink node using the `application.yml` you just edited and the `Lavalink.jar` you just downloaded.
+    - Can be skipped if you would rather use a Docker container [see discord for more info](https://discord.com/channels/970987707834720266/970987936063561738/1054069164148539422)
+ - Start an unmanaged Lavalink node using the `application.yml` you just edited and the `Lavalink.jar` you just downloaded or the docker image.
  - Make the following changes to your `pylav.yaml` config file
    - Set `PYLAV__EXTERNAL_UNMANAGED_HOST` to `localhost`
    - Set `PYLAV__EXTERNAL_UNMANAGED_PASSWORD` to the `password` in the `lavalink.server` section of the `application.yml` file
