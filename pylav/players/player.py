@@ -11,6 +11,7 @@ import time
 from collections.abc import Coroutine
 from typing import TYPE_CHECKING, Any, Literal
 
+import asyncpg
 import asyncstdlib
 import discord
 from discord import VoiceProtocol
@@ -764,7 +765,7 @@ class Player(VoiceProtocol):
 
     async def queue_resolver_task(self):
         with contextlib.suppress(
-            asyncio.exceptions.CancelledError,
+            asyncio.exceptions.CancelledError, NoNodeAvailableException, asyncpg.exceptions.CannotConnectNowError
         ):
             if not self.ready.is_set():
                 return
@@ -801,7 +802,7 @@ class Player(VoiceProtocol):
 
     async def auto_dc_task(self):
         with contextlib.suppress(
-            asyncio.exceptions.CancelledError,
+            asyncio.exceptions.CancelledError, NoNodeAvailableException, asyncpg.exceptions.CannotConnectNowError
         ):
             if not self.ready.is_set():
                 return
@@ -836,7 +837,7 @@ class Player(VoiceProtocol):
 
     async def auto_empty_queue_task(self):
         with contextlib.suppress(
-            asyncio.exceptions.CancelledError,
+            asyncio.exceptions.CancelledError, NoNodeAvailableException, asyncpg.exceptions.CannotConnectNowError
         ):
             if not self.ready.is_set():
                 return
@@ -874,7 +875,9 @@ class Player(VoiceProtocol):
                 self._last_empty_queue_check = 0
 
     async def auto_save_task(self):
-        with contextlib.suppress(asyncio.exceptions.CancelledError, NoNodeAvailableException):
+        with contextlib.suppress(
+            asyncio.exceptions.CancelledError, NoNodeAvailableException, asyncpg.exceptions.CannotConnectNowError
+        ):
             if not self.is_connected:
                 self._logger.trace(
                     "Auto save task for %s fired while player is not connected to a voice channel - discarding",
@@ -891,9 +894,7 @@ class Player(VoiceProtocol):
             await self.save()
 
     async def auto_track_stuck_fixer_track(self):
-        with contextlib.suppress(
-            asyncio.exceptions.CancelledError,
-        ):
+        with contextlib.suppress(asyncio.exceptions.CancelledError, NoNodeAvailableException):
             if not self.ready.is_set():
                 return
             if not self.is_playing:

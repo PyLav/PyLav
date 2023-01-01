@@ -5,6 +5,8 @@ import contextlib
 import datetime
 from typing import TYPE_CHECKING
 
+import asyncpg
+
 from pylav.helpers.time import get_now_utc
 from pylav.logging import getLogger
 from pylav.players.query.obj import Query
@@ -83,9 +85,7 @@ class QueryController:
 
     @staticmethod
     async def delete_old() -> None:
-        with contextlib.suppress(
-            asyncio.exceptions.CancelledError,
-        ):
+        with contextlib.suppress(asyncio.exceptions.CancelledError, asyncpg.exceptions.CannotConnectNowError):
             LOGGER.trace("Deleting old queries")
             await QueryRow.delete().where(QueryRow.last_updated <= (get_now_utc() - datetime.timedelta(days=30)))
             LOGGER.trace("Deleted old queries")

@@ -8,6 +8,7 @@ import typing
 from collections import namedtuple
 from typing import TYPE_CHECKING
 
+import asyncpg
 import discord
 
 from pylav.constants.config import (
@@ -276,9 +277,7 @@ class PlaylistController:
 
     async def update_bundled_playlists(self, *playlist_ids: int) -> None:
         # NOTICE: Update the BUNDLED_PLAYLIST_IDS constant in the constants.py file
-        with contextlib.suppress(
-            asyncio.exceptions.CancelledError,
-        ):
+        with contextlib.suppress(asyncio.exceptions.CancelledError, asyncpg.exceptions.CannotConnectNowError):
             await self.client.node_manager.wait_until_ready()
             # noinspection PyProtectedMember
             await self.client._maybe_wait_until_bundled_node(
@@ -323,7 +322,7 @@ class PlaylistController:
             LOGGER.info("Finished updating bundled playlists")
 
     async def update_bundled_external_playlists(self, *playlist_ids: int) -> None:
-        with contextlib.suppress(asyncio.exceptions.CancelledError):
+        with contextlib.suppress(asyncio.exceptions.CancelledError, asyncpg.exceptions.CannotConnectNowError):
             await self.client.node_manager.wait_until_ready()
             # noinspection PyProtectedMember
             await self.client._maybe_wait_until_bundled_node(
@@ -382,9 +381,7 @@ class PlaylistController:
 
     async def update_external_playlists(self, *playlist_ids: int) -> None:
 
-        with contextlib.suppress(
-            asyncio.exceptions.CancelledError,
-        ):
+        with contextlib.suppress(asyncio.exceptions.CancelledError, asyncpg.exceptions.CannotConnectNowError):
             await self.client.node_manager.wait_until_ready()
             # noinspection PyProtectedMember
             await self.client._maybe_wait_until_bundled_node(

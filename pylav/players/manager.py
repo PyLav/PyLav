@@ -6,6 +6,7 @@ import pathlib
 from collections.abc import Iterator
 from typing import TYPE_CHECKING
 
+import asyncpg
 import discord
 
 from pylav.events.player import PlayerConnectedEvent
@@ -332,9 +333,7 @@ class PlayerController:
         """
         Updates the bot's activity.
         """
-        with contextlib.suppress(
-            asyncio.exceptions.CancelledError,
-        ):
+        with contextlib.suppress(asyncio.exceptions.CancelledError, asyncpg.exceptions.CannotConnectNowError):
             if not await (self.client.lib_db_manager.get_config()).fetch_update_bot_activity():
                 return
             playing_players = len(self.playing_players)
