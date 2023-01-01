@@ -77,3 +77,4 @@ Credits
 - [Ryan](https://github.com/ryan5453) for the amazing [Lyrics API](https://flowery.pw) used for lyrics.
 - [globocom/m3u8](https://github.com/globocom/m3u8) for the M3U8 parser which I made asynchronous found in [m3u8_parser](pylav/extension/m3u).
 - [andreztz/pyradios](https://github.com/andreztz/pyradios) for the radio parser which I made asynchronous found in [radio](pylav/extension/radio).
+- [Lifeismana](https://github.com/Lifeismana) for the custom Red-DiscordBot docker image which added Python3.11 support until Phasecore's image is updated.

@@ -1,32 +1,32 @@
-PYLAV__POSTGRES_HOST: localhost # The full connection domain of the Postgres server
-PYLAV__POSTGRES_PORT: 5432 # The port the Postgres server is using
-PYLAV__POSTGRES_SOCKET:      # Full path to socket directory i.e /var/run/postgresql, if this is provided the port and host args are discarded
-PYLAV__POSTGRES_PASSWORD: changeme # The password for the user pylav should use
-PYLAV__POSTGRES_USER: changeme # The Postgres user that pylav should login as
-PYLAV__POSTGRES_DB: pylav_db  # The user created Postgres DB which pylav should use
+PYLAV__POSTGRES_HOST: localhost     # The full connection domain of the Postgres server
+PYLAV__POSTGRES_PORT: 5432          # The port the Postgres server is using
+PYLAV__POSTGRES_SOCKET:             # Full path to socket directory i.e /var/run/postgresql, if this is provided the port and host args are discarded
+PYLAV__POSTGRES_PASSWORD: changeme  # The password for the user pylav should use
+PYLAV__POSTGRES_USER: changeme      # The Postgres user that pylav should login as
+PYLAV__POSTGRES_DB: pylav_db        # The user created Postgres DB which pylav should use
 
 PYLAV__REDIS_FULL_ADDRESS_RESPONSE_CACHE:      # Optional Leave "null" so that it is not used.
-PYLAV__JAVA_EXECUTABLE: java   # The full path to the java executable to be used by the managed node - defaults to `java`
-PYLAV__LINKED_BOT_IDS: [] # Currently unused, list of bot ids
+PYLAV__JAVA_EXECUTABLE: java                   # The full absolute path to the java executable to be used by the managed node - defaults to `java`
+PYLAV__LINKED_BOT_IDS: []                      # Currently unused, list of bot ids
 
-PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE: true # Whether to use the bundled pylav external servers - Values are `true` or `false` - case sensitive (These nodes is hosted by Draper - and has all plugins, IP rotation enabled and age restriction bypass)
-PYLAV__USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE: false # Whether to use the bundled `lava.link` external server - Values are `true` or `false` - case sensitive (This node is unaffiliated to Pylav or its contributors - More info at: https://support.something.host/en/article/lavalink-hosting-okm26z/)
+PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE: false       # Whether to use the bundled pylav external servers - Values are `true` or `false` - case sensitive (These nodes is hosted by Draper - and has all plugins, IP rotation enabled and age restriction bypass)
+PYLAV__USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE: false   # Whether to use the bundled `lava.link` external server - Values are `true` or `false` - case sensitive (This node is unaffiliated to Pylav or its contributors - More info at: https://support.something.host/en/article/lavalink-hosting-okm26z/)
 
-PYLAV__EXTERNAL_UNMANAGED_HOST:      # host address of the node to connect to i.e `lava.link` without the connection protocol (i.e without http://, https://, ws:// or wss://)
-PYLAV__EXTERNAL_UNMANAGED_PORT: 2333 # Port to connect to the specified unmanaged external node
+PYLAV__EXTERNAL_UNMANAGED_HOST:                     # host address of the node to connect to i.e `lava.link` without the connection protocol (i.e without http://, https://, ws:// or wss://)
+PYLAV__EXTERNAL_UNMANAGED_PORT: 2333                # Port to connect to the specified unmanaged external node
 PYLAV__EXTERNAL_UNMANAGED_PASSWORD: youshallnotpass # Password of the specified unmanaged external node - case sensitive
-PYLAV__EXTERNAL_UNMANAGED_SSL: false # Whether to use a secured connection (Server must support it i.e https:// and wss://) - Values are `true` or `false` - case sensitive
+PYLAV__EXTERNAL_UNMANAGED_SSL: false                # Whether to use a secured connection (Server must support it i.e https:// and wss://) - Values are `true` or `false` - case sensitive
 
-PYLAV__TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS: 1  # How many days to wait between updates - Minimum 1 Day.
+PYLAV__TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS: 1          # How many days to wait between updates - Minimum 1 Day.
 PYLAV__TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS: 7 # How many days to wait between updates - Minimum 7 Days.
-PYLAV__TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS: 7 # How many days to wait between updates - Minimum 7 Days.
+PYLAV__TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS: 7         # How many days to wait between updates - Minimum 7 Days.
 
 # Please note that if this is enable, multiple bots should not share the same database, as reads/writes will not be synced.
 PYLAV__READ_CACHING_ENABLED: false # Whether to cache the postgres queries - Values are `true` or `false` - case sensitive
 
-PYLAV__DEFAULT_SEARCH_SOURCE: dzsearch # Defaults to dzsearch - Possible values are dzsearch (Deezer), spsearch (Spotify), amsearch (Apple Music), ytmsearch (YouTube Music), ytsearch (YouTube)
-PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_ID:                # Spotify Client ID - Required for Spotify tracks to work with the managed node
-PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_SECRET:           # Spotify Client Secret - Required for Spotify tracks to work with the managed node
+PYLAV__DEFAULT_SEARCH_SOURCE: dzsearch               # Defaults to dzsearch - Possible values are dzsearch (Deezer), spsearch (Spotify), amsearch (Apple Music), ytmsearch (YouTube Music), ytsearch (YouTube)
+PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_ID: CHANGE_ME     # Spotify Client ID - Required for Spotify tracks to work with the managed node
+PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_SECRET: CHANGE_ME # Spotify Client Secret - Required for Spotify tracks to work with the managed node
 PYLAV__MANAGED_NODE_SPOTIFY_COUNTRY_CODE: US         # Spotify Country Code
 PYLAV__MANAGED_NODE_APPLE_MUSIC_API_KEY:             # Apple Music API Key - Optional - Useful if you already have an Apple developer account
 PYLAV__MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE: US     # Apple Music Country Code
