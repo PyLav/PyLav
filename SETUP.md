@@ -123,28 +123,27 @@ An example of the file can be found at [pylav.example.yaml](pylav.example.yaml),
 - You will need will need to complete the following steps before you can successfully use this version, these will only be necessary until Lavalink 4.0.0 is released.
   - **Can be skipped if** you would rather use a Docker container [see discord for more info](https://discord.com/channels/970987707834720266/970987936063561738/1054069164148539422)
   - Download the latest Lavalink.jar from this [GitHub action](https://github.com/TopiSenpai/Lavalink/suites/9936879296/artifacts/481780568)
-  - Download the [`application.yml`](./application.yml) from this repo.
   - Place these a directory of your choice.
   - Edit the `application.yml` to your liking changing the `CHANGE_ME` values, if you need help with this please join the [Discord support server](https://discord.com/invite/Sjh2TSCYQB)
   - Start an unmanaged Lavalink node using the `application.yml` you just edited and the `Lavalink.jar` you just downloaded.
- - Make the following changes to your `pylav.yaml` config file
-   - Set `PYLAV__EXTERNAL_UNMANAGED_HOST` to `localhost`
-   - Set `PYLAV__EXTERNAL_UNMANAGED_PASSWORD` to the `password` in the `lavalink.server` section of the `application.yml` file
-     - Or the value of `LAVALINK_SERVER_PASSWORD` if you are using Docker
-   - Set `PYLAV__EXTERNAL_UNMANAGED_PORT` to the `port` in the `server` section of thee `application.yml` file (Default is `2155`)
-     - Or the port the docker container is bound its port 2155 to
-   - Set `PYLAV__EXTERNAL_UNMANAGED_SSL` to `false`
-   - Set `PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE` to `false`
-   - Set `PYLAV__USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE` to `false`
-   - Set `PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_ID` to the `clientId` in the `plugins.lavasrc.potify` section of the `application.yml` file
-     - Or the value of `PLUGINS_LAVASRC_SPOTIFY_CLIENTID` if you are using Docker
-   - Set `PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_SECRET` to the `clientSecret` in the `plugins.lavasrc.spotify` section of the `application.yml` file
-     - Or the value of `PLUGINS_LAVASRC_SPOTIFY_CLIENTSECRET` if you are using Docker
-   - Set `PYLAV__MANAGED_NODE_SPOTIFY_COUNTRY_CODE` to the `countryCode` in the `plugins.lavasrc.spotify` section of the `application.yml` file
-     - Or the value of `PLUGINS_LAVASRC_SPOTIFY_COUNTRYCODE` if you are using Docker
-   - Set `PYLAV__MANAGED_NODE_APPLE_MUSIC_API_KEY` to the `mediaAPIToken` in the `plugins.lavasrc.applemusic` section of the `application.yml` file or if none leave it as `''`
-     - Or the value of `PLUGINS_LAVASRC_APPLEMUSIC_MEDIAAPITOKEN` if you are using Docker
-   - Set `PYLAV__MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE` to the `countryCode` in the `plugins.lavasrc.applemusic` section of the `application.yml` file
-     - Or the value of `PLUGINS_LAVASRC_APPLEMUSIC_COUNTRYCODE` if you are using Docker
-   - Set `PYLAV__MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN` to the `accessToken` in the `plugins.lavasrc.yandexmusic` section of the `application.yml` file or if none leave it as `''`
-     - Or the value of `PLUGINS_LAVASRC_YANDEXMUSIC_ACCESSTOKEN` if you are using Docker
+- Make the following changes to your `pylav.yaml` config file
+  - Set `PYLAV__EXTERNAL_UNMANAGED_HOST` to `localhost`
+  - Set `PYLAV__EXTERNAL_UNMANAGED_PASSWORD` to the `password` in the `lavalink.server` section of the `application.yml` file
+    - Or the value of `LAVALINK_SERVER_PASSWORD` if you are using Docker
+  - Set `PYLAV__EXTERNAL_UNMANAGED_PORT` to the `port` in the `server` section of thee `application.yml` file (Default is `2155`)
+    - Or the port the docker container is bound its port 2155 to
+  - Set `PYLAV__EXTERNAL_UNMANAGED_SSL` to `false`
+  - Set `PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE` to `false`
+  - Set `PYLAV__USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE` to `false`
+  - Set `PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_ID` to the `clientId` in the `plugins.lavasrc.potify` section of the `application.yml` file
+    - Or the value of `PLUGINS_LAVASRC_SPOTIFY_CLIENTID` if you are using Docker
+  - Set `PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_SECRET` to the `clientSecret` in the `plugins.lavasrc.spotify` section of the `application.yml` file
+    - Or the value of `PLUGINS_LAVASRC_SPOTIFY_CLIENTSECRET` if you are using Docker
+  - Set `PYLAV__MANAGED_NODE_SPOTIFY_COUNTRY_CODE` to the `countryCode` in the `plugins.lavasrc.spotify` section of the `application.yml` file
+    - Or the value of `PLUGINS_LAVASRC_SPOTIFY_COUNTRYCODE` if you are using Docker
+  - Set `PYLAV__MANAGED_NODE_APPLE_MUSIC_API_KEY` to the `mediaAPIToken` in the `plugins.lavasrc.applemusic` section of the `application.yml` file or if none leave it as `''`
+    - Or the value of `PLUGINS_LAVASRC_APPLEMUSIC_MEDIAAPITOKEN` if you are using Docker
+  - Set `PYLAV__MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE` to the `countryCode` in the `plugins.lavasrc.applemusic` section of the `application.yml` file
+    - Or the value of `PLUGINS_LAVASRC_APPLEMUSIC_COUNTRYCODE` if you are using Docker
+  - Set `PYLAV__MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN` to the `accessToken` in the `plugins.lavasrc.yandexmusic` section of the `application.yml` file or if none leave it as `''`
+    - Or the value of `PLUGINS_LAVASRC_YANDEXMUSIC_ACCESSTOKEN` if you are using Docker
