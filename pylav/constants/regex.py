@@ -77,22 +77,22 @@ SOURCE_INPUT_MATCH_TIKTOK = re.compile(
 
 
 SOURCE_INPUT_MATCH_SPOTIFY = re.compile(
-    r"(https?://)?(www\.)?open\.spotify\.com/(user/[a-zA-Z\d\\-_]+/)?"
+    r"(https?://)?(www\.)?open\.spotify\.com/(user/[a-zA-Z\d\-_]+/)?"
     r"(?P<spotify_type>track|album|playlist|artist)/"
-    r"(?P<spotify_identifier>[a-zA-Z\d\\-_]+)",
+    r"(?P<spotify_identifier>[a-zA-Z\d\-_]+)",
     re.IGNORECASE,
 )
 
 SOURCE_INPUT_MATCH_APPLE_MUSIC = re.compile(
     r"(https?://)?(www\.)?music\.apple\.com/(?P<amcountrycode>[a-zA-Z]{2}/)?"
     r"(?P<type>album|playlist|artist|song)(/[a-zA-Z\d\-]+)?/"
-    r"(?P<identifier>[a-zA-Z\\d\-.]+)"
+    r"(?P<identifier>[a-zA-Z\d\-.]+)"
     r"(\?i=(?P<identifier2>\d+))?",
     re.IGNORECASE,
 )
 
 SOURCE_INPUT_MATCH_BANDCAMP = re.compile(
-    r"^(https?://(?:[^.]+\.|)bandcamp\.com)/(track|album)/([a-zA-Z\d\\-_]+)/?(?:\?.*|)$", re.IGNORECASE
+    r"^(https?://(?:[^.]+\.|)bandcamp\.com)/(track|album)/([a-zA-Z\d\-_]+)/?(?:\?.*|)$", re.IGNORECASE
 )
 SOURCE_INPUT_MATCH_NICONICO = re.compile(
     r"(?:http://|https://|)(?:www\.|)nicovideo\.jp/watch/(sm\d+)(?:\?.*|)$", re.IGNORECASE
@@ -103,12 +103,12 @@ SOURCE_INPUT_MATCH_VIMEO = re.compile(r"^https://vimeo.com/\d+(?:\?.*|)$", re.IG
 # noinspection LongLine
 SOURCE_INPUT_MATCH_SOUND_CLOUD = re.compile(
     r"^(?:http://|https://|)soundcloud\.app\.goo\.gl/([a-zA-Z0-9-_]+)/?(?:\?.*|)$|"
-    r"^(?:http://|https://|)(?:www\\.|)(?:m\.|)soundcloud\.com/"
+    r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/"
     r"([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/?(?:\?.*|)$|"
     r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/"
     r"([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/s-([a-zA-Z0-9-_]+)(?:\?.*|)$|"
     r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/"
-    r"([a-zA-Z0-9-_]+)/likes/?(?:\\?.*|)$|"
+    r"([a-zA-Z0-9-_]+)/likes/?(?:\?.*|)$|"
     r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/"
     r"([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)(?:\?.*|)$",
     # This last line was manually added and does not exist in in lavaplayer...
