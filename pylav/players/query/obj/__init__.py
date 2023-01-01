@@ -329,8 +329,8 @@ class Query:
             return process_youtube(cls, query, music=bool(music), partial=partial)
         elif SOURCE_INPUT_MATCH_SPOTIFY.match(query):
             return process_spotify(cls, query, partial=partial)
-        elif SOURCE_INPUT_MATCH_APPLE_MUSIC.match(query):
-            return cls(query, "Apple Music", partial=partial)
+        elif match := SOURCE_INPUT_MATCH_APPLE_MUSIC.match(query):
+            return cls.process_applemusic(match, partial, query)
         elif SOURCE_INPUT_MATCH_DEEZER.match(query):
             return process_deezer(cls, query, partial=partial)
         elif SOURCE_INPUT_MATCH_SOUND_CLOUD.match(query):
@@ -347,8 +347,8 @@ class Query:
             return cls(query, "Clyp.it", partial=partial)
         elif SOURCE_INPUT_MATCH_GETYARN.match(query):
             return cls(query, "GetYarn", partial=partial)
-        elif SOURCE_INPUT_MATCH_MIXCLOUD.match(query):
-            return cls(query, "Mixcloud", partial=partial)
+        elif match := SOURCE_INPUT_MATCH_MIXCLOUD.match(query):
+            return cls.process_mixcloud(match, partial, query)
         elif SOURCE_INPUT_MATCH_OCRREMIX.match(query):
             return cls(query, "OverClocked ReMix", partial=partial)
         elif SOURCE_INPUT_MATCH_PORNHUB.match(query):
@@ -370,6 +370,28 @@ class Query:
         elif SOURCE_INPUT_MATCH_HTTP.match(query):
             return cls(query, "HTTP", partial=partial)
         return None
+
+    @classmethod
+    def process_applemusic(cls, match: typing.Match[str], partial: bool, query: str) -> Query:
+        query_type = match.group("type")
+        match query_type:
+            case "album":
+                return cls(query, "Apple Music", partial=partial, query_type="album")
+            case "song":
+                return cls(query, "Apple Music", partial=partial, query_type="single")
+            case _:
+                return cls(query, "Apple Music", partial=partial, query_type="playlist")
+
+    @classmethod
+    def process_mixcloud(cls, match: typing.Match[str], partial: bool, query: str) -> Query:
+        query_type = match.group("type")
+        match query_type:
+            case "uploads" | "favorites" | "listens":
+                return cls(query, "Mixcloud", partial=partial, query_type="album")
+            case "playlist":
+                return cls(query, "Mixcloud", partial=partial, query_type="playlist")
+            case _:
+                return cls(query, "Mixcloud", partial=partial, query_type="single")
 
     @classmethod
     def __process_search(cls, query: str) -> Query | None:
