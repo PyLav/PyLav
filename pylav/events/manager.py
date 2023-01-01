@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from pylav.events import base, node, player, queue, track
 from pylav.events.track import track_start
-from pylav.events.utils import get_event_name
+from pylav.events.utils import get_event_name, get_simple_event_name
 
 if TYPE_CHECKING:
     from pylav.core.client import Client
@@ -64,3 +64,6 @@ class DispatchManager:
 
     def get_event_names(self) -> set[str]:
         return set(self.mapping.values())
+
+    def simple_event_names(self) -> set[str]:
+        return {get_simple_event_name(k) for k in self.mapping.keys()}

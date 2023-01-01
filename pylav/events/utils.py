@@ -15,3 +15,7 @@ def to_snake_case(name: str) -> str:
 
 def get_event_name(class_type: type[PyLavEvent]) -> str:
     return f"pylav_{to_snake_case(class_type.__name__)}"
+
+
+def get_simple_event_name(class_type: type[PyLavEvent]) -> str:
+    return to_snake_case(class_type.__name__)

@@ -322,6 +322,11 @@ class Client(metaclass=SingletonClass):
         return self._radio_manager
 
     @property
+    def dispatch_manager(self) -> DispatchManager:
+        """Returns the dispatch manager"""
+        return self._dispatch_manager
+
+    @property
     def player_config_manager(self) -> PlayerConfigController:
         """Returns the player config manager"""
         return self._player_config_manager
