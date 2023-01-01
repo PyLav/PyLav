@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-01 15:12+0000\n"
-"PO-Revision-Date: 2023-01-01 15:13\n"
+"POT-Creation-Date: 2023-01-01 17:01+0000\n"
+"PO-Revision-Date: 2023-01-01 17:10\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "MIME-Version: 1.0\n"
@@ -75,85 +75,85 @@ msgstr "Modulul curent are funcţionalitatea Echo dezactivată"
 msgid "Current node has the ChannelMix functionality disabled"
 msgstr "Modulul curent are funcționalitatea ChannelMix dezactivată"
 
-#: pylav/players/player.py:2463 pylav/players/player.py:2508
-#: pylav/players/player.py:2523
+#: pylav/players/player.py:2460 pylav/players/player.py:2505
+#: pylav/players/player.py:2520
 msgid "LIVE"
 msgstr "IV-VA"
 
-#: pylav/players/player.py:2476
+#: pylav/players/player.py:2473
 msgid "Now Playing in"
 msgstr "Acum se joacă în"
 
-#: pylav/players/player.py:2494 pylav/players/player.py:2603
+#: pylav/players/player.py:2491 pylav/players/player.py:2600
 msgid "Currently livestreaming"
 msgstr "În prezent animalul"
 
-#: pylav/players/player.py:2496
+#: pylav/players/player.py:2493
 msgid "Playing: "
 msgstr "Redare: "
 
-#: pylav/players/player.py:2499 pylav/players/player.py:2515
-#: pylav/players/player.py:2530 pylav/players/player.py:2609
+#: pylav/players/player.py:2496 pylav/players/player.py:2512
+#: pylav/players/player.py:2527 pylav/players/player.py:2606
 msgid "Requester"
 msgstr "Solicitant"
 
-#: pylav/players/player.py:2511 pylav/players/player.py:2526
+#: pylav/players/player.py:2508 pylav/players/player.py:2523
 msgid "Duration"
 msgstr "Durată"
 
-#: pylav/players/player.py:2517
+#: pylav/players/player.py:2514
 msgid "Previous Track"
 msgstr "Pistă anterioară"
 
-#: pylav/players/player.py:2532
+#: pylav/players/player.py:2529
 msgid "Next Track"
 msgstr "Următoarea piesă"
 
-#: pylav/players/player.py:2537
+#: pylav/players/player.py:2534
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
 msgstr "{track_count} melodii, {queue_total_duration} rămase\n"
 
-#: pylav/players/player.py:2541 pylav/players/player.py:2637
+#: pylav/players/player.py:2538 pylav/players/player.py:2634
 msgid "{translation}: {repeat_emoji}"
 msgstr "{translation}: {repeat_emoji}"
 
-#: pylav/players/player.py:2541 pylav/players/player.py:2637
+#: pylav/players/player.py:2538 pylav/players/player.py:2634
 msgid "Repeating"
 msgstr "Repetare"
 
-#: pylav/players/player.py:2542 pylav/players/player.py:2638
+#: pylav/players/player.py:2539 pylav/players/player.py:2635
 msgid "{space}{translation}: {autoplay_emoji}"
 msgstr "{space}{translation}: {autoplay_emoji}"
 
-#: pylav/players/player.py:2543 pylav/players/player.py:2639
+#: pylav/players/player.py:2540 pylav/players/player.py:2636
 msgid "Auto Play"
 msgstr "Redare automată"
 
-#: pylav/players/player.py:2545 pylav/players/player.py:2641
+#: pylav/players/player.py:2542 pylav/players/player.py:2638
 msgid "{space}{translation}: {volume}%"
 msgstr "{space}{translation}: {volume}%"
 
-#: pylav/players/player.py:2546 pylav/players/player.py:2642
+#: pylav/players/player.py:2543 pylav/players/player.py:2639
 msgid "Volume"
 msgstr "Volum"
 
-#: pylav/players/player.py:2586
+#: pylav/players/player.py:2583
 msgid "Recently Played for"
 msgstr "Jucat recent pentru"
 
-#: pylav/players/player.py:2586
+#: pylav/players/player.py:2583
 msgid "Queue for"
 msgstr "Coadă pentru"
 
-#: pylav/players/player.py:2606
+#: pylav/players/player.py:2603
 msgid "Playing"
 msgstr "Redare"
 
-#: pylav/players/player.py:2622
+#: pylav/players/player.py:2619
 msgid "Queue order is may not be accurate due to auto-shuffle being enabled"
 msgstr "Ordinea de așteptare ar putea să nu fie corectă din cauza activării auto-shuffle"
 
-#: pylav/players/player.py:2628
+#: pylav/players/player.py:2625
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
 msgstr "Pagina {current_page}/{total_pages} <unk> {track_number} melodii, {queue_total_duration} rămase\n"
 
