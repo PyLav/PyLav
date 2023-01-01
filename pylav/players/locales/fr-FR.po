@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2022-12-30 23:16\n"
+"PO-Revision-Date: 2023-01-01 12:13\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -95,7 +95,7 @@ msgstr "En cours de lecture : "
 #: pylav/players/player.py:2497 pylav/players/player.py:2513
 #: pylav/players/player.py:2528 pylav/players/player.py:2607
 msgid "Requester"
-msgstr "Demandeur"
+msgstr "Source de la demande"
 
 #: pylav/players/player.py:2509 pylav/players/player.py:2524
 msgid "Duration"
@@ -151,7 +151,7 @@ msgstr "En cours de lecture"
 
 #: pylav/players/player.py:2620
 msgid "Queue order is may not be accurate due to auto-shuffle being enabled"
-msgstr "La prescription en file d'attente n'est peut-être pas précise car l'auto-mélange est activé"
+msgstr "La file d'attente n'est peut-être pas exacte car le mélange automatique est activé"
 
 #: pylav/players/player.py:2626
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
