@@ -51,3 +51,7 @@ services:
             PLUGINS_LAVASRC_YANDEXMUSIC_ACCESSTOKEN: # the token used for accessing the yandex music api. See https://github.com/TopiSenpai/LavaSrc#yandex-music
 
             PLUGINS_LAVASRC_SOURCES_DEEZER: true # Enable Deezer source
+
+            # These are not necessary but can be used to bypass the auto token fetching which is likely to break again in the future
+            LAVALINK_SERVER_YOUTUBECONFIG_EMAIL:  # Google account email to use to bypass age restrictions
+            LAVALINK_SERVER_YOUTUBECONFIG_PASSWORD:  # Google account password to use to bypass age restrictions
