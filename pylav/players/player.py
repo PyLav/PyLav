@@ -2429,10 +2429,7 @@ class Player(VoiceProtocol):
     async def draw_time(self) -> str:
         paused = self.paused
         pos = await self.fetch_position()
-        if self.current:
-            duration = await self.current.duration()
-        else:
-            duration = None
+        duration = await self.current.duration() if self.current else None
         dur = duration or pos
         sections = 12
         loc_time = round((pos / dur if dur != 0 else pos) * sections)
