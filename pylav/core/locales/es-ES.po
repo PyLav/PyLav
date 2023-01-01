@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2022-12-30 23:16\n"
+"POT-Creation-Date: 2023-01-01 22:01+0000\n"
+"PO-Revision-Date: 2023-01-01 22:13\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -17,23 +17,23 @@ msgstr ""
 "X-Crowdin-File-ID: 795\n"
 "Language: es_ES\n"
 
-#: pylav/core/client.py:873 pylav/core/client.py:908
+#: pylav/core/client.py:878 pylav/core/client.py:913
 msgid "No available nodes!"
 msgstr "¡No hay nodos disponibles!"
 
-#: pylav/core/client.py:877 pylav/core/client.py:912
+#: pylav/core/client.py:882 pylav/core/client.py:917
 msgid "No node with {feature} functionality available!"
 msgstr "¡No hay ningún nodo con la funcionalidad {feature} disponible!"
 
-#: pylav/core/client.py:1211
+#: pylav/core/client.py:1216
 msgid "No node with {query.requires_capability} functionality available!"
 msgstr "¡No hay ningún nodo con la funcionalidad {query.requires_capability} disponible!"
 
-#: pylav/core/client.py:1584
+#: pylav/core/client.py:1589
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
 msgstr "Para generar una lista de reproducción mezclada es necesario un ID de Video, Usuario, Canal o Lista de reproducción"
 
-#: pylav/core/client.py:1589
+#: pylav/core/client.py:1594
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
 msgstr "Para generar una lista de reproducción mezclada es necesario un ID de Video, Usuario, Canal o Lista de reproducción. Sin embargo, usted proporcionó varios"
 
