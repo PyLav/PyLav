@@ -1,5 +1,19 @@
 # Changelog
 
+## v1.0.3 (01/01/2023)
+- [Add a workflow dispatch to PyLav-Cogs](https://github.com/Drapersniper/PyLav/commit/ad3b246c5d7c50eb821036ae20fbbc3bdfea6c25) - @Drapersniper
+- [fix versioning](https://github.com/Drapersniper/PyLav/commit/9683e6d8702b20e24a42dc517623d8c04c10cdcf) - @Drapersniper
+- [Sourcery](https://github.com/Drapersniper/PyLav/commit/9dc5bb339e1963f12a0c0860d89a98d3a4bc6f6a) - @Drapersniper
+
+---
+
+## v1.0.2 (01/01/2023)
+- [Cleanup](https://github.com/Drapersniper/PyLav/commit/5b734b8408c159c38a09060aec991192a5f4b849) - @Drapersniper
+- [Cleanup](https://github.com/Drapersniper/PyLav/commit/bfa1d4f4e2d75b28444076a0030632bccf4785e8) - @Drapersniper
+- [Clarification in the SETUP.md](https://github.com/Drapersniper/PyLav/commit/950d642586a8188c07f0752e0ef9bb6d287460da) - @Drapersniper
+
+---
+
 ## v1.0.1 (01/01/2023)
 - [Properly parse applemusic and mixcloud queries](https://github.com/Drapersniper/PyLav/commit/e5beceed727b733bb497afef58fbb14ff65df5fe) - @Drapersniper
 - [Fix regex for Spotify, apple music, bandcamp and soundcloud](https://github.com/Drapersniper/PyLav/commit/ee915ea302c324ca899150e197b35a5b5d918e82) - @Drapersniper
@@ -169,14 +183,3 @@
 ## v0.11.4.1 (17/10/2022)
 - [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/168d051f040cb45ac4af7ee47f2b224946000e84) - @Drapersniper
 - [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/77a31c25d3f450937b939adf41fc9f235de48ce0) - @crowdin-bot
-
----
-
-## v0.11.4.0 (17/10/2022)
-- [[patch]Refactor migration code, fix plugin migration, auto update plugin](https://github.com/Drapersniper/PyLav/commit/5a252bc7afed388b030c1da073bf27f69dd58216) - @Drapersniper
-
----
-
-## v0.11.2.1 (16/10/2022)
-- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/804e2266b5c88a56584c7d3f82715a01e179f5c7) - @Drapersniper
-- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/befa8e004487297371ef0dcb114b02d42f28faa9) - @crowdin-bot
