@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.0.4 (01/01/2023)
+- [Add the youtube email config option](https://github.com/Drapersniper/PyLav/commit/7f98770f7ad81e73a476c82b749755e172a613cd) - @Drapersniper
+- [Expose the dispatch manager attribute of pylav](https://github.com/Drapersniper/PyLav/commit/d2aecaafeb483a83f3218175d84f7264f8a73726) - @Drapersniper
+- [Better documentation](https://github.com/Drapersniper/PyLav/commit/b5ee42b0552b7f362e52777e8c0fa30934738331) - @Drapersniper
+- [Ignore DB connection errors on tasks](https://github.com/Drapersniper/PyLav/commit/bcc35de6beea4558e3d631a7c731b288b2c1c682) - @Drapersniper
+
+---
+
 ## v1.0.3 (01/01/2023)
 - [Add a workflow dispatch to PyLav-Cogs](https://github.com/Drapersniper/PyLav/commit/ad3b246c5d7c50eb821036ae20fbbc3bdfea6c25) - @Drapersniper
 - [fix versioning](https://github.com/Drapersniper/PyLav/commit/9683e6d8702b20e24a42dc517623d8c04c10cdcf) - @Drapersniper
@@ -177,9 +185,3 @@
 
 ## v0.11.5.0 (21/10/2022)
 - [[patch] TypeError: 'JSONB' object is not subscriptable (#80)](https://github.com/Drapersniper/PyLav/commit/d0235c946079d48f82ea4aec8048efc8fff5ca62) - @Drapersniper
-
----
-
-## v0.11.4.1 (17/10/2022)
-- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/168d051f040cb45ac4af7ee47f2b224946000e84) - @Drapersniper
-- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/77a31c25d3f450937b939adf41fc9f235de48ce0) - @crowdin-bot
