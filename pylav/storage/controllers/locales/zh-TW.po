@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2022-12-30 22:41\n"
+"POT-Creation-Date: 2023-01-01 22:01+0000\n"
+"PO-Revision-Date: 2023-01-01 22:13\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 "X-Crowdin-File-ID: 1045\n"
 "Language: zh_TW\n"
 
-#: pylav/storage/controllers/playlists.py:84
+#: pylav/storage/controllers/playlists.py:85
 msgid "Playlist with name {playlist_name} not found"
 msgstr "找不到名為 {playlist_name} 的播放列表"
 

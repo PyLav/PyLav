@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2022-12-30 23:16\n"
+"POT-Creation-Date: 2023-01-01 22:01+0000\n"
+"PO-Revision-Date: 2023-01-01 22:13\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "MIME-Version: 1.0\n"
@@ -17,23 +17,23 @@ msgstr ""
 "X-Crowdin-File-ID: 795\n"
 "Language: no_NO\n"
 
-#: pylav/core/client.py:873 pylav/core/client.py:908
+#: pylav/core/client.py:878 pylav/core/client.py:913
 msgid "No available nodes!"
 msgstr "Ingen noder er tilgjengelig!"
 
-#: pylav/core/client.py:877 pylav/core/client.py:912
+#: pylav/core/client.py:882 pylav/core/client.py:917
 msgid "No node with {feature} functionality available!"
 msgstr "Ingen node med {feature} -funksjonalitet tilgjengelig!"
 
-#: pylav/core/client.py:1211
+#: pylav/core/client.py:1216
 msgid "No node with {query.requires_capability} functionality available!"
 msgstr "Ingen node med {query.requires_capability} -funksjonalitet tilgjengelig!"
 
-#: pylav/core/client.py:1584
+#: pylav/core/client.py:1589
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
 msgstr "For å generere en miks spilleliste en video, bruker, kanal- eller spilleliste-ID er nødvendig"
 
-#: pylav/core/client.py:1589
+#: pylav/core/client.py:1594
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
 msgstr "For å generere en miks spilleliste en video, bruker, kanal- eller spilleliste-ID er nødvendig. Du har imidlertid gitt flere opplysninger."
 
