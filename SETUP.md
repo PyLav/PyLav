@@ -167,6 +167,7 @@ An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml
   - Download the latest Lavalink.jar from this [GitHub action](https://github.com/TopiSenpai/Lavalink/suites/9936879296/artifacts/481780568)
   - Place these a directory of your choice.
   - Edit the `application.yml` to your liking changing the `CHANGE_ME` values, if you need help with this please join the [Discord support server](https://discord.com/invite/Sjh2TSCYQB)
+    - You will need a specify version of the application.yml ping draper#6666 in the support server for it (not needed if you use docker to run Lavalink)
   - Start an unmanaged Lavalink node using the `application.yml` you just edited and the `Lavalink.jar` you just downloaded.
 - Make the following changes to your `pylav.yaml` config file
   - Set `PYLAV__EXTERNAL_UNMANAGED_HOST` to `localhost`
