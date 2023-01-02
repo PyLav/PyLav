@@ -5,3 +5,6 @@ updates:
     directory: /
     schedule:
         interval: daily
+    labels:
+    -   automerge
+    -   'Category: CI'
