@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.0.11 (02/01/2023)
+- [`[p]plsyncslash` should be owner only](https://github.com/Drapersniper/PyLav/commit/5690710cdabf5b6b245043c01a50f0f0cdaafbe3) - @Drapersniper
+- [Remove old invalid locale folders](https://github.com/Drapersniper/PyLav/commit/9f2b28f4c7eaa589a3df20cb83274c9b67b3af7a) - @Drapersniper
+- [[CI] Add automerge label to workflow prs](https://github.com/Drapersniper/PyLav/commit/7ab00839d50b6c686362fa1b37303436792eb560) - @Drapersniper
+
+---
+
 ## v1.0.10 (02/01/2023)
 - [Make sure name attribute can exist before accessing it](https://github.com/Drapersniper/PyLav/commit/037e0c4f0a93acbc7c4642e22f899bd99e7c70c0) - @Drapersniper
 
@@ -187,8 +194,3 @@
 
 ## v0.11.11.0 (24/10/2022)
 - [[patch] fix skipSegments being sent to non YouTube tracks causing playback failures](https://github.com/Drapersniper/PyLav/commit/ad0a93e285f0e45301bceaa68f4d22548c457f09) - @Drapersniper
-
----
-
-## v0.11.10.0 (23/10/2022)
-- [[patch] cleanup plugins on init sequence](https://github.com/Drapersniper/PyLav/commit/56427d4f763b59e713da234e524d2e54c3cf8b03) - @Drapersniper
