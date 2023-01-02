@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.0.12 (02/01/2023)
+- [`[p]plsyncslash` should be owner only v2](https://github.com/Drapersniper/PyLav/commit/2f5c1c5d417edc4292ace9bf01e471618c0bf6f7) - @Drapersniper
+
+---
+
 ## v1.0.11 (02/01/2023)
 - [`[p]plsyncslash` should be owner only](https://github.com/Drapersniper/PyLav/commit/5690710cdabf5b6b245043c01a50f0f0cdaafbe3) - @Drapersniper
 - [Remove old invalid locale folders](https://github.com/Drapersniper/PyLav/commit/9f2b28f4c7eaa589a3df20cb83274c9b67b3af7a) - @Drapersniper
@@ -189,8 +194,3 @@
 ## v0.11.12.0 (24/10/2022)
 - [[patch] fix an instance of where `Player.play()` was being called instead of `Player.add()` causing all songs in the enqueue op to be fast skipped](https://github.com/Drapersniper/PyLav/commit/1f4a09db7777a660b8a3ee1bad69c8d539552f62) - @Drapersniper
 - [fix  RuntimeWarning: coroutine 'AsyncPath.is_file' was never awaited](https://github.com/Drapersniper/PyLav/commit/efd82c1366b8d5ff8fa19c09c1d099ea4f37ed33) - @Drapersniper
-
----
-
-## v0.11.11.0 (24/10/2022)
-- [[patch] fix skipSegments being sent to non YouTube tracks causing playback failures](https://github.com/Drapersniper/PyLav/commit/ad0a93e285f0e45301bceaa68f4d22548c457f09) - @Drapersniper
