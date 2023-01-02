@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.0.7 (02/01/2023)
+
+
+---
+
+## v1.0.6 (02/01/2023)
+## What's Changed
+* New Crowdin translations by Github Action by @Drapersniper in https://github.com/Drapersniper/PyLav/pull/132
+
+
+**Full Changelog**: https://github.com/Drapersniper/PyLav/compare/v1.0.4...v1.0.6
+---
+
 ## v1.0.5 (02/01/2023)
 - [delete empty queries in cache](https://github.com/Drapersniper/PyLav/commit/9e70abea40b967950b7fb2129502d423697ed8cd) - @Drapersniper
 - [Only return cached entry if there are tracks to be returned](https://github.com/Drapersniper/PyLav/commit/e10369fa5549217c2e8e54f0a616de1b7e93a5b4) - @Drapersniper
@@ -176,14 +189,3 @@
 
 ## v0.11.7.0 (21/10/2022)
 - [[patch] KeyError: 'track'](https://github.com/Drapersniper/PyLav/commit/4f1a0edf2f07439a9813b66bc089b2d3b829799e) - @Drapersniper
-
----
-
-## v0.11.6.1 (21/10/2022)
-- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/1f865ff795211895ddf861cf55d31503312d9c71) - @Drapersniper
-- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/3823b4f6642502372f4ea1ee197117ed97fa848e) - @crowdin-bot
-
----
-
-## v0.11.6.0 (21/10/2022)
-- [[patch] certified typo moment (#82)](https://github.com/Drapersniper/PyLav/commit/857affacf4521be1e58d2b08f93be7790d0ea30b) - @Pogogo007
