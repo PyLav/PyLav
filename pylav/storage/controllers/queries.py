@@ -9,7 +9,7 @@ import asyncpg
 
 from pylav.helpers.time import get_now_utc
 from pylav.logging import getLogger
-from pylav.players.query.obj import Query
+from pylav.players.query.obj import Query as QueryObj
 from pylav.storage.database.tables.queries import QueryRow
 from pylav.storage.database.tables.tracks import TrackRow
 from pylav.storage.models.query import Query
@@ -32,7 +32,7 @@ class QueryController:
         return self._client
 
     @staticmethod
-    async def exists(query: Query) -> bool:
+    async def exists(query: QueryObj) -> bool:
         return await QueryRow.exists().where(
             (QueryRow.identifier == query.query_identifier)
             & (QueryRow.last_updated > get_now_utc() - datetime.timedelta(days=30))
@@ -43,16 +43,18 @@ class QueryController:
         """Get a query object"""
         return Query(id=identifier)
 
-    async def fetch_query(self, query: Query) -> Query | None:
+    async def fetch_query(self, query: QueryObj) -> Query | None:
         if query.is_local or query.is_custom_playlist or query.is_http:
             # Do not cache local queries and single track urls or http source entries
             return None
 
         if await self.exists(query):
-            return self.get(query.query_identifier)
+            cached = self.get(query.query_identifier)
+            if await cached.size() > 0:
+                return cached
 
     @staticmethod
-    async def add_query(query: Query, result: JSON_DICT_TYPE) -> bool:
+    async def add_query(query: QueryObj, result: JSON_DICT_TYPE) -> bool:
         if query.is_local or query.is_custom_playlist or query.is_http:
             # Do not cache local queries and single track urls or http source entries
             return False
@@ -103,7 +105,7 @@ class QueryController:
         await QueryRow.delete().where(QueryRow.last_updated <= (get_now_utc() - datetime.timedelta(days=days)))
 
     @staticmethod
-    async def delete_query(query: Query) -> None:
+    async def delete_query(query: QueryObj) -> None:
         await QueryRow.delete().where(QueryRow.identifier == query.query_identifier)
 
     @staticmethod
