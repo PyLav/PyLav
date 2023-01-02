@@ -18,6 +18,9 @@ services:
             PUID: 1000
             CUSTOM_REDBOT_PACKAGE: git+https://github.com/Cog-Creators/Red-DiscordBot.git
             PYLAV__YAML_CONFIG: /data/pylav.yaml
+        depends_on:
+        -   postgres
+        -   ll-node
     postgres:
         image: postgres:14
         restart: always
