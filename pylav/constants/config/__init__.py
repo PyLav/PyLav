@@ -68,9 +68,6 @@ if not ENV_FILE.exists():
     from pylav.constants.config.env_var import (
         TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS as TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS,
     )
-    from pylav.constants.config.env_var import (
-        USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE as USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE,
-    )
     from pylav.constants.config.env_var import USE_BUNDLED_EXTERNAL_PYLAV_NODE as USE_BUNDLED_EXTERNAL_PYLAV_NODE
 else:
     LOGGER.info("%s exist - Environment variables will be read from it", ENV_FILE)
@@ -110,7 +107,6 @@ else:
     from pylav.constants.config.file import (
         TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS as TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS,
     )
-    from pylav.constants.config.file import USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE as USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE
     from pylav.constants.config.file import USE_BUNDLED_EXTERNAL_PYLAV_NODE as USE_BUNDLED_EXTERNAL_PYLAV_NODE
 
 BROTLI_ENABLED = False

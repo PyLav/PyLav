@@ -78,9 +78,6 @@ An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml
     - Provide the `PYLAV__POSTGRES_SOCKET` variable. If this is provided `PYLAV__POSTGRES_HOST` and `PYLAV__POSTGRES_PORT` will be ignored.
   - `PYLAV__JAVA_EXECUTABLE` can be changed from java to the full path of the Azul Zulu 18 Java executable installed above.
     - By default it will use `java` to ensure you have the correct version under `java` run `java --version` if it says "OpenJDK Runtime Environment Zulu18..." then this is not needed to be changed.
-  - PyLav bundled an external unmanaged public lavalink Node - The node used is a public node (lava.link) unaffiliated with PyLav or Draper, this will expose you IP to the server hosting the node for communication purposes.
-    - To disable this set `PYLAV__USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE` to `false`
-    - To enable this set `PYLAV__USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE` to `true`
   - PyLav bundled an external unmanaged public lavalink Node - The node used is a public node (ll.draper.wtf) hosted by Draper, this will expose you IP to the server hosting the node for communication purposes.
     - To disable this set `PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE` to `false`
     - To enable this set `PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE` to `true`
@@ -120,9 +117,6 @@ An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml
   - Set `PYLAV__EXTERNAL_UNMANAGED_PASSWORD` to the Lavalink node connection auth password.
   - Set `PYLAV__EXTERNAL_UNMANAGED_PORT` to the Lavalink node connection port - If this is not specified the node will use port `80` if `PYLAV__EXTERNAL_UNMANAGED_SSL` is set to `false` or `443` if `PYLAV__EXTERNAL_UNMANAGED_SSL` is set to `true`.
   - Set `PYLAV__EXTERNAL_UNMANAGED_SSL` to `false` depending on weather or not the external node is using SSL
-  - PyLav bundled an external unmanaged public lavalink Node - The node used is a public node (lava.link) unaffiliated with PyLav or Draper, this will expose you IP to the server hosting the node for communication purposes.
-    - To disable this set `PYLAV__USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE` to `false`
-    - To enable this set `PYLAV__USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE` to `true`
   - PyLav bundled an external unmanaged public lavalink Node - The node used is a public node (ll.draper.wtf) hosted by Draper, this will expose you IP to the server hosting the node for communication purposes.
     - To disable this set `PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE` to `false`
     - To enable this set `PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE` to `true`
@@ -177,7 +171,6 @@ An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml
     - Or the port the docker container is bound its port 2155 to
   - Set `PYLAV__EXTERNAL_UNMANAGED_SSL` to `false`
   - Set `PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE` to `false`
-  - Set `PYLAV__USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE` to `false`
   - Set `PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_ID` to the `clientId` in the `plugins.lavasrc.potify` section of the `application.yml` file
     - Or the value of `PLUGINS_LAVASRC_SPOTIFY_CLIENTID` if you are using Docker
   - Set `PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_SECRET` to the `clientSecret` in the `plugins.lavasrc.spotify` section of the `application.yml` file

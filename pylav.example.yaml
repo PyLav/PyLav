@@ -10,7 +10,6 @@ PYLAV__JAVA_EXECUTABLE: java                   # The full absolute path to the j
 PYLAV__LINKED_BOT_IDS: []                      # Currently unused, list of bot ids
 
 PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE: false       # Whether to use the bundled pylav external servers - Values are `true` or `false` - case sensitive (These nodes is hosted by Draper - and has all plugins, IP rotation enabled and age restriction bypass)
-PYLAV__USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE: false   # Whether to use the bundled `lava.link` external server - Values are `true` or `false` - case sensitive (This node is unaffiliated to Pylav or its contributors - More info at: https://support.something.host/en/article/lavalink-hosting-okm26z/)
 
 PYLAV__EXTERNAL_UNMANAGED_HOST:                     # host address of the node to connect to i.e `lava.link` without the connection protocol (i.e without http://, https://, ws:// or wss://)
 PYLAV__EXTERNAL_UNMANAGED_PORT: 2333                # Port to connect to the specified unmanaged external node

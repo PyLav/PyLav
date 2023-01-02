@@ -498,10 +498,6 @@ class NodeManager:
             await self._process_bundled_node_london(nodes_list)
             await self._process_bundled_node_ny(nodes_list)
 
-        if all_data["use_bundled_lava_link_external"] and not self.get_node_by_id(
-            PYLAV_BUNDLED_NODES_SETTINGS["lava.link"]["unique_identifier"]
-        ):
-            await self._process_bundled_node_lava_link(nodes_list)
         tasks = [asyncio.create_task(n.wait_until_ready()) for n in nodes_list]
         if not tasks:
             if (

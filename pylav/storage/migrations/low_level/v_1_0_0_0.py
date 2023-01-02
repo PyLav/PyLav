@@ -259,7 +259,7 @@ async def migrate_lib_config_v_1_0_0_0(configs: list[asyncpg.Record]) -> None:
             LibConfigRow.download_id: config["download_id"],
             LibConfigRow.update_bot_activity: config["update_bot_activity"],
             LibConfigRow.use_bundled_pylav_external: config["use_bundled_pylav_external"],
-            LibConfigRow.use_bundled_lava_link_external: config["use_bundled_lava_link_external"],
+            LibConfigRow.use_bundled_lava_link_external: False,
             LibConfigRow.extras: ujson.loads(config["extras"]),
             LibConfigRow.next_execution_update_bundled_playlists: config["next_execution_update_bundled_playlists"],
             LibConfigRow.next_execution_update_bundled_external_playlists: config[

@@ -256,17 +256,7 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
         bool
             The use_bundled_lava_link_external.
         """
-        response = (
-            await LibConfigRow.select(LibConfigRow.use_bundled_lava_link_external)
-            .where((LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot))
-            .first()
-            .output(load_json=True, nested=True)
-        )
-        return (
-            response["use_bundled_lava_link_external"]
-            if response
-            else LibConfigRow.use_bundled_lava_link_external.default
-        )
+        return False
 
     async def update_use_bundled_lava_link_external(self, use_bundled_lava_link_external: bool) -> None:
         """Update the use_bundled_lava_link_external.
@@ -287,11 +277,9 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
             """,
             self.id,
             self.bot,
-            use_bundled_lava_link_external,
+            False,
         )
-        await self.update_cache(
-            (self.fetch_use_bundled_lava_link_external, use_bundled_lava_link_external), (self.exists, True)
-        )
+        await self.update_cache((self.fetch_use_bundled_lava_link_external, False), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
 
     @maybe_cached
@@ -626,7 +614,7 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
             "download_id": LibConfigRow.download_id.default,
             "update_bot_activity": LibConfigRow.update_bot_activity.default,
             "use_bundled_pylav_external": LibConfigRow.use_bundled_pylav_external.default,
-            "use_bundled_lava_link_external": LibConfigRow.use_bundled_lava_link_external.default,
+            "use_bundled_lava_link_external": False,
             "extras": ujson.loads(LibConfigRow.extras.default),
             "next_execution_update_bundled_playlists": LibConfigRow.next_execution_update_bundled_playlists.default,
             "next_execution_update_bundled_external_playlists": LibConfigRow.next_execution_update_bundled_external_playlists.default,  # noqa

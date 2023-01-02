@@ -24,8 +24,7 @@ PYLAV__REDIS_FULL_ADDRESS_RESPONSE_CACHE: # Optional Leave "null" so that it is 
 PYLAV__JAVA_EXECUTABLE: java              # Never used in this environment.
 PYLAV__LINKED_BOT_IDS: []                 # Currently unused, list of bot ids
 
-PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE: false     # MUST BE FALSE, until the public nodes are updated to PyLav 4.0.0
-PYLAV__USE_BUNDLED_EXTERNAL_LAVA_LINK_NODE: false # MUST BE FALSE, until the public nodes are updated to PyLav 4.0.0
+PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE: false     # MUST BE FALSE, until the public nodes are updated to Lavalink 4.0.0
 
 PYLAV__TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS: 1          # How many days to wait between updates - Minimum 1 Day.
 PYLAV__TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS: 7 # How many days to wait between updates - Minimum 7 Days.
