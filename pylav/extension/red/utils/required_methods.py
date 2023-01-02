@@ -108,6 +108,7 @@ async def pylav_version(context: PyLavContext) -> None:
     aliases=["plss"],
     i18n=_,
 )
+@commands.is_owner()
 async def pylav_sync_slash(context: PyLavContext) -> None:
     """Sync the Bots slash commands"""
     if isinstance(context, discord.Interaction):
