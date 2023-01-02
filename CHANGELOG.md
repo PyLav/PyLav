@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.0.9 (02/01/2023)
+- [default the PyLav external node to off](https://github.com/Drapersniper/PyLav/commit/7217d3bf68a385ca5c8d5f591395c29531f9eed1) - @Drapersniper
+
+---
+
 ## v1.0.8 (02/01/2023)
 - [fix to avoid the local database being constantly wiped](https://github.com/Drapersniper/PyLav/commit/dba0dcadf21c91fe1b8fa7fd2a72e60cdee5d598) - @Drapersniper
 - [Remove `lava.link` bundled node permanently](https://github.com/Drapersniper/PyLav/commit/d7f201297e56f91faff0842541c8e92265bba56a) - @Drapersniper
@@ -187,8 +192,3 @@
 
 ## v0.11.9.0 (23/10/2022)
 - [[patch] Don't specify track endTime if 0](https://github.com/Drapersniper/PyLav/commit/76726906d242d1a92a70428f27843026905e7066) - @Drapersniper
-
----
-
-## v0.11.8.0 (23/10/2022)
-- [[patch] disable yandee source which is enabled by default](https://github.com/Drapersniper/PyLav/commit/1e9f8767de00ef614878621901fcb85d4c263858) - @Drapersniper
