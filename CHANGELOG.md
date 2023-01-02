@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.0.10 (02/01/2023)
+- [Make sure name attribute can exist before accessing it](https://github.com/Drapersniper/PyLav/commit/037e0c4f0a93acbc7c4642e22f899bd99e7c70c0) - @Drapersniper
+
+---
+
 ## v1.0.9 (02/01/2023)
 - [default the PyLav external node to off](https://github.com/Drapersniper/PyLav/commit/7217d3bf68a385ca5c8d5f591395c29531f9eed1) - @Drapersniper
 
@@ -187,8 +192,3 @@
 
 ## v0.11.10.0 (23/10/2022)
 - [[patch] cleanup plugins on init sequence](https://github.com/Drapersniper/PyLav/commit/56427d4f763b59e713da234e524d2e54c3cf8b03) - @Drapersniper
-
----
-
-## v0.11.9.0 (23/10/2022)
-- [[patch] Don't specify track endTime if 0](https://github.com/Drapersniper/PyLav/commit/76726906d242d1a92a70428f27843026905e7066) - @Drapersniper
