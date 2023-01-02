@@ -75,11 +75,12 @@ class QueryController:
         # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
         async for track in AsyncIter(tracks):
             with contextlib.suppress(Exception):
-                for key in track["info"].keys():
-                    # noinspection SpellCheckingInspection
-                    if key not in {"identifier", "sourceName", "title", "uri", "isrc"}:
-                        track["info"].pop(key, None)
-                new_tracks.append(await TrackRow.get_or_create(track["encoded"], track["info"]))
+                new_info = {
+                    key: track["info"][key]
+                    for key in track["info"].keys()
+                    if key in {"identifier", "sourceName", "title", "uri", "isrc"}
+                }
+                new_tracks.append(await TrackRow.get_or_create(track["encoded"], new_info))
         if new_tracks:
             await query_row.add_m2m(*new_tracks, m2m=QueryRow.tracks)
             return True
