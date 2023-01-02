@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.0.5 (02/01/2023)
+- [delete empty queries in cache](https://github.com/Drapersniper/PyLav/commit/9e70abea40b967950b7fb2129502d423697ed8cd) - @Drapersniper
+- [Only return cached entry if there are tracks to be returned](https://github.com/Drapersniper/PyLav/commit/e10369fa5549217c2e8e54f0a616de1b7e93a5b4) - @Drapersniper
+- [Add a note to the the setup.md](https://github.com/Drapersniper/PyLav/commit/e38ba1089c3960ac846b982b125a804fa0ea31ad) - @Drapersniper
+
+---
+
 ## v1.0.4 (01/01/2023)
 - [Add the youtube email config option](https://github.com/Drapersniper/PyLav/commit/7f98770f7ad81e73a476c82b749755e172a613cd) - @Drapersniper
 - [Expose the dispatch manager attribute of pylav](https://github.com/Drapersniper/PyLav/commit/d2aecaafeb483a83f3218175d84f7264f8a73726) - @Drapersniper
@@ -180,8 +187,3 @@
 
 ## v0.11.6.0 (21/10/2022)
 - [[patch] certified typo moment (#82)](https://github.com/Drapersniper/PyLav/commit/857affacf4521be1e58d2b08f93be7790d0ea30b) - @Pogogo007
-
----
-
-## v0.11.5.0 (21/10/2022)
-- [[patch] TypeError: 'JSONB' object is not subscriptable (#80)](https://github.com/Drapersniper/PyLav/commit/d0235c946079d48f82ea4aec8048efc8fff5ca62) - @Drapersniper
