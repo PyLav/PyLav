@@ -83,6 +83,7 @@ class QueryController:
         if new_tracks:
             await query_row.add_m2m(*new_tracks, m2m=QueryRow.tracks)
             return True
+        await QueryRow.delete().where(QueryRow.identifier == query.query_identifier)
         return False
 
     @staticmethod
