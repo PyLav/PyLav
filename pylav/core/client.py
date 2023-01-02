@@ -1526,7 +1526,7 @@ class Client(metaclass=SingletonClass):
                     continue
                 if response.is_playlist or response.is_album:
                     _response = await node.get_track(response, bypass_cache=bypass_cache)
-                    playlist_name = _response.playlistInfo.name
+                    playlist_name = _response.playlistInfo.name if _response.playlistInfo else ""
                     output_tracks.extend(_response.tracks)
                     plugin_info |= _response.pluginInfo.to_dict()
                 elif fullsearch and response.is_search:
