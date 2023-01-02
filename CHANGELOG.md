@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.0.8 (02/01/2023)
+- [fix to avoid the local database being constantly wiped](https://github.com/Drapersniper/PyLav/commit/dba0dcadf21c91fe1b8fa7fd2a72e60cdee5d598) - @Drapersniper
+- [Remove `lava.link` bundled node permanently](https://github.com/Drapersniper/PyLav/commit/d7f201297e56f91faff0842541c8e92265bba56a) - @Drapersniper
+- [make the redbot container depend on the postgres and ll-node containers](https://github.com/Drapersniper/PyLav/commit/d6ac80a1c309e0619431b01b54f43d8268bc478f) - @Drapersniper
+- [Dependency update and cleanup](https://github.com/Drapersniper/PyLav/commit/7a51c40100e734aa151ea72e5751a39317fb47b6) - @Drapersniper
+
+---
+
 ## v1.0.7 (02/01/2023)
 
 
@@ -184,8 +192,3 @@
 
 ## v0.11.8.0 (23/10/2022)
 - [[patch] disable yandee source which is enabled by default](https://github.com/Drapersniper/PyLav/commit/1e9f8767de00ef614878621901fcb85d4c263858) - @Drapersniper
-
----
-
-## v0.11.7.0 (21/10/2022)
-- [[patch] KeyError: 'track'](https://github.com/Drapersniper/PyLav/commit/4f1a0edf2f07439a9813b66bc089b2d3b829799e) - @Drapersniper
