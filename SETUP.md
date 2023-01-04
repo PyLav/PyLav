@@ -166,20 +166,11 @@ An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml
 - Make the following changes to your `pylav.yaml` config file
   - Set `PYLAV__EXTERNAL_UNMANAGED_HOST` to `localhost`
   - Set `PYLAV__EXTERNAL_UNMANAGED_PASSWORD` to the `password` in the `lavalink.server` section of the `application.yml` file
-    - Or the value of `LAVALINK_SERVER_PASSWORD` if you are using Docker
   - Set `PYLAV__EXTERNAL_UNMANAGED_PORT` to the `port` in the `server` section of thee `application.yml` file (Default is `2155`)
-    - Or the port the docker container is bound its port 2155 to
   - Set `PYLAV__EXTERNAL_UNMANAGED_SSL` to `false`
-  - Set `PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE` to `false`
   - Set `PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_ID` to the `clientId` in the `plugins.lavasrc.potify` section of the `application.yml` file
-    - Or the value of `PLUGINS_LAVASRC_SPOTIFY_CLIENTID` if you are using Docker
   - Set `PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_SECRET` to the `clientSecret` in the `plugins.lavasrc.spotify` section of the `application.yml` file
-    - Or the value of `PLUGINS_LAVASRC_SPOTIFY_CLIENTSECRET` if you are using Docker
   - Set `PYLAV__MANAGED_NODE_SPOTIFY_COUNTRY_CODE` to the `countryCode` in the `plugins.lavasrc.spotify` section of the `application.yml` file
-    - Or the value of `PLUGINS_LAVASRC_SPOTIFY_COUNTRYCODE` if you are using Docker
-  - Set `PYLAV__MANAGED_NODE_APPLE_MUSIC_API_KEY` to the `mediaAPIToken` in the `plugins.lavasrc.applemusic` section of the `application.yml` file or if none leave it as `''`
-    - Or the value of `PLUGINS_LAVASRC_APPLEMUSIC_MEDIAAPITOKEN` if you are using Docker
+  - Set `PYLAV__MANAGED_NODE_APPLE_MUSIC_API_KEY` to the `mediaAPIToken` in the `plugins.lavasrc.applemusic` section of the `application.yml` file or if none leave it empty
   - Set `PYLAV__MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE` to the `countryCode` in the `plugins.lavasrc.applemusic` section of the `application.yml` file
-    - Or the value of `PLUGINS_LAVASRC_APPLEMUSIC_COUNTRYCODE` if you are using Docker
-  - Set `PYLAV__MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN` to the `accessToken` in the `plugins.lavasrc.yandexmusic` section of the `application.yml` file or if none leave it as `''`
-    - Or the value of `PLUGINS_LAVASRC_YANDEXMUSIC_ACCESSTOKEN` if you are using Docker
+  - Set `PYLAV__MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN` to the `accessToken` in the `plugins.lavasrc.yandexmusic` section of the `application.yml` file or if none leave it empty
