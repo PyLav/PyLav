@@ -580,9 +580,12 @@ class WebSocket:
         if player.current and player.current.encoded == data.encodedTrack:
             player.current.timestamp = 0
             requester = player.current.requester
-        return await Track.build_track(data=data.encodedTrack,
+        return await Track.build_track(
+            data=data.encodedTrack,
             requester=requester.id if requester else self._client.bot.user.id,
-            query=await Query.from_base64(data.encodedTrack), node=self.node, )
+            query=await Query.from_base64(data.encodedTrack),
+            node=self.node,
+        )
 
     async def send(self, **data: Any):
         """
