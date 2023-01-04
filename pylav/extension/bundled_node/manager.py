@@ -860,7 +860,7 @@ class LocalNodeManager:
         name = (
             f"PyLavPortConflictRecovery: {self._node_pid}"
             if external_fallback
-            else f"PyLavManagedN" f"ode: {self._node_pid}"
+            else f"PyLavManagedNode: {self._node_pid}"
         )
         data["yaml"]["sentry"]["tags"]["pylav_version"] = self._client.lib_version
         node = self._node = await self._client.add_node(

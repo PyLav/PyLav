@@ -245,7 +245,7 @@ class NodeManager:
             node.identifier
             and not node.managed
             and node.identifier not in BUNDLED_NODES_IDS_HOST_MAPPING
-            or node.identifier != 31415
+            and node.identifier != 31415
         ):
             await self.client.node_db_manager.delete(node.identifier)
             # noinspection PyProtectedMember
