@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.0.13 (04/01/2023)
+- [v1.0.13 (#140)](https://github.com/Drapersniper/PyLav/commit/770238c7cf1de68c9218a3327364bbc52dbbc100) - @Drapersniper
+- [Update SETUP.md](https://github.com/Drapersniper/PyLav/commit/121cfdd1bc4aa8455a0018403c6dbafb61e7e93c) - @Drapersniper
+- [Remove even more old locale folders](https://github.com/Drapersniper/PyLav/commit/ab156ad3848c454918795bb1d049363299abbbf1) - @Drapersniper
+- [remove invalid locales folder](https://github.com/Drapersniper/PyLav/commit/51a6bb88bbb33d61ac3d90b6d208fcb6f96fe1e6) - @Drapersniper
+
+---
+
 ## v1.0.12 (02/01/2023)
 - [`[p]plsyncslash` should be owner only v2](https://github.com/Drapersniper/PyLav/commit/2f5c1c5d417edc4292ace9bf01e471618c0bf6f7) - @Drapersniper
 
@@ -188,9 +196,3 @@
 ## v0.11.13.0 (24/10/2022)
 - [[patch] Make all single tracks partial by default](https://github.com/Drapersniper/PyLav/commit/f62747a4ec0fd44ed89ec74ae9001ff83aed6525) - @Drapersniper
 - [Fix localtracks not being sorted by default](https://github.com/Drapersniper/PyLav/commit/6c1ee2e0a19aa5fb5ffec184c58f3191d9cba695) - @Drapersniper
-
----
-
-## v0.11.12.0 (24/10/2022)
-- [[patch] fix an instance of where `Player.play()` was being called instead of `Player.add()` causing all songs in the enqueue op to be fast skipped](https://github.com/Drapersniper/PyLav/commit/1f4a09db7777a660b8a3ee1bad69c8d539552f62) - @Drapersniper
-- [fix  RuntimeWarning: coroutine 'AsyncPath.is_file' was never awaited](https://github.com/Drapersniper/PyLav/commit/efd82c1366b8d5ff8fa19c09c1d099ea4f37ed33) - @Drapersniper
