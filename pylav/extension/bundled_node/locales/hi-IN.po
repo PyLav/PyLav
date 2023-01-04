@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2022-12-30 22:41\n"
+"PO-Revision-Date: 2023-01-04 14:15\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: pylav/extension/bundled_node/manager.py:227
 msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture"
-msgstr ""
+msgstr "आप एक असमर्थित मशीन आर्किटेक्चर पर प्रबंधित लैवलिंक नोड को चलाने का प्रयास कर रहे हैं"
 
 #: pylav/extension/bundled_node/manager.py:452
 msgid "The output of `{java_exc} -version` was unexpected\n"
