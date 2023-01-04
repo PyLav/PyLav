@@ -220,6 +220,7 @@ class Track:
     ) -> Track:
         instance = cls(node, query, skip_segments, requester, **extra)
         instance._encoded = data["encoded"]
+        instance._is_partial = not bool(data["encoded"])
         instance._raw_data = data.get("raw_data", {}) or extra.get("raw_data", {})
         if instance._encoded is None:
             raise InvalidTrackException("Cannot build a track from partial data! (Missing key: encoded)")
@@ -309,7 +310,7 @@ class Track:
 
     @property
     def is_partial(self) -> bool:
-        return self._is_partial or not self.encoded
+        return True if self._is_partial and not self.encoded else False
 
     async def identifier(self) -> str | None:
         return MISSING if self.is_partial else (await self.fetch_full_track_data()).info.identifier
