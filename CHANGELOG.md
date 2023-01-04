@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.0.14 (04/01/2023)
+- [Make Release](https://github.com/Drapersniper/PyLav/commit/c2c8562fa79698bf76c200d69ffd9daecbe7891e) - @Drapersniper
+
+---
+
 ## v1.0.13 (04/01/2023)
 - [v1.0.13 (#140)](https://github.com/Drapersniper/PyLav/commit/770238c7cf1de68c9218a3327364bbc52dbbc100) - @Drapersniper
 - [Update SETUP.md](https://github.com/Drapersniper/PyLav/commit/121cfdd1bc4aa8455a0018403c6dbafb61e7e93c) - @Drapersniper
@@ -190,9 +195,3 @@
 - [[patch] Allow partial tracks to query the cache](https://github.com/Drapersniper/PyLav/commit/bd939f19b104890c929e7a5d214c51f36903c06b) - @Drapersniper
 - [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/ba02457b9bc793c6615f12557454895797a9b41c) - @Drapersniper
 - [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/39eccb08e7baad74ae133f91c8af596931bd5c22) - @crowdin-bot
-
----
-
-## v0.11.13.0 (24/10/2022)
-- [[patch] Make all single tracks partial by default](https://github.com/Drapersniper/PyLav/commit/f62747a4ec0fd44ed89ec74ae9001ff83aed6525) - @Drapersniper
-- [Fix localtracks not being sorted by default](https://github.com/Drapersniper/PyLav/commit/6c1ee2e0a19aa5fb5ffec184c58f3191d9cba695) - @Drapersniper
