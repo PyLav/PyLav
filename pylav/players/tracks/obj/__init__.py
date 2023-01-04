@@ -310,7 +310,7 @@ class Track:
 
     @property
     def is_partial(self) -> bool:
-        return True if self._is_partial and not self.encoded else False
+        return bool(self._is_partial and not self.encoded)
 
     async def identifier(self) -> str | None:
         return MISSING if self.is_partial else (await self.fetch_full_track_data()).info.identifier
