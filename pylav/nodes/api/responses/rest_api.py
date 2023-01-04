@@ -27,7 +27,7 @@ class BaseTrackResponse:
     playlistInfo: None | Info | dict = None
     pluginInfo: None | PlaylistPluginInfo | dict = None
     exception: None | LoadException | dict = None
-    tracks: list[Track] | list = dataclasses.field(default_factory=list)
+    tracks: list[Track] = dataclasses.field(default_factory=list)
 
     def __post_init__(self):
         if isinstance(self.pluginInfo, dict):
@@ -40,11 +40,7 @@ class BaseTrackResponse:
             object.__setattr__(self, "playlistInfo", Info(**self.playlistInfo))
         temp = []
         for s in self.tracks:
-            if isinstance(s, list):
-                for ss in s:
-                    if isinstance(ss, Track) or (isinstance(ss, dict) and (ss := Track(**ss))):
-                        temp.append(ss)
-            elif isinstance(s, Track) or (isinstance(s, dict) and (s := Track(**s))):
+            if isinstance(s, Track) or (isinstance(s, dict) and (s := Track(**s))):
                 temp.append(s)
 
         object.__setattr__(self, "tracks", temp)

@@ -1534,7 +1534,7 @@ class Client(metaclass=SingletonClass):
                     output_tracks.extend(_response.tracks)
                 elif response.is_single:
                     _response = await node.get_track(response, first=True, bypass_cache=bypass_cache)
-                    output_tracks.append(_response.tracks)
+                    output_tracks.extend(_response.tracks)
                 else:
                     LOGGER.error("Unknown query type: %s", response)
         data = {
