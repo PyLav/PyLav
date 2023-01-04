@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2023-01-04 15:15\n"
+"PO-Revision-Date: 2023-01-04 16:14\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "MIME-Version: 1.0\n"
@@ -181,7 +181,7 @@ msgstr "प्लेलिस्ट आप वर्तमान में ख�
 
 #: pylav/extension/red/ui/buttons/playlist.py:412
 msgid "Pick a playlist"
-msgstr ""
+msgstr "एक प्लेलिस्ट चुनें"
 
 #: pylav/extension/red/ui/buttons/playlist.py:434
 msgid "What should the playlist name be?"
