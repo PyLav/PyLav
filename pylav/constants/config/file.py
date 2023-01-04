@@ -154,6 +154,11 @@ if (MANAGED_NODE_DEEZER_KEY := data.get("PYLAV__MANAGED_NODE_DEEZER_KEY")) is No
     )
     data_new["PYLAV__MANAGED_NODE_DEEZER_KEY"] = MANAGED_NODE_DEEZER_KEY
 
+if (PREFER_PARTIAL_TRACKS := data.get("PYLAV__PREFER_PARTIAL_TRACKS")) is None:
+    PREFER_PARTIAL_TRACKS = bool(int(os.getenv("PYLAV__PREFER_PARTIAL_TRACKS", "0")))
+    data_new["PYLAV__PREFER_PARTIAL_TRACKS"] = PREFER_PARTIAL_TRACKS
+
+
 data_new = remove_keys("PYLAV__CACHING_ENABLED", data=data_new)
 
 if DeepDiff(data, data_new, ignore_order=True, max_passes=2, cache_size=1000):

@@ -67,3 +67,4 @@ MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN = os.getenv("PYLAV__MANAGED_NODE_YANDEX_M
 MANAGED_NODE_DEEZER_KEY = os.getenv("PYLAV__MANAGED_NODE_DEEZER_KEY") or "".join(
     [base64.b64decode(r).decode() for r in ANIME.split(b"|")]
 )
+PREFER_PARTIAL_TRACKS = bool(int(os.getenv("PYLAV__PREFER_PARTIAL_TRACKS", "0")))

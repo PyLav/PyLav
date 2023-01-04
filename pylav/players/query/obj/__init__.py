@@ -17,7 +17,7 @@ import ujson
 import yaml
 
 from pylav.constants import MAX_RECURSION_DEPTH
-from pylav.constants.config import DEFAULT_SEARCH_SOURCE
+from pylav.constants.config import DEFAULT_SEARCH_SOURCE, PREFER_PARTIAL_TRACKS
 from pylav.constants.node_features import SUPPORTED_SEARCHES
 from pylav.constants.regex import (
     LOCAL_TRACK_NESTED,
@@ -50,7 +50,6 @@ from pylav.constants.regex import (
     SOURCE_INPUT_MATCH_YANDEX,
     SOURCE_INPUT_MATCH_YOUTUBE,
 )
-from pylav.constants.specials import PREFER_PARTIAL
 from pylav.extension.m3u import load as m3u_loads
 from pylav.players.query.local_files import LocalFile
 from pylav.utils.validators import is_url
@@ -99,7 +98,7 @@ class Query:
         self._type = query_type or "single"
         self._recursive = recursive
         self._special_local = special_local
-        self._partial = partial if PREFER_PARTIAL else False
+        self._partial = partial if PREFER_PARTIAL_TRACKS else False
 
         self._local_file_cls = LocalFile
         self.update_local_file_cls(LocalFile)

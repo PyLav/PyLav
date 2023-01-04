@@ -69,6 +69,9 @@ if not ENV_FILE.exists():
         TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS as TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS,
     )
     from pylav.constants.config.env_var import USE_BUNDLED_EXTERNAL_PYLAV_NODE as USE_BUNDLED_EXTERNAL_PYLAV_NODE
+
+    from pylav.constants.config.env_var import PREFER_PARTIAL_TRACKS as PREFER_PARTIAL_TRACKS
+
 else:
     LOGGER.info("%s exist - Environment variables will be read from it", ENV_FILE)
     from pylav.constants.config.file import DEFAULT_SEARCH_SOURCE as DEFAULT_SEARCH_SOURCE
@@ -108,5 +111,7 @@ else:
         TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS as TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS,
     )
     from pylav.constants.config.file import USE_BUNDLED_EXTERNAL_PYLAV_NODE as USE_BUNDLED_EXTERNAL_PYLAV_NODE
+
+    from pylav.constants.config.file import PREFER_PARTIAL_TRACKS as PREFER_PARTIAL_TRACKS
 
 BROTLI_ENABLED = False
