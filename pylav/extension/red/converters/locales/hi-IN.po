@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2023-01-04 14:15\n"
+"PO-Revision-Date: 2023-01-04 15:15\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "MIME-Version: 1.0\n"
@@ -19,41 +19,41 @@ msgstr ""
 
 #: pylav/extension/red/converters/equalizer.py:47
 msgid "Bass boost with name `{arg}` not found"
-msgstr ""
+msgstr "नाम के साथ बास बूस्ट नहीं मिला"
 
 #: pylav/extension/red/converters/equalizer.py:61
 msgid "Maximum"
-msgstr ""
+msgstr "अधिकतम"
 
 #: pylav/extension/red/converters/equalizer.py:62
 msgid "Insane"
-msgstr ""
+msgstr "विक्षिप्त"
 
 #: pylav/extension/red/converters/equalizer.py:63
 msgid "Extreme"
-msgstr ""
+msgstr "चरम"
 
 #: pylav/extension/red/converters/equalizer.py:64
 msgid "Very High"
-msgstr ""
+msgstr "बहुत ऊँचा"
 
 #: pylav/extension/red/converters/equalizer.py:65
 msgid "High"
-msgstr ""
+msgstr "उच्च"
 
 #: pylav/extension/red/converters/equalizer.py:66
 msgid "Medium"
-msgstr ""
+msgstr "मध्यम"
 
 #: pylav/extension/red/converters/equalizer.py:67
 msgid "Fine Tuned"
-msgstr ""
+msgstr " महीन"
 
 #: pylav/extension/red/converters/equalizer.py:68
 msgid "Cut-off"
-msgstr ""
+msgstr "कट जाना"
 
 #: pylav/extension/red/converters/equalizer.py:69
 msgid "Off"
-msgstr ""
+msgstr "बंद"
 

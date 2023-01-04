@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-01 22:01+0000\n"
-"PO-Revision-Date: 2023-01-04 14:15\n"
+"PO-Revision-Date: 2023-01-04 15:15\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "MIME-Version: 1.0\n"
@@ -19,38 +19,38 @@ msgstr ""
 
 #: pylav/core/client.py:878 pylav/core/client.py:913
 msgid "No available nodes!"
-msgstr ""
+msgstr "कोई उपलब्ध नोड नहीं!"
 
 #: pylav/core/client.py:882 pylav/core/client.py:917
 msgid "No node with {feature} functionality available!"
-msgstr ""
+msgstr "कार्यात्मकता वाला कोई नोड उपलब्ध नहीं है!"
 
 #: pylav/core/client.py:1216
 msgid "No node with {query.requires_capability} functionality available!"
-msgstr ""
+msgstr "कार्यक्षमता वाला कोई नोड उपलब्ध नहीं है!"
 
 #: pylav/core/client.py:1589
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
-msgstr ""
+msgstr "मिक्स प्लेलिस्ट बनाने के लिए एक वीडियो, यूजर, चैनल या प्लेलिस्ट आईडी जरूरी है"
 
 #: pylav/core/client.py:1594
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
-msgstr ""
+msgstr "मिक्स प्लेलिस्ट बनाने के लिए एक वीडियो, यूजर, चैनल या प्लेलिस्ट आईडी जरूरी है। हालाँकि, आपने एकाधिक प्रदान किए"
 
 #: pylav/core/context.py:258
 msgid "{} remaining. Type `more` to continue."
-msgstr ""
+msgstr "{} शेष। जारी रखने के लिए `और` टाइप करें।"
 
 #: pylav/core/context.py:259
 msgid "There is still 1 message"
-msgstr ""
+msgstr "अभी भी 1 संदेश है"
 
 #: pylav/core/context.py:261
 msgid "There are still {remaining} messages"
-msgstr ""
+msgstr "अभी भी {शेष} संदेश हैं"
 
 #: pylav/core/context.py:288
 #, docstring
 msgid "Does nothing"
-msgstr ""
+msgstr "करते कुछ नहीं हैं"
 

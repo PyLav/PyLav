@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2023-01-04 14:15\n"
+"PO-Revision-Date: 2023-01-04 15:15\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "MIME-Version: 1.0\n"
@@ -24,13 +24,13 @@ msgstr "आप एक असमर्थित मशीन आर्किट�
 #: pylav/extension/bundled_node/manager.py:452
 msgid "The output of `{java_exc} -version` was unexpected\n"
 "{version_info}"
-msgstr ""
+msgstr "का आउटपुट अनपेक्षित था"
 
 #: pylav/extension/bundled_node/manager.py:472
 msgid "Port {port} already in use. Managed Lavalink startup aborted"
-msgstr ""
+msgstr "पोर्ट पहले से उपयोग में है। प्रबंधित लैवलिंक स्टार्टअप निरस्त किया गया"
 
 #: pylav/extension/bundled_node/manager.py:477
 msgid "Lavalink failed to start: {line}"
-msgstr ""
+msgstr "लैवलिंक प्रारंभ करने में विफल:"
 
