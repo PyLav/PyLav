@@ -527,27 +527,16 @@ class WebSocket:
                 data.guildId,
             )
             return
-
+        track = await self._get_track(data, player)
         match data.type:
             case "TrackEndEvent":
                 data = typing.cast(TrackEnd, data)
-
-                requester = None
-                track = None
                 if player.current and player.current.encoded == data.encodedTrack:
                     player.current.timestamp = 0
-                    requester = player.current.requester
-                    track = player.current
 
                 event = TrackEndEvent(
                     player,
-                    track
-                    or await Track.build_track(
-                        data=data.encodedTrack,
-                        requester=requester.id if requester else self._client.bot.user.id,
-                        query=await Query.from_base64(data.encodedTrack),
-                        node=self.node,
-                    ),
+                    track,
                     self.node,
                     event_object=data,
                 )
@@ -555,18 +544,17 @@ class WebSocket:
             case "TrackExceptionEvent":
                 if self.node.identifier == player.node.identifier:
                     data = typing.cast(TrackException, data)
-                    event = TrackExceptionEvent(player, player.current, node=self.node, event_object=data)
+                    event = TrackExceptionEvent(player, track, node=self.node, event_object=data)
                     await player._handle_event(event)
                     self.client.dispatch_event(event)
                 return
             case "TrackStartEvent":
                 data = typing.cast(TrackStart, data)
-                track = player.current
                 event = TrackStartEvent(player, track, self.node, event_object=data)
                 await self._process_track_event(player, track, self.node, data)
             case "TrackStuckEvent":
                 data = typing.cast(TrackStuck, data)
-                event = TrackStuckEvent(player, player.current, self.node, event_object=data)
+                event = TrackStuckEvent(player, track, self.node, event_object=data)
                 await player._handle_event(event)
             case "WebSocketClosedEvent":
                 data = typing.cast(Closed, data)
@@ -584,6 +572,20 @@ class WebSocket:
                 return
 
         self.client.dispatch_event(event)
+
+    async def _get_track(self, data, player) -> Track | None:
+        if not hasattr(data, "encodedTrack"):
+            return
+        requester = None
+        if player.current and player.current.encoded == data.encodedTrack:
+            player.current.timestamp = 0
+            requester = player.current.requester
+        return await Track.build_track(
+            data=data.encodedTrack,
+            requester=requester.id if requester else self._client.bot.user.id,
+            query=await Query.from_base64(data.encodedTrack),
+            node=self.node,
+        )
 
     async def send(self, **data: Any):
         """

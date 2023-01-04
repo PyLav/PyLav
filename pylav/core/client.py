@@ -46,6 +46,7 @@ from pylav.constants.config import (
     MANAGED_NODE_SPOTIFY_CLIENT_SECRET,
     MANAGED_NODE_SPOTIFY_COUNTRY_CODE,
     MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN,
+    PREFER_PARTIAL_TRACKS,
     REDIS_FULL_ADDRESS_RESPONSE_CACHE,
     TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS,
     TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS,
@@ -1225,7 +1226,7 @@ class Client(metaclass=SingletonClass):
         player: Player | None = None,
         bypass_cache: bool = False,
         enqueue: bool = True,
-        partial: bool = True,
+        partial: bool = PREFER_PARTIAL_TRACKS,
     ) -> tuple[list[Track], int, list[Query]]:  # sourcery no-metrics
         """High level interface to get and return all tracks for a list of queries.
 
@@ -1263,7 +1264,15 @@ class Client(metaclass=SingletonClass):
         track_count = 0
         for query in queries:
             track_count = await self._get_tracks_single_query(
-                bypass_cache, enqueue, player, queries_failed, query, requester, successful_tracks, track_count, partial
+                bypass_cache,
+                enqueue,
+                player,
+                queries_failed,
+                query,
+                requester,
+                successful_tracks,
+                track_count,
+                query.is_partial if partial is None else partial,
             )
         return successful_tracks, track_count, queries_failed
 
@@ -1490,7 +1499,7 @@ class Client(metaclass=SingletonClass):
         region: str | None = None,
         player: Player | None = None,
     ) -> LoadTrackResponses:
-        """This method can be rather slow as it recursibly queries all queries and their associated entries.
+        """This method can be rather slow as it recursively queries all queries and their associated entries.
 
         Thus, if you are processing user input  you may be interested in using
         the :meth:`get_all_tracks_for_queries` where it can enqueue tracks as needed to the player.
@@ -1512,38 +1521,38 @@ class Client(metaclass=SingletonClass):
         """
         output_tracks = []
         playlist_name = ""
+        plugin_info = {}
+
         if region is None and player is not None:
             region = player.region
-
         if region is None:
             region = "us_east"
-        node = await self.node_manager.find_best_node()
-        plugin_info = {}
         for query in queries:
-            async for response in self._yield_recursive_queries(query):
-                node = await self.node_manager.find_best_node(region=region, feature=response.requires_capability)
-                if node is None:
+            async for subquery in self._yield_recursive_queries(query):
+                response = await self.search_query(
+                    subquery, bypass_cache=bypass_cache, fullsearch=fullsearch, region=region
+                )
+                if response is None or not response.tracks:
                     continue
-                if response.is_playlist or response.is_album:
-                    _response = await node.get_track(response, bypass_cache=bypass_cache)
-                    playlist_name = _response.playlistInfo.name if _response.playlistInfo else ""
-                    output_tracks.extend(_response.tracks)
-                    plugin_info |= _response.pluginInfo.to_dict()
-                elif fullsearch and response.is_search:
-                    _response = await node.get_track(response, bypass_cache=bypass_cache)
-                    output_tracks.extend(_response.tracks)
-                elif response.is_single:
-                    _response = await node.get_track(response, first=True, bypass_cache=bypass_cache)
-                    output_tracks.append(_response.tracks)
+                if subquery.is_playlist or subquery.is_album:
+                    playlist_name = response.playlistInfo.name if response.playlistInfo else ""
+                    output_tracks.extend(response.tracks)
+                    plugin_info |= response.pluginInfo.to_dict()
+                elif fullsearch and subquery.is_search or subquery.is_single:
+                    output_tracks.extend(response.tracks)
                 else:
-                    LOGGER.error("Unknown query type: %s", response)
+                    LOGGER.error("Unknown query type: %s", subquery)
         data = {
             "playlistInfo": {
                 "name": playlist_name if len(queries) == 1 else "",
                 "selectedTrack": -1,
             },
             "pluginInfo": plugin_info,
-            "loadType": "PLAYLIST_LOADED" if playlist_name else "SEARCH_RESULT" if output_tracks else "LOAD_FAILED",
+            "loadType": "PLAYLIST_LOADED"
+            if playlist_name and len(queries) == 1
+            else "SEARCH_RESULT"
+            if output_tracks
+            else "LOAD_FAILED",
             "tracks": output_tracks,
         }
         if data["loadType"] == "LOAD_FAILED":
@@ -1553,6 +1562,37 @@ class Client(metaclass=SingletonClass):
             await asyncio.sleep(0.1)
             node = await self.node_manager.find_best_node()
         return node.parse_loadtrack_response(data)
+
+    async def search_query(
+        self, query: Query, bypass_cache: bool = False, fullsearch: bool = False, region: str | None = None
+    ) -> LoadTrackResponses | None:
+        """
+        Search for the specified query returns a LoadTrackResponse object
+
+
+        Parameters
+        ----------
+        query : `Query`
+            The list of queries to search for.
+        bypass_cache : `bool`, optional
+            Whether to bypass the cache and force a new search.
+            Local files will always be bypassed.
+        fullsearch : `bool`, optional
+            if a Search query is passed wether to returrn a list of tracks instead of the first.
+        region : `str`, optional
+            The region to search in.
+        player : `Player`, optional
+            The player to use for enqueuing tracks.
+        """
+        node = await self.node_manager.find_best_node(region=region, feature=query.requires_capability)
+        if node is None:
+            return
+        if query.is_playlist or query.is_album or (fullsearch and query.is_search):
+            return await node.get_track(query, bypass_cache=bypass_cache)
+        elif query.is_single:
+            return await node.get_track(query, first=True, bypass_cache=bypass_cache)
+        else:
+            LOGGER.error("Unknown query type: %s", query)
 
     async def remove_node(self, node_id: int):
         """Removes a node from the node manager"""

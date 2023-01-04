@@ -66,6 +66,7 @@ from pylav.helpers.time import get_now_utc
 from pylav.logging import getLogger
 from pylav.nodes.api.responses.player import State
 from pylav.nodes.api.responses.rest_api import LavalinkException, LavalinkPlayer
+from pylav.nodes.api.responses.track import Track as APITrack
 from pylav.nodes.api.responses.websocket import TrackException
 from pylav.nodes.node import Node
 from pylav.players.filters import (
@@ -1087,7 +1088,7 @@ class Player(VoiceProtocol):
     async def _query_to_track(
         self,
         requester: int,
-        track: Track | dict | str | None,
+        track: Track | APITrack | dict | str | None,
         query: Query = None,
     ) -> Track:
         if not isinstance(track, Track):
@@ -1100,7 +1101,7 @@ class Player(VoiceProtocol):
     async def add(
         self,
         requester: int,
-        track: Track | dict | str | None,
+        track: Track | APITrack | dict | str | None,
         index: int = None,
         query: Query = None,
     ) -> None:
@@ -1135,7 +1136,7 @@ class Player(VoiceProtocol):
     @synchronized_method_call(PLAYER_LOCK)
     async def bulk_add(
         self,
-        tracks_and_queries: list[Track | dict | str | list[tuple[Track | dict | str, Query]]],
+        tracks_and_queries: list[Track | APITrack | dict | str | list[tuple[Track | APITrack | dict | str, Query]]],
         requester: int,
         index: int = None,
     ) -> None:
@@ -1192,7 +1193,7 @@ class Player(VoiceProtocol):
     async def quick_play(
         self,
         requester: discord.Member,
-        track: Track | dict | str | None,
+        track: Track | APITrack | dict | str | None,
         query: Query,
         no_replace: bool = False,
         skip_segments: list[str] | str = None,
@@ -1232,7 +1233,7 @@ class Player(VoiceProtocol):
     @synchronized_method_call(PLAYER_LOCK)
     async def play(
         self,
-        track: Track | dict | str | None,
+        track: Track | APITrack | dict | str | None,
         query: Query | None,
         requester: discord.Member,
         start_time: int = 0,
@@ -1241,7 +1242,7 @@ class Player(VoiceProtocol):
         skip_segments: list[str] | str = None,
         bypass_cache: bool = False,
         node: Node = None,
-    ) -> None:
+    ) -> None:  # sourcery skip: low-code-quality
         """Plays the given track.
 
         Parameters
@@ -1275,7 +1276,7 @@ class Player(VoiceProtocol):
         """
         # sourcery no-metrics
         auto_play, payload, skip_segments = await self._on_play_reset(skip_segments)
-        if track is not None and isinstance(track, (Track, dict, str, type(None))):
+        if track is not None and isinstance(track, (Track, APITrack, dict, str, type(None))):
             track = await Track.build_track(
                 node=self.node, data=track, query=query, skip_segments=skip_segments, requester=requester.id
             )

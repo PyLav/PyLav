@@ -42,6 +42,7 @@ class BaseTrackResponse:
         for s in self.tracks:
             if isinstance(s, Track) or (isinstance(s, dict) and (s := Track(**s))):
                 temp.append(s)
+
         object.__setattr__(self, "tracks", temp)
 
 

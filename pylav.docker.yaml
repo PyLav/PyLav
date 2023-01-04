@@ -32,3 +32,5 @@ PYLAV__TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS: 7         # How many days to w
 
 # Please note that if this is enable, multiple bots should not share the same database, as reads/writes will not be synced.
 PYLAV__READ_CACHING_ENABLED: false # Whether to cache the postgres queries - Values are `true` or `false` - case sensitive
+
+PREFER_PARTIAL_TRACKS: false # PyLav will search for tracks only when it is necessary for it to be played rather than as soon as possible.
