@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.0.15 (05/01/2023)
+- [correct reset track position for historic tracks and enhanced query meta persistence](https://github.com/Drapersniper/PyLav/commit/c4c8f6ecc3e8a93e817569f6d95a8ed452ec3adf) - @Drapersniper
+- [don't discard query metadata on rebuild (i.e Properly allow users to use link timestamp for youtube, spotify and soundcloud)](https://github.com/Drapersniper/PyLav/commit/fc28eac4825117ddae715b12ef1896830b560205) - @Drapersniper
+- [Reference source regex](https://github.com/Drapersniper/PyLav/commit/f8337cd1d09842dabc6da28f3da90d95358e2a32) - @Drapersniper
+- [Handle TrackNotFoundException closes #143](https://github.com/Drapersniper/PyLav/commit/f98470bc77b66ce4c8283f19c83bfdc4843d6e47) - @Drapersniper
+
+---
+
 ## v1.0.14 (04/01/2023)
 - [Make Release](https://github.com/Drapersniper/PyLav/commit/c2c8562fa79698bf76c200d69ffd9daecbe7891e) - @Drapersniper
 
@@ -188,10 +196,3 @@
 
 ## v0.11.14.0 (24/10/2022)
 
-
----
-
-## v0.11.13.1 (24/10/2022)
-- [[patch] Allow partial tracks to query the cache](https://github.com/Drapersniper/PyLav/commit/bd939f19b104890c929e7a5d214c51f36903c06b) - @Drapersniper
-- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/ba02457b9bc793c6615f12557454895797a9b41c) - @Drapersniper
-- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/39eccb08e7baad74ae133f91c8af596931bd5c22) - @crowdin-bot
