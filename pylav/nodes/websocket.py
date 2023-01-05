@@ -531,9 +531,6 @@ class WebSocket:
         match data.type:
             case "TrackEndEvent":
                 data = typing.cast(TrackEnd, data)
-                if player.current and player.current.encoded == data.encodedTrack:
-                    player.current.timestamp = 0
-
                 event = TrackEndEvent(
                     player,
                     track,
@@ -578,7 +575,6 @@ class WebSocket:
             return
         requester = None
         if player.current and player.current.encoded == data.encodedTrack:
-            player.current.timestamp = 0
             requester = player.current.requester
         return await Track.build_track(
             data=data.encodedTrack,

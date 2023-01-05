@@ -1284,7 +1284,6 @@ class Player(VoiceProtocol):
         if self.current:
             await self._process_repeat_on_play()
         if self.current:
-            self.current.timestamp = 0
             await self.history.put([self.current], discard=True)
             self.last_track = self.current
         self.current = None

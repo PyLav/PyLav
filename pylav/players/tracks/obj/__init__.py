@@ -488,7 +488,17 @@ class Track:
         }
 
     async def search(self, bypass_cache: bool = False) -> Self:
-        self._query = await Query.from_string(self._query)
+        _query = await Query.from_string(self._query)
+        _query.merge(
+            query=self._query,
+            start_time=True,
+            index=True,
+            source=True,
+            recursive=True,
+            search=True,
+        )
+        self._query = _query
+        self.timestamp = self.timestamp or self._query.start_time
         response = await self.client._get_tracks(await self.query(), first=True, bypass_cache=bypass_cache)
         if not response or not response.tracks:
             raise TrackNotFoundException(f"No tracks found for query {await self.query_identifier()}")
@@ -500,7 +510,16 @@ class Track:
         self._is_partial = False
 
     async def search_all(self, player: Player, requester: int, bypass_cache: bool = False) -> list[Track]:
-        self._query = await Query.from_string(self._query)
+        _query = await Query.from_string(self._query)
+        _query.merge(
+            query=self._query,
+            start_time=True,
+            index=True,
+            source=True,
+            recursive=True,
+            search=True,
+        )
+        self._query = _query
         response = await player.node.get_track(
             await self.query(), bypass_cache=bypass_cache, first=self._query.is_search
         )

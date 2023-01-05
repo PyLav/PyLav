@@ -350,6 +350,7 @@ class TrackHistoryQueue(PlayerQueue[ANY_GENERIC_TYPE], ABC):
                 self.raw_b64s.pop()
         if index is not None:
             for i in items:
+                i.timestamp = 0
                 if index < 0:
                     self._queue.append(i)
                     self.raw_b64s.append(i.encoded)
@@ -360,6 +361,7 @@ class TrackHistoryQueue(PlayerQueue[ANY_GENERIC_TYPE], ABC):
         else:
             self._queue.extendleft(items)
             for i, t in enumerate(items):
+                t.timestamp = 0
                 self.raw_b64s.insert(i, t.encoded)
 
     def _get(self, index: int = None) -> ANY_GENERIC_TYPE:
