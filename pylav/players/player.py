@@ -1342,6 +1342,7 @@ class Player(VoiceProtocol):
 
     @staticmethod
     async def _process_payload_position(payload, start_time, track: Track):
+        start_time = start_time or track.timestamp
         if not isinstance(start_time, int) or not 0 <= start_time <= await track.duration():
             raise ValueError(
                 "start_time must be an int with a value equal to, "

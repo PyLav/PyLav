@@ -350,7 +350,17 @@ class Track:
     async def query(self) -> Query:
         if self.encoded and self._updated_query is None:
             assert self.encoded is not None
-            self._updated_query = self._query = await Query.from_base64(self.encoded)
+            self._updated_query = await Query.from_base64(self.encoded)
+            self._updated_query.merge(
+                query=self._query,
+                start_time=True,
+                index=True,
+                source=True,
+                recursive=True,
+                search=True,
+            )
+            self._query = self._updated_query
+            self.timestamp = self.timestamp or self._query.start_time
         return self._query
 
     async def is_clypit(self) -> bool:
