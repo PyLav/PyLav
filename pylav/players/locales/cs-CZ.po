@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-04 19:01+0000\n"
-"PO-Revision-Date: 2023-01-04 19:12\n"
+"POT-Creation-Date: 2023-01-05 22:01+0000\n"
+"PO-Revision-Date: 2023-01-05 22:15\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -25,135 +25,135 @@ msgstr "Žádné dostupné uzly!"
 msgid "Music in {count} servers"
 msgstr "Hudba na {count} serverech"
 
-#: pylav/players/player.py:1168
+#: pylav/players/player.py:1169
 msgid "There are no tracks currently in the player history"
 msgstr "Momentálně nejsou žádné skladby v historii hráčů"
 
-#: pylav/players/player.py:1877
+#: pylav/players/player.py:1880
 msgid "Current node has the Volume filter functionality disabled"
 msgstr "Aktuální uzel má funkci filtrování hlasitosti zakázán"
 
-#: pylav/players/player.py:1899 pylav/players/player.py:2075
-#: pylav/players/player.py:2130
+#: pylav/players/player.py:1902 pylav/players/player.py:2078
+#: pylav/players/player.py:2133
 msgid "Current node has the Equalizer functionality disabled"
 msgstr "Aktuální uzel má funkci ekvalizéru vypnutý"
 
-#: pylav/players/player.py:1919
+#: pylav/players/player.py:1922
 msgid "Current node has the Karaoke functionality disabled"
 msgstr "Aktuální uzel má funkci Karaoke zakázán"
 
-#: pylav/players/player.py:1939 pylav/players/player.py:2077
-#: pylav/players/player.py:2132
+#: pylav/players/player.py:1942 pylav/players/player.py:2080
+#: pylav/players/player.py:2135
 msgid "Current node has the Timescale functionality disabled"
 msgstr "Aktuální uzel má funkci Timescale vypnutý"
 
-#: pylav/players/player.py:1959
+#: pylav/players/player.py:1962
 msgid "Current node has the Tremolo functionality disabled"
 msgstr "Aktuální uzel má vypnutou funkci Tremolo"
 
-#: pylav/players/player.py:1979
+#: pylav/players/player.py:1982
 msgid "Current node has the Vibrato functionality disabled"
 msgstr "Aktuální uzel má vypnutou funkci Vibrato"
 
-#: pylav/players/player.py:1999
+#: pylav/players/player.py:2002
 msgid "Current node has the Rotation functionality disabled"
 msgstr "Aktuální uzel má vypnutou funkci rotace"
 
-#: pylav/players/player.py:2019
+#: pylav/players/player.py:2022
 msgid "Current node has the Distortion functionality disabled"
 msgstr "Aktuální uzel má vypnutou funkci Nokace"
 
-#: pylav/players/player.py:2039
+#: pylav/players/player.py:2042
 msgid "Current node has the LowPass functionality disabled"
 msgstr "Aktuální uzel má funkci LowPass vypnutý"
 
-#: pylav/players/player.py:2059
+#: pylav/players/player.py:2062
 msgid "Current node has the Echo functionality disabled"
 msgstr "Aktuální uzel má funkci Echo zakázáno"
 
-#: pylav/players/player.py:2189
+#: pylav/players/player.py:2192
 msgid "Current node has the ChannelMix functionality disabled"
 msgstr "Aktuální uzel má zakázanou funkci ChannelMix"
 
-#: pylav/players/player.py:2462 pylav/players/player.py:2507
-#: pylav/players/player.py:2522
+#: pylav/players/player.py:2465 pylav/players/player.py:2510
+#: pylav/players/player.py:2525
 msgid "LIVE"
 msgstr "ŽIVÁ"
 
-#: pylav/players/player.py:2475
+#: pylav/players/player.py:2478
 msgid "Now Playing in"
 msgstr "Nyní hraje v"
 
-#: pylav/players/player.py:2493 pylav/players/player.py:2602
+#: pylav/players/player.py:2496 pylav/players/player.py:2605
 msgid "Currently livestreaming"
 msgstr "Momentálně dobytek"
 
-#: pylav/players/player.py:2495
+#: pylav/players/player.py:2498
 msgid "Playing: "
 msgstr "Přehrávání: "
 
-#: pylav/players/player.py:2498 pylav/players/player.py:2514
-#: pylav/players/player.py:2529 pylav/players/player.py:2608
+#: pylav/players/player.py:2501 pylav/players/player.py:2517
+#: pylav/players/player.py:2532 pylav/players/player.py:2611
 msgid "Requester"
 msgstr "Objednávka"
 
-#: pylav/players/player.py:2510 pylav/players/player.py:2525
+#: pylav/players/player.py:2513 pylav/players/player.py:2528
 msgid "Duration"
 msgstr "Doba trvání"
 
-#: pylav/players/player.py:2516
+#: pylav/players/player.py:2519
 msgid "Previous Track"
 msgstr "Předchozí stopa"
 
-#: pylav/players/player.py:2531
+#: pylav/players/player.py:2534
 msgid "Next Track"
 msgstr "Další skladba"
 
-#: pylav/players/player.py:2536
+#: pylav/players/player.py:2539
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
 msgstr "{track_count} stop, {queue_total_duration} zbývá\n"
 
-#: pylav/players/player.py:2540 pylav/players/player.py:2636
+#: pylav/players/player.py:2543 pylav/players/player.py:2639
 msgid "{translation}: {repeat_emoji}"
 msgstr "{translation}: {repeat_emoji}"
 
-#: pylav/players/player.py:2540 pylav/players/player.py:2636
+#: pylav/players/player.py:2543 pylav/players/player.py:2639
 msgid "Repeating"
 msgstr "Opakování"
 
-#: pylav/players/player.py:2541 pylav/players/player.py:2637
+#: pylav/players/player.py:2544 pylav/players/player.py:2640
 msgid "{space}{translation}: {autoplay_emoji}"
 msgstr "{space}{translation}: {autoplay_emoji}"
 
-#: pylav/players/player.py:2542 pylav/players/player.py:2638
+#: pylav/players/player.py:2545 pylav/players/player.py:2641
 msgid "Auto Play"
 msgstr "Automatické přehrávání"
 
-#: pylav/players/player.py:2544 pylav/players/player.py:2640
+#: pylav/players/player.py:2547 pylav/players/player.py:2643
 msgid "{space}{translation}: {volume}%"
 msgstr "{space}{translation}: {volume}%"
 
-#: pylav/players/player.py:2545 pylav/players/player.py:2641
+#: pylav/players/player.py:2548 pylav/players/player.py:2644
 msgid "Volume"
 msgstr "Objem"
 
-#: pylav/players/player.py:2585
+#: pylav/players/player.py:2588
 msgid "Recently Played for"
 msgstr "Nedávno hrané pro"
 
-#: pylav/players/player.py:2585
+#: pylav/players/player.py:2588
 msgid "Queue for"
 msgstr "Fronta pro"
 
-#: pylav/players/player.py:2605
+#: pylav/players/player.py:2608
 msgid "Playing"
 msgstr "Přehrává se"
 
-#: pylav/players/player.py:2621
+#: pylav/players/player.py:2624
 msgid "Queue order is may not be accurate due to auto-shuffle being enabled"
 msgstr "Pořadí fronty nemusí být přesné, protože je povoleno automatické zamíchání"
 
-#: pylav/players/player.py:2627
+#: pylav/players/player.py:2630
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
 msgstr "Strana {current_page}/{total_pages} | {track_number} skladeb, {queue_total_duration} zbývá\n"
 
