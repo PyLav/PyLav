@@ -794,7 +794,8 @@ class Player(VoiceProtocol):
                 tracks = [track]
             else:
                 tracks = await track.search_all(self, requester.id if requester else self.client.user.id)
-            await self.queue.put(tracks, index=0)
+            if tracks:
+                await self.queue.put(tracks, index=0)
             self._logger.trace(
                 "Queue Resolver task - Resolved partial track %s - Added %s tracks to queue",
                 track.identifier,
@@ -1353,6 +1354,8 @@ class Player(VoiceProtocol):
     ) -> bool | list[Track]:
         try:
             tracks = await track.search_all(self, requester.id if requester else self.client.user.id)
+            if not tracks:
+                raise TrackNotFoundException(f"No tracks found for query {await track.query_identifier()}")
         except TrackNotFoundException as exc:
             if not track:
                 raise TrackNotFoundException from exc
@@ -1387,7 +1390,7 @@ class Player(VoiceProtocol):
             tracks = await track.search_all(
                 self, requester.id if requester else self.client.user.id, bypass_cache=bypass_cache
             )
-        if add_to_queue:
+        if add_to_queue and tracks:
             await self.queue.put(tracks)
             await self.maybe_shuffle_queue(requester=requester.id if requester else self.client.user.id)
         return track, tracks
