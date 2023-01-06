@@ -40,9 +40,12 @@ services:
         environment:
             _JAVA_OPTIONS: -Xmx4G # The highest amount of RAM which Lavalink is allowed to use
 
+            # Configure bind address and port
             SERVER_ADDRESS: 0.0.0.0 # The interface to bind to
             SERVER_PORT: 2155 # The port to bind to
 
+
+            # Plugins to load
             LAVALINK_PLUGINS_0_DEPENDENCY: com.github.TopiSenpai.LavaSrc:lavasrc-plugin:7bd20fd
             LAVALINK_PLUGINS_0_REPOSITORY: https://jitpack.io
             LAVALINK_PLUGINS_1_DEPENDENCY: com.github.topisenpai:sponsorblock-plugin:71b12d1
@@ -55,6 +58,7 @@ services:
             LAVALINK_PLUGINS_4_REPOSITORY: https://jitpack.io
 
 
+            # Configure built-in sources
             LAVALINK_SERVER_SOURCES_BANDCAMP: true # Enable Bandcamp source
             LAVALINK_SERVER_SOURCES_HTTP: true # Enable Bandcamp source
             LAVALINK_SERVER_SOURCES_LOCAL: true # Enable Localtracks source
@@ -63,6 +67,7 @@ services:
             LAVALINK_SERVER_SOURCES_VIMEO: true # Enable Vimeo source
             LAVALINK_SERVER_SOURCES_YOUTUBE: true # Enable YouTube source
 
+            # Configure filters
             LAVALINK_SERVER_FILTERS_CHANNELMIX: true  # Enable the Channel Mix filter
             LAVALINK_SERVER_FILTERS_DISTORTION: true  # Enable the Distortion filter
             LAVALINK_SERVER_FILTERS_EQUALIZER: true  # Enable the Equalizer filter
@@ -75,6 +80,7 @@ services:
             LAVALINK_SERVER_FILTERS_VOLUME: true  # Enable the Volume filter
             LAVALINK_SERVER_FILTERS_ECHO: true  # Enable the Echo filter
 
+            # Server configuration
             LAVALINK_SERVER_BUFFERDURATIONMS: 400  # The duration of the NAS buffer. Higher values fare better against longer GC pauses. Duration <= 0 to disable JDA-NAS. Minimum of 40ms, lower values may introduce pauses.
             LAVALINK_SERVER_FRAMEBUFFERDURATIONMS: 1000 # How many milliseconds of audio to keep buffered
             LAVALINK_SERVER_GCWARNINGS: true
@@ -92,7 +98,6 @@ services:
             # LAVALINK_SERVER_RATELIMIT_IPBLOCKS_0:         # ip block
             # LAVALINK_SERVER_RATELIMIT_EXCLUDEDIPS_0:      # ip which should be explicit excluded from usage by lavalink
 
-
             # LAVALINK_SERVER_RATELIMIT_STRATEGY: RotatingNanoSwitch  # RotateOnBan | LoadBalance | NanoSwitch | RotatingNanoSwitch
             # LAVALINK_SERVER_RATELIMIT_SEARCHTRIGGERSFAIL: true      # Whether a search 429 should trigger marking the ip as failing
             # LAVALINK_SERVER_RATELIMIT_RETRYLIMIT: -1                # -1 = use default lavaplayer value | 0 = infinity | >0 = retry will happen this numbers times
@@ -108,10 +113,12 @@ services:
             # LAVALINK_SERVER_HTTPCONFIG_PROXYPASSWORD: # Password for basic authentication
 
 
+            # Configure Prometheus
             METRICS_PROMETHEUS_ENABLED: false
             METRICS_PROMETHEUS_ENDPOINT: /metrics
 
 
+            # Configure DuncteBot Plugin
             PLUGINS_DUNCTEBOT_SOURCES_CLYPIT: true
             PLUGINS_DUNCTEBOT_SOURCES_GETYARN: true
             PLUGINS_DUNCTEBOT_SOURCES_MIXCLOUD: true
@@ -123,6 +130,8 @@ services:
             PLUGINS_DUNCTEBOT_SOURCES_TTS: true
             PLUGINS_DUNCTEBOT_TTSLANGUAGE: en-US
 
+
+            # Configure LavaSrc Plugin
             # The Track search order (Deezer ISRC, YouTube Music ISRC, YouTube ISRC, YouTube Music Query, YouTube Query, Deezer Query, SoundCloud Query)
             #  For finding Apple Music and Spotify tracks
             PLUGINS_LAVASRC_PROVIDERS_0: dzisrc:%ISRC%
@@ -133,27 +142,33 @@ services:
             PLUGINS_LAVASRC_PROVIDERS_5: dzsearch:%QUERY%
             PLUGINS_LAVASRC_PROVIDERS_6: scsearch:%QUERY%
 
+            # Lavasrc deezer  configuration
             PLUGINS_LAVASRC_SOURCES_DEEZER: true  # Enable Deezer source
-            # PLUGINS_LAVASRC_DEEZER_MASTERDECRYPTIONKEY:  # Leave this as it is, or fill it with the deezer key if you have it
+            # # PLUGINS_LAVASRC_DEEZER_MASTERDECRYPTIONKEY:  # Leave this as it is, or fill it with the deezer key if you have it
 
+            # Lavasrc Apple music configuration
             PLUGINS_LAVASRC_SOURCES_APPLEMUSIC: true   # Enable Apple Music source
             PLUGINS_LAVASRC_APPLEMUSIC_COUNTRYCODE: US # the country code you want to use for filtering the artists top tracks and language. See https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
             PLUGINS_LAVASRC_APPLEMUSIC_MEDIAAPITOKEN:  # Not necessary, Can be used to bypass the auto token fetching which is likely to break again in the future
 
+            # Lavasrc Spotify configuration
             PLUGINS_LAVASRC_SOURCES_SPOTIFY: true  # Enable Spotify source
             PLUGINS_LAVASRC_SPOTIFY_CLIENTID: CHANGE_ME # Your Spotify Client ID
             PLUGINS_LAVASRC_SPOTIFY_CLIENTSECRET: CHANGE_ME # Your Spotify Client Secret
             PLUGINS_LAVASRC_SPOTIFY_COUNTRYCODE: US # tHE country code you want to use for filtering the artists top tracks and language. See https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
 
+            # Lavasrc Yandex configuration
             PLUGINS_LAVASRC_SOURCES_YANDEXMUSIC: false # Enable Yandex Music source
             PLUGINS_LAVASRC_YANDEXMUSIC_ACCESSTOKEN:   # the token used for accessing the yandex music api. See https://github.com/TopiSenpai/LavaSrc#yandex-music
 
 
+            # Configure Sentry
             SENTRY_DSN:
             SENTRY_ENVIRONMENT:
             SENTRY_TAGS_PYLAVVERSION: 1.1.0
 
 
+            # Configure Logging
             LOGGING_FILE_PATH: ./logs/
             LOGGING_LEVEL_LAVALINK: INFO
             LOGGING_LEVEL_ROOT: INFO
