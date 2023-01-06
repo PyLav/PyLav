@@ -1185,8 +1185,6 @@ class Player(VoiceProtocol):
 
         self.current = track
         payload = {"encodedTrack": track.encoded}
-        if track.skip_segments and self.node.supports_sponsorblock and await track.is_youtube():
-            payload["skipSegments"] = track.skip_segments
         await self.node.patch_session_player(guild_id=self.guild.id, payload=payload, no_replace=False)
 
         self.node.dispatch_event(TrackPreviousRequestedEvent(self, requester, track))
@@ -1197,13 +1195,9 @@ class Player(VoiceProtocol):
         track: Track | APITrack | dict | str | None,
         query: Query,
         no_replace: bool = False,
-        skip_segments: list[str] | str = None,
         bypass_cache: bool = False,
     ) -> None:
-        skip_segments = self._process_skip_segments(skip_segments)
-        track = await Track.build_track(
-            node=self.node, data=track, query=query, skip_segments=skip_segments, requester=requester.id
-        )
+        track = await Track.build_track(node=self.node, data=track, query=query, requester=requester.id)
         self.next_track = None
         self.last_track = None
         self.stopped = False
@@ -1223,8 +1217,6 @@ class Player(VoiceProtocol):
         if self.next_track is None and not self.queue.empty():
             self.next_track = self.queue.raw_queue.popleft()
         payload = {"encodedTrack": track.encoded}
-        if track.skip_segments and self.node.supports_sponsorblock and await track.is_youtube():
-            payload["skipSegments"] = track.skip_segments
         await self.node.patch_session_player(guild_id=self.guild.id, payload=payload, no_replace=no_replace)
         self.node.dispatch_event(QuickPlayEvent(self, requester, track))
 
@@ -1240,7 +1232,6 @@ class Player(VoiceProtocol):
         start_time: int = 0,
         end_time: int = None,
         no_replace: bool = False,
-        skip_segments: list[str] | str = None,
         bypass_cache: bool = False,
         node: Node = None,
     ) -> None:  # sourcery skip: low-code-quality
@@ -1266,8 +1257,6 @@ class Player(VoiceProtocol):
             Defaults to `False`
         query: Optional[:class:`Query`]
             The query that was used to search for the track.
-        skip_segments: Optional[:class:`list`]
-            A list of segments to skip.
         requester: :class:`discord.Member`
             The member that requested the track.
         bypass_cache: Optional[:class:`bool`]
@@ -1276,11 +1265,9 @@ class Player(VoiceProtocol):
             The node to use. Defaults the best available node with the needed feature.
         """
         # sourcery no-metrics
-        auto_play, payload, skip_segments = await self._on_play_reset(skip_segments)
+        auto_play, payload = await self._on_play_reset()
         if track is not None and isinstance(track, (Track, APITrack, dict, str, type(None))):
-            track = await Track.build_track(
-                node=self.node, data=track, query=query, skip_segments=skip_segments, requester=requester.id
-            )
+            track = await Track.build_track(node=self.node, data=track, query=query, requester=requester.id)
         if self.current:
             await self._process_repeat_on_play()
         if self.current:
@@ -1288,7 +1275,7 @@ class Player(VoiceProtocol):
             self.last_track = self.current
         self.current = None
         if not track:
-            auto_play, track, returned = await self._process_play_no_track(auto_play, skip_segments, track)
+            auto_play, track, returned = await self._process_play_no_track(auto_play, track)
             if returned:
                 return
         if await track.query() is None:
@@ -1308,7 +1295,7 @@ class Player(VoiceProtocol):
                 track, requester=track.requester, bypass_cache=bypass_cache, add_to_queue=True
             )
             return await self.play(None, None, requester or self.bot.user, node=node)
-        await self._process_partial_payload(end_time, payload, skip_segments, start_time, track)
+        await self._process_partial_payload(end_time, payload, start_time, track)
 
         if no_replace is None:
             no_replace = False
@@ -1323,9 +1310,7 @@ class Player(VoiceProtocol):
         if auto_play:
             self.node.dispatch_event(TrackAutoPlayEvent(player=self, track=track))
 
-    async def _process_partial_payload(self, end_time, payload, skip_segments, start_time, track: Track):
-        if self.node.supports_sponsorblock and await track.is_youtube():
-            payload["skipSegments"] = skip_segments or track.skip_segments
+    async def _process_partial_payload(self, end_time, payload, start_time, track: Track):
         if start_time or track.timestamp:
             await self._process_payload_position(payload, start_time, track)
         if end_time is not None:
@@ -1395,9 +1380,8 @@ class Player(VoiceProtocol):
             await self.maybe_shuffle_queue(requester=requester.id if requester else self.client.user.id)
         return track, tracks
 
-    async def _on_play_reset(self, skip_segments):
+    async def _on_play_reset(self):
         payload = {}
-        skip_segments = self._process_skip_segments(skip_segments)
         self._last_update = 0
         self._last_position = 0
         self.position_timestamp = 0
@@ -1406,14 +1390,14 @@ class Player(VoiceProtocol):
         auto_play = False
         self.next_track = None
         self.last_track = None
-        return auto_play, payload, skip_segments
+        return auto_play, payload
 
-    async def _process_play_no_track(self, auto_play, skip_segments, track):
+    async def _process_play_no_track(self, auto_play, track):
         if self.queue.empty():
             if await self.autoplay_enabled() and (
                 available_tracks := await (await self.get_auto_playlist()).fetch_tracks()
             ):
-                auto_play, track = await self._process_autoplay_on_play(available_tracks, skip_segments)
+                auto_play, track = await self._process_autoplay_on_play(available_tracks)
             else:
                 await self.stop(
                     requester=self.guild.get_member(self.node.node_manager.client.bot.user.id)
@@ -1442,13 +1426,12 @@ class Player(VoiceProtocol):
         self.node.dispatch_event(event)
         await self._handle_event(event)
 
-    async def _process_autoplay_on_play(self, available_tracks, skip_segments):
+    async def _process_autoplay_on_play(self, available_tracks):
         if tracks_not_in_history := list(set(available_tracks) - set(self.history.raw_b64s)):
             track = await Track.build_track(
                 node=self.node,
                 data=random.choice(tracks_not_in_history),
                 query=None,
-                skip_segments=skip_segments,
                 requester=self.client.user.id,
             )
         else:
@@ -1456,7 +1439,6 @@ class Player(VoiceProtocol):
                 node=self.node,
                 data=random.choice(available_tracks),
                 query=None,
-                skip_segments=skip_segments,
                 requester=self.client.user.id,
             )
         auto_play = True
@@ -1470,13 +1452,13 @@ class Player(VoiceProtocol):
             await self.add(self.current.requester_id, self.current, index=-1)
 
     async def resume(self, requester: discord.Member = None):
-        payload = {"encodedTrack": self.current.encoded}
         self._last_update = 0
         self.stopped = False
         self._last_position = 0
-        if self.node.supports_sponsorblock and await self.current.is_youtube():
-            payload["skipSegments"] = self.current.skip_segments if self.current else []
-        payload["position"] = self.current.last_known_position if self.current else await self.fetch_position()
+        payload = {
+            "encodedTrack": self.current.encoded,
+            "position": self.current.last_known_position if self.current else await self.fetch_position(),
+        }
         await self.node.patch_session_player(guild_id=self.guild.id, payload=payload, no_replace=False)
         self.node.dispatch_event(PlayerResumedEvent(player=self, requester=requester or self.client.user.id))
 
@@ -1682,11 +1664,11 @@ class Player(VoiceProtocol):
             await old_node.delete_session_player(self.guild.id)
         if self._voice_state:
             await self._dispatch_voice_update()
+        if self.node.supports_sponsorblock:
+            await self.add_sponsorblock_categories()
         if ops:
             if self.current:
                 payload = {"encodedTrack": self.current.encoded, "position": position}
-                if self.current.skip_segments and node.supports_sponsorblock and await self.current.is_youtube():
-                    payload["skipSegments"] = self.current.skip_segments
                 if self.paused:
                     payload["paused"] = self.paused
 
@@ -2414,22 +2396,8 @@ class Player(VoiceProtocol):
             changed = True
         return changed
 
-    def _process_skip_segments(self, skip_segments: list[str] | str | None):
-        if skip_segments is not None and self.node.supports_sponsorblock:
-            if isinstance(skip_segments, str) and skip_segments == "all":
-                skip_segments = SegmentCategory.get_category_list_value()
-            else:
-                skip_segments = list(
-                    filter(
-                        lambda x: x in SegmentCategory.get_category_list_value(),
-                        map(lambda x: x.lower(), skip_segments),
-                    )
-                )
-        elif self.node.supports_sponsorblock:
-            skip_segments = SegmentCategory.get_category_list_value()
-        else:
-            skip_segments = []
-        return skip_segments
+    async def _process_skip_segments(self) -> list[str]:
+        return SegmentCategory.get_category_list_value()
 
     async def draw_time(self) -> str:
         paused = self.paused
@@ -2965,3 +2933,44 @@ class Player(VoiceProtocol):
 
     async def fetch_node_player(self) -> LavalinkPlayer | HTTPException:
         return await self.node.fetch_session_player(self.guild.id)
+
+    async def add_sponsorblock_categories(self, *categories: str) -> None:
+        """
+        Add sponsorblock categories to the player.
+        Parameters
+        ----------
+        categories: :class:`str`
+            The categories to add.
+        """
+        if not self.node.supports_sponsorblock:
+            return
+        if not categories and not (categories := await self._process_skip_segments()):
+            return
+        await self.node.put_session_player_sponsorblock_categories(guild_id=self.guild.id, categories=categories)
+
+    async def remove_sponsorblock_categories(self, *categories: str) -> None:
+        """
+        Remove sponsorblock categories from the player.
+        Parameters
+        ----------
+        categories: :class:`str`
+            The categories to remove.
+        """
+        if not self.node.supports_sponsorblock:
+            return
+        if not categories and not (categories := await self._process_skip_segments()):
+            return
+        await self.node.delete_session_player_sponsorblock_categories(guild_id=self.guild.id, categories=categories)
+
+    async def get_sponsorblock_categories(self) -> list[str]:
+        """
+        Get the sponsorblock categories for the player.
+        Returns
+        -------
+        list[:class:`str`]
+            The categories for the player.
+        """
+        if not self.node.supports_sponsorblock:
+            return []
+        categories = await self.node.get_session_player_sponsorblock_categories(guild_id=self.guild.id)
+        return categories if isinstance(categories, list) else []
