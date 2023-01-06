@@ -19,7 +19,7 @@ class Segment:
 class SegmentsLoaded(Message):
     op: Literal["event"] = "event"
     guildId: str | None = None
-    type: Literal["SegmentsLoadedEvent"] = "SegmentsLoadedEvent"
+    type: Literal["SegmentsLoaded"] = "SegmentsLoaded"
     segments: list[Segment | dict] = dataclasses.field(default_factory=list)
 
     def __post_init__(self) -> None:
@@ -34,7 +34,7 @@ class SegmentsLoaded(Message):
 class SegmentSkipped(Message):
     op: Literal["event"] = "event"
     guildId: str | None = None
-    type: Literal["SegmentSkippedEvent"] = "SegmentSkippedEvent"
+    type: Literal["SegmentSkipped"] = "SegmentSkipped"
     segment: Segment | dict = dataclasses.field(default_factory=dict)
 
     def __post_init__(self) -> None:

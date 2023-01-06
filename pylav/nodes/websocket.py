@@ -410,9 +410,9 @@ class WebSocket:
                         data = from_dict(data_class=TrackStuck, data=data)
                     case "WebSocketClosedEvent":
                         data = from_dict(data_class=Closed, data=data)
-                    case "SegmentsLoadedEvent":
+                    case "SegmentsLoaded":
                         data = from_dict(data_class=SegmentsLoaded, data=data)
-                    case "SegmentSkippedEvent":
+                    case "SegmentSkipped":
                         data = from_dict(data_class=SegmentSkipped, data=data)
                     case __:
                         self._logger.warning("Received unknown event: %s", data["type"])
