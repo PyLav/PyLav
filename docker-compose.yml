@@ -38,23 +38,131 @@ services:
     # volumes:
     #   - ./localtracks:/data/localtracks (Localtracks folder)
         environment:
-            LAVALINK_SERVER_PASSWORD: youshallnotpass # Lavalink Server Password
             _JAVA_OPTIONS: -Xmx4G # The highest amount of RAM which Lavalink is allowed to use
-      # Read https://github.com/TopiSenpai/LavaSrc/tree/feature/custom-json-fields#configuration for more info on these setting values
-            PLUGINS_LAVASRC_SOURCES_SPOTIFY: false # Enable Spotify source
-            PLUGINS_LAVASRC_SPOTIFY_CLIENTID: CHANGE_ME # https://support.heateor.com/get-spotify-client-id-client-secret/
-            PLUGINS_LAVASRC_SPOTIFY_CLIENTSECRET: CHANGE_ME # https://support.heateor.com/get-spotify-client-id-client-secret/
-            PLUGINS_LAVASRC_SPOTIFY_COUNTRYCODE: US # the country code you want to use for filtering the artists top tracks and language. See https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
 
-            PLUGINS_LAVASRC_SOURCES_APPLEMUSIC: true # Enable Apple Music source
+            SERVER_ADDRESS: 0.0.0.0 # The interface to bind to
+            SERVER_PORT: 2155 # The port to bind to
+
+            LAVALINK_PLUGINS_0_DEPENDENCY: com.github.TopiSenpai.LavaSrc:lavasrc-plugin:7bd20fd
+            LAVALINK_PLUGINS_0_REPOSITORY: https://jitpack.io
+            LAVALINK_PLUGINS_1_DEPENDENCY: com.github.topisenpai:sponsorblock-plugin:71b12d1
+            LAVALINK_PLUGINS_1_REPOSITORY: https://jitpack.io
+            LAVALINK_PLUGINS_2_DEPENDENCY: com.dunctebot:skybot-lavalink-plugin:1.4.1
+            LAVALINK_PLUGINS_2_REPOSITORY: https://m2.duncte123.dev/releases
+            LAVALINK_PLUGINS_3_DEPENDENCY: me.rohank05:lavalink-filter-plugin:0.0.1
+            LAVALINK_PLUGINS_3_REPOSITORY: https://jitpack.io
+            LAVALINK_PLUGINS_4_DEPENDENCY: com.github.esmBot:lava-xm-plugin:v0.2.1
+            LAVALINK_PLUGINS_4_REPOSITORY: https://jitpack.io
+
+
+            LAVALINK_SERVER_SOURCES_BANDCAMP: true # Enable Bandcamp source
+            LAVALINK_SERVER_SOURCES_HTTP: true # Enable Bandcamp source
+            LAVALINK_SERVER_SOURCES_LOCAL: true # Enable Localtracks source
+            LAVALINK_SERVER_SOURCES_SOUNDCLOUD: true # Enable Soundcloud source
+            LAVALINK_SERVER_SOURCES_TWITCH: true # Enable Twitch source
+            LAVALINK_SERVER_SOURCES_VIMEO: true # Enable Vimeo source
+            LAVALINK_SERVER_SOURCES_YOUTUBE: true # Enable YouTube source
+
+            LAVALINK_SERVER_FILTERS_CHANNELMIX: true  # Enable the Channel Mix filter
+            LAVALINK_SERVER_FILTERS_DISTORTION: true  # Enable the Distortion filter
+            LAVALINK_SERVER_FILTERS_EQUALIZER: true  # Enable the Equalizer filter
+            LAVALINK_SERVER_FILTERS_KARAOKE: true  # Enable the Karaoke filter
+            LAVALINK_SERVER_FILTERS_LOWPASS: true  # Enable the Low Pass filter
+            LAVALINK_SERVER_FILTERS_ROTATION: true  # Enable the Rotation filter
+            LAVALINK_SERVER_FILTERS_TIMESCALE: true  # Enable the Timescale filter
+            LAVALINK_SERVER_FILTERS_TREMOLO: true  # Enable the Tremolo filter
+            LAVALINK_SERVER_FILTERS_VIBRATO: true  # Enable the Vibrato filter
+            LAVALINK_SERVER_FILTERS_VOLUME: true  # Enable the Volume filter
+            LAVALINK_SERVER_FILTERS_ECHO: true  # Enable the Echo filter
+
+            LAVALINK_SERVER_BUFFERDURATIONMS: 400  # The duration of the NAS buffer. Higher values fare better against longer GC pauses. Duration <= 0 to disable JDA-NAS. Minimum of 40ms, lower values may introduce pauses.
+            LAVALINK_SERVER_FRAMEBUFFERDURATIONMS: 1000 # How many milliseconds of audio to keep buffered
+            LAVALINK_SERVER_GCWARNINGS: true
+            LAVALINK_SERVER_OPUSENCODINGQUALITY: 10 # Opus encoder quality. Valid values range from 0 to 10, where 10 is best quality but is the most expensive on the CPU.
+            LAVALINK_SERVER_PASSWORD: youshallnotpass # Authentication Password
+            LAVALINK_SERVER_PLAYERUPDATEINTERVAL: 30 # How frequently to send player updates to clients, in seconds
+            LAVALINK_SERVER_RESAMPLINGQUALITY: HIGH  # Quality of resampling operations. Valid values are LOW, MEDIUM and HIGH, where HIGH uses the most CPU.
+            LAVALINK_SERVER_SOUNDCLOUDSEARCHENABLED: true # Enable SoundCloud Search
+            LAVALINK_SERVER_TRACKSTUCKTHRESHOLDMS: 10000 # The threshold for how long a track can be stuck. A track is stuck if does not return any audio data.
+            LAVALINK_SERVER_USESEEKGHOSTING: true # Seek ghosting is the effect where whilst a seek is in progress, the audio buffer is read from until empty, or until seek is ready.
+            LAVALINK_SERVER_YOUTUBEPLAYLISTLOADLIMIT: 100  # Number of pages at 100 each (YouTube allows 10,000 songs in a playlist, 100x100 = 10,000)
+            LAVALINK_SERVER_YOUTUBESEARCHENABLED: true # Enable YouTube Search
+
+            # # For multiple blocks or IP increment the number at the end of the variable i.e LAVALINK_SERVER_RATELIMIT_IPBLOCKS_1 and LAVALINK_SERVER_RATELIMIT_EXCLUDEDIPS_1
+            # LAVALINK_SERVER_RATELIMIT_IPBLOCKS_0:         # ip block
+            # LAVALINK_SERVER_RATELIMIT_EXCLUDEDIPS_0:      # ip which should be explicit excluded from usage by lavalink
+
+
+            # LAVALINK_SERVER_RATELIMIT_STRATEGY: RotatingNanoSwitch  # RotateOnBan | LoadBalance | NanoSwitch | RotatingNanoSwitch
+            # LAVALINK_SERVER_RATELIMIT_SEARCHTRIGGERSFAIL: true      # Whether a search 429 should trigger marking the ip as failing
+            # LAVALINK_SERVER_RATELIMIT_RETRYLIMIT: -1                # -1 = use default lavaplayer value | 0 = infinity | >0 = retry will happen this numbers times
+
+            # # Required for avoiding all age restrictions by YouTube, some restricted videos still can be played without.
+            # LAVALINK_SERVER_YOUTUBECONFIG_EMAIL:    # Email of Google account
+            # LAVALINK_SERVER_YOUTUBECONFIG_PASSWORD: # Password of Google account
+
+            # # Useful for blocking bad-actors from ip-grabbing your music node and attacking it, this way only the http proxy will be attacked
+            # LAVALINK_SERVER_HTTPCONFIG_PROXYHOST:    # Hostname of the proxy, (ip or domain)
+            # LAVALINK_SERVER_HTTPCONFIG_PROXYPORT:    # Proxy port, 3128 is the default for squidProxy
+            # LAVALINK_SERVER_HTTPCONFIG_PROXYUSER:    # Optional user for basic authentication fields, leave blank if you don't use basic auth
+            # LAVALINK_SERVER_HTTPCONFIG_PROXYPASSWORD: # Password for basic authentication
+
+
+            METRICS_PROMETHEUS_ENABLED: false
+            METRICS_PROMETHEUS_ENDPOINT: /metrics
+
+
+            PLUGINS_DUNCTEBOT_SOURCES_CLYPIT: true
+            PLUGINS_DUNCTEBOT_SOURCES_GETYARN: true
+            PLUGINS_DUNCTEBOT_SOURCES_MIXCLOUD: true
+            PLUGINS_DUNCTEBOT_SOURCES_OCREMIX: true
+            PLUGINS_DUNCTEBOT_SOURCES_PORNHUB: true
+            PLUGINS_DUNCTEBOT_SOURCES_REDDIT: true
+            PLUGINS_DUNCTEBOT_SOURCES_SOUNDGASM: true
+            PLUGINS_DUNCTEBOT_SOURCES_TIKTOK: true
+            PLUGINS_DUNCTEBOT_SOURCES_TTS: true
+            PLUGINS_DUNCTEBOT_TTSLANGUAGE: en-US
+
+            # The Track search order (Deezer ISRC, YouTube Music ISRC, YouTube ISRC, YouTube Music Query, YouTube Query, Deezer Query, SoundCloud Query)
+            #  For finding Apple Music and Spotify tracks
+            PLUGINS_LAVASRC_PROVIDERS_0: dzisrc:%ISRC%
+            PLUGINS_LAVASRC_PROVIDERS_1: ytmsearch:%ISRC%"
+            PLUGINS_LAVASRC_PROVIDERS_2: ytsearch:"%ISRC%
+            PLUGINS_LAVASRC_PROVIDERS_3: ytmsearch:%QUERY%
+            PLUGINS_LAVASRC_PROVIDERS_4: ytsearch:%QUERY%
+            PLUGINS_LAVASRC_PROVIDERS_5: dzsearch:%QUERY%
+            PLUGINS_LAVASRC_PROVIDERS_6: scsearch:%QUERY%
+
+            PLUGINS_LAVASRC_SOURCES_DEEZER: true  # Enable Deezer source
+            # PLUGINS_LAVASRC_DEEZER_MASTERDECRYPTIONKEY:  # Leave this as it is, or fill it with the deezer key if you have it
+
+            PLUGINS_LAVASRC_SOURCES_APPLEMUSIC: true   # Enable Apple Music source
             PLUGINS_LAVASRC_APPLEMUSIC_COUNTRYCODE: US # the country code you want to use for filtering the artists top tracks and language. See https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
-            PLUGINS_LAVASRC_APPLEMUSIC_MEDIAAPITOKEN: # Not necessary, Can be used to bypass the auto token fetching which is likely to break again in the future
+            PLUGINS_LAVASRC_APPLEMUSIC_MEDIAAPITOKEN:  # Not necessary, Can be used to bypass the auto token fetching which is likely to break again in the future
+
+            PLUGINS_LAVASRC_SOURCES_SPOTIFY: true  # Enable Spotify source
+            PLUGINS_LAVASRC_SPOTIFY_CLIENTID: CHANGE_ME # Your Spotify Client ID
+            PLUGINS_LAVASRC_SPOTIFY_CLIENTSECRET: CHANGE_ME # Your Spotify Client Secret
+            PLUGINS_LAVASRC_SPOTIFY_COUNTRYCODE: US # tHE country code you want to use for filtering the artists top tracks and language. See https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
 
             PLUGINS_LAVASRC_SOURCES_YANDEXMUSIC: false # Enable Yandex Music source
-            PLUGINS_LAVASRC_YANDEXMUSIC_ACCESSTOKEN: # the token used for accessing the yandex music api. See https://github.com/TopiSenpai/LavaSrc#yandex-music
+            PLUGINS_LAVASRC_YANDEXMUSIC_ACCESSTOKEN:   # the token used for accessing the yandex music api. See https://github.com/TopiSenpai/LavaSrc#yandex-music
 
-            PLUGINS_LAVASRC_SOURCES_DEEZER: true # Enable Deezer source
 
-            # These are not necessary but can be used to bypass the auto token fetching which is likely to break again in the future
-            LAVALINK_SERVER_YOUTUBECONFIG_EMAIL:  # Google account email to use to bypass age restrictions
-            LAVALINK_SERVER_YOUTUBECONFIG_PASSWORD:  # Google account password to use to bypass age restrictions
+            SENTRY_DSN:
+            SENTRY_ENVIRONMENT:
+            SENTRY_TAGS_PYLAVVERSION: 1.1.0
+
+
+            LOGGING_FILE_PATH: ./logs/
+            LOGGING_LEVEL_LAVALINK: INFO
+            LOGGING_LEVEL_ROOT: INFO
+            LOGGING_LOGBACK_ROLLINGPOLICY_MAXFILESIZE: 25MB
+            LOGGING_LOGBACK_ROLLINGPOLICY_MAXHISTORY: 7
+            LOGGING_LOGBACK_ROLLINGPOLICY_TOTALSIZECAP: 1GB
+            LOGGING_REQUEST_ENABLED: true
+            LOGGING_REQUEST_INCLUDECLIENTINFO: true
+            LOGGING_REQUEST_INCLUDEHEADERS: false
+            LOGGING_REQUEST_INCLUDEPAYLOAD: true
+            LOGGING_REQUEST_INCLUDEQUERYSTRING: true
+            LOGGING_REQUEST_MAXPAYLOADLENGTH: 10000
