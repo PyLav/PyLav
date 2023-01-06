@@ -2948,19 +2948,13 @@ class Player(VoiceProtocol):
             return
         await self.node.put_session_player_sponsorblock_categories(guild_id=self.guild.id, categories=categories)
 
-    async def remove_sponsorblock_categories(self, *categories: str) -> None:
+    async def remove_sponsorblock_categories(self) -> None:
         """
         Remove sponsorblock categories from the player.
-        Parameters
-        ----------
-        categories: :class:`str`
-            The categories to remove.
         """
         if not self.node.supports_sponsorblock:
             return
-        if not categories and not (categories := await self._process_skip_segments()):
-            return
-        await self.node.delete_session_player_sponsorblock_categories(guild_id=self.guild.id, categories=categories)
+        await self.node.delete_session_player_sponsorblock_categories(guild_id=self.guild.id)
 
     async def get_sponsorblock_categories(self) -> list[str]:
         """

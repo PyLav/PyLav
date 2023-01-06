@@ -533,7 +533,6 @@ class Node:
         if self.identifier in PYLAV_NODES:
             self._capabilities.discard("http")
             self._capabilities.discard("local")
-            self._capabilities.discard("sponsorblock")
         # If not setup says these should be disabled remove them to trick the node to think they are disabled
         if self._capabilities:
             self._capabilities.difference_update(self._disabled_sources)
@@ -1112,13 +1111,10 @@ class Node:
             )
             return HTTPException(failure)
 
-    async def delete_session_player_sponsorblock_categories(
-        self, guild_id: int, categories: list[str]
-    ) -> None | HTTPException:
+    async def delete_session_player_sponsorblock_categories(self, guild_id: int) -> None | HTTPException:
         async with self._session.delete(
             self.get_endpoint_session_player_sponsorblock_categories(guild_id=guild_id),
             headers={"Authorization": self.password},
-            json=categories,
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
                 return
