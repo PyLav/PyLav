@@ -415,7 +415,8 @@ class WebSocket:
                     case "SegmentSkipped":
                         data = from_dict(data_class=SegmentSkipped, data=data)
                     case __:
-                        self._logger.warning("Received unknown event: %s", data["type"])
+                        self._logger.warning("Received unknown event: %s - ignoring it", data["type"])
+                        return
                 await self.handle_event(data)
             case "ready":
                 data = from_dict(data_class=Ready, data=data)
