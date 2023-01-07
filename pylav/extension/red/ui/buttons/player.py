@@ -99,7 +99,7 @@ class StopTrackButton(discord.ui.Button):
             )
             return
 
-        await player.stop()
+        await player.stop(interaction.user)
         if notify_channel := await player.notify_channel():
             with contextlib.suppress(discord.HTTPException):
                 await notify_channel.send(
