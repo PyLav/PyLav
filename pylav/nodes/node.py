@@ -533,7 +533,6 @@ class Node:
         if self.identifier in PYLAV_NODES:
             self._capabilities.discard("http")
             self._capabilities.discard("local")
-            self._capabilities.discard("sponsorblock")
         # If not setup says these should be disabled remove them to trick the node to think they are disabled
         if self._capabilities:
             self._capabilities.difference_update(self._disabled_sources)
@@ -999,6 +998,12 @@ class Node:
     def get_endpoint_routeplanner_free_all(self) -> str:
         return f"{self.connection_protocol}://{self.host}:{self.port}/v{self.api_version}/routeplanner/free/all"
 
+    def get_endpoint_session_player_sponsorblock_categories(self, guild_id: int) -> str:
+        return (
+            f"{self.connection_protocol}://{self.host}:{self.port}/v{self.api_version}"
+            f"/sessions/{self.session_id}/players/{guild_id}/sponsorblock/categories"
+        )
+
     def get_endpoint_version(self) -> str:
         return f"{self.connection_protocol}://{self.host}:{self.port}/version"
 
@@ -1071,6 +1076,54 @@ class Node:
             if res.status in [401, 403]:
                 raise UnauthorizedException(failure)
             self._logger.trace("Failed to delete session player: %d %s", failure.status, failure.message)
+            return HTTPException(failure)
+
+    async def get_session_player_sponsorblock_categories(self, guild_id: int) -> list[str] | HTTPException:
+        async with self._session.get(
+            self.get_endpoint_session_player_sponsorblock_categories(guild_id=guild_id),
+            headers={"Authorization": self.password},
+        ) as res:
+            if res.status in GOOD_RESPONSE_RANGE:
+                return await res.json(loads=ujson.loads)
+            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
+            if res.status in [401, 403]:
+                raise UnauthorizedException(failure)
+            self._logger.trace(
+                "Failed to get session player sponsorblock categories: %d %s", failure.status, failure.message
+            )
+            return HTTPException(failure)
+
+    async def put_session_player_sponsorblock_categories(
+        self, guild_id: int, categories: list[str]
+    ) -> None | HTTPException:
+        async with self._session.put(
+            self.get_endpoint_session_player_sponsorblock_categories(guild_id=guild_id),
+            headers={"Authorization": self.password},
+            json=categories,
+        ) as res:
+            if res.status in GOOD_RESPONSE_RANGE:
+                return
+            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
+            if res.status in [401, 403]:
+                raise UnauthorizedException(failure)
+            self._logger.trace(
+                "Failed to put session player sponsorblock categories: %d %s", failure.status, failure.message
+            )
+            return HTTPException(failure)
+
+    async def delete_session_player_sponsorblock_categories(self, guild_id: int) -> None | HTTPException:
+        async with self._session.delete(
+            self.get_endpoint_session_player_sponsorblock_categories(guild_id=guild_id),
+            headers={"Authorization": self.password},
+        ) as res:
+            if res.status in GOOD_RESPONSE_RANGE:
+                return
+            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
+            if res.status in [401, 403]:
+                raise UnauthorizedException(failure)
+            self._logger.trace(
+                "Failed to delete session player sponsorblock categories: %d %s", failure.status, failure.message
+            )
             return HTTPException(failure)
 
     async def patch_session(self, payload: JSON_DICT_TYPE) -> None | HTTPException:

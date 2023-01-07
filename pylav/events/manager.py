@@ -3,7 +3,8 @@ from __future__ import annotations
 import inspect
 from typing import TYPE_CHECKING
 
-from pylav.events import base, node, player, queue, track
+from pylav.events import base, node, player, plugins, queue, track
+from pylav.events.plugins import sponsorblock
 from pylav.events.track import track_start
 from pylav.events.utils import get_event_name, get_simple_event_name
 
@@ -47,7 +48,9 @@ class DispatchManager:
         self._update_mapper(node)
         self._update_mapper(queue)
         self._update_mapper(track)
+        self._update_mapper(plugins)
         self._update_mapper(track_start)
+        self._update_mapper(sponsorblock)
 
     def _update_mapper(self, module: node | player | queue | track) -> None:  # type: ignore
         self.mapping.update(

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-05 22:01+0000\n"
-"PO-Revision-Date: 2023-01-05 22:15\n"
+"POT-Creation-Date: 2023-01-06 22:01+0000\n"
+"PO-Revision-Date: 2023-01-06 22:16\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -29,131 +29,131 @@ msgstr "Musiikki {count} palvelimella"
 msgid "There are no tracks currently in the player history"
 msgstr "Pelaajan historiassa ei ole kappaleita"
 
-#: pylav/players/player.py:1880
+#: pylav/players/player.py:1862
 msgid "Current node has the Volume filter functionality disabled"
 msgstr "Nykyinen palvelin on poistettu käytöstä äänenvoimakkuuden suodattimen toiminnallisuus"
 
-#: pylav/players/player.py:1902 pylav/players/player.py:2078
-#: pylav/players/player.py:2133
+#: pylav/players/player.py:1884 pylav/players/player.py:2060
+#: pylav/players/player.py:2115
 msgid "Current node has the Equalizer functionality disabled"
 msgstr "Nykyinen palvelin ei ole käytössä"
 
-#: pylav/players/player.py:1922
+#: pylav/players/player.py:1904
 msgid "Current node has the Karaoke functionality disabled"
 msgstr "Nykyinen palvelin ei ole käytössä Karaoke-toiminnallisuutta"
 
-#: pylav/players/player.py:1942 pylav/players/player.py:2080
-#: pylav/players/player.py:2135
+#: pylav/players/player.py:1924 pylav/players/player.py:2062
+#: pylav/players/player.py:2117
 msgid "Current node has the Timescale functionality disabled"
 msgstr "Nykyinen palvelin ei ole käytössä"
 
-#: pylav/players/player.py:1962
+#: pylav/players/player.py:1944
 msgid "Current node has the Tremolo functionality disabled"
 msgstr "Nykyinen solmu on poistettu käytöstä Tremolon toiminnallisuus"
 
-#: pylav/players/player.py:1982
+#: pylav/players/player.py:1964
 msgid "Current node has the Vibrato functionality disabled"
 msgstr "Nykyinen palvelin on poistettu käytöstä Vibraton toiminnallisuus"
 
-#: pylav/players/player.py:2002
+#: pylav/players/player.py:1984
 msgid "Current node has the Rotation functionality disabled"
 msgstr "Nykyinen palvelin ei ole käytössä"
 
-#: pylav/players/player.py:2022
+#: pylav/players/player.py:2004
 msgid "Current node has the Distortion functionality disabled"
 msgstr "Nykyinen palvelin on poistettu käytöstä"
 
-#: pylav/players/player.py:2042
+#: pylav/players/player.py:2024
 msgid "Current node has the LowPass functionality disabled"
 msgstr "Nykyinen palvelin on poistettu käytöstä LowPass -toiminnallisuus"
 
-#: pylav/players/player.py:2062
+#: pylav/players/player.py:2044
 msgid "Current node has the Echo functionality disabled"
 msgstr "Nykyinen palvelin ei ole käytössä Echo-toiminnallisuutta"
 
-#: pylav/players/player.py:2192
+#: pylav/players/player.py:2174
 msgid "Current node has the ChannelMix functionality disabled"
 msgstr "Nykyinen palvelin on poistettu käytöstä ChannelMix -toiminnallisuus"
 
-#: pylav/players/player.py:2465 pylav/players/player.py:2510
-#: pylav/players/player.py:2525
+#: pylav/players/player.py:2433 pylav/players/player.py:2478
+#: pylav/players/player.py:2493
 msgid "LIVE"
 msgstr "ELÄI"
 
-#: pylav/players/player.py:2478
+#: pylav/players/player.py:2446
 msgid "Now Playing in"
 msgstr "Nyt soi"
 
-#: pylav/players/player.py:2496 pylav/players/player.py:2605
+#: pylav/players/player.py:2464 pylav/players/player.py:2573
 msgid "Currently livestreaming"
 msgstr "Tällä hetkellä hengissä"
 
-#: pylav/players/player.py:2498
+#: pylav/players/player.py:2466
 msgid "Playing: "
 msgstr "Toisto: "
 
-#: pylav/players/player.py:2501 pylav/players/player.py:2517
-#: pylav/players/player.py:2532 pylav/players/player.py:2611
+#: pylav/players/player.py:2469 pylav/players/player.py:2485
+#: pylav/players/player.py:2500 pylav/players/player.py:2579
 msgid "Requester"
 msgstr "Pyytäjä"
 
-#: pylav/players/player.py:2513 pylav/players/player.py:2528
+#: pylav/players/player.py:2481 pylav/players/player.py:2496
 msgid "Duration"
 msgstr "Kesto"
 
-#: pylav/players/player.py:2519
+#: pylav/players/player.py:2487
 msgid "Previous Track"
 msgstr "Edellinen Kappale"
 
-#: pylav/players/player.py:2534
+#: pylav/players/player.py:2502
 msgid "Next Track"
 msgstr "Seuraava Kappale"
 
-#: pylav/players/player.py:2539
+#: pylav/players/player.py:2507
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
 msgstr "{track_count} kappaletta, {queue_total_duration} jäljellä\n"
 
-#: pylav/players/player.py:2543 pylav/players/player.py:2639
+#: pylav/players/player.py:2511 pylav/players/player.py:2607
 msgid "{translation}: {repeat_emoji}"
 msgstr "{translation}: {repeat_emoji}"
 
-#: pylav/players/player.py:2543 pylav/players/player.py:2639
+#: pylav/players/player.py:2511 pylav/players/player.py:2607
 msgid "Repeating"
 msgstr "Toistuu"
 
-#: pylav/players/player.py:2544 pylav/players/player.py:2640
+#: pylav/players/player.py:2512 pylav/players/player.py:2608
 msgid "{space}{translation}: {autoplay_emoji}"
 msgstr "{space}{translation}: {autoplay_emoji}"
 
-#: pylav/players/player.py:2545 pylav/players/player.py:2641
+#: pylav/players/player.py:2513 pylav/players/player.py:2609
 msgid "Auto Play"
 msgstr "Automaattinen Toisto"
 
-#: pylav/players/player.py:2547 pylav/players/player.py:2643
+#: pylav/players/player.py:2515 pylav/players/player.py:2611
 msgid "{space}{translation}: {volume}%"
 msgstr "{space}{translation}: {volume}%"
 
-#: pylav/players/player.py:2548 pylav/players/player.py:2644
+#: pylav/players/player.py:2516 pylav/players/player.py:2612
 msgid "Volume"
 msgstr "Tilavuus"
 
-#: pylav/players/player.py:2588
+#: pylav/players/player.py:2556
 msgid "Recently Played for"
 msgstr "Äskettäin soitettu"
 
-#: pylav/players/player.py:2588
+#: pylav/players/player.py:2556
 msgid "Queue for"
 msgstr "Jono varten"
 
-#: pylav/players/player.py:2608
+#: pylav/players/player.py:2576
 msgid "Playing"
 msgstr "Toistetaan"
 
-#: pylav/players/player.py:2624
+#: pylav/players/player.py:2592
 msgid "Queue order is may not be accurate due to auto-shuffle being enabled"
 msgstr "Jonon järjestys ei ehkä ole tarkka, koska automaattinen sekoitus on otettu käyttöön"
 
-#: pylav/players/player.py:2630
+#: pylav/players/player.py:2598
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
 msgstr "Sivu {current_page}/{total_pages} ¶ {track_number} kappaletta, {queue_total_duration} jäljellä\n"
 

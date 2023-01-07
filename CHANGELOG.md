@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.1.0 (06/01/2023)
+- [Cleanup docker-compose.yml](https://github.com/Drapersniper/PyLav/commit/6a74b5b850ea5fd880da50a6578f254b0acde969) - @Drapersniper
+- [Add every possible configuration option as an env var](https://github.com/Drapersniper/PyLav/commit/ca0b71a12e1c6f8b9e24460fd103b4ac80bb143d) - @Drapersniper
+- [ignore unknown events rather than restarting the websocket connection](https://github.com/Drapersniper/PyLav/commit/59546915bc9ff1de2ffa2da1ff1c0423a6427ea3) - @Drapersniper
+- [Fixes incorrect references to SegmentLoaded/SegmentSkipped events from the sponsorblock plugin](https://github.com/Drapersniper/PyLav/commit/d67c2eb47eb09c150db5e8166422f99823c80892) - @Drapersniper
+- [Cleanup Sponsorblock changes](https://github.com/Drapersniper/PyLav/commit/c5fc1e0fba962401ae0ff286e99d6df76116440a) - @Drapersniper
+- [Update Sponsorblock plugin to pre-release version with RESTAPI support](https://github.com/Drapersniper/PyLav/commit/4d32b74f4437f00cf7c0b5397da32561da36b9be) - @Drapersniper
+
+---
+
 ## v1.0.15 (05/01/2023)
 - [correct reset track position for historic tracks and enhanced query meta persistence](https://github.com/Drapersniper/PyLav/commit/c4c8f6ecc3e8a93e817569f6d95a8ed452ec3adf) - @Drapersniper
 - [don't discard query metadata on rebuild (i.e Properly allow users to use link timestamp for youtube, spotify and soundcloud)](https://github.com/Drapersniper/PyLav/commit/fc28eac4825117ddae715b12ef1896830b560205) - @Drapersniper
@@ -191,7 +201,3 @@
 ## v0.11.14.1 (24/10/2022)
 - [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/24ae78c02e818abfd72b396d2c32676dc21dc62d) - @Drapersniper
 - [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/459958059156e959d67f6e47a0f32429a9baf18e) - @crowdin-bot
-
----
-
-## v0.11.14.0 (24/10/2022)
