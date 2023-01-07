@@ -289,6 +289,7 @@ class QueueMenu(BaseMenu):
             self.add_item(self.repeat_button_off)
 
     async def _no_player_or_no_dj(self):
+        self.queue_disconnect.disabled = True
         self.forward_button.disabled = True
         self.backward_button.disabled = True
         self.first_button.disabled = True
