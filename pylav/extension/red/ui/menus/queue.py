@@ -261,6 +261,7 @@ class QueueMenu(BaseMenu):
         self.add_item(self.play_now_button)
 
     async def _player_and_dj(self, player: Player):
+        self.queue_disconnect.disabled = False
         if player.paused:
             self.add_item(self.resume_button)
         else:
