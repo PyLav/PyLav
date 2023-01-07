@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-06 22:01+0000\n"
-"PO-Revision-Date: 2023-01-06 22:17\n"
+"PO-Revision-Date: 2023-01-07 04:13\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -23,7 +23,7 @@ msgstr "沒有可用的節點！"
 
 #: pylav/players/manager.py:349
 msgid "Music in {count} servers"
-msgstr ""
+msgstr "音樂正在 {count} 個伺服器播放"
 
 #: pylav/players/player.py:1169
 msgid "There are no tracks currently in the player history"
@@ -31,49 +31,49 @@ msgstr "播放歷史記錄中當前沒有曲目"
 
 #: pylav/players/player.py:1862
 msgid "Current node has the Volume filter functionality disabled"
-msgstr ""
+msgstr "當前節點禁用了音量過濾器功能"
 
 #: pylav/players/player.py:1884 pylav/players/player.py:2060
 #: pylav/players/player.py:2115
 msgid "Current node has the Equalizer functionality disabled"
-msgstr ""
+msgstr "當前節點禁用了均衡器功能"
 
 #: pylav/players/player.py:1904
 msgid "Current node has the Karaoke functionality disabled"
-msgstr ""
+msgstr "當前節點已禁用卡拉 OK 功能"
 
 #: pylav/players/player.py:1924 pylav/players/player.py:2062
 #: pylav/players/player.py:2117
 msgid "Current node has the Timescale functionality disabled"
-msgstr ""
+msgstr "當前節點禁用了時間刻度功能"
 
 #: pylav/players/player.py:1944
 msgid "Current node has the Tremolo functionality disabled"
-msgstr ""
+msgstr "當前節點禁用了 Tremolo 功能"
 
 #: pylav/players/player.py:1964
 msgid "Current node has the Vibrato functionality disabled"
-msgstr ""
+msgstr "當前節點禁用 Vibrato 功能"
 
 #: pylav/players/player.py:1984
 msgid "Current node has the Rotation functionality disabled"
-msgstr ""
+msgstr "當前節點禁用了Rotation功能"
 
 #: pylav/players/player.py:2004
 msgid "Current node has the Distortion functionality disabled"
-msgstr ""
+msgstr "當前節點禁用了失真功能"
 
 #: pylav/players/player.py:2024
 msgid "Current node has the LowPass functionality disabled"
-msgstr ""
+msgstr "當前節點禁用了 LowPass 功能"
 
 #: pylav/players/player.py:2044
 msgid "Current node has the Echo functionality disabled"
-msgstr ""
+msgstr "當前節點禁用了 Echo 功能"
 
 #: pylav/players/player.py:2174
 msgid "Current node has the ChannelMix functionality disabled"
-msgstr ""
+msgstr "當前節點禁用了 ChannelMix 功能"
 
 #: pylav/players/player.py:2433 pylav/players/player.py:2478
 #: pylav/players/player.py:2493
@@ -111,7 +111,7 @@ msgstr "下一首歌曲"
 
 #: pylav/players/player.py:2507
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
-msgstr ""
+msgstr "{track_count} 個曲目，剩餘 {queue_total_duration} 個"
 
 #: pylav/players/player.py:2511 pylav/players/player.py:2607
 msgid "{translation}: {repeat_emoji}"
@@ -155,5 +155,5 @@ msgstr "由於啟用了自動隨機播放，所以舊待播清單順序可能不
 
 #: pylav/players/player.py:2598
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
-msgstr ""
+msgstr " 第{current_page}頁 / 共{total_pages}頁 | {track_number} 首曲目，剩餘 {queue_total_duration} 首"
 

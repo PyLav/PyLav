@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2023-01-02 22:16\n"
+"PO-Revision-Date: 2023-01-07 04:13\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -201,7 +201,8 @@ msgstr "節點"
 #: pylav/extension/red/ui/sources/nodes.py:306
 msgid "Name: {name}\n"
 "Version: {version}\n\n"
-msgstr ""
+msgstr "名稱：{name}\n"
+"版本：{version}"
 
 #: pylav/extension/red/ui/sources/player.py:64
 msgid "Nothing playing"
@@ -258,7 +259,7 @@ msgstr "曲目在"
 
 #: pylav/extension/red/ui/sources/playlist.py:123
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks\n"
-msgstr ""
+msgstr "第 {page_num} 頁/共 {total_pages} 頁 | {num_tracks} 首歌曲"
 
 #: pylav/extension/red/ui/sources/playlist.py:157
 msgid "ID: {id}"
