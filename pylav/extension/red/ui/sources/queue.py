@@ -56,6 +56,7 @@ class SearchPickerSource(menus.ListPageSource):
 class QueueSource(menus.ListPageSource):
     def __init__(self, guild_id: int, cog: DISCORD_COG_TYPE, history: bool = False):  # noqa
         self.cog = cog
+        self.current_player = None
         self.per_page = 10
         self.guild_id = guild_id
         self.history = history
@@ -91,6 +92,7 @@ class QueueSource(menus.ListPageSource):
 
     async def format_page(self, menu: QueueMenu, tracks: list[Track]) -> discord.Embed:
         if player := self.cog.pylav.get_player(menu.ctx.guild.id):
+            self.current_player = player
             return (
                 await player.get_queue_page(
                     page_index=menu.current_page,
@@ -137,6 +139,7 @@ class QueuePickerSource(QueueSource):
 
     async def format_page(self, menu: QueuePickerMenu, tracks: list[Track]) -> discord.Embed:
         if player := self.cog.pylav.get_player(menu.ctx.guild.id):
+            self.current_player = player
             return (
                 await player.get_queue_page(
                     page_index=menu.current_page,
