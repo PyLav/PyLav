@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.1.2 (08/01/2023)
+- [Update docker-compose.yml](https://github.com/Drapersniper/PyLav/commit/90d0b1e3919b0e1916d91b173607ec38e7d5fdb3) - @Drapersniper
+- [Update .pre-commit-config.yaml](https://github.com/Drapersniper/PyLav/commit/313f111b139cc05166dc8e06fd5f42d8fcaf7729) - @Drapersniper
+- [Fix possible AttributeError in QueueSource (#149)](https://github.com/Drapersniper/PyLav/commit/dd9d5518236eeba2715aaad59b92464a017f42eb) - @Kuro-Rui
+
+---
+
 ## v1.1.1 (07/01/2023)
 - [Bump actions/checkout from 3.1.0 to 3.3.0 (#145)](https://github.com/Drapersniper/PyLav/commit/5e1df240ffcff4f90cfc211dc297092936e14c68) - @dependabot[bot]
 - [Add a missing positional argument in player.stop() (#148)](https://github.com/Drapersniper/PyLav/commit/21ac9dc7c22fa30efd3e3fe4a421ce9539e1af1d) - @Kuro-Rui
@@ -195,9 +202,3 @@
 ## v0.11.15.1 (25/10/2022)
 - [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/197760bc34dc44c28b6f6d993cfdd63c4c599ada) - @Drapersniper
 - [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/1af8f24bc806006706e43b98cfb471ca6d3cc343) - @crowdin-bot
-
----
-
-## v0.11.15.0 (25/10/2022)
-- [[patch] Add a logic to avoid race condition on a player reconnect](https://github.com/Drapersniper/PyLav/commit/07faa0b4d1528b8a17e19aee45877d3f70fe72a7) - @Drapersniper
-- [Add a `/decodetrack` call to node healthyness check as sometimes the node can get in a bad state where the ws is pingable but the endpoints timeout](https://github.com/Drapersniper/PyLav/commit/ddf899a1f77521a90d3b2df54b2306dc70cb9f97) - @Drapersniper
