@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2023-01-04 15:15\n"
+"POT-Creation-Date: 2023-01-08 12:01+0000\n"
+"PO-Revision-Date: 2023-01-08 12:15\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "MIME-Version: 1.0\n"
@@ -270,17 +270,17 @@ msgstr ""
 msgid "Playlists you can access in this server:"
 msgstr ""
 
-#: pylav/extension/red/ui/sources/queue.py:105
+#: pylav/extension/red/ui/sources/queue.py:96
+#: pylav/extension/red/ui/sources/queue.py:142
+msgid "No active player found in server"
+msgstr ""
+
+#: pylav/extension/red/ui/sources/queue.py:110
 msgid "There's nothing in recently played"
 msgstr ""
 
-#: pylav/extension/red/ui/sources/queue.py:107
-#: pylav/extension/red/ui/sources/queue.py:150
+#: pylav/extension/red/ui/sources/queue.py:112
+#: pylav/extension/red/ui/sources/queue.py:155
 msgid "There's nothing currently being played"
-msgstr ""
-
-#: pylav/extension/red/ui/sources/queue.py:113
-#: pylav/extension/red/ui/sources/queue.py:156
-msgid "No active player found in server"
 msgstr ""
 
