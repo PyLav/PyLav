@@ -158,9 +158,9 @@ An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml
   - If using this setup make sure to use this [pylav.yaml](./pylav.docker.yaml) file for the PyLav config.
 ## Without Docker
 - You will need will need to complete the following steps before you can successfully use this version, these will only be necessary until Lavalink 4.0.0 is released.
-  - Download the latest Lavalink.jar from this [GitHub action](https://github.com/TopiSenpai/Lavalink/suites/9936879296/artifacts/481780568)
+  - Download the latest Lavalink.jar from this [GitHub action](https://github.com/TopiSenpai/Lavalink/suites/10212244117/artifacts/500230420)
   - Place these a directory of your choice.
-  - Edit the `application.yml` to your liking changing the `CHANGE_ME` values, if you need help with this please join the [Discord support server](https://discord.com/invite/Sjh2TSCYQB)
+  - Edit the custom  `application.yml` (If you don't have it join the support server and ask about it) to your liking changing the `CHANGE_ME` values, if you need help with this please join the [Discord support server](https://discord.com/invite/Sjh2TSCYQB)
     - You will need a specify version of the application.yml ping draper#6666 in the support server for it (not needed if you use docker to run Lavalink)
   - Start an unmanaged Lavalink node using the `application.yml` you just edited and the `Lavalink.jar` you just downloaded.
 - Make the following changes to your `pylav.yaml` config file
