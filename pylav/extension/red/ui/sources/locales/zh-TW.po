@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2023-01-07 04:13\n"
+"POT-Creation-Date: 2023-01-08 12:01+0000\n"
+"PO-Revision-Date: 2023-01-08 12:15\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -281,17 +281,17 @@ msgstr "範圍：{scope}\n"
 msgid "Playlists you can access in this server:"
 msgstr "您可以在此伺務器中訪問的播放列表："
 
-#: pylav/extension/red/ui/sources/queue.py:105
+#: pylav/extension/red/ui/sources/queue.py:96
+#: pylav/extension/red/ui/sources/queue.py:142
+msgid "No active player found in server"
+msgstr "在伺務器中找不到活動的播放器"
+
+#: pylav/extension/red/ui/sources/queue.py:110
 msgid "There's nothing in recently played"
 msgstr "沒有最近播放的內容"
 
-#: pylav/extension/red/ui/sources/queue.py:107
-#: pylav/extension/red/ui/sources/queue.py:150
+#: pylav/extension/red/ui/sources/queue.py:112
+#: pylav/extension/red/ui/sources/queue.py:155
 msgid "There's nothing currently being played"
 msgstr "現在沒有正在播放的內容"
-
-#: pylav/extension/red/ui/sources/queue.py:113
-#: pylav/extension/red/ui/sources/queue.py:156
-msgid "No active player found in server"
-msgstr "在伺務器中找不到活動的播放器"
 

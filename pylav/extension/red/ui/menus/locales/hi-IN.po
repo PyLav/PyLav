@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2023-01-04 16:14\n"
+"POT-Creation-Date: 2023-01-08 12:01+0000\n"
+"PO-Revision-Date: 2023-01-08 12:15\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "MIME-Version: 1.0\n"
@@ -181,11 +181,11 @@ msgstr "जिज्ञासा"
 msgid "What query to remove from the playlist"
 msgstr "प्लेलिस्ट से किस क्वेरी को हटाना है"
 
-#: pylav/extension/red/ui/menus/queue.py:456
+#: pylav/extension/red/ui/menus/queue.py:458
 msgid "Select Track To Remove"
 msgstr "ट्रैक टू रिमूव चुनें"
 
-#: pylav/extension/red/ui/menus/queue.py:458
+#: pylav/extension/red/ui/menus/queue.py:460
 msgid "Select Track To Play Now"
 msgstr "ट्रैक टू प्ले नाउ चुनें"
 

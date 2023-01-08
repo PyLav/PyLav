@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2023-01-02 22:16\n"
+"POT-Creation-Date: 2023-01-08 12:01+0000\n"
+"PO-Revision-Date: 2023-01-08 12:15\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "MIME-Version: 1.0\n"
@@ -281,17 +281,17 @@ msgstr "Omfattning: {scope}\n"
 msgid "Playlists you can access in this server:"
 msgstr "Spellistor du kan komma åt i denna server:"
 
-#: pylav/extension/red/ui/sources/queue.py:105
+#: pylav/extension/red/ui/sources/queue.py:96
+#: pylav/extension/red/ui/sources/queue.py:142
+msgid "No active player found in server"
+msgstr "Ingen aktiv spelare hittades i servern"
+
+#: pylav/extension/red/ui/sources/queue.py:110
 msgid "There's nothing in recently played"
 msgstr "Det finns inget i nyligen spelade"
 
-#: pylav/extension/red/ui/sources/queue.py:107
-#: pylav/extension/red/ui/sources/queue.py:150
+#: pylav/extension/red/ui/sources/queue.py:112
+#: pylav/extension/red/ui/sources/queue.py:155
 msgid "There's nothing currently being played"
 msgstr "Det finns inget just nu som spelas"
-
-#: pylav/extension/red/ui/sources/queue.py:113
-#: pylav/extension/red/ui/sources/queue.py:156
-msgid "No active player found in server"
-msgstr "Ingen aktiv spelare hittades i servern"
 

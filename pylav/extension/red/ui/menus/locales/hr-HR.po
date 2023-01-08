@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2022-12-30 23:16\n"
+"POT-Creation-Date: 2023-01-08 12:01+0000\n"
+"PO-Revision-Date: 2023-01-08 12:15\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
 "MIME-Version: 1.0\n"
@@ -181,11 +181,11 @@ msgstr "Upit"
 msgid "What query to remove from the playlist"
 msgstr "Koji upit ukloniti s popisa za reprodukciju"
 
-#: pylav/extension/red/ui/menus/queue.py:456
+#: pylav/extension/red/ui/menus/queue.py:458
 msgid "Select Track To Remove"
 msgstr "Odaberi pjesmu koja će biti uklonjena"
 
-#: pylav/extension/red/ui/menus/queue.py:458
+#: pylav/extension/red/ui/menus/queue.py:460
 msgid "Select Track To Play Now"
 msgstr "Odaberi pjesmu za reprodukciju"
 
