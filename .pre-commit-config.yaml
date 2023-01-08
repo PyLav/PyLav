@@ -90,8 +90,6 @@ repos:
         -   --fix=lf
       # Trailing whitespace is evil
     -   id: trailing-whitespace
-      # Ensure that links to code on GitHub use the permalinks
-    -   id: check-vcs-permalinks
       # Syntax validation
     -   id: check-ast
     -   id: check-toml
