@@ -135,8 +135,8 @@ services:
             # The Track search order (Deezer ISRC, YouTube Music ISRC, YouTube ISRC, YouTube Music Query, YouTube Query, Deezer Query, SoundCloud Query)
             #  For finding Apple Music and Spotify tracks
             PLUGINS_LAVASRC_PROVIDERS_0: dzisrc:%ISRC%
-            PLUGINS_LAVASRC_PROVIDERS_1: ytmsearch:%ISRC%"
-            PLUGINS_LAVASRC_PROVIDERS_2: ytsearch:"%ISRC%
+            PLUGINS_LAVASRC_PROVIDERS_1: ytmsearch:"%ISRC%"
+            PLUGINS_LAVASRC_PROVIDERS_2: ytsearch:"%ISRC%"
             PLUGINS_LAVASRC_PROVIDERS_3: ytmsearch:%QUERY%
             PLUGINS_LAVASRC_PROVIDERS_4: ytsearch:%QUERY%
             PLUGINS_LAVASRC_PROVIDERS_5: dzsearch:%QUERY%
