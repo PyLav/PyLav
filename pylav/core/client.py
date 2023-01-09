@@ -856,7 +856,7 @@ class Client(metaclass=SingletonClass):
         )
 
     async def decode_track(
-        self, track: str, feature: str = None, raise_on_failure: bool = False
+        self, track: str, feature: str = None, raise_on_failure: bool = False, lazy: bool = False
     ) -> TrackObject | HTTPException:
         """|coro|
         Decodes a base64-encoded track string into a dict.
@@ -869,12 +869,17 @@ class Client(metaclass=SingletonClass):
             The feature to decode the track for. Defaults to `None`.
         raise_on_failure: Optional[:class:`bool`]
             Whether to raise an exception if the track fails to decode. Defaults to `False`.
+        lazy: :class:`bool`
+            Weather to decode within the Bot or send to Lavalink. Defaults to `False`.
 
         Returns
         -------
         LavalinkTrackObject
             An object representing the track's information.
         """
+        if lazy:
+            with contextlib.suppress(Exception):
+                return await async_decoder(track)
         if not self.node_manager.available_nodes:
             raise NoNodeAvailableException(_("No available nodes!"))
         node = await self.node_manager.find_best_node(feature=feature)

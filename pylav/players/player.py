@@ -2758,14 +2758,12 @@ class Player(VoiceProtocol):
         # sourcery no-metrics
         if self._restored is True:
             return
-
         self._was_alone_paused = player.extras.get("was_alone_paused", False)
         current, last_track, next_track = await self._process_restore_current_tracks(player)
         self.last_track = last_track
         self.next_track = next_track
         self.current = None
         self.paused = player.paused
-
         await self._process_restore_autoplaylist(player)
         self._last_position = player.position
         history, queue = await self._process_restore_queues(player)
@@ -2776,7 +2774,6 @@ class Player(VoiceProtocol):
         self._effect_enabled = player.effect_enabled
         await self._process_restore_filters(player)
         self.current = current
-
         self.stopped = (not await self.autoplay_enabled()) and not self.queue.qsize() and not self.current
         await self.change_to_best_node(ops=False, skip_position_fetch=True)
         await self._process_restore_rest_call()
@@ -2830,10 +2827,11 @@ class Player(VoiceProtocol):
                     node=self.node,
                     data=t.pop("encoded", None),
                     query=await Query.from_string(t.pop("query")),
+                    lazy=True,
                     **t.pop("extra"),
                     **t,
                 )
-                async for t in AsyncIter(player.queue, steps=200)
+                for t in player.queue
             ]
             if player.queue
             else []
@@ -2843,11 +2841,12 @@ class Player(VoiceProtocol):
                 await Track.build_track(
                     node=self.node,
                     data=t.pop("encoded", None),
+                    lazy=True,
                     query=await Query.from_string(t.pop("query")),
                     **t.pop("extra"),
                     **t,
                 )
-                async for t in AsyncIter(player.history)
+                for t in player.history
             ]
             if player.history
             else []
@@ -2859,6 +2858,7 @@ class Player(VoiceProtocol):
             await Track.build_track(
                 node=self.node,
                 data=player.current.pop("encoded", None),
+                lazy=True,
                 query=await Query.from_string(player.current.pop("query")),
                 **player.current.pop("extra"),
                 **player.current,
@@ -2870,6 +2870,7 @@ class Player(VoiceProtocol):
             await Track.build_track(
                 node=self.node,
                 data=n_track.pop("encoded", None),
+                lazy=True,
                 query=await Query.from_string(n_track.pop("query")),
                 **n_track.pop("extra"),
                 **n_track,
@@ -2881,6 +2882,7 @@ class Player(VoiceProtocol):
             await Track.build_track(
                 node=self.node,
                 data=l_track.pop("encoded", None),
+                lazy=True,
                 query=await Query.from_string(l_track.pop("query")),
                 **l_track.pop("extra"),
                 **l_track,

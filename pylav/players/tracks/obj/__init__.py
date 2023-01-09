@@ -143,6 +143,7 @@ class Track:
         query: Query | None,
         skip_segments: list[str] | None = None,
         requester: discord.abc.User | int | None = None,
+        lazy: bool = False,
         **extra: Any,
     ) -> Track:
         """Builds a track object from the given data.
@@ -159,6 +160,8 @@ class Track:
             The segments to skip when playing the track.
         requester: :class:`discord.abc.User` | :class:`int`
             The user that requested the track.
+        lazy: :class:`bool`
+            Whether to build decode via the bot or Lavalink
         **extra: Any
             Extra data to add to the track.
         """
@@ -184,7 +187,7 @@ class Track:
             return cls._from_query(node, query, skip_segments, requester, **extra)
 
         if isinstance(data, str):
-            return await cls._from_base64_string(node, data, skip_segments, requester, **extra)
+            return await cls._from_base64_string(node, data, skip_segments, requester, lazy=lazy, **extra)
 
         raise TypeError(f"Expected Track, LavalinkTrackObject, dict, or str, got {type(data).__name__}")
 
@@ -235,9 +238,10 @@ class Track:
         data: str,
         skip_segments: list[str] | None = None,
         requester: discord.abc.User | int | None = None,
+        lazy: bool = False,
         **extra: Any,
     ) -> Track:
-        track_obj = await cls.__CLIENT.decode_track(data, raise_on_failure=True)
+        track_obj = await cls.__CLIENT.decode_track(data, raise_on_failure=True, lazy=lazy)
         query_obj = await Query.from_base64(data)
         return cls._from_lavalink_track_object(
             node=node, data=track_obj, query=query_obj, skip_segments=skip_segments, requester=requester, **extra
