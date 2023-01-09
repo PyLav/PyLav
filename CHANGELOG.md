@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.1.4 (09/01/2023)
+- [Further start up enhancements](https://github.com/Drapersniper/PyLav/commit/1b89d276b8e3bceb9430cb0c36ad2f842391226f) - @Drapersniper
+
+---
+
 ## v1.1.3 (09/01/2023)
 - [Better track caching and references (Better performance)](https://github.com/Drapersniper/PyLav/commit/9eedaa9d17431e275431ea414a92a04c9ce58323) - @Drapersniper
 - [Fix the base64 decoder](https://github.com/Drapersniper/PyLav/commit/b550a3d20b3f5cd01956da62e31c6143b0c5b5b4) - @Drapersniper
@@ -202,8 +207,3 @@
 ## v0.11.16.1 (26/10/2022)
 - [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/e587e80bda9a5a5fffa10b8b7b1a946346d012d4) - @Drapersniper
 - [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/ea26dd61811392afdb9cce16915db76a3b4fc6b5) - @crowdin-bot
-
----
-
-## v0.11.16.0 (26/10/2022)
-- [[patch] Consume Managed node pipe to avoid deadlocks](https://github.com/Drapersniper/PyLav/commit/64abbed223db2d052d33de09957ef2b12fd942da) - @Drapersniper
