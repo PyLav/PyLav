@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.1.3 (09/01/2023)
+- [Better track caching and references (Better performance)](https://github.com/Drapersniper/PyLav/commit/9eedaa9d17431e275431ea414a92a04c9ce58323) - @Drapersniper
+- [Fix the base64 decoder](https://github.com/Drapersniper/PyLav/commit/b550a3d20b3f5cd01956da62e31c6143b0c5b5b4) - @Drapersniper
+- [Used cached session for decode endpoints](https://github.com/Drapersniper/PyLav/commit/4197ad78cfa0210c6fc20f352b32ff91d642609a) - @Drapersniper
+- [Fix incorrect cog name reference](https://github.com/Drapersniper/PyLav/commit/6b364195f70e664d4976813901aa5e462068b0d8) - @Drapersniper
+- [fix AttributeError: 'NoneType' object has no attribute 'source'](https://github.com/Drapersniper/PyLav/commit/9fec736961094fcfd54afde511b6dcfe7a747df3) - @Drapersniper
+- [precommit update](https://github.com/Drapersniper/PyLav/commit/839b097a2d8bd4817006e86ba0a3c94cb38038e4) - @Drapersniper
+- [Update setup.md](https://github.com/Drapersniper/PyLav/commit/a6a576f57b598817c00d8ed4b5774db13e011bee) - @Drapersniper
+
+---
+
 ## v1.1.2 (08/01/2023)
 - [Update docker-compose.yml](https://github.com/Drapersniper/PyLav/commit/90d0b1e3919b0e1916d91b173607ec38e7d5fdb3) - @Drapersniper
 - [Update .pre-commit-config.yaml](https://github.com/Drapersniper/PyLav/commit/313f111b139cc05166dc8e06fd5f42d8fcaf7729) - @Drapersniper
@@ -196,9 +207,3 @@
 
 ## v0.11.16.0 (26/10/2022)
 - [[patch] Consume Managed node pipe to avoid deadlocks](https://github.com/Drapersniper/PyLav/commit/64abbed223db2d052d33de09957ef2b12fd942da) - @Drapersniper
-
----
-
-## v0.11.15.1 (25/10/2022)
-- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/197760bc34dc44c28b6f6d993cfdd63c4c599ada) - @Drapersniper
-- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/1af8f24bc806006706e43b98cfb471ca6d3cc343) - @crowdin-bot
