@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2023-01-02 22:16\n"
+"POT-Creation-Date: 2023-01-09 21:01+0000\n"
+"PO-Revision-Date: 2023-01-09 21:14\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -73,16 +73,16 @@ msgid "This command requires an existing player to be run"
 msgstr "Este comando requer que um jogador existente seja executado"
 
 #: pylav/extension/red/utils/required_methods.py:151
-msgid "MediaPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later"
-msgstr "MediaPlayer cog está temporariamente indisponível devido a uma interrupção no serviço de backend, por favor tente novamente mais tarde"
+msgid "PyLavPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later"
+msgstr ""
 
 #: pylav/extension/red/utils/required_methods.py:155
 msgid "No Lavalink node currently available"
 msgstr "Nenhum nó de Lavalink disponível atualmente"
 
 #: pylav/extension/red/utils/required_methods.py:164
-msgid "MediaPlayer is currently unable to process tracks belonging to {feature}"
-msgstr "O MediaPlayer não pode processar trilhas pertencentes a {feature}"
+msgid "PyLavPlayer is currently unable to process tracks belonging to {feature}"
+msgstr ""
 
 #: pylav/extension/red/utils/required_methods.py:167
 msgid "No Lavalink node currently available with feature {feature}"
