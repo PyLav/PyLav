@@ -55,6 +55,7 @@ def decode_track(track: str) -> Track:
         __ = reader.read_long()  # Discard position, we don't need it
     except Exception as exc:
         LOGGER.verbose("Error while decoding version %d track: %s", version, track, exc_info=exc)
+        raise UnicodeError("Error while decoding track") from exc
 
     return typing.cast(
         Track,

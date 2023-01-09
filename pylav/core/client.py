@@ -887,7 +887,7 @@ class Client(metaclass=SingletonClass):
             if isinstance(response, TrackObject):
                 return response
             raise TypeError
-        except Exception:  # noqa
+        except Exception as exc:  # noqa
             return await async_decoder(track)
 
     async def decode_tracks(
@@ -1385,7 +1385,7 @@ class Client(metaclass=SingletonClass):
                     await Track.build_track(
                         data=response.tracks[0],
                         node=node,
-                        query=None,
+                        query=await Query.from_base64(track_b64),
                         requester=requester.id,
                     )
                 )
@@ -1420,7 +1420,7 @@ class Client(metaclass=SingletonClass):
                     await Track.build_track(
                         data=track,
                         node=node,
-                        query=None,
+                        query=await Query.from_base64(track_b64),
                         requester=requester.id,
                     )
                 )

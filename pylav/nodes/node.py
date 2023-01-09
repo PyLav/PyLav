@@ -1163,7 +1163,7 @@ class Node:
     async def fetch_decodetrack(
         self, encoded_track: str, timeout: aiohttp.ClientTimeout | object = sentinel, raise_on_failure: bool = True
     ) -> Track | HTTPException:
-        async with self._session.get(
+        async with self._manager._client.cached_session.get(
             self.get_endpoint_decodetrack(),
             headers={"Authorization": self.password},
             params={"encodedTrack": encoded_track, "trace": "true" if self.trace else "false"},
@@ -1182,7 +1182,7 @@ class Node:
     async def post_decodetracks(
         self, encoded_tracks: list[str], raise_on_failure: bool = False
     ) -> list[Track] | HTTPException:
-        async with self._session.post(
+        async with self._manager._client.cached_session.post(
             self.get_endpoint_decodetracks(),
             headers={"Authorization": self.password},
             json=encoded_tracks,

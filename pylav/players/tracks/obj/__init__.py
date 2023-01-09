@@ -4,7 +4,6 @@ import hashlib
 import struct
 import typing
 import uuid
-from datetime import timedelta
 from functools import total_ordering
 from typing import Any, Self
 
@@ -26,8 +25,6 @@ if typing.TYPE_CHECKING:
     from pylav.nodes.node import Node
     from pylav.players.player import Player
 
-CACHE = Cache(name="TrackCache")
-CACHE.setup("mem://?check_interval=10&size=10000")
 
 __CLIENT: Client | None = None
 
@@ -50,6 +47,7 @@ class Track:
         "_extra",
         "_encoded",
         "_raw_data",
+        "_processed",
     )
     __CLIENT: Client | None = None
 
@@ -73,6 +71,7 @@ class Track:
         self._updated_query = None
         self._id = str(uuid.uuid4())
         self._raw_data: JSON_DICT_TYPE = {}
+        self._processed = None
 
         self._process_init()
 
@@ -206,6 +205,7 @@ class Track:
         instance._unique_id = hashlib.md5()
         instance._unique_id.update(instance._encoded.encode())
         instance._is_partial = False
+        instance._processed = data
         return instance
 
     @classmethod
@@ -265,6 +265,7 @@ class Track:
         instance._raw_data = self._raw_data
         instance._unique_id = self._unique_id
         instance._is_partial = self._is_partial
+        instance._processed = self._processed
         return instance
 
     @property
@@ -457,14 +458,16 @@ class Track:
             return f"https://www.youtube.com/watch?v={self.identifier}&list=RD{self.identifier}"
         return None
 
-    @CACHE.cache(ttl=timedelta(minutes=1), key="{self.unique_identifier}:{self.encoded}")
     async def fetch_full_track_data(
         self,
     ) -> APITrack:
+        if self._processed:
+            return self._processed
         if self.encoded:
-            return await self.client.decode_track(self.encoded)
+            self._processed = await self.client.decode_track(self.encoded)
         else:
-            return await self.search()
+            await self.search()
+        return self._processed
 
     async def to_dict(self) -> dict[str, Any]:
         """
@@ -508,6 +511,7 @@ class Track:
         self._unique_id = hashlib.md5()
         self._unique_id.update(self.encoded.encode())
         self._is_partial = False
+        self._processed = track
 
     async def search_all(self, player: Player, requester: int, bypass_cache: bool = False) -> list[Track]:
         _query = await Query.from_string(self._query)
@@ -526,7 +530,7 @@ class Track:
         if not response or not response.tracks:
             raise TrackNotFoundException(f"No tracks found for query {await self.query_identifier()}")
         return [
-            await Track.build_track(data=track, node=player.node, query=None, requester=requester)
+            await Track.build_track(data=track, node=player.node, query=self._query, requester=requester)
             for track in response.tracks
         ]
 

@@ -149,7 +149,7 @@ async def cog_command_error(self: DISCORD_COG_TYPE, context: PyLavContext, error
             embed=await self.pylav.construct_embed(
                 messageable=context,
                 description=_(
-                    "MediaPlayer cog is currently temporarily unavailable due to an outage with "
+                    "PyLavPlayer cog is currently temporarily unavailable due to an outage with "
                     "the backend services, please try again later"
                 ),
                 footer=_("No Lavalink node currently available") if await self.bot.is_owner(context.author) else None,
@@ -161,7 +161,7 @@ async def cog_command_error(self: DISCORD_COG_TYPE, context: PyLavContext, error
         await context.send(
             embed=await self.pylav.construct_embed(
                 messageable=context,
-                description=_("MediaPlayer is currently unable to process tracks belonging to {feature}").format(
+                description=_("PyLavPlayer is currently unable to process tracks belonging to {feature}").format(
                     feature=error.feature
                 ),
                 footer=_("No Lavalink node currently available with feature {feature}").format(feature=error.feature)

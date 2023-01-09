@@ -140,17 +140,17 @@ class Query:
         recursive: bool = False,
         partial: bool = False,
     ) -> None:
-        if source:
+        if source and query:
             self._source = query.source
-        if search:
+        if search and query:
             self._search = query._search
-        if start_time:
+        if start_time and query:
             self.start_time = query.start_time
-        if index:
+        if index and query:
             self.index = query.index
-        if recursive:
+        if recursive and query:
             self._recursive = query._recursive
-        if partial:
+        if partial and query:
             self._partial = query._partial
 
     def __str__(self) -> str:
