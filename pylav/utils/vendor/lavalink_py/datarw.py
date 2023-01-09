@@ -134,7 +134,7 @@ class DataReader:
             return self._flags
         self._flags = (self.read_int() & 0xC0000000) >> 30
         self._flag_read = True
-        return self._version
+        return self._flags
 
     # Added for PyLav
     def read_version(self) -> int:
@@ -143,7 +143,7 @@ class DataReader:
         (version,) = (struct.unpack("B", self.read_byte())) if self.read_flags() & 1 != 0 else (1,)
         self._version = version
         self._version_read = True
-        return self._flags
+        return self._version
 
 
 class DataWriter:
