@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-04 19:01+0000\n"
-"PO-Revision-Date: 2023-01-04 19:12\n"
+"POT-Creation-Date: 2023-01-09 21:01+0000\n"
+"PO-Revision-Date: 2023-01-09 21:14\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
@@ -17,23 +17,23 @@ msgstr ""
 "X-Crowdin-File-ID: 795\n"
 "Language: pl_PL\n"
 
-#: pylav/core/client.py:879 pylav/core/client.py:914
+#: pylav/core/client.py:884 pylav/core/client.py:919
 msgid "No available nodes!"
 msgstr "Brak dostępnych węzłów!"
 
-#: pylav/core/client.py:883 pylav/core/client.py:918
+#: pylav/core/client.py:888 pylav/core/client.py:923
 msgid "No node with {feature} functionality available!"
 msgstr "Brak dostępnych węzłów z funkcją {feature}!"
 
-#: pylav/core/client.py:1217
+#: pylav/core/client.py:1222
 msgid "No node with {query.requires_capability} functionality available!"
 msgstr "Brak dostępnych węzłów z funkcją {query.requires_capability}!"
 
-#: pylav/core/client.py:1629
+#: pylav/core/client.py:1634
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
 msgstr "Aby wygenerować listę odtwarzania mieszanki, konieczne jest użycie wideo, użytkownika, kanału lub ID listy odtwarzania"
 
-#: pylav/core/client.py:1634
+#: pylav/core/client.py:1639
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
 msgstr "Aby wygenerować listę odtwarzania mieszanki, konieczne jest użycie wideo, użytkownika, kanału lub Playlist ID."
 
