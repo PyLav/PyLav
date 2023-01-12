@@ -242,7 +242,7 @@ class Track:
         **extra: Any,
     ) -> Track:
         track_obj = await cls.__CLIENT.decode_track(data, raise_on_failure=True, lazy=lazy)
-        query_obj = await Query.from_base64(data)
+        query_obj = await Query.from_string(track_obj.info.uri)
         return cls._from_lavalink_track_object(
             node=node, data=track_obj, query=query_obj, skip_segments=skip_segments, requester=requester, **extra
         )
@@ -355,7 +355,7 @@ class Track:
     async def query(self) -> Query:
         if self.encoded and self._updated_query is None:
             assert self.encoded is not None
-            self._updated_query = await Query.from_base64(self.encoded)
+            self._updated_query = await Query.from_base64(self.encoded, lazy=True)
             self._updated_query.merge(
                 query=self._query,
                 start_time=True,

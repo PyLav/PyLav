@@ -1384,13 +1384,13 @@ class Client(metaclass=SingletonClass):
                 )
                 continue
             response = await self._get_tracks(player=player, query=local_track, first=True, bypass_cache=True)
-            if track_b64 := response.tracks[0].encoded:
+            if __ := response.tracks[0].encoded:
                 track_count += 1
                 successful_tracks.append(
                     await Track.build_track(
                         data=response.tracks[0],
                         node=node,
-                        query=await Query.from_base64(track_b64),
+                        query=await Query.from_string(response.tracks[0].info.uri),
                         requester=requester.id,
                     )
                 )
@@ -1419,13 +1419,13 @@ class Client(metaclass=SingletonClass):
         if not track_list:
             queries_failed.append(sub_query)
         for track in track_list:
-            if track_b64 := track.encoded:
+            if __ := track.encoded:
                 track_count += 1
                 successful_tracks.append(
                     await Track.build_track(
                         data=track,
                         node=node,
-                        query=await Query.from_base64(track_b64),
+                        query=await Query.from_string(track.info.uri),
                         requester=requester.id,
                     )
                 )
@@ -1444,7 +1444,7 @@ class Client(metaclass=SingletonClass):
             queries_failed.append(sub_query)
         if track_b64:
             track_count += 1
-            new_query = await Query.from_base64(track_b64)
+            new_query = await Query.from_string(response.tracks[0].info.uri)
             new_query.merge(sub_query, start_time=True)
             successful_tracks.append(
                 await Track.build_track(

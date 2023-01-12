@@ -309,7 +309,7 @@ class PlayerController:
             discord_player = await self.create(
                 channel=channel,
                 requester=requester,
-                feature=(await Query.from_base64(player_state.current["encoded"])).requires_capability
+                feature=(await Query.from_base64(player_state.current["encoded"], lazy=True)).requires_capability
                 if player_state.current
                 else None,
                 self_deaf=player_state.self_deaf,

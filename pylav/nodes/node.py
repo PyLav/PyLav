@@ -940,14 +940,14 @@ class Node:
                 tracks = (
                     [
                         t.to_dict()
-                        for t in await self.node_manager.client.decode_tracks(
-                            [tracks[0]] if first else tracks, raise_on_failure=False
-                        )
+                        for t in await self.node_manager.client.decode_tracks(tracks, raise_on_failure=False)
                         if isinstance(t, Track)
                     ]
                     if tracks
                     else []
                 )
+                if tracks and first:
+                    tracks = [tracks[0]]
             except Exception:  # noqa
                 tracks = []
                 load_type = "LOAD_FAILED"

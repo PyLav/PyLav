@@ -488,8 +488,12 @@ class Query:
 
     @classmethod
     async def from_string(
-        cls, query: Query | str | pathlib.Path | aiopath.AsyncPath, dont_search: bool = False, partial: bool = False
-    ) -> Query:
+        cls,
+        query: Query | str | pathlib.Path | aiopath.AsyncPath,
+        dont_search: bool = False,
+        partial: bool = False,
+        lazy: bool = False,
+    ) -> Query:  # sourcery skip: low-code-quality
         if isinstance(query, Query):
             return query
         if isinstance(query, (aiopath.AsyncPath, pathlib.Path)):
@@ -504,7 +508,7 @@ class Query:
         source = None
         if len(query) > 20 and SOURCE_INPUT_MATCH_BASE64_TEST.match(query):
             with contextlib.suppress(Exception):
-                data = await cls.__CLIENT.decode_track(query, raise_on_failure=True)
+                data = await cls.__CLIENT.decode_track(query, raise_on_failure=True, lazy=lazy)
                 source = data.info.sourceName
                 query = data.info.uri
         try:
@@ -819,11 +823,10 @@ class Query:
         )
 
     @classmethod
-    async def from_base64(cls, base64_string: str) -> Query:
-        data = await cls.__CLIENT.decode_track(base64_string, raise_on_failure=True)
+    async def from_base64(cls, base64_string: str, lazy: bool = False) -> Query:
+        data = await cls.__CLIENT.decode_track(base64_string, raise_on_failure=True, lazy=lazy)
         source = data.info.sourceName
-        url = data.info.uri
-        response = await cls.from_string(url)
+        response = await cls.from_string(data.info.uri)
         response._source = cls.__get_source_from_str(source)
         return response
 

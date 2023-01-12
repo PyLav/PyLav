@@ -1279,7 +1279,7 @@ class Player(VoiceProtocol):
             if returned:
                 return
         if await track.query() is None:
-            track._query = await Query.from_base64(track.encoded)
+            track._query = await Query.from_base64(track.encoded, lazy=True)
         if node:
             if self.node != node:
                 await self.change_node(node)

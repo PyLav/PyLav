@@ -580,7 +580,7 @@ class WebSocket:
         return await Track.build_track(
             data=data.encodedTrack,
             requester=requester.id if requester else self._client.bot.user.id,
-            query=await Query.from_base64(data.encodedTrack),
+            query=await Query.from_base64(data.encodedTrack, lazy=True),
             node=self.node,
         )
 
