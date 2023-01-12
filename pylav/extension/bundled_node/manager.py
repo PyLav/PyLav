@@ -144,7 +144,7 @@ class LocalNodeManager:
         self.start_monitor_task = None
         self.timeout = timeout
         self._args = []
-        self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
+        self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=120), json_serialize=ujson.dumps)
         self._node_id: int = self._client.bot.user.id
         self._node: Node | None = None
         self._current_config = {}
@@ -806,7 +806,7 @@ class LocalNodeManager:
         self._java_path = java_path
         if self.start_monitor_task is not None:
             await self.shutdown()
-            self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
+            self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=120), json_serialize=ujson.dumps)
         if self.__buffer_task is not None:
             self.__buffer_task.cancel()
             self.__buffer_task = None

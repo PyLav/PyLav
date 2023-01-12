@@ -51,7 +51,7 @@ class NodeManager:
         external_ssl: bool = False,
     ):
         self._client = client
-        self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
+        self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=120), json_serialize=ujson.dumps)
         self._player_queue = set()
         self._unmanaged_external_host = external_host
         self._unmanaged_external_password = external_password
