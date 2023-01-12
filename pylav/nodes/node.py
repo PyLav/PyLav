@@ -120,7 +120,7 @@ class Node:
         self._version: Version | None = None
         self._api_version: int | None = None
         self._manager = manager
-        self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
+        self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=120), json_serialize=ujson.dumps)
         self._temporary = temporary
         if not temporary:
             # noinspection PyProtectedMember
