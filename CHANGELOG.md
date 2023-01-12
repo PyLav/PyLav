@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.1.5 (12/01/2023)
+- [More optimizations](https://github.com/Drapersniper/PyLav/commit/240686c7c45c4fcd6d384ca8e334689f0504bd28) - @Drapersniper
+- [optmization fixes](https://github.com/Drapersniper/PyLav/commit/df6aaf99105817218b3898c53efe621678f1aa75) - @Drapersniper
+- [bulk process track where possible](https://github.com/Drapersniper/PyLav/commit/31e8df416507f29e8b1995191570566da4c62eb3) - @Drapersniper
+- [Increase the node session timeouts](https://github.com/Drapersniper/PyLav/commit/cf0b3c9f0e762aadc2374060625f4f49e4bf9f8c) - @Drapersniper
+- [pre-commit hook version update](https://github.com/Drapersniper/PyLav/commit/445817f0ff0a1e6db035dd29a2a3e5bad70d89d1) - @Drapersniper
+- [increase session timeout for node](https://github.com/Drapersniper/PyLav/commit/3c9cbfe39278ec71ba4b655b2a86ea713810dbf2) - @Drapersniper
+
+---
+
 ## v1.1.4 (09/01/2023)
 - [Further start up enhancements](https://github.com/Drapersniper/PyLav/commit/1b89d276b8e3bceb9430cb0c36ad2f842391226f) - @Drapersniper
 
@@ -201,9 +211,3 @@
 
 ## v0.11.17.0 (27/10/2022)
 - [[patch] Fix incorrect logic on local track folder names if a dot is used in the name](https://github.com/Drapersniper/PyLav/commit/fd889a5fa0b3e3adbc2f128804ae599e509915cd) - @Drapersniper
-
----
-
-## v0.11.16.1 (26/10/2022)
-- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/e587e80bda9a5a5fffa10b8b7b1a946346d012d4) - @Drapersniper
-- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/ea26dd61811392afdb9cce16915db76a3b4fc6b5) - @crowdin-bot
