@@ -196,14 +196,15 @@ class Node:
         with contextlib.suppress(
             asyncio.exceptions.CancelledError,
         ):
+            if self.websocket and self.websocket._connecting is True:
+                return
+
             try:
                 await self.websocket.ping()
-                await self.fetch_version(raise_on_error=True)
                 self._logger.trace("Healthy")
             except Exception:  # noqa
                 # noinspection PyProtectedMember
                 if self.websocket._connecting is True:
-                    self._logger.debug("Already connecting - skipping reconnect on unhealthy")
                     return
                 self._logger.warning("Unhealthy - Triggering a state reset")
                 await self._unhealthy()
@@ -214,7 +215,6 @@ class Node:
             if (self.down_votes / playing_players) >= 0.5:
                 # noinspection PyProtectedMember
                 if self.websocket._connecting is True:
-                    self._logger.debug("Already connecting - skipping reconnect on unhealthy")
                     return
                 await self._unhealthy()
 

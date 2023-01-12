@@ -2849,12 +2849,12 @@ class Player(VoiceProtocol):
             queue = []
             for i, track in enumerate(queue_raw):
                 if track["data"] is not None and encoded_list:
-                    query = track.pop("query")
+                    query = await Query.from_string(track.pop("query"))
                     lazy = track.pop("lazy")
                     data = track_objects[i]
                     track.pop("data")
                 else:
-                    query = track.pop("query")
+                    query = await Query.from_string(track.pop("query"))
                     data = track.pop("data")
                     lazy = track.pop("lazy")
                 queue.append(await Track.build_track(node=self.node, query=query, lazy=lazy, data=data, **track))
