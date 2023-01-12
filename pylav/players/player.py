@@ -2821,37 +2821,60 @@ class Player(VoiceProtocol):
             await self.node.patch_session_player(guild_id=self.guild.id, payload=payload)
 
     async def _process_restore_queues(self, player):
-        queue = (
-            [
-                await Track.build_track(
-                    node=self.node,
-                    data=t.pop("encoded", None),
-                    query=await Query.from_string(t.pop("query")),
-                    lazy=True,
-                    **t.pop("extra"),
-                    **t,
-                )
-                for t in player.queue
-            ]
-            if player.queue
-            else []
-        )
-        history = (
-            [
-                await Track.build_track(
-                    node=self.node,
-                    data=t.pop("encoded", None),
-                    lazy=True,
-                    query=await Query.from_string(t.pop("query")),
-                    **t.pop("extra"),
-                    **t,
-                )
-                for t in player.history
-            ]
-            if player.history
-            else []
-        )
+        queue = await self._generate_queue(player.queue)
+        history = await self._generate_queue(player.history)
         return history, queue
+
+    async def _generate_queue(self, raw_queue):
+        queue_raw = (
+            [
+                {"data": t.pop("encoded", None), "query": t.pop("query"), "lazy": True, **t.pop("extra"), **t}
+                for t in raw_queue
+            ]
+            if raw_queue
+            else []
+        )
+        encoded_list = [track["data"] for track in queue_raw if track["data"] is not None]
+        if encoded_list:
+            track_objects = await self.node.post_decodetracks(encoded_list)
+            if not isinstance(track_objects, list):
+                track_objects = []
+                fallback = True
+            else:
+                fallback = False
+        else:
+            track_objects = []
+            fallback = True
+        if not fallback:
+            queue = []
+            for i, track in enumerate(queue_raw):
+                if track["data"] is not None and encoded_list:
+                    query = track.pop("query")
+                    lazy = track.pop("lazy")
+                    data = track_objects[i]
+                    track.pop("data")
+                else:
+                    query = track.pop("query")
+                    data = track.pop("data")
+                    lazy = track.pop("lazy")
+                queue.append(await Track.build_track(node=self.node, query=query, lazy=lazy, data=data, **track))
+        else:
+            queue = (
+                [
+                    await Track.build_track(
+                        node=self.node,
+                        data=t.pop("encoded", None),
+                        query=await Query.from_string(t.pop("query")),
+                        lazy=True,
+                        **t.pop("extra"),
+                        **t,
+                    )
+                    for t in raw_queue
+                ]
+                if raw_queue
+                else []
+            )
+        return queue
 
     async def _process_restore_current_tracks(self, player):
         current = (
