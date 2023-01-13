@@ -147,19 +147,21 @@ services:
             # # PLUGINS_LAVASRC_DEEZER_MASTERDECRYPTIONKEY:  # Leave this as it is, or fill it with the deezer key if you have it
 
             # Lavasrc Apple music configuration
-            PLUGINS_LAVASRC_SOURCES_APPLEMUSIC: true   # Enable Apple Music source
-            PLUGINS_LAVASRC_APPLEMUSIC_COUNTRYCODE: US # the country code you want to use for filtering the artists top tracks and language. See https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
-            PLUGINS_LAVASRC_APPLEMUSIC_MEDIAAPITOKEN:  # Not necessary, Can be used to bypass the auto token fetching which is likely to break again in the future
-
+            PLUGINS_LAVASRC_SOURCES_APPLEMUSIC: true          # Enable Apple Music source
+            PLUGINS_LAVASRC_APPLEMUSIC_COUNTRYCODE: US        # the country code you want to use for filtering the artists top tracks and language. See https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+            PLUGINS_LAVASRC_APPLEMUSIC_MEDIAAPITOKEN:         # Not necessary, Can be used to bypass the auto token fetching which is likely to break again in the future
+            PLUGINS_LAVASRC_APPLEMUSIC_PLAYLISTLOADLIMIT: 30  # The number of pages at 300 tracks each
+            PLUGINS_LAVASRC_APPLEMUSIC_ALBUMLOADLIMIT: 30     # The number of pages at 300 tracks each
             # Lavasrc Spotify configuration
-            PLUGINS_LAVASRC_SOURCES_SPOTIFY: true  # Enable Spotify source
-            PLUGINS_LAVASRC_SPOTIFY_CLIENTID: CHANGE_ME # Your Spotify Client ID
-            PLUGINS_LAVASRC_SPOTIFY_CLIENTSECRET: CHANGE_ME # Your Spotify Client Secret
-            PLUGINS_LAVASRC_SPOTIFY_COUNTRYCODE: US # tHE country code you want to use for filtering the artists top tracks and language. See https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
-
+            PLUGINS_LAVASRC_SOURCES_SPOTIFY: true             # Enable Spotify source
+            PLUGINS_LAVASRC_SPOTIFY_CLIENTID: CHANGE_ME       # Your Spotify Client ID
+            PLUGINS_LAVASRC_SPOTIFY_CLIENTSECRET: CHANGE_ME   # Your Spotify Client Secret
+            PLUGINS_LAVASRC_SPOTIFY_COUNTRYCODE: US           # The country code you want to use for filtering the artists top tracks and language. See https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+            PLUGINS_LAVASRC_SPOTIFY_PLAYLISTLOADLIMIT: 110    # The number of pages at 100 tracks each
+            PLUGINS_LAVASRC_SPOTIFY_ALBUMLOADLIMIT: 220       # The number of pages at 50 tracks each
             # Lavasrc Yandex configuration
-            PLUGINS_LAVASRC_SOURCES_YANDEXMUSIC: false # Enable Yandex Music source
-            PLUGINS_LAVASRC_YANDEXMUSIC_ACCESSTOKEN:   # the token used for accessing the yandex music api. See https://github.com/TopiSenpai/LavaSrc#yandex-music
+            PLUGINS_LAVASRC_SOURCES_YANDEXMUSIC: false        # Enable Yandex Music source
+            PLUGINS_LAVASRC_YANDEXMUSIC_ACCESSTOKEN:          # the token used for accessing the yandex music api. See https://github.com/TopiSenpai/LavaSrc#yandex-music
 
 
             # Configure Sentry

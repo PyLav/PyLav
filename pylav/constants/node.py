@@ -13,14 +13,14 @@ NODE_DEFAULT_SETTINGS = {
     "lavalink": {
         "plugins": [
             {
-                "dependency": "com.github.TopiSenpai.LavaSrc:lavasrc-plugin:3.1.8",
+                "dependency": "com.github.TopiSenpai.LavaSrc:lavasrc-plugin:933c901",
                 "repository": "https://jitpack.io",
             },
             {
                 "dependency": "com.dunctebot:skybot-lavalink-plugin:1.4.1",
                 "repository": "https://m2.duncte123.dev/releases",
             },
-            {"dependency": "com.github.topisenpai:sponsorblock-plugin:1.0.5", "repository": "https://jitpack.io"},
+            {"dependency": "com.github.topisenpai:sponsorblock-plugin:71b12d1", "repository": "https://jitpack.io"},
             {"dependency": "me.rohank05:lavalink-filter-plugin:0.0.1", "repository": "https://jitpack.io"},
             {"dependency": "com.github.esmBot:lava-xm-plugin:v0.2.1", "repository": "https://jitpack.io"},
         ],
@@ -89,8 +89,10 @@ NODE_DEFAULT_SETTINGS = {
                 "clientId": "",
                 "clientSecret": "",
                 "countryCode": "US",
+                "playlistLoadLimit": 110,
+                "albumLoadLimit": 220,
             },
-            "applemusic": {"countryCode": "US", "mediaAPIToken": None},
+            "applemusic": {"countryCode": "US", "mediaAPIToken": None, "playlistLoadLimit": 30, "albumLoadLimit": 30},
             "deezer": {"masterDecryptionKey": ""},
             "yandexmusic": {"accessToken": ""},
         },
