@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.1.6 (14/01/2023)
+- [Add a special penalty handling for nodes to change the weighting](https://github.com/Drapersniper/PyLav/commit/44153b74658aca19d5c3d829977e00482dae8b52) - @Drapersniper
+- [Update docker-compose.yml with the new lavasrc commit](https://github.com/Drapersniper/PyLav/commit/f6fda52bb1817a890e23266f160b2c2f74a253d3) - @Drapersniper
+- [Disable the london node - as that has been sunset-ed for the time being](https://github.com/Drapersniper/PyLav/commit/867fc28cb15e0f3e8ce813663344bc86723c4d0b) - @Drapersniper
+- [Add new Lavasrc configuration values for playlist and album limits (Applemusic built-in limit = 9K songs and Spotify = 11K songs)](https://github.com/Drapersniper/PyLav/commit/0de5c235336b61002b4af14bd455d32304ea9d2c) - @Drapersniper
+
+---
+
 ## v1.1.5 (12/01/2023)
 - [More optimizations](https://github.com/Drapersniper/PyLav/commit/240686c7c45c4fcd6d384ca8e334689f0504bd28) - @Drapersniper
 - [optmization fixes](https://github.com/Drapersniper/PyLav/commit/df6aaf99105817218b3898c53efe621678f1aa75) - @Drapersniper
@@ -206,8 +214,3 @@
 ## v0.11.17.1 (23/11/2022)
 - [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/72e281057e99ba376c3f42bf93e6ad18fac932ea) - @Drapersniper
 - [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/cf3f37148889129747a6216c1ef03bd63b041469) - @crowdin-bot
-
----
-
-## v0.11.17.0 (27/10/2022)
-- [[patch] Fix incorrect logic on local track folder names if a dot is used in the name](https://github.com/Drapersniper/PyLav/commit/fd889a5fa0b3e3adbc2f128804ae599e509915cd) - @Drapersniper
