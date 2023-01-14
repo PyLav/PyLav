@@ -51,6 +51,29 @@ class Penalty:
             1.03 ** (500 * (self._stats.frames_deficit / 3000)) * 600 - 600 if self._stats.frames_deficit != -1 else 0
         )
 
+    # noinspection PyProtectedMember
+    @property
+    def special_handling(self) -> float:
+        match self._stats._node.identifier:
+            # PyLav external are feature full nodes and will usually be better than the other external nodes
+            case 1 | 2:
+                return -50
+            # If the node is a lava.link node then lets penalise it heavily
+            case 1001:
+                return 2000
+            # EnvVar nodes are always the second best nodes as they are explicitly set
+            case 31415:
+                return -1500
+        # Bundled nodes are always the best nodes
+        if self._stats._node.managed:
+            # These are nodes already in the same machine using the config port - they are considered good but since they aren't fully managed they are not the best
+            if self._stats._node.name.startswith("PyLavPortConflictRecovery"):
+                return -500
+            # This is a fully managed bundled node - it is the best
+            return -2000
+        # Reduce the penalty of the node based on how many features it has
+        return -1 * len(self._stats._node._capabilities)
+
     @property
     def total(self) -> float:
         """The total penalty of the node.
@@ -64,6 +87,7 @@ class Penalty:
             + self.null_frame_penalty
             + self.deficit_frame_penalty
             + self._stats._node.down_votes * 100
+            + self.special_handling
         )
 
     def __repr__(self) -> str:
@@ -74,6 +98,7 @@ class Penalty:
             f"null_frame={self.null_frame_penalty} "
             f"deficit_frame={self.deficit_frame_penalty} "
             f"votes={self._stats._node.down_votes * 100} "
+            f"feature_weighting={self.special_handling} "
             f"total={self.total}>"
         )
 
