@@ -46,7 +46,7 @@ services:
 
 
             # Plugins to load
-            LAVALINK_PLUGINS_0_DEPENDENCY: com.github.TopiSenpai.LavaSrc:lavasrc-plugin:7bd20fd
+            LAVALINK_PLUGINS_0_DEPENDENCY: com.github.TopiSenpai.LavaSrc:lavasrc-plugin:933c901
             LAVALINK_PLUGINS_0_REPOSITORY: https://jitpack.io
             LAVALINK_PLUGINS_1_DEPENDENCY: com.github.topisenpai:sponsorblock-plugin:71b12d1
             LAVALINK_PLUGINS_1_REPOSITORY: https://jitpack.io
