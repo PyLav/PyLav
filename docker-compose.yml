@@ -8,7 +8,7 @@ services:
         volumes:
         -   ./redbot:/data
         -   ./pylav.docker.yaml:/data/pylav.yaml
-      # Use the pylav.docker.yaml file from https://github.com/Drapersniper/PyLav/blob/master/docker-compose.yml editing it as necessary.
+      # Use the pylav.docker.yaml file from https://github.com/Drapersniper/PyLav/blob/master/pylav.docker.yaml editing it as necessary.
         -   ./pgsocket:/var/run/postgresql
       # - ./localtracks:/data/localtracks (Localtracks folder)
         environment:
