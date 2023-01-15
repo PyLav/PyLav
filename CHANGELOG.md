@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.1.7 (15/01/2023)
+- [Tweaks to special handling logic for node penalty](https://github.com/Drapersniper/PyLav/commit/1c27a95e7899a6102edfd3b0b64dc6e0176f1d25) - @Drapersniper
+- [fix incorrect reference to pylav.docker.yaml](https://github.com/Drapersniper/PyLav/commit/fdbe1ec61e4005360ae2152738ec96bf238f422e) - @Drapersniper
+
+---
+
 ## v1.1.6 (14/01/2023)
 - [Add a special penalty handling for nodes to change the weighting](https://github.com/Drapersniper/PyLav/commit/44153b74658aca19d5c3d829977e00482dae8b52) - @Drapersniper
 - [Update docker-compose.yml with the new lavasrc commit](https://github.com/Drapersniper/PyLav/commit/f6fda52bb1817a890e23266f160b2c2f74a253d3) - @Drapersniper
@@ -208,9 +214,3 @@
 ## v0.11.17.2 (24/11/2022)
 - [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/a6b80d71b39fc1527ea9a02ceeb30a823d10c74c) - @Drapersniper
 - [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/79efb5dbc975602675b8b5db4724bef94cb7b98f) - @crowdin-bot
-
----
-
-## v0.11.17.1 (23/11/2022)
-- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/72e281057e99ba376c3f42bf93e6ad18fac932ea) - @Drapersniper
-- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/cf3f37148889129747a6216c1ef03bd63b041469) - @crowdin-bot
