@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 import ujson
 
+from pylav.constants.builtin_nodes import BUNDLED_NODES_IDS_HOST_MAPPING
 from pylav.constants.config import JAVA_EXECUTABLE
 from pylav.constants.node import NODE_DEFAULT_SETTINGS
 from pylav.constants.node_features import SUPPORTED_FEATURES, SUPPORTED_SOURCES
@@ -463,6 +464,9 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
             The connection args.
         """
         data = await self.fetch_all()
+
+        if self.id in BUNDLED_NODES_IDS_HOST_MAPPING:
+            data["yaml"]["lavalink"]["server"]["password"] = self.client._user_id
 
         return {
             "unique_identifier": self.id,

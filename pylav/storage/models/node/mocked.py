@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from pylav.constants.builtin_nodes import BUNDLED_NODES_IDS_HOST_MAPPING
 from pylav.constants.node_features import SUPPORTED_FEATURES, SUPPORTED_SOURCES
 from pylav.storage.database.cache.model import CachedModel
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
@@ -195,7 +196,8 @@ class NodeMock(CachedModel):
             The connection args.
         """
         data = await self.fetch_all()
-
+        if self.id in BUNDLED_NODES_IDS_HOST_MAPPING:
+            data["yaml"]["lavalink"]["server"]["password"] = self.client._user_id
         return {
             "unique_identifier": self.id,
             "host": data["yaml"]["server"]["address"],

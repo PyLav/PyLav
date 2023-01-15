@@ -54,6 +54,12 @@ class Penalty:
     # noinspection PyProtectedMember
     @property
     def special_handling(self) -> float:
+        # Node connection isn't ready yet
+        if not self._stats._node.is_ready:
+            return 1000000
+        # Ws connection isn't available yet
+        if not self._stats._node.available:
+            return 1000000
         match self._stats._node.identifier:
             # PyLav external are feature full nodes and will usually be better than the other external nodes
             case 1 | 2:

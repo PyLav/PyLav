@@ -1019,7 +1019,11 @@ class Node:
         """
         async with self._session.get(
             self.get_endpoint_session_players(),
-            headers={"Authorization": self.password},
+            headers={
+                "Authorization": self.password,
+                "Client-Name": f"PyLav/{self.node_manager.client.lib_version}",
+                "App-Id": self.node_manager.client._user_id,
+            },
             params={"trace": "true" if self.trace else "false"},
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
@@ -1035,7 +1039,11 @@ class Node:
     async def fetch_session_player(self, guild_id: int) -> rest_api.LavalinkPlayer | HTTPException:
         async with self._session.get(
             self.get_endpoint_session_player_by_guild_id(guild_id=guild_id),
-            headers={"Authorization": self.password},
+            headers={
+                "Authorization": self.password,
+                "Client-Name": f"PyLav/{self.node_manager.client.lib_version}",
+                "App-Id": self.node_manager.client._user_id,
+            },
             params={"trace": "true" if self.trace else "false"},
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
@@ -1051,7 +1059,11 @@ class Node:
     ) -> rest_api.LavalinkPlayer | HTTPException:
         async with self._session.patch(
             self.get_endpoint_session_player_by_guild_id(guild_id=guild_id),
-            headers={"Authorization": self.password},
+            headers={
+                "Authorization": self.password,
+                "Client-Name": f"PyLav/{self.node_manager.client.lib_version}",
+                "App-Id": self.node_manager.client._user_id,
+            },
             params={"noReplace": "true" if no_replace else "false", "trace": "true" if self.trace else "false"},
             json=payload,
         ) as res:
@@ -1066,7 +1078,11 @@ class Node:
     async def delete_session_player(self, guild_id: int) -> None | HTTPException:
         async with self._session.delete(
             self.get_endpoint_session_player_by_guild_id(guild_id=guild_id),
-            headers={"Authorization": self.password},
+            headers={
+                "Authorization": self.password,
+                "Client-Name": f"PyLav/{self.node_manager.client.lib_version}",
+                "App-Id": self.node_manager.client._user_id,
+            },
             params={"trace": "true" if self.trace else "false"},
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE or res.status in [404]:
@@ -1081,7 +1097,11 @@ class Node:
     async def get_session_player_sponsorblock_categories(self, guild_id: int) -> list[str] | HTTPException:
         async with self._session.get(
             self.get_endpoint_session_player_sponsorblock_categories(guild_id=guild_id),
-            headers={"Authorization": self.password},
+            headers={
+                "Authorization": self.password,
+                "Client-Name": f"PyLav/{self.node_manager.client.lib_version}",
+                "App-Id": self.node_manager.client._user_id,
+            },
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
                 return await res.json(loads=ujson.loads)
@@ -1098,7 +1118,11 @@ class Node:
     ) -> None | HTTPException:
         async with self._session.put(
             self.get_endpoint_session_player_sponsorblock_categories(guild_id=guild_id),
-            headers={"Authorization": self.password},
+            headers={
+                "Authorization": self.password,
+                "Client-Name": f"PyLav/{self.node_manager.client.lib_version}",
+                "App-Id": self.node_manager.client._user_id,
+            },
             json=categories,
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
@@ -1114,7 +1138,11 @@ class Node:
     async def delete_session_player_sponsorblock_categories(self, guild_id: int) -> None | HTTPException:
         async with self._session.delete(
             self.get_endpoint_session_player_sponsorblock_categories(guild_id=guild_id),
-            headers={"Authorization": self.password},
+            headers={
+                "Authorization": self.password,
+                "Client-Name": f"PyLav/{self.node_manager.client.lib_version}",
+                "App-Id": self.node_manager.client._user_id,
+            },
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
                 return
@@ -1129,7 +1157,11 @@ class Node:
     async def patch_session(self, payload: JSON_DICT_TYPE) -> None | HTTPException:
         async with self._session.patch(
             self.get_endpoint_session(),
-            headers={"Authorization": self.password},
+            headers={
+                "Authorization": self.password,
+                "Client-Name": f"PyLav/{self.node_manager.client.lib_version}",
+                "App-Id": self.node_manager.client._user_id,
+            },
             json=payload,
             params={"trace": "true" if self.trace else "false"},
         ) as res:
@@ -1147,7 +1179,11 @@ class Node:
 
         async with self._session.get(
             self.get_endpoint_loadtracks(),
-            headers={"Authorization": self.password},
+            headers={
+                "Authorization": self.password,
+                "Client-Name": f"PyLav/{self.node_manager.client.lib_version}",
+                "App-Id": self.node_manager.client._user_id,
+            },
             params={"identifier": query.query_identifier, "trace": "true" if self.trace else "false"},
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
@@ -1165,7 +1201,11 @@ class Node:
     ) -> Track | HTTPException:
         async with self._manager._client.cached_session.get(
             self.get_endpoint_decodetrack(),
-            headers={"Authorization": self.password},
+            headers={
+                "Authorization": self.password,
+                "Client-Name": f"PyLav/{self.node_manager.client.lib_version}",
+                "App-Id": self.node_manager.client._user_id,
+            },
             params={"encodedTrack": encoded_track, "trace": "true" if self.trace else "false"},
             timeout=timeout,
         ) as res:
@@ -1184,7 +1224,11 @@ class Node:
     ) -> list[Track] | HTTPException:
         async with self._manager._client.cached_session.post(
             self.get_endpoint_decodetracks(),
-            headers={"Authorization": self.password},
+            headers={
+                "Authorization": self.password,
+                "Client-Name": f"PyLav/{self.node_manager.client.lib_version}",
+                "App-Id": self.node_manager.client._user_id,
+            },
             json=encoded_tracks,
             params={"trace": "true" if self.trace else "false"},
         ) as res:
@@ -1201,7 +1245,11 @@ class Node:
     async def fetch_info(self, raise_on_error: bool = False) -> rest_api.LavalinkInfo | HTTPException:
         async with self._session.get(
             self.get_endpoint_info(),
-            headers={"Authorization": self.password},
+            headers={
+                "Authorization": self.password,
+                "Client-Name": f"PyLav/{self.node_manager.client.lib_version}",
+                "App-Id": self.node_manager.client._user_id,
+            },
             params={"trace": "true" if self.trace else "false"},
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
@@ -1224,7 +1272,11 @@ class Node:
     async def fetch_stats(self, raise_on_error: bool = False) -> websocket_responses.Stats | HTTPException:
         async with self._session.get(
             self.get_endpoint_stats(),
-            headers={"Authorization": self.password},
+            headers={
+                "Authorization": self.password,
+                "Client-Name": f"PyLav/{self.node_manager.client.lib_version}",
+                "App-Id": self.node_manager.client._user_id,
+            },
             params={"trace": "true" if self.trace else "false"},
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
@@ -1242,7 +1294,12 @@ class Node:
     async def fetch_version(self, raise_on_error: bool = False) -> Version | HTTPException:
         async with self._session.get(
             self.get_endpoint_version(),
-            headers={"Authorization": self.password, "Content-Type": "text/plain"},
+            headers={
+                "Authorization": self.password,
+                "Content-Type": "text/plain",
+                "Client-Name": f"PyLav/{self.node_manager.client.lib_version}",
+                "App-Id": self.node_manager.client._user_id,
+            },
             params={"trace": "true" if self.trace else "false"},
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
@@ -1262,7 +1319,11 @@ class Node:
     async def fetch_routeplanner_status(self) -> RoutePlannerStart | HTTPException:
         async with self._session.get(
             self.get_endpoint_routeplanner_status(),
-            headers={"Authorization": self.password},
+            headers={
+                "Authorization": self.password,
+                "Client-Name": f"PyLav/{self.node_manager.client.lib_version}",
+                "App-Id": self.node_manager.client._user_id,
+            },
             params={"trace": "true" if self.trace else "false"},
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
@@ -1279,7 +1340,11 @@ class Node:
     async def post_routeplanner_free_address(self, address: str) -> None | HTTPException:
         async with self._session.post(
             self.get_endpoint_routeplanner_free_address(),
-            headers={"Authorization": self.password},
+            headers={
+                "Authorization": self.password,
+                "Client-Name": f"PyLav/{self.node_manager.client.lib_version}",
+                "App-Id": self.node_manager.client._user_id,
+            },
             json={"address": address},
             params={"trace": "true" if self.trace else "false"},
         ) as res:
@@ -1294,7 +1359,11 @@ class Node:
     async def post_routeplanner_free_all(self) -> None | HTTPException:
         async with self._session.post(
             self.get_endpoint_routeplanner_free_all(),
-            headers={"Authorization": self.password},
+            headers={
+                "Authorization": self.password,
+                "Client-Name": f"PyLav/{self.node_manager.client.lib_version}",
+                "App-Id": self.node_manager.client._user_id,
+            },
             params={"trace": "true" if self.trace else "false"},
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
@@ -1318,7 +1387,11 @@ class Node:
     async def get_guild_player(self, guild_id: int) -> rest_api.LavalinkPlayer:
         async with self._session.get(
             self.get_endpoint_session_player_by_guild_id(guild_id=guild_id),
-            headers={"Authorization": self.password},
+            headers={
+                "Authorization": self.password,
+                "Client-Name": f"PyLav/{self.node_manager.client.lib_version}",
+                "App-Id": self.node_manager.client._user_id,
+            },
             params={"trace": "true" if self.trace else "false"},
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
