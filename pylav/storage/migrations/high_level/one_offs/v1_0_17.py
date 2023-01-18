@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from pylav.core.client import Client
 
 
-async def migration_v_1_0_0_0(client: Client, current_version: Version) -> None:
+async def migration_v_1_1_17(client: Client, current_version: Version) -> None:
     if current_version >= VERSION_1_1_17 or current_version == VERSION_0_0_0:
         return
 
