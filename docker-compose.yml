@@ -3,6 +3,7 @@ services:
     redbot:
     # Read https://github.com/PhasecoreX/docker-red-discordbot#red-discordbot-v3 for more info
         container_name: redbot
+        hostname: redbot
         image: ghcr.io/lifeismana/red-discordbot:extra
         restart: unless-stopped
         volumes:
@@ -22,6 +23,8 @@ services:
         -   postgres
         -   ll-node
     postgres:
+        container_name: postgres
+        hostname: postgres
         image: postgres:14
         restart: always
         environment:
@@ -33,6 +36,8 @@ services:
         -   ./pgdata:/var/lib/postgresql/data
         -   ./pgsocket:/var/run/postgresql
     ll-node:
+        hostname: ll-node
+        container_name: ll-node
         image: drapersniper/pylav-node:master
         restart: always
     # volumes:
