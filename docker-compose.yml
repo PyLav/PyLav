@@ -137,9 +137,9 @@ services:
             PLUGINS_LAVASRC_PROVIDERS_0: dzisrc:%ISRC%
             PLUGINS_LAVASRC_PROVIDERS_1: ytmsearch:"%ISRC%"
             PLUGINS_LAVASRC_PROVIDERS_2: ytsearch:"%ISRC%"
-            PLUGINS_LAVASRC_PROVIDERS_3: ytmsearch:%QUERY%
-            PLUGINS_LAVASRC_PROVIDERS_4: ytsearch:%QUERY%
-            PLUGINS_LAVASRC_PROVIDERS_5: dzsearch:%QUERY%
+            PLUGINS_LAVASRC_PROVIDERS_3: dzsearch:%QUERY%
+            PLUGINS_LAVASRC_PROVIDERS_4: ytmsearch:%QUERY%
+            PLUGINS_LAVASRC_PROVIDERS_5: ytsearch:%QUERY%
             PLUGINS_LAVASRC_PROVIDERS_6: scsearch:%QUERY%
 
             # Lavasrc deezer  configuration
