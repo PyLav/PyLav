@@ -11,7 +11,7 @@ import asyncstdlib
 import ujson
 
 from pylav.constants.builtin_nodes import BUNDLED_NODES_IDS_HOST_MAPPING, PYLAV_BUNDLED_NODES_SETTINGS
-from pylav.constants.config import JAVA_EXECUTABLE
+from pylav.constants.config import EXTERNAL_UNMANAGED_NAME, JAVA_EXECUTABLE
 from pylav.constants.coordinates import DEFAULT_REGIONS, REGION_TO_COUNTRY_COORDINATE_MAPPING
 from pylav.events.node import NodeConnectedEvent, NodeDisconnectedEvent
 from pylav.helpers.misc import ExponentialBackoffWithReset
@@ -575,14 +575,14 @@ class NodeManager:
                         "disabled_sources": [],
                         "host": self._unmanaged_external_host,
                         "unique_identifier": 31415,
-                        "name": "ENVAR Node (Unmanaged)",
+                        "name": EXTERNAL_UNMANAGED_NAME,
                         "temporary": True,
                     }
                 nodes_list.append(await self.add_node(**base_settings))
             else:
                 LOGGER.warning(
-                    "ENVAR Node (Unmanaged) already added to connection pool "
-                    "- skipping duplicated connection - (%s:%s)",
+                    "%s already added to connection pool - skipping duplicated connection - (%s:%s)",
+                    EXTERNAL_UNMANAGED_NAME,
                     self._unmanaged_external_host,
                     self._unmanaged_external_port,
                 )
