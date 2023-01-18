@@ -6,13 +6,9 @@ import socket
 import typing
 
 import aiohttp
-from cashews import Cache
 
 from pylav.exceptions.base import PyLavException
 from pylav.logging import getLogger
-
-CACHE = Cache("RADIOCACHE")
-CACHE.setup("mem://?check_interval=10&size=10000", enable=True)
 
 LOGGER = getLogger("PyLav.extension.RadioBrowser")
 
@@ -30,7 +26,6 @@ class RDNSLookupError(Error):
         super().__init__(self.error_msg)
 
 
-@CACHE.cache(ttl=3600, prefix="radio_browser", key=f"{__name__}.fetch_servers")
 async def fetch_servers() -> set[str]:
     """
     Get IP of all currently available `Radio Browser` servers.
@@ -47,7 +42,6 @@ async def fetch_servers() -> set[str]:
     return typing.cast(set[str], ips)
 
 
-@CACHE.cache(ttl=600, prefix="radio_browser")
 async def rdns_lookup(ip: str) -> str:
     """
     Reverse DNS lookup.
@@ -62,7 +56,6 @@ async def rdns_lookup(ip: str) -> str:
     return hostname
 
 
-@CACHE.cache(ttl=600, prefix="radio_browser", key=f"{__name__}.fetch_hosts")
 async def fetch_hosts() -> list[str]:
     names = []
     servers = await fetch_servers()
@@ -77,7 +70,6 @@ async def fetch_hosts() -> list[str]:
     return names
 
 
-@CACHE.cache(ttl=300, prefix="radio_browser", key=f"{__name__}.pick_base_url")
 async def pick_base_url(session: aiohttp.ClientSession) -> str | None:
     hosts = await fetch_hosts()
     for host in hosts:
