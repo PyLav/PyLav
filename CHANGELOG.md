@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.2.0 (18/01/2023)
+- [Enforce Env Var on config stored values (Run a migration on every start up)](https://github.com/Drapersniper/PyLav/commit/0295ddeacc89f8449e7d84cd0b208bedb85c51da) - @Drapersniper
+- [Add PYLAV__EXTERNAL_UNMANAGED_NAME to allow setting a name to the EnvVar node and set ENV Vars to take precedence over the file values](https://github.com/Drapersniper/PyLav/commit/66643bb714fc67f6a0e4bc7cad4ecb34e02d624a) - @Drapersniper
+- [update docker-compose.yml](https://github.com/Drapersniper/PyLav/commit/650e7308758858c8139eb8ef0ffbb96a41e881d8) - @Drapersniper
+
+---
+
 ## v1.1.19 (18/01/2023)
 - [Make Release](https://github.com/Drapersniper/PyLav/commit/9b2a1a1286636201ec5a3716d51768459afb3f4f) - @Drapersniper
 
@@ -208,8 +215,3 @@
 ## v0.11.19.1 (26/11/2022)
 - [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/b6a70d2af59d3593532a89e2a3af705180151f24) - @Drapersniper
 - [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/170d8c09d834c952c5018e517ec877a96675929c) - @crowdin-bot
-
----
-
-## v0.11.19.0 (26/11/2022)
-- [[patch] Properly fix  NameError: name 'tables' is not defined](https://github.com/Drapersniper/PyLav/commit/ee9521e95e40a97245dab038634101e0359b866f) - @Drapersniper
