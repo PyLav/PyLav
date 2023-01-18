@@ -74,11 +74,7 @@ TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS = (
 # noinspection SpellCheckingInspection
 DEFAULT_SEARCH_SOURCE = os.getenv("PYLAV__DEFAULT_SEARCH_SOURCE")
 if DEFAULT_SEARCH_SOURCE is not None and DEFAULT_SEARCH_SOURCE not in __SUPPORTED_SEARCHES:
-    # noinspection SpellCheckingInspection
-    __LOGGER.warning("Invalid search source %s, defaulting to dzsearch", DEFAULT_SEARCH_SOURCE)
-    __LOGGER.info("Valid search sources are %s", ", ".join(__SUPPORTED_SEARCHES.keys()))
-    # noinspection SpellCheckingInspection
-    DEFAULT_SEARCH_SOURCE = "dzsearch"
+    DEFAULT_SEARCH_SOURCE = None
 
 MANAGED_NODE_SPOTIFY_CLIENT_ID = os.getenv("PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_ID")
 MANAGED_NODE_SPOTIFY_CLIENT_SECRET = os.getenv("PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_SECRET")
