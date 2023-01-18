@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.2.1 (18/01/2023)
+- [Remove caching from radio browser api init](https://github.com/Drapersniper/PyLav/commit/a4e870d8236204ef8387ff5bc44f6390346d84ca) - @Drapersniper
+
+---
+
 ## v1.2.0 (18/01/2023)
 - [Enforce Env Var on config stored values (Run a migration on every start up)](https://github.com/Drapersniper/PyLav/commit/0295ddeacc89f8449e7d84cd0b208bedb85c51da) - @Drapersniper
 - [Add PYLAV__EXTERNAL_UNMANAGED_NAME to allow setting a name to the EnvVar node and set ENV Vars to take precedence over the file values](https://github.com/Drapersniper/PyLav/commit/66643bb714fc67f6a0e4bc7cad4ecb34e02d624a) - @Drapersniper
@@ -209,9 +214,3 @@
 - [Bump actions/dependency-review-action from 2 to 3](https://github.com/Drapersniper/PyLav/commit/e7ddb46c1ea723157b4ef38f4b4fc00b90948c8f) - @dependabot[bot]
 - [Bump crowdin/github-action from 1.5.0 to 1.5.1](https://github.com/Drapersniper/PyLav/commit/012e60dd64c02d05050067e4ef96bb9c46070b66) - @dependabot[bot]
 - [workflows](https://github.com/Drapersniper/PyLav/commit/b125e84e0f235fa8b0661834d91fa3ffac3455eb) - @Drapersniper
-
----
-
-## v0.11.19.1 (26/11/2022)
-- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/b6a70d2af59d3593532a89e2a3af705180151f24) - @Drapersniper
-- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/170d8c09d834c952c5018e517ec877a96675929c) - @crowdin-bot
