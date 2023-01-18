@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.1.19 (18/01/2023)
+- [Make Release](https://github.com/Drapersniper/PyLav/commit/9b2a1a1286636201ec5a3716d51768459afb3f4f) - @Drapersniper
+
+---
+
 ## v1.1.18 (18/01/2023)
 - [hotfix migration](https://github.com/Drapersniper/PyLav/commit/f80281b26fd21eefb9faccae984c49e137e46f4d) - @Drapersniper
 
@@ -208,8 +213,3 @@
 
 ## v0.11.19.0 (26/11/2022)
 - [[patch] Properly fix  NameError: name 'tables' is not defined](https://github.com/Drapersniper/PyLav/commit/ee9521e95e40a97245dab038634101e0359b866f) - @Drapersniper
-
----
-
-## v0.11.18.0 (25/11/2022)
-- [[patch] Fix an incorrect import usage](https://github.com/Drapersniper/PyLav/commit/af17f87cec7e776ae36b73bd81d5cc73ad0bf417) - @Drapersniper
