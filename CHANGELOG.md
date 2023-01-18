@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.2.2 (18/01/2023)
+- [properly use PYLAV__EXTERNAL_UNMANAGED_NAME](https://github.com/Drapersniper/PyLav/commit/273b5046238d5ef1e178975967f5b433fe3a2cdf) - @Drapersniper
+
+---
+
 ## v1.2.1 (18/01/2023)
 - [Remove caching from radio browser api init](https://github.com/Drapersniper/PyLav/commit/a4e870d8236204ef8387ff5bc44f6390346d84ca) - @Drapersniper
 
@@ -204,13 +209,3 @@
 - [Fixes release workflow](https://github.com/Drapersniper/PyLav/commit/7f4e87597d5fb910fb7f283c37ff21abedbaa7d7) - @Drapersniper
 - [Fixes release workflow](https://github.com/Drapersniper/PyLav/commit/fa323e0d5b7c60634e337876759cf1c344720dd9) - @Drapersniper
 - [1 0 0](https://github.com/Drapersniper/PyLav/commit/2b2fac3f4f3da7b790af0728292554410eda00f3) - @Drapersniper
-
----
-
-## v0.11.20.0 (30/12/2022)
-- [[patch] make patch release](https://github.com/Drapersniper/PyLav/commit/a04b7ca0a694e5ce43abc01400e97af981acefbb) - @Drapersniper
-- [[patch] ignore unsupported lavalink releases (3.7+)](https://github.com/Drapersniper/PyLav/commit/2a236366ca4d439c60fd402c3a6b06f6d69a40c0) - @Drapersniper
-- [add labeler.yml](https://github.com/Drapersniper/PyLav/commit/b73b4636b5ea5377d4ebec031c2e90cbbe1ec3e1) - @Drapersniper
-- [Bump actions/dependency-review-action from 2 to 3](https://github.com/Drapersniper/PyLav/commit/e7ddb46c1ea723157b4ef38f4b4fc00b90948c8f) - @dependabot[bot]
-- [Bump crowdin/github-action from 1.5.0 to 1.5.1](https://github.com/Drapersniper/PyLav/commit/012e60dd64c02d05050067e4ef96bb9c46070b66) - @dependabot[bot]
-- [workflows](https://github.com/Drapersniper/PyLav/commit/b125e84e0f235fa8b0661834d91fa3ffac3455eb) - @Drapersniper
