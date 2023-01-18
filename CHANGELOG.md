@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.1.17 (18/01/2023)
+- [pre-commit update](https://github.com/Drapersniper/PyLav/commit/e8b5120f3fbedb51aab021ef7037e59b6478bb16) - @Drapersniper
+- [Tweak LavaScr Providers to align with Topi's suggestion](https://github.com/Drapersniper/PyLav/commit/23247baad9b55badb12c5b68fe8d63d913f8d74e) - @Drapersniper
+
+---
+
 ## v1.1.7 (15/01/2023)
 - [Tweaks to special handling logic for node penalty](https://github.com/Drapersniper/PyLav/commit/1c27a95e7899a6102edfd3b0b64dc6e0176f1d25) - @Drapersniper
 - [fix incorrect reference to pylav.docker.yaml](https://github.com/Drapersniper/PyLav/commit/fdbe1ec61e4005360ae2152738ec96bf238f422e) - @Drapersniper
@@ -208,9 +214,3 @@
 ## v0.11.17.3 (24/11/2022)
 - [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/7848668966b1a511d5648548dfac5d420969fde3) - @Drapersniper
 - [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/b6c434083bb4e50b1859870fba5bf6729a6ec06f) - @crowdin-bot
-
----
-
-## v0.11.17.2 (24/11/2022)
-- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/a6b80d71b39fc1527ea9a02ceeb30a823d10c74c) - @Drapersniper
-- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/79efb5dbc975602675b8b5db4724bef94cb7b98f) - @crowdin-bot
