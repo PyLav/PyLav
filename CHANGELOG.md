@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.1.18 (18/01/2023)
+- [hotfix migration](https://github.com/Drapersniper/PyLav/commit/f80281b26fd21eefb9faccae984c49e137e46f4d) - @Drapersniper
+
+---
+
 ## v1.1.17 (18/01/2023)
 - [pre-commit update](https://github.com/Drapersniper/PyLav/commit/e8b5120f3fbedb51aab021ef7037e59b6478bb16) - @Drapersniper
 - [Tweak LavaScr Providers to align with Topi's suggestion](https://github.com/Drapersniper/PyLav/commit/23247baad9b55badb12c5b68fe8d63d913f8d74e) - @Drapersniper
@@ -208,9 +213,3 @@
 
 ## v0.11.18.0 (25/11/2022)
 - [[patch] Fix an incorrect import usage](https://github.com/Drapersniper/PyLav/commit/af17f87cec7e776ae36b73bd81d5cc73ad0bf417) - @Drapersniper
-
----
-
-## v0.11.17.3 (24/11/2022)
-- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/7848668966b1a511d5648548dfac5d420969fde3) - @Drapersniper
-- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/b6c434083bb4e50b1859870fba5bf6729a6ec06f) - @crowdin-bot
