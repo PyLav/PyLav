@@ -9,6 +9,7 @@ PYLAV__EXTERNAL_UNMANAGED_HOST: ll-node             # The hostname for the laval
 PYLAV__EXTERNAL_UNMANAGED_PORT: 2155                # Will always be this
 PYLAV__EXTERNAL_UNMANAGED_PASSWORD: youshallnotpass # Whatever you set LAVALINK_SERVER_PASSWORD as in the ll-node container
 PYLAV__EXTERNAL_UNMANAGED_SSL: false                # Will always be this
+PYLAV__EXTERNAL_UNMANAGED_NAME: Docker (localhost)  # Whatever you want to call the node
 
 PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_ID:              # Whatever you set PLUGINS_LAVASRC_SPOTIFY_CLIENTID as in the ll-node container
 PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_SECRET:          # Whatever you set PLUGINS_LAVASRC_SPOTIFY_CLIENTSECRET as in the ll-node container

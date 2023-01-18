@@ -55,7 +55,7 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
 -------------
 ##  Environment Variables
 Note - All environment variables except `PYLAV__LOGGER_PREFIX` and `PYLAV__YAML_CONFIG` can be configured from the `pylav.yaml` file which should reside in the home directory of the user running the bot.
-An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml), if you don't create the file yourself pylav will do so on the first run, and once the file exists it will be preferred over the Environment Variable set.
+An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml), if you don't create the file yourself pylav will do so on the first run.
  - `PYLAV__YAML_CONFIG`:
    - If you are in an environment where the home directory is not available you can specify a path to the config file using the `PYLAV__YAML_CONFIG` environment variable.
    - This should be the absolute path to the `pylav.yaml` file i.e `/config/pylav.yaml`.
@@ -87,6 +87,8 @@ An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml
       - Set `PYLAV__EXTERNAL_UNMANAGED_PASSWORD` to the Lavalink node connection auth password.
       - Set `PYLAV__EXTERNAL_UNMANAGED_PORT` to the Lavalink node connection port - If this is not specified the node will use port `80` if `PYLAV__EXTERNAL_UNMANAGED_SSL` is set to `false` or `443` if `PYLAV__EXTERNAL_UNMANAGED_SSL` is set to `true`.
       - Set `PYLAV__EXTERNAL_UNMANAGED_SSL` to `true` or `false` depending on weather or not the external node is using SSL
+      - Set `PYLAV__EXTERNAL_UNMANAGED_NAME` to the name of the external node (this is used for logging and event references)
+
 - If you already have a Redis server and want to make use of it for the request cache you can set `PYLAV__REDIS_FULL_ADDRESS_RESPONSE_CACHE` to the full connection url of your existing server.
   - e.g. `redis://[[username]:[password]]@localhost:6379/0`
   - e.g. `unix://[[username]:[password]]@/path/to/socket.sock?db=0`

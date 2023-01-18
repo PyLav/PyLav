@@ -15,6 +15,7 @@ PYLAV__EXTERNAL_UNMANAGED_HOST:                     # host address of the node t
 PYLAV__EXTERNAL_UNMANAGED_PORT: 2333                # Port to connect to the specified unmanaged external node
 PYLAV__EXTERNAL_UNMANAGED_PASSWORD: youshallnotpass # Password of the specified unmanaged external node - case sensitive
 PYLAV__EXTERNAL_UNMANAGED_SSL: false                # Whether to use a secured connection (Server must support it i.e https:// and wss://) - Values are `true` or `false` - case sensitive
+PYLAV__EXTERNAL_UNMANAGED_NAME: External Node       # Name of the external node
 
 PYLAV__TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS: 1          # How many days to wait between updates - Minimum 1 Day.
 PYLAV__TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS: 7 # How many days to wait between updates - Minimum 7 Days.

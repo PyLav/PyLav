@@ -34,6 +34,7 @@ if not ENV_FILE.exists():
     build_from_envvars()
     from pylav.constants.config.env_var import DEFAULT_SEARCH_SOURCE as DEFAULT_SEARCH_SOURCE
     from pylav.constants.config.env_var import EXTERNAL_UNMANAGED_HOST as EXTERNAL_UNMANAGED_HOST
+    from pylav.constants.config.env_var import EXTERNAL_UNMANAGED_NAME as EXTERNAL_UNMANAGED_NAME
     from pylav.constants.config.env_var import EXTERNAL_UNMANAGED_PASSWORD as EXTERNAL_UNMANAGED_PASSWORD
     from pylav.constants.config.env_var import EXTERNAL_UNMANAGED_PORT as EXTERNAL_UNMANAGED_PORT
     from pylav.constants.config.env_var import EXTERNAL_UNMANAGED_SSL as EXTERNAL_UNMANAGED_SSL
@@ -73,8 +74,11 @@ if not ENV_FILE.exists():
 
 else:
     LOGGER.info("%s exist - Environment variables will be read from it", ENV_FILE)
+    # Apply environment variables overrides if they exist
+    from pylav.constants.config import overrides
     from pylav.constants.config.file import DEFAULT_SEARCH_SOURCE as DEFAULT_SEARCH_SOURCE
     from pylav.constants.config.file import EXTERNAL_UNMANAGED_HOST as EXTERNAL_UNMANAGED_HOST
+    from pylav.constants.config.file import EXTERNAL_UNMANAGED_NAME as EXTERNAL_UNMANAGED_NAME
     from pylav.constants.config.file import EXTERNAL_UNMANAGED_PASSWORD as EXTERNAL_UNMANAGED_PASSWORD
     from pylav.constants.config.file import EXTERNAL_UNMANAGED_PORT as EXTERNAL_UNMANAGED_PORT
     from pylav.constants.config.file import EXTERNAL_UNMANAGED_SSL as EXTERNAL_UNMANAGED_SSL
@@ -111,5 +115,14 @@ else:
         TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS as TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS,
     )
     from pylav.constants.config.file import USE_BUNDLED_EXTERNAL_PYLAV_NODE as USE_BUNDLED_EXTERNAL_PYLAV_NODE
+
+    for item in dir(overrides):
+        if item.startswith("__") or not item.isupper():
+            continue
+        if (val := getattr(overrides, item, None)) is None:
+            continue
+        LOGGER.warning("Environment Variable found: Overriding PYLAV__%s with %s", item, val)
+        setattr(sys.modules[__name__], item, val)
+
 
 BROTLI_ENABLED = False
