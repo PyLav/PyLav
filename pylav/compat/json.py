@@ -178,7 +178,7 @@ if _orjson:
     def load(fp: IO[AnyStr]) -> Any:
         ...
 
-    _orjson_loads = _orjson
+    __load_origin = _orjson
 
 elif _ujson:
 
