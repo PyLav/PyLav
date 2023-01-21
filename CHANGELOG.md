@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.2.3 (21/01/2023)
+- [add `PlayerAutoDisconnectedEmptyQueueEvent`  `PlayerAutoDisconnectedAloneEvent` `PlayerAutoPausedEvent` and `PlayerAutoResumedEvent` events to the player](https://github.com/Drapersniper/PyLav/commit/26e48b07448cabf25584a55810d8b75b304d2afc) - @Drapersniper
+- [add `PYLAV__YAML_CONFIG` and `PYLAV__LOCAL_TRACKS_FOLDER` env vars](https://github.com/Drapersniper/PyLav/commit/2458cc2461150835b197d73625ad894771a5789c) - @Drapersniper
+- [explicitly set the hostname and container_name](https://github.com/Drapersniper/PyLav/commit/ecbbfb6db28e7b8e88a9a969b958904b6f1ece36) - @Drapersniper
+
+---
+
 ## v1.2.2 (18/01/2023)
 - [properly use PYLAV__EXTERNAL_UNMANAGED_NAME](https://github.com/Drapersniper/PyLav/commit/273b5046238d5ef1e178975967f5b433fe3a2cdf) - @Drapersniper
 
@@ -196,16 +203,3 @@
 - [Add a mention to discord to use docker container](https://github.com/Drapersniper/PyLav/commit/20de69c33fce4ada25aadf0dff408870c3981564) - @Drapersniper
 - [add workflow_dispatch: to certain workflows](https://github.com/Drapersniper/PyLav/commit/ea99e761e98570fc719aa8c05202938b54e78f23) - @Drapersniper
 - [Fix crowdin workflows](https://github.com/Drapersniper/PyLav/commit/706c842847a6a9e4e363c67f6698f168e454bb1e) - @Drapersniper
-
----
-
-## v1.0.0 (30/12/2022)
-- [fix release.yml](https://github.com/Drapersniper/PyLav/commit/08d440d79eef207a6a92b6987f394069c01befff) - @Drapersniper
-- [reexport gren token](https://github.com/Drapersniper/PyLav/commit/81b453673c0171dec1c78043cf5733549fbf1311) - @Drapersniper
-- [force token](https://github.com/Drapersniper/PyLav/commit/79447bd5213fa365b5bbf0bfe5a8f892cb644577) - @Drapersniper
-- [reuse poetry cache on changelogs](https://github.com/Drapersniper/PyLav/commit/7d0509ad2c9e9d5611913f1b74c49d01b6dddcee) - @Drapersniper
-- [don't try to publish if already existing](https://github.com/Drapersniper/PyLav/commit/cefc3e668d2c5a422f0090934f9a3c22daa4bac9) - @Drapersniper
-- [Only run release on Ubuntu-latest for now](https://github.com/Drapersniper/PyLav/commit/b2ede0799801e78ad5289d43abe74c0362a72404) - @Drapersniper
-- [Fixes release workflow](https://github.com/Drapersniper/PyLav/commit/7f4e87597d5fb910fb7f283c37ff21abedbaa7d7) - @Drapersniper
-- [Fixes release workflow](https://github.com/Drapersniper/PyLav/commit/fa323e0d5b7c60634e337876759cf1c344720dd9) - @Drapersniper
-- [1 0 0](https://github.com/Drapersniper/PyLav/commit/2b2fac3f4f3da7b790af0728292554410eda00f3) - @Drapersniper
