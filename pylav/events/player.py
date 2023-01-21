@@ -201,3 +201,49 @@ class QuickPlayEvent(PyLavEvent):
         self.player = player
         self.requester = requester
         self.track = track
+
+
+class PlayerAutoDisconnectedEmptyQueueEvent(PyLavEvent):
+    """This event is dispatched when the player is auto disconnected."""
+
+    __slots__ = ()
+
+    def __init__(self, player: Player) -> None:
+        self.player = player
+        self.requester = player.guild.me
+        self.current_track: Track | None = player.current
+        self.position: float = player.estimated_position
+        self.queue: collections.deque[Track] = player.queue.raw_queue
+
+
+class PlayerAutoDisconnectedAloneEvent(PyLavEvent):
+    """This event is dispatched when the player is auto disconnected."""
+
+    __slots__ = ()
+
+    def __init__(self, player: Player) -> None:
+        self.player = player
+        self.requester = player.guild.me
+        self.current_track: Track | None = player.current
+        self.position: float = player.estimated_position
+        self.queue: collections.deque[Track] = player.queue.raw_queue
+
+
+class PlayerAutoPausedEvent(PyLavEvent):
+    """This event is dispatched when the player is auto paused."""
+
+    __slots__ = ()
+
+    def __init__(self, player: Player) -> None:
+        self.player = player
+        self.requester = player.guild.me
+
+
+class PlayerAutoResumedEvent(PyLavEvent):
+    """This event is dispatched when the player is auto resumed."""
+
+    __slots__ = ()
+
+    def __init__(self, player: Player) -> None:
+        self.player = player
+        self.requester = player.guild.me

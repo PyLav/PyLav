@@ -23,6 +23,10 @@ from pylav.enums.plugins.sponsorblock import SegmentCategory
 from pylav.events.node import NodeChangedEvent
 from pylav.events.player import (
     FiltersAppliedEvent,
+    PlayerAutoDisconnectedAloneEvent,
+    PlayerAutoDisconnectedEmptyQueueEvent,
+    PlayerAutoPausedEvent,
+    PlayerAutoResumedEvent,
     PlayerDisconnectedEvent,
     PlayerMovedEvent,
     PlayerPausedEvent,
@@ -732,6 +736,7 @@ class Player(VoiceProtocol):
                     await self.set_pause(pause=True, requester=self.guild.me)
                     self._was_alone_paused = True
                     self._last_alone_paused_check = 0
+                    self.client.dispatch_event(PlayerAutoPausedEvent(self))
             else:
                 self._last_alone_paused_check = 0
 
@@ -763,6 +768,7 @@ class Player(VoiceProtocol):
                 )
                 await self.set_pause(pause=False, requester=self.guild.me)
                 self._was_alone_paused = False
+                self.client.dispatch_event(PlayerAutoResumedEvent(self))
 
     async def queue_resolver_task(self):
         with contextlib.suppress(
@@ -834,6 +840,7 @@ class Player(VoiceProtocol):
                     )
                     await self.disconnect(requester=self.guild.me)
                     self._last_alone_dc_check = 0
+                    self.client.dispatch_event(PlayerAutoDisconnectedEmptyQueueEvent(self))
             else:
                 self._last_alone_dc_check = 0
 
@@ -873,6 +880,7 @@ class Player(VoiceProtocol):
                     await self.stop(requester=self.guild.me)
                     await self.disconnect(requester=self.guild.me)
                     self._last_empty_queue_check = 0
+                    self.client.dispatch_event(PlayerAutoDisconnectedAloneEvent(self))
             else:
                 self._last_empty_queue_check = 0
 
@@ -2396,7 +2404,8 @@ class Player(VoiceProtocol):
             changed = True
         return changed
 
-    async def _process_skip_segments(self) -> list[str]:
+    @staticmethod
+    async def _process_skip_segments() -> list[str]:
         return SegmentCategory.get_category_list_value()
 
     async def draw_time(self) -> str:
