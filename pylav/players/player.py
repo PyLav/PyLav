@@ -736,7 +736,7 @@ class Player(VoiceProtocol):
                     await self.set_pause(pause=True, requester=self.guild.me)
                     self._was_alone_paused = True
                     self._last_alone_paused_check = 0
-                    self.client.dispatch_event(PlayerAutoPausedEvent(self))
+                    self.player_manager.client.dispatch_event(PlayerAutoPausedEvent(self))
             else:
                 self._last_alone_paused_check = 0
 
@@ -768,7 +768,7 @@ class Player(VoiceProtocol):
                 )
                 await self.set_pause(pause=False, requester=self.guild.me)
                 self._was_alone_paused = False
-                self.client.dispatch_event(PlayerAutoResumedEvent(self))
+                self.player_manager.client.dispatch_event(PlayerAutoResumedEvent(self))
 
     async def queue_resolver_task(self):
         with contextlib.suppress(
@@ -840,7 +840,7 @@ class Player(VoiceProtocol):
                     )
                     await self.disconnect(requester=self.guild.me)
                     self._last_alone_dc_check = 0
-                    self.client.dispatch_event(PlayerAutoDisconnectedEmptyQueueEvent(self))
+                    self.player_manager.client.dispatch_event(PlayerAutoDisconnectedEmptyQueueEvent(self))
             else:
                 self._last_alone_dc_check = 0
 
@@ -880,7 +880,7 @@ class Player(VoiceProtocol):
                     await self.stop(requester=self.guild.me)
                     await self.disconnect(requester=self.guild.me)
                     self._last_empty_queue_check = 0
-                    self.client.dispatch_event(PlayerAutoDisconnectedAloneEvent(self))
+                    self.player_manager.client.dispatch_event(PlayerAutoDisconnectedAloneEvent(self))
             else:
                 self._last_empty_queue_check = 0
 
