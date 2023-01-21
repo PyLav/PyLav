@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.2.4 (21/01/2023)
+- [fix AttributeError: 'Red' object has no attribute 'dispatch_event'](https://github.com/Drapersniper/PyLav/commit/acb26eeda14573ede7649044ca6e08c83f221abf) - @Drapersniper
+- [add home helper code to identify origins](https://github.com/Drapersniper/PyLav/commit/f73b2d724d1db0cd125e21667e0c8f8e0cddf661) - @Drapersniper
+- [Bump dependencies](https://github.com/Drapersniper/PyLav/commit/18c6c7bd4568f20d5059a8b2178c9af0e29f674b) - @Drapersniper
+- [fix incorrect doc strings](https://github.com/Drapersniper/PyLav/commit/95245e1e6191ea8ce5e7fe71b1fe6f14668f35f8) - @Drapersniper
+- [Implement a compatibility module for the json module which uses fastest json module available for any given op](https://github.com/Drapersniper/PyLav/commit/9bf08eac497bc3c2a152c1e37ac5e49512400529) - @Drapersniper
+
+---
+
 ## v1.2.3 (21/01/2023)
 - [add `PlayerAutoDisconnectedEmptyQueueEvent`  `PlayerAutoDisconnectedAloneEvent` `PlayerAutoPausedEvent` and `PlayerAutoResumedEvent` events to the player](https://github.com/Drapersniper/PyLav/commit/26e48b07448cabf25584a55810d8b75b304d2afc) - @Drapersniper
 - [add `PYLAV__YAML_CONFIG` and `PYLAV__LOCAL_TRACKS_FOLDER` env vars](https://github.com/Drapersniper/PyLav/commit/2458cc2461150835b197d73625ad894771a5789c) - @Drapersniper
@@ -193,13 +202,3 @@
 - [Cleanup](https://github.com/Drapersniper/PyLav/commit/5b734b8408c159c38a09060aec991192a5f4b849) - @Drapersniper
 - [Cleanup](https://github.com/Drapersniper/PyLav/commit/bfa1d4f4e2d75b28444076a0030632bccf4785e8) - @Drapersniper
 - [Clarification in the SETUP.md](https://github.com/Drapersniper/PyLav/commit/950d642586a8188c07f0752e0ef9bb6d287460da) - @Drapersniper
-
----
-
-## v1.0.1 (01/01/2023)
-- [Properly parse applemusic and mixcloud queries](https://github.com/Drapersniper/PyLav/commit/e5beceed727b733bb497afef58fbb14ff65df5fe) - @Drapersniper
-- [Fix regex for Spotify, apple music, bandcamp and soundcloud](https://github.com/Drapersniper/PyLav/commit/ee915ea302c324ca899150e197b35a5b5d918e82) - @Drapersniper
-- [Some clarification of docker usage](https://github.com/Drapersniper/PyLav/commit/9810baa4807b50da70c86caee2f4ff439607e8fe) - @Drapersniper
-- [Add a mention to discord to use docker container](https://github.com/Drapersniper/PyLav/commit/20de69c33fce4ada25aadf0dff408870c3981564) - @Drapersniper
-- [add workflow_dispatch: to certain workflows](https://github.com/Drapersniper/PyLav/commit/ea99e761e98570fc719aa8c05202938b54e78f23) - @Drapersniper
-- [Fix crowdin workflows](https://github.com/Drapersniper/PyLav/commit/706c842847a6a9e4e363c67f6698f168e454bb1e) - @Drapersniper
