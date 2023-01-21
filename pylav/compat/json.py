@@ -4,6 +4,7 @@ from collections.abc import Callable
 from json import JSONDecodeError as JSONDecodeError
 from json import JSONDecoder as JSONDecoder
 from json import JSONEncoder as JSONEncoder
+from types import ModuleType
 from typing import IO, Any, AnyStr, overload
 
 try:
@@ -26,6 +27,7 @@ __all__ = [
     "JSONDecoder",
     "JSONDecodeError",
     "JSONEncoder",
+    "get_origin",
 ]
 
 # .dumps() signatures
@@ -40,6 +42,8 @@ if _orjson:
     ) -> str:
         ...
 
+    __dumps_origin = _orjson
+
 elif _ujson:
 
     @overload
@@ -53,6 +57,8 @@ elif _ujson:
         indent: int | None = 0,
     ) -> str:
         ...
+
+    __dumps_origin = _ujson
 
 else:
 
@@ -73,6 +79,8 @@ else:
     ) -> str:
         ...
 
+    __dumps_origin = json
+
 
 # .loads() signatures
 if _orjson:
@@ -81,11 +89,15 @@ if _orjson:
     def loads(obj: bytes | bytearray | memoryview | str) -> Any:
         ...
 
+    __loads_origin = _orjson
+
 elif _ujson:
 
     @overload
     def loads(obj: AnyStr, *, ujson_precise_float: bool | None = None) -> Any:
         ...
+
+    __loads_origin = _ujson
 
 else:
 
@@ -103,9 +115,22 @@ else:
     ) -> Any:
         ...
 
+    __loads_origin = json
+
 
 # .dump() signatures
-if _ujson:
+if _orjson:
+
+    @overload
+    def dump(
+        obj: Any,
+        fp: IO[str],
+    ) -> None:
+        ...
+
+    __dump_origin = _orjson
+
+elif _ujson:
 
     @overload
     def dump(
@@ -119,6 +144,8 @@ if _ujson:
         ujson_escape_forward_slashes: bool = True,
     ) -> None:
         ...
+
+    __dump_origin = _ujson
 
 else:
 
@@ -140,9 +167,20 @@ else:
     ) -> None:
         ...
 
+    __dump_origin = json
+
 
 # .load() signatures
-if _ujson:
+
+if _orjson:
+
+    @overload
+    def load(fp: IO[AnyStr]) -> Any:
+        ...
+
+    _orjson_loads = _orjson
+
+elif _ujson:
 
     @overload
     def load(
@@ -151,6 +189,8 @@ if _ujson:
         precise_float: bool = ...,
     ) -> Any:
         ...
+
+    __load_origin = _ujson
 
 else:
 
@@ -167,6 +207,8 @@ else:
         **kwargs: Any,
     ) -> Any:
         ...
+
+    __load_origin = json
 
 
 def dumps(
@@ -319,3 +361,12 @@ def load(
         object_pairs_hook=object_pairs_hook,
         **kwargs,
     )
+
+
+def get_origin() -> dict[str, ModuleType]:
+    return {
+        "dumps": __dumps_origin,
+        "loads": __loads_origin,
+        "dump": __dump_origin,
+        "load": __load_origin,
+    }
