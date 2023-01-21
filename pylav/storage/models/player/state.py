@@ -2,8 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-import ujson
-
+from pylav.compat import json
 from pylav.storage.database.cache.model import CachedModel
 from pylav.storage.database.tables.player_state import PlayerStateRow
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
@@ -43,15 +42,15 @@ class PlayerState(CachedModel):
 
     def __post_init__(self) -> None:
         if isinstance(self.current, str):
-            self.current = ujson.loads(self.current)
+            self.current = json.loads(self.current)
         if isinstance(self.queue, str):
-            self.queue = ujson.loads(self.queue)
+            self.queue = json.loads(self.queue)
         if isinstance(self.history, str):
-            self.history = ujson.loads(self.history)
+            self.history = json.loads(self.history)
         if isinstance(self.effects, str):
-            self.effects = ujson.loads(self.effects)
+            self.effects = json.loads(self.effects)
         if isinstance(self.extras, str):
-            self.extras = ujson.loads(self.extras)
+            self.extras = json.loads(self.extras)
 
     async def delete(self) -> None:
         """Delete the player state from the database"""
@@ -131,11 +130,11 @@ class PlayerState(CachedModel):
             self.playing,
             self.effect_enabled,
             self.self_deaf,
-            ujson.dumps(self.current),
-            ujson.dumps(self.queue),
-            ujson.dumps(self.history),
-            ujson.dumps(self.effects),
-            ujson.dumps(self.extras),
+            json.dumps(self.current),
+            json.dumps(self.queue),
+            json.dumps(self.history),
+            json.dumps(self.effects),
+            json.dumps(self.extras),
         )
 
     @classmethod

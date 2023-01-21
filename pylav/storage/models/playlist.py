@@ -12,9 +12,9 @@ from dataclasses import dataclass
 import aiohttp
 import brotli  # type: ignore
 import discord
-import ujson
 import yaml
 
+from pylav.compat import json
 from pylav.constants.config import BROTLI_ENABLED, READ_CACHING_ENABLED
 from pylav.constants.playlists import BUNDLED_PLAYLIST_IDS
 from pylav.constants.regex import SQUARE_BRACKETS
@@ -548,7 +548,7 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
             The playlist.
         """
         try:
-            async with aiohttp.ClientSession(auto_decompress=False, json_serialize=ujson.dumps) as session:
+            async with aiohttp.ClientSession(auto_decompress=False, json_serialize=json.dumps) as session:
                 async with session.get(url) as response:
                     data = await response.read()
                     if ".gz.pylav" in url:

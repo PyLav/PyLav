@@ -5,8 +5,8 @@ from dataclasses import dataclass
 
 import asyncstdlib
 import discord
-import ujson
 
+from pylav.compat import json
 from pylav.helpers.misc import TimedFeature
 from pylav.helpers.singleton import SingletonCachedByKey
 from pylav.storage.database.cache.decodators import maybe_cached
@@ -27,7 +27,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
     @classmethod
     async def create_global(cls, bot: int) -> None:
         """Create the player in the database"""
-        data = ujson.dumps(
+        data = json.dumps(
             {
                 "enabled": False,
                 "time": 60,
@@ -96,11 +96,11 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
             "auto_shuffle": PlayerRow.auto_shuffle.default,
             "auto_play": PlayerRow.auto_play.default,
             "self_deaf": PlayerRow.self_deaf.default,
-            "empty_queue_dc": TimedFeature.from_dict(ujson.loads(PlayerRow.empty_queue_dc.default)),
-            "alone_dc": TimedFeature.from_dict(ujson.loads(PlayerRow.alone_dc.default)),
-            "alone_pause": TimedFeature.from_dict(ujson.loads(PlayerRow.alone_pause.default)),
-            "extras": ujson.loads(PlayerRow.extras.default),
-            "effects": ujson.loads(PlayerRow.effects.default),
+            "empty_queue_dc": TimedFeature.from_dict(json.loads(PlayerRow.empty_queue_dc.default)),
+            "alone_dc": TimedFeature.from_dict(json.loads(PlayerRow.alone_dc.default)),
+            "alone_pause": TimedFeature.from_dict(json.loads(PlayerRow.alone_pause.default)),
+            "extras": json.loads(PlayerRow.extras.default),
+            "effects": json.loads(PlayerRow.effects.default),
             "dj_users": PlayerRow.dj_users.default,
             "dj_roles": PlayerRow.dj_roles.default,
         }
@@ -444,7 +444,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
             .first()
             .output(load_json=True, nested=True)
         )
-        return player["extras"] if player else ujson.loads(PlayerRow.extras.default)
+        return player["extras"] if player else json.loads(PlayerRow.extras.default)
 
     async def update_extras(self, extras: JSON_DICT_TYPE) -> None:
         """Update the extras of the player"""
@@ -457,7 +457,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
             DO UPDATE SET extras = excluded.extras;""",
             self.id,
             self.bot,
-            ujson.dumps(extras),
+            json.dumps(extras),
         )
         await self.update_cache((self.fetch_extras, extras), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -473,7 +473,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
             .first()
             .output(load_json=True, nested=True)
         )
-        return player["effects"] if player else ujson.loads(PlayerRow.effects.default)
+        return player["effects"] if player else json.loads(PlayerRow.effects.default)
 
     async def update_effects(
         self, effects: dict[str, int | None | dict[str, int | float | list[dict[str, float | None]] | None]]
@@ -488,7 +488,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
             DO UPDATE SET effects = excluded.effects;""",
             self.id,
             self.bot,
-            ujson.dumps(effects),
+            json.dumps(effects),
         )
         await self.update_cache((self.fetch_effects, effects), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -503,7 +503,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
             .output(load_json=True, nested=True)
         )
         return TimedFeature.from_dict(
-            player["empty_queue_dc"] if player else ujson.loads(PlayerRow.empty_queue_dc.default)
+            player["empty_queue_dc"] if player else json.loads(PlayerRow.empty_queue_dc.default)
         )
 
     async def update_empty_queue_dc(self, empty_queue_dc: dict[str, int | bool]) -> None:
@@ -517,7 +517,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
             DO UPDATE SET empty_queue_dc = excluded.empty_queue_dc;""",
             self.id,
             self.bot,
-            ujson.dumps(empty_queue_dc),
+            json.dumps(empty_queue_dc),
         )
         await self.update_cache(
             (self.fetch_empty_queue_dc, TimedFeature.from_dict(empty_queue_dc)), (self.exists, True)
@@ -533,7 +533,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
             .first()
             .output(load_json=True, nested=True)
         )
-        return TimedFeature.from_dict(player["alone_dc"] if player else ujson.loads(PlayerRow.alone_dc.default))
+        return TimedFeature.from_dict(player["alone_dc"] if player else json.loads(PlayerRow.alone_dc.default))
 
     async def update_alone_dc(self, alone_dc: dict[str, int | bool]) -> None:
         """Update the alone dc of the player"""
@@ -546,7 +546,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
             DO UPDATE SET alone_dc = excluded.alone_dc;""",
             self.id,
             self.bot,
-            ujson.dumps(alone_dc),
+            json.dumps(alone_dc),
         )
         await self.update_cache((self.fetch_alone_dc, TimedFeature.from_dict(alone_dc)), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -560,7 +560,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
             .first()
             .output(load_json=True, nested=True)
         )
-        return TimedFeature.from_dict(player["alone_pause"] if player else ujson.loads(PlayerRow.alone_pause.default))
+        return TimedFeature.from_dict(player["alone_pause"] if player else json.loads(PlayerRow.alone_pause.default))
 
     async def update_alone_pause(self, alone_pause: dict[str, int | bool]) -> None:
         """Update the alone pause of the player"""
@@ -573,7 +573,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
             DO UPDATE SET alone_pause = excluded.alone_pause;""",
             self.id,
             self.bot,
-            ujson.dumps(alone_pause),
+            json.dumps(alone_pause),
         )
         await self.update_cache((self.fetch_alone_pause, TimedFeature.from_dict(alone_pause)), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)

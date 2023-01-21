@@ -6,8 +6,8 @@ from math import atan2, cos, radians, sin, sqrt
 
 import aiohttp
 import asyncstdlib
-import ujson
 
+from pylav.compat import json
 from pylav.constants.coordinates import REGION_TO_COUNTRY_COORDINATE_MAPPING
 
 
@@ -44,9 +44,9 @@ async def get_closest_region_name_and_coordinate(
 
 async def get_coordinates(ip: str | None = None) -> tuple[float, ...]:
     url = f"https://ipinfo.io/{ip}/json" if ip else "https://ipinfo.io/json"
-    async with aiohttp.ClientSession(json_serialize=ujson.dumps) as session:
+    async with aiohttp.ClientSession(json_serialize=json.dumps) as session:
         async with session.get(url) as response:
-            data = await response.json(loads=ujson.loads)
+            data = await response.json(loads=json.loads)
             return tuple(map(float, data["loc"].split(",")))
 
 

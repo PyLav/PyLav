@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING
 
 import aiohttp
 import aiohttp_client_cache
-import ujson
 
+from pylav.compat import json
 from pylav.constants.config import REDIS_FULL_ADDRESS_RESPONSE_CACHE
 from pylav.extension.flowery.lyrics import LyricsAPI
 from pylav.utils.aiohttp_postgres_cache import PostgresCacheBackend
@@ -38,7 +38,7 @@ class FloweryAPI:
             )
         self._cached_session = aiohttp_client_cache.CachedSession(
             timeout=aiohttp.ClientTimeout(total=30),
-            json_serialize=ujson.dumps,
+            json_serialize=json.dumps,
             cache=self._aiohttp_client_cache,
             headers={"User-Agent": f"PyLav/{client.lib_version} (https://github.com/Drapersniper/PyLav)"},
         )

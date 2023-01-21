@@ -10,10 +10,10 @@ from dataclasses import dataclass
 import aiohttp
 import brotli  # type: ignore
 import discord
-import ujson
 import yaml
 from piccolo.columns import Float
 
+from pylav.compat import json
 from pylav.constants.config import BROTLI_ENABLED
 from pylav.constants.playlists import BUNDLED_PLAYLIST_IDS
 from pylav.core.context import PyLavContext
@@ -246,7 +246,7 @@ class Equalizer(CachedModel):
 
         """
         try:
-            async with aiohttp.ClientSession(auto_decompress=False, json_serialize=ujson.dumps) as session:
+            async with aiohttp.ClientSession(auto_decompress=False, json_serialize=json.dumps) as session:
                 async with session.get(url) as response:
                     data = await response.read()
                     if ".gz.pylav" in url:

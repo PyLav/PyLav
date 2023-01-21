@@ -6,8 +6,8 @@ import typing
 from dataclasses import dataclass
 
 import aiopath  # type: ignore
-import ujson
 
+from pylav.compat import json
 from pylav.extension.bundled_node.utils import get_true_path
 from pylav.helpers.singleton import SingletonCachedByKey
 from pylav.helpers.time import get_now_utc
@@ -338,7 +338,7 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
             .first()
             .output(load_json=True, nested=True)
         )
-        return response["extras"] if response else ujson.loads(LibConfigRow.extras.default)
+        return response["extras"] if response else json.loads(LibConfigRow.extras.default)
 
     async def update_extras(self, extras: JSON_DICT_TYPE) -> None:
         """Update the extras.
@@ -359,7 +359,7 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
             """,
             self.id,
             self.bot,
-            ujson.dumps(extras),
+            json.dumps(extras),
         )
         await self.update_cache((self.fetch_extras, extras), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -615,7 +615,7 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
             "update_bot_activity": LibConfigRow.update_bot_activity.default,
             "use_bundled_pylav_external": LibConfigRow.use_bundled_pylav_external.default,
             "use_bundled_lava_link_external": False,
-            "extras": ujson.loads(LibConfigRow.extras.default),
+            "extras": json.loads(LibConfigRow.extras.default),
             "next_execution_update_bundled_playlists": LibConfigRow.next_execution_update_bundled_playlists.default,
             "next_execution_update_bundled_external_playlists": LibConfigRow.next_execution_update_bundled_external_playlists.default,  # noqa
             "next_execution_update_external_playlists": LibConfigRow.next_execution_update_external_playlists.default,

@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
 import aiohttp
-import ujson
 from aiohttp.helpers import sentinel  # noqa:
 from apscheduler.jobstores.base import JobLookupError
 from dacite import from_dict
@@ -18,6 +17,7 @@ from expiringdict import ExpiringDict
 from multidict import CIMultiDictProxy
 from packaging.version import Version, parse
 
+from pylav.compat import json
 from pylav.constants.builtin_nodes import BUNDLED_NODES_IDS_HOST_MAPPING, PYLAV_NODES
 from pylav.constants.coordinates import REGION_TO_COUNTRY_COORDINATE_MAPPING
 from pylav.constants.node import GOOD_RESPONSE_RANGE, MAX_SUPPORTED_API_MAJOR_VERSION
@@ -120,7 +120,7 @@ class Node:
         self._version: Version | None = None
         self._api_version: int | None = None
         self._manager = manager
-        self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=120), json_serialize=ujson.dumps)
+        self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=120), json_serialize=json.dumps)
         self._temporary = temporary
         if not temporary:
             # noinspection PyProtectedMember
@@ -1027,10 +1027,8 @@ class Node:
             params={"trace": "true" if self.trace else "false"},
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
-                return [
-                    from_dict(data_class=rest_api.LavalinkPlayer, data=t) for t in await res.json(loads=ujson.loads)
-                ]
-            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
+                return [from_dict(data_class=rest_api.LavalinkPlayer, data=t) for t in await res.json(loads=json.loads)]
+            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=json.loads))
             if res.status in [401, 403]:
                 raise UnauthorizedException(failure)
             self._logger.trace("Failed to get session players: %d %s", failure.status, failure.message)
@@ -1047,8 +1045,8 @@ class Node:
             params={"trace": "true" if self.trace else "false"},
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
-                return from_dict(data_class=rest_api.LavalinkPlayer, data=await res.json(loads=ujson.loads))
-            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
+                return from_dict(data_class=rest_api.LavalinkPlayer, data=await res.json(loads=json.loads))
+            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=json.loads))
             if res.status in [401, 403]:
                 raise UnauthorizedException(failure)
             self._logger.trace("Failed to get session player: %d %s", failure.status, failure.message)
@@ -1068,8 +1066,8 @@ class Node:
             json=payload,
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
-                return from_dict(data_class=rest_api.LavalinkPlayer, data=await res.json(loads=ujson.loads))
-            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
+                return from_dict(data_class=rest_api.LavalinkPlayer, data=await res.json(loads=json.loads))
+            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=json.loads))
             if res.status in [401, 403]:
                 raise UnauthorizedException(failure)
             self._logger.trace("Failed to patch session player: %d %s", failure.status, failure.message)
@@ -1087,7 +1085,7 @@ class Node:
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE or res.status in [404]:
                 return
-            response = await res.json(loads=ujson.loads)
+            response = await res.json(loads=json.loads)
             failure = from_dict(data_class=LavalinkError, data=response)
             if res.status in [401, 403]:
                 raise UnauthorizedException(failure)
@@ -1104,8 +1102,8 @@ class Node:
             },
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
-                return await res.json(loads=ujson.loads)
-            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
+                return await res.json(loads=json.loads)
+            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=json.loads))
             if res.status in [401, 403]:
                 raise UnauthorizedException(failure)
             self._logger.trace(
@@ -1127,7 +1125,7 @@ class Node:
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
                 return
-            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
+            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=json.loads))
             if res.status in [401, 403]:
                 raise UnauthorizedException(failure)
             self._logger.trace(
@@ -1146,7 +1144,7 @@ class Node:
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
                 return
-            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
+            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=json.loads))
             if res.status in [401, 403]:
                 raise UnauthorizedException(failure)
             self._logger.trace(
@@ -1167,7 +1165,7 @@ class Node:
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
                 return
-            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
+            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=json.loads))
             if res.status in [401, 403]:
                 raise UnauthorizedException(failure)
             self._logger.trace("Failed to delete session player: %d %s", failure.status, failure.message)
@@ -1187,10 +1185,10 @@ class Node:
             params={"identifier": query.query_identifier, "trace": "true" if self.trace else "false"},
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
-                result = await res.json(loads=ujson.loads)
+                result = await res.json(loads=json.loads)
                 asyncio.create_task(self.node_manager.client.query_cache_manager.add_query(query, result))
                 return self.parse_loadtrack_response(result)
-            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
+            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=json.loads))
             if res.status in [401, 403]:
                 raise UnauthorizedException(failure)
             self._logger.trace("Failed to load track: %d %s", failure.status, failure.message)
@@ -1210,8 +1208,8 @@ class Node:
             timeout=timeout,
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
-                return from_dict(data_class=Track, data=await res.json(loads=ujson.loads))
-            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
+                return from_dict(data_class=Track, data=await res.json(loads=json.loads))
+            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=json.loads))
             if res.status in [401, 403]:
                 raise UnauthorizedException(failure)
             self._logger.trace("Failed to decode track: %d %s", failure.status, failure.message)
@@ -1233,8 +1231,8 @@ class Node:
             params={"trace": "true" if self.trace else "false"},
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
-                return [from_dict(data_class=Track, data=t) for t in await res.json(loads=ujson.loads)]
-            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
+                return [from_dict(data_class=Track, data=t) for t in await res.json(loads=json.loads)]
+            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=json.loads))
             if res.status in [401, 403]:
                 raise UnauthorizedException(failure)
             self._logger.trace("Failed to decode tracks: %d %s", failure.status, failure.message)
@@ -1253,8 +1251,8 @@ class Node:
             params={"trace": "true" if self.trace else "false"},
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
-                return from_dict(data_class=rest_api.LavalinkInfo, data=await res.json(loads=ujson.loads))
-            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
+                return from_dict(data_class=rest_api.LavalinkInfo, data=await res.json(loads=json.loads))
+            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=json.loads))
             if res.status in [401, 403]:
                 if raise_on_error:
                     raise UnauthorizedException(failure)
@@ -1280,8 +1278,8 @@ class Node:
             params={"trace": "true" if self.trace else "false"},
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
-                return from_dict(data_class=websocket_responses.Stats, data=await res.json(loads=ujson.loads))
-            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
+                return from_dict(data_class=websocket_responses.Stats, data=await res.json(loads=json.loads))
+            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=json.loads))
             if res.status in [401, 403]:
                 if raise_on_error:
                     raise UnauthorizedException(failure)
@@ -1306,7 +1304,7 @@ class Node:
                 text = await res.text()
                 version_from_header = self._process_version_from_headers(res.headers)
                 return parse(text) if SEMANTIC_VERSIONING.match(text) else version_from_header
-            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
+            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=json.loads))
             if res.status in [401, 403]:
                 if raise_on_error:
                     raise UnauthorizedException(failure)
@@ -1327,11 +1325,11 @@ class Node:
             params={"trace": "true" if self.trace else "false"},
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
-                data = await res.json(loads=ujson.loads)
+                data = await res.json(loads=json.loads)
                 data["type"] = data["class"]
                 del data["class"]
                 return from_dict(data_class=RoutePlannerStart, data=data)
-            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
+            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=json.loads))
             if res.status in [401, 403]:
                 raise UnauthorizedException(failure)
             self._logger.trace("Failed to get routeplanner status: %d %s", failure.status, failure.message)
@@ -1350,7 +1348,7 @@ class Node:
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
                 return
-            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
+            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=json.loads))
             if res.status in [401, 403]:
                 raise UnauthorizedException(failure)
             self._logger.trace("Failed to free routeplanner address: %d %s", failure.status, failure.message)
@@ -1368,7 +1366,7 @@ class Node:
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
                 return
-            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=ujson.loads))
+            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=json.loads))
             if res.status in [401, 403]:
                 raise UnauthorizedException(failure)
             self._logger.trace("Failed to free all routeplanner addresses: %d %s", failure.status, failure.message)
@@ -1395,7 +1393,7 @@ class Node:
             params={"trace": "true" if self.trace else "false"},
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
-                return from_dict(data_class=rest_api.LavalinkPlayer, data=await res.json(loads=ujson.loads))
+                return from_dict(data_class=rest_api.LavalinkPlayer, data=await res.json(loads=json.loads))
             if res.status in [401, 403]:
                 raise UnauthorizedException
         raise ValueError(f"Server returned an unexpected return code: {res.status}")

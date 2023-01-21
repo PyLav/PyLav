@@ -18,10 +18,10 @@ import dateutil
 import dateutil.parser
 import psutil
 import rich.progress
-import ujson
 import yaml
 from packaging.version import Version
 
+from pylav.compat import json
 from pylav.constants.config import JAVA_EXECUTABLE
 from pylav.constants.misc import EPOCH_DT_TZ_AWARE
 from pylav.constants.node import JAR_SERVER_RELEASES
@@ -144,7 +144,7 @@ class LocalNodeManager:
         self.start_monitor_task = None
         self.timeout = timeout
         self._args = []
-        self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=120), json_serialize=ujson.dumps)
+        self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=120), json_serialize=json.dumps)
         self._node_id: int = self._client.bot.user.id
         self._node: Node | None = None
         self._current_config = {}
@@ -203,7 +203,7 @@ class LocalNodeManager:
                 LOGGER.warning("Failed to get latest CI info from GitHub: %s", response.status)
                 self._ci_info["number"] = -1
                 return self._ci_info
-            data = await response.json(loads=ujson.loads)
+            data = await response.json(loads=json.loads)
             release = await asyncstdlib.max(data, key=self._get_release_publish_dt_or_epoch)
             assets = release.get("assets", [])
             url = None
@@ -806,7 +806,7 @@ class LocalNodeManager:
         self._java_path = java_path
         if self.start_monitor_task is not None:
             await self.shutdown()
-            self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=120), json_serialize=ujson.dumps)
+            self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=120), json_serialize=json.dumps)
         if self.__buffer_task is not None:
             self.__buffer_task.cancel()
             self.__buffer_task = None

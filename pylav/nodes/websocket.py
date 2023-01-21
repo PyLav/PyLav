@@ -7,10 +7,10 @@ import typing
 from typing import Any
 
 import aiohttp
-import ujson
 from dacite import from_dict
 from packaging.version import Version
 
+from pylav.compat import json
 from pylav.constants.builtin_nodes import PYLAV_NODES
 from pylav.events.node import WebSocketClosedEvent
 from pylav.events.plugins import SegmentSkippedEvent, SegmentsLoadedEvent
@@ -112,7 +112,7 @@ class WebSocket:
         self._logger = getLogger(f"PyLav.WebSocket-{self.node.name}")
         self._client = self._node.node_manager.client
 
-        self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=120), json_serialize=ujson.dumps)
+        self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=120), json_serialize=json.dumps)
         self._ws = None
         self._message_queue = []
         self._host = host
@@ -345,7 +345,7 @@ class WebSocket:
                     await self._websocket_closed(msg.data, msg.extra)
                     return
                 else:
-                    await self.handle_message(msg.json(loads=ujson.loads))
+                    await self.handle_message(msg.json(loads=json.loads))
                 # elif msg.type == aiohttp.WSMsgType.ERROR and not self.client.is_shutting_down:
                 #     exc = self._ws.exception()
                 #     self._logger.error("Exception in WebSocket! %s", exc)
@@ -598,7 +598,7 @@ class WebSocket:
         if self.connected:
             self._logger.trace("Sending payload %s", data)
             try:
-                await self._ws.send_json(data)
+                await self._ws.send_json(data, dumps=json.dumps)
             except ConnectionResetError:
                 self._logger.debug("Send called before WebSocket ready!")
                 self._message_queue.append(data)

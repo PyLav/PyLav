@@ -2,8 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-import ujson
-
+from pylav.compat import json
 from pylav.constants.builtin_nodes import BUNDLED_NODES_IDS_HOST_MAPPING
 from pylav.constants.config import JAVA_EXECUTABLE
 from pylav.constants.node import NODE_DEFAULT_SETTINGS
@@ -50,8 +49,8 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
             "reconnect_attempts": NodeRow.reconnect_attempts.default,
             "search_only": NodeRow.search_only.default,
             "managed": NodeRow.managed.default,
-            "extras": ujson.loads(NodeRow.extras.default),
-            "yaml": ujson.loads(NodeRow.yaml.default),
+            "extras": json.loads(NodeRow.extras.default),
+            "yaml": json.loads(NodeRow.yaml.default),
             "disabled_sources": NodeRow.disabled_sources.default,
         }
 
@@ -256,7 +255,7 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
             .first()
             .output(load_json=True, nested=True)
         )
-        return data["extras"] if data else ujson.loads(NodeRow.extras.default)
+        return data["extras"] if data else json.loads(NodeRow.extras.default)
 
     async def update_extras(self, extras: JSON_DICT_TYPE) -> None:
         """Update the node's extras in the database"""
@@ -268,7 +267,7 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
             ON CONFLICT (id) DO UPDATE SET extras = excluded.extras;
             """,
             self.id,
-            ujson.dumps(extras),
+            json.dumps(extras),
         )
         await self.update_cache((self.fetch_extras, extras), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -285,7 +284,7 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
         data = (
             await NodeRow.select(NodeRow.yaml).where(NodeRow.id == self.id).first().output(load_json=True, nested=True)
         )
-        return data["yaml"] if data else ujson.loads(NodeRow.yaml.default)
+        return data["yaml"] if data else json.loads(NodeRow.yaml.default)
 
     async def update_yaml(self, yaml_data: JSON_DICT_TYPE) -> None:
         """Update the node's yaml in the database"""
@@ -297,7 +296,7 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
             ON CONFLICT (id) DO UPDATE SET yaml = excluded.yaml;
             """,
             self.id,
-            ujson.dumps(yaml_data),
+            json.dumps(yaml_data),
         )
         await self.update_cache((self.fetch_yaml, yaml_data), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -450,8 +449,8 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
             search_only,
             managed,
             disabled_sources,
-            ujson.dumps(extras),
-            ujson.dumps(yaml_data),
+            json.dumps(extras),
+            json.dumps(yaml_data),
         )
         await self.invalidate_cache()
 
@@ -502,9 +501,9 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
             False,
             -1,
             False,
-            ujson.dumps(NODE_DEFAULT_SETTINGS),
+            json.dumps(NODE_DEFAULT_SETTINGS),
             "PyLavManagedNode",
             None,
             600,
-            ujson.dumps({"max_ram": java_xmx_default}),
+            json.dumps({"max_ram": java_xmx_default}),
         )

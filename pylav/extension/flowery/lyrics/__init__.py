@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 from dacite import from_dict
 
+from pylav.compat import json
 from pylav.extension.flowery.lyrics.responses import Error, Lyrics, TrackList
 
 if TYPE_CHECKING:
@@ -35,9 +36,9 @@ class LyricsAPI:
         ) as response:
             match response.status:
                 case 200 | 202:
-                    return from_dict(data_class=Lyrics, data=await response.json())
+                    return from_dict(data_class=Lyrics, data=await response.json(loads=json.loads))
                 case 404 | 422 | 500:
-                    return from_dict(data_class=Error, data=await response.json())
+                    return from_dict(data_class=Error, data=await response.json(loads=json.loads))
                 case __:
                     raise ValueError(f"Unexpected status code: {response.status}")
 
@@ -48,8 +49,8 @@ class LyricsAPI:
         ) as response:
             match response.status:
                 case 200:
-                    return from_dict(data_class=TrackList, data=await response.json())
+                    return from_dict(data_class=TrackList, data=await response.json(loads=json.loads))
                 case 404 | 422 | 500:
-                    return from_dict(data_class=Error, data=await response.json())
+                    return from_dict(data_class=Error, data=await response.json(loads=json.loads))
                 case __:
                     raise ValueError(f"Unexpected status code: {response.status}")

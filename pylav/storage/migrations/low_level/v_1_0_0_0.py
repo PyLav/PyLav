@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 import contextlib
-import json
 from typing import TYPE_CHECKING
 
 import asyncpg
-import ujson
 from asyncpg import Connection
 from packaging.version import parse
 
+from pylav.compat import json
 from pylav.constants.playlists import BUNDLED_PLAYLIST_IDS
 from pylav.constants.versions import VERSION_1_0_0_0
 from pylav.players.tracks.decoder import async_decoder
@@ -186,11 +185,11 @@ async def migrate_player_config_v_1_0_0_0(players: list[asyncpg.Record]) -> None
             "auto_shuffle": player["auto_shuffle"],
             "auto_play": player["auto_play"],
             "self_deaf": player["self_deaf"],
-            "empty_queue_dc": ujson.loads(player["empty_queue_dc"]),
-            "alone_dc": ujson.loads(player["alone_dc"]),
-            "alone_pause": ujson.loads(player["alone_pause"]),
-            "extras": ujson.loads(player["extras"]),
-            "effects": ujson.loads(player["effects"]),
+            "empty_queue_dc": json.loads(player["empty_queue_dc"]),
+            "alone_dc": json.loads(player["alone_dc"]),
+            "alone_pause": json.loads(player["alone_pause"]),
+            "extras": json.loads(player["extras"]),
+            "effects": json.loads(player["effects"]),
             "dj_users": player["dj_users"],
             "dj_roles": player["dj_roles"],
         }
@@ -209,11 +208,11 @@ async def migrate_player_config_v_1_0_0_0(players: list[asyncpg.Record]) -> None
                 PlayerRow.auto_shuffle: player["auto_shuffle"],
                 PlayerRow.auto_play: player["auto_play"],
                 PlayerRow.self_deaf: player["self_deaf"],
-                PlayerRow.empty_queue_dc: ujson.loads(player["empty_queue_dc"]),
-                PlayerRow.alone_dc: ujson.loads(player["alone_dc"]),
-                PlayerRow.alone_pause: ujson.loads(player["alone_pause"]),
-                PlayerRow.extras: ujson.loads(player["extras"]),
-                PlayerRow.effects: ujson.loads(player["effects"]),
+                PlayerRow.empty_queue_dc: json.loads(player["empty_queue_dc"]),
+                PlayerRow.alone_dc: json.loads(player["alone_dc"]),
+                PlayerRow.alone_pause: json.loads(player["alone_pause"]),
+                PlayerRow.extras: json.loads(player["extras"]),
+                PlayerRow.effects: json.loads(player["effects"]),
                 PlayerRow.dj_users: player["dj_users"],
                 PlayerRow.dj_roles: player["dj_roles"],
             }
@@ -240,8 +239,8 @@ async def migrate_node_config_v_1_0_0_0(nodes: list[asyncpg.Record]) -> None:
             NodeRow.search_only: node["search_only"],
             NodeRow.managed: node["managed"],
             NodeRow.disabled_sources: node["disabled_sources"],
-            NodeRow.extras: ujson.loads(node["extras"]),
-            NodeRow.yaml: ujson.loads(node["yaml"]),
+            NodeRow.extras: json.loads(node["extras"]),
+            NodeRow.yaml: json.loads(node["yaml"]),
         }
         node_obj = await NodeRow.objects().get_or_create(NodeRow.id == node["id"], defaults=data)
         if not node_obj._was_created:
@@ -260,7 +259,7 @@ async def migrate_lib_config_v_1_0_0_0(configs: list[asyncpg.Record]) -> None:
             LibConfigRow.update_bot_activity: config["update_bot_activity"],
             LibConfigRow.use_bundled_pylav_external: config["use_bundled_pylav_external"],
             LibConfigRow.use_bundled_lava_link_external: False,
-            LibConfigRow.extras: ujson.loads(config["extras"]),
+            LibConfigRow.extras: json.loads(config["extras"]),
             LibConfigRow.next_execution_update_bundled_playlists: config["next_execution_update_bundled_playlists"],
             LibConfigRow.next_execution_update_bundled_external_playlists: config[
                 "next_execution_update_bundled_external_playlists"

@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import ujson
 from deepdiff import DeepDiff
 
+from pylav.compat import json
 from pylav.extension.bundled_node import LAVALINK_DOWNLOAD_DIR
 from pylav.storage.migrations.logging import LOGGER
 
@@ -63,7 +63,7 @@ async def update_plugins(client: Client) -> None:
                 await client.cached_session.get(
                     f"https://api.github.com/repos/{org}/{repo}/releases/latest",
                 )
-            ).json(loads=ujson.loads)
+            ).json(loads=json.loads)
             name = release_data["tag_name"]
             new_plugin_data.append(
                 {

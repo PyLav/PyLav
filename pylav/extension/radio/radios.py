@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING, Any
 
 import aiohttp
 import aiohttp_client_cache
-import ujson
 
+from pylav.compat import json
 from pylav.extension.radio.base_url import pick_base_url
 from pylav.extension.radio.objects import Codec, Country, CountryCode, Language, State, Station, Tag
 from pylav.extension.radio.utils import type_check
@@ -32,15 +32,15 @@ class Request:
     async def get(self, url: str, skip_cache: bool = False, **kwargs: Any) -> list[JSON_DICT_TYPE] | None:
         if skip_cache:
             async with aiohttp.ClientSession(
-                headers=self._headers, timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps
+                headers=self._headers, timeout=aiohttp.ClientTimeout(total=30), json_serialize=json.dumps
             ) as session:
                 async with session.get(url, params=kwargs) as resp:
                     if resp.status == 200:
-                        return await resp.json(loads=ujson.loads)
+                        return await resp.json(loads=json.loads)
         else:
             async with self._session.get(url, headers=self._headers, params=kwargs) as resp:
                 if resp.status == 200:
-                    return await resp.json(loads=ujson.loads)
+                    return await resp.json(loads=json.loads)
         resp.raise_for_status()
 
 

@@ -8,8 +8,8 @@ from typing import TYPE_CHECKING
 
 import aiohttp
 import asyncstdlib
-import ujson
 
+from pylav.compat import json
 from pylav.constants.builtin_nodes import BUNDLED_NODES_IDS_HOST_MAPPING, PYLAV_BUNDLED_NODES_SETTINGS
 from pylav.constants.config import EXTERNAL_UNMANAGED_NAME, JAVA_EXECUTABLE
 from pylav.constants.coordinates import DEFAULT_REGIONS, REGION_TO_COUNTRY_COORDINATE_MAPPING
@@ -51,7 +51,7 @@ class NodeManager:
         external_ssl: bool = False,
     ):
         self._client = client
-        self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=120), json_serialize=ujson.dumps)
+        self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=120), json_serialize=json.dumps)
         self._player_queue = set()
         self._unmanaged_external_host = external_host
         self._unmanaged_external_password = external_password

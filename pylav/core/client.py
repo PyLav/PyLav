@@ -17,7 +17,6 @@ import aiopath
 import asyncstdlib
 import discord
 import discord.ext.commands
-import ujson
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from asyncspotify import Client as SpotifyClient
 from asyncspotify import ClientCredentialsFlow
@@ -31,6 +30,7 @@ from pylav import VERSION
 
 # noinspection PyProtectedMember
 from pylav._internals.functions import add_property
+from pylav.compat import json
 from pylav.constants import MAX_RECURSION_DEPTH
 from pylav.constants.config import (
     CONFIG_DIR,
@@ -201,9 +201,9 @@ class Client(metaclass=SingletonClass):
                     expire_after=datetime.timedelta(days=1),
                     timeout=2.5,
                 )
-            self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps)
+            self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30), json_serialize=json.dumps)
             self._cached_session = aiohttp_client_cache.CachedSession(
-                timeout=aiohttp.ClientTimeout(total=30), json_serialize=ujson.dumps, cache=self._aiohttp_client_cache
+                timeout=aiohttp.ClientTimeout(total=30), json_serialize=json.dumps, cache=self._aiohttp_client_cache
             )
             # Attach the Client to the necessary objects
             CachedModel.attach_client(self)

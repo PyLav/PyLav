@@ -13,9 +13,9 @@ import aiopath  # type: ignore
 import asyncstdlib
 import brotli  # type: ignore
 import discord
-import ujson
 import yaml
 
+from pylav.compat import json
 from pylav.constants import MAX_RECURSION_DEPTH
 from pylav.constants.config import DEFAULT_SEARCH_SOURCE, PREFER_PARTIAL_TRACKS
 from pylav.constants.node_features import SUPPORTED_SEARCHES
@@ -624,7 +624,7 @@ class Query:
                     yield await Query.from_base64(track)
         elif is_url(self._query):
             assert not isinstance(self._query, LocalFile)
-            async with aiohttp.ClientSession(auto_decompress=False, json_serialize=ujson.dumps) as session:
+            async with aiohttp.ClientSession(auto_decompress=False, json_serialize=json.dumps) as session:
                 async with session.get(self._query) as response:
                     data = await response.read()
                     if ".gz.pylav" in self._query:
@@ -714,7 +714,7 @@ class Query:
 
     async def _yield_process_url(self) -> AsyncIterator[Query]:
         assert not isinstance(self._query, LocalFile)
-        async with aiohttp.ClientSession(json_serialize=ujson.dumps) as session:
+        async with aiohttp.ClientSession(json_serialize=json.dumps) as session:
             async with session.get(self._query) as resp:
                 contents = await resp.text()
                 async for line in asyncstdlib.iter(contents.splitlines()):
