@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-09 21:01+0000\n"
-"PO-Revision-Date: 2023-01-09 21:14\n"
+"PO-Revision-Date: 2023-01-21 17:14\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -64,7 +64,7 @@ msgstr "このコマンドを実行するには既存のプレイヤーが必要
 
 #: pylav/extension/red/utils/required_methods.py:151
 msgid "PyLavPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later"
-msgstr ""
+msgstr "バックエンドサービスが停止しているため、PyLavPlayerのコグは現在一時的に利用できません。後でもう一度お試しください"
 
 #: pylav/extension/red/utils/required_methods.py:155
 msgid "No Lavalink node currently available"
@@ -72,7 +72,7 @@ msgstr "現在利用可能なLavalinkノードはありません"
 
 #: pylav/extension/red/utils/required_methods.py:164
 msgid "PyLavPlayer is currently unable to process tracks belonging to {feature}"
-msgstr ""
+msgstr "現在 PyLavPlayer は {feature} に属するトラックを処理できません"
 
 #: pylav/extension/red/utils/required_methods.py:167
 msgid "No Lavalink node currently available with feature {feature}"

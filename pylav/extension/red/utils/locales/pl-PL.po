@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-09 21:01+0000\n"
-"PO-Revision-Date: 2023-01-09 21:14\n"
+"PO-Revision-Date: 2023-01-21 17:14\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
@@ -74,7 +74,7 @@ msgstr "Ta komenda wymaga uruchomienia istniejącego gracza"
 
 #: pylav/extension/red/utils/required_methods.py:151
 msgid "PyLavPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later"
-msgstr ""
+msgstr "Cog PyLavPlayer jest obecnie tymczasowo niedostępny ze względu na przerwy w usługach backendu, spróbuj ponownie później"
 
 #: pylav/extension/red/utils/required_methods.py:155
 msgid "No Lavalink node currently available"
@@ -82,7 +82,7 @@ msgstr "Brak dostępnego węzła Lavalink"
 
 #: pylav/extension/red/utils/required_methods.py:164
 msgid "PyLavPlayer is currently unable to process tracks belonging to {feature}"
-msgstr ""
+msgstr "PyLavPlayer nie jest obecnie w stanie przetworzyć utworów należących do {feature}"
 
 #: pylav/extension/red/utils/required_methods.py:167
 msgid "No Lavalink node currently available with feature {feature}"

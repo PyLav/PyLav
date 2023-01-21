@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-09 21:01+0000\n"
-"PO-Revision-Date: 2023-01-09 21:14\n"
+"PO-Revision-Date: 2023-01-21 17:14\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "MIME-Version: 1.0\n"
@@ -74,7 +74,7 @@ msgstr "Această comandă necesită un jucător existent pentru a fi rulat"
 
 #: pylav/extension/red/utils/required_methods.py:151
 msgid "PyLavPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later"
-msgstr ""
+msgstr "Cog PyLavPlayer este momentan indisponibil din cauza unei întreruperi cu serviciile backend, vă rugăm să încercaţi din nou mai târziu"
 
 #: pylav/extension/red/utils/required_methods.py:155
 msgid "No Lavalink node currently available"
@@ -82,7 +82,7 @@ msgstr "Nici un nod Lavalink disponibil în prezent"
 
 #: pylav/extension/red/utils/required_methods.py:164
 msgid "PyLavPlayer is currently unable to process tracks belonging to {feature}"
-msgstr ""
+msgstr "PyLavPlayer nu poate procesa piesele care aparțin {feature}"
 
 #: pylav/extension/red/utils/required_methods.py:167
 msgid "No Lavalink node currently available with feature {feature}"
