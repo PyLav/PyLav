@@ -96,7 +96,7 @@ class PlayerMovedEvent(PyLavEvent):
 
 
 class PlayerDisconnectedEvent(PyLavEvent):
-    """This event is dispatched when the player is moved."""
+    """This event is dispatched when the player is disconnected."""
 
     __slots__ = ()
 
@@ -109,7 +109,7 @@ class PlayerDisconnectedEvent(PyLavEvent):
 
 
 class PlayerConnectedEvent(PyLavEvent):
-    """This event is dispatched when the player is moved."""
+    """This event is dispatched when the player is connected."""
 
     __slots__ = ()
 
@@ -119,7 +119,7 @@ class PlayerConnectedEvent(PyLavEvent):
 
 
 class PlayerVolumeChangedEvent(PyLavEvent):
-    """This event is dispatched when the player is moved."""
+    """This event is dispatched when the player has its volume changed."""
 
     __slots__ = ()
 
@@ -131,7 +131,7 @@ class PlayerVolumeChangedEvent(PyLavEvent):
 
 
 class PlayerRepeatEvent(PyLavEvent):
-    """This event is dispatched when the player is moved."""
+    """This event is dispatched when the player repeat config changed."""
 
     __slots__ = ()
 
