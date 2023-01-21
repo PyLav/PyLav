@@ -15,13 +15,6 @@ LOGGER = getLogger("PyLav.Environment")
 
 INSTANCE_NAME = None
 
-LIB_DIR = platformdirs.PlatformDirs("PyLav")
-__CONFIG_DIR = pathlib.Path(LIB_DIR.user_config_path)
-if sys.platform == "linux" and 0 < os.getuid() < 1000 and not pathlib.Path.home().exists():
-    __CONFIG_DIR = pathlib.Path(LIB_DIR.site_data_path)
-__CONFIG_DIR.mkdir(parents=True, exist_ok=True)
-CONFIG_DIR = aiopath.AsyncPath(__CONFIG_DIR)
-
 
 ENV_FILE: pathlib.Path = pathlib.Path(os.getenv("PYLAV__YAML_CONFIG", pathlib.Path.home() / "pylav.yaml"))
 
@@ -32,6 +25,7 @@ if not ENV_FILE.exists():
         ENV_FILE,
     )
     build_from_envvars()
+    from pylav.constants.config.env_var import DATA_FOLDER as DATA_FOLDER
     from pylav.constants.config.env_var import DEFAULT_SEARCH_SOURCE as DEFAULT_SEARCH_SOURCE
     from pylav.constants.config.env_var import EXTERNAL_UNMANAGED_HOST as EXTERNAL_UNMANAGED_HOST
     from pylav.constants.config.env_var import EXTERNAL_UNMANAGED_NAME as EXTERNAL_UNMANAGED_NAME
@@ -41,6 +35,7 @@ if not ENV_FILE.exists():
     from pylav.constants.config.env_var import FALLBACK_POSTGREST_HOST as FALLBACK_POSTGREST_HOST
     from pylav.constants.config.env_var import JAVA_EXECUTABLE as JAVA_EXECUTABLE
     from pylav.constants.config.env_var import LINKED_BOT_IDS as LINKED_BOT_IDS
+    from pylav.constants.config.env_var import LOCAL_TRACKS_FOLDER as LOCAL_TRACKS_FOLDER
     from pylav.constants.config.env_var import MANAGED_NODE_APPLE_MUSIC_API_KEY as MANAGED_NODE_APPLE_MUSIC_API_KEY
     from pylav.constants.config.env_var import (
         MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE as MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE,
@@ -71,11 +66,11 @@ if not ENV_FILE.exists():
         TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS as TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS,
     )
     from pylav.constants.config.env_var import USE_BUNDLED_EXTERNAL_PYLAV_NODE as USE_BUNDLED_EXTERNAL_PYLAV_NODE
-
 else:
     LOGGER.info("%s exist - Environment variables will be read from it", ENV_FILE)
     # Apply environment variables overrides if they exist
     from pylav.constants.config import overrides
+    from pylav.constants.config.file import DATA_FOLDER as DATA_FOLDER
     from pylav.constants.config.file import DEFAULT_SEARCH_SOURCE as DEFAULT_SEARCH_SOURCE
     from pylav.constants.config.file import EXTERNAL_UNMANAGED_HOST as EXTERNAL_UNMANAGED_HOST
     from pylav.constants.config.file import EXTERNAL_UNMANAGED_NAME as EXTERNAL_UNMANAGED_NAME
@@ -85,6 +80,7 @@ else:
     from pylav.constants.config.file import FALLBACK_POSTGREST_HOST as FALLBACK_POSTGREST_HOST
     from pylav.constants.config.file import JAVA_EXECUTABLE as JAVA_EXECUTABLE
     from pylav.constants.config.file import LINKED_BOT_IDS as LINKED_BOT_IDS
+    from pylav.constants.config.file import LOCAL_TRACKS_FOLDER as LOCAL_TRACKS_FOLDER
     from pylav.constants.config.file import MANAGED_NODE_APPLE_MUSIC_API_KEY as MANAGED_NODE_APPLE_MUSIC_API_KEY
     from pylav.constants.config.file import (
         MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE as MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE,
@@ -126,3 +122,14 @@ else:
 
 
 BROTLI_ENABLED = False
+
+if DATA_FOLDER is None:
+    LIB_DIR = platformdirs.PlatformDirs("PyLav")
+    __CONFIG_DIR = pathlib.Path(LIB_DIR.user_config_path)
+    if sys.platform == "linux" and 0 < os.getuid() < 1000 and not pathlib.Path.home().exists():
+        __CONFIG_DIR = pathlib.Path(LIB_DIR.site_data_path)
+    __CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+    CONFIG_DIR = aiopath.AsyncPath(__CONFIG_DIR)
+else:
+    CONFIG_DIR = aiopath.AsyncPath(DATA_FOLDER)
+    CONFIG_DIR.mkdir(parents=True, exist_ok=True)

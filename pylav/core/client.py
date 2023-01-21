@@ -39,6 +39,7 @@ from pylav.constants.config import (
     EXTERNAL_UNMANAGED_PORT,
     EXTERNAL_UNMANAGED_SSL,
     JAVA_EXECUTABLE,
+    LOCAL_TRACKS_FOLDER,
     MANAGED_NODE_APPLE_MUSIC_API_KEY,
     MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE,
     MANAGED_NODE_DEEZER_KEY,
@@ -51,6 +52,7 @@ from pylav.constants.config import (
     TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS,
     TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS,
     TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS,
+    overrides,
 )
 from pylav.constants.playlists import BUNDLED_DEEZER_PLAYLIST_IDS, BUNDLED_PLAYLIST_IDS, BUNDLED_SPOTIFY_PLAYLIST_IDS
 from pylav.core.bot_overrides import get_context, process_commands
@@ -443,17 +445,17 @@ class Client(metaclass=SingletonClass):
                 else:
                     self.bot.add_listener(self.on_pylav_ready, name="on_ready")
                 await self._initialise_modules()
+                await self._config.update_config_folder(CONFIG_DIR)
                 config_data = await self._config.fetch_all()
                 java_path = config_data["java_path"]
                 config_folder = config_data["config_folder"]
-                localtrack_folder = config_data["localtrack_folder"]
+                localtrack_folder = await self.update_localtracks_folder(folder=config_data["localtrack_folder"])
                 if java_path != JAVA_EXECUTABLE and os.path.exists(JAVA_EXECUTABLE):
                     await self._config.update_java_path(JAVA_EXECUTABLE)
                 LOGGER.info("Lavalink folder: %s", LAVALINK_DOWNLOAD_DIR)
                 LOGGER.info("Config folder: %s", config_folder)
                 LOGGER.info("Localtracks folder: %s", localtrack_folder)
                 self._config_folder = aiopath.AsyncPath(config_folder)
-                localtrack_folder = aiopath.AsyncPath(localtrack_folder)
                 bundled_node_config = self._node_config_manager.bundled_node_config()
                 spotify_client_id, spotify_client_secret = await self._initialize_yaml_config(
                     bundled_node_config,
@@ -481,7 +483,7 @@ class Client(metaclass=SingletonClass):
                     await self.update_applemusic_tokens(
                         token=apple_music_token, country_code=MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE
                     )
-                await self._run_post_init_jobs(java_path, localtrack_folder)
+                await self._run_post_init_jobs(java_path)
                 self.ready.set()
                 LOGGER.info("PyLav is ready")
 
@@ -494,11 +496,8 @@ class Client(metaclass=SingletonClass):
         await self._player_manager.initialize()
         await self.player_config_manager.initialize_global_config()
 
-    async def _run_post_init_jobs(self, java_path, localtrack_folder) -> None:
+    async def _run_post_init_jobs(self, java_path) -> None:
 
-        from pylav.players.query.local_files import LocalFile
-
-        await LocalFile.add_root_folder(path=localtrack_folder, create=True)
         self._user_id = str(self._bot.user.id)
         self._local_node_manager = LocalNodeManager(self)
         enable_managed_node = await self.lib_db_manager.get_config().fetch_enable_managed_node()
@@ -1161,13 +1160,23 @@ class Client(metaclass=SingletonClass):
             ctx: PyLavContext = await self._bot.get_context(what, cls=PyLavContext)  # type: ignore
         return ctx
 
-    async def update_localtracks_folder(self, folder: str | None) -> None:
-
-        localtrack_folder = aiopath.AsyncPath(folder) if folder else self._config_folder / "music"
+    async def update_localtracks_folder(self, folder: str | None) -> aiopath.AsyncPath:
+        if overrides.LOCAL_TRACKS_FOLDER:
+            localtrack_folder = aiopath.AsyncPath(overrides.LOCAL_TRACKS_FOLDER)
+        elif not folder:
+            localtrack_folder = (
+                aiopath.AsyncPath(LOCAL_TRACKS_FOLDER) if LOCAL_TRACKS_FOLDER else self._config_folder / "music"
+            )
+        else:
+            localtrack_folder = aiopath.AsyncPath(folder)
 
         from pylav.players.query.local_files import LocalFile
 
+        await self.lib_db_manager.get_config().update_localtrack_folder(
+            str(await discord.utils.maybe_coroutine(localtrack_folder.absolute))
+        )
         await LocalFile.add_root_folder(path=localtrack_folder, create=True)
+        return localtrack_folder
 
     async def get_all_players(self) -> AsyncIterator[Player]:
 

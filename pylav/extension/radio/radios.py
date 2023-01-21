@@ -64,7 +64,7 @@ class RadioBrowser:
             LOGGER.debug(e, exc_info=e)
             self._disabled = True
         else:
-            LOGGER.debug("Priming the cache")
+            LOGGER.debug("Priming radio cache")
             await self.countries(None)
             await self.countrycodes()
             await self.codecs()
@@ -74,7 +74,7 @@ class RadioBrowser:
             await self.stations()
             await self.stations_by_clicks(limit=25)
             await self.stations_by_votes(limit=25)
-            LOGGER.debug("Cache primed")
+            LOGGER.debug("Radio cache primed")
 
     @property
     async def base_url(self) -> str | None:

@@ -142,7 +142,8 @@ An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml
   - `PYLAV__MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE` : Defaults to US
   - `PYLAV__MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN` - Defaults to None - Required if you want to use Yandex
   - `PYLAV__MANAGED_NODE_DEEZER_KEY` - Required if you want to use Deezer, leave empty unless you know what you are doing
-
+  - `PYLAV__LOCAL_TRACKS_FOLDER`  - Defaults to a "music" folder created inside PyLav's data folder
+  - `PYLAV__DATA_FOLDER` - Default of a OS appropriate config folder
 
 ## Red Users (PyLav Cogs) Setup
 ### Install [PyLav Cogs](https://github.com/Drapersniper/PyLav-Cogs)

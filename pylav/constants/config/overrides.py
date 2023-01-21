@@ -87,3 +87,6 @@ MANAGED_NODE_DEEZER_KEY = os.getenv("PYLAV__MANAGED_NODE_DEEZER_KEY")
 PREFER_PARTIAL_TRACKS = (
     bool(int(envar_value)) if (envar_value := os.getenv("PYLAV__PREFER_PARTIAL_TRACKS")) is not None else None
 )
+
+LOCAL_TRACKS_FOLDER = os.getenv("PYLAV__LOCAL_TRACKS_FOLDER")
+DATA_FOLDER = os.getenv("PYLAV__DATA_FOLDER")

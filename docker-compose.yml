@@ -1,4 +1,6 @@
 version: '3.8'
+volumes:
+    pgsocket:
 services:
     redbot:
     # Read https://github.com/PhasecoreX/docker-red-discordbot#red-discordbot-v3 for more info
@@ -7,21 +9,24 @@ services:
         image: ghcr.io/lifeismana/red-discordbot:extra
         restart: unless-stopped
         volumes:
-        -   ./redbot:/data
-        -   ./pylav.docker.yaml:/data/pylav.yaml
-      # Use the pylav.docker.yaml file from https://github.com/Drapersniper/PyLav/blob/master/pylav.docker.yaml editing it as necessary.
-        -   ./pgsocket:/var/run/postgresql
-      # - ./localtracks:/data/localtracks (Localtracks folder)
+        -   pgsocket:/var/run/postgresql # Postgres socket using Docker volume to allow access from other containers without mounting the host's filesystem (I.e use Sockets even on Windows)
+        -   ./redbot:/data # Red data folder
+        -   ./localtracks:/localtracks  # Localtracks folder
+        -   ./pylav:/pylav # Pylav folder
+            # Use the pylav.docker.yaml file from https://github.com/Drapersniper/PyLav/blob/master/pylav.docker.yaml editing it as necessary.
+        -   ./pylav.docker.yaml:/pylav/pylav.yaml # Pylav config file
         environment:
             TOKEN: your_bot_token_goes_here
             PREFIX: '!'
             TZ: Europe/London
             PUID: 1000
             CUSTOM_REDBOT_PACKAGE: git+https://github.com/Cog-Creators/Red-DiscordBot.git
-            PYLAV__YAML_CONFIG: /data/pylav.yaml
+            PYLAV__DATA_FOLDER: /pylav
+            PYLAV__YAML_CONFIG: /pylav/pylav.yaml
+            PYLAV__LOCAL_TRACKS_FOLDER: /localtracks
         depends_on:
-        -   postgres
-        -   ll-node
+        -   postgres # Wait for postgres container to start before starting Red
+        -   ll-node # Wait for node container to start before starting Red
     postgres:
         container_name: postgres
         hostname: postgres
@@ -33,15 +38,15 @@ services:
             POSTGRES_DB: postgres
             POSTGRES_HOST_AUTH_METHOD: trust
         volumes:
-        -   ./pgdata:/var/lib/postgresql/data
-        -   ./pgsocket:/var/run/postgresql
+        -   ./pgdata:/var/lib/postgresql/data # Postgres data folder
+        -   pgsocket:/var/run/postgresql # Postgres socket using Docker volume to allow access from other containers without mounting the host's filesystem (I.e use Sockets even on Windows)
     ll-node:
         hostname: ll-node
         container_name: ll-node
         image: drapersniper/pylav-node:master
         restart: always
-    # volumes:
-    #   - ./localtracks:/data/localtracks (Localtracks folder)
+        volumes:
+        -   ./localtracks:/localtracks
         environment:
             _JAVA_OPTIONS: -Xmx4G # The highest amount of RAM which Lavalink is allowed to use
 
