@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-09 21:01+0000\n"
-"PO-Revision-Date: 2023-01-09 21:14\n"
+"PO-Revision-Date: 2023-01-21 15:13\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgstr ""
 #: pylav/extension/red/utils/required_methods.py:46
 #, docstring
 msgid "Shows the credits and translation details for the PyLav cogs and shared code"
-msgstr ""
+msgstr "PyLav çarkları ve paylaşılan kod için kredileri ve çeviri ayrıntılarını gösterir"
 
 #: pylav/extension/red/utils/required_methods.py:50
 msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
@@ -34,45 +34,55 @@ msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
 "- https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors\n"
 "If you wish to buy me a coffee for my work, you can do so at:\n"
 "https://www.buymeacoffee.com/draper or https://github.com/sponsors/Drapersniper"
-msgstr ""
+msgstr "PyLav, [Draper#6666](https://github.com/Drapersniper) tarafından oluşturulmuştur.\n\n"
+"PyLav https://github.com/Drapersniper/PyLav adresinde bulunabilir.\n"
+"PyLav-Cogs https://github.com/Drapersniper/PyLav-Cogs adresinde bulunabilir.\n\n"
+"PyLav'ın destek sunucusu https://discord.com/invite/Sjh2TSCYQB adresinde bulunabilir.\n\n\n"
+"Aşağıdaki bağlantıdan Crowdin projelerimize katkıda bulunarak PyLav'ın çevrilmesine yardımcı olabilirsiniz:\n"
+"https://crowdin.com/project/pylav ve https://crowdin.com/project/pylavcogs\n\n\n"
+"Katkıda bulunanlar:\n"
+"- https://github.com/Drapersniper/PyLav/graphs/contributors\n"
+"- https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors\n"
+"Çalışmalarım için bana bir kahve ısmarlamak isterseniz, bunu şu adresten yapabilirsiniz:\n"
+"https://www.buymeacoffee.com/draper veya https://github.com/sponsors/Drapersniper"
 
 #: pylav/extension/red/utils/required_methods.py:77
 #, docstring
 msgid "Show the version of PyLav library"
-msgstr ""
+msgstr "PyLav kütüphanesinin sürümünü göster"
 
 #: pylav/extension/red/utils/required_methods.py:92
 msgid "Library"
-msgstr ""
+msgstr "Kütüphane"
 
 #: pylav/extension/red/utils/required_methods.py:93
 msgid "Version"
-msgstr ""
+msgstr "Sürüm"
 
 #: pylav/extension/red/utils/required_methods.py:112
 #, docstring
 msgid "Sync the Bots slash commands"
-msgstr ""
+msgstr "Botların eğik çizgi komutlarını senkronize edin"
 
 #: pylav/extension/red/utils/required_methods.py:121
 msgid "Synced the bots slash commands"
-msgstr ""
+msgstr "Botların eğik çizgi komutları senkronize edildi"
 
 #: pylav/extension/red/utils/required_methods.py:142
 msgid "This command requires an existing player to be run"
-msgstr ""
+msgstr "Bu komut mevcut bir oynatıcının çalıştırılmasını gerektirir"
 
 #: pylav/extension/red/utils/required_methods.py:151
 msgid "PyLavPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later"
-msgstr ""
+msgstr "PyLavPlayer cog, arka uç hizmetlerinde yaşanan bir kesinti nedeniyle şu anda geçici olarak kullanılamıyor, lütfen daha sonra tekrar deneyin"
 
 #: pylav/extension/red/utils/required_methods.py:155
 msgid "No Lavalink node currently available"
-msgstr ""
+msgstr "Şu anda mevcut Lavalink düğümü yok"
 
 #: pylav/extension/red/utils/required_methods.py:164
 msgid "PyLavPlayer is currently unable to process tracks belonging to {feature}"
-msgstr ""
+msgstr "PyLavPlayer şu anda {feature} parçalarını işleyemiyor"
 
 #: pylav/extension/red/utils/required_methods.py:167
 msgid "No Lavalink node currently available with feature {feature}"
