@@ -43,7 +43,7 @@ services:
     ll-node:
         hostname: ll-node
         container_name: ll-node
-        image: drapersniper/pylav-node:master
+        image: ghcr.io/drapersniper/pylav-node:master
         restart: always
         volumes:
         -   ./localtracks:/localtracks
