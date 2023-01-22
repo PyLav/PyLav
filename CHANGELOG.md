@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.2.6 (22/01/2023)
+- [fix incorrect assignment](https://github.com/Drapersniper/PyLav/commit/3529b64ddc7b0a5a6de70c25ac453215e9766107) - @Drapersniper
+- [undo accidental deletion](https://github.com/Drapersniper/PyLav/commit/0c5e325a5f34aefbab08c8aa58aa3cb61c63b27c) - @Drapersniper
+- [Introduce end-of-line normalization](https://github.com/Drapersniper/PyLav/commit/a8a08a6ea6c5522cbdc67db79303c894c81d63ab) - @Drapersniper
+- [if PYLAV__DATA_FOLDER is defined, and PYLAV__YAML_CONFIG is not specified, create the pylav.yaml file inside PYLAV__DATA_FOLDER](https://github.com/Drapersniper/PyLav/commit/3b58dd42ce1a80a667f31f38e4120b319f83b982) - @Drapersniper
+- [update docker compose to use githubs image repo](https://github.com/Drapersniper/PyLav/commit/dccecf9de9b7f72c2372d09657780fe576224b2b) - @Drapersniper
+- [Override localtracks folder as part of migrations if the envvar is explicitly set](https://github.com/Drapersniper/PyLav/commit/896048c7a0989764b0aadcbb0269a7f4e4207c6b) - @Drapersniper
+
+---
+
 ## v1.2.5 (22/01/2023)
 - [fix incorrect URL import](https://github.com/Drapersniper/PyLav/commit/69893a4269e1d84c7af4b580416c3b20ff489e02) - @Drapersniper
 - [Use `yarl` which is a dep of aiohttp](https://github.com/Drapersniper/PyLav/commit/bd5ce779c77fcdb2a7c14f0b21320561ff90ec2d) - @Drapersniper
@@ -196,10 +206,3 @@
 - [Expose the dispatch manager attribute of pylav](https://github.com/Drapersniper/PyLav/commit/d2aecaafeb483a83f3218175d84f7264f8a73726) - @Drapersniper
 - [Better documentation](https://github.com/Drapersniper/PyLav/commit/b5ee42b0552b7f362e52777e8c0fa30934738331) - @Drapersniper
 - [Ignore DB connection errors on tasks](https://github.com/Drapersniper/PyLav/commit/bcc35de6beea4558e3d631a7c731b288b2c1c682) - @Drapersniper
-
----
-
-## v1.0.3 (01/01/2023)
-- [Add a workflow dispatch to PyLav-Cogs](https://github.com/Drapersniper/PyLav/commit/ad3b246c5d7c50eb821036ae20fbbc3bdfea6c25) - @Drapersniper
-- [fix versioning](https://github.com/Drapersniper/PyLav/commit/9683e6d8702b20e24a42dc517623d8c04c10cdcf) - @Drapersniper
-- [Sourcery](https://github.com/Drapersniper/PyLav/commit/9dc5bb339e1963f12a0c0860d89a98d3a4bc6f6a) - @Drapersniper
