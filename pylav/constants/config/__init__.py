@@ -15,7 +15,7 @@ LOGGER = getLogger("PyLav.Environment")
 
 INSTANCE_NAME = None
 
-if data_folder := os.getenv("PYLAV__DATA_FOLDER") is not None:
+if (data_folder := os.getenv("PYLAV__DATA_FOLDER")) is not None:
     DATA_FOLDER = pathlib.Path(data_folder)
     del data_folder
 else:
