@@ -16,6 +16,7 @@ from dacite import from_dict
 from expiringdict import ExpiringDict
 from multidict import CIMultiDictProxy
 from packaging.version import Version, parse
+from yarl import URL
 
 from pylav.compat import json
 from pylav.constants.builtin_nodes import BUNDLED_NODES_IDS_HOST_MAPPING, PYLAV_NODES
@@ -25,7 +26,6 @@ from pylav.constants.node_features import SUPPORTED_FEATURES, SUPPORTED_SOURCES
 from pylav.constants.regex import SEMANTIC_VERSIONING
 from pylav.events.base import PyLavEvent
 from pylav.exceptions.request import HTTPException, UnauthorizedException
-from pylav.helpers.emojis import URL
 from pylav.helpers.time import get_now_utc
 from pylav.logging import getLogger
 from pylav.nodes.api.responses import rest_api
