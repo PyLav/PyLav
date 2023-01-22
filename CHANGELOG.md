@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.2.7 (22/01/2023)
+- [Fix incorrect assignement due to walrus](https://github.com/Drapersniper/PyLav/commit/44b55d8456743e3be0b6f6dbd050c20c67fb178d) - @Drapersniper
+
+---
+
 ## v1.2.6 (22/01/2023)
 - [fix incorrect assignment](https://github.com/Drapersniper/PyLav/commit/3529b64ddc7b0a5a6de70c25ac453215e9766107) - @Drapersniper
 - [undo accidental deletion](https://github.com/Drapersniper/PyLav/commit/0c5e325a5f34aefbab08c8aa58aa3cb61c63b27c) - @Drapersniper
@@ -198,11 +203,3 @@
 - [delete empty queries in cache](https://github.com/Drapersniper/PyLav/commit/9e70abea40b967950b7fb2129502d423697ed8cd) - @Drapersniper
 - [Only return cached entry if there are tracks to be returned](https://github.com/Drapersniper/PyLav/commit/e10369fa5549217c2e8e54f0a616de1b7e93a5b4) - @Drapersniper
 - [Add a note to the the setup.md](https://github.com/Drapersniper/PyLav/commit/e38ba1089c3960ac846b982b125a804fa0ea31ad) - @Drapersniper
-
----
-
-## v1.0.4 (01/01/2023)
-- [Add the youtube email config option](https://github.com/Drapersniper/PyLav/commit/7f98770f7ad81e73a476c82b749755e172a613cd) - @Drapersniper
-- [Expose the dispatch manager attribute of pylav](https://github.com/Drapersniper/PyLav/commit/d2aecaafeb483a83f3218175d84f7264f8a73726) - @Drapersniper
-- [Better documentation](https://github.com/Drapersniper/PyLav/commit/b5ee42b0552b7f362e52777e8c0fa30934738331) - @Drapersniper
-- [Ignore DB connection errors on tasks](https://github.com/Drapersniper/PyLav/commit/bcc35de6beea4558e3d631a7c731b288b2c1c682) - @Drapersniper
