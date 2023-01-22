@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any
 
 import aiohttp
 import aiohttp_client_cache
+from yarl import URL
 
 from pylav.compat import json
 from pylav.extension.radio.base_url import pick_base_url
@@ -29,7 +30,7 @@ class Request:
         self._headers = headers
         self._session = session
 
-    async def get(self, url: str, skip_cache: bool = False, **kwargs: Any) -> list[JSON_DICT_TYPE] | None:
+    async def get(self, url: str | URL, skip_cache: bool = False, **kwargs: Any) -> list[JSON_DICT_TYPE] | None:
         if skip_cache:
             async with aiohttp.ClientSession(
                 headers=self._headers, timeout=aiohttp.ClientTimeout(total=30), json_serialize=json.dumps
@@ -77,13 +78,11 @@ class RadioBrowser:
             LOGGER.debug("Radio cache primed")
 
     @property
-    async def base_url(self) -> str | None:
-        return await pick_base_url(self._lib_client.session)
-
-    async def build_url(self, endpoint: str) -> str | None:
-        if url := await self.base_url:
-            return f"{url}/{endpoint}"
+    async def base_url(self) -> URL:
+        if url := await pick_base_url(self._lib_client.session):
+            return url
         self._disabled = True
+        return URL()
 
     @property
     def disabled(self) -> bool:
@@ -102,8 +101,9 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_countries
         """
-        endpoint = f"json/countries/{code}" if code else "json/countries/"
-        url = await self.build_url(endpoint)
+        url = await self.base_url / "json" / "countries"
+        if code:
+            url /= code
         if self._disabled:
             return []
         return [Country(**country) async for country in AsyncIter(await self.client.get(url, hidebroken="true"))]
@@ -121,8 +121,9 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_countrycodes
         """
-        endpoint = f"json/countrycodes/{code}" if code else "json/countrycodes/"
-        url = await self.build_url(endpoint)
+        url = await self.base_url / "json" / "countrycodes"
+        if code:
+            url /= code
         if self._disabled:
             return []
         return [CountryCode(**country) async for country in AsyncIter(await self.client.get(url, hidebroken="true"))]
@@ -140,8 +141,7 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_codecs
         """
-        endpoint = "json/codecs/"
-        url = await self.build_url(endpoint)
+        url = await self.base_url / "json" / "codecs"
         if self._disabled:
             return []
         response = await self.client.get(url, hidebroken="true")
@@ -165,8 +165,7 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_states
         """
-        endpoint = "json/states"
-        url = await self.build_url(endpoint)
+        url = await self.base_url / "json" / "states"
         if self._disabled:
             return []
         response = await self.client.get(url, hidebroken="true")
@@ -203,8 +202,9 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_languages
         """
-        endpoint = f"json/languages/{language}" if language else "json/languages/"
-        url = await self.build_url(endpoint)
+        url = await self.base_url / "json" / "languages"
+        if language:
+            url /= language
         if self._disabled:
             return []
         response = await self.client.get(url, hidebroken="true")
@@ -223,12 +223,9 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_tags
         """
+        url = await self.base_url / "json" / "tags"
         if tag:
-            tag = tag.lower()
-            endpoint = f"json/tags/{tag}"
-        else:
-            endpoint = "json/tags/"
-        url = await self.build_url(endpoint)
+            url /= tag.lower()
         if self._disabled:
             return []
         response = await self.client.get(url, hidebroken="true")
@@ -246,8 +243,7 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#List_of_radio_stations
         """
-        endpoint = f"json/stations/byuuid/{stationuuid}"
-        url = await self.build_url(endpoint)
+        url = await self.base_url / "json" / "stations" / "byuuid" / stationuuid
         if self._disabled:
             return []
         response = await self.client.get(url, hidebroken="true")
@@ -396,7 +392,6 @@ class RadioBrowser:
         kwargs["tag_list"] = tag_list
         kwargs |= {"tag_list": tag_list, "order": "votes"}
         kwargs["hidebroken"] = kwargs.pop("hidebroken", True)
-
         return await self.search(**kwargs)
 
     async def click_counter(self, stationuuid: str) -> list[dict[str, str | int | bool]]:
@@ -418,8 +413,7 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#Count_station_click
         """
-        endpoint = f"json/url/{stationuuid}"
-        url = await self.build_url(endpoint)
+        url = await self.base_url / "json" / "url" / f"{stationuuid}"
         return [] if self._disabled else await self.client.get(url, hidebroken="true")
 
     async def stations(self, **kwargs: str | int | bool | None) -> list[Station]:
@@ -431,11 +425,10 @@ class RadioBrowser:
         See details:
             https://nl1.api.radio-browser.info/#List_of_all_radio_stations
         """
-        endpoint = "json/stations"
-        kwargs["hidebroken"] = kwargs.pop("hidebroken", "true")
-        url = await self.build_url(endpoint)
+        url = await self.base_url / "json" / "stations"
         if self._disabled:
             return []
+        kwargs["hidebroken"] = kwargs.pop("hidebroken", "true")
         return [
             Station(radio_api_client=self, **station)
             async for station in AsyncIter(await self.client.get(url, **kwargs))
@@ -453,10 +446,7 @@ class RadioBrowser:
         See details:
             https://nl1.api.radio-browser.info/#Stations_by_votes
         """
-        if self._disabled:
-            return []
-        endpoint = f"json/stations/topvote/{limit}"
-        url = await self.build_url(endpoint)
+        url = await self.base_url / "json" / "stations" / "topvote" / f"{limit}"
         if self._disabled:
             return []
         kwargs["hidebroken"] = kwargs.pop("hidebroken", "true")
@@ -475,8 +465,7 @@ class RadioBrowser:
         See details:
             https://nl1.api.radio-browser.info/#Stations_by_clicks
         """
-        endpoint = f"json/stations/topclick/{limit}"
-        url = await self.build_url(endpoint)
+        url = await self.base_url / "json" / "stations" / "topclick" / f"{limit}"
         if self._disabled:
             return []
         kwargs["hidebroken"] = kwargs.pop("hidebroken", "true")
@@ -534,7 +523,9 @@ class RadioBrowser:
         See details:
             https://de1.api.radio-browser.info/#Advanced_station_search
         """
-        endpoint = "json/stations/search"
+        url = await self.base_url / "json" / "stations" / "search"
+        if self._disabled:
+            return []
         # lowercase tag reference since the API turned to be case-sensitive
         for paramkey in ["tag", "tagList"]:
             if paramkey in kwargs:
@@ -542,9 +533,6 @@ class RadioBrowser:
         kwargs["hidebroken"] = kwargs.pop("hidebroken", "true")
         if kwargs["hidebroken"] is False:
             kwargs["hidebroken"] = "false"
-        url = await self.build_url(endpoint)
-        if self._disabled:
-            return []
         return [
             Station(radio_api_client=self, **station)
             async for station in AsyncIter(await self.client.get(url, **kwargs))
@@ -564,8 +552,7 @@ class RadioBrowser:
             return
         if station:
             station_id = station.stationuuid
-        endpoint = f"json/url/{station_id}"
-        url = await self.build_url(endpoint)
+        url = await self.base_url / "json" / "url" / f"{station_id}"
         if self._disabled:
             return
         with contextlib.suppress(Exception):

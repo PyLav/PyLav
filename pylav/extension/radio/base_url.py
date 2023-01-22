@@ -4,6 +4,7 @@ import contextlib
 import socket
 
 import aiohttp
+from yarl import URL
 
 from pylav.compat import json
 from pylav.exceptions.base import PyLavException
@@ -41,7 +42,7 @@ async def fetch_servers() -> set[str]:
         return {server["name"] for server in data}
 
 
-async def pick_base_url(session: aiohttp.ClientSession) -> str | None:
+async def pick_base_url(session: aiohttp.ClientSession) -> URL | None:
     servers = await fetch_servers()
     if not servers:
         LOGGER.warning("RadioBrowser API seems to be down at the moment, disabling Radio functionality.")
@@ -50,6 +51,6 @@ async def pick_base_url(session: aiohttp.ClientSession) -> str | None:
         with contextlib.suppress(Exception):
             async with session.get(f"https://{host}/json/stats") as response:
                 if response.status == 200:
-                    return f"https://{host}"
+                    return URL(f"https://{host}")
                 LOGGER.verbose("Error interacting with %s: %s", host, response.status)
     LOGGER.error("All the following hosts for the RadioBrowser API are broken: %s", ", ".join(servers))

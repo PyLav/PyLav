@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from dacite import from_dict
+from yarl import URL
 
 from pylav.compat import json
 from pylav.extension.flowery.lyrics.responses import Error, Lyrics, TrackList
@@ -15,7 +16,7 @@ if TYPE_CHECKING:
 class LyricsAPI:
     def __init__(self, client: Client, wrapper: FloweryAPI) -> None:
         self._wrapper = wrapper
-        self._base_url = "https://api.flowery.pw/v1/lyrics"
+        self._base_url = URL("https://api.flowery.pw/v1/lyrics")
         self._session = wrapper._cached_session
         self.client = client
 
@@ -44,7 +45,7 @@ class LyricsAPI:
 
     async def search_lyrics(self, query: str) -> TrackList | Error:
         async with self._session.get(
-            f"{self._base_url}/search",
+            self._base_url / "search",
             params={"query": query},
         ) as response:
             match response.status:

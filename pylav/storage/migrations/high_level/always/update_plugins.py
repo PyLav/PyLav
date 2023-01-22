@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from deepdiff import DeepDiff
+from yarl import URL
 
 from pylav.compat import json
 from pylav.extension.bundled_node import LAVALINK_DOWNLOAD_DIR
@@ -22,6 +23,7 @@ async def update_plugins(client: Client) -> None:
         new_plugin_data = []
         _temp = set()
         existing_plugins = set()
+        baseurl = URL("https://api.github.com/repos")
         for plugin in data["lavalink"]["plugins"].copy():
             dependency = ":".join(plugin["dependency"].split(":")[:-1])
             if dependency in _temp:
@@ -59,11 +61,9 @@ async def update_plugins(client: Client) -> None:
                 dependency += ":"
             else:
                 continue
-            release_data = await (
-                await client.cached_session.get(
-                    f"https://api.github.com/repos/{org}/{repo}/releases/latest",
-                )
-            ).json(loads=json.loads)
+            release_data = await (await client.cached_session.get(baseurl / org / repo / "releases" / "latest")).json(
+                loads=json.loads
+            )
             name = release_data["tag_name"]
             new_plugin_data.append(
                 {

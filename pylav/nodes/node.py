@@ -25,6 +25,7 @@ from pylav.constants.node_features import SUPPORTED_FEATURES, SUPPORTED_SOURCES
 from pylav.constants.regex import SEMANTIC_VERSIONING
 from pylav.events.base import PyLavEvent
 from pylav.exceptions.request import HTTPException, UnauthorizedException
+from pylav.helpers.emojis import URL
 from pylav.helpers.time import get_now_utc
 from pylav.logging import getLogger
 from pylav.nodes.api.responses import rest_api
@@ -958,54 +959,56 @@ class Node:
             }
             return self.parse_loadtrack_response(data)
 
+    @property
+    def base_url(self) -> URL:
+        return URL(f"{self.connection_protocol}://{self.host}:{self.port}")
+
+    @property
+    def base_api_url(self) -> URL:
+        return self.base_url / f"v{self.api_version}"
+
     # ENDPOINTS
-    def get_endpoint_websocket(self) -> str:
-        return f"{self.socket_protocol}://{self.host}:{self.port}/v{self.api_version}/websocket"
+    def get_endpoint_websocket(self) -> URL:
+        return self.base_api_url / "websocket"
 
-    def get_endpoint_info(self) -> str:
-        return f"{self.connection_protocol}://{self.host}:{self.port}/v{self.api_version}/info"
+    def get_endpoint_info(self) -> URL:
+        return self.base_api_url / "info"
 
-    def get_endpoint_session_players(self) -> str:
-        return f"{self.connection_protocol}://{self.host}:{self.port}/v{self.api_version}/sessions/{self.session_id}/players"
+    def get_endpoint_session_players(self) -> URL:
+        return self.get_endpoint_session() / "players"
 
-    def get_endpoint_session_player_by_guild_id(self, guild_id: int) -> str:
-        return (
-            f"{self.connection_protocol}://{self.host}:{self.port}/v{self.api_version}"
-            f"/sessions/{self.session_id}/players/{guild_id}"
-        )
+    def get_endpoint_session_player_by_guild_id(self, guild_id: int) -> URL:
+        return self.get_endpoint_session_players() / f"{guild_id}"
 
-    def get_endpoint_session(self) -> str:
-        return f"{self.connection_protocol}://{self.host}:{self.port}/v{self.api_version}/sessions/{self.session_id}"
+    def get_endpoint_session(self) -> URL:
+        return self.base_api_url / "sessions" / self.session_id
 
-    def get_endpoint_loadtracks(self) -> str:
-        return f"{self.connection_protocol}://{self.host}:{self.port}/v{self.api_version}/loadtracks"
+    def get_endpoint_loadtracks(self) -> URL:
+        return self.base_api_url / "loadtracks"
 
-    def get_endpoint_decodetrack(self) -> str:
-        return f"{self.connection_protocol}://{self.host}:{self.port}/v{self.api_version}/decodetrack"
+    def get_endpoint_decodetrack(self) -> URL:
+        return self.base_api_url / "decodetrack"
 
-    def get_endpoint_decodetracks(self) -> str:
-        return f"{self.connection_protocol}://{self.host}:{self.port}/v{self.api_version}/decodetracks"
+    def get_endpoint_decodetracks(self) -> URL:
+        return self.base_api_url / "decodetracks"
 
-    def get_endpoint_stats(self) -> str:
-        return f"{self.connection_protocol}://{self.host}:{self.port}/v{self.api_version}/stats"
+    def get_endpoint_stats(self) -> URL:
+        return self.base_api_url / "stats"
 
-    def get_endpoint_routeplanner_status(self) -> str:
-        return f"{self.connection_protocol}://{self.host}:{self.port}/v{self.api_version}/routeplanner/status"
+    def get_endpoint_routeplanner_status(self) -> URL:
+        return self.base_api_url / "routeplanner" / "status"
 
-    def get_endpoint_routeplanner_free_address(self) -> str:
-        return f"{self.connection_protocol}://{self.host}:{self.port}/v{self.api_version}routeplanner/free/address"
+    def get_endpoint_routeplanner_free_address(self) -> URL:
+        return self.base_api_url / "routeplanner" / "free" / "address"
 
-    def get_endpoint_routeplanner_free_all(self) -> str:
-        return f"{self.connection_protocol}://{self.host}:{self.port}/v{self.api_version}/routeplanner/free/all"
+    def get_endpoint_routeplanner_free_all(self) -> URL:
+        return self.base_api_url / "routeplanner" / "free" / "all"
 
-    def get_endpoint_session_player_sponsorblock_categories(self, guild_id: int) -> str:
-        return (
-            f"{self.connection_protocol}://{self.host}:{self.port}/v{self.api_version}"
-            f"/sessions/{self.session_id}/players/{guild_id}/sponsorblock/categories"
-        )
+    def get_endpoint_session_player_sponsorblock_categories(self, guild_id: int) -> URL:
+        return self.get_endpoint_session_player_by_guild_id(guild_id) / "sponsorblock" / "categories"
 
-    def get_endpoint_version(self) -> str:
-        return f"{self.connection_protocol}://{self.host}:{self.port}/version"
+    def get_endpoint_version(self) -> URL:
+        return self.base_url / "version"
 
     # REST API - Direct calls
     async def fetch_session_players(self) -> list[rest_api.LavalinkPlayer] | HTTPException:
