@@ -133,8 +133,8 @@ if DATA_FOLDER is None:
     __CONFIG_DIR = pathlib.Path(LIB_DIR.user_config_path)
     if sys.platform == "linux" and 0 < os.getuid() < 1000 and not pathlib.Path.home().exists():
         __CONFIG_DIR = pathlib.Path(LIB_DIR.site_data_path)
-    __CONFIG_DIR.mkdir(parents=True, exist_ok=True)
-    CONFIG_DIR = aiopath.AsyncPath(__CONFIG_DIR)
 else:
-    CONFIG_DIR = aiopath.AsyncPath(DATA_FOLDER)
-    CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+    __CONFIG_DIR = pathlib.Path(DATA_FOLDER)
+
+__CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+CONFIG_DIR = aiopath.AsyncPath(__CONFIG_DIR)
