@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from pylav.constants.config.overrides import (
+    LOCAL_TRACKS_FOLDER,
     MANAGED_NODE_APPLE_MUSIC_API_KEY,
     MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE,
     MANAGED_NODE_DEEZER_KEY,
@@ -51,3 +52,6 @@ async def process_envvar_variables(client: Client) -> None:
 
     if USE_BUNDLED_EXTERNAL_PYLAV_NODE is not None:
         await client.lib_db_manager.get_config().update_use_bundled_pylav_external(USE_BUNDLED_EXTERNAL_PYLAV_NODE)
+
+    if LOCAL_TRACKS_FOLDER is not None:
+        await client.lib_db_manager.get_config().update_localtrack_folder(LOCAL_TRACKS_FOLDER)
