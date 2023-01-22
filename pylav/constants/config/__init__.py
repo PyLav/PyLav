@@ -15,8 +15,13 @@ LOGGER = getLogger("PyLav.Environment")
 
 INSTANCE_NAME = None
 
+if data_folder := os.getenv("PYLAV__DATA_FOLDER") is not None:
+    DATA_FOLDER = pathlib.Path(data_folder)
+    del data_folder
+else:
+    DATA_FOLDER = pathlib.Path.home()
 
-ENV_FILE: pathlib.Path = pathlib.Path(os.getenv("PYLAV__YAML_CONFIG", pathlib.Path.home() / "pylav.yaml"))
+ENV_FILE: pathlib.Path = pathlib.Path(os.getenv("PYLAV__YAML_CONFIG", DATA_FOLDER / "pylav.yaml"))
 
 
 if not ENV_FILE.exists():
