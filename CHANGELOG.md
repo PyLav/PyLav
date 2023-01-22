@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.2.5 (22/01/2023)
+- [fix incorrect URL import](https://github.com/Drapersniper/PyLav/commit/69893a4269e1d84c7af4b580416c3b20ff489e02) - @Drapersniper
+- [Use `yarl` which is a dep of aiohttp](https://github.com/Drapersniper/PyLav/commit/bd5ce779c77fcdb2a7c14f0b21320561ff90ec2d) - @Drapersniper
+- [Fix RadioBrowser resolution and simplify logic](https://github.com/Drapersniper/PyLav/commit/f382e7356af321cc7ab1bfe3d9b1051447f94709) - @Drapersniper
+- [fix NameError: name '__load_origin' is not defined](https://github.com/Drapersniper/PyLav/commit/449aadc52b924822b3631262687ee6bc066b28cd) - @Drapersniper
+
+---
+
 ## v1.2.4 (21/01/2023)
 - [fix AttributeError: 'Red' object has no attribute 'dispatch_event'](https://github.com/Drapersniper/PyLav/commit/acb26eeda14573ede7649044ca6e08c83f221abf) - @Drapersniper
 - [add home helper code to identify origins](https://github.com/Drapersniper/PyLav/commit/f73b2d724d1db0cd125e21667e0c8f8e0cddf661) - @Drapersniper
@@ -195,10 +203,3 @@
 - [Add a workflow dispatch to PyLav-Cogs](https://github.com/Drapersniper/PyLav/commit/ad3b246c5d7c50eb821036ae20fbbc3bdfea6c25) - @Drapersniper
 - [fix versioning](https://github.com/Drapersniper/PyLav/commit/9683e6d8702b20e24a42dc517623d8c04c10cdcf) - @Drapersniper
 - [Sourcery](https://github.com/Drapersniper/PyLav/commit/9dc5bb339e1963f12a0c0860d89a98d3a4bc6f6a) - @Drapersniper
-
----
-
-## v1.0.2 (01/01/2023)
-- [Cleanup](https://github.com/Drapersniper/PyLav/commit/5b734b8408c159c38a09060aec991192a5f4b849) - @Drapersniper
-- [Cleanup](https://github.com/Drapersniper/PyLav/commit/bfa1d4f4e2d75b28444076a0030632bccf4785e8) - @Drapersniper
-- [Clarification in the SETUP.md](https://github.com/Drapersniper/PyLav/commit/950d642586a8188c07f0752e0ef9bb6d287460da) - @Drapersniper
