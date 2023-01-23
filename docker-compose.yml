@@ -6,7 +6,7 @@ services:
     # Read https://github.com/PhasecoreX/docker-red-discordbot#red-discordbot-v3 for more info
         container_name: redbot
         hostname: redbot
-        image: ghcr.io/lifeismana/red-discordbot:extra
+        image: ghcr.io/drapersniper/red-discordbot:pylav
         restart: unless-stopped
         volumes:
         -   pgsocket:/var/run/postgresql # Postgres socket using Docker volume to allow access from other containers without mounting the host's filesystem (I.e use Sockets even on Windows)
