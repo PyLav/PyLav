@@ -1169,12 +1169,11 @@ class Client(metaclass=SingletonClass):
             )
         else:
             localtrack_folder = aiopath.AsyncPath(folder)
-
+        if not await localtrack_folder.exists():
+            localtrack_folder = self._config_folder / "music"
         from pylav.players.query.local_files import LocalFile
 
-        await self.lib_db_manager.get_config().update_localtrack_folder(
-            str(await discord.utils.maybe_coroutine(localtrack_folder.absolute))
-        )
+        await self.lib_db_manager.get_config().update_localtrack_folder(await localtrack_folder.absolute())
         await LocalFile.add_root_folder(path=localtrack_folder, create=True)
         return localtrack_folder
 
