@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.3.0 (23/01/2023)
+- [enhancements to reduce duplicate work on track conversions](https://github.com/Drapersniper/PyLav/commit/03ea4608d6e582c0fdf68d61aa2a01ef36d78cd0) - @Drapersniper
+- [Stricter type definitions aligned with Lavalink V4](https://github.com/Drapersniper/PyLav/commit/dc26c0d237480871894aa1651e0856bd98a2309f) - @Drapersniper
+- [Fix a startup issue that could happen on an OS change](https://github.com/Drapersniper/PyLav/commit/7a9a1878ced6b3df44a297b09d19f82e0b6643ab) - @Drapersniper
+- [pre-commit update](https://github.com/Drapersniper/PyLav/commit/96a8160d2c49bda82ce908d7460b2a9cec8f79ee) - @Drapersniper
+- [fix docker-compose.yml envvar](https://github.com/Drapersniper/PyLav/commit/e2cab308f0b55b01349482827e101aff6a1084e3) - @Drapersniper
+- [update docker-compose.yml with new red image](https://github.com/Drapersniper/PyLav/commit/a80e543a11e4df1b89d2a6c9cfe9b9778ad7337e) - @Drapersniper
+- [Update Docker image to my fork of Phase](https://github.com/Drapersniper/PyLav/commit/f395f55d0020224f498b2e808bc6e6f114ad1e14) - @Drapersniper
+
+---
+
 ## v1.2.7 (22/01/2023)
 - [Fix incorrect assignement due to walrus](https://github.com/Drapersniper/PyLav/commit/44b55d8456743e3be0b6f6dbd050c20c67fb178d) - @Drapersniper
 
@@ -197,9 +208,3 @@
 
 
 **Full Changelog**: https://github.com/Drapersniper/PyLav/compare/v1.0.4...v1.0.6
----
-
-## v1.0.5 (02/01/2023)
-- [delete empty queries in cache](https://github.com/Drapersniper/PyLav/commit/9e70abea40b967950b7fb2129502d423697ed8cd) - @Drapersniper
-- [Only return cached entry if there are tracks to be returned](https://github.com/Drapersniper/PyLav/commit/e10369fa5549217c2e8e54f0a616de1b7e93a5b4) - @Drapersniper
-- [Add a note to the the setup.md](https://github.com/Drapersniper/PyLav/commit/e38ba1089c3960ac846b982b125a804fa0ea31ad) - @Drapersniper
