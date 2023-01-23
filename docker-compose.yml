@@ -22,7 +22,7 @@ services:
             PUID: 1000
             CUSTOM_REDBOT_PACKAGE: git+https://github.com/Cog-Creators/Red-DiscordBot.git
             PYLAV__DATA_FOLDER: /data/pylav
-            PYLAV__YAML_CONFIG: /data/pylav.yaml
+            PYLAV__YAML_CONFIG: /data/pylav/pylav.yaml
             PYLAV__LOCAL_TRACKS_FOLDER: /localtracks
         depends_on:
         -   postgres # Wait for postgres container to start before starting Red
