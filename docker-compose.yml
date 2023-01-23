@@ -10,19 +10,19 @@ services:
         restart: unless-stopped
         volumes:
         -   pgsocket:/var/run/postgresql # Postgres socket using Docker volume to allow access from other containers without mounting the host's filesystem (I.e use Sockets even on Windows)
-        -   ./redbot:/data # Red data folder
         -   ./localtracks:/localtracks  # Localtracks folder
-        -   ./pylav:/pylav # Pylav folder
+        -   ./redbot:/data # Red data folder
+        -   ./pylav:/data/pylav # Pylav folder
             # Use the pylav.docker.yaml file from https://github.com/Drapersniper/PyLav/blob/master/pylav.docker.yaml editing it as necessary.
-        -   ./pylav.docker.yaml:/pylav/pylav.yaml # Pylav config file
+        -   ./pylav.docker.yaml:/data/pylav/pylav.yaml # Pylav config file
         environment:
             TOKEN: your_bot_token_goes_here
             PREFIX: '!'
             TZ: Europe/London
             PUID: 1000
             CUSTOM_REDBOT_PACKAGE: git+https://github.com/Cog-Creators/Red-DiscordBot.git
-            PYLAV__DATA_FOLDER: /pylav
-            PYLAV__YAML_CONFIG: /pylav/pylav.yaml
+            PYLAV__DATA_FOLDER: /data/pylav
+            PYLAV__YAML_CONFIG: /data/pylav.yaml
             PYLAV__LOCAL_TRACKS_FOLDER: /localtracks
         depends_on:
         -   postgres # Wait for postgres container to start before starting Red
