@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-21 17:01+0000\n"
-"PO-Revision-Date: 2023-01-21 17:14\n"
+"POT-Creation-Date: 2023-01-23 21:11+0000\n"
+"PO-Revision-Date: 2023-01-23 21:12\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "MIME-Version: 1.0\n"
@@ -25,15 +25,15 @@ msgstr "Немає доступних вузлів!"
 msgid "No node with {feature} functionality available!"
 msgstr "Немає вузла з функціональністю {feature}!"
 
-#: pylav/core/client.py:1231
+#: pylav/core/client.py:1230
 msgid "No node with {query.requires_capability} functionality available!"
 msgstr "Немає вузла з функціональністю {query.requires_capability}!"
 
-#: pylav/core/client.py:1643
+#: pylav/core/client.py:1644
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
 msgstr "Для створення плейлиста з текстом, користувачем, каналом або ID плейлісту необхідно"
 
-#: pylav/core/client.py:1648
+#: pylav/core/client.py:1649
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
 msgstr "Для створення плейлиста з текстом відео, користувача, каналу або ID плейлісту необхідно. Однак, ви надали декілька варіантів відео"
 
