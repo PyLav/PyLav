@@ -1570,6 +1570,8 @@ class Client(metaclass=SingletonClass):
         }
         if data["loadType"] == "LOAD_FAILED":
             data["exception"] = {"cause": "No tracks returned", "severity": "COMMON", "message": "No tracks found"}
+        else:
+            data["exception"] = None
         node = await self.node_manager.find_best_node()
         while not node:
             await asyncio.sleep(0.1)

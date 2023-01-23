@@ -13,12 +13,12 @@ class Info:
     identifier: str
     isSeekable: bool
     author: str
-    length: int = 0
-    isStream: bool = False
-    position: int | None = 0
-    title: str = ""
-    uri: str | None = None
-    sourceName: str | None = None
+    length: int
+    isStream: bool
+    position: int
+    title: str
+    uri: str | None
+    sourceName: str | None
     artworkUrl: str | None = None
     isrc: str | None = None
     version: NotRequired[int] = TRACK_VERSION
@@ -39,20 +39,16 @@ class Info:
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class Track:
-    info: Info | dict
-    encoded: str | None = None
-    pluginInfo: None | dict | TrackPluginInfo = None
+    info: Info
+    encoded: str = None
+    pluginInfo: TrackPluginInfo | None = None
 
     def __post_init__(self) -> None:
-        if isinstance(self.pluginInfo, dict):
-            object.__setattr__(self, "pluginInfo", TrackPluginInfo(kwargs=self.pluginInfo))
-        elif self.pluginInfo is None:
+        if self.pluginInfo is None:
             object.__setattr__(self, "pluginInfo", TrackPluginInfo(kwargs=None))
-        if isinstance(self.info, dict):
-            object.__setattr__(self, "info", Info(**self.info))
 
     def set_version(self, version: int) -> None:
-        object.__setattr__(self, "version", version)
+        object.__setattr__(self.info, "version", version)
 
     def to_dict(self) -> JSON_DICT_TYPE:
         return {

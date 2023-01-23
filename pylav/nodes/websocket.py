@@ -61,7 +61,6 @@ from pylav.players.query.obj import Query
 from pylav.players.tracks.obj import Track
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 from pylav.utils.location import get_closest_discord_region
-from pylav.utils.vendor.redbot import AsyncIter
 
 if typing.TYPE_CHECKING:
     from pylav.core.client import Client
@@ -76,7 +75,6 @@ class WebSocket:
         "_node",
         "_session",
         "_ws",
-        "_message_queue",
         "_host",
         "_port",
         "_password",
@@ -114,7 +112,6 @@ class WebSocket:
 
         self._session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=120), json_serialize=json.dumps)
         self._ws = None
-        self._message_queue = []
         self._host = host
         self._port = port
         self._password = password
@@ -301,11 +298,6 @@ class WebSocket:
                     #  asyncio.ensure_future(self._listen())
 
                     await self.node.node_manager.node_connect(self.node)
-                    if self._message_queue:
-                        async for message in AsyncIter(self._message_queue.copy()):
-                            await self.send(**message)
-
-                        self._message_queue.clear()
                     await self._listen()
                     self._logger.debug("Websocket lister returned")
                     # Ensure this loop doesn't proceed if _listen returns control back to this
@@ -572,15 +564,15 @@ class WebSocket:
         self.client.dispatch_event(event)
 
     async def _get_track(self, data, player) -> Track | None:
-        if not hasattr(data, "encodedTrack"):
+        if not isinstance(data, (TrackStart, TrackEnd, TrackException, TrackStuck)):
             return
         requester = None
-        if player.current and player.current.encoded == data.encodedTrack:
+        if player.current and player.current.encoded == data.track.encoded:
             requester = player.current.requester
         return await Track.build_track(
-            data=data.encodedTrack,
+            data=data.track,
             requester=requester.id if requester else self._client.bot.user.id,
-            query=await Query.from_base64(data.encodedTrack, lazy=True),
+            query=await Query.from_string(data.track.info.uri),
             node=self.node,
         )
 
@@ -601,10 +593,8 @@ class WebSocket:
                 await self._ws.send_json(data, dumps=json.dumps)
             except ConnectionResetError:
                 self._logger.debug("Send called before WebSocket ready!")
-                self._message_queue.append(data)
         else:
             self._logger.debug("Send called before WebSocket ready!")
-            self._message_queue.append(data)
 
     async def _process_track_event(self, player: Player, track: Track, node: Node, event_object: TrackStart) -> None:
         query = await track.query()

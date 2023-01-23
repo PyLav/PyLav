@@ -34,12 +34,12 @@ class PluginInfo:
 
 @dataclass(kw_only=True)
 class PlaylistPluginInfo(PluginInfo):
-    type: NotRequired[str] = field(init=False)
-    identifier: NotRequired[str] = field(init=False)
-    artworkURL: NotRequired[str] = field(init=False)
-    author: NotRequired[str] = field(init=False)
+    type: NotRequired[str] | None = field(init=False)
+    identifier: NotRequired[str] | None = field(init=False)
+    artworkURL: NotRequired[str] | None = field(init=False)
+    author: NotRequired[str] | None = field(init=False)
 
 
 @dataclass(kw_only=True)
 class TrackPluginInfo(PluginInfo):
-    probeInfo: NotRequired[str] = field(init=False)
+    probeInfo: NotRequired[str] | None = field(init=False)

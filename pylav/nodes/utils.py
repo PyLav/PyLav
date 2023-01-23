@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from pylav.nodes.api.responses.playlists import Info
 from pylav.nodes.api.responses.rest_api import NoMatches
 from pylav.nodes.api.responses.websocket import Stats as StatsMessage
 
@@ -231,4 +230,4 @@ class Stats:
         )
 
 
-NO_MATCHES = NoMatches(loadType="NO_MATCHES", tracks=[], playlistInfo=Info(name="", selectedTrack=-1))
+NO_MATCHES = NoMatches(loadType="NO_MATCHES", tracks=[], playlistInfo=None, pluginInfo=None, exception=None)

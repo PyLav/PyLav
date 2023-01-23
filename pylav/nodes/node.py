@@ -949,13 +949,17 @@ class Node:
                 )
                 if tracks and first:
                     tracks = [tracks[0]]
+                exception = None
             except Exception:  # noqa
                 tracks = []
                 load_type = "LOAD_FAILED"
+                exception = {"cause": "No tracks returned", "severity": "COMMON", "message": "No tracks found"}
             data = {
                 "loadType": load_type,
                 "tracks": tracks,
-                "playlistInfo": {"selectedTrack": -1, "name": await response.fetch_name()},
+                "playlistInfo": {"selectedTrack": -1, "name": await response.fetch_name() or ""},
+                "exception": exception,
+                "pluginInfo": None,
             }
             return self.parse_loadtrack_response(data)
 

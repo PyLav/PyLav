@@ -24,26 +24,14 @@ class LavalinkException(LoadException):
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class BaseTrackResponse:
-    playlistInfo: None | Info | dict = None
-    pluginInfo: None | PlaylistPluginInfo | dict = None
-    exception: None | LoadException | dict = None
-    tracks: list[Track] = dataclasses.field(default_factory=list)
+    playlistInfo: Info | None
+    pluginInfo: PlaylistPluginInfo | None
+    exception: LoadException | None
+    tracks: list[Track]
 
     def __post_init__(self):
-        if isinstance(self.pluginInfo, dict):
-            object.__setattr__(self, "pluginInfo", PlaylistPluginInfo(kwargs=self.pluginInfo))
-        elif self.pluginInfo is None:
+        if self.pluginInfo is None:
             object.__setattr__(self, "pluginInfo", PlaylistPluginInfo(kwargs=None))
-        if isinstance(self.exception, dict):
-            object.__setattr__(self, "exception", LoadException(**self.exception))
-        if isinstance(self.playlistInfo, dict):
-            object.__setattr__(self, "playlistInfo", Info(**self.playlistInfo))
-        temp = []
-        for s in self.tracks:
-            if isinstance(s, Track) or (isinstance(s, dict) and (s := Track(**s))):
-                temp.append(s)
-
-        object.__setattr__(self, "tracks", temp)
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
