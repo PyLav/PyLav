@@ -5,7 +5,7 @@ import struct
 import typing
 import uuid
 from functools import total_ordering
-from typing import Any, Self
+from typing import Any
 
 import asyncstdlib
 import discord
@@ -16,6 +16,7 @@ from pylav.constants.regex import SQUARE_BRACKETS, STREAM_TITLE
 from pylav.exceptions.track import InvalidTrackException, TrackNotFoundException
 from pylav.extension.flowery.lyrics import Error, Lyrics
 from pylav.helpers.misc import MISSING
+from pylav.nodes.api.responses.playlists import Info
 from pylav.nodes.api.responses.track import Track as APITrack
 from pylav.players.query.obj import Query
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
@@ -71,7 +72,7 @@ class Track:
         self._updated_query = None
         self._id = str(uuid.uuid4())
         self._raw_data: JSON_DICT_TYPE = {}
-        self._processed = None
+        self._processed: APITrack | None = None
 
         self._process_init()
 
@@ -349,21 +350,38 @@ class Track:
     async def isrc(self) -> str | None:
         return MISSING if self.is_partial else (await self.fetch_full_track_data()).info.isrc
 
+    async def info(self) -> Info | None:
+        return MISSING if self.is_partial else (await self.fetch_full_track_data()).info
+
     async def probe_info(self) -> str | None:
         return MISSING if self.is_partial else (await self.fetch_full_track_data()).pluginInfo.probeInfo
 
     async def query(self) -> Query:
+        if self._processed and self._updated_query is None:
+            self._updated_query = await Query.from_string(self._processed.info.uri)
+            if self._query:
+                self._updated_query.merge(
+                    query=self._query,
+                    start_time=True,
+                    index=True,
+                    source=True,
+                    recursive=True,
+                    search=True,
+                )
+            self._query = self._updated_query
+            self.timestamp = self.timestamp or self._query.start_time
         if self.encoded and self._updated_query is None:
             assert self.encoded is not None
             self._updated_query = await Query.from_base64(self.encoded, lazy=True)
-            self._updated_query.merge(
-                query=self._query,
-                start_time=True,
-                index=True,
-                source=True,
-                recursive=True,
-                search=True,
-            )
+            if self._query:
+                self._updated_query.merge(
+                    query=self._query,
+                    start_time=True,
+                    index=True,
+                    source=True,
+                    recursive=True,
+                    search=True,
+                )
             self._query = self._updated_query
             self.timestamp = self.timestamp or self._query.start_time
         return self._query
@@ -494,7 +512,7 @@ class Track:
             "raw_data": self._raw_data,
         }
 
-    async def search(self, bypass_cache: bool = False) -> Self:
+    async def search(self, bypass_cache: bool = False):
         _query = await Query.from_string(self._query)
         _query.merge(
             query=self._query,

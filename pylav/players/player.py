@@ -1427,7 +1427,7 @@ class Player(VoiceProtocol):
                 op="event",
                 guildId=str(self.guild.id),
                 type="TrackExceptionEvent",
-                encodedTrack="",
+                track=await track.fetch_full_track_data(),
                 exception=LavalinkException(cause=str(exc), message=str(exc), severity="SUSPICIOUS"),
             ),
         )

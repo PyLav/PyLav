@@ -57,7 +57,6 @@ from pylav.nodes.api.responses.websocket import (
     TrackStuck,
 )
 from pylav.nodes.utils import Stats as NodeStats
-from pylav.players.query.obj import Query
 from pylav.players.tracks.obj import Track
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 from pylav.utils.location import get_closest_discord_region
@@ -572,7 +571,7 @@ class WebSocket:
         return await Track.build_track(
             data=data.track,
             requester=requester.id if requester else self._client.bot.user.id,
-            query=await Query.from_string(data.track.info.uri),
+            query=None,
             node=self.node,
         )
 

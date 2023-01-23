@@ -1398,7 +1398,7 @@ class Client(metaclass=SingletonClass):
                     await Track.build_track(
                         data=response.tracks[0],
                         node=node,
-                        query=await Query.from_string(response.tracks[0].info.uri),
+                        query=None,
                         requester=requester.id,
                     )
                 )
@@ -1433,7 +1433,7 @@ class Client(metaclass=SingletonClass):
                     await Track.build_track(
                         data=track,
                         node=node,
-                        query=await Query.from_string(track.info.uri),
+                        query=None,
                         requester=requester.id,
                     )
                 )
@@ -1458,7 +1458,7 @@ class Client(metaclass=SingletonClass):
                 await Track.build_track(
                     data=response.tracks[0],
                     node=node,
-                    query=new_query,
+                    query=sub_query,
                     requester=requester.id,
                 )
             )
