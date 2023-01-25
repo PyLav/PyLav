@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2023-01-25 18:15\n"
+"PO-Revision-Date: 2023-01-25 19:12\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -23,13 +23,13 @@ msgstr ""
 
 #: pylav/extension/red/ui/prompts/nodes.py:36
 msgid "Pick a node"
-msgstr ""
+msgstr "Bir düğüm seçin"
 
 #: pylav/extension/red/ui/prompts/playlists.py:31
 msgid "Multiple playlist matched, pick the one which you meant"
-msgstr ""
+msgstr "Benzer oynatma listeleri bulundu, kastettiğini seç"
 
 #: pylav/extension/red/ui/prompts/playlists.py:38
 msgid "Pick a playlist"
-msgstr ""
+msgstr "Bir Oynatma Listesi Seç"
 
