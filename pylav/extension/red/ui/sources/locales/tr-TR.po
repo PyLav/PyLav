@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-08 12:01+0000\n"
-"PO-Revision-Date: 2023-01-21 15:13\n"
+"PO-Revision-Date: 2023-01-25 18:15\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -44,12 +44,12 @@ msgstr ""
 #: pylav/extension/red/ui/sources/nodes.py:92
 #: pylav/extension/red/ui/sources/nodes.py:253
 msgid "No"
-msgstr ""
+msgstr "Hayır"
 
 #: pylav/extension/red/ui/sources/nodes.py:93
 #: pylav/extension/red/ui/sources/nodes.py:254
 msgid "Yes"
-msgstr ""
+msgstr "Evet"
 
 #: pylav/extension/red/ui/sources/nodes.py:145
 msgid "Name: {name}\n"
