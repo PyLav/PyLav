@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2023-01-21 15:13\n"
+"PO-Revision-Date: 2023-01-25 18:15\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -40,11 +40,11 @@ msgstr ""
 
 #: pylav/extension/red/ui/buttons/generic.py:85
 msgid "Yes"
-msgstr ""
+msgstr "Evet"
 
 #: pylav/extension/red/ui/buttons/generic.py:109
 msgid "No"
-msgstr ""
+msgstr "Hayır"
 
 #: pylav/extension/red/ui/buttons/generic.py:164
 msgid "Disconnect {} {}"
@@ -52,7 +52,7 @@ msgstr ""
 
 #: pylav/extension/red/ui/buttons/generic.py:165
 msgid "players"
-msgstr ""
+msgstr "oyuncular"
 
 #: pylav/extension/red/ui/buttons/generic.py:165
 msgid "player"
@@ -100,7 +100,7 @@ msgstr ""
 #: pylav/extension/red/ui/buttons/player.py:47
 #: pylav/extension/red/ui/buttons/player.py:96
 msgid "No Player Available For Action - Try Refreshing"
-msgstr ""
+msgstr "Eylem İçin Yeterince Oyuncu Bulunamadı - Yenilemeyi Deneyin"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:107
