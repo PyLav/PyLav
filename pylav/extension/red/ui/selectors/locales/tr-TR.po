@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2023-01-25 18:15\n"
+"PO-Revision-Date: 2023-01-25 19:12\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -20,22 +20,22 @@ msgstr ""
 #: pylav/extension/red/ui/selectors/nodes.py:46
 #: pylav/extension/red/ui/selectors/playlist.py:73
 msgid "You are not authorized to interact with this option"
-msgstr ""
+msgstr "Bu seçenek üzerinde işlem yapma yetkiniz yok"
 
 #: pylav/extension/red/ui/selectors/nodes.py:53
 msgid "Disabling the following sources: {sources}"
-msgstr ""
+msgstr "Belirtilen kaynaklar devre dışı bırakılıyor: {sources}"
 
 #: pylav/extension/red/ui/selectors/nodes.py:83
 msgid "Node not found"
-msgstr ""
+msgstr "Düğüm bulunamadı"
 
 #: pylav/extension/red/ui/selectors/playlist.py:41
 #: pylav/extension/red/ui/selectors/playlist.py:82
 msgid "Playlist not found"
-msgstr ""
+msgstr "Çalma listesi bulunamadı"
 
 #: pylav/extension/red/ui/selectors/queue.py:96
 msgid "Track not found"
-msgstr ""
+msgstr "Parça bulunamadı"
 
