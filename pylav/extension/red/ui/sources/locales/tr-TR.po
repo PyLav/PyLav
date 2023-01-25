@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-08 12:01+0000\n"
-"PO-Revision-Date: 2023-01-25 18:15\n"
+"PO-Revision-Date: 2023-01-25 20:15\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -19,27 +19,27 @@ msgstr ""
 
 #: pylav/extension/red/ui/sources/equalizer.py:32
 msgid "Preset Name"
-msgstr ""
+msgstr "Ön Ayar Adı"
 
 #: pylav/extension/red/ui/sources/equalizer.py:33
 msgid "Author"
-msgstr ""
+msgstr "Yazar"
 
 #: pylav/extension/red/ui/sources/generic.py:88
 msgid "Page {page_num}/{total_pages} | {num} {entries}"
-msgstr ""
+msgstr "Sayfa {page_num}/{total_pages} | {num} çalma listesi."
 
 #: pylav/extension/red/ui/sources/generic.py:92
 msgid "entries"
-msgstr ""
+msgstr "girdiler"
 
 #: pylav/extension/red/ui/sources/generic.py:92
 msgid "entry"
-msgstr ""
+msgstr "girdi"
 
 #: pylav/extension/red/ui/sources/nodes.py:50
 msgid "Page {page_num}/{total_pages} | {num} nodes"
-msgstr ""
+msgstr "Sayfa {page_num}/{total_pages}|{num} düğümler"
 
 #: pylav/extension/red/ui/sources/nodes.py:92
 #: pylav/extension/red/ui/sources/nodes.py:253
@@ -54,7 +54,8 @@ msgstr "Evet"
 #: pylav/extension/red/ui/sources/nodes.py:145
 msgid "Name: {name}\n"
 "Version: {version}"
-msgstr ""
+msgstr "İsim: {name}\n"
+"Sürüm: {version}"
 
 #: pylav/extension/red/ui/sources/nodes.py:146
 #: pylav/extension/red/ui/sources/nodes.py:147
@@ -67,97 +68,102 @@ msgstr "Bilinmeyen"
 #: pylav/extension/red/ui/sources/nodes.py:150
 #: pylav/extension/red/ui/sources/nodes.py:310
 msgid "None / Unknown"
-msgstr ""
+msgstr "Yok / Bilinmeyen"
 
 #: pylav/extension/red/ui/sources/nodes.py:152
 #: pylav/extension/red/ui/sources/nodes.py:312
 msgid "Property"
-msgstr ""
+msgstr "Varlık"
 
 #: pylav/extension/red/ui/sources/nodes.py:153
 #: pylav/extension/red/ui/sources/nodes.py:313
 msgid "Value"
-msgstr ""
+msgstr "Değer"
 
 #: pylav/extension/red/ui/sources/nodes.py:154
 #: pylav/extension/red/ui/sources/nodes.py:314
 msgid "Latitude: {lat}\n"
 "Longitude: {lon}"
-msgstr ""
+msgstr "Enlem: {lat}\n"
+"Boylam: {lon}"
 
 #: pylav/extension/red/ui/sources/nodes.py:160
 #: pylav/extension/red/ui/sources/nodes.py:320
 msgid "Region"
-msgstr ""
+msgstr "Bölge"
 
 #: pylav/extension/red/ui/sources/nodes.py:160
 #: pylav/extension/red/ui/sources/nodes.py:320
 msgid "N/A"
-msgstr ""
+msgstr "Yok"
 
 #: pylav/extension/red/ui/sources/nodes.py:161
 #: pylav/extension/red/ui/sources/nodes.py:321
 msgid "Coordinates"
-msgstr ""
+msgstr "Koordinatlar"
 
 #: pylav/extension/red/ui/sources/nodes.py:162
 #: pylav/extension/red/ui/sources/nodes.py:322
 msgid "Host"
-msgstr ""
+msgstr "Sunucu"
 
 #: pylav/extension/red/ui/sources/nodes.py:163
 #: pylav/extension/red/ui/sources/nodes.py:323
 msgid "Port"
-msgstr ""
+msgstr "Port"
 
 #: pylav/extension/red/ui/sources/nodes.py:164
 #: pylav/extension/red/ui/sources/nodes.py:324
 msgid "Password"
-msgstr ""
+msgstr "Şifre"
 
 #: pylav/extension/red/ui/sources/nodes.py:167
 #: pylav/extension/red/ui/sources/nodes.py:327
 msgid "SSL"
-msgstr ""
+msgstr "SSL"
 
 #: pylav/extension/red/ui/sources/nodes.py:168
 #: pylav/extension/red/ui/sources/nodes.py:328
 msgid "Available"
-msgstr ""
+msgstr "Mevcut"
 
 #: pylav/extension/red/ui/sources/nodes.py:169
 #: pylav/extension/red/ui/sources/nodes.py:329
 msgid "Search Only"
-msgstr ""
+msgstr "Yalnızca arama"
 
 #: pylav/extension/red/ui/sources/nodes.py:170
 #: pylav/extension/red/ui/sources/nodes.py:330
 msgid "Players\n"
 "Connected\n"
 "Active"
-msgstr ""
+msgstr "Oyuncular\n"
+"Bağlananlar\n"
+"Aktif"
 
 #: pylav/extension/red/ui/sources/nodes.py:174
 #: pylav/extension/red/ui/sources/nodes.py:334
 msgid "Frames Lost"
-msgstr ""
+msgstr "Kayıp Kareler"
 
 #: pylav/extension/red/ui/sources/nodes.py:179
 #: pylav/extension/red/ui/sources/nodes.py:339
 msgid "Uptime"
-msgstr ""
+msgstr "Çalışma süresi"
 
 #: pylav/extension/red/ui/sources/nodes.py:180
 #: pylav/extension/red/ui/sources/nodes.py:340
 msgid "CPU Load\n"
 "Lavalink\n"
 "System"
-msgstr ""
+msgstr "CPU Yükü\n"
+"Lavalink\n"
+"Sistem"
 
 #: pylav/extension/red/ui/sources/nodes.py:183
 #: pylav/extension/red/ui/sources/nodes.py:343
 msgid "Penalty"
-msgstr ""
+msgstr "Ceza"
 
 #: pylav/extension/red/ui/sources/nodes.py:184
 #: pylav/extension/red/ui/sources/nodes.py:344
@@ -166,121 +172,126 @@ msgid "Memory\n"
 "Free\n"
 "Allocated\n"
 "Reservable"
-msgstr ""
+msgstr "Hafıza\n"
+"Kullanılan\n"
+"Boş\n"
+"Ayrılmış\n"
+"Kullanılabilir"
 
 #: pylav/extension/red/ui/sources/nodes.py:187
 #: pylav/extension/red/ui/sources/nodes.py:347
 msgid "Plugins"
-msgstr ""
+msgstr "Eklentiler"
 
 #: pylav/extension/red/ui/sources/nodes.py:199
 #: pylav/extension/red/ui/sources/nodes.py:359
 msgid "Page {page_num}/{total_pages} | {num} {plural}"
-msgstr ""
+msgstr "Sayfa {page_num}/{total_pages} | {num} {plural}"
 
 #: pylav/extension/red/ui/sources/nodes.py:203
 #: pylav/extension/red/ui/sources/nodes.py:363
 msgid "nodes"
-msgstr ""
+msgstr "düğümler"
 
 #: pylav/extension/red/ui/sources/nodes.py:203
 #: pylav/extension/red/ui/sources/nodes.py:363
 msgid "node"
-msgstr ""
+msgstr "düğüm"
 
 #: pylav/extension/red/ui/sources/nodes.py:306
 msgid "Name: {name}\n"
 "Version: {version}\n\n"
-msgstr ""
+msgstr "İsim: {name}\n"
+"Sürüm: {version}\n\n"
 
 #: pylav/extension/red/ui/sources/player.py:64
 msgid "Nothing playing"
-msgstr ""
+msgstr "Hiçbir şey çalmıyor."
 
 #: pylav/extension/red/ui/sources/player.py:76
 msgid "Server Owner"
-msgstr ""
+msgstr "Sunucu Sahibi"
 
 #: pylav/extension/red/ui/sources/player.py:77
 msgid "Connected"
-msgstr ""
+msgstr "Bağlandı"
 
 #: pylav/extension/red/ui/sources/player.py:78
 msgid "Users in VC"
-msgstr ""
+msgstr "Sesteki kullanıcılar"
 
 #: pylav/extension/red/ui/sources/player.py:80
 msgid "Queue Length"
-msgstr ""
+msgstr "Sıra Uzunluğu"
 
 #: pylav/extension/red/ui/sources/player.py:86
 msgid "Queue History Length"
-msgstr ""
+msgstr "Kuyruk Geçmişi Uzunluğu"
 
 #: pylav/extension/red/ui/sources/player.py:89
 msgid "track"
-msgstr ""
+msgstr "parça"
 
 #: pylav/extension/red/ui/sources/player.py:89
 msgid "tracks"
-msgstr ""
+msgstr "parçalar"
 
 #: pylav/extension/red/ui/sources/player.py:100
 msgid "Page {page_num}/{total_pages} | Playing in {playing} {server_translation}"
-msgstr ""
+msgstr "Sayfa {page_num}/{total_pages} | {playing}{server_translation}'da oynatılıyor"
 
 #: pylav/extension/red/ui/sources/player.py:104
 msgid "server"
-msgstr ""
+msgstr "sunucu"
 
 #: pylav/extension/red/ui/sources/player.py:104
 msgid "servers"
-msgstr ""
+msgstr "sunucular"
 
 #: pylav/extension/red/ui/sources/playlist.py:52
 #: pylav/extension/red/ui/sources/playlist.py:172
 msgid "Page {page_num}/{total_pages} | {num} playlists"
-msgstr ""
+msgstr "Sayfa {page_num}/{total_pages} | {num} çalma listesi"
 
 #: pylav/extension/red/ui/sources/playlist.py:118
 msgid "Tracks in"
-msgstr ""
+msgstr "içindeki parçalar"
 
 #: pylav/extension/red/ui/sources/playlist.py:123
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks\n"
-msgstr ""
+msgstr "Sayfa {page_num}/{total_pages} | {num_tracks} parça\n"
 
 #: pylav/extension/red/ui/sources/playlist.py:157
 msgid "ID: {id}"
-msgstr ""
+msgstr "ID: {id}"
 
 #: pylav/extension/red/ui/sources/playlist.py:158
 msgid "Tracks: {num}"
-msgstr ""
+msgstr "Parçalar: {num}"
 
 #: pylav/extension/red/ui/sources/playlist.py:159
 msgid "Author: {name}"
-msgstr ""
+msgstr "Sanatçı: {name}"
 
 #: pylav/extension/red/ui/sources/playlist.py:160
 msgid "Scope: {scope}\n"
-msgstr ""
+msgstr "Kapsam: {scope}\n"
 
 #: pylav/extension/red/ui/sources/playlist.py:168
 msgid "Playlists you can access in this server:"
-msgstr ""
+msgstr "Bu sunucuda erişebileceğin çalma listeleri:"
 
 #: pylav/extension/red/ui/sources/queue.py:96
 #: pylav/extension/red/ui/sources/queue.py:142
 msgid "No active player found in server"
-msgstr ""
+msgstr "Bu sunucuda hiçbir aktif oyuncu bulunamadı"
 
 #: pylav/extension/red/ui/sources/queue.py:110
 msgid "There's nothing in recently played"
-msgstr ""
+msgstr "Yakınlarda çalınmış bir şey yok"
 
 #: pylav/extension/red/ui/sources/queue.py:112
 #: pylav/extension/red/ui/sources/queue.py:155
 msgid "There's nothing currently being played"
-msgstr ""
+msgstr "Şu anda çalan bir şey yok"
 

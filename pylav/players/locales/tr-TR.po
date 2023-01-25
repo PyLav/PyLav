@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-21 17:01+0000\n"
-"PO-Revision-Date: 2023-01-25 18:15\n"
+"PO-Revision-Date: 2023-01-25 20:15\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -23,7 +23,7 @@ msgstr "Kullanılabilir düğüm yok!"
 
 #: pylav/players/manager.py:349
 msgid "Music in {count} servers"
-msgstr ""
+msgstr "{count} sunucu da şarkı"
 
 #: pylav/players/player.py:1177
 msgid "There are no tracks currently in the player history"
@@ -123,7 +123,7 @@ msgstr "Tekrar ediyor"
 
 #: pylav/players/player.py:2521 pylav/players/player.py:2617
 msgid "{space}{translation}: {autoplay_emoji}"
-msgstr ""
+msgstr "{space}{translation}: {autoplay_emoji}"
 
 #: pylav/players/player.py:2522 pylav/players/player.py:2618
 msgid "Auto Play"
@@ -131,7 +131,7 @@ msgstr "Otomatik Oynat"
 
 #: pylav/players/player.py:2524 pylav/players/player.py:2620
 msgid "{space}{translation}: {volume}%"
-msgstr ""
+msgstr "{space}{translation}: {volume}%"
 
 #: pylav/players/player.py:2525 pylav/players/player.py:2621
 msgid "Volume"
@@ -155,5 +155,5 @@ msgstr "Otomatik karıştırma etkinleştirildiğinden çalma sırası doğru ol
 
 #: pylav/players/player.py:2607
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
-msgstr ""
+msgstr "Sayfa {current_page}/{total_pages}|{track_number} parça, kalan {queue_total_duration}\n"
 
