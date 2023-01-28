@@ -501,9 +501,9 @@ class Client(metaclass=SingletonClass):
         if IN_CONTAINER:
             return False
         return (
-            await self.lib_db_manager.get_config().fetch_enable_managed_node()
+            False
             if (self._node_manager._unmanaged_external_password and self._node_manager._unmanaged_external_host)
-            else False
+            else await self.lib_db_manager.get_config().fetch_enable_managed_node()
         )
 
     async def _run_post_init_jobs(self, java_path) -> None:
