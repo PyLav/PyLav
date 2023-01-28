@@ -68,7 +68,8 @@ jobs:
         needs: [release]
         runs-on: ubuntu-latest
         steps:
-        -   uses: actions/checkout@v3.3.0
+        -   name: Checkout
+            uses: actions/checkout@v3.3.0
             with:
                 fetch-depth: 0
                 ref: master
@@ -85,11 +86,14 @@ jobs:
         -   name: Install Poetry
             if: steps.cached-poetry.outputs.cache-hit != 'true'
             uses: snok/install-poetry@v1
-        -   run: poetry self add "poetry-dynamic-versioning[plugin]"
-        -   uses: actions/setup-node@v3
+        -   name: Install Poetry-Dynamic-Versioning
+            run: poetry self add "poetry-dynamic-versioning[plugin]"
+        -   name: Install Node.js 14
+            uses: actions/setup-node@v3
             with:
                 node-version: '14'
-        -   run: npm install github-release-notes -g
+        -   name: Install GitHub Release Notes
+            run: npm install github-release-notes -g
         -   name: Release Notes and Change logs
             env:
                 GREN_GITHUB_TOKEN: ${{ secrets.GREN_GITHUB_TOKEN }}
@@ -104,6 +108,8 @@ jobs:
                 git_commit_gpgsign: true
                 git_tag_gpgsign: true
             id: import_gpg
+        -   name: Bump Version in Files
+            run: poetry dynamic-versioning
         -   name: Get Version
             id: get-version
             run: |
