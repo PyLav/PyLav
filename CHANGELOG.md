@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.3.2 (28/01/2023)
+- [Fix incorrect boolean in Client.managed_node_is_enabled](https://github.com/Drapersniper/PyLav/commit/cda5e6cff92acbb1a531a651160a7a2547767ebd) - @Drapersniper
+- [Disable Managed node if running inside a container](https://github.com/Drapersniper/PyLav/commit/e374c937a51591a5bfb552993041564cb71db668) - @Drapersniper
+
+---
+
 ## v1.3.1 (28/01/2023)
 - [Add a version bump as part of the release logic](https://github.com/Drapersniper/PyLav/commit/fde01a1fefc393e0263c0423a5f768485f037885) - @Drapersniper
 - [Dependency update](https://github.com/Drapersniper/PyLav/commit/a51a5897baff810d29f9ccc1714e4c816d6d7420) - @Drapersniper
@@ -204,8 +210,3 @@
 - [Remove `lava.link` bundled node permanently](https://github.com/Drapersniper/PyLav/commit/d7f201297e56f91faff0842541c8e92265bba56a) - @Drapersniper
 - [make the redbot container depend on the postgres and ll-node containers](https://github.com/Drapersniper/PyLav/commit/d6ac80a1c309e0619431b01b54f43d8268bc478f) - @Drapersniper
 - [Dependency update and cleanup](https://github.com/Drapersniper/PyLav/commit/7a51c40100e734aa151ea72e5751a39317fb47b6) - @Drapersniper
-
----
-
-## v1.0.7 (02/01/2023)
-

@@ -69,7 +69,7 @@ known_local_folder = [
 
 [tool.poetry]
 name = "Py-Lav"
-version = "1.3.1"
+version = "1.3.2"
 description = " A Lavalink WebSocket & API wrapper for discord.py"
 authors = ["Draper <27962761+Drapersniper@users.noreply.github.com>"]
 readme = "README.md"
