@@ -9,6 +9,7 @@ import platformdirs
 
 # noinspection PyProtectedMember
 from pylav._internals.pylav_yaml_builder import build_from_envvars
+from pylav.constants.config.utils import in_container
 from pylav.logging import getLogger
 
 LOGGER = getLogger("PyLav.Environment")
@@ -125,6 +126,11 @@ else:
         LOGGER.warning("Environment Variable found: Overriding PYLAV__%s with %s", item, val)
         setattr(sys.modules[__name__], item, val)
 
+IN_CONTAINER = in_container() or any(
+    i
+    for i in {"PYLAV__IN_CONTAINER", "PCX_DISCORDBOT_TAG", "PCX_DISCORDBOT_BUILD", "PCX_DISCORDBOT_COMMIT"}
+    if i in os.environ
+)
 
 BROTLI_ENABLED = False
 

@@ -38,6 +38,7 @@ from pylav.constants.config import (
     EXTERNAL_UNMANAGED_PASSWORD,
     EXTERNAL_UNMANAGED_PORT,
     EXTERNAL_UNMANAGED_SSL,
+    IN_CONTAINER,
     JAVA_EXECUTABLE,
     LOCAL_TRACKS_FOLDER,
     MANAGED_NODE_APPLE_MUSIC_API_KEY,
@@ -496,11 +497,22 @@ class Client(metaclass=SingletonClass):
         await self._player_manager.initialize()
         await self.player_config_manager.initialize_global_config()
 
+    async def managed_node_is_enabled(self) -> bool:
+        if IN_CONTAINER:
+            return False
+        return (
+            await self.lib_db_manager.get_config().fetch_enable_managed_node()
+            if (self._node_manager._unmanaged_external_password and self._node_manager._unmanaged_external_host)
+            else False
+        )
+
     async def _run_post_init_jobs(self, java_path) -> None:
 
         self._user_id = str(self._bot.user.id)
         self._local_node_manager = LocalNodeManager(self)
-        enable_managed_node = await self.lib_db_manager.get_config().fetch_enable_managed_node()
+        enable_managed_node = await self.managed_node_is_enabled()
+        if IN_CONTAINER:
+            LOGGER.warning("Running in container, disabling managed node")
         time_now = get_now_utc()
         await self._maybe_start_bundled_node(enable_managed_node, java_path)
         await self.node_manager.connect_to_all_nodes()
@@ -520,10 +532,7 @@ class Client(metaclass=SingletonClass):
 
     async def _maybe_start_bundled_node(self, enable_managed_node: bool, java_path: str) -> None:
         # noinspection PyProtectedMember
-        if (
-            not (self._node_manager._unmanaged_external_password and self._node_manager._unmanaged_external_host)
-            and enable_managed_node
-        ):
+        if enable_managed_node:
             await self._local_node_manager.start(java_path=java_path)
         else:
             self._local_node_manager.ready.set()
@@ -545,10 +554,7 @@ class Client(metaclass=SingletonClass):
 
     async def _maybe_wait_until_bundled_node(self, enable_managed_node):
         # noinspection PyProtectedMember
-        if (
-            not (self._node_manager._unmanaged_external_password and self._node_manager._unmanaged_external_host)
-            and enable_managed_node
-        ):
+        if enable_managed_node:
             await self._local_node_manager.wait_until_connected()
 
     async def _wait_until_ready(self):

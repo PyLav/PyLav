@@ -280,9 +280,7 @@ class PlaylistController:
         with contextlib.suppress(asyncio.exceptions.CancelledError, asyncpg.exceptions.CannotConnectNowError):
             await self.client.node_manager.wait_until_ready()
             # noinspection PyProtectedMember
-            await self.client._maybe_wait_until_bundled_node(
-                await self.client.lib_db_manager.get_config().fetch_enable_managed_node()
-            )
+            await self.client._maybe_wait_until_bundled_node(await self.client.managed_node_is_enabled())
             # noinspection PyProtectedMember
             old_time_stamp = await self.client._config.fetch_next_execution_update_bundled_playlists()
             id_filtered = {
@@ -325,9 +323,7 @@ class PlaylistController:
         with contextlib.suppress(asyncio.exceptions.CancelledError, asyncpg.exceptions.CannotConnectNowError):
             await self.client.node_manager.wait_until_ready()
             # noinspection PyProtectedMember
-            await self.client._maybe_wait_until_bundled_node(
-                await self.client.lib_db_manager.get_config().fetch_enable_managed_node()
-            )
+            await self.client._maybe_wait_until_bundled_node(await self.client.managed_node_is_enabled())
             # noinspection PyProtectedMember
             old_time_stamp = await self.client._config.fetch_next_execution_update_bundled_external_playlists()
             # NOTICE: Update the BUNDLED_PLAYLIST_IDS constant in the constants.py file
@@ -384,9 +380,7 @@ class PlaylistController:
         with contextlib.suppress(asyncio.exceptions.CancelledError, asyncpg.exceptions.CannotConnectNowError):
             await self.client.node_manager.wait_until_ready()
             # noinspection PyProtectedMember
-            await self.client._maybe_wait_until_bundled_node(
-                await self.client.lib_db_manager.get_config().fetch_enable_managed_node()
-            )
+            await self.client._maybe_wait_until_bundled_node(await self.client.managed_node_is_enabled())
 
             async for playlist in self.get_external_playlists(*playlist_ids, ignore_ids=BUNDLED_PLAYLIST_IDS):
                 name = await playlist.fetch_name()

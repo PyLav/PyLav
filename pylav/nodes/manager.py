@@ -500,10 +500,7 @@ class NodeManager:
 
         tasks = [asyncio.create_task(n.wait_until_ready()) for n in nodes_list]
         if not tasks:
-            if (
-                not (self._unmanaged_external_password and self._unmanaged_external_host)
-                and await self.client.lib_db_manager.get_config().fetch_enable_managed_node()
-            ):
+            if await self.client.managed_node_is_enabled():
                 self._adding_nodes.set()
                 return
             LOGGER.warning("No nodes found, please add some nodes")
