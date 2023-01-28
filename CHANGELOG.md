@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.3.1 (28/01/2023)
+- [Add a version bump as part of the release logic](https://github.com/Drapersniper/PyLav/commit/fde01a1fefc393e0263c0423a5f768485f037885) - @Drapersniper
+- [Dependency update](https://github.com/Drapersniper/PyLav/commit/a51a5897baff810d29f9ccc1714e4c816d6d7420) - @Drapersniper
+- [pre-commit updates](https://github.com/Drapersniper/PyLav/commit/57eaa6eac2a07e873b016c58eec8f1b8636f77ae) - @Drapersniper
+- [Bump crowdin/github-action from 1.5.3 to 1.6.0 (#169)](https://github.com/Drapersniper/PyLav/commit/17265241a4fe7dea5b68ab1e9ef1f31a36a46c84) - @dependabot[bot]
+- [formatting](https://github.com/Drapersniper/PyLav/commit/b61f421c212f42bf451be8623f55a9aacc36c0d4) - @Drapersniper
+- [Update documentation](https://github.com/Drapersniper/PyLav/commit/e923f6944225f8fda72b9e636af66a57761395ed) - @Drapersniper
+
+---
+
 ## v1.3.0 (23/01/2023)
 - [enhancements to reduce duplicate work on track conversions](https://github.com/Drapersniper/PyLav/commit/03ea4608d6e582c0fdf68d61aa2a01ef36d78cd0) - @Drapersniper
 - [Stricter type definitions aligned with Lavalink V4](https://github.com/Drapersniper/PyLav/commit/dc26c0d237480871894aa1651e0856bd98a2309f) - @Drapersniper
@@ -199,12 +209,3 @@
 
 ## v1.0.7 (02/01/2023)
 
-
----
-
-## v1.0.6 (02/01/2023)
-## What's Changed
-* New Crowdin translations by Github Action by @Drapersniper in https://github.com/Drapersniper/PyLav/pull/132
-
-
-**Full Changelog**: https://github.com/Drapersniper/PyLav/compare/v1.0.4...v1.0.6
