@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-23 21:11+0000\n"
-"PO-Revision-Date: 2023-01-25 18:15\n"
+"POT-Creation-Date: 2023-01-28 23:01+0000\n"
+"PO-Revision-Date: 2023-01-28 23:11\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -17,23 +17,23 @@ msgstr ""
 "X-Crowdin-File-ID: 795\n"
 "Language: tr_TR\n"
 
-#: pylav/core/client.py:883 pylav/core/client.py:918
+#: pylav/core/client.py:889 pylav/core/client.py:924
 msgid "No available nodes!"
 msgstr "Kullanılabilir düğüm yok!"
 
-#: pylav/core/client.py:887 pylav/core/client.py:922
+#: pylav/core/client.py:893 pylav/core/client.py:928
 msgid "No node with {feature} functionality available!"
 msgstr "{feature} işlevine sahip düğüm yok!"
 
-#: pylav/core/client.py:1230
+#: pylav/core/client.py:1236
 msgid "No node with {query.requires_capability} functionality available!"
 msgstr "{query.requires_capability} işlevine sahip düğüm yok!"
 
-#: pylav/core/client.py:1644
+#: pylav/core/client.py:1650
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
 msgstr "Karışık oynatma listesi oluşturmak için bir Video, Kullanıcı, Kanal veya Oynatma Listesi Kimliği gereklidir"
 
-#: pylav/core/client.py:1649
+#: pylav/core/client.py:1655
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
 msgstr "Karışık oynatma listesi oluşturmak için Video, Kullanıcı, Kanal veya Oynatma Listesi Kimliği gereklidir. Ancak, birden fazla sağladınız"
 
