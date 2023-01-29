@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2023-01-21 17:14\n"
+"POT-Creation-Date: 2023-01-29 19:01+0000\n"
+"PO-Revision-Date: 2023-01-29 19:13\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -30,58 +30,41 @@ msgstr "Lista de reprodução com nome ou id `{arg}` não encontrada"
 msgid "Query must be a playlist or album"
 msgstr "A consulta deve ser uma lista de reprodução ou álbum"
 
-#: pylav/helpers/discord/converters/radio.py:55
+#: pylav/helpers/discord/converters/radio.py:53
 msgid "Station with name `{arg}` not found"
 msgstr "Estação com o nome `{arg}` não encontrada"
 
-#: pylav/helpers/discord/converters/radio.py:71
+#: pylav/helpers/discord/converters/radio.py:69
+#: pylav/helpers/discord/converters/radio.py:131
 #: pylav/helpers/discord/converters/radio.py:171
-#: pylav/helpers/discord/converters/radio.py:228
-#: pylav/helpers/discord/converters/radio.py:284
-#: pylav/helpers/discord/converters/radio.py:339
-#: pylav/helpers/discord/converters/radio.py:391
-#: pylav/helpers/discord/converters/radio.py:444
+#: pylav/helpers/discord/converters/radio.py:209
+#: pylav/helpers/discord/converters/radio.py:246
+#: pylav/helpers/discord/converters/radio.py:283
+#: pylav/helpers/discord/converters/radio.py:320
 msgid "Radio Browser is disabled"
 msgstr "O Navegador de Rádio está desativado"
 
-#: pylav/helpers/discord/converters/radio.py:117
-#: pylav/helpers/discord/converters/radio.py:140
-#: pylav/helpers/discord/converters/radio.py:181
-#: pylav/helpers/discord/converters/radio.py:196
-#: pylav/helpers/discord/converters/radio.py:238
-#: pylav/helpers/discord/converters/radio.py:253
-#: pylav/helpers/discord/converters/radio.py:299
-#: pylav/helpers/discord/converters/radio.py:309
-#: pylav/helpers/discord/converters/radio.py:349
-#: pylav/helpers/discord/converters/radio.py:361
-#: pylav/helpers/discord/converters/radio.py:398
-#: pylav/helpers/discord/converters/radio.py:408
-#: pylav/helpers/discord/converters/radio.py:458
-#: pylav/helpers/discord/converters/radio.py:468
-msgid "Unnamed"
-msgstr "Anônimo"
-
-#: pylav/helpers/discord/converters/radio.py:155
+#: pylav/helpers/discord/converters/radio.py:115
 msgid "Tag with name `{arg}` not found"
 msgstr "Tag com o nome{arg}` não encontrada"
 
-#: pylav/helpers/discord/converters/radio.py:212
+#: pylav/helpers/discord/converters/radio.py:155
 msgid "Language with name `{arg}` not found"
 msgstr "Idioma com o nome `{arg}` não encontrado"
 
-#: pylav/helpers/discord/converters/radio.py:268
+#: pylav/helpers/discord/converters/radio.py:193
 msgid "State with name `{arg}` not found"
 msgstr "Estado com o nome `{arg}` não encontrado"
 
-#: pylav/helpers/discord/converters/radio.py:323
+#: pylav/helpers/discord/converters/radio.py:230
 msgid "Codec with name `{arg}` not found"
 msgstr "Codec com o nome `{arg}` não encontrado"
 
-#: pylav/helpers/discord/converters/radio.py:375
+#: pylav/helpers/discord/converters/radio.py:267
 msgid "Country code `{arg}` not found"
 msgstr "Código do país `{arg}` não encontrado"
 
-#: pylav/helpers/discord/converters/radio.py:422
+#: pylav/helpers/discord/converters/radio.py:304
 msgid "Country with name `{arg}` not found"
 msgstr "País com o nome `{arg}` não encontrado"
 

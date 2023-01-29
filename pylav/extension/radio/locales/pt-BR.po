@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2023-01-21 17:14\n"
+"POT-Creation-Date: 2023-01-29 19:01+0000\n"
+"PO-Revision-Date: 2023-01-29 19:13\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -16,4 +16,11 @@ msgstr ""
 "X-Crowdin-File: /pylav/extension/radio/locales/messages.pot\n"
 "X-Crowdin-File-ID: 1073\n"
 "Language: pt_BR\n"
+
+#: pylav/extension/radio/utils.py:179 pylav/extension/radio/utils.py:188
+#: pylav/extension/radio/utils.py:197 pylav/extension/radio/utils.py:204
+#: pylav/extension/radio/utils.py:210 pylav/extension/radio/utils.py:216
+#: pylav/extension/radio/utils.py:223 pylav/extension/radio/utils.py:518
+msgid "Unnamed"
+msgstr ""
 
