@@ -1,17 +1,15 @@
 from __future__ import annotations
 
-import asyncio
+import random
 from pathlib import Path
 from typing import TYPE_CHECKING, TypeVar
 
-import asyncstdlib
-from asyncstdlib import heapq
 from discord.app_commands import Choice, Transformer
 from discord.ext import commands
-from rapidfuzz import fuzz
 
 from pylav.exceptions.database import EntryNotFoundException
 from pylav.extension.radio.objects import Codec, Country, CountryCode, Language, State, Station, Tag
+from pylav.extension.radio.utils import TransformerCache
 from pylav.helpers.format.strings import shorten_string
 from pylav.logging import getLogger
 from pylav.type_hints.bot import DISCORD_CONTEXT_TYPE, DISCORD_INTERACTION_TYPE
@@ -40,7 +38,7 @@ if TYPE_CHECKING:
     CountryConverter = TypeVar("CountryConverter", bound=list[Country])
 else:
 
-    class StationConverter(Transformer):
+    class StationConverter(Transformer, TransformerCache):
         @classmethod
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> list[Station]:
             """Converts a station name to a matching object"""
@@ -48,9 +46,9 @@ else:
                 return []
 
             try:
-                return await ctx.pylav.radio_browser.station_by_uuid(
-                    arg
-                ) or await ctx.pylav.radio_browser.stations_by_name(name=arg)
+                if arg in cls._cache_stations:
+                    return [cls._cache_stations[arg]]
+                return await cls.filter_cache(cache_type="station", limit=25, name=arg)
             except EntryNotFoundException as e:
                 raise commands.BadArgument(_("Station with name `{arg}` not found").format(arg=arg)) from e
 
@@ -74,7 +72,7 @@ else:
                 ]
             data = interaction.data
             options = data.get("options", [])
-            kwargs = {"order": "votes"}
+            kwargs = {}
             if options:
                 country_code = [v for v in options if v.get("name") == "countrycode"]
                 country = [v for v in options if v.get("name") == "country"]
@@ -85,64 +83,24 @@ else:
                     kwargs["countrycode"] = val
                 if country and (val := country[0].get("value")):
                     kwargs["country"] = val
-                    kwargs["country_exact"] = any(
-                        True for c in await interaction.client.pylav.radio_browser.countries() if c.name == val
-                    )
                 if state and (val := state[0].get("value")):
                     kwargs["state"] = val
-                    kwargs["state_exact"] = any(
-                        True for t in await interaction.client.pylav.radio_browser.states() if t.name == val
-                    )
                 if language and (val := language[0].get("value")):
                     kwargs["language"] = val
-                    kwargs["language_exact"] = any(
-                        True for t in await interaction.client.pylav.radio_browser.languages() if t.name == val
-                    )
                 if tags:
                     if len(tags) == 1 and (val := tags[0].get("value")):
                         kwargs["tag"] = val
-                        kwargs["tag_exact"] = any(
-                            True for t in await interaction.client.pylav.radio_browser.tags() if t.name == val
-                        )
                     elif len(tags) > 1:
                         kwargs["tag_list"] = ",".join([tv for t in tags if (tv := t.get("value"))])
-
             if current:
                 kwargs["name"] = current
-            if not current:
-                return [
-                    Choice(
-                        name=shorten_string(e.name, max_length=100)
-                        if e.name
-                        else shorten_string(max_length=100, string=_("Unnamed")),
-                        value=f"{e.stationuuid}",
-                    )
-                    for e in await interaction.client.pylav.radio_browser.stations_by_votes(limit=25)
-                ]
-            if not kwargs:
-                kwargs["limit"] = 1000
-            stations = await interaction.client.pylav.radio_browser.search(**kwargs)
+            if not current and not kwargs:
+                return await cls.get_top_25_stations()
+            kwargs["order"] = "votes"
+            stations = await cls.filter_cache(cache_type="station", limit=25, **kwargs)
+            return [cls._choice_cache_stations[stations.stationuuid] for stations in stations]
 
-            async def _filter(c: Station):
-                return (
-                    await asyncio.to_thread(
-                        fuzz.partial_ratio,
-                        c.name,
-                        current,
-                    ),
-                    c.votes,
-                )
-
-            extracted: list[Station] = await heapq.nlargest(asyncstdlib.iter(stations), n=25, key=_filter)
-
-            return [
-                Choice(
-                    name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.stationuuid}"
-                )
-                for e in extracted
-            ]
-
-    class TagConverter(Transformer):
+    class TagConverter(Transformer, TransformerCache):
         @classmethod
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> list[Tag]:
             """Converts a Tag name to to a matching object"""
@@ -150,7 +108,9 @@ else:
                 return []
 
             try:
-                return await ctx.pylav.radio_browser.tags(arg)
+                if arg in cls._cache_tags:
+                    return [cls._cache_tags[arg]]
+                return await cls.filter_cache(cache_type="tag", limit=25, tag=arg)
             except EntryNotFoundException as e:
                 raise commands.BadArgument(_("Tag with name `{arg}` not found").format(arg=arg)) from e
 
@@ -172,34 +132,15 @@ else:
                         value="???",
                     )
                 ]
-            tags = await interaction.client.pylav.radio_browser.tags()
+
             if not current:
-                return [
-                    Choice(
-                        name=shorten_string(e.name, max_length=100)
-                        if e.name
-                        else shorten_string(max_length=100, string=_("Unnamed")),
-                        value=f"{e.name}",
-                    )
-                    for e in tags
-                ][:25]
+                return random.choices(list(cls._choice_cache_tags.values()), k=25)
 
-            async def _filter(c):
-                return await asyncio.to_thread(fuzz.partial_ratio, c.name, current), [-ord(c) for c in c.name]
+            tags = await cls.filter_cache(cache_type="tag", limit=25, tag=current)
 
-            extracted = await heapq.nlargest(asyncstdlib.iter(tags), n=25, key=_filter)
+            return [cls._choice_cache_tags[tag.name] for tag in tags]
 
-            return [
-                Choice(
-                    name=shorten_string(e.name, max_length=100)
-                    if e.name
-                    else shorten_string(max_length=100, string=_("Unnamed")),
-                    value=f"{e.name}",
-                )
-                for e in extracted
-            ]
-
-    class LanguageConverter(Transformer):
+    class LanguageConverter(Transformer, TransformerCache):
         @classmethod
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> list[Language]:
             """Converts a Language name to to a matching object"""
@@ -207,7 +148,9 @@ else:
                 return []
 
             try:
-                return await ctx.pylav.radio_browser.languages(arg)
+                if arg in cls._cache_languages:
+                    return [cls._cache_languages[arg]]
+                return await cls.filter_cache(cache_type="language", limit=25, language=arg)
             except EntryNotFoundException as e:
                 raise commands.BadArgument(_("Language with name `{arg}` not found").format(arg=arg)) from e
 
@@ -229,41 +172,23 @@ else:
                         value="???",
                     )
                 ]
-            languages = await interaction.client.pylav.radio_browser.languages()
             if not current:
-                return [
-                    Choice(
-                        name=shorten_string(e.name, max_length=100)
-                        if e.name
-                        else shorten_string(max_length=100, string=_("Unnamed")),
-                        value=f"{e.name}",
-                    )
-                    for e in languages
-                ][:25]
+                return random.choices(list(cls._choice_cache_languages.values()), k=25)
 
-            async def _filter(c):
-                return await asyncio.to_thread(fuzz.partial_ratio, c.name, current), [-ord(c) for c in c.name]
+            languages = await cls.filter_cache(cache_type="language", limit=25, language=current)
 
-            extracted = await heapq.nlargest(asyncstdlib.iter(languages), n=25, key=_filter)
+            return [cls._choice_cache_languages[language.name] for language in languages]
 
-            return [
-                Choice(
-                    name=shorten_string(e.name, max_length=100)
-                    if e.name
-                    else shorten_string(max_length=100, string=_("Unnamed")),
-                    value=f"{e.name}",
-                )
-                for e in extracted
-            ]
-
-    class StateConverter(Transformer):
+    class StateConverter(Transformer, TransformerCache):
         @classmethod
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> list[State]:
             """Converts a State name to to a matching object"""
             if ctx.bot.pylav.radio_browser.disabled:
                 return []
             try:
-                return await ctx.pylav.radio_browser.states(state=arg)
+                if arg in cls._cache_states:
+                    return [cls._cache_states[arg]]
+                return await cls.filter_cache(cache_type="state", limit=25, state=arg)
             except EntryNotFoundException as e:
                 raise commands.BadArgument(_("State with name `{arg}` not found")) from e
 
@@ -285,32 +210,12 @@ else:
                         value="???",
                     )
                 ]
-            data = interaction.data
-            options = data.get("options", [])
-            kwargs = {}
-            if options:
-                country = [v for v in options if v.get("name") == "country"]
-
-                if country and (val := country[0].get("value")):
-                    kwargs["country"] = val
-            states = await interaction.client.pylav.radio_browser.states(**kwargs)
             if not current:
-                return [
-                    Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
-                    for e in states
-                ][:25]
+                return random.choices(list(cls._choice_cache_states.values()), k=25)
+            states = await cls.filter_cache(cache_type="state", limit=25, state=current)
+            return [cls._choice_cache_states[state.name] for state in states]
 
-            async def _filter(c):
-                return await asyncio.to_thread(fuzz.partial_ratio, c.name, current), [-ord(c) for c in c.name]
-
-            extracted = await heapq.nlargest(asyncstdlib.iter(states), n=25, key=_filter)
-
-            return [
-                Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
-                for e in extracted
-            ]
-
-    class CodecConverter(Transformer):
+    class CodecConverter(Transformer, TransformerCache):
         @classmethod
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> list[Codec]:
             """Converts a Codec name to to a matching object"""
@@ -318,7 +223,9 @@ else:
                 return []
 
             try:
-                return await ctx.pylav.radio_browser.codecs(arg)
+                if arg in cls._cache_codecs:
+                    return [cls._cache_codecs[arg]]
+                return await cls.filter_cache(cache_type="codec", limit=25, codec=arg)
             except EntryNotFoundException as e:
                 raise commands.BadArgument(_("Codec with name `{arg}` not found").format(arg=arg)) from e
 
@@ -340,29 +247,12 @@ else:
                         value="???",
                     )
                 ]
-            codecs = await interaction.client.pylav.radio_browser.codecs()
             if not current:
-                return [
-                    Choice(
-                        name=shorten_string(e.name, max_length=100)
-                        if e.name
-                        else shorten_string(max_length=100, string=_("Unnamed")),
-                        value=f"{e.name}",
-                    )
-                    for e in codecs
-                ][:25]
+                return random.choices(list(cls._choice_cache_codecs.values()), k=25)
+            codecs = await cls.filter_cache(cache_type="codec", limit=25, codec=current)
+            return [cls._choice_cache_codecs[codec.name] for codec in codecs]
 
-            async def _filter(c):
-                return await asyncio.to_thread(fuzz.ratio, c.name, current), [-ord(c) for c in c.name]
-
-            extracted = await heapq.nlargest(asyncstdlib.iter(codecs), n=25, key=_filter)
-
-            return [
-                Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
-                for e in extracted
-            ]
-
-    class CountryCodeConverter(Transformer):
+    class CountryCodeConverter(Transformer, TransformerCache):
         @classmethod
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> list[CountryCode]:
             """Converts a CountryCode name to to a matching object"""
@@ -370,7 +260,9 @@ else:
                 return []
 
             try:
-                return await ctx.pylav.radio_browser.countrycodes(arg)
+                if arg in cls._cache_country_codes:
+                    return [cls._cache_country_codes[arg]]
+                return await cls.filter_cache(cache_type="countrycode", limit=25, countrycode=arg)
             except EntryNotFoundException as e:
                 raise commands.BadArgument(_("Country code `{arg}` not found").format(arg=arg)) from e
 
@@ -392,24 +284,12 @@ else:
                         value="???",
                     )
                 ]
-            country_codes = await interaction.client.pylav.radio_browser.countrycodes()
             if not current:
-                return [
-                    Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
-                    for e in country_codes
-                ][:25]
+                return random.choices(list(cls._choice_cache_country_codes.values()), k=25)
+            country_codes = await cls.filter_cache(cache_type="countrycode", limit=25, countrycode=current)
+            return [cls._choice_cache_country_codes[country_code.name] for country_code in country_codes]
 
-            async def _filter(c):
-                return await asyncio.to_thread(fuzz.partial_ratio, c.name, current), [-ord(c) for c in c.name]
-
-            extracted = await heapq.nlargest(asyncstdlib.iter(country_codes), n=25, key=_filter)
-
-            return [
-                Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
-                for e in extracted
-            ]
-
-    class CountryConverter(Transformer):
+    class CountryConverter(Transformer, TransformerCache):
         @classmethod
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> list[Country]:
             """Converts a Country name to to a matching object"""
@@ -417,15 +297,11 @@ else:
                 return []
 
             try:
-                countries = await ctx.pylav.radio_browser.countries()
+                if arg in cls._cache_countries:
+                    return [cls._cache_countries[arg]]
+                return await cls.filter_cache(cache_type="country", limit=25, country=arg)
             except EntryNotFoundException as e:
                 raise commands.BadArgument(_("Country with name `{arg}` not found").format(arg=arg)) from e
-
-            async def _filter(c):
-                return await asyncio.to_thread(fuzz.partial_ratio, arg, c.name), [-ord(c) for c in c.name]
-
-            extracted = await heapq.nlargest(asyncstdlib.iter(countries), n=25, key=_filter)
-            return extracted
 
         @classmethod
         async def transform(cls, interaction: DISCORD_INTERACTION_TYPE, argument: str) -> list[Country]:
@@ -451,20 +327,7 @@ else:
             if options:
                 code = [v for v in options if v.get("name") in ["countrycode", "code"]]
                 if code and (val := code[0].get("value")):
-                    kwargs["code"] = val
-            countries = await interaction.client.pylav.radio_browser.countries(**kwargs)
-            if not current:
-                return [
-                    Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
-                    for e in countries
-                ][:25]
+                    kwargs["countrycode"] = val
 
-            async def _filter(c):
-                return await asyncio.to_thread(fuzz.partial_ratio, c.name, current), [-ord(c) for c in c.name]
-
-            extracted = await heapq.nlargest(asyncstdlib.iter(countries), n=25, key=_filter)
-
-            return [
-                Choice(name=shorten_string(e.name, max_length=100) if e.name else _("Unnamed"), value=f"{e.name}")
-                for e in extracted
-            ]
+            countries = await cls.filter_cache(cache_type="country", limit=25, country=current, **kwargs)
+            return [cls._choice_cache_countries[country.name] for country in countries]

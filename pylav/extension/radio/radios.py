@@ -10,7 +10,7 @@ from yarl import URL
 from pylav.compat import json
 from pylav.extension.radio.base_url import pick_base_url
 from pylav.extension.radio.objects import Codec, Country, CountryCode, Language, State, Station, Tag
-from pylav.extension.radio.utils import type_check
+from pylav.extension.radio.utils import TransformerCache, type_check
 from pylav.logging import getLogger
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 from pylav.utils.vendor.redbot import AsyncIter
@@ -66,15 +66,10 @@ class RadioBrowser:
             self._disabled = True
         else:
             LOGGER.debug("Priming radio cache")
-            await self.countries(None)
-            await self.countrycodes()
-            await self.codecs()
-            await self.states()
-            await self.languages()
-            await self.tags()
-            await self.stations()
+            await TransformerCache.fill_cache(self._lib_client)
             await self.stations_by_clicks(limit=25)
             await self.stations_by_votes(limit=25)
+            TransformerCache.fill_choice_cache()
             LOGGER.debug("Radio cache primed")
 
     @property
