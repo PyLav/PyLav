@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.3.3 (29/01/2023)
+- [Add caching to the Radio transformers, improve transformers performance](https://github.com/Drapersniper/PyLav/commit/15383ca5189ebdeeddcb85377f28eef956198abd) - @Drapersniper
+
+---
+
 ## v1.3.2 (28/01/2023)
 - [Fix incorrect boolean in Client.managed_node_is_enabled](https://github.com/Drapersniper/PyLav/commit/cda5e6cff92acbb1a531a651160a7a2547767ebd) - @Drapersniper
 - [Disable Managed node if running inside a container](https://github.com/Drapersniper/PyLav/commit/e374c937a51591a5bfb552993041564cb71db668) - @Drapersniper
@@ -202,11 +207,3 @@
 
 ## v1.0.9 (02/01/2023)
 - [default the PyLav external node to off](https://github.com/Drapersniper/PyLav/commit/7217d3bf68a385ca5c8d5f591395c29531f9eed1) - @Drapersniper
-
----
-
-## v1.0.8 (02/01/2023)
-- [fix to avoid the local database being constantly wiped](https://github.com/Drapersniper/PyLav/commit/dba0dcadf21c91fe1b8fa7fd2a72e60cdee5d598) - @Drapersniper
-- [Remove `lava.link` bundled node permanently](https://github.com/Drapersniper/PyLav/commit/d7f201297e56f91faff0842541c8e92265bba56a) - @Drapersniper
-- [make the redbot container depend on the postgres and ll-node containers](https://github.com/Drapersniper/PyLav/commit/d6ac80a1c309e0619431b01b54f43d8268bc478f) - @Drapersniper
-- [Dependency update and cleanup](https://github.com/Drapersniper/PyLav/commit/7a51c40100e734aa151ea72e5751a39317fb47b6) - @Drapersniper
