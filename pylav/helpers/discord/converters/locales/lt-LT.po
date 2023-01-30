@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-30 10:01+0000\n"
-"PO-Revision-Date: 2023-01-30 10:17\n"
+"POT-Creation-Date: 2023-01-30 19:01+0000\n"
+"PO-Revision-Date: 2023-01-30 19:12\n"
 "Last-Translator: \n"
 "Language-Team: Lithuanian\n"
 "MIME-Version: 1.0\n"
@@ -17,12 +17,12 @@ msgstr ""
 "X-Crowdin-File-ID: 909\n"
 "Language: lt_LT\n"
 
-#: pylav/helpers/discord/converters/nodes.py:41
-#: pylav/helpers/discord/converters/nodes.py:46
+#: pylav/helpers/discord/converters/nodes.py:40
+#: pylav/helpers/discord/converters/nodes.py:45
 msgid "Node with name or id `{arg}` not found"
 msgstr ""
 
-#: pylav/helpers/discord/converters/playlists.py:42
+#: pylav/helpers/discord/converters/playlists.py:41
 msgid "Playlist with name or id `{arg}` not found"
 msgstr ""
 
