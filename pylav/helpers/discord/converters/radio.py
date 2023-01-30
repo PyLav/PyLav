@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import random
 from pathlib import Path
-from typing import TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from discord.app_commands import Choice, Transformer
 from discord.ext import commands
+from discord.types.interactions import ChatInputApplicationCommandInteractionData
 
 from pylav.exceptions.database import EntryNotFoundException
 from pylav.extension.radio.objects import Codec, Country, CountryCode, Language, State, Station, Tag
@@ -71,6 +72,31 @@ else:
                     )
                 ]
             data = interaction.data
+            kwargs = await cls.process_kwargs(current, data)
+            if not current and not kwargs:
+                return await cls.get_top_25_stations()
+            kwargs["order"] = "votes"
+            stations = await cls.filter_cache(cache_type="station", limit=25, **kwargs)
+            for station in stations:
+                await cls.maybe_add_station_to_cache(station)
+            return [cls._choice_cache_stations[stations.stationuuid] for stations in stations]
+
+        @classmethod
+        async def maybe_add_station_to_cache(cls, station: Station) -> None:
+            if station.stationuuid not in cls._choice_cache_stations:
+                cls._choice_cache_stations[station.stationuuid] = Choice(
+                    name=shorten_string(station.name, max_length=100)
+                    if station.name
+                    else shorten_string(max_length=100, string=_("Unnamed")),
+                    value=f"{station.stationuuid}",
+                )
+                cls._cache_stations[station.stationuuid] = station
+
+        @staticmethod
+        async def process_kwargs(
+            current: str,
+            data: ChatInputApplicationCommandInteractionData | None,
+        ) -> dict[str, Any]:
             options = data.get("options", [])
             kwargs = {}
             if options:
@@ -94,11 +120,7 @@ else:
                         kwargs["tag_list"] = ",".join([tv for t in tags if (tv := t.get("value"))])
             if current:
                 kwargs["name"] = current
-            if not current and not kwargs:
-                return await cls.get_top_25_stations()
-            kwargs["order"] = "votes"
-            stations = await cls.filter_cache(cache_type="station", limit=25, **kwargs)
-            return [cls._choice_cache_stations[stations.stationuuid] for stations in stations]
+            return kwargs
 
     class TagConverter(Transformer, TransformerCache):
         @classmethod
