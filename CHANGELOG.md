@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.3.4 (30/01/2023)
+- [remove unnecessary async methods](https://github.com/Drapersniper/PyLav/commit/5a674424ac83783b5df9f2abaf8c61bf9f11b5f3) - @Drapersniper
+- [KeyError fix for when new stations are added to RadioBrowser and cache is not up to date.](https://github.com/Drapersniper/PyLav/commit/f4e26a99eea375347d6d11abe1804b33846edcd5) - @Drapersniper
+
+---
+
 ## v1.3.3 (29/01/2023)
 - [Add caching to the Radio transformers, improve transformers performance](https://github.com/Drapersniper/PyLav/commit/15383ca5189ebdeeddcb85377f28eef956198abd) - @Drapersniper
 
@@ -202,8 +208,3 @@
 
 ## v1.0.10 (02/01/2023)
 - [Make sure name attribute can exist before accessing it](https://github.com/Drapersniper/PyLav/commit/037e0c4f0a93acbc7c4642e22f899bd99e7c70c0) - @Drapersniper
-
----
-
-## v1.0.9 (02/01/2023)
-- [default the PyLav external node to off](https://github.com/Drapersniper/PyLav/commit/7217d3bf68a385ca5c8d5f591395c29531f9eed1) - @Drapersniper
