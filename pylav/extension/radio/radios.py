@@ -60,17 +60,16 @@ class RadioBrowser:
             if self._disabled:
                 LOGGER.error("Error while initializing the Radio Browser extension - disabling it")
                 return
-        except Exception as e:
-            LOGGER.error("Error while initializing the Radio Browser extension - disabling it")
-            LOGGER.debug(e, exc_info=e)
-            self._disabled = True
-        else:
             LOGGER.debug("Priming radio cache")
             await TransformerCache.fill_cache(self._lib_client)
             await self.stations_by_clicks(limit=25)
             await self.stations_by_votes(limit=25)
             TransformerCache.fill_choice_cache()
             LOGGER.debug("Radio cache primed")
+        except Exception as e:
+            LOGGER.error("Error while initializing the Radio Browser extension - disabling it")
+            LOGGER.debug(e, exc_info=e)
+            self._disabled = True
 
     @property
     async def base_url(self) -> URL:
