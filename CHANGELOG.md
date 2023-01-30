@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.3.5 (30/01/2023)
+- [hotfix for d.py circular imports](https://github.com/Drapersniper/PyLav/commit/e7f89ec4739a88ce939bb476546e8cc18d15bec1) - @Drapersniper
+
+---
+
 ## v1.3.4 (30/01/2023)
 - [remove unnecessary async methods](https://github.com/Drapersniper/PyLav/commit/5a674424ac83783b5df9f2abaf8c61bf9f11b5f3) - @Drapersniper
 - [KeyError fix for when new stations are added to RadioBrowser and cache is not up to date.](https://github.com/Drapersniper/PyLav/commit/f4e26a99eea375347d6d11abe1804b33846edcd5) - @Drapersniper
@@ -203,8 +208,3 @@
 - [`[p]plsyncslash` should be owner only](https://github.com/Drapersniper/PyLav/commit/5690710cdabf5b6b245043c01a50f0f0cdaafbe3) - @Drapersniper
 - [Remove old invalid locale folders](https://github.com/Drapersniper/PyLav/commit/9f2b28f4c7eaa589a3df20cb83274c9b67b3af7a) - @Drapersniper
 - [[CI] Add automerge label to workflow prs](https://github.com/Drapersniper/PyLav/commit/7ab00839d50b6c686362fa1b37303436792eb560) - @Drapersniper
-
----
-
-## v1.0.10 (02/01/2023)
-- [Make sure name attribute can exist before accessing it](https://github.com/Drapersniper/PyLav/commit/037e0c4f0a93acbc7c4642e22f899bd99e7c70c0) - @Drapersniper
