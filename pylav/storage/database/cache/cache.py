@@ -19,5 +19,5 @@ else:
 
 
 CACHE = Cache("ReadCache")
-CACHE.setup("mem://?check_interval=10&size=10000", disable=not READ_CACHING_ENABLED)
+CACHE.setup("mem://?check_interval=10", size=1_000_000, enable=READ_CACHING_ENABLED)
 # TODO: Allow for redis caching

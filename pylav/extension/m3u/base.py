@@ -17,7 +17,7 @@ from pylav.extension.m3u.parser import is_url
 
 
 CACHE = Cache("M3U3CACHE")
-CACHE.setup("mem://?check_interval=10&size=10000", enable=True)
+CACHE.setup("mem://?check_interval=10", size=1_000_000, enable=True)
 
 
 @CACHE(ttl=600, prefix="m3u_loads")

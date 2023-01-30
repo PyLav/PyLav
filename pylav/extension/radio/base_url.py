@@ -4,6 +4,7 @@ import contextlib
 import socket
 
 import aiohttp
+from cashews import Cache  # type: ignore
 from yarl import URL
 
 from pylav.compat import json
@@ -11,6 +12,10 @@ from pylav.exceptions.base import PyLavException
 from pylav.logging import getLogger
 
 LOGGER = getLogger("PyLav.extension.RadioBrowser")
+
+
+CACHE = Cache("RADIO")
+CACHE.setup("mem://?check_interval=10", size=1_000_000, enable=True)
 
 
 class Error(PyLavException):
@@ -26,6 +31,7 @@ class RDNSLookupError(Error):
         super().__init__(self.error_msg)
 
 
+@CACHE(ttl=3600, prefix="fetch_servers")
 async def fetch_servers() -> set[str]:
     """
     Get IP of all currently available `Radio Browser` servers.
@@ -42,6 +48,7 @@ async def fetch_servers() -> set[str]:
         return {server["name"] for server in data}
 
 
+@CACHE(ttl=300, prefix="pick_base_url")
 async def pick_base_url(session: aiohttp.ClientSession) -> URL | None:
     servers = await fetch_servers()
     if not servers:
