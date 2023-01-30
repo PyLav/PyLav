@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.3.6 (30/01/2023)
+- [Speed up Queue rebuild + fix a crash that could happen due to partial tracks](https://github.com/Drapersniper/PyLav/commit/08fcdb4077d68e81ad524c701c3362b898b66533) - @Drapersniper
+- [Localtrack tweaks](https://github.com/Drapersniper/PyLav/commit/a4dba731b9527077f8ea517f1e1985d550256af3) - @Drapersniper
+- [Many Localtrack optmizations as well as other smaller tweaks](https://github.com/Drapersniper/PyLav/commit/3f547b36d354662a1d376e18074729410b1acb80) - @Drapersniper
+
+---
+
 ## v1.3.5 (30/01/2023)
 - [hotfix for d.py circular imports](https://github.com/Drapersniper/PyLav/commit/e7f89ec4739a88ce939bb476546e8cc18d15bec1) - @Drapersniper
 
@@ -201,10 +208,3 @@
 
 ## v1.0.12 (02/01/2023)
 - [`[p]plsyncslash` should be owner only v2](https://github.com/Drapersniper/PyLav/commit/2f5c1c5d417edc4292ace9bf01e471618c0bf6f7) - @Drapersniper
-
----
-
-## v1.0.11 (02/01/2023)
-- [`[p]plsyncslash` should be owner only](https://github.com/Drapersniper/PyLav/commit/5690710cdabf5b6b245043c01a50f0f0cdaafbe3) - @Drapersniper
-- [Remove old invalid locale folders](https://github.com/Drapersniper/PyLav/commit/9f2b28f4c7eaa589a3df20cb83274c9b67b3af7a) - @Drapersniper
-- [[CI] Add automerge label to workflow prs](https://github.com/Drapersniper/PyLav/commit/7ab00839d50b6c686362fa1b37303436792eb560) - @Drapersniper
