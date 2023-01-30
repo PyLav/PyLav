@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2022-12-30 22:38+0000\n"
-"PO-Revision-Date: 2023-01-21 17:14\n"
+"POT-Creation-Date: 2023-01-30 19:01+0000\n"
+"PO-Revision-Date: 2023-01-30 19:12\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
@@ -18,6 +18,6 @@ msgstr ""
 "Language: el_GR\n"
 
 #: pylav/players/query/local_files.py:105
-msgid "Root folder not initialized, call Client.update_localtracks_folder(folder: str | pathlib.Path)"
-msgstr "Ο ριζικός φάκελος δεν αρχικοποιήθηκε, κάλεσε το Client.update_localtracks_folder(φάκελος: str connections pathlib.Path)"
+msgid "Root folder not initialized, call await Client.update_localtracks_folder(folder: str | pathlib.Path)"
+msgstr ""
 
