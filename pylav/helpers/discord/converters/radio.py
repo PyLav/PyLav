@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, Any, TypeVar
 
 from discord.app_commands import Choice, Transformer
 from discord.ext import commands
-from discord.types.interactions import ChatInputApplicationCommandInteractionData
 
 from pylav.exceptions.database import EntryNotFoundException
 from pylav.extension.radio.objects import Codec, Country, CountryCode, Language, State, Station, Tag
@@ -25,6 +24,9 @@ except ImportError:
     def _(string: str) -> str:
         return string
 
+
+if TYPE_CHECKING:
+    from discord.types.interactions import ChatInputApplicationCommandInteractionData
 
 LOGGER = getLogger("PyLav.extension.Shared.converters.radio")
 
