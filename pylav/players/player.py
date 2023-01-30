@@ -2848,25 +2848,23 @@ class Player(VoiceProtocol):
         if encoded_list:
             track_objects = await self.node.post_decodetracks(encoded_list)
             if not isinstance(track_objects, list):
-                track_objects = []
+                track_objects_mapping = {}
                 fallback = True
             else:
+                track_objects_mapping = {track.encoded: track for track in track_objects}
                 fallback = False
         else:
-            track_objects = []
+            track_objects_mapping = {}
             fallback = True
         if not fallback:
             queue = []
-            for i, track in enumerate(queue_raw):
-                if track["data"] is not None and encoded_list:
-                    query = await Query.from_string(track.pop("query"))
-                    lazy = track.pop("lazy")
-                    data = track_objects[i]
-                    track.pop("data")
+            for i, track in enumerate(queue_raw, start=0):
+                query = await Query.from_string(track.pop("query"))
+                lazy = track.pop("lazy")
+                if track["data"] is not None and track["data"] in track_objects_mapping:
+                    data = track_objects_mapping[track.pop("data")]
                 else:
-                    query = await Query.from_string(track.pop("query"))
                     data = track.pop("data")
-                    lazy = track.pop("lazy")
                 queue.append(await Track.build_track(node=self.node, query=query, lazy=lazy, data=data, **track))
         else:
             queue = (
