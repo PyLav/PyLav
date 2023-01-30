@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.3.7 (30/01/2023)
+- [Cache RadioBrowser responses for http://all.api.radio-browser.info/json/servers as it is extremely rate-limited](https://github.com/Drapersniper/PyLav/commit/141838c5c48e66c542594d3eae606841d28db441) - @Drapersniper
+- [Fix the start up failures caused by aiohttp.client_exceptions.ContentTypeError: 0, message='Attempt to decode JSON with unexpected mimetype: text/html; charset=iso-8859-1', url=URL('http://all.api.radio-browser.info/json/servers')](https://github.com/Drapersniper/PyLav/commit/7a69d0be2f8c38344620bd68d5ea2823465e7ecd) - @Drapersniper
+
+---
+
 ## v1.3.6 (30/01/2023)
 - [Speed up Queue rebuild + fix a crash that could happen due to partial tracks](https://github.com/Drapersniper/PyLav/commit/08fcdb4077d68e81ad524c701c3362b898b66533) - @Drapersniper
 - [Localtrack tweaks](https://github.com/Drapersniper/PyLav/commit/a4dba731b9527077f8ea517f1e1985d550256af3) - @Drapersniper
@@ -203,8 +209,3 @@
 - [Update SETUP.md](https://github.com/Drapersniper/PyLav/commit/121cfdd1bc4aa8455a0018403c6dbafb61e7e93c) - @Drapersniper
 - [Remove even more old locale folders](https://github.com/Drapersniper/PyLav/commit/ab156ad3848c454918795bb1d049363299abbbf1) - @Drapersniper
 - [remove invalid locales folder](https://github.com/Drapersniper/PyLav/commit/51a6bb88bbb33d61ac3d90b6d208fcb6f96fe1e6) - @Drapersniper
-
----
-
-## v1.0.12 (02/01/2023)
-- [`[p]plsyncslash` should be owner only v2](https://github.com/Drapersniper/PyLav/commit/2f5c1c5d417edc4292ace9bf01e471618c0bf6f7) - @Drapersniper
