@@ -68,7 +68,6 @@ from pylav.extension.bundled_node.manager import LocalNodeManager
 from pylav.extension.flowery.base import FloweryAPI
 from pylav.extension.m3u import M3UParser
 from pylav.extension.radio import RadioBrowser
-from pylav.helpers.misc import MISSING
 from pylav.helpers.singleton import SingletonCallable, SingletonClass
 from pylav.helpers.time import get_now_utc, get_tz_utc
 from pylav.logging import getLogger
@@ -1390,7 +1389,7 @@ class Client(metaclass=SingletonClass):
                 track_count += 1
                 successful_tracks.append(
                     await Track.build_track(
-                        data=MISSING,
+                        data=None,
                         node=node,
                         query=local_track,
                         requester=requester.id,

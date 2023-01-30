@@ -184,7 +184,7 @@ class Track:
                     f"Cannot build a track from partial data! (Missing key: {missing_key})"
                 ) from ke
 
-        if data is None or (isinstance(data, str) and data == MISSING):
+        if data is None:
             return cls._from_query(node, query, skip_segments, requester, **extra)
 
         if isinstance(data, str):
@@ -610,7 +610,7 @@ class Track:
 
         if self.is_partial:
             track_name = await self.get_partial_track_display_name(
-                max_length=(max_length - 8) if with_url and isinstance(max_length, int) else max_length
+                max_length=max_length if with_url and max_length is None else (max_length - 8)
             )
             track_name = self._maybe_escape_markdown(text=track_name, escape=escape)
             if with_url and (query := await self.query()):
@@ -618,7 +618,7 @@ class Track:
                     track_name = f"**[{track_name}]({query.query_identifier})**"
         else:
             track_name = await self.get_full_track_display_name(
-                max_length=(max_length - 8) if with_url and isinstance(max_length, int) else max_length, author=author
+                max_length=max_length if with_url and max_length is None else (max_length - 8), author=author
             )
             track_name = self._maybe_escape_markdown(text=track_name, escape=escape)
             if with_url and (query := await self.query()) and not query.is_local:
@@ -628,7 +628,7 @@ class Track:
 
     async def get_partial_track_display_name(self, max_length: int | None = None) -> str:
         query = await self.query()
-        track_name = await query.query_to_queue(max_length, partial=True)
+        track_name = await query.query_to_queue(max_length if max_length is None else (max_length - 1), partial=True)
         track_name = SQUARE_BRACKETS.sub("", track_name).strip()
         if max_length is not None and len(track_name) > (max_length - 1):
             max_length -= 1
@@ -658,12 +658,13 @@ class Track:
         if not (unknown_title and unknown_author):
             track_name = f"{await self.title()}{author_string}"
             track_name = SQUARE_BRACKETS.sub("", track_name).strip()
-            if max_length and len(track_name) > max_length:
+            if max_length and len(track_name) > (max_length - 1):
+                max_length -= 1
                 track_name = f"{track_name[:max_length]}\N{HORIZONTAL ELLIPSIS}"
             elif not max_length:
-                track_name += f"\n{await (await self.query()).query_to_string(add_ellipsis=False)} "
+                track_name += f"\n{await (await self.query()).query_to_string(add_ellipsis=False, no_extension=True)} "
         else:
-            track_name = await (await self.query()).query_to_string(max_length, name_only=True)
+            track_name = await (await self.query()).query_to_string(max_length, name_only=True, no_extension=True)
             track_name = SQUARE_BRACKETS.sub("", track_name).strip()
         return track_name
 

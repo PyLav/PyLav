@@ -774,7 +774,7 @@ class Query:
         source = len(self.source) + 3
         if max_length:
             max_length -= source
-        query_to_string = await self.query_to_string(max_length, name_only=name_only)
+        query_to_string = await self.query_to_string(max_length, name_only=name_only, no_extension=True)
         return f"\N{HOURGLASS}\N{VARIATION SELECTOR-16}({self.source}) {query_to_string}"
 
     @property
