@@ -644,7 +644,7 @@ class WebSocket:
             case "Yandex Music":
                 event = TrackStartYandexMusicEvent(player, track, node, event_object)
             case __:
-                if query.source == "Local Files" or (
+                if query.source == "Local" or (
                     query._special_local and (query.is_m3u or query.is_pls or query.is_pylav)
                 ):
                     event = TrackStartLocalFileEvent(player, track, node, event_object)

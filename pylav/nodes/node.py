@@ -523,8 +523,6 @@ class Node:
         self._filters.clear()
         for source in info.sourceManagers:
             self._capabilities.add(source)
-        if not self.managed or self.host != "localhost":
-            self._capabilities.discard("local")
         for filterName in info.filters:
             self._filters.add(filterName)
         for plugin in info.plugins:
@@ -1285,7 +1283,7 @@ class Node:
             params={"trace": "true" if self.trace else "false"},
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
-                return from_dict(data_class=websocket_responses.Stats, data=await res.json(loads=json.loads))
+                return from_dict(data_class=rest_api.Stats, data=await res.json(loads=json.loads))
             failure = from_dict(data_class=LavalinkError, data=await res.json(loads=json.loads))
             if res.status in [401, 403]:
                 if raise_on_error:
@@ -1428,6 +1426,8 @@ class Node:
             if cached_entry := await self.get_track_from_cache(query=query, first=first):
                 return cached_entry
         response = await self.fetch_loadtracks(query=query)
+        if isinstance(response, HTTPException):
+            return response
         if first:
             return dataclasses.replace(response, tracks=response.tracks[:1])
         return response

@@ -1,25 +1,16 @@
 from __future__ import annotations
 
 import dataclasses
-from typing import Literal, TypeAlias, Union  # noqa
+from typing import TYPE_CHECKING, Literal, TypeAlias, Union  # noqa
 
+from pylav.nodes.api.responses.exceptions import LoadException
 from pylav.nodes.api.responses.filters import Filters
 from pylav.nodes.api.responses.misc import Git, Plugin, Version
 from pylav.nodes.api.responses.playlists import Info
 from pylav.nodes.api.responses.shared import PlaylistPluginInfo
 from pylav.nodes.api.responses.track import Track
+from pylav.nodes.api.responses.websocket import CPU, Frame, Memory
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
-
-
-@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
-class LoadException:
-    severity: Literal["COMMON", "SUSPICIOUS", "FAULT"]
-    message: str | None = None
-
-
-@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
-class LavalinkException(LoadException):
-    cause: str | None = None  # This is only optional so that inheritance in python works
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
@@ -147,3 +138,17 @@ class LavalinkPlayer:
             "filters": self.filters.to_dict(),
             "track": self.track.to_dict() if self.track else None,
         }
+
+
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
+class Stats:
+    players: int
+    playingPlayers: int
+    uptime: int
+    memory: Memory
+    cpu: CPU
+    frameStats: Frame | None = None
+    uptime_seconds: int = dataclasses.field(init=False)
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "uptime_seconds", self.uptime / 1000)

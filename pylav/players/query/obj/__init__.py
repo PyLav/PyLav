@@ -226,7 +226,7 @@ class Query:
 
     @property
     def is_local(self) -> bool:
-        return self.source == "Local Files" or (self._special_local and (self.is_m3u or self.is_pls or self.is_pylav))
+        return self.source == "Local" or (self._special_local and (self.is_m3u or self.is_pls or self.is_pylav))
 
     @property
     def is_niconico(self) -> bool:
@@ -471,7 +471,7 @@ class Query:
         except Exception as e:
             raise ValueError(f"{e}") from e
         query_type = "album" if await local_path.path.is_dir() else "single"
-        return cls(local_path, "Local Files", query_type=query_type, recursive=recursively)  # type: ignore
+        return cls(local_path, "Local", query_type=query_type, recursive=recursively)  # type: ignore
 
     @classmethod
     async def __process_playlist(cls, query: str, partial: bool = False) -> Query | None:
@@ -801,7 +801,7 @@ class Query:
             case "am":
                 source = "Apple Music"
             case "local":
-                source = "Local Files"
+                source = "Local"
             case "speak":
                 source = "speak"
             case "tts://":
@@ -844,7 +844,7 @@ class Query:
             case "applemusic":
                 return "Apple Music"
             case "local":
-                return "Local Files"
+                return "Local"
             case "speak":
                 return "speak"
             case "gcloud-tts":

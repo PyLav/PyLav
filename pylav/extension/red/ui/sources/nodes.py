@@ -82,7 +82,9 @@ class NodeListSource(menus.ListPageSource):
         return start, page_num
 
     async def format_page(self, menu: NodeManagerMenu, node: Node) -> discord.Embed | str:
-
+        locale = f"{i18n.get_babel_locale()}"
+        with contextlib.suppress(Exception):
+            humanize.i18n.activate(locale)
         idx_start, page_num = self.get_starting_index_and_page_number(menu)
         region = node.region
         coord = node.coordinates
@@ -95,9 +97,6 @@ class NodeListSource(menus.ListPageSource):
         secure = yes if node.ssl else no
         connected = yes if node.available else no
         search_only = yes if node.search_only else no
-        locale = f"{i18n.get_babel_locale()}"
-        with contextlib.suppress(Exception):
-            humanize.i18n.activate(locale)
 
         node_stats = await node.fetch_stats()
         pylav_connected_players = len(node.connected_players)
@@ -136,18 +135,10 @@ class NodeListSource(menus.ListPageSource):
             allocated = "?"
             reservable = "?"
             penalty = "?"
-        try:
-            plugins = await node.fetch_info()
-        except Exception:  # noqa
-            plugins = {}
-        plugins_str = ""
-        for plugin in plugins.plugins:
-            plugins_str += EightBitANSI.paint_white(_("Name: {name}\nVersion: {version}")).format(
-                name=EightBitANSI.paint_blue(plugin.name) or EightBitANSI.paint_red(_("Unknown")),
-                version=EightBitANSI.paint_blue(plugin.version) or EightBitANSI.paint_red(_("Unknown")),
-            )
-            plugins_str += "\n\n"
-        plugins_str = plugins_str.strip() or EightBitANSI.paint_red(_("None / Unknown"))
+        feature_str = ""
+        for feature in sorted(node.capabilities):
+            feature_str += f"{EightBitANSI.paint_blue(feature)}\n"
+        feature_str = feature_str.strip() or EightBitANSI.paint_red(_("None / Unknown"))
         humanize.i18n.deactivate()
         t_property = EightBitANSI.paint_yellow(_("Property"), bold=True, underline=True)
         t_values = EightBitANSI.paint_yellow(_("Value"), bold=True, underline=True)
@@ -184,7 +175,7 @@ class NodeListSource(menus.ListPageSource):
             EightBitANSI.paint_white(_("Memory\nUsed\nFree\nAllocated\nReservable")): EightBitANSI.paint_blue(
                 f"-\n{used}\n{free}\n{allocated}\n{reservable}"
             ),
-            EightBitANSI.paint_white(_("Plugins")): plugins_str,
+            EightBitANSI.paint_white(_("Features")): feature_str,
         }
         description = box(
             tabulate([{t_property: k, t_values: v} for k, v in data.items()], headers="keys", tablefmt="fancy_grid"),
@@ -243,6 +234,9 @@ class NodeManageSource(menus.ListPageSource):
         return start, page_num
 
     async def format_page(self, menu: NodeManagerMenu, node: Node) -> discord.Embed | str:
+        locale = f"{i18n.get_babel_locale()}"
+        with contextlib.suppress(Exception):
+            humanize.i18n.activate(locale)
         await menu.prepare()
         idx_start, page_num = self.get_starting_index_and_page_number(menu)
         region = node.region
@@ -256,9 +250,6 @@ class NodeManageSource(menus.ListPageSource):
         secure = yes if node.ssl else no
         connected = yes if node.available else no
         search_only = yes if node.search_only else no
-        locale = f"{i18n.get_babel_locale()}"
-        with contextlib.suppress(Exception):
-            humanize.i18n.activate(locale)
 
         node_stats = await node.fetch_stats()
         pylav_connected_players = len(node.connected_players)
@@ -297,17 +288,10 @@ class NodeManageSource(menus.ListPageSource):
             allocated = "?"
             reservable = "?"
             penalty = "?"
-        try:
-            plugins = await node.fetch_info()
-        except Exception:
-            plugins = {}
-        plugins_str = ""
-        for plugin in plugins.plugins:
-            plugins_str += EightBitANSI.paint_white(_("Name: {name}\nVersion: {version}\n\n")).format(
-                name=EightBitANSI.paint_blue(plugin.name) or EightBitANSI.paint_red(_("Unknown")),
-                version=EightBitANSI.paint_blue(plugin.version) or EightBitANSI.paint_red(_("Unknown")),
-            )
-        plugins_str = plugins_str.strip() or EightBitANSI.paint_red(_("None / Unknown"))
+        feature_str = ""
+        for feature in sorted(node.capabilities):
+            feature_str += f"{EightBitANSI.paint_blue(feature)}\n"
+        feature_str = feature_str.strip() or EightBitANSI.paint_red(_("None / Unknown"))
         humanize.i18n.deactivate()
         t_property = EightBitANSI.paint_yellow(_("Property"), bold=True, underline=True)
         t_values = EightBitANSI.paint_yellow(_("Value"), bold=True, underline=True)
@@ -344,7 +328,7 @@ class NodeManageSource(menus.ListPageSource):
             EightBitANSI.paint_white(_("Memory\nUsed\nFree\nAllocated\nReservable")): EightBitANSI.paint_blue(
                 f"-\n{used}\n{free}\n{allocated}\n{reservable}"
             ),
-            EightBitANSI.paint_white(_("Plugins")): plugins_str,
+            EightBitANSI.paint_white(_("Features")): feature_str,
         }
         description = box(
             tabulate([{t_property: k, t_values: v} for k, v in data.items()], headers="keys", tablefmt="fancy_grid"),

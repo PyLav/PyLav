@@ -614,14 +614,14 @@ class Track:
             )
             track_name = self._maybe_escape_markdown(text=track_name, escape=escape)
             if with_url and (query := await self.query()):
-                if not query.is_single and not query.is_custom_playlist:
+                if not query.is_single and not query.is_custom_playlist and not query.is_local:
                     track_name = f"**[{track_name}]({query.query_identifier})**"
         else:
             track_name = await self.get_full_track_display_name(
                 max_length=(max_length - 8) if with_url and isinstance(max_length, int) else max_length, author=author
             )
             track_name = self._maybe_escape_markdown(text=track_name, escape=escape)
-            if with_url:
+            if with_url and (query := await self.query()) and not query.is_local:
                 track_name = f"**[{track_name}]({await self.uri()})**"
 
         return track_name

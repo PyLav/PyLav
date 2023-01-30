@@ -102,7 +102,9 @@ class LocalFile:
         if self._ROOT_FOLDER is None:
             # noinspection SpellCheckingInspection
             raise RuntimeError(
-                _("Root folder not initialized, call Client.update_localtracks_folder(folder: str | pathlib.Path)")
+                _(
+                    "Root folder not initialized, call await Client.update_localtracks_folder(folder: str | pathlib.Path)"
+                )
             )
         self._path: aiopath.AsyncPath = aiopath.AsyncPath(path)
         self._parent = self._path.parent
@@ -131,6 +133,10 @@ class LocalFile:
     @property
     def path(self) -> aiopath.AsyncPath:
         return self._path
+
+    @property
+    def sync_path(self) -> pathlib.Path:
+        return pathlib.Path(self._path)
 
     @property
     def root_folder(self) -> aiopath.AsyncPath:

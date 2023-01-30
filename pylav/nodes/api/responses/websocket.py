@@ -3,9 +3,9 @@ from __future__ import annotations
 import dataclasses
 from typing import Literal  # noqa
 
+from pylav.nodes.api.responses.exceptions import LavalinkException as TrackExceptionClass
 from pylav.nodes.api.responses.player import State
-from pylav.nodes.api.responses.rest_api import LavalinkException as TrackExceptionClass
-from pylav.nodes.api.responses.rest_api import Track
+from pylav.nodes.api.responses.track import Track
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)

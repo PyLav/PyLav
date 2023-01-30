@@ -68,8 +68,9 @@ from pylav.helpers.format.strings import format_time_dd_hh_mm_ss, format_time_st
 from pylav.helpers.singleton import synchronized_method_call
 from pylav.helpers.time import get_now_utc
 from pylav.logging import getLogger
+from pylav.nodes.api.responses.exceptions import LavalinkException
 from pylav.nodes.api.responses.player import State
-from pylav.nodes.api.responses.rest_api import LavalinkException, LavalinkPlayer
+from pylav.nodes.api.responses.rest_api import LavalinkPlayer
 from pylav.nodes.api.responses.track import Track as APITrack
 from pylav.nodes.api.responses.websocket import TrackException
 from pylav.nodes.node import Node
@@ -2598,7 +2599,7 @@ class Player(VoiceProtocol):
         ):
             queue_list += "__{translation}__\n\n".format(
                 translation=discord.utils.escape_markdown(
-                    _("Queue order is may not be accurate due to auto-shuffle being enabled")
+                    _("Queue order may not be accurate due to auto-shuffle being enabled")
                 )
             )
         return queue_list

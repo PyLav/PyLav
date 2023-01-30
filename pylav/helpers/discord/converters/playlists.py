@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import asyncio
 from pathlib import Path
 from typing import TYPE_CHECKING, TypeVar
 
@@ -68,7 +67,7 @@ else:
                 name = await c.fetch_name()
                 author = await c.fetch_author()
                 return (
-                    await asyncio.to_thread(fuzz.partial_ratio, name, current, score_cutoff=75),
+                    fuzz.partial_ratio(name, current, score_cutoff=75),
                     1 if author == interaction.user.id else 0,
                     [-ord(i) for i in name],
                 )

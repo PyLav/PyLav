@@ -7,10 +7,14 @@ import random
 from abc import ABC
 from asyncio import Event, QueueFull, get_event_loop
 from collections.abc import Iterator
+from threading import Lock
 from types import GenericAlias
 from typing import NoReturn
 
+from pylav.helpers.singleton import synchronized_method_call
 from pylav.type_hints.generics import ANY_GENERIC_TYPE
+
+_LOCK = Lock()
 
 
 class PlayerQueue(asyncio.Queue[ANY_GENERIC_TYPE]):
@@ -61,16 +65,18 @@ class PlayerQueue(asyncio.Queue[ANY_GENERIC_TYPE]):
     def raw_queue(self) -> None:
         self.clear()
 
+    @synchronized_method_call(_LOCK)
     def popindex(self, index: int) -> ANY_GENERIC_TYPE:
         value = self._queue[index]
         del self._queue[index]
         return value
 
+    @synchronized_method_call(_LOCK)
     async def remove(self, value: ANY_GENERIC_TYPE, duplicates: bool = False) -> tuple[list[ANY_GENERIC_TYPE], int]:
         """Removes the first occurrence of a value from the queue.
 
         If duplicates is True, all occurrences of the value are removed.
-        Returns the number of occurrences removed.
+        Returns the removed entries and number of occurrences removed.
         """
         count = 0
         removed = []
@@ -88,6 +94,7 @@ class PlayerQueue(asyncio.Queue[ANY_GENERIC_TYPE]):
         except ValueError as e:
             raise IndexError("Value not in queue") from e
 
+    @synchronized_method_call(_LOCK)
     def clear(self) -> None:
         """Remove all items from the queue"""
         self._queue.clear()
@@ -98,6 +105,7 @@ class PlayerQueue(asyncio.Queue[ANY_GENERIC_TYPE]):
             i.cancel()
         self._putters.clear()
 
+    @synchronized_method_call(_LOCK)
     async def shuffle(self) -> None:
         """Shuffle the queue"""
         if self.empty():
@@ -138,12 +146,14 @@ class PlayerQueue(asyncio.Queue[ANY_GENERIC_TYPE]):
         self._queue = collections.deque(maxlen=maxsize or None)
         self.raw_b64s = []
 
+    @synchronized_method_call(_LOCK)
     def _get(self, index: int = None) -> ANY_GENERIC_TYPE:
         r = self.popindex(index) if index is not None else self._queue.popleft()
         if r.encoded:
             self.raw_b64s.remove(r.encoded)
         return r
 
+    @synchronized_method_call(_LOCK)
     def _put(self, items: list[ANY_GENERIC_TYPE], index: int = None) -> None:
         if index is not None:
             for i in items:

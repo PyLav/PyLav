@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import asyncio
 from pathlib import Path
 from typing import TYPE_CHECKING, TypeVar
 
@@ -60,9 +59,9 @@ else:
                     :25
                 ]
 
-            async def _filter(c):
-                return await asyncio.to_thread(fuzz.partial_ratio, c.name, current)
+            def _filter(c):
+                return fuzz.partial_ratio(c.name, current)
 
-            extracted = await heapq.nlargest(asyncstdlib.iter(nodes), n=25, key=_filter)
+            extracted = heapq.nlargest(nodes, n=25, key=_filter)
 
             return [Choice(name=shorten_string(e.name, max_length=100), value=f"{e.identifier}") for e in extracted]
