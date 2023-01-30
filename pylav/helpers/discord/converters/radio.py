@@ -72,17 +72,17 @@ else:
                     )
                 ]
             data = interaction.data
-            kwargs = await cls.process_kwargs(current, data)
+            kwargs = cls.process_kwargs(current, data)
             if not current and not kwargs:
                 return await cls.get_top_25_stations()
             kwargs["order"] = "votes"
             stations = await cls.filter_cache(cache_type="station", limit=25, **kwargs)
             for station in stations:
-                await cls.maybe_add_station_to_cache(station)
+                cls.maybe_add_station_to_cache(station)
             return [cls._choice_cache_stations[stations.stationuuid] for stations in stations]
 
         @classmethod
-        async def maybe_add_station_to_cache(cls, station: Station) -> None:
+        def maybe_add_station_to_cache(cls, station: Station) -> None:
             if station.stationuuid not in cls._choice_cache_stations:
                 cls._choice_cache_stations[station.stationuuid] = Choice(
                     name=shorten_string(station.name, max_length=100)
@@ -93,13 +93,12 @@ else:
                 cls._cache_stations[station.stationuuid] = station
 
         @staticmethod
-        async def process_kwargs(
+        def process_kwargs(
             current: str,
             data: ChatInputApplicationCommandInteractionData | None,
         ) -> dict[str, Any]:
-            options = data.get("options", [])
             kwargs = {}
-            if options:
+            if options := data.get("options", []):
                 country_code = [v for v in options if v.get("name") == "countrycode"]
                 country = [v for v in options if v.get("name") == "country"]
                 state = [v for v in options if v.get("name") == "state"]
