@@ -1372,6 +1372,8 @@ class Client(metaclass=SingletonClass):
     @staticmethod
     async def _get_tracks_play_or_enqueue(enqueue, player, requester, successful_tracks):
         # Query tracks as the queue builds as this may be a slow operation
+        if player is None:
+            return
         if enqueue and successful_tracks and not player.is_playing and not player.paused:
             track = successful_tracks.pop()
             await player.play(track, await track.query(), requester)
