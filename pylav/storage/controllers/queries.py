@@ -55,7 +55,7 @@ class QueryController:
 
     @staticmethod
     async def add_query(query: QueryObj, result: JSON_DICT_TYPE) -> bool:
-        if query.is_local or query.is_custom_playlist or query.is_http:
+        if query.is_custom_playlist or query.is_http:
             # Do not cache local queries and single track urls or http source entries
             return False
         if result.get("loadType") in ["NO_MATCHES", "LOAD_FAILED", None]:
