@@ -1,5 +1,20 @@
 # Changelog
 
+## v1.3.8 (31/01/2023)
+- [Formatting and logging added to 1.3.8 LL migration](https://github.com/Drapersniper/PyLav/commit/f52ef79382ebf6d9a0a86a01911649e7cfe621f9) - @Drapersniper
+- [Fix ImportError: cannot import name 'ConfigController' from partially initialized module 'pylav.storage.controllers.config' (most likely due to a circular import) introduced with 3107feaa1c54220c79715320425466e8a24a2921](https://github.com/Drapersniper/PyLav/commit/dc3eaba76c69da09813a10c89c45ee2634978d09) - @Drapersniper
+- [Update 1.3.8 migration to name the new column artworkUrl instead of artwork to mirror Lavalink's response](https://github.com/Drapersniper/PyLav/commit/f96c39ba72fcf38052b86f71616f28d4368521c6) - @Drapersniper
+- [enable local queries to be searchable in the cache](https://github.com/Drapersniper/PyLav/commit/2203bbbb2f1a02758b808e3cc536e4b592ca3643) - @Drapersniper
+- [Fix an invalid import due to 3107feaa1c54220c79715320425466e8a24a2921](https://github.com/Drapersniper/PyLav/commit/00620289b508bc320196f4e84f9b39f2aed6ec77) - @Drapersniper
+- [Add 1.3.8 migrations](https://github.com/Drapersniper/PyLav/commit/e2debe4b8fef9bb5bccf9fc4e3b6a98a9ffe65e4) - @Drapersniper
+- [Cleanup 1.0.0 low level migrations and split it up in prep for 1.3.7 migrations](https://github.com/Drapersniper/PyLav/commit/3107feaa1c54220c79715320425466e8a24a2921) - @Drapersniper
+- [Fix an error if a Null player was passed to `Client.get_all_tracks_for_queries`](https://github.com/Drapersniper/PyLav/commit/ed96e0722bc8c1ca86f6c3d275905bef9e2df005) - @Drapersniper
+- [Allow caching for the local source](https://github.com/Drapersniper/PyLav/commit/bf28fbc3727c0dbf3fca7ca3c78827e92c9a4f82) - @Drapersniper
+- [Update pre-commit hooks](https://github.com/Drapersniper/PyLav/commit/5ff29441dcdcc8fb0a9d970c93ccf779c6082395) - @Drapersniper
+- [Make Locks Object specific for locks affecting Players and Queues (Used to be a shared lock)](https://github.com/Drapersniper/PyLav/commit/6f30c712c54c21cd0f5d33878d7c1cda94716074) - @Drapersniper
+
+---
+
 ## v1.3.7 (30/01/2023)
 - [Cache RadioBrowser responses for http://all.api.radio-browser.info/json/servers as it is extremely rate-limited](https://github.com/Drapersniper/PyLav/commit/141838c5c48e66c542594d3eae606841d28db441) - @Drapersniper
 - [Fix the start up failures caused by aiohttp.client_exceptions.ContentTypeError: 0, message='Attempt to decode JSON with unexpected mimetype: text/html; charset=iso-8859-1', url=URL('http://all.api.radio-browser.info/json/servers')](https://github.com/Drapersniper/PyLav/commit/7a69d0be2f8c38344620bd68d5ea2823465e7ecd) - @Drapersniper
@@ -201,11 +216,3 @@
 
 ## v1.0.14 (04/01/2023)
 - [Make Release](https://github.com/Drapersniper/PyLav/commit/c2c8562fa79698bf76c200d69ffd9daecbe7891e) - @Drapersniper
-
----
-
-## v1.0.13 (04/01/2023)
-- [v1.0.13 (#140)](https://github.com/Drapersniper/PyLav/commit/770238c7cf1de68c9218a3327364bbc52dbbc100) - @Drapersniper
-- [Update SETUP.md](https://github.com/Drapersniper/PyLav/commit/121cfdd1bc4aa8455a0018403c6dbafb61e7e93c) - @Drapersniper
-- [Remove even more old locale folders](https://github.com/Drapersniper/PyLav/commit/ab156ad3848c454918795bb1d049363299abbbf1) - @Drapersniper
-- [remove invalid locales folder](https://github.com/Drapersniper/PyLav/commit/51a6bb88bbb33d61ac3d90b6d208fcb6f96fe1e6) - @Drapersniper
