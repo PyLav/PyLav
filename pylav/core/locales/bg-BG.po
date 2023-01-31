@@ -1,0 +1,56 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: pylav\n"
+"POT-Creation-Date: 2023-01-31 23:14+0000\n"
+"PO-Revision-Date: 2023-01-31 23:16\n"
+"Last-Translator: \n"
+"Language-Team: Bulgarian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.4.2\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: pylav\n"
+"X-Crowdin-Project-ID: 535244\n"
+"X-Crowdin-Language: bg\n"
+"X-Crowdin-File: /lib/pylav/core/locales/messages.pot\n"
+"X-Crowdin-File-ID: 2973\n"
+"Language: bg_BG\n"
+
+#: pylav/core/client.py:888 pylav/core/client.py:923
+msgid "No available nodes!"
+msgstr ""
+
+#: pylav/core/client.py:892 pylav/core/client.py:927
+msgid "No node with {feature} functionality available!"
+msgstr ""
+
+#: pylav/core/client.py:1235
+msgid "No node with {query.requires_capability} functionality available!"
+msgstr ""
+
+#: pylav/core/client.py:1651
+msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
+msgstr ""
+
+#: pylav/core/client.py:1656
+msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
+msgstr ""
+
+#: pylav/core/context.py:258
+msgid "{} remaining. Type `more` to continue."
+msgstr ""
+
+#: pylav/core/context.py:259
+msgid "There is still 1 message"
+msgstr ""
+
+#: pylav/core/context.py:261
+msgid "There are still {remaining} messages"
+msgstr ""
+
+#: pylav/core/context.py:288
+#, docstring
+msgid "Does nothing"
+msgstr ""
+
