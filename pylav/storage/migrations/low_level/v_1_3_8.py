@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from asyncpg import Connection
 
+from pylav.storage.migrations.logging import LOGGER
+
 
 async def low_level_v_1_3_8_migration(con: Connection) -> None:
     await low_level_v_1_3_8_tracks(con)
@@ -26,6 +28,7 @@ async def run_tracks_migration_v_1_3_8(con: Connection) -> None:
             """
     has_artwork = await con.fetchval(has_column)
     if not has_artwork:
+        LOGGER.info("----------- Migrating Tracks to PyLav 1.3.8 ---------")
         alter_table = """
         ALTER TABLE IF EXISTS track
         ADD COLUMN IF NOT EXISTS "artworkUrl" text COLLATE pg_catalog."default"

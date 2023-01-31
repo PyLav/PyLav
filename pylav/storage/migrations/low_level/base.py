@@ -40,17 +40,17 @@ async def migrate_data(data: dict[str, dict[str, list[asyncpg.Record]]]) -> None
         match version:
             case "1.0.0":
                 if "playlist" in migrations and migrations["playlist"]:
-                    LOGGER.info("-----------Migrating Playlist data to PyLav 1.0.0 ---------")
+                    LOGGER.info("----------- Migrating Playlist data to PyLav 1.0.0 ---------")
                     await migrate_playlists_v_1_0_0(migrations["playlist"])
                 if "query" in migrations and migrations["query"]:
-                    LOGGER.info("-----------Migrating Query data to PyLav 1.0.0 ---------")
+                    LOGGER.info("----------- Migrating Query data to PyLav 1.0.0 ---------")
                     await migrate_queries_v_1_0_0(migrations["query"])
                 if "player" in migrations and migrations["player"]:
-                    LOGGER.info("-----------Migrating Player Config to PyLav 1.0.0 ---------")
+                    LOGGER.info("----------- Migrating Player Config to PyLav 1.0.0 ---------")
                     await migrate_player_config_v_1_0_0(migrations["player"])
                 if "lib" in migrations and migrations["lib"]:
-                    LOGGER.info("-----------Migrating Lib Config to PyLav 1.0.0 ---------")
+                    LOGGER.info("----------- Migrating Lib Config to PyLav 1.0.0 ---------")
                     await migrate_lib_config_v_1_0_0(migrations["lib"])
                 if "node" in migrations and migrations["node"]:
-                    LOGGER.info("-----------Migrating Node Config to PyLav 1.0.0 ---------")
+                    LOGGER.info("----------- Migrating Node Config to PyLav 1.0.0 ---------")
                     await migrate_node_config_v_1_0_0(migrations["node"])
