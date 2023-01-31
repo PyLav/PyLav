@@ -34,7 +34,7 @@ class Info:
             "uri": self.uri,
             "sourceName": self.sourceName,
             "isrc": self.isrc,
-            "artwork": self.artworkUrl,
+            "artworkUrl": self.artworkUrl,
         }
 
 
