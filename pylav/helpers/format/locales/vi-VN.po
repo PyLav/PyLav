@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 20:21+0000\n"
-"PO-Revision-Date: 2023-01-31 21:06\n"
+"PO-Revision-Date: 2023-01-31 22:05\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "MIME-Version: 1.0\n"
@@ -19,37 +19,37 @@ msgstr ""
 
 #: pylav/helpers/format/strings.py:31
 msgid "Unknown"
-msgstr ""
+msgstr "Không biết"
 
 #: pylav/helpers/format/strings.py:57
 msgid "hour"
-msgstr ""
+msgstr "giờ"
 
 #: pylav/helpers/format/strings.py:58
 msgid "minute"
-msgstr ""
+msgstr "phút"
 
 #: pylav/helpers/format/strings.py:59
 msgid "second"
-msgstr ""
+msgstr "thứ hai"
 
 #: pylav/helpers/format/strings.py:60
 msgid "day"
-msgstr ""
+msgstr "ngày"
 
 #: pylav/helpers/format/strings.py:61
 msgid "days"
-msgstr ""
+msgstr "Ngày"
 
 #: pylav/helpers/format/strings.py:62
 msgid "hours"
-msgstr ""
+msgstr "Giờ"
 
 #: pylav/helpers/format/strings.py:63
 msgid "minutes"
-msgstr ""
+msgstr "biên bản"
 
 #: pylav/helpers/format/strings.py:64
 msgid "seconds"
-msgstr ""
+msgstr "Giây"
 
