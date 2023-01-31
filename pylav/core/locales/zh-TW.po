@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-30 19:01+0000\n"
-"PO-Revision-Date: 2023-01-30 19:12\n"
+"POT-Creation-Date: 2023-01-31 17:01+0000\n"
+"PO-Revision-Date: 2023-01-31 17:15\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -29,11 +29,11 @@ msgstr "沒有具有{feature}功能的節點可用！"
 msgid "No node with {query.requires_capability} functionality available!"
 msgstr "沒有{query.requires_capability}功能的節點可用！"
 
-#: pylav/core/client.py:1649
+#: pylav/core/client.py:1651
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
 msgstr "要生成混合播放列表，需要影片、使用者、頻道或播放列表ID"
 
-#: pylav/core/client.py:1654
+#: pylav/core/client.py:1656
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
 msgstr "要生成混合播放列表，需要視頻、用戶、頻道或播放列表 ID。 但是您提供太多個了"
 
