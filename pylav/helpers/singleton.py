@@ -35,6 +35,28 @@ def synchronized_method_call(
     return wrapper
 
 
+def synchronized_method_call_with_self_threading_lock(
+    discard: bool = False,
+) -> Callable[PARAM_SPEC_TYPE, ANY_GENERIC_TYPE]:  # type: ignore
+    """Synchronization decorator"""
+
+    def wrapper(
+        f: Callable[PARAM_SPEC_TYPE, ANY_GENERIC_TYPE]  # type: ignore
+    ) -> Callable[PARAM_SPEC_TYPE, ANY_GENERIC_TYPE]:  # type: ignore
+        @functools.wraps(f)
+        def inner_wrapper(
+            self, *args: PARAM_SPEC_TYPE.args, **kwargs: PARAM_SPEC_TYPE.kwargs
+        ) -> ANY_GENERIC_TYPE | Awaitable[ANY_GENERIC_TYPE] | None:
+            if self._threading_lock.locked() and discard:
+                return
+            with self._threading_lock:
+                return f(self, *args, **kwargs)
+
+        return inner_wrapper
+
+    return wrapper
+
+
 class SingletonClass(type):
     _instances = {}
 

@@ -65,7 +65,7 @@ from pylav.exceptions.request import HTTPException
 from pylav.exceptions.track import TrackNotFoundException
 from pylav.extension.radio import RadioBrowser
 from pylav.helpers.format.strings import format_time_dd_hh_mm_ss, format_time_string, shorten_string
-from pylav.helpers.singleton import synchronized_method_call
+from pylav.helpers.singleton import synchronized_method_call_with_self_threading_lock
 from pylav.helpers.time import get_now_utc
 from pylav.logging import getLogger
 from pylav.nodes.api.responses.exceptions import LavalinkException
@@ -111,9 +111,6 @@ except ImportError:
 if TYPE_CHECKING:
     from pylav.core.client import Client
     from pylav.players.manager import PlayerController
-
-
-PLAYER_LOCK = threading.Lock()
 
 
 class Player(VoiceProtocol):
@@ -183,6 +180,7 @@ class Player(VoiceProtocol):
         node: Node = None,
     ):
         super().__init__(client, channel)
+        self._threading_lock = threading.Lock()
         self.ready = asyncio.Event()
         self.bot = self.client = client
         self._channel = None
@@ -1107,7 +1105,7 @@ class Player(VoiceProtocol):
             track._requester = requester
         return track
 
-    @synchronized_method_call(PLAYER_LOCK)
+    @synchronized_method_call_with_self_threading_lock()
     async def add(
         self,
         requester: int,
@@ -1143,7 +1141,7 @@ class Player(VoiceProtocol):
         self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
         self.node.dispatch_event(TracksRequestedEvent(self, self.guild.get_member(requester), [at]))
 
-    @synchronized_method_call(PLAYER_LOCK)
+    @synchronized_method_call_with_self_threading_lock()
     async def bulk_add(
         self,
         tracks_and_queries: list[Track | APITrack | dict | str | list[tuple[Track | APITrack | dict | str, Query]]],
@@ -1232,7 +1230,7 @@ class Player(VoiceProtocol):
     def next(self, requester: discord.Member = None, node: Node = None) -> Coroutine[Any, Any, None]:
         return self.play(None, None, requester or self.bot.user, node=node)  # type: ignore
 
-    @synchronized_method_call(PLAYER_LOCK)
+    @synchronized_method_call_with_self_threading_lock()
     async def play(
         self,
         track: Track | APITrack | dict | str | None,
@@ -1737,7 +1735,7 @@ class Player(VoiceProtocol):
         self.connected_at = get_now_utc()
         self._logger.debug("Connected to voice channel")
 
-    @synchronized_method_call(PLAYER_LOCK, discard=True)
+    @synchronized_method_call_with_self_threading_lock(discard=True)
     async def reconnect(self):
         self._waiting_for_node.clear()
         shard = self.bot.get_shard(self.guild.shard_id)
