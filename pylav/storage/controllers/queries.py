@@ -44,7 +44,7 @@ class QueryController:
         return Query(id=identifier)
 
     async def fetch_query(self, query: QueryObj) -> Query | None:
-        if query.is_local or query.is_custom_playlist or query.is_http:
+        if query.is_custom_playlist or query.is_http:
             # Do not cache local queries and single track urls or http source entries
             return None
 
@@ -78,7 +78,7 @@ class QueryController:
                 new_info = {
                     key: track["info"][key]
                     for key in track["info"].keys()
-                    if key in {"identifier", "sourceName", "title", "uri", "isrc"}
+                    if key in {"identifier", "sourceName", "title", "uri", "isrc", "artworkUrl"}
                 }
                 new_tracks.append(await TrackRow.get_or_create(track["encoded"], new_info))
         if new_tracks:
