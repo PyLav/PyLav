@@ -6,4 +6,4 @@ commit_message: '[post] Update translations'
 files:
 -   source: pylav/**/messages.pot
     translation: /%original_path%/%locale%.po
-    dest: lib/%original_path%/messages.po
+    dest: lib/%original_path%/messages.pot
