@@ -16,7 +16,7 @@ from pylav.storage.database.tables.playlists import PlaylistRow
 from pylav.storage.database.tables.queries import QueryRow
 from pylav.storage.database.tables.tracks import TrackRow
 from pylav.storage.database.tables.version import BotVersionRow
-from pylav.storage.migrations.low_level.v_1_0_0_0 import migrate_data, run_low_level_migrations
+from pylav.storage.migrations.low_level.base import migrate_data, run_low_level_migrations
 from pylav.storage.models.config import Config
 from pylav.storage.models.version import BotVersion
 
