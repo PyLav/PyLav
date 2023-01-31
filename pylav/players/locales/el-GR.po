@@ -1,0 +1,159 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: pylav\n"
+"POT-Creation-Date: 2023-01-31 23:27+0000\n"
+"PO-Revision-Date: 2023-01-31 23:28\n"
+"Last-Translator: \n"
+"Language-Team: Greek\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.4.2\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: pylav\n"
+"X-Crowdin-Project-ID: 535244\n"
+"X-Crowdin-Language: el\n"
+"X-Crowdin-File: /lib/pylav/players/locales/messages.pot\n"
+"X-Crowdin-File-ID: 3701\n"
+"Language: el_GR\n"
+
+#: pylav/players/manager.py:259
+msgid "No available nodes!"
+msgstr ""
+
+#: pylav/players/manager.py:349
+msgid "Music in {count} servers"
+msgstr ""
+
+#: pylav/players/player.py:1176
+msgid "There are no tracks currently in the player history"
+msgstr ""
+
+#: pylav/players/player.py:1869
+msgid "Current node has the Volume filter functionality disabled"
+msgstr ""
+
+#: pylav/players/player.py:1891 pylav/players/player.py:2067
+#: pylav/players/player.py:2122
+msgid "Current node has the Equalizer functionality disabled"
+msgstr ""
+
+#: pylav/players/player.py:1911
+msgid "Current node has the Karaoke functionality disabled"
+msgstr ""
+
+#: pylav/players/player.py:1931 pylav/players/player.py:2069
+#: pylav/players/player.py:2124
+msgid "Current node has the Timescale functionality disabled"
+msgstr ""
+
+#: pylav/players/player.py:1951
+msgid "Current node has the Tremolo functionality disabled"
+msgstr ""
+
+#: pylav/players/player.py:1971
+msgid "Current node has the Vibrato functionality disabled"
+msgstr ""
+
+#: pylav/players/player.py:1991
+msgid "Current node has the Rotation functionality disabled"
+msgstr ""
+
+#: pylav/players/player.py:2011
+msgid "Current node has the Distortion functionality disabled"
+msgstr ""
+
+#: pylav/players/player.py:2031
+msgid "Current node has the LowPass functionality disabled"
+msgstr ""
+
+#: pylav/players/player.py:2051
+msgid "Current node has the Echo functionality disabled"
+msgstr ""
+
+#: pylav/players/player.py:2181
+msgid "Current node has the ChannelMix functionality disabled"
+msgstr ""
+
+#: pylav/players/player.py:2441 pylav/players/player.py:2486
+#: pylav/players/player.py:2501
+msgid "LIVE"
+msgstr ""
+
+#: pylav/players/player.py:2454
+msgid "Now Playing in"
+msgstr ""
+
+#: pylav/players/player.py:2472 pylav/players/player.py:2581
+msgid "Currently livestreaming"
+msgstr ""
+
+#: pylav/players/player.py:2474
+msgid "Playing: "
+msgstr ""
+
+#: pylav/players/player.py:2477 pylav/players/player.py:2493
+#: pylav/players/player.py:2508 pylav/players/player.py:2587
+msgid "Requester"
+msgstr ""
+
+#: pylav/players/player.py:2489 pylav/players/player.py:2504
+msgid "Duration"
+msgstr ""
+
+#: pylav/players/player.py:2495
+msgid "Previous Track"
+msgstr ""
+
+#: pylav/players/player.py:2510
+msgid "Next Track"
+msgstr ""
+
+#: pylav/players/player.py:2515
+msgid "{track_count} tracks, {queue_total_duration} remaining\n"
+msgstr ""
+
+#: pylav/players/player.py:2519 pylav/players/player.py:2615
+msgid "{translation}: {repeat_emoji}"
+msgstr ""
+
+#: pylav/players/player.py:2519 pylav/players/player.py:2615
+msgid "Repeating"
+msgstr ""
+
+#: pylav/players/player.py:2520 pylav/players/player.py:2616
+msgid "{space}{translation}: {autoplay_emoji}"
+msgstr ""
+
+#: pylav/players/player.py:2521 pylav/players/player.py:2617
+msgid "Auto Play"
+msgstr ""
+
+#: pylav/players/player.py:2523 pylav/players/player.py:2619
+msgid "{space}{translation}: {volume}%"
+msgstr ""
+
+#: pylav/players/player.py:2524 pylav/players/player.py:2620
+msgid "Volume"
+msgstr ""
+
+#: pylav/players/player.py:2564
+msgid "Recently Played for"
+msgstr ""
+
+#: pylav/players/player.py:2564
+msgid "Queue for"
+msgstr ""
+
+#: pylav/players/player.py:2584
+msgid "Playing"
+msgstr ""
+
+#: pylav/players/player.py:2600
+msgid "Queue order may not be accurate due to auto-shuffle being enabled"
+msgstr ""
+
+#: pylav/players/player.py:2606
+msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
+msgstr ""
+
