@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 19:54+0000\n"
-"PO-Revision-Date: 2023-01-31 20:03\n"
+"POT-Creation-Date: 2023-01-31 20:21+0000\n"
+"PO-Revision-Date: 2023-01-31 20:31\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
@@ -13,8 +13,8 @@ msgstr ""
 "X-Crowdin-Project: pylav\n"
 "X-Crowdin-Project-ID: 535244\n"
 "X-Crowdin-Language: el\n"
-"X-Crowdin-File: /lib/pylav/extension/red/utils/locales/pylav/extension/red/utils/locales/messages.po\n"
-"X-Crowdin-File-ID: 1305\n"
+"X-Crowdin-File: /lib/pylav/extension/red/utils/locales/messages.po\n"
+"X-Crowdin-File-ID: 2401\n"
 "Language: el_GR\n"
 
 #: pylav/extension/red/utils/required_methods.py:46
@@ -27,76 +27,66 @@ msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
 "PyLav can be located in https://github.com/Drapersniper/PyLav\n"
 "PyLav-Cogs can be located in https://github.com/Drapersniper/PyLav-Cogs\n\n"
 "PyLav's support server can be found at https://discord.com/invite/Sjh2TSCYQB\n\n\n"
-"You can help translate PyLav by contributing to our Crowdin projects at:\n"
-"https://crowdin.com/project/pylav and https://crowdin.com/project/pylavcogs\n\n\n"
+"You can help translate PyLav by contributing to our Crowdin project at:\n"
+"https://crowdin.com/project/pylav\n\n\n"
 "Contributors:\n"
 "- https://github.com/Drapersniper/PyLav/graphs/contributors\n"
 "- https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors\n"
 "If you wish to buy me a coffee for my work, you can do so at:\n"
 "https://www.buymeacoffee.com/draper or https://github.com/sponsors/Drapersniper"
-msgstr "Το PyLav δημιουργήθηκε από το [Draper#6666](https://github.com/Drapersniper).\n\n"
-"Το PyLav βρίσκεται στο https://github.com/Drapersniper/PyLav\n"
-"Η PyLav-Cogs μπορεί να βρίσκεται στο https://github. Ο διακομιστής υποστήριξης της PyLav/Drapersniper/PyLav-Cogs\n\n"
-"μπορεί να βρεθεί στο https://discord.com/invite/Sjh2TSCYQB\n\n\n"
-"Μπορείτε να βοηθήσετε στη μετάφραση της PyLav συμβάλλοντας στα έργα μας στο Crowdin στο:\n"
-"https://crowdin. om/project/pylav and https://crowdin.com/project/pylavcogs\n\n\n"
-"Συνεισφέροντες:\n"
-"- https://github.com/Drapersniper/PyLav/graphs/contributors\n"
-"- https://github. om/Drapersniper/PyLav-Cogs/graphs/contributors\n"
-"Αν θέλετε να μου αγοράσετε έναν καφέ για τη δουλειά μου, μπορείτε να το κάνετε στο:\n"
-"https://www.buymeacoffee.com/draper ή https://github.com/sponsors/Drapersniper"
+msgstr ""
 
-#: pylav/extension/red/utils/required_methods.py:77
+#: pylav/extension/red/utils/required_methods.py:76
 #, docstring
 msgid "Show the version of PyLav library"
 msgstr "Εμφάνιση της έκδοσης της βιβλιοθήκης PyLav"
 
-#: pylav/extension/red/utils/required_methods.py:92
+#: pylav/extension/red/utils/required_methods.py:91
 msgid "Library"
 msgstr "Βιβλιοθήκη"
 
-#: pylav/extension/red/utils/required_methods.py:93
+#: pylav/extension/red/utils/required_methods.py:92
 msgid "Version"
 msgstr "Έκδοση"
 
-#: pylav/extension/red/utils/required_methods.py:112
+#: pylav/extension/red/utils/required_methods.py:111
 #, docstring
 msgid "Sync the Bots slash commands"
 msgstr "Συγχρονισμός των εντολών κάθετος Bots"
 
-#: pylav/extension/red/utils/required_methods.py:121
+#: pylav/extension/red/utils/required_methods.py:120
 msgid "Synced the bots slash commands"
 msgstr "Συγχρονισμός των εντολών κάθετου bots"
 
-#: pylav/extension/red/utils/required_methods.py:142
+#: pylav/extension/red/utils/required_methods.py:141
 msgid "This command requires an existing player to be run"
 msgstr "Αυτή η εντολή απαιτεί την εκτέλεση ενός υπάρχοντος παίκτη"
 
-#: pylav/extension/red/utils/required_methods.py:151
+#: pylav/extension/red/utils/required_methods.py:150
 msgid "PyLavPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later"
 msgstr "Ο κώδικας PyLavPlayer δεν είναι προσωρινά διαθέσιμος λόγω διακοπής λειτουργίας με τις υπηρεσίες υποστήριξης, παρακαλώ δοκιμάστε ξανά αργότερα"
 
-#: pylav/extension/red/utils/required_methods.py:155
+#: pylav/extension/red/utils/required_methods.py:154
 msgid "No Lavalink node currently available"
 msgstr "Δεν υπάρχει διαθέσιμος κόμβος Lavalink"
 
-#: pylav/extension/red/utils/required_methods.py:164
+#: pylav/extension/red/utils/required_methods.py:163
 msgid "PyLavPlayer is currently unable to process tracks belonging to {feature}"
 msgstr "Η PyLavPlayer δεν είναι σε θέση να επεξεργαστεί κομμάτια που ανήκουν στο {feature}"
 
-#: pylav/extension/red/utils/required_methods.py:167
+#: pylav/extension/red/utils/required_methods.py:166
 msgid "No Lavalink node currently available with feature {feature}"
 msgstr "Κανένας κόμβος Lavalink δεν είναι διαθέσιμος με το χαρακτηριστικό {feature}"
 
-#: pylav/extension/red/utils/required_methods.py:178
+#: pylav/extension/red/utils/required_methods.py:177
 msgid "This command is not available in this channel. Please use {channel}"
 msgstr "Αυτή η εντολή δεν είναι διαθέσιμη σε αυτό το κανάλι. Παρακαλούμε χρησιμοποιήστε {channel}"
 
-#: pylav/extension/red/utils/required_methods.py:190
+#: pylav/extension/red/utils/required_methods.py:189
 msgid "This command requires you to be a DJ"
 msgstr "Αυτή η εντολή απαιτεί να είστε DJ"
 
-#: pylav/extension/red/utils/required_methods.py:228
+#: pylav/extension/red/utils/required_methods.py:227
 msgid "PyLav is not ready - Please try again shortly"
 msgstr "Το PyLav δεν είναι έτοιμο - Παρακαλώ δοκιμάστε ξανά σύντομα"
 

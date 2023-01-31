@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 19:54+0000\n"
-"PO-Revision-Date: 2023-01-31 20:03\n"
+"POT-Creation-Date: 2023-01-31 20:21+0000\n"
+"PO-Revision-Date: 2023-01-31 20:32\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -13,8 +13,8 @@ msgstr ""
 "X-Crowdin-Project: pylav\n"
 "X-Crowdin-Project-ID: 535244\n"
 "X-Crowdin-Language: nl\n"
-"X-Crowdin-File: /lib/pylav/extension/red/utils/locales/pylav/extension/red/utils/locales/messages.po\n"
-"X-Crowdin-File-ID: 1305\n"
+"X-Crowdin-File: /lib/pylav/extension/red/utils/locales/messages.po\n"
+"X-Crowdin-File-ID: 2401\n"
 "Language: nl_NL\n"
 
 #: pylav/extension/red/utils/required_methods.py:46
@@ -27,76 +27,66 @@ msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
 "PyLav can be located in https://github.com/Drapersniper/PyLav\n"
 "PyLav-Cogs can be located in https://github.com/Drapersniper/PyLav-Cogs\n\n"
 "PyLav's support server can be found at https://discord.com/invite/Sjh2TSCYQB\n\n\n"
-"You can help translate PyLav by contributing to our Crowdin projects at:\n"
-"https://crowdin.com/project/pylav and https://crowdin.com/project/pylavcogs\n\n\n"
+"You can help translate PyLav by contributing to our Crowdin project at:\n"
+"https://crowdin.com/project/pylav\n\n\n"
 "Contributors:\n"
 "- https://github.com/Drapersniper/PyLav/graphs/contributors\n"
 "- https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors\n"
 "If you wish to buy me a coffee for my work, you can do so at:\n"
 "https://www.buymeacoffee.com/draper or https://github.com/sponsors/Drapersniper"
-msgstr "PyLav was gemaakt door [Draper#66](https://github.com/Drapersniper).\n\n"
-"PyLav kan zich bevinden in https://github.com/Drapersniper/PyLav\n"
-"PyLav-Cogs kan zijn te vinden op https://github. om/Drapersniper/PyLav-Cogs\n\n"
-"PyLav's ondersteuningsserver kan worden gevonden op https://discord.com/invite/Sjh2TSCYQB\n\n\n"
-"Je kunt helpen met het vertalen van PyLav door bij te dragen aan onze Crowdin-projecten op:\n"
-"https://crowdin. om/project/pylav en https://crowdin.com/project/pylavcogs\n\n\n"
-"Bijdragers:\n"
-"- https://github.com/Drapersniper/PyLav/graphs/contributors\n"
-"- https://github. om/Drapersniper/PyLav-Cogs/graphs/contributors\n"
-"Als je me een koffie voor mijn werk wilt kopen, kan je dat hier doen:\n"
-"https://www.buymeacoffee.com/draper of https://github.com/sponsors/Drapersniper"
+msgstr ""
 
-#: pylav/extension/red/utils/required_methods.py:77
+#: pylav/extension/red/utils/required_methods.py:76
 #, docstring
 msgid "Show the version of PyLav library"
 msgstr "Toon de versie van PyLav bibliotheek"
 
-#: pylav/extension/red/utils/required_methods.py:92
+#: pylav/extension/red/utils/required_methods.py:91
 msgid "Library"
 msgstr "Bibliotheek"
 
-#: pylav/extension/red/utils/required_methods.py:93
+#: pylav/extension/red/utils/required_methods.py:92
 msgid "Version"
 msgstr "Versie"
 
-#: pylav/extension/red/utils/required_methods.py:112
+#: pylav/extension/red/utils/required_methods.py:111
 #, docstring
 msgid "Sync the Bots slash commands"
 msgstr "Synchroniseer de bots slash commando's"
 
-#: pylav/extension/red/utils/required_methods.py:121
+#: pylav/extension/red/utils/required_methods.py:120
 msgid "Synced the bots slash commands"
 msgstr "De slash commando's van de bots gesynchroniseerd"
 
-#: pylav/extension/red/utils/required_methods.py:142
+#: pylav/extension/red/utils/required_methods.py:141
 msgid "This command requires an existing player to be run"
 msgstr "Deze opdracht vereist dat een bestaande speler wordt uitgevoerd"
 
-#: pylav/extension/red/utils/required_methods.py:151
+#: pylav/extension/red/utils/required_methods.py:150
 msgid "PyLavPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later"
 msgstr "PyLavPlayer cog is momenteel tijdelijk niet beschikbaar vanwege een uitval met de backend diensten, probeer het alstublieft later opnieuw"
 
-#: pylav/extension/red/utils/required_methods.py:155
+#: pylav/extension/red/utils/required_methods.py:154
 msgid "No Lavalink node currently available"
 msgstr "Er is geen Lavalink node momenteel beschikbaar"
 
-#: pylav/extension/red/utils/required_methods.py:164
+#: pylav/extension/red/utils/required_methods.py:163
 msgid "PyLavPlayer is currently unable to process tracks belonging to {feature}"
 msgstr "PyLavPlayer kan momenteel geen tracks van {feature} verwerken"
 
-#: pylav/extension/red/utils/required_methods.py:167
+#: pylav/extension/red/utils/required_methods.py:166
 msgid "No Lavalink node currently available with feature {feature}"
 msgstr "Er is geen Lavalink node beschikbaar met functie {feature}"
 
-#: pylav/extension/red/utils/required_methods.py:178
+#: pylav/extension/red/utils/required_methods.py:177
 msgid "This command is not available in this channel. Please use {channel}"
 msgstr "Deze opdracht is niet beschikbaar in dit kanaal. Gebruik {channel}"
 
-#: pylav/extension/red/utils/required_methods.py:190
+#: pylav/extension/red/utils/required_methods.py:189
 msgid "This command requires you to be a DJ"
 msgstr "Dit commando vereist dat je een DJ bent"
 
-#: pylav/extension/red/utils/required_methods.py:228
+#: pylav/extension/red/utils/required_methods.py:227
 msgid "PyLav is not ready - Please try again shortly"
 msgstr "PyLav is niet klaar - Probeer het binnenkort opnieuw"
 
