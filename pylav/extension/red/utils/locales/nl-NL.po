@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:28\n"
+"PO-Revision-Date: 2023-01-31 23:42\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgstr ""
 #: pylav/extension/red/utils/required_methods.py:46
 #, docstring
 msgid "Shows the credits and translation details for the PyLav cogs and shared code"
-msgstr ""
+msgstr "Toont de credits en vertaalgegevens voor de PyLav-tandwielen en gedeelde code"
 
 #: pylav/extension/red/utils/required_methods.py:50
 msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
@@ -34,59 +34,69 @@ msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
 "- https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors\n"
 "If you wish to buy me a coffee for my work, you can do so at:\n"
 "https://www.buymeacoffee.com/draper or https://github.com/sponsors/Drapersniper"
-msgstr ""
+msgstr "PyLav is gemaakt door [Draper#6666](https://github.com/Drapersniper).\n\n"
+"PyLav bevindt zich in https://github.com/Drapersniper/PyLav\n"
+"PyLav-Cogs bevindt zich in https://github.com/Drapersniper/PyLav-Cogs\n\n"
+"De ondersteuningsserver van PyLav is te vinden op https://discord.com/invite/Sjh2TSCYQB\n\n\n"
+"U kunt PyLav helpen vertalen door bij te dragen aan ons Crowdin-project op:\n"
+"https://crowdin.com/project/pylav\n\n\n"
+"Medewerkers:\n"
+"- https://github.com/Drapersniper/PyLav/graphs/contributors\n"
+"- https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors\n"
+"Als je een koffie voor me wilt kopen voor mijn werk, kun je dat doen op:\n"
+"https://www.buymeacoffee.com/draper of https://github.com/sponsors/Drapersniper"
 
 #: pylav/extension/red/utils/required_methods.py:76
 #, docstring
 msgid "Show the version of PyLav library"
-msgstr ""
+msgstr "De versie van de PyLav-bibliotheek weergeven"
 
 #: pylav/extension/red/utils/required_methods.py:91
 msgid "Library"
-msgstr ""
+msgstr "Bibliotheek"
 
 #: pylav/extension/red/utils/required_methods.py:92
 msgid "Version"
-msgstr ""
+msgstr "Versie"
 
 #: pylav/extension/red/utils/required_methods.py:111
 #, docstring
 msgid "Sync the Bots slash commands"
-msgstr ""
+msgstr "De Bots slash-opdrachten synchroniseren"
 
 #: pylav/extension/red/utils/required_methods.py:120
 msgid "Synced the bots slash commands"
-msgstr ""
+msgstr "De bots slash-opdrachten gesynchroniseerd"
 
 #: pylav/extension/red/utils/required_methods.py:141
 msgid "This command requires an existing player to be run"
-msgstr ""
+msgstr "Voor deze opdracht moet een bestaande speler worden uitgevoerd"
 
 #: pylav/extension/red/utils/required_methods.py:150
 msgid "PyLavPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later"
-msgstr ""
+msgstr "PyLavPlayer-tandwiel is momenteel tijdelijk niet beschikbaar vanwege een storing met de backend-services, probeer het later opnieuw"
 
 #: pylav/extension/red/utils/required_methods.py:154
 msgid "No Lavalink node currently available"
-msgstr ""
+msgstr "Momenteel geen Lavalink-knooppunt beschikbaar"
 
 #: pylav/extension/red/utils/required_methods.py:163
 msgid "PyLavPlayer is currently unable to process tracks belonging to {feature}"
-msgstr ""
+msgstr "PyLavPlayer kan momenteel geen tracks verwerken die behoren tot {feature}"
 
 #: pylav/extension/red/utils/required_methods.py:166
 msgid "No Lavalink node currently available with feature {feature}"
-msgstr ""
+msgstr "Geen Lavalink-node momenteel beschikbaar met functie {feature}"
 
 #: pylav/extension/red/utils/required_methods.py:177
 msgid "This command is not available in this channel. Please use {channel}"
-msgstr ""
+msgstr "Deze opdracht is niet beschikbaar in dit kanaal. Gelieve {channel}"
 
 #: pylav/extension/red/utils/required_methods.py:189
 msgid "This command requires you to be a DJ"
-msgstr ""
+msgstr "Voor deze opdracht moet je een DJ zijn"
 
 #: pylav/extension/red/utils/required_methods.py:227
 msgid "PyLav is not ready - Please try again shortly"
-msgstr ""
+msgstr "PyLav is niet klaar - Probeer het binnenkort opnieuw"
 

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:28\n"
+"PO-Revision-Date: 2023-01-31 23:42\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgstr ""
 #: pylav/extension/red/utils/required_methods.py:46
 #, docstring
 msgid "Shows the credits and translation details for the PyLav cogs and shared code"
-msgstr ""
+msgstr "Megjeleníti a PyLav-fogaskerekek és a megosztott kód kreditjeit és fordítási részleteit"
 
 #: pylav/extension/red/utils/required_methods.py:50
 msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
@@ -34,59 +34,69 @@ msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
 "- https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors\n"
 "If you wish to buy me a coffee for my work, you can do so at:\n"
 "https://www.buymeacoffee.com/draper or https://github.com/sponsors/Drapersniper"
-msgstr ""
+msgstr "A PyLav-ot a [Draper#6666](https://github.com/Drapersniper hozta létre.\n\n"
+"A PyLav https://github.com/Drapersniper/PyLav található\n"
+"A PyLav-Cogs https://github.com/Drapersniper/PyLav-Cogs található\n\n"
+"A PyLav támogatási szervere a következő címen található: https://discord.com/invite/Sjh2TSCYQB\n\n\n"
+"Segíthet a PyLav fordításában, ha hozzájárul a Crowdin projektünkhöz a következő címen:\n"
+"https://crowdin.com/project/pylav\n\n\n"
+"Közreműködők:\n"
+"- https://github.com/Drapersniper/PyLav/graphs/contributors\n"
+"- https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors\n"
+"Ha szeretne nekem egy kávét vásárolni a munkámhoz, ezt a következő címen teheti meg:\n"
+"https://www.buymeacoffee.com/draper vagy https://github.com/sponsors/Drapersniper"
 
 #: pylav/extension/red/utils/required_methods.py:76
 #, docstring
 msgid "Show the version of PyLav library"
-msgstr ""
+msgstr "A PyLav-kódtár verziójának megjelenítése"
 
 #: pylav/extension/red/utils/required_methods.py:91
 msgid "Library"
-msgstr ""
+msgstr "Könyvtár"
 
 #: pylav/extension/red/utils/required_methods.py:92
 msgid "Version"
-msgstr ""
+msgstr "Verzió"
 
 #: pylav/extension/red/utils/required_methods.py:111
 #, docstring
 msgid "Sync the Bots slash commands"
-msgstr ""
+msgstr "A botok perjeles parancsainak szinkronizálása"
 
 #: pylav/extension/red/utils/required_methods.py:120
 msgid "Synced the bots slash commands"
-msgstr ""
+msgstr "Szinkronizálta a robotok perjeles parancsait"
 
 #: pylav/extension/red/utils/required_methods.py:141
 msgid "This command requires an existing player to be run"
-msgstr ""
+msgstr "Ehhez a parancshoz egy meglévő lejátszó futtatása szükséges"
 
 #: pylav/extension/red/utils/required_methods.py:150
 msgid "PyLavPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later"
-msgstr ""
+msgstr "A PyLavPlayer fogaskereke jelenleg ideiglenesen nem érhető el a háttérszolgáltatások leállása miatt, kérjük, próbálja újra később"
 
 #: pylav/extension/red/utils/required_methods.py:154
 msgid "No Lavalink node currently available"
-msgstr ""
+msgstr "Jelenleg nem érhető el Lavalink csomópont"
 
 #: pylav/extension/red/utils/required_methods.py:163
 msgid "PyLavPlayer is currently unable to process tracks belonging to {feature}"
-msgstr ""
+msgstr "A PyLavPlayer jelenleg nem tudja feldolgozni a {feature}"
 
 #: pylav/extension/red/utils/required_methods.py:166
 msgid "No Lavalink node currently available with feature {feature}"
-msgstr ""
+msgstr "Jelenleg egyetlen Lavalink csomópont sem érhető el funkcióval {feature}"
 
 #: pylav/extension/red/utils/required_methods.py:177
 msgid "This command is not available in this channel. Please use {channel}"
-msgstr ""
+msgstr "Ez a parancs nem érhető el ebben a csatornában. Kérjük, használja {channel}"
 
 #: pylav/extension/red/utils/required_methods.py:189
 msgid "This command requires you to be a DJ"
-msgstr ""
+msgstr "Ehhez a parancshoz DJ-nek kell lenned"
 
 #: pylav/extension/red/utils/required_methods.py:227
 msgid "PyLav is not ready - Please try again shortly"
-msgstr ""
+msgstr "A PyLav még nem áll készen - Kérjük, próbálja újra hamarosan"
 

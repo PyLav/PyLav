@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:28\n"
+"PO-Revision-Date: 2023-01-31 23:42\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -19,37 +19,37 @@ msgstr ""
 
 #: pylav/helpers/format/strings.py:31
 msgid "Unknown"
-msgstr ""
+msgstr "Неизвестный"
 
 #: pylav/helpers/format/strings.py:57
 msgid "hour"
-msgstr ""
+msgstr "час"
 
 #: pylav/helpers/format/strings.py:58
 msgid "minute"
-msgstr ""
+msgstr "минута"
 
 #: pylav/helpers/format/strings.py:59
 msgid "second"
-msgstr ""
+msgstr "секунда"
 
 #: pylav/helpers/format/strings.py:60
 msgid "day"
-msgstr ""
+msgstr "день"
 
 #: pylav/helpers/format/strings.py:61
 msgid "days"
-msgstr ""
+msgstr "Дни недели"
 
 #: pylav/helpers/format/strings.py:62
 msgid "hours"
-msgstr ""
+msgstr "Часов"
 
 #: pylav/helpers/format/strings.py:63
 msgid "minutes"
-msgstr ""
+msgstr "протокол"
 
 #: pylav/helpers/format/strings.py:64
 msgid "seconds"
-msgstr ""
+msgstr "товары второго сорта"
 

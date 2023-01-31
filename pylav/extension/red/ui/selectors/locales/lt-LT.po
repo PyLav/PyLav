@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:28\n"
+"PO-Revision-Date: 2023-01-31 23:42\n"
 "Last-Translator: \n"
 "Language-Team: Lithuanian\n"
 "MIME-Version: 1.0\n"
@@ -20,22 +20,22 @@ msgstr ""
 #: pylav/extension/red/ui/selectors/nodes.py:46
 #: pylav/extension/red/ui/selectors/playlist.py:73
 msgid "You are not authorized to interact with this option"
-msgstr ""
+msgstr "Jūs neturite teisės sąveikauti su šia parinktimi"
 
 #: pylav/extension/red/ui/selectors/nodes.py:53
 msgid "Disabling the following sources: {sources}"
-msgstr ""
+msgstr "Šių šaltinių išjungimas: {sources}"
 
 #: pylav/extension/red/ui/selectors/nodes.py:83
 msgid "Node not found"
-msgstr ""
+msgstr "Mazgas nerastas"
 
 #: pylav/extension/red/ui/selectors/playlist.py:41
 #: pylav/extension/red/ui/selectors/playlist.py:82
 msgid "Playlist not found"
-msgstr ""
+msgstr "Grojaraštis nerastas"
 
 #: pylav/extension/red/ui/selectors/queue.py:96
 msgid "Track not found"
-msgstr ""
+msgstr "Takelis nerastas"
 

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:29\n"
+"PO-Revision-Date: 2023-01-31 23:42\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "MIME-Version: 1.0\n"
@@ -19,18 +19,19 @@ msgstr ""
 
 #: pylav/extension/bundled_node/manager.py:227
 msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture"
-msgstr ""
+msgstr "Bạn đang cố gắng chạy nút Lavalink được quản lý trên kiến trúc máy không được hỗ trợ"
 
 #: pylav/extension/bundled_node/manager.py:452
 msgid "The output of `{java_exc} -version` was unexpected\n"
 "{version_info}"
-msgstr ""
+msgstr "Đầu ra của '{java_exc} -version' thật bất ngờ\n"
+"{version_info}"
 
 #: pylav/extension/bundled_node/manager.py:472
 msgid "Port {port} already in use. Managed Lavalink startup aborted"
-msgstr ""
+msgstr "Cảng {port} đã được sử dụng. Công ty khởi nghiệp Lavalink được quản lý bị hủy bỏ"
 
 #: pylav/extension/bundled_node/manager.py:477
 msgid "Lavalink failed to start: {line}"
-msgstr ""
+msgstr "Lavalink không khởi động được: {line}"
 

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:29\n"
+"PO-Revision-Date: 2023-01-31 23:42\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
 "MIME-Version: 1.0\n"
@@ -19,141 +19,141 @@ msgstr ""
 
 #: pylav/players/manager.py:259
 msgid "No available nodes!"
-msgstr ""
+msgstr "Nema dostupnih čvorova!"
 
 #: pylav/players/manager.py:349
 msgid "Music in {count} servers"
-msgstr ""
+msgstr "Glazba u {count} Poslužitelja"
 
 #: pylav/players/player.py:1176
 msgid "There are no tracks currently in the player history"
-msgstr ""
+msgstr "Trenutno u povijesti igrača nema pjesama"
 
 #: pylav/players/player.py:1869
 msgid "Current node has the Volume filter functionality disabled"
-msgstr ""
+msgstr "Trenutni čvor ima onemogućenu funkciju filtara glasnoće"
 
 #: pylav/players/player.py:1891 pylav/players/player.py:2067
 #: pylav/players/player.py:2122
 msgid "Current node has the Equalizer functionality disabled"
-msgstr ""
+msgstr "Trenutni čvor ima onemogućenu funkciju Ekvilizatora"
 
 #: pylav/players/player.py:1911
 msgid "Current node has the Karaoke functionality disabled"
-msgstr ""
+msgstr "Trenutni čvor ima onemogućenu funkcionalnost Karaoke"
 
 #: pylav/players/player.py:1931 pylav/players/player.py:2069
 #: pylav/players/player.py:2124
 msgid "Current node has the Timescale functionality disabled"
-msgstr ""
+msgstr "Trenutni čvor ima onemogućenu funkciju Timescale"
 
 #: pylav/players/player.py:1951
 msgid "Current node has the Tremolo functionality disabled"
-msgstr ""
+msgstr "Trenutni čvor ima onemogućenu funkciju Tremolo"
 
 #: pylav/players/player.py:1971
 msgid "Current node has the Vibrato functionality disabled"
-msgstr ""
+msgstr "Trenutni čvor ima onemogućenu funkciju Vibrato"
 
 #: pylav/players/player.py:1991
 msgid "Current node has the Rotation functionality disabled"
-msgstr ""
+msgstr "Trenutni čvor ima onemogućenu funkciju Rotacija"
 
 #: pylav/players/player.py:2011
 msgid "Current node has the Distortion functionality disabled"
-msgstr ""
+msgstr "Trenutni čvor ima onemogućenu funkciju izobličenja"
 
 #: pylav/players/player.py:2031
 msgid "Current node has the LowPass functionality disabled"
-msgstr ""
+msgstr "Trenutni čvor ima onemogućenu funkcionalnost LowPass"
 
 #: pylav/players/player.py:2051
 msgid "Current node has the Echo functionality disabled"
-msgstr ""
+msgstr "Trenutni čvor ima onemogućenu funkciju Echo"
 
 #: pylav/players/player.py:2181
 msgid "Current node has the ChannelMix functionality disabled"
-msgstr ""
+msgstr "Trenutni čvor ima onemogućenu funkciju ChannelMix"
 
 #: pylav/players/player.py:2441 pylav/players/player.py:2486
 #: pylav/players/player.py:2501
 msgid "LIVE"
-msgstr ""
+msgstr "ŽIVJETI"
 
 #: pylav/players/player.py:2454
 msgid "Now Playing in"
-msgstr ""
+msgstr "Sada se reproducira u"
 
 #: pylav/players/player.py:2472 pylav/players/player.py:2581
 msgid "Currently livestreaming"
-msgstr ""
+msgstr "Trenutno prijenos uživo"
 
 #: pylav/players/player.py:2474
 msgid "Playing: "
-msgstr ""
+msgstr "Igranje: "
 
 #: pylav/players/player.py:2477 pylav/players/player.py:2493
 #: pylav/players/player.py:2508 pylav/players/player.py:2587
 msgid "Requester"
-msgstr ""
+msgstr "Tražitelj"
 
 #: pylav/players/player.py:2489 pylav/players/player.py:2504
 msgid "Duration"
-msgstr ""
+msgstr "Trajanje"
 
 #: pylav/players/player.py:2495
 msgid "Previous Track"
-msgstr ""
+msgstr "Prethodni zapis"
 
 #: pylav/players/player.py:2510
 msgid "Next Track"
-msgstr ""
+msgstr "Sljedeća pjesma"
 
 #: pylav/players/player.py:2515
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
-msgstr ""
+msgstr "{track_count} Pjesme {queue_total_duration} preostali\n"
 
 #: pylav/players/player.py:2519 pylav/players/player.py:2615
 msgid "{translation}: {repeat_emoji}"
-msgstr ""
+msgstr "{translation}: {repeat_emoji}"
 
 #: pylav/players/player.py:2519 pylav/players/player.py:2615
 msgid "Repeating"
-msgstr ""
+msgstr "Ponavljajuće"
 
 #: pylav/players/player.py:2520 pylav/players/player.py:2616
 msgid "{space}{translation}: {autoplay_emoji}"
-msgstr ""
+msgstr "{space}{translation}: {autoplay_emoji}"
 
 #: pylav/players/player.py:2521 pylav/players/player.py:2617
 msgid "Auto Play"
-msgstr ""
+msgstr "Automatska reprodukcija"
 
 #: pylav/players/player.py:2523 pylav/players/player.py:2619
 msgid "{space}{translation}: {volume}%"
-msgstr ""
+msgstr "{space}{translation}: {volume}%"
 
 #: pylav/players/player.py:2524 pylav/players/player.py:2620
 msgid "Volume"
-msgstr ""
+msgstr "Obim"
 
 #: pylav/players/player.py:2564
 msgid "Recently Played for"
-msgstr ""
+msgstr "Nedavno je reproducirano za"
 
 #: pylav/players/player.py:2564
 msgid "Queue for"
-msgstr ""
+msgstr "Red čekanja za"
 
 #: pylav/players/player.py:2584
 msgid "Playing"
-msgstr ""
+msgstr "Igranje"
 
 #: pylav/players/player.py:2600
 msgid "Queue order may not be accurate due to auto-shuffle being enabled"
-msgstr ""
+msgstr "Redoslijed reda čekanja možda nije točan zbog omogućavanja automatskog miješanja"
 
 #: pylav/players/player.py:2606
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
-msgstr ""
+msgstr "Stranica {current_page}/{total_pages} | {track_number} Pjesme {queue_total_duration} preostali\n"
 

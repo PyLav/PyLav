@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:29\n"
+"PO-Revision-Date: 2023-01-31 23:42\n"
 "Last-Translator: \n"
 "Language-Team: Thai\n"
 "MIME-Version: 1.0\n"
@@ -19,37 +19,37 @@ msgstr ""
 
 #: pylav/helpers/format/strings.py:31
 msgid "Unknown"
-msgstr ""
+msgstr "ไม่คุ้นเคย"
 
 #: pylav/helpers/format/strings.py:57
 msgid "hour"
-msgstr ""
+msgstr "ชั่วโมง"
 
 #: pylav/helpers/format/strings.py:58
 msgid "minute"
-msgstr ""
+msgstr "นาที"
 
 #: pylav/helpers/format/strings.py:59
 msgid "second"
-msgstr ""
+msgstr "ที่สอง"
 
 #: pylav/helpers/format/strings.py:60
 msgid "day"
-msgstr ""
+msgstr "วัน"
 
 #: pylav/helpers/format/strings.py:61
 msgid "days"
-msgstr ""
+msgstr "วัน"
 
 #: pylav/helpers/format/strings.py:62
 msgid "hours"
-msgstr ""
+msgstr "ชั่วโมง"
 
 #: pylav/helpers/format/strings.py:63
 msgid "minutes"
-msgstr ""
+msgstr "รายงานการประชุม"
 
 #: pylav/helpers/format/strings.py:64
 msgid "seconds"
-msgstr ""
+msgstr "วินาที"
 
