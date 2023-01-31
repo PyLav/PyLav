@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import asyncpg
 
-from pylav.storage.controllers.config import ConfigController
 from pylav.storage.database.tables.misc import DATABASE_ENGINE
 from pylav.storage.migrations.logging import LOGGER
 from pylav.storage.migrations.low_level.v_1_0_0 import (
@@ -14,6 +15,9 @@ from pylav.storage.migrations.low_level.v_1_0_0 import (
     migrate_queries_v_1_0_0,
 )
 from pylav.storage.migrations.low_level.v_1_3_8 import low_level_v_1_3_8_migration
+
+if TYPE_CHECKING:
+    from pylav.storage.controllers.config import ConfigController
 
 
 async def run_low_level_migrations(migrator: ConfigController) -> dict[str, dict[str, list[asyncpg.Record] | None]]:
