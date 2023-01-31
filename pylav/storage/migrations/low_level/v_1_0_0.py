@@ -9,25 +9,23 @@ from packaging.version import parse
 
 from pylav.compat import json
 from pylav.constants.playlists import BUNDLED_PLAYLIST_IDS
-from pylav.constants.versions import VERSION_1_0_0_0
+from pylav.constants.versions import VERSION_1_0_0
 from pylav.players.tracks.decoder import async_decoder
 from pylav.storage.database.tables.config import LibConfigRow
-from pylav.storage.database.tables.misc import DATABASE_ENGINE
 from pylav.storage.database.tables.nodes import NodeRow
 from pylav.storage.database.tables.players import PlayerRow
 from pylav.storage.database.tables.playlists import PlaylistRow
 from pylav.storage.database.tables.queries import QueryRow
 from pylav.storage.database.tables.tracks import TrackRow
-from pylav.storage.migrations.logging import LOGGER
 from pylav.utils.vendor.redbot import AsyncIter
 
 if TYPE_CHECKING:
     from pylav.storage.controllers.config import ConfigController
 
 
-async def run_playlist_migration_v_1_0_0_0(connection: Connection) -> list[asyncpg.Record]:
+async def run_playlist_migration_v_1_0_0(connection: Connection) -> list[asyncpg.Record]:
     """
-    Runs playlist migration 1000.
+    Runs playlist migration 100.
     """
     HAS_COLUMN = """
     SELECT EXISTS (SELECT 1
@@ -41,9 +39,9 @@ async def run_playlist_migration_v_1_0_0_0(connection: Connection) -> list[async
         return data
 
 
-async def run_query_migration_v_1_0_0_0(connection: Connection) -> list[asyncpg.Record] | None:
+async def run_query_migration_v_1_0_0(connection: Connection) -> list[asyncpg.Record] | None:
     """
-    Runs playlist migration 1000.
+    Runs playlist migration 100.
     """
     HAS_COLUMN = """
     SELECT EXISTS (SELECT 1
@@ -57,7 +55,7 @@ async def run_query_migration_v_1_0_0_0(connection: Connection) -> list[asyncpg.
         return data
 
 
-async def run_player_config_v_1_0_0_0(connection: Connection) -> list[asyncpg.Record]:
+async def run_player_config_v_1_0_0(connection: Connection) -> list[asyncpg.Record]:
     """
     Migrates player config.
     """
@@ -74,12 +72,12 @@ async def run_player_config_v_1_0_0_0(connection: Connection) -> list[asyncpg.Re
         return []
 
     version = parse(version)
-    if (not version) or version < VERSION_1_0_0_0:
+    if (not version) or version < VERSION_1_0_0:
         return await connection.fetch("SELECT * FROM player;")
     return []
 
 
-async def run_node_config_v_1_0_0_0(connection: Connection) -> list[asyncpg.Record]:
+async def run_node_config_v_1_0_0(connection: Connection) -> list[asyncpg.Record]:
     """
     Migrates player config.
     """
@@ -96,12 +94,12 @@ async def run_node_config_v_1_0_0_0(connection: Connection) -> list[asyncpg.Reco
         return []
 
     version = parse(version)
-    if (not version) or version < VERSION_1_0_0_0:
+    if (not version) or version < VERSION_1_0_0:
         return await connection.fetch("SELECT * FROM node;")
     return []
 
 
-async def run_lib_config_v_1_0_0_0(connection: Connection) -> list[asyncpg.Record]:
+async def run_lib_config_v_1_0_0(connection: Connection) -> list[asyncpg.Record]:
     """
     Migrates player config.
     """
@@ -118,11 +116,11 @@ async def run_lib_config_v_1_0_0_0(connection: Connection) -> list[asyncpg.Recor
         return []
 
     version = parse(version)
-    if (not version) or version < VERSION_1_0_0_0:
+    if (not version) or version < VERSION_1_0_0:
         return await connection.fetch("SELECT * FROM lib_config;")
 
 
-async def migrate_playlists_v_1_0_0_0(playlists: list[asyncpg.Record]) -> None:
+async def migrate_playlists_v_1_0_0(playlists: list[asyncpg.Record]) -> None:
     for playlist in playlists:
         if playlist["id"] in BUNDLED_PLAYLIST_IDS:
             continue
@@ -147,7 +145,7 @@ async def migrate_playlists_v_1_0_0_0(playlists: list[asyncpg.Record]) -> None:
             await playlist_row.add_m2m(*new_tracks, m2m=PlaylistRow.tracks)
 
 
-async def migrate_queries_v_1_0_0_0(queries: list[asyncpg.Record]) -> None:
+async def migrate_queries_v_1_0_0(queries: list[asyncpg.Record]) -> None:
 
     for query in queries:
         defaults = {QueryRow.name: query["name"]}
@@ -167,7 +165,7 @@ async def migrate_queries_v_1_0_0_0(queries: list[asyncpg.Record]) -> None:
             await query_row.add_m2m(*new_tracks, m2m=QueryRow.tracks)
 
 
-async def migrate_player_config_v_1_0_0_0(players: list[asyncpg.Record]) -> None:
+async def migrate_player_config_v_1_0_0(players: list[asyncpg.Record]) -> None:
     bulk_insert = []
     for player in players:
         data = {
@@ -229,7 +227,7 @@ async def migrate_player_config_v_1_0_0_0(players: list[asyncpg.Record]) -> None
         await PlayerRow.insert(*bulk_insert)
 
 
-async def migrate_node_config_v_1_0_0_0(nodes: list[asyncpg.Record]) -> None:
+async def migrate_node_config_v_1_0_0(nodes: list[asyncpg.Record]) -> None:
     for node in nodes:
         data = {
             NodeRow.name: node["name"],
@@ -247,7 +245,7 @@ async def migrate_node_config_v_1_0_0_0(nodes: list[asyncpg.Record]) -> None:
             await NodeRow.update(data).where(NodeRow.id == node["id"])
 
 
-async def migrate_lib_config_v_1_0_0_0(configs: list[asyncpg.Record]) -> None:
+async def migrate_lib_config_v_1_0_0(configs: list[asyncpg.Record]) -> None:
     for config in configs:
         data = {
             LibConfigRow.config_folder: config["config_folder"],
@@ -275,16 +273,6 @@ async def migrate_lib_config_v_1_0_0_0(configs: list[asyncpg.Record]) -> None:
             )
 
 
-async def run_low_level_migrations(migrator: ConfigController) -> dict[str, dict[str, list[asyncpg.Record] | None]]:
-    """
-    Runs migrations.
-    """
-    migration_data = {}
-    con = await DATABASE_ENGINE.get_new_connection()
-    await low_level_v_1_0_0_migration(con, migration_data, migrator)
-    return migration_data
-
-
 async def low_level_v_1_0_0_migration(
     con: Connection, migration_data: dict[str, dict[str, list[asyncpg.Record]] | None], migrator: ConfigController
 ) -> None:
@@ -302,7 +290,7 @@ async def low_level_v_1_0_0_migration(
 async def low_level_v_1_0_0_nodes(
     con: Connection, migration_data: dict[str, dict[str, list[asyncpg.Record]] | None], version: str
 ) -> None:
-    node_config_data_1000 = await run_node_config_v_1_0_0_0(con)
+    node_config_data_1000 = await run_node_config_v_1_0_0(con)
     if node_config_data_1000:
         migration_data[version]["node"] = node_config_data_1000
 
@@ -310,7 +298,7 @@ async def low_level_v_1_0_0_nodes(
 async def low_level_v_1_0_0_lib(
     con: Connection, migration_data: dict[str, dict[str, list[asyncpg.Record]] | None], version: str
 ) -> None:
-    lib_config_data_1000 = await run_lib_config_v_1_0_0_0(con)
+    lib_config_data_1000 = await run_lib_config_v_1_0_0(con)
     if lib_config_data_1000:
         migration_data[version]["lib"] = lib_config_data_1000
 
@@ -318,7 +306,7 @@ async def low_level_v_1_0_0_lib(
 async def low_level_v_1_0_0_players(
     con: Connection, migration_data: dict[str, dict[str, list[asyncpg.Record]] | None], version: str
 ) -> None:
-    player_data_1000 = await run_player_config_v_1_0_0_0(con)
+    player_data_1000 = await run_player_config_v_1_0_0(con)
     if player_data_1000:
         migration_data[version]["player"] = player_data_1000
 
@@ -326,7 +314,7 @@ async def low_level_v_1_0_0_players(
 async def low_level_v_1_0_0_queries(
     con: Connection, migration_data: dict[str, dict[str, list[asyncpg.Record]] | None], version: str
 ) -> None:
-    query_data_1000 = await run_query_migration_v_1_0_0_0(con)
+    query_data_1000 = await run_query_migration_v_1_0_0(con)
     if query_data_1000:
         migration_data[version]["query"] = query_data_1000
 
@@ -334,31 +322,6 @@ async def low_level_v_1_0_0_queries(
 async def low_level_v_1_0_0_playlists(
     con: Connection, migration_data: dict[str, dict[str, list[asyncpg.Record]] | None], version: str
 ) -> None:
-    playlist_data_1000 = await run_playlist_migration_v_1_0_0_0(con)
+    playlist_data_1000 = await run_playlist_migration_v_1_0_0(con)
     if playlist_data_1000:
         migration_data[version]["playlist"] = playlist_data_1000
-
-
-async def migrate_data(data: dict[str, dict[str, list[asyncpg.Record]]]) -> None:
-    """
-    Migrates data.
-    """
-
-    for version, migrations in data.items():
-        match version:
-            case "1.0.0":
-                if "playlist" in migrations and migrations["playlist"]:
-                    LOGGER.info("-----------Migrating Playlist data to PyLav 1.0.0 ---------")
-                    await migrate_playlists_v_1_0_0_0(migrations["playlist"])
-                if "query" in migrations and migrations["query"]:
-                    LOGGER.info("-----------Migrating Query data to PyLav 1.0.0 ---------")
-                    await migrate_queries_v_1_0_0_0(migrations["query"])
-                if "player" in migrations and migrations["player"]:
-                    LOGGER.info("-----------Migrating Player Config to PyLav 1.0.0 ---------")
-                    await migrate_player_config_v_1_0_0_0(migrations["player"])
-                if "lib" in migrations and migrations["lib"]:
-                    LOGGER.info("-----------Migrating Lib Config to PyLav 1.0.0 ---------")
-                    await migrate_lib_config_v_1_0_0_0(migrations["lib"])
-                if "node" in migrations and migrations["node"]:
-                    LOGGER.info("-----------Migrating Node Config to PyLav 1.0.0 ---------")
-                    await migrate_node_config_v_1_0_0_0(migrations["node"])
