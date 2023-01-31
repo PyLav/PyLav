@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:28\n"
+"PO-Revision-Date: 2023-01-31 23:42\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgstr ""
 #: pylav/extension/red/utils/required_methods.py:46
 #, docstring
 msgid "Shows the credits and translation details for the PyLav cogs and shared code"
-msgstr ""
+msgstr "Afișează creditele și detaliile de traducere pentru rotițele PyLav și codul partajat"
 
 #: pylav/extension/red/utils/required_methods.py:50
 msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
@@ -34,59 +34,69 @@ msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
 "- https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors\n"
 "If you wish to buy me a coffee for my work, you can do so at:\n"
 "https://www.buymeacoffee.com/draper or https://github.com/sponsors/Drapersniper"
-msgstr ""
+msgstr "PyLav a fost creat de [Draper#6666](https://github.com/Drapersniper).\n\n"
+"PyLav poate fi situat în https://github.com/Drapersniper/PyLav\n"
+"PyLav-Rotițele pot fi localizate în https://github.com/Drapersniper/PyLav-Cogs\n\n"
+"Serverul de asistență PyLav poate fi găsit la https://discord.com/invite/Sjh2TSCYQB\n\n\n"
+"Puteți ajuta la traducerea PyLav contribuind la proiectul nostru Crowdin la:\n"
+"https://crowdin.com/project/pylav\n\n\n"
+"Contribuabili:\n"
+"- https://github.com/Drapersniper/PyLav/graphs/contributors\n"
+"- https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors\n"
+"Dacă doriți să-mi cumpărați o cafea pentru munca mea, puteți face acest lucru la:\n"
+"https://www.buymeacoffee.com/draper sau https://github.com/sponsors/Drapersniper"
 
 #: pylav/extension/red/utils/required_methods.py:76
 #, docstring
 msgid "Show the version of PyLav library"
-msgstr ""
+msgstr "Afișați versiunea bibliotecii PyLav"
 
 #: pylav/extension/red/utils/required_methods.py:91
 msgid "Library"
-msgstr ""
+msgstr "Bibliotecă"
 
 #: pylav/extension/red/utils/required_methods.py:92
 msgid "Version"
-msgstr ""
+msgstr "Versiune"
 
 #: pylav/extension/red/utils/required_methods.py:111
 #, docstring
 msgid "Sync the Bots slash commands"
-msgstr ""
+msgstr "Sincronizarea comenzilor Bară oblică botilor"
 
 #: pylav/extension/red/utils/required_methods.py:120
 msgid "Synced the bots slash commands"
-msgstr ""
+msgstr "Sincronizarea comenzilor bară oblică a roboților"
 
 #: pylav/extension/red/utils/required_methods.py:141
 msgid "This command requires an existing player to be run"
-msgstr ""
+msgstr "Această comandă necesită rularea unui jucător existent"
 
 #: pylav/extension/red/utils/required_methods.py:150
 msgid "PyLavPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later"
-msgstr ""
+msgstr "Rotița PyLavPlayer este în prezent temporar indisponibilă din cauza unei întreruperi cu serviciile backend, vă rugăm să încercați din nou mai târziu"
 
 #: pylav/extension/red/utils/required_methods.py:154
 msgid "No Lavalink node currently available"
-msgstr ""
+msgstr "Niciun nod Lavalink nu este disponibil în prezent"
 
 #: pylav/extension/red/utils/required_methods.py:163
 msgid "PyLavPlayer is currently unable to process tracks belonging to {feature}"
-msgstr ""
+msgstr "PyLavPlayer este în prezent în imposibilitatea de a procesa piese aparținând {feature}"
 
 #: pylav/extension/red/utils/required_methods.py:166
 msgid "No Lavalink node currently available with feature {feature}"
-msgstr ""
+msgstr "Nici un nod Lavalink disponibil în prezent cu caracteristică {feature}"
 
 #: pylav/extension/red/utils/required_methods.py:177
 msgid "This command is not available in this channel. Please use {channel}"
-msgstr ""
+msgstr "Această comandă nu este disponibilă în acest canal. Vă rugăm să utilizați {channel}"
 
 #: pylav/extension/red/utils/required_methods.py:189
 msgid "This command requires you to be a DJ"
-msgstr ""
+msgstr "Această comandă necesită să fiți DJ"
 
 #: pylav/extension/red/utils/required_methods.py:227
 msgid "PyLav is not ready - Please try again shortly"
-msgstr ""
+msgstr "PyLav nu este gata - Vă rugăm să încercați din nou în scurt timp"
 

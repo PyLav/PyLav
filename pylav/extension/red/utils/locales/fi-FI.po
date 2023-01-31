@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:28\n"
+"PO-Revision-Date: 2023-01-31 23:42\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgstr ""
 #: pylav/extension/red/utils/required_methods.py:46
 #, docstring
 msgid "Shows the credits and translation details for the PyLav cogs and shared code"
-msgstr ""
+msgstr "Näyttää PyLav-hammaspyörien krediitit ja käännöstiedot sekä jaetun koodin"
 
 #: pylav/extension/red/utils/required_methods.py:50
 msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
@@ -34,59 +34,69 @@ msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
 "- https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors\n"
 "If you wish to buy me a coffee for my work, you can do so at:\n"
 "https://www.buymeacoffee.com/draper or https://github.com/sponsors/Drapersniper"
-msgstr ""
+msgstr "PyLavin loi [Draper#6666](https://github.com/Drapersniper).\n\n"
+"PyLav voi sijaita https://github.com/Drapersniper/PyLav\n"
+"PyLav-Cogs voi sijaita https://github.com/Drapersniper/PyLav-Cogs\n\n"
+"PyLavin tukipalvelin löytyy osoitteesta https://discord.com/invite/Sjh2TSCYQB\n\n\n"
+"Voit auttaa kääntämään PyLavia osallistumalla Crowdin-projektiimme osoitteessa:\n"
+"https://crowdin.com/project/pylav\n\n\n"
+"Osallistujien:\n"
+"- https://github.com/Drapersniper/PyLav/graphs/contributors\n"
+"- https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors\n"
+"Jos haluat ostaa minulle kahvia työhöni, voit tehdä sen osoitteessa:\n"
+"https://www.buymeacoffee.com/draper tai https://github.com/sponsors/Drapersniper"
 
 #: pylav/extension/red/utils/required_methods.py:76
 #, docstring
 msgid "Show the version of PyLav library"
-msgstr ""
+msgstr "Näytä PyLav-kirjaston versio"
 
 #: pylav/extension/red/utils/required_methods.py:91
 msgid "Library"
-msgstr ""
+msgstr "Kirjasto"
 
 #: pylav/extension/red/utils/required_methods.py:92
 msgid "Version"
-msgstr ""
+msgstr "Versio"
 
 #: pylav/extension/red/utils/required_methods.py:111
 #, docstring
 msgid "Sync the Bots slash commands"
-msgstr ""
+msgstr "Bottien vinoviivakomentojen synkronointi"
 
 #: pylav/extension/red/utils/required_methods.py:120
 msgid "Synced the bots slash commands"
-msgstr ""
+msgstr "Synkronoidut bottien vinoviivakomennot"
 
 #: pylav/extension/red/utils/required_methods.py:141
 msgid "This command requires an existing player to be run"
-msgstr ""
+msgstr "Tämä komento edellyttää olemassa olevan soittimen suorittamista"
 
 #: pylav/extension/red/utils/required_methods.py:150
 msgid "PyLavPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later"
-msgstr ""
+msgstr "PyLavPlayer cog on tällä hetkellä tilapäisesti poissa käytöstä taustapalveluiden katkoksen vuoksi, yritä myöhemmin uudelleen"
 
 #: pylav/extension/red/utils/required_methods.py:154
 msgid "No Lavalink node currently available"
-msgstr ""
+msgstr "Lavalink-solmua ei ole tällä hetkellä saatavilla"
 
 #: pylav/extension/red/utils/required_methods.py:163
 msgid "PyLavPlayer is currently unable to process tracks belonging to {feature}"
-msgstr ""
+msgstr "PyLavPlayer ei tällä hetkellä pysty käsittelemään kappaleita, jotka kuuluvat {feature}"
 
 #: pylav/extension/red/utils/required_methods.py:166
 msgid "No Lavalink node currently available with feature {feature}"
-msgstr ""
+msgstr "Lavalink-solmua ei ole tällä hetkellä saatavilla ominaisuuden kanssa {feature}"
 
 #: pylav/extension/red/utils/required_methods.py:177
 msgid "This command is not available in this channel. Please use {channel}"
-msgstr ""
+msgstr "Tämä komento ei ole käytettävissä tällä kanavalla. Ole hyvä ja käytä {channel}"
 
 #: pylav/extension/red/utils/required_methods.py:189
 msgid "This command requires you to be a DJ"
-msgstr ""
+msgstr "Tämä komento edellyttää, että olet DJ"
 
 #: pylav/extension/red/utils/required_methods.py:227
 msgid "PyLav is not ready - Please try again shortly"
-msgstr ""
+msgstr "PyLav ei ole valmis - yritä pian uudelleen"
 

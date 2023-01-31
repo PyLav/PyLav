@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:28\n"
+"PO-Revision-Date: 2023-01-31 23:42\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -19,132 +19,137 @@ msgstr ""
 
 #: pylav/extension/red/ui/sources/equalizer.py:32
 msgid "Preset Name"
-msgstr ""
+msgstr "Esiasetettu nimi"
 
 #: pylav/extension/red/ui/sources/equalizer.py:33
 msgid "Author"
-msgstr ""
+msgstr "Tekijä"
 
 #: pylav/extension/red/ui/sources/generic.py:88
 msgid "Page {page_num}/{total_pages} | {num} {entries}"
-msgstr ""
+msgstr "Sivu {page_num}/{total_pages} | {num} {entries}"
 
 #: pylav/extension/red/ui/sources/generic.py:92
 msgid "entries"
-msgstr ""
+msgstr "Merkinnät"
 
 #: pylav/extension/red/ui/sources/generic.py:92
 msgid "entry"
-msgstr ""
+msgstr "merkintä"
 
 #: pylav/extension/red/ui/sources/nodes.py:50
 msgid "Page {page_num}/{total_pages} | {num} nodes"
-msgstr ""
+msgstr "Sivu {page_num}/{total_pages} | {num} Solmut"
 
 #: pylav/extension/red/ui/sources/nodes.py:94
 #: pylav/extension/red/ui/sources/nodes.py:247
 msgid "No"
-msgstr ""
+msgstr "Ei"
 
 #: pylav/extension/red/ui/sources/nodes.py:95
 #: pylav/extension/red/ui/sources/nodes.py:248
 msgid "Yes"
-msgstr ""
+msgstr "Kyllä"
 
 #: pylav/extension/red/ui/sources/nodes.py:141
 #: pylav/extension/red/ui/sources/nodes.py:294
 msgid "None / Unknown"
-msgstr ""
+msgstr "Ei mitään / tuntematon"
 
 #: pylav/extension/red/ui/sources/nodes.py:143
 #: pylav/extension/red/ui/sources/nodes.py:296
 msgid "Property"
-msgstr ""
+msgstr "Ominaisuus"
 
 #: pylav/extension/red/ui/sources/nodes.py:144
 #: pylav/extension/red/ui/sources/nodes.py:297
 msgid "Value"
-msgstr ""
+msgstr "Arvo"
 
 #: pylav/extension/red/ui/sources/nodes.py:145
 #: pylav/extension/red/ui/sources/nodes.py:298
 msgid "Latitude: {lat}\n"
 "Longitude: {lon}"
-msgstr ""
+msgstr "Leveysaste: {lat}\n"
+"Pituusaste: {lon}"
 
 #: pylav/extension/red/ui/sources/nodes.py:151
 #: pylav/extension/red/ui/sources/nodes.py:304
 msgid "Region"
-msgstr ""
+msgstr "Alue"
 
 #: pylav/extension/red/ui/sources/nodes.py:151
 #: pylav/extension/red/ui/sources/nodes.py:304
 msgid "N/A"
-msgstr ""
+msgstr "N/A"
 
 #: pylav/extension/red/ui/sources/nodes.py:152
 #: pylav/extension/red/ui/sources/nodes.py:305
 msgid "Coordinates"
-msgstr ""
+msgstr "Koordinaatit"
 
 #: pylav/extension/red/ui/sources/nodes.py:153
 #: pylav/extension/red/ui/sources/nodes.py:306
 msgid "Host"
-msgstr ""
+msgstr "Isäntä"
 
 #: pylav/extension/red/ui/sources/nodes.py:154
 #: pylav/extension/red/ui/sources/nodes.py:307
 msgid "Port"
-msgstr ""
+msgstr "Satama"
 
 #: pylav/extension/red/ui/sources/nodes.py:155
 #: pylav/extension/red/ui/sources/nodes.py:308
 msgid "Password"
-msgstr ""
+msgstr "Salasana"
 
 #: pylav/extension/red/ui/sources/nodes.py:158
 #: pylav/extension/red/ui/sources/nodes.py:311
 msgid "SSL"
-msgstr ""
+msgstr "SSL"
 
 #: pylav/extension/red/ui/sources/nodes.py:159
 #: pylav/extension/red/ui/sources/nodes.py:312
 msgid "Available"
-msgstr ""
+msgstr "Käytettävissä"
 
 #: pylav/extension/red/ui/sources/nodes.py:160
 #: pylav/extension/red/ui/sources/nodes.py:313
 msgid "Search Only"
-msgstr ""
+msgstr "Vain haku"
 
 #: pylav/extension/red/ui/sources/nodes.py:161
 #: pylav/extension/red/ui/sources/nodes.py:314
 msgid "Players\n"
 "Connected\n"
 "Active"
-msgstr ""
+msgstr "Pelaajat\n"
+"Yhdistetty\n"
+"Aktiivinen"
 
 #: pylav/extension/red/ui/sources/nodes.py:165
 #: pylav/extension/red/ui/sources/nodes.py:318
 msgid "Frames Lost"
-msgstr ""
+msgstr "Kehykset kadonneet"
 
 #: pylav/extension/red/ui/sources/nodes.py:170
 #: pylav/extension/red/ui/sources/nodes.py:323
 msgid "Uptime"
-msgstr ""
+msgstr "Päällä"
 
 #: pylav/extension/red/ui/sources/nodes.py:171
 #: pylav/extension/red/ui/sources/nodes.py:324
 msgid "CPU Load\n"
 "Lavalink\n"
 "System"
-msgstr ""
+msgstr "CPU: n kuormitus\n"
+"Lavalink\n"
+"Järjestelmä"
 
 #: pylav/extension/red/ui/sources/nodes.py:174
 #: pylav/extension/red/ui/sources/nodes.py:327
 msgid "Penalty"
-msgstr ""
+msgstr "Rangaistus"
 
 #: pylav/extension/red/ui/sources/nodes.py:175
 #: pylav/extension/red/ui/sources/nodes.py:328
@@ -153,120 +158,124 @@ msgid "Memory\n"
 "Free\n"
 "Allocated\n"
 "Reservable"
-msgstr ""
+msgstr "Muisti\n"
+"Käytetty\n"
+"Vapaa\n"
+"Kohdennettu\n"
+"Varattavissa"
 
 #: pylav/extension/red/ui/sources/nodes.py:178
 #: pylav/extension/red/ui/sources/nodes.py:331
 msgid "Features"
-msgstr ""
+msgstr "Ominaisuuksia"
 
 #: pylav/extension/red/ui/sources/nodes.py:190
 #: pylav/extension/red/ui/sources/nodes.py:343
 msgid "Page {page_num}/{total_pages} | {num} {plural}"
-msgstr ""
+msgstr "Sivu {page_num}/{total_pages} | {num} {plural}"
 
 #: pylav/extension/red/ui/sources/nodes.py:194
 #: pylav/extension/red/ui/sources/nodes.py:347
 msgid "nodes"
-msgstr ""
+msgstr "Solmut"
 
 #: pylav/extension/red/ui/sources/nodes.py:194
 #: pylav/extension/red/ui/sources/nodes.py:347
 msgid "node"
-msgstr ""
+msgstr "solmu"
 
 #: pylav/extension/red/ui/sources/player.py:64
 msgid "Nothing playing"
-msgstr ""
+msgstr "Mikään ei pelaa"
 
 #: pylav/extension/red/ui/sources/player.py:76
 msgid "Server Owner"
-msgstr ""
+msgstr "Palvelimen omistaja"
 
 #: pylav/extension/red/ui/sources/player.py:77
 msgid "Connected"
-msgstr ""
+msgstr "Yhdistetty"
 
 #: pylav/extension/red/ui/sources/player.py:78
 msgid "Users in VC"
-msgstr ""
+msgstr "VC:n käyttäjät"
 
 #: pylav/extension/red/ui/sources/player.py:80
 msgid "Queue Length"
-msgstr ""
+msgstr "Jonon pituus"
 
 #: pylav/extension/red/ui/sources/player.py:86
 msgid "Queue History Length"
-msgstr ""
+msgstr "Jonon historian pituus"
 
 #: pylav/extension/red/ui/sources/player.py:89
 msgid "track"
-msgstr ""
+msgstr "raita"
 
 #: pylav/extension/red/ui/sources/player.py:89
 msgid "tracks"
-msgstr ""
+msgstr "Kappaleita"
 
 #: pylav/extension/red/ui/sources/player.py:100
 msgid "Page {page_num}/{total_pages} | Playing in {playing} {server_translation}"
-msgstr ""
+msgstr "Sivu {page_num}/{total_pages} | Pelaaminen {playing} {server_translation}"
 
 #: pylav/extension/red/ui/sources/player.py:104
 msgid "server"
-msgstr ""
+msgstr "palvelin"
 
 #: pylav/extension/red/ui/sources/player.py:104
 msgid "servers"
-msgstr ""
+msgstr "Palvelimet"
 
 #: pylav/extension/red/ui/sources/playlist.py:52
 #: pylav/extension/red/ui/sources/playlist.py:172
 msgid "Page {page_num}/{total_pages} | {num} playlists"
-msgstr ""
+msgstr "Sivu {page_num}/{total_pages} | {num} soittolistat"
 
 #: pylav/extension/red/ui/sources/playlist.py:118
 msgid "Tracks in"
-msgstr ""
+msgstr "Kappaleet sisään"
 
 #: pylav/extension/red/ui/sources/playlist.py:123
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks\n"
-msgstr ""
+msgstr "Sivu {page_num}/{total_pages} | {num_tracks} Kappaleita\n"
 
 #: pylav/extension/red/ui/sources/playlist.py:152
 msgid "Unknown"
-msgstr ""
+msgstr "Tuntematon"
 
 #: pylav/extension/red/ui/sources/playlist.py:157
 msgid "ID: {id}"
-msgstr ""
+msgstr "HENKILÖLLISYYSTODISTUS: {id}"
 
 #: pylav/extension/red/ui/sources/playlist.py:158
 msgid "Tracks: {num}"
-msgstr ""
+msgstr "Kappaleita: {num}"
 
 #: pylav/extension/red/ui/sources/playlist.py:159
 msgid "Author: {name}"
-msgstr ""
+msgstr "Tekijä: {name}"
 
 #: pylav/extension/red/ui/sources/playlist.py:160
 msgid "Scope: {scope}\n"
-msgstr ""
+msgstr "Laajuus: {scope}\n"
 
 #: pylav/extension/red/ui/sources/playlist.py:168
 msgid "Playlists you can access in this server:"
-msgstr ""
+msgstr "Soittolistat, joita voit käyttää tällä palvelimella:"
 
 #: pylav/extension/red/ui/sources/queue.py:96
 #: pylav/extension/red/ui/sources/queue.py:142
 msgid "No active player found in server"
-msgstr ""
+msgstr "Palvelimelta ei löytynyt aktiivista soitinta"
 
 #: pylav/extension/red/ui/sources/queue.py:110
 msgid "There's nothing in recently played"
-msgstr ""
+msgstr "Äskettäin pelatuissa ei ole mitään"
 
 #: pylav/extension/red/ui/sources/queue.py:112
 #: pylav/extension/red/ui/sources/queue.py:155
 msgid "There's nothing currently being played"
-msgstr ""
+msgstr "Tällä hetkellä ei pelata mitään"
 

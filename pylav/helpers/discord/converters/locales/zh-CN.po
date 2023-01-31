@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:28\n"
+"PO-Revision-Date: 2023-01-31 23:42\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -20,19 +20,19 @@ msgstr ""
 #: pylav/helpers/discord/converters/nodes.py:40
 #: pylav/helpers/discord/converters/nodes.py:45
 msgid "Node with name or id `{arg}` not found"
-msgstr ""
+msgstr "具有名称或 ID ' 的节点{arg}' 未找到"
 
 #: pylav/helpers/discord/converters/playlists.py:41
 msgid "Playlist with name or id `{arg}` not found"
-msgstr ""
+msgstr "带有名称或 ID ' 的播放列表{arg}' 未找到"
 
 #: pylav/helpers/discord/converters/queries.py:52
 msgid "Query must be a playlist or album"
-msgstr ""
+msgstr "查询必须是播放列表或专辑"
 
 #: pylav/helpers/discord/converters/radio.py:56
 msgid "Station with name `{arg}` not found"
-msgstr ""
+msgstr "车站名称为 '{arg}' 未找到"
 
 #: pylav/helpers/discord/converters/radio.py:72
 #: pylav/helpers/discord/converters/radio.py:154
@@ -42,33 +42,33 @@ msgstr ""
 #: pylav/helpers/discord/converters/radio.py:306
 #: pylav/helpers/discord/converters/radio.py:343
 msgid "Radio Browser is disabled"
-msgstr ""
+msgstr "无线电浏览器已禁用"
 
 #: pylav/helpers/discord/converters/radio.py:92
 msgid "Unnamed"
-msgstr ""
+msgstr "无名"
 
 #: pylav/helpers/discord/converters/radio.py:138
 msgid "Tag with name `{arg}` not found"
-msgstr ""
+msgstr "带有名称的标记 '{arg}' 未找到"
 
 #: pylav/helpers/discord/converters/radio.py:178
 msgid "Language with name `{arg}` not found"
-msgstr ""
+msgstr "名称为 ' 的语言{arg}' 未找到"
 
 #: pylav/helpers/discord/converters/radio.py:216
 msgid "State with name `{arg}` not found"
-msgstr ""
+msgstr "名称为 ' 的州{arg}' 未找到"
 
 #: pylav/helpers/discord/converters/radio.py:253
 msgid "Codec with name `{arg}` not found"
-msgstr ""
+msgstr "名称为 ' 的编解码器{arg}' 未找到"
 
 #: pylav/helpers/discord/converters/radio.py:290
 msgid "Country code `{arg}` not found"
-msgstr ""
+msgstr "国家代码 '{arg}' 未找到"
 
 #: pylav/helpers/discord/converters/radio.py:327
 msgid "Country with name `{arg}` not found"
-msgstr ""
+msgstr "国家名称 '{arg}' 未找到"
 

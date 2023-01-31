@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:28\n"
+"PO-Revision-Date: 2023-01-31 23:42\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -19,38 +19,38 @@ msgstr ""
 
 #: pylav/core/client.py:888 pylav/core/client.py:923
 msgid "No available nodes!"
-msgstr ""
+msgstr "Geen beschikbare nodes!"
 
 #: pylav/core/client.py:892 pylav/core/client.py:927
 msgid "No node with {feature} functionality available!"
-msgstr ""
+msgstr "Geen node met {feature} functionaliteit beschikbaar!"
 
 #: pylav/core/client.py:1235
 msgid "No node with {query.requires_capability} functionality available!"
-msgstr ""
+msgstr "Geen node met {query.requires_capability} functionaliteit beschikbaar!"
 
 #: pylav/core/client.py:1651
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
-msgstr ""
+msgstr "Om een mixafspeellijst te genereren is een video-, gebruikers-, kanaal- of afspeellijst-ID nodig"
 
 #: pylav/core/client.py:1656
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
-msgstr ""
+msgstr "Om een mixafspeellijst te genereren is een video-, gebruikers-, kanaal- of afspeellijst-ID nodig. U hebt echter meerdere"
 
 #: pylav/core/context.py:258
 msgid "{} remaining. Type `more` to continue."
-msgstr ""
+msgstr "{} over. Typ 'meer' om door te gaan."
 
 #: pylav/core/context.py:259
 msgid "There is still 1 message"
-msgstr ""
+msgstr "Er is nog 1 bericht"
 
 #: pylav/core/context.py:261
 msgid "There are still {remaining} messages"
-msgstr ""
+msgstr "Er zijn nog steeds {remaining} Berichten"
 
 #: pylav/core/context.py:288
 #, docstring
 msgid "Does nothing"
-msgstr ""
+msgstr "Doet niets"
 

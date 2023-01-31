@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:29\n"
+"PO-Revision-Date: 2023-01-31 23:42\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgstr ""
 #: pylav/extension/red/utils/required_methods.py:46
 #, docstring
 msgid "Shows the credits and translation details for the PyLav cogs and shared code"
-msgstr ""
+msgstr "PyLav cogs और साझा कोड के लिए क्रेडिट और अनुवाद विवरण दिखाता है"
 
 #: pylav/extension/red/utils/required_methods.py:50
 msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
@@ -34,59 +34,69 @@ msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
 "- https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors\n"
 "If you wish to buy me a coffee for my work, you can do so at:\n"
 "https://www.buymeacoffee.com/draper or https://github.com/sponsors/Drapersniper"
-msgstr ""
+msgstr "PyLav [Draper #6666] (https://github.com/Drapersniper) द्वारा बनाया गया था।\n\n"
+"PyLav https://github.com/Drapersniper/PyLav में स्थित हो सकता है\n"
+"PyLav-Cogs https://github.com/Drapersniper/PyLav-Cogs में स्थित हो सकता है\n\n"
+"PyLav का समर्थन सर्वर https://discord.com/invite/Sjh2TSCYQB पर पाया जा सकता है\n\n\n"
+"आप हमारे क्राउडिन प्रोजेक्ट में योगदान करके PyLav का अनुवाद करने में मदद कर सकते हैं:\n"
+"https://crowdin.com/project/pylav\n\n\n"
+"योगदानकर्ताओं:\n"
+"- https://github.com/Drapersniper/PyLav/graphs/contributors\n"
+"- https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors\n"
+"यदि आप मेरे काम के लिए मुझे एक कॉफी खरीदना चाहते हैं, तो आप ऐसा कर सकते हैं:\n"
+"https://www.buymeacoffee.com/draper या https://github.com/sponsors/Drapersniper"
 
 #: pylav/extension/red/utils/required_methods.py:76
 #, docstring
 msgid "Show the version of PyLav library"
-msgstr ""
+msgstr "PyLav लायब्रेरी का संस्करण दिखाएँ"
 
 #: pylav/extension/red/utils/required_methods.py:91
 msgid "Library"
-msgstr ""
+msgstr "पुस्तकालय"
 
 #: pylav/extension/red/utils/required_methods.py:92
 msgid "Version"
-msgstr ""
+msgstr "संस्करण"
 
 #: pylav/extension/red/utils/required_methods.py:111
 #, docstring
 msgid "Sync the Bots slash commands"
-msgstr ""
+msgstr "बॉट्स स्लैश कमांड को सिंक्रनाइज़ करें"
 
 #: pylav/extension/red/utils/required_methods.py:120
 msgid "Synced the bots slash commands"
-msgstr ""
+msgstr "बॉट्स स्लैश कमांड को सिंक किया गया"
 
 #: pylav/extension/red/utils/required_methods.py:141
 msgid "This command requires an existing player to be run"
-msgstr ""
+msgstr "इस आदेश को किसी मौजूदा प्लेयर को चलाने की आवश्यकता है"
 
 #: pylav/extension/red/utils/required_methods.py:150
 msgid "PyLavPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later"
-msgstr ""
+msgstr "PyLavPlayer cog वर्तमान में बैकएंड सेवाओं के साथ आउटेज के कारण अस्थायी रूप से अनुपलब्ध है, कृपया बाद में पुन: प्रयास करें"
 
 #: pylav/extension/red/utils/required_methods.py:154
 msgid "No Lavalink node currently available"
-msgstr ""
+msgstr "कोई Lavalink नोड वर्तमान में उपलब्ध नहीं है"
 
 #: pylav/extension/red/utils/required_methods.py:163
 msgid "PyLavPlayer is currently unable to process tracks belonging to {feature}"
-msgstr ""
+msgstr "PyLavPlayer वर्तमान में किससे संबंधित ट्रैक संसाधित करने में असमर्थ है? {feature}"
 
 #: pylav/extension/red/utils/required_methods.py:166
 msgid "No Lavalink node currently available with feature {feature}"
-msgstr ""
+msgstr "कोई Lavalink नोड वर्तमान में सुविधा के साथ उपलब्ध नहीं है {feature}"
 
 #: pylav/extension/red/utils/required_methods.py:177
 msgid "This command is not available in this channel. Please use {channel}"
-msgstr ""
+msgstr "यह आदेश इस चैनल में उपलब्ध नहीं है. कृपया उपयोग करें {channel}"
 
 #: pylav/extension/red/utils/required_methods.py:189
 msgid "This command requires you to be a DJ"
-msgstr ""
+msgstr "इस आदेश के लिए आपको एक डीजे होने की आवश्यकता है"
 
 #: pylav/extension/red/utils/required_methods.py:227
 msgid "PyLav is not ready - Please try again shortly"
-msgstr ""
+msgstr "PyLav तैयार नहीं है - कृपया शीघ्र ही पुन: प्रयास करें"
 

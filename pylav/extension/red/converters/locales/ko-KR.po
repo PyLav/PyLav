@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:28\n"
+"PO-Revision-Date: 2023-01-31 23:42\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -19,41 +19,41 @@ msgstr ""
 
 #: pylav/extension/red/converters/equalizer.py:47
 msgid "Bass boost with name `{arg}` not found"
-msgstr ""
+msgstr "이름으로베이스 부스트 '{arg}' 찾을 수 없음"
 
 #: pylav/extension/red/converters/equalizer.py:61
 msgid "Maximum"
-msgstr ""
+msgstr "최대"
 
 #: pylav/extension/red/converters/equalizer.py:62
 msgid "Insane"
-msgstr ""
+msgstr "미친"
 
 #: pylav/extension/red/converters/equalizer.py:63
 msgid "Extreme"
-msgstr ""
+msgstr "극도"
 
 #: pylav/extension/red/converters/equalizer.py:64
 msgid "Very High"
-msgstr ""
+msgstr "매우 높음"
 
 #: pylav/extension/red/converters/equalizer.py:65
 msgid "High"
-msgstr ""
+msgstr "높다"
 
 #: pylav/extension/red/converters/equalizer.py:66
 msgid "Medium"
-msgstr ""
+msgstr "보통"
 
 #: pylav/extension/red/converters/equalizer.py:67
 msgid "Fine Tuned"
-msgstr ""
+msgstr "미세 조정"
 
 #: pylav/extension/red/converters/equalizer.py:68
 msgid "Cut-off"
-msgstr ""
+msgstr "컷오프"
 
 #: pylav/extension/red/converters/equalizer.py:69
 msgid "Off"
-msgstr ""
+msgstr "꺼짐"
 

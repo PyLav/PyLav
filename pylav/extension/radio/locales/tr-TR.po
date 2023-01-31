@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:28\n"
+"PO-Revision-Date: 2023-01-31 23:42\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -22,5 +22,5 @@ msgstr ""
 #: pylav/extension/radio/utils.py:210 pylav/extension/radio/utils.py:216
 #: pylav/extension/radio/utils.py:223 pylav/extension/radio/utils.py:518
 msgid "Unnamed"
-msgstr ""
+msgstr "İsimsiz"
 
