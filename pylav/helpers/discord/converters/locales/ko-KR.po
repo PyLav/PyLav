@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 20:21+0000\n"
-"PO-Revision-Date: 2023-01-31 21:06\n"
+"PO-Revision-Date: 2023-01-31 22:05\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -20,19 +20,19 @@ msgstr ""
 #: pylav/helpers/discord/converters/nodes.py:40
 #: pylav/helpers/discord/converters/nodes.py:45
 msgid "Node with name or id `{arg}` not found"
-msgstr ""
+msgstr "이름 또는 ID가 있는 노드 '{arg}' 찾을 수 없음"
 
 #: pylav/helpers/discord/converters/playlists.py:41
 msgid "Playlist with name or id `{arg}` not found"
-msgstr ""
+msgstr "이름 또는 ID가 있는 재생목록 '{arg}' 찾을 수 없음"
 
 #: pylav/helpers/discord/converters/queries.py:52
 msgid "Query must be a playlist or album"
-msgstr ""
+msgstr "쿼리는 재생 목록 또는 앨범이어야 합니다."
 
 #: pylav/helpers/discord/converters/radio.py:56
 msgid "Station with name `{arg}` not found"
-msgstr ""
+msgstr "이름이 '인 역{arg}' 찾을 수 없음"
 
 #: pylav/helpers/discord/converters/radio.py:72
 #: pylav/helpers/discord/converters/radio.py:154
@@ -42,33 +42,33 @@ msgstr ""
 #: pylav/helpers/discord/converters/radio.py:306
 #: pylav/helpers/discord/converters/radio.py:343
 msgid "Radio Browser is disabled"
-msgstr ""
+msgstr "라디오 브라우저가 비활성화되었습니다."
 
 #: pylav/helpers/discord/converters/radio.py:92
 msgid "Unnamed"
-msgstr ""
+msgstr "명명 되지 않은"
 
 #: pylav/helpers/discord/converters/radio.py:138
 msgid "Tag with name `{arg}` not found"
-msgstr ""
+msgstr "이름이 '인 태그{arg}' 찾을 수 없음"
 
 #: pylav/helpers/discord/converters/radio.py:178
 msgid "Language with name `{arg}` not found"
-msgstr ""
+msgstr "이름이 '인 언어{arg}' 찾을 수 없음"
 
 #: pylav/helpers/discord/converters/radio.py:216
 msgid "State with name `{arg}` not found"
-msgstr ""
+msgstr "이름이 '인 상태{arg}' 찾을 수 없음"
 
 #: pylav/helpers/discord/converters/radio.py:253
 msgid "Codec with name `{arg}` not found"
-msgstr ""
+msgstr "이름이 '인 코덱{arg}' 찾을 수 없음"
 
 #: pylav/helpers/discord/converters/radio.py:290
 msgid "Country code `{arg}` not found"
-msgstr ""
+msgstr "국가 코드 '{arg}' 찾을 수 없음"
 
 #: pylav/helpers/discord/converters/radio.py:327
 msgid "Country with name `{arg}` not found"
-msgstr ""
+msgstr "이름이 '인 국가{arg}' 찾을 수 없음"
 

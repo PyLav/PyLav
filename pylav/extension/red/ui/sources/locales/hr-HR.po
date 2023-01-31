@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 20:21+0000\n"
-"PO-Revision-Date: 2023-01-31 21:06\n"
+"PO-Revision-Date: 2023-01-31 22:05\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: pylav/extension/red/ui/sources/equalizer.py:32
 msgid "Preset Name"
-msgstr ""
+msgstr "Unaprijed postavljeni naziv"
 
 #: pylav/extension/red/ui/sources/equalizer.py:33
 msgid "Author"
@@ -39,7 +39,7 @@ msgstr "unos"
 
 #: pylav/extension/red/ui/sources/nodes.py:50
 msgid "Page {page_num}/{total_pages} | {num} nodes"
-msgstr ""
+msgstr "Stranica {page_num}/{total_pages} | {num} Čvorova"
 
 #: pylav/extension/red/ui/sources/nodes.py:94
 #: pylav/extension/red/ui/sources/nodes.py:247
@@ -59,12 +59,12 @@ msgstr "Ništa / Nepoznato"
 #: pylav/extension/red/ui/sources/nodes.py:143
 #: pylav/extension/red/ui/sources/nodes.py:296
 msgid "Property"
-msgstr ""
+msgstr "Svojstvo"
 
 #: pylav/extension/red/ui/sources/nodes.py:144
 #: pylav/extension/red/ui/sources/nodes.py:297
 msgid "Value"
-msgstr ""
+msgstr "Vrijednost"
 
 #: pylav/extension/red/ui/sources/nodes.py:145
 #: pylav/extension/red/ui/sources/nodes.py:298
@@ -91,17 +91,17 @@ msgstr "Koordinate"
 #: pylav/extension/red/ui/sources/nodes.py:153
 #: pylav/extension/red/ui/sources/nodes.py:306
 msgid "Host"
-msgstr ""
+msgstr "Domaćin"
 
 #: pylav/extension/red/ui/sources/nodes.py:154
 #: pylav/extension/red/ui/sources/nodes.py:307
 msgid "Port"
-msgstr ""
+msgstr "Luka"
 
 #: pylav/extension/red/ui/sources/nodes.py:155
 #: pylav/extension/red/ui/sources/nodes.py:308
 msgid "Password"
-msgstr ""
+msgstr "Lozinka"
 
 #: pylav/extension/red/ui/sources/nodes.py:158
 #: pylav/extension/red/ui/sources/nodes.py:311
@@ -130,7 +130,7 @@ msgstr "Playeri\n"
 #: pylav/extension/red/ui/sources/nodes.py:165
 #: pylav/extension/red/ui/sources/nodes.py:318
 msgid "Frames Lost"
-msgstr ""
+msgstr "Izgubljeni okviri"
 
 #: pylav/extension/red/ui/sources/nodes.py:170
 #: pylav/extension/red/ui/sources/nodes.py:323
@@ -142,7 +142,9 @@ msgstr "Ukupno vrijeme rada"
 msgid "CPU Load\n"
 "Lavalink\n"
 "System"
-msgstr ""
+msgstr "Učitavanje PROCESOR-a\n"
+"Lavalink\n"
+"Sustav"
 
 #: pylav/extension/red/ui/sources/nodes.py:174
 #: pylav/extension/red/ui/sources/nodes.py:327
@@ -156,12 +158,16 @@ msgid "Memory\n"
 "Free\n"
 "Allocated\n"
 "Reservable"
-msgstr ""
+msgstr "Memorija\n"
+"Iskorišten\n"
+"Slobodan\n"
+"Dodijeliti\n"
+"Može se rezervirati"
 
 #: pylav/extension/red/ui/sources/nodes.py:178
 #: pylav/extension/red/ui/sources/nodes.py:331
 msgid "Features"
-msgstr ""
+msgstr "Značajkama"
 
 #: pylav/extension/red/ui/sources/nodes.py:190
 #: pylav/extension/red/ui/sources/nodes.py:343
@@ -171,12 +177,12 @@ msgstr "Stranica {page_num}/{total_pages} | {num} {plural}"
 #: pylav/extension/red/ui/sources/nodes.py:194
 #: pylav/extension/red/ui/sources/nodes.py:347
 msgid "nodes"
-msgstr ""
+msgstr "Čvorova"
 
 #: pylav/extension/red/ui/sources/nodes.py:194
 #: pylav/extension/red/ui/sources/nodes.py:347
 msgid "node"
-msgstr ""
+msgstr "čvor"
 
 #: pylav/extension/red/ui/sources/player.py:64
 msgid "Nothing playing"
@@ -188,7 +194,7 @@ msgstr "Vlasnik servera"
 
 #: pylav/extension/red/ui/sources/player.py:77
 msgid "Connected"
-msgstr ""
+msgstr "Povezan"
 
 #: pylav/extension/red/ui/sources/player.py:78
 msgid "Users in VC"
@@ -200,7 +206,7 @@ msgstr "Duljina reda čekanja"
 
 #: pylav/extension/red/ui/sources/player.py:86
 msgid "Queue History Length"
-msgstr ""
+msgstr "Duljina povijesti reda čekanja"
 
 #: pylav/extension/red/ui/sources/player.py:89
 msgid "track"
@@ -212,7 +218,7 @@ msgstr "pjesme"
 
 #: pylav/extension/red/ui/sources/player.py:100
 msgid "Page {page_num}/{total_pages} | Playing in {playing} {server_translation}"
-msgstr ""
+msgstr "Stranica {page_num}/{total_pages} | Igranje u {playing} {server_translation}"
 
 #: pylav/extension/red/ui/sources/player.py:104
 msgid "server"
@@ -229,11 +235,11 @@ msgstr "Stranica {page_num}/{total_pages} | {num} popisa za reprodukciju"
 
 #: pylav/extension/red/ui/sources/playlist.py:118
 msgid "Tracks in"
-msgstr ""
+msgstr "Zapisi u"
 
 #: pylav/extension/red/ui/sources/playlist.py:123
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks\n"
-msgstr ""
+msgstr "Stranica {page_num}/{total_pages} | {num_tracks} Pjesme\n"
 
 #: pylav/extension/red/ui/sources/playlist.py:152
 msgid "Unknown"
@@ -262,14 +268,14 @@ msgstr "Popisi za reprodukciju kojima možete pristupiti na ovom serveru:"
 #: pylav/extension/red/ui/sources/queue.py:96
 #: pylav/extension/red/ui/sources/queue.py:142
 msgid "No active player found in server"
-msgstr ""
+msgstr "Na poslužitelju nije pronađen aktivni uređaj"
 
 #: pylav/extension/red/ui/sources/queue.py:110
 msgid "There's nothing in recently played"
-msgstr ""
+msgstr "Nema ništa u zadnje vrijeme."
 
 #: pylav/extension/red/ui/sources/queue.py:112
 #: pylav/extension/red/ui/sources/queue.py:155
 msgid "There's nothing currently being played"
-msgstr ""
+msgstr "Trenutno se ništa ne reproducira."
 

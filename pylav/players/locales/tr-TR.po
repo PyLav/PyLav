@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 20:21+0000\n"
-"PO-Revision-Date: 2023-01-31 21:06\n"
+"PO-Revision-Date: 2023-01-31 22:05\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -31,49 +31,49 @@ msgstr "Şu anda çalma geçmişinde hiçbir parça yok"
 
 #: pylav/players/player.py:1869
 msgid "Current node has the Volume filter functionality disabled"
-msgstr ""
+msgstr "Geçerli düğümde Birim filtresi işlevi devre dışı bırakılmış"
 
 #: pylav/players/player.py:1891 pylav/players/player.py:2067
 #: pylav/players/player.py:2122
 msgid "Current node has the Equalizer functionality disabled"
-msgstr ""
+msgstr "Geçerli düğümde Ekolayzır işlevi devre dışı bırakılmış"
 
 #: pylav/players/player.py:1911
 msgid "Current node has the Karaoke functionality disabled"
-msgstr ""
+msgstr "Geçerli düğümde Karaoke işlevi devre dışı bırakılmış"
 
 #: pylav/players/player.py:1931 pylav/players/player.py:2069
 #: pylav/players/player.py:2124
 msgid "Current node has the Timescale functionality disabled"
-msgstr ""
+msgstr "Geçerli düğümde Zaman Ölçeği işlevi devre dışı bırakılmış"
 
 #: pylav/players/player.py:1951
 msgid "Current node has the Tremolo functionality disabled"
-msgstr ""
+msgstr "Geçerli düğümde Tremolo işlevi devre dışı bırakılmış"
 
 #: pylav/players/player.py:1971
 msgid "Current node has the Vibrato functionality disabled"
-msgstr ""
+msgstr "Geçerli düğümde Vibrato işlevi devre dışı bırakılmış"
 
 #: pylav/players/player.py:1991
 msgid "Current node has the Rotation functionality disabled"
-msgstr ""
+msgstr "Geçerli düğümde Döndürme işlevi devre dışı bırakılmış"
 
 #: pylav/players/player.py:2011
 msgid "Current node has the Distortion functionality disabled"
-msgstr ""
+msgstr "Geçerli düğümde Bozulma işlevi devre dışı bırakılmış"
 
 #: pylav/players/player.py:2031
 msgid "Current node has the LowPass functionality disabled"
-msgstr ""
+msgstr "Geçerli düğümde LowPass işlevi devre dışı bırakılmış"
 
 #: pylav/players/player.py:2051
 msgid "Current node has the Echo functionality disabled"
-msgstr ""
+msgstr "Geçerli düğümde Yankı işlevi devre dışı bırakılmış"
 
 #: pylav/players/player.py:2181
 msgid "Current node has the ChannelMix functionality disabled"
-msgstr ""
+msgstr "Geçerli düğümde ChannelMix işlevi devre dışı bırakılmış"
 
 #: pylav/players/player.py:2441 pylav/players/player.py:2486
 #: pylav/players/player.py:2501
@@ -111,7 +111,7 @@ msgstr "Sıradaki Parça"
 
 #: pylav/players/player.py:2515
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
-msgstr ""
+msgstr "{track_count} Parça {queue_total_duration} Kalan\n"
 
 #: pylav/players/player.py:2519 pylav/players/player.py:2615
 msgid "{translation}: {repeat_emoji}"
@@ -151,7 +151,7 @@ msgstr "Oynuyor"
 
 #: pylav/players/player.py:2600
 msgid "Queue order may not be accurate due to auto-shuffle being enabled"
-msgstr ""
+msgstr "Otomatik karıştırma etkinleştirildiği için kuyruk siparişi doğru olmayabilir"
 
 #: pylav/players/player.py:2606
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
