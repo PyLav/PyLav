@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-30 19:01+0000\n"
-"PO-Revision-Date: 2023-01-30 19:12\n"
+"POT-Creation-Date: 2023-01-31 17:01+0000\n"
+"PO-Revision-Date: 2023-01-31 17:15\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -25,135 +25,135 @@ msgstr "没有可用的节点！"
 msgid "Music in {count} servers"
 msgstr "{count} 服务器中的音乐"
 
-#: pylav/players/player.py:1178
+#: pylav/players/player.py:1176
 msgid "There are no tracks currently in the player history"
 msgstr "当前没有曲目在播放器历史记录"
 
-#: pylav/players/player.py:1871
+#: pylav/players/player.py:1869
 msgid "Current node has the Volume filter functionality disabled"
 msgstr "当前节点禁用了音量过滤功能"
 
-#: pylav/players/player.py:1893 pylav/players/player.py:2069
-#: pylav/players/player.py:2124
+#: pylav/players/player.py:1891 pylav/players/player.py:2067
+#: pylav/players/player.py:2122
 msgid "Current node has the Equalizer functionality disabled"
 msgstr "当前节点禁用均衡器功能"
 
-#: pylav/players/player.py:1913
+#: pylav/players/player.py:1911
 msgid "Current node has the Karaoke functionality disabled"
 msgstr "当前节点禁用了Karaoke功能"
 
-#: pylav/players/player.py:1933 pylav/players/player.py:2071
-#: pylav/players/player.py:2126
+#: pylav/players/player.py:1931 pylav/players/player.py:2069
+#: pylav/players/player.py:2124
 msgid "Current node has the Timescale functionality disabled"
 msgstr "当前节点已禁用 Timescale 功能"
 
-#: pylav/players/player.py:1953
+#: pylav/players/player.py:1951
 msgid "Current node has the Tremolo functionality disabled"
 msgstr "当前节点已禁用 Tremolo 功能"
 
-#: pylav/players/player.py:1973
+#: pylav/players/player.py:1971
 msgid "Current node has the Vibrato functionality disabled"
 msgstr "当前节点禁用了振动功能"
 
-#: pylav/players/player.py:1993
+#: pylav/players/player.py:1991
 msgid "Current node has the Rotation functionality disabled"
 msgstr "当前节点禁用了旋转功能"
 
-#: pylav/players/player.py:2013
+#: pylav/players/player.py:2011
 msgid "Current node has the Distortion functionality disabled"
 msgstr "当前节点禁用了失真功能"
 
-#: pylav/players/player.py:2033
+#: pylav/players/player.py:2031
 msgid "Current node has the LowPass functionality disabled"
 msgstr "当前节点已禁用 LowPass 功能"
 
-#: pylav/players/player.py:2053
+#: pylav/players/player.py:2051
 msgid "Current node has the Echo functionality disabled"
 msgstr "当前节点禁用了 Echo 功能"
 
-#: pylav/players/player.py:2183
+#: pylav/players/player.py:2181
 msgid "Current node has the ChannelMix functionality disabled"
 msgstr "当前节点禁用了通道Mix功能"
 
-#: pylav/players/player.py:2443 pylav/players/player.py:2488
-#: pylav/players/player.py:2503
+#: pylav/players/player.py:2441 pylav/players/player.py:2486
+#: pylav/players/player.py:2501
 msgid "LIVE"
 msgstr "直线"
 
-#: pylav/players/player.py:2456
+#: pylav/players/player.py:2454
 msgid "Now Playing in"
 msgstr "正在播放"
 
-#: pylav/players/player.py:2474 pylav/players/player.py:2583
+#: pylav/players/player.py:2472 pylav/players/player.py:2581
 msgid "Currently livestreaming"
 msgstr "当前直播中"
 
-#: pylav/players/player.py:2476
+#: pylav/players/player.py:2474
 msgid "Playing: "
 msgstr "正在播放： "
 
-#: pylav/players/player.py:2479 pylav/players/player.py:2495
-#: pylav/players/player.py:2510 pylav/players/player.py:2589
+#: pylav/players/player.py:2477 pylav/players/player.py:2493
+#: pylav/players/player.py:2508 pylav/players/player.py:2587
 msgid "Requester"
 msgstr "请求者"
 
-#: pylav/players/player.py:2491 pylav/players/player.py:2506
+#: pylav/players/player.py:2489 pylav/players/player.py:2504
 msgid "Duration"
 msgstr "期限"
 
-#: pylav/players/player.py:2497
+#: pylav/players/player.py:2495
 msgid "Previous Track"
 msgstr "上一曲目"
 
-#: pylav/players/player.py:2512
+#: pylav/players/player.py:2510
 msgid "Next Track"
 msgstr "下一曲目"
 
-#: pylav/players/player.py:2517
+#: pylav/players/player.py:2515
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
 msgstr "{track_count} 首歌曲, {queue_total_duration} 余下\n"
 
-#: pylav/players/player.py:2521 pylav/players/player.py:2617
+#: pylav/players/player.py:2519 pylav/players/player.py:2615
 msgid "{translation}: {repeat_emoji}"
 msgstr "{translation}: {repeat_emoji}"
 
-#: pylav/players/player.py:2521 pylav/players/player.py:2617
+#: pylav/players/player.py:2519 pylav/players/player.py:2615
 msgid "Repeating"
 msgstr "重复"
 
-#: pylav/players/player.py:2522 pylav/players/player.py:2618
+#: pylav/players/player.py:2520 pylav/players/player.py:2616
 msgid "{space}{translation}: {autoplay_emoji}"
 msgstr "{space}{translation}: {autoplay_emoji}"
 
-#: pylav/players/player.py:2523 pylav/players/player.py:2619
+#: pylav/players/player.py:2521 pylav/players/player.py:2617
 msgid "Auto Play"
 msgstr "自动播放"
 
-#: pylav/players/player.py:2525 pylav/players/player.py:2621
+#: pylav/players/player.py:2523 pylav/players/player.py:2619
 msgid "{space}{translation}: {volume}%"
 msgstr "{space}{translation}: {volume}%"
 
-#: pylav/players/player.py:2526 pylav/players/player.py:2622
+#: pylav/players/player.py:2524 pylav/players/player.py:2620
 msgid "Volume"
 msgstr "音量"
 
-#: pylav/players/player.py:2566
+#: pylav/players/player.py:2564
 msgid "Recently Played for"
 msgstr "最近玩过的"
 
-#: pylav/players/player.py:2566
+#: pylav/players/player.py:2564
 msgid "Queue for"
 msgstr "队列为"
 
-#: pylav/players/player.py:2586
+#: pylav/players/player.py:2584
 msgid "Playing"
 msgstr "正在播放"
 
-#: pylav/players/player.py:2602
+#: pylav/players/player.py:2600
 msgid "Queue order may not be accurate due to auto-shuffle being enabled"
 msgstr ""
 
-#: pylav/players/player.py:2608
+#: pylav/players/player.py:2606
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
 msgstr "页面 {current_page}/{total_pages} | {track_number} 首歌曲, 剩余 {queue_total_duration}\n"
 

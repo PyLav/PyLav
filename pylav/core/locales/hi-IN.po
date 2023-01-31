@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-30 19:01+0000\n"
-"PO-Revision-Date: 2023-01-30 19:12\n"
+"POT-Creation-Date: 2023-01-31 17:01+0000\n"
+"PO-Revision-Date: 2023-01-31 17:15\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "MIME-Version: 1.0\n"
@@ -29,11 +29,11 @@ msgstr "कार्यात्मकता वाला कोई नोड �
 msgid "No node with {query.requires_capability} functionality available!"
 msgstr "कार्यक्षमता वाला कोई नोड उपलब्ध नहीं है!"
 
-#: pylav/core/client.py:1649
+#: pylav/core/client.py:1651
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
 msgstr "मिक्स प्लेलिस्ट बनाने के लिए एक वीडियो, यूजर, चैनल या प्लेलिस्ट आईडी जरूरी है"
 
-#: pylav/core/client.py:1654
+#: pylav/core/client.py:1656
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
 msgstr "मिक्स प्लेलिस्ट बनाने के लिए एक वीडियो, यूजर, चैनल या प्लेलिस्ट आईडी जरूरी है। हालाँकि, आपने एकाधिक प्रदान किए"
 
