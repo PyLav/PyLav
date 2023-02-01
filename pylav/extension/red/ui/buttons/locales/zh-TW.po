@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:18\n"
+"PO-Revision-Date: 2023-02-01 00:33\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -145,7 +145,8 @@ msgstr "這是您的播放列表：{name}{extras}"
 #: pylav/extension/red/ui/buttons/playlist.py:128
 msgid "\n"
 " (compressed using gzip to make it possible to send via Discord - you can use <https://gzip.swimburger.net/> to decompress it)"
-msgstr "（使用 gzip 壓縮以便通過 Discord 發送 - 您可以使用 <https://gzip.swimburger.net/> 來解壓縮它）"
+msgstr "\n"
+"（使用 gzip 壓縮以便通過 Discord 發送 - 您可以使用 <https://gzip.swimburger.net/> 來解壓縮它）"
 
 #: pylav/extension/red/ui/buttons/playlist.py:133
 msgid "\n"
