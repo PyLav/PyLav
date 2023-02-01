@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -20,19 +20,19 @@ msgstr ""
 #: pylav/helpers/discord/converters/nodes.py:40
 #: pylav/helpers/discord/converters/nodes.py:45
 msgid "Node with name or id `{arg}` not found"
-msgstr "名前または ID を持つノード '{arg}' が見つかりません"
+msgstr "名前または id `{arg}`のノードが見つかりません"
 
 #: pylav/helpers/discord/converters/playlists.py:41
 msgid "Playlist with name or id `{arg}` not found"
-msgstr "名前またはIDを持つプレイリスト '{arg}' が見つかりません"
+msgstr "名前またはID付きのプレイリストが見つかりません `{arg}`"
 
 #: pylav/helpers/discord/converters/queries.py:52
 msgid "Query must be a playlist or album"
-msgstr "クエリはプレイリストまたはアルバムである必要があります"
+msgstr "クエリはプレイリストまたはアルバムでなければなりません"
 
 #: pylav/helpers/discord/converters/radio.py:56
 msgid "Station with name `{arg}` not found"
-msgstr "名前の付いた駅 '{arg}' が見つかりません"
+msgstr "ステーション名`{arg}`が見つかりません"
 
 #: pylav/helpers/discord/converters/radio.py:72
 #: pylav/helpers/discord/converters/radio.py:154
@@ -50,25 +50,25 @@ msgstr "無名"
 
 #: pylav/helpers/discord/converters/radio.py:138
 msgid "Tag with name `{arg}` not found"
-msgstr "名前の付いたタグ '{arg}' が見つかりません"
+msgstr "`{arg}`という名前のタグが見つかりません"
 
 #: pylav/helpers/discord/converters/radio.py:178
 msgid "Language with name `{arg}` not found"
-msgstr "名前の付いた言語 '{arg}' が見つかりません"
+msgstr "`{arg}`という名前の言語が見つかりません"
 
 #: pylav/helpers/discord/converters/radio.py:216
 msgid "State with name `{arg}` not found"
-msgstr "名前の付いた状態 '{arg}' が見つかりません"
+msgstr "`{arg}`の名前の状態が見つかりません"
 
 #: pylav/helpers/discord/converters/radio.py:253
 msgid "Codec with name `{arg}` not found"
-msgstr "名前の付いたコーデック '{arg}' が見つかりません"
+msgstr "名前`{arg}`のコーデックが見つかりません"
 
 #: pylav/helpers/discord/converters/radio.py:290
 msgid "Country code `{arg}` not found"
-msgstr "国コード '{arg}' が見つかりません"
+msgstr "国コード`{arg}`が見つかりません"
 
 #: pylav/helpers/discord/converters/radio.py:327
 msgid "Country with name `{arg}` not found"
-msgstr "名前の付いた国 '{arg}' が見つかりません"
+msgstr "`{arg}`の名前の国が見つかりません"
 

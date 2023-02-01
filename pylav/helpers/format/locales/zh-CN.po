@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:18\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -31,15 +31,15 @@ msgstr "分钟"
 
 #: pylav/helpers/format/strings.py:59
 msgid "second"
-msgstr "第二"
+msgstr "秒"
 
 #: pylav/helpers/format/strings.py:60
 msgid "day"
-msgstr "日"
+msgstr "天"
 
 #: pylav/helpers/format/strings.py:61
 msgid "days"
-msgstr "日"
+msgstr "天"
 
 #: pylav/helpers/format/strings.py:62
 msgid "hours"
@@ -47,7 +47,7 @@ msgstr "小时"
 
 #: pylav/helpers/format/strings.py:63
 msgid "minutes"
-msgstr "纪要"
+msgstr "分钟"
 
 #: pylav/helpers/format/strings.py:64
 msgid "seconds"

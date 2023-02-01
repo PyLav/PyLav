@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "MIME-Version: 1.0\n"
@@ -26,7 +26,7 @@ msgstr "Du har inte behörighet att interagera med detta"
 
 #: pylav/extension/red/ui/menus/nodes.py:60
 msgid "Enter the domain or IP address of the host"
-msgstr "Ange värdens domän eller IP-adress"
+msgstr "Ange domänen eller IP-adressen för värden"
 
 #: pylav/extension/red/ui/menus/nodes.py:61
 #: pylav/extension/red/ui/menus/nodes.py:499
@@ -35,7 +35,7 @@ msgstr "Värd"
 
 #: pylav/extension/red/ui/menus/nodes.py:68
 msgid "Enter the host port to connect to"
-msgstr "Ange värdporten som du vill ansluta till"
+msgstr "Ange värdporten för att ansluta till"
 
 #: pylav/extension/red/ui/menus/nodes.py:69
 #: pylav/extension/red/ui/menus/nodes.py:507
@@ -53,7 +53,7 @@ msgstr "Lösenord"
 
 #: pylav/extension/red/ui/menus/nodes.py:84
 msgid "Enter an easy to know name for the node"
-msgstr "Ange ett lätt att veta namn för noden"
+msgstr "Ange ett lättkänt namn för noden"
 
 #: pylav/extension/red/ui/menus/nodes.py:85
 #: pylav/extension/red/ui/menus/nodes.py:523
@@ -72,22 +72,22 @@ msgstr "Timeout"
 #: pylav/extension/red/ui/menus/nodes.py:109
 #: pylav/extension/red/ui/menus/nodes.py:560
 msgid "Source to disable"
-msgstr "Källa för att inaktivera"
+msgstr "Källa att inaktivera"
 
 #: pylav/extension/red/ui/menus/nodes.py:222
 #: pylav/extension/red/ui/menus/nodes.py:671
 msgid "Name set to {name}"
-msgstr "Namn inställt på {name}"
+msgstr "Namn satt till {name}"
 
 #: pylav/extension/red/ui/menus/nodes.py:235
 #: pylav/extension/red/ui/menus/nodes.py:684
 msgid "Password set to {password}"
-msgstr "Lösenord inställt på {password}"
+msgstr "Lösenord satt till {password}"
 
 #: pylav/extension/red/ui/menus/nodes.py:253
 #: pylav/extension/red/ui/menus/nodes.py:702
 msgid "Host set to {host}"
-msgstr "Värd inställd på {host}"
+msgstr "Värd inställd till {host}"
 
 #: pylav/extension/red/ui/menus/nodes.py:270
 #: pylav/extension/red/ui/menus/nodes.py:719
@@ -97,21 +97,21 @@ msgstr "Ogiltig port"
 #: pylav/extension/red/ui/menus/nodes.py:278
 #: pylav/extension/red/ui/menus/nodes.py:727
 msgid "Port set to {port}"
-msgstr "Port inställd på {port}"
+msgstr "Port inställd till {port}"
 
 #: pylav/extension/red/ui/menus/nodes.py:295
 #: pylav/extension/red/ui/menus/nodes.py:744
 msgid "Invalid timeout, it must be a number in seconds"
-msgstr "Ogiltig timeout, det måste vara ett tal i sekunder"
+msgstr "Ogiltig timeout, måste vara ett nummer i sekunder"
 
 #: pylav/extension/red/ui/menus/nodes.py:303
 #: pylav/extension/red/ui/menus/nodes.py:752
 msgid "Timeout set to {timeout} seconds"
-msgstr "Timeout inställd på {timeout} Sekunder"
+msgstr "Timeout inställd på {timeout} sekunder"
 
 #: pylav/extension/red/ui/menus/nodes.py:498
 msgid "Change the domain or IP address of the host"
-msgstr "Ändra värdens domän eller IP-adress"
+msgstr "Ändra domänen eller IP-adressen för värden"
 
 #: pylav/extension/red/ui/menus/nodes.py:506
 msgid "Change the host port to connect to"
@@ -127,7 +127,7 @@ msgstr "Ändra namnet på den här noden"
 
 #: pylav/extension/red/ui/menus/nodes.py:530
 msgid "Enter the new timeout for this node"
-msgstr "Ange den nya tidsgränsen för den här noden"
+msgstr "Ange ny timeout för den här noden"
 
 #: pylav/extension/red/ui/menus/player.py:95
 msgid "selected"
@@ -148,7 +148,7 @@ msgstr "Inte ansluten någonstans"
 #: pylav/extension/red/ui/menus/playlist.py:187
 #: pylav/extension/red/ui/menus/playlist.py:322
 msgid "Please enter the playlist URL"
-msgstr "Ange spellistans URL"
+msgstr "Ange URL till spellistan"
 
 #: pylav/extension/red/ui/menus/playlist.py:188
 #: pylav/extension/red/ui/menus/playlist.py:323
@@ -157,20 +157,20 @@ msgstr "URL för spellista"
 
 #: pylav/extension/red/ui/menus/playlist.py:194
 msgid "Please enter the playlist name"
-msgstr "Ange spellistans namn"
+msgstr "Ange namnet på spellistan"
 
 #: pylav/extension/red/ui/menus/playlist.py:195
 #: pylav/extension/red/ui/menus/playlist.py:330
 msgid "Playlist Name"
-msgstr "Spellistans namn"
+msgstr "Namn på spellista"
 
 #: pylav/extension/red/ui/menus/playlist.py:329
 msgid "Please enter the new playlist name"
-msgstr "Ange det nya spellistans namn"
+msgstr "Ange det nya namnet på spellistan"
 
 #: pylav/extension/red/ui/menus/playlist.py:336
 msgid "What query to add to the playlist"
-msgstr "Vilken fråga du ska lägga till i spellistan"
+msgstr "Vilken fråga att lägga till i spellistan"
 
 #: pylav/extension/red/ui/menus/playlist.py:337
 #: pylav/extension/red/ui/menus/playlist.py:345
@@ -179,13 +179,13 @@ msgstr "Fråga"
 
 #: pylav/extension/red/ui/menus/playlist.py:344
 msgid "What query to remove from the playlist"
-msgstr "Vilken fråga som ska tas bort från spellistan"
+msgstr "Vilken fråga att ta bort från spellistan"
 
 #: pylav/extension/red/ui/menus/queue.py:458
 msgid "Select Track To Remove"
-msgstr "Välj Spår att ta bort"
+msgstr "Välj spår för att ta bort"
 
 #: pylav/extension/red/ui/menus/queue.py:460
 msgid "Select Track To Play Now"
-msgstr "Välj Spår att spela nu"
+msgstr "Välj spår för att spela nu"
 

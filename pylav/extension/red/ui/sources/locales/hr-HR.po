@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:18\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
 "MIME-Version: 1.0\n"
@@ -70,8 +70,8 @@ msgstr "Vrijednost"
 #: pylav/extension/red/ui/sources/nodes.py:298
 msgid "Latitude: {lat}\n"
 "Longitude: {lon}"
-msgstr "Širina: {lat}\n"
-"Geografska duž: {lon}"
+msgstr "Geografska širina: {lat}\n"
+"Geografska dužina: {lon}"
 
 #: pylav/extension/red/ui/sources/nodes.py:151
 #: pylav/extension/red/ui/sources/nodes.py:304
@@ -81,7 +81,7 @@ msgstr "Regija"
 #: pylav/extension/red/ui/sources/nodes.py:151
 #: pylav/extension/red/ui/sources/nodes.py:304
 msgid "N/A"
-msgstr "N/A"
+msgstr "Nema"
 
 #: pylav/extension/red/ui/sources/nodes.py:152
 #: pylav/extension/red/ui/sources/nodes.py:305
@@ -111,21 +111,21 @@ msgstr "SSL"
 #: pylav/extension/red/ui/sources/nodes.py:159
 #: pylav/extension/red/ui/sources/nodes.py:312
 msgid "Available"
-msgstr "Dostupan"
+msgstr "Dostupno"
 
 #: pylav/extension/red/ui/sources/nodes.py:160
 #: pylav/extension/red/ui/sources/nodes.py:313
 msgid "Search Only"
-msgstr "Samo pretraživanje"
+msgstr "Samo pretraga"
 
 #: pylav/extension/red/ui/sources/nodes.py:161
 #: pylav/extension/red/ui/sources/nodes.py:314
 msgid "Players\n"
 "Connected\n"
 "Active"
-msgstr "Igrača\n"
-"Povezan\n"
-"Aktivan"
+msgstr "Playeri\n"
+"Povezani\n"
+"Aktivni"
 
 #: pylav/extension/red/ui/sources/nodes.py:165
 #: pylav/extension/red/ui/sources/nodes.py:318
@@ -135,7 +135,7 @@ msgstr "Izgubljeni okviri"
 #: pylav/extension/red/ui/sources/nodes.py:170
 #: pylav/extension/red/ui/sources/nodes.py:323
 msgid "Uptime"
-msgstr "Produženje rada"
+msgstr "Ukupno vrijeme rada"
 
 #: pylav/extension/red/ui/sources/nodes.py:171
 #: pylav/extension/red/ui/sources/nodes.py:324
@@ -149,7 +149,7 @@ msgstr "Učitavanje PROCESOR-a\n"
 #: pylav/extension/red/ui/sources/nodes.py:174
 #: pylav/extension/red/ui/sources/nodes.py:327
 msgid "Penalty"
-msgstr "Kazna"
+msgstr "Penal"
 
 #: pylav/extension/red/ui/sources/nodes.py:175
 #: pylav/extension/red/ui/sources/nodes.py:328
@@ -190,7 +190,7 @@ msgstr "Ništa se ne reproducira"
 
 #: pylav/extension/red/ui/sources/player.py:76
 msgid "Server Owner"
-msgstr "Vlasnik poslužitelja"
+msgstr "Vlasnik servera"
 
 #: pylav/extension/red/ui/sources/player.py:77
 msgid "Connected"
@@ -198,7 +198,7 @@ msgstr "Povezan"
 
 #: pylav/extension/red/ui/sources/player.py:78
 msgid "Users in VC"
-msgstr "Korisnici u VC-u"
+msgstr "Korisnici u glasovnom kanalu"
 
 #: pylav/extension/red/ui/sources/player.py:80
 msgid "Queue Length"
@@ -226,12 +226,12 @@ msgstr "poslužitelj"
 
 #: pylav/extension/red/ui/sources/player.py:104
 msgid "servers"
-msgstr "Poslužitelja"
+msgstr "servera"
 
 #: pylav/extension/red/ui/sources/playlist.py:52
 #: pylav/extension/red/ui/sources/playlist.py:172
 msgid "Page {page_num}/{total_pages} | {num} playlists"
-msgstr "Stranica {page_num}/{total_pages} | {num} popisi za reproduciranje"
+msgstr "Stranica {page_num}/{total_pages} | {num} popisa za reprodukciju"
 
 #: pylav/extension/red/ui/sources/playlist.py:118
 msgid "Tracks in"
@@ -243,7 +243,7 @@ msgstr "Stranica {page_num}/{total_pages} | {num_tracks} Pjesme\n"
 
 #: pylav/extension/red/ui/sources/playlist.py:152
 msgid "Unknown"
-msgstr "Nepoznat"
+msgstr "Nepoznato"
 
 #: pylav/extension/red/ui/sources/playlist.py:157
 msgid "ID: {id}"
@@ -251,7 +251,7 @@ msgstr "ID: {id}"
 
 #: pylav/extension/red/ui/sources/playlist.py:158
 msgid "Tracks: {num}"
-msgstr "Pjesme: {num}"
+msgstr "Broj pjesama: {num}"
 
 #: pylav/extension/red/ui/sources/playlist.py:159
 msgid "Author: {name}"
@@ -263,7 +263,7 @@ msgstr "Opseg: {scope}\n"
 
 #: pylav/extension/red/ui/sources/playlist.py:168
 msgid "Playlists you can access in this server:"
-msgstr "Popisi za reproduciranje kojima možete pristupiti na ovom poslužitelju:"
+msgstr "Popisi za reprodukciju kojima možete pristupiti na ovom serveru:"
 
 #: pylav/extension/red/ui/sources/queue.py:96
 #: pylav/extension/red/ui/sources/queue.py:142

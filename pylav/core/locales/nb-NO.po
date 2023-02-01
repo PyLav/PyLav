@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "MIME-Version: 1.0\n"
@@ -19,27 +19,27 @@ msgstr ""
 
 #: pylav/core/client.py:888 pylav/core/client.py:923
 msgid "No available nodes!"
-msgstr "Ingen tilgjengelige noder!"
+msgstr "Ingen noder er tilgjengelig!"
 
 #: pylav/core/client.py:892 pylav/core/client.py:927
 msgid "No node with {feature} functionality available!"
-msgstr "Ingen node med {feature} funksjonalitet tilgjengelig!"
+msgstr "Ingen node med {feature} -funksjonalitet tilgjengelig!"
 
 #: pylav/core/client.py:1235
 msgid "No node with {query.requires_capability} functionality available!"
-msgstr "Ingen node med {query.requires_capability} funksjonalitet tilgjengelig!"
+msgstr "Ingen node med {query.requires_capability} -funksjonalitet tilgjengelig!"
 
 #: pylav/core/client.py:1651
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
-msgstr "For å generere en miksespilleliste er en video-, bruker-, kanal- eller spilleliste-ID nødvendig"
+msgstr "For å generere en miks spilleliste en video, bruker, kanal- eller spilleliste-ID er nødvendig"
 
 #: pylav/core/client.py:1656
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
-msgstr "For å generere en miksespilleliste er det nødvendig med en video-, bruker-, kanal- eller spilleliste-ID. Du har imidlertid oppgitt flere"
+msgstr "For å generere en miks spilleliste en video, bruker, kanal- eller spilleliste-ID er nødvendig. Du har imidlertid gitt flere opplysninger."
 
 #: pylav/core/context.py:258
 msgid "{} remaining. Type `more` to continue."
-msgstr "{} gjenstår. Skriv \"mer\" for å fortsette."
+msgstr "{} gjenstår. Skriv inn \"mer\" for å fortsette."
 
 #: pylav/core/context.py:259
 msgid "There is still 1 message"
@@ -47,7 +47,7 @@ msgstr "Det er fortsatt 1 melding"
 
 #: pylav/core/context.py:261
 msgid "There are still {remaining} messages"
-msgstr "Det er fortsatt {remaining} Meldinger"
+msgstr "Det er fortsatt {remaining} meldinger"
 
 #: pylav/core/context.py:288
 #, docstring

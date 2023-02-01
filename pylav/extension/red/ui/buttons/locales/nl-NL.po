@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -48,11 +48,11 @@ msgstr "Nee"
 
 #: pylav/extension/red/ui/buttons/generic.py:164
 msgid "Disconnect {} {}"
-msgstr "Verbinding verbreken {} {}"
+msgstr "Verbreek {} {}"
 
 #: pylav/extension/red/ui/buttons/generic.py:165
 msgid "players"
-msgstr "Spelers"
+msgstr "spelers"
 
 #: pylav/extension/red/ui/buttons/generic.py:165
 msgid "player"
@@ -60,36 +60,36 @@ msgstr "speler"
 
 #: pylav/extension/red/ui/buttons/nodes.py:57
 msgid "Connecting to the node with SSL enabled"
-msgstr "Verbinding maken met het knooppunt met SSL ingeschakeld"
+msgstr "Verbinden met node met SSL ingeschakeld"
 
 #: pylav/extension/red/ui/buttons/nodes.py:64
 msgid "Connecting to the node with SSL disabled"
-msgstr "Verbinding maken met het knooppunt met SSL uitgeschakeld"
+msgstr "Verbinden met node met SSL uitgeschakeld"
 
 #: pylav/extension/red/ui/buttons/nodes.py:102
 msgid "This node will only be used for searches"
-msgstr "Dit knooppunt wordt alleen gebruikt voor zoekopdrachten"
+msgstr "This node will only be used for search"
 
 #: pylav/extension/red/ui/buttons/nodes.py:109
 msgid "This node will be used for search and playback"
-msgstr "Dit knooppunt wordt gebruikt voor zoeken en afspelen"
+msgstr "This node will be used for search and play"
 
 #: pylav/extension/red/ui/buttons/nodes.py:140
 msgid "Please fill out all the fields before continuing"
-msgstr "Vul alle velden in voordat u verdergaat"
+msgstr "Gelieve alle velden in te vullen voordat u verder gaat"
 
 #: pylav/extension/red/ui/buttons/nodes.py:220
 msgid "When you press done this node will be permanently delete"
-msgstr "Wanneer u op gereed drukt, wordt dit knooppunt permanent verwijderd"
+msgstr "Wanneer u op dit knooppunt drukt wordt het permanent verwijderd"
 
 #: pylav/extension/red/ui/buttons/nodes.py:222
 msgid "This node will no longer be deleted once you press done"
-msgstr "Dit knooppunt wordt niet langer verwijderd zodra u op gereed drukt"
+msgstr "Dit knooppunt zal niet langer worden verwijderd zodra u tikt"
 
 #: pylav/extension/red/ui/buttons/nodes.py:255
 msgid "__Enabled sources__:\n"
 "{sources}"
-msgstr "__Enabled sources__:\n"
+msgstr "__Ingeschakelde bronnen__:\n"
 "{sources}"
 
 #: pylav/extension/red/ui/buttons/player.py:38
@@ -101,18 +101,18 @@ msgstr "U bent niet bevoegd om deze actie uit te voeren"
 #: pylav/extension/red/ui/buttons/player.py:47
 #: pylav/extension/red/ui/buttons/player.py:96
 msgid "No Player Available For Action - Try Refreshing"
-msgstr "Geen speler beschikbaar voor actie - Probeer te vernieuwen"
+msgstr "Geen speler beschikbaar voor actie - Probeer te verversen"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:107
 #: pylav/extension/red/ui/buttons/player.py:164
 msgid "Bot Owner Action"
-msgstr "Actie boteigenaar"
+msgstr "Bot Eigenaar Actie"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:164
 msgid "Player disconnected"
-msgstr "Speler losgekoppeld"
+msgstr "Speler verbroken"
 
 #: pylav/extension/red/ui/buttons/player.py:107
 msgid "Player stopped"
@@ -120,19 +120,19 @@ msgstr "Speler gestopt"
 
 #: pylav/extension/red/ui/buttons/player.py:154
 msgid "No Players Available For Action - Try Refreshing"
-msgstr "Geen spelers beschikbaar voor actie - Probeer te vernieuwen"
+msgstr "Geen spelers beschikbaar voor actie - Probeer te verversen"
 
 #: pylav/extension/red/ui/buttons/playlist.py:48
 msgid "When you press done this playlist will be permanently delete"
-msgstr "Wanneer u op gereed drukt, wordt deze afspeellijst permanent verwijderd"
+msgstr "Wanneer je op klaar drukt, zal deze afspeellijst permanent worden verwijderd"
 
 #: pylav/extension/red/ui/buttons/playlist.py:50
 msgid "This playlist will no longer be deleted once you press done"
-msgstr "Deze afspeellijst wordt niet langer verwijderd zodra u op gereed drukt"
+msgstr "Deze afspeellijst zal niet meer worden verwijderd zodra je tikt"
 
 #: pylav/extension/red/ui/buttons/playlist.py:83
 msgid "Clearing all tracks from the playlist playlist"
-msgstr "Alle nummers uit de afspeellijst wissen"
+msgstr "Alle nummers wissen van de afspeellijst"
 
 #: pylav/extension/red/ui/buttons/playlist.py:85
 msgid "No longer clearing tracks from the playlist"
@@ -146,41 +146,41 @@ msgstr "Hier is je afspeellijst: {name}{extras}"
 msgid "\n"
 " (compressed using gzip to make it possible to send via Discord - you can use <https://gzip.swimburger.net/> to decompress it)"
 msgstr "\n"
-" (gecomprimeerd met gzip om het mogelijk te maken om via Discord te verzenden - u kunt gebruiken <https://gzip.swimburger.net/> om het te decomprimeren)"
+" (gecomprimeerd met behulp van gzip om het mogelijk te maken om te verzenden via Discord - je kan <https://gzip.swimburger.net/> gebruiken om het te decomprimeren)"
 
 #: pylav/extension/red/ui/buttons/playlist.py:133
 msgid "\n"
 " (File compressed using Brotli compression."
 msgstr "\n"
-" (Bestand gecomprimeerd met Brotli-compressie."
+" (gecomprimeerd met behulp van Brotli compressie."
 
 #: pylav/extension/red/ui/buttons/playlist.py:171
 msgid "Updating playlist with the latest tracks, press done to continue"
-msgstr "Afspeellijst bijwerken met de nieuwste nummers, druk op gereed om door te gaan"
+msgstr "Afspeellijst wordt bijgewerkt met de laatste nummers, druk op Gereed om door te gaan"
 
 #: pylav/extension/red/ui/buttons/playlist.py:174
 msgid "Not updating playlist"
-msgstr "Afspeellijst niet bijwerken"
+msgstr "Afspeellijst wordt niet bijgewerkt"
 
 #: pylav/extension/red/ui/buttons/playlist.py:263
 msgid "Adding the current queue to playlist"
-msgstr "De huidige wachtrij toevoegen aan de afspeellijst"
+msgstr "De huidige wachtrij aan afspeellijst toevoegen"
 
 #: pylav/extension/red/ui/buttons/playlist.py:270
 msgid "No longer adding the current queue to playlist"
-msgstr "De huidige wachtrij niet langer toevoegen aan de afspeellijst"
+msgstr "Niet langer de huidige wachtrij aan afspeellijst toevoegen"
 
 #: pylav/extension/red/ui/buttons/playlist.py:309
 msgid "Removing all duplicate tracks from the queue"
-msgstr "Alle dubbele tracks uit de wachtrij verwijderen"
+msgstr "Alle dubbele nummers uit de wachtrij verwijderen"
 
 #: pylav/extension/red/ui/buttons/playlist.py:316
 msgid "No longer all duplicate tracks from the queue"
-msgstr "Niet langer alle dubbele tracks uit de wachtrij"
+msgstr "Niet meer alle dubbele nummers uit de wachtrij"
 
 #: pylav/extension/red/ui/buttons/playlist.py:406
 msgid "Playlists you can currently play"
-msgstr "Afspeellijsten die u momenteel kunt afspelen"
+msgstr "Afspeellijsten die je momenteel kunt spelen"
 
 #: pylav/extension/red/ui/buttons/playlist.py:412
 msgid "Pick a playlist"
@@ -198,13 +198,13 @@ msgstr "Niet verbonden met een spraakkanaal"
 
 #: pylav/extension/red/ui/buttons/queue.py:289
 msgid "There's nothing in the Queue"
-msgstr "Er staat niets in de wachtrij"
+msgstr "Er is niets in de wachtrij"
 
 #: pylav/extension/red/ui/buttons/queue.py:296
 msgid "Removed tracks from the queue"
-msgstr "Tracks uit de wachtrij verwijderd"
+msgstr "Tracks verwijderd uit de wachtrij"
 
 #: pylav/extension/red/ui/buttons/queue.py:323
 msgid "What do you want to enqueue?"
-msgstr "Wat wil je daarna doen?"
+msgstr "Wat wilt u navraag doen?"
 

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -19,17 +19,17 @@ msgstr ""
 
 #: pylav/extension/red/ui/prompts/nodes.py:29
 msgid "Multiple nodes matched, pick the one which you meant"
-msgstr "多个节点匹配，选择您想要的节点"
+msgstr "多个节点匹配，选择你想要的节点"
 
 #: pylav/extension/red/ui/prompts/nodes.py:36
 msgid "Pick a node"
-msgstr "选取节点"
+msgstr "选择节点"
 
 #: pylav/extension/red/ui/prompts/playlists.py:31
 msgid "Multiple playlist matched, pick the one which you meant"
-msgstr "多个播放列表匹配，选择您想要的播放列表"
+msgstr "多个播放列表匹配，选择你想要的播放列表"
 
 #: pylav/extension/red/ui/prompts/playlists.py:38
 msgid "Pick a playlist"
-msgstr "选择一个播放列表"
+msgstr "选择播放列表"
 

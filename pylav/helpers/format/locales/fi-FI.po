@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -31,7 +31,7 @@ msgstr "minuutti"
 
 #: pylav/helpers/format/strings.py:59
 msgid "second"
-msgstr "toinen"
+msgstr "sekunti"
 
 #: pylav/helpers/format/strings.py:60
 msgid "day"
@@ -39,17 +39,17 @@ msgstr "päivä"
 
 #: pylav/helpers/format/strings.py:61
 msgid "days"
-msgstr "Päivää"
+msgstr "päivää"
 
 #: pylav/helpers/format/strings.py:62
 msgid "hours"
-msgstr "työaika"
+msgstr "tuntia"
 
 #: pylav/helpers/format/strings.py:63
 msgid "minutes"
-msgstr "pöytäkirja"
+msgstr "minuuttia"
 
 #: pylav/helpers/format/strings.py:64
 msgid "seconds"
-msgstr "Sekuntia"
+msgstr "sekuntia"
 

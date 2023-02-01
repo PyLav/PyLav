@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
 "MIME-Version: 1.0\n"
@@ -19,15 +19,15 @@ msgstr ""
 
 #: pylav/extension/red/ui/modals/playlist.py:27
 msgid "Enter the name for the new playlist"
-msgstr "Unesite naziv novog popisa za reproduciranje"
+msgstr "Unesite naziv za novi popis za reprodukciju"
 
 #: pylav/extension/red/ui/modals/playlist.py:28
 msgid "My awesome new playlist"
-msgstr "Moja sjajna nova lista za reprodukciju"
+msgstr "Moj fora popis za reprodukciju"
 
 #: pylav/extension/red/ui/modals/queue.py:27
 msgid "Search for a song to add to the queue"
-msgstr "Traženje pjesme koju želite dodati u red čekanja"
+msgstr "Pretraži pjesmu koju želiš dodati u red"
 
 #: pylav/extension/red/ui/modals/queue.py:30
 msgid "Hello by Adele, speak:Hello, https://open.spotify.com/playlist/37i9dQZF1DX6XceWZP1znY"

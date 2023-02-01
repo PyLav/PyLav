@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:09\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -35,7 +35,7 @@ msgstr "Hostitel"
 
 #: pylav/extension/red/ui/menus/nodes.py:68
 msgid "Enter the host port to connect to"
-msgstr "Zadejte hostitelský port, ke kterému se chcete připojit"
+msgstr "Zadejte port hostitele pro připojení k"
 
 #: pylav/extension/red/ui/menus/nodes.py:69
 #: pylav/extension/red/ui/menus/nodes.py:507
@@ -53,26 +53,26 @@ msgstr "Heslo"
 
 #: pylav/extension/red/ui/menus/nodes.py:84
 msgid "Enter an easy to know name for the node"
-msgstr "Zadejte snadno srozumitelný název uzlu"
+msgstr "Vložte snadno znát název uzlu"
 
 #: pylav/extension/red/ui/menus/nodes.py:85
 #: pylav/extension/red/ui/menus/nodes.py:523
 msgid "Name"
-msgstr "Jméno"
+msgstr "Název"
 
 #: pylav/extension/red/ui/menus/nodes.py:92
 msgid "Enter a timeout in seconds"
-msgstr "Zadání časového limitu v sekundách"
+msgstr "Zadejte časový limit v sekundách"
 
 #: pylav/extension/red/ui/menus/nodes.py:93
 #: pylav/extension/red/ui/menus/nodes.py:531
 msgid "Timeout"
-msgstr "Přerušení zápasu"
+msgstr "Časový limit"
 
 #: pylav/extension/red/ui/menus/nodes.py:109
 #: pylav/extension/red/ui/menus/nodes.py:560
 msgid "Source to disable"
-msgstr "Zdroj, který chcete zakázat"
+msgstr "Zdroj pro vypnutí"
 
 #: pylav/extension/red/ui/menus/nodes.py:222
 #: pylav/extension/red/ui/menus/nodes.py:671
@@ -87,7 +87,7 @@ msgstr "Heslo nastaveno na {password}"
 #: pylav/extension/red/ui/menus/nodes.py:253
 #: pylav/extension/red/ui/menus/nodes.py:702
 msgid "Host set to {host}"
-msgstr "Hostitel nastavený na {host}"
+msgstr "Hostitel nastaven na {host}"
 
 #: pylav/extension/red/ui/menus/nodes.py:270
 #: pylav/extension/red/ui/menus/nodes.py:719
@@ -97,33 +97,33 @@ msgstr "Neplatný port"
 #: pylav/extension/red/ui/menus/nodes.py:278
 #: pylav/extension/red/ui/menus/nodes.py:727
 msgid "Port set to {port}"
-msgstr "Port nastavený na {port}"
+msgstr "Port nastaven na {port}"
 
 #: pylav/extension/red/ui/menus/nodes.py:295
 #: pylav/extension/red/ui/menus/nodes.py:744
 msgid "Invalid timeout, it must be a number in seconds"
-msgstr "Neplatný časový limit, musí to být číslo v sekundách"
+msgstr "Neplatný časový limit, musí být číslo v sekundách"
 
 #: pylav/extension/red/ui/menus/nodes.py:303
 #: pylav/extension/red/ui/menus/nodes.py:752
 msgid "Timeout set to {timeout} seconds"
-msgstr "Časový limit nastaven na {timeout} sekundy"
+msgstr "Časový limit nastaven na {timeout} sekund"
 
 #: pylav/extension/red/ui/menus/nodes.py:498
 msgid "Change the domain or IP address of the host"
-msgstr "Změna domény nebo adresy IP hostitele"
+msgstr "Změnit doménu nebo IP adresu hostitele"
 
 #: pylav/extension/red/ui/menus/nodes.py:506
 msgid "Change the host port to connect to"
-msgstr "Změna portu hostitele, ke kterému se chcete připojit"
+msgstr "Změnit port hostitele pro připojení k"
 
 #: pylav/extension/red/ui/menus/nodes.py:514
 msgid "Change the node's password"
-msgstr "Změna hesla uzlu"
+msgstr "Změnit heslo uzlu"
 
 #: pylav/extension/red/ui/menus/nodes.py:522
 msgid "Change the name of this node"
-msgstr "Změna názvu tohoto uzlu"
+msgstr "Změnit název tohoto uzlu"
 
 #: pylav/extension/red/ui/menus/nodes.py:530
 msgid "Enter the new timeout for this node"
@@ -131,7 +131,7 @@ msgstr "Zadejte nový časový limit pro tento uzel"
 
 #: pylav/extension/red/ui/menus/player.py:95
 msgid "selected"
-msgstr "vybraný"
+msgstr "vybráno"
 
 #: pylav/extension/red/ui/menus/player.py:105
 msgid "inactive"
@@ -139,7 +139,7 @@ msgstr "neaktivní"
 
 #: pylav/extension/red/ui/menus/player.py:115
 msgid "all"
-msgstr "všichni"
+msgstr "vše"
 
 #: pylav/extension/red/ui/menus/player.py:208
 msgid "Not connected anywhere"
@@ -148,29 +148,29 @@ msgstr "Nikde není připojen"
 #: pylav/extension/red/ui/menus/playlist.py:187
 #: pylav/extension/red/ui/menus/playlist.py:322
 msgid "Please enter the playlist URL"
-msgstr "Zadejte adresu URL seznamu videí"
+msgstr "Zadejte prosím URL seznamu skladeb"
 
 #: pylav/extension/red/ui/menus/playlist.py:188
 #: pylav/extension/red/ui/menus/playlist.py:323
 msgid "Playlist URL"
-msgstr "Adresa URL seznamu videí"
+msgstr "URL playlistu"
 
 #: pylav/extension/red/ui/menus/playlist.py:194
 msgid "Please enter the playlist name"
-msgstr "Zadejte prosím název seznamu skladeb"
+msgstr "Zadejte název playlistu"
 
 #: pylav/extension/red/ui/menus/playlist.py:195
 #: pylav/extension/red/ui/menus/playlist.py:330
 msgid "Playlist Name"
-msgstr "Název seznamu skladeb"
+msgstr "Název playlistu"
 
 #: pylav/extension/red/ui/menus/playlist.py:329
 msgid "Please enter the new playlist name"
-msgstr "Zadejte prosím nový název seznamu skladeb"
+msgstr "Zadejte nový název playlistu"
 
 #: pylav/extension/red/ui/menus/playlist.py:336
 msgid "What query to add to the playlist"
-msgstr "Jaký dotaz přidat do seznamu videí"
+msgstr "Jaký dotaz má být přidán do seznamu skladeb"
 
 #: pylav/extension/red/ui/menus/playlist.py:337
 #: pylav/extension/red/ui/menus/playlist.py:345
@@ -179,13 +179,13 @@ msgstr "Dotaz"
 
 #: pylav/extension/red/ui/menus/playlist.py:344
 msgid "What query to remove from the playlist"
-msgstr "Jaký dotaz chcete ze seznamu stop odebrat"
+msgstr "Jaký dotaz má být odebrán ze seznamu skladeb"
 
 #: pylav/extension/red/ui/menus/queue.py:458
 msgid "Select Track To Remove"
-msgstr "Vyberte možnost Track To Remove (Stopa, kterou chcete odebrat)"
+msgstr "Vyberte skladbu pro odstranění"
 
 #: pylav/extension/red/ui/menus/queue.py:460
 msgid "Select Track To Play Now"
-msgstr "Vyberte skladbu, kterou chcete nyní přehrát"
+msgstr "Vyberte skladbu pro přehrání"
 

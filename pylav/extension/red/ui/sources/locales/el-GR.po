@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:18\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: pylav/extension/red/ui/sources/equalizer.py:32
 msgid "Preset Name"
-msgstr "Προκαθορισμένο όνομα"
+msgstr "Προκαθορισμένο Όνομα"
 
 #: pylav/extension/red/ui/sources/equalizer.py:33
 msgid "Author"
@@ -27,7 +27,7 @@ msgstr "Συγγραφέας"
 
 #: pylav/extension/red/ui/sources/generic.py:88
 msgid "Page {page_num}/{total_pages} | {num} {entries}"
-msgstr "Σελίδα {page_num}/{total_pages} | {num} {entries}"
+msgstr "Σελίδα {page_num}/{total_pages} - {num} {entries}"
 
 #: pylav/extension/red/ui/sources/generic.py:92
 msgid "entries"
@@ -59,7 +59,7 @@ msgstr "Κανένα / Άγνωστο"
 #: pylav/extension/red/ui/sources/nodes.py:143
 #: pylav/extension/red/ui/sources/nodes.py:296
 msgid "Property"
-msgstr "Ιδιοκτησία"
+msgstr "Ιδιότητα"
 
 #: pylav/extension/red/ui/sources/nodes.py:144
 #: pylav/extension/red/ui/sources/nodes.py:297
@@ -91,12 +91,12 @@ msgstr "Συντεταγμένες"
 #: pylav/extension/red/ui/sources/nodes.py:153
 #: pylav/extension/red/ui/sources/nodes.py:306
 msgid "Host"
-msgstr "Κεντρικός υπολογιστής"
+msgstr "Διακομιστής"
 
 #: pylav/extension/red/ui/sources/nodes.py:154
 #: pylav/extension/red/ui/sources/nodes.py:307
 msgid "Port"
-msgstr "Λιμάνι"
+msgstr "Θύρα"
 
 #: pylav/extension/red/ui/sources/nodes.py:155
 #: pylav/extension/red/ui/sources/nodes.py:308
@@ -111,31 +111,30 @@ msgstr "ΥΓ."
 #: pylav/extension/red/ui/sources/nodes.py:159
 #: pylav/extension/red/ui/sources/nodes.py:312
 msgid "Available"
-msgstr "Διαθέσιμος"
+msgstr "Διαθέσιμο"
 
 #: pylav/extension/red/ui/sources/nodes.py:160
 #: pylav/extension/red/ui/sources/nodes.py:313
 msgid "Search Only"
-msgstr "Μόνο αναζήτηση"
+msgstr "Μόνο Αναζήτηση"
 
 #: pylav/extension/red/ui/sources/nodes.py:161
 #: pylav/extension/red/ui/sources/nodes.py:314
 msgid "Players\n"
 "Connected\n"
 "Active"
-msgstr "Παίκτες\n"
-"Συνεχόμενος\n"
-"Δραστήριος"
+msgstr "Συνδεδεμένοι παίκτες\n\n"
+"Ενεργοί"
 
 #: pylav/extension/red/ui/sources/nodes.py:165
 #: pylav/extension/red/ui/sources/nodes.py:318
 msgid "Frames Lost"
-msgstr "Χαμένα καρέ"
+msgstr "Τα Καρέ Χάθηκαν"
 
 #: pylav/extension/red/ui/sources/nodes.py:170
 #: pylav/extension/red/ui/sources/nodes.py:323
 msgid "Uptime"
-msgstr "Χρόνος λειτουργίας"
+msgstr "Χρόνος"
 
 #: pylav/extension/red/ui/sources/nodes.py:171
 #: pylav/extension/red/ui/sources/nodes.py:324
@@ -159,10 +158,10 @@ msgid "Memory\n"
 "Allocated\n"
 "Reservable"
 msgstr "Μνήμη\n"
-"Μεταχειρισμένος\n"
-"Ελεύθερος\n"
-"Εκχωρηθεί\n"
-"Με δυνατότητα κράτησης"
+"Χρησιμοποιείται\n"
+"Δωρεάν\n"
+"Allocated\n"
+"Reservable"
 
 #: pylav/extension/red/ui/sources/nodes.py:178
 #: pylav/extension/red/ui/sources/nodes.py:331
@@ -172,7 +171,7 @@ msgstr "Χαρακτηριστικά"
 #: pylav/extension/red/ui/sources/nodes.py:190
 #: pylav/extension/red/ui/sources/nodes.py:343
 msgid "Page {page_num}/{total_pages} | {num} {plural}"
-msgstr "Σελίδα {page_num}/{total_pages} | {num} {plural}"
+msgstr "Σελίδα {page_num}/{total_pages} - {num} {plural}"
 
 #: pylav/extension/red/ui/sources/nodes.py:194
 #: pylav/extension/red/ui/sources/nodes.py:347
@@ -190,23 +189,23 @@ msgstr "Τίποτα δεν παίζει"
 
 #: pylav/extension/red/ui/sources/player.py:76
 msgid "Server Owner"
-msgstr "Ιδιοκτήτης διακομιστή"
+msgstr "Ιδιοκτήτης Διακομιστή"
 
 #: pylav/extension/red/ui/sources/player.py:77
 msgid "Connected"
-msgstr "Συνεχόμενος"
+msgstr "Συνδεδεμένο"
 
 #: pylav/extension/red/ui/sources/player.py:78
 msgid "Users in VC"
-msgstr "Χρήστες σε ΕΣ"
+msgstr "Χρήστες σε VC"
 
 #: pylav/extension/red/ui/sources/player.py:80
 msgid "Queue Length"
-msgstr "Μήκος ουράς"
+msgstr "Μήκος Ουράς"
 
 #: pylav/extension/red/ui/sources/player.py:86
 msgid "Queue History Length"
-msgstr "Μήκος ιστορικού ουράς"
+msgstr "Μήκος Ιστορικού Ουράς"
 
 #: pylav/extension/red/ui/sources/player.py:89
 msgid "track"
@@ -218,32 +217,32 @@ msgstr "Κομμάτια"
 
 #: pylav/extension/red/ui/sources/player.py:100
 msgid "Page {page_num}/{total_pages} | Playing in {playing} {server_translation}"
-msgstr "Σελίδα {page_num}/{total_pages} | Παίζοντας σε {playing} {server_translation}"
+msgstr "Σελίδα {page_num}/{total_pages} \"Παίζει στο {playing} {server_translation}"
 
 #: pylav/extension/red/ui/sources/player.py:104
 msgid "server"
-msgstr "διακομιστής"
+msgstr "εξυπηρετητής"
 
 #: pylav/extension/red/ui/sources/player.py:104
 msgid "servers"
-msgstr "Διακομιστές"
+msgstr "διακομιστές"
 
 #: pylav/extension/red/ui/sources/playlist.py:52
 #: pylav/extension/red/ui/sources/playlist.py:172
 msgid "Page {page_num}/{total_pages} | {num} playlists"
-msgstr "Σελίδα {page_num}/{total_pages} | {num} λίστες αναπαραγωγής"
+msgstr "Λίστα αναπαραγωγής της σελίδας {page_num}/{total_pages} {num}"
 
 #: pylav/extension/red/ui/sources/playlist.py:118
 msgid "Tracks in"
-msgstr "Κομμάτια σε"
+msgstr "Κομμάτια μέσα"
 
 #: pylav/extension/red/ui/sources/playlist.py:123
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks\n"
-msgstr "Σελίδα {page_num}/{total_pages} | {num_tracks} Κομμάτια\n"
+msgstr "Σελίδα {page_num}/{total_pages} \" {num_tracks} κομμάτια\"\n"
 
 #: pylav/extension/red/ui/sources/playlist.py:152
 msgid "Unknown"
-msgstr "Άγνωστος"
+msgstr "Άγνωστο"
 
 #: pylav/extension/red/ui/sources/playlist.py:157
 msgid "ID: {id}"
@@ -263,7 +262,7 @@ msgstr "Εμβέλεια: {scope}\n"
 
 #: pylav/extension/red/ui/sources/playlist.py:168
 msgid "Playlists you can access in this server:"
-msgstr "Λίστες αναπαραγωγής στις οποίες μπορείτε να αποκτήσετε πρόσβαση σε αυτόν τον διακομιστή:"
+msgstr "Λίστες αναπαραγωγής που μπορείτε να αποκτήσετε πρόσβαση σε αυτόν τον διακομιστή:"
 
 #: pylav/extension/red/ui/sources/queue.py:96
 #: pylav/extension/red/ui/sources/queue.py:142
@@ -277,5 +276,5 @@ msgstr "Δεν υπάρχει τίποτα στο πρόσφατο παιχνί�
 #: pylav/extension/red/ui/sources/queue.py:112
 #: pylav/extension/red/ui/sources/queue.py:155
 msgid "There's nothing currently being played"
-msgstr "Δεν παίζεται τίποτα αυτήν τη στιγμή"
+msgstr "Δεν υπάρχει τίποτα προς το παρόν σε αναπαραγωγή"
 

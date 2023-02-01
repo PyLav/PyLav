@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:18\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "MIME-Version: 1.0\n"
@@ -23,29 +23,29 @@ msgstr "Ingen tilgjengelige noder!"
 
 #: pylav/players/manager.py:349
 msgid "Music in {count} servers"
-msgstr "Musikk i {count} Servere"
+msgstr "Musikk i {count} servere"
 
 #: pylav/players/player.py:1176
 msgid "There are no tracks currently in the player history"
-msgstr "Det er ingen spor i spillerhistorikken for øyeblikket"
+msgstr "Det er ingen spor som er i spiller-loggen"
 
 #: pylav/players/player.py:1869
 msgid "Current node has the Volume filter functionality disabled"
-msgstr "Gjeldende node har volumfilterfunksjonaliteten deaktivert"
+msgstr "Gjeldende node har funksjonen for volumfilter er deaktivert"
 
 #: pylav/players/player.py:1891 pylav/players/player.py:2067
 #: pylav/players/player.py:2122
 msgid "Current node has the Equalizer functionality disabled"
-msgstr "Gjeldende node har Equalizer-funksjonaliteten deaktivert"
+msgstr "Gjeldende node har Equalizer-funksjonen deaktivert"
 
 #: pylav/players/player.py:1911
 msgid "Current node has the Karaoke functionality disabled"
-msgstr "Gjeldende node har Karaoke-funksjonaliteten deaktivert"
+msgstr "Gjeldende node har funksjonen funksjonen funksjonen deaktivert"
 
 #: pylav/players/player.py:1931 pylav/players/player.py:2069
 #: pylav/players/player.py:2124
 msgid "Current node has the Timescale functionality disabled"
-msgstr "Gjeldende node har tidsskalafunksjonaliteten deaktivert"
+msgstr "Gjeldende node har tidsforskyvning deaktivert"
 
 #: pylav/players/player.py:1951
 msgid "Current node has the Tremolo functionality disabled"
@@ -53,7 +53,7 @@ msgstr "Gjeldende node har Tremolo-funksjonaliteten deaktivert"
 
 #: pylav/players/player.py:1971
 msgid "Current node has the Vibrato functionality disabled"
-msgstr "Gjeldende node har Vibrato-funksjonaliteten deaktivert"
+msgstr "Gjeldende node har vibrasjonsfunksjonalitet deaktivert"
 
 #: pylav/players/player.py:1991
 msgid "Current node has the Rotation functionality disabled"
@@ -61,7 +61,7 @@ msgstr "Gjeldende node har rotasjonsfunksjonaliteten deaktivert"
 
 #: pylav/players/player.py:2011
 msgid "Current node has the Distortion functionality disabled"
-msgstr "Gjeldende node har forvrengningsfunksjonaliteten deaktivert"
+msgstr "Gjeldende node har forvrengningsfunksjonalitet deaktivert"
 
 #: pylav/players/player.py:2031
 msgid "Current node has the LowPass functionality disabled"
@@ -69,28 +69,28 @@ msgstr "Gjeldende node har LowPass-funksjonaliteten deaktivert"
 
 #: pylav/players/player.py:2051
 msgid "Current node has the Echo functionality disabled"
-msgstr "Gjeldende node har Echo-funksjonaliteten deaktivert"
+msgstr "Gjeldende node har Echo funksjonalitet deaktivert"
 
 #: pylav/players/player.py:2181
 msgid "Current node has the ChannelMix functionality disabled"
-msgstr "Gjeldende node har ChannelMix-funksjonaliteten deaktivert"
+msgstr "Gjeldende node har funksjonen til ChannelMix funksjon deaktivert"
 
 #: pylav/players/player.py:2441 pylav/players/player.py:2486
 #: pylav/players/player.py:2501
 msgid "LIVE"
-msgstr "LEVE"
+msgstr "Direkte"
 
 #: pylav/players/player.py:2454
 msgid "Now Playing in"
-msgstr "Spiller nå inn"
+msgstr "Spiller nå om"
 
 #: pylav/players/player.py:2472 pylav/players/player.py:2581
 msgid "Currently livestreaming"
-msgstr "Strømmer for øyeblikket"
+msgstr "Direkteavspilling for øyeblikket"
 
 #: pylav/players/player.py:2474
 msgid "Playing: "
-msgstr "Lek: "
+msgstr "Spiller: "
 
 #: pylav/players/player.py:2477 pylav/players/player.py:2493
 #: pylav/players/player.py:2508 pylav/players/player.py:2587
@@ -111,7 +111,7 @@ msgstr "Neste spor"
 
 #: pylav/players/player.py:2515
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
-msgstr "{track_count} Spor {queue_total_duration} resterende\n"
+msgstr "{track_count} spor, {queue_total_duration} gjenstående\n"
 
 #: pylav/players/player.py:2519 pylav/players/player.py:2615
 msgid "{translation}: {repeat_emoji}"
@@ -119,7 +119,7 @@ msgstr "{translation}: {repeat_emoji}"
 
 #: pylav/players/player.py:2519 pylav/players/player.py:2615
 msgid "Repeating"
-msgstr "Gjentatt"
+msgstr "Gjentakende"
 
 #: pylav/players/player.py:2520 pylav/players/player.py:2616
 msgid "{space}{translation}: {autoplay_emoji}"
@@ -127,7 +127,7 @@ msgstr "{space}{translation}: {autoplay_emoji}"
 
 #: pylav/players/player.py:2521 pylav/players/player.py:2617
 msgid "Auto Play"
-msgstr "Spill automatisk av"
+msgstr "Automatisk avspilling"
 
 #: pylav/players/player.py:2523 pylav/players/player.py:2619
 msgid "{space}{translation}: {volume}%"
@@ -147,7 +147,7 @@ msgstr "Kø for"
 
 #: pylav/players/player.py:2584
 msgid "Playing"
-msgstr "Lek"
+msgstr "Spiller"
 
 #: pylav/players/player.py:2600
 msgid "Queue order may not be accurate due to auto-shuffle being enabled"
@@ -155,5 +155,5 @@ msgstr "Kørekkefølgen er kanskje ikke nøyaktig på grunn av at automatisk omr
 
 #: pylav/players/player.py:2606
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
-msgstr "Side {current_page}/{total_pages} | {track_number} Spor {queue_total_duration} resterende\n"
+msgstr "Side {current_page}/{total_pages} ＋ {track_number} spor, {queue_total_duration} gjenstående\n"
 

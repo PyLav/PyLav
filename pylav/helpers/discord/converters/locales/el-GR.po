@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
@@ -20,11 +20,11 @@ msgstr ""
 #: pylav/helpers/discord/converters/nodes.py:40
 #: pylav/helpers/discord/converters/nodes.py:45
 msgid "Node with name or id `{arg}` not found"
-msgstr "Κόμβος με όνομα ή αναγνωριστικό '{arg}' δεν βρέθηκε"
+msgstr "Ο κόμβος με όνομα ή ταυτότητα `{arg}` δεν βρέθηκε"
 
 #: pylav/helpers/discord/converters/playlists.py:41
 msgid "Playlist with name or id `{arg}` not found"
-msgstr "Λίστα αναπαραγωγής με όνομα ή αναγνωριστικό '{arg}' δεν βρέθηκε"
+msgstr "Δεν βρέθηκε λίστα αναπαραγωγής με όνομα ή αναγνωριστικό `{arg}`"
 
 #: pylav/helpers/discord/converters/queries.py:52
 msgid "Query must be a playlist or album"
@@ -32,7 +32,7 @@ msgstr "Το ερώτημα πρέπει να είναι λίστα αναπαρ
 
 #: pylav/helpers/discord/converters/radio.py:56
 msgid "Station with name `{arg}` not found"
-msgstr "Σταθμός με όνομα '{arg}' δεν βρέθηκε"
+msgstr "Ο σταθμός με το όνομα `{arg}` δεν βρέθηκε"
 
 #: pylav/helpers/discord/converters/radio.py:72
 #: pylav/helpers/discord/converters/radio.py:154
@@ -46,29 +46,29 @@ msgstr "Το πρόγραμμα περιήγησης ραδιοφώνου είν
 
 #: pylav/helpers/discord/converters/radio.py:92
 msgid "Unnamed"
-msgstr "Ακατονόμαστος"
+msgstr "Ανώνυμο"
 
 #: pylav/helpers/discord/converters/radio.py:138
 msgid "Tag with name `{arg}` not found"
-msgstr "Ετικέτα με όνομα '{arg}' δεν βρέθηκε"
+msgstr "Η ετικέτα με το όνομα `{arg}` δεν βρέθηκε"
 
 #: pylav/helpers/discord/converters/radio.py:178
 msgid "Language with name `{arg}` not found"
-msgstr "Γλώσσα με όνομα '{arg}' δεν βρέθηκε"
+msgstr "Η γλώσσα με όνομα `{arg}` δεν βρέθηκε"
 
 #: pylav/helpers/discord/converters/radio.py:216
 msgid "State with name `{arg}` not found"
-msgstr "Κράτος με όνομα '{arg}' δεν βρέθηκε"
+msgstr "Δεν βρέθηκε η κατάσταση με το όνομα `{arg}`"
 
 #: pylav/helpers/discord/converters/radio.py:253
 msgid "Codec with name `{arg}` not found"
-msgstr "Κωδικοποιητής με όνομα '{arg}' δεν βρέθηκε"
+msgstr "Το Codec με το όνομα `{arg}` δεν βρέθηκε"
 
 #: pylav/helpers/discord/converters/radio.py:290
 msgid "Country code `{arg}` not found"
-msgstr "Κωδικός χώρας '{arg}' δεν βρέθηκε"
+msgstr "Δεν βρέθηκε κωδικός χώρας `{arg}`"
 
 #: pylav/helpers/discord/converters/radio.py:327
 msgid "Country with name `{arg}` not found"
-msgstr "Χώρα με όνομα '{arg}' δεν βρέθηκε"
+msgstr "Η χώρα με όνομα `{arg}` δεν βρέθηκε"
 

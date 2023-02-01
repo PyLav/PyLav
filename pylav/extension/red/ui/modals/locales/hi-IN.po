@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "MIME-Version: 1.0\n"
@@ -19,17 +19,18 @@ msgstr ""
 
 #: pylav/extension/red/ui/modals/playlist.py:27
 msgid "Enter the name for the new playlist"
-msgstr "नई प्लेलिस्ट के लिए नाम दर्ज करें"
+msgstr "नई प्लेलिस्ट के लिए कोई नाम दर्ज करें"
 
 #: pylav/extension/red/ui/modals/playlist.py:28
 msgid "My awesome new playlist"
-msgstr "मेरी भयानक नई प्लेलिस्ट"
+msgstr "मेरी शानदार नई प्लेलिस्ट"
 
 #: pylav/extension/red/ui/modals/queue.py:27
 msgid "Search for a song to add to the queue"
-msgstr "कतार में जोड़ने के लिए एक गीत खोजें"
+msgstr "कतार में जोड़ने के लिए गीत खोजें"
 
 #: pylav/extension/red/ui/modals/queue.py:30
 msgid "Hello by Adele, speak:Hello, https://open.spotify.com/playlist/37i9dQZF1DX6XceWZP1znY"
-msgstr "एडेल द्वारा नमस्ते, बोलें: हैलो, https://open.spotify.com/playlist/37i9dQZF1DX6XceWZP1znY"
+msgstr "एडेल द्वारा हैलो, बोलें:हैलो, \n"
+"https://open.spotify.com/playlist/37i9dQZF1DX6XceWZP1znY"
 

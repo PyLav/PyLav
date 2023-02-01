@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "MIME-Version: 1.0\n"
@@ -27,7 +27,7 @@ msgstr "Författare"
 
 #: pylav/extension/red/ui/sources/generic.py:88
 msgid "Page {page_num}/{total_pages} | {num} {entries}"
-msgstr "Sida {page_num}/{total_pages} | {num} {entries}"
+msgstr "Sida {page_num}/{total_pages} <unk> {num} {entries}"
 
 #: pylav/extension/red/ui/sources/generic.py:92
 msgid "entries"
@@ -70,7 +70,7 @@ msgstr "Värde"
 #: pylav/extension/red/ui/sources/nodes.py:298
 msgid "Latitude: {lat}\n"
 "Longitude: {lon}"
-msgstr "Breddgrad: {lat}\n"
+msgstr "Latitud: {lat}\n"
 "Longitud: {lon}"
 
 #: pylav/extension/red/ui/sources/nodes.py:151
@@ -124,25 +124,25 @@ msgid "Players\n"
 "Connected\n"
 "Active"
 msgstr "Spelare\n"
-"Ansluten\n"
-"Aktiv"
+"anslutna\n"
+"aktiva"
 
 #: pylav/extension/red/ui/sources/nodes.py:165
 #: pylav/extension/red/ui/sources/nodes.py:318
 msgid "Frames Lost"
-msgstr "Förlorade ramar"
+msgstr "Förlorade bågar"
 
 #: pylav/extension/red/ui/sources/nodes.py:170
 #: pylav/extension/red/ui/sources/nodes.py:323
 msgid "Uptime"
-msgstr "Upptid"
+msgstr "Drifttid"
 
 #: pylav/extension/red/ui/sources/nodes.py:171
 #: pylav/extension/red/ui/sources/nodes.py:324
 msgid "CPU Load\n"
 "Lavalink\n"
 "System"
-msgstr "CPU-belastning\n"
+msgstr "CPU Ladda\n"
 "Lavalink\n"
 "System"
 
@@ -159,10 +159,10 @@ msgid "Memory\n"
 "Allocated\n"
 "Reservable"
 msgstr "Minne\n"
-"Begagnad\n"
+"Används\n"
 "Gratis\n"
-"Tilldelade\n"
-"Bokningsbar"
+"tilldelad\n"
+"Reservbart"
 
 #: pylav/extension/red/ui/sources/nodes.py:178
 #: pylav/extension/red/ui/sources/nodes.py:331
@@ -172,7 +172,7 @@ msgstr "Funktioner"
 #: pylav/extension/red/ui/sources/nodes.py:190
 #: pylav/extension/red/ui/sources/nodes.py:343
 msgid "Page {page_num}/{total_pages} | {num} {plural}"
-msgstr "Sida {page_num}/{total_pages} | {num} {plural}"
+msgstr "Sida {page_num}/{total_pages} <unk> {num} {plural}"
 
 #: pylav/extension/red/ui/sources/nodes.py:194
 #: pylav/extension/red/ui/sources/nodes.py:347
@@ -190,7 +190,7 @@ msgstr "Inget som spelar"
 
 #: pylav/extension/red/ui/sources/player.py:76
 msgid "Server Owner"
-msgstr "Serverägare"
+msgstr "Serverns ägare"
 
 #: pylav/extension/red/ui/sources/player.py:77
 msgid "Connected"
@@ -202,11 +202,11 @@ msgstr "Användare i VC"
 
 #: pylav/extension/red/ui/sources/player.py:80
 msgid "Queue Length"
-msgstr "Kölängd"
+msgstr "Kö längd"
 
 #: pylav/extension/red/ui/sources/player.py:86
 msgid "Queue History Length"
-msgstr "Köhistorikens längd"
+msgstr "Kö historik längd"
 
 #: pylav/extension/red/ui/sources/player.py:89
 msgid "track"
@@ -218,7 +218,7 @@ msgstr "Spår"
 
 #: pylav/extension/red/ui/sources/player.py:100
 msgid "Page {page_num}/{total_pages} | Playing in {playing} {server_translation}"
-msgstr "Sida {page_num}/{total_pages} | Spelar i {playing} {server_translation}"
+msgstr "Sida {page_num}/{total_pages} <unk> Spelar i {playing} {server_translation}"
 
 #: pylav/extension/red/ui/sources/player.py:104
 msgid "server"
@@ -226,12 +226,12 @@ msgstr "server"
 
 #: pylav/extension/red/ui/sources/player.py:104
 msgid "servers"
-msgstr "Servrar"
+msgstr "servrar"
 
 #: pylav/extension/red/ui/sources/playlist.py:52
 #: pylav/extension/red/ui/sources/playlist.py:172
 msgid "Page {page_num}/{total_pages} | {num} playlists"
-msgstr "Sida {page_num}/{total_pages} | {num} spellistor"
+msgstr "Sida {page_num}/{total_pages} <unk> {num} spellistor"
 
 #: pylav/extension/red/ui/sources/playlist.py:118
 msgid "Tracks in"
@@ -239,7 +239,7 @@ msgstr "Spår i"
 
 #: pylav/extension/red/ui/sources/playlist.py:123
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks\n"
-msgstr "Sida {page_num}/{total_pages} | {num_tracks} Spår\n"
+msgstr "Sida {page_num}/{total_pages} <unk> {num_tracks} spår\n"
 
 #: pylav/extension/red/ui/sources/playlist.py:152
 msgid "Unknown"
@@ -263,12 +263,12 @@ msgstr "Omfattning: {scope}\n"
 
 #: pylav/extension/red/ui/sources/playlist.py:168
 msgid "Playlists you can access in this server:"
-msgstr "Spellistor som du kan komma åt på den här servern:"
+msgstr "Spellistor du kan komma åt i denna server:"
 
 #: pylav/extension/red/ui/sources/queue.py:96
 #: pylav/extension/red/ui/sources/queue.py:142
 msgid "No active player found in server"
-msgstr "Ingen aktiv spelare hittades på servern"
+msgstr "Ingen aktiv spelare hittades i servern"
 
 #: pylav/extension/red/ui/sources/queue.py:110
 msgid "There's nothing in recently played"
@@ -277,5 +277,5 @@ msgstr "Det finns inget i nyligen spelade"
 #: pylav/extension/red/ui/sources/queue.py:112
 #: pylav/extension/red/ui/sources/queue.py:155
 msgid "There's nothing currently being played"
-msgstr "Det spelas ingenting just nu"
+msgstr "Det finns inget just nu som spelas"
 

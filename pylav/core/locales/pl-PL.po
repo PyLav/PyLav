@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
@@ -23,31 +23,31 @@ msgstr "Brak dostępnych węzłów!"
 
 #: pylav/core/client.py:892 pylav/core/client.py:927
 msgid "No node with {feature} functionality available!"
-msgstr "Brak węzła z {feature} Funkcjonalność dostępna!"
+msgstr "Brak dostępnych węzłów z funkcją {feature}!"
 
 #: pylav/core/client.py:1235
 msgid "No node with {query.requires_capability} functionality available!"
-msgstr "Brak węzła z {query.requires_capability} Funkcjonalność dostępna!"
+msgstr "Brak dostępnych węzłów z funkcją {query.requires_capability}!"
 
 #: pylav/core/client.py:1651
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
-msgstr "Aby wygenerować playlistę składanki, wymagany jest identyfikator filmu, użytkownika, kanału lub playlisty"
+msgstr "Aby wygenerować listę odtwarzania mieszanki, konieczne jest użycie wideo, użytkownika, kanału lub ID listy odtwarzania"
 
 #: pylav/core/client.py:1656
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
-msgstr "Aby wygenerować playlistę miksu, wymagany jest identyfikator filmu, użytkownika, kanału lub playlisty. Podano jednak wiele"
+msgstr "Aby wygenerować listę odtwarzania mieszanki, konieczne jest użycie wideo, użytkownika, kanału lub Playlist ID."
 
 #: pylav/core/context.py:258
 msgid "{} remaining. Type `more` to continue."
-msgstr "{} pozostało. Wpisz \"więcej\", aby kontynuować."
+msgstr "{} pozostało. Wpisz `more` aby kontynuować."
 
 #: pylav/core/context.py:259
 msgid "There is still 1 message"
-msgstr "Jest jeszcze 1 wiadomość"
+msgstr "Nadal jest 1 wiadomość"
 
 #: pylav/core/context.py:261
 msgid "There are still {remaining} messages"
-msgstr "Są jeszcze {remaining} Wiadomości"
+msgstr "Nadal są {remaining} wiadomości"
 
 #: pylav/core/context.py:288
 #, docstring

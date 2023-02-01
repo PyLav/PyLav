@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:18\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgstr ""
 #: pylav/extension/red/utils/required_methods.py:46
 #, docstring
 msgid "Shows the credits and translation details for the PyLav cogs and shared code"
-msgstr "Показує титри та деталі перекладу гвинтиків PyLav та спільний код"
+msgstr "Показує інформацію про кредити та переклади для pyLav cogs і спільний код"
 
 #: pylav/extension/red/utils/required_methods.py:50
 msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
@@ -62,31 +62,31 @@ msgstr "Версія"
 #: pylav/extension/red/utils/required_methods.py:111
 #, docstring
 msgid "Sync the Bots slash commands"
-msgstr "Синхронізація команд скісної риски ботів"
+msgstr "Синхронізація команд із косою рискою (/)"
 
 #: pylav/extension/red/utils/required_methods.py:120
 msgid "Synced the bots slash commands"
-msgstr "Синхронізовано команди ботів зі скісною рискою"
+msgstr "Синхронізовані команди слешу ботів"
 
 #: pylav/extension/red/utils/required_methods.py:141
 msgid "This command requires an existing player to be run"
-msgstr "Ця команда вимагає запуску наявного програвача"
+msgstr "Ця команда вимагає запущеного гравця"
 
 #: pylav/extension/red/utils/required_methods.py:150
 msgid "PyLavPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later"
-msgstr "Гвинтик PyLavPlayer наразі тимчасово недоступний через відключення серверних служб, будь ласка, спробуйте ще раз пізніше"
+msgstr "Конг PyLavPlayer тимчасово недоступний через відключення із серверами, будь ласка, спробуйте пізніше"
 
 #: pylav/extension/red/utils/required_methods.py:154
 msgid "No Lavalink node currently available"
-msgstr "Наразі вузол Lavalink недоступний"
+msgstr "На даний момент відсутній лаволінійний вузол"
 
 #: pylav/extension/red/utils/required_methods.py:163
 msgid "PyLavPlayer is currently unable to process tracks belonging to {feature}"
-msgstr "В даний час PyLavPlayer не може обробляти треки, що належать {feature}"
+msgstr "Наразі PyLavPlayer не вдається обробити треки, що належать {feature}"
 
 #: pylav/extension/red/utils/required_methods.py:166
 msgid "No Lavalink node currently available with feature {feature}"
-msgstr "Вузол Lavalink наразі недоступний з функцією {feature}"
+msgstr "На даний момент лаволінійний вузол недоступний з функцією {feature}"
 
 #: pylav/extension/red/utils/required_methods.py:177
 msgid "This command is not available in this channel. Please use {channel}"
@@ -94,9 +94,9 @@ msgstr "Ця команда недоступна в цьому каналі. Б�
 
 #: pylav/extension/red/utils/required_methods.py:189
 msgid "This command requires you to be a DJ"
-msgstr "Ця команда вимагає від вас бути діджеєм"
+msgstr "Ця команда вимагає щоб ви були DJ"
 
 #: pylav/extension/red/utils/required_methods.py:227
 msgid "PyLav is not ready - Please try again shortly"
-msgstr "PyLav не готовий - будь ласка, спробуйте ще раз найближчим часом"
+msgstr "PyLav не готовий - будь ласка спробуйте найближчим часом"
 

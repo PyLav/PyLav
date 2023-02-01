@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -19,5 +19,5 @@ msgstr ""
 
 #: pylav/storage/controllers/playlists.py:85
 msgid "Playlist with name {playlist_name} not found"
-msgstr "Lista de reprodução com nome {playlist_name} não encontrado"
+msgstr "Lista de reprodução com o nome {playlist_name} não encontrada"
 

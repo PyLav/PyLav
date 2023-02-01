@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -19,19 +19,19 @@ msgstr ""
 
 #: pylav/extension/bundled_node/manager.py:227
 msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture"
-msgstr "サポートされていないマシンアーキテクチャで管理対象Lavalinkノードを実行しようとしています"
+msgstr "サポートされていないマシンアーキテクチャで管理されているLavalinkノードを実行しようとしています"
 
 #: pylav/extension/bundled_node/manager.py:452
 msgid "The output of `{java_exc} -version` was unexpected\n"
 "{version_info}"
-msgstr "' の出力{java_exc} -バージョン' は予期しないものでした\n"
+msgstr "`{java_exc} -version` の出力が予期しないものでした\n"
 "{version_info}"
 
 #: pylav/extension/bundled_node/manager.py:472
 msgid "Port {port} already in use. Managed Lavalink startup aborted"
-msgstr "港 {port} すでに使用されています。マネージド Lavalink の起動が中止されました"
+msgstr "ポート {port} は既に使用されています。管理された Lavalink 起動は中止されました。"
 
 #: pylav/extension/bundled_node/manager.py:477
 msgid "Lavalink failed to start: {line}"
-msgstr "ラバリンクが起動に失敗しました: {line}"
+msgstr "ラバリンクの開始に失敗しました: {line}"
 

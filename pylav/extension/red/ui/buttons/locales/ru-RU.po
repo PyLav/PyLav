@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:18\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -48,11 +48,11 @@ msgstr "Нет"
 
 #: pylav/extension/red/ui/buttons/generic.py:164
 msgid "Disconnect {} {}"
-msgstr "Отключить {} {}"
+msgstr "Отключить {} {} {}"
 
 #: pylav/extension/red/ui/buttons/generic.py:165
 msgid "players"
-msgstr "Игроков"
+msgstr "игроков"
 
 #: pylav/extension/red/ui/buttons/generic.py:165
 msgid "player"
@@ -60,11 +60,11 @@ msgstr "игрок"
 
 #: pylav/extension/red/ui/buttons/nodes.py:57
 msgid "Connecting to the node with SSL enabled"
-msgstr "Подключение к узлу с включенным SSL"
+msgstr "Подключение к узлу с включением SSL"
 
 #: pylav/extension/red/ui/buttons/nodes.py:64
 msgid "Connecting to the node with SSL disabled"
-msgstr "Подключение к узлу с отключенным SSL"
+msgstr "Подключение к узлу с отключением SSL"
 
 #: pylav/extension/red/ui/buttons/nodes.py:102
 msgid "This node will only be used for searches"
@@ -76,32 +76,32 @@ msgstr "Этот узел будет использоваться для пои�
 
 #: pylav/extension/red/ui/buttons/nodes.py:140
 msgid "Please fill out all the fields before continuing"
-msgstr "Пожалуйста, заполните все поля, прежде чем продолжить"
+msgstr "Пожалуйста, заполните все поля перед продолжением"
 
 #: pylav/extension/red/ui/buttons/nodes.py:220
 msgid "When you press done this node will be permanently delete"
-msgstr "Когда вы нажмете готово, этот узел будет окончательно удален"
+msgstr "После того, как вы нажмете на кнопку \"Готово\", этот узел будет удален навсегда"
 
 #: pylav/extension/red/ui/buttons/nodes.py:222
 msgid "This node will no longer be deleted once you press done"
-msgstr "Этот узел больше не будет удален после нажатия кнопки Готово"
+msgstr "Этот узел больше не будет удален после того, как вы нажмете на кнопку"
 
 #: pylav/extension/red/ui/buttons/nodes.py:255
 msgid "__Enabled sources__:\n"
 "{sources}"
-msgstr "__Enabled sources__:\n"
+msgstr "__Включённые источники__:\n"
 "{sources}"
 
 #: pylav/extension/red/ui/buttons/player.py:38
 #: pylav/extension/red/ui/buttons/player.py:87
 #: pylav/extension/red/ui/buttons/player.py:140
 msgid "You are not authorized to perform this action"
-msgstr "Вы не уполномочены выполнять это действие"
+msgstr "Вы не авторизованы для выполнения этого действия"
 
 #: pylav/extension/red/ui/buttons/player.py:47
 #: pylav/extension/red/ui/buttons/player.py:96
 msgid "No Player Available For Action - Try Refreshing"
-msgstr "Нет игрока, доступного для действий - Попробуйте освежить"
+msgstr "Нет доступных игроков для действия - Попробуйте обновить"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:107
@@ -120,33 +120,33 @@ msgstr "Игрок остановлен"
 
 #: pylav/extension/red/ui/buttons/player.py:154
 msgid "No Players Available For Action - Try Refreshing"
-msgstr "Нет игроков, доступных для действий - Попробуйте освежить"
+msgstr "Нет доступных игроков для действий - Попробуйте обновить"
 
 #: pylav/extension/red/ui/buttons/playlist.py:48
 msgid "When you press done this playlist will be permanently delete"
-msgstr "Когда вы нажмете готово, этот плейлист будет окончательно удален"
+msgstr "После завершения этого плейлиста будет удален навсегда"
 
 #: pylav/extension/red/ui/buttons/playlist.py:50
 msgid "This playlist will no longer be deleted once you press done"
-msgstr "Этот плейлист больше не будет удален после нажатия кнопки «Готово»"
+msgstr "Этот плейлист больше не будет удален после того, как вы нажмете на кнопку"
 
 #: pylav/extension/red/ui/buttons/playlist.py:83
 msgid "Clearing all tracks from the playlist playlist"
-msgstr "Удаление всех треков из плейлиста плейлиста"
+msgstr "Очистка всех треков из плейлиста"
 
 #: pylav/extension/red/ui/buttons/playlist.py:85
 msgid "No longer clearing tracks from the playlist"
-msgstr "Больше не удаляется треки из плейлиста"
+msgstr "Больше не удалять треки из плейлиста"
 
 #: pylav/extension/red/ui/buttons/playlist.py:126
 msgid "Here is your playlist: {name}{extras}"
-msgstr "Вот ваш плейлист: {name}{extras}"
+msgstr "Ваш плейлист: {name}{extras}"
 
 #: pylav/extension/red/ui/buttons/playlist.py:128
 msgid "\n"
 " (compressed using gzip to make it possible to send via Discord - you can use <https://gzip.swimburger.net/> to decompress it)"
 msgstr "\n"
-" (сжато с помощью gzip, чтобы сделать возможным отправку через Discord - вы можете использовать <https://gzip.swimburger.net/> для его распаковки)"
+" (сжато с помощью gzip для отправки через Discord - вы можете использовать <https://gzip.swimburger.net/> для распаковки)"
 
 #: pylav/extension/red/ui/buttons/playlist.py:133
 msgid "\n"
@@ -168,7 +168,7 @@ msgstr "Добавление текущей очереди в плейлист"
 
 #: pylav/extension/red/ui/buttons/playlist.py:270
 msgid "No longer adding the current queue to playlist"
-msgstr "Больше не добавлять текущую очередь в плейлист"
+msgstr "Не добавлять текущую очередь в плейлист"
 
 #: pylav/extension/red/ui/buttons/playlist.py:309
 msgid "Removing all duplicate tracks from the queue"
@@ -180,7 +180,7 @@ msgstr "Больше не все повторяющиеся треки из оч
 
 #: pylav/extension/red/ui/buttons/playlist.py:406
 msgid "Playlists you can currently play"
-msgstr "Плейлисты, в которые вы можете играть в настоящее время"
+msgstr "Плейлисты, которые вы можете сейчас играть"
 
 #: pylav/extension/red/ui/buttons/playlist.py:412
 msgid "Pick a playlist"
@@ -188,7 +188,7 @@ msgstr "Выберите плейлист"
 
 #: pylav/extension/red/ui/buttons/playlist.py:434
 msgid "What should the playlist name be?"
-msgstr "Каким должно быть название плейлиста?"
+msgstr "Каким именем должен быть плейлист?"
 
 #: pylav/extension/red/ui/buttons/queue.py:164
 #: pylav/extension/red/ui/buttons/queue.py:191
@@ -202,9 +202,9 @@ msgstr "В очереди ничего нет"
 
 #: pylav/extension/red/ui/buttons/queue.py:296
 msgid "Removed tracks from the queue"
-msgstr "Удалены треки из очереди"
+msgstr "Удалить треки из очереди"
 
 #: pylav/extension/red/ui/buttons/queue.py:323
 msgid "What do you want to enqueue?"
-msgstr "Что вы хотите поставить в очередь?"
+msgstr "Что вы хотите поставить?"
 

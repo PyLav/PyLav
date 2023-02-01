@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:09\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -27,9 +27,9 @@ msgstr "Ma nouvelle playlist géniale"
 
 #: pylav/extension/red/ui/modals/queue.py:27
 msgid "Search for a song to add to the queue"
-msgstr "Rechercher un morceau à ajouter à la file d’attente"
+msgstr "Rechercher une chanson à ajouter à la file d'attente"
 
 #: pylav/extension/red/ui/modals/queue.py:30
 msgid "Hello by Adele, speak:Hello, https://open.spotify.com/playlist/37i9dQZF1DX6XceWZP1znY"
-msgstr "Bonjour par Adele, parle:Bonjour, https://open.spotify.com/playlist/37i9dQZF1DX6XceWZP1znY"
+msgstr "Bonjour par Adele, parlez :Bonjour, https://open.spotify.com/playlist/37i9dQZF1DX6XceWZP1znY"
 

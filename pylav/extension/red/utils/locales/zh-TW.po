@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:18\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgstr ""
 #: pylav/extension/red/utils/required_methods.py:46
 #, docstring
 msgid "Shows the credits and translation details for the PyLav cogs and shared code"
-msgstr "顯示 PyLav 齒輪和共用代碼的製作者和翻譯詳細資訊"
+msgstr "顯示 PyLav 齒輪和shared code的學分和翻譯詳細信息"
 
 #: pylav/extension/red/utils/required_methods.py:50
 msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
@@ -49,11 +49,11 @@ msgstr "PyLav 由 [Draper#6666]（https://github.com/Drapersniper） 創建。\n
 #: pylav/extension/red/utils/required_methods.py:76
 #, docstring
 msgid "Show the version of PyLav library"
-msgstr "顯示 PyLav 庫的版本"
+msgstr "顯示 PyLav 資料庫的版本"
 
 #: pylav/extension/red/utils/required_methods.py:91
 msgid "Library"
-msgstr "圖書館"
+msgstr "資料庫"
 
 #: pylav/extension/red/utils/required_methods.py:92
 msgid "Version"
@@ -62,31 +62,31 @@ msgstr "版本"
 #: pylav/extension/red/utils/required_methods.py:111
 #, docstring
 msgid "Sync the Bots slash commands"
-msgstr "同步機器人斜杠命令"
+msgstr "同步機器人斜線指令"
 
 #: pylav/extension/red/utils/required_methods.py:120
 msgid "Synced the bots slash commands"
-msgstr "同步了機器人斜杠命令"
+msgstr "已同步機器人斜線指令"
 
 #: pylav/extension/red/utils/required_methods.py:141
 msgid "This command requires an existing player to be run"
-msgstr "此命令需要運行現有播放機"
+msgstr "此指令需要運行現有的播放器"
 
 #: pylav/extension/red/utils/required_methods.py:150
 msgid "PyLavPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later"
-msgstr "由於後端服務中斷，PyLavPlayer 齒輪目前暫時不可用，請稍後重試"
+msgstr "由於後端服務中斷，PyLavPlayer cog 目前暫時不可用，請稍後重試"
 
 #: pylav/extension/red/utils/required_methods.py:154
 msgid "No Lavalink node currently available"
-msgstr "目前沒有可用的熔岩鏈接節點"
+msgstr "當前沒有可用的 Lavalink 節點"
 
 #: pylav/extension/red/utils/required_methods.py:163
 msgid "PyLavPlayer is currently unable to process tracks belonging to {feature}"
-msgstr "PyLavPlayer 目前無法處理屬於 {feature}"
+msgstr "PyLavPlayer 目前無法處理屬於 {feature} 的曲目"
 
 #: pylav/extension/red/utils/required_methods.py:166
 msgid "No Lavalink node currently available with feature {feature}"
-msgstr "目前沒有具有功能的 Lavalink 節點 {feature}"
+msgstr "當前沒有可用的 Lavalink 節點具有 {feature} 功能"
 
 #: pylav/extension/red/utils/required_methods.py:177
 msgid "This command is not available in this channel. Please use {channel}"
@@ -94,9 +94,9 @@ msgstr "此命令在此通道中不可用。請使用 {channel}"
 
 #: pylav/extension/red/utils/required_methods.py:189
 msgid "This command requires you to be a DJ"
-msgstr "此命令要求您是 DJ"
+msgstr "此命令要求您成為 DJ"
 
 #: pylav/extension/red/utils/required_methods.py:227
 msgid "PyLav is not ready - Please try again shortly"
-msgstr "PyLav 尚未準備就緒 - 請稍後重試"
+msgstr "PyLav 尚未準備好 - 請稍後重試"
 

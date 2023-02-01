@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:17\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "MIME-Version: 1.0\n"
@@ -35,12 +35,12 @@ msgstr "Gazdă"
 
 #: pylav/extension/red/ui/menus/nodes.py:68
 msgid "Enter the host port to connect to"
-msgstr "Introduceți portul gazdă la care să vă conectați"
+msgstr "Introduceți portul gazdă pentru a vă conecta la"
 
 #: pylav/extension/red/ui/menus/nodes.py:69
 #: pylav/extension/red/ui/menus/nodes.py:507
 msgid "Port"
-msgstr "Port"
+msgstr "Portul"
 
 #: pylav/extension/red/ui/menus/nodes.py:76
 msgid "Enter the node's password"
@@ -62,17 +62,17 @@ msgstr "Nume"
 
 #: pylav/extension/red/ui/menus/nodes.py:92
 msgid "Enter a timeout in seconds"
-msgstr "Introduceți o expirare în câteva secunde"
+msgstr "Introduceți un timp de expirare în secunde"
 
 #: pylav/extension/red/ui/menus/nodes.py:93
 #: pylav/extension/red/ui/menus/nodes.py:531
 msgid "Timeout"
-msgstr "Timeout"
+msgstr "Expirare"
 
 #: pylav/extension/red/ui/menus/nodes.py:109
 #: pylav/extension/red/ui/menus/nodes.py:560
 msgid "Source to disable"
-msgstr "Sursă pentru dezactivare"
+msgstr "Sursa pentru dezactivare"
 
 #: pylav/extension/red/ui/menus/nodes.py:222
 #: pylav/extension/red/ui/menus/nodes.py:671
@@ -82,7 +82,7 @@ msgstr "Nume setat la {name}"
 #: pylav/extension/red/ui/menus/nodes.py:235
 #: pylav/extension/red/ui/menus/nodes.py:684
 msgid "Password set to {password}"
-msgstr "Parolă setată la {password}"
+msgstr "Parola setată la {password}"
 
 #: pylav/extension/red/ui/menus/nodes.py:253
 #: pylav/extension/red/ui/menus/nodes.py:702
@@ -102,36 +102,36 @@ msgstr "Port setat la {port}"
 #: pylav/extension/red/ui/menus/nodes.py:295
 #: pylav/extension/red/ui/menus/nodes.py:744
 msgid "Invalid timeout, it must be a number in seconds"
-msgstr "Expirare nevalidă, trebuie să fie un număr în secunde"
+msgstr "Pauză invalidă, trebuie să fie un număr în secunde"
 
 #: pylav/extension/red/ui/menus/nodes.py:303
 #: pylav/extension/red/ui/menus/nodes.py:752
 msgid "Timeout set to {timeout} seconds"
-msgstr "Expirare setată la {timeout} Secunde"
+msgstr "Timeout setat la {timeout} secunde"
 
 #: pylav/extension/red/ui/menus/nodes.py:498
 msgid "Change the domain or IP address of the host"
-msgstr "Modificarea domeniului sau a adresei IP a gazdei"
+msgstr "Schimbă domeniul sau adresa IP a gazdei"
 
 #: pylav/extension/red/ui/menus/nodes.py:506
 msgid "Change the host port to connect to"
-msgstr "Modificarea portului gazdă la care să vă conectați"
+msgstr "Schimbă portul gazdă la care să te conectezi"
 
 #: pylav/extension/red/ui/menus/nodes.py:514
 msgid "Change the node's password"
-msgstr "Modificarea parolei nodului"
+msgstr "Schimbă parola nodului"
 
 #: pylav/extension/red/ui/menus/nodes.py:522
 msgid "Change the name of this node"
-msgstr "Modificarea numelui acestui nod"
+msgstr "Schimbă numele acestui modul"
 
 #: pylav/extension/red/ui/menus/nodes.py:530
 msgid "Enter the new timeout for this node"
-msgstr "Introduceți noua expirare pentru acest nod"
+msgstr "Introduceți noul timp de expirare pentru acest modul"
 
 #: pylav/extension/red/ui/menus/player.py:95
 msgid "selected"
-msgstr "Selectat"
+msgstr "selectat"
 
 #: pylav/extension/red/ui/menus/player.py:105
 msgid "inactive"
@@ -139,7 +139,7 @@ msgstr "inactiv"
 
 #: pylav/extension/red/ui/menus/player.py:115
 msgid "all"
-msgstr "tot"
+msgstr "toate"
 
 #: pylav/extension/red/ui/menus/player.py:208
 msgid "Not connected anywhere"
@@ -148,44 +148,44 @@ msgstr "Nu este conectat nicăieri"
 #: pylav/extension/red/ui/menus/playlist.py:187
 #: pylav/extension/red/ui/menus/playlist.py:322
 msgid "Please enter the playlist URL"
-msgstr "Vă rugăm să introduceți adresa URL a playlistului"
+msgstr "Te rugăm să introduci URL-ul listei de redare"
 
 #: pylav/extension/red/ui/menus/playlist.py:188
 #: pylav/extension/red/ui/menus/playlist.py:323
 msgid "Playlist URL"
-msgstr "Url-ul playlistului"
+msgstr "URL Playlist"
 
 #: pylav/extension/red/ui/menus/playlist.py:194
 msgid "Please enter the playlist name"
-msgstr "Vă rugăm să introduceți numele playlist-ului"
+msgstr "Te rugăm să introduci numele listei de redare"
 
 #: pylav/extension/red/ui/menus/playlist.py:195
 #: pylav/extension/red/ui/menus/playlist.py:330
 msgid "Playlist Name"
-msgstr "Nume listă de redare"
+msgstr "Nume Playlist"
 
 #: pylav/extension/red/ui/menus/playlist.py:329
 msgid "Please enter the new playlist name"
-msgstr "Vă rugăm să introduceți noul nume de listă de redare"
+msgstr "Te rugăm să introduci noul nume al listei de redare"
 
 #: pylav/extension/red/ui/menus/playlist.py:336
 msgid "What query to add to the playlist"
-msgstr "Ce interogare să adăugați la lista de redare"
+msgstr "Ce interogare să adaugi la lista de redare"
 
 #: pylav/extension/red/ui/menus/playlist.py:337
 #: pylav/extension/red/ui/menus/playlist.py:345
 msgid "Query"
-msgstr "Întrebare"
+msgstr "Interogare"
 
 #: pylav/extension/red/ui/menus/playlist.py:344
 msgid "What query to remove from the playlist"
-msgstr "Ce interogare să eliminați din lista de redare"
+msgstr "Ce interogare de eliminat din lista de redare"
 
 #: pylav/extension/red/ui/menus/queue.py:458
 msgid "Select Track To Remove"
-msgstr "Selectați Urmărire pentru a elimina"
+msgstr "Selectează melodia pentru a o elimina"
 
 #: pylav/extension/red/ui/menus/queue.py:460
 msgid "Select Track To Play Now"
-msgstr "Selectați Urmărire pentru a juca acum"
+msgstr "Selectează melodia pentru a reda acum"
 

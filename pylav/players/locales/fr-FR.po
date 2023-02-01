@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:17\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -23,79 +23,79 @@ msgstr "Aucun nœud disponible!"
 
 #: pylav/players/manager.py:349
 msgid "Music in {count} servers"
-msgstr "Musique dans {count} Serveurs"
+msgstr "Musique sur les serveurs de {count}"
 
 #: pylav/players/player.py:1176
 msgid "There are no tracks currently in the player history"
-msgstr "Il n’y a actuellement aucune piste dans l’historique des joueurs"
+msgstr "Il n'y a pas de pistes actuellement dans l'historique du joueur"
 
 #: pylav/players/player.py:1869
 msgid "Current node has the Volume filter functionality disabled"
-msgstr "La fonctionnalité de filtre de volume du nœud actuel est désactivée"
+msgstr "Le noeud actuel a la fonctionnalité de filtre de volume désactivée"
 
 #: pylav/players/player.py:1891 pylav/players/player.py:2067
 #: pylav/players/player.py:2122
 msgid "Current node has the Equalizer functionality disabled"
-msgstr "La fonctionnalité Égaliseur est désactivée sur le nœud actuel"
+msgstr "Le noeud actuel a la fonctionnalité d'égaliseur désactivé"
 
 #: pylav/players/player.py:1911
 msgid "Current node has the Karaoke functionality disabled"
-msgstr "La fonctionnalité Karaoké du nœud actuel est désactivée"
+msgstr "Le noeud actuel a la fonctionnalité Karaoké désactivée"
 
 #: pylav/players/player.py:1931 pylav/players/player.py:2069
 #: pylav/players/player.py:2124
 msgid "Current node has the Timescale functionality disabled"
-msgstr "La fonctionnalité Échelle de temps du nœud actuel est désactivée"
+msgstr "Le noeud actuel a la fonctionnalité de mise à jour de temps désactivée"
 
 #: pylav/players/player.py:1951
 msgid "Current node has the Tremolo functionality disabled"
-msgstr "La fonctionnalité Tremolo est désactivée sur le nœud actuel"
+msgstr "Le noeud actuel a la fonctionnalité Tremolo désactivée"
 
 #: pylav/players/player.py:1971
 msgid "Current node has the Vibrato functionality disabled"
-msgstr "La fonctionnalité Vibrato du nœud actuel est désactivée"
+msgstr "Le noeud actuel a la fonctionnalité Vibrato désactivée"
 
 #: pylav/players/player.py:1991
 msgid "Current node has the Rotation functionality disabled"
-msgstr "La fonctionnalité Rotation du nœud actuel est désactivée"
+msgstr "Le noeud actuel a la fonctionnalité Rotation désactivée"
 
 #: pylav/players/player.py:2011
 msgid "Current node has the Distortion functionality disabled"
-msgstr "La fonctionnalité Distorsion du nœud actuel est désactivée"
+msgstr "Le noeud actuel a la fonctionnalité Distortion désactivée"
 
 #: pylav/players/player.py:2031
 msgid "Current node has the LowPass functionality disabled"
-msgstr "La fonctionnalité LowPass du nœud actuel est désactivée"
+msgstr "Le noeud actuel a la fonctionnalité LowPass désactivée"
 
 #: pylav/players/player.py:2051
 msgid "Current node has the Echo functionality disabled"
-msgstr "La fonctionnalité Echo du nœud actuel est désactivée"
+msgstr "Le noeud actuel a la fonctionnalité Echo désactivée"
 
 #: pylav/players/player.py:2181
 msgid "Current node has the ChannelMix functionality disabled"
-msgstr "La fonctionnalité ChannelMix est désactivée sur le nœud actuel"
+msgstr "Le noeud actuel a la fonctionnalité ChannelMix désactivée"
 
 #: pylav/players/player.py:2441 pylav/players/player.py:2486
 #: pylav/players/player.py:2501
 msgid "LIVE"
-msgstr "VIVRE"
+msgstr "EN DIRECT"
 
 #: pylav/players/player.py:2454
 msgid "Now Playing in"
-msgstr "En cours de lecture"
+msgstr "En cours de lecture dans"
 
 #: pylav/players/player.py:2472 pylav/players/player.py:2581
 msgid "Currently livestreaming"
-msgstr "Diffusion en direct"
+msgstr "Actuellement en direct"
 
 #: pylav/players/player.py:2474
 msgid "Playing: "
-msgstr "Jeu: "
+msgstr "En cours de lecture : "
 
 #: pylav/players/player.py:2477 pylav/players/player.py:2493
 #: pylav/players/player.py:2508 pylav/players/player.py:2587
 msgid "Requester"
-msgstr "Demandeur"
+msgstr "Source de la demande"
 
 #: pylav/players/player.py:2489 pylav/players/player.py:2504
 msgid "Duration"
@@ -111,7 +111,7 @@ msgstr "Piste suivante"
 
 #: pylav/players/player.py:2515
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
-msgstr "{track_count} traces {queue_total_duration} restant\n"
+msgstr "{track_count} pistes, {queue_total_duration} restants\n"
 
 #: pylav/players/player.py:2519 pylav/players/player.py:2615
 msgid "{translation}: {repeat_emoji}"
@@ -119,7 +119,7 @@ msgstr "{translation}: {repeat_emoji}"
 
 #: pylav/players/player.py:2519 pylav/players/player.py:2615
 msgid "Repeating"
-msgstr "Répétitif"
+msgstr "Répétition en cours"
 
 #: pylav/players/player.py:2520 pylav/players/player.py:2616
 msgid "{space}{translation}: {autoplay_emoji}"
@@ -139,21 +139,21 @@ msgstr "Volume"
 
 #: pylav/players/player.py:2564
 msgid "Recently Played for"
-msgstr "A récemment joué pour"
+msgstr "Joué récemment pour"
 
 #: pylav/players/player.py:2564
 msgid "Queue for"
-msgstr "File d’attente pour"
+msgstr "File d'attente pour"
 
 #: pylav/players/player.py:2584
 msgid "Playing"
-msgstr "Jeu"
+msgstr "En cours de lecture"
 
 #: pylav/players/player.py:2600
 msgid "Queue order may not be accurate due to auto-shuffle being enabled"
-msgstr "L’ordre des files d’attente peut ne pas être précis en raison de l’activation du remaniement automatique"
+msgstr "La prescription en file d'attente peut ne pas être précise car l'auto-mélange est activé"
 
 #: pylav/players/player.py:2606
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
-msgstr "Page {current_page}/{total_pages} | {track_number} traces {queue_total_duration} restant\n"
+msgstr "Page {current_page}/{total_pages} | {track_number} pistes, {queue_total_duration} restantes\n"
 

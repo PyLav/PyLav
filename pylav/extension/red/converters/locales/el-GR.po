@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
@@ -19,41 +19,41 @@ msgstr ""
 
 #: pylav/extension/red/converters/equalizer.py:47
 msgid "Bass boost with name `{arg}` not found"
-msgstr "Ενίσχυση μπάσων με όνομα '{arg}' δεν βρέθηκε"
+msgstr "Ενίσχυση μπάσου με το όνομα `{arg}` δεν βρέθηκε"
 
 #: pylav/extension/red/converters/equalizer.py:61
 msgid "Maximum"
-msgstr "Μέγιστος"
+msgstr "Μέγιστο"
 
 #: pylav/extension/red/converters/equalizer.py:62
 msgid "Insane"
-msgstr "Τρελός"
+msgstr "Παρανοησία"
 
 #: pylav/extension/red/converters/equalizer.py:63
 msgid "Extreme"
-msgstr "Ακραίος"
+msgstr "Ακραία"
 
 #: pylav/extension/red/converters/equalizer.py:64
 msgid "Very High"
-msgstr "Πολύ υψηλή"
+msgstr "Πολύ Υψηλή"
 
 #: pylav/extension/red/converters/equalizer.py:65
 msgid "High"
-msgstr "Ψηλός"
+msgstr "Υψηλή"
 
 #: pylav/extension/red/converters/equalizer.py:66
 msgid "Medium"
-msgstr "Μέτριος"
+msgstr "Μεσαίο"
 
 #: pylav/extension/red/converters/equalizer.py:67
 msgid "Fine Tuned"
-msgstr "Τελειοποιημένο"
+msgstr "Πρόστιμο Συντονισμένο"
 
 #: pylav/extension/red/converters/equalizer.py:68
 msgid "Cut-off"
-msgstr "Αποκοπής"
+msgstr "Αποκοπή"
 
 #: pylav/extension/red/converters/equalizer.py:69
 msgid "Off"
-msgstr "Από"
+msgstr "Ανενεργό"
 

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -24,7 +24,7 @@ msgstr "Sie sind nicht berechtigt, mit dieser Option zu interagieren"
 
 #: pylav/extension/red/ui/selectors/nodes.py:53
 msgid "Disabling the following sources: {sources}"
-msgstr "Deaktivieren der folgenden Quellen: {sources}"
+msgstr "Deaktiviere folgende Quellen: {sources}"
 
 #: pylav/extension/red/ui/selectors/nodes.py:83
 msgid "Node not found"

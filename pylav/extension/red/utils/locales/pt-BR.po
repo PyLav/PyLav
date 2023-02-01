@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:18\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgstr ""
 #: pylav/extension/red/utils/required_methods.py:46
 #, docstring
 msgid "Shows the credits and translation details for the PyLav cogs and shared code"
-msgstr "Mostra os créditos e detalhes de tradução para as engrenagens PyLav e código compartilhado"
+msgstr "Mostra os detalhes de créditos e tradução para os cogs PyLav e código compartilhado"
 
 #: pylav/extension/red/utils/required_methods.py:50
 msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
@@ -62,31 +62,31 @@ msgstr "Versão"
 #: pylav/extension/red/utils/required_methods.py:111
 #, docstring
 msgid "Sync the Bots slash commands"
-msgstr "Sincronizar os comandos de barra dos Bots"
+msgstr "Sincronize os comandos da barra de bots"
 
 #: pylav/extension/red/utils/required_methods.py:120
 msgid "Synced the bots slash commands"
-msgstr "Sincronizados os comandos de barra dos bots"
+msgstr "Sincronizado os comandos com a barra dos bots"
 
 #: pylav/extension/red/utils/required_methods.py:141
 msgid "This command requires an existing player to be run"
-msgstr "Este comando requer que um player existente seja executado"
+msgstr "Este comando requer que um jogador existente seja executado"
 
 #: pylav/extension/red/utils/required_methods.py:150
 msgid "PyLavPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later"
-msgstr "A engrenagem do PyLavPlayer está temporariamente indisponível devido a uma interrupção com os serviços de back-end, tente novamente mais tarde"
+msgstr "PyLavPlayer cog está temporariamente indisponível devido a uma interrupção no serviço de backend, por favor, tente novamente mais tarde"
 
 #: pylav/extension/red/utils/required_methods.py:154
 msgid "No Lavalink node currently available"
-msgstr "Nenhum nó Lavalink atualmente disponível"
+msgstr "Nenhum nó de Lavalink disponível atualmente"
 
 #: pylav/extension/red/utils/required_methods.py:163
 msgid "PyLavPlayer is currently unable to process tracks belonging to {feature}"
-msgstr "PyLavPlayer é atualmente incapaz de processar faixas pertencentes a {feature}"
+msgstr "PyLavPlayer está impossibilitado de processar faixas pertencentes a {feature}"
 
 #: pylav/extension/red/utils/required_methods.py:166
 msgid "No Lavalink node currently available with feature {feature}"
-msgstr "Nenhum nó Lavalink atualmente disponível com recurso {feature}"
+msgstr "Nenhum nó Lavalink disponível atualmente com o recurso {feature}"
 
 #: pylav/extension/red/utils/required_methods.py:177
 msgid "This command is not available in this channel. Please use {channel}"

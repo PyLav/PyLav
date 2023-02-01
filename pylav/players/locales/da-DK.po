@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Danish\n"
 "MIME-Version: 1.0\n"
@@ -23,57 +23,57 @@ msgstr "Ingen tilgængelige noder!"
 
 #: pylav/players/manager.py:349
 msgid "Music in {count} servers"
-msgstr "Musik i {count} Servere"
+msgstr "Musik i {count} servere"
 
 #: pylav/players/player.py:1176
 msgid "There are no tracks currently in the player history"
-msgstr "Der er ingen spor i øjeblikket i spillerhistorikken"
+msgstr "Der er ingen spor i spillerens historie"
 
 #: pylav/players/player.py:1869
 msgid "Current node has the Volume filter functionality disabled"
-msgstr "Aktuel node har funktionen Lydstyrkefilter deaktiveret"
+msgstr "Aktuel node har funktionen Volumenfilter deaktiveret"
 
 #: pylav/players/player.py:1891 pylav/players/player.py:2067
 #: pylav/players/player.py:2122
 msgid "Current node has the Equalizer functionality disabled"
-msgstr "Aktuel node har Equalizer-funktionaliteten deaktiveret"
+msgstr "Aktuelle indholdselement har funktionen Equalizer deaktiveret"
 
 #: pylav/players/player.py:1911
 msgid "Current node has the Karaoke functionality disabled"
-msgstr "Aktuel node har karaoke-funktionaliteten deaktiveret"
+msgstr "Aktuel node har Karaoke funktionaliteten deaktiveret"
 
 #: pylav/players/player.py:1931 pylav/players/player.py:2069
 #: pylav/players/player.py:2124
 msgid "Current node has the Timescale functionality disabled"
-msgstr "Aktuel node har funktionen Tidsskala deaktiveret"
+msgstr "Aktuelle indholdselement har funktionen Timescale deaktiveret"
 
 #: pylav/players/player.py:1951
 msgid "Current node has the Tremolo functionality disabled"
-msgstr "Nuværende node har Tremolo-funktionaliteten deaktiveret"
+msgstr "Aktuel node har Tremolo funktionalitet deaktiveret"
 
 #: pylav/players/player.py:1971
 msgid "Current node has the Vibrato functionality disabled"
-msgstr "Aktuel node har Vibrato-funktionaliteten deaktiveret"
+msgstr "Aktuelle indholdselement har funktionen Vibrato deaktiveret"
 
 #: pylav/players/player.py:1991
 msgid "Current node has the Rotation functionality disabled"
-msgstr "Aktuel node har rotationsfunktionen deaktiveret"
+msgstr "Aktuel node har rotationsfunktionaliteten deaktiveret"
 
 #: pylav/players/player.py:2011
 msgid "Current node has the Distortion functionality disabled"
-msgstr "Aktuel node har deaktiveret Distortion-funktionaliteten"
+msgstr "Aktuel node har forvrængningsfunktionaliteten deaktiveret"
 
 #: pylav/players/player.py:2031
 msgid "Current node has the LowPass functionality disabled"
-msgstr "Aktuel node har LowPass-funktionaliteten deaktiveret"
+msgstr "Aktuel node har funktionen LowPass deaktiveret"
 
 #: pylav/players/player.py:2051
 msgid "Current node has the Echo functionality disabled"
-msgstr "Aktuel node har Echo-funktionaliteten deaktiveret"
+msgstr "Aktuel node har Echo funktionaliteten deaktiveret"
 
 #: pylav/players/player.py:2181
 msgid "Current node has the ChannelMix functionality disabled"
-msgstr "Aktuel node har ChannelMix-funktionaliteten deaktiveret"
+msgstr "Aktuel node har funktionaliteten ChannelMix deaktiveret"
 
 #: pylav/players/player.py:2441 pylav/players/player.py:2486
 #: pylav/players/player.py:2501
@@ -82,20 +82,20 @@ msgstr "LEVE"
 
 #: pylav/players/player.py:2454
 msgid "Now Playing in"
-msgstr "Spiller nu ind"
+msgstr "Spiller nu om"
 
 #: pylav/players/player.py:2472 pylav/players/player.py:2581
 msgid "Currently livestreaming"
-msgstr "Livestreaming i øjeblikket"
+msgstr "I øjeblikket livestreaming"
 
 #: pylav/players/player.py:2474
 msgid "Playing: "
-msgstr "Spille: "
+msgstr "Afspilning: "
 
 #: pylav/players/player.py:2477 pylav/players/player.py:2493
 #: pylav/players/player.py:2508 pylav/players/player.py:2587
 msgid "Requester"
-msgstr "Anmoderen"
+msgstr "Anmoder"
 
 #: pylav/players/player.py:2489 pylav/players/player.py:2504
 msgid "Duration"
@@ -103,15 +103,15 @@ msgstr "Varighed"
 
 #: pylav/players/player.py:2495
 msgid "Previous Track"
-msgstr "Forrige spor"
+msgstr "Forrige Spor"
 
 #: pylav/players/player.py:2510
 msgid "Next Track"
-msgstr "Næste spor"
+msgstr "Næste Spor"
 
 #: pylav/players/player.py:2515
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
-msgstr "{track_count} spor {queue_total_duration} resterende\n"
+msgstr "{track_count} numre, {queue_total_duration} tilbage\n"
 
 #: pylav/players/player.py:2519 pylav/players/player.py:2615
 msgid "{translation}: {repeat_emoji}"
@@ -119,7 +119,7 @@ msgstr "{translation}: {repeat_emoji}"
 
 #: pylav/players/player.py:2519 pylav/players/player.py:2615
 msgid "Repeating"
-msgstr "Gentaget"
+msgstr "Gentagelse"
 
 #: pylav/players/player.py:2520 pylav/players/player.py:2616
 msgid "{space}{translation}: {autoplay_emoji}"
@@ -127,7 +127,7 @@ msgstr "{space}{translation}: {autoplay_emoji}"
 
 #: pylav/players/player.py:2521 pylav/players/player.py:2617
 msgid "Auto Play"
-msgstr "Automatisk afspilning"
+msgstr "Automatisk Afspil"
 
 #: pylav/players/player.py:2523 pylav/players/player.py:2619
 msgid "{space}{translation}: {volume}%"
@@ -139,21 +139,21 @@ msgstr "Lydstyrke"
 
 #: pylav/players/player.py:2564
 msgid "Recently Played for"
-msgstr "Senest spillet for"
+msgstr "Senest afspillet for"
 
 #: pylav/players/player.py:2564
 msgid "Queue for"
-msgstr "Kø til"
+msgstr "Kø for"
 
 #: pylav/players/player.py:2584
 msgid "Playing"
-msgstr "Spille"
+msgstr "Afspiller"
 
 #: pylav/players/player.py:2600
 msgid "Queue order may not be accurate due to auto-shuffle being enabled"
-msgstr "Kørækkefølgen er muligvis ikke nøjagtig, fordi automatisk blanding er aktiveret"
+msgstr "Kø ordre er muligvis ikke præcis fordi auto-shuffle bliver aktiveret"
 
 #: pylav/players/player.py:2606
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
-msgstr "Side {current_page}/{total_pages} | {track_number} spor {queue_total_duration} resterende\n"
+msgstr "Side {current_page}/{total_pages} ¤ {track_number} numre, {queue_total_duration} tilbage\n"
 

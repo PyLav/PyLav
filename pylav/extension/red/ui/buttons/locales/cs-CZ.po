@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:09\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -48,7 +48,7 @@ msgstr "Ne"
 
 #: pylav/extension/red/ui/buttons/generic.py:164
 msgid "Disconnect {} {}"
-msgstr "Disconnect {} {}"
+msgstr "Odpojit {} {} {}"
 
 #: pylav/extension/red/ui/buttons/generic.py:165
 msgid "players"
@@ -60,11 +60,11 @@ msgstr "hráč"
 
 #: pylav/extension/red/ui/buttons/nodes.py:57
 msgid "Connecting to the node with SSL enabled"
-msgstr "Připojení k uzlu s povoleným protokolem SSL"
+msgstr "Připojování k uzlu s povoleným SSL"
 
 #: pylav/extension/red/ui/buttons/nodes.py:64
 msgid "Connecting to the node with SSL disabled"
-msgstr "Připojení k uzlu se zakázaným protokolem SSL"
+msgstr "Připojování k uzlu je zakázáno SSL"
 
 #: pylav/extension/red/ui/buttons/nodes.py:102
 msgid "This node will only be used for searches"
@@ -76,38 +76,38 @@ msgstr "Tento uzel bude použit pro vyhledávání a přehrávání"
 
 #: pylav/extension/red/ui/buttons/nodes.py:140
 msgid "Please fill out all the fields before continuing"
-msgstr "Před pokračováním vyplňte všechna pole"
+msgstr "Před pokračováním prosím vyplňte všechna pole"
 
 #: pylav/extension/red/ui/buttons/nodes.py:220
 msgid "When you press done this node will be permanently delete"
-msgstr "Po stisknutí tlačítka Hotovo bude tento uzel trvale odstraněn"
+msgstr "Po stisknutí tohoto uzlu bude trvale smazán"
 
 #: pylav/extension/red/ui/buttons/nodes.py:222
 msgid "This node will no longer be deleted once you press done"
-msgstr "Tento uzel již nebude odstraněn, jakmile stisknete tlačítko Hotovo"
+msgstr "Tento uzel již nebude po stisknutí smazán"
 
 #: pylav/extension/red/ui/buttons/nodes.py:255
 msgid "__Enabled sources__:\n"
 "{sources}"
-msgstr "__Enabled sources__:\n"
+msgstr "__Povolené zdroje__:\n"
 "{sources}"
 
 #: pylav/extension/red/ui/buttons/player.py:38
 #: pylav/extension/red/ui/buttons/player.py:87
 #: pylav/extension/red/ui/buttons/player.py:140
 msgid "You are not authorized to perform this action"
-msgstr "Nejste oprávněni tuto akci provést"
+msgstr "Nemáte oprávnění k provedení této akce"
 
 #: pylav/extension/red/ui/buttons/player.py:47
 #: pylav/extension/red/ui/buttons/player.py:96
 msgid "No Player Available For Action - Try Refreshing"
-msgstr "Žádný hráč není k dispozici pro akci - zkuste osvěžit"
+msgstr "Žádný hráč není k dispozici pro akci - zkuste obnovit"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:107
 #: pylav/extension/red/ui/buttons/player.py:164
 msgid "Bot Owner Action"
-msgstr "Akce vlastníka robota"
+msgstr "Akce Bot vlastníka"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:164
@@ -120,15 +120,15 @@ msgstr "Hráč se zastavil"
 
 #: pylav/extension/red/ui/buttons/player.py:154
 msgid "No Players Available For Action - Try Refreshing"
-msgstr "Žádní hráči nejsou k dispozici pro akci - zkuste osvěžit"
+msgstr "Nejsou k dispozici žádní hráči pro akci - zkuste obnovit"
 
 #: pylav/extension/red/ui/buttons/playlist.py:48
 msgid "When you press done this playlist will be permanently delete"
-msgstr "Po stisknutí tlačítka Hotovo bude tento seznam skladeb trvale smazán"
+msgstr "Po stisknutí tohoto seznamu skladeb bude trvale smazán"
 
 #: pylav/extension/red/ui/buttons/playlist.py:50
 msgid "This playlist will no longer be deleted once you press done"
-msgstr "Tento seznam skladeb již nebude smazán, jakmile stisknete tlačítko Hotovo"
+msgstr "Tento seznam skladeb nebude po stisknutí smazán"
 
 #: pylav/extension/red/ui/buttons/playlist.py:83
 msgid "Clearing all tracks from the playlist playlist"
@@ -136,43 +136,43 @@ msgstr "Vymazání všech skladeb ze seznamu skladeb"
 
 #: pylav/extension/red/ui/buttons/playlist.py:85
 msgid "No longer clearing tracks from the playlist"
-msgstr "Již nemaže skladby ze seznamu skladeb"
+msgstr "Již neodstraňovat skladby ze seznamu skladeb"
 
 #: pylav/extension/red/ui/buttons/playlist.py:126
 msgid "Here is your playlist: {name}{extras}"
-msgstr "Zde je váš seznam skladeb: {name}{extras}"
+msgstr "Zde je tvůj playlist: {name}{extras}"
 
 #: pylav/extension/red/ui/buttons/playlist.py:128
 msgid "\n"
 " (compressed using gzip to make it possible to send via Discord - you can use <https://gzip.swimburger.net/> to decompress it)"
 msgstr "\n"
-" (komprimováno pomocí gzipu, aby bylo možné posílat přes Discord - můžete použít <https://gzip.swimburger.net/> dekomprimovat)"
+" (komprimováno pomocí gzipu, aby bylo možné poslat přes Discord - můžeš použít <https://gzip.swimburger.net/> k jeho depresi)"
 
 #: pylav/extension/red/ui/buttons/playlist.py:133
 msgid "\n"
 " (File compressed using Brotli compression."
 msgstr "\n"
-" (Soubor komprimovaný pomocí komprese Brotli."
+" (komprimováno pomocí komprese typu Brotli."
 
 #: pylav/extension/red/ui/buttons/playlist.py:171
 msgid "Updating playlist with the latest tracks, press done to continue"
-msgstr "Aktualizace seznamu skladeb s nejnovějšími skladbami, pokračujte stisknutím tlačítka Hotovo"
+msgstr "Aktualizace playlistu s nejnovějšími skladbami, stiskněte pro pokračování"
 
 #: pylav/extension/red/ui/buttons/playlist.py:174
 msgid "Not updating playlist"
-msgstr "Neaktualizuje seznam skladeb"
+msgstr "Neaktualizuje se seznam skladeb"
 
 #: pylav/extension/red/ui/buttons/playlist.py:263
 msgid "Adding the current queue to playlist"
-msgstr "Přidání aktuální fronty do seznamu stop"
+msgstr "Přidání aktuální fronty do seznamu skladeb"
 
 #: pylav/extension/red/ui/buttons/playlist.py:270
 msgid "No longer adding the current queue to playlist"
-msgstr "Již nepřidávání aktuální fronty do seznamu stop"
+msgstr "Již nepřidává aktuální frontu do seznamu skladeb"
 
 #: pylav/extension/red/ui/buttons/playlist.py:309
 msgid "Removing all duplicate tracks from the queue"
-msgstr "Odstranění všech duplicitních stop z fronty"
+msgstr "Odstranění všech duplicitních skladeb z fronty"
 
 #: pylav/extension/red/ui/buttons/playlist.py:316
 msgid "No longer all duplicate tracks from the queue"
@@ -180,7 +180,7 @@ msgstr "Již nejsou všechny duplicitní skladby z fronty"
 
 #: pylav/extension/red/ui/buttons/playlist.py:406
 msgid "Playlists you can currently play"
-msgstr "Seznamy skladeb, které lze aktuálně přehrávat"
+msgstr "Seznamy skladeb, které aktuálně můžete hrát"
 
 #: pylav/extension/red/ui/buttons/playlist.py:412
 msgid "Pick a playlist"
@@ -188,7 +188,7 @@ msgstr "Výběr playlistu"
 
 #: pylav/extension/red/ui/buttons/playlist.py:434
 msgid "What should the playlist name be?"
-msgstr "Jaký by měl být název seznamu skladeb?"
+msgstr "Co by měl být seznam skladeb?"
 
 #: pylav/extension/red/ui/buttons/queue.py:164
 #: pylav/extension/red/ui/buttons/queue.py:191
@@ -198,13 +198,13 @@ msgstr "Není připojen k hlasovému kanálu"
 
 #: pylav/extension/red/ui/buttons/queue.py:289
 msgid "There's nothing in the Queue"
-msgstr "Ve frontě nic není"
+msgstr "Ve frontě není nic"
 
 #: pylav/extension/red/ui/buttons/queue.py:296
 msgid "Removed tracks from the queue"
-msgstr "Odstraněny prošlé trasy z fronty"
+msgstr "Odstraněné skladby z fronty"
 
 #: pylav/extension/red/ui/buttons/queue.py:323
 msgid "What do you want to enqueue?"
-msgstr "Co chcete zařadit do fronty?"
+msgstr "Co chcete do fronty?"
 

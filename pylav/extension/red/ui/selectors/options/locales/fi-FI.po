@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -19,9 +19,9 @@ msgstr ""
 
 #: pylav/extension/red/ui/selectors/options/nodes.py:37
 msgid "ID: {} || SSL: {} || Search-only: {}"
-msgstr "Tunnus: {} || SSL: {} || Vain haku: {}"
+msgstr "ID: {} ¶ SSL: {} ¶ Vain Haku: {}"
 
 #: pylav/extension/red/ui/selectors/options/playlist.py:22
 msgid "Tracks: {} || {} || {}"
-msgstr "Kappaleet: {} || {} || {}"
+msgstr "Kappaleet: {} - {} Kytketään{}"
 

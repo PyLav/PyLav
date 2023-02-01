@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "MIME-Version: 1.0\n"
@@ -48,11 +48,11 @@ msgstr "Nej"
 
 #: pylav/extension/red/ui/buttons/generic.py:164
 msgid "Disconnect {} {}"
-msgstr "Koppla från {} {}"
+msgstr "Koppla bort {} {}"
 
 #: pylav/extension/red/ui/buttons/generic.py:165
 msgid "players"
-msgstr "Spelare"
+msgstr "spelare"
 
 #: pylav/extension/red/ui/buttons/generic.py:165
 msgid "player"
@@ -60,15 +60,15 @@ msgstr "spelare"
 
 #: pylav/extension/red/ui/buttons/nodes.py:57
 msgid "Connecting to the node with SSL enabled"
-msgstr "Ansluta till noden med SSL aktiverat"
+msgstr "Ansluter till noden med SSL aktiverat"
 
 #: pylav/extension/red/ui/buttons/nodes.py:64
 msgid "Connecting to the node with SSL disabled"
-msgstr "Ansluta till noden med SSL inaktiverat"
+msgstr "Ansluter till noden med SSL inaktiverad"
 
 #: pylav/extension/red/ui/buttons/nodes.py:102
 msgid "This node will only be used for searches"
-msgstr "Den här noden används endast för sökningar"
+msgstr "Den här noden kommer endast användas för sökningar"
 
 #: pylav/extension/red/ui/buttons/nodes.py:109
 msgid "This node will be used for search and playback"
@@ -76,43 +76,43 @@ msgstr "Den här noden kommer att användas för sökning och uppspelning"
 
 #: pylav/extension/red/ui/buttons/nodes.py:140
 msgid "Please fill out all the fields before continuing"
-msgstr "Fyll i alla fält innan du fortsätter"
+msgstr "Vänligen fyll i alla fält innan du fortsätter"
 
 #: pylav/extension/red/ui/buttons/nodes.py:220
 msgid "When you press done this node will be permanently delete"
-msgstr "När du trycker på klar kommer den här noden att raderas permanent"
+msgstr "När du trycker på klar kommer den här noden att tas bort permanent"
 
 #: pylav/extension/red/ui/buttons/nodes.py:222
 msgid "This node will no longer be deleted once you press done"
-msgstr "Den här noden raderas inte längre när du trycker på klar"
+msgstr "Den här noden kommer inte längre att raderas när du trycker på"
 
 #: pylav/extension/red/ui/buttons/nodes.py:255
 msgid "__Enabled sources__:\n"
 "{sources}"
-msgstr "__Enabled sources__:\n"
+msgstr "__Aktiverade källor__:\n"
 "{sources}"
 
 #: pylav/extension/red/ui/buttons/player.py:38
 #: pylav/extension/red/ui/buttons/player.py:87
 #: pylav/extension/red/ui/buttons/player.py:140
 msgid "You are not authorized to perform this action"
-msgstr "Du har inte behörighet att utföra den här åtgärden"
+msgstr "Du har inte behörighet att utföra denna åtgärd"
 
 #: pylav/extension/red/ui/buttons/player.py:47
 #: pylav/extension/red/ui/buttons/player.py:96
 msgid "No Player Available For Action - Try Refreshing"
-msgstr "Ingen spelare tillgänglig för action - Prova att uppdatera"
+msgstr "Ingen spelare tillgänglig för åtgärd - Försök att uppdatera"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:107
 #: pylav/extension/red/ui/buttons/player.py:164
 msgid "Bot Owner Action"
-msgstr "Åtgärd för robotägare"
+msgstr "Bot Owner åtgärd"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:164
 msgid "Player disconnected"
-msgstr "Spelaren frånkopplad"
+msgstr "Spelare frånkopplad"
 
 #: pylav/extension/red/ui/buttons/player.py:107
 msgid "Player stopped"
@@ -120,19 +120,19 @@ msgstr "Spelaren stoppad"
 
 #: pylav/extension/red/ui/buttons/player.py:154
 msgid "No Players Available For Action - Try Refreshing"
-msgstr "Inga spelare tillgängliga för action - Prova uppfriskande"
+msgstr "Inga spelare tillgängliga för åtgärd - Försök att uppdatera"
 
 #: pylav/extension/red/ui/buttons/playlist.py:48
 msgid "When you press done this playlist will be permanently delete"
-msgstr "När du trycker på klar kommer den här spellistan att raderas permanent"
+msgstr "När du trycker på klar kommer denna spellista att tas bort permanent"
 
 #: pylav/extension/red/ui/buttons/playlist.py:50
 msgid "This playlist will no longer be deleted once you press done"
-msgstr "Den här spellistan raderas inte längre när du trycker på klar"
+msgstr "Denna spellista kommer inte längre att raderas när du trycker på klart"
 
 #: pylav/extension/red/ui/buttons/playlist.py:83
 msgid "Clearing all tracks from the playlist playlist"
-msgstr "Rensa alla spår från spellistans spellista"
+msgstr "Rensar alla spår från spellistan"
 
 #: pylav/extension/red/ui/buttons/playlist.py:85
 msgid "No longer clearing tracks from the playlist"
@@ -146,25 +146,25 @@ msgstr "Här är din spellista: {name}{extras}"
 msgid "\n"
 " (compressed using gzip to make it possible to send via Discord - you can use <https://gzip.swimburger.net/> to decompress it)"
 msgstr "\n"
-" (komprimerad med gzip för att göra det möjligt att skicka via Discord - du kan använda <https://gzip.swimburger.net/> för att dekomprimera det)"
+" (komprimerat med gzip för att göra det möjligt att skicka via Discord - du kan använda <https://gzip.swimburger.net/> för att decompress den)"
 
 #: pylav/extension/red/ui/buttons/playlist.py:133
 msgid "\n"
 " (File compressed using Brotli compression."
 msgstr "\n"
-" (Fil komprimerad med Brotli-komprimering."
+" (Filen komprimeras med Brotli kompression."
 
 #: pylav/extension/red/ui/buttons/playlist.py:171
 msgid "Updating playlist with the latest tracks, press done to continue"
-msgstr "Uppdatera spellistan med de senaste spåren, tryck på klar för att fortsätta"
+msgstr "Uppdatera spellistan med de senaste låtarna, tryck på gjort för att fortsätta"
 
 #: pylav/extension/red/ui/buttons/playlist.py:174
 msgid "Not updating playlist"
-msgstr "Uppdaterar inte spellistan"
+msgstr "Uppdaterar inte spellista"
 
 #: pylav/extension/red/ui/buttons/playlist.py:263
 msgid "Adding the current queue to playlist"
-msgstr "Lägga till den aktuella kön i spellistan"
+msgstr "Lägger till den aktuella kön i spellistan"
 
 #: pylav/extension/red/ui/buttons/playlist.py:270
 msgid "No longer adding the current queue to playlist"
@@ -172,7 +172,7 @@ msgstr "Lägger inte längre till den aktuella kön i spellistan"
 
 #: pylav/extension/red/ui/buttons/playlist.py:309
 msgid "Removing all duplicate tracks from the queue"
-msgstr "Ta bort alla dubblettspår från kön"
+msgstr "Tar bort alla dubblettspår från kön"
 
 #: pylav/extension/red/ui/buttons/playlist.py:316
 msgid "No longer all duplicate tracks from the queue"
@@ -180,7 +180,7 @@ msgstr "Inte längre alla dubblettspår från kön"
 
 #: pylav/extension/red/ui/buttons/playlist.py:406
 msgid "Playlists you can currently play"
-msgstr "Spellistor som du kan spela för närvarande"
+msgstr "Spellistor som du för närvarande kan spela"
 
 #: pylav/extension/red/ui/buttons/playlist.py:412
 msgid "Pick a playlist"
@@ -188,7 +188,7 @@ msgstr "Välj en spellista"
 
 #: pylav/extension/red/ui/buttons/playlist.py:434
 msgid "What should the playlist name be?"
-msgstr "Vad ska spellistans namn vara?"
+msgstr "Vad ska namnet på spellistan vara?"
 
 #: pylav/extension/red/ui/buttons/queue.py:164
 #: pylav/extension/red/ui/buttons/queue.py:191
@@ -206,5 +206,5 @@ msgstr "Tog bort spår från kön"
 
 #: pylav/extension/red/ui/buttons/queue.py:323
 msgid "What do you want to enqueue?"
-msgstr "Vad vill du göra?"
+msgstr "Vad vill du köa?"
 

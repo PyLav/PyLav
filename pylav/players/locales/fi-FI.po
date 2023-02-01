@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:18\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -23,74 +23,74 @@ msgstr "Ei käytettävissä olevia solmuja!"
 
 #: pylav/players/manager.py:349
 msgid "Music in {count} servers"
-msgstr "Musiikki {count} Palvelimet"
+msgstr "Musiikki {count} palvelimella"
 
 #: pylav/players/player.py:1176
 msgid "There are no tracks currently in the player history"
-msgstr "Pelaajahistoriassa ei ole tällä hetkellä kappaleita"
+msgstr "Pelaajan historiassa ei ole kappaleita"
 
 #: pylav/players/player.py:1869
 msgid "Current node has the Volume filter functionality disabled"
-msgstr "Nykyisessä solmussa äänenvoimakkuussuodatintoiminto on poistettu käytöstä"
+msgstr "Nykyinen palvelin on poistettu käytöstä äänenvoimakkuuden suodattimen toiminnallisuus"
 
 #: pylav/players/player.py:1891 pylav/players/player.py:2067
 #: pylav/players/player.py:2122
 msgid "Current node has the Equalizer functionality disabled"
-msgstr "Nykyisessä solmussa taajuuskorjaintoiminto on poistettu käytöstä"
+msgstr "Nykyinen palvelin ei ole käytössä"
 
 #: pylav/players/player.py:1911
 msgid "Current node has the Karaoke functionality disabled"
-msgstr "Nykyisessä solmussa karaoketoiminto on poistettu käytöstä"
+msgstr "Nykyinen palvelin ei ole käytössä Karaoke-toiminnallisuutta"
 
 #: pylav/players/player.py:1931 pylav/players/player.py:2069
 #: pylav/players/player.py:2124
 msgid "Current node has the Timescale functionality disabled"
-msgstr "Nykyisessä solmussa Timescale-toiminto on poistettu käytöstä"
+msgstr "Nykyinen palvelin ei ole käytössä"
 
 #: pylav/players/player.py:1951
 msgid "Current node has the Tremolo functionality disabled"
-msgstr "Nykyisessä solmussa Tremolo-toiminto on poistettu käytöstä"
+msgstr "Nykyinen solmu on poistettu käytöstä Tremolon toiminnallisuus"
 
 #: pylav/players/player.py:1971
 msgid "Current node has the Vibrato functionality disabled"
-msgstr "Nykyisessä solmussa Vibrato-toiminto on poistettu käytöstä"
+msgstr "Nykyinen palvelin on poistettu käytöstä Vibraton toiminnallisuus"
 
 #: pylav/players/player.py:1991
 msgid "Current node has the Rotation functionality disabled"
-msgstr "Nykyisessä solmussa kiertotoiminto on poistettu käytöstä"
+msgstr "Nykyinen palvelin ei ole käytössä"
 
 #: pylav/players/player.py:2011
 msgid "Current node has the Distortion functionality disabled"
-msgstr "Nykyisessä solmussa vääristymätoiminto on poistettu käytöstä"
+msgstr "Nykyinen palvelin on poistettu käytöstä"
 
 #: pylav/players/player.py:2031
 msgid "Current node has the LowPass functionality disabled"
-msgstr "Nykyisessä solmussa LowPass-toiminto on poistettu käytöstä"
+msgstr "Nykyinen palvelin on poistettu käytöstä LowPass -toiminnallisuus"
 
 #: pylav/players/player.py:2051
 msgid "Current node has the Echo functionality disabled"
-msgstr "Nykyisessä solmussa Echo-toiminto on poistettu käytöstä"
+msgstr "Nykyinen palvelin ei ole käytössä Echo-toiminnallisuutta"
 
 #: pylav/players/player.py:2181
 msgid "Current node has the ChannelMix functionality disabled"
-msgstr "Nykyisessä solmussa ChannelMix-toiminto on poistettu käytöstä"
+msgstr "Nykyinen palvelin on poistettu käytöstä ChannelMix -toiminnallisuus"
 
 #: pylav/players/player.py:2441 pylav/players/player.py:2486
 #: pylav/players/player.py:2501
 msgid "LIVE"
-msgstr "ELÄÄ"
+msgstr "ELÄI"
 
 #: pylav/players/player.py:2454
 msgid "Now Playing in"
-msgstr "Nyt pelataan"
+msgstr "Nyt soi"
 
 #: pylav/players/player.py:2472 pylav/players/player.py:2581
 msgid "Currently livestreaming"
-msgstr "Tällä hetkellä suoratoistona"
+msgstr "Tällä hetkellä hengissä"
 
 #: pylav/players/player.py:2474
 msgid "Playing: "
-msgstr "Soittaminen: "
+msgstr "Toisto: "
 
 #: pylav/players/player.py:2477 pylav/players/player.py:2493
 #: pylav/players/player.py:2508 pylav/players/player.py:2587
@@ -103,15 +103,15 @@ msgstr "Kesto"
 
 #: pylav/players/player.py:2495
 msgid "Previous Track"
-msgstr "Edellinen kappale"
+msgstr "Edellinen Kappale"
 
 #: pylav/players/player.py:2510
 msgid "Next Track"
-msgstr "Seuraava kappale"
+msgstr "Seuraava Kappale"
 
 #: pylav/players/player.py:2515
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
-msgstr "{track_count} Kappaleita {queue_total_duration} jäljellä oleva\n"
+msgstr "{track_count} kappaletta, {queue_total_duration} jäljellä\n"
 
 #: pylav/players/player.py:2519 pylav/players/player.py:2615
 msgid "{translation}: {repeat_emoji}"
@@ -119,7 +119,7 @@ msgstr "{translation}: {repeat_emoji}"
 
 #: pylav/players/player.py:2519 pylav/players/player.py:2615
 msgid "Repeating"
-msgstr "Toistaminen"
+msgstr "Toistuu"
 
 #: pylav/players/player.py:2520 pylav/players/player.py:2616
 msgid "{space}{translation}: {autoplay_emoji}"
@@ -127,7 +127,7 @@ msgstr "{space}{translation}: {autoplay_emoji}"
 
 #: pylav/players/player.py:2521 pylav/players/player.py:2617
 msgid "Auto Play"
-msgstr "Automaattinen toisto"
+msgstr "Automaattinen Toisto"
 
 #: pylav/players/player.py:2523 pylav/players/player.py:2619
 msgid "{space}{translation}: {volume}%"
@@ -139,15 +139,15 @@ msgstr "Tilavuus"
 
 #: pylav/players/player.py:2564
 msgid "Recently Played for"
-msgstr "Äskettäin pelattu"
+msgstr "Äskettäin soitettu"
 
 #: pylav/players/player.py:2564
 msgid "Queue for"
-msgstr "Jono"
+msgstr "Jono varten"
 
 #: pylav/players/player.py:2584
 msgid "Playing"
-msgstr "Soittaminen"
+msgstr "Toistetaan"
 
 #: pylav/players/player.py:2600
 msgid "Queue order may not be accurate due to auto-shuffle being enabled"
@@ -155,5 +155,5 @@ msgstr "Jonon järjestys ei ehkä ole tarkka, koska automaattinen sekoitus on k�
 
 #: pylav/players/player.py:2606
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
-msgstr "Sivu {current_page}/{total_pages} | {track_number} Kappaleita {queue_total_duration} jäljellä oleva\n"
+msgstr "Sivu {current_page}/{total_pages} ¶ {track_number} kappaletta, {queue_total_duration} jäljellä\n"
 

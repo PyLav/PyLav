@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:18\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
 "MIME-Version: 1.0\n"
@@ -131,11 +131,11 @@ msgstr "Unesite novo vremensko ograničenje za ovaj čvor"
 
 #: pylav/extension/red/ui/menus/player.py:95
 msgid "selected"
-msgstr "odabrani"
+msgstr "odabrane"
 
 #: pylav/extension/red/ui/menus/player.py:105
 msgid "inactive"
-msgstr "neaktivan"
+msgstr "neaktivne"
 
 #: pylav/extension/red/ui/menus/player.py:115
 msgid "all"
@@ -143,34 +143,34 @@ msgstr "sve"
 
 #: pylav/extension/red/ui/menus/player.py:208
 msgid "Not connected anywhere"
-msgstr "Nigdje nije povezano"
+msgstr "Nisam igdje povezan"
 
 #: pylav/extension/red/ui/menus/playlist.py:187
 #: pylav/extension/red/ui/menus/playlist.py:322
 msgid "Please enter the playlist URL"
-msgstr "Unesite URL popisa za reproduciranje"
+msgstr "Unesite URL popisa za reprodukciju"
 
 #: pylav/extension/red/ui/menus/playlist.py:188
 #: pylav/extension/red/ui/menus/playlist.py:323
 msgid "Playlist URL"
-msgstr "URL popisa za reproduciranje"
+msgstr "URL popisa za reprodukciju"
 
 #: pylav/extension/red/ui/menus/playlist.py:194
 msgid "Please enter the playlist name"
-msgstr "Unesite naziv popisa za reproduciranje"
+msgstr "Unesite naziv popisa za reprodukciju"
 
 #: pylav/extension/red/ui/menus/playlist.py:195
 #: pylav/extension/red/ui/menus/playlist.py:330
 msgid "Playlist Name"
-msgstr "Naziv popisa za reproduciranje"
+msgstr "Naziv popisa za reprodukciju"
 
 #: pylav/extension/red/ui/menus/playlist.py:329
 msgid "Please enter the new playlist name"
-msgstr "Unesite novi naziv popisa za reproduciranje"
+msgstr "Unesite novi naziv popisa za reprodukciju"
 
 #: pylav/extension/red/ui/menus/playlist.py:336
 msgid "What query to add to the playlist"
-msgstr "Koji upit dodati na popis za reproduciranje"
+msgstr "Koji upit dodati u popis za reprodukciju"
 
 #: pylav/extension/red/ui/menus/playlist.py:337
 #: pylav/extension/red/ui/menus/playlist.py:345
@@ -179,13 +179,13 @@ msgstr "Upit"
 
 #: pylav/extension/red/ui/menus/playlist.py:344
 msgid "What query to remove from the playlist"
-msgstr "Koji upit ukloniti s popisa za reproduciranje"
+msgstr "Koji upit ukloniti s popisa za reprodukciju"
 
 #: pylav/extension/red/ui/menus/queue.py:458
 msgid "Select Track To Remove"
-msgstr "Odaberite zapis koji želite ukloniti"
+msgstr "Odaberi pjesmu koja će biti uklonjena"
 
 #: pylav/extension/red/ui/menus/queue.py:460
 msgid "Select Track To Play Now"
-msgstr "Odaberite zapis koji će se reproducirati sada"
+msgstr "Odaberi pjesmu za reprodukciju"
 
