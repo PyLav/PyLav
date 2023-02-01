@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "MIME-Version: 1.0\n"
@@ -31,15 +31,15 @@ msgstr "Ingen nod med {query.requires_capability} funktionalitet tillgänglig!"
 
 #: pylav/core/client.py:1651
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
-msgstr "För att skapa en mixspellista krävs ett video-, användar-, kanal- eller spellist-ID"
+msgstr "För att generera en mixa spellista krävs ett Video, Användare, Kanal eller Spellista ID"
 
 #: pylav/core/client.py:1656
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
-msgstr "För att skapa en mixspellista krävs ett video-, användar-, kanal- eller spellist-ID. Du har dock angett flera"
+msgstr "För att generera en blandning spellista en Video, Användare, Kanal eller Spellista ID är nödvändigt. Men du angav flera"
 
 #: pylav/core/context.py:258
 msgid "{} remaining. Type `more` to continue."
-msgstr "{} återstående. Skriv \"mer\" för att fortsätta."
+msgstr "{} återstår. Skriv `more` för att fortsätta."
 
 #: pylav/core/context.py:259
 msgid "There is still 1 message"
@@ -47,7 +47,7 @@ msgstr "Det finns fortfarande 1 meddelande"
 
 #: pylav/core/context.py:261
 msgid "There are still {remaining} messages"
-msgstr "Det finns fortfarande {remaining} Meddelanden"
+msgstr "Det finns fortfarande {remaining} meddelanden"
 
 #: pylav/core/context.py:288
 #, docstring

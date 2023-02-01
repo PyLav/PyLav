@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: pylav/extension/red/converters/equalizer.py:47
 msgid "Bass boost with name `{arg}` not found"
-msgstr "Bassotehostus nimellä '{arg}' ei löydy"
+msgstr "Basson tehostusta nimellä `{arg}` ei löytynyt"
 
 #: pylav/extension/red/converters/equalizer.py:61
 msgid "Maximum"
@@ -31,11 +31,11 @@ msgstr "Hullu"
 
 #: pylav/extension/red/converters/equalizer.py:63
 msgid "Extreme"
-msgstr "Äärimmäinen"
+msgstr "Äärimmä"
 
 #: pylav/extension/red/converters/equalizer.py:64
 msgid "Very High"
-msgstr "Erittäin korkea"
+msgstr "Erittäin Korkea"
 
 #: pylav/extension/red/converters/equalizer.py:65
 msgid "High"
@@ -43,15 +43,15 @@ msgstr "Korkea"
 
 #: pylav/extension/red/converters/equalizer.py:66
 msgid "Medium"
-msgstr "Keskiverto"
+msgstr "Keskitaso"
 
 #: pylav/extension/red/converters/equalizer.py:67
 msgid "Fine Tuned"
-msgstr "Hienosäädetty"
+msgstr "Hieno Virittää"
 
 #: pylav/extension/red/converters/equalizer.py:68
 msgid "Cut-off"
-msgstr "Cut-off"
+msgstr "Leikkaus"
 
 #: pylav/extension/red/converters/equalizer.py:69
 msgid "Off"

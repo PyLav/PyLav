@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:09\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "MIME-Version: 1.0\n"
@@ -52,7 +52,7 @@ msgstr "Deconectare {} {}"
 
 #: pylav/extension/red/ui/buttons/generic.py:165
 msgid "players"
-msgstr "Jucători"
+msgstr "jucători"
 
 #: pylav/extension/red/ui/buttons/generic.py:165
 msgid "player"
@@ -68,28 +68,28 @@ msgstr "Conectarea la nod cu SSL dezactivat"
 
 #: pylav/extension/red/ui/buttons/nodes.py:102
 msgid "This node will only be used for searches"
-msgstr "Acest nod va fi utilizat numai pentru căutări"
+msgstr "Acest modul va fi folosit doar pentru căutări"
 
 #: pylav/extension/red/ui/buttons/nodes.py:109
 msgid "This node will be used for search and playback"
-msgstr "Acest nod va fi utilizat pentru căutare și redare"
+msgstr "Acest modul va fi folosit pentru căutare și redare"
 
 #: pylav/extension/red/ui/buttons/nodes.py:140
 msgid "Please fill out all the fields before continuing"
-msgstr "Vă rugăm să completați toate câmpurile înainte de a continua"
+msgstr "Vă rugăm să completaţi toate câmpurile înainte de a continua"
 
 #: pylav/extension/red/ui/buttons/nodes.py:220
 msgid "When you press done this node will be permanently delete"
-msgstr "Când apăsați făcut acest nod va fi șters definitiv"
+msgstr "Când apăsați s-a terminat acest modul va fi șters permanent"
 
 #: pylav/extension/red/ui/buttons/nodes.py:222
 msgid "This node will no longer be deleted once you press done"
-msgstr "Acest nod nu va mai fi șters odată ce apăsați terminat"
+msgstr "Acest modul nu va mai fi șters după ce ați apăsat"
 
 #: pylav/extension/red/ui/buttons/nodes.py:255
 msgid "__Enabled sources__:\n"
 "{sources}"
-msgstr "__Enabled sources__:\n"
+msgstr "__Surse activate__:\n"
 "{sources}"
 
 #: pylav/extension/red/ui/buttons/player.py:38
@@ -101,18 +101,18 @@ msgstr "Nu sunteți autorizat să efectuați această acțiune"
 #: pylav/extension/red/ui/buttons/player.py:47
 #: pylav/extension/red/ui/buttons/player.py:96
 msgid "No Player Available For Action - Try Refreshing"
-msgstr "Niciun jucător disponibil pentru acțiune - Încercați să reîmprospătați"
+msgstr "Niciun jucător disponibil pentru acțiune - Încearcă să reîmprospătezi"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:107
 #: pylav/extension/red/ui/buttons/player.py:164
 msgid "Bot Owner Action"
-msgstr "Bot Proprietar de acțiune"
+msgstr "Acțiunea proprietarului botului"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:164
 msgid "Player disconnected"
-msgstr "Jucător deconectat"
+msgstr "Player deconectat"
 
 #: pylav/extension/red/ui/buttons/player.py:107
 msgid "Player stopped"
@@ -120,47 +120,47 @@ msgstr "Jucătorul s-a oprit"
 
 #: pylav/extension/red/ui/buttons/player.py:154
 msgid "No Players Available For Action - Try Refreshing"
-msgstr "Nu există jucători disponibili pentru acțiune - Încercați reîmprospătarea"
+msgstr "Niciun jucător disponibil pentru acțiune - Încearcă să reîmprospătezi"
 
 #: pylav/extension/red/ui/buttons/playlist.py:48
 msgid "When you press done this playlist will be permanently delete"
-msgstr "Când apăsați făcut această listă de redare va fi șters definitiv"
+msgstr "Când apeși terminat, această listă de redare va fi ștearsă definitiv"
 
 #: pylav/extension/red/ui/buttons/playlist.py:50
 msgid "This playlist will no longer be deleted once you press done"
-msgstr "Această listă de redare nu va mai fi ștearsă după ce apăsați gata"
+msgstr "Această listă de redare nu va mai fi ștearsă după ce apăsați făcut"
 
 #: pylav/extension/red/ui/buttons/playlist.py:83
 msgid "Clearing all tracks from the playlist playlist"
-msgstr "Ștergerea tuturor pieselor din lista de redare a playlistului"
+msgstr "Curăță toate melodiile din playlist"
 
 #: pylav/extension/red/ui/buttons/playlist.py:85
 msgid "No longer clearing tracks from the playlist"
-msgstr "Nu mai ștergeți piesele din lista de redare"
+msgstr "Nu se mai șterg melodiile din lista de redare"
 
 #: pylav/extension/red/ui/buttons/playlist.py:126
 msgid "Here is your playlist: {name}{extras}"
-msgstr "Aici este lista de redare: {name}{extras}"
+msgstr "Aici este lista ta de redare: {name}{extras}"
 
 #: pylav/extension/red/ui/buttons/playlist.py:128
 msgid "\n"
 " (compressed using gzip to make it possible to send via Discord - you can use <https://gzip.swimburger.net/> to decompress it)"
 msgstr "\n"
-" (comprimat folosind gzip pentru a face posibilă trimiterea prin Discord - puteți utiliza <https://gzip.swimburger.net/> pentru a-l decomprima)"
+" (comprimat folosind gzip pentru a face posibilă trimiterea prin Discord - poți folosi <https://gzip.swimburger.net/> pentru a o dezarhiva)"
 
 #: pylav/extension/red/ui/buttons/playlist.py:133
 msgid "\n"
 " (File compressed using Brotli compression."
 msgstr "\n"
-" (Fișier comprimat utilizând compresia Brotli."
+" (Compresie comprimată folosind compresia Brotli)."
 
 #: pylav/extension/red/ui/buttons/playlist.py:171
 msgid "Updating playlist with the latest tracks, press done to continue"
-msgstr "Actualizarea lista de redare cu cele mai recente piese, apăsați făcut pentru a continua"
+msgstr "Actualizând lista de redare cu cele mai recente piese, apăsați făcut pentru a continua"
 
 #: pylav/extension/red/ui/buttons/playlist.py:174
 msgid "Not updating playlist"
-msgstr "Nu se actualizează lista de redare"
+msgstr "Nu se actualizează playlist"
 
 #: pylav/extension/red/ui/buttons/playlist.py:263
 msgid "Adding the current queue to playlist"
@@ -168,19 +168,19 @@ msgstr "Adăugarea cozii curente la lista de redare"
 
 #: pylav/extension/red/ui/buttons/playlist.py:270
 msgid "No longer adding the current queue to playlist"
-msgstr "Nu mai adăugați coada curentă în lista de redare"
+msgstr "Nu se mai adaugă coada curentă la lista de redare"
 
 #: pylav/extension/red/ui/buttons/playlist.py:309
 msgid "Removing all duplicate tracks from the queue"
-msgstr "Eliminarea tuturor pistelor dublate din coadă"
+msgstr "Şterge toate piesele duplicate din coada de aşteptare"
 
 #: pylav/extension/red/ui/buttons/playlist.py:316
 msgid "No longer all duplicate tracks from the queue"
-msgstr "Nu mai toate piesele dublate din coadă"
+msgstr "Nu se mai repetă toate piesele din coada de aşteptare"
 
 #: pylav/extension/red/ui/buttons/playlist.py:406
 msgid "Playlists you can currently play"
-msgstr "Liste de redare pe care le puteți juca în prezent"
+msgstr "Liste de redare pe care le poți reda în prezent"
 
 #: pylav/extension/red/ui/buttons/playlist.py:412
 msgid "Pick a playlist"
@@ -188,7 +188,7 @@ msgstr "Alege o listă de redare"
 
 #: pylav/extension/red/ui/buttons/playlist.py:434
 msgid "What should the playlist name be?"
-msgstr "Care ar trebui să fie numele playlistului?"
+msgstr "Care ar trebui să fie numele listei de redare?"
 
 #: pylav/extension/red/ui/buttons/queue.py:164
 #: pylav/extension/red/ui/buttons/queue.py:191
@@ -198,13 +198,13 @@ msgstr "Nu este conectat la un canal de voce"
 
 #: pylav/extension/red/ui/buttons/queue.py:289
 msgid "There's nothing in the Queue"
-msgstr "Nu e nimic în coadă"
+msgstr "Nu există nimic în coadă"
 
 #: pylav/extension/red/ui/buttons/queue.py:296
 msgid "Removed tracks from the queue"
-msgstr "Eliminarea pistelor din coadă"
+msgstr "Piesele eliminate din coadă"
 
 #: pylav/extension/red/ui/buttons/queue.py:323
 msgid "What do you want to enqueue?"
-msgstr "Ce vrei să enqueue?"
+msgstr "Ce vrei să te bazezi?"
 

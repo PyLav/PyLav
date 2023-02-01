@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "MIME-Version: 1.0\n"
@@ -48,7 +48,7 @@ msgstr "नहीं"
 
 #: pylav/extension/red/ui/buttons/generic.py:164
 msgid "Disconnect {} {}"
-msgstr "डिस्कनेक्ट {} {}"
+msgstr "डिस्कनेक्ट करें {} {}"
 
 #: pylav/extension/red/ui/buttons/generic.py:165
 msgid "players"
@@ -60,11 +60,11 @@ msgstr "खिलाड़ी"
 
 #: pylav/extension/red/ui/buttons/nodes.py:57
 msgid "Connecting to the node with SSL enabled"
-msgstr "SSL सक्षम के साथ नोड से कनेक्ट करना"
+msgstr "एसएसएल सक्षम के साथ नोड से कनेक्ट करना"
 
 #: pylav/extension/red/ui/buttons/nodes.py:64
 msgid "Connecting to the node with SSL disabled"
-msgstr "SSL अक्षम के साथ नोड से कनेक्ट करना अक्षम"
+msgstr "एसएसएल अक्षम के साथ नोड से कनेक्ट करना"
 
 #: pylav/extension/red/ui/buttons/nodes.py:102
 msgid "This node will only be used for searches"
@@ -80,17 +80,16 @@ msgstr "जारी रखने से पहले कृपया सभी 
 
 #: pylav/extension/red/ui/buttons/nodes.py:220
 msgid "When you press done this node will be permanently delete"
-msgstr "जब आप दबाते हैं तो यह नोड स्थायी रूप से हटा दिया जाएगा"
+msgstr "जब आप किया दबाते हैं तो यह नोड स्थायी रूप से हटा दिया जाएगा"
 
 #: pylav/extension/red/ui/buttons/nodes.py:222
 msgid "This node will no longer be deleted once you press done"
-msgstr "एक बार प्रेस करने के बाद यह नोड अब हटाया नहीं जाएगा"
+msgstr "आपके द्वारा हो गया दबाने के बाद यह नोड अब नहीं हटाया जाएगा"
 
 #: pylav/extension/red/ui/buttons/nodes.py:255
 msgid "__Enabled sources__:\n"
 "{sources}"
-msgstr "__Enabled sources__:\n"
-"{sources}"
+msgstr "__सक्षम स्रोत__:"
 
 #: pylav/extension/red/ui/buttons/player.py:38
 #: pylav/extension/red/ui/buttons/player.py:87
@@ -101,18 +100,18 @@ msgstr "आप इस क्रिया को करने के लिए �
 #: pylav/extension/red/ui/buttons/player.py:47
 #: pylav/extension/red/ui/buttons/player.py:96
 msgid "No Player Available For Action - Try Refreshing"
-msgstr "कार्रवाई के लिए कोई प्लेयर उपलब्ध नहीं - ताज़ा करने का प्रयास करें"
+msgstr "कार्रवाई के लिए कोई खिलाड़ी उपलब्ध नहीं - ताज़ा करने का प्रयास करें"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:107
 #: pylav/extension/red/ui/buttons/player.py:164
 msgid "Bot Owner Action"
-msgstr "बॉट स्वामी कार्रवाई"
+msgstr "बॉट मालिक कार्रवाई"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:164
 msgid "Player disconnected"
-msgstr "प्लेयर डिस्कनेक्ट किया गया"
+msgstr "प्लेयर डिसकनेक्ट हो गया"
 
 #: pylav/extension/red/ui/buttons/player.py:107
 msgid "Player stopped"
@@ -124,11 +123,11 @@ msgstr "कार्रवाई के लिए कोई खिलाड़�
 
 #: pylav/extension/red/ui/buttons/playlist.py:48
 msgid "When you press done this playlist will be permanently delete"
-msgstr "जब आप प्रेस करते हैं तो यह प्लेलिस्ट स्थायी रूप से हटा दी जाएगी"
+msgstr "जब आप हो गया दबाते हैं तो यह प्लेलिस्ट स्थायी रूप से हटा दी जाएगी"
 
 #: pylav/extension/red/ui/buttons/playlist.py:50
 msgid "This playlist will no longer be deleted once you press done"
-msgstr "एक बार प्रेस करने के बाद यह प्लेलिस्ट अब नहीं हटाई जाएगी"
+msgstr "आपके द्वारा हो गया दबाने के बाद यह प्लेलिस्ट अब हटाई नहीं जाएगी"
 
 #: pylav/extension/red/ui/buttons/playlist.py:83
 msgid "Clearing all tracks from the playlist playlist"
@@ -136,31 +135,29 @@ msgstr "प्लेलिस्ट प्लेलिस्ट से सभी
 
 #: pylav/extension/red/ui/buttons/playlist.py:85
 msgid "No longer clearing tracks from the playlist"
-msgstr "प्लेलिस्ट से ट्रैक साफ़ नहीं करना"
+msgstr "अब प्लेलिस्ट से ट्रैक साफ़ नहीं कर रहे हैं"
 
 #: pylav/extension/red/ui/buttons/playlist.py:126
 msgid "Here is your playlist: {name}{extras}"
-msgstr "यहाँ आपकी प्लेलिस्ट है: {name}{extras}"
+msgstr "यहां आपकी प्लेलिस्ट है:"
 
 #: pylav/extension/red/ui/buttons/playlist.py:128
 msgid "\n"
 " (compressed using gzip to make it possible to send via Discord - you can use <https://gzip.swimburger.net/> to decompress it)"
-msgstr "\n"
-" (डिस्कॉर्ड के माध्यम से भेजना संभव बनाने के लिए gzip का उपयोग करके संपीड़ित किया गया - आप उपयोग कर सकते हैं <https://gzip.swimburger.net/> इसे डीकंप्रेस करने के लिए)"
+msgstr "(डिस्कॉर्ड के माध्यम से भेजना संभव बनाने के लिए gzip का उपयोग करके संपीड़ित - आप इसे डीकंप्रेस करने के लिए <https://gzip.swimburger.net/> का उपयोग कर सकते हैं)"
 
 #: pylav/extension/red/ui/buttons/playlist.py:133
 msgid "\n"
 " (File compressed using Brotli compression."
-msgstr "\n"
-" (ब्रोटली संपीड़न का उपयोग करके फ़ाइल संपीड़ित।"
+msgstr "(फ़ाइल Brotli संपीड़न का उपयोग कर संपीड़ित।"
 
 #: pylav/extension/red/ui/buttons/playlist.py:171
 msgid "Updating playlist with the latest tracks, press done to continue"
-msgstr "नवीनतम ट्रैक के साथ प्लेलिस्ट अपडेट करना, जारी रखने के लिए प्रेस किया गया"
+msgstr "नवीनतम ट्रैक्स के साथ प्लेलिस्ट अपडेट करना, जारी रखने के लिए किया हुआ दबाएं"
 
 #: pylav/extension/red/ui/buttons/playlist.py:174
 msgid "Not updating playlist"
-msgstr "प्लेलिस्ट अपडेट नहीं करना"
+msgstr "प्लेलिस्ट अपडेट नहीं हो रही है"
 
 #: pylav/extension/red/ui/buttons/playlist.py:263
 msgid "Adding the current queue to playlist"
@@ -168,19 +165,19 @@ msgstr "प्लेलिस्ट में वर्तमान कतार
 
 #: pylav/extension/red/ui/buttons/playlist.py:270
 msgid "No longer adding the current queue to playlist"
-msgstr "प्लेलिस्ट में वर्तमान कतार को अब नहीं जोड़ना"
+msgstr "अब प्लेलिस्ट में वर्तमान कतार नहीं जोड़ रहा है"
 
 #: pylav/extension/red/ui/buttons/playlist.py:309
 msgid "Removing all duplicate tracks from the queue"
-msgstr "कतार से सभी डुप्लिकेट ट्रैक हटाना"
+msgstr "कतार से सभी डुप्लीकेट ट्रैक हटा रहे हैं"
 
 #: pylav/extension/red/ui/buttons/playlist.py:316
 msgid "No longer all duplicate tracks from the queue"
-msgstr "अब कतार से सभी डुप्लिकेट ट्रैक नहीं हैं"
+msgstr "कतार से अब सभी डुप्लीकेट ट्रैक नहीं हैं"
 
 #: pylav/extension/red/ui/buttons/playlist.py:406
 msgid "Playlists you can currently play"
-msgstr "प्लेलिस्ट जिन्हें आप वर्तमान में खेल सकते हैं"
+msgstr "प्लेलिस्ट आप वर्तमान में खेल सकते हैं"
 
 #: pylav/extension/red/ui/buttons/playlist.py:412
 msgid "Pick a playlist"
@@ -202,9 +199,9 @@ msgstr "कतार में कुछ भी नहीं है"
 
 #: pylav/extension/red/ui/buttons/queue.py:296
 msgid "Removed tracks from the queue"
-msgstr "लाइन से हटाए गए ट्रैक"
+msgstr "कतार से ट्रैक हटा दिए गए"
 
 #: pylav/extension/red/ui/buttons/queue.py:323
 msgid "What do you want to enqueue?"
-msgstr "आप क्या कहना चाहते हैं?"
+msgstr "आप क्या कतारबद्ध करना चाहते हैं?"
 

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
@@ -33,7 +33,7 @@ msgstr "Ο κόμβος δεν βρέθηκε"
 #: pylav/extension/red/ui/selectors/playlist.py:41
 #: pylav/extension/red/ui/selectors/playlist.py:82
 msgid "Playlist not found"
-msgstr "Η λίστα αναπαραγωγής δεν βρέθηκε"
+msgstr "Δε βρέθηκε η λίστα αναπαραγωγής"
 
 #: pylav/extension/red/ui/selectors/queue.py:96
 msgid "Track not found"

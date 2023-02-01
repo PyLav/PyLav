@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:18\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -48,11 +48,11 @@ msgstr "Hayır"
 
 #: pylav/extension/red/ui/buttons/generic.py:164
 msgid "Disconnect {} {}"
-msgstr "Disconnect {} {}"
+msgstr "Bağlantıdan ayrıl {} {}"
 
 #: pylav/extension/red/ui/buttons/generic.py:165
 msgid "players"
-msgstr "Oyuncu"
+msgstr "oyuncular"
 
 #: pylav/extension/red/ui/buttons/generic.py:165
 msgid "player"
@@ -60,19 +60,19 @@ msgstr "oyuncu"
 
 #: pylav/extension/red/ui/buttons/nodes.py:57
 msgid "Connecting to the node with SSL enabled"
-msgstr "SSL etkin olarak düğüme bağlanma"
+msgstr "SSL etkinken düğüme bağlanıyor"
 
 #: pylav/extension/red/ui/buttons/nodes.py:64
 msgid "Connecting to the node with SSL disabled"
-msgstr "SSL devre dışı bırakılmış olarak düğüme bağlanma"
+msgstr "SSL devre dışıyken düğüme bağlanıyor"
 
 #: pylav/extension/red/ui/buttons/nodes.py:102
 msgid "This node will only be used for searches"
-msgstr "Bu düğüm yalnızca aramalar için kullanılacaktır"
+msgstr "Düğüm, yalnızca aramalar için kullanılacak"
 
 #: pylav/extension/red/ui/buttons/nodes.py:109
 msgid "This node will be used for search and playback"
-msgstr "Bu düğüm arama ve oynatma için kullanılacaktır"
+msgstr "Düğüm, aramalar ve oynatmalar için kullanılacak"
 
 #: pylav/extension/red/ui/buttons/nodes.py:140
 msgid "Please fill out all the fields before continuing"
@@ -80,34 +80,34 @@ msgstr "Lütfen devam etmeden önce tüm alanları doldurun"
 
 #: pylav/extension/red/ui/buttons/nodes.py:220
 msgid "When you press done this node will be permanently delete"
-msgstr "Bitti'ye bastığınızda bu düğüm kalıcı olarak silinecektir"
+msgstr "Tamamla yaptığınızda, düğüm kalıcı olarak silinecektir"
 
 #: pylav/extension/red/ui/buttons/nodes.py:222
 msgid "This node will no longer be deleted once you press done"
-msgstr "İşiniz bitti'ye bastığınızda bu düğüm artık silinmeyecek"
+msgstr "Bu düğüm,  \"Tamamla\" butonuna bastığınızda silinmeyecek"
 
 #: pylav/extension/red/ui/buttons/nodes.py:255
 msgid "__Enabled sources__:\n"
 "{sources}"
-msgstr "__Enabled sources__:\n"
+msgstr "__Etkin Kaynaklar__:\n"
 "{sources}"
 
 #: pylav/extension/red/ui/buttons/player.py:38
 #: pylav/extension/red/ui/buttons/player.py:87
 #: pylav/extension/red/ui/buttons/player.py:140
 msgid "You are not authorized to perform this action"
-msgstr "Bu eylemi gerçekleştirme yetkiniz yok"
+msgstr "Bu eylemi gerçekleştirmek için gereken yetkiye sahip değilsin"
 
 #: pylav/extension/red/ui/buttons/player.py:47
 #: pylav/extension/red/ui/buttons/player.py:96
 msgid "No Player Available For Action - Try Refreshing"
-msgstr "Eylem için Kullanılabilir Oyuncu Yok - Yenilemeyi Deneyin"
+msgstr "Eylem İçin Yeterince Oyuncu Bulunamadı - Yenilemeyi Deneyin"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:107
 #: pylav/extension/red/ui/buttons/player.py:164
 msgid "Bot Owner Action"
-msgstr "Bot Sahibi Eylemi"
+msgstr "Bot Sahibi İşlemi"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:164
@@ -120,67 +120,67 @@ msgstr "Oyuncu durduruldu"
 
 #: pylav/extension/red/ui/buttons/player.py:154
 msgid "No Players Available For Action - Try Refreshing"
-msgstr "Aksiyon için Oyuncu Yok - Yenilemeyi Deneyin"
+msgstr "Eylem İçin Yeterince Oyuncu Bulunamadı - Yenilemeyi Deneyin"
 
 #: pylav/extension/red/ui/buttons/playlist.py:48
 msgid "When you press done this playlist will be permanently delete"
-msgstr "Bitti'ye bastığınızda bu çalma listesi kalıcı olarak silinecektir"
+msgstr "Tamamla yaptığınızda, oynatma listesi kalıcı olarak silinecektir"
 
 #: pylav/extension/red/ui/buttons/playlist.py:50
 msgid "This playlist will no longer be deleted once you press done"
-msgstr "İşiniz bitti'ye bastığınızda bu çalma listesi artık silinmeyecek"
+msgstr "Bu oynatma listesi,  \"Tamamla\" butonuna bastığınızda silinmeyecek"
 
 #: pylav/extension/red/ui/buttons/playlist.py:83
 msgid "Clearing all tracks from the playlist playlist"
-msgstr "Çalma listesi çalma listesindeki tüm parçaları temizleme"
+msgstr "Oynatma listesindeki tüm parçalar siliniyor"
 
 #: pylav/extension/red/ui/buttons/playlist.py:85
 msgid "No longer clearing tracks from the playlist"
-msgstr "Artık çalma listesindeki parçaları temizlemiyor"
+msgstr "Oynatma listesindeki parçaların silinmesi durduruldu"
 
 #: pylav/extension/red/ui/buttons/playlist.py:126
 msgid "Here is your playlist: {name}{extras}"
-msgstr "İşte çalma listeniz: {name}{extras}"
+msgstr "Oynatma listen işte burada: {name}{extras}"
 
 #: pylav/extension/red/ui/buttons/playlist.py:128
 msgid "\n"
 " (compressed using gzip to make it possible to send via Discord - you can use <https://gzip.swimburger.net/> to decompress it)"
 msgstr "\n"
-" (Discord ile göndermeyi mümkün kılmak için gzip kullanılarak sıkıştırılır - kullanabilirsiniz <https://gzip.swimburger.net/> sıkıştırmasını açmak için)"
+"(gzip kullanarak Discord'da gönderilmek üzere sıkıştırıldı - normale döndürmek için <https://gzip.swimburger.net/> kullanabilirsiniz)"
 
 #: pylav/extension/red/ui/buttons/playlist.py:133
 msgid "\n"
 " (File compressed using Brotli compression."
 msgstr "\n"
-" (Dosya Brotli sıkıştırması kullanılarak sıkıştırılmıştır."
+"(Dosya, Brotli algoritması ile sıkıştırıldı."
 
 #: pylav/extension/red/ui/buttons/playlist.py:171
 msgid "Updating playlist with the latest tracks, press done to continue"
-msgstr "Çalma listesini en son parçalarla güncelleme, devam etmek için bitti'ye basın"
+msgstr "Son parçalar ile oynatma listesi güncelleniyor, devam etmek için tamam'a basın"
 
 #: pylav/extension/red/ui/buttons/playlist.py:174
 msgid "Not updating playlist"
-msgstr "Çalma listesi güncellenmiyor"
+msgstr "Oynatma listesin güncellenmiyor"
 
 #: pylav/extension/red/ui/buttons/playlist.py:263
 msgid "Adding the current queue to playlist"
-msgstr "Geçerli kuyruğu çalma listesine ekleme"
+msgstr "Sıradaki mevcut parçalar, oynatma listesine ekleniyor"
 
 #: pylav/extension/red/ui/buttons/playlist.py:270
 msgid "No longer adding the current queue to playlist"
-msgstr "Geçerli kuyruğu artık çalma listesine eklemiyor"
+msgstr "Sıradaki mevcut parçalar, oynatma listesine artık eklenmiyor"
 
 #: pylav/extension/red/ui/buttons/playlist.py:309
 msgid "Removing all duplicate tracks from the queue"
-msgstr "Tüm yinelenen parçaları kuyruktan kaldırma"
+msgstr "Sıradaki tekrarlanan parçalar, sıradan çıkarılıyor"
 
 #: pylav/extension/red/ui/buttons/playlist.py:316
 msgid "No longer all duplicate tracks from the queue"
-msgstr "Artık kuyruktaki tüm yinelenen parçalar yok"
+msgstr "Sıradaki tekrarlanan parçalar temizlendi"
 
 #: pylav/extension/red/ui/buttons/playlist.py:406
 msgid "Playlists you can currently play"
-msgstr "Şu anda çalabileceğiniz çalma listeleri"
+msgstr "Şu anda oynatabileceğiniz oynatma listeleri"
 
 #: pylav/extension/red/ui/buttons/playlist.py:412
 msgid "Pick a playlist"
@@ -188,7 +188,7 @@ msgstr "Bir çalma listesi seçin"
 
 #: pylav/extension/red/ui/buttons/playlist.py:434
 msgid "What should the playlist name be?"
-msgstr "Çalma listesi adı ne olmalıdır?"
+msgstr "Oynatma listesinin adı ne olmalı?"
 
 #: pylav/extension/red/ui/buttons/queue.py:164
 #: pylav/extension/red/ui/buttons/queue.py:191
@@ -198,13 +198,13 @@ msgstr "Ses kanalına bağlı değil"
 
 #: pylav/extension/red/ui/buttons/queue.py:289
 msgid "There's nothing in the Queue"
-msgstr "Kuyrukta hiçbir şey yok"
+msgstr "Sırada hiçbir şey yok."
 
 #: pylav/extension/red/ui/buttons/queue.py:296
 msgid "Removed tracks from the queue"
-msgstr "Kuyruktan parçalar kaldırıldı"
+msgstr "Parçalar sıradan çıkarıldı"
 
 #: pylav/extension/red/ui/buttons/queue.py:323
 msgid "What do you want to enqueue?"
-msgstr "Neyi kuyruğa almak istiyorsunuz?"
+msgstr "Neyi sıraya almak istiyorsun?"
 

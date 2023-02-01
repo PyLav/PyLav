@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -26,7 +26,7 @@ msgstr "Sinulla ei ole valtuuksia olla vuorovaikutuksessa tämän kanssa"
 
 #: pylav/extension/red/ui/menus/nodes.py:60
 msgid "Enter the domain or IP address of the host"
-msgstr "Anna isännän verkkotunnus tai IP-osoite"
+msgstr "Syötä vastaanottajan verkkotunnus tai IP-osoite"
 
 #: pylav/extension/red/ui/menus/nodes.py:61
 #: pylav/extension/red/ui/menus/nodes.py:499
@@ -35,7 +35,7 @@ msgstr "Isäntä"
 
 #: pylav/extension/red/ui/menus/nodes.py:68
 msgid "Enter the host port to connect to"
-msgstr "Anna isäntäportti, johon haluat muodostaa yhteyden"
+msgstr "Syötä isäntäportti, johon voit muodostaa yhteyden"
 
 #: pylav/extension/red/ui/menus/nodes.py:69
 #: pylav/extension/red/ui/menus/nodes.py:507
@@ -44,7 +44,7 @@ msgstr "Satama"
 
 #: pylav/extension/red/ui/menus/nodes.py:76
 msgid "Enter the node's password"
-msgstr "Anna solmun salasana"
+msgstr "Syötä solmun salasana"
 
 #: pylav/extension/red/ui/menus/nodes.py:77
 #: pylav/extension/red/ui/menus/nodes.py:515
@@ -53,7 +53,7 @@ msgstr "Salasana"
 
 #: pylav/extension/red/ui/menus/nodes.py:84
 msgid "Enter an easy to know name for the node"
-msgstr "Anna solmulle helposti tiedettävä nimi"
+msgstr "Anna helppo tietää nimi solmulle"
 
 #: pylav/extension/red/ui/menus/nodes.py:85
 #: pylav/extension/red/ui/menus/nodes.py:523
@@ -62,7 +62,7 @@ msgstr "Nimi"
 
 #: pylav/extension/red/ui/menus/nodes.py:92
 msgid "Enter a timeout in seconds"
-msgstr "Aikakatkaisun syöttäminen sekunneissa"
+msgstr "Syötä aikakatkaisu sekunneissa"
 
 #: pylav/extension/red/ui/menus/nodes.py:93
 #: pylav/extension/red/ui/menus/nodes.py:531
@@ -72,22 +72,22 @@ msgstr "Aikakatkaisu"
 #: pylav/extension/red/ui/menus/nodes.py:109
 #: pylav/extension/red/ui/menus/nodes.py:560
 msgid "Source to disable"
-msgstr "Lähde poistettavaksi käytöstä"
+msgstr "Poista käytöstä lähde"
 
 #: pylav/extension/red/ui/menus/nodes.py:222
 #: pylav/extension/red/ui/menus/nodes.py:671
 msgid "Name set to {name}"
-msgstr "Nimi, jonka arvoksi on määritetty {name}"
+msgstr "Nimi asetettu {name}"
 
 #: pylav/extension/red/ui/menus/nodes.py:235
 #: pylav/extension/red/ui/menus/nodes.py:684
 msgid "Password set to {password}"
-msgstr "Salasana-asetuksena {password}"
+msgstr "Salasana asetettu {password}"
 
 #: pylav/extension/red/ui/menus/nodes.py:253
 #: pylav/extension/red/ui/menus/nodes.py:702
 msgid "Host set to {host}"
-msgstr "Isäntä asetettu arvoon {host}"
+msgstr "Isäntä asetettu {host}"
 
 #: pylav/extension/red/ui/menus/nodes.py:270
 #: pylav/extension/red/ui/menus/nodes.py:719
@@ -97,25 +97,25 @@ msgstr "Virheellinen portti"
 #: pylav/extension/red/ui/menus/nodes.py:278
 #: pylav/extension/red/ui/menus/nodes.py:727
 msgid "Port set to {port}"
-msgstr "Portiksi on määritetty {port}"
+msgstr "Portti asetettu {port}"
 
 #: pylav/extension/red/ui/menus/nodes.py:295
 #: pylav/extension/red/ui/menus/nodes.py:744
 msgid "Invalid timeout, it must be a number in seconds"
-msgstr "Virheellinen aikakatkaisu, sen on oltava numero sekunteina"
+msgstr "Virheellinen aikakatkaisu, sen on oltava numero sekunneissa"
 
 #: pylav/extension/red/ui/menus/nodes.py:303
 #: pylav/extension/red/ui/menus/nodes.py:752
 msgid "Timeout set to {timeout} seconds"
-msgstr "Aikakatkaisu asetettu {timeout} Sekuntia"
+msgstr "Aikakatkaisu asetettu {timeout} sekunniksi"
 
 #: pylav/extension/red/ui/menus/nodes.py:498
 msgid "Change the domain or IP address of the host"
-msgstr "Isännän verkkotunnuksen tai IP-osoitteen muuttaminen"
+msgstr "Muuta vastaanottajan verkko- tai IP-osoitetta"
 
 #: pylav/extension/red/ui/menus/nodes.py:506
 msgid "Change the host port to connect to"
-msgstr "Vaihda isäntäportti, johon haluat muodostaa yhteyden"
+msgstr "Vaihda isäntäportti yhdistääksesi siihen"
 
 #: pylav/extension/red/ui/menus/nodes.py:514
 msgid "Change the node's password"
@@ -123,11 +123,11 @@ msgstr "Vaihda solmun salasana"
 
 #: pylav/extension/red/ui/menus/nodes.py:522
 msgid "Change the name of this node"
-msgstr "Muuta tämän solmun nimeä"
+msgstr "Vaihda tämän solmun nimi"
 
 #: pylav/extension/red/ui/menus/nodes.py:530
 msgid "Enter the new timeout for this node"
-msgstr "Anna tämän solmun uusi aikakatkaisu"
+msgstr "Syötä tämän solmun uusi aikakatkaisu"
 
 #: pylav/extension/red/ui/menus/player.py:95
 msgid "selected"
@@ -135,7 +135,7 @@ msgstr "valittu"
 
 #: pylav/extension/red/ui/menus/player.py:105
 msgid "inactive"
-msgstr "toimeton"
+msgstr "passiivinen"
 
 #: pylav/extension/red/ui/menus/player.py:115
 msgid "all"
@@ -148,29 +148,29 @@ msgstr "Ei yhdistetty mihinkään"
 #: pylav/extension/red/ui/menus/playlist.py:187
 #: pylav/extension/red/ui/menus/playlist.py:322
 msgid "Please enter the playlist URL"
-msgstr "Anna soittolistan URL-osoite"
+msgstr "Syötä soittolistan URL-osoite"
 
 #: pylav/extension/red/ui/menus/playlist.py:188
 #: pylav/extension/red/ui/menus/playlist.py:323
 msgid "Playlist URL"
-msgstr "Soittolistan URL-osoite"
+msgstr "Soittolistan URL"
 
 #: pylav/extension/red/ui/menus/playlist.py:194
 msgid "Please enter the playlist name"
-msgstr "Anna soittolistan nimi"
+msgstr "Syötä soittolistan nimi"
 
 #: pylav/extension/red/ui/menus/playlist.py:195
 #: pylav/extension/red/ui/menus/playlist.py:330
 msgid "Playlist Name"
-msgstr "Soittolistan nimi"
+msgstr "Soittolistan Nimi"
 
 #: pylav/extension/red/ui/menus/playlist.py:329
 msgid "Please enter the new playlist name"
-msgstr "Anna uusi soittolistan nimi"
+msgstr "Syötä uuden soittolistan nimi"
 
 #: pylav/extension/red/ui/menus/playlist.py:336
 msgid "What query to add to the playlist"
-msgstr "Mikä kysely lisätään soittolistaan"
+msgstr "Mitä kysy lisättäväksi soittolistaan"
 
 #: pylav/extension/red/ui/menus/playlist.py:337
 #: pylav/extension/red/ui/menus/playlist.py:345
@@ -179,13 +179,13 @@ msgstr "Kysely"
 
 #: pylav/extension/red/ui/menus/playlist.py:344
 msgid "What query to remove from the playlist"
-msgstr "Mikä kysely poistetaan soittolistasta"
+msgstr "Mitä hakua haluat poistaa soittolistalta"
 
 #: pylav/extension/red/ui/menus/queue.py:458
 msgid "Select Track To Remove"
-msgstr "Valitse poistettava raita"
+msgstr "Valitse Poistettava Kappale"
 
 #: pylav/extension/red/ui/menus/queue.py:460
 msgid "Select Track To Play Now"
-msgstr "Valitse Nyt toistettava kappale"
+msgstr "Valitse Kappale Toistaa Nyt"
 

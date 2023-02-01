@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "MIME-Version: 1.0\n"
@@ -20,19 +20,19 @@ msgstr ""
 #: pylav/helpers/discord/converters/nodes.py:40
 #: pylav/helpers/discord/converters/nodes.py:45
 msgid "Node with name or id `{arg}` not found"
-msgstr "Nodo con nome o id '{arg}' not found"
+msgstr "Nodo con nome o id `{arg}` non trovato"
 
 #: pylav/helpers/discord/converters/playlists.py:41
 msgid "Playlist with name or id `{arg}` not found"
-msgstr "Playlist con nome o id '{arg}' not found"
+msgstr "Playlist con nome o id `{arg}` non trovata"
 
 #: pylav/helpers/discord/converters/queries.py:52
 msgid "Query must be a playlist or album"
-msgstr "La query deve essere una playlist o un album"
+msgstr "La query deve essere una scaletta o un album"
 
 #: pylav/helpers/discord/converters/radio.py:56
 msgid "Station with name `{arg}` not found"
-msgstr "Stazione con nome '{arg}' not found"
+msgstr "Stazione con nome `{arg}` non trovata"
 
 #: pylav/helpers/discord/converters/radio.py:72
 #: pylav/helpers/discord/converters/radio.py:154
@@ -42,7 +42,7 @@ msgstr "Stazione con nome '{arg}' not found"
 #: pylav/helpers/discord/converters/radio.py:306
 #: pylav/helpers/discord/converters/radio.py:343
 msgid "Radio Browser is disabled"
-msgstr "Radio Browser è disabilitato"
+msgstr "Il browser radio è disabilitato"
 
 #: pylav/helpers/discord/converters/radio.py:92
 msgid "Unnamed"
@@ -50,25 +50,25 @@ msgstr "Anonimo"
 
 #: pylav/helpers/discord/converters/radio.py:138
 msgid "Tag with name `{arg}` not found"
-msgstr "Tag con nome '{arg}' not found"
+msgstr "Tag con nome `{arg}` non trovato"
 
 #: pylav/helpers/discord/converters/radio.py:178
 msgid "Language with name `{arg}` not found"
-msgstr "Lingua con nome '{arg}' not found"
+msgstr "Lingua con nome `{arg}` non trovata"
 
 #: pylav/helpers/discord/converters/radio.py:216
 msgid "State with name `{arg}` not found"
-msgstr "Stato con nome '{arg}' not found"
+msgstr "Fortezza con nome `{arg}` non trovata"
 
 #: pylav/helpers/discord/converters/radio.py:253
 msgid "Codec with name `{arg}` not found"
-msgstr "Codec con nome '{arg}' not found"
+msgstr "Codec con nome `{arg}` non trovato"
 
 #: pylav/helpers/discord/converters/radio.py:290
 msgid "Country code `{arg}` not found"
-msgstr "Codice paese '{arg}' not found"
+msgstr "Codice paese `{arg}` non trovato"
 
 #: pylav/helpers/discord/converters/radio.py:327
 msgid "Country with name `{arg}` not found"
-msgstr "Paese con nome '{arg}' not found"
+msgstr "Paese con nome `{arg}` non trovato"
 

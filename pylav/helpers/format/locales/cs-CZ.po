@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:09\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -31,7 +31,7 @@ msgstr "minuta"
 
 #: pylav/helpers/format/strings.py:59
 msgid "second"
-msgstr "vteřina"
+msgstr "sekunda"
 
 #: pylav/helpers/format/strings.py:60
 msgid "day"
@@ -39,7 +39,7 @@ msgstr "den"
 
 #: pylav/helpers/format/strings.py:61
 msgid "days"
-msgstr "Dny"
+msgstr "dny"
 
 #: pylav/helpers/format/strings.py:62
 msgid "hours"

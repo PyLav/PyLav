@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:18\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -35,7 +35,7 @@ msgstr "Gastheer"
 
 #: pylav/extension/red/ui/menus/nodes.py:68
 msgid "Enter the host port to connect to"
-msgstr "Voer de hostpoort in waarmee u verbinding wilt maken"
+msgstr "Voer de host poort in om mee te verbinden"
 
 #: pylav/extension/red/ui/menus/nodes.py:69
 #: pylav/extension/red/ui/menus/nodes.py:507
@@ -44,7 +44,7 @@ msgstr "Haven"
 
 #: pylav/extension/red/ui/menus/nodes.py:76
 msgid "Enter the node's password"
-msgstr "Voer het wachtwoord van het knooppunt in"
+msgstr "Voer het wachtwoord van de node in"
 
 #: pylav/extension/red/ui/menus/nodes.py:77
 #: pylav/extension/red/ui/menus/nodes.py:515
@@ -53,21 +53,21 @@ msgstr "Wachtwoord"
 
 #: pylav/extension/red/ui/menus/nodes.py:84
 msgid "Enter an easy to know name for the node"
-msgstr "Voer een eenvoudig te kennen naam in voor het knooppunt"
+msgstr "Voer een eenvoudige naam in om de node te kennen"
 
 #: pylav/extension/red/ui/menus/nodes.py:85
 #: pylav/extension/red/ui/menus/nodes.py:523
 msgid "Name"
-msgstr "Naam"
+msgstr "naam"
 
 #: pylav/extension/red/ui/menus/nodes.py:92
 msgid "Enter a timeout in seconds"
-msgstr "Voer binnen enkele seconden een time-out in"
+msgstr "Voer een time-out in seconden in"
 
 #: pylav/extension/red/ui/menus/nodes.py:93
 #: pylav/extension/red/ui/menus/nodes.py:531
 msgid "Timeout"
-msgstr "Timeout"
+msgstr "Time-out"
 
 #: pylav/extension/red/ui/menus/nodes.py:109
 #: pylav/extension/red/ui/menus/nodes.py:560
@@ -107,7 +107,7 @@ msgstr "Ongeldige time-out, het moet een getal in seconden zijn"
 #: pylav/extension/red/ui/menus/nodes.py:303
 #: pylav/extension/red/ui/menus/nodes.py:752
 msgid "Timeout set to {timeout} seconds"
-msgstr "Time-out ingesteld op {timeout} Seconden"
+msgstr "Time-out ingesteld op {timeout} seconden"
 
 #: pylav/extension/red/ui/menus/nodes.py:498
 msgid "Change the domain or IP address of the host"
@@ -115,11 +115,11 @@ msgstr "Het domein of IP-adres van de host wijzigen"
 
 #: pylav/extension/red/ui/menus/nodes.py:506
 msgid "Change the host port to connect to"
-msgstr "Wijzig de hostpoort om verbinding mee te maken"
+msgstr "Wijzig de host poort om mee te verbinden"
 
 #: pylav/extension/red/ui/menus/nodes.py:514
 msgid "Change the node's password"
-msgstr "Het wachtwoord van het knooppunt wijzigen"
+msgstr "Verander het wachtwoord van het knooppunt"
 
 #: pylav/extension/red/ui/menus/nodes.py:522
 msgid "Change the name of this node"
@@ -127,15 +127,15 @@ msgstr "De naam van dit knooppunt wijzigen"
 
 #: pylav/extension/red/ui/menus/nodes.py:530
 msgid "Enter the new timeout for this node"
-msgstr "Voer de nieuwe time-out voor dit knooppunt in"
+msgstr "Voer de nieuwe time-out in voor deze node"
 
 #: pylav/extension/red/ui/menus/player.py:95
 msgid "selected"
-msgstr "uitverkoren"
+msgstr "Geselecteerd"
 
 #: pylav/extension/red/ui/menus/player.py:105
 msgid "inactive"
-msgstr "inactief"
+msgstr "Inactief"
 
 #: pylav/extension/red/ui/menus/player.py:115
 msgid "all"
@@ -143,17 +143,17 @@ msgstr "alle"
 
 #: pylav/extension/red/ui/menus/player.py:208
 msgid "Not connected anywhere"
-msgstr "Nergens verbonden"
+msgstr "nergens verbonden"
 
 #: pylav/extension/red/ui/menus/playlist.py:187
 #: pylav/extension/red/ui/menus/playlist.py:322
 msgid "Please enter the playlist URL"
-msgstr "Voer de URL van de afspeellijst in"
+msgstr "Voer de afspeellijst URL in"
 
 #: pylav/extension/red/ui/menus/playlist.py:188
 #: pylav/extension/red/ui/menus/playlist.py:323
 msgid "Playlist URL"
-msgstr "URL van afspeellijst"
+msgstr "Afspeellijst URL"
 
 #: pylav/extension/red/ui/menus/playlist.py:194
 msgid "Please enter the playlist name"
@@ -166,26 +166,26 @@ msgstr "Naam afspeellijst"
 
 #: pylav/extension/red/ui/menus/playlist.py:329
 msgid "Please enter the new playlist name"
-msgstr "Voer de naam van de nieuwe afspeellijst in"
+msgstr "Voer de nieuwe naam van de afspeellijst in"
 
 #: pylav/extension/red/ui/menus/playlist.py:336
 msgid "What query to add to the playlist"
-msgstr "Welke query u aan de afspeellijst wilt toevoegen"
+msgstr "Welke query aan de afspeellijst toe te voegen"
 
 #: pylav/extension/red/ui/menus/playlist.py:337
 #: pylav/extension/red/ui/menus/playlist.py:345
 msgid "Query"
-msgstr "Vraag"
+msgstr "Zoekopdracht"
 
 #: pylav/extension/red/ui/menus/playlist.py:344
 msgid "What query to remove from the playlist"
-msgstr "Welke query u uit de afspeellijst wilt verwijderen"
+msgstr "Welke query uit de afspeellijst te verwijderen"
 
 #: pylav/extension/red/ui/menus/queue.py:458
 msgid "Select Track To Remove"
-msgstr "Selecteer Track om te verwijderen"
+msgstr "Selecteer track om te verwijderen"
 
 #: pylav/extension/red/ui/menus/queue.py:460
 msgid "Select Track To Play Now"
-msgstr "Selecteer Track om nu te spelen"
+msgstr "Selecteer track To Play Nu"
 

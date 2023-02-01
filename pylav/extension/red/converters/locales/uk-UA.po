@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: pylav/extension/red/converters/equalizer.py:47
 msgid "Bass boost with name `{arg}` not found"
-msgstr "Бас-буст з ім'ям '{arg}' не знайдено"
+msgstr "Підсилення НЧ з іменем{arg}` не знайдено"
 
 #: pylav/extension/red/converters/equalizer.py:61
 msgid "Maximum"
@@ -27,11 +27,11 @@ msgstr "Максимум"
 
 #: pylav/extension/red/converters/equalizer.py:62
 msgid "Insane"
-msgstr "Божевільні"
+msgstr "Божевільно"
 
 #: pylav/extension/red/converters/equalizer.py:63
 msgid "Extreme"
-msgstr "Екстремальних"
+msgstr "Надмірний"
 
 #: pylav/extension/red/converters/equalizer.py:64
 msgid "Very High"
@@ -43,15 +43,15 @@ msgstr "Високий"
 
 #: pylav/extension/red/converters/equalizer.py:66
 msgid "Medium"
-msgstr "Середнє"
+msgstr "Медіум"
 
 #: pylav/extension/red/converters/equalizer.py:67
 msgid "Fine Tuned"
-msgstr "Тонко налаштовані"
+msgstr "Точне налаштування"
 
 #: pylav/extension/red/converters/equalizer.py:68
 msgid "Cut-off"
-msgstr "Відсікання"
+msgstr "Кут-офф"
 
 #: pylav/extension/red/converters/equalizer.py:69
 msgid "Off"

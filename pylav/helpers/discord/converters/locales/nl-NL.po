@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgstr ""
 #: pylav/helpers/discord/converters/nodes.py:40
 #: pylav/helpers/discord/converters/nodes.py:45
 msgid "Node with name or id `{arg}` not found"
-msgstr "Node met naam of id '{arg}' niet gevonden"
+msgstr "Node met naam of id `{arg}` niet gevonden"
 
 #: pylav/helpers/discord/converters/playlists.py:41
 msgid "Playlist with name or id `{arg}` not found"
@@ -32,7 +32,7 @@ msgstr "Query moet een afspeellijst of album zijn"
 
 #: pylav/helpers/discord/converters/radio.py:56
 msgid "Station with name `{arg}` not found"
-msgstr "Station met naam '{arg}' niet gevonden"
+msgstr "Station met naam `{arg}` niet gevonden"
 
 #: pylav/helpers/discord/converters/radio.py:72
 #: pylav/helpers/discord/converters/radio.py:154
@@ -46,29 +46,29 @@ msgstr "Radio Browser is uitgeschakeld"
 
 #: pylav/helpers/discord/converters/radio.py:92
 msgid "Unnamed"
-msgstr "Naamloos"
+msgstr "Onbenoemd"
 
 #: pylav/helpers/discord/converters/radio.py:138
 msgid "Tag with name `{arg}` not found"
-msgstr "Tag met naam '{arg}' niet gevonden"
+msgstr "Tag met naam{arg}is niet gevonden"
 
 #: pylav/helpers/discord/converters/radio.py:178
 msgid "Language with name `{arg}` not found"
-msgstr "Taal met naam '{arg}' niet gevonden"
+msgstr "Taal met naam `{arg}` niet gevonden"
 
 #: pylav/helpers/discord/converters/radio.py:216
 msgid "State with name `{arg}` not found"
-msgstr "Staat met naam '{arg}' niet gevonden"
+msgstr "Provincie met naam{arg}is niet gevonden"
 
 #: pylav/helpers/discord/converters/radio.py:253
 msgid "Codec with name `{arg}` not found"
-msgstr "Codec met naam '{arg}' niet gevonden"
+msgstr "Codec met de naam `{arg}` niet gevonden"
 
 #: pylav/helpers/discord/converters/radio.py:290
 msgid "Country code `{arg}` not found"
-msgstr "Landnummer '{arg}' niet gevonden"
+msgstr "Landcode `{arg}` niet gevonden"
 
 #: pylav/helpers/discord/converters/radio.py:327
 msgid "Country with name `{arg}` not found"
-msgstr "Land met naam '{arg}' niet gevonden"
+msgstr "Land met de naam `{arg}is niet gevonden"
 

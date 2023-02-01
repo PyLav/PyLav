@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:18\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -52,67 +52,67 @@ msgstr "斷開連接 {} {}"
 
 #: pylav/extension/red/ui/buttons/generic.py:165
 msgid "players"
-msgstr "球員"
+msgstr "播放器"
 
 #: pylav/extension/red/ui/buttons/generic.py:165
 msgid "player"
-msgstr "選手"
+msgstr "播放器"
 
 #: pylav/extension/red/ui/buttons/nodes.py:57
 msgid "Connecting to the node with SSL enabled"
-msgstr "連接到啟用了 SSL 的節點"
+msgstr "正在連接到已啟用 SSL 的節點"
 
 #: pylav/extension/red/ui/buttons/nodes.py:64
 msgid "Connecting to the node with SSL disabled"
-msgstr "連接到禁用 SSL 的節點"
+msgstr "正在連接到未啟用 SSL 的節點"
 
 #: pylav/extension/red/ui/buttons/nodes.py:102
 msgid "This node will only be used for searches"
-msgstr "此節點將僅用於搜索"
+msgstr "該節點將僅用於搜尋"
 
 #: pylav/extension/red/ui/buttons/nodes.py:109
 msgid "This node will be used for search and playback"
-msgstr "此節點將用於搜索和播放"
+msgstr "該節點將用於搜尋和播放"
 
 #: pylav/extension/red/ui/buttons/nodes.py:140
 msgid "Please fill out all the fields before continuing"
-msgstr "請填寫所有欄位，然後再繼續"
+msgstr "請在繼續之前填寫所有字段"
 
 #: pylav/extension/red/ui/buttons/nodes.py:220
 msgid "When you press done this node will be permanently delete"
-msgstr "當您按完成時，此節點將被永久刪除"
+msgstr "當您按下完成時，此節點將被永久刪除"
 
 #: pylav/extension/red/ui/buttons/nodes.py:222
 msgid "This node will no longer be deleted once you press done"
-msgstr "按完成後，此節點將不再被刪除"
+msgstr "一旦你按下完成，這個節點將不再被刪除"
 
 #: pylav/extension/red/ui/buttons/nodes.py:255
 msgid "__Enabled sources__:\n"
 "{sources}"
-msgstr "__Enabled sources__：\n"
+msgstr "__啟用來源__：\n"
 "{sources}"
 
 #: pylav/extension/red/ui/buttons/player.py:38
 #: pylav/extension/red/ui/buttons/player.py:87
 #: pylav/extension/red/ui/buttons/player.py:140
 msgid "You are not authorized to perform this action"
-msgstr "您無權執行此操作"
+msgstr "您無權限執行此操作"
 
 #: pylav/extension/red/ui/buttons/player.py:47
 #: pylav/extension/red/ui/buttons/player.py:96
 msgid "No Player Available For Action - Try Refreshing"
-msgstr "沒有可用於操作的播放機 - 嘗試刷新"
+msgstr "沒有播放器可以進行動作 - 正在嘗試刷新"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:107
 #: pylav/extension/red/ui/buttons/player.py:164
 msgid "Bot Owner Action"
-msgstr "機器人擁有者操作"
+msgstr "機器人所有者動作"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:164
 msgid "Player disconnected"
-msgstr "播放機已斷開連接"
+msgstr "播放器已斷開連接"
 
 #: pylav/extension/red/ui/buttons/player.py:107
 msgid "Player stopped"
@@ -120,33 +120,32 @@ msgstr "播放器已停止"
 
 #: pylav/extension/red/ui/buttons/player.py:154
 msgid "No Players Available For Action - Try Refreshing"
-msgstr "沒有可用於操作的播放機 - 嘗試刷新"
+msgstr "沒有播放器可以進行動作 - 正在嘗試刷新"
 
 #: pylav/extension/red/ui/buttons/playlist.py:48
 msgid "When you press done this playlist will be permanently delete"
-msgstr "當您按完成時，此播放清單將被永久刪除"
+msgstr "當您按完成時，此播放列表將被永久刪除"
 
 #: pylav/extension/red/ui/buttons/playlist.py:50
 msgid "This playlist will no longer be deleted once you press done"
-msgstr "按完成後，此播放清單將不再被刪除"
+msgstr "按下完成後將不再刪除此播放列表"
 
 #: pylav/extension/red/ui/buttons/playlist.py:83
 msgid "Clearing all tracks from the playlist playlist"
-msgstr "清除播放清單播放清單中的所有曲目"
+msgstr "正在清除播放列表中的所有曲目"
 
 #: pylav/extension/red/ui/buttons/playlist.py:85
 msgid "No longer clearing tracks from the playlist"
-msgstr "不再清除播放清單中的曲目"
+msgstr "不再從播放列表中清除曲目"
 
 #: pylav/extension/red/ui/buttons/playlist.py:126
 msgid "Here is your playlist: {name}{extras}"
-msgstr "這是您的播放清單： {name}{extras}"
+msgstr "這是您的播放列表：{name}{extras}"
 
 #: pylav/extension/red/ui/buttons/playlist.py:128
 msgid "\n"
 " (compressed using gzip to make it possible to send via Discord - you can use <https://gzip.swimburger.net/> to decompress it)"
-msgstr "\n"
-" （使用 gzip 壓縮以使其可以通過 Discord 送出 - 您可以使用 <https://gzip.swimburger.net/> 解壓）"
+msgstr "（使用 gzip 壓縮以便通過 Discord 發送 - 您可以使用 <https://gzip.swimburger.net/> 來解壓縮它）"
 
 #: pylav/extension/red/ui/buttons/playlist.py:133
 msgid "\n"
@@ -156,31 +155,31 @@ msgstr "\n"
 
 #: pylav/extension/red/ui/buttons/playlist.py:171
 msgid "Updating playlist with the latest tracks, press done to continue"
-msgstr "使用最新曲目更新播放清單，按完成繼續"
+msgstr "正在使用最新曲目更新播放列表，按完成繼續"
 
 #: pylav/extension/red/ui/buttons/playlist.py:174
 msgid "Not updating playlist"
-msgstr "不更新播放清單"
+msgstr "不再更新播放列表"
 
 #: pylav/extension/red/ui/buttons/playlist.py:263
 msgid "Adding the current queue to playlist"
-msgstr "將當前佇列添加到播放清單"
+msgstr "將當前清單添加到播放列表"
 
 #: pylav/extension/red/ui/buttons/playlist.py:270
 msgid "No longer adding the current queue to playlist"
-msgstr "不再將當前佇列添加到播放清單"
+msgstr "不再將當前清單添加到播放列表"
 
 #: pylav/extension/red/ui/buttons/playlist.py:309
 msgid "Removing all duplicate tracks from the queue"
-msgstr "從佇列中刪除所有重複的軌道"
+msgstr "從隊列中刪除所有重複的曲目"
 
 #: pylav/extension/red/ui/buttons/playlist.py:316
 msgid "No longer all duplicate tracks from the queue"
-msgstr "佇列中不再有所有重複的曲目"
+msgstr "隊列中不再有重複的曲目"
 
 #: pylav/extension/red/ui/buttons/playlist.py:406
 msgid "Playlists you can currently play"
-msgstr "您目前可以播放的播放清單"
+msgstr "您現在可以播放的播放列表"
 
 #: pylav/extension/red/ui/buttons/playlist.py:412
 msgid "Pick a playlist"
@@ -188,7 +187,7 @@ msgstr "選擇一個播放清單"
 
 #: pylav/extension/red/ui/buttons/playlist.py:434
 msgid "What should the playlist name be?"
-msgstr "播放清單名稱應該是什麼？"
+msgstr "播放列表名稱要叫什麼？"
 
 #: pylav/extension/red/ui/buttons/queue.py:164
 #: pylav/extension/red/ui/buttons/queue.py:191
@@ -198,13 +197,13 @@ msgstr "未連接到語音通道"
 
 #: pylav/extension/red/ui/buttons/queue.py:289
 msgid "There's nothing in the Queue"
-msgstr "佇列中沒有任何內容"
+msgstr "播放清單中沒有內容"
 
 #: pylav/extension/red/ui/buttons/queue.py:296
 msgid "Removed tracks from the queue"
-msgstr "從佇列中刪除的曲目"
+msgstr "已從隊列中刪除曲目"
 
 #: pylav/extension/red/ui/buttons/queue.py:323
 msgid "What do you want to enqueue?"
-msgstr "您要排隊什麼？"
+msgstr "你想為清單新增什麼？"
 

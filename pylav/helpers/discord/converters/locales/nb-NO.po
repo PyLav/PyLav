@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "MIME-Version: 1.0\n"
@@ -20,11 +20,11 @@ msgstr ""
 #: pylav/helpers/discord/converters/nodes.py:40
 #: pylav/helpers/discord/converters/nodes.py:45
 msgid "Node with name or id `{arg}` not found"
-msgstr "Node med navn eller id '{arg}' ikke funnet"
+msgstr "Node med navn eller id `{arg}` ikke funnet"
 
 #: pylav/helpers/discord/converters/playlists.py:41
 msgid "Playlist with name or id `{arg}` not found"
-msgstr "Spilleliste med navn eller id '{arg}' ikke funnet"
+msgstr "Spilleliste med navn eller id `{arg}` ikke funnet"
 
 #: pylav/helpers/discord/converters/queries.py:52
 msgid "Query must be a playlist or album"
@@ -32,7 +32,7 @@ msgstr "Spørringen må være en spilleliste eller et album"
 
 #: pylav/helpers/discord/converters/radio.py:56
 msgid "Station with name `{arg}` not found"
-msgstr "Stasjon med navn '{arg}' ikke funnet"
+msgstr "Stasjon med navn `{arg}` ikke funnet"
 
 #: pylav/helpers/discord/converters/radio.py:72
 #: pylav/helpers/discord/converters/radio.py:154
@@ -42,33 +42,33 @@ msgstr "Stasjon med navn '{arg}' ikke funnet"
 #: pylav/helpers/discord/converters/radio.py:306
 #: pylav/helpers/discord/converters/radio.py:343
 msgid "Radio Browser is disabled"
-msgstr "Radio Browser er deaktivert"
+msgstr "Radionettleseren er deaktivert"
 
 #: pylav/helpers/discord/converters/radio.py:92
 msgid "Unnamed"
-msgstr "Unnamed"
+msgstr "Navnløs"
 
 #: pylav/helpers/discord/converters/radio.py:138
 msgid "Tag with name `{arg}` not found"
-msgstr "Tag med navn '{arg}' ikke funnet"
+msgstr "Tag med navnet `{arg}` ikke funnet"
 
 #: pylav/helpers/discord/converters/radio.py:178
 msgid "Language with name `{arg}` not found"
-msgstr "Språk med navn '{arg}' ikke funnet"
+msgstr "Språk med navn `{arg}` ikke funnet"
 
 #: pylav/helpers/discord/converters/radio.py:216
 msgid "State with name `{arg}` not found"
-msgstr "Stat med navn '{arg}' ikke funnet"
+msgstr "Fylke med navn `{arg}` ikke funnet"
 
 #: pylav/helpers/discord/converters/radio.py:253
 msgid "Codec with name `{arg}` not found"
-msgstr "Kodek med navn '{arg}' ikke funnet"
+msgstr "Koden med navn `{arg}` ble ikke funnet"
 
 #: pylav/helpers/discord/converters/radio.py:290
 msgid "Country code `{arg}` not found"
-msgstr "Landskode '{arg}' ikke funnet"
+msgstr "Landskoden `{arg}` ikke funnet"
 
 #: pylav/helpers/discord/converters/radio.py:327
 msgid "Country with name `{arg}` not found"
-msgstr "Land med navn '{arg}' ikke funnet"
+msgstr "Land med navnet `{arg}` ikke funnet"
 

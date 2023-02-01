@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
@@ -23,33 +23,33 @@ msgstr "Brak dostępnych węzłów!"
 
 #: pylav/players/manager.py:349
 msgid "Music in {count} servers"
-msgstr "Muzyka w {count} Serwerów"
+msgstr "Muzyka na {count} serwerach"
 
 #: pylav/players/player.py:1176
 msgid "There are no tracks currently in the player history"
-msgstr "W historii gracza nie ma obecnie żadnych utworów"
+msgstr "Obecnie nie ma żadnych utworów w historii gracza"
 
 #: pylav/players/player.py:1869
 msgid "Current node has the Volume filter functionality disabled"
-msgstr "Bieżący węzeł ma wyłączoną funkcję filtru głośności"
+msgstr "Bieżący węzeł ma wyłączoną funkcję filtra głośności"
 
 #: pylav/players/player.py:1891 pylav/players/player.py:2067
 #: pylav/players/player.py:2122
 msgid "Current node has the Equalizer functionality disabled"
-msgstr "Bieżący węzeł ma wyłączoną funkcję korektora"
+msgstr "Bieżący węzeł ma wyłączoną funkcjonalność korektora"
 
 #: pylav/players/player.py:1911
 msgid "Current node has the Karaoke functionality disabled"
-msgstr "Bieżący węzeł ma wyłączoną funkcję Karaoke"
+msgstr "Bieżący węzeł ma wyłączoną funkcjonalność Karaoke"
 
 #: pylav/players/player.py:1931 pylav/players/player.py:2069
 #: pylav/players/player.py:2124
 msgid "Current node has the Timescale functionality disabled"
-msgstr "Bieżący węzeł ma wyłączoną funkcję Skala czasu"
+msgstr "Bieżący węzeł ma wyłączoną funkcjonalność Czasu"
 
 #: pylav/players/player.py:1951
 msgid "Current node has the Tremolo functionality disabled"
-msgstr "Bieżący węzeł ma wyłączoną funkcję Tremolo"
+msgstr "Bieżący węzeł ma wyłączoną funkcjonalność Tremolo"
 
 #: pylav/players/player.py:1971
 msgid "Current node has the Vibrato functionality disabled"
@@ -57,11 +57,11 @@ msgstr "Bieżący węzeł ma wyłączoną funkcjonalność Vibrato"
 
 #: pylav/players/player.py:1991
 msgid "Current node has the Rotation functionality disabled"
-msgstr "Bieżący węzeł ma wyłączoną funkcję Obrót"
+msgstr "Bieżący węzeł ma wyłączoną funkcję rotacji"
 
 #: pylav/players/player.py:2011
 msgid "Current node has the Distortion functionality disabled"
-msgstr "Bieżący węzeł ma wyłączoną funkcję Zniekształcenia"
+msgstr "Bieżący węzeł ma wyłączoną funkcję zniekształcenia"
 
 #: pylav/players/player.py:2031
 msgid "Current node has the LowPass functionality disabled"
@@ -69,7 +69,7 @@ msgstr "Bieżący węzeł ma wyłączoną funkcjonalność LowPass"
 
 #: pylav/players/player.py:2051
 msgid "Current node has the Echo functionality disabled"
-msgstr "Bieżący węzeł ma wyłączoną funkcję Echo"
+msgstr "Bieżący węzeł ma wyłączoną funkcjonalność Echo"
 
 #: pylav/players/player.py:2181
 msgid "Current node has the ChannelMix functionality disabled"
@@ -78,15 +78,15 @@ msgstr "Bieżący węzeł ma wyłączoną funkcję ChannelMix"
 #: pylav/players/player.py:2441 pylav/players/player.py:2486
 #: pylav/players/player.py:2501
 msgid "LIVE"
-msgstr "MIESZKAĆ"
+msgstr "ŻYWO"
 
 #: pylav/players/player.py:2454
 msgid "Now Playing in"
-msgstr "Teraz grasz w"
+msgstr "Teraz odtwarzane w"
 
 #: pylav/players/player.py:2472 pylav/players/player.py:2581
 msgid "Currently livestreaming"
-msgstr "Obecnie transmisja na żywo"
+msgstr "Obecnie żywe zwierzęta"
 
 #: pylav/players/player.py:2474
 msgid "Playing: "
@@ -95,7 +95,7 @@ msgstr "Odtwarzanie: "
 #: pylav/players/player.py:2477 pylav/players/player.py:2493
 #: pylav/players/player.py:2508 pylav/players/player.py:2587
 msgid "Requester"
-msgstr "Żądającego"
+msgstr "Żądający"
 
 #: pylav/players/player.py:2489 pylav/players/player.py:2504
 msgid "Duration"
@@ -103,7 +103,7 @@ msgstr "Czas trwania"
 
 #: pylav/players/player.py:2495
 msgid "Previous Track"
-msgstr "Poprzedni utwór"
+msgstr "Poprzednia ścieżka"
 
 #: pylav/players/player.py:2510
 msgid "Next Track"
@@ -111,7 +111,7 @@ msgstr "Następny utwór"
 
 #: pylav/players/player.py:2515
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
-msgstr "{track_count} Utworów {queue_total_duration} pozostały\n"
+msgstr "{track_count} utworów, pozostało {queue_total_duration}\n"
 
 #: pylav/players/player.py:2519 pylav/players/player.py:2615
 msgid "{translation}: {repeat_emoji}"
@@ -119,7 +119,7 @@ msgstr "{translation}: {repeat_emoji}"
 
 #: pylav/players/player.py:2519 pylav/players/player.py:2615
 msgid "Repeating"
-msgstr "Powtarzanej"
+msgstr "Powtarzanie"
 
 #: pylav/players/player.py:2520 pylav/players/player.py:2616
 msgid "{space}{translation}: {autoplay_emoji}"
@@ -143,17 +143,17 @@ msgstr "Ostatnio grane dla"
 
 #: pylav/players/player.py:2564
 msgid "Queue for"
-msgstr "Kolejka do"
+msgstr "Kolejka dla"
 
 #: pylav/players/player.py:2584
 msgid "Playing"
-msgstr "Odtwarzanie"
+msgstr "Gra"
 
 #: pylav/players/player.py:2600
 msgid "Queue order may not be accurate due to auto-shuffle being enabled"
-msgstr "Kolejność kolejek może być niedokładna z powodu włączenia automatycznego losowania"
+msgstr "Kolejka może nie być dokładna z powodu włączonego automatycznego przetasowania"
 
 #: pylav/players/player.py:2606
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
-msgstr "Strona {current_page}/{total_pages} | {track_number} Utworów {queue_total_duration} pozostały\n"
+msgstr "Strona {current_page}/{total_pages} | {track_number} utworów, pozostało {queue_total_duration}\n"
 

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:18\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgstr ""
 #: pylav/extension/red/utils/required_methods.py:46
 #, docstring
 msgid "Shows the credits and translation details for the PyLav cogs and shared code"
-msgstr "Pokazuje informacje o autorach i szczegóły tłumaczenia trybików PyLav i współdzielonego kodu"
+msgstr "Pokazuje informacje o kredytach i tłumaczeniach dla kogów PyLav i wspólnego kodu"
 
 #: pylav/extension/red/utils/required_methods.py:50
 msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
@@ -34,16 +34,16 @@ msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
 "- https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors\n"
 "If you wish to buy me a coffee for my work, you can do so at:\n"
 "https://www.buymeacoffee.com/draper or https://github.com/sponsors/Drapersniper"
-msgstr "PyLav został stworzony przez [Draper#6666](https://github.com/Drapersniper).\n\n"
+msgstr "PyLav został utworzony przez [Draper#6666](https://github.com/Drapersniper).\n\n"
 "PyLav może znajdować się w https://github.com/Drapersniper/PyLav\n"
-"PyLav-Cogs można zlokalizować w https://github.com/Drapersniper/PyLav-Cogs\n\n"
-"Serwer wsparcia PyLav można znaleźć pod adresem https://discord.com/invite/Sjh2TSCYQB\n\n\n"
-"Możesz pomóc w tłumaczeniu PyLav, przyczyniając się do naszego projektu Crowdin na:\n"
-"https://crowdin.com/project/pylav\n\n\n"
-"Współpracowników:\n"
+"PyLav-Cogs można zlokalizować na https://github. om/Drapersniper/PyLav-Cogs\n\n"
+"Serwer wsparcia PyLava można znaleźć na https://discord.com/invite/Sjh2TSCYQB\n\n\n"
+"Możesz pomóc w tłumaczeniu PyLava przyczyniając się do naszego projektu Crowdin pod adresem:\n"
+"https://crowdin. om/project/pylav\n\n\n"
+"Współtwórcy:\n"
 "- https://github.com/Drapersniper/PyLav/graphs/contributors\n"
-"- https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors\n"
-"Jeśli chcesz kupić mi kawę do mojej pracy, możesz to zrobić na:\n"
+"- https://github. om/Drapersniper/PyLav-Cogs/graphs/contributors\n"
+"Jeśli chcesz kupić mi kawę za moją pracę, możesz to zrobić pod adresem:\n"
 "https://www.buymeacoffee.com/draper lub https://github.com/sponsors/Drapersniper"
 
 #: pylav/extension/red/utils/required_methods.py:76
@@ -62,31 +62,31 @@ msgstr "Wersja"
 #: pylav/extension/red/utils/required_methods.py:111
 #, docstring
 msgid "Sync the Bots slash commands"
-msgstr "Synchronizowanie poleceń ukośnika botów"
+msgstr "Synchronizuj polecenia ukośne botów"
 
 #: pylav/extension/red/utils/required_methods.py:120
 msgid "Synced the bots slash commands"
-msgstr "Zsynchronizowano polecenia ukośnika botów"
+msgstr "Zsynchronizowano komendy ukośne botów"
 
 #: pylav/extension/red/utils/required_methods.py:141
 msgid "This command requires an existing player to be run"
-msgstr "To polecenie wymaga uruchomienia istniejącego odtwarzacza"
+msgstr "Ta komenda wymaga uruchomienia istniejącego gracza"
 
 #: pylav/extension/red/utils/required_methods.py:150
 msgid "PyLavPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later"
-msgstr "Cog PyLavPlayer jest obecnie tymczasowo niedostępny z powodu awarii usług zaplecza, spróbuj ponownie później"
+msgstr "Cog PyLavPlayer jest obecnie tymczasowo niedostępny ze względu na przerwy w usługach backendu, spróbuj ponownie później"
 
 #: pylav/extension/red/utils/required_methods.py:154
 msgid "No Lavalink node currently available"
-msgstr "Brak obecnie dostępnego węzła Lavalink"
+msgstr "Brak dostępnego węzła Lavalink"
 
 #: pylav/extension/red/utils/required_methods.py:163
 msgid "PyLavPlayer is currently unable to process tracks belonging to {feature}"
-msgstr "PyLavPlayer nie jest obecnie w stanie przetwarzać utworów należących do {feature}"
+msgstr "PyLavPlayer nie jest obecnie w stanie przetworzyć utworów należących do {feature}"
 
 #: pylav/extension/red/utils/required_methods.py:166
 msgid "No Lavalink node currently available with feature {feature}"
-msgstr "Brak węzła Lavalink obecnie dostępnego z funkcją {feature}"
+msgstr "Brak dostępnego węzła Lavalink z funkcją {feature}"
 
 #: pylav/extension/red/utils/required_methods.py:177
 msgid "This command is not available in this channel. Please use {channel}"
@@ -94,9 +94,9 @@ msgstr "To polecenie nie jest dostępne w tym kanale. Proszę użyć {channel}"
 
 #: pylav/extension/red/utils/required_methods.py:189
 msgid "This command requires you to be a DJ"
-msgstr "To polecenie wymaga, abyś był DJ-em"
+msgstr "Ta komenda wymaga bycia DJ"
 
 #: pylav/extension/red/utils/required_methods.py:227
 msgid "PyLav is not ready - Please try again shortly"
-msgstr "PyLav nie jest gotowy - Spróbuj ponownie wkrótce"
+msgstr "PyLav nie jest gotowy - spróbuj ponownie wkrótce"
 

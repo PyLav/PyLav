@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -23,34 +23,34 @@ msgstr "Žádné dostupné uzly!"
 
 #: pylav/core/client.py:892 pylav/core/client.py:927
 msgid "No node with {feature} functionality available!"
-msgstr "Žádný uzel s {feature} Funkce k dispozici!"
+msgstr "Žádný uzel s funkcí {feature} není k dispozici!"
 
 #: pylav/core/client.py:1235
 msgid "No node with {query.requires_capability} functionality available!"
-msgstr "Žádný uzel s {query.requires_capability} Funkce k dispozici!"
+msgstr "Žádný uzel s funkcí {query.requires_capability} není k dispozici!"
 
 #: pylav/core/client.py:1651
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
-msgstr "Chcete-li vygenerovat mix playlistu, je nutné ID videa, uživatele, kanálu nebo seznamu videí"
+msgstr "Pro vytvoření mixu playlistu je potřeba mít video, uživatel, kanál nebo ID playlistu"
 
 #: pylav/core/client.py:1656
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
-msgstr "Chcete-li vygenerovat seznam skladeb mixu, je nutné ID videa, uživatele, kanálu nebo seznamu videí. Poskytli jste však více"
+msgstr "Pro vytvoření kombinace playlistu je nutné vytvořit video, uživatel, kanál nebo ID playlistu. Poskytli jste však více položek."
 
 #: pylav/core/context.py:258
 msgid "{} remaining. Type `more` to continue."
-msgstr "{} zbývající. Pokračujte zadáním \"více\"."
+msgstr "{} zbývá. Zadejte `more` pro pokračování."
 
 #: pylav/core/context.py:259
 msgid "There is still 1 message"
-msgstr "Stále je 1 zpráva"
+msgstr "Stále existuje 1 zpráva"
 
 #: pylav/core/context.py:261
 msgid "There are still {remaining} messages"
-msgstr "Stále existují {remaining} zprávy"
+msgstr "Stále existuje {remaining} zpráv"
 
 #: pylav/core/context.py:288
 #, docstring
 msgid "Does nothing"
-msgstr "Nedělá nic"
+msgstr "Nic"
 

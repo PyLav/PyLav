@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: pylav/extension/red/converters/equalizer.py:47
 msgid "Bass boost with name `{arg}` not found"
-msgstr "低音增強與名稱'{arg}' 找不到"
+msgstr "找不到名為“{arg}”的低音增強設定"
 
 #: pylav/extension/red/converters/equalizer.py:61
 msgid "Maximum"
@@ -27,11 +27,11 @@ msgstr "最大"
 
 #: pylav/extension/red/converters/equalizer.py:62
 msgid "Insane"
-msgstr "瘋"
+msgstr "瘋狂"
 
 #: pylav/extension/red/converters/equalizer.py:63
 msgid "Extreme"
-msgstr "極端"
+msgstr "極致"
 
 #: pylav/extension/red/converters/equalizer.py:64
 msgid "Very High"
@@ -51,7 +51,7 @@ msgstr "微調"
 
 #: pylav/extension/red/converters/equalizer.py:68
 msgid "Cut-off"
-msgstr "截止時間"
+msgstr "切斷"
 
 #: pylav/extension/red/converters/equalizer.py:69
 msgid "Off"

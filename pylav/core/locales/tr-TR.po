@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -27,7 +27,7 @@ msgstr "İle düğüm yok {feature} işlevsellik mevcut!"
 
 #: pylav/core/client.py:1235
 msgid "No node with {query.requires_capability} functionality available!"
-msgstr "İle düğüm yok {query.requires_capability} işlevsellik mevcut!"
+msgstr "{query.requires_capability} işlevine sahip düğüm yok!"
 
 #: pylav/core/client.py:1651
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
@@ -47,7 +47,7 @@ msgstr "Hala 1 mesaj var"
 
 #: pylav/core/context.py:261
 msgid "There are still {remaining} messages"
-msgstr "Hala var {remaining} Ileti"
+msgstr "Hâlâ {remaining} mesaj var"
 
 #: pylav/core/context.py:288
 #, docstring

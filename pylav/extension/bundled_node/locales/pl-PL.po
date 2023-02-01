@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
@@ -24,14 +24,14 @@ msgstr "Próbujesz uruchomić zarządzany węzeł Lavalink na nieobsługiwanej a
 #: pylav/extension/bundled_node/manager.py:452
 msgid "The output of `{java_exc} -version` was unexpected\n"
 "{version_info}"
-msgstr "Wynik \"{java_exc} -wersja\" była nieoczekiwana\n"
+msgstr "Wyjście `{java_exc} -version` było nieoczekiwane\n"
 "{version_info}"
 
 #: pylav/extension/bundled_node/manager.py:472
 msgid "Port {port} already in use. Managed Lavalink startup aborted"
-msgstr "Port {port} już w użyciu. Zarządzane uruchamianie Lavalink przerwane"
+msgstr "Port {port} jest już w użyciu. Uruchamianie Lavalink przerwano"
 
 #: pylav/extension/bundled_node/manager.py:477
 msgid "Lavalink failed to start: {line}"
-msgstr "Nie udało się uruchomić Lavalink: {line}"
+msgstr "Rozpoczęcie Lavalink nie powiodło się: {line}"
 

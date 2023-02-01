@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
 "MIME-Version: 1.0\n"
@@ -48,11 +48,11 @@ msgstr "Ne"
 
 #: pylav/extension/red/ui/buttons/generic.py:164
 msgid "Disconnect {} {}"
-msgstr "Prekini vezu {} {} {}"
+msgstr "Odspoji {} {}"
 
 #: pylav/extension/red/ui/buttons/generic.py:165
 msgid "players"
-msgstr "Igrača"
+msgstr "playere"
 
 #: pylav/extension/red/ui/buttons/generic.py:165
 msgid "player"
@@ -96,7 +96,7 @@ msgstr "__Enabled sources__:\n"
 #: pylav/extension/red/ui/buttons/player.py:87
 #: pylav/extension/red/ui/buttons/player.py:140
 msgid "You are not authorized to perform this action"
-msgstr "Niste ovlašteni za izvođenje ove akcije"
+msgstr "Niste autorizirani za tu radnju"
 
 #: pylav/extension/red/ui/buttons/player.py:47
 #: pylav/extension/red/ui/buttons/player.py:96
@@ -107,12 +107,12 @@ msgstr "Nema dostupnog playera za akciju - pokušajte osvježiti"
 #: pylav/extension/red/ui/buttons/player.py:107
 #: pylav/extension/red/ui/buttons/player.py:164
 msgid "Bot Owner Action"
-msgstr "Akcija vlasnika bota"
+msgstr "Radnja vlasnika bota"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:164
 msgid "Player disconnected"
-msgstr "Player je prekinuo vezu"
+msgstr "Player odspojen"
 
 #: pylav/extension/red/ui/buttons/player.py:107
 msgid "Player stopped"
@@ -198,13 +198,13 @@ msgstr "Nije povezano s glasovnim kanalom"
 
 #: pylav/extension/red/ui/buttons/queue.py:289
 msgid "There's nothing in the Queue"
-msgstr "Nema ničega u redu čekanja."
+msgstr "Nema ičega u redu čekanja"
 
 #: pylav/extension/red/ui/buttons/queue.py:296
 msgid "Removed tracks from the queue"
-msgstr "Uklonjeni zapisi iz reda čekanja"
+msgstr "Pjesme maknute iz reda čekanja"
 
 #: pylav/extension/red/ui/buttons/queue.py:323
 msgid "What do you want to enqueue?"
-msgstr "Što želite objaviti?"
+msgstr "Što želite staviti u red čekanja?"
 

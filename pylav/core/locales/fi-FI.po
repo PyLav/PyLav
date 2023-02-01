@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -19,35 +19,35 @@ msgstr ""
 
 #: pylav/core/client.py:888 pylav/core/client.py:923
 msgid "No available nodes!"
-msgstr "Ei käytettävissä olevia solmuja!"
+msgstr "Ei saatavilla olevia solmuja!"
 
 #: pylav/core/client.py:892 pylav/core/client.py:927
 msgid "No node with {feature} functionality available!"
-msgstr "Ei solmua, jossa on {feature} toiminnallisuus saatavilla!"
+msgstr "Ei solmua {feature} toiminnallisuudella käytettävissä!"
 
 #: pylav/core/client.py:1235
 msgid "No node with {query.requires_capability} functionality available!"
-msgstr "Ei solmua, jossa on {query.requires_capability} toiminnallisuus saatavilla!"
+msgstr "Ei solmua {query.requires_capability} toiminnallisuudella käytettävissä!"
 
 #: pylav/core/client.py:1651
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
-msgstr "Miksaussoittolistan luomiseen tarvitaan video-, käyttäjä-, kanava- tai soittolistatunnus"
+msgstr "Jos haluat luoda sekoitussoittolistan, tarvitaan video, käyttäjä, kanava tai soittolista ID."
 
 #: pylav/core/client.py:1656
 msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
-msgstr "Miksaussoittolistan luomiseen tarvitaan video-, käyttäjä-, kanava- tai soittolistan tunnus. Annoit kuitenkin useita"
+msgstr "Voit luoda sekoitussoittolistan video, käyttäjä, kanava tai soittolista ID on välttämätön, mutta olet antanut useita"
 
 #: pylav/core/context.py:258
 msgid "{} remaining. Type `more` to continue."
-msgstr "{} jäljellä. Kirjoita \"lisää\" jatkaaksesi."
+msgstr "{} jäljellä. Jatka kirjoittamalla `more`."
 
 #: pylav/core/context.py:259
 msgid "There is still 1 message"
-msgstr "On vielä 1 viesti"
+msgstr "Viesti on vielä 1"
 
 #: pylav/core/context.py:261
 msgid "There are still {remaining} messages"
-msgstr "On vielä {remaining} Viestit"
+msgstr "Täällä on vielä {remaining} viestiä"
 
 #: pylav/core/context.py:288
 #, docstring

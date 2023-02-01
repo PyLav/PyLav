@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgstr ""
 #: pylav/extension/red/utils/required_methods.py:46
 #, docstring
 msgid "Shows the credits and translation details for the PyLav cogs and shared code"
-msgstr "Prikazuje odjavne špice i detalje prijevoda za PyLav kotačiće i zajednički kod"
+msgstr "Prikazuje zasluge i detalje prijevoda za PyLav Cog-ove i zajednički kod"
 
 #: pylav/extension/red/utils/required_methods.py:50
 msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
@@ -53,7 +53,7 @@ msgstr "Prikaz verzije PyLav biblioteke"
 
 #: pylav/extension/red/utils/required_methods.py:91
 msgid "Library"
-msgstr "Knjižnica"
+msgstr "Baza"
 
 #: pylav/extension/red/utils/required_methods.py:92
 msgid "Version"
@@ -62,11 +62,11 @@ msgstr "Verzija"
 #: pylav/extension/red/utils/required_methods.py:111
 #, docstring
 msgid "Sync the Bots slash commands"
-msgstr "Sinkronizacija naredbi kose crte botova"
+msgstr "Sinkronizirajte botove Slash naredbe"
 
 #: pylav/extension/red/utils/required_methods.py:120
 msgid "Synced the bots slash commands"
-msgstr "Sinkronizirane naredbe za rezanje botova"
+msgstr "Botove Slash naredbe su sinkronizirane"
 
 #: pylav/extension/red/utils/required_methods.py:141
 msgid "This command requires an existing player to be run"
@@ -98,5 +98,5 @@ msgstr "Ova naredba zahtijeva da budete DJ"
 
 #: pylav/extension/red/utils/required_methods.py:227
 msgid "PyLav is not ready - Please try again shortly"
-msgstr "PyLav nije spreman - Pokušajte ponovno uskoro"
+msgstr "PyLav nije spreman - Pokušajte ponovno"
 

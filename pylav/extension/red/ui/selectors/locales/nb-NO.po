@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "MIME-Version: 1.0\n"
@@ -24,18 +24,18 @@ msgstr "Du er ikke autorisert til å samhandle med dette alternativet"
 
 #: pylav/extension/red/ui/selectors/nodes.py:53
 msgid "Disabling the following sources: {sources}"
-msgstr "Deaktivering av følgende kilder: {sources}"
+msgstr "Deaktiverer følgende kilder: {sources}"
 
 #: pylav/extension/red/ui/selectors/nodes.py:83
 msgid "Node not found"
-msgstr "Node ikke funnet"
+msgstr "Finner ikke noden"
 
 #: pylav/extension/red/ui/selectors/playlist.py:41
 #: pylav/extension/red/ui/selectors/playlist.py:82
 msgid "Playlist not found"
-msgstr "Finner ikke spilleliste"
+msgstr "Spilleliste ikke funnet"
 
 #: pylav/extension/red/ui/selectors/queue.py:96
 msgid "Track not found"
-msgstr "Finner ikke spor"
+msgstr "Finner ikke sporet"
 

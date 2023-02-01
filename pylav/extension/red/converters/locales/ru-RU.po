@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: pylav/extension/red/converters/equalizer.py:47
 msgid "Bass boost with name `{arg}` not found"
-msgstr "Усиление баса с именем '{arg}' не найдено"
+msgstr "Усиление басов с именем `{arg}` не найдено"
 
 #: pylav/extension/red/converters/equalizer.py:61
 msgid "Maximum"
@@ -31,7 +31,7 @@ msgstr "Безумный"
 
 #: pylav/extension/red/converters/equalizer.py:63
 msgid "Extreme"
-msgstr "Крайний"
+msgstr "Экстремальная"
 
 #: pylav/extension/red/converters/equalizer.py:64
 msgid "Very High"
@@ -43,17 +43,17 @@ msgstr "Высокий"
 
 #: pylav/extension/red/converters/equalizer.py:66
 msgid "Medium"
-msgstr "Терпимая"
+msgstr "Средний"
 
 #: pylav/extension/red/converters/equalizer.py:67
 msgid "Fine Tuned"
-msgstr "Тонкая настройка"
+msgstr "Прекрасная Настроенная"
 
 #: pylav/extension/red/converters/equalizer.py:68
 msgid "Cut-off"
-msgstr "Отсечка"
+msgstr "4.2.4.2.4.2 Частота подачи топлива"
 
 #: pylav/extension/red/converters/equalizer.py:69
 msgid "Off"
-msgstr "От"
+msgstr "Выкл"
 

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:18\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgstr ""
 #: pylav/extension/red/utils/required_methods.py:46
 #, docstring
 msgid "Shows the credits and translation details for the PyLav cogs and shared code"
-msgstr "Näyttää PyLav-hammaspyörien krediitit ja käännöstiedot sekä jaetun koodin"
+msgstr "Näyttää krediitit ja käännökset PyLav koodeille ja jaetuille koodille"
 
 #: pylav/extension/red/utils/required_methods.py:50
 msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
@@ -49,7 +49,7 @@ msgstr "PyLavin loi [Draper#6666](https://github.com/Drapersniper).\n\n"
 #: pylav/extension/red/utils/required_methods.py:76
 #, docstring
 msgid "Show the version of PyLav library"
-msgstr "Näytä PyLav-kirjaston versio"
+msgstr "Näytä Pylav kirjaston versio"
 
 #: pylav/extension/red/utils/required_methods.py:91
 msgid "Library"
@@ -62,31 +62,31 @@ msgstr "Versio"
 #: pylav/extension/red/utils/required_methods.py:111
 #, docstring
 msgid "Sync the Bots slash commands"
-msgstr "Bottien vinoviivakomentojen synkronointi"
+msgstr "Synkronoi bottien kauttaviivakomennot"
 
 #: pylav/extension/red/utils/required_methods.py:120
 msgid "Synced the bots slash commands"
-msgstr "Synkronoidut bottien vinoviivakomennot"
+msgstr "Synkronoi botit kauttaviivakomennot"
 
 #: pylav/extension/red/utils/required_methods.py:141
 msgid "This command requires an existing player to be run"
-msgstr "Tämä komento edellyttää olemassa olevan soittimen suorittamista"
+msgstr "Tämä komento vaatii olemassa olevan pelaajan suorittamisen"
 
 #: pylav/extension/red/utils/required_methods.py:150
 msgid "PyLavPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later"
-msgstr "PyLavPlayer cog on tällä hetkellä tilapäisesti poissa käytöstä taustapalveluiden katkoksen vuoksi, yritä myöhemmin uudelleen"
+msgstr "PyLavPlayerin koodaus on tällä hetkellä tilapäisesti poissa käytöstä, koska taustaosa ei ole käytössä, yritä myöhemmin uudelleen"
 
 #: pylav/extension/red/utils/required_methods.py:154
 msgid "No Lavalink node currently available"
-msgstr "Lavalink-solmua ei ole tällä hetkellä saatavilla"
+msgstr "Ei Lavalink solmua tällä hetkellä saatavilla"
 
 #: pylav/extension/red/utils/required_methods.py:163
 msgid "PyLavPlayer is currently unable to process tracks belonging to {feature}"
-msgstr "PyLavPlayer ei tällä hetkellä pysty käsittelemään kappaleita, jotka kuuluvat {feature}"
+msgstr "PyLavPlayer ei pysty tällä hetkellä käsittelemään {feature} ryhmään kuuluvia kappaleita"
 
 #: pylav/extension/red/utils/required_methods.py:166
 msgid "No Lavalink node currently available with feature {feature}"
-msgstr "Lavalink-solmua ei ole tällä hetkellä saatavilla ominaisuuden kanssa {feature}"
+msgstr "Ei Lavalink solmua tällä hetkellä saatavilla ominaisuudella {feature}"
 
 #: pylav/extension/red/utils/required_methods.py:177
 msgid "This command is not available in this channel. Please use {channel}"
@@ -98,5 +98,5 @@ msgstr "Tämä komento edellyttää, että olet DJ"
 
 #: pylav/extension/red/utils/required_methods.py:227
 msgid "PyLav is not ready - Please try again shortly"
-msgstr "PyLav ei ole valmis - yritä pian uudelleen"
+msgstr "PyLav ei ole valmis - Yritä uudelleen hetken kuluttua"
 

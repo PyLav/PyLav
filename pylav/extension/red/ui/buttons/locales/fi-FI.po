@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -48,11 +48,11 @@ msgstr "Ei"
 
 #: pylav/extension/red/ui/buttons/generic.py:164
 msgid "Disconnect {} {}"
-msgstr "Katkaise yhteys {} {}"
+msgstr "Katkaise Yhteys {} {}"
 
 #: pylav/extension/red/ui/buttons/generic.py:165
 msgid "players"
-msgstr "Pelaajat"
+msgstr "pelaajat"
 
 #: pylav/extension/red/ui/buttons/generic.py:165
 msgid "player"
@@ -60,11 +60,11 @@ msgstr "pelaaja"
 
 #: pylav/extension/red/ui/buttons/nodes.py:57
 msgid "Connecting to the node with SSL enabled"
-msgstr "Yhteyden muodostaminen solmuun, jossa SSL on käytössä"
+msgstr "Yhdistetään solmukohtaan ja SSL on käytössä"
 
 #: pylav/extension/red/ui/buttons/nodes.py:64
 msgid "Connecting to the node with SSL disabled"
-msgstr "Yhteyden muodostaminen solmuun, jossa SSL on poistettu käytöstä"
+msgstr "Yhteyden muodostaminen palvelimeen SSL:llä on estetty"
 
 #: pylav/extension/red/ui/buttons/nodes.py:102
 msgid "This node will only be used for searches"
@@ -76,11 +76,11 @@ msgstr "Tätä solmua käytetään hakuun ja toistoon"
 
 #: pylav/extension/red/ui/buttons/nodes.py:140
 msgid "Please fill out all the fields before continuing"
-msgstr "Täytä kaikki kentät ennen kuin jatkat"
+msgstr "Täytä kaikki kentät ennen jatkamista"
 
 #: pylav/extension/red/ui/buttons/nodes.py:220
 msgid "When you press done this node will be permanently delete"
-msgstr "Kun painat valmis, tämä solmu poistetaan pysyvästi"
+msgstr "Kun painat valmis tämä solmu poistetaan pysyvästi"
 
 #: pylav/extension/red/ui/buttons/nodes.py:222
 msgid "This node will no longer be deleted once you press done"
@@ -89,30 +89,30 @@ msgstr "Tätä solmua ei enää poisteta, kun painat valmis"
 #: pylav/extension/red/ui/buttons/nodes.py:255
 msgid "__Enabled sources__:\n"
 "{sources}"
-msgstr "__Enabled sources__:\n"
+msgstr "__Käytössä lähteet__:\n"
 "{sources}"
 
 #: pylav/extension/red/ui/buttons/player.py:38
 #: pylav/extension/red/ui/buttons/player.py:87
 #: pylav/extension/red/ui/buttons/player.py:140
 msgid "You are not authorized to perform this action"
-msgstr "Sinulla ei ole valtuuksia suorittaa tätä toimintoa"
+msgstr "Sinulla ei ole oikeutta suorittaa tätä toimintoa"
 
 #: pylav/extension/red/ui/buttons/player.py:47
 #: pylav/extension/red/ui/buttons/player.py:96
 msgid "No Player Available For Action - Try Refreshing"
-msgstr "Ei pelaajaa käytettävissä toimintaan - kokeile päivittää"
+msgstr "Pelaajaa Ei Saatavilla Toimintoihin - Kokeile Päivitetään"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:107
 #: pylav/extension/red/ui/buttons/player.py:164
 msgid "Bot Owner Action"
-msgstr "Botin omistajan toiminto"
+msgstr "Botin Omistajan Toiminta"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:164
 msgid "Player disconnected"
-msgstr "Pelaajan yhteys katkaistu"
+msgstr "Soittimen yhteys katkaistu"
 
 #: pylav/extension/red/ui/buttons/player.py:107
 msgid "Player stopped"
@@ -120,11 +120,11 @@ msgstr "Pelaaja pysähtyi"
 
 #: pylav/extension/red/ui/buttons/player.py:154
 msgid "No Players Available For Action - Try Refreshing"
-msgstr "Ei pelaajia käytettävissä toimintaan - kokeile päivittää"
+msgstr "Pelaajia Ei Käytettävissä Toimintoon - Kokeile Päivitetään"
 
 #: pylav/extension/red/ui/buttons/playlist.py:48
 msgid "When you press done this playlist will be permanently delete"
-msgstr "Kun painat valmis, tämä soittolista poistetaan pysyvästi"
+msgstr "Kun painat valmis tämä soittolista poistetaan pysyvästi"
 
 #: pylav/extension/red/ui/buttons/playlist.py:50
 msgid "This playlist will no longer be deleted once you press done"
@@ -132,11 +132,11 @@ msgstr "Tätä soittolistaa ei enää poisteta, kun painat valmis"
 
 #: pylav/extension/red/ui/buttons/playlist.py:83
 msgid "Clearing all tracks from the playlist playlist"
-msgstr "Kaikkien kappaleiden tyhjentäminen soittolistan soittolistalta"
+msgstr "Tyhjennetään kaikki kappaleet soittolistan soittolistalta"
 
 #: pylav/extension/red/ui/buttons/playlist.py:85
 msgid "No longer clearing tracks from the playlist"
-msgstr "Ei enää kappaleiden tyhjentämistä soittolistalta"
+msgstr "Ei enää raivata kappaleita soittolistalta"
 
 #: pylav/extension/red/ui/buttons/playlist.py:126
 msgid "Here is your playlist: {name}{extras}"
@@ -146,17 +146,17 @@ msgstr "Tässä on soittolistasi: {name}{extras}"
 msgid "\n"
 " (compressed using gzip to make it possible to send via Discord - you can use <https://gzip.swimburger.net/> to decompress it)"
 msgstr "\n"
-" (pakattu gzipillä, jotta se voidaan lähettää Discordin kautta - voit käyttää <https://gzip.swimburger.net/> purkaaksesi sen)"
+" (pakattu gzip-pakkauksella, jotta lähettäminen Discordin kautta on mahdollista - voit käyttää <https://gzip.swimburger.net/> purkaa sen)"
 
 #: pylav/extension/red/ui/buttons/playlist.py:133
 msgid "\n"
 " (File compressed using Brotli compression."
 msgstr "\n"
-" (Tiedosto pakattu Brotli-pakkauksella."
+" (Tiedosto, joka on pakattu Brotlin pakkauksella."
 
 #: pylav/extension/red/ui/buttons/playlist.py:171
 msgid "Updating playlist with the latest tracks, press done to continue"
-msgstr "Päivitä soittolista uusimmilla kappaleilla, jatka painamalla valmis"
+msgstr "Päivitetään soittolistaa uusimmilla kappaleilla, paina valmis jatkaaksesi"
 
 #: pylav/extension/red/ui/buttons/playlist.py:174
 msgid "Not updating playlist"
@@ -164,7 +164,7 @@ msgstr "Soittolistaa ei päivitetä"
 
 #: pylav/extension/red/ui/buttons/playlist.py:263
 msgid "Adding the current queue to playlist"
-msgstr "Nykyisen jonon lisääminen soittolistaan"
+msgstr "Lisätään nykyinen jono soittolistaan"
 
 #: pylav/extension/red/ui/buttons/playlist.py:270
 msgid "No longer adding the current queue to playlist"
@@ -172,15 +172,15 @@ msgstr "Ei enää nykyisen jonon lisäämistä soittolistaan"
 
 #: pylav/extension/red/ui/buttons/playlist.py:309
 msgid "Removing all duplicate tracks from the queue"
-msgstr "Kaikkien päällekkäisten raitojen poistaminen jonosta"
+msgstr "Poistetaan kaikki kaksoiskappaleet jonosta"
 
 #: pylav/extension/red/ui/buttons/playlist.py:316
 msgid "No longer all duplicate tracks from the queue"
-msgstr "Ei enää kaikkia päällekkäisiä kappaleita jonosta"
+msgstr "Ei enää kaikkia kappaleita jonosta"
 
 #: pylav/extension/red/ui/buttons/playlist.py:406
 msgid "Playlists you can currently play"
-msgstr "Soittolistat, joita voit tällä hetkellä toistaa"
+msgstr "Soittolistat joita voit pelata tällä hetkellä"
 
 #: pylav/extension/red/ui/buttons/playlist.py:412
 msgid "Pick a playlist"
@@ -202,9 +202,9 @@ msgstr "Jonossa ei ole mitään"
 
 #: pylav/extension/red/ui/buttons/queue.py:296
 msgid "Removed tracks from the queue"
-msgstr "Kappaleiden poistaminen jonosta"
+msgstr "Poistetut kappaleet jonosta"
 
 #: pylav/extension/red/ui/buttons/queue.py:323
 msgid "What do you want to enqueue?"
-msgstr "Mitä haluat odottaa?"
+msgstr "Mitä haluat jonottaa?"
 

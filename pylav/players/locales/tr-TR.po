@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:18\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -23,11 +23,11 @@ msgstr "Mevcut düğüm yok!"
 
 #: pylav/players/manager.py:349
 msgid "Music in {count} servers"
-msgstr "Müzik {count} Sunucu"
+msgstr "{count} sunucu da şarkı"
 
 #: pylav/players/player.py:1176
 msgid "There are no tracks currently in the player history"
-msgstr "Şu anda oyuncu geçmişinde parça yok"
+msgstr "Şu anda çalma geçmişinde hiçbir parça yok"
 
 #: pylav/players/player.py:1869
 msgid "Current node has the Volume filter functionality disabled"
@@ -78,24 +78,24 @@ msgstr "Geçerli düğümde ChannelMix işlevi devre dışı bırakılmış"
 #: pylav/players/player.py:2441 pylav/players/player.py:2486
 #: pylav/players/player.py:2501
 msgid "LIVE"
-msgstr "YAŞAMAK"
+msgstr "CANLI"
 
 #: pylav/players/player.py:2454
 msgid "Now Playing in"
-msgstr "Şimdi Oynanıyor"
+msgstr "Şu Anda Oynatılıyor"
 
 #: pylav/players/player.py:2472 pylav/players/player.py:2581
 msgid "Currently livestreaming"
-msgstr "Şu anda canlı yayın"
+msgstr "Şu anda canlı yayında"
 
 #: pylav/players/player.py:2474
 msgid "Playing: "
-msgstr "Oynamak: "
+msgstr "Oynuyor: "
 
 #: pylav/players/player.py:2477 pylav/players/player.py:2493
 #: pylav/players/player.py:2508 pylav/players/player.py:2587
 msgid "Requester"
-msgstr "Istekte"
+msgstr "İstekte Bulunan"
 
 #: pylav/players/player.py:2489 pylav/players/player.py:2504
 msgid "Duration"
@@ -107,7 +107,7 @@ msgstr "Önceki Parça"
 
 #: pylav/players/player.py:2510
 msgid "Next Track"
-msgstr "Sonraki Parça"
+msgstr "Sıradaki Parça"
 
 #: pylav/players/player.py:2515
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
@@ -119,7 +119,7 @@ msgstr "{translation}: {repeat_emoji}"
 
 #: pylav/players/player.py:2519 pylav/players/player.py:2615
 msgid "Repeating"
-msgstr "Yine -lenen"
+msgstr "Tekrar ediyor"
 
 #: pylav/players/player.py:2520 pylav/players/player.py:2616
 msgid "{space}{translation}: {autoplay_emoji}"
@@ -139,15 +139,15 @@ msgstr "Hacim"
 
 #: pylav/players/player.py:2564
 msgid "Recently Played for"
-msgstr "Son zamanlarda oynadığı"
+msgstr "Son Çalınan"
 
 #: pylav/players/player.py:2564
 msgid "Queue for"
-msgstr "Kuyruk için"
+msgstr "İçin sıra"
 
 #: pylav/players/player.py:2584
 msgid "Playing"
-msgstr "Oynamak"
+msgstr "Oynuyor"
 
 #: pylav/players/player.py:2600
 msgid "Queue order may not be accurate due to auto-shuffle being enabled"

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: pylav/extension/red/ui/modals/playlist.py:27
 msgid "Enter the name for the new playlist"
-msgstr "Εισαγάγετε το όνομα για τη νέα λίστα αναπαραγωγής"
+msgstr "Εισάγετε το όνομα της νέας λίστας αναπαραγωγής"
 
 #: pylav/extension/red/ui/modals/playlist.py:28
 msgid "My awesome new playlist"
@@ -27,9 +27,9 @@ msgstr "Η φοβερή νέα λίστα αναπαραγωγής μου"
 
 #: pylav/extension/red/ui/modals/queue.py:27
 msgid "Search for a song to add to the queue"
-msgstr "Αναζήτηση τραγουδιού για προσθήκη στην ουρά"
+msgstr "Αναζήτηση για ένα τραγούδι για προσθήκη στην ουρά"
 
 #: pylav/extension/red/ui/modals/queue.py:30
 msgid "Hello by Adele, speak:Hello, https://open.spotify.com/playlist/37i9dQZF1DX6XceWZP1znY"
-msgstr "Γεια σας από την Adele, μιλήστε: Γεια σας, https://open.spotify.com/playlist/37i9dQZF1DX6XceWZP1znY"
+msgstr "Γεια σας από τον Adele, μιλήστε:Γεια σας, https://open.spotify.com/playlist/37i9dQZF1DX6XceWZP1znY"
 

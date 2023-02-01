@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:18\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -23,83 +23,83 @@ msgstr "没有可用的节点！"
 
 #: pylav/players/manager.py:349
 msgid "Music in {count} servers"
-msgstr "音乐在 {count} 服务器"
+msgstr "{count} 服务器中的音乐"
 
 #: pylav/players/player.py:1176
 msgid "There are no tracks currently in the player history"
-msgstr "玩家历史记录中当前没有曲目"
+msgstr "当前没有曲目在播放器历史记录"
 
 #: pylav/players/player.py:1869
 msgid "Current node has the Volume filter functionality disabled"
-msgstr "当前节点已禁用卷过滤器功能"
+msgstr "当前节点禁用了音量过滤功能"
 
 #: pylav/players/player.py:1891 pylav/players/player.py:2067
 #: pylav/players/player.py:2122
 msgid "Current node has the Equalizer functionality disabled"
-msgstr "当前节点已禁用均衡器功能"
+msgstr "当前节点禁用均衡器功能"
 
 #: pylav/players/player.py:1911
 msgid "Current node has the Karaoke functionality disabled"
-msgstr "当前节点已禁用卡拉 OK 功能"
+msgstr "当前节点禁用了Karaoke功能"
 
 #: pylav/players/player.py:1931 pylav/players/player.py:2069
 #: pylav/players/player.py:2124
 msgid "Current node has the Timescale functionality disabled"
-msgstr "当前节点已禁用时间刻度功能"
+msgstr "当前节点已禁用 Timescale 功能"
 
 #: pylav/players/player.py:1951
 msgid "Current node has the Tremolo functionality disabled"
-msgstr "当前节点已禁用颤音功能"
+msgstr "当前节点已禁用 Tremolo 功能"
 
 #: pylav/players/player.py:1971
 msgid "Current node has the Vibrato functionality disabled"
-msgstr "当前节点已禁用颤音功能"
+msgstr "当前节点禁用了振动功能"
 
 #: pylav/players/player.py:1991
 msgid "Current node has the Rotation functionality disabled"
-msgstr "当前节点已禁用旋转功能"
+msgstr "当前节点禁用了旋转功能"
 
 #: pylav/players/player.py:2011
 msgid "Current node has the Distortion functionality disabled"
-msgstr "当前节点已禁用失真功能"
+msgstr "当前节点禁用了失真功能"
 
 #: pylav/players/player.py:2031
 msgid "Current node has the LowPass functionality disabled"
-msgstr "当前节点已禁用低通功能"
+msgstr "当前节点已禁用 LowPass 功能"
 
 #: pylav/players/player.py:2051
 msgid "Current node has the Echo functionality disabled"
-msgstr "当前节点已禁用回显功能"
+msgstr "当前节点禁用了 Echo 功能"
 
 #: pylav/players/player.py:2181
 msgid "Current node has the ChannelMix functionality disabled"
-msgstr "当前节点已禁用通道混合功能"
+msgstr "当前节点禁用了通道Mix功能"
 
 #: pylav/players/player.py:2441 pylav/players/player.py:2486
 #: pylav/players/player.py:2501
 msgid "LIVE"
-msgstr "住"
+msgstr "直线"
 
 #: pylav/players/player.py:2454
 msgid "Now Playing in"
-msgstr "现在正在播放"
+msgstr "正在播放"
 
 #: pylav/players/player.py:2472 pylav/players/player.py:2581
 msgid "Currently livestreaming"
-msgstr "目前直播"
+msgstr "当前直播中"
 
 #: pylav/players/player.py:2474
 msgid "Playing: "
-msgstr "玩： "
+msgstr "正在播放： "
 
 #: pylav/players/player.py:2477 pylav/players/player.py:2493
 #: pylav/players/player.py:2508 pylav/players/player.py:2587
 msgid "Requester"
-msgstr "请求"
+msgstr "请求者"
 
 #: pylav/players/player.py:2489 pylav/players/player.py:2504
 msgid "Duration"
-msgstr "期间"
+msgstr "期限"
 
 #: pylav/players/player.py:2495
 msgid "Previous Track"
@@ -107,11 +107,11 @@ msgstr "上一曲目"
 
 #: pylav/players/player.py:2510
 msgid "Next Track"
-msgstr "下一首曲目"
+msgstr "下一曲目"
 
 #: pylav/players/player.py:2515
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
-msgstr "{track_count} 轨道 {queue_total_duration} 剩余\n"
+msgstr "{track_count} 首歌曲, {queue_total_duration} 余下\n"
 
 #: pylav/players/player.py:2519 pylav/players/player.py:2615
 msgid "{translation}: {repeat_emoji}"
@@ -139,21 +139,21 @@ msgstr "卷"
 
 #: pylav/players/player.py:2564
 msgid "Recently Played for"
-msgstr "最近效力"
+msgstr "最近玩过的"
 
 #: pylav/players/player.py:2564
 msgid "Queue for"
-msgstr "队列"
+msgstr "队列为"
 
 #: pylav/players/player.py:2584
 msgid "Playing"
-msgstr "玩"
+msgstr "正在播放"
 
 #: pylav/players/player.py:2600
 msgid "Queue order may not be accurate due to auto-shuffle being enabled"
-msgstr "由于启用了自动随机播放，队列顺序可能不准确"
+msgstr "由于启用了自动随机排序，队列顺序可能不正确"
 
 #: pylav/players/player.py:2606
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
-msgstr "页 {current_page}/{total_pages} | {track_number} 轨道 {queue_total_duration} 剩余\n"
+msgstr "页面 {current_page}/{total_pages} | {track_number} 首歌曲, 剩余 {queue_total_duration}\n"
 

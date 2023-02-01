@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:18\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -26,7 +26,7 @@ msgstr "あなたはこれと対話する権限がありません"
 
 #: pylav/extension/red/ui/menus/nodes.py:60
 msgid "Enter the domain or IP address of the host"
-msgstr "ホストのドメインまたはIPアドレスを入力します"
+msgstr "ホストのドメインまたは IP アドレスを入力してください"
 
 #: pylav/extension/red/ui/menus/nodes.py:61
 #: pylav/extension/red/ui/menus/nodes.py:499
@@ -35,7 +35,7 @@ msgstr "ホスト"
 
 #: pylav/extension/red/ui/menus/nodes.py:68
 msgid "Enter the host port to connect to"
-msgstr "接続するホストポートを入力します"
+msgstr "接続するホストポートを入力してください"
 
 #: pylav/extension/red/ui/menus/nodes.py:69
 #: pylav/extension/red/ui/menus/nodes.py:507
@@ -44,7 +44,7 @@ msgstr "港"
 
 #: pylav/extension/red/ui/menus/nodes.py:76
 msgid "Enter the node's password"
-msgstr "ノードのパスワードを入力します"
+msgstr "ノードのパスワードを入力してください"
 
 #: pylav/extension/red/ui/menus/nodes.py:77
 #: pylav/extension/red/ui/menus/nodes.py:515
@@ -53,7 +53,7 @@ msgstr "パスワード"
 
 #: pylav/extension/red/ui/menus/nodes.py:84
 msgid "Enter an easy to know name for the node"
-msgstr "ノードのわかりやすい名前を入力します。"
+msgstr "ノードの名前を簡単に入力してください"
 
 #: pylav/extension/red/ui/menus/nodes.py:85
 #: pylav/extension/red/ui/menus/nodes.py:523
@@ -62,7 +62,7 @@ msgstr "名前"
 
 #: pylav/extension/red/ui/menus/nodes.py:92
 msgid "Enter a timeout in seconds"
-msgstr "タイムアウトを秒単位で入力する"
+msgstr "タイムアウト時間を秒単位で入力してください"
 
 #: pylav/extension/red/ui/menus/nodes.py:93
 #: pylav/extension/red/ui/menus/nodes.py:531
@@ -77,17 +77,17 @@ msgstr "無効にするソース"
 #: pylav/extension/red/ui/menus/nodes.py:222
 #: pylav/extension/red/ui/menus/nodes.py:671
 msgid "Name set to {name}"
-msgstr "名前を {name}"
+msgstr "名前を {name} に設定しました"
 
 #: pylav/extension/red/ui/menus/nodes.py:235
 #: pylav/extension/red/ui/menus/nodes.py:684
 msgid "Password set to {password}"
-msgstr "パスワードが {password}"
+msgstr "パスワードが {password} に設定されました"
 
 #: pylav/extension/red/ui/menus/nodes.py:253
 #: pylav/extension/red/ui/menus/nodes.py:702
 msgid "Host set to {host}"
-msgstr "ホストが {host}"
+msgstr "ホストが {host} に設定されました"
 
 #: pylav/extension/red/ui/menus/nodes.py:270
 #: pylav/extension/red/ui/menus/nodes.py:719
@@ -97,17 +97,17 @@ msgstr "無効なポート"
 #: pylav/extension/red/ui/menus/nodes.py:278
 #: pylav/extension/red/ui/menus/nodes.py:727
 msgid "Port set to {port}"
-msgstr "ポートを {port}"
+msgstr "ポートを {port} に設定しました"
 
 #: pylav/extension/red/ui/menus/nodes.py:295
 #: pylav/extension/red/ui/menus/nodes.py:744
 msgid "Invalid timeout, it must be a number in seconds"
-msgstr "タイムアウトが無効です。秒単位の数値である必要があります"
+msgstr "無効なタイムアウトです。数字を秒で入力してください。"
 
 #: pylav/extension/red/ui/menus/nodes.py:303
 #: pylav/extension/red/ui/menus/nodes.py:752
 msgid "Timeout set to {timeout} seconds"
-msgstr "タイムアウトを {timeout} お代わり"
+msgstr "タイムアウトを {timeout} 秒に設定しました"
 
 #: pylav/extension/red/ui/menus/nodes.py:498
 msgid "Change the domain or IP address of the host"
@@ -115,7 +115,7 @@ msgstr "ホストのドメインまたは IP アドレスを変更する"
 
 #: pylav/extension/red/ui/menus/nodes.py:506
 msgid "Change the host port to connect to"
-msgstr "接続先のホストポートを変更する"
+msgstr "ホストポートを接続するように変更する"
 
 #: pylav/extension/red/ui/menus/nodes.py:514
 msgid "Change the node's password"
@@ -127,19 +127,19 @@ msgstr "このノードの名前を変更する"
 
 #: pylav/extension/red/ui/menus/nodes.py:530
 msgid "Enter the new timeout for this node"
-msgstr "このノードの新しいタイムアウトを入力します"
+msgstr "このノードの新しいタイムアウトを入力してください"
 
 #: pylav/extension/red/ui/menus/player.py:95
 msgid "selected"
-msgstr "入選"
+msgstr "選択済み"
 
 #: pylav/extension/red/ui/menus/player.py:105
 msgid "inactive"
-msgstr "不活発な"
+msgstr "非アクティブ"
 
 #: pylav/extension/red/ui/menus/player.py:115
 msgid "all"
-msgstr "すべての"
+msgstr "すべて"
 
 #: pylav/extension/red/ui/menus/player.py:208
 msgid "Not connected anywhere"
@@ -148,12 +148,12 @@ msgstr "どこにも接続されていません"
 #: pylav/extension/red/ui/menus/playlist.py:187
 #: pylav/extension/red/ui/menus/playlist.py:322
 msgid "Please enter the playlist URL"
-msgstr "プレイリストのURLを入力してください"
+msgstr "プレイリストURLを入力してください"
 
 #: pylav/extension/red/ui/menus/playlist.py:188
 #: pylav/extension/red/ui/menus/playlist.py:323
 msgid "Playlist URL"
-msgstr "プレイリストの URL"
+msgstr "プレイリストURL"
 
 #: pylav/extension/red/ui/menus/playlist.py:194
 msgid "Please enter the playlist name"

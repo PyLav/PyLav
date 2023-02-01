@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: pylav/extension/red/ui/sources/equalizer.py:32
 msgid "Preset Name"
-msgstr "Ім'я стилю"
+msgstr "Назва заданого параметра"
 
 #: pylav/extension/red/ui/sources/equalizer.py:33
 msgid "Author"
@@ -54,12 +54,12 @@ msgstr "Так"
 #: pylav/extension/red/ui/sources/nodes.py:141
 #: pylav/extension/red/ui/sources/nodes.py:294
 msgid "None / Unknown"
-msgstr "Немає / Невідомо"
+msgstr "Немає / невідомо"
 
 #: pylav/extension/red/ui/sources/nodes.py:143
 #: pylav/extension/red/ui/sources/nodes.py:296
 msgid "Property"
-msgstr "Власність"
+msgstr "Властивість"
 
 #: pylav/extension/red/ui/sources/nodes.py:144
 #: pylav/extension/red/ui/sources/nodes.py:297
@@ -70,13 +70,13 @@ msgstr "Цінність"
 #: pylav/extension/red/ui/sources/nodes.py:298
 msgid "Latitude: {lat}\n"
 "Longitude: {lon}"
-msgstr "Широти: {lat}\n"
+msgstr "Широта: {lat}\n"
 "Довгота: {lon}"
 
 #: pylav/extension/red/ui/sources/nodes.py:151
 #: pylav/extension/red/ui/sources/nodes.py:304
 msgid "Region"
-msgstr "Область"
+msgstr "Регіон"
 
 #: pylav/extension/red/ui/sources/nodes.py:151
 #: pylav/extension/red/ui/sources/nodes.py:304
@@ -91,7 +91,7 @@ msgstr "Координати"
 #: pylav/extension/red/ui/sources/nodes.py:153
 #: pylav/extension/red/ui/sources/nodes.py:306
 msgid "Host"
-msgstr "Господар"
+msgstr "Хост"
 
 #: pylav/extension/red/ui/sources/nodes.py:154
 #: pylav/extension/red/ui/sources/nodes.py:307
@@ -111,12 +111,12 @@ msgstr "Протокол SSL"
 #: pylav/extension/red/ui/sources/nodes.py:159
 #: pylav/extension/red/ui/sources/nodes.py:312
 msgid "Available"
-msgstr "Доступні"
+msgstr "Доступно"
 
 #: pylav/extension/red/ui/sources/nodes.py:160
 #: pylav/extension/red/ui/sources/nodes.py:313
 msgid "Search Only"
-msgstr "Лише пошук"
+msgstr "Шукати тільки"
 
 #: pylav/extension/red/ui/sources/nodes.py:161
 #: pylav/extension/red/ui/sources/nodes.py:314
@@ -130,26 +130,26 @@ msgstr "Гравців\n"
 #: pylav/extension/red/ui/sources/nodes.py:165
 #: pylav/extension/red/ui/sources/nodes.py:318
 msgid "Frames Lost"
-msgstr "Втрачені кадри"
+msgstr "Кадрів втрачено"
 
 #: pylav/extension/red/ui/sources/nodes.py:170
 #: pylav/extension/red/ui/sources/nodes.py:323
 msgid "Uptime"
-msgstr "Час безвідмовної роботи"
+msgstr "Час роботи"
 
 #: pylav/extension/red/ui/sources/nodes.py:171
 #: pylav/extension/red/ui/sources/nodes.py:324
 msgid "CPU Load\n"
 "Lavalink\n"
 "System"
-msgstr "Завантаження процесора\n"
-"Лавалінк\n"
+msgstr "Завантаження ЦП\n"
+"Лавальне ядро\n"
 "Система"
 
 #: pylav/extension/red/ui/sources/nodes.py:174
 #: pylav/extension/red/ui/sources/nodes.py:327
 msgid "Penalty"
-msgstr "Кара"
+msgstr "Штраф"
 
 #: pylav/extension/red/ui/sources/nodes.py:175
 #: pylav/extension/red/ui/sources/nodes.py:328
@@ -160,14 +160,14 @@ msgid "Memory\n"
 "Reservable"
 msgstr "Пам'ять\n"
 "Використовується\n"
-"Безкоштовний\n"
-"Виділені\n"
-"Резервовані"
+"Безкоштовно\n"
+"зберігання\n"
+"резервується"
 
 #: pylav/extension/red/ui/sources/nodes.py:178
 #: pylav/extension/red/ui/sources/nodes.py:331
 msgid "Features"
-msgstr "Функції"
+msgstr "Особливості"
 
 #: pylav/extension/red/ui/sources/nodes.py:190
 #: pylav/extension/red/ui/sources/nodes.py:343
@@ -182,7 +182,7 @@ msgstr "Вузлів"
 #: pylav/extension/red/ui/sources/nodes.py:194
 #: pylav/extension/red/ui/sources/nodes.py:347
 msgid "node"
-msgstr "Вузол"
+msgstr "вузол"
 
 #: pylav/extension/red/ui/sources/player.py:64
 msgid "Nothing playing"
@@ -194,11 +194,11 @@ msgstr "Власник сервера"
 
 #: pylav/extension/red/ui/sources/player.py:77
 msgid "Connected"
-msgstr "Підключений"
+msgstr "Підключено"
 
 #: pylav/extension/red/ui/sources/player.py:78
 msgid "Users in VC"
-msgstr "Користувачі в ВК"
+msgstr "Користувачі у VC"
 
 #: pylav/extension/red/ui/sources/player.py:80
 msgid "Queue Length"
@@ -218,32 +218,32 @@ msgstr "Треків"
 
 #: pylav/extension/red/ui/sources/player.py:100
 msgid "Page {page_num}/{total_pages} | Playing in {playing} {server_translation}"
-msgstr "Сторінка {page_num}/{total_pages} | Гра в {playing} {server_translation}"
+msgstr "Сторінка {page_num}/{total_pages} | Грає в {playing} {server_translation}"
 
 #: pylav/extension/red/ui/sources/player.py:104
 msgid "server"
-msgstr "Сервер"
+msgstr "сервер"
 
 #: pylav/extension/red/ui/sources/player.py:104
 msgid "servers"
-msgstr "Серверів"
+msgstr "сервери"
 
 #: pylav/extension/red/ui/sources/playlist.py:52
 #: pylav/extension/red/ui/sources/playlist.py:172
 msgid "Page {page_num}/{total_pages} | {num} playlists"
-msgstr "Сторінка {page_num}/{total_pages} | {num} плейлисти"
+msgstr "Сторінка {page_num}/{total_pages} | Списки відтворення {num}"
 
 #: pylav/extension/red/ui/sources/playlist.py:118
 msgid "Tracks in"
-msgstr "Доріжки в"
+msgstr "Треки в"
 
 #: pylav/extension/red/ui/sources/playlist.py:123
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks\n"
-msgstr "Сторінка {page_num}/{total_pages} | {num_tracks} Треків\n"
+msgstr "Сторінка {page_num}/{total_pages} | {num_tracks} треків\n"
 
 #: pylav/extension/red/ui/sources/playlist.py:152
 msgid "Unknown"
-msgstr "Невідомий"
+msgstr "Не вказано"
 
 #: pylav/extension/red/ui/sources/playlist.py:157
 msgid "ID: {id}"
@@ -251,7 +251,7 @@ msgstr "ID: {id}"
 
 #: pylav/extension/red/ui/sources/playlist.py:158
 msgid "Tracks: {num}"
-msgstr "Треків: {num}"
+msgstr "Доріжки: {num}"
 
 #: pylav/extension/red/ui/sources/playlist.py:159
 msgid "Author: {name}"
@@ -259,23 +259,23 @@ msgstr "Автор: {name}"
 
 #: pylav/extension/red/ui/sources/playlist.py:160
 msgid "Scope: {scope}\n"
-msgstr "Масштаб: {scope}\n"
+msgstr "Область використання: {scope}\n"
 
 #: pylav/extension/red/ui/sources/playlist.py:168
 msgid "Playlists you can access in this server:"
-msgstr "Плейлисти, до яких можна отримати доступ на цьому сервері:"
+msgstr "Плейлісти ви можете отримати доступ на цьому сервері:"
 
 #: pylav/extension/red/ui/sources/queue.py:96
 #: pylav/extension/red/ui/sources/queue.py:142
 msgid "No active player found in server"
-msgstr "На сервері немає активного програвача"
+msgstr "Не знайдено активного гравця на сервері"
 
 #: pylav/extension/red/ui/sources/queue.py:110
 msgid "There's nothing in recently played"
-msgstr "У нещодавно зіграному немає нічого"
+msgstr "Останнім часом нічого не було"
 
 #: pylav/extension/red/ui/sources/queue.py:112
 #: pylav/extension/red/ui/sources/queue.py:155
 msgid "There's nothing currently being played"
-msgstr "Зараз нічого не грається"
+msgstr "Немає нічого грати в даний час"
 

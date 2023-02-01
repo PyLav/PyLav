@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:10\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -47,10 +47,10 @@ msgstr "還有1條消息"
 
 #: pylav/core/context.py:261
 msgid "There are still {remaining} messages"
-msgstr "還有 {remaining} 消息"
+msgstr "還有 {remaining} 則訊息"
 
 #: pylav/core/context.py:288
 #, docstring
 msgid "Does nothing"
-msgstr "什麼都不做"
+msgstr "不做任何動作"
 

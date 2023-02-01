@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:18\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -23,66 +23,66 @@ msgstr "Geen beschikbare nodes!"
 
 #: pylav/players/manager.py:349
 msgid "Music in {count} servers"
-msgstr "Muziek in {count} Servers"
+msgstr "Muziek in {count} servers"
 
 #: pylav/players/player.py:1176
 msgid "There are no tracks currently in the player history"
-msgstr "Er zijn momenteel geen tracks in de geschiedenis van de speler"
+msgstr "Er zijn momenteel geen nummers in de spelergeschiedenis"
 
 #: pylav/players/player.py:1869
 msgid "Current node has the Volume filter functionality disabled"
-msgstr "De volumefilterfunctionaliteit is uitgeschakeld voor het huidige knooppunt"
+msgstr "Huidige node heeft de Volume filter functionaliteit uitgeschakeld"
 
 #: pylav/players/player.py:1891 pylav/players/player.py:2067
 #: pylav/players/player.py:2122
 msgid "Current node has the Equalizer functionality disabled"
-msgstr "De Equalizer-functionaliteit is uitgeschakeld voor het huidige knooppunt"
+msgstr "Huidige node heeft de Equalizer functionaliteit uitgeschakeld"
 
 #: pylav/players/player.py:1911
 msgid "Current node has the Karaoke functionality disabled"
-msgstr "De huidige node heeft de Karaoke-functionaliteit uitgeschakeld"
+msgstr "Huidige node heeft de Karaoke functionaliteit uitgeschakeld"
 
 #: pylav/players/player.py:1931 pylav/players/player.py:2069
 #: pylav/players/player.py:2124
 msgid "Current node has the Timescale functionality disabled"
-msgstr "De functie Tijdschaal is uitgeschakeld voor huidstroom"
+msgstr "Huidige node heeft de tijdschaal-functionaliteit uitgeschakeld"
 
 #: pylav/players/player.py:1951
 msgid "Current node has the Tremolo functionality disabled"
-msgstr "De Tremolo-functionaliteit is uitgeschakeld voor het huidige knooppunt"
+msgstr "Huidige node heeft de Tremolo functionaliteit uitgeschakeld"
 
 #: pylav/players/player.py:1971
 msgid "Current node has the Vibrato functionality disabled"
-msgstr "De Vibrato-functionaliteit is uitgeschakeld voor het huidige knooppunt"
+msgstr "Huidige node heeft de Vibrato functionaliteit uitgeschakeld"
 
 #: pylav/players/player.py:1991
 msgid "Current node has the Rotation functionality disabled"
-msgstr "De rotatiefunctionaliteit van het huidige knooppunt is uitgeschakeld"
+msgstr "Huidige node heeft de rotatiefunctionaliteit uitgeschakeld"
 
 #: pylav/players/player.py:2011
 msgid "Current node has the Distortion functionality disabled"
-msgstr "De functie Vervorming is uitgeschakeld voor het huidige knooppunt"
+msgstr "Huidige node heeft de vervormingsfunctionaliteit uitgeschakeld"
 
 #: pylav/players/player.py:2031
 msgid "Current node has the LowPass functionality disabled"
-msgstr "De LowPass-functionaliteit is uitgeschakeld voor het huidige knooppunt"
+msgstr "Huidige node heeft de LowPass functionaliteit uitgeschakeld"
 
 #: pylav/players/player.py:2051
 msgid "Current node has the Echo functionality disabled"
-msgstr "De Echo-functionaliteit is uitgeschakeld voor huidig knooppunt"
+msgstr "Huidige node heeft de Echo functionaliteit uitgeschakeld"
 
 #: pylav/players/player.py:2181
 msgid "Current node has the ChannelMix functionality disabled"
-msgstr "De ChannelMix-functionaliteit is uitgeschakeld voor het huidige knooppunt"
+msgstr "Huidige node heeft de KanaalMix functionaliteit uitgeschakeld"
 
 #: pylav/players/player.py:2441 pylav/players/player.py:2486
 #: pylav/players/player.py:2501
 msgid "LIVE"
-msgstr "WONEN"
+msgstr "Live"
 
 #: pylav/players/player.py:2454
 msgid "Now Playing in"
-msgstr "Nu spelen in"
+msgstr "Nu aan het spelen"
 
 #: pylav/players/player.py:2472 pylav/players/player.py:2581
 msgid "Currently livestreaming"
@@ -90,7 +90,7 @@ msgstr "Momenteel livestreaming"
 
 #: pylav/players/player.py:2474
 msgid "Playing: "
-msgstr "Spelen: "
+msgstr "Afspelen: "
 
 #: pylav/players/player.py:2477 pylav/players/player.py:2493
 #: pylav/players/player.py:2508 pylav/players/player.py:2587
@@ -111,7 +111,7 @@ msgstr "Volgende track"
 
 #: pylav/players/player.py:2515
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
-msgstr "{track_count} Tracks {queue_total_duration} overig\n"
+msgstr "{track_count} nummers, {queue_total_duration} resterend\n"
 
 #: pylav/players/player.py:2519 pylav/players/player.py:2615
 msgid "{translation}: {repeat_emoji}"
@@ -127,7 +127,7 @@ msgstr "{space}{translation}: {autoplay_emoji}"
 
 #: pylav/players/player.py:2521 pylav/players/player.py:2617
 msgid "Auto Play"
-msgstr "Automatisch afspelen"
+msgstr "Automatisch spelen"
 
 #: pylav/players/player.py:2523 pylav/players/player.py:2619
 msgid "{space}{translation}: {volume}%"
@@ -147,13 +147,13 @@ msgstr "Wachtrij voor"
 
 #: pylav/players/player.py:2584
 msgid "Playing"
-msgstr "Spelen"
+msgstr "Afspelen"
 
 #: pylav/players/player.py:2600
 msgid "Queue order may not be accurate due to auto-shuffle being enabled"
-msgstr "De wachtrijvolgorde is mogelijk niet nauwkeurig omdat automatisch schakelen is ingeschakeld"
+msgstr "Wachtrijvolgorde is mogelijk niet nauwkeurig omdat auto-shuffle is ingeschakeld"
 
 #: pylav/players/player.py:2606
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
-msgstr "Bladzijde {current_page}/{total_pages} | {track_number} Tracks {queue_total_duration} overig\n"
+msgstr "Pagina {current_page}/{total_pages} ½ {track_number} nummers, {queue_total_duration} resterend\n"
 

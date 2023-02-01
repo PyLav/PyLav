@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-01-31 23:42\n"
+"PO-Revision-Date: 2023-02-01 00:09\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: pylav/extension/red/ui/sources/equalizer.py:32
 msgid "Preset Name"
-msgstr "Název přednastavení"
+msgstr "Název předvolby"
 
 #: pylav/extension/red/ui/sources/equalizer.py:33
 msgid "Author"
@@ -27,7 +27,7 @@ msgstr "Autor"
 
 #: pylav/extension/red/ui/sources/generic.py:88
 msgid "Page {page_num}/{total_pages} | {num} {entries}"
-msgstr "Stránka {page_num}/{total_pages} | {num} {entries}"
+msgstr "Strana {page_num}/{total_pages} | {num} {entries}"
 
 #: pylav/extension/red/ui/sources/generic.py:92
 msgid "entries"
@@ -54,12 +54,12 @@ msgstr "Ano"
 #: pylav/extension/red/ui/sources/nodes.py:141
 #: pylav/extension/red/ui/sources/nodes.py:294
 msgid "None / Unknown"
-msgstr "Žádné / Neznámé"
+msgstr "Žádný / Neznámý"
 
 #: pylav/extension/red/ui/sources/nodes.py:143
 #: pylav/extension/red/ui/sources/nodes.py:296
 msgid "Property"
-msgstr "Vlastnost"
+msgstr "Majetek"
 
 #: pylav/extension/red/ui/sources/nodes.py:144
 #: pylav/extension/red/ui/sources/nodes.py:297
@@ -76,7 +76,7 @@ msgstr "Zeměpisná šířka: {lat}\n"
 #: pylav/extension/red/ui/sources/nodes.py:151
 #: pylav/extension/red/ui/sources/nodes.py:304
 msgid "Region"
-msgstr "Oblast"
+msgstr "Oblasti"
 
 #: pylav/extension/red/ui/sources/nodes.py:151
 #: pylav/extension/red/ui/sources/nodes.py:304
@@ -111,12 +111,12 @@ msgstr "Protokol SSL"
 #: pylav/extension/red/ui/sources/nodes.py:159
 #: pylav/extension/red/ui/sources/nodes.py:312
 msgid "Available"
-msgstr "K dispozici"
+msgstr "Dostupné"
 
 #: pylav/extension/red/ui/sources/nodes.py:160
 #: pylav/extension/red/ui/sources/nodes.py:313
 msgid "Search Only"
-msgstr "Pouze vyhledávání"
+msgstr "Pouze Hledat"
 
 #: pylav/extension/red/ui/sources/nodes.py:161
 #: pylav/extension/red/ui/sources/nodes.py:314
@@ -124,8 +124,8 @@ msgid "Players\n"
 "Connected\n"
 "Active"
 msgstr "Hráči\n"
-"Připojený\n"
-"Aktivní"
+"připojeni\n"
+"aktivní"
 
 #: pylav/extension/red/ui/sources/nodes.py:165
 #: pylav/extension/red/ui/sources/nodes.py:318
@@ -135,7 +135,7 @@ msgstr "Ztracené snímky"
 #: pylav/extension/red/ui/sources/nodes.py:170
 #: pylav/extension/red/ui/sources/nodes.py:323
 msgid "Uptime"
-msgstr "Uptime"
+msgstr "Doba provozu"
 
 #: pylav/extension/red/ui/sources/nodes.py:171
 #: pylav/extension/red/ui/sources/nodes.py:324
@@ -149,7 +149,7 @@ msgstr "Zatížení procesoru\n"
 #: pylav/extension/red/ui/sources/nodes.py:174
 #: pylav/extension/red/ui/sources/nodes.py:327
 msgid "Penalty"
-msgstr "Trest"
+msgstr "Sankce"
 
 #: pylav/extension/red/ui/sources/nodes.py:175
 #: pylav/extension/red/ui/sources/nodes.py:328
@@ -159,20 +159,20 @@ msgid "Memory\n"
 "Allocated\n"
 "Reservable"
 msgstr "Paměť\n"
-"Ojetý\n"
-"Bezplatně\n"
-"Přidělený\n"
-"Vyhrazené"
+"využitá\n"
+"bez\n"
+"přidělených\n"
+", rezervovatelné"
 
 #: pylav/extension/red/ui/sources/nodes.py:178
 #: pylav/extension/red/ui/sources/nodes.py:331
 msgid "Features"
-msgstr "Rysy"
+msgstr "Vlastnosti"
 
 #: pylav/extension/red/ui/sources/nodes.py:190
 #: pylav/extension/red/ui/sources/nodes.py:343
 msgid "Page {page_num}/{total_pages} | {num} {plural}"
-msgstr "Stránka {page_num}/{total_pages} | {num} {plural}"
+msgstr "Strana {page_num}/{total_pages} | {num} {plural}"
 
 #: pylav/extension/red/ui/sources/nodes.py:194
 #: pylav/extension/red/ui/sources/nodes.py:347
@@ -194,7 +194,7 @@ msgstr "Vlastník serveru"
 
 #: pylav/extension/red/ui/sources/player.py:77
 msgid "Connected"
-msgstr "Připojený"
+msgstr "Připojeno"
 
 #: pylav/extension/red/ui/sources/player.py:78
 msgid "Users in VC"
@@ -218,7 +218,7 @@ msgstr "Skladby"
 
 #: pylav/extension/red/ui/sources/player.py:100
 msgid "Page {page_num}/{total_pages} | Playing in {playing} {server_translation}"
-msgstr "Stránka {page_num}/{total_pages} | Hraní v {playing} {server_translation}"
+msgstr "Strana {page_num}/{total_pages} | Přehrávání v {playing} {server_translation}"
 
 #: pylav/extension/red/ui/sources/player.py:104
 msgid "server"
@@ -231,7 +231,7 @@ msgstr "servery"
 #: pylav/extension/red/ui/sources/playlist.py:52
 #: pylav/extension/red/ui/sources/playlist.py:172
 msgid "Page {page_num}/{total_pages} | {num} playlists"
-msgstr "Stránka {page_num}/{total_pages} | {num} Seznamy skladeb"
+msgstr "Strana {page_num}/{total_pages} | {num} seznamů skladeb"
 
 #: pylav/extension/red/ui/sources/playlist.py:118
 msgid "Tracks in"
@@ -239,7 +239,7 @@ msgstr "Skladby v"
 
 #: pylav/extension/red/ui/sources/playlist.py:123
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks\n"
-msgstr "Stránka {page_num}/{total_pages} | {num_tracks} Skladby\n"
+msgstr "Strana {page_num}/{total_pages} | {num_tracks} skladeb\n"
 
 #: pylav/extension/red/ui/sources/playlist.py:152
 msgid "Unknown"
@@ -263,7 +263,7 @@ msgstr "Rozsah: {scope}\n"
 
 #: pylav/extension/red/ui/sources/playlist.py:168
 msgid "Playlists you can access in this server:"
-msgstr "Seznamy skladeb, ke kterým máte přístup na tomto serveru:"
+msgstr "Seznamy skladeb, ke kterým můžete přistupovat na tomto serveru:"
 
 #: pylav/extension/red/ui/sources/queue.py:96
 #: pylav/extension/red/ui/sources/queue.py:142
@@ -272,7 +272,7 @@ msgstr "Na serveru nebyl nalezen žádný aktivní hráč"
 
 #: pylav/extension/red/ui/sources/queue.py:110
 msgid "There's nothing in recently played"
-msgstr "V poslední době není nic hraného"
+msgstr "V poslední době se nic nehraje"
 
 #: pylav/extension/red/ui/sources/queue.py:112
 #: pylav/extension/red/ui/sources/queue.py:155
