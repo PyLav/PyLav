@@ -107,10 +107,10 @@ exclude = [
 ]
 [tool.poetry.dependencies]
 python = "^3.11"
-pip = "^22.3.1"
-setuptools = "^67.0.0"
+pip = "^23.0"
+setuptools = "^67.1.0"
 wheel = "^0.38.4"
-APScheduler = "^3.9.1.post1"
+APScheduler = "^3.10.0"
 Brotli = "^1.0.9"
 PyYAML = "^6.0"
 aiohttp-client-cache = "^0.8.1"
@@ -123,7 +123,7 @@ cashews = {extras = ["dill", "redis"], version = "^5.0.0"}
 dacite = "^1.8.0"
 deepdiff6 = "^6.2.0"
 expiringdict = "^1.2.2"
-humanize = "^4.4.0"
+humanize = "^4.5.0"
 iso8601 = "^1.1.0"
 netaddr = "^0.8.0"
 numpy = "^1.24.1"
