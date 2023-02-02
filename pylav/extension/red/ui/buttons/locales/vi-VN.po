@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:10\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:18\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "MIME-Version: 1.0\n"
@@ -30,13 +30,13 @@ msgstr ""
 #: pylav/extension/red/ui/buttons/playlist.py:41
 #: pylav/extension/red/ui/buttons/playlist.py:76
 #: pylav/extension/red/ui/buttons/playlist.py:117
-#: pylav/extension/red/ui/buttons/playlist.py:164
-#: pylav/extension/red/ui/buttons/playlist.py:207
-#: pylav/extension/red/ui/buttons/playlist.py:255
-#: pylav/extension/red/ui/buttons/playlist.py:301
-#: pylav/extension/red/ui/buttons/playlist.py:347
-msgid "You are not authorized to interact with this option"
-msgstr "Bạn không được phép tương tác với tùy chọn này"
+#: pylav/extension/red/ui/buttons/playlist.py:167
+#: pylav/extension/red/ui/buttons/playlist.py:210
+#: pylav/extension/red/ui/buttons/playlist.py:258
+#: pylav/extension/red/ui/buttons/playlist.py:304
+#: pylav/extension/red/ui/buttons/playlist.py:350
+msgid "You are not authorized to interact with this option."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/generic.py:85
 msgid "Yes"
@@ -46,62 +46,55 @@ msgstr "Có"
 msgid "No"
 msgstr "Không"
 
-#: pylav/extension/red/ui/buttons/generic.py:164
-msgid "Disconnect {} {}"
-msgstr "Ngắt kết nối {} {}"
-
 #: pylav/extension/red/ui/buttons/generic.py:165
-msgid "players"
-msgstr "Cầu thủ"
+msgid "Disconnect {player_type} players"
+msgstr ""
 
-#: pylav/extension/red/ui/buttons/generic.py:165
-msgid "player"
-msgstr "cầu thủ"
+#: pylav/extension/red/ui/buttons/generic.py:167
+msgid "Disconnect {player_type} player"
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/nodes.py:57
-msgid "Connecting to the node with SSL enabled"
-msgstr "Kết nối với nút có bật SSL"
+msgid "Connecting to the node with SSL enabled."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/nodes.py:64
-msgid "Connecting to the node with SSL disabled"
-msgstr "Kết nối với nút bị tắt SSL"
+msgid "Connecting to the node with SSL disabled."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/nodes.py:102
-msgid "This node will only be used for searches"
-msgstr "Nút này sẽ chỉ được sử dụng cho các tìm kiếm"
+msgid "This node will only be used for search."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/nodes.py:109
-msgid "This node will be used for search and playback"
-msgstr "Nút này sẽ được sử dụng để tìm kiếm và phát lại"
+msgid "This node will be used for search and playback."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/nodes.py:140
-msgid "Please fill out all the fields before continuing"
-msgstr "Vui lòng điền vào tất cả các trường trước khi tiếp tục"
+msgid "Please fill out all the fields before continuing."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/nodes.py:220
-msgid "When you press done this node will be permanently delete"
-msgstr "Khi bạn nhấn xong, nút này sẽ bị xóa vĩnh viễn"
+msgid "When you press done this node will be permanently delete."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/nodes.py:222
-msgid "This node will no longer be deleted once you press done"
-msgstr "Nút này sẽ không còn bị xóa sau khi bạn nhấn xong"
+msgid "This node will no longer be deleted once you press done."
+msgstr ""
 
-#: pylav/extension/red/ui/buttons/nodes.py:255
-msgid "__Enabled sources__:\n"
-"{sources}"
-msgstr "__Enabled sources__:\n"
-"{sources}"
+#: pylav/extension/red/ui/buttons/nodes.py:256
+msgid "Enable sources"
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/player.py:38
 #: pylav/extension/red/ui/buttons/player.py:87
-#: pylav/extension/red/ui/buttons/player.py:140
-msgid "You are not authorized to perform this action"
-msgstr "Bạn không được phép thực hiện hành động này"
+msgid "You are not authorized to perform this action."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/player.py:47
 #: pylav/extension/red/ui/buttons/player.py:96
-msgid "No Player Available For Action - Try Refreshing"
-msgstr "Không có trình phát nào có sẵn cho hành động - Hãy thử làm mới"
+msgid "No player available for action, try refreshing."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:107
@@ -111,98 +104,98 @@ msgstr "Hành động của chủ sở hữu bot"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:164
-msgid "Player disconnected"
-msgstr "Trình phát bị ngắt kết nối"
+msgid "Player disconnected."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/player.py:107
-msgid "Player stopped"
-msgstr "Người chơi đã dừng lại"
+msgid "Player stopped."
+msgstr ""
+
+#: pylav/extension/red/ui/buttons/player.py:140
+msgid "You are not authorized to perform this action"
+msgstr "Bạn không được phép thực hiện hành động này"
 
 #: pylav/extension/red/ui/buttons/player.py:154
-msgid "No Players Available For Action - Try Refreshing"
-msgstr "Không có người chơi nào có sẵn để hành động - Hãy thử làm mới"
+msgid "No players available for action, try refreshing."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/playlist.py:48
-msgid "When you press done this playlist will be permanently delete"
-msgstr "Khi bạn nhấn xong, danh sách phát này sẽ bị xóa vĩnh viễn"
+msgid "When you press done this playlist will be permanently delete."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/playlist.py:50
-msgid "This playlist will no longer be deleted once you press done"
-msgstr "Danh sách phát này sẽ không còn bị xóa sau khi bạn nhấn xong"
+msgid "This playlist will no longer be deleted once you press done."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/playlist.py:83
-msgid "Clearing all tracks from the playlist playlist"
-msgstr "Xóa tất cả các bản nhạc khỏi danh sách phát danh sách phát"
+msgid "Clearing all tracks from the playlist."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/playlist.py:85
-msgid "No longer clearing tracks from the playlist"
-msgstr "Không còn xóa các bản nhạc khỏi danh sách phát"
+msgid "No longer clearing tracks from the playlist."
+msgstr ""
 
-#: pylav/extension/red/ui/buttons/playlist.py:126
-msgid "Here is your playlist: {name}{extras}"
-msgstr "Đây là danh sách phát của bạn: {name}{extras}"
+#: pylav/extension/red/ui/buttons/playlist.py:124
+msgid "Here is your playlist: {playlist_name}, file is compressed using Gzip to make it possible to send via Discord you can use <https://gzip.swimburger.net/> to decompress it."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/playlist.py:128
-msgid "\n"
-" (compressed using gzip to make it possible to send via Discord - you can use <https://gzip.swimburger.net/> to decompress it)"
-msgstr "\n"
-" (nén bằng gzip để có thể gửi qua Discord - bạn có thể sử dụng <https://gzip.swimburger.net/> để giải nén nó)"
+msgid "Here is your playlist: {playlist_name}, file is compressed using Brotli compression."
+msgstr ""
 
-#: pylav/extension/red/ui/buttons/playlist.py:133
-msgid "\n"
-" (File compressed using Brotli compression."
-msgstr "\n"
-" (Tệp được nén bằng cách sử dụng nén Brotli."
-
-#: pylav/extension/red/ui/buttons/playlist.py:171
-msgid "Updating playlist with the latest tracks, press done to continue"
-msgstr "Cập nhật danh sách phát với các bản nhạc mới nhất, nhấn xong để tiếp tục"
+#: pylav/extension/red/ui/buttons/playlist.py:132
+msgid "Here is your playlist: {playlist_name}."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/playlist.py:174
-msgid "Not updating playlist"
-msgstr "Không cập nhật danh sách phát"
+msgid "Updating playlist with the latest tracks, press done to continue."
+msgstr ""
 
-#: pylav/extension/red/ui/buttons/playlist.py:263
-msgid "Adding the current queue to playlist"
-msgstr "Thêm hàng đợi hiện tại vào danh sách phát"
+#: pylav/extension/red/ui/buttons/playlist.py:177
+msgid "Not updating playlist."
+msgstr ""
 
-#: pylav/extension/red/ui/buttons/playlist.py:270
-msgid "No longer adding the current queue to playlist"
-msgstr "Không còn thêm hàng đợi hiện tại vào danh sách phát"
+#: pylav/extension/red/ui/buttons/playlist.py:266
+msgid "Adding the current queue to playlist."
+msgstr ""
 
-#: pylav/extension/red/ui/buttons/playlist.py:309
-msgid "Removing all duplicate tracks from the queue"
-msgstr "Xóa tất cả các bản nhạc trùng lặp khỏi hàng đợi"
+#: pylav/extension/red/ui/buttons/playlist.py:273
+msgid "No longer adding the current queue to playlist."
+msgstr ""
 
-#: pylav/extension/red/ui/buttons/playlist.py:316
-msgid "No longer all duplicate tracks from the queue"
-msgstr "Không còn tất cả các bản nhạc trùng lặp từ hàng đợi"
+#: pylav/extension/red/ui/buttons/playlist.py:312
+msgid "Removing all duplicate tracks from the queue."
+msgstr ""
 
-#: pylav/extension/red/ui/buttons/playlist.py:406
-msgid "Playlists you can currently play"
-msgstr "Danh sách phát bạn hiện có thể phát"
+#: pylav/extension/red/ui/buttons/playlist.py:319
+msgid "No longer all duplicate tracks from the queue."
+msgstr ""
 
-#: pylav/extension/red/ui/buttons/playlist.py:412
-msgid "Pick a playlist"
-msgstr "Chọn một playlist"
+#: pylav/extension/red/ui/buttons/playlist.py:409
+msgid "Playlists you can currently play."
+msgstr ""
 
-#: pylav/extension/red/ui/buttons/playlist.py:434
+#: pylav/extension/red/ui/buttons/playlist.py:415
+msgid "Pick a playlist."
+msgstr ""
+
+#: pylav/extension/red/ui/buttons/playlist.py:437
 msgid "What should the playlist name be?"
 msgstr "Tên danh sách phát nên là gì?"
 
 #: pylav/extension/red/ui/buttons/queue.py:164
 #: pylav/extension/red/ui/buttons/queue.py:191
 #: pylav/extension/red/ui/buttons/queue.py:224
-msgid "Not connected to a voice channel"
-msgstr "Không được kết nối với kênh thoại"
+msgid "Not connected to a voice channel."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/queue.py:289
-msgid "There's nothing in the Queue"
-msgstr "Không có gì trong Hàng đợi"
+msgid "There is nothing in the queue."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/queue.py:296
-msgid "Removed tracks from the queue"
-msgstr "Đã xóa các bản nhạc khỏi hàng đợi"
+msgid "Removed tracks from the queue."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/queue.py:323
 msgid "What do you want to enqueue?"

@@ -1,0 +1,55 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: pylav\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:18\n"
+"Last-Translator: \n"
+"Language-Team: Romanian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.4.2\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2);\n"
+"X-Crowdin-Project: pylav\n"
+"X-Crowdin-Project-ID: 535244\n"
+"X-Crowdin-Language: ro\n"
+"X-Crowdin-File: /lib/pylav/helpers/format/locales/messages.pot\n"
+"X-Crowdin-File-ID: 3749\n"
+"Language: ro_RO\n"
+
+#: pylav/helpers/format/strings.py:31
+msgid "Unknown"
+msgstr "Necunoscut"
+
+#: pylav/helpers/format/strings.py:57
+msgid "hour"
+msgstr "oră"
+
+#: pylav/helpers/format/strings.py:58
+msgid "hours"
+msgstr "ore"
+
+#: pylav/helpers/format/strings.py:60
+msgid "minute"
+msgstr "minut"
+
+#: pylav/helpers/format/strings.py:61
+msgid "minutes"
+msgstr "minute"
+
+#: pylav/helpers/format/strings.py:63
+msgid "second"
+msgstr "secundă"
+
+#: pylav/helpers/format/strings.py:64
+msgid "seconds"
+msgstr "secunde"
+
+#: pylav/helpers/format/strings.py:66
+msgid "day"
+msgstr "zi"
+
+#: pylav/helpers/format/strings.py:67
+msgid "days"
+msgstr "zile"
+

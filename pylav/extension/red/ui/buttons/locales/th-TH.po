@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:10\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:18\n"
 "Last-Translator: \n"
 "Language-Team: Thai\n"
 "MIME-Version: 1.0\n"
@@ -30,13 +30,13 @@ msgstr ""
 #: pylav/extension/red/ui/buttons/playlist.py:41
 #: pylav/extension/red/ui/buttons/playlist.py:76
 #: pylav/extension/red/ui/buttons/playlist.py:117
-#: pylav/extension/red/ui/buttons/playlist.py:164
-#: pylav/extension/red/ui/buttons/playlist.py:207
-#: pylav/extension/red/ui/buttons/playlist.py:255
-#: pylav/extension/red/ui/buttons/playlist.py:301
-#: pylav/extension/red/ui/buttons/playlist.py:347
-msgid "You are not authorized to interact with this option"
-msgstr "คุณไม่ได้รับอนุญาตให้โต้ตอบกับตัวเลือกนี้"
+#: pylav/extension/red/ui/buttons/playlist.py:167
+#: pylav/extension/red/ui/buttons/playlist.py:210
+#: pylav/extension/red/ui/buttons/playlist.py:258
+#: pylav/extension/red/ui/buttons/playlist.py:304
+#: pylav/extension/red/ui/buttons/playlist.py:350
+msgid "You are not authorized to interact with this option."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/generic.py:85
 msgid "Yes"
@@ -46,62 +46,55 @@ msgstr "ใช่"
 msgid "No"
 msgstr "ไม่ใช่"
 
-#: pylav/extension/red/ui/buttons/generic.py:164
-msgid "Disconnect {} {}"
-msgstr "ยกเลิกการเชื่อมต่อ {} {}"
-
 #: pylav/extension/red/ui/buttons/generic.py:165
-msgid "players"
-msgstr "เล่น"
+msgid "Disconnect {player_type} players"
+msgstr ""
 
-#: pylav/extension/red/ui/buttons/generic.py:165
-msgid "player"
-msgstr "นักแสดง"
+#: pylav/extension/red/ui/buttons/generic.py:167
+msgid "Disconnect {player_type} player"
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/nodes.py:57
-msgid "Connecting to the node with SSL enabled"
-msgstr "การเชื่อมต่อกับโหนดที่เปิดใช้งาน SSL"
+msgid "Connecting to the node with SSL enabled."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/nodes.py:64
-msgid "Connecting to the node with SSL disabled"
-msgstr "การเชื่อมต่อกับโหนดโดยปิดใช้งาน SSL"
+msgid "Connecting to the node with SSL disabled."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/nodes.py:102
-msgid "This node will only be used for searches"
-msgstr "โหนดนี้จะใช้สําหรับการค้นหาเท่านั้น"
+msgid "This node will only be used for search."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/nodes.py:109
-msgid "This node will be used for search and playback"
-msgstr "โหนดนี้จะใช้สําหรับการค้นหาและเล่น"
+msgid "This node will be used for search and playback."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/nodes.py:140
-msgid "Please fill out all the fields before continuing"
-msgstr "กรุณากรอกข้อมูลให้ครบทุกช่องก่อนดําเนินการต่อ"
+msgid "Please fill out all the fields before continuing."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/nodes.py:220
-msgid "When you press done this node will be permanently delete"
-msgstr "เมื่อคุณกดเสร็จสิ้นโหนดนี้จะถูกลบอย่างถาวร"
+msgid "When you press done this node will be permanently delete."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/nodes.py:222
-msgid "This node will no longer be deleted once you press done"
-msgstr "โหนดนี้จะไม่ถูกลบอีกต่อไปเมื่อคุณกดเสร็จสิ้น"
+msgid "This node will no longer be deleted once you press done."
+msgstr ""
 
-#: pylav/extension/red/ui/buttons/nodes.py:255
-msgid "__Enabled sources__:\n"
-"{sources}"
-msgstr "__Enabled sources__:\n"
-"{sources}"
+#: pylav/extension/red/ui/buttons/nodes.py:256
+msgid "Enable sources"
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/player.py:38
 #: pylav/extension/red/ui/buttons/player.py:87
-#: pylav/extension/red/ui/buttons/player.py:140
-msgid "You are not authorized to perform this action"
-msgstr "คุณไม่ได้รับอนุญาตให้ดําเนินการนี้"
+msgid "You are not authorized to perform this action."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/player.py:47
 #: pylav/extension/red/ui/buttons/player.py:96
-msgid "No Player Available For Action - Try Refreshing"
-msgstr "ไม่มีผู้เล่นพร้อมสําหรับการดําเนินการ - ลองรีเฟรช"
+msgid "No player available for action, try refreshing."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:107
@@ -111,98 +104,98 @@ msgstr "การกระทําของเจ้าของบอท"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:164
-msgid "Player disconnected"
-msgstr "ผู้เล่นถูกตัดการเชื่อมต่อ"
+msgid "Player disconnected."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/player.py:107
-msgid "Player stopped"
-msgstr "ผู้เล่นหยุด"
+msgid "Player stopped."
+msgstr ""
+
+#: pylav/extension/red/ui/buttons/player.py:140
+msgid "You are not authorized to perform this action"
+msgstr "คุณไม่ได้รับอนุญาตให้ดําเนินการนี้"
 
 #: pylav/extension/red/ui/buttons/player.py:154
-msgid "No Players Available For Action - Try Refreshing"
-msgstr "ไม่มีผู้เล่นพร้อมสําหรับการดําเนินการ - ลองรีเฟรช"
+msgid "No players available for action, try refreshing."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/playlist.py:48
-msgid "When you press done this playlist will be permanently delete"
-msgstr "เมื่อคุณกดเสร็จสิ้นรายการเพลงนี้จะถูกลบอย่างถาวร"
+msgid "When you press done this playlist will be permanently delete."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/playlist.py:50
-msgid "This playlist will no longer be deleted once you press done"
-msgstr "เพลย์ลิสต์นี้จะไม่ถูกลบอีกต่อไปเมื่อคุณกดเสร็จแล้ว"
+msgid "This playlist will no longer be deleted once you press done."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/playlist.py:83
-msgid "Clearing all tracks from the playlist playlist"
-msgstr "การล้างแทร็กทั้งหมดจากเพลย์ลิสต์เพลย์ลิสต์"
+msgid "Clearing all tracks from the playlist."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/playlist.py:85
-msgid "No longer clearing tracks from the playlist"
-msgstr "ไม่ล้างแทร็กออกจากเพลย์ลิสต์อีกต่อไป"
+msgid "No longer clearing tracks from the playlist."
+msgstr ""
 
-#: pylav/extension/red/ui/buttons/playlist.py:126
-msgid "Here is your playlist: {name}{extras}"
-msgstr "นี่คือเพลย์ลิสต์ของคุณ: {name}{extras}"
+#: pylav/extension/red/ui/buttons/playlist.py:124
+msgid "Here is your playlist: {playlist_name}, file is compressed using Gzip to make it possible to send via Discord you can use <https://gzip.swimburger.net/> to decompress it."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/playlist.py:128
-msgid "\n"
-" (compressed using gzip to make it possible to send via Discord - you can use <https://gzip.swimburger.net/> to decompress it)"
-msgstr "\n"
-" (บีบอัดโดยใช้ gzip เพื่อให้สามารถส่งผ่าน Discord ได้ - คุณสามารถใช้ <https://gzip.swimburger.net/> เพื่อคลายการบีบอัด)"
+msgid "Here is your playlist: {playlist_name}, file is compressed using Brotli compression."
+msgstr ""
 
-#: pylav/extension/red/ui/buttons/playlist.py:133
-msgid "\n"
-" (File compressed using Brotli compression."
-msgstr "\n"
-" (ไฟล์บีบอัดโดยใช้การบีบอัด Brotli"
-
-#: pylav/extension/red/ui/buttons/playlist.py:171
-msgid "Updating playlist with the latest tracks, press done to continue"
-msgstr "อัปเดตเพลย์ลิสต์ด้วยแทร็กล่าสุดกดเสร็จสิ้นเพื่อดําเนินการต่อ"
+#: pylav/extension/red/ui/buttons/playlist.py:132
+msgid "Here is your playlist: {playlist_name}."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/playlist.py:174
-msgid "Not updating playlist"
-msgstr "ไม่อัปเดตเพลย์ลิสต์"
+msgid "Updating playlist with the latest tracks, press done to continue."
+msgstr ""
 
-#: pylav/extension/red/ui/buttons/playlist.py:263
-msgid "Adding the current queue to playlist"
-msgstr "การเพิ่มคิวปัจจุบันลงในเพลย์ลิสต์"
+#: pylav/extension/red/ui/buttons/playlist.py:177
+msgid "Not updating playlist."
+msgstr ""
 
-#: pylav/extension/red/ui/buttons/playlist.py:270
-msgid "No longer adding the current queue to playlist"
-msgstr "ไม่เพิ่มคิวปัจจุบันลงในเพลย์ลิสต์อีกต่อไป"
+#: pylav/extension/red/ui/buttons/playlist.py:266
+msgid "Adding the current queue to playlist."
+msgstr ""
 
-#: pylav/extension/red/ui/buttons/playlist.py:309
-msgid "Removing all duplicate tracks from the queue"
-msgstr "การลบแทร็กที่ซ้ํากันทั้งหมดออกจากคิว"
+#: pylav/extension/red/ui/buttons/playlist.py:273
+msgid "No longer adding the current queue to playlist."
+msgstr ""
 
-#: pylav/extension/red/ui/buttons/playlist.py:316
-msgid "No longer all duplicate tracks from the queue"
-msgstr "ไม่มีแทร็กที่ซ้ํากันทั้งหมดจากคิวอีกต่อไป"
+#: pylav/extension/red/ui/buttons/playlist.py:312
+msgid "Removing all duplicate tracks from the queue."
+msgstr ""
 
-#: pylav/extension/red/ui/buttons/playlist.py:406
-msgid "Playlists you can currently play"
-msgstr "เพลย์ลิสต์ที่คุณสามารถเล่นได้ในขณะนี้"
+#: pylav/extension/red/ui/buttons/playlist.py:319
+msgid "No longer all duplicate tracks from the queue."
+msgstr ""
 
-#: pylav/extension/red/ui/buttons/playlist.py:412
-msgid "Pick a playlist"
-msgstr "เลือกเพลย์ลิสต์"
+#: pylav/extension/red/ui/buttons/playlist.py:409
+msgid "Playlists you can currently play."
+msgstr ""
 
-#: pylav/extension/red/ui/buttons/playlist.py:434
+#: pylav/extension/red/ui/buttons/playlist.py:415
+msgid "Pick a playlist."
+msgstr ""
+
+#: pylav/extension/red/ui/buttons/playlist.py:437
 msgid "What should the playlist name be?"
 msgstr "ชื่อเพลย์ลิสต์ควรเป็นอย่างไร?"
 
 #: pylav/extension/red/ui/buttons/queue.py:164
 #: pylav/extension/red/ui/buttons/queue.py:191
 #: pylav/extension/red/ui/buttons/queue.py:224
-msgid "Not connected to a voice channel"
-msgstr "ไม่ได้เชื่อมต่อกับช่องสัญญาณเสียง"
+msgid "Not connected to a voice channel."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/queue.py:289
-msgid "There's nothing in the Queue"
-msgstr "ไม่มีอะไรในคิว"
+msgid "There is nothing in the queue."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/queue.py:296
-msgid "Removed tracks from the queue"
-msgstr "ลบแทร็กออกจากคิว"
+msgid "Removed tracks from the queue."
+msgstr ""
 
 #: pylav/extension/red/ui/buttons/queue.py:323
 msgid "What do you want to enqueue?"

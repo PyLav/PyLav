@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:10\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:18\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -18,38 +18,30 @@ msgstr ""
 "Language: zh_TW\n"
 
 #: pylav/core/client.py:888 pylav/core/client.py:923
-msgid "No available nodes!"
-msgstr "沒有可用的節點！"
+msgid "There are no available nodes!"
+msgstr ""
 
-#: pylav/core/client.py:892 pylav/core/client.py:927
-msgid "No node with {feature} functionality available!"
-msgstr "沒有節點 {feature} 功能可用！"
+#: pylav/core/client.py:892 pylav/core/client.py:927 pylav/core/client.py:1235
+msgid "No node with {feature_name} functionality available!"
+msgstr ""
 
-#: pylav/core/client.py:1235
-msgid "No node with {query.requires_capability} functionality available!"
-msgstr "沒有節點 {query.requires_capability} 功能可用！"
+#: pylav/core/client.py:1653
+msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist."
+msgstr ""
 
-#: pylav/core/client.py:1651
-msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
-msgstr "要生成混音播放清單，需要視頻、使用者、頻道或播放清單ID"
-
-#: pylav/core/client.py:1656
-msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
-msgstr "要生成混音播放清單，需要視頻、使用者、頻道或播放清單ID。但是，您提供了多個"
+#: pylav/core/client.py:1658
+msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist. However, you provided multiple"
+msgstr ""
 
 #: pylav/core/context.py:258
-msgid "{} remaining. Type `more` to continue."
-msgstr "{} 剩餘。鍵入「更多」以繼續。"
+msgid "There is still 1 message remaining. Type `more` to continue."
+msgstr ""
 
-#: pylav/core/context.py:259
-msgid "There is still 1 message"
-msgstr "還有1條消息"
+#: pylav/core/context.py:260
+msgid "There are still {remaining_value} messages remaining. Type `more` to continue."
+msgstr ""
 
-#: pylav/core/context.py:261
-msgid "There are still {remaining} messages"
-msgstr "還有 {remaining} 則訊息"
-
-#: pylav/core/context.py:288
+#: pylav/core/context.py:290
 #, docstring
 msgid "Does nothing"
 msgstr "不做任何動作"

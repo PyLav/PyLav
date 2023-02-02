@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:18\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:18\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
@@ -26,30 +26,30 @@ msgid "hour"
 msgstr "ώρα"
 
 #: pylav/helpers/format/strings.py:58
-msgid "minute"
-msgstr "λεπτό"
-
-#: pylav/helpers/format/strings.py:59
-msgid "second"
-msgstr "δευτερόλεπτο"
-
-#: pylav/helpers/format/strings.py:60
-msgid "day"
-msgstr "ημέρα"
-
-#: pylav/helpers/format/strings.py:61
-msgid "days"
-msgstr "ημέρες"
-
-#: pylav/helpers/format/strings.py:62
 msgid "hours"
 msgstr "ώρες"
 
-#: pylav/helpers/format/strings.py:63
+#: pylav/helpers/format/strings.py:60
+msgid "minute"
+msgstr "λεπτό"
+
+#: pylav/helpers/format/strings.py:61
 msgid "minutes"
 msgstr "λεπτά"
+
+#: pylav/helpers/format/strings.py:63
+msgid "second"
+msgstr "δευτερόλεπτο"
 
 #: pylav/helpers/format/strings.py:64
 msgid "seconds"
 msgstr "δευτερόλεπτα"
+
+#: pylav/helpers/format/strings.py:66
+msgid "day"
+msgstr "ημέρα"
+
+#: pylav/helpers/format/strings.py:67
+msgid "days"
+msgstr "ημέρες"
 

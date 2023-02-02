@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:18\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:18\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -19,23 +19,23 @@ msgstr ""
 
 #: pylav/extension/red/ui/selectors/nodes.py:46
 #: pylav/extension/red/ui/selectors/playlist.py:73
-msgid "You are not authorized to interact with this option"
-msgstr "您無權與此選項進行交互"
+msgid "You are not authorized to interact with this option."
+msgstr ""
 
 #: pylav/extension/red/ui/selectors/nodes.py:53
-msgid "Disabling the following sources: {sources}"
-msgstr "禁用以下來源：{sources}"
+msgid "Disabling the following sources: {sources_list}."
+msgstr ""
 
-#: pylav/extension/red/ui/selectors/nodes.py:83
-msgid "Node not found"
-msgstr "找不到節點"
+#: pylav/extension/red/ui/selectors/nodes.py:85
+msgid "Node not found."
+msgstr ""
 
 #: pylav/extension/red/ui/selectors/playlist.py:41
 #: pylav/extension/red/ui/selectors/playlist.py:82
-msgid "Playlist not found"
-msgstr "找不到播放清單"
+msgid "Playlist not found."
+msgstr ""
 
 #: pylav/extension/red/ui/selectors/queue.py:96
-msgid "Track not found"
-msgstr "找不到歌曲"
+msgid "Track not found."
+msgstr ""
 

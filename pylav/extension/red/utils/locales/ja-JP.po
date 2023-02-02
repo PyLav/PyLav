@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:10\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:18\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -23,80 +23,70 @@ msgid "Shows the credits and translation details for the PyLav cogs and shared c
 msgstr "PyLav コグと共有コードのクレジットと翻訳の詳細を表示します。"
 
 #: pylav/extension/red/utils/required_methods.py:50
-msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
-"PyLav can be located in https://github.com/Drapersniper/PyLav\n"
-"PyLav-Cogs can be located in https://github.com/Drapersniper/PyLav-Cogs\n\n"
-"PyLav's support server can be found at https://discord.com/invite/Sjh2TSCYQB\n\n\n"
+msgid "PyLav was created by {library_author_name}.\n\n"
+"PyLav can be located in {library_url_value}\n"
+"PyLav-Cogs can be located in {second_library_url_value}\n\n"
+"PyLav's support server can be found at {support_server_url_value}\n\n\n"
 "You can help translate PyLav by contributing to our Crowdin project at:\n"
-"https://crowdin.com/project/pylav\n\n\n"
+"{crowdin_project_url_value}\n\n\n"
 "Contributors:\n"
-"- https://github.com/Drapersniper/PyLav/graphs/contributors\n"
-"- https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors\n"
+"- {project_contributors_url_value}\n"
+"- {second_project_contributors_url_value}\n"
 "If you wish to buy me a coffee for my work, you can do so at:\n"
-"https://www.buymeacoffee.com/draper or https://github.com/sponsors/Drapersniper"
-msgstr "PyLav は [Draper#6666](https://github.com/Drapersniper) によって作成されました。\n\n"
-"PyLavは https://github.com/Drapersniper/PyLav にあります\n"
-"PyLav-Cogsは https://github.com/Drapersniper/PyLav-Cogs にあります\n\n"
-"PyLavのサポートサーバーは https://discord.com/invite/Sjh2TSCYQB にあります。\n\n\n"
-"PyLav の翻訳を手伝うには、次の場所で Crowdin プロジェクトに貢献してください。\n"
-"https://crowdin.com/project/pylav\n\n\n"
-"貢献：\n"
-"- https://github.com/Drapersniper/PyLav/graphs/contributors\n"
-"- https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors\n"
-"私の仕事のためにコーヒーを買いたい場合は、次の場所で購入できます。\n"
-"https://www.buymeacoffee.com/draper または https://github.com/sponsors/Drapersniper"
+"{buymeacoffee_url_value} or {github_sponsors_url_value}"
+msgstr ""
 
-#: pylav/extension/red/utils/required_methods.py:76
+#: pylav/extension/red/utils/required_methods.py:86
 #, docstring
 msgid "Show the version of PyLav library"
 msgstr "PyLav ライブラリのバージョンを表示"
 
-#: pylav/extension/red/utils/required_methods.py:91
+#: pylav/extension/red/utils/required_methods.py:101
 msgid "Library"
 msgstr "ライブラリ"
 
-#: pylav/extension/red/utils/required_methods.py:92
+#: pylav/extension/red/utils/required_methods.py:102
 msgid "Version"
 msgstr "バージョン"
 
-#: pylav/extension/red/utils/required_methods.py:111
+#: pylav/extension/red/utils/required_methods.py:121
 #, docstring
 msgid "Sync the Bots slash commands"
 msgstr "ボットスラッシュコマンドを同期"
 
-#: pylav/extension/red/utils/required_methods.py:120
-msgid "Synced the bots slash commands"
-msgstr "ボットスラッシュコマンドを同期しました"
+#: pylav/extension/red/utils/required_methods.py:130
+msgid "I have synced my slash commands."
+msgstr ""
 
-#: pylav/extension/red/utils/required_methods.py:141
-msgid "This command requires an existing player to be run"
-msgstr "このコマンドを実行するには既存のプレイヤーが必要です"
+#: pylav/extension/red/utils/required_methods.py:151
+msgid "This command requires an existing player to be run."
+msgstr ""
 
-#: pylav/extension/red/utils/required_methods.py:150
-msgid "PyLavPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later"
-msgstr "バックエンドサービスが停止しているため、PyLavPlayerのコグは現在一時的に利用できません。後でもう一度お試しください"
+#: pylav/extension/red/utils/required_methods.py:160
+msgid "PyLavPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later."
+msgstr ""
 
-#: pylav/extension/red/utils/required_methods.py:154
-msgid "No Lavalink node currently available"
-msgstr "現在利用可能なLavalinkノードはありません"
+#: pylav/extension/red/utils/required_methods.py:164
+msgid "No Lavalink node currently available."
+msgstr ""
 
-#: pylav/extension/red/utils/required_methods.py:163
-msgid "PyLavPlayer is currently unable to process tracks belonging to {feature}"
-msgstr "現在 PyLavPlayer は {feature} に属するトラックを処理できません"
+#: pylav/extension/red/utils/required_methods.py:173
+msgid "PyLavPlayer is currently unable to process tracks belonging to {feature_name}."
+msgstr ""
 
-#: pylav/extension/red/utils/required_methods.py:166
-msgid "No Lavalink node currently available with feature {feature}"
-msgstr "機能 {feature} で現在利用可能な Lavalink ノードはありません"
-
-#: pylav/extension/red/utils/required_methods.py:177
-msgid "This command is not available in this channel. Please use {channel}"
-msgstr "このコマンドは、このチャネルでは使用できません。ご利用ください {channel}"
+#: pylav/extension/red/utils/required_methods.py:176
+msgid "No Lavalink node currently available with feature {feature_name}"
+msgstr ""
 
 #: pylav/extension/red/utils/required_methods.py:189
-msgid "This command requires you to be a DJ"
-msgstr "このコマンドはDJになる必要があります"
+msgid "This command is not available in this channel, please use {channel_name}."
+msgstr ""
 
-#: pylav/extension/red/utils/required_methods.py:227
-msgid "PyLav is not ready - Please try again shortly"
-msgstr "PyLav の準備ができていません - しばらくしてからもう一度お試しください"
+#: pylav/extension/red/utils/required_methods.py:203
+msgid "This command requires you to be a disc jockey."
+msgstr ""
+
+#: pylav/extension/red/utils/required_methods.py:241
+msgid "PyLav is not ready, please try again shortly"
+msgstr ""
 

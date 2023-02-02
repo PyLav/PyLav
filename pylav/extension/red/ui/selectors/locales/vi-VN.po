@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:10\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:18\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "MIME-Version: 1.0\n"
@@ -19,23 +19,23 @@ msgstr ""
 
 #: pylav/extension/red/ui/selectors/nodes.py:46
 #: pylav/extension/red/ui/selectors/playlist.py:73
-msgid "You are not authorized to interact with this option"
-msgstr "Bạn không được phép tương tác với tùy chọn này"
+msgid "You are not authorized to interact with this option."
+msgstr ""
 
 #: pylav/extension/red/ui/selectors/nodes.py:53
-msgid "Disabling the following sources: {sources}"
-msgstr "Vô hiệu hóa các nguồn sau: {sources}"
+msgid "Disabling the following sources: {sources_list}."
+msgstr ""
 
-#: pylav/extension/red/ui/selectors/nodes.py:83
-msgid "Node not found"
-msgstr "Nút không tìm thấy"
+#: pylav/extension/red/ui/selectors/nodes.py:85
+msgid "Node not found."
+msgstr ""
 
 #: pylav/extension/red/ui/selectors/playlist.py:41
 #: pylav/extension/red/ui/selectors/playlist.py:82
-msgid "Playlist not found"
-msgstr "Không tìm thấy danh sách phát"
+msgid "Playlist not found."
+msgstr ""
 
 #: pylav/extension/red/ui/selectors/queue.py:96
-msgid "Track not found"
-msgstr "Không tìm thấy bản nhạc"
+msgid "Track not found."
+msgstr ""
 

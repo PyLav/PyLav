@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:10\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:18\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "MIME-Version: 1.0\n"
@@ -18,38 +18,30 @@ msgstr ""
 "Language: uk_UA\n"
 
 #: pylav/core/client.py:888 pylav/core/client.py:923
-msgid "No available nodes!"
-msgstr "Немає доступних вузлів!"
+msgid "There are no available nodes!"
+msgstr ""
 
-#: pylav/core/client.py:892 pylav/core/client.py:927
-msgid "No node with {feature} functionality available!"
-msgstr "Немає вузла з функціональністю {feature}!"
+#: pylav/core/client.py:892 pylav/core/client.py:927 pylav/core/client.py:1235
+msgid "No node with {feature_name} functionality available!"
+msgstr ""
 
-#: pylav/core/client.py:1235
-msgid "No node with {query.requires_capability} functionality available!"
-msgstr "Немає вузла з функціональністю {query.requires_capability}!"
+#: pylav/core/client.py:1653
+msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist."
+msgstr ""
 
-#: pylav/core/client.py:1651
-msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
-msgstr "Для створення плейлиста з текстом, користувачем, каналом або ID плейлісту необхідно"
-
-#: pylav/core/client.py:1656
-msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
-msgstr "Для створення плейлиста з текстом відео, користувача, каналу або ID плейлісту необхідно. Однак, ви надали декілька варіантів відео"
+#: pylav/core/client.py:1658
+msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist. However, you provided multiple"
+msgstr ""
 
 #: pylav/core/context.py:258
-msgid "{} remaining. Type `more` to continue."
-msgstr "{} залишилось. Наберіть \"більше\", щоб продовжити."
+msgid "There is still 1 message remaining. Type `more` to continue."
+msgstr ""
 
-#: pylav/core/context.py:259
-msgid "There is still 1 message"
-msgstr "Залишається ще 1 повідомлення"
+#: pylav/core/context.py:260
+msgid "There are still {remaining_value} messages remaining. Type `more` to continue."
+msgstr ""
 
-#: pylav/core/context.py:261
-msgid "There are still {remaining} messages"
-msgstr "Ще {remaining} повідомлень є"
-
-#: pylav/core/context.py:288
+#: pylav/core/context.py:290
 #, docstring
 msgid "Does nothing"
 msgstr "Нічого не знайдено"

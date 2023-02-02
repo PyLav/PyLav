@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:10\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:18\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
@@ -18,22 +18,22 @@ msgstr ""
 "Language: pl_PL\n"
 
 #: pylav/storage/models/playlist.py:406
-msgid "(Global) {user_name}"
-msgstr "(Globalny) {user_name}"
+msgid "(Global) {user_name_value}"
+msgstr ""
 
 #: pylav/storage/models/playlist.py:410
-msgid "(Server) {guild_name}"
-msgstr "(Serwer) {guild_name}"
+msgid "(Server) {guild_name_value}"
+msgstr ""
 
 #: pylav/storage/models/playlist.py:412
-msgid "(Channel) {channel}"
-msgstr "(Kanał) {channel}"
-
-#: pylav/storage/models/playlist.py:418
-msgid "(User) {user_name}"
-msgstr "((Uwaga) {user_name}"
+msgid "(Channel) {channel_name_value}"
+msgstr ""
 
 #: pylav/storage/models/playlist.py:420
-msgid "(Invalid) {scope}"
-msgstr "(Nieważne) {scope}"
+msgid "(User) {user_name_value}"
+msgstr ""
+
+#: pylav/storage/models/playlist.py:422
+msgid "(Invalid) {scope_name_value}"
+msgstr ""
 

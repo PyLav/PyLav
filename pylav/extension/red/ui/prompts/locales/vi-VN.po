@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:10\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:18\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "MIME-Version: 1.0\n"
@@ -18,18 +18,18 @@ msgstr ""
 "Language: vi_VN\n"
 
 #: pylav/extension/red/ui/prompts/nodes.py:29
-msgid "Multiple nodes matched, pick the one which you meant"
-msgstr "Nhiều nút phù hợp, chọn nút mà bạn muốn"
+msgid "Multiple nodes matched, pick the one which you meant."
+msgstr ""
 
 #: pylav/extension/red/ui/prompts/nodes.py:36
-msgid "Pick a node"
-msgstr "Chọn một nút"
+msgid "Pick a node."
+msgstr ""
 
 #: pylav/extension/red/ui/prompts/playlists.py:31
-msgid "Multiple playlist matched, pick the one which you meant"
-msgstr "Nhiều danh sách phát phù hợp, chọn danh sách mà bạn muốn biết"
+msgid "Multiple playlist matched, pick the one which you meant."
+msgstr ""
 
 #: pylav/extension/red/ui/prompts/playlists.py:38
-msgid "Pick a playlist"
-msgstr "Chọn một playlist"
+msgid "Pick a playlist."
+msgstr ""
 

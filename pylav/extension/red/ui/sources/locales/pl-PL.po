@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:18\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:18\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
@@ -25,101 +25,103 @@ msgstr "Nazwa ustawień wstępnych"
 msgid "Author"
 msgstr "Autor"
 
-#: pylav/extension/red/ui/sources/generic.py:88
-msgid "Page {page_num}/{total_pages} | {num} {entries}"
-msgstr "Strona {page_num}/{total_pages} | {num} {entries}"
+#: pylav/extension/red/ui/sources/equalizer.py:39
+msgid "Bundled with PyLav"
+msgstr ""
 
-#: pylav/extension/red/ui/sources/generic.py:92
-msgid "entries"
-msgstr "Wpisy"
+#: pylav/extension/red/ui/sources/generic.py:94
+#: pylav/extension/red/ui/sources/nodes.py:56
+msgid "Page {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} entries"
+msgstr ""
 
-#: pylav/extension/red/ui/sources/generic.py:92
-msgid "entry"
-msgstr "wpis"
+#: pylav/extension/red/ui/sources/generic.py:102
+#: pylav/extension/red/ui/sources/nodes.py:64
+msgid "Page 1 / 1 | 1 entry"
+msgstr ""
 
-#: pylav/extension/red/ui/sources/nodes.py:50
-msgid "Page {page_num}/{total_pages} | {num} nodes"
-msgstr "Strona {page_num}/{total_pages} | {num} Węzłów"
+#: pylav/extension/red/ui/sources/generic.py:104
+#: pylav/extension/red/ui/sources/nodes.py:66
+msgid "Page 1 / 1 | 0 entries"
+msgstr ""
 
-#: pylav/extension/red/ui/sources/nodes.py:94
-#: pylav/extension/red/ui/sources/nodes.py:247
+#: pylav/extension/red/ui/sources/nodes.py:106
+#: pylav/extension/red/ui/sources/nodes.py:260
 msgid "No"
 msgstr "Nie"
 
-#: pylav/extension/red/ui/sources/nodes.py:95
-#: pylav/extension/red/ui/sources/nodes.py:248
+#: pylav/extension/red/ui/sources/nodes.py:107
+#: pylav/extension/red/ui/sources/nodes.py:261
 msgid "Yes"
 msgstr "Tak"
 
-#: pylav/extension/red/ui/sources/nodes.py:141
-#: pylav/extension/red/ui/sources/nodes.py:294
+#: pylav/extension/red/ui/sources/nodes.py:153
+#: pylav/extension/red/ui/sources/nodes.py:307
 msgid "None / Unknown"
 msgstr "Brak / Nieznane"
 
-#: pylav/extension/red/ui/sources/nodes.py:143
-#: pylav/extension/red/ui/sources/nodes.py:296
+#: pylav/extension/red/ui/sources/nodes.py:155
+#: pylav/extension/red/ui/sources/nodes.py:309
 msgid "Property"
 msgstr "Własność"
 
-#: pylav/extension/red/ui/sources/nodes.py:144
-#: pylav/extension/red/ui/sources/nodes.py:297
+#: pylav/extension/red/ui/sources/nodes.py:156
+#: pylav/extension/red/ui/sources/nodes.py:310
 msgid "Value"
 msgstr "Wartość"
 
-#: pylav/extension/red/ui/sources/nodes.py:145
-#: pylav/extension/red/ui/sources/nodes.py:298
+#: pylav/extension/red/ui/sources/nodes.py:157
 msgid "Latitude: {lat}\n"
 "Longitude: {lon}"
 msgstr "Szerokość: {lat}\n"
 "Długość geograficzna: {lon}"
 
-#: pylav/extension/red/ui/sources/nodes.py:151
-#: pylav/extension/red/ui/sources/nodes.py:304
+#: pylav/extension/red/ui/sources/nodes.py:163
+#: pylav/extension/red/ui/sources/nodes.py:317
 msgid "Region"
 msgstr "Region"
 
-#: pylav/extension/red/ui/sources/nodes.py:151
-#: pylav/extension/red/ui/sources/nodes.py:304
+#: pylav/extension/red/ui/sources/nodes.py:163
+#: pylav/extension/red/ui/sources/nodes.py:317
 msgid "N/A"
 msgstr "Nie dotyczy."
 
-#: pylav/extension/red/ui/sources/nodes.py:152
-#: pylav/extension/red/ui/sources/nodes.py:305
+#: pylav/extension/red/ui/sources/nodes.py:164
+#: pylav/extension/red/ui/sources/nodes.py:318
 msgid "Coordinates"
 msgstr "Współrzędne"
 
-#: pylav/extension/red/ui/sources/nodes.py:153
-#: pylav/extension/red/ui/sources/nodes.py:306
+#: pylav/extension/red/ui/sources/nodes.py:165
+#: pylav/extension/red/ui/sources/nodes.py:319
 msgid "Host"
 msgstr "Gospodarz"
 
-#: pylav/extension/red/ui/sources/nodes.py:154
-#: pylav/extension/red/ui/sources/nodes.py:307
+#: pylav/extension/red/ui/sources/nodes.py:166
+#: pylav/extension/red/ui/sources/nodes.py:320
 msgid "Port"
 msgstr "Port"
 
-#: pylav/extension/red/ui/sources/nodes.py:155
-#: pylav/extension/red/ui/sources/nodes.py:308
+#: pylav/extension/red/ui/sources/nodes.py:167
+#: pylav/extension/red/ui/sources/nodes.py:321
 msgid "Password"
 msgstr "Hasło"
 
-#: pylav/extension/red/ui/sources/nodes.py:158
-#: pylav/extension/red/ui/sources/nodes.py:311
+#: pylav/extension/red/ui/sources/nodes.py:170
+#: pylav/extension/red/ui/sources/nodes.py:324
 msgid "SSL"
 msgstr "Protokół SSL"
 
-#: pylav/extension/red/ui/sources/nodes.py:159
-#: pylav/extension/red/ui/sources/nodes.py:312
+#: pylav/extension/red/ui/sources/nodes.py:171
+#: pylav/extension/red/ui/sources/nodes.py:325
 msgid "Available"
 msgstr "Dostępny"
 
-#: pylav/extension/red/ui/sources/nodes.py:160
-#: pylav/extension/red/ui/sources/nodes.py:313
+#: pylav/extension/red/ui/sources/nodes.py:172
+#: pylav/extension/red/ui/sources/nodes.py:326
 msgid "Search Only"
 msgstr "Tylko wyszukiwanie"
 
-#: pylav/extension/red/ui/sources/nodes.py:161
-#: pylav/extension/red/ui/sources/nodes.py:314
+#: pylav/extension/red/ui/sources/nodes.py:173
+#: pylav/extension/red/ui/sources/nodes.py:327
 msgid "Players\n"
 "Connected\n"
 "Active"
@@ -127,18 +129,18 @@ msgstr "Gracze\n"
 "połączeni\n"
 "Aktywni"
 
-#: pylav/extension/red/ui/sources/nodes.py:165
-#: pylav/extension/red/ui/sources/nodes.py:318
+#: pylav/extension/red/ui/sources/nodes.py:177
+#: pylav/extension/red/ui/sources/nodes.py:331
 msgid "Frames Lost"
 msgstr "Utracone klatki"
 
-#: pylav/extension/red/ui/sources/nodes.py:170
-#: pylav/extension/red/ui/sources/nodes.py:323
+#: pylav/extension/red/ui/sources/nodes.py:182
+#: pylav/extension/red/ui/sources/nodes.py:336
 msgid "Uptime"
 msgstr "Czas pracy"
 
-#: pylav/extension/red/ui/sources/nodes.py:171
-#: pylav/extension/red/ui/sources/nodes.py:324
+#: pylav/extension/red/ui/sources/nodes.py:183
+#: pylav/extension/red/ui/sources/nodes.py:337
 msgid "CPU Load\n"
 "Lavalink\n"
 "System"
@@ -146,13 +148,13 @@ msgstr "Obciążenie procesora\n"
 "Lavalink\n"
 "System"
 
-#: pylav/extension/red/ui/sources/nodes.py:174
-#: pylav/extension/red/ui/sources/nodes.py:327
+#: pylav/extension/red/ui/sources/nodes.py:186
+#: pylav/extension/red/ui/sources/nodes.py:340
 msgid "Penalty"
 msgstr "Kara"
 
-#: pylav/extension/red/ui/sources/nodes.py:175
-#: pylav/extension/red/ui/sources/nodes.py:328
+#: pylav/extension/red/ui/sources/nodes.py:187
+#: pylav/extension/red/ui/sources/nodes.py:341
 msgid "Memory\n"
 "Used\n"
 "Free\n"
@@ -164,29 +166,43 @@ msgstr "Pamięć\n"
 "Przydzielona\n"
 "Zastrzeżona"
 
-#: pylav/extension/red/ui/sources/nodes.py:178
-#: pylav/extension/red/ui/sources/nodes.py:331
+#: pylav/extension/red/ui/sources/nodes.py:190
+#: pylav/extension/red/ui/sources/nodes.py:344
 msgid "Features"
 msgstr "Funkcje"
 
-#: pylav/extension/red/ui/sources/nodes.py:190
-#: pylav/extension/red/ui/sources/nodes.py:343
-msgid "Page {page_num}/{total_pages} | {num} {plural}"
-msgstr "Strona {page_num}/{total_pages} | {num} {plural}"
+#: pylav/extension/red/ui/sources/nodes.py:203
+msgid "Page {page_num_value}/{total_pages_value} | {num_value} {plural_value}"
+msgstr ""
 
-#: pylav/extension/red/ui/sources/nodes.py:194
-#: pylav/extension/red/ui/sources/nodes.py:347
+#: pylav/extension/red/ui/sources/nodes.py:207
 msgid "nodes"
 msgstr "Węzłów"
 
-#: pylav/extension/red/ui/sources/nodes.py:194
-#: pylav/extension/red/ui/sources/nodes.py:347
+#: pylav/extension/red/ui/sources/nodes.py:207
 msgid "node"
 msgstr "węzeł"
 
+#: pylav/extension/red/ui/sources/nodes.py:311
+msgid "Latitude: {lat_value}\n"
+"Longitude: {lon_value}"
+msgstr ""
+
+#: pylav/extension/red/ui/sources/nodes.py:362
+msgid "Page {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} nodes"
+msgstr ""
+
+#: pylav/extension/red/ui/sources/nodes.py:370
+msgid "Page 1 / 1 | 1 node"
+msgstr ""
+
+#: pylav/extension/red/ui/sources/nodes.py:372
+msgid "Page 1 / 1 | 0 nodes"
+msgstr ""
+
 #: pylav/extension/red/ui/sources/player.py:64
-msgid "Nothing playing"
-msgstr "Nic nie gra"
+msgid "I am not currently playing anything on this server."
+msgstr ""
 
 #: pylav/extension/red/ui/sources/player.py:76
 msgid "Server Owner"
@@ -197,85 +213,111 @@ msgid "Connected"
 msgstr "Połączono"
 
 #: pylav/extension/red/ui/sources/player.py:78
-msgid "Users in VC"
-msgstr "Użytkownicy w VC"
+msgid "Users in Voice Channel"
+msgstr ""
 
 #: pylav/extension/red/ui/sources/player.py:80
 msgid "Queue Length"
 msgstr "Długość kolejki"
 
-#: pylav/extension/red/ui/sources/player.py:86
-msgid "Queue History Length"
-msgstr "Długość historii kolejki"
-
+#: pylav/extension/red/ui/sources/player.py:82
 #: pylav/extension/red/ui/sources/player.py:89
 msgid "track"
 msgstr "śledzić"
 
+#: pylav/extension/red/ui/sources/player.py:82
 #: pylav/extension/red/ui/sources/player.py:89
 msgid "tracks"
 msgstr "Utworów"
 
-#: pylav/extension/red/ui/sources/player.py:100
-msgid "Page {page_num}/{total_pages} | Playing in {playing} {server_translation}"
-msgstr "Strona {page_num}/{total_pages} | Gra w {playing} {server_translation}"
+#: pylav/extension/red/ui/sources/player.py:86
+msgid "Queue History Length"
+msgstr "Długość historii kolejki"
 
-#: pylav/extension/red/ui/sources/player.py:104
-msgid "server"
-msgstr "serwer"
+#: pylav/extension/red/ui/sources/player.py:105
+msgid "Page {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} servers"
+msgstr ""
 
-#: pylav/extension/red/ui/sources/player.py:104
-msgid "servers"
-msgstr "serwery"
+#: pylav/extension/red/ui/sources/player.py:113
+msgid "Page 1 / 1 | 1 server"
+msgstr ""
 
-#: pylav/extension/red/ui/sources/playlist.py:52
-#: pylav/extension/red/ui/sources/playlist.py:172
-msgid "Page {page_num}/{total_pages} | {num} playlists"
-msgstr "Strona {page_num}/{total_pages} | {num} playlist"
+#: pylav/extension/red/ui/sources/player.py:115
+msgid "Page 1 / 1 | 0 servers"
+msgstr ""
 
-#: pylav/extension/red/ui/sources/playlist.py:118
+#: pylav/extension/red/ui/sources/playlist.py:58
+#: pylav/extension/red/ui/sources/playlist.py:207
+msgid "Page {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} playlists"
+msgstr ""
+
+#: pylav/extension/red/ui/sources/playlist.py:66
+#: pylav/extension/red/ui/sources/playlist.py:215
+msgid "Page 1 / 1 | 1 playlist"
+msgstr ""
+
+#: pylav/extension/red/ui/sources/playlist.py:68
+#: pylav/extension/red/ui/sources/playlist.py:217
+msgid "Page 1 / 1 | 0 playlists"
+msgstr ""
+
+#: pylav/extension/red/ui/sources/playlist.py:131
 msgid "Tracks in"
 msgstr "Ścieżki w"
 
-#: pylav/extension/red/ui/sources/playlist.py:123
-msgid "Page {page_num}/{total_pages} | {num_tracks} tracks\n"
-msgstr "Strona {page_num}/{total_pages} | {num_tracks} utwory\n"
+#: pylav/extension/red/ui/sources/playlist.py:143
+msgid "Page {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} tracks"
+msgstr ""
 
-#: pylav/extension/red/ui/sources/playlist.py:152
+#: pylav/extension/red/ui/sources/playlist.py:151
+msgid "Page 1 / 1 | 1 track"
+msgstr ""
+
+#: pylav/extension/red/ui/sources/playlist.py:153
+msgid "Page 1 / 1 | 0 tracks"
+msgstr ""
+
+#: pylav/extension/red/ui/sources/playlist.py:181
 msgid "Unknown"
 msgstr "Nieznane"
 
-#: pylav/extension/red/ui/sources/playlist.py:157
-msgid "ID: {id}"
-msgstr "ID: {id}"
+#: pylav/extension/red/ui/sources/playlist.py:186
+msgid "Identifier: {id_value}"
+msgstr ""
 
-#: pylav/extension/red/ui/sources/playlist.py:158
-msgid "Tracks: {num}"
-msgstr "Ścieżki: {num}"
+#: pylav/extension/red/ui/sources/playlist.py:187
+msgid "Tracks: {num_value}"
+msgstr ""
 
-#: pylav/extension/red/ui/sources/playlist.py:159
-msgid "Author: {name}"
-msgstr "Autor: {name}"
+#: pylav/extension/red/ui/sources/playlist.py:188
+msgid "Author: {name_value}"
+msgstr ""
 
-#: pylav/extension/red/ui/sources/playlist.py:160
-msgid "Scope: {scope}\n"
-msgstr "Zakres: {scope}\n"
+#: pylav/extension/red/ui/sources/playlist.py:189
+msgid "Scope: {scope_value}\n"
+msgstr ""
 
-#: pylav/extension/red/ui/sources/playlist.py:168
+#: pylav/extension/red/ui/sources/playlist.py:197
 msgid "Playlists you can access in this server:"
 msgstr "Listy odtwarzania dostępne na tym serwerze:"
 
 #: pylav/extension/red/ui/sources/queue.py:96
-#: pylav/extension/red/ui/sources/queue.py:142
-msgid "No active player found in server"
-msgstr "Nie znaleziono aktywnego gracza na serwerze"
+msgid "I am not currently playing anything in this server."
+msgstr ""
 
 #: pylav/extension/red/ui/sources/queue.py:110
-msgid "There's nothing in recently played"
-msgstr "Niedawno nie ma nic w grze"
+msgid "There is nothing in recently played."
+msgstr ""
 
 #: pylav/extension/red/ui/sources/queue.py:112
+msgid "There is nothing currently being played"
+msgstr ""
+
+#: pylav/extension/red/ui/sources/queue.py:142
+msgid "No active player found in server."
+msgstr ""
+
 #: pylav/extension/red/ui/sources/queue.py:155
-msgid "There's nothing currently being played"
-msgstr "Obecnie nic nie jest odtwarzane"
+msgid "There is nothing currently being played."
+msgstr ""
 

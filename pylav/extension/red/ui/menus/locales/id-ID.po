@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:10\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:18\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -21,113 +21,116 @@ msgstr ""
 #: pylav/extension/red/ui/menus/nodes.py:199
 #: pylav/extension/red/ui/menus/playlist.py:261
 #: pylav/extension/red/ui/menus/playlist.py:480
-msgid "You are not authorized to interact with this"
-msgstr "Anda tidak berwenang untuk berinteraksi dengan ini"
+msgid "You are not authorized to interact with this."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/nodes.py:60
-msgid "Enter the domain or IP address of the host"
-msgstr "Masukkan domain atau alamat IP host"
+msgid "Enter the domain or IP address of the host."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/nodes.py:61
-#: pylav/extension/red/ui/menus/nodes.py:499
+#: pylav/extension/red/ui/menus/nodes.py:503
 msgid "Host"
 msgstr "Tuan rumah"
 
 #: pylav/extension/red/ui/menus/nodes.py:68
-msgid "Enter the host port to connect to"
-msgstr "Masukkan port host untuk disambungkan"
+msgid "Enter the host port to connect to."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/nodes.py:69
-#: pylav/extension/red/ui/menus/nodes.py:507
+#: pylav/extension/red/ui/menus/nodes.py:511
 msgid "Port"
 msgstr "Pelabuhan"
 
 #: pylav/extension/red/ui/menus/nodes.py:76
-msgid "Enter the node's password"
-msgstr "Masukkan kata sandi node"
+msgid "Enter the node password."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/nodes.py:77
-#: pylav/extension/red/ui/menus/nodes.py:515
+#: pylav/extension/red/ui/menus/nodes.py:519
 msgid "Password"
 msgstr "Kata sandi"
 
 #: pylav/extension/red/ui/menus/nodes.py:84
-msgid "Enter an easy to know name for the node"
-msgstr "Masukkan nama yang mudah diketahui untuk node"
+msgid "Enter an easy to reference name for the node."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/nodes.py:85
-#: pylav/extension/red/ui/menus/nodes.py:523
+#: pylav/extension/red/ui/menus/nodes.py:527
 msgid "Name"
 msgstr "Nama"
 
 #: pylav/extension/red/ui/menus/nodes.py:92
-msgid "Enter a timeout in seconds"
-msgstr "Masukkan batas waktu dalam hitungan detik"
+msgid "Enter a timeout in seconds."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/nodes.py:93
-#: pylav/extension/red/ui/menus/nodes.py:531
+#: pylav/extension/red/ui/menus/nodes.py:535
 msgid "Timeout"
 msgstr "Timeout"
 
 #: pylav/extension/red/ui/menus/nodes.py:109
-#: pylav/extension/red/ui/menus/nodes.py:560
-msgid "Source to disable"
-msgstr "Sumber untuk menonaktifkan"
+#: pylav/extension/red/ui/menus/nodes.py:564
+msgid "Source to disable."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/nodes.py:222
-#: pylav/extension/red/ui/menus/nodes.py:671
-msgid "Name set to {name}"
-msgstr "Nama diatur ke {name}"
+#: pylav/extension/red/ui/menus/nodes.py:675
+msgid "Name set to {node_name_value}"
+msgstr ""
 
 #: pylav/extension/red/ui/menus/nodes.py:235
-#: pylav/extension/red/ui/menus/nodes.py:684
-msgid "Password set to {password}"
-msgstr "Kata sandi diatur ke {password}"
+#: pylav/extension/red/ui/menus/nodes.py:688
+msgid "Password set to {node_password_value}"
+msgstr ""
 
-#: pylav/extension/red/ui/menus/nodes.py:253
-#: pylav/extension/red/ui/menus/nodes.py:702
-msgid "Host set to {host}"
-msgstr "Host diatur ke {host}"
+#: pylav/extension/red/ui/menus/nodes.py:255
+#: pylav/extension/red/ui/menus/nodes.py:708
+msgid "Host set to {node_host_value}"
+msgstr ""
 
-#: pylav/extension/red/ui/menus/nodes.py:270
-#: pylav/extension/red/ui/menus/nodes.py:719
-msgid "Invalid port"
-msgstr "Port tidak valid"
+#: pylav/extension/red/ui/menus/nodes.py:272
+#: pylav/extension/red/ui/menus/nodes.py:725
+msgid "Invalid port."
+msgstr ""
 
-#: pylav/extension/red/ui/menus/nodes.py:278
-#: pylav/extension/red/ui/menus/nodes.py:727
-msgid "Port set to {port}"
-msgstr "Port diatur ke {port}"
+#: pylav/extension/red/ui/menus/nodes.py:280
+#: pylav/extension/red/ui/menus/nodes.py:733
+msgid "Port set to {node_port_value}."
+msgstr ""
 
-#: pylav/extension/red/ui/menus/nodes.py:295
-#: pylav/extension/red/ui/menus/nodes.py:744
-msgid "Invalid timeout, it must be a number in seconds"
-msgstr "Batas waktu tidak valid, itu harus berupa angka dalam detik"
+#: pylav/extension/red/ui/menus/nodes.py:297
+#: pylav/extension/red/ui/menus/nodes.py:750
+msgid "Invalid timeout, it must be a number in seconds."
+msgstr ""
 
-#: pylav/extension/red/ui/menus/nodes.py:303
-#: pylav/extension/red/ui/menus/nodes.py:752
-msgid "Timeout set to {timeout} seconds"
-msgstr "Batas waktu diatur ke {timeout} Detik"
+#: pylav/extension/red/ui/menus/nodes.py:305
+msgid "Timeout set to {node_timeout_value} seconds"
+msgstr ""
 
-#: pylav/extension/red/ui/menus/nodes.py:498
-msgid "Change the domain or IP address of the host"
-msgstr "Mengubah domain atau alamat IP host"
+#: pylav/extension/red/ui/menus/nodes.py:502
+msgid "Change the domain or IP address of the host."
+msgstr ""
 
-#: pylav/extension/red/ui/menus/nodes.py:506
-msgid "Change the host port to connect to"
-msgstr "Ubah port host untuk disambungkan"
+#: pylav/extension/red/ui/menus/nodes.py:510
+msgid "Change the host port to connect to."
+msgstr ""
 
-#: pylav/extension/red/ui/menus/nodes.py:514
-msgid "Change the node's password"
-msgstr "Ubah kata sandi node"
+#: pylav/extension/red/ui/menus/nodes.py:518
+msgid "Change the node password."
+msgstr ""
 
-#: pylav/extension/red/ui/menus/nodes.py:522
-msgid "Change the name of this node"
-msgstr "Mengubah nama node ini"
+#: pylav/extension/red/ui/menus/nodes.py:526
+msgid "Change the name of this node."
+msgstr ""
 
-#: pylav/extension/red/ui/menus/nodes.py:530
-msgid "Enter the new timeout for this node"
-msgstr "Masukkan batas waktu baru untuk node ini"
+#: pylav/extension/red/ui/menus/nodes.py:534
+msgid "Enter the new timeout for this node."
+msgstr ""
+
+#: pylav/extension/red/ui/menus/nodes.py:758
+msgid "Timeout set to {node_timeout_value} seconds."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/player.py:95
 msgid "selected"
@@ -142,13 +145,12 @@ msgid "all"
 msgstr "semua"
 
 #: pylav/extension/red/ui/menus/player.py:208
-msgid "Not connected anywhere"
-msgstr "Tidak terhubung di mana pun"
+msgid "Not connected in any server."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/playlist.py:187
-#: pylav/extension/red/ui/menus/playlist.py:322
-msgid "Please enter the playlist URL"
-msgstr "Silakan masukkan URL daftar putar"
+msgid "Please enter the playlist URL."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/playlist.py:188
 #: pylav/extension/red/ui/menus/playlist.py:323
@@ -156,21 +158,25 @@ msgid "Playlist URL"
 msgstr "URL daftar putar"
 
 #: pylav/extension/red/ui/menus/playlist.py:194
-msgid "Please enter the playlist name"
-msgstr "Silakan masukkan nama daftar putar"
+msgid "Please enter the playlist name."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/playlist.py:195
 #: pylav/extension/red/ui/menus/playlist.py:330
 msgid "Playlist Name"
 msgstr "Nama Daftar Putar"
 
+#: pylav/extension/red/ui/menus/playlist.py:322
+msgid "Please enter the new URL for this playlist."
+msgstr ""
+
 #: pylav/extension/red/ui/menus/playlist.py:329
-msgid "Please enter the new playlist name"
-msgstr "Silakan masukkan nama daftar putar baru"
+msgid "Please enter the new name for this playlist."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/playlist.py:336
-msgid "What query to add to the playlist"
-msgstr "Kueri apa yang harus ditambahkan ke daftar putar"
+msgid "What query to add to this playlist."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/playlist.py:337
 #: pylav/extension/red/ui/menus/playlist.py:345
@@ -178,14 +184,14 @@ msgid "Query"
 msgstr "Kueri"
 
 #: pylav/extension/red/ui/menus/playlist.py:344
-msgid "What query to remove from the playlist"
-msgstr "Kueri apa yang harus dihapus dari daftar putar"
+msgid "What query to remove from this playlist."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/queue.py:458
-msgid "Select Track To Remove"
-msgstr "Pilih Lacak Untuk Menghapus"
+msgid "Select Track To Remove."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/queue.py:460
-msgid "Select Track To Play Now"
-msgstr "Pilih Lacak Untuk Diputar Sekarang"
+msgid "Select Track To Play Now."
+msgstr ""
 

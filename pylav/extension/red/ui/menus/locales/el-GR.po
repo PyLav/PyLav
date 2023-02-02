@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:18\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:18\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
@@ -21,113 +21,116 @@ msgstr ""
 #: pylav/extension/red/ui/menus/nodes.py:199
 #: pylav/extension/red/ui/menus/playlist.py:261
 #: pylav/extension/red/ui/menus/playlist.py:480
-msgid "You are not authorized to interact with this"
-msgstr "Δεν είστε εξουσιοδοτημένοι να αλληλεπιδράσετε με αυτό"
+msgid "You are not authorized to interact with this."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/nodes.py:60
-msgid "Enter the domain or IP address of the host"
-msgstr "Εισάγετε τον τομέα ή τη διεύθυνση IP του κεντρικού υπολογιστή"
+msgid "Enter the domain or IP address of the host."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/nodes.py:61
-#: pylav/extension/red/ui/menus/nodes.py:499
+#: pylav/extension/red/ui/menus/nodes.py:503
 msgid "Host"
 msgstr "Κεντρικός υπολογιστής"
 
 #: pylav/extension/red/ui/menus/nodes.py:68
-msgid "Enter the host port to connect to"
-msgstr "Εισάγετε τη θύρα κεντρικού υπολογιστή με την οποία θα συνδεθείτε"
+msgid "Enter the host port to connect to."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/nodes.py:69
-#: pylav/extension/red/ui/menus/nodes.py:507
+#: pylav/extension/red/ui/menus/nodes.py:511
 msgid "Port"
 msgstr "Λιμάνι"
 
 #: pylav/extension/red/ui/menus/nodes.py:76
-msgid "Enter the node's password"
-msgstr "Εισάγετε τον κωδικό πρόσβασης του κόμβου"
+msgid "Enter the node password."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/nodes.py:77
-#: pylav/extension/red/ui/menus/nodes.py:515
+#: pylav/extension/red/ui/menus/nodes.py:519
 msgid "Password"
 msgstr "Κωδικός πρόσβασης"
 
 #: pylav/extension/red/ui/menus/nodes.py:84
-msgid "Enter an easy to know name for the node"
-msgstr "Εισάγετε ένα εύκολο να γνωρίζετε όνομα για τον κόμβο"
+msgid "Enter an easy to reference name for the node."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/nodes.py:85
-#: pylav/extension/red/ui/menus/nodes.py:523
+#: pylav/extension/red/ui/menus/nodes.py:527
 msgid "Name"
 msgstr "Όνομα"
 
 #: pylav/extension/red/ui/menus/nodes.py:92
-msgid "Enter a timeout in seconds"
-msgstr "Εισάγετε ένα χρονικό όριο σε δευτερόλεπτα"
+msgid "Enter a timeout in seconds."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/nodes.py:93
-#: pylav/extension/red/ui/menus/nodes.py:531
+#: pylav/extension/red/ui/menus/nodes.py:535
 msgid "Timeout"
 msgstr "Χρονικό όριο"
 
 #: pylav/extension/red/ui/menus/nodes.py:109
-#: pylav/extension/red/ui/menus/nodes.py:560
-msgid "Source to disable"
-msgstr "Πηγή για απενεργοποίηση"
+#: pylav/extension/red/ui/menus/nodes.py:564
+msgid "Source to disable."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/nodes.py:222
-#: pylav/extension/red/ui/menus/nodes.py:671
-msgid "Name set to {name}"
-msgstr "Το όνομα ορίστηκε σε {name}"
+#: pylav/extension/red/ui/menus/nodes.py:675
+msgid "Name set to {node_name_value}"
+msgstr ""
 
 #: pylav/extension/red/ui/menus/nodes.py:235
-#: pylav/extension/red/ui/menus/nodes.py:684
-msgid "Password set to {password}"
-msgstr "Ο κωδικός πρόσβασης ορίστηκε σε {password}"
+#: pylav/extension/red/ui/menus/nodes.py:688
+msgid "Password set to {node_password_value}"
+msgstr ""
 
-#: pylav/extension/red/ui/menus/nodes.py:253
-#: pylav/extension/red/ui/menus/nodes.py:702
-msgid "Host set to {host}"
-msgstr "Ο υπολογιστής ορίστηκε σε {host}"
+#: pylav/extension/red/ui/menus/nodes.py:255
+#: pylav/extension/red/ui/menus/nodes.py:708
+msgid "Host set to {node_host_value}"
+msgstr ""
 
-#: pylav/extension/red/ui/menus/nodes.py:270
-#: pylav/extension/red/ui/menus/nodes.py:719
-msgid "Invalid port"
-msgstr "Μη έγκυρη θύρα"
+#: pylav/extension/red/ui/menus/nodes.py:272
+#: pylav/extension/red/ui/menus/nodes.py:725
+msgid "Invalid port."
+msgstr ""
 
-#: pylav/extension/red/ui/menus/nodes.py:278
-#: pylav/extension/red/ui/menus/nodes.py:727
-msgid "Port set to {port}"
-msgstr "Η θύρα ορίστηκε σε {port}"
+#: pylav/extension/red/ui/menus/nodes.py:280
+#: pylav/extension/red/ui/menus/nodes.py:733
+msgid "Port set to {node_port_value}."
+msgstr ""
 
-#: pylav/extension/red/ui/menus/nodes.py:295
-#: pylav/extension/red/ui/menus/nodes.py:744
-msgid "Invalid timeout, it must be a number in seconds"
-msgstr "Μη έγκυρο χρονικό όριο, πρέπει να είναι αριθμός σε δευτερόλεπτα"
+#: pylav/extension/red/ui/menus/nodes.py:297
+#: pylav/extension/red/ui/menus/nodes.py:750
+msgid "Invalid timeout, it must be a number in seconds."
+msgstr ""
 
-#: pylav/extension/red/ui/menus/nodes.py:303
-#: pylav/extension/red/ui/menus/nodes.py:752
-msgid "Timeout set to {timeout} seconds"
-msgstr "Το χρονικό όριο ορίστηκε σε {timeout} δευτερόλεπτα"
+#: pylav/extension/red/ui/menus/nodes.py:305
+msgid "Timeout set to {node_timeout_value} seconds"
+msgstr ""
 
-#: pylav/extension/red/ui/menus/nodes.py:498
-msgid "Change the domain or IP address of the host"
-msgstr "Αλλάξτε τον τομέα ή τη διεύθυνση IP του κεντρικού υπολογιστή"
+#: pylav/extension/red/ui/menus/nodes.py:502
+msgid "Change the domain or IP address of the host."
+msgstr ""
 
-#: pylav/extension/red/ui/menus/nodes.py:506
-msgid "Change the host port to connect to"
-msgstr "Αλλάξτε τη θύρα κεντρικού υπολογιστή για να συνδεθείτε"
+#: pylav/extension/red/ui/menus/nodes.py:510
+msgid "Change the host port to connect to."
+msgstr ""
 
-#: pylav/extension/red/ui/menus/nodes.py:514
-msgid "Change the node's password"
-msgstr "Αλλαγή του κωδικού πρόσβασης του κόμβου"
+#: pylav/extension/red/ui/menus/nodes.py:518
+msgid "Change the node password."
+msgstr ""
 
-#: pylav/extension/red/ui/menus/nodes.py:522
-msgid "Change the name of this node"
-msgstr "Αλλάξτε το όνομα αυτού του κόμβου"
+#: pylav/extension/red/ui/menus/nodes.py:526
+msgid "Change the name of this node."
+msgstr ""
 
-#: pylav/extension/red/ui/menus/nodes.py:530
-msgid "Enter the new timeout for this node"
-msgstr "Εισάγετε το νέο χρονικό όριο για αυτόν τον κόμβο"
+#: pylav/extension/red/ui/menus/nodes.py:534
+msgid "Enter the new timeout for this node."
+msgstr ""
+
+#: pylav/extension/red/ui/menus/nodes.py:758
+msgid "Timeout set to {node_timeout_value} seconds."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/player.py:95
 msgid "selected"
@@ -142,13 +145,12 @@ msgid "all"
 msgstr "όλα"
 
 #: pylav/extension/red/ui/menus/player.py:208
-msgid "Not connected anywhere"
-msgstr "Δεν υπάρχει σύνδεση οπουδήποτε"
+msgid "Not connected in any server."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/playlist.py:187
-#: pylav/extension/red/ui/menus/playlist.py:322
-msgid "Please enter the playlist URL"
-msgstr "Παρακαλώ εισάγετε το URL της λίστας αναπαραγωγής"
+msgid "Please enter the playlist URL."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/playlist.py:188
 #: pylav/extension/red/ui/menus/playlist.py:323
@@ -156,21 +158,25 @@ msgid "Playlist URL"
 msgstr "Διεύθυνση Url Λίστας Αναπαραγωγής"
 
 #: pylav/extension/red/ui/menus/playlist.py:194
-msgid "Please enter the playlist name"
-msgstr "Παρακαλώ εισάγετε το όνομα της λίστας αναπαραγωγής"
+msgid "Please enter the playlist name."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/playlist.py:195
 #: pylav/extension/red/ui/menus/playlist.py:330
 msgid "Playlist Name"
 msgstr "Όνομα Λίστας Αναπαραγωγής"
 
+#: pylav/extension/red/ui/menus/playlist.py:322
+msgid "Please enter the new URL for this playlist."
+msgstr ""
+
 #: pylav/extension/red/ui/menus/playlist.py:329
-msgid "Please enter the new playlist name"
-msgstr "Παρακαλώ εισάγετε το νέο όνομα της λίστας αναπαραγωγής"
+msgid "Please enter the new name for this playlist."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/playlist.py:336
-msgid "What query to add to the playlist"
-msgstr "Τι ερώτημα για προσθήκη στη λίστα αναπαραγωγής"
+msgid "What query to add to this playlist."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/playlist.py:337
 #: pylav/extension/red/ui/menus/playlist.py:345
@@ -178,14 +184,14 @@ msgid "Query"
 msgstr "Ερώτημα"
 
 #: pylav/extension/red/ui/menus/playlist.py:344
-msgid "What query to remove from the playlist"
-msgstr "Τι ερώτημα για αφαίρεση από τη λίστα αναπαραγωγής"
+msgid "What query to remove from this playlist."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/queue.py:458
-msgid "Select Track To Remove"
-msgstr "Επιλογή Κομματιού Για Κατάργηση"
+msgid "Select Track To Remove."
+msgstr ""
 
 #: pylav/extension/red/ui/menus/queue.py:460
-msgid "Select Track To Play Now"
-msgstr "Επιλέξτε Κομμάτι Για Να Παίξετε Τώρα"
+msgid "Select Track To Play Now."
+msgstr ""
 

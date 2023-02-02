@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-02 20:05\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:18\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
 "MIME-Version: 1.0\n"
@@ -18,38 +18,30 @@ msgstr ""
 "Language: hr_HR\n"
 
 #: pylav/core/client.py:888 pylav/core/client.py:923
-msgid "No available nodes!"
-msgstr "Nema dostupnih čvorova!"
+msgid "There are no available nodes!"
+msgstr ""
 
-#: pylav/core/client.py:892 pylav/core/client.py:927
-msgid "No node with {feature} functionality available!"
-msgstr "Nema dostupnog čvora s {feature} funkcionalnosti!"
+#: pylav/core/client.py:892 pylav/core/client.py:927 pylav/core/client.py:1235
+msgid "No node with {feature_name} functionality available!"
+msgstr ""
 
-#: pylav/core/client.py:1235
-msgid "No node with {query.requires_capability} functionality available!"
-msgstr "Nema dostupnog čvora s {query.requires_capability} funkcionalnosti!"
+#: pylav/core/client.py:1653
+msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist."
+msgstr ""
 
-#: pylav/core/client.py:1651
-msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
-msgstr "Za generiranje mix popisa za reprodukciju potreban je ID videozapisa, korisnika, kanala ili popisa za reprodukciju"
-
-#: pylav/core/client.py:1656
-msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
-msgstr "Za generiranje mix popisa za reprodukciju potreban je ID videozapisa, korisnika, kanala ili popisa za reprodukciju. Međutim, naveli ste više njih"
+#: pylav/core/client.py:1658
+msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist. However, you provided multiple"
+msgstr ""
 
 #: pylav/core/context.py:258
-msgid "{} remaining. Type `more` to continue."
-msgstr "{} preostalo. Za nastavak upišite 'more'."
+msgid "There is still 1 message remaining. Type `more` to continue."
+msgstr ""
 
-#: pylav/core/context.py:259
-msgid "There is still 1 message"
-msgstr "Još uvijek postoji 1 poruka"
+#: pylav/core/context.py:260
+msgid "There are still {remaining_value} messages remaining. Type `more` to continue."
+msgstr ""
 
-#: pylav/core/context.py:261
-msgid "There are still {remaining} messages"
-msgstr "Još uvijek ih ima. {remaining} poruke"
-
-#: pylav/core/context.py:288
+#: pylav/core/context.py:290
 #, docstring
 msgid "Does nothing"
 msgstr "Ne radi ništa"

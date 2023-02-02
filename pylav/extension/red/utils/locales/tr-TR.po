@@ -1,0 +1,92 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: pylav\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:18\n"
+"Last-Translator: \n"
+"Language-Team: Turkish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.4.2\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: pylav\n"
+"X-Crowdin-Project-ID: 535244\n"
+"X-Crowdin-Language: tr\n"
+"X-Crowdin-File: /lib/pylav/extension/red/utils/locales/messages.pot\n"
+"X-Crowdin-File-ID: 3405\n"
+"Language: tr_TR\n"
+
+#: pylav/extension/red/utils/required_methods.py:46
+#, docstring
+msgid "Shows the credits and translation details for the PyLav cogs and shared code"
+msgstr "PyLav çarkları ve paylaşılan kod için kredileri ve çeviri ayrıntılarını gösterir"
+
+#: pylav/extension/red/utils/required_methods.py:50
+msgid "PyLav was created by {library_author_name}.\n\n"
+"PyLav can be located in {library_url_value}\n"
+"PyLav-Cogs can be located in {second_library_url_value}\n\n"
+"PyLav's support server can be found at {support_server_url_value}\n\n\n"
+"You can help translate PyLav by contributing to our Crowdin project at:\n"
+"{crowdin_project_url_value}\n\n\n"
+"Contributors:\n"
+"- {project_contributors_url_value}\n"
+"- {second_project_contributors_url_value}\n"
+"If you wish to buy me a coffee for my work, you can do so at:\n"
+"{buymeacoffee_url_value} or {github_sponsors_url_value}"
+msgstr ""
+
+#: pylav/extension/red/utils/required_methods.py:86
+#, docstring
+msgid "Show the version of PyLav library"
+msgstr "PyLav kitaplığının sürümünü gösterme"
+
+#: pylav/extension/red/utils/required_methods.py:101
+msgid "Library"
+msgstr "Kütüphane"
+
+#: pylav/extension/red/utils/required_methods.py:102
+msgid "Version"
+msgstr "Sürüm"
+
+#: pylav/extension/red/utils/required_methods.py:121
+#, docstring
+msgid "Sync the Bots slash commands"
+msgstr "Botların eğik çizgi komutlarını senkronize etme"
+
+#: pylav/extension/red/utils/required_methods.py:130
+msgid "I have synced my slash commands."
+msgstr ""
+
+#: pylav/extension/red/utils/required_methods.py:151
+msgid "This command requires an existing player to be run."
+msgstr ""
+
+#: pylav/extension/red/utils/required_methods.py:160
+msgid "PyLavPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later."
+msgstr ""
+
+#: pylav/extension/red/utils/required_methods.py:164
+msgid "No Lavalink node currently available."
+msgstr ""
+
+#: pylav/extension/red/utils/required_methods.py:173
+msgid "PyLavPlayer is currently unable to process tracks belonging to {feature_name}."
+msgstr ""
+
+#: pylav/extension/red/utils/required_methods.py:176
+msgid "No Lavalink node currently available with feature {feature_name}"
+msgstr ""
+
+#: pylav/extension/red/utils/required_methods.py:189
+msgid "This command is not available in this channel, please use {channel_name}."
+msgstr ""
+
+#: pylav/extension/red/utils/required_methods.py:203
+msgid "This command requires you to be a disc jockey."
+msgstr ""
+
+#: pylav/extension/red/utils/required_methods.py:241
+msgid "PyLav is not ready, please try again shortly"
+msgstr ""
+
