@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:10\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:33\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -18,18 +18,18 @@ msgstr ""
 "Language: fi_FI\n"
 
 #: pylav/extension/red/ui/prompts/nodes.py:29
-msgid "Multiple nodes matched, pick the one which you meant"
-msgstr "Useita solmuja täsmätty, valitse se, mitä tarkoitit"
+msgid "Multiple nodes matched, pick the one which you meant."
+msgstr "Useita solmuja täsmäsi, valitse se, jota tarkoitit."
 
 #: pylav/extension/red/ui/prompts/nodes.py:36
-msgid "Pick a node"
-msgstr "Valitse solmu"
+msgid "Pick a node."
+msgstr "Valitse solmu."
 
 #: pylav/extension/red/ui/prompts/playlists.py:31
-msgid "Multiple playlist matched, pick the one which you meant"
-msgstr "Useita soittolistoja täsmätty, valitse se, jota tarkoitit"
+msgid "Multiple playlist matched, pick the one which you meant."
+msgstr "Useita soittolistoja sovitettu, valitse se, jota tarkoitit."
 
 #: pylav/extension/red/ui/prompts/playlists.py:38
-msgid "Pick a playlist"
-msgstr "Valitse soittolista"
+msgid "Pick a playlist."
+msgstr "Valitse soittolista."
 

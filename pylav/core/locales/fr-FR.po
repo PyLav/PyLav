@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:09\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:33\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -18,38 +18,30 @@ msgstr ""
 "Language: fr_FR\n"
 
 #: pylav/core/client.py:888 pylav/core/client.py:923
-msgid "No available nodes!"
-msgstr "Aucun noeud disponible !"
+msgid "There are no available nodes!"
+msgstr "Il n’y a pas de nœuds disponibles!"
 
-#: pylav/core/client.py:892 pylav/core/client.py:927
-msgid "No node with {feature} functionality available!"
-msgstr "Aucun noeud avec la fonctionnalité {feature} disponible!"
+#: pylav/core/client.py:892 pylav/core/client.py:927 pylav/core/client.py:1235
+msgid "No node with {feature_name} functionality available!"
+msgstr "Pas de nœud avec {feature_name} Fonctionnalité disponible!"
 
-#: pylav/core/client.py:1235
-msgid "No node with {query.requires_capability} functionality available!"
-msgstr "Aucun noeud avec la fonctionnalité {query.requires_capability} disponible!"
+#: pylav/core/client.py:1653
+msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist."
+msgstr "Un seul identifiant de vidéo, d’utilisateur, de chaîne ou de playlist est nécessaire pour générer une playlist mixte."
 
-#: pylav/core/client.py:1651
-msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
-msgstr "Pour générer une playlist mixte, un ID de vidéo, d'utilisateur, de canal ou de playlist est nécessaire"
-
-#: pylav/core/client.py:1656
-msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
-msgstr "Pour générer une playlist mixte un ID Vidéo, Utilisateur, Chaîne ou Playlist est nécessaire. Cependant, vous avez fourni plusieurs"
+#: pylav/core/client.py:1658
+msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist. However, you provided multiple"
+msgstr "Un seul identifiant de vidéo, d’utilisateur, de chaîne ou de playlist est nécessaire pour générer une playlist mixte. Toutefois, vous avez fourni plusieurs"
 
 #: pylav/core/context.py:258
-msgid "{} remaining. Type `more` to continue."
-msgstr "{} restant. Tapez `more` pour continuer."
+msgid "There is still 1 message remaining. Type `more` to continue."
+msgstr "Il reste encore 1 message. Tapez 'plus' pour continuer."
 
-#: pylav/core/context.py:259
-msgid "There is still 1 message"
-msgstr "Il y a encore 1 message"
+#: pylav/core/context.py:260
+msgid "There are still {remaining_value} messages remaining. Type `more` to continue."
+msgstr "Il y a encore {remaining_value} messages restants. Tapez 'plus' pour continuer."
 
-#: pylav/core/context.py:261
-msgid "There are still {remaining} messages"
-msgstr "Il y a encore {remaining} messages"
-
-#: pylav/core/context.py:288
+#: pylav/core/context.py:290
 #, docstring
 msgid "Does nothing"
 msgstr "Ne fait rien"

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:10\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:33\n"
 "Last-Translator: \n"
 "Language-Team: Danish\n"
 "MIME-Version: 1.0\n"
@@ -19,23 +19,23 @@ msgstr ""
 
 #: pylav/extension/red/ui/selectors/nodes.py:46
 #: pylav/extension/red/ui/selectors/playlist.py:73
-msgid "You are not authorized to interact with this option"
-msgstr "Du har ikke tilladelse til at interagere med denne mulighed"
+msgid "You are not authorized to interact with this option."
+msgstr "Du har ikke tilladelse til at interagere med denne mulighed."
 
 #: pylav/extension/red/ui/selectors/nodes.py:53
-msgid "Disabling the following sources: {sources}"
-msgstr "Deaktivering af følgende kilder: {sources}"
+msgid "Disabling the following sources: {sources_list}."
+msgstr "Deaktivering af følgende kilder: {sources_list}."
 
-#: pylav/extension/red/ui/selectors/nodes.py:83
-msgid "Node not found"
-msgstr "Indholdselement ikke fundet"
+#: pylav/extension/red/ui/selectors/nodes.py:85
+msgid "Node not found."
+msgstr "Node ikke fundet."
 
 #: pylav/extension/red/ui/selectors/playlist.py:41
 #: pylav/extension/red/ui/selectors/playlist.py:82
-msgid "Playlist not found"
-msgstr "Afspilningsliste ikke fundet"
+msgid "Playlist not found."
+msgstr "Afspilningslisten blev ikke fundet."
 
 #: pylav/extension/red/ui/selectors/queue.py:96
-msgid "Track not found"
-msgstr "Spor ikke fundet"
+msgid "Track not found."
+msgstr "Sporet blev ikke fundet."
 

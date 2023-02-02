@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:10\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:33\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "MIME-Version: 1.0\n"
@@ -18,22 +18,22 @@ msgstr ""
 "Language: hu_HU\n"
 
 #: pylav/storage/models/playlist.py:406
-msgid "(Global) {user_name}"
-msgstr "(Globális) {user_name}"
+msgid "(Global) {user_name_value}"
+msgstr "(Globális) {user_name_value}"
 
 #: pylav/storage/models/playlist.py:410
-msgid "(Server) {guild_name}"
-msgstr "(Szerver) {guild_name}"
+msgid "(Server) {guild_name_value}"
+msgstr "(Szerver) {guild_name_value}"
 
 #: pylav/storage/models/playlist.py:412
-msgid "(Channel) {channel}"
-msgstr "(Csatorna) {channel}"
-
-#: pylav/storage/models/playlist.py:418
-msgid "(User) {user_name}"
-msgstr "(Felhasználó) {user_name}"
+msgid "(Channel) {channel_name_value}"
+msgstr "(Csatorna) {channel_name_value}"
 
 #: pylav/storage/models/playlist.py:420
-msgid "(Invalid) {scope}"
-msgstr "(Érvénytelen) {scope}"
+msgid "(User) {user_name_value}"
+msgstr "(Felhasználó) {user_name_value}"
+
+#: pylav/storage/models/playlist.py:422
+msgid "(Invalid) {scope_name_value}"
+msgstr "(Érvénytelen) {scope_name_value}"
 

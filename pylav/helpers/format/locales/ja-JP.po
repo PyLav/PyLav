@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:10\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:18\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -26,30 +26,30 @@ msgid "hour"
 msgstr "時"
 
 #: pylav/helpers/format/strings.py:58
-msgid "minute"
-msgstr "分"
-
-#: pylav/helpers/format/strings.py:59
-msgid "second"
-msgstr "秒"
-
-#: pylav/helpers/format/strings.py:60
-msgid "day"
-msgstr "日"
-
-#: pylav/helpers/format/strings.py:61
-msgid "days"
-msgstr "日"
-
-#: pylav/helpers/format/strings.py:62
 msgid "hours"
 msgstr "時間"
 
-#: pylav/helpers/format/strings.py:63
+#: pylav/helpers/format/strings.py:60
+msgid "minute"
+msgstr "分"
+
+#: pylav/helpers/format/strings.py:61
 msgid "minutes"
 msgstr "分"
+
+#: pylav/helpers/format/strings.py:63
+msgid "second"
+msgstr "秒"
 
 #: pylav/helpers/format/strings.py:64
 msgid "seconds"
 msgstr "秒"
+
+#: pylav/helpers/format/strings.py:66
+msgid "day"
+msgstr "日"
+
+#: pylav/helpers/format/strings.py:67
+msgid "days"
+msgstr "日"
 

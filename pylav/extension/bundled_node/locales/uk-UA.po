@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:10\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:33\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "MIME-Version: 1.0\n"
@@ -18,20 +18,20 @@ msgstr ""
 "Language: uk_UA\n"
 
 #: pylav/extension/bundled_node/manager.py:227
-msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture"
-msgstr "Ви намагаєтеся запустити керований вузол Lavalink на непідтримуваній архітектурі машин"
+msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture."
+msgstr "Ви намагаєтеся запустити керований вузол Lavalink на непідтримуваній машинній архітектурі."
 
 #: pylav/extension/bundled_node/manager.py:452
-msgid "The output of `{java_exc} -version` was unexpected\n"
-"{version_info}"
-msgstr "Вивід `{java_exc} -version` був несподіваний\n"
-"{version_info}"
+msgid "The output of `{command_name}` was unexpected\n"
+"{command_output}"
+msgstr "Вихід '{command_name}' був несподіваним\n"
+"{command_output}"
 
 #: pylav/extension/bundled_node/manager.py:472
-msgid "Port {port} already in use. Managed Lavalink startup aborted"
-msgstr "Порт {port} вже використовується. Керований автозапуск Лавалінка перервано"
+msgid "Port {port_value} already in use. Managed Lavalink startup has been aborted."
+msgstr "Порт {port_value} вже у використанні. Керований стартап Lavalink був перерваний."
 
 #: pylav/extension/bundled_node/manager.py:477
-msgid "Lavalink failed to start: {line}"
-msgstr "Не вдалося запустити Лавалінк: {line}"
+msgid "Lavalink failed to start: {error_value}"
+msgstr "Lavalink не вдалося запустити: {error_value}"
 

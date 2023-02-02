@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-02 20:05\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:33\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
 "MIME-Version: 1.0\n"
@@ -18,18 +18,18 @@ msgstr ""
 "Language: hr_HR\n"
 
 #: pylav/extension/red/ui/prompts/nodes.py:29
-msgid "Multiple nodes matched, pick the one which you meant"
-msgstr "Više se čvorova podudara, odaberite onaj na koji ste mislili"
+msgid "Multiple nodes matched, pick the one which you meant."
+msgstr "Više čvorova se podudara, odaberite onaj na koji ste mislili."
 
 #: pylav/extension/red/ui/prompts/nodes.py:36
-msgid "Pick a node"
-msgstr "Odabir čvora"
+msgid "Pick a node."
+msgstr "Odaberite čvor."
 
 #: pylav/extension/red/ui/prompts/playlists.py:31
-msgid "Multiple playlist matched, pick the one which you meant"
-msgstr "Pronađeno više popisa za reprodukciju, odaberite onaj na koji ste mislili"
+msgid "Multiple playlist matched, pick the one which you meant."
+msgstr "Višestruki popis za reproduciranje odgovara, odaberite onaj na koji ste mislili."
 
 #: pylav/extension/red/ui/prompts/playlists.py:38
-msgid "Pick a playlist"
-msgstr "Odabir popisa za reproduciranje"
+msgid "Pick a playlist."
+msgstr "Odaberite popis za reproduciranje."
 

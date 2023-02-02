@@ -1,0 +1,203 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: pylav\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:33\n"
+"Last-Translator: \n"
+"Language-Team: Romanian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.4.2\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2);\n"
+"X-Crowdin-Project: pylav\n"
+"X-Crowdin-Project-ID: 535244\n"
+"X-Crowdin-Language: ro\n"
+"X-Crowdin-File: /lib/pylav/extension/red/ui/buttons/locales/messages.pot\n"
+"X-Crowdin-File-ID: 3641\n"
+"Language: ro_RO\n"
+
+#: pylav/extension/red/ui/buttons/generic.py:70
+#: pylav/extension/red/ui/buttons/generic.py:94
+#: pylav/extension/red/ui/buttons/generic.py:118
+#: pylav/extension/red/ui/buttons/generic.py:142
+#: pylav/extension/red/ui/buttons/nodes.py:49
+#: pylav/extension/red/ui/buttons/nodes.py:94
+#: pylav/extension/red/ui/buttons/nodes.py:133
+#: pylav/extension/red/ui/buttons/nodes.py:178
+#: pylav/extension/red/ui/buttons/nodes.py:213
+#: pylav/extension/red/ui/buttons/nodes.py:248
+#: pylav/extension/red/ui/buttons/playlist.py:41
+#: pylav/extension/red/ui/buttons/playlist.py:76
+#: pylav/extension/red/ui/buttons/playlist.py:117
+#: pylav/extension/red/ui/buttons/playlist.py:167
+#: pylav/extension/red/ui/buttons/playlist.py:210
+#: pylav/extension/red/ui/buttons/playlist.py:258
+#: pylav/extension/red/ui/buttons/playlist.py:304
+#: pylav/extension/red/ui/buttons/playlist.py:350
+msgid "You are not authorized to interact with this option."
+msgstr "Nu sunteți autorizat să interacționați cu această opțiune."
+
+#: pylav/extension/red/ui/buttons/generic.py:85
+msgid "Yes"
+msgstr "Da"
+
+#: pylav/extension/red/ui/buttons/generic.py:109
+msgid "No"
+msgstr "Nu"
+
+#: pylav/extension/red/ui/buttons/generic.py:165
+msgid "Disconnect {player_type} players"
+msgstr "Deconecta {player_type} Jucători"
+
+#: pylav/extension/red/ui/buttons/generic.py:167
+msgid "Disconnect {player_type} player"
+msgstr "Deconecta {player_type} jucător"
+
+#: pylav/extension/red/ui/buttons/nodes.py:57
+msgid "Connecting to the node with SSL enabled."
+msgstr "Conectarea la nod cu SSL activat."
+
+#: pylav/extension/red/ui/buttons/nodes.py:64
+msgid "Connecting to the node with SSL disabled."
+msgstr "Conectarea la nod cu SSL dezactivat."
+
+#: pylav/extension/red/ui/buttons/nodes.py:102
+msgid "This node will only be used for search."
+msgstr "Acest nod va fi utilizat numai pentru căutare."
+
+#: pylav/extension/red/ui/buttons/nodes.py:109
+msgid "This node will be used for search and playback."
+msgstr "Acest nod va fi utilizat pentru căutare și redare."
+
+#: pylav/extension/red/ui/buttons/nodes.py:140
+msgid "Please fill out all the fields before continuing."
+msgstr "Vă rugăm să completați toate câmpurile înainte de a continua."
+
+#: pylav/extension/red/ui/buttons/nodes.py:220
+msgid "When you press done this node will be permanently delete."
+msgstr "Când apăsați făcut acest nod va fi șters definitiv."
+
+#: pylav/extension/red/ui/buttons/nodes.py:222
+msgid "This node will no longer be deleted once you press done."
+msgstr "Acest nod nu va mai fi șters odată ce apăsați terminat."
+
+#: pylav/extension/red/ui/buttons/nodes.py:256
+msgid "Enable sources"
+msgstr "Activarea surselor"
+
+#: pylav/extension/red/ui/buttons/player.py:38
+#: pylav/extension/red/ui/buttons/player.py:87
+msgid "You are not authorized to perform this action."
+msgstr "Nu sunteți autorizat să efectuați această acțiune."
+
+#: pylav/extension/red/ui/buttons/player.py:47
+#: pylav/extension/red/ui/buttons/player.py:96
+msgid "No player available for action, try refreshing."
+msgstr "Nici un jucător disponibil pentru acțiune, încercați să reîmprospătați."
+
+#: pylav/extension/red/ui/buttons/player.py:56
+#: pylav/extension/red/ui/buttons/player.py:107
+#: pylav/extension/red/ui/buttons/player.py:164
+msgid "Bot Owner Action"
+msgstr "Acțiunea proprietarului botului"
+
+#: pylav/extension/red/ui/buttons/player.py:56
+#: pylav/extension/red/ui/buttons/player.py:164
+msgid "Player disconnected."
+msgstr "Jucător deconectat."
+
+#: pylav/extension/red/ui/buttons/player.py:107
+msgid "Player stopped."
+msgstr "Jucătorul s-a oprit."
+
+#: pylav/extension/red/ui/buttons/player.py:140
+msgid "You are not authorized to perform this action"
+msgstr "Nu sunteți autorizat să efectuați această acțiune"
+
+#: pylav/extension/red/ui/buttons/player.py:154
+msgid "No players available for action, try refreshing."
+msgstr "Nu există jucători disponibili pentru acțiune, încercați să reîmprospătați."
+
+#: pylav/extension/red/ui/buttons/playlist.py:48
+msgid "When you press done this playlist will be permanently delete."
+msgstr "Când apăsați făcut această listă de redare va fi șters definitiv."
+
+#: pylav/extension/red/ui/buttons/playlist.py:50
+msgid "This playlist will no longer be deleted once you press done."
+msgstr "Această listă de redare nu va mai fi ștearsă după ce apăsați gata."
+
+#: pylav/extension/red/ui/buttons/playlist.py:83
+msgid "Clearing all tracks from the playlist."
+msgstr "Ștergerea tuturor pieselor din lista de redare."
+
+#: pylav/extension/red/ui/buttons/playlist.py:85
+msgid "No longer clearing tracks from the playlist."
+msgstr "Nu mai șterge piesele din lista de redare."
+
+#: pylav/extension/red/ui/buttons/playlist.py:124
+msgid "Here is your playlist: {playlist_name}, file is compressed using Gzip to make it possible to send via Discord you can use <https://gzip.swimburger.net/> to decompress it."
+msgstr "Aici este lista de redare: {playlist_name}, fișierul este comprimat folosind Gzip pentru a face posibilă trimiterea prin Discord pe care o puteți utiliza <https://gzip.swimburger.net/> pentru a-l decomprima."
+
+#: pylav/extension/red/ui/buttons/playlist.py:128
+msgid "Here is your playlist: {playlist_name}, file is compressed using Brotli compression."
+msgstr "Aici este lista de redare: {playlist_name}, fișierul este comprimat utilizând compresia Brotli."
+
+#: pylav/extension/red/ui/buttons/playlist.py:132
+msgid "Here is your playlist: {playlist_name}."
+msgstr "Aici este lista de redare: {playlist_name}."
+
+#: pylav/extension/red/ui/buttons/playlist.py:174
+msgid "Updating playlist with the latest tracks, press done to continue."
+msgstr "Actualizarea lista de redare cu cele mai recente piese, apăsați făcut pentru a continua."
+
+#: pylav/extension/red/ui/buttons/playlist.py:177
+msgid "Not updating playlist."
+msgstr "Nu se actualizează lista de redare."
+
+#: pylav/extension/red/ui/buttons/playlist.py:266
+msgid "Adding the current queue to playlist."
+msgstr "Adăugarea cozii curente în lista de redare."
+
+#: pylav/extension/red/ui/buttons/playlist.py:273
+msgid "No longer adding the current queue to playlist."
+msgstr "Nu mai adăugați coada curentă în lista de redare."
+
+#: pylav/extension/red/ui/buttons/playlist.py:312
+msgid "Removing all duplicate tracks from the queue."
+msgstr "Eliminarea tuturor pieselor dublate din coadă."
+
+#: pylav/extension/red/ui/buttons/playlist.py:319
+msgid "No longer all duplicate tracks from the queue."
+msgstr "Nu mai toate piesele dublate din coadă."
+
+#: pylav/extension/red/ui/buttons/playlist.py:409
+msgid "Playlists you can currently play."
+msgstr "Liste de redare pe care le puteți reda în prezent."
+
+#: pylav/extension/red/ui/buttons/playlist.py:415
+msgid "Pick a playlist."
+msgstr "Alege o listă de redare."
+
+#: pylav/extension/red/ui/buttons/playlist.py:437
+msgid "What should the playlist name be?"
+msgstr "Care ar trebui să fie numele listei de redare?"
+
+#: pylav/extension/red/ui/buttons/queue.py:164
+#: pylav/extension/red/ui/buttons/queue.py:191
+#: pylav/extension/red/ui/buttons/queue.py:224
+msgid "Not connected to a voice channel."
+msgstr "Nu este conectat la un canal de voce."
+
+#: pylav/extension/red/ui/buttons/queue.py:289
+msgid "There is nothing in the queue."
+msgstr "Nu este nimic în coadă."
+
+#: pylav/extension/red/ui/buttons/queue.py:296
+msgid "Removed tracks from the queue."
+msgstr "A eliminat pistele din coadă."
+
+#: pylav/extension/red/ui/buttons/queue.py:323
+msgid "What do you want to enqueue?"
+msgstr "Ce vrei să te bazezi?"
+

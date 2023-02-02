@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:18\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:33\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -21,113 +21,116 @@ msgstr ""
 #: pylav/extension/red/ui/menus/nodes.py:199
 #: pylav/extension/red/ui/menus/playlist.py:261
 #: pylav/extension/red/ui/menus/playlist.py:480
-msgid "You are not authorized to interact with this"
-msgstr "Вы не имеете права взаимодействовать с этим"
+msgid "You are not authorized to interact with this."
+msgstr "Вы не имеете права взаимодействовать с этим."
 
 #: pylav/extension/red/ui/menus/nodes.py:60
-msgid "Enter the domain or IP address of the host"
-msgstr "Введите домен или IP-адрес хоста"
+msgid "Enter the domain or IP address of the host."
+msgstr "Введите домен или IP-адрес хоста."
 
 #: pylav/extension/red/ui/menus/nodes.py:61
-#: pylav/extension/red/ui/menus/nodes.py:499
+#: pylav/extension/red/ui/menus/nodes.py:503
 msgid "Host"
 msgstr "Хозяин"
 
 #: pylav/extension/red/ui/menus/nodes.py:68
-msgid "Enter the host port to connect to"
-msgstr "Введите порт хоста для подключения к"
+msgid "Enter the host port to connect to."
+msgstr "Введите порт хоста для подключения."
 
 #: pylav/extension/red/ui/menus/nodes.py:69
-#: pylav/extension/red/ui/menus/nodes.py:507
+#: pylav/extension/red/ui/menus/nodes.py:511
 msgid "Port"
 msgstr "Порт"
 
 #: pylav/extension/red/ui/menus/nodes.py:76
-msgid "Enter the node's password"
-msgstr "Введите пароль узла"
+msgid "Enter the node password."
+msgstr "Введите пароль узла."
 
 #: pylav/extension/red/ui/menus/nodes.py:77
-#: pylav/extension/red/ui/menus/nodes.py:515
+#: pylav/extension/red/ui/menus/nodes.py:519
 msgid "Password"
 msgstr "Пароль"
 
 #: pylav/extension/red/ui/menus/nodes.py:84
-msgid "Enter an easy to know name for the node"
-msgstr "Введите легко знать имя узла"
+msgid "Enter an easy to reference name for the node."
+msgstr "Введите простое для ссылки имя узла."
 
 #: pylav/extension/red/ui/menus/nodes.py:85
-#: pylav/extension/red/ui/menus/nodes.py:523
+#: pylav/extension/red/ui/menus/nodes.py:527
 msgid "Name"
 msgstr "Наименование"
 
 #: pylav/extension/red/ui/menus/nodes.py:92
-msgid "Enter a timeout in seconds"
-msgstr "Введите таймаут в секундах"
+msgid "Enter a timeout in seconds."
+msgstr "Введите время ожидания в секундах."
 
 #: pylav/extension/red/ui/menus/nodes.py:93
-#: pylav/extension/red/ui/menus/nodes.py:531
+#: pylav/extension/red/ui/menus/nodes.py:535
 msgid "Timeout"
 msgstr "Таймаут"
 
 #: pylav/extension/red/ui/menus/nodes.py:109
-#: pylav/extension/red/ui/menus/nodes.py:560
-msgid "Source to disable"
-msgstr "Источник для отключения"
+#: pylav/extension/red/ui/menus/nodes.py:564
+msgid "Source to disable."
+msgstr "Источник для отключения."
 
 #: pylav/extension/red/ui/menus/nodes.py:222
-#: pylav/extension/red/ui/menus/nodes.py:671
-msgid "Name set to {name}"
-msgstr "Имя установлено в {name}"
+#: pylav/extension/red/ui/menus/nodes.py:675
+msgid "Name set to {node_name_value}"
+msgstr "Имя установлено в значение {node_name_value}"
 
 #: pylav/extension/red/ui/menus/nodes.py:235
-#: pylav/extension/red/ui/menus/nodes.py:684
-msgid "Password set to {password}"
-msgstr "Пароль установлен на {password}"
+#: pylav/extension/red/ui/menus/nodes.py:688
+msgid "Password set to {node_password_value}"
+msgstr "Пароль установлен в значение {node_password_value}"
 
-#: pylav/extension/red/ui/menus/nodes.py:253
-#: pylav/extension/red/ui/menus/nodes.py:702
-msgid "Host set to {host}"
-msgstr "Узел установлен в {host}"
+#: pylav/extension/red/ui/menus/nodes.py:255
+#: pylav/extension/red/ui/menus/nodes.py:708
+msgid "Host set to {node_host_value}"
+msgstr "Хост настроен на {node_host_value}"
 
-#: pylav/extension/red/ui/menus/nodes.py:270
-#: pylav/extension/red/ui/menus/nodes.py:719
-msgid "Invalid port"
-msgstr "Неверный порт"
+#: pylav/extension/red/ui/menus/nodes.py:272
+#: pylav/extension/red/ui/menus/nodes.py:725
+msgid "Invalid port."
+msgstr "Недопустимый порт."
 
-#: pylav/extension/red/ui/menus/nodes.py:278
-#: pylav/extension/red/ui/menus/nodes.py:727
-msgid "Port set to {port}"
-msgstr "Порт изменен на {port}"
+#: pylav/extension/red/ui/menus/nodes.py:280
+#: pylav/extension/red/ui/menus/nodes.py:733
+msgid "Port set to {node_port_value}."
+msgstr "Порт, установленный на {node_port_value}."
 
-#: pylav/extension/red/ui/menus/nodes.py:295
-#: pylav/extension/red/ui/menus/nodes.py:744
-msgid "Invalid timeout, it must be a number in seconds"
-msgstr "Недопустимый таймаут, это должно быть числом в секундах"
+#: pylav/extension/red/ui/menus/nodes.py:297
+#: pylav/extension/red/ui/menus/nodes.py:750
+msgid "Invalid timeout, it must be a number in seconds."
+msgstr "Недопустимое время ожидания, оно должно быть числом в секундах."
 
-#: pylav/extension/red/ui/menus/nodes.py:303
-#: pylav/extension/red/ui/menus/nodes.py:752
-msgid "Timeout set to {timeout} seconds"
-msgstr "Таймаут установлен на {timeout} секунд"
+#: pylav/extension/red/ui/menus/nodes.py:305
+msgid "Timeout set to {node_timeout_value} seconds"
+msgstr "Время ожидания установлено равным {node_timeout_value} товары второго сорта"
 
-#: pylav/extension/red/ui/menus/nodes.py:498
-msgid "Change the domain or IP address of the host"
-msgstr "Изменить домен или IP-адрес хоста"
+#: pylav/extension/red/ui/menus/nodes.py:502
+msgid "Change the domain or IP address of the host."
+msgstr "Измените домен или IP-адрес хоста."
 
-#: pylav/extension/red/ui/menus/nodes.py:506
-msgid "Change the host port to connect to"
-msgstr "Изменить хост-порт на подключение к"
+#: pylav/extension/red/ui/menus/nodes.py:510
+msgid "Change the host port to connect to."
+msgstr "Измените порт хоста для подключения."
 
-#: pylav/extension/red/ui/menus/nodes.py:514
-msgid "Change the node's password"
-msgstr "Изменить пароль узла"
+#: pylav/extension/red/ui/menus/nodes.py:518
+msgid "Change the node password."
+msgstr "Измените пароль узла."
 
-#: pylav/extension/red/ui/menus/nodes.py:522
-msgid "Change the name of this node"
-msgstr "Изменить имя этого узла"
+#: pylav/extension/red/ui/menus/nodes.py:526
+msgid "Change the name of this node."
+msgstr "Измените имя этого узла."
 
-#: pylav/extension/red/ui/menus/nodes.py:530
-msgid "Enter the new timeout for this node"
-msgstr "Введите новый тайм-аут для этого узла"
+#: pylav/extension/red/ui/menus/nodes.py:534
+msgid "Enter the new timeout for this node."
+msgstr "Введите новое время ожидания для этого узла."
+
+#: pylav/extension/red/ui/menus/nodes.py:758
+msgid "Timeout set to {node_timeout_value} seconds."
+msgstr "Время ожидания установлено равным {node_timeout_value} товары второго сорта."
 
 #: pylav/extension/red/ui/menus/player.py:95
 msgid "selected"
@@ -142,13 +145,12 @@ msgid "all"
 msgstr "все"
 
 #: pylav/extension/red/ui/menus/player.py:208
-msgid "Not connected anywhere"
-msgstr "Нигде не подключено"
+msgid "Not connected in any server."
+msgstr "Не подключен ни к одному серверу."
 
 #: pylav/extension/red/ui/menus/playlist.py:187
-#: pylav/extension/red/ui/menus/playlist.py:322
-msgid "Please enter the playlist URL"
-msgstr "Пожалуйста, введите URL плейлиста"
+msgid "Please enter the playlist URL."
+msgstr "Пожалуйста, введите URL-адрес плейлиста."
 
 #: pylav/extension/red/ui/menus/playlist.py:188
 #: pylav/extension/red/ui/menus/playlist.py:323
@@ -156,21 +158,25 @@ msgid "Playlist URL"
 msgstr "URL плейлиста"
 
 #: pylav/extension/red/ui/menus/playlist.py:194
-msgid "Please enter the playlist name"
-msgstr "Пожалуйста, введите имя плейлиста"
+msgid "Please enter the playlist name."
+msgstr "Пожалуйста, введите название плейлиста."
 
 #: pylav/extension/red/ui/menus/playlist.py:195
 #: pylav/extension/red/ui/menus/playlist.py:330
 msgid "Playlist Name"
 msgstr "Имя плейлиста"
 
+#: pylav/extension/red/ui/menus/playlist.py:322
+msgid "Please enter the new URL for this playlist."
+msgstr "Пожалуйста, введите новый URL для этого плейлиста."
+
 #: pylav/extension/red/ui/menus/playlist.py:329
-msgid "Please enter the new playlist name"
-msgstr "Пожалуйста, введите новое имя плейлиста"
+msgid "Please enter the new name for this playlist."
+msgstr "Пожалуйста, введите новое название для этого плейлиста."
 
 #: pylav/extension/red/ui/menus/playlist.py:336
-msgid "What query to add to the playlist"
-msgstr "Какой запрос добавить в плейлист"
+msgid "What query to add to this playlist."
+msgstr "Какой запрос добавить в этот плейлист."
 
 #: pylav/extension/red/ui/menus/playlist.py:337
 #: pylav/extension/red/ui/menus/playlist.py:345
@@ -178,14 +184,14 @@ msgid "Query"
 msgstr "Запрос"
 
 #: pylav/extension/red/ui/menus/playlist.py:344
-msgid "What query to remove from the playlist"
-msgstr "Какой запрос удалить из плейлиста"
+msgid "What query to remove from this playlist."
+msgstr "Какой запрос удалить из этого плейлиста."
 
 #: pylav/extension/red/ui/menus/queue.py:458
-msgid "Select Track To Remove"
-msgstr "Выберите трек для удаления"
+msgid "Select Track To Remove."
+msgstr "Выберите Трек для удаления."
 
 #: pylav/extension/red/ui/menus/queue.py:460
-msgid "Select Track To Play Now"
-msgstr "Выберите трек для воспроизведения"
+msgid "Select Track To Play Now."
+msgstr "Выберите Трек для воспроизведения сейчас."
 

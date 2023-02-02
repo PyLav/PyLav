@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-02 20:05\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:33\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
 "MIME-Version: 1.0\n"
@@ -18,20 +18,20 @@ msgstr ""
 "Language: hr_HR\n"
 
 #: pylav/extension/bundled_node/manager.py:227
-msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture"
-msgstr "Pokušavate pokrenuti upravljani čvor Lavalink na nepodržanoj arhitekturi stroja"
+msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture."
+msgstr "Pokušavate pokrenuti upravljani čvor Lavalink na nepodržanoj arhitekturi stroja."
 
 #: pylav/extension/bundled_node/manager.py:452
-msgid "The output of `{java_exc} -version` was unexpected\n"
-"{version_info}"
-msgstr "Izlaz od '{java_exc} -verzija' je neočekivano\n"
-"{version_info}"
+msgid "The output of `{command_name}` was unexpected\n"
+"{command_output}"
+msgstr "Izlaz od '{command_name}' bilo je neočekivano\n"
+"{command_output}"
 
 #: pylav/extension/bundled_node/manager.py:472
-msgid "Port {port} already in use. Managed Lavalink startup aborted"
-msgstr "Luka {port} već se koristi. Prekinuto upravljano pokretanje Lavalinka"
+msgid "Port {port_value} already in use. Managed Lavalink startup has been aborted."
+msgstr "Luka {port_value} već se koristi. Upravljani lavalink startup je prekinut."
 
 #: pylav/extension/bundled_node/manager.py:477
-msgid "Lavalink failed to start: {line}"
-msgstr "Lavalink se nije uspio pokrenuti: {line}"
+msgid "Lavalink failed to start: {error_value}"
+msgstr "Lavalink se nije uspio pokrenuti: {error_value}"
 

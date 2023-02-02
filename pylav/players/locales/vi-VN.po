@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:10\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:33\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "MIME-Version: 1.0\n"
@@ -21,139 +21,155 @@ msgstr ""
 msgid "No available nodes!"
 msgstr "Không có nút có sẵn!"
 
-#: pylav/players/manager.py:349
-msgid "Music in {count} servers"
-msgstr "Âm nhạc trong {count} Máy chủ"
+#: pylav/players/manager.py:350
+msgid "Music in {number_of_servers_value} servers"
+msgstr "Âm nhạc trong {number_of_servers_value} Máy chủ"
 
 #: pylav/players/player.py:1176
-msgid "There are no tracks currently in the player history"
-msgstr "Hiện tại không có bản nhạc nào trong lịch sử người chơi"
+msgid "There are no tracks currently in the player history."
+msgstr "Hiện tại không có bản nhạc nào trong lịch sử người chơi."
 
 #: pylav/players/player.py:1869
-msgid "Current node has the Volume filter functionality disabled"
-msgstr "Nút hiện tại đã tắt chức năng Bộ lọc âm lượng"
+msgid "Current node has the volume filter feature disabled."
+msgstr "Nút hiện tại đã tắt tính năng bộ lọc âm lượng."
 
 #: pylav/players/player.py:1891 pylav/players/player.py:2067
 #: pylav/players/player.py:2122
-msgid "Current node has the Equalizer functionality disabled"
-msgstr "Nút hiện tại đã tắt chức năng Bộ chỉnh âm"
+msgid "Current node has the equalizer feature disabled."
+msgstr "Nút hiện tại có tính năng bộ chỉnh âm bị tắt."
 
 #: pylav/players/player.py:1911
-msgid "Current node has the Karaoke functionality disabled"
-msgstr "Nút hiện tại đã tắt chức năng Karaoke"
+msgid "Current node has the karaoke feature disabled"
+msgstr "Nút hiện tại đã tắt tính năng karaoke"
 
 #: pylav/players/player.py:1931 pylav/players/player.py:2069
 #: pylav/players/player.py:2124
-msgid "Current node has the Timescale functionality disabled"
-msgstr "Nút hiện tại đã tắt chức năng Timescale"
+msgid "Current node has the timescale feature disabled."
+msgstr "Nút hiện tại đã tắt tính năng thang thời gian."
 
 #: pylav/players/player.py:1951
-msgid "Current node has the Tremolo functionality disabled"
-msgstr "Nút hiện tại đã tắt chức năng Tremolo"
+msgid "Current node has the tremolo feature disabled."
+msgstr "Nút hiện tại đã tắt tính năng tremolo."
 
 #: pylav/players/player.py:1971
-msgid "Current node has the Vibrato functionality disabled"
-msgstr "Nút hiện tại đã tắt chức năng Vibrato"
+msgid "Current node has the vibrato feature disabled."
+msgstr "Nút hiện tại đã tắt tính năng rung."
 
 #: pylav/players/player.py:1991
-msgid "Current node has the Rotation functionality disabled"
-msgstr "Nút hiện tại đã tắt chức năng Xoay"
+msgid "Current node has the rotation feature disabled."
+msgstr "Nút hiện tại đã tắt tính năng xoay."
 
 #: pylav/players/player.py:2011
-msgid "Current node has the Distortion functionality disabled"
-msgstr "Nút hiện tại đã tắt chức năng Biến dạng"
+msgid "Current node has the distortion feature disabled."
+msgstr "Nút hiện tại đã tắt tính năng biến dạng."
 
 #: pylav/players/player.py:2031
-msgid "Current node has the LowPass functionality disabled"
-msgstr "Nút hiện tại đã tắt chức năng LowPass"
+msgid "Current node has the low-pass feature disabled."
+msgstr "Nút hiện tại đã tắt tính năng low-pass."
 
 #: pylav/players/player.py:2051
-msgid "Current node has the Echo functionality disabled"
-msgstr "Nút hiện tại đã tắt chức năng Echo"
+msgid "Current node has the echo feature disabled."
+msgstr "Nút hiện tại có tính năng tiếng vang bị tắt."
 
 #: pylav/players/player.py:2181
-msgid "Current node has the ChannelMix functionality disabled"
-msgstr "Nút hiện tại đã tắt chức năng ChannelMix"
+msgid "Current node has the channel-mix feature disabled."
+msgstr "Nút hiện tại đã tắt tính năng kết hợp kênh."
 
-#: pylav/players/player.py:2441 pylav/players/player.py:2486
-#: pylav/players/player.py:2501
+#: pylav/players/player.py:2441 pylav/players/player.py:2484
+#: pylav/players/player.py:2499
 msgid "LIVE"
 msgstr "SỐNG"
 
-#: pylav/players/player.py:2454
-msgid "Now Playing in"
-msgstr "Hiện đang chơi trong"
+#: pylav/players/player.py:2453
+msgid "Now Playing in {server_name}"
+msgstr "Hiện đang chơi trong {server_name}"
 
-#: pylav/players/player.py:2472 pylav/players/player.py:2581
+#: pylav/players/player.py:2470 pylav/players/player.py:2592
 msgid "Currently livestreaming"
 msgstr "Hiện đang phát trực tiếp"
 
-#: pylav/players/player.py:2474
+#: pylav/players/player.py:2472
 msgid "Playing: "
 msgstr "Chơi: "
 
-#: pylav/players/player.py:2477 pylav/players/player.py:2493
-#: pylav/players/player.py:2508 pylav/players/player.py:2587
+#: pylav/players/player.py:2475 pylav/players/player.py:2491
+#: pylav/players/player.py:2506 pylav/players/player.py:2598
 msgid "Requester"
 msgstr "Người yêu cầu"
 
-#: pylav/players/player.py:2489 pylav/players/player.py:2504
+#: pylav/players/player.py:2487 pylav/players/player.py:2502
 msgid "Duration"
 msgstr "Trường độ"
 
-#: pylav/players/player.py:2495
+#: pylav/players/player.py:2493
 msgid "Previous Track"
 msgstr "Bản nhạc trước"
 
-#: pylav/players/player.py:2510
+#: pylav/players/player.py:2508
 msgid "Next Track"
 msgstr "Bản nhạc tiếp theo"
 
-#: pylav/players/player.py:2515
+#: pylav/players/player.py:2517
+msgid "1 track, {queue_total_duration} remaining\n"
+msgstr "1 bản nhạc, {queue_total_duration} Còn lại\n"
+
+#: pylav/players/player.py:2519
+msgid "0 tracks, {queue_total_duration} remaining\n"
+msgstr "0 bản nhạc, {queue_total_duration} Còn lại\n"
+
+#: pylav/players/player.py:2521
 msgid "{track_count} tracks, {queue_total_duration} remaining\n"
 msgstr "{track_count} Bài hát {queue_total_duration} Còn lại\n"
 
-#: pylav/players/player.py:2519 pylav/players/player.py:2615
+#: pylav/players/player.py:2525 pylav/players/player.py:2639
 msgid "{translation}: {repeat_emoji}"
 msgstr "{translation}: {repeat_emoji}"
 
-#: pylav/players/player.py:2519 pylav/players/player.py:2615
+#: pylav/players/player.py:2525 pylav/players/player.py:2639
 msgid "Repeating"
 msgstr "Lặp lại"
 
-#: pylav/players/player.py:2520 pylav/players/player.py:2616
+#: pylav/players/player.py:2526 pylav/players/player.py:2640
 msgid "{space}{translation}: {autoplay_emoji}"
 msgstr "{space}{translation}: {autoplay_emoji}"
 
-#: pylav/players/player.py:2521 pylav/players/player.py:2617
+#: pylav/players/player.py:2527 pylav/players/player.py:2641
 msgid "Auto Play"
 msgstr "Tự động phát"
 
-#: pylav/players/player.py:2523 pylav/players/player.py:2619
+#: pylav/players/player.py:2529 pylav/players/player.py:2643
 msgid "{space}{translation}: {volume}%"
 msgstr "{space}{translation}: {volume}%"
 
-#: pylav/players/player.py:2524 pylav/players/player.py:2620
+#: pylav/players/player.py:2530 pylav/players/player.py:2644
 msgid "Volume"
 msgstr "Âm lượng"
 
-#: pylav/players/player.py:2564
-msgid "Recently Played for"
-msgstr "Đã chơi gần đây cho"
+#: pylav/players/player.py:2570
+msgid "Recently Played for {server_name}"
+msgstr "Đã chơi gần đây cho {server_name}"
 
-#: pylav/players/player.py:2564
-msgid "Queue for"
-msgstr "Xếp hàng cho"
+#: pylav/players/player.py:2573
+msgid "Queue for {server_name}"
+msgstr "Xếp hàng cho {server_name}"
 
-#: pylav/players/player.py:2584
+#: pylav/players/player.py:2595
 msgid "Playing"
 msgstr "Chơi"
 
-#: pylav/players/player.py:2600
-msgid "Queue order may not be accurate due to auto-shuffle being enabled"
-msgstr "Thứ tự hàng đợi có thể không chính xác do tính năng tự động xáo trộn được bật"
+#: pylav/players/player.py:2611
+msgid "Queue order may not be accurate due to auto shuffle being enabled."
+msgstr "Thứ tự hàng đợi có thể không chính xác do tính năng tự động xáo trộn được bật."
 
-#: pylav/players/player.py:2606
+#: pylav/players/player.py:2621
+msgid "Page 1 / 1 | 1 track, {queue_total_duration} remaining\n"
+msgstr "Trang 1 / 1 | 1 bản nhạc, {queue_total_duration} Còn lại\n"
+
+#: pylav/players/player.py:2625
+msgid "Page 1 / 1 | 0 tracks, {queue_total_duration} remaining\n"
+msgstr "Trang 1 / 1 | 0 bản nhạc, {queue_total_duration} Còn lại\n"
+
+#: pylav/players/player.py:2629
 msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
 msgstr "Trang {current_page}/{total_pages} | {track_number} Bài hát {queue_total_duration} Còn lại\n"
 

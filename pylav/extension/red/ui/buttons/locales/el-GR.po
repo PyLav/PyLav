@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:18\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:33\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
@@ -30,13 +30,13 @@ msgstr ""
 #: pylav/extension/red/ui/buttons/playlist.py:41
 #: pylav/extension/red/ui/buttons/playlist.py:76
 #: pylav/extension/red/ui/buttons/playlist.py:117
-#: pylav/extension/red/ui/buttons/playlist.py:164
-#: pylav/extension/red/ui/buttons/playlist.py:207
-#: pylav/extension/red/ui/buttons/playlist.py:255
-#: pylav/extension/red/ui/buttons/playlist.py:301
-#: pylav/extension/red/ui/buttons/playlist.py:347
-msgid "You are not authorized to interact with this option"
-msgstr "Δεν είστε εξουσιοδοτημένοι να αλληλεπιδράσετε με αυτήν την επιλογή"
+#: pylav/extension/red/ui/buttons/playlist.py:167
+#: pylav/extension/red/ui/buttons/playlist.py:210
+#: pylav/extension/red/ui/buttons/playlist.py:258
+#: pylav/extension/red/ui/buttons/playlist.py:304
+#: pylav/extension/red/ui/buttons/playlist.py:350
+msgid "You are not authorized to interact with this option."
+msgstr "Δεν είστε εξουσιοδοτημένοι να αλληλεπιδράσετε με αυτήν την επιλογή."
 
 #: pylav/extension/red/ui/buttons/generic.py:85
 msgid "Yes"
@@ -46,62 +46,55 @@ msgstr "Ναι"
 msgid "No"
 msgstr "Όχι"
 
-#: pylav/extension/red/ui/buttons/generic.py:164
-msgid "Disconnect {} {}"
-msgstr "Αποσύνδεση {} {}"
-
 #: pylav/extension/red/ui/buttons/generic.py:165
-msgid "players"
-msgstr "παίκτες"
+msgid "Disconnect {player_type} players"
+msgstr "Αποσυνδέω {player_type} Παίκτες"
 
-#: pylav/extension/red/ui/buttons/generic.py:165
-msgid "player"
-msgstr "παίκτης"
+#: pylav/extension/red/ui/buttons/generic.py:167
+msgid "Disconnect {player_type} player"
+msgstr "Αποσυνδέω {player_type} παίκτης"
 
 #: pylav/extension/red/ui/buttons/nodes.py:57
-msgid "Connecting to the node with SSL enabled"
-msgstr "Σύνδεση στον κόμβο με ενεργοποιημένο SSL"
+msgid "Connecting to the node with SSL enabled."
+msgstr "Σύνδεση στον κόμβο με ενεργοποιημένο το SSL."
 
 #: pylav/extension/red/ui/buttons/nodes.py:64
-msgid "Connecting to the node with SSL disabled"
-msgstr "Σύνδεση στον κόμβο με SSL απενεργοποιημένο"
+msgid "Connecting to the node with SSL disabled."
+msgstr "Σύνδεση στον κόμβο με απενεργοποιημένο το SSL."
 
 #: pylav/extension/red/ui/buttons/nodes.py:102
-msgid "This node will only be used for searches"
-msgstr "Αυτός ο κόμβος θα χρησιμοποιηθεί μόνο για αναζητήσεις"
+msgid "This node will only be used for search."
+msgstr "Αυτός ο κόμβος θα χρησιμοποιηθεί μόνο για αναζήτηση."
 
 #: pylav/extension/red/ui/buttons/nodes.py:109
-msgid "This node will be used for search and playback"
-msgstr "Αυτός ο κόμβος θα χρησιμοποιηθεί για αναζήτηση και αναπαραγωγή"
+msgid "This node will be used for search and playback."
+msgstr "Αυτός ο κόμβος θα χρησιμοποιηθεί για αναζήτηση και αναπαραγωγή."
 
 #: pylav/extension/red/ui/buttons/nodes.py:140
-msgid "Please fill out all the fields before continuing"
-msgstr "Παρακαλώ συμπληρώστε όλα τα πεδία πριν συνεχίσετε"
+msgid "Please fill out all the fields before continuing."
+msgstr "Παρακαλούμε συμπληρώστε όλα τα πεδία πριν συνεχίσετε."
 
 #: pylav/extension/red/ui/buttons/nodes.py:220
-msgid "When you press done this node will be permanently delete"
-msgstr "Όταν πατήσετε αυτό το κουμπί θα διαγραφεί οριστικά"
+msgid "When you press done this node will be permanently delete."
+msgstr "Όταν πατήσετε done, αυτός ο κόμβος θα διαγραφεί οριστικά."
 
 #: pylav/extension/red/ui/buttons/nodes.py:222
-msgid "This node will no longer be deleted once you press done"
-msgstr "Αυτός ο κόμβος δεν θα διαγράφεται πλέον μόλις πατήσετε το κουμπί"
+msgid "This node will no longer be deleted once you press done."
+msgstr "Αυτός ο κόμβος δεν θα διαγραφεί πλέον μόλις πατήσετε τέλος."
 
-#: pylav/extension/red/ui/buttons/nodes.py:255
-msgid "__Enabled sources__:\n"
-"{sources}"
-msgstr "__Ενεργοποιημένες πηγές__:\n"
-"{sources}"
+#: pylav/extension/red/ui/buttons/nodes.py:256
+msgid "Enable sources"
+msgstr "Ενεργοποίηση πηγών"
 
 #: pylav/extension/red/ui/buttons/player.py:38
 #: pylav/extension/red/ui/buttons/player.py:87
-#: pylav/extension/red/ui/buttons/player.py:140
-msgid "You are not authorized to perform this action"
-msgstr "Δεν είστε εξουσιοδοτημένοι να εκτελέσετε αυτήν την ενέργεια"
+msgid "You are not authorized to perform this action."
+msgstr "Δεν είστε εξουσιοδοτημένοι να εκτελέσετε αυτήν την ενέργεια."
 
 #: pylav/extension/red/ui/buttons/player.py:47
 #: pylav/extension/red/ui/buttons/player.py:96
-msgid "No Player Available For Action - Try Refreshing"
-msgstr "Δεν Υπάρχει Διαθέσιμος Παίκτης Για Δράση - Δοκιμάστε Να Ανανεώσετε"
+msgid "No player available for action, try refreshing."
+msgstr "Δεν υπάρχει διαθέσιμος παίκτης για δράση, δοκιμάστε να ανανεώσετε."
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:107
@@ -111,98 +104,98 @@ msgstr "Ενέργεια Ιδιοκτήτη Bot"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:164
-msgid "Player disconnected"
-msgstr "Ο παίκτης αποσυνδέθηκε"
+msgid "Player disconnected."
+msgstr "Ο παίκτης αποσυνδέθηκε."
 
 #: pylav/extension/red/ui/buttons/player.py:107
-msgid "Player stopped"
-msgstr "Ο παίκτης σταμάτησε"
+msgid "Player stopped."
+msgstr "Ο παίκτης σταμάτησε."
+
+#: pylav/extension/red/ui/buttons/player.py:140
+msgid "You are not authorized to perform this action"
+msgstr "Δεν είστε εξουσιοδοτημένοι να εκτελέσετε αυτήν την ενέργεια"
 
 #: pylav/extension/red/ui/buttons/player.py:154
-msgid "No Players Available For Action - Try Refreshing"
-msgstr "Δεν Υπάρχουν Διαθέσιμοι Παίκτες Για Δράση - Δοκιμάστε Να Ανανεώσετε"
+msgid "No players available for action, try refreshing."
+msgstr "Δεν υπάρχουν παίκτες διαθέσιμοι για δράση, δοκιμάστε να ανανεώσετε."
 
 #: pylav/extension/red/ui/buttons/playlist.py:48
-msgid "When you press done this playlist will be permanently delete"
-msgstr "Όταν πατήσετε το τέλος αυτής της λίστας αναπαραγωγής θα διαγραφεί οριστικά"
+msgid "When you press done this playlist will be permanently delete."
+msgstr "Όταν πατήσετε τέλος, αυτή η λίστα αναπαραγωγής θα διαγραφεί οριστικά."
 
 #: pylav/extension/red/ui/buttons/playlist.py:50
-msgid "This playlist will no longer be deleted once you press done"
-msgstr "Αυτή η λίστα αναπαραγωγής δεν θα διαγράφεται πλέον όταν πατήσετε να τελειώσετε"
+msgid "This playlist will no longer be deleted once you press done."
+msgstr "Αυτή η λίστα αναπαραγωγής δεν θα διαγράφεται πλέον μόλις πατήσετε τέλος."
 
 #: pylav/extension/red/ui/buttons/playlist.py:83
-msgid "Clearing all tracks from the playlist playlist"
-msgstr "Εκκαθάριση όλων των κομματιών από τη λίστα αναπαραγωγής"
+msgid "Clearing all tracks from the playlist."
+msgstr "Εκκαθάριση όλων των κομματιών από τη λίστα αναπαραγωγής."
 
 #: pylav/extension/red/ui/buttons/playlist.py:85
-msgid "No longer clearing tracks from the playlist"
-msgstr "Δεν γίνεται πλέον εκκαθάριση κομματιών από τη λίστα αναπαραγωγής"
+msgid "No longer clearing tracks from the playlist."
+msgstr "Δεν διαγράφει πλέον κομμάτια από τη λίστα αναπαραγωγής."
 
-#: pylav/extension/red/ui/buttons/playlist.py:126
-msgid "Here is your playlist: {name}{extras}"
-msgstr "Εδώ είναι η λίστα αναπαραγωγής: {name}{extras}"
+#: pylav/extension/red/ui/buttons/playlist.py:124
+msgid "Here is your playlist: {playlist_name}, file is compressed using Gzip to make it possible to send via Discord you can use <https://gzip.swimburger.net/> to decompress it."
+msgstr "Εδώ είναι η λίστα αναπαραγωγής σας: {playlist_name}, το αρχείο συμπιέζεται χρησιμοποιώντας το Gzip για να καταστεί δυνατή η αποστολή μέσω Discord που μπορείτε να χρησιμοποιήσετε <https://gzip.swimburger.net/> για να το αποσυμπιέσετε."
 
 #: pylav/extension/red/ui/buttons/playlist.py:128
-msgid "\n"
-" (compressed using gzip to make it possible to send via Discord - you can use <https://gzip.swimburger.net/> to decompress it)"
-msgstr "\n"
-" (συμπιεσμένο χρησιμοποιώντας το gzip για να καταστήσει δυνατή την αποστολή μέσω του Discord - μπορείτε να χρησιμοποιήσετε <https://gzip.swimburger.net/> για να το αποσυμπιέσετε)"
+msgid "Here is your playlist: {playlist_name}, file is compressed using Brotli compression."
+msgstr "Εδώ είναι η λίστα αναπαραγωγής σας: {playlist_name}, το αρχείο συμπιέζεται χρησιμοποιώντας συμπίεση Brotli."
 
-#: pylav/extension/red/ui/buttons/playlist.py:133
-msgid "\n"
-" (File compressed using Brotli compression."
-msgstr "\n"
-" (Συμπιεσμένη χρήση συμπίεσης Brotli."
-
-#: pylav/extension/red/ui/buttons/playlist.py:171
-msgid "Updating playlist with the latest tracks, press done to continue"
-msgstr "Ενημέρωση λίστας αναπαραγωγής με τα τελευταία κομμάτια, πατήστε για να συνεχίσετε"
+#: pylav/extension/red/ui/buttons/playlist.py:132
+msgid "Here is your playlist: {playlist_name}."
+msgstr "Εδώ είναι η λίστα αναπαραγωγής σας: {playlist_name}."
 
 #: pylav/extension/red/ui/buttons/playlist.py:174
-msgid "Not updating playlist"
-msgstr "Μη ενημέρωση λίστας αναπαραγωγής"
+msgid "Updating playlist with the latest tracks, press done to continue."
+msgstr "Ενημέρωση λίστας αναπαραγωγής με τα πιο πρόσφατα κομμάτια, πατήστε τέλος για να συνεχίσετε."
 
-#: pylav/extension/red/ui/buttons/playlist.py:263
-msgid "Adding the current queue to playlist"
-msgstr "Προσθήκη της τρέχουσας ουράς στην λίστα αναπαραγωγής"
+#: pylav/extension/red/ui/buttons/playlist.py:177
+msgid "Not updating playlist."
+msgstr "Δεν ενημερώνεται η λίστα αναπαραγωγής."
 
-#: pylav/extension/red/ui/buttons/playlist.py:270
-msgid "No longer adding the current queue to playlist"
-msgstr "Δεν προσθέτει πλέον την τρέχουσα ουρά στην λίστα αναπαραγωγής"
+#: pylav/extension/red/ui/buttons/playlist.py:266
+msgid "Adding the current queue to playlist."
+msgstr "Προσθήκη της τρέχουσας ουράς στη λίστα αναπαραγωγής."
 
-#: pylav/extension/red/ui/buttons/playlist.py:309
-msgid "Removing all duplicate tracks from the queue"
-msgstr "Αφαίρεση όλων των διπλών κομματιών από την ουρά"
+#: pylav/extension/red/ui/buttons/playlist.py:273
+msgid "No longer adding the current queue to playlist."
+msgstr "Δεν προσθέτει πλέον την τρέχουσα ουρά στη λίστα αναπαραγωγής."
 
-#: pylav/extension/red/ui/buttons/playlist.py:316
-msgid "No longer all duplicate tracks from the queue"
-msgstr "Δεν είναι πλέον όλα τα διπλά κομμάτια από την ουρά"
+#: pylav/extension/red/ui/buttons/playlist.py:312
+msgid "Removing all duplicate tracks from the queue."
+msgstr "Κατάργηση όλων των διπλών κομματιών από την ουρά."
 
-#: pylav/extension/red/ui/buttons/playlist.py:406
-msgid "Playlists you can currently play"
-msgstr "Λίστες αναπαραγωγής που μπορείτε να παίξετε"
+#: pylav/extension/red/ui/buttons/playlist.py:319
+msgid "No longer all duplicate tracks from the queue."
+msgstr "Δεν είναι πλέον όλα τα διπλότυπα κομμάτια από την ουρά."
 
-#: pylav/extension/red/ui/buttons/playlist.py:412
-msgid "Pick a playlist"
-msgstr "Επιλογή λίστας αναπαραγωγής"
+#: pylav/extension/red/ui/buttons/playlist.py:409
+msgid "Playlists you can currently play."
+msgstr "Λίστες αναπαραγωγής που μπορείτε να παίξετε αυτήν τη στιγμή."
 
-#: pylav/extension/red/ui/buttons/playlist.py:434
+#: pylav/extension/red/ui/buttons/playlist.py:415
+msgid "Pick a playlist."
+msgstr "Επιλέξτε μια λίστα αναπαραγωγής."
+
+#: pylav/extension/red/ui/buttons/playlist.py:437
 msgid "What should the playlist name be?"
 msgstr "Τι πρέπει να είναι το όνομα της λίστας αναπαραγωγής?"
 
 #: pylav/extension/red/ui/buttons/queue.py:164
 #: pylav/extension/red/ui/buttons/queue.py:191
 #: pylav/extension/red/ui/buttons/queue.py:224
-msgid "Not connected to a voice channel"
-msgstr "Δεν είναι συνδεδεμένο σε κανάλι φωνής"
+msgid "Not connected to a voice channel."
+msgstr "Δεν είναι συνδεδεμένο σε κανάλι φωνής."
 
 #: pylav/extension/red/ui/buttons/queue.py:289
-msgid "There's nothing in the Queue"
-msgstr "Δεν υπάρχει τίποτα στην ουρά"
+msgid "There is nothing in the queue."
+msgstr "Δεν υπάρχει τίποτα στην ουρά."
 
 #: pylav/extension/red/ui/buttons/queue.py:296
-msgid "Removed tracks from the queue"
-msgstr "Αφαιρέθηκαν τα κομμάτια από την ουρά"
+msgid "Removed tracks from the queue."
+msgstr "Καταργήθηκαν κομμάτια από την ουρά."
 
 #: pylav/extension/red/ui/buttons/queue.py:323
 msgid "What do you want to enqueue?"

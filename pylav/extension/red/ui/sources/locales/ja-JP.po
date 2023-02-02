@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:18\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:33\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -25,119 +25,121 @@ msgstr "プリセット名"
 msgid "Author"
 msgstr "作成者"
 
-#: pylav/extension/red/ui/sources/generic.py:88
-msgid "Page {page_num}/{total_pages} | {num} {entries}"
-msgstr "ページ {page_num}/{total_pages} | {num} {entries}"
+#: pylav/extension/red/ui/sources/equalizer.py:39
+msgid "Bundled with PyLav"
+msgstr "パイラヴにバンドル"
 
-#: pylav/extension/red/ui/sources/generic.py:92
-msgid "entries"
-msgstr "エントリ"
+#: pylav/extension/red/ui/sources/generic.py:94
+#: pylav/extension/red/ui/sources/nodes.py:56
+msgid "Page {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} entries"
+msgstr "ページ {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} エントリ"
 
-#: pylav/extension/red/ui/sources/generic.py:92
-msgid "entry"
-msgstr "エントリ"
+#: pylav/extension/red/ui/sources/generic.py:102
+#: pylav/extension/red/ui/sources/nodes.py:64
+msgid "Page 1 / 1 | 1 entry"
+msgstr "ページ 1 / 1 |1 エントリ"
 
-#: pylav/extension/red/ui/sources/nodes.py:50
-msgid "Page {page_num}/{total_pages} | {num} nodes"
-msgstr "ページ {page_num}/{total_pages} | {num} ノード"
+#: pylav/extension/red/ui/sources/generic.py:104
+#: pylav/extension/red/ui/sources/nodes.py:66
+msgid "Page 1 / 1 | 0 entries"
+msgstr "ページ 1 / 1 |0 エントリ"
 
-#: pylav/extension/red/ui/sources/nodes.py:94
-#: pylav/extension/red/ui/sources/nodes.py:247
+#: pylav/extension/red/ui/sources/nodes.py:106
+#: pylav/extension/red/ui/sources/nodes.py:260
 msgid "No"
 msgstr "いいえ"
 
-#: pylav/extension/red/ui/sources/nodes.py:95
-#: pylav/extension/red/ui/sources/nodes.py:248
+#: pylav/extension/red/ui/sources/nodes.py:107
+#: pylav/extension/red/ui/sources/nodes.py:261
 msgid "Yes"
 msgstr "はい"
 
-#: pylav/extension/red/ui/sources/nodes.py:141
-#: pylav/extension/red/ui/sources/nodes.py:294
+#: pylav/extension/red/ui/sources/nodes.py:153
+#: pylav/extension/red/ui/sources/nodes.py:307
 msgid "None / Unknown"
 msgstr "なし / 不明"
 
-#: pylav/extension/red/ui/sources/nodes.py:143
-#: pylav/extension/red/ui/sources/nodes.py:296
+#: pylav/extension/red/ui/sources/nodes.py:155
+#: pylav/extension/red/ui/sources/nodes.py:309
 msgid "Property"
 msgstr "属性"
 
-#: pylav/extension/red/ui/sources/nodes.py:144
-#: pylav/extension/red/ui/sources/nodes.py:297
+#: pylav/extension/red/ui/sources/nodes.py:156
+#: pylav/extension/red/ui/sources/nodes.py:310
 msgid "Value"
 msgstr "価値"
 
-#: pylav/extension/red/ui/sources/nodes.py:145
-#: pylav/extension/red/ui/sources/nodes.py:298
+#: pylav/extension/red/ui/sources/nodes.py:157
 msgid "Latitude: {lat}\n"
 "Longitude: {lon}"
 msgstr "緯度: {lat}\n"
 "経度: {lon}"
 
-#: pylav/extension/red/ui/sources/nodes.py:151
-#: pylav/extension/red/ui/sources/nodes.py:304
+#: pylav/extension/red/ui/sources/nodes.py:163
+#: pylav/extension/red/ui/sources/nodes.py:317
 msgid "Region"
 msgstr "地域"
 
-#: pylav/extension/red/ui/sources/nodes.py:151
-#: pylav/extension/red/ui/sources/nodes.py:304
+#: pylav/extension/red/ui/sources/nodes.py:163
+#: pylav/extension/red/ui/sources/nodes.py:317
 msgid "N/A"
 msgstr "該当なし"
 
-#: pylav/extension/red/ui/sources/nodes.py:152
-#: pylav/extension/red/ui/sources/nodes.py:305
+#: pylav/extension/red/ui/sources/nodes.py:164
+#: pylav/extension/red/ui/sources/nodes.py:318
 msgid "Coordinates"
 msgstr "座標"
 
-#: pylav/extension/red/ui/sources/nodes.py:153
-#: pylav/extension/red/ui/sources/nodes.py:306
+#: pylav/extension/red/ui/sources/nodes.py:165
+#: pylav/extension/red/ui/sources/nodes.py:319
 msgid "Host"
 msgstr "ホスト"
 
-#: pylav/extension/red/ui/sources/nodes.py:154
-#: pylav/extension/red/ui/sources/nodes.py:307
+#: pylav/extension/red/ui/sources/nodes.py:166
+#: pylav/extension/red/ui/sources/nodes.py:320
 msgid "Port"
 msgstr "ポート"
 
-#: pylav/extension/red/ui/sources/nodes.py:155
-#: pylav/extension/red/ui/sources/nodes.py:308
+#: pylav/extension/red/ui/sources/nodes.py:167
+#: pylav/extension/red/ui/sources/nodes.py:321
 msgid "Password"
 msgstr "パスワード"
 
-#: pylav/extension/red/ui/sources/nodes.py:158
-#: pylav/extension/red/ui/sources/nodes.py:311
+#: pylav/extension/red/ui/sources/nodes.py:170
+#: pylav/extension/red/ui/sources/nodes.py:324
 msgid "SSL"
 msgstr "ティッカー"
 
-#: pylav/extension/red/ui/sources/nodes.py:159
-#: pylav/extension/red/ui/sources/nodes.py:312
+#: pylav/extension/red/ui/sources/nodes.py:171
+#: pylav/extension/red/ui/sources/nodes.py:325
 msgid "Available"
 msgstr "利用可能です"
 
-#: pylav/extension/red/ui/sources/nodes.py:160
-#: pylav/extension/red/ui/sources/nodes.py:313
+#: pylav/extension/red/ui/sources/nodes.py:172
+#: pylav/extension/red/ui/sources/nodes.py:326
 msgid "Search Only"
 msgstr "検索のみ"
 
-#: pylav/extension/red/ui/sources/nodes.py:161
-#: pylav/extension/red/ui/sources/nodes.py:314
+#: pylav/extension/red/ui/sources/nodes.py:173
+#: pylav/extension/red/ui/sources/nodes.py:327
 msgid "Players\n"
 "Connected\n"
 "Active"
 msgstr "接続済みのプレイヤー\n\n"
 "が有効"
 
-#: pylav/extension/red/ui/sources/nodes.py:165
-#: pylav/extension/red/ui/sources/nodes.py:318
+#: pylav/extension/red/ui/sources/nodes.py:177
+#: pylav/extension/red/ui/sources/nodes.py:331
 msgid "Frames Lost"
 msgstr "失われたフレーム"
 
-#: pylav/extension/red/ui/sources/nodes.py:170
-#: pylav/extension/red/ui/sources/nodes.py:323
+#: pylav/extension/red/ui/sources/nodes.py:182
+#: pylav/extension/red/ui/sources/nodes.py:336
 msgid "Uptime"
 msgstr "稼働時間"
 
-#: pylav/extension/red/ui/sources/nodes.py:171
-#: pylav/extension/red/ui/sources/nodes.py:324
+#: pylav/extension/red/ui/sources/nodes.py:183
+#: pylav/extension/red/ui/sources/nodes.py:337
 msgid "CPU Load\n"
 "Lavalink\n"
 "System"
@@ -145,13 +147,13 @@ msgstr "CPU負荷\n"
 "Lavalink\n"
 "システム"
 
-#: pylav/extension/red/ui/sources/nodes.py:174
-#: pylav/extension/red/ui/sources/nodes.py:327
+#: pylav/extension/red/ui/sources/nodes.py:186
+#: pylav/extension/red/ui/sources/nodes.py:340
 msgid "Penalty"
 msgstr "ペナルティ"
 
-#: pylav/extension/red/ui/sources/nodes.py:175
-#: pylav/extension/red/ui/sources/nodes.py:328
+#: pylav/extension/red/ui/sources/nodes.py:187
+#: pylav/extension/red/ui/sources/nodes.py:341
 msgid "Memory\n"
 "Used\n"
 "Free\n"
@@ -162,29 +164,44 @@ msgstr "メモリ\n\n"
 "割り当て可能\n"
 "予約"
 
-#: pylav/extension/red/ui/sources/nodes.py:178
-#: pylav/extension/red/ui/sources/nodes.py:331
+#: pylav/extension/red/ui/sources/nodes.py:190
+#: pylav/extension/red/ui/sources/nodes.py:344
 msgid "Features"
 msgstr "特徴"
 
-#: pylav/extension/red/ui/sources/nodes.py:190
-#: pylav/extension/red/ui/sources/nodes.py:343
-msgid "Page {page_num}/{total_pages} | {num} {plural}"
-msgstr "ページ {page_num}/{total_pages} | {num} {plural}"
+#: pylav/extension/red/ui/sources/nodes.py:203
+msgid "Page {page_num_value}/{total_pages_value} | {num_value} {plural_value}"
+msgstr "ページ {page_num_value}/{total_pages_value} | {num_value} {plural_value}"
 
-#: pylav/extension/red/ui/sources/nodes.py:194
-#: pylav/extension/red/ui/sources/nodes.py:347
+#: pylav/extension/red/ui/sources/nodes.py:207
 msgid "nodes"
 msgstr "ノード"
 
-#: pylav/extension/red/ui/sources/nodes.py:194
-#: pylav/extension/red/ui/sources/nodes.py:347
+#: pylav/extension/red/ui/sources/nodes.py:207
 msgid "node"
 msgstr "ノード"
 
+#: pylav/extension/red/ui/sources/nodes.py:311
+msgid "Latitude: {lat_value}\n"
+"Longitude: {lon_value}"
+msgstr "緯度： {lat_value}\n"
+"経度： {lon_value}"
+
+#: pylav/extension/red/ui/sources/nodes.py:362
+msgid "Page {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} nodes"
+msgstr "ページ {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} ノード"
+
+#: pylav/extension/red/ui/sources/nodes.py:370
+msgid "Page 1 / 1 | 1 node"
+msgstr "ページ 1 / 1 |1 ノード"
+
+#: pylav/extension/red/ui/sources/nodes.py:372
+msgid "Page 1 / 1 | 0 nodes"
+msgstr "ページ 1 / 1 |0 ノード"
+
 #: pylav/extension/red/ui/sources/player.py:64
-msgid "Nothing playing"
-msgstr "何も再生されていません"
+msgid "I am not currently playing anything on this server."
+msgstr "私は現在、このサーバーで何もプレイしていません。"
 
 #: pylav/extension/red/ui/sources/player.py:76
 msgid "Server Owner"
@@ -195,85 +212,111 @@ msgid "Connected"
 msgstr "接続しました"
 
 #: pylav/extension/red/ui/sources/player.py:78
-msgid "Users in VC"
-msgstr "VC のユーザー"
+msgid "Users in Voice Channel"
+msgstr "音声チャネルのユーザー"
 
 #: pylav/extension/red/ui/sources/player.py:80
 msgid "Queue Length"
 msgstr "キューの長さ"
 
-#: pylav/extension/red/ui/sources/player.py:86
-msgid "Queue History Length"
-msgstr "キュー履歴の長さ"
-
+#: pylav/extension/red/ui/sources/player.py:82
 #: pylav/extension/red/ui/sources/player.py:89
 msgid "track"
 msgstr "トラック"
 
+#: pylav/extension/red/ui/sources/player.py:82
 #: pylav/extension/red/ui/sources/player.py:89
 msgid "tracks"
 msgstr "跡"
 
-#: pylav/extension/red/ui/sources/player.py:100
-msgid "Page {page_num}/{total_pages} | Playing in {playing} {server_translation}"
-msgstr "ページ {page_num}/{total_pages} | {playing} {server_translation} でプレイ"
+#: pylav/extension/red/ui/sources/player.py:86
+msgid "Queue History Length"
+msgstr "キュー履歴の長さ"
 
-#: pylav/extension/red/ui/sources/player.py:104
-msgid "server"
-msgstr "サーバー"
+#: pylav/extension/red/ui/sources/player.py:105
+msgid "Page {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} servers"
+msgstr "ページ {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} サーバー"
 
-#: pylav/extension/red/ui/sources/player.py:104
-msgid "servers"
-msgstr "サーバー"
+#: pylav/extension/red/ui/sources/player.py:113
+msgid "Page 1 / 1 | 1 server"
+msgstr "ページ 1 / 1 |1 サーバー"
 
-#: pylav/extension/red/ui/sources/playlist.py:52
-#: pylav/extension/red/ui/sources/playlist.py:172
-msgid "Page {page_num}/{total_pages} | {num} playlists"
-msgstr "ページ {page_num}/{total_pages} | {num} プレイリスト"
+#: pylav/extension/red/ui/sources/player.py:115
+msgid "Page 1 / 1 | 0 servers"
+msgstr "ページ 1 / 1 |0 サーバー"
 
-#: pylav/extension/red/ui/sources/playlist.py:118
+#: pylav/extension/red/ui/sources/playlist.py:58
+#: pylav/extension/red/ui/sources/playlist.py:207
+msgid "Page {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} playlists"
+msgstr "ページ {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} プレイリスト"
+
+#: pylav/extension/red/ui/sources/playlist.py:66
+#: pylav/extension/red/ui/sources/playlist.py:215
+msgid "Page 1 / 1 | 1 playlist"
+msgstr "ページ 1 / 1 |1 プレイリスト"
+
+#: pylav/extension/red/ui/sources/playlist.py:68
+#: pylav/extension/red/ui/sources/playlist.py:217
+msgid "Page 1 / 1 | 0 playlists"
+msgstr "ページ 1 / 1 |0 プレイリスト"
+
+#: pylav/extension/red/ui/sources/playlist.py:131
 msgid "Tracks in"
 msgstr "トラック"
 
-#: pylav/extension/red/ui/sources/playlist.py:123
-msgid "Page {page_num}/{total_pages} | {num_tracks} tracks\n"
-msgstr "ページ {page_num}/{total_pages} | {num_tracks} トラック\n"
+#: pylav/extension/red/ui/sources/playlist.py:143
+msgid "Page {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} tracks"
+msgstr "ページ {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} 跡"
 
-#: pylav/extension/red/ui/sources/playlist.py:152
+#: pylav/extension/red/ui/sources/playlist.py:151
+msgid "Page 1 / 1 | 1 track"
+msgstr "ページ 1 / 1 |1トラック"
+
+#: pylav/extension/red/ui/sources/playlist.py:153
+msgid "Page 1 / 1 | 0 tracks"
+msgstr "ページ 1 / 1 |0曲のトラック"
+
+#: pylav/extension/red/ui/sources/playlist.py:181
 msgid "Unknown"
 msgstr "不明"
 
-#: pylav/extension/red/ui/sources/playlist.py:157
-msgid "ID: {id}"
-msgstr "身分証明書： {id}"
+#: pylav/extension/red/ui/sources/playlist.py:186
+msgid "Identifier: {id_value}"
+msgstr "識別子： {id_value}"
 
-#: pylav/extension/red/ui/sources/playlist.py:158
-msgid "Tracks: {num}"
-msgstr "トラック: {num}"
+#: pylav/extension/red/ui/sources/playlist.py:187
+msgid "Tracks: {num_value}"
+msgstr "跡： {num_value}"
 
-#: pylav/extension/red/ui/sources/playlist.py:159
-msgid "Author: {name}"
-msgstr "作成者: {name}"
+#: pylav/extension/red/ui/sources/playlist.py:188
+msgid "Author: {name_value}"
+msgstr "著者： {name_value}"
 
-#: pylav/extension/red/ui/sources/playlist.py:160
-msgid "Scope: {scope}\n"
-msgstr "スコープ: {scope}\n"
+#: pylav/extension/red/ui/sources/playlist.py:189
+msgid "Scope: {scope_value}\n"
+msgstr "スコープ： {scope_value}\n"
 
-#: pylav/extension/red/ui/sources/playlist.py:168
+#: pylav/extension/red/ui/sources/playlist.py:197
 msgid "Playlists you can access in this server:"
 msgstr "このサーバーでアクセスできるプレイリスト:"
 
 #: pylav/extension/red/ui/sources/queue.py:96
-#: pylav/extension/red/ui/sources/queue.py:142
-msgid "No active player found in server"
-msgstr "サーバーにアクティブなプレイヤーが見つかりません"
+msgid "I am not currently playing anything in this server."
+msgstr "私は現在、このサーバーで何もプレイしていません。"
 
 #: pylav/extension/red/ui/sources/queue.py:110
-msgid "There's nothing in recently played"
-msgstr "最近再生されたものはありません"
+msgid "There is nothing in recently played."
+msgstr "最近プレイしたものは何もありません。"
 
 #: pylav/extension/red/ui/sources/queue.py:112
-#: pylav/extension/red/ui/sources/queue.py:155
-msgid "There's nothing currently being played"
+msgid "There is nothing currently being played"
 msgstr "現在再生されているものはありません"
+
+#: pylav/extension/red/ui/sources/queue.py:142
+msgid "No active player found in server."
+msgstr "サーバーにアクティブなプレーヤーが見つかりません。"
+
+#: pylav/extension/red/ui/sources/queue.py:155
+msgid "There is nothing currently being played."
+msgstr "現在再生されているものはありません。"
 

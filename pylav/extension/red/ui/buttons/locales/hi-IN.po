@@ -1,0 +1,203 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: pylav\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:33\n"
+"Last-Translator: \n"
+"Language-Team: Hindi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.4.2\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: pylav\n"
+"X-Crowdin-Project-ID: 535244\n"
+"X-Crowdin-Language: hi\n"
+"X-Crowdin-File: /lib/pylav/extension/red/ui/buttons/locales/messages.pot\n"
+"X-Crowdin-File-ID: 3641\n"
+"Language: hi_IN\n"
+
+#: pylav/extension/red/ui/buttons/generic.py:70
+#: pylav/extension/red/ui/buttons/generic.py:94
+#: pylav/extension/red/ui/buttons/generic.py:118
+#: pylav/extension/red/ui/buttons/generic.py:142
+#: pylav/extension/red/ui/buttons/nodes.py:49
+#: pylav/extension/red/ui/buttons/nodes.py:94
+#: pylav/extension/red/ui/buttons/nodes.py:133
+#: pylav/extension/red/ui/buttons/nodes.py:178
+#: pylav/extension/red/ui/buttons/nodes.py:213
+#: pylav/extension/red/ui/buttons/nodes.py:248
+#: pylav/extension/red/ui/buttons/playlist.py:41
+#: pylav/extension/red/ui/buttons/playlist.py:76
+#: pylav/extension/red/ui/buttons/playlist.py:117
+#: pylav/extension/red/ui/buttons/playlist.py:167
+#: pylav/extension/red/ui/buttons/playlist.py:210
+#: pylav/extension/red/ui/buttons/playlist.py:258
+#: pylav/extension/red/ui/buttons/playlist.py:304
+#: pylav/extension/red/ui/buttons/playlist.py:350
+msgid "You are not authorized to interact with this option."
+msgstr "आप इस विकल्प के साथ सहभागिता करने के लिए अधिकृत नहीं हैं."
+
+#: pylav/extension/red/ui/buttons/generic.py:85
+msgid "Yes"
+msgstr "हाँ"
+
+#: pylav/extension/red/ui/buttons/generic.py:109
+msgid "No"
+msgstr "नहीं"
+
+#: pylav/extension/red/ui/buttons/generic.py:165
+msgid "Disconnect {player_type} players"
+msgstr "अलग करना {player_type} खिलाड़ियों"
+
+#: pylav/extension/red/ui/buttons/generic.py:167
+msgid "Disconnect {player_type} player"
+msgstr "अलग करना {player_type} खिलाड़ी"
+
+#: pylav/extension/red/ui/buttons/nodes.py:57
+msgid "Connecting to the node with SSL enabled."
+msgstr "SSL के साथ नोड से कनेक्ट करना सक्षम है।"
+
+#: pylav/extension/red/ui/buttons/nodes.py:64
+msgid "Connecting to the node with SSL disabled."
+msgstr "SSL के साथ नोड से कनेक्ट करना अक्षम है।"
+
+#: pylav/extension/red/ui/buttons/nodes.py:102
+msgid "This node will only be used for search."
+msgstr "इस नोड का उपयोग केवल खोज के लिए किया जाएगा।"
+
+#: pylav/extension/red/ui/buttons/nodes.py:109
+msgid "This node will be used for search and playback."
+msgstr "इस नोड का उपयोग खोज और प्लेबैक के लिए किया जाएगा।"
+
+#: pylav/extension/red/ui/buttons/nodes.py:140
+msgid "Please fill out all the fields before continuing."
+msgstr "जारी रखने से पहले कृपया सभी फ़ील्ड भरें।"
+
+#: pylav/extension/red/ui/buttons/nodes.py:220
+msgid "When you press done this node will be permanently delete."
+msgstr "जब आप दबाते हैं तो यह नोड स्थायी रूप से हटा दिया जाएगा।"
+
+#: pylav/extension/red/ui/buttons/nodes.py:222
+msgid "This node will no longer be deleted once you press done."
+msgstr "आपके द्वारा दबाए जाने के बाद यह नोड अब हटाया नहीं जाएगा."
+
+#: pylav/extension/red/ui/buttons/nodes.py:256
+msgid "Enable sources"
+msgstr "स्रोत सक्षम करें"
+
+#: pylav/extension/red/ui/buttons/player.py:38
+#: pylav/extension/red/ui/buttons/player.py:87
+msgid "You are not authorized to perform this action."
+msgstr "आप इस क्रिया को करने के लिए अधिकृत नहीं हैं."
+
+#: pylav/extension/red/ui/buttons/player.py:47
+#: pylav/extension/red/ui/buttons/player.py:96
+msgid "No player available for action, try refreshing."
+msgstr "कार्रवाई के लिए कोई खिलाड़ी उपलब्ध नहीं है, ताज़ा करने का प्रयास करें."
+
+#: pylav/extension/red/ui/buttons/player.py:56
+#: pylav/extension/red/ui/buttons/player.py:107
+#: pylav/extension/red/ui/buttons/player.py:164
+msgid "Bot Owner Action"
+msgstr "बॉट मालिक कार्रवाई"
+
+#: pylav/extension/red/ui/buttons/player.py:56
+#: pylav/extension/red/ui/buttons/player.py:164
+msgid "Player disconnected."
+msgstr "प्लेयर डिस्कनेक्ट हो गया."
+
+#: pylav/extension/red/ui/buttons/player.py:107
+msgid "Player stopped."
+msgstr "खिलाड़ी रुक गया।"
+
+#: pylav/extension/red/ui/buttons/player.py:140
+msgid "You are not authorized to perform this action"
+msgstr "आप इस क्रिया को करने के लिए अधिकृत नहीं हैं"
+
+#: pylav/extension/red/ui/buttons/player.py:154
+msgid "No players available for action, try refreshing."
+msgstr "एक्शन के लिए कोई खिलाड़ी उपलब्ध नहीं है, रिफ्रेशिंग की कोशिश करें।"
+
+#: pylav/extension/red/ui/buttons/playlist.py:48
+msgid "When you press done this playlist will be permanently delete."
+msgstr "जब आप प्रेस करते हैं तो यह प्लेलिस्ट स्थायी रूप से हटा दी जाएगी।"
+
+#: pylav/extension/red/ui/buttons/playlist.py:50
+msgid "This playlist will no longer be deleted once you press done."
+msgstr "आपके द्वारा प्रेस करने के बाद यह प्लेलिस्ट अब नहीं हटाई जाएगी।"
+
+#: pylav/extension/red/ui/buttons/playlist.py:83
+msgid "Clearing all tracks from the playlist."
+msgstr "प्लेलिस्ट से सभी ट्रैक साफ़ करना।"
+
+#: pylav/extension/red/ui/buttons/playlist.py:85
+msgid "No longer clearing tracks from the playlist."
+msgstr "अब प्लेलिस्ट से ट्रैक साफ़ नहीं करना."
+
+#: pylav/extension/red/ui/buttons/playlist.py:124
+msgid "Here is your playlist: {playlist_name}, file is compressed using Gzip to make it possible to send via Discord you can use <https://gzip.swimburger.net/> to decompress it."
+msgstr "यहाँ आपकी प्लेलिस्ट है: {playlist_name}, फ़ाइल Gzip का उपयोग करके संपीड़ित की जाती है ताकि आप डिस्कॉर्ड के माध्यम से भेजना संभव बना सकें जिसका आप उपयोग कर सकते हैं <https://gzip.swimburger.net/> इसे डीकंप्रेस करना।"
+
+#: pylav/extension/red/ui/buttons/playlist.py:128
+msgid "Here is your playlist: {playlist_name}, file is compressed using Brotli compression."
+msgstr "यहाँ आपकी प्लेलिस्ट है: {playlist_name}, फ़ाइल को Brotli संपीड़न का उपयोग करके संपीड़ित किया जाता है।"
+
+#: pylav/extension/red/ui/buttons/playlist.py:132
+msgid "Here is your playlist: {playlist_name}."
+msgstr "यहाँ आपकी प्लेलिस्ट है: {playlist_name}."
+
+#: pylav/extension/red/ui/buttons/playlist.py:174
+msgid "Updating playlist with the latest tracks, press done to continue."
+msgstr "नवीनतम ट्रैक के साथ प्लेलिस्ट अपडेट करना, जारी रखने के लिए प्रेस किया गया।"
+
+#: pylav/extension/red/ui/buttons/playlist.py:177
+msgid "Not updating playlist."
+msgstr "प्लेलिस्ट अपडेट नहीं करना।"
+
+#: pylav/extension/red/ui/buttons/playlist.py:266
+msgid "Adding the current queue to playlist."
+msgstr "प्लेलिस्ट में वर्तमान कतार जोड़ना."
+
+#: pylav/extension/red/ui/buttons/playlist.py:273
+msgid "No longer adding the current queue to playlist."
+msgstr "अब प्लेलिस्ट में वर्तमान कतार को नहीं जोड़ना."
+
+#: pylav/extension/red/ui/buttons/playlist.py:312
+msgid "Removing all duplicate tracks from the queue."
+msgstr "कतार से सभी डुप्लिकेट पटरियों को हटाना।"
+
+#: pylav/extension/red/ui/buttons/playlist.py:319
+msgid "No longer all duplicate tracks from the queue."
+msgstr "अब कतार से सभी डुप्लिकेट ट्रैक नहीं हैं।"
+
+#: pylav/extension/red/ui/buttons/playlist.py:409
+msgid "Playlists you can currently play."
+msgstr "प्लेलिस्ट जिन्हें आप वर्तमान में खेल सकते हैं।"
+
+#: pylav/extension/red/ui/buttons/playlist.py:415
+msgid "Pick a playlist."
+msgstr "एक प्लेलिस्ट चुनें।"
+
+#: pylav/extension/red/ui/buttons/playlist.py:437
+msgid "What should the playlist name be?"
+msgstr "प्लेलिस्ट का नाम क्या होना चाहिए?"
+
+#: pylav/extension/red/ui/buttons/queue.py:164
+#: pylav/extension/red/ui/buttons/queue.py:191
+#: pylav/extension/red/ui/buttons/queue.py:224
+msgid "Not connected to a voice channel."
+msgstr "किसी ध्वनि चैनल से कनेक्ट डे नहीं."
+
+#: pylav/extension/red/ui/buttons/queue.py:289
+msgid "There is nothing in the queue."
+msgstr "कतार में कुछ भी नहीं है।"
+
+#: pylav/extension/red/ui/buttons/queue.py:296
+msgid "Removed tracks from the queue."
+msgstr "लाइन से पटरियों को हटा दिया गया।"
+
+#: pylav/extension/red/ui/buttons/queue.py:323
+msgid "What do you want to enqueue?"
+msgstr "आप क्या कतारबद्ध करना चाहते हैं?"
+
