@@ -90,13 +90,7 @@ def validate_input(
             raise IllegalArgumentError(f"There is no parameter named '{exc.args[0]}'") from exc
         else:
             if not isinstance(value, key_type):
-                raise TypeError(
-                    "Argument {!r} must be {}, not {}".format(
-                        key,
-                        key_type.__name__,
-                        type(value).__name__,
-                    )
-                )
+                raise TypeError(f"Argument {key!r} must be {key_type.__name__}, not {type(value).__name__}")
 
 
 def type_check(

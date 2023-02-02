@@ -183,10 +183,10 @@ class PlaylistListSource(menus.ListPageSource):
             playlist_info = ("\n" + space * 4).join(
                 (
                     await playlist.get_name_formatted(with_url=True),
-                    _("Identifier: {id}").format(id=playlist.id),
-                    _("Tracks: {num}").format(num=await playlist.size()),
-                    _("Author: {name}").format(name=author_name),
-                    "\n" if is_same else _("Scope: {scope}\n").format(scope=scope_name),
+                    _("Identifier: {id_value}").format(id_value=playlist.id),
+                    _("Tracks: {num_value}").format(num_value=await playlist.size()),
+                    _("Author: {name_value}").format(name_value=author_name),
+                    "\n" if is_same else _("Scope: {scope_value}\n").format(scope_value=scope_name),
                 )
             )
 

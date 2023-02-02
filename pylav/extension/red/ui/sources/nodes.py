@@ -200,11 +200,11 @@ class NodeListSource(menus.ListPageSource):
         )
 
         embed.set_footer(
-            text=_("Page {page_num}/{total_pages} | {num} {plural}").format(
-                page_num=humanize_number(page_num + 1),
-                total_pages=humanize_number(self.get_max_pages()),
-                num=len(self.entries),
-                plural=_("nodes") if len(self.entries) != 1 else _("node"),
+            text=_("Page {page_num_value}/{total_pages_value} | {num_value} {plural_value}").format(
+                page_num_value=humanize_number(page_num + 1),
+                total_pages_value=humanize_number(self.get_max_pages()),
+                num_value=len(self.entries),
+                plural_value=_("nodes") if len(self.entries) != 1 else _("node"),
             )
         )
         return embed
@@ -308,9 +308,9 @@ class NodeManageSource(menus.ListPageSource):
         humanize.i18n.deactivate()
         t_property = EightBitANSI.paint_yellow(_("Property"), bold=True, underline=True)
         t_values = EightBitANSI.paint_yellow(_("Value"), bold=True, underline=True)
-        coordinate_str = EightBitANSI.paint_white(_("Latitude: {lat}\nLongitude: {lon}")).format(
-            lat=EightBitANSI.paint_blue(coord[0] if coord else "?"),
-            lon=EightBitANSI.paint_blue(coord[1] if coord else "?"),
+        coordinate_str = EightBitANSI.paint_white(_("Latitude: {lat_value}\nLongitude: {lon_value}")).format(
+            lat_value=EightBitANSI.paint_blue(coord[0] if coord else "?"),
+            lon_value=EightBitANSI.paint_blue(coord[1] if coord else "?"),
         )
 
         data = {
