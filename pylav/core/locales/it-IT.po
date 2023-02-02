@@ -1,0 +1,48 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: pylav\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:33\n"
+"Last-Translator: \n"
+"Language-Team: Italian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.4.2\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: pylav\n"
+"X-Crowdin-Project-ID: 535244\n"
+"X-Crowdin-Language: it\n"
+"X-Crowdin-File: /lib/pylav/core/locales/messages.pot\n"
+"X-Crowdin-File-ID: 3471\n"
+"Language: it_IT\n"
+
+#: pylav/core/client.py:888 pylav/core/client.py:923
+msgid "There are no available nodes!"
+msgstr "Non ci sono nodi disponibili!"
+
+#: pylav/core/client.py:892 pylav/core/client.py:927 pylav/core/client.py:1235
+msgid "No node with {feature_name} functionality available!"
+msgstr "Nessun nodo con {feature_name} funzionalità disponibile!"
+
+#: pylav/core/client.py:1653
+msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist."
+msgstr "Per generare una playlist mista è necessario un singolo identificatore di video, utente, canale o playlist."
+
+#: pylav/core/client.py:1658
+msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist. However, you provided multiple"
+msgstr "Per generare una playlist mista è necessario un singolo identificatore di video, utente, canale o playlist. Tuttavia, hai fornito più"
+
+#: pylav/core/context.py:258
+msgid "There is still 1 message remaining. Type `more` to continue."
+msgstr "C'è ancora 1 messaggio rimanente. Digitare 'more' per continuare."
+
+#: pylav/core/context.py:260
+msgid "There are still {remaining_value} messages remaining. Type `more` to continue."
+msgstr "Ci sono ancora {remaining_value} messaggi rimanenti. Digitare 'more' per continuare."
+
+#: pylav/core/context.py:290
+#, docstring
+msgid "Does nothing"
+msgstr "Non fa nulla"
+

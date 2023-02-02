@@ -1,0 +1,80 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: pylav\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:33\n"
+"Last-Translator: \n"
+"Language-Team: Hindi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.4.2\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: pylav\n"
+"X-Crowdin-Project-ID: 535244\n"
+"X-Crowdin-Language: hi\n"
+"X-Crowdin-File: /lib/pylav/helpers/discord/converters/locales/messages.pot\n"
+"X-Crowdin-File-ID: 3575\n"
+"Language: hi_IN\n"
+
+#: pylav/helpers/discord/converters/nodes.py:41
+msgid "Node with name or identifier `{user_input_value}` not found."
+msgstr "नाम या पहचानकर्ता के साथ नोड '{user_input_value}'नहीं मिला।"
+
+#: pylav/helpers/discord/converters/nodes.py:48
+msgid "Node with name or identifier `{user_input_value}` not found"
+msgstr "नाम या पहचानकर्ता के साथ नोड '{user_input_value}'नहीं मिला"
+
+#: pylav/helpers/discord/converters/playlists.py:42
+msgid "Playlist with name or identifier `{user_input_value}` not found"
+msgstr "नाम या पहचानकर्ता के साथ प्लेलिस्ट '{user_input_value}'नहीं मिला"
+
+#: pylav/helpers/discord/converters/queries.py:52
+msgid "Query must be a playlist or album."
+msgstr "क्वेरी एक प्लेलिस्ट या एल्बम होना चाहिए।"
+
+#: pylav/helpers/discord/converters/radio.py:57
+msgid "Station with name `{user_input_value}` not found."
+msgstr "नाम के साथ स्टेशन '{user_input_value}'नहीं मिला।"
+
+#: pylav/helpers/discord/converters/radio.py:74
+msgid "Radio Browser extension is currently disabled."
+msgstr "रेडियो ब्राउज़र एक्सटेंशन वर्तमान में अक्षम है।"
+
+#: pylav/helpers/discord/converters/radio.py:94
+msgid "Unnamed"
+msgstr "अनाम"
+
+#: pylav/helpers/discord/converters/radio.py:141
+msgid "Tag with name `{user_input_value}` not found."
+msgstr "नाम के साथ टैग करें '{user_input_value}'नहीं मिला।"
+
+#: pylav/helpers/discord/converters/radio.py:158
+#: pylav/helpers/discord/converters/radio.py:200
+#: pylav/helpers/discord/converters/radio.py:240
+#: pylav/helpers/discord/converters/radio.py:279
+#: pylav/helpers/discord/converters/radio.py:318
+#: pylav/helpers/discord/converters/radio.py:357
+msgid "Radio Browser extension is currently disabled"
+msgstr "रेडियो ब्राउज़र एक्सटेंशन वर्तमान में अक्षम है"
+
+#: pylav/helpers/discord/converters/radio.py:183
+msgid "Language with name `{user_input_value}` not found."
+msgstr "नाम के साथ भाषा '{user_input_value}'नहीं मिला।"
+
+#: pylav/helpers/discord/converters/radio.py:223
+msgid "State with name `{user_input_value}` not found."
+msgstr "नाम के साथ राज्य '{user_input_value}'नहीं मिला।"
+
+#: pylav/helpers/discord/converters/radio.py:262
+msgid "Codec with name `{user_input_value}` not found."
+msgstr "नाम के साथ कोडेक '{user_input_value}'नहीं मिला।"
+
+#: pylav/helpers/discord/converters/radio.py:301
+msgid "Country code `{user_input_value}` not found."
+msgstr "देश कोड '{user_input_value}'नहीं मिला।"
+
+#: pylav/helpers/discord/converters/radio.py:340
+msgid "Country with name `{user_input_value}` not found."
+msgstr "नाम के साथ देश '{user_input_value}'नहीं मिला।"
+

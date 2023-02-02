@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:10\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:33\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -18,38 +18,30 @@ msgstr ""
 "Language: id_ID\n"
 
 #: pylav/core/client.py:888 pylav/core/client.py:923
-msgid "No available nodes!"
+msgid "There are no available nodes!"
 msgstr "Tidak ada node yang tersedia!"
 
-#: pylav/core/client.py:892 pylav/core/client.py:927
-msgid "No node with {feature} functionality available!"
-msgstr "Tidak ada node dengan {feature} fungsionalitas tersedia!"
+#: pylav/core/client.py:892 pylav/core/client.py:927 pylav/core/client.py:1235
+msgid "No node with {feature_name} functionality available!"
+msgstr "Tidak ada node dengan {feature_name} fungsionalitas tersedia!"
 
-#: pylav/core/client.py:1235
-msgid "No node with {query.requires_capability} functionality available!"
-msgstr "Tidak ada node dengan {query.requires_capability} fungsionalitas tersedia!"
+#: pylav/core/client.py:1653
+msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist."
+msgstr "Satu video, pengguna, saluran, atau pengenal daftar putar diperlukan untuk menghasilkan daftar putar campuran."
 
-#: pylav/core/client.py:1651
-msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
-msgstr "Untuk membuat daftar putar campuran, ID Video, Pengguna, Saluran, atau Daftar Putar diperlukan"
-
-#: pylav/core/client.py:1656
-msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
-msgstr "Untuk membuat daftar putar campuran, ID Video, Pengguna, Saluran, atau Daftar Putar diperlukan. Namun, Anda memberikan beberapa"
+#: pylav/core/client.py:1658
+msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist. However, you provided multiple"
+msgstr "Satu video, pengguna, saluran, atau pengenal daftar putar diperlukan untuk menghasilkan daftar putar campuran. Namun, Anda memberikan beberapa"
 
 #: pylav/core/context.py:258
-msgid "{} remaining. Type `more` to continue."
-msgstr "{} tersisa. Ketik 'more' untuk melanjutkan."
+msgid "There is still 1 message remaining. Type `more` to continue."
+msgstr "Masih ada 1 pesan tersisa. Ketik 'more' untuk melanjutkan."
 
-#: pylav/core/context.py:259
-msgid "There is still 1 message"
-msgstr "Masih ada 1 pesan"
+#: pylav/core/context.py:260
+msgid "There are still {remaining_value} messages remaining. Type `more` to continue."
+msgstr "Masih ada {remaining_value} pesan yang tersisa. Ketik 'more' untuk melanjutkan."
 
-#: pylav/core/context.py:261
-msgid "There are still {remaining} messages"
-msgstr "Masih ada {remaining} Pesan"
-
-#: pylav/core/context.py:288
+#: pylav/core/context.py:290
 #, docstring
 msgid "Does nothing"
 msgstr "Tidak melakukan apa-apa"

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:10\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:33\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Language: ko_KR\n"
 
 #: pylav/extension/red/ui/modals/playlist.py:27
-msgid "Enter the name for the new playlist"
+msgid "Enter the name for the new playlist."
 msgstr "새 재생 목록의 이름을 입력합니다."
 
 #: pylav/extension/red/ui/modals/playlist.py:28
@@ -26,10 +26,6 @@ msgid "My awesome new playlist"
 msgstr "내 멋진 새 재생 목록"
 
 #: pylav/extension/red/ui/modals/queue.py:27
-msgid "Search for a song to add to the queue"
-msgstr "대기열에 추가할 노래 검색"
-
-#: pylav/extension/red/ui/modals/queue.py:30
-msgid "Hello by Adele, speak:Hello, https://open.spotify.com/playlist/37i9dQZF1DX6XceWZP1znY"
-msgstr "안녕하세요 Adele, 말하기 :안녕하세요, https://open.spotify.com/playlist/37i9dQZF1DX6XceWZP1znY"
+msgid "Search for a song to add to the queue."
+msgstr "대기열에 추가할 노래를 검색합니다."
 

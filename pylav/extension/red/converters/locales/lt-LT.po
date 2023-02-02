@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:10\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:33\n"
 "Last-Translator: \n"
 "Language-Team: Lithuanian\n"
 "MIME-Version: 1.0\n"
@@ -17,43 +17,43 @@ msgstr ""
 "X-Crowdin-File-ID: 3389\n"
 "Language: lt_LT\n"
 
-#: pylav/extension/red/converters/equalizer.py:47
-msgid "Bass boost with name `{arg}` not found"
-msgstr "Boso stiprinimas su pavadinimu \"{arg}\" nerasta"
+#: pylav/extension/red/converters/equalizer.py:48
+msgid "Bass boost profile with name `{user_input_value}` not found."
+msgstr "Boso padidinimo profilis su pavadinimu \"{user_input_value}– nerasta."
 
-#: pylav/extension/red/converters/equalizer.py:61
+#: pylav/extension/red/converters/equalizer.py:63
 msgid "Maximum"
 msgstr "Didžiausias"
 
-#: pylav/extension/red/converters/equalizer.py:62
+#: pylav/extension/red/converters/equalizer.py:64
 msgid "Insane"
 msgstr "Insane"
 
-#: pylav/extension/red/converters/equalizer.py:63
+#: pylav/extension/red/converters/equalizer.py:65
 msgid "Extreme"
 msgstr "Ekstremalus"
 
-#: pylav/extension/red/converters/equalizer.py:64
+#: pylav/extension/red/converters/equalizer.py:66
 msgid "Very High"
 msgstr "Labai aukštas"
 
-#: pylav/extension/red/converters/equalizer.py:65
+#: pylav/extension/red/converters/equalizer.py:67
 msgid "High"
 msgstr "Aukštas"
 
-#: pylav/extension/red/converters/equalizer.py:66
+#: pylav/extension/red/converters/equalizer.py:68
 msgid "Medium"
 msgstr "Vidutinis"
 
-#: pylav/extension/red/converters/equalizer.py:67
+#: pylav/extension/red/converters/equalizer.py:69
 msgid "Fine Tuned"
 msgstr "Tiksliai sureguliuotas"
 
-#: pylav/extension/red/converters/equalizer.py:68
+#: pylav/extension/red/converters/equalizer.py:70
 msgid "Cut-off"
 msgstr "Atjungimo"
 
-#: pylav/extension/red/converters/equalizer.py:69
+#: pylav/extension/red/converters/equalizer.py:71
 msgid "Off"
 msgstr "Išjungti"
 

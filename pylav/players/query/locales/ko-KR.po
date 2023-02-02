@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:10\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:33\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -18,6 +18,6 @@ msgstr ""
 "Language: ko_KR\n"
 
 #: pylav/players/query/local_files.py:105
-msgid "Root folder not initialized, call await Client.update_localtracks_folder(folder: str | pathlib.Path)"
-msgstr "루트 폴더가 초기화되지 않고 await Client.update_localtracks_folder(폴더: str | pathlib를 호출합니다. 경로)"
+msgid "Root folder is not initialized, call `{python_function_value}`."
+msgstr "루트 폴더가 초기화되지 않은 경우 '{python_function_value}`."
 

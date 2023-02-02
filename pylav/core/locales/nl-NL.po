@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:10\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:33\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -18,38 +18,30 @@ msgstr ""
 "Language: nl_NL\n"
 
 #: pylav/core/client.py:888 pylav/core/client.py:923
-msgid "No available nodes!"
-msgstr "Geen beschikbare knooppunten!"
+msgid "There are no available nodes!"
+msgstr "Er zijn geen beschikbare knooppunten!"
 
-#: pylav/core/client.py:892 pylav/core/client.py:927
-msgid "No node with {feature} functionality available!"
-msgstr "Geen node met {feature} functionaliteit beschikbaar!"
+#: pylav/core/client.py:892 pylav/core/client.py:927 pylav/core/client.py:1235
+msgid "No node with {feature_name} functionality available!"
+msgstr "Geen node met {feature_name} functionaliteit beschikbaar!"
 
-#: pylav/core/client.py:1235
-msgid "No node with {query.requires_capability} functionality available!"
-msgstr "Geen node met {query.requires_capability} functionaliteit beschikbaar!"
+#: pylav/core/client.py:1653
+msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist."
+msgstr "Een enkele video-, gebruikers-, kanaal- of afspeellijst-ID is nodig om een gemengde afspeellijst te genereren."
 
-#: pylav/core/client.py:1651
-msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary"
-msgstr "Om een mix afspeellijst te genereren is een Video, Gebruiker, Kanaal of Afspeellijst ID noodzakelijk"
-
-#: pylav/core/client.py:1656
-msgid "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. However, you provided multiple"
-msgstr "Om een mix afspeellijst te genereren is een Video, Gebruiker, Kanaal of Afspeellijst ID nodig. Je hebt echter meerdere opgegeven"
+#: pylav/core/client.py:1658
+msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist. However, you provided multiple"
+msgstr "Een enkele video-, gebruikers-, kanaal- of afspeellijst-ID is nodig om een gemengde afspeellijst te genereren. U hebt echter meerdere"
 
 #: pylav/core/context.py:258
-msgid "{} remaining. Type `more` to continue."
-msgstr "{} resterend. Typ `meer` om door te gaan."
+msgid "There is still 1 message remaining. Type `more` to continue."
+msgstr "Er is nog 1 bericht over. Typ 'meer' om door te gaan."
 
-#: pylav/core/context.py:259
-msgid "There is still 1 message"
-msgstr "Er is nog 1 bericht"
+#: pylav/core/context.py:260
+msgid "There are still {remaining_value} messages remaining. Type `more` to continue."
+msgstr "Er zijn nog steeds {remaining_value} berichten blijven. Typ 'meer' om door te gaan."
 
-#: pylav/core/context.py:261
-msgid "There are still {remaining} messages"
-msgstr "Er zijn nog {remaining} berichten"
-
-#: pylav/core/context.py:288
+#: pylav/core/context.py:290
 #, docstring
 msgid "Does nothing"
 msgstr "Doet niets"

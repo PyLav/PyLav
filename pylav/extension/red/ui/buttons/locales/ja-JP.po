@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:18\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:33\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -30,13 +30,13 @@ msgstr ""
 #: pylav/extension/red/ui/buttons/playlist.py:41
 #: pylav/extension/red/ui/buttons/playlist.py:76
 #: pylav/extension/red/ui/buttons/playlist.py:117
-#: pylav/extension/red/ui/buttons/playlist.py:164
-#: pylav/extension/red/ui/buttons/playlist.py:207
-#: pylav/extension/red/ui/buttons/playlist.py:255
-#: pylav/extension/red/ui/buttons/playlist.py:301
-#: pylav/extension/red/ui/buttons/playlist.py:347
-msgid "You are not authorized to interact with this option"
-msgstr "このオプションを操作する権限がありません"
+#: pylav/extension/red/ui/buttons/playlist.py:167
+#: pylav/extension/red/ui/buttons/playlist.py:210
+#: pylav/extension/red/ui/buttons/playlist.py:258
+#: pylav/extension/red/ui/buttons/playlist.py:304
+#: pylav/extension/red/ui/buttons/playlist.py:350
+msgid "You are not authorized to interact with this option."
+msgstr "このオプションを操作する権限がありません。"
 
 #: pylav/extension/red/ui/buttons/generic.py:85
 msgid "Yes"
@@ -46,62 +46,55 @@ msgstr "はい"
 msgid "No"
 msgstr "いいえ"
 
-#: pylav/extension/red/ui/buttons/generic.py:164
-msgid "Disconnect {} {}"
-msgstr "{} {} を切断"
-
 #: pylav/extension/red/ui/buttons/generic.py:165
-msgid "players"
-msgstr "プレイヤー"
+msgid "Disconnect {player_type} players"
+msgstr "切る {player_type} 選手"
 
-#: pylav/extension/red/ui/buttons/generic.py:165
-msgid "player"
-msgstr "プレイヤー"
+#: pylav/extension/red/ui/buttons/generic.py:167
+msgid "Disconnect {player_type} player"
+msgstr "切る {player_type} プレーヤー"
 
 #: pylav/extension/red/ui/buttons/nodes.py:57
-msgid "Connecting to the node with SSL enabled"
-msgstr "SSLを有効にしてノードに接続しています"
+msgid "Connecting to the node with SSL enabled."
+msgstr "SSL を有効にしてノードに接続する。"
 
 #: pylav/extension/red/ui/buttons/nodes.py:64
-msgid "Connecting to the node with SSL disabled"
-msgstr "SSLを無効にしたノードへの接続が無効です"
+msgid "Connecting to the node with SSL disabled."
+msgstr "SSL を無効にしてノードに接続する。"
 
 #: pylav/extension/red/ui/buttons/nodes.py:102
-msgid "This node will only be used for searches"
-msgstr "このノードは検索にのみ使用されます"
+msgid "This node will only be used for search."
+msgstr "このノードは検索にのみ使用されます。"
 
 #: pylav/extension/red/ui/buttons/nodes.py:109
-msgid "This node will be used for search and playback"
-msgstr "このノードは検索と再生に使用されます"
+msgid "This node will be used for search and playback."
+msgstr "このノードは、検索と再生に使用されます。"
 
 #: pylav/extension/red/ui/buttons/nodes.py:140
-msgid "Please fill out all the fields before continuing"
-msgstr "続行する前にすべての項目を入力してください"
+msgid "Please fill out all the fields before continuing."
+msgstr "続行する前に、すべてのフィールドに入力してください。"
 
 #: pylav/extension/red/ui/buttons/nodes.py:220
-msgid "When you press done this node will be permanently delete"
-msgstr "完了ボタンを押すと、このノードは完全に削除されます"
+msgid "When you press done this node will be permanently delete."
+msgstr "[完了]を押すと、このノードは完全に削除されます。"
 
 #: pylav/extension/red/ui/buttons/nodes.py:222
-msgid "This node will no longer be deleted once you press done"
-msgstr "完了ボタンを押すと、このノードは削除されなくなります"
+msgid "This node will no longer be deleted once you press done."
+msgstr "このノードは、[完了]を押すと削除されなくなります。"
 
-#: pylav/extension/red/ui/buttons/nodes.py:255
-msgid "__Enabled sources__:\n"
-"{sources}"
-msgstr "__Enabled sources__:\n"
-"{sources}"
+#: pylav/extension/red/ui/buttons/nodes.py:256
+msgid "Enable sources"
+msgstr "ソースを有効にする"
 
 #: pylav/extension/red/ui/buttons/player.py:38
 #: pylav/extension/red/ui/buttons/player.py:87
-#: pylav/extension/red/ui/buttons/player.py:140
-msgid "You are not authorized to perform this action"
+msgid "You are not authorized to perform this action."
 msgstr "この操作を実行する権限がありません。"
 
 #: pylav/extension/red/ui/buttons/player.py:47
 #: pylav/extension/red/ui/buttons/player.py:96
-msgid "No Player Available For Action - Try Refreshing"
-msgstr "操作可能なプレイヤーがありません。リフレッシュしてみてください"
+msgid "No player available for action, try refreshing."
+msgstr "アクションに使用できるプレーヤーがいません。更新してみてください。"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:107
@@ -111,98 +104,98 @@ msgstr "Botオーナーアクション"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:164
-msgid "Player disconnected"
-msgstr "プレイヤーが切断されました"
+msgid "Player disconnected."
+msgstr "プレイヤーが切断されました。"
 
 #: pylav/extension/red/ui/buttons/player.py:107
-msgid "Player stopped"
-msgstr "プレイヤーが停止しました"
+msgid "Player stopped."
+msgstr "プレイヤーが停止しました。"
+
+#: pylav/extension/red/ui/buttons/player.py:140
+msgid "You are not authorized to perform this action"
+msgstr "この操作を実行する権限がありません。"
 
 #: pylav/extension/red/ui/buttons/player.py:154
-msgid "No Players Available For Action - Try Refreshing"
-msgstr "操作可能なプレイヤーがいません。リフレッシュしてみてください"
+msgid "No players available for action, try refreshing."
+msgstr "アクションに利用できるプレイヤーがいません。リフレッシュしてみてください。"
 
 #: pylav/extension/red/ui/buttons/playlist.py:48
-msgid "When you press done this playlist will be permanently delete"
-msgstr "終了ボタンを押すと、このプレイリストは完全に削除されます"
+msgid "When you press done this playlist will be permanently delete."
+msgstr "完了を押すと、このプレイリストは完全に削除されます。"
 
 #: pylav/extension/red/ui/buttons/playlist.py:50
-msgid "This playlist will no longer be deleted once you press done"
-msgstr "終了ボタンを押すと、このプレイリストは削除されなくなります"
+msgid "This playlist will no longer be deleted once you press done."
+msgstr "このプレイリストは、[完了]を押すと削除されなくなります。"
 
 #: pylav/extension/red/ui/buttons/playlist.py:83
-msgid "Clearing all tracks from the playlist playlist"
-msgstr "プレイリストからすべてのトラックをクリアしています"
+msgid "Clearing all tracks from the playlist."
+msgstr "プレイリストからすべてのトラックをクリアします。"
 
 #: pylav/extension/red/ui/buttons/playlist.py:85
-msgid "No longer clearing tracks from the playlist"
-msgstr "プレイリストからトラックをクリアしなくなりました"
+msgid "No longer clearing tracks from the playlist."
+msgstr "プレイリストからトラックをクリアしなくなりました。"
 
-#: pylav/extension/red/ui/buttons/playlist.py:126
-msgid "Here is your playlist: {name}{extras}"
-msgstr "プレイリスト: {name}{extras}"
+#: pylav/extension/red/ui/buttons/playlist.py:124
+msgid "Here is your playlist: {playlist_name}, file is compressed using Gzip to make it possible to send via Discord you can use <https://gzip.swimburger.net/> to decompress it."
+msgstr "これがあなたのプレイリストです: {playlist_name}、ファイルはGzipを使用して圧縮され、Discord経由で送信できるようにします <https://gzip.swimburger.net/> 解凍します。"
 
 #: pylav/extension/red/ui/buttons/playlist.py:128
-msgid "\n"
-" (compressed using gzip to make it possible to send via Discord - you can use <https://gzip.swimburger.net/> to decompress it)"
-msgstr "\n"
-" (gzip で圧縮してDiscord経由で送信できるようにします。 <https://gzip.swimburger.net/> を使用して解凍できます。"
+msgid "Here is your playlist: {playlist_name}, file is compressed using Brotli compression."
+msgstr "これがあなたのプレイリストです: {playlist_name}、ファイルはBrotli圧縮を使用して圧縮されます。"
 
-#: pylav/extension/red/ui/buttons/playlist.py:133
-msgid "\n"
-" (File compressed using Brotli compression."
-msgstr "\n"
-" (Brotli圧縮を使用して圧縮されたファイル。"
-
-#: pylav/extension/red/ui/buttons/playlist.py:171
-msgid "Updating playlist with the latest tracks, press done to continue"
-msgstr "最新のトラックでプレイリストを更新し、続行するには完了を押してください"
+#: pylav/extension/red/ui/buttons/playlist.py:132
+msgid "Here is your playlist: {playlist_name}."
+msgstr "これがあなたのプレイリストです: {playlist_name}."
 
 #: pylav/extension/red/ui/buttons/playlist.py:174
-msgid "Not updating playlist"
-msgstr "プレイリストを更新していません"
+msgid "Updating playlist with the latest tracks, press done to continue."
+msgstr "プレイリストを最新のトラックで更新し、[完了]を押して続行します。"
 
-#: pylav/extension/red/ui/buttons/playlist.py:263
-msgid "Adding the current queue to playlist"
-msgstr "プレイリストに現在のキューを追加する"
+#: pylav/extension/red/ui/buttons/playlist.py:177
+msgid "Not updating playlist."
+msgstr "プレイリストを更新していません。"
 
-#: pylav/extension/red/ui/buttons/playlist.py:270
-msgid "No longer adding the current queue to playlist"
-msgstr "プレイリストに現在のキューを追加しない"
+#: pylav/extension/red/ui/buttons/playlist.py:266
+msgid "Adding the current queue to playlist."
+msgstr "現在のキューをプレイリストに追加します。"
 
-#: pylav/extension/red/ui/buttons/playlist.py:309
-msgid "Removing all duplicate tracks from the queue"
-msgstr "キューから重複したトラックをすべて削除します"
+#: pylav/extension/red/ui/buttons/playlist.py:273
+msgid "No longer adding the current queue to playlist."
+msgstr "現在のキューをプレイリストに追加しなくなりました。"
 
-#: pylav/extension/red/ui/buttons/playlist.py:316
-msgid "No longer all duplicate tracks from the queue"
-msgstr "キューから複製されたトラックをすべて削除しました"
+#: pylav/extension/red/ui/buttons/playlist.py:312
+msgid "Removing all duplicate tracks from the queue."
+msgstr "キューからすべての重複トラックを削除します。"
 
-#: pylav/extension/red/ui/buttons/playlist.py:406
-msgid "Playlists you can currently play"
-msgstr "現在プレイできるプレイリスト"
+#: pylav/extension/red/ui/buttons/playlist.py:319
+msgid "No longer all duplicate tracks from the queue."
+msgstr "キューからすべてのトラックが重複しなくなりました。"
 
-#: pylav/extension/red/ui/buttons/playlist.py:412
-msgid "Pick a playlist"
-msgstr "プレイリストを選ぶ"
+#: pylav/extension/red/ui/buttons/playlist.py:409
+msgid "Playlists you can currently play."
+msgstr "現在再生できるプレイリスト。"
 
-#: pylav/extension/red/ui/buttons/playlist.py:434
+#: pylav/extension/red/ui/buttons/playlist.py:415
+msgid "Pick a playlist."
+msgstr "プレイリストを選択します。"
+
+#: pylav/extension/red/ui/buttons/playlist.py:437
 msgid "What should the playlist name be?"
 msgstr "プレイリスト名は何ですか?"
 
 #: pylav/extension/red/ui/buttons/queue.py:164
 #: pylav/extension/red/ui/buttons/queue.py:191
 #: pylav/extension/red/ui/buttons/queue.py:224
-msgid "Not connected to a voice channel"
-msgstr "音声チャネルに接続されていない"
+msgid "Not connected to a voice channel."
+msgstr "音声チャネルに接続されていません。"
 
 #: pylav/extension/red/ui/buttons/queue.py:289
-msgid "There's nothing in the Queue"
-msgstr "隊列には何もありません"
+msgid "There is nothing in the queue."
+msgstr "キューには何もありません。"
 
 #: pylav/extension/red/ui/buttons/queue.py:296
-msgid "Removed tracks from the queue"
-msgstr "キューからトラックを削除しました"
+msgid "Removed tracks from the queue."
+msgstr "キューからトラックを削除しました。"
 
 #: pylav/extension/red/ui/buttons/queue.py:323
 msgid "What do you want to enqueue?"

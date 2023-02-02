@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:10\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:33\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "MIME-Version: 1.0\n"
@@ -23,80 +23,80 @@ msgid "Shows the credits and translation details for the PyLav cogs and shared c
 msgstr "Hiển thị các khoản tín dụng và chi tiết dịch thuật cho bánh răng PyLav và mã được chia sẻ"
 
 #: pylav/extension/red/utils/required_methods.py:50
-msgid "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
-"PyLav can be located in https://github.com/Drapersniper/PyLav\n"
-"PyLav-Cogs can be located in https://github.com/Drapersniper/PyLav-Cogs\n\n"
-"PyLav's support server can be found at https://discord.com/invite/Sjh2TSCYQB\n\n\n"
+msgid "PyLav was created by {library_author_name}.\n\n"
+"PyLav can be located in {library_url_value}\n"
+"PyLav-Cogs can be located in {second_library_url_value}\n\n"
+"PyLav's support server can be found at {support_server_url_value}\n\n\n"
 "You can help translate PyLav by contributing to our Crowdin project at:\n"
-"https://crowdin.com/project/pylav\n\n\n"
+"{crowdin_project_url_value}\n\n\n"
 "Contributors:\n"
-"- https://github.com/Drapersniper/PyLav/graphs/contributors\n"
-"- https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors\n"
+"- {project_contributors_url_value}\n"
+"- {second_project_contributors_url_value}\n"
 "If you wish to buy me a coffee for my work, you can do so at:\n"
-"https://www.buymeacoffee.com/draper or https://github.com/sponsors/Drapersniper"
-msgstr "PyLav được tạo ra bởi [Draper#6666](https://github.com/Drapersniper).\n\n"
-"PyLav có thể được đặt tại https://github.com/Drapersniper/PyLav\n"
-"PyLav-Cogs có thể được đặt tại https://github.com/Drapersniper/PyLav-Cogs\n\n"
-"Máy chủ hỗ trợ của PyLav có thể được tìm thấy tại https://discord.com/invite/Sjh2TSCYQB\n\n\n"
+"{buymeacoffee_url_value} or {github_sponsors_url_value}"
+msgstr "PyLav được tạo ra bởi {library_author_name}.\n\n"
+"PyLav có thể được đặt tại {library_url_value}\n"
+"PyLav-Cogs có thể được đặt tại {second_library_url_value}\n\n"
+"Máy chủ hỗ trợ của PyLav có thể được tìm thấy tại {support_server_url_value}\n\n\n"
 "Bạn có thể giúp dịch PyLav bằng cách đóng góp cho dự án Crowdin của chúng tôi tại:\n"
-"https://crowdin.com/project/pylav\n\n\n"
+"{crowdin_project_url_value}\n\n\n"
 "Đóng góp:\n"
-"- https://github.com/Drapersniper/PyLav/graphs/contributors\n"
-"- https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors\n"
+"- {project_contributors_url_value}\n"
+"- {second_project_contributors_url_value}\n"
 "Nếu bạn muốn mua cho tôi một ly cà phê cho công việc của tôi, bạn có thể làm như vậy tại:\n"
-"https://www.buymeacoffee.com/draper hoặc https://github.com/sponsors/Drapersniper"
+"{buymeacoffee_url_value} hoặc {github_sponsors_url_value}"
 
-#: pylav/extension/red/utils/required_methods.py:76
+#: pylav/extension/red/utils/required_methods.py:86
 #, docstring
 msgid "Show the version of PyLav library"
 msgstr "Hiển thị phiên bản của thư viện PyLav"
 
-#: pylav/extension/red/utils/required_methods.py:91
+#: pylav/extension/red/utils/required_methods.py:101
 msgid "Library"
 msgstr "Thư viện"
 
-#: pylav/extension/red/utils/required_methods.py:92
+#: pylav/extension/red/utils/required_methods.py:102
 msgid "Version"
 msgstr "Phiên bản"
 
-#: pylav/extension/red/utils/required_methods.py:111
+#: pylav/extension/red/utils/required_methods.py:121
 #, docstring
 msgid "Sync the Bots slash commands"
 msgstr "Đồng bộ hóa các lệnh dấu gạch chéo Bots"
 
-#: pylav/extension/red/utils/required_methods.py:120
-msgid "Synced the bots slash commands"
-msgstr "Đã đồng bộ hóa các lệnh dấu gạch chéo bot"
+#: pylav/extension/red/utils/required_methods.py:130
+msgid "I have synced my slash commands."
+msgstr "Tôi đã đồng bộ hóa các lệnh gạch chéo của mình."
 
-#: pylav/extension/red/utils/required_methods.py:141
-msgid "This command requires an existing player to be run"
-msgstr "Lệnh này yêu cầu chạy một người chơi hiện có"
+#: pylav/extension/red/utils/required_methods.py:151
+msgid "This command requires an existing player to be run."
+msgstr "Lệnh này yêu cầu một người chơi hiện tại phải được chạy."
 
-#: pylav/extension/red/utils/required_methods.py:150
-msgid "PyLavPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later"
-msgstr "Bánh răng PyLavPlayer hiện tạm thời không khả dụng do ngừng hoạt động với các dịch vụ phụ trợ, vui lòng thử lại sau"
+#: pylav/extension/red/utils/required_methods.py:160
+msgid "PyLavPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later."
+msgstr "Bánh răng PyLavPlayer hiện tạm thời không khả dụng do ngừng hoạt động với các dịch vụ phụ trợ, vui lòng thử lại sau."
 
-#: pylav/extension/red/utils/required_methods.py:154
-msgid "No Lavalink node currently available"
-msgstr "Không có nút Lavalink nào hiện có sẵn"
+#: pylav/extension/red/utils/required_methods.py:164
+msgid "No Lavalink node currently available."
+msgstr "Hiện tại không có nút Lavalink nào khả dụng."
 
-#: pylav/extension/red/utils/required_methods.py:163
-msgid "PyLavPlayer is currently unable to process tracks belonging to {feature}"
-msgstr "PyLavPlayer hiện không thể xử lý các bản nhạc thuộc về {feature}"
+#: pylav/extension/red/utils/required_methods.py:173
+msgid "PyLavPlayer is currently unable to process tracks belonging to {feature_name}."
+msgstr "PyLavPlayer hiện không thể xử lý các bản nhạc thuộc về {feature_name}."
 
-#: pylav/extension/red/utils/required_methods.py:166
-msgid "No Lavalink node currently available with feature {feature}"
-msgstr "Không có nút Lavalink nào hiện có sẵn với tính năng {feature}"
-
-#: pylav/extension/red/utils/required_methods.py:177
-msgid "This command is not available in this channel. Please use {channel}"
-msgstr "Lệnh này không khả dụng trong kênh này. Vui lòng sử dụng {channel}"
+#: pylav/extension/red/utils/required_methods.py:176
+msgid "No Lavalink node currently available with feature {feature_name}"
+msgstr "Không có nút Lavalink nào hiện có sẵn với tính năng {feature_name}"
 
 #: pylav/extension/red/utils/required_methods.py:189
-msgid "This command requires you to be a DJ"
-msgstr "Lệnh này yêu cầu bạn phải là một DJ"
+msgid "This command is not available in this channel, please use {channel_name}."
+msgstr "Lệnh này không có sẵn trong kênh này, vui lòng sử dụng {channel_name}."
 
-#: pylav/extension/red/utils/required_methods.py:227
-msgid "PyLav is not ready - Please try again shortly"
-msgstr "PyLav chưa sẵn sàng - Vui lòng thử lại trong thời gian ngắn"
+#: pylav/extension/red/utils/required_methods.py:203
+msgid "This command requires you to be a disc jockey."
+msgstr "Lệnh này yêu cầu bạn phải là một tay đua đĩa."
+
+#: pylav/extension/red/utils/required_methods.py:241
+msgid "PyLav is not ready, please try again shortly"
+msgstr "PyLav chưa sẵn sàng, vui lòng thử lại trong thời gian ngắn"
 

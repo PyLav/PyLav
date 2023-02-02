@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:10\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:33\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
@@ -18,20 +18,20 @@ msgstr ""
 "Language: el_GR\n"
 
 #: pylav/extension/bundled_node/manager.py:227
-msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture"
-msgstr "Προσπαθείτε να εκτελέσετε τον διαχειριζόμενο κόμβο Lavalink σε μια μη υποστηριζόμενη αρχιτεκτονική μηχανών"
+msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture."
+msgstr "Προσπαθείτε να εκτελέσετε τον διαχειριζόμενο κόμβο Lavalink σε μια μη υποστηριζόμενη αρχιτεκτονική υπολογιστή."
 
 #: pylav/extension/bundled_node/manager.py:452
-msgid "The output of `{java_exc} -version` was unexpected\n"
-"{version_info}"
-msgstr "Η έξοδος του `{java_exc} -έκδοση` ήταν απρόσμενη\n"
-"{version_info}"
+msgid "The output of `{command_name}` was unexpected\n"
+"{command_output}"
+msgstr "Η παραγωγή του «{command_name}» ήταν απροσδόκητο\n"
+"{command_output}"
 
 #: pylav/extension/bundled_node/manager.py:472
-msgid "Port {port} already in use. Managed Lavalink startup aborted"
-msgstr "Η θύρα {port} ήδη σε χρήση. Η διαχείριση της εκκίνησης Lavalink ματαιώθηκε"
+msgid "Port {port_value} already in use. Managed Lavalink startup has been aborted."
+msgstr "Λιμάνι {port_value} χρησιμοποιείται ήδη. Η διαχειριζόμενη εκκίνηση Lavalink έχει ματαιωθεί."
 
 #: pylav/extension/bundled_node/manager.py:477
-msgid "Lavalink failed to start: {line}"
-msgstr "Αποτυχία εκκίνησης του Lavalink: {line}"
+msgid "Lavalink failed to start: {error_value}"
+msgstr "Το Lavalink απέτυχε να ξεκινήσει: {error_value}"
 

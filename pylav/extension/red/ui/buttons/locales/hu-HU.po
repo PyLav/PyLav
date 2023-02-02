@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-01-31 23:27+0000\n"
-"PO-Revision-Date: 2023-02-01 00:10\n"
+"POT-Creation-Date: 2023-02-02 22:15+0000\n"
+"PO-Revision-Date: 2023-02-02 22:33\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "MIME-Version: 1.0\n"
@@ -30,13 +30,13 @@ msgstr ""
 #: pylav/extension/red/ui/buttons/playlist.py:41
 #: pylav/extension/red/ui/buttons/playlist.py:76
 #: pylav/extension/red/ui/buttons/playlist.py:117
-#: pylav/extension/red/ui/buttons/playlist.py:164
-#: pylav/extension/red/ui/buttons/playlist.py:207
-#: pylav/extension/red/ui/buttons/playlist.py:255
-#: pylav/extension/red/ui/buttons/playlist.py:301
-#: pylav/extension/red/ui/buttons/playlist.py:347
-msgid "You are not authorized to interact with this option"
-msgstr "Ön nem jogosult arra, hogy ezzel a lehetőséggel interakcióba lépjen"
+#: pylav/extension/red/ui/buttons/playlist.py:167
+#: pylav/extension/red/ui/buttons/playlist.py:210
+#: pylav/extension/red/ui/buttons/playlist.py:258
+#: pylav/extension/red/ui/buttons/playlist.py:304
+#: pylav/extension/red/ui/buttons/playlist.py:350
+msgid "You are not authorized to interact with this option."
+msgstr "Ön nem jogosult arra, hogy ezzel a lehetőséggel interakcióba lépjen."
 
 #: pylav/extension/red/ui/buttons/generic.py:85
 msgid "Yes"
@@ -46,62 +46,55 @@ msgstr "Igen"
 msgid "No"
 msgstr "Nem"
 
-#: pylav/extension/red/ui/buttons/generic.py:164
-msgid "Disconnect {} {}"
-msgstr "Leválasztás {} {}"
-
 #: pylav/extension/red/ui/buttons/generic.py:165
-msgid "players"
-msgstr "Játékosok"
+msgid "Disconnect {player_type} players"
+msgstr "Szétkapcsol {player_type} Játékosok"
 
-#: pylav/extension/red/ui/buttons/generic.py:165
-msgid "player"
-msgstr "játékos"
+#: pylav/extension/red/ui/buttons/generic.py:167
+msgid "Disconnect {player_type} player"
+msgstr "Szétkapcsol {player_type} játékos"
 
 #: pylav/extension/red/ui/buttons/nodes.py:57
-msgid "Connecting to the node with SSL enabled"
-msgstr "Csatlakozás a csomóponthoz engedélyezett SSL-lel"
+msgid "Connecting to the node with SSL enabled."
+msgstr "Csatlakozás a csomóponthoz engedélyezett SSL-lel."
 
 #: pylav/extension/red/ui/buttons/nodes.py:64
-msgid "Connecting to the node with SSL disabled"
-msgstr "Csatlakozás a csomóponthoz letiltott SSL-lel"
+msgid "Connecting to the node with SSL disabled."
+msgstr "Csatlakozás a csomóponthoz letiltott SSL-lel."
 
 #: pylav/extension/red/ui/buttons/nodes.py:102
-msgid "This node will only be used for searches"
-msgstr "Ez a csomópont csak keresésekhez lesz használva"
+msgid "This node will only be used for search."
+msgstr "Ez a csomópont csak keresésre lesz használva."
 
 #: pylav/extension/red/ui/buttons/nodes.py:109
-msgid "This node will be used for search and playback"
-msgstr "Ezt a csomópontot keresésre és lejátszásra használják"
+msgid "This node will be used for search and playback."
+msgstr "Ez a csomópont keresésre és lejátszásra szolgál."
 
 #: pylav/extension/red/ui/buttons/nodes.py:140
-msgid "Please fill out all the fields before continuing"
-msgstr "Kérjük, töltse ki az összes mezőt, mielőtt folytatná"
+msgid "Please fill out all the fields before continuing."
+msgstr "Kérjük, töltse ki az összes mezőt, mielőtt folytatná."
 
 #: pylav/extension/red/ui/buttons/nodes.py:220
-msgid "When you press done this node will be permanently delete"
-msgstr "Amikor megnyomja a kész gombot, ez a csomópont véglegesen törlődik"
+msgid "When you press done this node will be permanently delete."
+msgstr "Amikor megnyomja a done gombot, ez a csomópont véglegesen törlődik."
 
 #: pylav/extension/red/ui/buttons/nodes.py:222
-msgid "This node will no longer be deleted once you press done"
-msgstr "Ez a csomópont a továbbiakban nem törlődik, ha megnyomja a kész gombot"
+msgid "This node will no longer be deleted once you press done."
+msgstr "Ez a csomópont a továbbiakban nem törlődik, ha megnyomja a kész gombot."
 
-#: pylav/extension/red/ui/buttons/nodes.py:255
-msgid "__Enabled sources__:\n"
-"{sources}"
-msgstr "__Enabled sources__:\n"
-"{sources}"
+#: pylav/extension/red/ui/buttons/nodes.py:256
+msgid "Enable sources"
+msgstr "Források engedélyezése"
 
 #: pylav/extension/red/ui/buttons/player.py:38
 #: pylav/extension/red/ui/buttons/player.py:87
-#: pylav/extension/red/ui/buttons/player.py:140
-msgid "You are not authorized to perform this action"
-msgstr "Ön nem jogosult a művelet végrehajtására"
+msgid "You are not authorized to perform this action."
+msgstr "Ön nem jogosult ennek a műveletnek a végrehajtására."
 
 #: pylav/extension/red/ui/buttons/player.py:47
 #: pylav/extension/red/ui/buttons/player.py:96
-msgid "No Player Available For Action - Try Refreshing"
-msgstr "Nincs játékos akcióra - próbálja meg frissíteni"
+msgid "No player available for action, try refreshing."
+msgstr "Nincs olyan játékos, aki akcióba lendülhetne, próbáld meg frissíteni."
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:107
@@ -111,98 +104,98 @@ msgstr "Robottulajdonosi művelet"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 #: pylav/extension/red/ui/buttons/player.py:164
-msgid "Player disconnected"
-msgstr "A lejátszó leválasztva"
+msgid "Player disconnected."
+msgstr "A játékos leválasztva."
 
 #: pylav/extension/red/ui/buttons/player.py:107
-msgid "Player stopped"
-msgstr "A játékos leállt"
+msgid "Player stopped."
+msgstr "A játékos megállt."
+
+#: pylav/extension/red/ui/buttons/player.py:140
+msgid "You are not authorized to perform this action"
+msgstr "Ön nem jogosult a művelet végrehajtására"
 
 #: pylav/extension/red/ui/buttons/player.py:154
-msgid "No Players Available For Action - Try Refreshing"
-msgstr "Nincsenek akcióképes játékosok - próbáld meg frissíteni"
+msgid "No players available for action, try refreshing."
+msgstr "Nincsenek játékosok akcióra, próbáld meg frissíteni."
 
 #: pylav/extension/red/ui/buttons/playlist.py:48
-msgid "When you press done this playlist will be permanently delete"
-msgstr "Amikor megnyomja a kész gombot, ez a lejátszási lista véglegesen törlődik"
+msgid "When you press done this playlist will be permanently delete."
+msgstr "Amikor megnyomja a kész gombot, ez a lejátszási lista véglegesen törlődik."
 
 #: pylav/extension/red/ui/buttons/playlist.py:50
-msgid "This playlist will no longer be deleted once you press done"
-msgstr "Ez a lejátszási lista a továbbiakban nem törlődik, ha megnyomja a kész gombot"
+msgid "This playlist will no longer be deleted once you press done."
+msgstr "Ez a lejátszási lista a továbbiakban nem törlődik, ha megnyomja a kész gombot."
 
 #: pylav/extension/red/ui/buttons/playlist.py:83
-msgid "Clearing all tracks from the playlist playlist"
-msgstr "Az összes zeneszám törlése a lejátszási lista lejátszási listájáról"
+msgid "Clearing all tracks from the playlist."
+msgstr "Az összes szám törlése a lejátszási listáról."
 
 #: pylav/extension/red/ui/buttons/playlist.py:85
-msgid "No longer clearing tracks from the playlist"
-msgstr "Már nem törli a zeneszámokat a lejátszási listáról"
+msgid "No longer clearing tracks from the playlist."
+msgstr "Már nem törli a zeneszámokat a lejátszási listáról."
 
-#: pylav/extension/red/ui/buttons/playlist.py:126
-msgid "Here is your playlist: {name}{extras}"
-msgstr "Íme a lejátszási listád: {name}{extras}"
+#: pylav/extension/red/ui/buttons/playlist.py:124
+msgid "Here is your playlist: {playlist_name}, file is compressed using Gzip to make it possible to send via Discord you can use <https://gzip.swimburger.net/> to decompress it."
+msgstr "Íme a lejátszási listád: {playlist_name}, a fájlt a Gzip segítségével tömörítik, hogy lehetővé tegyék a Discordon keresztüli küldést, amelyet használhat <https://gzip.swimburger.net/> hogy kibontsa."
 
 #: pylav/extension/red/ui/buttons/playlist.py:128
-msgid "\n"
-" (compressed using gzip to make it possible to send via Discord - you can use <https://gzip.swimburger.net/> to decompress it)"
-msgstr "\n"
-" (tömörítve a gzip használatával, hogy lehetővé tegye a Discordon keresztüli küldést - használhatja <https://gzip.swimburger.net/> kibontani)"
+msgid "Here is your playlist: {playlist_name}, file is compressed using Brotli compression."
+msgstr "Íme a lejátszási listád: {playlist_name}, a fájl Brotli-tömörítéssel van tömörítve."
 
-#: pylav/extension/red/ui/buttons/playlist.py:133
-msgid "\n"
-" (File compressed using Brotli compression."
-msgstr "\n"
-" (Brotli tömörítéssel tömörített fájl."
-
-#: pylav/extension/red/ui/buttons/playlist.py:171
-msgid "Updating playlist with the latest tracks, press done to continue"
-msgstr "A lejátszási lista frissítése a legújabb műsorszámokkal, nyomja meg a kész gombot a folytatáshoz"
+#: pylav/extension/red/ui/buttons/playlist.py:132
+msgid "Here is your playlist: {playlist_name}."
+msgstr "Íme a lejátszási listád: {playlist_name}."
 
 #: pylav/extension/red/ui/buttons/playlist.py:174
-msgid "Not updating playlist"
-msgstr "Nem frissíti a lejátszási listát"
+msgid "Updating playlist with the latest tracks, press done to continue."
+msgstr "A lejátszási lista frissítése a legújabb számokkal, nyomja meg a kész gombot a folytatáshoz."
 
-#: pylav/extension/red/ui/buttons/playlist.py:263
-msgid "Adding the current queue to playlist"
-msgstr "Az aktuális várólista hozzáadása a lejátszási listához"
+#: pylav/extension/red/ui/buttons/playlist.py:177
+msgid "Not updating playlist."
+msgstr "Nem frissíti a lejátszási listát."
 
-#: pylav/extension/red/ui/buttons/playlist.py:270
-msgid "No longer adding the current queue to playlist"
-msgstr "Már nem adja hozzá az aktuális várólistát a lejátszási listához"
+#: pylav/extension/red/ui/buttons/playlist.py:266
+msgid "Adding the current queue to playlist."
+msgstr "Az aktuális várólista hozzáadása a lejátszási listához."
 
-#: pylav/extension/red/ui/buttons/playlist.py:309
-msgid "Removing all duplicate tracks from the queue"
-msgstr "Az összes ismétlődő szám eltávolítása a sorból"
+#: pylav/extension/red/ui/buttons/playlist.py:273
+msgid "No longer adding the current queue to playlist."
+msgstr "Már nem adja hozzá az aktuális várólistát a lejátszási listához."
 
-#: pylav/extension/red/ui/buttons/playlist.py:316
-msgid "No longer all duplicate tracks from the queue"
-msgstr "Már nem minden duplikált szám a várólistából"
+#: pylav/extension/red/ui/buttons/playlist.py:312
+msgid "Removing all duplicate tracks from the queue."
+msgstr "Az összes ismétlődő szám eltávolítása a sorból."
 
-#: pylav/extension/red/ui/buttons/playlist.py:406
-msgid "Playlists you can currently play"
-msgstr "A jelenleg lejátszható lejátszási listák"
+#: pylav/extension/red/ui/buttons/playlist.py:319
+msgid "No longer all duplicate tracks from the queue."
+msgstr "Már nem minden duplikált szám a sorból."
 
-#: pylav/extension/red/ui/buttons/playlist.py:412
-msgid "Pick a playlist"
-msgstr "Lejátszási lista kiválasztása"
+#: pylav/extension/red/ui/buttons/playlist.py:409
+msgid "Playlists you can currently play."
+msgstr "A jelenleg lejátszható lejátszási listák."
 
-#: pylav/extension/red/ui/buttons/playlist.py:434
+#: pylav/extension/red/ui/buttons/playlist.py:415
+msgid "Pick a playlist."
+msgstr "Válasszon ki egy lejátszási listát."
+
+#: pylav/extension/red/ui/buttons/playlist.py:437
 msgid "What should the playlist name be?"
 msgstr "Mi legyen a lejátszási lista neve?"
 
 #: pylav/extension/red/ui/buttons/queue.py:164
 #: pylav/extension/red/ui/buttons/queue.py:191
 #: pylav/extension/red/ui/buttons/queue.py:224
-msgid "Not connected to a voice channel"
-msgstr "Nincs hangcsatornához csatlakoztatva"
+msgid "Not connected to a voice channel."
+msgstr "Nincs hangcsatornához csatlakoztatva."
 
 #: pylav/extension/red/ui/buttons/queue.py:289
-msgid "There's nothing in the Queue"
-msgstr "Nincs semmi a sorban"
+msgid "There is nothing in the queue."
+msgstr "Nincs semmi a sorban."
 
 #: pylav/extension/red/ui/buttons/queue.py:296
-msgid "Removed tracks from the queue"
-msgstr "Eltávolított számok a várólistából"
+msgid "Removed tracks from the queue."
+msgstr "Eltávolított sávok a sorból."
 
 #: pylav/extension/red/ui/buttons/queue.py:323
 msgid "What do you want to enqueue?"
