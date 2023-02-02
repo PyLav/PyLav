@@ -1,30 +1,28 @@
 'Category: Vendor':
-  # Source
 -   pylav/**/vendor/*
 -   pylav/vendor/*
 'Category: M3U Parser':
-  # Source
 -   pylav/extension/m3u/*
 'Category: Radio':
 -   pylav/extension/radio/*
 'Category: CI':
 -   .github/workflows/*
+-   .github/dependabot.yml
+-   .github/labeler.yml
 'Category: Lavalink':
 -   pylav/nodes/*
 'Category: i18n':
-  # Locale files
 -   pylav/**/locales/*
 'Category: Filters':
-  # Locale files
 -   pylav/nodes/api/responses/filters/*
 -   pylav/players/filters/*
 'Category: Database':
-  # Source
 -   pylav/storage/*
 'Category: Red Utils':
-  # Source
 -   pylav/vendor/red/*
 -   pylav/extension/red/*
+'Category: Style':
+-   style/*
 'Category: Admin':
 -   tools/*
 -   .github/*
@@ -51,3 +49,4 @@
 -   pylav.docker.yml
 -   pylav.example.yml
 -   application.example.yml
+-   .vale.ini
