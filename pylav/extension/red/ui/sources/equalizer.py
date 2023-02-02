@@ -36,7 +36,7 @@ class EQPresetsSource(menus.ListPageSource):
             try:
                 author = self.cog.bot.get_user(preset_data["author"])
             except TypeError:
-                author = "Build-in"
+                author = _("Bundled with PyLav")
             data.append(
                 {
                     header_name: EightBitANSI.paint_white(preset_name),

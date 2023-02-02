@@ -184,14 +184,14 @@ class PlaylistCreationFlow(discord.ui.View):
         self.author = original_author
         self.url_prompt = PromptForInput(
             cog=self.cog,
-            title=shorten_string(max_length=100, string=_("Please enter the playlist URL")),
+            title=shorten_string(max_length=100, string=_("Please enter the playlist URL.")),
             label=shorten_string(max_length=100, string=_("Playlist URL")),
             style=discord.TextStyle.paragraph,
             max_length=4000,
         )
         self.name_prompt = PromptForInput(
             cog=self.cog,
-            title=shorten_string(max_length=100, string=_("Please enter the playlist name")),
+            title=shorten_string(max_length=100, string=_("Please enter the playlist name.")),
             label=shorten_string(max_length=100, string=_("Playlist Name")),
             max_length=64,
         )
@@ -258,7 +258,7 @@ class PlaylistCreationFlow(discord.ui.View):
             self.author and (interaction.user.id != self.author.id)
         ):
             await interaction.response.send_message(
-                content=_("You are not authorized to interact with this"), ephemeral=True
+                content=_("You are not authorized to interact with this."), ephemeral=True
             )
             return False
         return True
@@ -319,21 +319,21 @@ class PlaylistManageFlow(discord.ui.View):
         self.playlist = playlist
         self.url_prompt = PromptForInput(
             cog=self.cog,
-            title=shorten_string(max_length=100, string=_("Please enter the playlist URL")),
+            title=shorten_string(max_length=100, string=_("Please enter the new URL for this playlist.")),
             label=shorten_string(max_length=100, string=_("Playlist URL")),
             style=discord.TextStyle.paragraph,
             max_length=4000,
         )
         self.name_prompt = PromptForInput(
             cog=self.cog,
-            title=shorten_string(max_length=100, string=_("Please enter the new playlist name")),
+            title=shorten_string(max_length=100, string=_("Please enter the new name for this playlist.")),
             label=shorten_string(max_length=100, string=_("Playlist Name")),
             max_length=64,
         )
 
         self.add_prompt = PromptForInput(
             cog=self.cog,
-            title=_("What query to add to the playlist"),
+            title=_("What query to add to this playlist."),
             label=_("Query"),
             style=discord.TextStyle.paragraph,
             max_length=4000,
@@ -341,7 +341,7 @@ class PlaylistManageFlow(discord.ui.View):
 
         self.remove_prompt = PromptForInput(
             cog=self.cog,
-            title=_("What query to remove from the playlist"),
+            title=_("What query to remove from this playlist."),
             label=_("Query"),
             style=discord.TextStyle.paragraph,
             max_length=4000,
@@ -477,7 +477,7 @@ class PlaylistManageFlow(discord.ui.View):
             self.author and (interaction.user.id != self.author.id)
         ):
             await interaction.response.send_message(
-                content=_("You are not authorized to interact with this"), ephemeral=True
+                content=_("You are not authorized to interact with this."), ephemeral=True
             )
             return False
         return True

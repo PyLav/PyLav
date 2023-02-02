@@ -24,7 +24,7 @@ class PlaylistSaveModal(discord.ui.Modal):
         super().__init__(title=title, timeout=timeout)
         self.text = discord.ui.TextInput(
             style=discord.TextStyle.short,
-            label=shorten_string(max_length=100, string=_("Enter the name for the new playlist")),
+            label=shorten_string(max_length=100, string=_("Enter the name for the new playlist.")),
             placeholder=shorten_string(max_length=100, string=_("My awesome new playlist")),
             min_length=3,
             max_length=64,

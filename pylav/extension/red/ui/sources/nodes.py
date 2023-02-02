@@ -46,13 +46,25 @@ class NodePickerSource(menus.ListPageSource):
 
         idx_start, page_num = self.get_starting_index_and_page_number(menu)
         page = await self.cog.pylav.construct_embed(messageable=menu.ctx, title=self.message_str)
-        page.set_footer(
-            text=_("Page {page_num}/{total_pages} | {num} nodes").format(
-                page_num=humanize_number(page_num + 1),
-                total_pages=humanize_number(self.get_max_pages()),
-                num=len(self.entries),
+
+        number_of_pages = self.get_max_pages()
+        total_number_of_entries = len(self.entries)
+        current_page = humanize_number(page_num + 1)
+        total_number_of_pages = humanize_number(self.get_max_pages())
+
+        if number_of_pages > 1:
+            message = _(
+                "Page {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} entries"
+            ).format(
+                current_page_value=current_page,
+                total_number_of_pages_value=total_number_of_pages,
+                total_number_of_entries_value=total_number_of_entries,
             )
-        )
+        elif number_of_pages == 1:
+            message = _("Page 1 / 1 | 1 entry")
+        else:
+            message = _("Page 1 / 1 | 0 entries")
+        page.set_footer(text=message)
         return page
 
     async def get_page(self, page_number):
@@ -186,6 +198,7 @@ class NodeListSource(menus.ListPageSource):
             title=node.name,
             description=description,
         )
+
         embed.set_footer(
             text=_("Page {page_num}/{total_pages} | {num} {plural}").format(
                 page_num=humanize_number(page_num + 1),
@@ -339,12 +352,24 @@ class NodeManageSource(menus.ListPageSource):
             title=node.name,
             description=description,
         )
-        embed.set_footer(
-            text=_("Page {page_num}/{total_pages} | {num} {plural}").format(
-                page_num=humanize_number(page_num + 1),
-                total_pages=humanize_number(self.get_max_pages()),
-                num=len(self.entries),
-                plural=_("nodes") if len(self.entries) != 1 else _("node"),
+
+        number_of_pages = self.get_max_pages()
+        total_number_of_entries = len(self.entries)
+        current_page = humanize_number(page_num + 1)
+        total_number_of_pages = humanize_number(self.get_max_pages())
+
+        if number_of_pages > 1:
+            message = _(
+                "Page {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} nodes"
+            ).format(
+                current_page_value=current_page,
+                total_number_of_pages_value=total_number_of_pages,
+                total_number_of_entries_value=total_number_of_entries,
             )
-        )
+        elif number_of_pages == 1:
+            message = _("Page 1 / 1 | 1 node")
+        else:
+            message = _("Page 1 / 1 | 0 nodes")
+
+        embed.set_footer(text=message)
         return embed

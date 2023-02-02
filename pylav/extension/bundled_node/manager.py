@@ -68,7 +68,7 @@ from pylav.utils.vendor.redbot import AsyncIter
 try:
     from redbot.core.i18n import Translator
 
-    _ = Translator("PyLavPlayer", pathlib.Path(__file__))
+    _ = Translator("PyLav", pathlib.Path(__file__))
 except ImportError:
     Translator = None
 
@@ -224,7 +224,7 @@ class LocalNodeManager:
         self._java_exc = java_path
         if arch_name in self._blacklisted_archs:
             raise InvalidArchitectureException(
-                _("You are attempting to run the managed Lavalink node on an unsupported machine architecture")
+                _("You are attempting to run the managed Lavalink node on an unsupported machine architecture.")
             )
         await self.process_settings()
         possible_lavalink_processes = await self.get_lavalink_process(lazy_match=True)
@@ -449,8 +449,8 @@ class LocalNodeManager:
             return major, minor
 
         raise UnexpectedJavaResponseException(
-            _("The output of `{java_exc} -version` was unexpected\n{version_info}").format(
-                java_exc=self._java_exc, version_info=version_info
+            _("The output of `{command_name}` was unexpected\n{command_output}").format(
+                command_name=f"{self._java_exc} -version", command_output=version_info
             )
         )
 
@@ -469,12 +469,12 @@ class LocalNodeManager:
             if LAVALINK_FAILED_TO_START.search(line):
                 if f"Port {self._current_config['server']['port']} was already in use".encode() in line:
                     raise PortAlreadyInUseException(
-                        _("Port {port} already in use. Managed Lavalink startup aborted").format(
-                            port=self._current_config["server"]["port"]
+                        _("Port {port_value} already in use. Managed Lavalink startup has been aborted.").format(
+                            port_value=self._current_config["server"]["port"]
                         )
                     )
                 raise ManagedLavalinkStartFailureException(
-                    _("Lavalink failed to start: {line}").format(line=line.decode("utf-8"))
+                    _("Lavalink failed to start: {error_value}").format(error_value=line.decode("utf-8"))
                 )
             if self._proc.returncode is not None:
                 # Avoid Console spam only print once every 2 seconds

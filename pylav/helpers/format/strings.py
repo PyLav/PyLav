@@ -55,13 +55,16 @@ def format_time_string(seconds: int | float) -> str:
     d, h = divmod(h, 24)
 
     hour = _("hour")
+    hours = _("hours")
+
     minute = _("minute")
+    minutes = _("minutes")
+
     second = _("second")
+    seconds = _("seconds")
+
     day = _("day")
     days = _("days")
-    hours = _("hours")
-    minutes = _("minutes")
-    seconds = _("seconds")
 
     if d > 0:
         return f"{d} {day if d == 1 else days} {h} {hour if h == 1 else hours}"

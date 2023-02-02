@@ -19,10 +19,12 @@ class PlaylistOption(discord.SelectOption):
             label=shorten_string(max_length=100, string=f"{index + 1}. {await playlist.fetch_name()}"),
             description=shorten_string(
                 max_length=100,
-                string=_("Tracks: {} || {} || {}").format(
-                    await playlist.size(),
-                    await playlist.get_author_name(bot, mention=False),
-                    await playlist.get_scope_name(bot, mention=False),
+                string=_(
+                    "Tracks: {playlist_size_value} || {playlist_author_name_value} || {playlist_scope_value}"
+                ).format(
+                    playlist_size_value=await playlist.size(),
+                    playlist_author_name_value=await playlist.get_author_name(bot, mention=False),
+                    playlist_scope_value=await playlist.get_scope_name(bot, mention=False),
                 ),
             ),
             value=f"{playlist.id}",

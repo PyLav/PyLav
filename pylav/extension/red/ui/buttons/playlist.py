@@ -38,16 +38,16 @@ class PlaylistDeleteButton(discord.ui.Button):
         if self.view.author.id != interaction.user.id:
             return await context.send(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=interaction, description=_("You are not authorized to interact with this option")
+                    messageable=interaction, description=_("You are not authorized to interact with this option.")
                 ),
                 ephemeral=True,
             )
         self.view.cancelled = False
         self.view.delete = not self.view.delete
         if self.view.delete:
-            response = _("When you press done this playlist will be permanently delete")
+            response = _("When you press done this playlist will be permanently delete.")
         else:
-            response = _("This playlist will no longer be deleted once you press done")
+            response = _("This playlist will no longer be deleted once you press done.")
 
         await context.send(
             embed=await self.cog.pylav.construct_embed(messageable=interaction, description=response),
@@ -73,16 +73,16 @@ class PlaylistClearButton(discord.ui.Button):
         if self.view.author.id != interaction.user.id:
             return await context.send(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=interaction, description=_("You are not authorized to interact with this option")
+                    messageable=interaction, description=_("You are not authorized to interact with this option.")
                 ),
                 ephemeral=True,
             )
         self.view.cancelled = False
         self.view.clear = not self.view.clear
         if self.view.clear:
-            response = _("Clearing all tracks from the playlist playlist")
+            response = _("Clearing all tracks from the playlist.")
         else:
-            response = _("No longer clearing tracks from the playlist")
+            response = _("No longer clearing tracks from the playlist.")
 
         await context.send(
             embed=await self.cog.pylav.construct_embed(messageable=interaction, description=response),
@@ -114,26 +114,29 @@ class PlaylistDownloadButton(discord.ui.Button):
         if self.view.author.id != interaction.user.id:
             return await context.send(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=interaction, description=_("You are not authorized to interact with this option")
+                    messageable=interaction, description=_("You are not authorized to interact with this option.")
                 ),
                 ephemeral=True,
             )
         async with self.view.playlist.to_yaml(guild=interaction.guild) as (yaml_file, compressed):
             yaml_file: BytesIO
+            if compressed == "gzip":
+                message = _(
+                    "Here is your playlist: {playlist_name}, file is compressed using Gzip to make it possible to send via Discord you can use <https://gzip.swimburger.net/> to decompress it."
+                ).format(playlist_name=await self.view.playlist.get_name_formatted(with_url=True))
+            elif compressed == "brotli":
+                message = _(
+                    "Here is your playlist: {playlist_name}, file is compressed using Brotli compression."
+                ).format(playlist_name=await self.view.playlist.get_name_formatted(with_url=True))
+            else:
+                message = _("Here is your playlist: {playlist_name}.").format(
+                    playlist_name=await self.view.playlist.get_name_formatted(with_url=True)
+                )
+
             await context.send(
                 embed=await self.cog.pylav.construct_embed(
                     messageable=interaction,
-                    description=_("Here is your playlist: {name}{extras}").format(
-                        name=await self.view.playlist.get_name_formatted(with_url=True),
-                        extras=_(
-                            "\n (compressed using gzip to make it possible to send via Discord "
-                            "- you can use <https://gzip.swimburger.net/> to decompress it)"
-                        )
-                        if compressed == "gzip"
-                        else _("\n (File compressed using Brotli compression.")
-                        if compressed == "brotli"
-                        else "",
-                    ),
+                    description=message,
                 ),
                 file=discord.File(
                     filename=f"{await self.view.playlist.fetch_name()}{'.gz' if compressed=='gzip' else '.br' if compressed=='brotli' else ''}.pylav",
@@ -161,17 +164,17 @@ class PlaylistUpdateButton(discord.ui.Button):
         if self.view.author.id != interaction.user.id:
             return await context.send(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=interaction, description=_("You are not authorized to interact with this option")
+                    messageable=interaction, description=_("You are not authorized to interact with this option.")
                 ),
                 ephemeral=True,
             )
         self.view.cancelled = False
         self.view.update = not self.view.update
         if (await self.view.playlist.fetch_url() or self.view.url) and self.view.update:
-            response = _("Updating playlist with the latest tracks, press done to continue")
+            response = _("Updating playlist with the latest tracks, press done to continue.")
         else:
             self.view.update = False
-            response = _("Not updating playlist")
+            response = _("Not updating playlist.")
         await context.send(
             embed=await self.cog.pylav.construct_embed(messageable=interaction, description=response),
             ephemeral=True,
@@ -204,7 +207,7 @@ class PlaylistInfoButton(discord.ui.Button):
         if self.view.author.id != interaction.user.id:
             return await context.send(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=interaction, description=_("You are not authorized to interact with this option")
+                    messageable=interaction, description=_("You are not authorized to interact with this option.")
                 ),
                 ephemeral=True,
             )
@@ -252,7 +255,7 @@ class PlaylistQueueButton(discord.ui.Button):
         if self.view.author.id != interaction.user.id:
             return await context.send(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=interaction, description=_("You are not authorized to interact with this option")
+                    messageable=interaction, description=_("You are not authorized to interact with this option.")
                 ),
                 ephemeral=True,
             )
@@ -260,14 +263,14 @@ class PlaylistQueueButton(discord.ui.Button):
         if self.view.queue:
             await context.send(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=interaction, description=_("Adding the current queue to playlist")
+                    messageable=interaction, description=_("Adding the current queue to playlist.")
                 ),
                 ephemeral=True,
             )
         else:
             await context.send(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=interaction, description=_("No longer adding the current queue to playlist")
+                    messageable=interaction, description=_("No longer adding the current queue to playlist.")
                 ),
                 ephemeral=True,
             )
@@ -298,7 +301,7 @@ class PlaylistDedupeButton(discord.ui.Button):
         if self.view.author.id != interaction.user.id:
             return await context.send(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=interaction, description=_("You are not authorized to interact with this option")
+                    messageable=interaction, description=_("You are not authorized to interact with this option.")
                 ),
                 ephemeral=True,
             )
@@ -306,14 +309,14 @@ class PlaylistDedupeButton(discord.ui.Button):
         if self.view.dedupe:
             await context.send(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=interaction, description=_("Removing all duplicate tracks from the queue")
+                    messageable=interaction, description=_("Removing all duplicate tracks from the queue.")
                 ),
                 ephemeral=True,
             )
         else:
             await context.send(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=interaction, description=_("No longer all duplicate tracks from the queue")
+                    messageable=interaction, description=_("No longer all duplicate tracks from the queue.")
                 ),
                 ephemeral=True,
             )
@@ -344,7 +347,7 @@ class PlaylistUpsertButton(discord.ui.Button):
         if self.view.author.id != interaction.user.id:
             return await interaction.response.send_message(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=interaction, description=_("You are not authorized to interact with this option")
+                    messageable=interaction, description=_("You are not authorized to interact with this option.")
                 ),
                 ephemeral=True,
             )
@@ -403,13 +406,13 @@ class EnqueuePlaylistButton(discord.ui.Button):
                     guild_id=context.guild.id,
                     cog=self.cog,
                     pages=playlists,
-                    message_str=_("Playlists you can currently play"),
+                    message_str=_("Playlists you can currently play."),
                 ),
                 delete_after_timeout=True,
                 clear_buttons_after=True,
                 starting_page=0,
                 original_author=context.author,
-                selector_text=shorten_string(max_length=100, string=_("Pick a playlist")),
+                selector_text=shorten_string(max_length=100, string=_("Pick a playlist.")),
             ).start(context)
         else:
             await self.cog.command_playlist_play.callback(self.cog, interaction, playlist=[self.playlist])

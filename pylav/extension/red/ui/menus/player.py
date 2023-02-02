@@ -205,7 +205,7 @@ class StatsMenu(BaseMenu):
                 "content": None,
                 "embed": await self.cog.pylav.construct_embed(
                     messageable=self.ctx,
-                    title=shorten_string(max_length=100, string=_("Not connected anywhere")),
+                    title=shorten_string(max_length=100, string=_("Not connected in any server.")),
                 ),
             }
         try:

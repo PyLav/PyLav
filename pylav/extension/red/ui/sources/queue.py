@@ -93,7 +93,7 @@ class QueueSource(menus.ListPageSource):
     async def format_page(self, menu: QueueMenu, tracks: list[Track]) -> discord.Embed:
         if not (player := self.cog.pylav.get_player(menu.ctx.guild.id)):
             return await self.cog.pylav.construct_embed(
-                description=_("No active player found in server"), messageable=menu.ctx
+                description=_("I am not currently playing anything in this server."), messageable=menu.ctx
             )
         self.current_player = player
         return (
@@ -107,9 +107,9 @@ class QueueSource(menus.ListPageSource):
             )
             if player.current and (player.history.size() if self.history else True)
             else await self.cog.pylav.construct_embed(
-                description=_("There's nothing in recently played")
+                description=_("There is nothing in recently played.")
                 if self.history
-                else _("There's nothing currently being played"),
+                else _("There is nothing currently being played"),
                 messageable=menu.ctx,
             )
         )
@@ -139,7 +139,7 @@ class QueuePickerSource(QueueSource):
     async def format_page(self, menu: QueuePickerMenu, tracks: list[Track]) -> discord.Embed:
         if not (player := self.cog.pylav.get_player(menu.ctx.guild.id)):
             return await self.cog.pylav.construct_embed(
-                description=_("No active player found in server"), messageable=menu.ctx
+                description=_("No active player found in server."), messageable=menu.ctx
             )
         self.current_player = player
         return (
@@ -152,7 +152,7 @@ class QueuePickerSource(QueueSource):
             )
             if player.current
             else await self.cog.pylav.construct_embed(
-                description=_("There's nothing currently being played"),
+                description=_("There is nothing currently being played."),
                 messageable=menu.ctx,
             )
         )

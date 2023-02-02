@@ -44,7 +44,9 @@ else:
                 else:
                     raise EntryNotFoundException
             except EntryNotFoundException as e:
-                raise commands.BadArgument(_("Bass boost with name `{arg}` not found").format(arg=arg)) from e
+                raise commands.BadArgument(
+                    _("Bass boost profile with name `{user_input_value}` not found.").format(user_input_value=arg)
+                ) from e
 
         @classmethod
         async def transform(cls, interaction: DISCORD_INTERACTION_TYPE, argument: str) -> str:

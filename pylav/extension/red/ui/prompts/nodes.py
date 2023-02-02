@@ -26,14 +26,14 @@ async def maybe_prompt_for_node(cog: DISCORD_COG_TYPE, context: PyLavContext, no
                 cog=cog,
                 pages=nodes,
                 message_str=shorten_string(
-                    max_length=100, string=_("Multiple nodes matched, pick the one which you meant")
+                    max_length=100, string=_("Multiple nodes matched, pick the one which you meant.")
                 ),
             ),
             selector_cls=NodeSelectSelector,
             delete_after_timeout=True,
             clear_buttons_after=True,
             starting_page=0,
-            selector_text=shorten_string(max_length=100, string=_("Pick a node")),
+            selector_text=shorten_string(max_length=100, string=_("Pick a node.")),
             original_author=context.interaction.user if context.interaction else context.author,
         )
 

@@ -48,13 +48,26 @@ class PlaylistPickerSource(menus.ListPageSource):
 
         idx_start, page_num = self.get_starting_index_and_page_number(menu)
         page = await self.cog.pylav.construct_embed(messageable=menu.ctx, title=self.message_str)
-        page.set_footer(
-            text=_("Page {page_num}/{total_pages} | {num} playlists").format(
-                page_num=humanize_number(page_num + 1),
-                total_pages=humanize_number(self.get_max_pages()),
-                num=len(self.entries),
+
+        number_of_pages = self.get_max_pages()
+        total_number_of_entries = len(self.entries)
+        current_page = humanize_number(page_num + 1)
+        total_number_of_pages = humanize_number(self.get_max_pages())
+
+        if number_of_pages > 1:
+            message = _(
+                "Page {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} playlists"
+            ).format(
+                current_page_value=current_page,
+                total_number_of_pages_value=total_number_of_pages,
+                total_number_of_entries_value=total_number_of_entries,
             )
-        )
+        elif number_of_pages == 1:
+            message = _("Page 1 / 1 | 1 playlist")
+        else:
+            message = _("Page 1 / 1 | 0 playlists")
+
+        page.set_footer(text=message)
         return page
 
     async def get_page(self, page_number):
@@ -120,10 +133,26 @@ class Base64Source(menus.ListPageSource):
             description=queue_list,
             messageable=menu.ctx,
         )
-        text = _("Page {page_num}/{total_pages} | {num_tracks} tracks\n").format(
-            page_num=page_num + 1, total_pages=self.get_max_pages(), num_tracks=len(self.entries)
-        )
-        page.set_footer(text=text)
+
+        number_of_pages = self.get_max_pages()
+        total_number_of_entries = len(self.entries)
+        current_page = humanize_number(page_num + 1)
+        total_number_of_pages = humanize_number(self.get_max_pages())
+
+        if number_of_pages > 1:
+            message = _(
+                "Page {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} tracks"
+            ).format(
+                current_page_value=current_page,
+                total_number_of_pages_value=total_number_of_pages,
+                total_number_of_entries_value=total_number_of_entries,
+            )
+        elif number_of_pages == 1:
+            message = _("Page 1 / 1 | 1 track")
+        else:
+            message = _("Page 1 / 1 | 0 tracks")
+
+        page.set_footer(text=message)
         return page
 
     def get_max_pages(self):
@@ -154,7 +183,7 @@ class PlaylistListSource(menus.ListPageSource):
             playlist_info = ("\n" + space * 4).join(
                 (
                     await playlist.get_name_formatted(with_url=True),
-                    _("ID: {id}").format(id=playlist.id),
+                    _("Identifier: {id}").format(id=playlist.id),
                     _("Tracks: {num}").format(num=await playlist.size()),
                     _("Author: {name}").format(name=author_name),
                     "\n" if is_same else _("Scope: {scope}\n").format(scope=scope_name),
@@ -168,13 +197,26 @@ class PlaylistListSource(menus.ListPageSource):
             title=_("Playlists you can access in this server:"),
             description=plist,
         )
-        embed.set_footer(
-            text=_("Page {page_num}/{total_pages} | {num} playlists").format(
-                page_num=humanize_number(page_num + 1),
-                total_pages=humanize_number(self.get_max_pages()),
-                num=len(self.entries),
+
+        number_of_pages = self.get_max_pages()
+        total_number_of_entries = len(self.entries)
+        current_page = humanize_number(page_num + 1)
+        total_number_of_pages = humanize_number(self.get_max_pages())
+
+        if number_of_pages > 1:
+            message = _(
+                "Page {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} playlists"
+            ).format(
+                current_page_value=current_page,
+                total_number_of_pages_value=total_number_of_pages,
+                total_number_of_entries_value=total_number_of_entries,
             )
-        )
+        elif number_of_pages == 1:
+            message = _("Page 1 / 1 | 1 playlist")
+        else:
+            message = _("Page 1 / 1 | 0 playlists")
+
+        embed.set_footer(text=message)
         return embed
 
     def get_max_pages(self):

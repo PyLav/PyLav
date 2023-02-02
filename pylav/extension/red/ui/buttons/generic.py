@@ -67,7 +67,7 @@ class CloseButton(discord.ui.Button):
         if self.view.author.id != interaction.user.id:
             return await interaction.response.send_message(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=interaction, description=_("You are not authorized to interact with this option")
+                    messageable=interaction, description=_("You are not authorized to interact with this option.")
                 ),
                 ephemeral=True,
             )
@@ -91,7 +91,7 @@ class YesButton(discord.ui.Button):
         if self.view.author.id != interaction.user.id:
             await interaction.response.send_message(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=interaction, description=_("You are not authorized to interact with this option")
+                    messageable=interaction, description=_("You are not authorized to interact with this option.")
                 ),
                 ephemeral=True,
             )
@@ -115,7 +115,7 @@ class NoButton(discord.ui.Button):
         if self.view.author.id != interaction.user.id:
             await interaction.response.send_message(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=interaction, description=_("You are not authorized to interact with this option")
+                    messageable=interaction, description=_("You are not authorized to interact with this option.")
                 ),
                 ephemeral=True,
             )
@@ -139,7 +139,7 @@ class DoneButton(discord.ui.Button):
         if self.view.author.id != interaction.user.id:
             return await interaction.response.send_message(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=interaction, description=_("You are not authorized to interact with this option")
+                    messageable=interaction, description=_("You are not authorized to interact with this option.")
                 ),
                 ephemeral=True,
             )
@@ -161,9 +161,10 @@ class LabelButton(discord.ui.Button):
             emoji=None,
             row=row,
         )
-        self.label = _("Disconnect {} {}").format(
-            disconnect_type_translation, _("players") if multiple else _("player")
-        )
+        if multiple:
+            self.label = _("Disconnect {player_type} players").format(player_type=disconnect_type_translation)
+        else:
+            self.label = _("Disconnect {player_type} player").format(player_type=disconnect_type_translation)
 
 
 class RefreshButton(discord.ui.Button):

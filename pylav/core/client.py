@@ -885,11 +885,11 @@ class Client(metaclass=SingletonClass):
             with contextlib.suppress(Exception):
                 return await async_decoder(track)
         if not self.node_manager.available_nodes:
-            raise NoNodeAvailableException(_("No available nodes!"))
+            raise NoNodeAvailableException(_("There are no available nodes!"))
         node = await self.node_manager.find_best_node(feature=feature)
         if node is None and feature:
             raise NoNodeWithRequestFunctionalityAvailableException(
-                _("No node with {feature} functionality available!").format(feature=feature), feature=feature
+                _("No node with {feature_name} functionality available!").format(feature_name=feature), feature=feature
             )
         try:
             response = await node.fetch_decodetrack(track, raise_on_failure=raise_on_failure)
@@ -920,11 +920,11 @@ class Client(metaclass=SingletonClass):
             A list of LavalinkTrackObject representing track information.
         """
         if not self.node_manager.available_nodes:
-            raise NoNodeAvailableException(_("No available nodes!"))
+            raise NoNodeAvailableException(_("There are no available nodes!"))
         node = await self.node_manager.find_best_node(feature=feature)
         if node is None and feature:
             raise NoNodeWithRequestFunctionalityAvailableException(
-                _("No node with {feature} functionality available!").format(feature=feature), feature=feature
+                _("No node with {feature_name} functionality available!").format(feature_name=feature), feature=feature
             )
         try:
             response = await node.post_decodetracks(tracks, raise_on_failure=raise_on_failure)
@@ -1224,7 +1224,7 @@ class Client(metaclass=SingletonClass):
             A LavalinkLoadTrackObjects representing Lavalink response.
         """
         if not self.node_manager.available_nodes:
-            raise NoNodeAvailableException("No available nodes!")
+            raise NoNodeAvailableException("There are no available nodes!")
         node = await self.node_manager.find_best_node(
             feature=query.requires_capability,
             region=player.region if player else None,
@@ -1232,7 +1232,9 @@ class Client(metaclass=SingletonClass):
         )
         if node is None:
             raise NoNodeWithRequestFunctionalityAvailableException(
-                _("No node with {query.requires_capability} functionality available!").format(query=query),
+                _("No node with {feature_name} functionality available!").format(
+                    feature_name=query.requires_capability
+                ),
                 query.requires_capability,
             )
         return await node.get_track(query, first=first, bypass_cache=bypass_cache)
@@ -1648,13 +1650,13 @@ class Client(metaclass=SingletonClass):
     ) -> str:
         if not await asyncstdlib.any([video_id, playlist_id, channel_id, user_id]):
             raise PyLavInvalidArgumentsException(
-                _("To generate a mix playlist a Video, User, Channel or Playlist ID is necessary")
+                _("A single video, user, channel or playlist identifier is necessary to generate a mixed playlist.")
             )
 
         if await asyncstdlib.sum(1 for i in [video_id, playlist_id, channel_id, user_id] if i) > 1:
             raise PyLavInvalidArgumentsException(
                 _(
-                    "To generate a mix playlist a Video, User, Channel or Playlist ID is necessary. "
+                    "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist. "
                     "However, you provided multiple"
                 )
             )

@@ -57,7 +57,7 @@ class AddNodeFlow(discord.ui.View):
         )
         self.host_prompt = PromptForInput(
             cog=self.cog,
-            title=shorten_string(max_length=100, string=_("Enter the domain or IP address of the host")),
+            title=shorten_string(max_length=100, string=_("Enter the domain or IP address of the host.")),
             label=shorten_string(max_length=100, string=_("Host")),
             style=discord.TextStyle.short,
             min_length=4,
@@ -65,7 +65,7 @@ class AddNodeFlow(discord.ui.View):
         )
         self.port_prompt = PromptForInput(
             cog=self.cog,
-            title=shorten_string(max_length=100, string=_("Enter the host port to connect to")),
+            title=shorten_string(max_length=100, string=_("Enter the host port to connect to.")),
             label=shorten_string(max_length=100, string=_("Port")),
             style=discord.TextStyle.short,
             min_length=2,
@@ -73,7 +73,7 @@ class AddNodeFlow(discord.ui.View):
         )
         self.password_prompt = PromptForInput(
             cog=self.cog,
-            title=shorten_string(max_length=100, string=_("Enter the node's password")),
+            title=shorten_string(max_length=100, string=_("Enter the node password.")),
             label=shorten_string(max_length=100, string=_("Password")),
             style=discord.TextStyle.short,
             min_length=1,
@@ -81,7 +81,7 @@ class AddNodeFlow(discord.ui.View):
         )
         self.name_prompt = PromptForInput(
             cog=self.cog,
-            title=shorten_string(max_length=100, string=_("Enter an easy to know name for the node")),
+            title=shorten_string(max_length=100, string=_("Enter an easy to reference name for the node.")),
             label=shorten_string(max_length=100, string=_("Name")),
             style=discord.TextStyle.short,
             min_length=8,
@@ -89,7 +89,7 @@ class AddNodeFlow(discord.ui.View):
         )
         self.resume_timeout_prompt = PromptForInput(
             cog=self.cog,
-            title=shorten_string(max_length=100, string=_("Enter a timeout in seconds")),
+            title=shorten_string(max_length=100, string=_("Enter a timeout in seconds.")),
             label=shorten_string(max_length=100, string=_("Timeout")),
             style=discord.TextStyle.short,
             min_length=2,
@@ -106,7 +106,7 @@ class AddNodeFlow(discord.ui.View):
             emoji=emojis.SSL,
         )
         self.disabled_sources_selector = SourceSelector(
-            cog=self.cog, placeholder=shorten_string(max_length=100, string=_("Source to disable")), row=2
+            cog=self.cog, placeholder=shorten_string(max_length=100, string=_("Source to disable.")), row=2
         )
         self.name_button = NodeButton(
             cog=self.cog,
@@ -196,7 +196,7 @@ class AddNodeFlow(discord.ui.View):
             self.author and (interaction.user.id != self.author.id)
         ):
             await interaction.response.send_message(
-                content=_("You are not authorized to interact with this"), ephemeral=True
+                content=_("You are not authorized to interact with this."), ephemeral=True
             )
             return False
         return True
@@ -219,7 +219,7 @@ class AddNodeFlow(discord.ui.View):
         self.name = self.name_prompt.response
         await interaction.followup.send(
             embed=await self.cog.pylav.construct_embed(
-                description=_("Name set to {name}").format(name=inline(self.name)),
+                description=_("Name set to {node_name_value}").format(node_name_value=inline(self.name)),
                 messageable=interaction,
             ),
             ephemeral=True,
@@ -232,7 +232,9 @@ class AddNodeFlow(discord.ui.View):
         self.password = self.password_prompt.response
         await interaction.followup.send(
             embed=await self.cog.pylav.construct_embed(
-                description=_("Password set to {password}").format(password=inline(self.password)),
+                description=_("Password set to {node_password_value}").format(
+                    node_password_value=inline(self.password)
+                ),
                 messageable=interaction,
             ),
             ephemeral=True,
@@ -250,7 +252,7 @@ class AddNodeFlow(discord.ui.View):
             self.host = self.host_prompt.response
         await interaction.followup.send(
             embed=await self.cog.pylav.construct_embed(
-                description=_("Host set to {host}").format(host=inline(self.host)),
+                description=_("Host set to {node_host_value}").format(node_host_value=inline(self.host)),
                 messageable=interaction,
             ),
             ephemeral=True,
@@ -267,7 +269,7 @@ class AddNodeFlow(discord.ui.View):
         if self.port is None:
             await interaction.followup.send(
                 embed=await self.cog.pylav.construct_embed(
-                    description=_("Invalid port"),
+                    description=_("Invalid port."),
                     messageable=interaction,
                 ),
                 ephemeral=True,
@@ -275,7 +277,7 @@ class AddNodeFlow(discord.ui.View):
         else:
             await interaction.followup.send(
                 embed=await self.cog.pylav.construct_embed(
-                    description=_("Port set to {port}").format(port=inline(f"{self.port}")),
+                    description=_("Port set to {node_port_value}.").format(node_port_value=inline(f"{self.port}")),
                     messageable=interaction,
                 ),
                 ephemeral=True,
@@ -292,7 +294,7 @@ class AddNodeFlow(discord.ui.View):
         if self.resume_timeout is None:
             await interaction.followup.send(
                 embed=await self.cog.pylav.construct_embed(
-                    description=_("Invalid timeout, it must be a number in seconds"),
+                    description=_("Invalid timeout, it must be a number in seconds."),
                     messageable=interaction,
                 ),
                 ephemeral=True,
@@ -300,7 +302,9 @@ class AddNodeFlow(discord.ui.View):
         else:
             await interaction.followup.send(
                 embed=await self.cog.pylav.construct_embed(
-                    description=_("Timeout set to {timeout} seconds").format(timeout=inline(f"{self.resume_timeout}")),
+                    description=_("Timeout set to {node_timeout_value} seconds").format(
+                        node_timeout_value=inline(f"{self.resume_timeout}")
+                    ),
                     messageable=interaction,
                 ),
                 ephemeral=True,
@@ -495,7 +499,7 @@ class NodeManagerMenu(BaseMenu):
         self.close_button = CloseButton(style=discord.ButtonStyle.red, cog=cog, row=0)
         self.host_prompt = PromptForInput(
             cog=self.cog,
-            title=shorten_string(max_length=100, string=_("Change the domain or IP address of the host")),
+            title=shorten_string(max_length=100, string=_("Change the domain or IP address of the host.")),
             label=shorten_string(max_length=100, string=_("Host")),
             style=discord.TextStyle.short,
             min_length=4,
@@ -503,7 +507,7 @@ class NodeManagerMenu(BaseMenu):
         )
         self.port_prompt = PromptForInput(
             cog=self.cog,
-            title=shorten_string(max_length=100, string=_("Change the host port to connect to")),
+            title=shorten_string(max_length=100, string=_("Change the host port to connect to.")),
             label=shorten_string(max_length=100, string=_("Port")),
             style=discord.TextStyle.short,
             min_length=2,
@@ -511,7 +515,7 @@ class NodeManagerMenu(BaseMenu):
         )
         self.password_prompt = PromptForInput(
             cog=self.cog,
-            title=shorten_string(max_length=100, string=_("Change the node's password")),
+            title=shorten_string(max_length=100, string=_("Change the node password.")),
             label=shorten_string(max_length=100, string=_("Password")),
             style=discord.TextStyle.short,
             min_length=1,
@@ -519,7 +523,7 @@ class NodeManagerMenu(BaseMenu):
         )
         self.name_prompt = PromptForInput(
             cog=self.cog,
-            title=shorten_string(max_length=100, string=_("Change the name of this node")),
+            title=shorten_string(max_length=100, string=_("Change the name of this node.")),
             label=shorten_string(max_length=100, string=_("Name")),
             style=discord.TextStyle.short,
             min_length=8,
@@ -527,7 +531,7 @@ class NodeManagerMenu(BaseMenu):
         )
         self.resume_timeout_prompt = PromptForInput(
             cog=self.cog,
-            title=shorten_string(max_length=100, string=_("Enter the new timeout for this node")),
+            title=shorten_string(max_length=100, string=_("Enter the new timeout for this node.")),
             label=shorten_string(max_length=100, string=_("Timeout")),
             style=discord.TextStyle.short,
             min_length=2,
@@ -557,7 +561,7 @@ class NodeManagerMenu(BaseMenu):
         )
         self.delete_button = NodeDeleteButton(cog=self.cog, style=discord.ButtonStyle.red, row=2)
         self.disabled_sources_selector = SourceSelector(
-            cog=self.cog, placeholder=shorten_string(max_length=100, string=_("Source to disable")), row=3
+            cog=self.cog, placeholder=shorten_string(max_length=100, string=_("Source to disable.")), row=3
         )
 
         self.cancelled = True
@@ -668,7 +672,7 @@ class NodeManagerMenu(BaseMenu):
         self.name = self.name_prompt.response
         await interaction.followup.send(
             embed=await self.cog.pylav.construct_embed(
-                description=_("Name set to {name}").format(name=inline(self.name)),
+                description=_("Name set to {node_name_value}").format(node_name_value=inline(self.name)),
                 messageable=interaction,
             ),
             ephemeral=True,
@@ -681,7 +685,9 @@ class NodeManagerMenu(BaseMenu):
         self.password = self.password_prompt.response
         await interaction.followup.send(
             embed=await self.cog.pylav.construct_embed(
-                description=_("Password set to {password}").format(password=inline(self.password)),
+                description=_("Password set to {node_password_value}").format(
+                    node_password_value=inline(self.password)
+                ),
                 messageable=interaction,
             ),
             ephemeral=True,
@@ -699,7 +705,7 @@ class NodeManagerMenu(BaseMenu):
             self.host = self.host_prompt.response
         await interaction.followup.send(
             embed=await self.cog.pylav.construct_embed(
-                description=_("Host set to {host}").format(host=inline(self.host)),
+                description=_("Host set to {node_host_value}").format(node_host_value=inline(self.host)),
                 messageable=interaction,
             ),
             ephemeral=True,
@@ -716,7 +722,7 @@ class NodeManagerMenu(BaseMenu):
         if self.port is None:
             await interaction.followup.send(
                 embed=await self.cog.pylav.construct_embed(
-                    description=_("Invalid port"),
+                    description=_("Invalid port."),
                     messageable=interaction,
                 ),
                 ephemeral=True,
@@ -724,7 +730,7 @@ class NodeManagerMenu(BaseMenu):
         else:
             await interaction.followup.send(
                 embed=await self.cog.pylav.construct_embed(
-                    description=_("Port set to {port}").format(port=inline(f"{self.port}")),
+                    description=_("Port set to {node_port_value}.").format(node_port_value=inline(f"{self.port}")),
                     messageable=interaction,
                 ),
                 ephemeral=True,
@@ -741,7 +747,7 @@ class NodeManagerMenu(BaseMenu):
         if self.resume_timeout is None:
             await interaction.followup.send(
                 embed=await self.cog.pylav.construct_embed(
-                    description=_("Invalid timeout, it must be a number in seconds"),
+                    description=_("Invalid timeout, it must be a number in seconds."),
                     messageable=interaction,
                 ),
                 ephemeral=True,
@@ -749,7 +755,9 @@ class NodeManagerMenu(BaseMenu):
         else:
             await interaction.followup.send(
                 embed=await self.cog.pylav.construct_embed(
-                    description=_("Timeout set to {timeout} seconds").format(timeout=inline(f"{self.resume_timeout}")),
+                    description=_("Timeout set to {node_timeout_value} seconds.").format(
+                        node_timeout_value=inline(f"{self.resume_timeout}")
+                    ),
                     messageable=interaction,
                 ),
                 ephemeral=True,

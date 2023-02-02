@@ -580,7 +580,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
 
     @maybe_cached
     async def fetch_dj_users(self) -> set[int]:
-        """Fetch the dj users of the player"""
+        """Fetch the disc jockey users of the player"""
         player = (
             await PlayerRow.select(PlayerRow.dj_users)
             .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
@@ -591,7 +591,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         return set(player["dj_users"] if player else PlayerRow.dj_users.default)
 
     async def add_to_dj_users(self, user: discord.Member) -> None:
-        """Add a user to the dj users of the player"""
+        """Add a user to the disc jockey users of the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await PlayerRow.raw(
@@ -607,7 +607,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         await self.invalidate_cache(self.fetch_all, self.fetch_dj_users)
 
     async def remove_from_dj_users(self, user: discord.Member) -> None:
-        """Remove a user from the dj users of the player"""
+        """Remove a user from the disc jockey users of the player"""
         # TODO: When piccolo add more functions for dealing with arrays update this to become ORM
         await PlayerRow.raw(
             "UPDATE player SET dj_users = array_remove(dj_users, {}) WHERE id = {} AND bot = {};",
@@ -619,7 +619,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         await self.invalidate_cache(self.fetch_all, self.fetch_dj_users)
 
     async def bulk_add_dj_users(self, *users: discord.Member) -> None:
-        """Add dj users to the player"""
+        """Add disc jockey users to the player"""
         if not users:
             return
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
@@ -637,7 +637,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         await self.invalidate_cache(self.fetch_all, self.fetch_dj_users)
 
     async def bulk_remove_dj_users(self, *users: discord.Member) -> None:
-        """Remove dj users from the player.
+        """Remove disc jockey users from the player.
 
         Parameters
         ----------
@@ -650,7 +650,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
             await self.remove_from_dj_users(user)
 
     async def dj_users_reset(self) -> None:
-        """Reset the dj users of the player"""
+        """Reset the disc jockey users of the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await PlayerRow.raw(
@@ -667,7 +667,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
 
     @maybe_cached
     async def fetch_dj_roles(self) -> set[int]:
-        """Fetch the dj roles of the player"""
+        """Fetch the disc jockey roles of the player"""
         player = (
             await PlayerRow.select(PlayerRow.dj_roles)
             .where((PlayerRow.id == self.id) & (PlayerRow.bot == self.bot))
@@ -678,7 +678,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         return set(player["dj_roles"] if player else PlayerRow.dj_roles.default)
 
     async def add_to_dj_roles(self, role: discord.Role) -> None:
-        """Add dj roles to the player"""
+        """Add disc jockey roles to the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await PlayerRow.raw(
@@ -694,7 +694,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         await self.invalidate_cache(self.fetch_all, self.fetch_dj_roles)
 
     async def remove_from_dj_roles(self, role: discord.Role) -> None:
-        """Remove dj roles from the player"""
+        """Remove disc jockey roles from the player"""
         # TODO: When piccolo add more functions for dealing with arrays update this to become ORM
 
         await PlayerRow.raw(
@@ -707,7 +707,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         await self.invalidate_cache(self.fetch_all, self.fetch_dj_roles)
 
     async def bulk_add_dj_roles(self, *roles: discord.Role) -> None:
-        """Add dj roles to the player.
+        """Add disc jockey roles to the player.
 
         Parameters
         ----------
@@ -731,7 +731,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         await self.invalidate_cache(self.fetch_all, self.fetch_dj_roles)
 
     async def bulk_remove_dj_roles(self, *roles: discord.Role) -> None:
-        """Remove dj roles from the player.
+        """Remove disc jockey roles from the player.
 
         Parameters
         ----------
@@ -744,7 +744,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
             await self.remove_from_dj_roles(role)
 
     async def dj_roles_reset(self) -> None:
-        """Reset the dj roles of the player"""
+        """Reset the disc jockey roles of the player"""
         # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
         #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
         await PlayerRow.raw(
@@ -777,23 +777,23 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         additional_user_ids: list | None = None,
         bot: DISCORD_BOT_TYPE = None,
     ) -> bool:
-        """Check if a user is a dj.
+        """Check if a user is a disc jockey.
 
         Parameters
         ----------
         user : discord.Member
             The user to check.
         additional_role_ids : list
-            The additional dj role ids to check.
+            The additional disc jockey role ids to check.
         additional_user_ids : list
-            The additional dj user ids to check.
+            The additional disc jockey user ids to check.
         bot : DISCORD_BOT_TYPE
             The bot instance to check for owners, admins or mods.
 
         Returns
         -------
         bool
-            Whether the user is a dj.
+            Whether the user is a disc jockey.
         """
         if additional_user_ids and user.id in additional_user_ids:
             return True

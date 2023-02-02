@@ -53,7 +53,9 @@ else:
                     return [cls._cache_stations[arg]]
                 return await cls.filter_cache(cache_type="station", limit=25, name=arg)
             except EntryNotFoundException as e:
-                raise commands.BadArgument(_("Station with name `{arg}` not found").format(arg=arg)) from e
+                raise commands.BadArgument(
+                    _("Station with name `{user_input_value}` not found.").format(user_input_value=arg)
+                ) from e
 
         @classmethod
         async def transform(cls, interaction: DISCORD_INTERACTION_TYPE, argument: str) -> list[Station]:
@@ -69,7 +71,7 @@ else:
             if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(
-                        name=shorten_string(max_length=100, string=_("Radio Browser is disabled")),
+                        name=shorten_string(max_length=100, string=_("Radio Browser extension is currently disabled.")),
                         value="???",
                     )
                 ]
@@ -135,7 +137,9 @@ else:
                     return [cls._cache_tags[arg]]
                 return await cls.filter_cache(cache_type="tag", limit=25, tag=arg)
             except EntryNotFoundException as e:
-                raise commands.BadArgument(_("Tag with name `{arg}` not found").format(arg=arg)) from e
+                raise commands.BadArgument(
+                    _("Tag with name `{user_input_value}` not found.").format(user_input_value=arg)
+                ) from e
 
         @classmethod
         async def transform(cls, interaction: DISCORD_INTERACTION_TYPE, argument: str) -> list[Tag]:
@@ -151,7 +155,7 @@ else:
             if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(
-                        name=shorten_string(max_length=100, string=_("Radio Browser is disabled")),
+                        name=shorten_string(max_length=100, string=_("Radio Browser extension is currently disabled")),
                         value="???",
                     )
                 ]
@@ -175,7 +179,9 @@ else:
                     return [cls._cache_languages[arg]]
                 return await cls.filter_cache(cache_type="language", limit=25, language=arg)
             except EntryNotFoundException as e:
-                raise commands.BadArgument(_("Language with name `{arg}` not found").format(arg=arg)) from e
+                raise commands.BadArgument(
+                    _("Language with name `{user_input_value}` not found.").format(user_input_value=arg)
+                ) from e
 
         @classmethod
         async def transform(cls, interaction: DISCORD_INTERACTION_TYPE, argument: str) -> list[Language]:
@@ -191,7 +197,7 @@ else:
             if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(
-                        name=shorten_string(max_length=100, string=_("Radio Browser is disabled")),
+                        name=shorten_string(max_length=100, string=_("Radio Browser extension is currently disabled")),
                         value="???",
                     )
                 ]
@@ -213,7 +219,9 @@ else:
                     return [cls._cache_states[arg]]
                 return await cls.filter_cache(cache_type="state", limit=25, state=arg)
             except EntryNotFoundException as e:
-                raise commands.BadArgument(_("State with name `{arg}` not found")) from e
+                raise commands.BadArgument(
+                    _("State with name `{user_input_value}` not found.").formar(user_input_value=arg)
+                ) from e
 
         @classmethod
         async def transform(cls, interaction: DISCORD_INTERACTION_TYPE, argument: str) -> list[State]:
@@ -229,7 +237,7 @@ else:
             if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(
-                        name=shorten_string(max_length=100, string=_("Radio Browser is disabled")),
+                        name=shorten_string(max_length=100, string=_("Radio Browser extension is currently disabled")),
                         value="???",
                     )
                 ]
@@ -250,7 +258,9 @@ else:
                     return [cls._cache_codecs[arg]]
                 return await cls.filter_cache(cache_type="codec", limit=25, codec=arg)
             except EntryNotFoundException as e:
-                raise commands.BadArgument(_("Codec with name `{arg}` not found").format(arg=arg)) from e
+                raise commands.BadArgument(
+                    _("Codec with name `{user_input_value}` not found.").format(user_input_value=arg)
+                ) from e
 
         @classmethod
         async def transform(cls, interaction: DISCORD_INTERACTION_TYPE, argument: str) -> list[Codec]:
@@ -266,7 +276,7 @@ else:
             if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(
-                        name=shorten_string(max_length=100, string=_("Radio Browser is disabled")),
+                        name=shorten_string(max_length=100, string=_("Radio Browser extension is currently disabled")),
                         value="???",
                     )
                 ]
@@ -287,7 +297,9 @@ else:
                     return [cls._cache_country_codes[arg]]
                 return await cls.filter_cache(cache_type="countrycode", limit=25, countrycode=arg)
             except EntryNotFoundException as e:
-                raise commands.BadArgument(_("Country code `{arg}` not found").format(arg=arg)) from e
+                raise commands.BadArgument(
+                    _("Country code `{user_input_value}` not found.").format(user_input_value=arg)
+                ) from e
 
         @classmethod
         async def transform(cls, interaction: DISCORD_INTERACTION_TYPE, argument: str) -> list[CountryCode]:
@@ -303,7 +315,7 @@ else:
             if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(
-                        name=shorten_string(max_length=100, string=_("Radio Browser is disabled")),
+                        name=shorten_string(max_length=100, string=_("Radio Browser extension is currently disabled")),
                         value="???",
                     )
                 ]
@@ -324,7 +336,9 @@ else:
                     return [cls._cache_countries[arg]]
                 return await cls.filter_cache(cache_type="country", limit=25, country=arg)
             except EntryNotFoundException as e:
-                raise commands.BadArgument(_("Country with name `{arg}` not found").format(arg=arg)) from e
+                raise commands.BadArgument(
+                    _("Country with name `{user_input_value}` not found.").format(user_input_value=arg)
+                ) from e
 
         @classmethod
         async def transform(cls, interaction: DISCORD_INTERACTION_TYPE, argument: str) -> list[Country]:
@@ -340,7 +354,7 @@ else:
             if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(
-                        name=shorten_string(max_length=100, string=_("Radio Browser is disabled")),
+                        name=shorten_string(max_length=100, string=_("Radio Browser extension is currently disabled")),
                         value="???",
                     )
                 ]

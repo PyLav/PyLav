@@ -319,7 +319,7 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
         await self.invalidate_cache(self.fetch_tracks, self.fetch_all, self.size, self.fetch_first, self.exists)
 
     async def bulk_remove_tracks(self, tracks: list[str]) -> None:
-        """Remove dj users from the player.
+        """Remove disc jockey users from the player.
 
         Parameters
         ----------
@@ -403,21 +403,23 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
         """
         original_scope = await self.fetch_scope()
         if bot.user.id == original_scope:
-            return _("(Global) {user_name}").format(user_name=bot.user.mention if mention else bot.user)
+            return _("(Global) {user_name_value}").format(user_name_value=bot.user.mention if mention else bot.user)
         elif guild_ := bot.get_guild(original_scope):
             if guild_:
                 guild = guild_
-            return _("(Server) {guild_name}").format(guild_name=guild.name)
+            return _("(Server) {guild_name_value}").format(guild_name_value=guild.name)
         elif guild and (channel := guild.get_channel_or_thread(original_scope)):
-            return _("(Channel) {channel}").format(channel=channel.mention if mention else channel.name)
+            return _("(Channel) {channel_name_value}").format(
+                channel_name_value=channel.mention if mention else channel.name
+            )
         elif (
             (guild := guild_ or guild)
             and (guild and (scope := guild.get_member(original_scope)))  # noqa
             or (scope := bot.get_user(original_scope))
         ):
-            return _("(User) {user_name}").format(user_name=scope.mention if mention else scope)
+            return _("(User) {user_name_value}").format(user_name_value=scope.mention if mention else scope)
         else:
-            return _("(Invalid) {scope}").format(scope=original_scope)
+            return _("(Invalid) {scope_name_value}").format(scope_name_value=original_scope)
 
     async def get_author_name(self, bot: DISCORD_BOT_TYPE, mention: bool = True) -> str | None:
         """Get the name of the author of the playlist.

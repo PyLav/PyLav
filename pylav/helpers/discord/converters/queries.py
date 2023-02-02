@@ -49,7 +49,7 @@ else:
             arg = arg.strip("<>")
             query = await Query.from_string(arg)
             if not (query.is_playlist or query.is_album):
-                raise commands.BadArgument(_("Query must be a playlist or album"))
+                raise commands.BadArgument(_("Query must be a playlist or album."))
             return query
 
         @classmethod

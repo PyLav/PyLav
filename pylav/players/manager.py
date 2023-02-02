@@ -22,7 +22,7 @@ from pylav.storage.models.player.state import PlayerState
 try:
     from redbot.core.i18n import Translator
 
-    _ = Translator("PyLavPlayer", pathlib.Path(__file__))
+    _ = Translator("PyLav", pathlib.Path(__file__))
 except ImportError:
     Translator = None
 
@@ -341,12 +341,15 @@ class PlayerController:
             activity = discord.utils.find(lambda a: a.type == discord.ActivityType.listening, activities)
             if playing_players > 1:
                 if (not activity) or f"Music in {playing_players} servers" not in activity.name:
-                    LOGGER.debug("Updating bot activity to %s", f"Listening to Music in {playing_players} servers")
+                    LOGGER.verbose("Updating bot activity to %s", f"Listening to Music in {playing_players} servers")
                     await self.bot.change_presence(
                         activity=discord.Activity(
                             type=discord.ActivityType.listening,
                             name=shorten_string(
-                                max_length=100, string=_("Music in {count} servers").format(count=playing_players)
+                                max_length=100,
+                                string=_("Music in {number_of_servers_value} servers").format(
+                                    number_of_servers_value=playing_players
+                                ),
                             ),
                         )
                     )
@@ -361,11 +364,11 @@ class PlayerController:
                 )
                 if activity and track_name in activity.name:
                     return
-                LOGGER.debug("Updating bot activity to %s", f"Listening to {track_name}")
+                LOGGER.verbose("Updating bot activity to %s", f"Listening to {track_name}")
                 await self.bot.change_presence(
                     activity=discord.Activity(type=discord.ActivityType.listening, name=track_name)
                 )
 
             elif playing_players == 0 and activity:
-                LOGGER.debug("Removing bot activity")
+                LOGGER.verbose("Removing bot activity")
                 await self.bot.change_presence(activity=None)

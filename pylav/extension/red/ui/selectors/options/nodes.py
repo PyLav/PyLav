@@ -34,7 +34,11 @@ class NodeOption(discord.SelectOption):
             label=shorten_string(max_length=100, string=f"{index + 1}. {data['name']}"),
             description=shorten_string(
                 max_length=100,
-                string=_("ID: {} || SSL: {} || Search-only: {}").format(node.id, data["ssl"], data["search_only"]),
+                string=_(
+                    "ID: {node_identifier_value} || SSL: {node_ssl_value} || Search-only: {node_config_value}"
+                ).format(
+                    node_identifier_value=node.id, node_ssl_value=data["ssl"], node_config_value=data["search_only"]
+                ),
             ),
             value=f"{node.id}",
         )

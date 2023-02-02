@@ -61,7 +61,7 @@ class PlayersSource(menus.ListPageSource):
         current_track = (
             await player.current.get_track_display_name(max_length=50, with_url=True)
             if player.current
-            else _("Nothing playing")
+            else _("I am not currently playing anything on this server.")
         )
 
         listener_count = await asyncstdlib.sum(
@@ -75,11 +75,11 @@ class PlayersSource(menus.ListPageSource):
             for i in [
                 (_("Server Owner"), server_owner),
                 (_("Connected"), connect_dur),
-                (_("Users in VC"), listeners),
+                (_("Users in Voice Channel"), listeners),
                 (
                     _("Queue Length"),
                     "{queue_length} {track_translation}".format(
-                        queue_length=queue_len, track_translation=_("track" if queue_len == 1 else "tracks")
+                        queue_length=queue_len, track_translation=_("track") if queue_len == 1 else _("tracks")
                     ),
                 ),
                 (
@@ -96,12 +96,23 @@ class PlayersSource(menus.ListPageSource):
 
         embed = await self.cog.pylav.construct_embed(messageable=menu.ctx, title=guild_name, description=current_track)
 
-        embed.set_footer(
-            text=_("Page {page_num}/{total_pages} | Playing in {playing} {server_translation}").format(
-                page_num=humanize_number(page_num + 1),
-                total_pages=humanize_number(self.get_max_pages()),
-                playing=humanize_number(len(self.cog.pylav.player_manager.playing_players)),
-                server_translation=_("server") if history_queue_len == 1 else _("servers"),
+        number_of_pages = self.get_max_pages()
+        total_number_of_entries = len(self.entries)
+        current_page = humanize_number(page_num + 1)
+        total_number_of_pages = humanize_number(self.get_max_pages())
+
+        if number_of_pages > 1:
+            message = _(
+                "Page {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} servers"
+            ).format(
+                current_page_value=current_page,
+                total_number_of_pages_value=total_number_of_pages,
+                total_number_of_entries_value=total_number_of_entries,
             )
-        )
+        elif number_of_pages == 1:
+            message = _("Page 1 / 1 | 1 server")
+        else:
+            message = _("Page 1 / 1 | 0 servers")
+
+        embed.set_footer(text=message)
         return embed

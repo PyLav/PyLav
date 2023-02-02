@@ -37,12 +37,16 @@ else:
             try:
                 nodes = ctx.pylav.node_manager.nodes
             except EntryNotFoundException as e:
-                raise commands.BadArgument(_("Node with name or id `{arg}` not found").format(arg=arg)) from e
+                raise commands.BadArgument(
+                    _("Node with name or identifier `{user_input_value}` not found.").format(user_input_value=arg)
+                ) from e
             if r := await asyncstdlib.list(
                 asyncstdlib.filter(lambda n: arg.lower() in n.name.lower() or arg == f"{n.identifier}", nodes)
             ):
                 return r
-            raise commands.BadArgument(_("Node with name or id `{arg}` not found").format(arg=arg))
+            raise commands.BadArgument(
+                _("Node with name or identifier `{user_input_value}` not found").format(user_input_value=arg)
+            )
 
         @classmethod
         async def transform(cls, interaction: DISCORD_INTERACTION_TYPE, argument: str) -> list[Node]:

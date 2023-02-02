@@ -48,18 +48,28 @@ async def pylav_credits(context: PyLavContext) -> None:
         embed=await context.pylav.construct_embed(
             messageable=context,
             description=_(
-                "PyLav was created by [Draper#6666](https://github.com/Drapersniper).\n\n"
-                "PyLav can be located in https://github.com/Drapersniper/PyLav\n"
-                "PyLav-Cogs can be located in https://github.com/Drapersniper/PyLav-Cogs\n\n"
-                "PyLav's support server can be found at https://discord.com/invite/Sjh2TSCYQB\n"
+                "PyLav was created by {library_author_name}.\n\n"
+                "PyLav can be located in {library_url_value}\n"
+                "PyLav-Cogs can be located in {second_library_url_value}\n\n"
+                "PyLav's support server can be found at {support_server_url_value}\n"
                 "\n\n"
                 "You can help translate PyLav by contributing to our Crowdin project at:\n"
-                "https://crowdin.com/project/pylav\n\n\n"
+                "{crowdin_project_url_value}\n\n\n"
                 "Contributors:\n"
-                "- https://github.com/Drapersniper/PyLav/graphs/contributors\n"
-                "- https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors\n"
+                "- {project_contributors_url_value}\n"
+                "- {second_project_contributors_url_value}\n"
                 "If you wish to buy me a coffee for my work, you can do so at:\n"
-                "https://www.buymeacoffee.com/draper or https://github.com/sponsors/Drapersniper"
+                "{buymeacoffee_url_value} or {github_sponsors_url_value}"
+            ).format(
+                library_author_name="[Draper#6666](https://github.com/Drapersniper)",
+                library_url_value="https://github.com/Drapersniper/PyLav",
+                second_library_url_value="https://github.com/Drapersniper/PyLav-Cogs",
+                support_server_url_value="https://discord.com/invite/Sjh2TSCYQB",
+                crowdin_project_url_value="https://crowdin.com/project/pylav",
+                project_contributors_url_value="https://github.com/Drapersniper/PyLav/graphs/contributors",
+                second_project_contributors_url_value="https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors",
+                buymeacoffee_url_value="https://www.buymeacoffee.com/draper",
+                github_sponsors_url_value="https://github.com/sponsors/Drapersniper",
             ),
         ),
         ephemeral=True,
@@ -117,7 +127,7 @@ async def pylav_sync_slash(context: PyLavContext) -> None:
     await context.bot.tree.sync()
     await context.send(
         embed=await context.pylav.construct_embed(
-            description=_("Synced the bots slash commands"),
+            description=_("I have synced my slash commands."),
             messageable=context,
         ),
         ephemeral=True,
@@ -138,7 +148,7 @@ async def cog_command_error(self: DISCORD_COG_TYPE, context: PyLavContext, error
         unhandled = False
         await context.send(
             embed=await self.pylav.construct_embed(
-                messageable=context, description=_("This command requires an existing player to be run")
+                messageable=context, description=_("This command requires an existing player to be run.")
             ),
             ephemeral=True,
         )
@@ -149,9 +159,9 @@ async def cog_command_error(self: DISCORD_COG_TYPE, context: PyLavContext, error
                 messageable=context,
                 description=_(
                     "PyLavPlayer cog is currently temporarily unavailable due to an outage with "
-                    "the backend services, please try again later"
+                    "the backend services, please try again later."
                 ),
-                footer=_("No Lavalink node currently available") if await self.bot.is_owner(context.author) else None,
+                footer=_("No Lavalink node currently available.") if await self.bot.is_owner(context.author) else None,
             ),
             ephemeral=True,
         )
@@ -160,10 +170,12 @@ async def cog_command_error(self: DISCORD_COG_TYPE, context: PyLavContext, error
         await context.send(
             embed=await self.pylav.construct_embed(
                 messageable=context,
-                description=_("PyLavPlayer is currently unable to process tracks belonging to {feature}").format(
-                    feature=error.feature
+                description=_("PyLavPlayer is currently unable to process tracks belonging to {feature_name}.").format(
+                    feature_name=error.feature
                 ),
-                footer=_("No Lavalink node currently available with feature {feature}").format(feature=error.feature)
+                footer=_("No Lavalink node currently available with feature {feature_name}").format(
+                    feature_name=error.feature
+                )
                 if await self.bot.is_owner(context.author)
                 else None,
             ),
@@ -174,8 +186,10 @@ async def cog_command_error(self: DISCORD_COG_TYPE, context: PyLavContext, error
         await context.send(
             embed=await self.pylav.construct_embed(
                 messageable=context,
-                description=_("This command is not available in this channel. Please use {channel}").format(
-                    channel=channel.mention if (channel := context.guild.get_channel_or_thread(error.channel)) else None
+                description=_("This command is not available in this channel, please use {channel_name}.").format(
+                    channel_name=channel.mention
+                    if (channel := context.guild.get_channel_or_thread(error.channel))
+                    else error.channel
                 ),
             ),
             ephemeral=True,
@@ -186,7 +200,7 @@ async def cog_command_error(self: DISCORD_COG_TYPE, context: PyLavContext, error
         await context.send(
             embed=await self.pylav.construct_embed(
                 messageable=context,
-                description=_("This command requires you to be a DJ"),
+                description=_("This command requires you to be a disc jockey."),
             ),
             ephemeral=True,
             delete_after=10,
@@ -224,7 +238,7 @@ async def cog_before_invoke(self: DISCORD_COG_TYPE, context: PyLavContext):
             context.command.qualified_name,
         )
 
-        raise CheckFailure(_("PyLav is not ready - Please try again shortly")) from e
+        raise CheckFailure(_("PyLav is not ready, please try again shortly")) from e
     if meth := getattr(self, "__pylav_original_cog_before_invoke", None):
         return await discord.utils.maybe_coroutine(meth)
 

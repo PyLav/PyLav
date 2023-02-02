@@ -100,7 +100,7 @@ from pylav.utils.vendor.redbot import AsyncIter
 try:
     from redbot.core.i18n import Translator
 
-    _ = Translator("PyLavPlayer", pathlib.Path(__file__))
+    _ = Translator("PyLav", pathlib.Path(__file__))
 except ImportError:
     Translator = None
 
@@ -1173,7 +1173,7 @@ class Player(VoiceProtocol):
 
     async def previous(self, requester: discord.Member, bypass_cache: bool = False) -> None:
         if self.history.empty():
-            raise TrackNotFoundException(_("There are no tracks currently in the player history"))
+            raise TrackNotFoundException(_("There are no tracks currently in the player history."))
         self.stopped = False
         track = await self.history.get()
         if track.is_partial:
@@ -1866,7 +1866,7 @@ class Player(VoiceProtocol):
             If the node does not have specified filter enabled
         """
         if not self.node.has_filter("volume"):
-            raise NodeHasNoFiltersException(_("Current node has the Volume filter functionality disabled"))
+            raise NodeHasNoFiltersException(_("Current node has the volume filter feature disabled."))
         max_volume = await self.player_manager.client.player_config_manager.get_max_volume(self.guild.id)
         if volume.get_int_value() > max_volume:
             volume = Volume(max_volume)
@@ -1888,7 +1888,7 @@ class Player(VoiceProtocol):
             The member who requested the equalizer to be set
         """
         if not self.node.has_filter("equalizer"):
-            raise NodeHasNoFiltersException(_("Current node has the Equalizer functionality disabled"))
+            raise NodeHasNoFiltersException(_("Current node has the equalizer feature disabled."))
         await self.set_filters(
             equalizer=equalizer,
             reset_not_set=forced,
@@ -1908,7 +1908,7 @@ class Player(VoiceProtocol):
             The member who requested the karaoke
         """
         if not self.node.has_filter("karaoke"):
-            raise NodeHasNoFiltersException(_("Current node has the Karaoke functionality disabled"))
+            raise NodeHasNoFiltersException(_("Current node has the karaoke feature disabled"))
         await self.set_filters(
             karaoke=karaoke,
             reset_not_set=forced,
@@ -1928,7 +1928,7 @@ class Player(VoiceProtocol):
             The member who requested the timescale
         """
         if not self.node.has_filter("timescale"):
-            raise NodeHasNoFiltersException(_("Current node has the Timescale functionality disabled"))
+            raise NodeHasNoFiltersException(_("Current node has the timescale feature disabled."))
         await self.set_filters(
             timescale=timescale,
             reset_not_set=forced,
@@ -1948,7 +1948,7 @@ class Player(VoiceProtocol):
             The member who requested the tremolo
         """
         if not self.node.has_filter("tremolo"):
-            raise NodeHasNoFiltersException(_("Current node has the Tremolo functionality disabled"))
+            raise NodeHasNoFiltersException(_("Current node has the tremolo feature disabled."))
         await self.set_filters(
             tremolo=tremolo,
             reset_not_set=forced,
@@ -1968,7 +1968,7 @@ class Player(VoiceProtocol):
             The member who requested the vibrato
         """
         if not self.node.has_filter("vibrato"):
-            raise NodeHasNoFiltersException(_("Current node has the Vibrato functionality disabled"))
+            raise NodeHasNoFiltersException(_("Current node has the vibrato feature disabled."))
         await self.set_filters(
             vibrato=vibrato,
             reset_not_set=forced,
@@ -1988,7 +1988,7 @@ class Player(VoiceProtocol):
             The member who requested the rotation
         """
         if not self.node.has_filter("rotation"):
-            raise NodeHasNoFiltersException(_("Current node has the Rotation functionality disabled"))
+            raise NodeHasNoFiltersException(_("Current node has the rotation feature disabled."))
         await self.set_filters(
             rotation=rotation,
             reset_not_set=forced,
@@ -2008,7 +2008,7 @@ class Player(VoiceProtocol):
             The member who requested the distortion
         """
         if not self.node.has_filter("distortion"):
-            raise NodeHasNoFiltersException(_("Current node has the Distortion functionality disabled"))
+            raise NodeHasNoFiltersException(_("Current node has the distortion feature disabled."))
         await self.set_filters(
             distortion=distortion,
             reset_not_set=forced,
@@ -2028,7 +2028,7 @@ class Player(VoiceProtocol):
             Member who requested the filter change
         """
         if not self.node.has_filter("lowPass"):
-            raise NodeHasNoFiltersException(_("Current node has the LowPass functionality disabled"))
+            raise NodeHasNoFiltersException(_("Current node has the low-pass feature disabled."))
         await self.set_filters(
             low_pass=low_pass,
             reset_not_set=forced,
@@ -2048,7 +2048,7 @@ class Player(VoiceProtocol):
             Member who requested the filter change
         """
         if not self.node.has_filter("echo"):
-            raise NodeHasNoFiltersException(_("Current node has the Echo functionality disabled"))
+            raise NodeHasNoFiltersException(_("Current node has the echo feature disabled."))
         await self.set_filters(
             echo=echo,
             reset_not_set=forced,
@@ -2064,9 +2064,9 @@ class Player(VoiceProtocol):
             Member who requested the filter change
         """
         if not self.node.has_filter("equalizer"):
-            raise NodeHasNoFiltersException(_("Current node has the Equalizer functionality disabled"))
+            raise NodeHasNoFiltersException(_("Current node has the equalizer feature disabled."))
         if not self.node.has_filter("timescale"):
-            raise NodeHasNoFiltersException(_("Current node has the Timescale functionality disabled"))
+            raise NodeHasNoFiltersException(_("Current node has the timescale feature disabled."))
         await self.set_filters(
             requester=requester,
             low_pass=None,
@@ -2119,9 +2119,9 @@ class Player(VoiceProtocol):
             Member who requested the filter change
         """
         if not self.node.has_filter("equalizer"):
-            raise NodeHasNoFiltersException(_("Current node has the Equalizer functionality disabled"))
+            raise NodeHasNoFiltersException(_("Current node has the equalizer feature disabled."))
         if not self.node.has_filter("timescale"):
-            raise NodeHasNoFiltersException(_("Current node has the Timescale functionality disabled"))
+            raise NodeHasNoFiltersException(_("Current node has the timescale feature disabled."))
         await self.set_filters(
             requester=requester,
             low_pass=None,
@@ -2178,7 +2178,7 @@ class Player(VoiceProtocol):
             The member who requested the channel_mix
         """
         if not self.node.has_filter("channelMix"):
-            raise NodeHasNoFiltersException(_("Current node has the ChannelMix functionality disabled"))
+            raise NodeHasNoFiltersException(_("Current node has the channel-mix feature disabled."))
         await self.set_filters(
             channel_mix=channel_mix,
             reset_not_set=forced,
@@ -2450,9 +2450,7 @@ class Player(VoiceProtocol):
             arrow, current, current_track_description, dur, pos, queue_list
         )
         page = await self.node.node_manager.client.construct_embed(
-            title="{translation} __{guild}__".format(
-                guild=self.guild.name, translation=discord.utils.escape_markdown(_("Now Playing in"))
-            ),
+            title=discord.utils.escape_markdown(_("Now Playing in {server_name}").format(server_name=self.guild.name)),
             description=queue_list,
             messageable=messageable,
         )
@@ -2512,9 +2510,17 @@ class Player(VoiceProtocol):
     async def _process_now_playing_embed_footer(self, page):
         queue_dur = await self.queue_duration()
         queue_total_duration = format_time_string(queue_dur // 1000)
-        text = _("{track_count} tracks, {queue_total_duration} remaining\n").format(
-            track_count=self.queue.qsize(), queue_total_duration=queue_total_duration
-        )
+
+        track_count = self.queue.qsize()
+
+        if track_count == 1:
+            text = _("1 track, {queue_total_duration} remaining\n").format(queue_total_duration=queue_total_duration)
+        elif track_count == 0:
+            text = _("0 tracks, {queue_total_duration} remaining\n").format(queue_total_duration=queue_total_duration)
+        else:
+            text = _("{track_count} tracks, {queue_total_duration} remaining\n").format(
+                track_count=track_count, queue_total_duration=queue_total_duration
+            )
         autoplay_emoji, repeat_emoji = await self._process_embed_emojis()
         text += _("{translation}: {repeat_emoji}").format(repeat_emoji=repeat_emoji, translation=_("Repeating"))
         text += _("{space}{translation}: {autoplay_emoji}").format(
@@ -2558,11 +2564,16 @@ class Player(VoiceProtocol):
         queue_list = await self._process_queue_embed_initial_description(arrow, current, dur, pos, queue_list)
         queue_list = await self._process_queue_embed_maybe_shuffle(history, queue_list, tracks)
         queue_list = await self._process_queue_tracks(history, queue_list, start_index, tracks)
+
+        if history:
+            title = discord.utils.escape_markdown(
+                _("Recently Played for {server_name}").format(server_name=self.guild.name)
+            )
+        else:
+            title = discord.utils.escape_markdown(_("Queue for {server_name}").format(server_name=self.guild.name))
+
         page = await self.node.node_manager.client.construct_embed(
-            title="{translation} __{guild}__".format(
-                guild=self.guild.name,
-                translation=discord.utils.escape_markdown(_("Recently Played for") if history else _("Queue for")),
-            ),
+            title=title,
             description=queue_list,
             messageable=messageable,
         )
@@ -2597,20 +2608,33 @@ class Player(VoiceProtocol):
         ):
             queue_list += "__{translation}__\n\n".format(
                 translation=discord.utils.escape_markdown(
-                    _("Queue order may not be accurate due to auto-shuffle being enabled")
+                    _("Queue order may not be accurate due to auto shuffle being enabled.")
                 )
             )
         return queue_list
 
     async def _process_queue_embed_footer(self, page, page_index, queue, queue_total_duration, total_pages):
-        text = _(
-            "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
-        ).format(
-            current_page=page_index + 1,
-            total_pages=total_pages,
-            track_number=queue.qsize(),
-            queue_total_duration=queue_total_duration,
-        )
+
+        track_number = queue.qsize()
+
+        if track_number == 1:
+            text = _("Page 1 / 1 | 1 track, {queue_total_duration} remaining\n").format(
+                queue_total_duration=queue_total_duration,
+            )
+        elif track_number == 0:
+            text = _("Page 1 / 1 | 0 tracks, {queue_total_duration} remaining\n").format(
+                queue_total_duration=queue_total_duration,
+            )
+        else:
+            text = _(
+                "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
+            ).format(
+                current_page=page_index + 1,
+                total_pages=total_pages,
+                track_number=track_number,
+                queue_total_duration=queue_total_duration,
+            )
+
         autoplay_emoji, repeat_emoji = await self._process_embed_emojis()
         text += _("{translation}: {repeat_emoji}").format(repeat_emoji=repeat_emoji, translation=_("Repeating"))
         text += _("{space}{translation}: {autoplay_emoji}").format(

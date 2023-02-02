@@ -28,14 +28,14 @@ async def maybe_prompt_for_playlist(
                 cog=cog,
                 pages=playlists,
                 message_str=shorten_string(
-                    max_length=100, string=_("Multiple playlist matched, pick the one which you meant")
+                    max_length=100, string=_("Multiple playlist matched, pick the one which you meant.")
                 ),
             ),
             selector_cls=PlaylistSelectSelector,
             delete_after_timeout=True,
             clear_buttons_after=True,
             starting_page=0,
-            selector_text=shorten_string(max_length=100, string=_("Pick a playlist")),
+            selector_text=shorten_string(max_length=100, string=_("Pick a playlist.")),
             original_author=context.interaction.user if context.interaction else context.author,
         )
 

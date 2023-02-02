@@ -20,7 +20,7 @@ from pylav.type_hints.generics import ANY_GENERIC_TYPE, PARAM_SPEC_TYPE
 try:
     from redbot.core.i18n import Translator
 
-    _ = Translator("PyLavRadio", pathlib.Path(__file__))
+    _ = Translator("PyLav", pathlib.Path(__file__))
 except ImportError:
     Translator = None
 

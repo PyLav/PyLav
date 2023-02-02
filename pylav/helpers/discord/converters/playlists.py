@@ -38,7 +38,9 @@ else:
             try:
                 playlists = await ctx.pylav.playlist_db_manager.get_playlist_by_name_or_id(arg)
             except EntryNotFoundException as e:
-                raise commands.BadArgument(_("Playlist with name or id `{arg}` not found").format(arg=arg)) from e
+                raise commands.BadArgument(
+                    _("Playlist with name or identifier `{user_input_value}` not found").format(user_input_value=arg)
+                ) from e
             return playlists
 
         @classmethod

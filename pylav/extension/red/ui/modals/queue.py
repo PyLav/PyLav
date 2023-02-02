@@ -24,10 +24,10 @@ class EnqueueModal(discord.ui.Modal):
         self.cog = cog
         self.text = discord.ui.TextInput(
             style=discord.TextStyle.paragraph,
-            label=shorten_string(max_length=100, string=_("Search for a song to add to the queue")),
+            label=shorten_string(max_length=100, string=_("Search for a song to add to the queue.")),
             placeholder=shorten_string(
                 max_length=100,
-                string=_("Hello by Adele, speak:Hello, https://open.spotify.com/playlist/37i9dQZF1DX6XceWZP1znY"),
+                string="Hello by Adele, speak:Hello, https://open.spotify.com/playlist/37i9dQZF1DX6XceWZP1znY",
             ),
         )
         self.add_item(self.text)
