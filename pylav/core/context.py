@@ -198,7 +198,6 @@ class PyLavContext(OriginalContextClass):
 
         # Circular import
         from discord.ext.commands.bot import BotBase
-        from discord.types.interactions import ApplicationCommandInteractionData
 
         if not isinstance(interaction.client, BotBase):
             raise TypeError("Interaction client is not derived from commands.Bot or commands.AutoShardedBot")
@@ -208,7 +207,7 @@ class PyLavContext(OriginalContextClass):
             raise ValueError("interaction does not have command data")
 
         bot: DISCORD_BOT_TYPE = interaction.client  # type: ignore
-        data: ApplicationCommandInteractionData = interaction.data  # type: ignore
+        data = interaction.data  # type: ignore
         if interaction.message is None:
             synthetic_payload = {
                 "id": interaction.id,
