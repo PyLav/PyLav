@@ -7,6 +7,7 @@ from functools import partial
 from typing import TYPE_CHECKING
 
 import aiohttp
+import asyncstdlib
 
 from pylav.compat import json
 from pylav.constants.builtin_nodes import BUNDLED_NODES_IDS_HOST_MAPPING, PYLAV_BUNDLED_NODES_SETTINGS
@@ -349,7 +350,7 @@ class NodeManager:
 
         if not nodes:
             nodes = await self._get_fall_back_nodes(already_attempted_regions, feature, nodes)
-        node = min(nodes, key=partial(sort_key_nodes, region=region), default=None) if nodes else None
+        node = await asyncstdlib.min(nodes, key=partial(sort_key_nodes, region=region), default=None) if nodes else None
         if node is None and wait:
             await asyncio.sleep(delay)
             return await self.find_best_node(
