@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.4.0 (03/02/2023)
+- [Release](https://github.com/Drapersniper/PyLav/commit/3752e113e931b0e2da1c7ce619d13ca17455419f) - @Drapersniper
+- [fix TypeError: 'async_generator' object cannot be interpreted as an integer](https://github.com/Drapersniper/PyLav/commit/c902ede507aca495cadf4c731828029c4720f5f7) - @Drapersniper
+- [fix TypeError: 'async for' requires an object with __aiter__ method, got list_iterator](https://github.com/Drapersniper/PyLav/commit/266979bd0e4e0847e64e31f5008070bdb5f98fdc) - @Drapersniper
+- [fix circular import error](https://github.com/Drapersniper/PyLav/commit/2b16919b56fad47709df645c13f5e1cb68bbf7a6) - @Drapersniper
+- [Translation friendly strings + a few fixes](https://github.com/Drapersniper/PyLav/commit/1e372611b47c814aa0fbf4c0cc17337b0c288c3c) - @Drapersniper
+- [update .pre-commit-config.yaml](https://github.com/Drapersniper/PyLav/commit/a74878f32c86d40902349189e154492e40136b00) - @Drapersniper
+- [fix RuntimeWarning: coroutine 'sort_key_nodes' was never awaited](https://github.com/Drapersniper/PyLav/commit/ef9401708aa9d3a3212446f84eadbd8afd8278aa) - @Drapersniper
+- [Circular import fix](https://github.com/Drapersniper/PyLav/commit/e2ef9829d93b0baf3c09b14d3364a83f0e8d5975) - @Drapersniper
+- [Translation friendly string, reduce usage of asyncstdlib and AsyncIter to improve response times](https://github.com/Drapersniper/PyLav/commit/2868e7bd6b2cf2f1c0f1fe098619036519f2e0eb) - @Drapersniper
+
+---
+
 ## v1.3.9 (02/02/2023)
 - [fix automerge.yml](https://github.com/Drapersniper/PyLav/commit/06b0c81e1e295b2b2587d9907cddd0938bc8f969) - @Drapersniper
 - [automerge.yml update](https://github.com/Drapersniper/PyLav/commit/36b3a0549b692972537e9a408a5058a7b7793e6f) - @Drapersniper
@@ -235,11 +248,3 @@
 - [Fixes incorrect references to SegmentLoaded/SegmentSkipped events from the sponsorblock plugin](https://github.com/Drapersniper/PyLav/commit/d67c2eb47eb09c150db5e8166422f99823c80892) - @Drapersniper
 - [Cleanup Sponsorblock changes](https://github.com/Drapersniper/PyLav/commit/c5fc1e0fba962401ae0ff286e99d6df76116440a) - @Drapersniper
 - [Update Sponsorblock plugin to pre-release version with RESTAPI support](https://github.com/Drapersniper/PyLav/commit/4d32b74f4437f00cf7c0b5397da32561da36b9be) - @Drapersniper
-
----
-
-## v1.0.15 (05/01/2023)
-- [correct reset track position for historic tracks and enhanced query meta persistence](https://github.com/Drapersniper/PyLav/commit/c4c8f6ecc3e8a93e817569f6d95a8ed452ec3adf) - @Drapersniper
-- [don't discard query metadata on rebuild (i.e Properly allow users to use link timestamp for youtube, spotify and soundcloud)](https://github.com/Drapersniper/PyLav/commit/fc28eac4825117ddae715b12ef1896830b560205) - @Drapersniper
-- [Reference source regex](https://github.com/Drapersniper/PyLav/commit/f8337cd1d09842dabc6da28f3da90d95358e2a32) - @Drapersniper
-- [Handle TrackNotFoundException closes #143](https://github.com/Drapersniper/PyLav/commit/f98470bc77b66ce4c8283f19c83bfdc4843d6e47) - @Drapersniper
