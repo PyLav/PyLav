@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-03 19:54\n"
+"PO-Revision-Date: 2023-02-03 20:03\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -19,23 +19,23 @@ msgstr ""
 
 #: pylav/helpers/discord/converters/nodes.py:40
 msgid "Node with name or identifier `{user_input_variable_do_not_translate}` not found."
-msgstr ""
+msgstr "Uzel s názvem nebo identifikátorem '{user_input_variable_do_not_translate}' Nebyl nalezen."
 
 #: pylav/helpers/discord/converters/nodes.py:47
 msgid "Node with name or identifier `{user_input_variable_do_not_translate}` not found"
-msgstr ""
+msgstr "Uzel s názvem nebo identifikátorem '{user_input_variable_do_not_translate}' nenalezeno"
 
 #: pylav/helpers/discord/converters/playlists.py:40
 msgid "A playlist with the name or identifier `{user_input_variable_do_not_translate}` was not found."
-msgstr ""
+msgstr "Seznam skladeb s názvem nebo identifikátorem '{user_input_variable_do_not_translate}' nebyl nalezen."
 
 #: pylav/helpers/discord/converters/queries.py:52
 msgid "The query must be a playlist or album."
-msgstr ""
+msgstr "Dotaz musí být seznam stop nebo album."
 
 #: pylav/helpers/discord/converters/radio.py:57
 msgid "A station with the name `{user_input_variable_do_not_translate}` was not found."
-msgstr ""
+msgstr "Stanice s názvem \"{user_input_variable_do_not_translate}' nebyl nalezen."
 
 #: pylav/helpers/discord/converters/radio.py:77
 #: pylav/helpers/discord/converters/radio.py:165
@@ -45,7 +45,7 @@ msgstr ""
 #: pylav/helpers/discord/converters/radio.py:341
 #: pylav/helpers/discord/converters/radio.py:384
 msgid "The Radio Browser extension is currently disabled."
-msgstr ""
+msgstr "Rozšíření Prohlížeč rádia je aktuálně zakázáno."
 
 #: pylav/helpers/discord/converters/radio.py:98
 msgid "Unnamed"
@@ -53,25 +53,25 @@ msgstr "Nepojmenované"
 
 #: pylav/helpers/discord/converters/radio.py:145
 msgid "A tag with the name `{user_input_variable_do_not_translate}` was not found."
-msgstr ""
+msgstr "Značka s názvem '{user_input_variable_do_not_translate}' nebyl nalezen."
 
 #: pylav/helpers/discord/converters/radio.py:191
 msgid "A language with the name `{user_input_variable_do_not_translate}` was not found."
-msgstr ""
+msgstr "Jazyk s názvem \"{user_input_variable_do_not_translate}' nebyl nalezen."
 
 #: pylav/helpers/discord/converters/radio.py:235
 msgid "A state with the name `{user_input_variable_do_not_translate}` was not found."
-msgstr ""
+msgstr "Stát s názvem '{user_input_variable_do_not_translate}' nebyl nalezen."
 
 #: pylav/helpers/discord/converters/radio.py:278
 msgid "A codec with the name `{user_input_variable_do_not_translate}` was not found."
-msgstr ""
+msgstr "Kodek s názvem '{user_input_variable_do_not_translate}' nebyl nalezen."
 
 #: pylav/helpers/discord/converters/radio.py:321
 msgid "A country code with the value `{user_input_variable_do_not_translate}` was not found."
-msgstr ""
+msgstr "Kód země s hodnotou '{user_input_variable_do_not_translate}' nebyl nalezen."
 
 #: pylav/helpers/discord/converters/radio.py:364
 msgid "A country with the name `{user_input_variable_do_not_translate}` was not found."
-msgstr ""
+msgstr "Země s názvem \"{user_input_variable_do_not_translate}' nebyl nalezen."
 

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-03 19:55\n"
+"PO-Revision-Date: 2023-02-03 20:03\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "MIME-Version: 1.0\n"
@@ -42,7 +42,7 @@ msgstr "Сторінка 1 / 1 | 0 записів"
 #: pylav/extension/red/ui/sources/generic.py:97
 #: pylav/extension/red/ui/sources/nodes.py:59
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} entries"
-msgstr ""
+msgstr "Сторінка {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} Записи"
 
 #: pylav/extension/red/ui/sources/nodes.py:105
 #: pylav/extension/red/ui/sources/nodes.py:269
@@ -73,7 +73,8 @@ msgstr "Цінність"
 #: pylav/extension/red/ui/sources/nodes.py:321
 msgid "Latitude: {latitude_variable_do_not_translate}\n"
 "Longitude: {longitude_variable_do_not_translate}"
-msgstr ""
+msgstr "Широти: {latitude_variable_do_not_translate}\n"
+"Довгота: {longitude_variable_do_not_translate}"
 
 #: pylav/extension/red/ui/sources/nodes.py:164
 #: pylav/extension/red/ui/sources/nodes.py:328
@@ -184,7 +185,7 @@ msgstr "Сторінка 1 / 1 | 0 вузлів"
 #: pylav/extension/red/ui/sources/nodes.py:210
 #: pylav/extension/red/ui/sources/nodes.py:375
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} nodes"
-msgstr ""
+msgstr "Сторінка {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} Вузлів"
 
 #: pylav/extension/red/ui/sources/player.py:63
 #: pylav/extension/red/ui/sources/queue.py:108
@@ -196,20 +197,20 @@ msgstr "Зараз я нічого не граю на цьому сервері.
 #: pylav/extension/red/ui/sources/player.py:72
 #: pylav/extension/red/ui/sources/player.py:82
 msgid "1 track"
-msgstr ""
+msgstr "1 трек"
 
 #: pylav/extension/red/ui/sources/player.py:74
 #: pylav/extension/red/ui/sources/player.py:84
 msgid "0 tracks"
-msgstr ""
+msgstr "0 доріжок"
 
 #: pylav/extension/red/ui/sources/player.py:76
 msgid "{queue_length_variable_do_not_translate} tracks"
-msgstr ""
+msgstr "{queue_length_variable_do_not_translate} Треків"
 
 #: pylav/extension/red/ui/sources/player.py:86
 msgid "{history_queue_length_variable_do_not_translate} tracks"
-msgstr ""
+msgstr "{history_queue_length_variable_do_not_translate} Треків"
 
 #: pylav/extension/red/ui/sources/player.py:93
 msgid "Server Owner"
@@ -241,7 +242,7 @@ msgstr "Сторінка 1 / 1 | 0 серверів"
 
 #: pylav/extension/red/ui/sources/player.py:121
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} servers"
-msgstr ""
+msgstr "Сторінка {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} Серверів"
 
 #: pylav/extension/red/ui/sources/playlist.py:56
 #: pylav/extension/red/ui/sources/playlist.py:210
@@ -256,7 +257,7 @@ msgstr "Сторінка 1 / 1 | 0 плейлистів"
 #: pylav/extension/red/ui/sources/playlist.py:60
 #: pylav/extension/red/ui/sources/playlist.py:214
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} playlists"
-msgstr ""
+msgstr "Сторінка {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} плейлисти"
 
 #: pylav/extension/red/ui/sources/playlist.py:128
 msgid "Tracks in"
@@ -272,7 +273,7 @@ msgstr "Сторінка 1 / 1 | 0 доріжок"
 
 #: pylav/extension/red/ui/sources/playlist.py:144
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} tracks"
-msgstr ""
+msgstr "Сторінка {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} Треків"
 
 #: pylav/extension/red/ui/sources/playlist.py:178
 msgid "Unknown"
@@ -280,19 +281,19 @@ msgstr "Не вказано"
 
 #: pylav/extension/red/ui/sources/playlist.py:183
 msgid "Identifier: {id_variable_do_not_translate}"
-msgstr ""
+msgstr "Ідентифікатор: {id_variable_do_not_translate}"
 
 #: pylav/extension/red/ui/sources/playlist.py:184
 msgid "Tracks: {num_variable_do_not_translate}"
-msgstr ""
+msgstr "Треків: {num_variable_do_not_translate}"
 
 #: pylav/extension/red/ui/sources/playlist.py:187
 msgid "Author: {name_variable_do_not_translate}"
-msgstr ""
+msgstr "Автор: {name_variable_do_not_translate}"
 
 #: pylav/extension/red/ui/sources/playlist.py:190
 msgid "Scope: {scope_variable_do_not_translate}\n"
-msgstr ""
+msgstr "Масштаб: {scope_variable_do_not_translate}\n"
 
 #: pylav/extension/red/ui/sources/playlist.py:200
 msgid "Playlists you can access in this server:"
@@ -301,5 +302,5 @@ msgstr "Плейлісти ви можете отримати доступ на 
 #: pylav/extension/red/ui/sources/queue.py:94
 #: pylav/extension/red/ui/sources/queue.py:138
 msgid "I am not connected to any voice channel at the moment."
-msgstr ""
+msgstr "На даний момент я не підключений до жодного голосового каналу."
 

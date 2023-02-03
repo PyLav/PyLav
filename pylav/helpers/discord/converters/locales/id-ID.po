@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-03 19:55\n"
+"PO-Revision-Date: 2023-02-03 20:03\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -19,23 +19,23 @@ msgstr ""
 
 #: pylav/helpers/discord/converters/nodes.py:40
 msgid "Node with name or identifier `{user_input_variable_do_not_translate}` not found."
-msgstr ""
+msgstr "Node dengan nama atau pengidentifikasi '{user_input_variable_do_not_translate}' tidak ditemukan."
 
 #: pylav/helpers/discord/converters/nodes.py:47
 msgid "Node with name or identifier `{user_input_variable_do_not_translate}` not found"
-msgstr ""
+msgstr "Node dengan nama atau pengidentifikasi '{user_input_variable_do_not_translate}' tidak ditemukan"
 
 #: pylav/helpers/discord/converters/playlists.py:40
 msgid "A playlist with the name or identifier `{user_input_variable_do_not_translate}` was not found."
-msgstr ""
+msgstr "Daftar putar dengan nama atau pengenal'{user_input_variable_do_not_translate}' tidak ditemukan."
 
 #: pylav/helpers/discord/converters/queries.py:52
 msgid "The query must be a playlist or album."
-msgstr ""
+msgstr "Kueri harus berupa daftar putar atau album."
 
 #: pylav/helpers/discord/converters/radio.py:57
 msgid "A station with the name `{user_input_variable_do_not_translate}` was not found."
-msgstr ""
+msgstr "Stasiun dengan nama '{user_input_variable_do_not_translate}' tidak ditemukan."
 
 #: pylav/helpers/discord/converters/radio.py:77
 #: pylav/helpers/discord/converters/radio.py:165
@@ -45,7 +45,7 @@ msgstr ""
 #: pylav/helpers/discord/converters/radio.py:341
 #: pylav/helpers/discord/converters/radio.py:384
 msgid "The Radio Browser extension is currently disabled."
-msgstr ""
+msgstr "Ekstensi Radio Browser saat ini dinonaktifkan."
 
 #: pylav/helpers/discord/converters/radio.py:98
 msgid "Unnamed"
@@ -53,25 +53,25 @@ msgstr "Tidak disebutkan namanya"
 
 #: pylav/helpers/discord/converters/radio.py:145
 msgid "A tag with the name `{user_input_variable_do_not_translate}` was not found."
-msgstr ""
+msgstr "Tag dengan nama '{user_input_variable_do_not_translate}' tidak ditemukan."
 
 #: pylav/helpers/discord/converters/radio.py:191
 msgid "A language with the name `{user_input_variable_do_not_translate}` was not found."
-msgstr ""
+msgstr "Bahasa dengan nama '{user_input_variable_do_not_translate}' tidak ditemukan."
 
 #: pylav/helpers/discord/converters/radio.py:235
 msgid "A state with the name `{user_input_variable_do_not_translate}` was not found."
-msgstr ""
+msgstr "Negara dengan nama '{user_input_variable_do_not_translate}' tidak ditemukan."
 
 #: pylav/helpers/discord/converters/radio.py:278
 msgid "A codec with the name `{user_input_variable_do_not_translate}` was not found."
-msgstr ""
+msgstr "Codec dengan nama '{user_input_variable_do_not_translate}' tidak ditemukan."
 
 #: pylav/helpers/discord/converters/radio.py:321
 msgid "A country code with the value `{user_input_variable_do_not_translate}` was not found."
-msgstr ""
+msgstr "Kode negara dengan nilai '{user_input_variable_do_not_translate}' tidak ditemukan."
 
 #: pylav/helpers/discord/converters/radio.py:364
 msgid "A country with the name `{user_input_variable_do_not_translate}` was not found."
-msgstr ""
+msgstr "Negara dengan nama '{user_input_variable_do_not_translate}' tidak ditemukan."
 

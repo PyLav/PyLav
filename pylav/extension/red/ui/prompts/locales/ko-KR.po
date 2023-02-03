@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-03 19:55\n"
+"PO-Revision-Date: 2023-02-03 20:03\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: pylav/extension/red/ui/prompts/nodes.py:29
 msgid "Multiple nodes matched. Pick the one which you meant."
-msgstr ""
+msgstr "여러 노드가 일치했습니다. 당신이 의미하는 것을 선택하십시오."
 
 #: pylav/extension/red/ui/prompts/nodes.py:36
 msgid "Pick a node."
@@ -27,7 +27,7 @@ msgstr "노드를 선택합니다."
 
 #: pylav/extension/red/ui/prompts/playlists.py:31
 msgid "Multiple playlists matched. Pick the one which you meant."
-msgstr ""
+msgstr "여러 재생 목록이 일치했습니다. 당신이 의미하는 것을 선택하십시오."
 
 #: pylav/extension/red/ui/prompts/playlists.py:38
 msgid "Pick a playlist."

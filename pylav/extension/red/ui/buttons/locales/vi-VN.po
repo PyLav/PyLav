@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-03 19:55\n"
+"PO-Revision-Date: 2023-02-03 20:03\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "MIME-Version: 1.0\n"
@@ -48,27 +48,27 @@ msgstr "Không"
 
 #: pylav/extension/red/ui/buttons/generic.py:165
 msgid "Disconnect {player_type_variable_do_not_translate} players"
-msgstr ""
+msgstr "Ngắt kết nối {player_type_variable_do_not_translate} Cầu thủ"
 
 #: pylav/extension/red/ui/buttons/generic.py:169
 msgid "Disconnect {player_type_variable_do_not_translate} player"
-msgstr ""
+msgstr "Ngắt kết nối {player_type_variable_do_not_translate} cầu thủ"
 
 #: pylav/extension/red/ui/buttons/nodes.py:57
 msgid "I will connect to this node using a secure connection. Please ensure that this node supports secure connections."
-msgstr ""
+msgstr "Tôi sẽ kết nối với nút này bằng kết nối an toàn. Hãy đảm bảo rằng nút này hỗ trợ các kết nối an toàn."
 
 #: pylav/extension/red/ui/buttons/nodes.py:66
 msgid "I will connect to this node using an unsecure connection."
-msgstr ""
+msgstr "Tôi sẽ kết nối với nút này bằng cách sử dụng một kết nối không an toàn."
 
 #: pylav/extension/red/ui/buttons/nodes.py:104
 msgid "This node will be used for searches only."
-msgstr ""
+msgstr "Nút này sẽ chỉ được sử dụng cho các tìm kiếm."
 
 #: pylav/extension/red/ui/buttons/nodes.py:111
 msgid "This node will be used for both searches and playback."
-msgstr ""
+msgstr "Nút này sẽ được sử dụng cho cả tìm kiếm và phát lại."
 
 #: pylav/extension/red/ui/buttons/nodes.py:142
 msgid "Please fill out all the fields before continuing."
@@ -76,15 +76,15 @@ msgstr "Vui lòng điền vào tất cả các trường trước khi tiếp t�
 
 #: pylav/extension/red/ui/buttons/nodes.py:222
 msgid "I will remove this node permanently once you select “done”."
-msgstr ""
+msgstr "Tôi sẽ xóa nút này vĩnh viễn sau khi bạn chọn \"xong\"."
 
 #: pylav/extension/red/ui/buttons/nodes.py:224
 msgid "I will no longer remove this node permanently once you select “done”."
-msgstr ""
+msgstr "Tôi sẽ không còn xóa nút này vĩnh viễn sau khi bạn chọn \"xong\"."
 
 #: pylav/extension/red/ui/buttons/nodes.py:258
 msgid "Enabled sources"
-msgstr ""
+msgstr "Nguồn đã bật"
 
 #: pylav/extension/red/ui/buttons/player.py:37
 #: pylav/extension/red/ui/buttons/player.py:91
@@ -96,77 +96,77 @@ msgstr "Bạn không được phép thực hiện hành động này."
 #: pylav/extension/red/ui/buttons/player.py:101
 #: pylav/extension/red/ui/buttons/player.py:163
 msgid "There are no players available for this action. Try refreshing."
-msgstr ""
+msgstr "Không có người chơi nào có sẵn cho hành động này. Hãy thử làm mới."
 
 #: pylav/extension/red/ui/buttons/player.py:55
 #: pylav/extension/red/ui/buttons/player.py:112
 #: pylav/extension/red/ui/buttons/player.py:173
 msgid "My bot owner requested an action"
-msgstr ""
+msgstr "Chủ sở hữu bot của tôi đã yêu cầu một hành động"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 msgid "My bot owner has requested that I disconnect from this server. I have saved my current position, so connect me to a voice channel to resume playback. Sorry for any inconvenience caused."
-msgstr ""
+msgstr "Chủ sở hữu bot của tôi đã yêu cầu tôi ngắt kết nối khỏi máy chủ này. Tôi đã lưu vị trí hiện tại của mình, vì vậy hãy kết nối tôi với kênh thoại để tiếp tục phát lại. Xin lỗi vì bất kỳ sự bất tiện nào gây ra."
 
 #: pylav/extension/red/ui/buttons/player.py:113
 msgid "My owner has requested that I wipe the queue for this server and stop playback. Sorry for any inconvenience caused."
-msgstr ""
+msgstr "Chủ sở hữu của tôi đã yêu cầu tôi xóa hàng đợi cho máy chủ này và dừng phát lại. Xin lỗi vì bất kỳ sự bất tiện nào gây ra."
 
 #: pylav/extension/red/ui/buttons/player.py:174
 msgid "My bot owner has requested that I disconnect from all servers. I have saved my current position, so connect me to a voice channel to resume playback. Sorry for any inconvenience caused."
-msgstr ""
+msgstr "Chủ sở hữu bot của tôi đã yêu cầu tôi ngắt kết nối khỏi tất cả các máy chủ. Tôi đã lưu vị trí hiện tại của mình, vì vậy hãy kết nối tôi với kênh thoại để tiếp tục phát lại. Xin lỗi vì bất kỳ sự bất tiện nào gây ra."
 
 #: pylav/extension/red/ui/buttons/playlist.py:48
 msgid "I will delete this playlist permanently once you select “done”."
-msgstr ""
+msgstr "Tôi sẽ xóa danh sách phát này vĩnh viễn sau khi bạn chọn \"xong\"."
 
 #: pylav/extension/red/ui/buttons/playlist.py:50
 msgid "I will no longer delete this playlist permanently once you select “done”."
-msgstr ""
+msgstr "Tôi sẽ không còn xóa danh sách phát này vĩnh viễn sau khi bạn chọn \"xong\"."
 
 #: pylav/extension/red/ui/buttons/playlist.py:83
 msgid "I will remove all tracks from this playlist."
-msgstr ""
+msgstr "Tôi sẽ xóa tất cả các bản nhạc khỏi danh sách phát này."
 
 #: pylav/extension/red/ui/buttons/playlist.py:85
 msgid "I will no longer remove all tracks from this playlist."
-msgstr ""
+msgstr "Tôi sẽ không xóa tất cả các bản nhạc khỏi danh sách phát này nữa."
 
 #: pylav/extension/red/ui/buttons/playlist.py:124
 msgid "Here is your playlist: {playlist_name_variable_do_not_translate}. This file is compressed using Gzip to make it possible to be sent via Discord. You can use {url_name_variable_do_not_translate} to decompress it."
-msgstr ""
+msgstr "Đây là danh sách phát của bạn: {playlist_name_variable_do_not_translate}. Tệp này được nén bằng Gzip để có thể gửi qua Discord. Bạn có thể sử dụng {url_name_variable_do_not_translate} để giải nén nó."
 
 #: pylav/extension/red/ui/buttons/playlist.py:133
 msgid "Here is your playlist: {playlist_name_name_variable_do_not_translate}. This file is compressed using Brotli to make it possible to be sent via Discord."
-msgstr ""
+msgstr "Đây là danh sách phát của bạn: {playlist_name_name_variable_do_not_translate}. Tệp này được nén bằng Brotli để có thể gửi qua Discord."
 
 #: pylav/extension/red/ui/buttons/playlist.py:142
 msgid "Here is your playlist: {playlist_name_name_variable_do_not_translate}."
-msgstr ""
+msgstr "Đây là danh sách phát của bạn: {playlist_name_name_variable_do_not_translate}."
 
 #: pylav/extension/red/ui/buttons/playlist.py:186
 msgid "I will update this playlist with the latest tracks, press done to continue."
-msgstr ""
+msgstr "Tôi sẽ cập nhật danh sách phát này với các bản nhạc mới nhất, nhấn xong để tiếp tục."
 
 #: pylav/extension/red/ui/buttons/playlist.py:189
 msgid "I will no longer update this playlist with the latest tracks."
-msgstr ""
+msgstr "Tôi sẽ không cập nhật danh sách phát này với các bản nhạc mới nhất nữa."
 
 #: pylav/extension/red/ui/buttons/playlist.py:278
 msgid "I will add the current queue this playlist."
-msgstr ""
+msgstr "Tôi sẽ thêm hàng đợi hiện tại danh sách phát này."
 
 #: pylav/extension/red/ui/buttons/playlist.py:285
 msgid "I will no longer add the current queue to this playlist."
-msgstr ""
+msgstr "Tôi sẽ không còn thêm hàng đợi hiện tại vào danh sách phát này nữa."
 
 #: pylav/extension/red/ui/buttons/playlist.py:324
 msgid "I will remove all duplicate tracks from the queue."
-msgstr ""
+msgstr "Tôi sẽ xóa tất cả các bản nhạc trùng lặp khỏi hàng đợi."
 
 #: pylav/extension/red/ui/buttons/playlist.py:331
 msgid "I will no longer remove duplicate tracks from the queue."
-msgstr ""
+msgstr "Tôi sẽ không còn xóa các bản nhạc trùng lặp khỏi hàng đợi."
 
 #: pylav/extension/red/ui/buttons/playlist.py:421
 msgid "Playlists you can currently play."
@@ -184,7 +184,7 @@ msgstr "Tên danh sách phát nên là gì?"
 #: pylav/extension/red/ui/buttons/queue.py:191
 #: pylav/extension/red/ui/buttons/queue.py:224
 msgid "I am not connected to any voice channel at the moment."
-msgstr ""
+msgstr "Tôi không được kết nối với bất kỳ kênh thoại nào vào lúc này."
 
 #: pylav/extension/red/ui/buttons/queue.py:289
 msgid "There is nothing in the queue."

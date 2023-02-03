@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-03 19:54\n"
+"PO-Revision-Date: 2023-02-03 20:03\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "MIME-Version: 1.0\n"
@@ -24,18 +24,18 @@ msgstr "Nu sunteți autorizat să interacționați cu această opțiune."
 
 #: pylav/extension/red/ui/selectors/nodes.py:53
 msgid "Disabling the following sources: {sources_list_variable_do_not_translate}."
-msgstr ""
+msgstr "Dezactivarea următoarelor surse: {sources_list_variable_do_not_translate}."
 
 #: pylav/extension/red/ui/selectors/nodes.py:85
 msgid "Node was not found."
-msgstr ""
+msgstr "Nodul nu a fost găsit."
 
 #: pylav/extension/red/ui/selectors/playlist.py:41
 #: pylav/extension/red/ui/selectors/playlist.py:82
 msgid "Playlist was not found."
-msgstr ""
+msgstr "Playlist-ul nu a fost găsit."
 
 #: pylav/extension/red/ui/selectors/queue.py:96
 msgid "Track was not found."
-msgstr ""
+msgstr "Pista nu a fost găsită."
 

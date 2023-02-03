@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-03 19:55\n"
+"PO-Revision-Date: 2023-02-03 20:03\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -34,7 +34,17 @@ msgid "PyLav was created by {library_author_name_variable_do_not_translate}.\n\n
 "- {second_project_contributors_url_variable_do_not_translate}\n"
 "If you wish to buy me a coffee for my work, you can do so at:\n"
 "{buymeacoffee_url_variable_do_not_translate} or {github_sponsors_url_variable_do_not_translate}"
-msgstr ""
+msgstr "PyLav foi criado por {library_author_name_variable_do_not_translate}.\n\n"
+"O código-fonte do PyLav pode ser localizado em {library_url_variable_do_not_translate}\n"
+"O código-fonte do PyLav-Cogs pode ser localizado em {second_library_url_variable_do_not_translate}\n\n"
+"Você pode se juntar ao servidor de suporte PyLav via {support_server_url_variable_do_not_translate}\n\n\n"
+"Você pode ajudar a traduzir o PyLav contribuindo para o nosso projeto Crowdin em:\n"
+"{crowdin_project_url_variable_do_not_translate}\n\n\n"
+"Contribuintes:\n"
+"- {project_contributors_url_variable_do_not_translate}\n"
+"- {second_project_contributors_url_variable_do_not_translate}\n"
+"Se você deseja me comprar um café para o meu trabalho, você pode fazê-lo em:\n"
+"{buymeacoffee_url_variable_do_not_translate} ou {github_sponsors_url_variable_do_not_translate}"
 
 #: pylav/extension/red/utils/required_methods.py:85
 #, docstring
@@ -56,31 +66,31 @@ msgstr "Sincronize os comandos da barra de bots"
 
 #: pylav/extension/red/utils/required_methods.py:129
 msgid "I have synced all my slash commands."
-msgstr ""
+msgstr "Sincronizei todos os meus comandos de barra."
 
 #: pylav/extension/red/utils/required_methods.py:151
 msgid "This command requires that I be in a voice channel before it can be executed."
-msgstr ""
+msgstr "Este comando requer que eu esteja em um canal de voz antes que ele possa ser executado."
 
 #: pylav/extension/red/utils/required_methods.py:160
 msgid "PyLavPlayer cog is temporarily unavailable due to an outage with the backend services; please try again later."
-msgstr ""
+msgstr "A engrenagem do PyLavPlayer está temporariamente indisponível devido a uma interrupção nos serviços de back-end; por favor, tente novamente mais tarde."
 
 #: pylav/extension/red/utils/required_methods.py:163
 msgid "There are no nodes available currently."
-msgstr ""
+msgstr "Não há nós disponíveis no momento."
 
 #: pylav/extension/red/utils/required_methods.py:174
 msgid "PyLavPlayer is currently unable to process tracks belonging to {feature_name_variable_do_not_translate}."
-msgstr ""
+msgstr "PyLavPlayer é atualmente incapaz de processar faixas pertencentes a {feature_name_variable_do_not_translate}."
 
 #: pylav/extension/red/utils/required_methods.py:177
 msgid "There is currently no available Lavalink node with the feature {feature_name_variable_do_not_translate}."
-msgstr ""
+msgstr "No momento, não há nenhum nó Lavalink disponível com o recurso {feature_name_variable_do_not_translate}."
 
 #: pylav/extension/red/utils/required_methods.py:190
 msgid "This command is unavailable in this channel; please use {channel_name_variable_do_not_translate} instead."
-msgstr ""
+msgstr "Este comando não está disponível neste canal; por favor use {channel_name_variable_do_not_translate} em vez de."
 
 #: pylav/extension/red/utils/required_methods.py:206
 msgid "This command requires you to be a disc jockey."
@@ -88,5 +98,5 @@ msgstr "Este comando requer que você seja um disc jockey."
 
 #: pylav/extension/red/utils/required_methods.py:244
 msgid "PyLav is starting up; please try again in a few minutes."
-msgstr ""
+msgstr "O PyLav está começando; por favor, tente novamente em alguns minutos."
 
