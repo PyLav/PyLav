@@ -14,7 +14,6 @@ from discord.ext import commands as dpy_command
 from discord.ext.commands import Context as DpyContext
 from discord.ext.commands.view import StringView
 from discord.types.embed import EmbedType
-from discord.types.interactions import ApplicationCommandInteractionData
 from discord.utils import MISSING as D_MISSING  # noqa
 
 from pylav.type_hints.bot import DISCORD_BOT_TYPE, DISCORD_COG_TYPE, DISCORD_CONTEXT_TYPE, DISCORD_INTERACTION_TYPE
@@ -196,9 +195,10 @@ class PyLavContext(OriginalContextClass):
         if isinstance(interaction, discord.Interaction) and interaction.command is None:
             setattr(interaction, "_cs_command", _dummy_command)
             added_dummy = True
-            # Circular import
 
+        # Circular import
         from discord.ext.commands.bot import BotBase
+        from discord.types.interactions import ApplicationCommandInteractionData
 
         if not isinstance(interaction.client, BotBase):
             raise TypeError("Interaction client is not derived from commands.Bot or commands.AutoShardedBot")
