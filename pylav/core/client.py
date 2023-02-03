@@ -138,7 +138,7 @@ class Client(metaclass=SingletonClass):
         node when it becomes available. This behaviour can be avoided in custom player implementations by
         setting `self._original_node` to `None` in the `change_node` function.
     config_folder: Optional[:class:`pathlib.Path`]
-        The path to the config folder. Defaults to ``CONFIG_DIR``.
+        The path to the settings folder. Defaults to ``CONFIG_DIR``.
     """
 
     _local_node_manager: LocalNodeManager
@@ -451,7 +451,7 @@ class Client(metaclass=SingletonClass):
                 if java_path != JAVA_EXECUTABLE and os.path.exists(JAVA_EXECUTABLE):
                     await self._config.update_java_path(JAVA_EXECUTABLE)
                 LOGGER.info("Lavalink folder: %s", LAVALINK_DOWNLOAD_DIR)
-                LOGGER.info("Config folder: %s", config_folder)
+                LOGGER.info("Settings folder: %s", config_folder)
                 LOGGER.info("Localtracks folder: %s", localtrack_folder)
                 self._config_folder = aiopath.AsyncPath(config_folder)
                 bundled_node_config = self._node_config_manager.bundled_node_config()
@@ -504,7 +504,6 @@ class Client(metaclass=SingletonClass):
         )
 
     async def _run_post_init_jobs(self, java_path) -> None:
-
         self._user_id = str(self._bot.user.id)
         self._local_node_manager = LocalNodeManager(self)
         enable_managed_node = await self.managed_node_is_enabled()
@@ -1127,7 +1126,6 @@ class Client(metaclass=SingletonClass):
         footer_url: str = None,
         messageable: Messageable | DISCORD_INTERACTION_TYPE = None,
     ) -> discord.Embed:
-
         if messageable and not colour and not color and hasattr(self._bot, "get_embed_color"):
             colour = await self._bot.get_embed_color(messageable)
         elif colour or color:
@@ -1187,15 +1185,14 @@ class Client(metaclass=SingletonClass):
         return localtrack_folder
 
     def get_all_players(self) -> Iterator[Player]:
-
         return iter(self.player_manager)
 
-    async def get_managed_node(self) -> Node | None:
+    def get_managed_node(self) -> Node | None:
         available_nodes = list(filter(operator.attrgetter("available"), self.node_manager.managed_nodes))
 
         return random.choice(available_nodes) if available_nodes else None
 
-    async def get_my_node(self) -> Node | None:
+    def get_my_node(self) -> Node | None:
         return next(
             filter(lambda n: n.identifier == self.bot.user.id, self.node_manager.managed_nodes),
             None,

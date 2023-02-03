@@ -50,7 +50,7 @@ def deduplicate_iterables(*iterables: Iterable[_T]) -> list[_T]:
 class AsyncFilter(AsyncIterator[_T], Awaitable[list[_T]]):  # pylint: disable=duplicate-bases
     """Class returned by `async_filter`. See that function for details.
 
-    We don't recommend instantiating this class directly.
+    We do not recommend instantiating this class directly.
     """
 
     __slots__ = ("__func", "__iterable", "__generator_instance")

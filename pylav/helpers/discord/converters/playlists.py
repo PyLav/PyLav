@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import heapq
 from pathlib import Path
 from typing import TYPE_CHECKING, TypeVar
 
+import asyncstdlib
 from discord.app_commands import Choice, Transformer
 from discord.ext import commands
 from rapidfuzz import fuzz
@@ -25,7 +25,6 @@ except ImportError:
 
 
 if TYPE_CHECKING:
-
     PlaylistConverter = TypeVar("PlaylistConverter", bound=list[PlaylistModel])
 else:
 
@@ -53,7 +52,6 @@ else:
 
         @classmethod
         async def autocomplete(cls, interaction: DISCORD_INTERACTION_TYPE, current: str) -> list[Choice]:
-
             if not current:
                 playlists = await interaction.client.pylav.playlist_db_manager.get_bundled_playlists()
                 return [
@@ -75,7 +73,7 @@ else:
                     [-ord(i) for i in name],
                 )
 
-            extracted = heapq.nlargest(25, iter(playlists), key=_filter)
+            extracted = await asyncstdlib.heapq.nlargest(25, asyncstdlib.iter(playlists), key=_filter)
             return [
                 Choice(name=shorten_string(await e.fetch_name(), max_length=100), value=f"{e.id}") for e in extracted
             ]

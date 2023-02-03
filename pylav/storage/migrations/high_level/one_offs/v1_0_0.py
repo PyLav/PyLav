@@ -41,7 +41,7 @@ async def migration_v_1_0_0(client: Client, current_version: Version) -> None:
             "You are using the default Spotify client ID and secret. "
             "Please register your own client ID and secret at "
             "https://developer.spotify.com/dashboard/applications "
-            "and set them in your %s config file.",
+            "and set them in your %s settings file.",
             ENV_FILE,
         )
     yaml_data["lavalink"]["server"]["resamplingQuality"] = NODE_DEFAULT_SETTINGS["lavalink"]["server"][

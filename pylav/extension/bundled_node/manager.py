@@ -271,7 +271,7 @@ class LocalNodeManager:
             config = aiopath.AsyncPath(cwd) / "application.yml"
             if await config.exists() and await config.is_file():
                 LOGGER.debug(
-                    "The following config file exists for an unmanaged Lavalink node %s",
+                    "The following settings file exists for an unmanaged Lavalink node %s",
                     config,
                 )
                 try:
@@ -907,8 +907,7 @@ class LocalNodeManager:
 
     async def restart(self, java_path: str = None) -> None:
         LOGGER.info("Restarting managed Lavalink node")
-        node = await self._client.get_my_node()
-        if node:
+        if node := self._client.get_my_node():
             if self.start_monitor_task is not None:
                 self.start_monitor_task.cancel()
                 self.start_monitor_task = None

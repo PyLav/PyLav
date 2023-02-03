@@ -55,7 +55,7 @@ class SSLNodeToggleButton(discord.ui.Button):
                 embed=await self.cog.pylav.construct_embed(
                     messageable=interaction,
                     description=_(
-                        "I will connect to this node using n secure connection. Please ensure that this node supports secure connections."
+                        "I will connect to this node using a secure connection. Please ensure that this node supports secure connections."
                     ),
                 ),
                 ephemeral=True,
