@@ -20,11 +20,11 @@ class PlaylistOption(discord.SelectOption):
             description=shorten_string(
                 max_length=100,
                 string=_(
-                    "Tracks: {playlist_size_value} || {playlist_author_name_value} || {playlist_scope_value}"
+                    "Tracks: {playlist_size_variable_do_not_translate} || {playlist_author_name_variable_do_not_translate} || {playlist_scope_variable_do_not_translate}"
                 ).format(
-                    playlist_size_value=await playlist.size(),
-                    playlist_author_name_value=await playlist.get_author_name(bot, mention=False),
-                    playlist_scope_value=await playlist.get_scope_name(bot, mention=False),
+                    playlist_size_variable_do_not_translate=await playlist.size(),
+                    playlist_author_name_variable_do_not_translate=await playlist.get_author_name(bot, mention=False),
+                    playlist_scope_variable_do_not_translate=await playlist.get_scope_name(bot, mention=False),
                 ),
             ),
             value=f"{playlist.id}",

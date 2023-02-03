@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import asyncstdlib
 import discord
 
 from pylav.helpers.misc import TimedFeature
@@ -93,7 +92,7 @@ class PlayerConfigController:
     ) -> bool:
         if additional_user_ids and user.id in additional_user_ids:
             return True
-        if additional_role_ids and await asyncstdlib.any(r.id in additional_role_ids for r in user.roles):
+        if additional_role_ids and any(r.id in additional_role_ids for r in user.roles):
             return True
         return await self.get_config(guild_id=guild.id).is_dj(
             user=user, additional_role_ids=None, additional_user_ids=None, bot=bot

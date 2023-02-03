@@ -1,10 +1,9 @@
 from __future__ import annotations
 
+import heapq
 from pathlib import Path
 from typing import TYPE_CHECKING, TypeVar
 
-import asyncstdlib
-from asyncstdlib import heapq
 from discord.app_commands import Choice, Transformer
 from discord.ext import commands
 from rapidfuzz import fuzz
@@ -39,7 +38,9 @@ else:
                 playlists = await ctx.pylav.playlist_db_manager.get_playlist_by_name_or_id(arg)
             except EntryNotFoundException as e:
                 raise commands.BadArgument(
-                    _("Playlist with name or identifier `{user_input_value}` not found").format(user_input_value=arg)
+                    _(
+                        "A playlist with the name or identifier `{user_input_variable_do_not_translate}` was not found."
+                    ).format(user_input_variable_do_not_translate=arg)
                 ) from e
             return playlists
 
@@ -74,7 +75,7 @@ else:
                     [-ord(i) for i in name],
                 )
 
-            extracted = await heapq.nlargest(asyncstdlib.iter(playlists), n=25, key=_filter)
+            extracted = heapq.nlargest(25, iter(playlists), key=_filter)
             return [
                 Choice(name=shorten_string(await e.fetch_name(), max_length=100), value=f"{e.id}") for e in extracted
             ]

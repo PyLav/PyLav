@@ -162,9 +162,13 @@ class LabelButton(discord.ui.Button):
             row=row,
         )
         if multiple:
-            self.label = _("Disconnect {player_type} players").format(player_type=disconnect_type_translation)
+            self.label = _("Disconnect {player_type_variable_do_not_translate} players").format(
+                player_type_variable_do_not_translate=disconnect_type_translation
+            )
         else:
-            self.label = _("Disconnect {player_type} player").format(player_type=disconnect_type_translation)
+            self.label = _("Disconnect {player_type_variable_do_not_translate} player").format(
+                player_type_variable_do_not_translate=disconnect_type_translation
+            )
 
 
 class RefreshButton(discord.ui.Button):

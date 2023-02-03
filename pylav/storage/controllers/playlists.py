@@ -31,7 +31,6 @@ from pylav.players.query.obj import Query
 from pylav.storage.database.tables.playlists import PlaylistRow
 from pylav.storage.models.playlist import Playlist
 from pylav.type_hints.bot import DISCORD_BOT_TYPE
-from pylav.utils.vendor.redbot import AsyncIter
 
 if TYPE_CHECKING:
     from pylav.core.client import Client
@@ -82,7 +81,9 @@ class PlaylistController:
         playlists = await query
         if not playlists:
             raise EntryNotFoundException(
-                _("Playlist with name {playlist_name} not found").format(playlist_name=playlist_name)
+                _("laylist with the name {playlist_name_variable_do_not_translate} was not found.").format(
+                    playlist_name_variable_do_not_translate=playlist_name
+                )
             )
         return [self.get_playlist(**playlist) for playlist in playlists]
 
@@ -270,7 +271,7 @@ class PlaylistController:
                 playlists = []
         returning_list = []
         if playlists:
-            async for playlist in AsyncIter(playlists):
+            for playlist in playlists:
                 if await playlist.can_manage(requester=requester, bot=bot):
                     returning_list.append(playlist)
         return returning_list

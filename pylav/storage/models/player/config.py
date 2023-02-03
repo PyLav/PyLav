@@ -3,7 +3,6 @@ from __future__ import annotations
 import typing
 from dataclasses import dataclass
 
-import asyncstdlib
 import discord
 
 from pylav.compat import json
@@ -797,7 +796,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         """
         if additional_user_ids and user.id in additional_user_ids:
             return True
-        if additional_role_ids and await asyncstdlib.any(r.id in additional_role_ids for r in user.roles):
+        if additional_role_ids and any(r.id in additional_role_ids for r in user.roles):
             return True
         if __ := user.guild:
             if hasattr(bot, "is_owner") and await bot.is_owner(typing.cast(discord.User, user)):
@@ -809,4 +808,4 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         if await self._userid_in_dj_users(user.id):
             return True
         dj_roles = await self.fetch_dj_roles()
-        return bool(await asyncstdlib.any(r.id in dj_roles for r in user.roles)) if dj_roles else True
+        return bool(any(r.id in dj_roles for r in user.roles)) if dj_roles else True

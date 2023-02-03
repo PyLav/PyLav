@@ -1,10 +1,9 @@
 from __future__ import annotations
 
+import heapq
 from pathlib import Path
 from typing import TYPE_CHECKING, TypeVar
 
-import asyncstdlib
-from asyncstdlib import heapq
 from discord.app_commands import Choice, Transformer
 from discord.ext import commands
 from rapidfuzz import fuzz
@@ -38,14 +37,16 @@ else:
                 nodes = ctx.pylav.node_manager.nodes
             except EntryNotFoundException as e:
                 raise commands.BadArgument(
-                    _("Node with name or identifier `{user_input_value}` not found.").format(user_input_value=arg)
+                    _("Node with name or identifier `{user_input_variable_do_not_translate}` not found.").format(
+                        user_input_variable_do_not_translate=arg
+                    )
                 ) from e
-            if r := await asyncstdlib.list(
-                asyncstdlib.filter(lambda n: arg.lower() in n.name.lower() or arg == f"{n.identifier}", nodes)
-            ):
+            if r := list(filter(lambda n: arg.lower() in n.name.lower() or arg == f"{n.identifier}", nodes)):
                 return r
             raise commands.BadArgument(
-                _("Node with name or identifier `{user_input_value}` not found").format(user_input_value=arg)
+                _("Node with name or identifier `{user_input_variable_do_not_translate}` not found").format(
+                    user_input_variable_do_not_translate=arg
+                )
             )
 
         @classmethod
@@ -66,6 +67,6 @@ else:
             def _filter(c):
                 return fuzz.partial_ratio(c.name, current)
 
-            extracted = heapq.nlargest(nodes, n=25, key=_filter)
+            extracted = heapq.nlargest(25, nodes, key=_filter)
 
             return [Choice(name=shorten_string(e.name, max_length=100), value=f"{e.identifier}") for e in extracted]

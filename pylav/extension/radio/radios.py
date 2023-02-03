@@ -100,7 +100,7 @@ class RadioBrowser:
             url /= code
         if self._disabled:
             return []
-        return [Country(**country) async for country in AsyncIter(await self.client.get(url, hidebroken="true"))]
+        return [Country(**country) for country in await self.client.get(url, hidebroken="true")]
 
     @type_check
     async def countrycodes(self, code: str | None = None) -> list[CountryCode]:
@@ -120,7 +120,7 @@ class RadioBrowser:
             url /= code
         if self._disabled:
             return []
-        return [CountryCode(**country) async for country in AsyncIter(await self.client.get(url, hidebroken="true"))]
+        return [CountryCode(**country) for country in await self.client.get(url, hidebroken="true")]
 
     @type_check
     async def codecs(self, codec: str | None = None) -> list[Codec]:
@@ -140,10 +140,8 @@ class RadioBrowser:
             return []
         response = await self.client.get(url, hidebroken="true")
         if codec:
-            return [
-                Codec(**tag) async for tag in AsyncIter(response).filter(lambda s: s["name"].lower() == codec.lower())
-            ]
-        return [Codec(**tag) async for tag in AsyncIter(response)]
+            return [Codec(**tag) for tag in filter(lambda s: s["name"].lower() == codec.lower(), response)]
+        return [Codec(**tag) for tag in response]
 
     @type_check
     async def states(self, country: str | None = None, state: str | None = None) -> list[State]:
@@ -151,7 +149,7 @@ class RadioBrowser:
 
         Args:
             country (str, optional): Filter by country. Defaults to None.
-            state (str, optionla): Filter by state.  Defaults to None.
+            state (str, optionla): Filter by state. Defaults to None.
 
         Returns:
             list: States.
@@ -168,20 +166,15 @@ class RadioBrowser:
             if state:
                 return [
                     State(**state)
-                    async for state in AsyncIter(response).filter(
-                        lambda s: s["country"].lower() == country.lower() and s["name"].lower() == state.lower()
+                    for state in filter(
+                        lambda s: s["country"].lower() == country.lower() and s["name"].lower() == state.lower(),
+                        response,
                     )
                 ]
-            return [
-                State(**state)
-                async for state in AsyncIter(response).filter(lambda s: s["country"].lower() == country.lower())
-            ]
+            return [State(**state) for state in filter(lambda s: s["country"].lower() == country.lower(), response)]
         if state:
-            return [
-                State(**state)
-                async for state in AsyncIter(response).filter(lambda s: s["name"].lower() == state.lower())
-            ]
-        return [State(**state) async for state in AsyncIter(response)]
+            return [State(**state) for state in filter(lambda s: s["name"].lower() == state.lower(), response)]
+        return [State(**state) for state in response]
 
     @type_check
     async def languages(self, language: str | None = None) -> list[Language]:
@@ -202,7 +195,7 @@ class RadioBrowser:
         if self._disabled:
             return []
         response = await self.client.get(url, hidebroken="true")
-        return [Language(**language) async for language in AsyncIter(response)]
+        return [Language(**language) for language in response]
 
     @type_check
     async def tags(self, tag: str | None = None) -> list[Tag]:
@@ -223,7 +216,7 @@ class RadioBrowser:
         if self._disabled:
             return []
         response = await self.client.get(url, hidebroken="true")
-        return [Tag(**tag) async for tag in AsyncIter(response)]
+        return [Tag(**tag) for tag in response]
 
     async def station_by_uuid(self, stationuuid: str) -> list[Station]:
         """Radio station by stationuuid.
@@ -241,7 +234,7 @@ class RadioBrowser:
         if self._disabled:
             return []
         response = await self.client.get(url, hidebroken="true")
-        return [Station(radio_api_client=self, **station) async for station in AsyncIter(response)]
+        return [Station(radio_api_client=self, **station) async for station in AsyncIter(response, steps=250)]
 
     async def stations_by_name(
         self, name: str, exact: bool = False, **kwargs: str | int | bool | None
@@ -425,7 +418,7 @@ class RadioBrowser:
         kwargs["hidebroken"] = kwargs.pop("hidebroken", "true")
         return [
             Station(radio_api_client=self, **station)
-            async for station in AsyncIter(await self.client.get(url, **kwargs))
+            async for station in AsyncIter(await self.client.get(url, **kwargs), steps=250)
         ]
 
     async def stations_by_votes(self, limit: int, **kwargs: str | int | bool | None) -> list[Station]:
@@ -445,7 +438,7 @@ class RadioBrowser:
             return []
         kwargs["hidebroken"] = kwargs.pop("hidebroken", "true")
         response = await self.client.get(url, **kwargs)
-        return [Station(radio_api_client=self, **station) async for station in AsyncIter(response)]
+        return [Station(radio_api_client=self, **station) async for station in AsyncIter(response, steps=250)]
 
     async def stations_by_clicks(self, limit: int, **kwargs: str | int | bool | None) -> list[Station]:
         """A list of the stations that are clicked the most.
@@ -464,7 +457,7 @@ class RadioBrowser:
             return []
         kwargs["hidebroken"] = kwargs.pop("hidebroken", "true")
         response = await self.client.get(url, **kwargs)
-        return [Station(radio_api_client=self, **station) async for station in AsyncIter(response)]
+        return [Station(radio_api_client=self, **station) async for station in AsyncIter(response, steps=250)]
 
     @type_check
     async def search(self, **kwargs: str | int | bool | None) -> list[Station]:
@@ -529,7 +522,7 @@ class RadioBrowser:
             kwargs["hidebroken"] = "false"
         return [
             Station(radio_api_client=self, **station)
-            async for station in AsyncIter(await self.client.get(url, **kwargs))
+            async for station in AsyncIter(await self.client.get(url, **kwargs), steps=250)
         ]
 
     async def click(self, station: Station | None = None, station_id: str | None = None) -> None:

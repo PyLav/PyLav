@@ -3,7 +3,6 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING, Literal
 
-import asyncstdlib
 import discord
 from discord import Emoji, PartialEmoji
 from redbot.core.i18n import Translator
@@ -54,14 +53,17 @@ class SSLNodeToggleButton(discord.ui.Button):
         if self.view.ssl:
             await context.send(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=interaction, description=_("Connecting to the node with SSL enabled.")
+                    messageable=interaction,
+                    description=_(
+                        "I will connect to this node using n secure connection. Please ensure that this node supports secure connections."
+                    ),
                 ),
                 ephemeral=True,
             )
         else:
             await context.send(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=interaction, description=_("Connecting to the node with SSL disabled.")
+                    messageable=interaction, description=_("I will connect to this node using an unsecure connection.")
                 ),
                 ephemeral=True,
             )
@@ -99,14 +101,14 @@ class SearchOnlyNodeToggleButton(discord.ui.Button):
         if self.view.search_only:
             await context.send(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=interaction, description=_("This node will only be used for search.")
+                    messageable=interaction, description=_("This node will be used for searches only.")
                 ),
                 ephemeral=True,
             )
         else:
             await context.send(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=interaction, description=_("This node will be used for search and playback.")
+                    messageable=interaction, description=_("This node will be used for both searches and playback.")
                 ),
                 ephemeral=True,
             )
@@ -134,7 +136,7 @@ class AddNodeDoneButton(discord.ui.Button):
                 ),
                 ephemeral=True,
             )
-        if not await asyncstdlib.all([self.view.name, self.view.host, self.view.port, self.view.password]):
+        if not ([self.view.name, self.view.host, self.view.port, self.view.password]):
             await context.send(
                 embed=await self.cog.pylav.construct_embed(
                     messageable=interaction, description=_("Please fill out all the fields before continuing.")
@@ -217,9 +219,9 @@ class NodeDeleteButton(discord.ui.Button):
         self.view.cancelled = False
         self.view.delete = not self.view.delete
         if self.view.delete:
-            response = _("When you press done this node will be permanently delete.")
+            response = _("I will remove this node permanently once you select “done”.")
         else:
-            response = _("This node will no longer be deleted once you press done.")
+            response = _("I will no longer remove this node permanently once you select “done”.")
 
         await context.send(
             embed=await self.cog.pylav.construct_embed(messageable=interaction, description=response),
@@ -253,7 +255,7 @@ class NodeShowEnabledSourcesButton(discord.ui.Button):
             embed=await self.cog.pylav.construct_embed(
                 messageable=interaction,
                 description="__{title}__:\n{sources}".format(
-                    title=_("Enable sources"), sources="\n".join(map(str.title, self.view.source.target.capabilities))
+                    title=_("Enabled sources"), sources="\n".join(map(str.title, self.view.source.target.capabilities))
                 ),
             ),
             ephemeral=True,

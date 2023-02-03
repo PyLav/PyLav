@@ -45,9 +45,9 @@ class PlaylistDeleteButton(discord.ui.Button):
         self.view.cancelled = False
         self.view.delete = not self.view.delete
         if self.view.delete:
-            response = _("When you press done this playlist will be permanently delete.")
+            response = _("I will delete this playlist permanently once you select “done”.")
         else:
-            response = _("This playlist will no longer be deleted once you press done.")
+            response = _("I will no longer delete this playlist permanently once you select “done”.")
 
         await context.send(
             embed=await self.cog.pylav.construct_embed(messageable=interaction, description=response),
@@ -80,9 +80,9 @@ class PlaylistClearButton(discord.ui.Button):
         self.view.cancelled = False
         self.view.clear = not self.view.clear
         if self.view.clear:
-            response = _("Clearing all tracks from the playlist.")
+            response = _("I will remove all tracks from this playlist.")
         else:
-            response = _("No longer clearing tracks from the playlist.")
+            response = _("I will no longer remove all tracks from this playlist.")
 
         await context.send(
             embed=await self.cog.pylav.construct_embed(messageable=interaction, description=response),
@@ -122,15 +122,27 @@ class PlaylistDownloadButton(discord.ui.Button):
             yaml_file: BytesIO
             if compressed == "gzip":
                 message = _(
-                    "Here is your playlist: {playlist_name}, file is compressed using Gzip to make it possible to send via Discord you can use <https://gzip.swimburger.net/> to decompress it."
-                ).format(playlist_name=await self.view.playlist.get_name_formatted(with_url=True))
+                    "Here is your playlist: {playlist_name_variable_do_not_translate}. "
+                    "This file is compressed using Gzip to make it possible to be sent via Discord. "
+                    "You can use {url_name_variable_do_not_translate} to decompress it."
+                ).format(
+                    playlist_name_variable_do_not_translate=await self.view.playlist.get_name_formatted(with_url=True),
+                    url_name_variable_do_not_translate="<https://gzip.swimburger.net/>",
+                )
             elif compressed == "brotli":
                 message = _(
-                    "Here is your playlist: {playlist_name}, file is compressed using Brotli compression."
-                ).format(playlist_name=await self.view.playlist.get_name_formatted(with_url=True))
+                    "Here is your playlist: {playlist_name_name_variable_do_not_translate}. "
+                    "This file is compressed using Brotli to make it possible to be sent via Discord."
+                ).format(
+                    playlist_name_name_variable_do_not_translate=await self.view.playlist.get_name_formatted(
+                        with_url=True
+                    )
+                )
             else:
-                message = _("Here is your playlist: {playlist_name}.").format(
-                    playlist_name=await self.view.playlist.get_name_formatted(with_url=True)
+                message = _("Here is your playlist: {playlist_name_name_variable_do_not_translate}.").format(
+                    playlist_name_name_variable_do_not_translate=await self.view.playlist.get_name_formatted(
+                        with_url=True
+                    )
                 )
 
             await context.send(
@@ -171,10 +183,10 @@ class PlaylistUpdateButton(discord.ui.Button):
         self.view.cancelled = False
         self.view.update = not self.view.update
         if (await self.view.playlist.fetch_url() or self.view.url) and self.view.update:
-            response = _("Updating playlist with the latest tracks, press done to continue.")
+            response = _("I will update this playlist with the latest tracks, press done to continue.")
         else:
             self.view.update = False
-            response = _("Not updating playlist.")
+            response = _("I will no longer update this playlist with the latest tracks.")
         await context.send(
             embed=await self.cog.pylav.construct_embed(messageable=interaction, description=response),
             ephemeral=True,
@@ -263,14 +275,14 @@ class PlaylistQueueButton(discord.ui.Button):
         if self.view.queue:
             await context.send(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=interaction, description=_("Adding the current queue to playlist.")
+                    messageable=interaction, description=_("I will add the current queue this playlist.")
                 ),
                 ephemeral=True,
             )
         else:
             await context.send(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=interaction, description=_("No longer adding the current queue to playlist.")
+                    messageable=interaction, description=_("I will no longer add the current queue to this playlist.")
                 ),
                 ephemeral=True,
             )
@@ -309,14 +321,14 @@ class PlaylistDedupeButton(discord.ui.Button):
         if self.view.dedupe:
             await context.send(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=interaction, description=_("Removing all duplicate tracks from the queue.")
+                    messageable=interaction, description=_("I will remove all duplicate tracks from the queue.")
                 ),
                 ephemeral=True,
             )
         else:
             await context.send(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=interaction, description=_("No longer all duplicate tracks from the queue.")
+                    messageable=interaction, description=_("I will no longer remove duplicate tracks from the queue.")
                 ),
                 ephemeral=True,
             )

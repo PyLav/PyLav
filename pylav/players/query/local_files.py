@@ -102,8 +102,8 @@ class LocalFile:
         if self._ROOT_FOLDER is None:
             # noinspection SpellCheckingInspection
             raise RuntimeError(
-                _("Root folder is not initialized, call `{python_function_value}`.").format(
-                    python_function_value="await Client.update_localtracks_folder(folder: str | pathlib.Path)"
+                _("Root folder is not initialized, call `{python_function_variable_do_not_translate}`.").format(
+                    python_function_variable_do_not_translate="await Client.update_localtracks_folder(folder: str | pathlib.Path)"
                 )
             )
         self._path: aiopath.AsyncPath = aiopath.AsyncPath(path)

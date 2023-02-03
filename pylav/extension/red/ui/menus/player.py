@@ -3,7 +3,6 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-import asyncstdlib
 import discord
 from redbot.core.i18n import Translator
 
@@ -183,7 +182,7 @@ class StatsMenu(BaseMenu):
             self.queue_disconnect_inactive.disabled = True
             self.queue_disconnect_all.disabled = True
 
-        if not [p async for p in asyncstdlib.iter(self.cog.pylav.player_manager.connected_players) if not p.is_playing]:
+        if not [p async for p in iter(self.cog.pylav.player_manager.connected_players) if not p.is_playing]:
             self.queue_disconnect_inactive.disabled = True
 
     @property
@@ -205,7 +204,7 @@ class StatsMenu(BaseMenu):
                 "content": None,
                 "embed": await self.cog.pylav.construct_embed(
                     messageable=self.ctx,
-                    title=shorten_string(max_length=100, string=_("Not connected in any server.")),
+                    title=shorten_string(max_length=100, string=_("I am not in any voice channel currently.")),
                 ),
             }
         try:

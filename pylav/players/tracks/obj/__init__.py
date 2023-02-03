@@ -7,7 +7,6 @@ import uuid
 from functools import total_ordering
 from typing import Any
 
-import asyncstdlib
 import discord
 from cached_property import cached_property  # type: ignore
 from cashews import Cache  # type: ignore
@@ -560,7 +559,7 @@ class Track:
         try:
             async with self._node.session.get(url, headers={"Icy-MetaData": "1"}) as resp:
                 metaint = int(resp.headers["icy-metaint"])
-                async for __ in asyncstdlib.iter(range(5)):
+                for __ in iter(range(5)):
                     await resp.content.readexactly(metaint)
                     metadata_length = struct.unpack("B", await resp.content.readexactly(1))[0] * 16
                     metadata = await resp.content.readexactly(metadata_length)

@@ -5,7 +5,6 @@ import socket
 from math import atan2, cos, radians, sin, sqrt
 
 import aiohttp
-import asyncstdlib
 from yarl import URL
 
 from pylav.compat import json
@@ -25,7 +24,7 @@ async def closest(
     if region_pool is None:
         region_pool = set()
     entries = [(k, v) for k, v in data.items() if not region_pool or k in region_pool]
-    return await asyncstdlib.min(
+    return min(
         entries,
         key=lambda p: distance(compare_to[0], compare_to[1], p[1][0], p[1][1]),
     )
@@ -37,8 +36,8 @@ async def get_closest_region_name_and_coordinate(
     closest_region, closest_coordinates = await closest(
         REGION_TO_COUNTRY_COORDINATE_MAPPING, compare_to=(lat, lon), region_pool=region_pool
     )
-    name, coordinate = await asyncstdlib.anext(
-        asyncstdlib.iter((k, v) for k, v in REGION_TO_COUNTRY_COORDINATE_MAPPING.items() if v == closest_coordinates)
+    name, coordinate = next(
+        iter((k, v) for k, v in REGION_TO_COUNTRY_COORDINATE_MAPPING.items() if v == closest_coordinates)
     )
     return name, coordinate
 

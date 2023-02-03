@@ -429,7 +429,7 @@ class WebSocket:
 
     async def handle_player_update(self, data: PlayerUpdate) -> None:
         """
-        Handles the player update message  from the websocket.
+        Handles the player update message from the websocket.
 
         Parameters
         ----------

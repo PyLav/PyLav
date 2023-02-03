@@ -13,7 +13,6 @@ from typing import TYPE_CHECKING, Any
 
 import aiohttp
 import aiopath
-import asyncstdlib
 import dateutil
 import dateutil.parser
 import psutil
@@ -63,7 +62,6 @@ from pylav.logging import getLogger
 from pylav.nodes.node import Node
 from pylav.storage.migrations.high_level.always.update_plugins import update_plugins
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
-from pylav.utils.vendor.redbot import AsyncIter
 
 try:
     from redbot.core.i18n import Translator
@@ -204,10 +202,10 @@ class LocalNodeManager:
                 self._ci_info["number"] = -1
                 return self._ci_info
             data = await response.json(loads=json.loads)
-            release = await asyncstdlib.max(data, key=self._get_release_publish_dt_or_epoch)
+            release = max(data, key=self._get_release_publish_dt_or_epoch)
             assets = release.get("assets", [])
             url = None
-            async for asset in asyncstdlib.iter(assets):
+            for asset in iter(assets):
                 if asset["name"] != "Lavalink.jar":
                     continue
                 url = asset.get("browser_download_url")
@@ -265,11 +263,11 @@ class LocalNodeManager:
         )
         valid_working_dirs = [
             cwd  # noqa
-            async for d in asyncstdlib.iter(possible_lavalink_processes)
+            for d in iter(possible_lavalink_processes)
             if d.get("name") in ["java", "java.exe"] and (cwd := d.get("cwd"))
         ]
         LOGGER.debug("Found %s java processed with a cwd set", len(valid_working_dirs))
-        async for cwd in asyncstdlib.iter(valid_working_dirs):
+        for cwd in iter(valid_working_dirs):
             config = aiopath.AsyncPath(cwd) / "application.yml"
             if await config.exists() and await config.is_file():
                 LOGGER.debug(
@@ -370,7 +368,7 @@ class LocalNodeManager:
 
     @staticmethod
     async def maybe_remove_youtube_config(data: JSON_DICT_TYPE) -> None:
-        if not await asyncstdlib.all(
+        if not all(
             (
                 data["lavalink"]["server"]["youtubeConfig"].get("email"),
                 data["lavalink"]["server"]["youtubeConfig"].get("password"),
@@ -433,7 +431,7 @@ class LocalNodeManager:
         version_info: str = err.decode("utf-8")
         lines = version_info.splitlines()
 
-        async for line in asyncstdlib.iter(lines):
+        for line in iter(lines):
             match = JAVA_VERSION_LINE_PRE223.search(line)
             if match is None:
                 match = JAVA_VERSION_LINE_223.search(line)
@@ -449,8 +447,11 @@ class LocalNodeManager:
             return major, minor
 
         raise UnexpectedJavaResponseException(
-            _("The output of `{command_name}` was unexpected\n{command_output}").format(
-                command_name=f"{self._java_exc} -version", command_output=version_info
+            _(
+                "The output of `{command_name_variable_do_not_translate}` was unexpected\n{command_output_variable_do_not_translate}"
+            ).format(
+                command_name_variable_do_not_translate=f"{self._java_exc} -version",
+                command_output_variable_do_not_translate=version_info,
             )
         )
 
@@ -469,12 +470,14 @@ class LocalNodeManager:
             if LAVALINK_FAILED_TO_START.search(line):
                 if f"Port {self._current_config['server']['port']} was already in use".encode() in line:
                     raise PortAlreadyInUseException(
-                        _("Port {port_value} already in use. Managed Lavalink startup has been aborted.").format(
-                            port_value=self._current_config["server"]["port"]
-                        )
+                        _(
+                            "The port {port_variable_do_not_translate} is already in use. Managed Lavalink startup has been aborted."
+                        ).format(port_variable_do_not_translate=self._current_config["server"]["port"])
                     )
                 raise ManagedLavalinkStartFailureException(
-                    _("Lavalink failed to start: {error_value}").format(error_value=line.decode("utf-8"))
+                    _("Lavalink failed to start: {error_variable_do_not_translate}").format(
+                        error_variable_do_not_translate=line.decode("utf-8")
+                    )
                 )
             if self._proc.returncode is not None:
                 # Avoid Console spam only print once every 2 seconds
@@ -758,7 +761,7 @@ class LocalNodeManager:
     async def _monitor_managed_start_failure(self) -> None:
         LOGGER.warning("Lavalink Managed node failed to start, restarting")
         await self._partial_shutdown()
-        async for process in asyncstdlib.iter(
+        for process in iter(
             await self.get_lavalink_process(
                 "-Djdk.tls.client.protocols=TLSv1.2", "-Xms64M", "-jar", cwd=str(LAVALINK_DOWNLOAD_DIR)
             )
@@ -884,16 +887,16 @@ class LocalNodeManager:
     ) -> list[dict[str, Any]]:
         process_list = []
         filter_ = [cwd] if cwd else []
-        async for proc in AsyncIter(psutil.process_iter()):
+        for proc in psutil.process_iter():
             with contextlib.suppress(psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 if cwd and await asyncio.to_thread(proc.cwd) not in filter_:
                     continue
                 cmdline = await asyncio.to_thread(proc.cmdline)
                 if (
                     matches
-                    and await asyncstdlib.all(a in cmdline async for a in asyncstdlib.iter(matches))
+                    and all(a in cmdline for a in iter(matches))
                     or lazy_match
-                    and await asyncstdlib.any("lavalink" in arg.lower() async for arg in asyncstdlib.iter(cmdline))
+                    and any("lavalink" in arg.lower() for arg in iter(cmdline))
                 ):
                     proc_as_dict = await asyncio.to_thread(
                         proc.as_dict, attrs=["pid", "name", "create_time", "status", "cmdline", "cwd"]

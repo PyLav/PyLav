@@ -4,7 +4,6 @@ import random
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-import asyncstdlib
 import discord
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_number
@@ -15,7 +14,6 @@ from pylav.logging import getLogger
 from pylav.players.tracks.obj import Track
 from pylav.storage.models.playlist import Playlist
 from pylav.type_hints.bot import DISCORD_COG_TYPE
-from pylav.utils.vendor.redbot import AsyncIter
 
 if TYPE_CHECKING:
     from pylav.extension.red.ui.menus.generic import PaginatingMenu
@@ -49,23 +47,23 @@ class PlaylistPickerSource(menus.ListPageSource):
         idx_start, page_num = self.get_starting_index_and_page_number(menu)
         page = await self.cog.pylav.construct_embed(messageable=menu.ctx, title=self.message_str)
 
-        number_of_pages = self.get_max_pages()
         total_number_of_entries = len(self.entries)
         current_page = humanize_number(page_num + 1)
         total_number_of_pages = humanize_number(self.get_max_pages())
 
-        if number_of_pages > 1:
-            message = _(
-                "Page {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} playlists"
-            ).format(
-                current_page_value=current_page,
-                total_number_of_pages_value=total_number_of_pages,
-                total_number_of_entries_value=total_number_of_entries,
-            )
-        elif number_of_pages == 1:
-            message = _("Page 1 / 1 | 1 playlist")
-        else:
-            message = _("Page 1 / 1 | 0 playlists")
+        match total_number_of_entries:
+            case 1:
+                message = _("Page 1 / 1 | 1 playlist")
+            case 0:
+                message = _("Page 1 / 1 | 0 playlists")
+            case __:
+                message = _(
+                    "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} playlists"
+                ).format(
+                    current_page_variable_do_not_translate=current_page,
+                    total_number_of_pages_variable_do_not_translate=total_number_of_pages,
+                    total_number_of_entries_variable_do_not_translate=humanize_number(total_number_of_entries),
+                )
 
         page.set_footer(text=message)
         return page
@@ -76,9 +74,7 @@ class PlaylistPickerSource(menus.ListPageSource):
         base = page_number * self.per_page
         self.select_options.clear()
         self.select_mapping.clear()
-        async for i, playlist in asyncstdlib.enumerate(
-            asyncstdlib.iter(self.entries[base : base + self.per_page]), start=base
-        ):  # noqa: E203
+        for i, playlist in enumerate(iter(self.entries[base : base + self.per_page]), start=base):  # noqa: E203
             self.select_options.append(await PlaylistOption.from_playlist(playlist=playlist, index=i, bot=self.cog.bot))
             self.select_mapping[f"{playlist.id}"] = playlist
         return self.entries[base : base + self.per_page]  # noqa: E203
@@ -116,7 +112,7 @@ class Base64Source(menus.ListPageSource):
         start_index, page_num = self.get_starting_index_and_page_number(menu)
         padding = len(str(start_index + len(tracks)))
         queue_list = ""
-        async for track_idx, track in AsyncIter(tracks).enumerate(start=start_index + 1):
+        for track_idx, track in enumerate(tracks, start=start_index + 1):
             track = await Track.build_track(
                 node=random.choice(self.cog.pylav.node_manager.nodes),
                 requester=self.author.id,
@@ -126,6 +122,7 @@ class Base64Source(menus.ListPageSource):
             track_description = await track.get_track_display_name(max_length=50, with_url=True)
             diff = padding - len(str(track_idx))
             queue_list += f"`{track_idx}.{' ' * diff}` {track_description}\n"
+
         page = await self.cog.pylav.construct_embed(
             title="{translation} __{name}__".format(
                 name=await self.playlist.fetch_name(), translation=discord.utils.escape_markdown(_("Tracks in"))
@@ -134,23 +131,23 @@ class Base64Source(menus.ListPageSource):
             messageable=menu.ctx,
         )
 
-        number_of_pages = self.get_max_pages()
         total_number_of_entries = len(self.entries)
         current_page = humanize_number(page_num + 1)
         total_number_of_pages = humanize_number(self.get_max_pages())
 
-        if number_of_pages > 1:
-            message = _(
-                "Page {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} tracks"
-            ).format(
-                current_page_value=current_page,
-                total_number_of_pages_value=total_number_of_pages,
-                total_number_of_entries_value=total_number_of_entries,
-            )
-        elif number_of_pages == 1:
-            message = _("Page 1 / 1 | 1 track")
-        else:
-            message = _("Page 1 / 1 | 0 tracks")
+        match total_number_of_entries:
+            case 1:
+                message = _("Page 1 / 1 | 1 track")
+            case 0:
+                message = _("Page 1 / 1 | 0 tracks")
+            case __:
+                message = _(
+                    "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} tracks"
+                ).format(
+                    current_page_variable_do_not_translate=current_page,
+                    total_number_of_pages_variable_do_not_translate=total_number_of_pages,
+                    total_number_of_entries_variable_do_not_translate=humanize_number(total_number_of_entries),
+                )
 
         page.set_footer(text=message)
         return page
@@ -176,17 +173,23 @@ class PlaylistListSource(menus.ListPageSource):
         idx_start, page_num = self.get_starting_index_and_page_number(menu)
         plist = ""
         space = "\N{EN SPACE}"
-        async for i, playlist in AsyncIter(playlists).enumerate(start=idx_start + 1):
+        for i, playlist in enumerate(playlists, start=idx_start + 1):
             scope_name = await playlist.get_scope_name(self.cog.bot)
             author_name = await playlist.get_author_name(self.cog.bot) or _("Unknown")
             is_same = scope_name == author_name
             playlist_info = ("\n" + space * 4).join(
                 (
                     await playlist.get_name_formatted(with_url=True),
-                    _("Identifier: {id_value}").format(id_value=playlist.id),
-                    _("Tracks: {num_value}").format(num_value=await playlist.size()),
-                    _("Author: {name_value}").format(name_value=author_name),
-                    "\n" if is_same else _("Scope: {scope_value}\n").format(scope_value=scope_name),
+                    _("Identifier: {id_variable_do_not_translate}").format(id_variable_do_not_translate=playlist.id),
+                    _("Tracks: {num_variable_do_not_translate}").format(
+                        num_variable_do_not_translate=await playlist.size()
+                    ),
+                    _("Author: {name_variable_do_not_translate}").format(name_variable_do_not_translate=author_name),
+                    "\n"
+                    if is_same
+                    else _("Scope: {scope_variable_do_not_translate}\n").format(
+                        scope_variable_do_not_translate=scope_name
+                    ),
                 )
             )
 
@@ -198,23 +201,23 @@ class PlaylistListSource(menus.ListPageSource):
             description=plist,
         )
 
-        number_of_pages = self.get_max_pages()
         total_number_of_entries = len(self.entries)
         current_page = humanize_number(page_num + 1)
         total_number_of_pages = humanize_number(self.get_max_pages())
 
-        if number_of_pages > 1:
-            message = _(
-                "Page {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} playlists"
-            ).format(
-                current_page_value=current_page,
-                total_number_of_pages_value=total_number_of_pages,
-                total_number_of_entries_value=total_number_of_entries,
-            )
-        elif number_of_pages == 1:
-            message = _("Page 1 / 1 | 1 playlist")
-        else:
-            message = _("Page 1 / 1 | 0 playlists")
+        match total_number_of_entries:
+            case 1:
+                message = _("Page 1 / 1 | 1 playlist")
+            case 0:
+                message = _("Page 1 / 1 | 0 playlists")
+            case __:
+                message = _(
+                    "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} playlists"
+                ).format(
+                    current_page_variable_do_not_translate=current_page,
+                    total_number_of_pages_variable_do_not_translate=total_number_of_pages,
+                    total_number_of_entries_variable_do_not_translate=humanize_number(total_number_of_entries),
+                )
 
         embed.set_footer(text=message)
         return embed

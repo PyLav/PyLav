@@ -403,23 +403,31 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
         """
         original_scope = await self.fetch_scope()
         if bot.user.id == original_scope:
-            return _("(Global) {user_name_value}").format(user_name_value=bot.user.mention if mention else bot.user)
+            return _("(Global) {user_name_variable_do_not_translate}").format(
+                user_name_variable_do_not_translate=bot.user.mention if mention else bot.user
+            )
         elif guild_ := bot.get_guild(original_scope):
             if guild_:
                 guild = guild_
-            return _("(Server) {guild_name_value}").format(guild_name_value=guild.name)
+            return _("(Server) {guild_name_variable_do_not_translate}").format(
+                guild_name_variable_do_not_translate=guild.name
+            )
         elif guild and (channel := guild.get_channel_or_thread(original_scope)):
-            return _("(Channel) {channel_name_value}").format(
-                channel_name_value=channel.mention if mention else channel.name
+            return _("(Channel) {channel_name_variable_do_not_translate}").format(
+                channel_name_variable_do_not_translate=channel.mention if mention else channel.name
             )
         elif (
             (guild := guild_ or guild)
             and (guild and (scope := guild.get_member(original_scope)))  # noqa
             or (scope := bot.get_user(original_scope))
         ):
-            return _("(User) {user_name_value}").format(user_name_value=scope.mention if mention else scope)
+            return _("(User) {user_name_variable_do_not_translate}").format(
+                user_name_variable_do_not_translate=scope.mention if mention else scope
+            )
         else:
-            return _("(Invalid) {scope_name_value}").format(scope_name_value=original_scope)
+            return _("(Invalid) {scope_name_variable_do_not_translate}").format(
+                scope_name_variable_do_not_translate=original_scope
+            )
 
     async def get_author_name(self, bot: DISCORD_BOT_TYPE, mention: bool = True) -> str | None:
         """Get the name of the author of the playlist.

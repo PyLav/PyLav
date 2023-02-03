@@ -54,7 +54,9 @@ else:
                 return await cls.filter_cache(cache_type="station", limit=25, name=arg)
             except EntryNotFoundException as e:
                 raise commands.BadArgument(
-                    _("Station with name `{user_input_value}` not found.").format(user_input_value=arg)
+                    _("A station with the name `{user_input_variable_do_not_translate}` was not found.").format(
+                        user_input_variable_do_not_translate=arg
+                    )
                 ) from e
 
         @classmethod
@@ -71,7 +73,9 @@ else:
             if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(
-                        name=shorten_string(max_length=100, string=_("Radio Browser extension is currently disabled.")),
+                        name=shorten_string(
+                            max_length=100, string=_("The Radio Browser extension is currently disabled.")
+                        ),
                         value="???",
                     )
                 ]
@@ -138,7 +142,9 @@ else:
                 return await cls.filter_cache(cache_type="tag", limit=25, tag=arg)
             except EntryNotFoundException as e:
                 raise commands.BadArgument(
-                    _("Tag with name `{user_input_value}` not found.").format(user_input_value=arg)
+                    _("A tag with the name `{user_input_variable_do_not_translate}` was not found.").format(
+                        user_input_variable_do_not_translate=arg
+                    )
                 ) from e
 
         @classmethod
@@ -155,7 +161,9 @@ else:
             if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(
-                        name=shorten_string(max_length=100, string=_("Radio Browser extension is currently disabled")),
+                        name=shorten_string(
+                            max_length=100, string=_("The Radio Browser extension is currently disabled.")
+                        ),
                         value="???",
                     )
                 ]
@@ -180,7 +188,9 @@ else:
                 return await cls.filter_cache(cache_type="language", limit=25, language=arg)
             except EntryNotFoundException as e:
                 raise commands.BadArgument(
-                    _("Language with name `{user_input_value}` not found.").format(user_input_value=arg)
+                    _("A language with the name `{user_input_variable_do_not_translate}` was not found.").format(
+                        user_input_variable_do_not_translate=arg
+                    )
                 ) from e
 
         @classmethod
@@ -197,7 +207,9 @@ else:
             if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(
-                        name=shorten_string(max_length=100, string=_("Radio Browser extension is currently disabled")),
+                        name=shorten_string(
+                            max_length=100, string=_("The Radio Browser extension is currently disabled.")
+                        ),
                         value="???",
                     )
                 ]
@@ -220,7 +232,9 @@ else:
                 return await cls.filter_cache(cache_type="state", limit=25, state=arg)
             except EntryNotFoundException as e:
                 raise commands.BadArgument(
-                    _("State with name `{user_input_value}` not found.").formar(user_input_value=arg)
+                    _("A state with the name `{user_input_variable_do_not_translate}` was not found.").formar(
+                        user_input_variable_do_not_translate=arg
+                    )
                 ) from e
 
         @classmethod
@@ -237,7 +251,9 @@ else:
             if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(
-                        name=shorten_string(max_length=100, string=_("Radio Browser extension is currently disabled")),
+                        name=shorten_string(
+                            max_length=100, string=_("The Radio Browser extension is currently disabled.")
+                        ),
                         value="???",
                     )
                 ]
@@ -259,7 +275,9 @@ else:
                 return await cls.filter_cache(cache_type="codec", limit=25, codec=arg)
             except EntryNotFoundException as e:
                 raise commands.BadArgument(
-                    _("Codec with name `{user_input_value}` not found.").format(user_input_value=arg)
+                    _("A codec with the name `{user_input_variable_do_not_translate}` was not found.").format(
+                        user_input_variable_do_not_translate=arg
+                    )
                 ) from e
 
         @classmethod
@@ -276,7 +294,9 @@ else:
             if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(
-                        name=shorten_string(max_length=100, string=_("Radio Browser extension is currently disabled")),
+                        name=shorten_string(
+                            max_length=100, string=_("The Radio Browser extension is currently disabled.")
+                        ),
                         value="???",
                     )
                 ]
@@ -298,7 +318,9 @@ else:
                 return await cls.filter_cache(cache_type="countrycode", limit=25, countrycode=arg)
             except EntryNotFoundException as e:
                 raise commands.BadArgument(
-                    _("Country code `{user_input_value}` not found.").format(user_input_value=arg)
+                    _("A country code with the value `{user_input_variable_do_not_translate}` was not found.").format(
+                        user_input_variable_do_not_translate=arg
+                    )
                 ) from e
 
         @classmethod
@@ -315,7 +337,9 @@ else:
             if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(
-                        name=shorten_string(max_length=100, string=_("Radio Browser extension is currently disabled")),
+                        name=shorten_string(
+                            max_length=100, string=_("The Radio Browser extension is currently disabled.")
+                        ),
                         value="???",
                     )
                 ]
@@ -337,7 +361,9 @@ else:
                 return await cls.filter_cache(cache_type="country", limit=25, country=arg)
             except EntryNotFoundException as e:
                 raise commands.BadArgument(
-                    _("Country with name `{user_input_value}` not found.").format(user_input_value=arg)
+                    _("A country with the name `{user_input_variable_do_not_translate}` was not found.").format(
+                        user_input_variable_do_not_translate=arg
+                    )
                 ) from e
 
         @classmethod
@@ -354,7 +380,9 @@ else:
             if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(
-                        name=shorten_string(max_length=100, string=_("Radio Browser extension is currently disabled")),
+                        name=shorten_string(
+                            max_length=100, string=_("The Radio Browser extension is currently disabled.")
+                        ),
                         value="???",
                     )
                 ]

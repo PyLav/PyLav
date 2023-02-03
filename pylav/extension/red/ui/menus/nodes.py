@@ -106,7 +106,7 @@ class AddNodeFlow(discord.ui.View):
             emoji=emojis.SSL,
         )
         self.disabled_sources_selector = SourceSelector(
-            cog=self.cog, placeholder=shorten_string(max_length=100, string=_("Source to disable.")), row=2
+            cog=self.cog, placeholder=shorten_string(max_length=100, string=_("Sources to turn off.")), row=2
         )
         self.name_button = NodeButton(
             cog=self.cog,
@@ -219,7 +219,9 @@ class AddNodeFlow(discord.ui.View):
         self.name = self.name_prompt.response
         await interaction.followup.send(
             embed=await self.cog.pylav.construct_embed(
-                description=_("Name set to {node_name_value}").format(node_name_value=inline(self.name)),
+                description=_("The node name has been set to `{node_name_variable_do_not_translate}`.").format(
+                    node_name_variable_do_not_translate=inline(self.name)
+                ),
                 messageable=interaction,
             ),
             ephemeral=True,
@@ -232,8 +234,8 @@ class AddNodeFlow(discord.ui.View):
         self.password = self.password_prompt.response
         await interaction.followup.send(
             embed=await self.cog.pylav.construct_embed(
-                description=_("Password set to {node_password_value}").format(
-                    node_password_value=inline(self.password)
+                description=_("The node password has been set to `{node_password_variable_do_not_translate}`.").format(
+                    node_password_variable_do_not_translate=inline(self.password)
                 ),
                 messageable=interaction,
             ),
@@ -252,7 +254,9 @@ class AddNodeFlow(discord.ui.View):
             self.host = self.host_prompt.response
         await interaction.followup.send(
             embed=await self.cog.pylav.construct_embed(
-                description=_("Host set to {node_host_value}").format(node_host_value=inline(self.host)),
+                description=_("The node host address has been set to `{node_host_variable_do_not_translate}`.").format(
+                    node_host_variable_do_not_translate=inline(self.host)
+                ),
                 messageable=interaction,
             ),
             ephemeral=True,
@@ -269,7 +273,7 @@ class AddNodeFlow(discord.ui.View):
         if self.port is None:
             await interaction.followup.send(
                 embed=await self.cog.pylav.construct_embed(
-                    description=_("Invalid port."),
+                    description=_("The port you specified is invalid."),
                     messageable=interaction,
                 ),
                 ephemeral=True,
@@ -277,7 +281,9 @@ class AddNodeFlow(discord.ui.View):
         else:
             await interaction.followup.send(
                 embed=await self.cog.pylav.construct_embed(
-                    description=_("Port set to {node_port_value}.").format(node_port_value=inline(f"{self.port}")),
+                    description=_("The node port has been set to `{node_port_variable_do_not_translate}`.").format(
+                        node_port_variable_do_not_translate=inline(f"{self.port}")
+                    ),
                     messageable=interaction,
                 ),
                 ephemeral=True,
@@ -294,17 +300,25 @@ class AddNodeFlow(discord.ui.View):
         if self.resume_timeout is None:
             await interaction.followup.send(
                 embed=await self.cog.pylav.construct_embed(
-                    description=_("Invalid timeout, it must be a number in seconds."),
+                    description=_("The timeout you specified is invalid; it must be a number in seconds."),
                     messageable=interaction,
                 ),
                 ephemeral=True,
             )
         else:
+            match self.resume_timeout:
+                case 0:
+                    message = _("The node timeout has been set to `0` seconds.")
+                case 1:
+                    message = _("The node timeout has been set to `1` second.")
+                case __:
+                    message = _(
+                        "The node timeout has been set to `{node_timeout_variable_do_not_translate}` seconds."
+                    ).format(node_timeout_variable_do_not_translate=inline(f"{self.resume_timeout}"))
+
             await interaction.followup.send(
                 embed=await self.cog.pylav.construct_embed(
-                    description=_("Timeout set to {node_timeout_value} seconds").format(
-                        node_timeout_value=inline(f"{self.resume_timeout}")
-                    ),
+                    description=message,
                     messageable=interaction,
                 ),
                 ephemeral=True,
@@ -672,7 +686,9 @@ class NodeManagerMenu(BaseMenu):
         self.name = self.name_prompt.response
         await interaction.followup.send(
             embed=await self.cog.pylav.construct_embed(
-                description=_("Name set to {node_name_value}").format(node_name_value=inline(self.name)),
+                description=_("The node name has been set to `{node_name_variable_do_not_translate}`.").format(
+                    node_name_variable_do_not_translate=inline(self.name)
+                ),
                 messageable=interaction,
             ),
             ephemeral=True,
@@ -685,8 +701,8 @@ class NodeManagerMenu(BaseMenu):
         self.password = self.password_prompt.response
         await interaction.followup.send(
             embed=await self.cog.pylav.construct_embed(
-                description=_("Password set to {node_password_value}").format(
-                    node_password_value=inline(self.password)
+                description=_("The node password has been set to `{node_password_variable_do_not_translate}`.").format(
+                    node_password_variable_do_not_translate=inline(self.password)
                 ),
                 messageable=interaction,
             ),
@@ -705,7 +721,9 @@ class NodeManagerMenu(BaseMenu):
             self.host = self.host_prompt.response
         await interaction.followup.send(
             embed=await self.cog.pylav.construct_embed(
-                description=_("Host set to {node_host_value}").format(node_host_value=inline(self.host)),
+                description=_("The node host address has been set to `{node_host_variable_do_not_translate}`.").format(
+                    node_host_variable_do_not_translate=inline(self.host)
+                ),
                 messageable=interaction,
             ),
             ephemeral=True,
@@ -722,7 +740,7 @@ class NodeManagerMenu(BaseMenu):
         if self.port is None:
             await interaction.followup.send(
                 embed=await self.cog.pylav.construct_embed(
-                    description=_("Invalid port."),
+                    description=_("The port you specified is invalid."),
                     messageable=interaction,
                 ),
                 ephemeral=True,
@@ -730,7 +748,9 @@ class NodeManagerMenu(BaseMenu):
         else:
             await interaction.followup.send(
                 embed=await self.cog.pylav.construct_embed(
-                    description=_("Port set to {node_port_value}.").format(node_port_value=inline(f"{self.port}")),
+                    description=_("The node port has been set to `{node_port_variable_do_not_translate}`.").format(
+                        node_port_variable_do_not_translate=inline(f"{self.port}")
+                    ),
                     messageable=interaction,
                 ),
                 ephemeral=True,
@@ -747,17 +767,28 @@ class NodeManagerMenu(BaseMenu):
         if self.resume_timeout is None:
             await interaction.followup.send(
                 embed=await self.cog.pylav.construct_embed(
-                    description=_("Invalid timeout, it must be a number in seconds."),
+                    description=_("The timeout you specified is invalid; it must be a number in seconds."),
                     messageable=interaction,
                 ),
                 ephemeral=True,
             )
         else:
+
+            match self.resume_timeout:
+                case 1:
+                    message = _("The node timeout has been set to `1` second.").format(
+                        node_timeout_variable_do_not_translate=inline(f"{self.resume_timeout}")
+                    )
+                case 0:
+                    message = _("The node timeout has been set to `0` seconds.")
+                case __:
+                    message = _(
+                        "The node timeout has been set to `{node_timeout_variable_do_not_translate}` seconds."
+                    ).format(node_timeout_variable_do_not_translate=inline(f"{self.resume_timeout}"))
+
             await interaction.followup.send(
                 embed=await self.cog.pylav.construct_embed(
-                    description=_("Timeout set to {node_timeout_value} seconds.").format(
-                        node_timeout_value=inline(f"{self.resume_timeout}")
-                    ),
+                    description=message,
                     messageable=interaction,
                 ),
                 ephemeral=True,

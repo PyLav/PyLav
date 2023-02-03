@@ -3,14 +3,13 @@ from __future__ import annotations
 import threading
 
 from asyncpg import UniqueViolationError  # type: ignore
-from piccolo.columns import M2M, LazyTableReference, Text
+from piccolo.columns import M2M, Column, LazyTableReference, Text
 from piccolo.columns.indexes import IndexMethod
 from piccolo.table import Table
 
 from pylav.helpers.singleton import synchronized_method_call
 from pylav.logging import getLogger
 from pylav.storage.database.tables.misc import DATABASE_ENGINE
-from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 LOGGER = getLogger("PyLav.Database.Track")
 _LOCK = threading.Lock()
@@ -30,11 +29,11 @@ class TrackRow(Table, db=DATABASE_ENGINE, tablename="track"):
 
     @classmethod
     @synchronized_method_call(_LOCK)
-    async def get_or_create(cls, encoded: str, kwargs: JSON_DICT_TYPE) -> TrackRow:
+    async def get_or_create(cls, encoded: str, kwargs: dict[Column, str | None]) -> TrackRow:
         try:
             return await cls.objects().get_or_create(cls.encoded == encoded, kwargs)
         except UniqueViolationError:
-            obj = cls(encoded=encoded, **kwargs)
+            obj = cls(encoded=encoded, **{k._meta.db_column_name: v for k, v in kwargs.items()})
             obj._exists_in_db = True
             return obj
         except Exception as e:

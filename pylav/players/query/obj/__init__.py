@@ -10,7 +10,6 @@ from typing import Literal
 
 import aiohttp
 import aiopath  # type: ignore
-import asyncstdlib
 import brotli  # type: ignore
 import discord
 import yaml
@@ -620,7 +619,7 @@ class Query:
                 elif ".br" in file.suffixes:
                     contents = brotli.decompress(contents)
                 data_dict = typing.cast(dict[str, typing.Any], yaml.safe_load(contents))
-                async for track in asyncstdlib.iter(data_dict.get("tracks", [])):
+                for track in iter(data_dict.get("tracks", [])):
                     yield await Query.from_base64(track)
         elif is_url(self._query):
             assert not isinstance(self._query, LocalFile)
@@ -632,7 +631,7 @@ class Query:
                     elif ".br.pylav" in self._query:
                         data = brotli.decompress(data)
                     data_dict = typing.cast(dict[str, typing.Any], yaml.safe_load(data))
-                    async for track in asyncstdlib.iter(data_dict.get("tracks", [])):
+                    for track in iter(data_dict.get("tracks", [])):
                         yield await Query.from_base64(track)
 
     async def _yield_local_tracks(self) -> AsyncIterator[Query]:
@@ -656,7 +655,7 @@ class Query:
             file = self._query.path
         else:
             file = aiopath.AsyncPath(self._query)
-        async for track in asyncstdlib.iter(m3u8.files):
+        for track in iter(m3u8.files):
             if is_url(track):
                 yield await Query.from_string(track, dont_search=True)
             else:
@@ -667,7 +666,7 @@ class Query:
                     file_path_alt = file.parent / file_path.relative_to(file_path.anchor)
                     if await file_path_alt.exists():
                         yield await Query.from_string(file_path_alt, dont_search=True)
-        async for playlist in asyncstdlib.iter(m3u8.playlists):
+        for playlist in iter(m3u8.playlists):
             if is_url(playlist.uri):
                 yield await Query.from_string(playlist.uri, dont_search=True)
             else:
@@ -698,7 +697,7 @@ class Query:
     async def _yield_process_file(file):
         async with file.open("r") as f:
             contents = await f.read()
-            async for line in asyncstdlib.iter(contents.splitlines()):
+            for line in iter(contents.splitlines()):
                 if match := SOURCE_INPUT_MATCH_PLS.match(line):
                     track = match.group("pls_query").strip()
                     if is_url(track):
@@ -717,7 +716,7 @@ class Query:
         async with aiohttp.ClientSession(json_serialize=json.dumps) as session:
             async with session.get(self._query) as resp:
                 contents = await resp.text()
-                async for line in asyncstdlib.iter(contents.splitlines()):
+                for line in iter(contents.splitlines()):
                     with contextlib.suppress(Exception):
                         if match := SOURCE_INPUT_MATCH_PLS_TRACK.match(line):
                             yield await Query.from_string(match.group("pls_query").strip(), dont_search=True)

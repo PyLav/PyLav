@@ -17,7 +17,6 @@ from pylav.storage.database.tables.players import PlayerRow
 from pylav.storage.database.tables.playlists import PlaylistRow
 from pylav.storage.database.tables.queries import QueryRow
 from pylav.storage.database.tables.tracks import TrackRow
-from pylav.utils.vendor.redbot import AsyncIter
 
 if TYPE_CHECKING:
     from pylav.storage.controllers.config import ConfigController
@@ -137,7 +136,7 @@ async def migrate_playlists_v_1_0_0(playlists: list[asyncpg.Record]) -> None:
         new_tracks = []
         # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
         tracks = json.loads(playlist["tracks"]) if playlist["tracks"] else []
-        async for track in AsyncIter(tracks):
+        for track in tracks:
             with contextlib.suppress(Exception):
                 data = await async_decoder(track)  # TODO: Make an API call to the public node?
                 new_tracks.append(await TrackRow.get_or_create(data.encoded, data.info.to_database()))
@@ -157,7 +156,7 @@ async def migrate_queries_v_1_0_0(queries: list[asyncpg.Record]) -> None:
         new_tracks = []
         # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
         tracks = json.loads(query["tracks"]) if query["tracks"] else []
-        async for track in AsyncIter(tracks):
+        for track in tracks:
             with contextlib.suppress(Exception):
                 data = await async_decoder(track)  # TODO: Make an API call to the public node?
                 new_tracks.append(await TrackRow.get_or_create(data.encoded, data.info.to_database()))

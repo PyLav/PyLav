@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING, Any
 from pylav.constants.node import TRACK_VERSION
 from pylav.logging import getLogger
 from pylav.utils.vendor.lavalink_py.datarw import DataWriter
-from pylav.utils.vendor.redbot import AsyncIter
 
 if TYPE_CHECKING:
     from pylav.nodes.node import Node
@@ -97,6 +96,6 @@ async def async_re_encoder(track: str, node: Node) -> str:
 
 async def async_bulk_re_encoder(track: list[str], node: Node) -> AsyncIterator[str]:
     track_objs = await node.post_decodetracks(track, raise_on_failure=True)
-    async for track_obj in AsyncIter(track_objs):
+    for track_obj in track_objs:
         track_data = track_obj.info.to_dict()
         yield await async_encoder(**track_data)

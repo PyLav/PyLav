@@ -28,7 +28,7 @@ async def maybe_prompt_for_playlist(
                 cog=cog,
                 pages=playlists,
                 message_str=shorten_string(
-                    max_length=100, string=_("Multiple playlist matched, pick the one which you meant.")
+                    max_length=100, string=_("Multiple playlists matched. Pick the one which you meant.")
                 ),
             ),
             selector_cls=PlaylistSelectSelector,

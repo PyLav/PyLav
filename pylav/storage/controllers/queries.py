@@ -14,7 +14,6 @@ from pylav.storage.database.tables.queries import QueryRow
 from pylav.storage.database.tables.tracks import TrackRow
 from pylav.storage.models.query import Query
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
-from pylav.utils.vendor.redbot import AsyncIter
 
 if TYPE_CHECKING:
     from pylav.core.client import Client
@@ -73,7 +72,7 @@ class QueryController:
             await QueryRow.update(defaults).where(QueryRow.identifier == query.query_identifier)
         new_tracks = []
         # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
-        async for track in AsyncIter(tracks):
+        for track in tracks:
             with contextlib.suppress(Exception):
                 new_info = {
                     key: track["info"][key]

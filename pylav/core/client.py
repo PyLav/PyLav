@@ -3,24 +3,23 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import datetime
+import itertools
 import operator
 import os
 import pathlib
 import random
-from collections.abc import AsyncIterator, Awaitable, Callable
+from collections.abc import AsyncIterator, Awaitable, Callable, Iterator
 from types import MethodType
 from typing import Any
 
 import aiohttp
 import aiohttp_client_cache
 import aiopath
-import asyncstdlib
 import discord
 import discord.ext.commands
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from asyncspotify import Client as SpotifyClient
 from asyncspotify import ClientCredentialsFlow
-from asyncstdlib import itertools
 from discord.abc import Messageable
 from discord.ext.commands import Context
 from discord.types.embed import EmbedType
@@ -97,7 +96,6 @@ from pylav.storage.models.node.real import Node as RealNode
 from pylav.storage.models.player.state import PlayerState
 from pylav.type_hints.bot import DISCORD_BOT_TYPE, DISCORD_COG_TYPE, DISCORD_CONTEXT_TYPE, DISCORD_INTERACTION_TYPE
 from pylav.utils.aiohttp_postgres_cache import PostgresCacheBackend
-from pylav.utils.vendor.redbot import AsyncIter
 
 try:
     from redbot.core.i18n import Translator
@@ -704,10 +702,10 @@ class Client(metaclass=SingletonClass):
     ):
         yaml_data = await bundled_node_config.fetch_yaml()
         need_update = False
-        if not await asyncstdlib.all([spotify_client_id, spotify_client_secret]):
+        if not all([spotify_client_id, spotify_client_secret]):
             yaml_data["plugins"]["lavasrc"]["sources"]["spotify"] = False
             need_update = True
-        elif await asyncstdlib.all([spotify_client_id, spotify_client_secret]):
+        elif all([spotify_client_id, spotify_client_secret]):
             yaml_data["plugins"]["lavasrc"]["spotify"]["clientId"] = spotify_client_id
             yaml_data["plugins"]["lavasrc"]["spotify"]["clientSecret"] = spotify_client_secret
             yaml_data["plugins"]["lavasrc"]["sources"]["spotify"] = True
@@ -889,7 +887,10 @@ class Client(metaclass=SingletonClass):
         node = await self.node_manager.find_best_node(feature=feature)
         if node is None and feature:
             raise NoNodeWithRequestFunctionalityAvailableException(
-                _("No node with {feature_name} functionality available!").format(feature_name=feature), feature=feature
+                _("No node with {feature_name_variable_do_not_translate} functionality available!").format(
+                    feature_name_variable_do_not_translate=feature
+                ),
+                feature=feature,
             )
         try:
             response = await node.fetch_decodetrack(track, raise_on_failure=raise_on_failure)
@@ -924,7 +925,10 @@ class Client(metaclass=SingletonClass):
         node = await self.node_manager.find_best_node(feature=feature)
         if node is None and feature:
             raise NoNodeWithRequestFunctionalityAvailableException(
-                _("No node with {feature_name} functionality available!").format(feature_name=feature), feature=feature
+                _("No node with {feature_name_variable_do_not_translate} functionality available!").format(
+                    feature_name_variable_do_not_translate=feature
+                ),
+                feature=feature,
             )
         try:
             response = await node.post_decodetracks(tracks, raise_on_failure=raise_on_failure)
@@ -933,7 +937,7 @@ class Client(metaclass=SingletonClass):
             return response
         except Exception:  # noqa
             response_tracks = []
-            async for track in AsyncIter(tracks):
+            for track in tracks:
                 with contextlib.suppress(Exception):
                     response_tracks.append(await async_decoder(track))
             return response_tracks
@@ -996,7 +1000,7 @@ class Client(metaclass=SingletonClass):
         event_dispatcher = [self._dispatch_manager.dispatch]
 
         task_list = []
-        async for hook in itertools.chain(
+        for hook in itertools.chain(
             event_dispatcher,
         ):
             task = asyncio.create_task(hook(event))  # type: ignore
@@ -1182,21 +1186,19 @@ class Client(metaclass=SingletonClass):
         await LocalFile.add_root_folder(path=localtrack_folder, create=True)
         return localtrack_folder
 
-    async def get_all_players(self) -> AsyncIterator[Player]:
+    def get_all_players(self) -> Iterator[Player]:
 
-        return asyncstdlib.iter(self.player_manager)
+        return iter(self.player_manager)
 
     async def get_managed_node(self) -> Node | None:
-        available_nodes = await asyncstdlib.list(
-            asyncstdlib.filter(operator.attrgetter("available"), self.node_manager.managed_nodes)
-        )
+        available_nodes = list(filter(operator.attrgetter("available"), self.node_manager.managed_nodes))
 
         return random.choice(available_nodes) if available_nodes else None
 
     async def get_my_node(self) -> Node | None:
-        return await asyncstdlib.anext(
-            asyncstdlib.filter(lambda n: n.identifier == self.bot.user.id, self.node_manager.managed_nodes),
-            default=None,  # type: ignore
+        return next(
+            filter(lambda n: n.identifier == self.bot.user.id, self.node_manager.managed_nodes),
+            None,
         )
 
     async def _get_tracks(
@@ -1232,8 +1234,8 @@ class Client(metaclass=SingletonClass):
         )
         if node is None:
             raise NoNodeWithRequestFunctionalityAvailableException(
-                _("No node with {feature_name} functionality available!").format(
-                    feature_name=query.requires_capability
+                _("No node with {feature_name_variable_do_not_translate} functionality available!").format(
+                    feature_name_variable_do_not_translate=query.requires_capability
                 ),
                 query.requires_capability,
             )
@@ -1523,7 +1525,7 @@ class Client(metaclass=SingletonClass):
     ) -> LoadTrackResponses:
         """This method can be rather slow as it recursively queries all queries and their associated entries.
 
-        Thus, if you are processing user input  you may be interested in using
+        Thus, if you are processing user input you may be interested in using
         the :meth:`get_all_tracks_for_queries` where it can enqueue tracks as needed to the player.
 
 
@@ -1634,7 +1636,7 @@ class Client(metaclass=SingletonClass):
     ) -> bool:
         if additional_user_ids and user.id in additional_user_ids:
             return True
-        if additional_role_ids and await asyncstdlib.any(r.id in additional_role_ids for r in user.roles):
+        if additional_role_ids and any(r.id in additional_role_ids for r in user.roles):
             return True
         return await self.player_config_manager.is_dj(
             user=user, guild=guild, additional_role_ids=None, additional_user_ids=None, bot=bot
@@ -1648,12 +1650,12 @@ class Client(metaclass=SingletonClass):
         playlist_id: str | None = None,
         channel_id: str | None = None,
     ) -> str:
-        if not await asyncstdlib.any([video_id, playlist_id, channel_id, user_id]):
+        if not any([video_id, playlist_id, channel_id, user_id]):
             raise PyLavInvalidArgumentsException(
                 _("A single video, user, channel or playlist identifier is necessary to generate a mixed playlist.")
             )
 
-        if await asyncstdlib.sum(1 for i in [video_id, playlist_id, channel_id, user_id] if i) > 1:
+        if sum(1 for i in [video_id, playlist_id, channel_id, user_id] if i) > 1:
             raise PyLavInvalidArgumentsException(
                 _(
                     "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist. "

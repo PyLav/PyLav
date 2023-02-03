@@ -9,10 +9,12 @@ from copy import copy
 from typing import TYPE_CHECKING, Any
 
 import discord
+from discord import Attachment, Message, MessageType, PartialMessageable
 from discord.ext import commands as dpy_command
 from discord.ext.commands import Context as DpyContext
 from discord.ext.commands.view import StringView
 from discord.types.embed import EmbedType
+from discord.types.interactions import ApplicationCommandInteractionData
 from discord.utils import MISSING as D_MISSING  # noqa
 
 from pylav.type_hints.bot import DISCORD_BOT_TYPE, DISCORD_COG_TYPE, DISCORD_CONTEXT_TYPE, DISCORD_INTERACTION_TYPE
@@ -50,7 +52,7 @@ class PyLavContext(OriginalContextClass):
     def __init__(
         self,
         *,
-        message: discord.Message,
+        message: Message,
         bot: DISCORD_BOT_TYPE,
         view: StringView,
         args: list[Any] = D_MISSING,
@@ -93,7 +95,7 @@ class PyLavContext(OriginalContextClass):
         """Union[:class:`~discord.User`, :class:`.Member`]:
         Returns the author associated with this context's command. Shorthand for :attr:`.Message.author`
         """
-        # When using client.get_context() on  a button interaction the "author" becomes the bot user
+        # When using client.get_context() on a button interaction the "author" becomes the bot user
         #   This ensures the original author remains the author of the context
         if isinstance(self._original_ctx_or_interaction, discord.Interaction):
             return self._original_ctx_or_interaction.user
@@ -194,11 +196,68 @@ class PyLavContext(OriginalContextClass):
         if isinstance(interaction, discord.Interaction) and interaction.command is None:
             setattr(interaction, "_cs_command", _dummy_command)
             added_dummy = True
-        instance = await super().from_interaction(interaction)
+            # Circular import
+
+        from discord.ext.commands.bot import BotBase
+
+        if not isinstance(interaction.client, BotBase):
+            raise TypeError("Interaction client is not derived from commands.Bot or commands.AutoShardedBot")
+
+        command = interaction.command
+        if command is None:
+            raise ValueError("interaction does not have command data")
+
+        bot: DISCORD_BOT_TYPE = interaction.client  # type: ignore
+        data: ApplicationCommandInteractionData = interaction.data  # type: ignore
+        if interaction.message is None:
+            synthetic_payload = {
+                "id": interaction.id,
+                "reactions": [],
+                "embeds": [],
+                "mention_everyone": False,
+                "tts": False,
+                "pinned": False,
+                "edited_timestamp": None,
+                "type": MessageType.chat_input_command
+                if data.get("type", 1) == 1
+                else MessageType.context_menu_command,
+                "flags": 64,
+                "content": "",
+                "mentions": [],
+                "mention_roles": [],
+                "attachments": [],
+            }
+
+            if interaction.channel_id is None:
+                raise RuntimeError("interaction channel ID is null, this is probably a Discord bug")
+
+            channel = interaction.channel or PartialMessageable(
+                state=interaction._state, guild_id=interaction.guild_id, id=interaction.channel_id
+            )
+            message = Message(state=interaction._state, channel=channel, data=synthetic_payload)  # type: ignore
+            message.author = interaction.user
+            message.attachments = [a for _, a in interaction.namespace if isinstance(a, Attachment)]
+        else:
+            message = interaction.message
+
+        prefix = "/" if data.get("type", 1) == 1 else "\u200b"  # Mock the prefix
+        ctx = cls(
+            message=message,
+            bot=bot,
+            view=StringView(""),
+            args=[],
+            kwargs={},
+            prefix=prefix,
+            interaction=interaction,
+            invoked_with=command.name,
+            command=command,  # type: ignore # this will be a hybrid command, technically
+        )
+        interaction._baton = ctx
+        ctx.command_failed = interaction.command_failed
         if added_dummy:
-            instance.command = None
-        instance._original_ctx_or_interaction = interaction
-        return instance
+            ctx.command = None
+        ctx._original_ctx_or_interaction = interaction
+        return ctx
 
     def dispatch_command(
         self, message: discord.Message, command: Command, author: discord.abc.User, args: list[str], prefix: str = None
@@ -254,12 +313,13 @@ class PyLavContext(OriginalContextClass):
             ret.append(msg)
             n_remaining = len(messages) - idx
             if n_remaining > 0:
-                if n_remaining == 1:
-                    message = _("There is still 1 message remaining. Type `more` to continue.")
-                else:
-                    message = _(
-                        "There are still {remaining_value} messages remaining. Type `more` to continue."
-                    ).format(remaining_value=n_remaining)
+                match n_remaining:
+                    case 1:
+                        message = _("There is still 1 message remaining. Type `more` to continue.")
+                    case __:
+                        message = _(
+                            "There are still {remaining_variable_do_not_translate} messages remaining. Type `more` to continue."
+                        ).format(remaining_variable_do_not_translate=n_remaining)
 
                 query = await self.send(message)
 

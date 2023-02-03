@@ -35,9 +35,11 @@ class NodeOption(discord.SelectOption):
             description=shorten_string(
                 max_length=100,
                 string=_(
-                    "ID: {node_identifier_value} || SSL: {node_ssl_value} || Search-only: {node_config_value}"
+                    "Identifier: {node_identifier_variable_do_not_translate} || SSL: {node_ssl_variable_do_not_translate} || Search-only: {node_config_variable_do_not_translate}"
                 ).format(
-                    node_identifier_value=node.id, node_ssl_value=data["ssl"], node_config_value=data["search_only"]
+                    node_identifier_variable_do_not_translate=node.id,
+                    node_ssl_variable_do_not_translate=data["ssl"],
+                    node_config_variable_do_not_translate=data["search_only"],
                 ),
             ),
             value=f"{node.id}",

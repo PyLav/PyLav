@@ -50,8 +50,8 @@ class SourceSelector(discord.ui.Select):
         await interaction.response.send_message(
             embed=await self.cog.pylav.construct_embed(
                 messageable=interaction,
-                description=_("Disabling the following sources: {sources_list}.").format(
-                    sources_list=humanize_list(self.values)
+                description=_("Disabling the following sources: {sources_list_variable_do_not_translate}.").format(
+                    sources_list_variable_do_not_translate=humanize_list(self.values)
                 ),
             ),
             ephemeral=True,
@@ -82,7 +82,7 @@ class NodeSelectSelector(discord.ui.Select):
         self.node: Node = self.mapping.get(playlist_id)
         if self.node is None:
             await interaction.response.send_message(
-                embed=await self.cog.pylav.construct_embed(messageable=interaction, title=_("Node not found.")),
+                embed=await self.cog.pylav.construct_embed(messageable=interaction, title=_("Node was not found.")),
                 ephemeral=True,
             )
             self.view.stop()

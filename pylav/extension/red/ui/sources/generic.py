@@ -4,7 +4,6 @@ from collections.abc import Iterable
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-import asyncstdlib
 import discord
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box, humanize_number
@@ -85,23 +84,23 @@ class EntryPickerSource(menus.ListPageSource):
         idx_start, page_num = self.get_starting_index_and_page_number(menu)
         page = await self.cog.pylav.construct_embed(messageable=menu.ctx, title=self.message_str)
 
-        number_of_pages = self.get_max_pages()
         total_number_of_entries = len(self.entries)
         current_page = humanize_number(page_num + 1)
         total_number_of_pages = humanize_number(self.get_max_pages())
 
-        if number_of_pages > 1:
-            message = _(
-                "Page {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} entries"
-            ).format(
-                current_page_value=current_page,
-                total_number_of_pages_value=total_number_of_pages,
-                total_number_of_entries_value=total_number_of_entries,
-            )
-        elif number_of_pages == 1:
-            message = _("Page 1 / 1 | 1 entry")
-        else:
-            message = _("Page 1 / 1 | 0 entries")
+        match total_number_of_entries:
+            case 1:
+                message = _("Page 1 / 1 | 1 entry")
+            case 0:
+                message = _("Page 1 / 1 | 0 entries")
+            case __:
+                message = _(
+                    "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} entries"
+                ).format(
+                    current_page_variable_do_not_translate=current_page,
+                    total_number_of_pages_variable_do_not_translate=total_number_of_pages,
+                    total_number_of_entries_variable_do_not_translate=humanize_number(total_number_of_entries),
+                )
         page.set_footer(text=message)
         return page
 
@@ -111,9 +110,7 @@ class EntryPickerSource(menus.ListPageSource):
         base = page_number * self.per_page
         self.select_options.clear()
         self.select_mapping.clear()
-        async for i, entry in asyncstdlib.enumerate(
-            asyncstdlib.iter(self.entries[base : base + self.per_page]), start=base
-        ):  # n
+        for i, entry in enumerate(iter(self.entries[base : base + self.per_page]), start=base):  # n
             new_entry = Mutator(entry)
             self.select_options.append(await EntryOption.from_entry(entry=new_entry, index=i))
             self.select_mapping[f"{new_entry.id}"] = entry

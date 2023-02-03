@@ -93,7 +93,7 @@ class SearchSelectTrack(discord.ui.Select):
 
         if track is None:
             await interaction.response.send_message(
-                embed=await self.cog.pylav.construct_embed(messageable=interaction, title=_("Track not found.")),
+                embed=await self.cog.pylav.construct_embed(messageable=interaction, title=_("Track was not found.")),
                 ephemeral=True,
             )
             self.view.stop()

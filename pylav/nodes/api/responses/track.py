@@ -3,8 +3,11 @@ from __future__ import annotations
 import dataclasses
 from typing import NotRequired  # noqa
 
+from piccolo.columns import Column
+
 from pylav.constants.node import TRACK_VERSION
 from pylav.nodes.api.responses.shared import TrackPluginInfo
+from pylav.storage.database.tables.tracks import TrackRow
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 
@@ -26,15 +29,15 @@ class Info:
     def to_dict(self) -> JSON_DICT_TYPE:
         return dataclasses.asdict(self)
 
-    def to_database(self) -> JSON_DICT_TYPE:
+    def to_database(self) -> dict[Column, str | None]:
         # noinspection SpellCheckingInspection
         return {
-            "identifier": self.identifier,
-            "title": self.title,
-            "uri": self.uri,
-            "sourceName": self.sourceName,
-            "isrc": self.isrc,
-            "artworkUrl": self.artworkUrl,
+            TrackRow.identifier: self.identifier,
+            TrackRow.title: self.title,
+            TrackRow.uri: self.uri,
+            TrackRow.sourceName: self.sourceName,
+            TrackRow.isrc: self.isrc,
+            TrackRow.artworkUrl: self.artworkUrl,
         }
 
 

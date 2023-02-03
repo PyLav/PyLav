@@ -4,7 +4,6 @@ import contextlib
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-import asyncstdlib
 import discord
 import humanize
 from redbot.core import i18n
@@ -47,23 +46,23 @@ class NodePickerSource(menus.ListPageSource):
         idx_start, page_num = self.get_starting_index_and_page_number(menu)
         page = await self.cog.pylav.construct_embed(messageable=menu.ctx, title=self.message_str)
 
-        number_of_pages = self.get_max_pages()
         total_number_of_entries = len(self.entries)
         current_page = humanize_number(page_num + 1)
         total_number_of_pages = humanize_number(self.get_max_pages())
 
-        if number_of_pages > 1:
-            message = _(
-                "Page {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} entries"
-            ).format(
-                current_page_value=current_page,
-                total_number_of_pages_value=total_number_of_pages,
-                total_number_of_entries_value=total_number_of_entries,
-            )
-        elif number_of_pages == 1:
-            message = _("Page 1 / 1 | 1 entry")
-        else:
-            message = _("Page 1 / 1 | 0 entries")
+        match total_number_of_entries:
+            case 1:
+                message = _("Page 1 / 1 | 1 entry")
+            case 0:
+                message = _("Page 1 / 1 | 0 entries")
+            case __:
+                message = _(
+                    "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} entries"
+                ).format(
+                    current_page_variable_do_not_translate=current_page,
+                    total_number_of_pages_variable_do_not_translate=total_number_of_pages,
+                    total_number_of_entries_variable_do_not_translate=humanize_number(total_number_of_entries),
+                )
         page.set_footer(text=message)
         return page
 
@@ -154,9 +153,11 @@ class NodeListSource(menus.ListPageSource):
         humanize.i18n.deactivate()
         t_property = EightBitANSI.paint_yellow(_("Property"), bold=True, underline=True)
         t_values = EightBitANSI.paint_yellow(_("Value"), bold=True, underline=True)
-        coordinate_str = EightBitANSI.paint_white(_("Latitude: {lat}\nLongitude: {lon}")).format(
-            lat=EightBitANSI.paint_blue(coord[0] if coord else "?"),
-            lon=EightBitANSI.paint_blue(coord[1] if coord else "?"),
+        coordinate_str = EightBitANSI.paint_white(
+            _("Latitude: {latitude_variable_do_not_translate}\nLongitude: {longitude_variable_do_not_translate}")
+        ).format(
+            latitude_variable_do_not_translate=EightBitANSI.paint_blue(coord[0] if coord else "?"),
+            longitude_variable_do_not_translate=EightBitANSI.paint_blue(coord[1] if coord else "?"),
         )
 
         data = {
@@ -164,9 +165,7 @@ class NodeListSource(menus.ListPageSource):
             EightBitANSI.paint_white(_("Coordinates")): coordinate_str,
             EightBitANSI.paint_white(_("Host")): EightBitANSI.paint_blue(host),
             EightBitANSI.paint_white(_("Port")): EightBitANSI.paint_blue(port),
-            EightBitANSI.paint_white(_("Password")): EightBitANSI.paint_blue(
-                "*" * await asyncstdlib.min([len(password), 10])
-            ),
+            EightBitANSI.paint_white(_("Password")): EightBitANSI.paint_blue("*" * min([len(password), 10])),
             EightBitANSI.paint_white(_("SSL")): secure,
             EightBitANSI.paint_white(_("Available")): connected,
             EightBitANSI.paint_white(_("Search Only")): search_only,
@@ -199,14 +198,24 @@ class NodeListSource(menus.ListPageSource):
             description=description,
         )
 
-        embed.set_footer(
-            text=_("Page {page_num_value}/{total_pages_value} | {num_value} {plural_value}").format(
-                page_num_value=humanize_number(page_num + 1),
-                total_pages_value=humanize_number(self.get_max_pages()),
-                num_value=len(self.entries),
-                plural_value=_("nodes") if len(self.entries) != 1 else _("node"),
-            )
-        )
+        total_number_of_entries = len(self.entries)
+        current_page = humanize_number(page_num + 1)
+        total_number_of_pages = humanize_number(self.get_max_pages())
+        match total_number_of_entries:
+            case 1:
+                message = _("Page 1 / 1 | 1 node")
+            case 0:
+                message = _("Page 1 / 1 | 0 nodes")
+            case __:
+                message = _(
+                    "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} nodes"
+                ).format(
+                    current_page_variable_do_not_translate=current_page,
+                    total_number_of_pages_variable_do_not_translate=total_number_of_pages,
+                    total_number_of_entries_variable_do_not_translate=humanize_number(total_number_of_entries),
+                )
+
+        embed.set_footer(text=message)
         return embed
 
 
@@ -308,9 +317,11 @@ class NodeManageSource(menus.ListPageSource):
         humanize.i18n.deactivate()
         t_property = EightBitANSI.paint_yellow(_("Property"), bold=True, underline=True)
         t_values = EightBitANSI.paint_yellow(_("Value"), bold=True, underline=True)
-        coordinate_str = EightBitANSI.paint_white(_("Latitude: {lat_value}\nLongitude: {lon_value}")).format(
-            lat_value=EightBitANSI.paint_blue(coord[0] if coord else "?"),
-            lon_value=EightBitANSI.paint_blue(coord[1] if coord else "?"),
+        coordinate_str = EightBitANSI.paint_white(
+            _("Latitude: {latitude_variable_do_not_translate}\nLongitude: {longitude_variable_do_not_translate}")
+        ).format(
+            latitude_variable_do_not_translate=EightBitANSI.paint_blue(coord[0] if coord else "?"),
+            longitude_variable_do_not_translate=EightBitANSI.paint_blue(coord[1] if coord else "?"),
         )
 
         data = {
@@ -318,9 +329,7 @@ class NodeManageSource(menus.ListPageSource):
             EightBitANSI.paint_white(_("Coordinates")): coordinate_str,
             EightBitANSI.paint_white(_("Host")): EightBitANSI.paint_blue(host),
             EightBitANSI.paint_white(_("Port")): EightBitANSI.paint_blue(port),
-            EightBitANSI.paint_white(_("Password")): EightBitANSI.paint_blue(
-                "*" * await asyncstdlib.min([len(password), 10])
-            ),
+            EightBitANSI.paint_white(_("Password")): EightBitANSI.paint_blue("*" * min([len(password), 10])),
             EightBitANSI.paint_white(_("SSL")): secure,
             EightBitANSI.paint_white(_("Available")): connected,
             EightBitANSI.paint_white(_("Search Only")): search_only,
@@ -357,19 +366,19 @@ class NodeManageSource(menus.ListPageSource):
         total_number_of_entries = len(self.entries)
         current_page = humanize_number(page_num + 1)
         total_number_of_pages = humanize_number(self.get_max_pages())
-
-        if number_of_pages > 1:
-            message = _(
-                "Page {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} nodes"
-            ).format(
-                current_page_value=current_page,
-                total_number_of_pages_value=total_number_of_pages,
-                total_number_of_entries_value=total_number_of_entries,
-            )
-        elif number_of_pages == 1:
-            message = _("Page 1 / 1 | 1 node")
-        else:
-            message = _("Page 1 / 1 | 0 nodes")
+        match number_of_pages:
+            case 1:
+                message = _("Page 1 / 1 | 1 node")
+            case 0:
+                message = _("Page 1 / 1 | 0 nodes")
+            case __:
+                message = _(
+                    "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} nodes"
+                ).format(
+                    current_page_variable_do_not_translate=current_page,
+                    total_number_of_pages_variable_do_not_translate=total_number_of_pages,
+                    total_number_of_entries_variable_do_not_translate=total_number_of_entries,
+                )
 
         embed.set_footer(text=message)
         return embed

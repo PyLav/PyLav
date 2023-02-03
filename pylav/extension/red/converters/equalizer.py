@@ -45,7 +45,9 @@ else:
                     raise EntryNotFoundException
             except EntryNotFoundException as e:
                 raise commands.BadArgument(
-                    _("Bass boost profile with name `{user_input_value}` not found.").format(user_input_value=arg)
+                    _(
+                        "A bass boost profile with the name `{user_input_variable_do_not_translate}` was not found."
+                    ).format(user_input_variable_do_not_translate=arg)
                 ) from e
 
         @classmethod
@@ -68,7 +70,7 @@ else:
                     ("Medium", _("Medium")),
                     ("Fine Tuned", _("Fine Tuned")),
                     ("Cut-off", _("Cut-off")),
-                    ("Off", _("Off")),
+                    ("Off", _("Turn off")),
                 ]
                 if current.lower() in p.lower()
             ]

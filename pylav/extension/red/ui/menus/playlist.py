@@ -333,7 +333,7 @@ class PlaylistManageFlow(discord.ui.View):
 
         self.add_prompt = PromptForInput(
             cog=self.cog,
-            title=_("What query to add to this playlist."),
+            title=_("What is the query to add to this playlist?"),
             label=_("Query"),
             style=discord.TextStyle.paragraph,
             max_length=4000,
@@ -341,7 +341,7 @@ class PlaylistManageFlow(discord.ui.View):
 
         self.remove_prompt = PromptForInput(
             cog=self.cog,
-            title=_("What query to remove from this playlist."),
+            title=_("What is the query to remove from this playlist?"),
             label=_("Query"),
             style=discord.TextStyle.paragraph,
             max_length=4000,

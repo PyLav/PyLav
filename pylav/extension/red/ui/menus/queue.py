@@ -455,9 +455,9 @@ class QueuePickerMenu(BaseMenu):
 
             options = self.source.select_options
             if self.menu_type == "remove":
-                title = _("Select Track To Remove.")
+                title = _("Select a track to remove.")
             else:
-                title = _("Select Track To Play Now.")
+                title = _("Select a track to play now.")
             self.remove_item(self.select_view)
             self.select_view = QueueSelectTrack(
                 options=options,

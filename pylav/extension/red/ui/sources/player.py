@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import asyncstdlib
 import discord
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_number
@@ -64,11 +63,29 @@ class PlayersSource(menus.ListPageSource):
             else _("I am not currently playing anything on this server.")
         )
 
-        listener_count = await asyncstdlib.sum(
-            True async for m in asyncstdlib.iter(rgetattr(player, "channel.members", [])) if not m.bot
-        )
+        listener_count = sum(True for m in iter(rgetattr(player, "channel.members", [])) if not m.bot)
         listeners = humanize_number(listener_count)
         current_track += "\n"
+
+        match queue_len:
+            case 1:
+                queue_length_translation = _("1 track")
+            case 0:
+                queue_length_translation = _("0 tracks")
+            case __:
+                queue_length_translation = _("{queue_length_variable_do_not_translate} tracks").format(
+                    queue_length_variable_do_not_translate=humanize_number(queue_len)
+                )
+
+        match history_queue_len:
+            case 1:
+                history_queue_length_translation = _("1 track")
+            case 0:
+                history_queue_length_translation = _("0 tracks")
+            case __:
+                history_queue_length_translation = _("{history_queue_length_variable_do_not_translate} tracks").format(
+                    history_queue_length_variable_do_not_translate=humanize_number(history_queue_len)
+                )
 
         field_values = "\n".join(
             f"**{i[0]}**: {i[1]}"
@@ -78,16 +95,11 @@ class PlayersSource(menus.ListPageSource):
                 (_("Users in Voice Channel"), listeners),
                 (
                     _("Queue Length"),
-                    "{queue_length} {track_translation}".format(
-                        queue_length=queue_len, track_translation=_("track") if queue_len == 1 else _("tracks")
-                    ),
+                    queue_length_translation,
                 ),
                 (
                     _("Queue History Length"),
-                    "{count} {track_translation}".format(
-                        count=history_queue_len,
-                        track_translation=_("track") if history_queue_len == 1 else _("tracks"),
-                    ),
+                    history_queue_length_translation,
                 ),
             ]
         )
@@ -96,23 +108,23 @@ class PlayersSource(menus.ListPageSource):
 
         embed = await self.cog.pylav.construct_embed(messageable=menu.ctx, title=guild_name, description=current_track)
 
-        number_of_pages = self.get_max_pages()
         total_number_of_entries = len(self.entries)
         current_page = humanize_number(page_num + 1)
         total_number_of_pages = humanize_number(self.get_max_pages())
 
-        if number_of_pages > 1:
-            message = _(
-                "Page {current_page_value} / {total_number_of_pages_value} | {total_number_of_entries_value} servers"
-            ).format(
-                current_page_value=current_page,
-                total_number_of_pages_value=total_number_of_pages,
-                total_number_of_entries_value=total_number_of_entries,
-            )
-        elif number_of_pages == 1:
-            message = _("Page 1 / 1 | 1 server")
-        else:
-            message = _("Page 1 / 1 | 0 servers")
+        match total_number_of_entries:
+            case 1:
+                message = _("Page 1 / 1 | 1 server")
+            case 0:
+                message = _("Page 1 / 1 | 0 servers")
+            case __:
+                message = _(
+                    "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} servers"
+                ).format(
+                    current_page_variable_do_not_translate=current_page,
+                    total_number_of_pages_variable_do_not_translate=total_number_of_pages,
+                    total_number_of_entries_variable_do_not_translate=humanize_number(total_number_of_entries),
+                )
 
         embed.set_footer(text=message)
         return embed

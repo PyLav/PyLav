@@ -7,7 +7,6 @@ from functools import partial
 from typing import TYPE_CHECKING
 
 import aiohttp
-import asyncstdlib
 
 from pylav.compat import json
 from pylav.constants.builtin_nodes import BUNDLED_NODES_IDS_HOST_MAPPING, PYLAV_BUNDLED_NODES_SETTINGS
@@ -350,7 +349,7 @@ class NodeManager:
 
         if not nodes:
             nodes = await self._get_fall_back_nodes(already_attempted_regions, feature, nodes)
-        node = await asyncstdlib.min(nodes, key=partial(sort_key_nodes, region=region), default=None) if nodes else None
+        node = min(nodes, key=partial(sort_key_nodes, region=region), default=None) if nodes else None
         if node is None and wait:
             await asyncio.sleep(delay)
             return await self.find_best_node(
@@ -426,14 +425,14 @@ class NodeManager:
         self.client.dispatch_event(NodeConnectedEvent(node))
 
     async def _player_change_node_task(self, node):
-        async for player in asyncstdlib.iter(self.player_queue):
+        for player in iter(self.player_queue):
             await player.change_node(node, forced=True)
             # noinspection PyProtectedMember
             node._logger.debug("Successfully moved %s", player.guild.id)
         # noinspection PyProtectedMember
         if self.client._connect_back:
             # noinspection PyProtectedMember
-            async for player in asyncstdlib.iter(node._original_players):
+            for player in iter(node._original_players):
                 await player.change_node(node, forced=True)
                 player._original_node = None
         del self.player_queue
@@ -469,7 +468,7 @@ class NodeManager:
             LOGGER.error("Unable to move players, no available nodes! Waiting for a node to become available")
             return
 
-        async for player in asyncstdlib.iter(node.players):
+        for player in iter(node.players):
             await player.change_node(best_node, forced=True)
             # noinspection PyProtectedMember
             if self.client._connect_back:
@@ -479,12 +478,12 @@ class NodeManager:
         if self._player_migrate_task is not None:
             self._player_migrate_task.cancel()
         await self.session.close()
-        async for node in asyncstdlib.iter(self.nodes):
+        for node in iter(self.nodes):
             await node.close()
 
     async def connect_to_all_nodes(self) -> None:
         nodes_list = []
-        async for node in asyncstdlib.iter(await self.client.node_db_manager.get_all_unmanaged_nodes()):
+        for node in iter(await self.client.node_db_manager.get_all_unmanaged_nodes()):
             await self._process_single_unmanaged_node_connection(node, nodes_list)
         await self._process_envvar_node(nodes_list)
         # noinspection PyProtectedMember
@@ -517,7 +516,7 @@ class NodeManager:
             self._adding_nodes.set()
 
     async def _process_bundled_node_lava_link(self, nodes_list):
-        if await asyncstdlib.all(True async for n in asyncstdlib.iter(nodes_list) if n.host != "lava.link"):
+        if all(True for n in iter(nodes_list) if n.host != "lava.link"):
             nodes_list.append(
                 await self.add_node(
                     password=f"PyLav/{self.client.lib_version}",
@@ -531,9 +530,9 @@ class NodeManager:
             )
 
     async def _process_bundled_node_ny(self, nodes_list):
-        if await asyncstdlib.all(
-            True async for n in asyncstdlib.iter(nodes_list) if n.host != "ll-us-ny.draper.wtf"
-        ) and not self.get_node_by_id(PYLAV_BUNDLED_NODES_SETTINGS["ll-us-ny.draper.wtf"]["unique_identifier"]):
+        if all(True for n in iter(nodes_list) if n.host != "ll-us-ny.draper.wtf") and not self.get_node_by_id(
+            PYLAV_BUNDLED_NODES_SETTINGS["ll-us-ny.draper.wtf"]["unique_identifier"]
+        ):
             base_settings = PYLAV_BUNDLED_NODES_SETTINGS["ll-us-ny.draper.wtf"]
             nodes_list.append(await self.add_node(**base_settings))
         else:
@@ -543,9 +542,9 @@ class NodeManager:
             )
 
     async def _process_bundled_node_london(self, nodes_list):
-        if await asyncstdlib.all(
-            True async for n in asyncstdlib.iter(nodes_list) if n.host != "ll-gb.draper.wtf"
-        ) and not self.get_node_by_id(PYLAV_BUNDLED_NODES_SETTINGS["ll-gb.draper.wtf"]["unique_identifier"]):
+        if all(True for n in iter(nodes_list) if n.host != "ll-gb.draper.wtf") and not self.get_node_by_id(
+            PYLAV_BUNDLED_NODES_SETTINGS["ll-gb.draper.wtf"]["unique_identifier"]
+        ):
             base_settings = PYLAV_BUNDLED_NODES_SETTINGS["ll-gb.draper.wtf"]
             base_settings["host"] = "ll-gb.draper.wtf"
             nodes_list.append(await self.add_node(**base_settings))
@@ -557,7 +556,7 @@ class NodeManager:
 
     async def _process_envvar_node(self, nodes_list):
         if self._unmanaged_external_host and self._unmanaged_external_password:
-            if await asyncstdlib.all(True for n in nodes_list if n.host != self._unmanaged_external_host):
+            if all(True for n in nodes_list if n.host != self._unmanaged_external_host):
                 if self._unmanaged_external_host in PYLAV_BUNDLED_NODES_SETTINGS:
                     base_settings = PYLAV_BUNDLED_NODES_SETTINGS[self._unmanaged_external_host]
                 else:

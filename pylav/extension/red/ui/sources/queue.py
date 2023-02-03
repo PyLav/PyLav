@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
+from itertools import islice
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-import asyncstdlib
 import discord
 from redbot.core.i18n import Translator
 from redbot.vendored.discord.ext import menus
@@ -38,9 +38,7 @@ class SearchPickerSource(menus.ListPageSource):
         base = page_number * self.per_page
         self.select_options.clear()
         self.select_mapping.clear()
-        async for i, track in asyncstdlib.enumerate(
-            asyncstdlib.iter(self.entries[base : base + self.per_page]), start=base
-        ):  # noqa: E203
+        for i, track in enumerate(iter(self.entries[base : base + self.per_page]), start=base):  # noqa: E203
             self.select_options.append(await SearchTrackOption.from_track(track=track, index=i))
             self.select_mapping[track.id] = track
         return []
@@ -73,7 +71,7 @@ class QueueSource(menus.ListPageSource):
 
     async def get_page(self, page_number: int) -> list[Track]:
         base = page_number * self.per_page
-        return await asyncstdlib.list(asyncstdlib.islice(self.entries, base, base + self.per_page))
+        return list(islice(self.entries, base, base + self.per_page))
 
     def get_max_pages(self) -> int:
         player = self.cog.pylav.get_player(self.guild_id)
@@ -93,7 +91,7 @@ class QueueSource(menus.ListPageSource):
     async def format_page(self, menu: QueueMenu, tracks: list[Track]) -> discord.Embed:
         if not (player := self.cog.pylav.get_player(menu.ctx.guild.id)):
             return await self.cog.pylav.construct_embed(
-                description=_("I am not currently playing anything in this server."), messageable=menu.ctx
+                description=_("I am not connected to any voice channel at the moment."), messageable=menu.ctx
             )
         self.current_player = player
         return (
@@ -107,9 +105,9 @@ class QueueSource(menus.ListPageSource):
             )
             if player.current and (player.history.size() if self.history else True)
             else await self.cog.pylav.construct_embed(
-                description=_("There is nothing in recently played.")
+                description=_("I am not currently playing anything on this server.")
                 if self.history
-                else _("There is nothing currently being played"),
+                else _("I am not currently playing anything on this server."),
                 messageable=menu.ctx,
             )
         )
@@ -129,9 +127,7 @@ class QueuePickerSource(QueueSource):
         base = page_number * self.per_page
         self.select_options.clear()
         self.select_mapping.clear()
-        async for i, track in asyncstdlib.enumerate(
-            asyncstdlib.islice(self.entries, base, base + self.per_page), start=base
-        ):
+        for i, track in enumerate(islice(self.entries, base, base + self.per_page), start=base):
             self.select_options.append(await QueueTrackOption.from_track(track=track, index=i))
             self.select_mapping[track.id] = track
         return []
@@ -139,7 +135,7 @@ class QueuePickerSource(QueueSource):
     async def format_page(self, menu: QueuePickerMenu, tracks: list[Track]) -> discord.Embed:
         if not (player := self.cog.pylav.get_player(menu.ctx.guild.id)):
             return await self.cog.pylav.construct_embed(
-                description=_("No active player found in server."), messageable=menu.ctx
+                description=_("I am not connected to any voice channel at the moment."), messageable=menu.ctx
             )
         self.current_player = player
         return (
@@ -152,7 +148,7 @@ class QueuePickerSource(QueueSource):
             )
             if player.current
             else await self.cog.pylav.construct_embed(
-                description=_("There is nothing currently being played."),
+                description=_("I am not currently playing anything on this server."),
                 messageable=menu.ctx,
             )
         )

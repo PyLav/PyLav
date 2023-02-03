@@ -256,7 +256,7 @@ class PlayerController:
                 region, feature=feature or None, coordinates=player.coordinates
             )
             if not best_node:
-                raise NoNodeAvailableException(_("No available nodes!"))
+                raise NoNodeAvailableException(_("There are no nodes available currently."))
             await player.post_init(
                 node=best_node, player_manager=self, config=player_config, pylav=self.client, requester=requester
             )
@@ -347,8 +347,8 @@ class PlayerController:
                             type=discord.ActivityType.listening,
                             name=shorten_string(
                                 max_length=100,
-                                string=_("Music in {number_of_servers_value} servers").format(
-                                    number_of_servers_value=playing_players
+                                string=_("Music in {number_of_servers_variable_do_not_translate} servers").format(
+                                    number_of_servers_variable_do_not_translate=playing_players
                                 ),
                             ),
                         )

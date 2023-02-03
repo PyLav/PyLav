@@ -7,7 +7,6 @@ import threading
 from pathlib import Path
 from types import MethodType
 
-import asyncstdlib
 import discord
 from discord.ext.commands import CheckFailure
 from redbot.core import commands
@@ -48,28 +47,28 @@ async def pylav_credits(context: PyLavContext) -> None:
         embed=await context.pylav.construct_embed(
             messageable=context,
             description=_(
-                "PyLav was created by {library_author_name}.\n\n"
-                "PyLav can be located in {library_url_value}\n"
-                "PyLav-Cogs can be located in {second_library_url_value}\n\n"
-                "PyLav's support server can be found at {support_server_url_value}\n"
+                "PyLav was created by {library_author_name_variable_do_not_translate}.\n\n"
+                "PyLav source code can be located in {library_url_variable_do_not_translate}\n"
+                "PyLav-Cogs source code can be located in {second_library_url_variable_do_not_translate}\n\n"
+                "You can join the PyLav support server via {support_server_url_variable_do_not_translate}\n"
                 "\n\n"
                 "You can help translate PyLav by contributing to our Crowdin project at:\n"
-                "{crowdin_project_url_value}\n\n\n"
+                "{crowdin_project_url_variable_do_not_translate}\n\n\n"
                 "Contributors:\n"
-                "- {project_contributors_url_value}\n"
-                "- {second_project_contributors_url_value}\n"
+                "- {project_contributors_url_variable_do_not_translate}\n"
+                "- {second_project_contributors_url_variable_do_not_translate}\n"
                 "If you wish to buy me a coffee for my work, you can do so at:\n"
-                "{buymeacoffee_url_value} or {github_sponsors_url_value}"
+                "{buymeacoffee_url_variable_do_not_translate} or {github_sponsors_url_variable_do_not_translate}"
             ).format(
-                library_author_name="[Draper#6666](https://github.com/Drapersniper)",
-                library_url_value="https://github.com/Drapersniper/PyLav",
-                second_library_url_value="https://github.com/Drapersniper/PyLav-Cogs",
-                support_server_url_value="https://discord.com/invite/Sjh2TSCYQB",
-                crowdin_project_url_value="https://crowdin.com/project/pylav",
-                project_contributors_url_value="https://github.com/Drapersniper/PyLav/graphs/contributors",
-                second_project_contributors_url_value="https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors",
-                buymeacoffee_url_value="https://www.buymeacoffee.com/draper",
-                github_sponsors_url_value="https://github.com/sponsors/Drapersniper",
+                library_author_name_variable_do_not_translate="[Draper#6666](https://github.com/Drapersniper)",
+                library_url_variable_do_not_translate="https://github.com/Drapersniper/PyLav",
+                second_library_url_variable_do_not_translate="https://github.com/Drapersniper/PyLav-Cogs",
+                support_server_url_variable_do_not_translate="https://discord.com/invite/Sjh2TSCYQB",
+                crowdin_project_url_variable_do_not_translate="https://crowdin.com/project/pylav",
+                project_contributors_url_variable_do_not_translate="https://github.com/Drapersniper/PyLav/graphs/contributors",
+                second_project_contributors_url_variable_do_not_translate="https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors",
+                buymeacoffee_url_variable_do_not_translate="https://www.buymeacoffee.com/draper",
+                github_sponsors_url_variable_do_not_translate="https://github.com/sponsors/Drapersniper",
             ),
         ),
         ephemeral=True,
@@ -127,7 +126,7 @@ async def pylav_sync_slash(context: PyLavContext) -> None:
     await context.bot.tree.sync()
     await context.send(
         embed=await context.pylav.construct_embed(
-            description=_("I have synced my slash commands."),
+            description=_("I have synced all my slash commands."),
             messageable=context,
         ),
         ephemeral=True,
@@ -148,7 +147,8 @@ async def cog_command_error(self: DISCORD_COG_TYPE, context: PyLavContext, error
         unhandled = False
         await context.send(
             embed=await self.pylav.construct_embed(
-                messageable=context, description=_("This command requires an existing player to be run.")
+                messageable=context,
+                description=_("This command requires that I be in a voice channel before it can be executed."),
             ),
             ephemeral=True,
         )
@@ -158,10 +158,11 @@ async def cog_command_error(self: DISCORD_COG_TYPE, context: PyLavContext, error
             embed=await self.pylav.construct_embed(
                 messageable=context,
                 description=_(
-                    "PyLavPlayer cog is currently temporarily unavailable due to an outage with "
-                    "the backend services, please try again later."
+                    "PyLavPlayer cog is temporarily unavailable due to an outage with the backend services; please try again later."
                 ),
-                footer=_("No Lavalink node currently available.") if await self.bot.is_owner(context.author) else None,
+                footer=_("There are no nodes available currently.")
+                if await self.bot.is_owner(context.author)
+                else None,
             ),
             ephemeral=True,
         )
@@ -170,12 +171,12 @@ async def cog_command_error(self: DISCORD_COG_TYPE, context: PyLavContext, error
         await context.send(
             embed=await self.pylav.construct_embed(
                 messageable=context,
-                description=_("PyLavPlayer is currently unable to process tracks belonging to {feature_name}.").format(
-                    feature_name=error.feature
-                ),
-                footer=_("No Lavalink node currently available with feature {feature_name}").format(
-                    feature_name=error.feature
-                )
+                description=_(
+                    "PyLavPlayer is currently unable to process tracks belonging to {feature_name_variable_do_not_translate}."
+                ).format(feature_name_variable_do_not_translate=error.feature),
+                footer=_(
+                    "There is currently no available Lavalink node with the feature {feature_name_variable_do_not_translate}."
+                ).format(feature_name_variable_do_not_translate=error.feature)
                 if await self.bot.is_owner(context.author)
                 else None,
             ),
@@ -186,8 +187,10 @@ async def cog_command_error(self: DISCORD_COG_TYPE, context: PyLavContext, error
         await context.send(
             embed=await self.pylav.construct_embed(
                 messageable=context,
-                description=_("This command is not available in this channel, please use {channel_name}.").format(
-                    channel_name=channel.mention
+                description=_(
+                    "This command is unavailable in this channel; please use {channel_name_variable_do_not_translate} instead."
+                ).format(
+                    channel_name_variable_do_not_translate=channel.mention
                     if (channel := context.guild.get_channel_or_thread(error.channel))
                     else error.channel
                 ),
@@ -238,7 +241,7 @@ async def cog_before_invoke(self: DISCORD_COG_TYPE, context: PyLavContext):
             context.command.qualified_name,
         )
 
-        raise CheckFailure(_("PyLav is not ready, please try again shortly")) from e
+        raise CheckFailure(_("PyLav is starting up; please try again in a few minutes.")) from e
     if meth := getattr(self, "__pylav_original_cog_before_invoke", None):
         return await discord.utils.maybe_coroutine(meth)
 
@@ -256,7 +259,7 @@ async def cog_check(self: DISCORD_COG_TYPE, context: PyLavContext) -> bool:
 
     # This cog mock discord objects and sends them on the listener
     #   Due to the potential risk for unexpected behaviour - disabled all commands if this cog is loaded.
-    if await asyncstdlib.any(context.bot.get_cog(name) is not None for name in INCOMPATIBLE_COGS):
+    if any(context.bot.get_cog(name) is not None for name in INCOMPATIBLE_COGS):
         return False
     if not (getattr(context.bot, "pylav", None)):
         return False
@@ -382,7 +385,7 @@ async def pylav_auto_setup(
         initkwargs=dict())
 
     """
-    if await asyncstdlib.any(bot.get_cog(name) is not None for name in INCOMPATIBLE_COGS if (_name := name)):
+    if any(bot.get_cog(name) is not None for name in INCOMPATIBLE_COGS if (_name := name)):
         raise IncompatibleException(
             f"{_name} is loaded, this cog is incompatible with PyLav - PyLav will not work as long as this cog is loaded"
         )

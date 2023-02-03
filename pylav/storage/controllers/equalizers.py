@@ -11,7 +11,6 @@ from pylav.logging import getLogger
 from pylav.storage.database.tables.equalizer import EqualizerRow
 from pylav.storage.models import equilizer
 from pylav.type_hints.bot import DISCORD_BOT_TYPE
-from pylav.utils.vendor.redbot import AsyncIter
 
 LOGGER = getLogger("PyLav.Database.Controller.Equalizer")
 
@@ -461,7 +460,7 @@ class EqualizerController:
                 equalizers = []
         returning_list = []
         if equalizers:
-            async for equalizer in AsyncIter(equalizers):
+            for equalizer in equalizers:
                 if await equalizer.can_manage(requester=requester, bot=bot):
                     returning_list.append(equalizer)
         return returning_list

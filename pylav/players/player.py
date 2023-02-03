@@ -9,10 +9,10 @@ import random
 import threading
 import time
 from collections.abc import Coroutine
+from itertools import islice
 from typing import TYPE_CHECKING, Any, Literal
 
 import asyncpg
-import asyncstdlib
 import discord
 from discord import VoiceProtocol
 from discord.abc import Messageable
@@ -95,7 +95,6 @@ from pylav.storage.models.player.state import PlayerState
 from pylav.storage.models.playlist import Playlist
 from pylav.type_hints.bot import DISCORD_BOT_TYPE, DISCORD_INTERACTION_TYPE
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
-from pylav.utils.vendor.redbot import AsyncIter
 
 try:
     from redbot.core.i18n import Translator
@@ -433,7 +432,7 @@ class Player(VoiceProtocol):
         if self.node.has_filter("echo") and (echo := effects.get("echo", None)) and (f := Echo.from_dict(echo)):  # noqa
             self._echo = f
         payload = {}
-        if await asyncstdlib.any(
+        if any(
             f.changed
             for f in [
                 self.equalizer,
@@ -1161,7 +1160,7 @@ class Player(VoiceProtocol):
         """
         output = []
         is_list = isinstance(tracks_and_queries[0], (list, tuple))
-        async for entry in AsyncIter(tracks_and_queries):
+        for entry in tracks_and_queries:
             track, query = entry if is_list else (entry, None)
             track = await self._query_to_track(requester, track, query)
             output.append(track)
@@ -1573,7 +1572,7 @@ class Player(VoiceProtocol):
             The member who requested the volume change.
         """
         max_volume = await self.player_manager.client.player_config_manager.get_max_volume(self.guild.id)
-        volume = await asyncstdlib.max([await asyncstdlib.min([vol, max_volume]), 0])
+        volume = max([min([vol, max_volume]), 0])
         if volume == self.volume:
             return
         await self.config.update_volume(volume)
@@ -1597,7 +1596,7 @@ class Player(VoiceProtocol):
         if self.current and await self.current.is_seekable():
             if with_filter:
                 position = await self.fetch_position()
-            position = await asyncstdlib.max([await asyncstdlib.min([position, await self.current.duration()]), 0])
+            position = max([min([position, await self.current.duration()]), 0])
             self.node.dispatch_event(
                 TrackSeekEvent(self, requester, self.current, before=await self.fetch_position(), after=position)
             )
@@ -2450,7 +2449,11 @@ class Player(VoiceProtocol):
             arrow, current, current_track_description, dur, pos, queue_list
         )
         page = await self.node.node_manager.client.construct_embed(
-            title=discord.utils.escape_markdown(_("Now Playing in {server_name}").format(server_name=self.guild.name)),
+            title=discord.utils.escape_markdown(
+                _("Now Playing in {server_name_variable_do_not_translate}").format(
+                    server_name_variable_do_not_translate=self.guild.name
+                )
+            ),
             description=queue_list,
             messageable=messageable,
         )
@@ -2512,22 +2515,31 @@ class Player(VoiceProtocol):
         queue_total_duration = format_time_string(queue_dur // 1000)
 
         track_count = self.queue.qsize()
-
-        if track_count == 1:
-            text = _("1 track, {queue_total_duration} remaining\n").format(queue_total_duration=queue_total_duration)
-        elif track_count == 0:
-            text = _("0 tracks, {queue_total_duration} remaining\n").format(queue_total_duration=queue_total_duration)
-        else:
-            text = _("{track_count} tracks, {queue_total_duration} remaining\n").format(
-                track_count=track_count, queue_total_duration=queue_total_duration
-            )
+        match track_count:
+            case 1:
+                text = _("1 track, {queue_total_duration_variable_do_not_translate} remaining\n").format(
+                    queue_total_duration_variable_do_not_translate=queue_total_duration
+                )
+            case 0:
+                text = _("0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n").format(
+                    queue_total_duration_variable_do_not_translate=queue_total_duration
+                )
+            case __:
+                text = _(
+                    "{track_count_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
+                ).format(
+                    track_count_variable_do_not_translate=track_count,
+                    queue_total_duration_variable_do_not_translate=queue_total_duration,
+                )
         autoplay_emoji, repeat_emoji = await self._process_embed_emojis()
-        text += _("{translation}: {repeat_emoji}").format(repeat_emoji=repeat_emoji, translation=_("Repeating"))
-        text += _("{space}{translation}: {autoplay_emoji}").format(
+        text += "{translation}: {repeat_emoji}".format(repeat_emoji=repeat_emoji, translation=_("Repeating"))
+        text += "{space}{translation}: {autoplay_emoji}".format(
             space=(" | " if text else ""), autoplay_emoji=autoplay_emoji, translation=_("Auto Play")
         )
-        text += _("{space}{translation}: {volume}%").format(
-            space=(" | " if text else ""), volume=self.volume, translation=_("Volume")
+        text += "{space}{translation}: {volume}".format(
+            space=(" | " if text else ""),
+            volume=_("{volume_variable_do_not_translate}%").format(volume_variable_do_not_translate=self.volume),
+            translation=_("Volume"),
         )
         page.set_footer(text=text)
 
@@ -2556,7 +2568,7 @@ class Player(VoiceProtocol):
         queue_list = ""
         start_index = page_index * per_page
         end_index = start_index + per_page
-        tracks = await asyncstdlib.list(asyncstdlib.islice(queue.raw_queue, start_index, end_index))
+        tracks = list(islice(queue.raw_queue, start_index, end_index))
         arrow = await self.draw_time()
         pos = format_time_dd_hh_mm_ss(await self.fetch_position())
         current = self.current
@@ -2567,10 +2579,16 @@ class Player(VoiceProtocol):
 
         if history:
             title = discord.utils.escape_markdown(
-                _("Recently Played for {server_name}").format(server_name=self.guild.name)
+                _("Recently Played for {server_name_variable_do_not_translate}").format(
+                    server_name_variable_do_not_translate=self.guild.name
+                )
             )
         else:
-            title = discord.utils.escape_markdown(_("Queue for {server_name}").format(server_name=self.guild.name))
+            title = discord.utils.escape_markdown(
+                _("Queue for {server_name_variable_do_not_translate}").format(
+                    server_name_variable_do_not_translate=self.guild.name
+                )
+            )
 
         page = await self.node.node_manager.client.construct_embed(
             title=title,
@@ -2608,7 +2626,7 @@ class Player(VoiceProtocol):
         ):
             queue_list += "__{translation}__\n\n".format(
                 translation=discord.utils.escape_markdown(
-                    _("Queue order may not be accurate due to auto shuffle being enabled.")
+                    _("Queue order will change every time a track is added due to auto shuffle being enabled.")
                 )
             )
         return queue_list
@@ -2617,38 +2635,41 @@ class Player(VoiceProtocol):
 
         track_number = queue.qsize()
 
-        if track_number == 1:
-            text = _("Page 1 / 1 | 1 track, {queue_total_duration} remaining\n").format(
-                queue_total_duration=queue_total_duration,
-            )
-        elif track_number == 0:
-            text = _("Page 1 / 1 | 0 tracks, {queue_total_duration} remaining\n").format(
-                queue_total_duration=queue_total_duration,
-            )
-        else:
-            text = _(
-                "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
-            ).format(
-                current_page=page_index + 1,
-                total_pages=total_pages,
-                track_number=track_number,
-                queue_total_duration=queue_total_duration,
-            )
+        match track_number:
+            case 1:
+                text = _("Page 1 / 1 | 1 track, {queue_total_duration_variable_do_not_translate} remaining\n").format(
+                    queue_total_duration_variable_do_not_translate=queue_total_duration,
+                )
+            case 0:
+                text = _("Page 1 / 1 | 0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n").format(
+                    queue_total_duration_variable_do_not_translate=queue_total_duration,
+                )
+            case __:
+                text = _(
+                    "Page {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
+                ).format(
+                    current_page_variable_do_not_translate=page_index + 1,
+                    total_pages_variable_do_not_translate=total_pages,
+                    track_number_variable_do_not_translate=track_number,
+                    queue_total_duration_variable_do_not_translate=queue_total_duration,
+                )
 
         autoplay_emoji, repeat_emoji = await self._process_embed_emojis()
-        text += _("{translation}: {repeat_emoji}").format(repeat_emoji=repeat_emoji, translation=_("Repeating"))
-        text += _("{space}{translation}: {autoplay_emoji}").format(
+        text += "{translation}: {repeat_emoji}".format(repeat_emoji=repeat_emoji, translation=_("Repeating"))
+        text += "{space}{translation}: {autoplay_emoji}".format(
             space=(" | " if text else ""), autoplay_emoji=autoplay_emoji, translation=_("Auto Play")
         )
-        text += _("{space}{translation}: {volume}%").format(
-            space=(" | " if text else ""), volume=self.volume, translation=_("Volume")
+        text += "{space}{translation}: {volume}".format(
+            space=(" | " if text else ""),
+            volume=_("{volume_variable_do_not_translate}%").format(volume_variable_do_not_translate=self.volume),
+            translation=_("Volume"),
         )
         page.set_footer(text=text)
 
     async def _process_queue_tracks(self, history, queue_list, start_index, tracks):
         if tracks:
             padding = len(str(start_index + len(tracks)))
-            async for track_idx, track in AsyncIter(tracks).enumerate(start=start_index + 1):
+            for track_idx, track in enumerate(tracks, start=start_index + 1):
                 queue_list = await self._process_single_queue_track(history, padding, queue_list, track, track_idx)
         return queue_list
 
@@ -2666,10 +2687,10 @@ class Player(VoiceProtocol):
         queue = self.history if history else self.queue
         dur = [
             await track.duration()
-            async for track in AsyncIter(queue.raw_queue).filter(lambda x: not x.is_partial)
+            for track in filter(lambda x: not x.is_partial, queue.raw_queue)
             if not await track.stream()
         ]
-        queue_dur = await asyncstdlib.sum(dur)
+        queue_dur = sum(dur)
         if queue.empty():
             queue_dur = 0
         if history:

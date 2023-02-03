@@ -9,7 +9,6 @@ from redbot.core.i18n import Translator
 
 from pylav.helpers import emojis
 from pylav.type_hints.bot import DISCORD_COG_TYPE, DISCORD_INTERACTION_TYPE
-from pylav.utils.vendor.redbot import AsyncIter
 
 _ = Translator("PyLav", Path(__file__))
 
@@ -44,7 +43,7 @@ class DisconnectButton(discord.ui.Button):
         if not player:
             await context.send(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=context, title=_("No player available for action, try refreshing.")
+                    messageable=context, title=_("There are no players available for this action. Try refreshing.")
                 ),
                 ephemeral=True,
             )
@@ -53,7 +52,12 @@ class DisconnectButton(discord.ui.Button):
             with contextlib.suppress(discord.HTTPException):
                 await notify_channel.send(
                     embed=await self.cog.pylav.construct_embed(
-                        title=_("Bot Owner Action"), description=_("Player disconnected.")
+                        title=_("My bot owner requested an action"),
+                        description=_(
+                            "My bot owner has requested that I disconnect from this server. "
+                            "I have saved my current position, so connect me to a voice channel to resume playback. "
+                            "Sorry for any inconvenience caused."
+                        ),
                     )
                 )
         await player.disconnect(requester=context.author)
@@ -93,7 +97,8 @@ class StopTrackButton(discord.ui.Button):
         if not player:
             await context.send(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=context, description=_("No player available for action, try refreshing.")
+                    messageable=context,
+                    description=_("There are no players available for this action. Try refreshing."),
                 ),
                 ephemeral=True,
             )
@@ -104,7 +109,10 @@ class StopTrackButton(discord.ui.Button):
             with contextlib.suppress(discord.HTTPException):
                 await notify_channel.send(
                     embed=await self.cog.pylav.construct_embed(
-                        title=_("Bot Owner Action"), description=_("Player stopped.")
+                        title=_("My bot owner requested an action"),
+                        description=_(
+                            "My owner has requested that I wipe the queue for this server and stop playback. Sorry for any inconvenience caused."
+                        ),
                     )
                 )
 
@@ -137,7 +145,7 @@ class DisconnectAllButton(discord.ui.Button):
         if not await self.view.bot.is_owner(context.author):
             await context.send(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=context, description=_("You are not authorized to perform this action")
+                    messageable=context, description=_("You are not authorized to perform this action.")
                 ),
                 ephemeral=True,
             )
@@ -151,17 +159,23 @@ class DisconnectAllButton(discord.ui.Button):
         if not players:
             await context.send(
                 embed=await self.cog.pylav.construct_embed(
-                    messageable=context, description=_("No players available for action, try refreshing.")
+                    messageable=context,
+                    description=_("There are no players available for this action. Try refreshing."),
                 ),
                 ephemeral=True,
             )
             return
-        async for player in AsyncIter(players):
+        for player in players:
             if notify_channel := await player.notify_channel():
                 with contextlib.suppress(discord.HTTPException):
                     await notify_channel.send(
                         embed=await self.cog.pylav.construct_embed(
-                            title=_("Bot Owner Action"), description=_("Player disconnected.")
+                            title=_("My bot owner requested an action"),
+                            description=_(
+                                "My bot owner has requested that I disconnect from all servers. "
+                                "I have saved my current position, so connect me to a voice channel to resume playback. "
+                                "Sorry for any inconvenience caused."
+                            ),
                         )
                     )
             await player.disconnect(requester=context.author)
