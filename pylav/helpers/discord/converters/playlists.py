@@ -73,7 +73,7 @@ else:
                     [-ord(i) for i in name],
                 )
 
-            extracted = await asyncstdlib.heapq.nlargest(25, asyncstdlib.iter(playlists), key=_filter)
+            extracted = await asyncstdlib.heapq.nlargest(asyncstdlib.iter(playlists), n=25, key=_filter)
             return [
                 Choice(name=shorten_string(await e.fetch_name(), max_length=100), value=f"{e.id}") for e in extracted
             ]
