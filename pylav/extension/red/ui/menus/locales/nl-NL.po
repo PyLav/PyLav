@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-03 19:55\n"
+"PO-Revision-Date: 2023-02-03 20:03\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -71,52 +71,52 @@ msgstr "Time-out"
 
 #: pylav/extension/red/ui/menus/nodes.py:109
 msgid "Sources to turn off."
-msgstr ""
+msgstr "Bronnen uit te schakelen."
 
 #: pylav/extension/red/ui/menus/nodes.py:222
 #: pylav/extension/red/ui/menus/nodes.py:689
 msgid "The node name has been set to `{node_name_variable_do_not_translate}`."
-msgstr ""
+msgstr "De naam van het knooppunt is ingesteld op '{node_name_variable_do_not_translate}`."
 
 #: pylav/extension/red/ui/menus/nodes.py:237
 #: pylav/extension/red/ui/menus/nodes.py:704
 msgid "The node password has been set to `{node_password_variable_do_not_translate}`."
-msgstr ""
+msgstr "Het wachtwoord van het knooppunt is ingesteld op '{node_password_variable_do_not_translate}`."
 
 #: pylav/extension/red/ui/menus/nodes.py:257
 #: pylav/extension/red/ui/menus/nodes.py:724
 msgid "The node host address has been set to `{node_host_variable_do_not_translate}`."
-msgstr ""
+msgstr "Het hostadres van het knooppunt is ingesteld op '{node_host_variable_do_not_translate}`."
 
 #: pylav/extension/red/ui/menus/nodes.py:276
 #: pylav/extension/red/ui/menus/nodes.py:743
 msgid "The port you specified is invalid."
-msgstr ""
+msgstr "De poort die u hebt opgegeven, is ongeldig."
 
 #: pylav/extension/red/ui/menus/nodes.py:284
 #: pylav/extension/red/ui/menus/nodes.py:751
 msgid "The node port has been set to `{node_port_variable_do_not_translate}`."
-msgstr ""
+msgstr "De knooppuntpoort is ingesteld op '{node_port_variable_do_not_translate}`."
 
 #: pylav/extension/red/ui/menus/nodes.py:303
 #: pylav/extension/red/ui/menus/nodes.py:770
 msgid "The timeout you specified is invalid; it must be a number in seconds."
-msgstr ""
+msgstr "De time-out die u hebt opgegeven, is ongeldig. het moet een getal in seconden zijn."
 
 #: pylav/extension/red/ui/menus/nodes.py:311
 #: pylav/extension/red/ui/menus/nodes.py:783
 msgid "The node timeout has been set to `0` seconds."
-msgstr ""
+msgstr "De time-out van het knooppunt is ingesteld op '0' seconden."
 
 #: pylav/extension/red/ui/menus/nodes.py:313
 #: pylav/extension/red/ui/menus/nodes.py:779
 msgid "The node timeout has been set to `1` second."
-msgstr ""
+msgstr "De time-out van het knooppunt is ingesteld op '1' seconde."
 
 #: pylav/extension/red/ui/menus/nodes.py:315
 #: pylav/extension/red/ui/menus/nodes.py:785
 msgid "The node timeout has been set to `{node_timeout_variable_do_not_translate}` seconds."
-msgstr ""
+msgstr "De time-out van het knooppunt is ingesteld op '{node_timeout_variable_do_not_translate}' seconden."
 
 #: pylav/extension/red/ui/menus/nodes.py:516
 msgid "Change the domain or IP address of the host."
@@ -156,7 +156,7 @@ msgstr "alle"
 
 #: pylav/extension/red/ui/menus/player.py:207
 msgid "I am not in any voice channel currently."
-msgstr ""
+msgstr "Ik zit momenteel niet in een stemkanaal."
 
 #: pylav/extension/red/ui/menus/playlist.py:187
 msgid "Please enter the playlist URL."
@@ -186,7 +186,7 @@ msgstr "Voer de nieuwe naam voor deze afspeellijst in."
 
 #: pylav/extension/red/ui/menus/playlist.py:336
 msgid "What is the query to add to this playlist?"
-msgstr ""
+msgstr "Wat is de query die aan deze afspeellijst moet worden toegevoegd?"
 
 #: pylav/extension/red/ui/menus/playlist.py:337
 #: pylav/extension/red/ui/menus/playlist.py:345
@@ -195,13 +195,13 @@ msgstr "Zoekopdracht"
 
 #: pylav/extension/red/ui/menus/playlist.py:344
 msgid "What is the query to remove from this playlist?"
-msgstr ""
+msgstr "Wat is de query die u uit deze afspeellijst wilt verwijderen?"
 
 #: pylav/extension/red/ui/menus/queue.py:458
 msgid "Select a track to remove."
-msgstr ""
+msgstr "Selecteer een track die u wilt verwijderen."
 
 #: pylav/extension/red/ui/menus/queue.py:460
 msgid "Select a track to play now."
-msgstr ""
+msgstr "Selecteer een nummer om nu af te spelen."
 

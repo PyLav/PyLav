@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-03 19:55\n"
+"PO-Revision-Date: 2023-02-03 20:03\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "MIME-Version: 1.0\n"
@@ -19,21 +19,21 @@ msgstr ""
 
 #: pylav/storage/models/playlist.py:406
 msgid "(Global) {user_name_variable_do_not_translate}"
-msgstr ""
+msgstr "(वैश्विक) {user_name_variable_do_not_translate}"
 
 #: pylav/storage/models/playlist.py:412
 msgid "(Server) {guild_name_variable_do_not_translate}"
-msgstr ""
+msgstr "(सर्वर) {guild_name_variable_do_not_translate}"
 
 #: pylav/storage/models/playlist.py:416
 msgid "(Channel) {channel_name_variable_do_not_translate}"
-msgstr ""
+msgstr "(चैनल) {channel_name_variable_do_not_translate}"
 
 #: pylav/storage/models/playlist.py:424
 msgid "(User) {user_name_variable_do_not_translate}"
-msgstr ""
+msgstr "(उपयोगकर्ता) {user_name_variable_do_not_translate}"
 
 #: pylav/storage/models/playlist.py:428
 msgid "(Invalid) {scope_name_variable_do_not_translate}"
-msgstr ""
+msgstr "(अमान्य) {scope_name_variable_do_not_translate}"
 

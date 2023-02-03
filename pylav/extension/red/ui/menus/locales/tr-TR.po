@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-03 19:55\n"
+"PO-Revision-Date: 2023-02-03 20:03\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -71,52 +71,52 @@ msgstr "Zaman aşımı"
 
 #: pylav/extension/red/ui/menus/nodes.py:109
 msgid "Sources to turn off."
-msgstr ""
+msgstr "Kapatılacak kaynaklar."
 
 #: pylav/extension/red/ui/menus/nodes.py:222
 #: pylav/extension/red/ui/menus/nodes.py:689
 msgid "The node name has been set to `{node_name_variable_do_not_translate}`."
-msgstr ""
+msgstr "Düğüm adı ' olarak ayarlandı{node_name_variable_do_not_translate}`."
 
 #: pylav/extension/red/ui/menus/nodes.py:237
 #: pylav/extension/red/ui/menus/nodes.py:704
 msgid "The node password has been set to `{node_password_variable_do_not_translate}`."
-msgstr ""
+msgstr "Düğüm parolası ' olarak ayarlandı{node_password_variable_do_not_translate}`."
 
 #: pylav/extension/red/ui/menus/nodes.py:257
 #: pylav/extension/red/ui/menus/nodes.py:724
 msgid "The node host address has been set to `{node_host_variable_do_not_translate}`."
-msgstr ""
+msgstr "Düğüm ana bilgisayar adresi ' olarak ayarlandı{node_host_variable_do_not_translate}`."
 
 #: pylav/extension/red/ui/menus/nodes.py:276
 #: pylav/extension/red/ui/menus/nodes.py:743
 msgid "The port you specified is invalid."
-msgstr ""
+msgstr "Belirttiğiniz bağlantı noktası geçersiz."
 
 #: pylav/extension/red/ui/menus/nodes.py:284
 #: pylav/extension/red/ui/menus/nodes.py:751
 msgid "The node port has been set to `{node_port_variable_do_not_translate}`."
-msgstr ""
+msgstr "Düğüm bağlantı noktası ' olarak ayarlandı{node_port_variable_do_not_translate}`."
 
 #: pylav/extension/red/ui/menus/nodes.py:303
 #: pylav/extension/red/ui/menus/nodes.py:770
 msgid "The timeout you specified is invalid; it must be a number in seconds."
-msgstr ""
+msgstr "Belirttiğiniz zaman aşımı geçersiz; saniye cinsinden bir sayı olmalıdır."
 
 #: pylav/extension/red/ui/menus/nodes.py:311
 #: pylav/extension/red/ui/menus/nodes.py:783
 msgid "The node timeout has been set to `0` seconds."
-msgstr ""
+msgstr "Düğüm zaman aşımı '0' saniye olarak ayarlandı."
 
 #: pylav/extension/red/ui/menus/nodes.py:313
 #: pylav/extension/red/ui/menus/nodes.py:779
 msgid "The node timeout has been set to `1` second."
-msgstr ""
+msgstr "Düğüm zaman aşımı '1' saniyeye ayarlandı."
 
 #: pylav/extension/red/ui/menus/nodes.py:315
 #: pylav/extension/red/ui/menus/nodes.py:785
 msgid "The node timeout has been set to `{node_timeout_variable_do_not_translate}` seconds."
-msgstr ""
+msgstr "Düğüm zaman aşımı ' olarak ayarlandı{node_timeout_variable_do_not_translate}' saniye."
 
 #: pylav/extension/red/ui/menus/nodes.py:516
 msgid "Change the domain or IP address of the host."
@@ -156,7 +156,7 @@ msgstr "tüm"
 
 #: pylav/extension/red/ui/menus/player.py:207
 msgid "I am not in any voice channel currently."
-msgstr ""
+msgstr "Şu anda herhangi bir ses kanalında değilim."
 
 #: pylav/extension/red/ui/menus/playlist.py:187
 msgid "Please enter the playlist URL."
@@ -186,7 +186,7 @@ msgstr "Lütfen bu çalma listesi için yeni bir ad girin."
 
 #: pylav/extension/red/ui/menus/playlist.py:336
 msgid "What is the query to add to this playlist?"
-msgstr ""
+msgstr "Bu çalma listesine eklenecek sorgu nedir?"
 
 #: pylav/extension/red/ui/menus/playlist.py:337
 #: pylav/extension/red/ui/menus/playlist.py:345
@@ -195,13 +195,13 @@ msgstr "Sorgu"
 
 #: pylav/extension/red/ui/menus/playlist.py:344
 msgid "What is the query to remove from this playlist?"
-msgstr ""
+msgstr "Bu çalma listesinden kaldırılacak sorgu nedir?"
 
 #: pylav/extension/red/ui/menus/queue.py:458
 msgid "Select a track to remove."
-msgstr ""
+msgstr "Kaldırılacak parçayı seçin."
 
 #: pylav/extension/red/ui/menus/queue.py:460
 msgid "Select a track to play now."
-msgstr ""
+msgstr "Şimdi çalmak üzere bir parça seçin."
 

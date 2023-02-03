@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-03 19:54\n"
+"PO-Revision-Date: 2023-02-03 20:03\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "MIME-Version: 1.0\n"
@@ -71,52 +71,52 @@ msgstr "Expirare"
 
 #: pylav/extension/red/ui/menus/nodes.py:109
 msgid "Sources to turn off."
-msgstr ""
+msgstr "Surse pentru a dezactiva."
 
 #: pylav/extension/red/ui/menus/nodes.py:222
 #: pylav/extension/red/ui/menus/nodes.py:689
 msgid "The node name has been set to `{node_name_variable_do_not_translate}`."
-msgstr ""
+msgstr "Numele nodului a fost setat la '{node_name_variable_do_not_translate}`."
 
 #: pylav/extension/red/ui/menus/nodes.py:237
 #: pylav/extension/red/ui/menus/nodes.py:704
 msgid "The node password has been set to `{node_password_variable_do_not_translate}`."
-msgstr ""
+msgstr "Parola nodului a fost setată la '{node_password_variable_do_not_translate}`."
 
 #: pylav/extension/red/ui/menus/nodes.py:257
 #: pylav/extension/red/ui/menus/nodes.py:724
 msgid "The node host address has been set to `{node_host_variable_do_not_translate}`."
-msgstr ""
+msgstr "Adresa gazdă nod a fost setată la '{node_host_variable_do_not_translate}`."
 
 #: pylav/extension/red/ui/menus/nodes.py:276
 #: pylav/extension/red/ui/menus/nodes.py:743
 msgid "The port you specified is invalid."
-msgstr ""
+msgstr "Portul pe care l-ați specificat nu este valid."
 
 #: pylav/extension/red/ui/menus/nodes.py:284
 #: pylav/extension/red/ui/menus/nodes.py:751
 msgid "The node port has been set to `{node_port_variable_do_not_translate}`."
-msgstr ""
+msgstr "Portul nodului a fost setat la '{node_port_variable_do_not_translate}`."
 
 #: pylav/extension/red/ui/menus/nodes.py:303
 #: pylav/extension/red/ui/menus/nodes.py:770
 msgid "The timeout you specified is invalid; it must be a number in seconds."
-msgstr ""
+msgstr "Expirarea pe care ați specificat-o nu este validă; trebuie să fie un număr în câteva secunde."
 
 #: pylav/extension/red/ui/menus/nodes.py:311
 #: pylav/extension/red/ui/menus/nodes.py:783
 msgid "The node timeout has been set to `0` seconds."
-msgstr ""
+msgstr "Expirarea nodului a fost setată la \"0\" secunde."
 
 #: pylav/extension/red/ui/menus/nodes.py:313
 #: pylav/extension/red/ui/menus/nodes.py:779
 msgid "The node timeout has been set to `1` second."
-msgstr ""
+msgstr "Expirarea nodului a fost setată la \"1\" secundă."
 
 #: pylav/extension/red/ui/menus/nodes.py:315
 #: pylav/extension/red/ui/menus/nodes.py:785
 msgid "The node timeout has been set to `{node_timeout_variable_do_not_translate}` seconds."
-msgstr ""
+msgstr "Expirarea nodului a fost setată la '{node_timeout_variable_do_not_translate}' secunde."
 
 #: pylav/extension/red/ui/menus/nodes.py:516
 msgid "Change the domain or IP address of the host."
@@ -156,7 +156,7 @@ msgstr "toate"
 
 #: pylav/extension/red/ui/menus/player.py:207
 msgid "I am not in any voice channel currently."
-msgstr ""
+msgstr "Eu nu sunt în orice canal de voce în prezent."
 
 #: pylav/extension/red/ui/menus/playlist.py:187
 msgid "Please enter the playlist URL."
@@ -186,7 +186,7 @@ msgstr "Vă rugăm să introduceți noul nume pentru această listă de redare."
 
 #: pylav/extension/red/ui/menus/playlist.py:336
 msgid "What is the query to add to this playlist?"
-msgstr ""
+msgstr "Care este interogarea de adăugat la această listă de redare?"
 
 #: pylav/extension/red/ui/menus/playlist.py:337
 #: pylav/extension/red/ui/menus/playlist.py:345
@@ -195,13 +195,13 @@ msgstr "Interogare"
 
 #: pylav/extension/red/ui/menus/playlist.py:344
 msgid "What is the query to remove from this playlist?"
-msgstr ""
+msgstr "Care este interogarea de eliminat din această listă de redare?"
 
 #: pylav/extension/red/ui/menus/queue.py:458
 msgid "Select a track to remove."
-msgstr ""
+msgstr "Selectați o pistă de eliminat."
 
 #: pylav/extension/red/ui/menus/queue.py:460
 msgid "Select a track to play now."
-msgstr ""
+msgstr "Selectați o piesă pe care să o redați acum."
 

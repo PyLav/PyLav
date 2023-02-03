@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-03 19:55\n"
+"PO-Revision-Date: 2023-02-03 20:03\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "MIME-Version: 1.0\n"
@@ -48,27 +48,27 @@ msgstr "Ні"
 
 #: pylav/extension/red/ui/buttons/generic.py:165
 msgid "Disconnect {player_type_variable_do_not_translate} players"
-msgstr ""
+msgstr "Відключити {player_type_variable_do_not_translate} Гравців"
 
 #: pylav/extension/red/ui/buttons/generic.py:169
 msgid "Disconnect {player_type_variable_do_not_translate} player"
-msgstr ""
+msgstr "Відключити {player_type_variable_do_not_translate} гравець"
 
 #: pylav/extension/red/ui/buttons/nodes.py:57
 msgid "I will connect to this node using a secure connection. Please ensure that this node supports secure connections."
-msgstr ""
+msgstr "Я з'єднаюся з цим вузлом за допомогою захищеного з'єднання. Переконайтеся, що цей вузол підтримує безпечні з'єднання."
 
 #: pylav/extension/red/ui/buttons/nodes.py:66
 msgid "I will connect to this node using an unsecure connection."
-msgstr ""
+msgstr "Я підключуся до цього вузла за допомогою незахищеного з'єднання."
 
 #: pylav/extension/red/ui/buttons/nodes.py:104
 msgid "This node will be used for searches only."
-msgstr ""
+msgstr "Цей вузол буде використовуватися тільки для пошуку."
 
 #: pylav/extension/red/ui/buttons/nodes.py:111
 msgid "This node will be used for both searches and playback."
-msgstr ""
+msgstr "Цей вузол буде використовуватися як для пошуку, так і для відтворення."
 
 #: pylav/extension/red/ui/buttons/nodes.py:142
 msgid "Please fill out all the fields before continuing."
@@ -76,15 +76,15 @@ msgstr "Будь ласка, заповніть усі поля, перш ніж
 
 #: pylav/extension/red/ui/buttons/nodes.py:222
 msgid "I will remove this node permanently once you select “done”."
-msgstr ""
+msgstr "Я видалю цей вузол назавжди, як тільки ви виберете \"готово\"."
 
 #: pylav/extension/red/ui/buttons/nodes.py:224
 msgid "I will no longer remove this node permanently once you select “done”."
-msgstr ""
+msgstr "Я більше не буду видаляти цей вузол назавжди, як тільки ви виберете \"готово\"."
 
 #: pylav/extension/red/ui/buttons/nodes.py:258
 msgid "Enabled sources"
-msgstr ""
+msgstr "Увімкнені джерела"
 
 #: pylav/extension/red/ui/buttons/player.py:37
 #: pylav/extension/red/ui/buttons/player.py:91
@@ -96,77 +96,77 @@ msgstr "Ви не маєте права виконувати цю дію."
 #: pylav/extension/red/ui/buttons/player.py:101
 #: pylav/extension/red/ui/buttons/player.py:163
 msgid "There are no players available for this action. Try refreshing."
-msgstr ""
+msgstr "Для цієї дії немає гравців. Спробуйте освіжити."
 
 #: pylav/extension/red/ui/buttons/player.py:55
 #: pylav/extension/red/ui/buttons/player.py:112
 #: pylav/extension/red/ui/buttons/player.py:173
 msgid "My bot owner requested an action"
-msgstr ""
+msgstr "Мій власник бота подав запит на дію"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 msgid "My bot owner has requested that I disconnect from this server. I have saved my current position, so connect me to a voice channel to resume playback. Sorry for any inconvenience caused."
-msgstr ""
+msgstr "Мій власник бота попросив мене відключитися від цього сервера. Я зберіг свою поточну позицію, тому підключіть мене до голосового каналу, щоб відновити відтворення. Вибачте за завдані незручності."
 
 #: pylav/extension/red/ui/buttons/player.py:113
 msgid "My owner has requested that I wipe the queue for this server and stop playback. Sorry for any inconvenience caused."
-msgstr ""
+msgstr "Мій власник попросив мене стерти чергу на цей сервер і припинити відтворення. Вибачте за завдані незручності."
 
 #: pylav/extension/red/ui/buttons/player.py:174
 msgid "My bot owner has requested that I disconnect from all servers. I have saved my current position, so connect me to a voice channel to resume playback. Sorry for any inconvenience caused."
-msgstr ""
+msgstr "Мій власник бота попросив мене відключитися від усіх серверів. Я зберіг свою поточну позицію, тому підключіть мене до голосового каналу, щоб відновити відтворення. Вибачте за завдані незручності."
 
 #: pylav/extension/red/ui/buttons/playlist.py:48
 msgid "I will delete this playlist permanently once you select “done”."
-msgstr ""
+msgstr "Я видалю цей список відтворення назавжди, як тільки ви виберете \"готово\"."
 
 #: pylav/extension/red/ui/buttons/playlist.py:50
 msgid "I will no longer delete this playlist permanently once you select “done”."
-msgstr ""
+msgstr "Я більше не буду видаляти цей список відтворення назавжди, як тільки ви виберете \"готово\"."
 
 #: pylav/extension/red/ui/buttons/playlist.py:83
 msgid "I will remove all tracks from this playlist."
-msgstr ""
+msgstr "Я приберу всі треки з цього плейлиста."
 
 #: pylav/extension/red/ui/buttons/playlist.py:85
 msgid "I will no longer remove all tracks from this playlist."
-msgstr ""
+msgstr "Я більше не буду видаляти всі треки з цього плейлиста."
 
 #: pylav/extension/red/ui/buttons/playlist.py:124
 msgid "Here is your playlist: {playlist_name_variable_do_not_translate}. This file is compressed using Gzip to make it possible to be sent via Discord. You can use {url_name_variable_do_not_translate} to decompress it."
-msgstr ""
+msgstr "Ось ваш плейлист: {playlist_name_variable_do_not_translate}. Цей файл стискається за допомогою Gzip, щоб зробити його можливим через Discord. Можна використовувати {url_name_variable_do_not_translate} для його розпакування."
 
 #: pylav/extension/red/ui/buttons/playlist.py:133
 msgid "Here is your playlist: {playlist_name_name_variable_do_not_translate}. This file is compressed using Brotli to make it possible to be sent via Discord."
-msgstr ""
+msgstr "Ось ваш плейлист: {playlist_name_name_variable_do_not_translate}. Цей файл стискається за допомогою Brotli, щоб зробити його можливим для відправки через Discord."
 
 #: pylav/extension/red/ui/buttons/playlist.py:142
 msgid "Here is your playlist: {playlist_name_name_variable_do_not_translate}."
-msgstr ""
+msgstr "Ось ваш плейлист: {playlist_name_name_variable_do_not_translate}."
 
 #: pylav/extension/red/ui/buttons/playlist.py:186
 msgid "I will update this playlist with the latest tracks, press done to continue."
-msgstr ""
+msgstr "Я оновлю цей список відтворення останніми треками, натисніть готово, щоб продовжити."
 
 #: pylav/extension/red/ui/buttons/playlist.py:189
 msgid "I will no longer update this playlist with the latest tracks."
-msgstr ""
+msgstr "Я більше не буду оновлювати цей плейлист останніми треками."
 
 #: pylav/extension/red/ui/buttons/playlist.py:278
 msgid "I will add the current queue this playlist."
-msgstr ""
+msgstr "Я додам поточну чергу цього плейлиста."
 
 #: pylav/extension/red/ui/buttons/playlist.py:285
 msgid "I will no longer add the current queue to this playlist."
-msgstr ""
+msgstr "Я більше не буду додавати поточну чергу в цей плейлист."
 
 #: pylav/extension/red/ui/buttons/playlist.py:324
 msgid "I will remove all duplicate tracks from the queue."
-msgstr ""
+msgstr "Я приберу всі дублікати треків з черги."
 
 #: pylav/extension/red/ui/buttons/playlist.py:331
 msgid "I will no longer remove duplicate tracks from the queue."
-msgstr ""
+msgstr "Я більше не буду видаляти дублікати треків з черги."
 
 #: pylav/extension/red/ui/buttons/playlist.py:421
 msgid "Playlists you can currently play."
@@ -184,7 +184,7 @@ msgstr "Якою має бути назва плейліста?"
 #: pylav/extension/red/ui/buttons/queue.py:191
 #: pylav/extension/red/ui/buttons/queue.py:224
 msgid "I am not connected to any voice channel at the moment."
-msgstr ""
+msgstr "На даний момент я не підключений до жодного голосового каналу."
 
 #: pylav/extension/red/ui/buttons/queue.py:289
 msgid "There is nothing in the queue."

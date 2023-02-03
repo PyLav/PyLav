@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-03 19:55\n"
+"PO-Revision-Date: 2023-02-03 20:03\n"
 "Last-Translator: \n"
 "Language-Team: Thai\n"
 "MIME-Version: 1.0\n"
@@ -23,7 +23,7 @@ msgstr "ไม่มีโหนดที่พร้อมใช้งาน!"
 
 #: pylav/core/client.py:889 pylav/core/client.py:927 pylav/core/client.py:1234
 msgid "No node with {feature_name_variable_do_not_translate} functionality available!"
-msgstr ""
+msgstr "ไม่มีโหนดที่มี {feature_name_variable_do_not_translate} ฟังก์ชั่นใช้ได้!"
 
 #: pylav/core/client.py:1652
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist."
@@ -39,7 +39,7 @@ msgstr "ยังมีข้อความเหลืออยู่อีก
 
 #: pylav/core/context.py:319
 msgid "There are still {remaining_variable_do_not_translate} messages remaining. Type `more` to continue."
-msgstr ""
+msgstr "ยังมีอยู่ {remaining_variable_do_not_translate} ข้อความที่เหลืออยู่ พิมพ์ 'เพิ่มเติม' เพื่อดําเนินการต่อ"
 
 #: pylav/core/context.py:349
 #, docstring

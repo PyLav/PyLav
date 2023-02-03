@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-03 19:54\n"
+"PO-Revision-Date: 2023-02-03 20:03\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "MIME-Version: 1.0\n"
@@ -24,18 +24,18 @@ msgstr "Ön nem jogosult arra, hogy ezzel a lehetőséggel interakcióba lépjen
 
 #: pylav/extension/red/ui/selectors/nodes.py:53
 msgid "Disabling the following sources: {sources_list_variable_do_not_translate}."
-msgstr ""
+msgstr "A következő források letiltása: {sources_list_variable_do_not_translate}."
 
 #: pylav/extension/red/ui/selectors/nodes.py:85
 msgid "Node was not found."
-msgstr ""
+msgstr "A csomópont nem található."
 
 #: pylav/extension/red/ui/selectors/playlist.py:41
 #: pylav/extension/red/ui/selectors/playlist.py:82
 msgid "Playlist was not found."
-msgstr ""
+msgstr "A lejátszási lista nem található."
 
 #: pylav/extension/red/ui/selectors/queue.py:96
 msgid "Track was not found."
-msgstr ""
+msgstr "A pálya nem található."
 

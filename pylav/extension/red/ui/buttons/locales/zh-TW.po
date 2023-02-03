@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-03 19:55\n"
+"PO-Revision-Date: 2023-02-03 20:03\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -48,27 +48,27 @@ msgstr "不"
 
 #: pylav/extension/red/ui/buttons/generic.py:165
 msgid "Disconnect {player_type_variable_do_not_translate} players"
-msgstr ""
+msgstr "斷開 {player_type_variable_do_not_translate} 球員"
 
 #: pylav/extension/red/ui/buttons/generic.py:169
 msgid "Disconnect {player_type_variable_do_not_translate} player"
-msgstr ""
+msgstr "斷開 {player_type_variable_do_not_translate} 選手"
 
 #: pylav/extension/red/ui/buttons/nodes.py:57
 msgid "I will connect to this node using a secure connection. Please ensure that this node supports secure connections."
-msgstr ""
+msgstr "我將使用安全連接連接到此節點。請確保此節點支援安全連接。"
 
 #: pylav/extension/red/ui/buttons/nodes.py:66
 msgid "I will connect to this node using an unsecure connection."
-msgstr ""
+msgstr "我將使用不安全的連接連接到此節點。"
 
 #: pylav/extension/red/ui/buttons/nodes.py:104
 msgid "This node will be used for searches only."
-msgstr ""
+msgstr "此節點將僅用於搜索。"
 
 #: pylav/extension/red/ui/buttons/nodes.py:111
 msgid "This node will be used for both searches and playback."
-msgstr ""
+msgstr "此節點將用於搜索和播放。"
 
 #: pylav/extension/red/ui/buttons/nodes.py:142
 msgid "Please fill out all the fields before continuing."
@@ -76,15 +76,15 @@ msgstr "請填寫所有欄位，然後再繼續。"
 
 #: pylav/extension/red/ui/buttons/nodes.py:222
 msgid "I will remove this node permanently once you select “done”."
-msgstr ""
+msgstr "一旦您選擇“完成”，我將永久刪除此節點。"
 
 #: pylav/extension/red/ui/buttons/nodes.py:224
 msgid "I will no longer remove this node permanently once you select “done”."
-msgstr ""
+msgstr "一旦您選擇“完成”，我將不再永久刪除此節點。"
 
 #: pylav/extension/red/ui/buttons/nodes.py:258
 msgid "Enabled sources"
-msgstr ""
+msgstr "啟用的源"
 
 #: pylav/extension/red/ui/buttons/player.py:37
 #: pylav/extension/red/ui/buttons/player.py:91
@@ -96,77 +96,77 @@ msgstr "您無權執行此操作。"
 #: pylav/extension/red/ui/buttons/player.py:101
 #: pylav/extension/red/ui/buttons/player.py:163
 msgid "There are no players available for this action. Try refreshing."
-msgstr ""
+msgstr "沒有可用於此操作的玩家。請嘗試刷新。"
 
 #: pylav/extension/red/ui/buttons/player.py:55
 #: pylav/extension/red/ui/buttons/player.py:112
 #: pylav/extension/red/ui/buttons/player.py:173
 msgid "My bot owner requested an action"
-msgstr ""
+msgstr "我的機器人擁有者請求了操作"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 msgid "My bot owner has requested that I disconnect from this server. I have saved my current position, so connect me to a voice channel to resume playback. Sorry for any inconvenience caused."
-msgstr ""
+msgstr "我的機器人擁有者已請求我斷開與此伺服器的連接。我已保存當前位置，因此請將我連接到語音通道以恢復播放。對於給您帶來的不便，我們深表歉意。"
 
 #: pylav/extension/red/ui/buttons/player.py:113
 msgid "My owner has requested that I wipe the queue for this server and stop playback. Sorry for any inconvenience caused."
-msgstr ""
+msgstr "我的所有者已請求我擦除此伺服器的佇列並停止播放。對於給您帶來的不便，我們深表歉意。"
 
 #: pylav/extension/red/ui/buttons/player.py:174
 msgid "My bot owner has requested that I disconnect from all servers. I have saved my current position, so connect me to a voice channel to resume playback. Sorry for any inconvenience caused."
-msgstr ""
+msgstr "我的機器人擁有者已請求我斷開與所有伺服器的連接。我已保存當前位置，因此請將我連接到語音通道以恢復播放。對於給您帶來的不便，我們深表歉意。"
 
 #: pylav/extension/red/ui/buttons/playlist.py:48
 msgid "I will delete this playlist permanently once you select “done”."
-msgstr ""
+msgstr "一旦您選擇“完成”，我將永久刪除此播放清單。"
 
 #: pylav/extension/red/ui/buttons/playlist.py:50
 msgid "I will no longer delete this playlist permanently once you select “done”."
-msgstr ""
+msgstr "一旦您選擇“完成”，我將不再永久刪除此播放清單。"
 
 #: pylav/extension/red/ui/buttons/playlist.py:83
 msgid "I will remove all tracks from this playlist."
-msgstr ""
+msgstr "我將從此播放清單中刪除所有曲目。"
 
 #: pylav/extension/red/ui/buttons/playlist.py:85
 msgid "I will no longer remove all tracks from this playlist."
-msgstr ""
+msgstr "我將不再從此播放清單中刪除所有曲目。"
 
 #: pylav/extension/red/ui/buttons/playlist.py:124
 msgid "Here is your playlist: {playlist_name_variable_do_not_translate}. This file is compressed using Gzip to make it possible to be sent via Discord. You can use {url_name_variable_do_not_translate} to decompress it."
-msgstr ""
+msgstr "這是您的播放清單： {playlist_name_variable_do_not_translate}.此檔使用 Gzip 壓縮，以便可以通過 Discord 發送。您可以使用 {url_name_variable_do_not_translate} 解壓它。"
 
 #: pylav/extension/red/ui/buttons/playlist.py:133
 msgid "Here is your playlist: {playlist_name_name_variable_do_not_translate}. This file is compressed using Brotli to make it possible to be sent via Discord."
-msgstr ""
+msgstr "這是您的播放清單： {playlist_name_name_variable_do_not_translate}.該檔使用 Brotli 進行壓縮，以便可以通過 Discord 發送。"
 
 #: pylav/extension/red/ui/buttons/playlist.py:142
 msgid "Here is your playlist: {playlist_name_name_variable_do_not_translate}."
-msgstr ""
+msgstr "這是您的播放清單： {playlist_name_name_variable_do_not_translate}."
 
 #: pylav/extension/red/ui/buttons/playlist.py:186
 msgid "I will update this playlist with the latest tracks, press done to continue."
-msgstr ""
+msgstr "我將使用最新曲目更新此播放清單，按完成繼續。"
 
 #: pylav/extension/red/ui/buttons/playlist.py:189
 msgid "I will no longer update this playlist with the latest tracks."
-msgstr ""
+msgstr "我將不再使用最新曲目更新此播放清單。"
 
 #: pylav/extension/red/ui/buttons/playlist.py:278
 msgid "I will add the current queue this playlist."
-msgstr ""
+msgstr "我將在此播放清單中添加當前佇列。"
 
 #: pylav/extension/red/ui/buttons/playlist.py:285
 msgid "I will no longer add the current queue to this playlist."
-msgstr ""
+msgstr "我將不再將當前佇列添加到此播放清單中。"
 
 #: pylav/extension/red/ui/buttons/playlist.py:324
 msgid "I will remove all duplicate tracks from the queue."
-msgstr ""
+msgstr "我將從佇列中刪除所有重複的曲目。"
 
 #: pylav/extension/red/ui/buttons/playlist.py:331
 msgid "I will no longer remove duplicate tracks from the queue."
-msgstr ""
+msgstr "我將不再從佇列中刪除重複的曲目。"
 
 #: pylav/extension/red/ui/buttons/playlist.py:421
 msgid "Playlists you can currently play."
@@ -184,7 +184,7 @@ msgstr "播放列表名稱要叫什麼？"
 #: pylav/extension/red/ui/buttons/queue.py:191
 #: pylav/extension/red/ui/buttons/queue.py:224
 msgid "I am not connected to any voice channel at the moment."
-msgstr ""
+msgstr "我目前沒有連接到任何語音頻道。"
 
 #: pylav/extension/red/ui/buttons/queue.py:289
 msgid "There is nothing in the queue."

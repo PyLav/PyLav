@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-03 19:55\n"
+"PO-Revision-Date: 2023-02-03 20:03\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "MIME-Version: 1.0\n"
@@ -19,11 +19,11 @@ msgstr ""
 
 #: pylav/players/manager.py:259
 msgid "There are no nodes available currently."
-msgstr ""
+msgstr "Hiện tại không có nút nào."
 
 #: pylav/players/manager.py:350
 msgid "Music in {number_of_servers_variable_do_not_translate} servers"
-msgstr ""
+msgstr "Âm nhạc trong {number_of_servers_variable_do_not_translate} Máy chủ"
 
 #: pylav/players/player.py:1175
 msgid "There are no tracks currently in the player history."
@@ -82,7 +82,7 @@ msgstr "SỐNG"
 
 #: pylav/players/player.py:2453
 msgid "Now Playing in {server_name_variable_do_not_translate}"
-msgstr ""
+msgstr "Hiện đang chơi trong {server_name_variable_do_not_translate}"
 
 #: pylav/players/player.py:2473 pylav/players/player.py:2610
 msgid "Currently livestreaming"
@@ -111,15 +111,15 @@ msgstr "Bản nhạc tiếp theo"
 
 #: pylav/players/player.py:2520
 msgid "1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
-msgstr ""
+msgstr "1 bản nhạc, {queue_total_duration_variable_do_not_translate} Còn lại\n"
 
 #: pylav/players/player.py:2524
 msgid "0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
-msgstr ""
+msgstr "0 bản nhạc, {queue_total_duration_variable_do_not_translate} Còn lại\n"
 
 #: pylav/players/player.py:2528
 msgid "{track_count_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
-msgstr ""
+msgstr "{track_count_variable_do_not_translate} Bài hát {queue_total_duration_variable_do_not_translate} Còn lại\n"
 
 #: pylav/players/player.py:2535 pylav/players/player.py:2658
 msgid "Repeating"
@@ -131,7 +131,7 @@ msgstr "Tự động phát"
 
 #: pylav/players/player.py:2541 pylav/players/player.py:2664
 msgid "{volume_variable_do_not_translate}%"
-msgstr ""
+msgstr "{volume_variable_do_not_translate}%"
 
 #: pylav/players/player.py:2542 pylav/players/player.py:2665
 msgid "Volume"
@@ -139,11 +139,11 @@ msgstr "Âm lượng"
 
 #: pylav/players/player.py:2582
 msgid "Recently Played for {server_name_variable_do_not_translate}"
-msgstr ""
+msgstr "Đã chơi gần đây cho {server_name_variable_do_not_translate}"
 
 #: pylav/players/player.py:2588
 msgid "Queue for {server_name_variable_do_not_translate}"
-msgstr ""
+msgstr "Xếp hàng cho {server_name_variable_do_not_translate}"
 
 #: pylav/players/player.py:2613
 msgid "Playing"
@@ -151,17 +151,17 @@ msgstr "Chơi"
 
 #: pylav/players/player.py:2629
 msgid "Queue order will change every time a track is added due to auto shuffle being enabled."
-msgstr ""
+msgstr "Thứ tự hàng đợi sẽ thay đổi mỗi khi một bản nhạc được thêm vào do tính năng tự động xáo trộn được bật."
 
 #: pylav/players/player.py:2640
 msgid "Page 1 / 1 | 1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
-msgstr ""
+msgstr "Trang 1 / 1 | 1 bản nhạc, {queue_total_duration_variable_do_not_translate} Còn lại\n"
 
 #: pylav/players/player.py:2644
 msgid "Page 1 / 1 | 0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
-msgstr ""
+msgstr "Trang 1 / 1 | 0 bản nhạc, {queue_total_duration_variable_do_not_translate} Còn lại\n"
 
 #: pylav/players/player.py:2648
 msgid "Page {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
-msgstr ""
+msgstr "Trang {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} Bài hát {queue_total_duration_variable_do_not_translate} Còn lại\n"
 

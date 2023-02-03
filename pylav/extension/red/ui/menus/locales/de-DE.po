@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-03 19:54\n"
+"PO-Revision-Date: 2023-02-03 20:03\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -71,52 +71,52 @@ msgstr "Zeitüberschreitung"
 
 #: pylav/extension/red/ui/menus/nodes.py:109
 msgid "Sources to turn off."
-msgstr ""
+msgstr "Zu deaktivierende Quellen."
 
 #: pylav/extension/red/ui/menus/nodes.py:222
 #: pylav/extension/red/ui/menus/nodes.py:689
 msgid "The node name has been set to `{node_name_variable_do_not_translate}`."
-msgstr ""
+msgstr "Der Knotenname wurde auf '{node_name_variable_do_not_translate}`."
 
 #: pylav/extension/red/ui/menus/nodes.py:237
 #: pylav/extension/red/ui/menus/nodes.py:704
 msgid "The node password has been set to `{node_password_variable_do_not_translate}`."
-msgstr ""
+msgstr "Das Knotenkennwort wurde auf '{node_password_variable_do_not_translate}`."
 
 #: pylav/extension/red/ui/menus/nodes.py:257
 #: pylav/extension/red/ui/menus/nodes.py:724
 msgid "The node host address has been set to `{node_host_variable_do_not_translate}`."
-msgstr ""
+msgstr "Die Hostadresse des Knotens wurde auf '{node_host_variable_do_not_translate}`."
 
 #: pylav/extension/red/ui/menus/nodes.py:276
 #: pylav/extension/red/ui/menus/nodes.py:743
 msgid "The port you specified is invalid."
-msgstr ""
+msgstr "Der angegebene Port ist ungültig."
 
 #: pylav/extension/red/ui/menus/nodes.py:284
 #: pylav/extension/red/ui/menus/nodes.py:751
 msgid "The node port has been set to `{node_port_variable_do_not_translate}`."
-msgstr ""
+msgstr "Der Knotenport wurde auf '{node_port_variable_do_not_translate}`."
 
 #: pylav/extension/red/ui/menus/nodes.py:303
 #: pylav/extension/red/ui/menus/nodes.py:770
 msgid "The timeout you specified is invalid; it must be a number in seconds."
-msgstr ""
+msgstr "Das angegebene Timeout ist ungültig. Es muss eine Zahl in Sekunden sein."
 
 #: pylav/extension/red/ui/menus/nodes.py:311
 #: pylav/extension/red/ui/menus/nodes.py:783
 msgid "The node timeout has been set to `0` seconds."
-msgstr ""
+msgstr "Das Knoten-Timeout wurde auf '0' Sekunden gesetzt."
 
 #: pylav/extension/red/ui/menus/nodes.py:313
 #: pylav/extension/red/ui/menus/nodes.py:779
 msgid "The node timeout has been set to `1` second."
-msgstr ""
+msgstr "Das Knoten-Timeout wurde auf '1' Sekunde gesetzt."
 
 #: pylav/extension/red/ui/menus/nodes.py:315
 #: pylav/extension/red/ui/menus/nodes.py:785
 msgid "The node timeout has been set to `{node_timeout_variable_do_not_translate}` seconds."
-msgstr ""
+msgstr "Das Knoten-Timeout wurde auf '{node_timeout_variable_do_not_translate}' Sekunden."
 
 #: pylav/extension/red/ui/menus/nodes.py:516
 msgid "Change the domain or IP address of the host."
@@ -156,7 +156,7 @@ msgstr "alle"
 
 #: pylav/extension/red/ui/menus/player.py:207
 msgid "I am not in any voice channel currently."
-msgstr ""
+msgstr "Ich bin derzeit in keinem Sprachkanal."
 
 #: pylav/extension/red/ui/menus/playlist.py:187
 msgid "Please enter the playlist URL."
@@ -186,7 +186,7 @@ msgstr "Bitte geben Sie den neuen Namen für diese Playlist ein."
 
 #: pylav/extension/red/ui/menus/playlist.py:336
 msgid "What is the query to add to this playlist?"
-msgstr ""
+msgstr "Welche Abfrage soll dieser Wiedergabeliste hinzugefügt werden?"
 
 #: pylav/extension/red/ui/menus/playlist.py:337
 #: pylav/extension/red/ui/menus/playlist.py:345
@@ -195,13 +195,13 @@ msgstr "Abfrage"
 
 #: pylav/extension/red/ui/menus/playlist.py:344
 msgid "What is the query to remove from this playlist?"
-msgstr ""
+msgstr "Welche Abfrage soll aus dieser Wiedergabeliste entfernt werden?"
 
 #: pylav/extension/red/ui/menus/queue.py:458
 msgid "Select a track to remove."
-msgstr ""
+msgstr "Wählen Sie eine Spur aus, die entfernt werden soll."
 
 #: pylav/extension/red/ui/menus/queue.py:460
 msgid "Select a track to play now."
-msgstr ""
+msgstr "Wählen Sie einen Titel aus, den Sie jetzt abspielen möchten."
 

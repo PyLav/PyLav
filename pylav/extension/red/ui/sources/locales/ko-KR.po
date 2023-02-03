@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-03 19:55\n"
+"PO-Revision-Date: 2023-02-03 20:03\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -42,7 +42,7 @@ msgstr "페이지 1 / 1 | 0 항목"
 #: pylav/extension/red/ui/sources/generic.py:97
 #: pylav/extension/red/ui/sources/nodes.py:59
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} entries"
-msgstr ""
+msgstr "페이지 {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} 항목"
 
 #: pylav/extension/red/ui/sources/nodes.py:105
 #: pylav/extension/red/ui/sources/nodes.py:269
@@ -73,7 +73,8 @@ msgstr "값"
 #: pylav/extension/red/ui/sources/nodes.py:321
 msgid "Latitude: {latitude_variable_do_not_translate}\n"
 "Longitude: {longitude_variable_do_not_translate}"
-msgstr ""
+msgstr "위도: {latitude_variable_do_not_translate}\n"
+"경도: {longitude_variable_do_not_translate}"
 
 #: pylav/extension/red/ui/sources/nodes.py:164
 #: pylav/extension/red/ui/sources/nodes.py:328
@@ -184,7 +185,7 @@ msgstr "페이지 1 / 1 | 0 노드"
 #: pylav/extension/red/ui/sources/nodes.py:210
 #: pylav/extension/red/ui/sources/nodes.py:375
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} nodes"
-msgstr ""
+msgstr "페이지 {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} 노드"
 
 #: pylav/extension/red/ui/sources/player.py:63
 #: pylav/extension/red/ui/sources/queue.py:108
@@ -196,20 +197,20 @@ msgstr "현재이 서버에서 아무 것도하지 않습니다."
 #: pylav/extension/red/ui/sources/player.py:72
 #: pylav/extension/red/ui/sources/player.py:82
 msgid "1 track"
-msgstr ""
+msgstr "1 트랙"
 
 #: pylav/extension/red/ui/sources/player.py:74
 #: pylav/extension/red/ui/sources/player.py:84
 msgid "0 tracks"
-msgstr ""
+msgstr "0 트랙"
 
 #: pylav/extension/red/ui/sources/player.py:76
 msgid "{queue_length_variable_do_not_translate} tracks"
-msgstr ""
+msgstr "{queue_length_variable_do_not_translate} 트랙"
 
 #: pylav/extension/red/ui/sources/player.py:86
 msgid "{history_queue_length_variable_do_not_translate} tracks"
-msgstr ""
+msgstr "{history_queue_length_variable_do_not_translate} 트랙"
 
 #: pylav/extension/red/ui/sources/player.py:93
 msgid "Server Owner"
@@ -241,7 +242,7 @@ msgstr "페이지 1 / 1 | 0 서버"
 
 #: pylav/extension/red/ui/sources/player.py:121
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} servers"
-msgstr ""
+msgstr "페이지 {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} 서버"
 
 #: pylav/extension/red/ui/sources/playlist.py:56
 #: pylav/extension/red/ui/sources/playlist.py:210
@@ -256,7 +257,7 @@ msgstr "페이지 1 / 1 | 재생 목록 0개"
 #: pylav/extension/red/ui/sources/playlist.py:60
 #: pylav/extension/red/ui/sources/playlist.py:214
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} playlists"
-msgstr ""
+msgstr "페이지 {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} 재생 목록"
 
 #: pylav/extension/red/ui/sources/playlist.py:128
 msgid "Tracks in"
@@ -272,7 +273,7 @@ msgstr "페이지 1 / 1 | 0 트랙"
 
 #: pylav/extension/red/ui/sources/playlist.py:144
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} tracks"
-msgstr ""
+msgstr "페이지 {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} 트랙"
 
 #: pylav/extension/red/ui/sources/playlist.py:178
 msgid "Unknown"
@@ -280,19 +281,19 @@ msgstr "알려지지 않은"
 
 #: pylav/extension/red/ui/sources/playlist.py:183
 msgid "Identifier: {id_variable_do_not_translate}"
-msgstr ""
+msgstr "식별자: {id_variable_do_not_translate}"
 
 #: pylav/extension/red/ui/sources/playlist.py:184
 msgid "Tracks: {num_variable_do_not_translate}"
-msgstr ""
+msgstr "트랙: {num_variable_do_not_translate}"
 
 #: pylav/extension/red/ui/sources/playlist.py:187
 msgid "Author: {name_variable_do_not_translate}"
-msgstr ""
+msgstr "저자: {name_variable_do_not_translate}"
 
 #: pylav/extension/red/ui/sources/playlist.py:190
 msgid "Scope: {scope_variable_do_not_translate}\n"
-msgstr ""
+msgstr "범위: {scope_variable_do_not_translate}\n"
 
 #: pylav/extension/red/ui/sources/playlist.py:200
 msgid "Playlists you can access in this server:"
@@ -301,5 +302,5 @@ msgstr "이 서버에서 액세스할 수 있는 재생 목록:"
 #: pylav/extension/red/ui/sources/queue.py:94
 #: pylav/extension/red/ui/sources/queue.py:138
 msgid "I am not connected to any voice channel at the moment."
-msgstr ""
+msgstr "현재 음성 채널에 연결되어 있지 않습니다."
 

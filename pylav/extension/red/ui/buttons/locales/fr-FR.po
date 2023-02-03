@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-03 19:54\n"
+"PO-Revision-Date: 2023-02-03 20:03\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -48,27 +48,27 @@ msgstr "Non"
 
 #: pylav/extension/red/ui/buttons/generic.py:165
 msgid "Disconnect {player_type_variable_do_not_translate} players"
-msgstr ""
+msgstr "Déconnecter {player_type_variable_do_not_translate} Joueurs"
 
 #: pylav/extension/red/ui/buttons/generic.py:169
 msgid "Disconnect {player_type_variable_do_not_translate} player"
-msgstr ""
+msgstr "Déconnecter {player_type_variable_do_not_translate} joueur"
 
 #: pylav/extension/red/ui/buttons/nodes.py:57
 msgid "I will connect to this node using a secure connection. Please ensure that this node supports secure connections."
-msgstr ""
+msgstr "Je vais me connecter à ce nœud en utilisant une connexion sécurisée. Assurez-vous que ce nœud prend en charge les connexions sécurisées."
 
 #: pylav/extension/red/ui/buttons/nodes.py:66
 msgid "I will connect to this node using an unsecure connection."
-msgstr ""
+msgstr "Je vais me connecter à ce nœud en utilisant une connexion non sécurisée."
 
 #: pylav/extension/red/ui/buttons/nodes.py:104
 msgid "This node will be used for searches only."
-msgstr ""
+msgstr "Ce nœud ne sera utilisé que pour les recherches."
 
 #: pylav/extension/red/ui/buttons/nodes.py:111
 msgid "This node will be used for both searches and playback."
-msgstr ""
+msgstr "Ce nœud sera utilisé à la fois pour les recherches et la lecture."
 
 #: pylav/extension/red/ui/buttons/nodes.py:142
 msgid "Please fill out all the fields before continuing."
@@ -76,15 +76,15 @@ msgstr "Veuillez remplir tous les champs avant de continuer."
 
 #: pylav/extension/red/ui/buttons/nodes.py:222
 msgid "I will remove this node permanently once you select “done”."
-msgstr ""
+msgstr "Je supprimerai définitivement ce nœud une fois que vous aurez sélectionné « terminé »."
 
 #: pylav/extension/red/ui/buttons/nodes.py:224
 msgid "I will no longer remove this node permanently once you select “done”."
-msgstr ""
+msgstr "Je ne supprimerai plus définitivement ce nœud une fois que vous aurez sélectionné « terminé »."
 
 #: pylav/extension/red/ui/buttons/nodes.py:258
 msgid "Enabled sources"
-msgstr ""
+msgstr "Sources activées"
 
 #: pylav/extension/red/ui/buttons/player.py:37
 #: pylav/extension/red/ui/buttons/player.py:91
@@ -96,77 +96,77 @@ msgstr "Vous n’êtes pas autorisé à effectuer cette action."
 #: pylav/extension/red/ui/buttons/player.py:101
 #: pylav/extension/red/ui/buttons/player.py:163
 msgid "There are no players available for this action. Try refreshing."
-msgstr ""
+msgstr "Il n’y a pas de joueurs disponibles pour cette action. Essayez de rafraîchir."
 
 #: pylav/extension/red/ui/buttons/player.py:55
 #: pylav/extension/red/ui/buttons/player.py:112
 #: pylav/extension/red/ui/buttons/player.py:173
 msgid "My bot owner requested an action"
-msgstr ""
+msgstr "Le propriétaire de mon bot a demandé une action"
 
 #: pylav/extension/red/ui/buttons/player.py:56
 msgid "My bot owner has requested that I disconnect from this server. I have saved my current position, so connect me to a voice channel to resume playback. Sorry for any inconvenience caused."
-msgstr ""
+msgstr "Le propriétaire de mon bot m’a demandé de me déconnecter de ce serveur. J’ai enregistré ma position actuelle, alors connectez-moi à un canal vocal pour reprendre la lecture. Veuillez nous excuser pour la gêne occasionnée."
 
 #: pylav/extension/red/ui/buttons/player.py:113
 msgid "My owner has requested that I wipe the queue for this server and stop playback. Sorry for any inconvenience caused."
-msgstr ""
+msgstr "Mon propriétaire m’a demandé d’effacer la file d’attente de ce serveur et d’arrêter la lecture. Veuillez nous excuser pour la gêne occasionnée."
 
 #: pylav/extension/red/ui/buttons/player.py:174
 msgid "My bot owner has requested that I disconnect from all servers. I have saved my current position, so connect me to a voice channel to resume playback. Sorry for any inconvenience caused."
-msgstr ""
+msgstr "Le propriétaire de mon bot m’a demandé de me déconnecter de tous les serveurs. J’ai enregistré ma position actuelle, alors connectez-moi à un canal vocal pour reprendre la lecture. Veuillez nous excuser pour la gêne occasionnée."
 
 #: pylav/extension/red/ui/buttons/playlist.py:48
 msgid "I will delete this playlist permanently once you select “done”."
-msgstr ""
+msgstr "Je supprimerai définitivement cette liste de lecture une fois que vous aurez sélectionné « terminé »."
 
 #: pylav/extension/red/ui/buttons/playlist.py:50
 msgid "I will no longer delete this playlist permanently once you select “done”."
-msgstr ""
+msgstr "Je ne supprimerai plus définitivement cette playlist une fois que vous aurez sélectionné « terminé »."
 
 #: pylav/extension/red/ui/buttons/playlist.py:83
 msgid "I will remove all tracks from this playlist."
-msgstr ""
+msgstr "Je vais supprimer toutes les pistes de cette playlist."
 
 #: pylav/extension/red/ui/buttons/playlist.py:85
 msgid "I will no longer remove all tracks from this playlist."
-msgstr ""
+msgstr "Je ne supprimerai plus tous les morceaux de cette playlist."
 
 #: pylav/extension/red/ui/buttons/playlist.py:124
 msgid "Here is your playlist: {playlist_name_variable_do_not_translate}. This file is compressed using Gzip to make it possible to be sent via Discord. You can use {url_name_variable_do_not_translate} to decompress it."
-msgstr ""
+msgstr "Voici votre playlist : {playlist_name_variable_do_not_translate}. Ce fichier est compressé à l’aide de Gzip pour permettre l’envoi via Discord. Vous pouvez utiliser {url_name_variable_do_not_translate} pour le décompresser."
 
 #: pylav/extension/red/ui/buttons/playlist.py:133
 msgid "Here is your playlist: {playlist_name_name_variable_do_not_translate}. This file is compressed using Brotli to make it possible to be sent via Discord."
-msgstr ""
+msgstr "Voici votre playlist : {playlist_name_name_variable_do_not_translate}. Ce fichier est compressé à l’aide de Brotli pour permettre l’envoi via Discord."
 
 #: pylav/extension/red/ui/buttons/playlist.py:142
 msgid "Here is your playlist: {playlist_name_name_variable_do_not_translate}."
-msgstr ""
+msgstr "Voici votre playlist : {playlist_name_name_variable_do_not_translate}."
 
 #: pylav/extension/red/ui/buttons/playlist.py:186
 msgid "I will update this playlist with the latest tracks, press done to continue."
-msgstr ""
+msgstr "Je vais mettre à jour cette liste de lecture avec les dernières pistes, appuyez sur terminé pour continuer."
 
 #: pylav/extension/red/ui/buttons/playlist.py:189
 msgid "I will no longer update this playlist with the latest tracks."
-msgstr ""
+msgstr "Je ne mettrai plus à jour cette playlist avec les derniers morceaux."
 
 #: pylav/extension/red/ui/buttons/playlist.py:278
 msgid "I will add the current queue this playlist."
-msgstr ""
+msgstr "Je vais ajouter la file d’attente actuelle à cette liste de lecture."
 
 #: pylav/extension/red/ui/buttons/playlist.py:285
 msgid "I will no longer add the current queue to this playlist."
-msgstr ""
+msgstr "Je n’ajouterai plus la file d’attente actuelle à cette playlist."
 
 #: pylav/extension/red/ui/buttons/playlist.py:324
 msgid "I will remove all duplicate tracks from the queue."
-msgstr ""
+msgstr "Je vais supprimer toutes les pistes en double de la file d’attente."
 
 #: pylav/extension/red/ui/buttons/playlist.py:331
 msgid "I will no longer remove duplicate tracks from the queue."
-msgstr ""
+msgstr "Je ne supprimerai plus les pistes en double de la file d’attente."
 
 #: pylav/extension/red/ui/buttons/playlist.py:421
 msgid "Playlists you can currently play."
@@ -184,7 +184,7 @@ msgstr "Quel devrait être le nom de la playlist ?"
 #: pylav/extension/red/ui/buttons/queue.py:191
 #: pylav/extension/red/ui/buttons/queue.py:224
 msgid "I am not connected to any voice channel at the moment."
-msgstr ""
+msgstr "Je ne suis connecté à aucun canal vocal pour le moment."
 
 #: pylav/extension/red/ui/buttons/queue.py:289
 msgid "There is nothing in the queue."

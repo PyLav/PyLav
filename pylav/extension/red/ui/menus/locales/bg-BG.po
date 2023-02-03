@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-03 19:54\n"
+"PO-Revision-Date: 2023-02-03 20:03\n"
 "Last-Translator: \n"
 "Language-Team: Bulgarian\n"
 "MIME-Version: 1.0\n"
@@ -71,52 +71,52 @@ msgstr "Изчакване"
 
 #: pylav/extension/red/ui/menus/nodes.py:109
 msgid "Sources to turn off."
-msgstr ""
+msgstr "Източници за изключване."
 
 #: pylav/extension/red/ui/menus/nodes.py:222
 #: pylav/extension/red/ui/menus/nodes.py:689
 msgid "The node name has been set to `{node_name_variable_do_not_translate}`."
-msgstr ""
+msgstr "Името на възела е зададено на '{node_name_variable_do_not_translate}`."
 
 #: pylav/extension/red/ui/menus/nodes.py:237
 #: pylav/extension/red/ui/menus/nodes.py:704
 msgid "The node password has been set to `{node_password_variable_do_not_translate}`."
-msgstr ""
+msgstr "Паролата на възела е зададена на '{node_password_variable_do_not_translate}`."
 
 #: pylav/extension/red/ui/menus/nodes.py:257
 #: pylav/extension/red/ui/menus/nodes.py:724
 msgid "The node host address has been set to `{node_host_variable_do_not_translate}`."
-msgstr ""
+msgstr "Адресът на хоста на възела е зададен на '{node_host_variable_do_not_translate}`."
 
 #: pylav/extension/red/ui/menus/nodes.py:276
 #: pylav/extension/red/ui/menus/nodes.py:743
 msgid "The port you specified is invalid."
-msgstr ""
+msgstr "Зададеният от вас порт е невалиден."
 
 #: pylav/extension/red/ui/menus/nodes.py:284
 #: pylav/extension/red/ui/menus/nodes.py:751
 msgid "The node port has been set to `{node_port_variable_do_not_translate}`."
-msgstr ""
+msgstr "Портът на възела е настроен на '{node_port_variable_do_not_translate}`."
 
 #: pylav/extension/red/ui/menus/nodes.py:303
 #: pylav/extension/red/ui/menus/nodes.py:770
 msgid "The timeout you specified is invalid; it must be a number in seconds."
-msgstr ""
+msgstr "Зададеното от вас време на изчакване е невалидно; Трябва да е число в секунди."
 
 #: pylav/extension/red/ui/menus/nodes.py:311
 #: pylav/extension/red/ui/menus/nodes.py:783
 msgid "The node timeout has been set to `0` seconds."
-msgstr ""
+msgstr "Времето за изчакване на възела е зададено на \"0\" секунди."
 
 #: pylav/extension/red/ui/menus/nodes.py:313
 #: pylav/extension/red/ui/menus/nodes.py:779
 msgid "The node timeout has been set to `1` second."
-msgstr ""
+msgstr "Времето за изчакване на възела е зададено на \"1\" секунда."
 
 #: pylav/extension/red/ui/menus/nodes.py:315
 #: pylav/extension/red/ui/menus/nodes.py:785
 msgid "The node timeout has been set to `{node_timeout_variable_do_not_translate}` seconds."
-msgstr ""
+msgstr "Времето за изчакване на възела е зададено на '{node_timeout_variable_do_not_translate}' секунди."
 
 #: pylav/extension/red/ui/menus/nodes.py:516
 msgid "Change the domain or IP address of the host."
@@ -156,7 +156,7 @@ msgstr "цял"
 
 #: pylav/extension/red/ui/menus/player.py:207
 msgid "I am not in any voice channel currently."
-msgstr ""
+msgstr "В момента не съм в нито един гласов канал."
 
 #: pylav/extension/red/ui/menus/playlist.py:187
 msgid "Please enter the playlist URL."
@@ -186,7 +186,7 @@ msgstr "Въведете новото име за този плейлист."
 
 #: pylav/extension/red/ui/menus/playlist.py:336
 msgid "What is the query to add to this playlist?"
-msgstr ""
+msgstr "Каква е заявката за добавяне към този плейлист?"
 
 #: pylav/extension/red/ui/menus/playlist.py:337
 #: pylav/extension/red/ui/menus/playlist.py:345
@@ -195,13 +195,13 @@ msgstr "Заявка"
 
 #: pylav/extension/red/ui/menus/playlist.py:344
 msgid "What is the query to remove from this playlist?"
-msgstr ""
+msgstr "Каква е заявката за премахване от този плейлист?"
 
 #: pylav/extension/red/ui/menus/queue.py:458
 msgid "Select a track to remove."
-msgstr ""
+msgstr "Изберете писта за премахване."
 
 #: pylav/extension/red/ui/menus/queue.py:460
 msgid "Select a track to play now."
-msgstr ""
+msgstr "Изберете песен, която да възпроизведете сега."
 

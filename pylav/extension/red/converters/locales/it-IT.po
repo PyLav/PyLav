@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-03 19:54\n"
+"PO-Revision-Date: 2023-02-03 20:03\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: pylav/extension/red/converters/equalizer.py:48
 msgid "A bass boost profile with the name `{user_input_variable_do_not_translate}` was not found."
-msgstr ""
+msgstr "Un profilo di bass boost con il nome '{user_input_variable_do_not_translate}' non è stato trovato."
 
 #: pylav/extension/red/converters/equalizer.py:65
 msgid "Maximum"
@@ -55,5 +55,5 @@ msgstr "Taglia"
 
 #: pylav/extension/red/converters/equalizer.py:73
 msgid "Turn off"
-msgstr ""
+msgstr "Spegni"
 

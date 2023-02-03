@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-03 19:55\n"
+"PO-Revision-Date: 2023-02-03 20:03\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -24,13 +24,14 @@ msgstr "您正在尝试在不受支持的机器架构上运行托管的 Lavalink
 #: pylav/extension/bundled_node/manager.py:450
 msgid "The output of `{command_name_variable_do_not_translate}` was unexpected\n"
 "{command_output_variable_do_not_translate}"
-msgstr ""
+msgstr "' 的输出{command_name_variable_do_not_translate}' 出乎意料\n"
+"{command_output_variable_do_not_translate}"
 
 #: pylav/extension/bundled_node/manager.py:473
 msgid "The port {port_variable_do_not_translate} is already in use. Managed Lavalink startup has been aborted."
-msgstr ""
+msgstr "港口 {port_variable_do_not_translate} 已在使用中。托管 Lavalink 启动已中止。"
 
 #: pylav/extension/bundled_node/manager.py:478
 msgid "Lavalink failed to start: {error_variable_do_not_translate}"
-msgstr ""
+msgstr "Lavalink 无法启动： {error_variable_do_not_translate}"
 

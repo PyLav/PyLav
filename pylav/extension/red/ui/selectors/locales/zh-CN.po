@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-03 19:55\n"
+"PO-Revision-Date: 2023-02-03 20:03\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -24,18 +24,18 @@ msgstr "您无权与此选项进行交互。"
 
 #: pylav/extension/red/ui/selectors/nodes.py:53
 msgid "Disabling the following sources: {sources_list_variable_do_not_translate}."
-msgstr ""
+msgstr "禁用以下源： {sources_list_variable_do_not_translate}."
 
 #: pylav/extension/red/ui/selectors/nodes.py:85
 msgid "Node was not found."
-msgstr ""
+msgstr "未找到节点。"
 
 #: pylav/extension/red/ui/selectors/playlist.py:41
 #: pylav/extension/red/ui/selectors/playlist.py:82
 msgid "Playlist was not found."
-msgstr ""
+msgstr "找不到播放列表。"
 
 #: pylav/extension/red/ui/selectors/queue.py:96
 msgid "Track was not found."
-msgstr ""
+msgstr "找不到跟踪。"
 

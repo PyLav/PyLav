@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-03 19:54\n"
+"PO-Revision-Date: 2023-02-03 20:03\n"
 "Last-Translator: \n"
 "Language-Team: Danish\n"
 "MIME-Version: 1.0\n"
@@ -24,13 +24,14 @@ msgstr "Du forsøger at køre den administrerede Lavalink-node på en ikke-under
 #: pylav/extension/bundled_node/manager.py:450
 msgid "The output of `{command_name_variable_do_not_translate}` was unexpected\n"
 "{command_output_variable_do_not_translate}"
-msgstr ""
+msgstr "Outputtet af '{command_name_variable_do_not_translate}' var uventet\n"
+"{command_output_variable_do_not_translate}"
 
 #: pylav/extension/bundled_node/manager.py:473
 msgid "The port {port_variable_do_not_translate} is already in use. Managed Lavalink startup has been aborted."
-msgstr ""
+msgstr "Havnen {port_variable_do_not_translate} er allerede i brug. Administreret Lavalink-opstart er blevet afbrudt."
 
 #: pylav/extension/bundled_node/manager.py:478
 msgid "Lavalink failed to start: {error_variable_do_not_translate}"
-msgstr ""
+msgstr "Lavalink kunne ikke starte: {error_variable_do_not_translate}"
 

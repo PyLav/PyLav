@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-03 19:54\n"
+"PO-Revision-Date: 2023-02-03 20:03\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
@@ -24,13 +24,14 @@ msgstr "Προσπαθείτε να εκτελέσετε τον διαχειρι
 #: pylav/extension/bundled_node/manager.py:450
 msgid "The output of `{command_name_variable_do_not_translate}` was unexpected\n"
 "{command_output_variable_do_not_translate}"
-msgstr ""
+msgstr "Η παραγωγή του «{command_name_variable_do_not_translate}» ήταν απροσδόκητο\n"
+"{command_output_variable_do_not_translate}"
 
 #: pylav/extension/bundled_node/manager.py:473
 msgid "The port {port_variable_do_not_translate} is already in use. Managed Lavalink startup has been aborted."
-msgstr ""
+msgstr "Το λιμάνι {port_variable_do_not_translate} χρησιμοποιείται ήδη. Η διαχειριζόμενη εκκίνηση Lavalink έχει ματαιωθεί."
 
 #: pylav/extension/bundled_node/manager.py:478
 msgid "Lavalink failed to start: {error_variable_do_not_translate}"
-msgstr ""
+msgstr "Το Lavalink απέτυχε να ξεκινήσει: {error_variable_do_not_translate}"
 

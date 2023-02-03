@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-03 19:55\n"
+"PO-Revision-Date: 2023-02-03 20:03\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -19,11 +19,11 @@ msgstr ""
 
 #: pylav/players/manager.py:259
 msgid "There are no nodes available currently."
-msgstr ""
+msgstr "當前沒有可用的節點。"
 
 #: pylav/players/manager.py:350
 msgid "Music in {number_of_servers_variable_do_not_translate} servers"
-msgstr ""
+msgstr "音樂在 {number_of_servers_variable_do_not_translate} 伺服器"
 
 #: pylav/players/player.py:1175
 msgid "There are no tracks currently in the player history."
@@ -82,7 +82,7 @@ msgstr "直播"
 
 #: pylav/players/player.py:2453
 msgid "Now Playing in {server_name_variable_do_not_translate}"
-msgstr ""
+msgstr "現在正在播放 {server_name_variable_do_not_translate}"
 
 #: pylav/players/player.py:2473 pylav/players/player.py:2610
 msgid "Currently livestreaming"
@@ -111,15 +111,15 @@ msgstr "下一首歌曲"
 
 #: pylav/players/player.py:2520
 msgid "1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
-msgstr ""
+msgstr "1 首曲目， {queue_total_duration_variable_do_not_translate} 剩餘\n"
 
 #: pylav/players/player.py:2524
 msgid "0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
-msgstr ""
+msgstr "0 首曲目， {queue_total_duration_variable_do_not_translate} 剩餘\n"
 
 #: pylav/players/player.py:2528
 msgid "{track_count_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
-msgstr ""
+msgstr "{track_count_variable_do_not_translate} 軌道 {queue_total_duration_variable_do_not_translate} 剩餘\n"
 
 #: pylav/players/player.py:2535 pylav/players/player.py:2658
 msgid "Repeating"
@@ -131,7 +131,7 @@ msgstr "自動播放"
 
 #: pylav/players/player.py:2541 pylav/players/player.py:2664
 msgid "{volume_variable_do_not_translate}%"
-msgstr ""
+msgstr "{volume_variable_do_not_translate}%"
 
 #: pylav/players/player.py:2542 pylav/players/player.py:2665
 msgid "Volume"
@@ -139,11 +139,11 @@ msgstr "卷"
 
 #: pylav/players/player.py:2582
 msgid "Recently Played for {server_name_variable_do_not_translate}"
-msgstr ""
+msgstr "最近效力 {server_name_variable_do_not_translate}"
 
 #: pylav/players/player.py:2588
 msgid "Queue for {server_name_variable_do_not_translate}"
-msgstr ""
+msgstr "佇列 {server_name_variable_do_not_translate}"
 
 #: pylav/players/player.py:2613
 msgid "Playing"
@@ -151,17 +151,17 @@ msgstr "正在播放"
 
 #: pylav/players/player.py:2629
 msgid "Queue order will change every time a track is added due to auto shuffle being enabled."
-msgstr ""
+msgstr "由於啟用了自動隨機播放，每次添加曲目時，佇列順序都會更改。"
 
 #: pylav/players/player.py:2640
 msgid "Page 1 / 1 | 1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
-msgstr ""
+msgstr "頁次 1 / 1 |1 首曲目， {queue_total_duration_variable_do_not_translate} 剩餘\n"
 
 #: pylav/players/player.py:2644
 msgid "Page 1 / 1 | 0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
-msgstr ""
+msgstr "頁次 1 / 1 |0 首曲目， {queue_total_duration_variable_do_not_translate} 剩餘\n"
 
 #: pylav/players/player.py:2648
 msgid "Page {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
-msgstr ""
+msgstr "頁 {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} 軌道 {queue_total_duration_variable_do_not_translate} 剩餘\n"
 

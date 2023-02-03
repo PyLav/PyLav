@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-03 19:54\n"
+"PO-Revision-Date: 2023-02-03 20:03\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "MIME-Version: 1.0\n"
@@ -34,7 +34,17 @@ msgid "PyLav was created by {library_author_name_variable_do_not_translate}.\n\n
 "- {second_project_contributors_url_variable_do_not_translate}\n"
 "If you wish to buy me a coffee for my work, you can do so at:\n"
 "{buymeacoffee_url_variable_do_not_translate} or {github_sponsors_url_variable_do_not_translate}"
-msgstr ""
+msgstr "PyLav a fost creat de {library_author_name_variable_do_not_translate}.\n\n"
+"Codul sursă PyLav poate fi localizat în {library_url_variable_do_not_translate}\n"
+"Codul sursă PyLav-Cogs poate fi localizat în {second_library_url_variable_do_not_translate}\n\n"
+"Vă puteți alătura serverului de asistență PyLav prin intermediul {support_server_url_variable_do_not_translate}\n\n\n"
+"Puteți ajuta la traducerea PyLav contribuind la proiectul nostru Crowdin la:\n"
+"{crowdin_project_url_variable_do_not_translate}\n\n\n"
+"Contribuabili:\n"
+"- {project_contributors_url_variable_do_not_translate}\n"
+"- {second_project_contributors_url_variable_do_not_translate}\n"
+"Dacă doriți să-mi cumpărați o cafea pentru munca mea, puteți face acest lucru la:\n"
+"{buymeacoffee_url_variable_do_not_translate} sau {github_sponsors_url_variable_do_not_translate}"
 
 #: pylav/extension/red/utils/required_methods.py:85
 #, docstring
@@ -56,31 +66,31 @@ msgstr "Sincronizează comenzile de slash Bots"
 
 #: pylav/extension/red/utils/required_methods.py:129
 msgid "I have synced all my slash commands."
-msgstr ""
+msgstr "Am sincronizat toate comenzile mele bară oblică."
 
 #: pylav/extension/red/utils/required_methods.py:151
 msgid "This command requires that I be in a voice channel before it can be executed."
-msgstr ""
+msgstr "Această comandă necesită ca eu să fie într-un canal de voce înainte de a putea fi executat."
 
 #: pylav/extension/red/utils/required_methods.py:160
 msgid "PyLavPlayer cog is temporarily unavailable due to an outage with the backend services; please try again later."
-msgstr ""
+msgstr "Rotița PyLavPlayer este temporar indisponibilă din cauza unei întreruperi a serviciilor backend; vă rugăm să încercați din nou mai târziu."
 
 #: pylav/extension/red/utils/required_methods.py:163
 msgid "There are no nodes available currently."
-msgstr ""
+msgstr "Nu există noduri disponibile în prezent."
 
 #: pylav/extension/red/utils/required_methods.py:174
 msgid "PyLavPlayer is currently unable to process tracks belonging to {feature_name_variable_do_not_translate}."
-msgstr ""
+msgstr "PyLavPlayer este în prezent în imposibilitatea de a procesa piese aparținând {feature_name_variable_do_not_translate}."
 
 #: pylav/extension/red/utils/required_methods.py:177
 msgid "There is currently no available Lavalink node with the feature {feature_name_variable_do_not_translate}."
-msgstr ""
+msgstr "În prezent, nu există niciun nod Lavalink disponibil cu caracteristica {feature_name_variable_do_not_translate}."
 
 #: pylav/extension/red/utils/required_methods.py:190
 msgid "This command is unavailable in this channel; please use {channel_name_variable_do_not_translate} instead."
-msgstr ""
+msgstr "Această comandă nu este disponibilă în acest canal; vă rugăm să utilizați {channel_name_variable_do_not_translate} în loc de."
 
 #: pylav/extension/red/utils/required_methods.py:206
 msgid "This command requires you to be a disc jockey."
@@ -88,5 +98,5 @@ msgstr "Această comandă necesită să fie un disc jockey."
 
 #: pylav/extension/red/utils/required_methods.py:244
 msgid "PyLav is starting up; please try again in a few minutes."
-msgstr ""
+msgstr "PyLav pornește; vă rugăm să încercați din nou în câteva minute."
 
