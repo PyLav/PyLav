@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-02 22:15+0000\n"
-"PO-Revision-Date: 2023-02-02 22:33\n"
+"POT-Creation-Date: 2023-02-03 19:54+0000\n"
+"PO-Revision-Date: 2023-02-03 19:55\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "MIME-Version: 1.0\n"
@@ -17,86 +17,76 @@ msgstr ""
 "X-Crowdin-File-ID: 3405\n"
 "Language: hi_IN\n"
 
-#: pylav/extension/red/utils/required_methods.py:46
+#: pylav/extension/red/utils/required_methods.py:45
 #, docstring
 msgid "Shows the credits and translation details for the PyLav cogs and shared code"
 msgstr "PyLav cogs और साझा कोड के लिए क्रेडिट और अनुवाद विवरण दिखाता है"
 
-#: pylav/extension/red/utils/required_methods.py:50
-msgid "PyLav was created by {library_author_name}.\n\n"
-"PyLav can be located in {library_url_value}\n"
-"PyLav-Cogs can be located in {second_library_url_value}\n\n"
-"PyLav's support server can be found at {support_server_url_value}\n\n\n"
+#: pylav/extension/red/utils/required_methods.py:49
+msgid "PyLav was created by {library_author_name_variable_do_not_translate}.\n\n"
+"PyLav source code can be located in {library_url_variable_do_not_translate}\n"
+"PyLav-Cogs source code can be located in {second_library_url_variable_do_not_translate}\n\n"
+"You can join the PyLav support server via {support_server_url_variable_do_not_translate}\n\n\n"
 "You can help translate PyLav by contributing to our Crowdin project at:\n"
-"{crowdin_project_url_value}\n\n\n"
+"{crowdin_project_url_variable_do_not_translate}\n\n\n"
 "Contributors:\n"
-"- {project_contributors_url_value}\n"
-"- {second_project_contributors_url_value}\n"
+"- {project_contributors_url_variable_do_not_translate}\n"
+"- {second_project_contributors_url_variable_do_not_translate}\n"
 "If you wish to buy me a coffee for my work, you can do so at:\n"
-"{buymeacoffee_url_value} or {github_sponsors_url_value}"
-msgstr "PyLav किसके द्वारा बनाया गया था? {library_author_name}.\n\n"
-"PyLav कहाँ स्थित हो सकता है? {library_url_value}\n"
-"PyLav-Cogs कहाँ स्थित हो सकता है? {second_library_url_value}\n\n"
-"PyLav का समर्थन सर्वर यहाँ पाया जा सकता है {support_server_url_value}\n\n\n"
-"आप हमारे क्राउडिन प्रोजेक्ट में योगदान करके PyLav का अनुवाद करने में मदद कर सकते हैं:\n"
-"{crowdin_project_url_value}\n\n\n"
-"योगदानकर्ताओं:\n"
-"- {project_contributors_url_value}\n"
-"- {second_project_contributors_url_value}\n"
-"यदि आप मेरे काम के लिए मुझे एक कॉफी खरीदना चाहते हैं, तो आप ऐसा कर सकते हैं:\n"
-"{buymeacoffee_url_value} नहीं तो {github_sponsors_url_value}"
+"{buymeacoffee_url_variable_do_not_translate} or {github_sponsors_url_variable_do_not_translate}"
+msgstr ""
 
-#: pylav/extension/red/utils/required_methods.py:86
+#: pylav/extension/red/utils/required_methods.py:85
 #, docstring
 msgid "Show the version of PyLav library"
 msgstr "PyLav लायब्रेरी का संस्करण दिखाएँ"
 
-#: pylav/extension/red/utils/required_methods.py:101
+#: pylav/extension/red/utils/required_methods.py:100
 msgid "Library"
 msgstr "पुस्तकालय"
 
-#: pylav/extension/red/utils/required_methods.py:102
+#: pylav/extension/red/utils/required_methods.py:101
 msgid "Version"
 msgstr "संस्करण"
 
-#: pylav/extension/red/utils/required_methods.py:121
+#: pylav/extension/red/utils/required_methods.py:120
 #, docstring
 msgid "Sync the Bots slash commands"
 msgstr "बॉट्स स्लैश कमांड को सिंक्रनाइज़ करें"
 
-#: pylav/extension/red/utils/required_methods.py:130
-msgid "I have synced my slash commands."
-msgstr "मैंने अपने स्लैश कमांड को सिंक किया है।"
+#: pylav/extension/red/utils/required_methods.py:129
+msgid "I have synced all my slash commands."
+msgstr ""
 
 #: pylav/extension/red/utils/required_methods.py:151
-msgid "This command requires an existing player to be run."
-msgstr "इस आदेश को चलाने के लिए किसी मौजूदा प्लेयर की आवश्यकता है."
+msgid "This command requires that I be in a voice channel before it can be executed."
+msgstr ""
 
 #: pylav/extension/red/utils/required_methods.py:160
-msgid "PyLavPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later."
-msgstr "PyLavPlayer cog वर्तमान में बैकएंड सेवाओं के साथ आउटेज के कारण अस्थायी रूप से अनुपलब्ध है, कृपया बाद में पुन: प्रयास करें."
+msgid "PyLavPlayer cog is temporarily unavailable due to an outage with the backend services; please try again later."
+msgstr ""
 
-#: pylav/extension/red/utils/required_methods.py:164
-msgid "No Lavalink node currently available."
-msgstr "वर्तमान में कोई Lavalink नोड उपलब्ध नहीं है."
+#: pylav/extension/red/utils/required_methods.py:163
+msgid "There are no nodes available currently."
+msgstr ""
 
-#: pylav/extension/red/utils/required_methods.py:173
-msgid "PyLavPlayer is currently unable to process tracks belonging to {feature_name}."
-msgstr "PyLavPlayer वर्तमान में किससे संबंधित ट्रैक संसाधित करने में असमर्थ है? {feature_name}."
+#: pylav/extension/red/utils/required_methods.py:174
+msgid "PyLavPlayer is currently unable to process tracks belonging to {feature_name_variable_do_not_translate}."
+msgstr ""
 
-#: pylav/extension/red/utils/required_methods.py:176
-msgid "No Lavalink node currently available with feature {feature_name}"
-msgstr "कोई Lavalink नोड वर्तमान में सुविधा के साथ उपलब्ध नहीं है {feature_name}"
+#: pylav/extension/red/utils/required_methods.py:177
+msgid "There is currently no available Lavalink node with the feature {feature_name_variable_do_not_translate}."
+msgstr ""
 
-#: pylav/extension/red/utils/required_methods.py:189
-msgid "This command is not available in this channel, please use {channel_name}."
-msgstr "यह आदेश इस चैनल में उपलब्ध नहीं है, कृपया उपयोग करें {channel_name}."
+#: pylav/extension/red/utils/required_methods.py:190
+msgid "This command is unavailable in this channel; please use {channel_name_variable_do_not_translate} instead."
+msgstr ""
 
-#: pylav/extension/red/utils/required_methods.py:203
+#: pylav/extension/red/utils/required_methods.py:206
 msgid "This command requires you to be a disc jockey."
 msgstr "इस आदेश के लिए आपको डिस्क जॉकी होना आवश्यक है."
 
-#: pylav/extension/red/utils/required_methods.py:241
-msgid "PyLav is not ready, please try again shortly"
-msgstr "PyLav तैयार नहीं है, कृपया शीघ्र ही पुन: प्रयास करें"
+#: pylav/extension/red/utils/required_methods.py:244
+msgid "PyLav is starting up; please try again in a few minutes."
+msgstr ""
 

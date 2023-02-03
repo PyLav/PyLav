@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-02 22:15+0000\n"
-"PO-Revision-Date: 2023-02-02 22:33\n"
+"POT-Creation-Date: 2023-02-03 19:54+0000\n"
+"PO-Revision-Date: 2023-02-03 19:55\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "MIME-Version: 1.0\n"
@@ -17,64 +17,61 @@ msgstr ""
 "X-Crowdin-File-ID: 3575\n"
 "Language: uk_UA\n"
 
-#: pylav/helpers/discord/converters/nodes.py:41
-msgid "Node with name or identifier `{user_input_value}` not found."
-msgstr "Вузол з ім'ям або ідентифікатором '{user_input_value}' не знайдено."
+#: pylav/helpers/discord/converters/nodes.py:40
+msgid "Node with name or identifier `{user_input_variable_do_not_translate}` not found."
+msgstr ""
 
-#: pylav/helpers/discord/converters/nodes.py:48
-msgid "Node with name or identifier `{user_input_value}` not found"
-msgstr "Вузол з ім'ям або ідентифікатором '{user_input_value}' не знайдено"
+#: pylav/helpers/discord/converters/nodes.py:47
+msgid "Node with name or identifier `{user_input_variable_do_not_translate}` not found"
+msgstr ""
 
-#: pylav/helpers/discord/converters/playlists.py:42
-msgid "Playlist with name or identifier `{user_input_value}` not found"
-msgstr "Плейлист з ім'ям або ідентифікатором '{user_input_value}' не знайдено"
+#: pylav/helpers/discord/converters/playlists.py:40
+msgid "A playlist with the name or identifier `{user_input_variable_do_not_translate}` was not found."
+msgstr ""
 
 #: pylav/helpers/discord/converters/queries.py:52
-msgid "Query must be a playlist or album."
-msgstr "Запит повинен бути плейлистом або альбомом."
+msgid "The query must be a playlist or album."
+msgstr ""
 
 #: pylav/helpers/discord/converters/radio.py:57
-msgid "Station with name `{user_input_value}` not found."
-msgstr "Станція з назвою '{user_input_value}' не знайдено."
+msgid "A station with the name `{user_input_variable_do_not_translate}` was not found."
+msgstr ""
 
-#: pylav/helpers/discord/converters/radio.py:74
-msgid "Radio Browser extension is currently disabled."
-msgstr "Розширення Radio Browser в даний час відключено."
+#: pylav/helpers/discord/converters/radio.py:77
+#: pylav/helpers/discord/converters/radio.py:165
+#: pylav/helpers/discord/converters/radio.py:211
+#: pylav/helpers/discord/converters/radio.py:255
+#: pylav/helpers/discord/converters/radio.py:298
+#: pylav/helpers/discord/converters/radio.py:341
+#: pylav/helpers/discord/converters/radio.py:384
+msgid "The Radio Browser extension is currently disabled."
+msgstr ""
 
-#: pylav/helpers/discord/converters/radio.py:94
+#: pylav/helpers/discord/converters/radio.py:98
 msgid "Unnamed"
 msgstr "Без імені"
 
-#: pylav/helpers/discord/converters/radio.py:141
-msgid "Tag with name `{user_input_value}` not found."
-msgstr "Тег з ім'ям '{user_input_value}' не знайдено."
+#: pylav/helpers/discord/converters/radio.py:145
+msgid "A tag with the name `{user_input_variable_do_not_translate}` was not found."
+msgstr ""
 
-#: pylav/helpers/discord/converters/radio.py:158
-#: pylav/helpers/discord/converters/radio.py:200
-#: pylav/helpers/discord/converters/radio.py:240
-#: pylav/helpers/discord/converters/radio.py:279
-#: pylav/helpers/discord/converters/radio.py:318
-#: pylav/helpers/discord/converters/radio.py:357
-msgid "Radio Browser extension is currently disabled"
-msgstr "Розширення Radio Browser в даний час відключено"
+#: pylav/helpers/discord/converters/radio.py:191
+msgid "A language with the name `{user_input_variable_do_not_translate}` was not found."
+msgstr ""
 
-#: pylav/helpers/discord/converters/radio.py:183
-msgid "Language with name `{user_input_value}` not found."
-msgstr "Мова з ім'ям '{user_input_value}' не знайдено."
+#: pylav/helpers/discord/converters/radio.py:235
+msgid "A state with the name `{user_input_variable_do_not_translate}` was not found."
+msgstr ""
 
-#: pylav/helpers/discord/converters/radio.py:223
-msgid "State with name `{user_input_value}` not found."
-msgstr "Держава з ім'ям '{user_input_value}' не знайдено."
+#: pylav/helpers/discord/converters/radio.py:278
+msgid "A codec with the name `{user_input_variable_do_not_translate}` was not found."
+msgstr ""
 
-#: pylav/helpers/discord/converters/radio.py:262
-msgid "Codec with name `{user_input_value}` not found."
-msgstr "Кодек з іменем '{user_input_value}' не знайдено."
+#: pylav/helpers/discord/converters/radio.py:321
+msgid "A country code with the value `{user_input_variable_do_not_translate}` was not found."
+msgstr ""
 
-#: pylav/helpers/discord/converters/radio.py:301
-msgid "Country code `{user_input_value}` not found."
-msgstr "Код країни '{user_input_value}' не знайдено."
-
-#: pylav/helpers/discord/converters/radio.py:340
-msgid "Country with name `{user_input_value}` not found."
-msgstr "Країна з назвою '{user_input_value}' не знайдено."
+#: pylav/helpers/discord/converters/radio.py:364
+msgid "A country with the name `{user_input_variable_do_not_translate}` was not found."
+msgstr ""
 

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-02 22:15+0000\n"
-"PO-Revision-Date: 2023-02-02 22:33\n"
+"POT-Creation-Date: 2023-02-03 19:54+0000\n"
+"PO-Revision-Date: 2023-02-03 19:54\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
@@ -18,158 +18,150 @@ msgstr ""
 "Language: el_GR\n"
 
 #: pylav/players/manager.py:259
-msgid "No available nodes!"
-msgstr "Δεν υπάρχουν διαθέσιμοι κόμβοι!"
+msgid "There are no nodes available currently."
+msgstr ""
 
 #: pylav/players/manager.py:350
-msgid "Music in {number_of_servers_value} servers"
-msgstr "Μουσική σε {number_of_servers_value} Διακομιστές"
+msgid "Music in {number_of_servers_variable_do_not_translate} servers"
+msgstr ""
 
-#: pylav/players/player.py:1176
+#: pylav/players/player.py:1175
 msgid "There are no tracks currently in the player history."
 msgstr "Δεν υπάρχουν κομμάτια αυτή τη στιγμή στο ιστορικό των παικτών."
 
-#: pylav/players/player.py:1869
+#: pylav/players/player.py:1868
 msgid "Current node has the volume filter feature disabled."
 msgstr "Ο τρέχων κόμβος έχει απενεργοποιημένη τη λειτουργία φίλτρου έντασης."
 
-#: pylav/players/player.py:1891 pylav/players/player.py:2067
-#: pylav/players/player.py:2122
+#: pylav/players/player.py:1890 pylav/players/player.py:2066
+#: pylav/players/player.py:2121
 msgid "Current node has the equalizer feature disabled."
 msgstr "Ο τρέχων κόμβος έχει απενεργοποιημένη τη λειτουργία ισοσταθμιστή."
 
-#: pylav/players/player.py:1911
+#: pylav/players/player.py:1910
 msgid "Current node has the karaoke feature disabled"
 msgstr "Ο τρέχων κόμβος έχει απενεργοποιημένη τη λειτουργία καραόκε"
 
-#: pylav/players/player.py:1931 pylav/players/player.py:2069
-#: pylav/players/player.py:2124
+#: pylav/players/player.py:1930 pylav/players/player.py:2068
+#: pylav/players/player.py:2123
 msgid "Current node has the timescale feature disabled."
 msgstr "Ο τρέχων κόμβος έχει απενεργοποιημένη τη δυνατότητα χρονικής κλίμακας."
 
-#: pylav/players/player.py:1951
+#: pylav/players/player.py:1950
 msgid "Current node has the tremolo feature disabled."
 msgstr "Ο τρέχων κόμβος έχει απενεργοποιημένη τη λειτουργία tremolo."
 
-#: pylav/players/player.py:1971
+#: pylav/players/player.py:1970
 msgid "Current node has the vibrato feature disabled."
 msgstr "Ο τρέχων κόμβος έχει απενεργοποιημένη τη λειτουργία βιμπράτο."
 
-#: pylav/players/player.py:1991
+#: pylav/players/player.py:1990
 msgid "Current node has the rotation feature disabled."
 msgstr "Ο τρέχων κόμβος έχει απενεργοποιημένη τη δυνατότητα περιστροφής."
 
-#: pylav/players/player.py:2011
+#: pylav/players/player.py:2010
 msgid "Current node has the distortion feature disabled."
 msgstr "Ο τρέχων κόμβος έχει απενεργοποιημένη τη δυνατότητα παραμόρφωσης."
 
-#: pylav/players/player.py:2031
+#: pylav/players/player.py:2030
 msgid "Current node has the low-pass feature disabled."
 msgstr "Ο τρέχων κόμβος έχει απενεργοποιημένη τη δυνατότητα χαμηλής διέλευσης."
 
-#: pylav/players/player.py:2051
+#: pylav/players/player.py:2050
 msgid "Current node has the echo feature disabled."
 msgstr "Ο τρέχων κόμβος έχει απενεργοποιημένη τη δυνατότητα ηχούς."
 
-#: pylav/players/player.py:2181
+#: pylav/players/player.py:2180
 msgid "Current node has the channel-mix feature disabled."
 msgstr "Ο τρέχων κόμβος έχει απενεργοποιημένη τη δυνατότητα ανάμειξης καναλιών."
 
-#: pylav/players/player.py:2441 pylav/players/player.py:2484
-#: pylav/players/player.py:2499
+#: pylav/players/player.py:2440 pylav/players/player.py:2487
+#: pylav/players/player.py:2502
 msgid "LIVE"
 msgstr "ΖΩΝΤΑΝΑ"
 
 #: pylav/players/player.py:2453
-msgid "Now Playing in {server_name}"
-msgstr "Παίζει τώρα σε {server_name}"
+msgid "Now Playing in {server_name_variable_do_not_translate}"
+msgstr ""
 
-#: pylav/players/player.py:2470 pylav/players/player.py:2592
+#: pylav/players/player.py:2473 pylav/players/player.py:2610
 msgid "Currently livestreaming"
 msgstr "Επί του παρόντος livestreaming"
 
-#: pylav/players/player.py:2472
+#: pylav/players/player.py:2475
 msgid "Playing: "
 msgstr "Αναπαραγωγή: "
 
-#: pylav/players/player.py:2475 pylav/players/player.py:2491
-#: pylav/players/player.py:2506 pylav/players/player.py:2598
+#: pylav/players/player.py:2478 pylav/players/player.py:2494
+#: pylav/players/player.py:2509 pylav/players/player.py:2616
 msgid "Requester"
 msgstr "Αιτών"
 
-#: pylav/players/player.py:2487 pylav/players/player.py:2502
+#: pylav/players/player.py:2490 pylav/players/player.py:2505
 msgid "Duration"
 msgstr "Διάρκεια"
 
-#: pylav/players/player.py:2493
+#: pylav/players/player.py:2496
 msgid "Previous Track"
 msgstr "Προηγούμενο Κομμάτι"
 
-#: pylav/players/player.py:2508
+#: pylav/players/player.py:2511
 msgid "Next Track"
 msgstr "Επόμενο Κομμάτι"
 
-#: pylav/players/player.py:2517
-msgid "1 track, {queue_total_duration} remaining\n"
-msgstr "1 κομμάτι, {queue_total_duration} Υπόλοιπα\n"
+#: pylav/players/player.py:2520
+msgid "1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
+msgstr ""
 
-#: pylav/players/player.py:2519
-msgid "0 tracks, {queue_total_duration} remaining\n"
-msgstr "0 κομμάτια, {queue_total_duration} Υπόλοιπα\n"
+#: pylav/players/player.py:2524
+msgid "0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
+msgstr ""
 
-#: pylav/players/player.py:2521
-msgid "{track_count} tracks, {queue_total_duration} remaining\n"
-msgstr "{track_count} κομμάτια, {queue_total_duration} απομένουν\n"
+#: pylav/players/player.py:2528
+msgid "{track_count_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
+msgstr ""
 
-#: pylav/players/player.py:2525 pylav/players/player.py:2639
-msgid "{translation}: {repeat_emoji}"
-msgstr "{translation}: {repeat_emoji}"
-
-#: pylav/players/player.py:2525 pylav/players/player.py:2639
+#: pylav/players/player.py:2535 pylav/players/player.py:2658
 msgid "Repeating"
 msgstr "Επανάληψη"
 
-#: pylav/players/player.py:2526 pylav/players/player.py:2640
-msgid "{space}{translation}: {autoplay_emoji}"
-msgstr "{space}{translation}: {autoplay_emoji}"
-
-#: pylav/players/player.py:2527 pylav/players/player.py:2641
+#: pylav/players/player.py:2537 pylav/players/player.py:2660
 msgid "Auto Play"
 msgstr "Αυτόματη Αναπαραγωγή"
 
-#: pylav/players/player.py:2529 pylav/players/player.py:2643
-msgid "{space}{translation}: {volume}%"
-msgstr "{space}{translation}: {volume}%"
+#: pylav/players/player.py:2541 pylav/players/player.py:2664
+msgid "{volume_variable_do_not_translate}%"
+msgstr ""
 
-#: pylav/players/player.py:2530 pylav/players/player.py:2644
+#: pylav/players/player.py:2542 pylav/players/player.py:2665
 msgid "Volume"
 msgstr "Τόμος"
 
-#: pylav/players/player.py:2570
-msgid "Recently Played for {server_name}"
-msgstr "Πρόσφατα έπαιξε για {server_name}"
+#: pylav/players/player.py:2582
+msgid "Recently Played for {server_name_variable_do_not_translate}"
+msgstr ""
 
-#: pylav/players/player.py:2573
-msgid "Queue for {server_name}"
-msgstr "Ουρά για {server_name}"
+#: pylav/players/player.py:2588
+msgid "Queue for {server_name_variable_do_not_translate}"
+msgstr ""
 
-#: pylav/players/player.py:2595
+#: pylav/players/player.py:2613
 msgid "Playing"
 msgstr "Αναπαραγωγή"
 
-#: pylav/players/player.py:2611
-msgid "Queue order may not be accurate due to auto shuffle being enabled."
-msgstr "Η σειρά ουράς ενδέχεται να μην είναι ακριβής λόγω της ενεργοποίησης της αυτόματης τυχαίας σειράς."
-
-#: pylav/players/player.py:2621
-msgid "Page 1 / 1 | 1 track, {queue_total_duration} remaining\n"
-msgstr "Σελίδα 1 / 1 | 1 κομμάτι, {queue_total_duration} Υπόλοιπα\n"
-
-#: pylav/players/player.py:2625
-msgid "Page 1 / 1 | 0 tracks, {queue_total_duration} remaining\n"
-msgstr "Σελίδα 1 / 1 | 0 κομμάτια, {queue_total_duration} Υπόλοιπα\n"
-
 #: pylav/players/player.py:2629
-msgid "Page {current_page}/{total_pages} | {track_number} tracks, {queue_total_duration} remaining\n"
-msgstr "Σελίδα {current_page}/{total_pages} - {track_number} κομμάτια, {queue_total_duration} απομένουν\n"
+msgid "Queue order will change every time a track is added due to auto shuffle being enabled."
+msgstr ""
+
+#: pylav/players/player.py:2640
+msgid "Page 1 / 1 | 1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
+msgstr ""
+
+#: pylav/players/player.py:2644
+msgid "Page 1 / 1 | 0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
+msgstr ""
+
+#: pylav/players/player.py:2648
+msgid "Page {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
+msgstr ""
 

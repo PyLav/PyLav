@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-02 22:15+0000\n"
-"PO-Revision-Date: 2023-02-02 22:33\n"
+"POT-Creation-Date: 2023-02-03 19:54+0000\n"
+"PO-Revision-Date: 2023-02-03 19:55\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
@@ -17,31 +17,31 @@ msgstr ""
 "X-Crowdin-File-ID: 3471\n"
 "Language: pl_PL\n"
 
-#: pylav/core/client.py:888 pylav/core/client.py:923
+#: pylav/core/client.py:885 pylav/core/client.py:923
 msgid "There are no available nodes!"
 msgstr "Brak dostępnych węzłów!"
 
-#: pylav/core/client.py:892 pylav/core/client.py:927 pylav/core/client.py:1235
-msgid "No node with {feature_name} functionality available!"
-msgstr "Brak węzła z {feature_name} Funkcjonalność dostępna!"
+#: pylav/core/client.py:889 pylav/core/client.py:927 pylav/core/client.py:1234
+msgid "No node with {feature_name_variable_do_not_translate} functionality available!"
+msgstr ""
 
-#: pylav/core/client.py:1653
+#: pylav/core/client.py:1652
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist."
 msgstr "Pojedynczy identyfikator filmu, użytkownika, kanału lub playlisty jest niezbędny do wygenerowania mieszanej listy odtwarzania."
 
-#: pylav/core/client.py:1658
+#: pylav/core/client.py:1657
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist. However, you provided multiple"
 msgstr "Pojedynczy identyfikator filmu, użytkownika, kanału lub playlisty jest niezbędny do wygenerowania mieszanej listy odtwarzania. Podano jednak wiele"
 
-#: pylav/core/context.py:258
+#: pylav/core/context.py:317
 msgid "There is still 1 message remaining. Type `more` to continue."
 msgstr "Pozostała jeszcze 1 wiadomość. Wpisz \"więcej\", aby kontynuować."
 
-#: pylav/core/context.py:260
-msgid "There are still {remaining_value} messages remaining. Type `more` to continue."
-msgstr "Są jeszcze {remaining_value} Pozostałe wiadomości. Wpisz \"więcej\", aby kontynuować."
+#: pylav/core/context.py:319
+msgid "There are still {remaining_variable_do_not_translate} messages remaining. Type `more` to continue."
+msgstr ""
 
-#: pylav/core/context.py:290
+#: pylav/core/context.py:349
 #, docstring
 msgid "Does nothing"
 msgstr "Nic nie robi"

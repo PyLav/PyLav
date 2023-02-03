@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-02 22:15+0000\n"
-"PO-Revision-Date: 2023-02-02 22:33\n"
+"POT-Creation-Date: 2023-02-03 19:54+0000\n"
+"PO-Revision-Date: 2023-02-03 19:55\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "MIME-Version: 1.0\n"
@@ -17,86 +17,76 @@ msgstr ""
 "X-Crowdin-File-ID: 3405\n"
 "Language: sv_SE\n"
 
-#: pylav/extension/red/utils/required_methods.py:46
+#: pylav/extension/red/utils/required_methods.py:45
 #, docstring
 msgid "Shows the credits and translation details for the PyLav cogs and shared code"
 msgstr "Visar krediter och översättningsdetaljer för PyLav kuggar och delad kod"
 
-#: pylav/extension/red/utils/required_methods.py:50
-msgid "PyLav was created by {library_author_name}.\n\n"
-"PyLav can be located in {library_url_value}\n"
-"PyLav-Cogs can be located in {second_library_url_value}\n\n"
-"PyLav's support server can be found at {support_server_url_value}\n\n\n"
+#: pylav/extension/red/utils/required_methods.py:49
+msgid "PyLav was created by {library_author_name_variable_do_not_translate}.\n\n"
+"PyLav source code can be located in {library_url_variable_do_not_translate}\n"
+"PyLav-Cogs source code can be located in {second_library_url_variable_do_not_translate}\n\n"
+"You can join the PyLav support server via {support_server_url_variable_do_not_translate}\n\n\n"
 "You can help translate PyLav by contributing to our Crowdin project at:\n"
-"{crowdin_project_url_value}\n\n\n"
+"{crowdin_project_url_variable_do_not_translate}\n\n\n"
 "Contributors:\n"
-"- {project_contributors_url_value}\n"
-"- {second_project_contributors_url_value}\n"
+"- {project_contributors_url_variable_do_not_translate}\n"
+"- {second_project_contributors_url_variable_do_not_translate}\n"
 "If you wish to buy me a coffee for my work, you can do so at:\n"
-"{buymeacoffee_url_value} or {github_sponsors_url_value}"
-msgstr "PyLav skapades av {library_author_name}.\n\n"
-"PyLav kan placeras i {library_url_value}\n"
-"PyLav-Cogs kan placeras i {second_library_url_value}\n\n"
-"PyLavs supportserver finns på {support_server_url_value}\n\n\n"
-"Du kan hjälpa till att översätta PyLav genom att bidra till vårt Crowdin-projekt på:\n"
-"{crowdin_project_url_value}\n\n\n"
-"Bidragsgivare:\n"
-"- {project_contributors_url_value}\n"
-"- {second_project_contributors_url_value}\n"
-"Om du vill köpa mig en kaffe för mitt arbete kan du göra det på:\n"
-"{buymeacoffee_url_value} eller {github_sponsors_url_value}"
+"{buymeacoffee_url_variable_do_not_translate} or {github_sponsors_url_variable_do_not_translate}"
+msgstr ""
 
-#: pylav/extension/red/utils/required_methods.py:86
+#: pylav/extension/red/utils/required_methods.py:85
 #, docstring
 msgid "Show the version of PyLav library"
 msgstr "Visa versionen av PyLav bibliotek"
 
-#: pylav/extension/red/utils/required_methods.py:101
+#: pylav/extension/red/utils/required_methods.py:100
 msgid "Library"
 msgstr "Bibliotek"
 
-#: pylav/extension/red/utils/required_methods.py:102
+#: pylav/extension/red/utils/required_methods.py:101
 msgid "Version"
 msgstr "Version"
 
-#: pylav/extension/red/utils/required_methods.py:121
+#: pylav/extension/red/utils/required_methods.py:120
 #, docstring
 msgid "Sync the Bots slash commands"
 msgstr "Synkronisera bots snedstreck kommandon"
 
-#: pylav/extension/red/utils/required_methods.py:130
-msgid "I have synced my slash commands."
-msgstr "Jag har synkroniserat mina snedstreckskommandon."
+#: pylav/extension/red/utils/required_methods.py:129
+msgid "I have synced all my slash commands."
+msgstr ""
 
 #: pylav/extension/red/utils/required_methods.py:151
-msgid "This command requires an existing player to be run."
-msgstr "Det här kommandot kräver att en befintlig spelare körs."
+msgid "This command requires that I be in a voice channel before it can be executed."
+msgstr ""
 
 #: pylav/extension/red/utils/required_methods.py:160
-msgid "PyLavPlayer cog is currently temporarily unavailable due to an outage with the backend services, please try again later."
-msgstr "PyLavPlayer cog är för närvarande tillfälligt otillgänglig på grund av ett avbrott med backend-tjänsterna, försök igen senare."
+msgid "PyLavPlayer cog is temporarily unavailable due to an outage with the backend services; please try again later."
+msgstr ""
 
-#: pylav/extension/red/utils/required_methods.py:164
-msgid "No Lavalink node currently available."
-msgstr "Ingen Lavalink-nod för närvarande tillgänglig."
+#: pylav/extension/red/utils/required_methods.py:163
+msgid "There are no nodes available currently."
+msgstr ""
 
-#: pylav/extension/red/utils/required_methods.py:173
-msgid "PyLavPlayer is currently unable to process tracks belonging to {feature_name}."
-msgstr "PyLavPlayer kan för närvarande inte bearbeta spår som tillhör {feature_name}."
+#: pylav/extension/red/utils/required_methods.py:174
+msgid "PyLavPlayer is currently unable to process tracks belonging to {feature_name_variable_do_not_translate}."
+msgstr ""
 
-#: pylav/extension/red/utils/required_methods.py:176
-msgid "No Lavalink node currently available with feature {feature_name}"
-msgstr "Ingen Lavalink-nod för närvarande tillgänglig med funktionen {feature_name}"
+#: pylav/extension/red/utils/required_methods.py:177
+msgid "There is currently no available Lavalink node with the feature {feature_name_variable_do_not_translate}."
+msgstr ""
 
-#: pylav/extension/red/utils/required_methods.py:189
-msgid "This command is not available in this channel, please use {channel_name}."
-msgstr "Det här kommandot är inte tillgängligt i den här kanalen, använd {channel_name}."
+#: pylav/extension/red/utils/required_methods.py:190
+msgid "This command is unavailable in this channel; please use {channel_name_variable_do_not_translate} instead."
+msgstr ""
 
-#: pylav/extension/red/utils/required_methods.py:203
+#: pylav/extension/red/utils/required_methods.py:206
 msgid "This command requires you to be a disc jockey."
 msgstr "Detta kommando kräver att du är en discjockey."
 
-#: pylav/extension/red/utils/required_methods.py:241
-msgid "PyLav is not ready, please try again shortly"
-msgstr "PyLav är inte redo, försök igen inom kort"
+#: pylav/extension/red/utils/required_methods.py:244
+msgid "PyLav is starting up; please try again in a few minutes."
+msgstr ""
 

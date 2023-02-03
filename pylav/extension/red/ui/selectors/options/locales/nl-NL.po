@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-02 22:15+0000\n"
-"PO-Revision-Date: 2023-02-02 22:33\n"
+"POT-Creation-Date: 2023-02-03 19:54+0000\n"
+"PO-Revision-Date: 2023-02-03 19:55\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -18,10 +18,10 @@ msgstr ""
 "Language: nl_NL\n"
 
 #: pylav/extension/red/ui/selectors/options/nodes.py:37
-msgid "ID: {node_identifier_value} || SSL: {node_ssl_value} || Search-only: {node_config_value}"
-msgstr "LEGITIMATIEBEWIJS: {node_identifier_value} || SSL: {node_ssl_value} || Alleen zoeken: {node_config_value}"
+msgid "Identifier: {node_identifier_variable_do_not_translate} || SSL: {node_ssl_variable_do_not_translate} || Search-only: {node_config_variable_do_not_translate}"
+msgstr ""
 
 #: pylav/extension/red/ui/selectors/options/playlist.py:22
-msgid "Tracks: {playlist_size_value} || {playlist_author_name_value} || {playlist_scope_value}"
-msgstr "Tracks: {playlist_size_value} || {playlist_author_name_value} || {playlist_scope_value}"
+msgid "Tracks: {playlist_size_variable_do_not_translate} || {playlist_author_name_variable_do_not_translate} || {playlist_scope_variable_do_not_translate}"
+msgstr ""
 

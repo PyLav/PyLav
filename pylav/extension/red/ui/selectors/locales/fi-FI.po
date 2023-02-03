@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-02 22:15+0000\n"
-"PO-Revision-Date: 2023-02-02 22:33\n"
+"POT-Creation-Date: 2023-02-03 19:54+0000\n"
+"PO-Revision-Date: 2023-02-03 19:54\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -23,19 +23,19 @@ msgid "You are not authorized to interact with this option."
 msgstr "Sinulla ei ole valtuuksia käyttää tätä vaihtoehtoa."
 
 #: pylav/extension/red/ui/selectors/nodes.py:53
-msgid "Disabling the following sources: {sources_list}."
-msgstr "Seuraavien lähteiden poistaminen käytöstä: {sources_list}."
+msgid "Disabling the following sources: {sources_list_variable_do_not_translate}."
+msgstr ""
 
 #: pylav/extension/red/ui/selectors/nodes.py:85
-msgid "Node not found."
-msgstr "Solmua ei löydy."
+msgid "Node was not found."
+msgstr ""
 
 #: pylav/extension/red/ui/selectors/playlist.py:41
 #: pylav/extension/red/ui/selectors/playlist.py:82
-msgid "Playlist not found."
-msgstr "Soittolistaa ei löydy."
+msgid "Playlist was not found."
+msgstr ""
 
 #: pylav/extension/red/ui/selectors/queue.py:96
-msgid "Track not found."
-msgstr "Kappaletta ei löydy."
+msgid "Track was not found."
+msgstr ""
 
