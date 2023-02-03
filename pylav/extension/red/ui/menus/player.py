@@ -182,7 +182,7 @@ class StatsMenu(BaseMenu):
             self.queue_disconnect_inactive.disabled = True
             self.queue_disconnect_all.disabled = True
 
-        if not [p async for p in iter(self.cog.pylav.player_manager.connected_players) if not p.is_playing]:
+        if not [p for p in iter(self.cog.pylav.player_manager.connected_players) if not p.is_playing]:
             self.queue_disconnect_inactive.disabled = True
 
     @property
