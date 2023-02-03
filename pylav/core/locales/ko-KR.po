@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-02 22:15+0000\n"
-"PO-Revision-Date: 2023-02-02 22:33\n"
+"POT-Creation-Date: 2023-02-03 19:54+0000\n"
+"PO-Revision-Date: 2023-02-03 19:54\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -17,31 +17,31 @@ msgstr ""
 "X-Crowdin-File-ID: 3471\n"
 "Language: ko_KR\n"
 
-#: pylav/core/client.py:888 pylav/core/client.py:923
+#: pylav/core/client.py:885 pylav/core/client.py:923
 msgid "There are no available nodes!"
 msgstr "사용 가능한 노드가 없습니다!"
 
-#: pylav/core/client.py:892 pylav/core/client.py:927 pylav/core/client.py:1235
-msgid "No node with {feature_name} functionality available!"
-msgstr "노드가 없는 경우 {feature_name} 기능을 사용할 수 있습니다!"
+#: pylav/core/client.py:889 pylav/core/client.py:927 pylav/core/client.py:1234
+msgid "No node with {feature_name_variable_do_not_translate} functionality available!"
+msgstr ""
 
-#: pylav/core/client.py:1653
+#: pylav/core/client.py:1652
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist."
 msgstr "혼합 재생목록을 생성하려면 단일 동영상, 사용자, 채널 또는 재생목록 식별자가 필요합니다."
 
-#: pylav/core/client.py:1658
+#: pylav/core/client.py:1657
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist. However, you provided multiple"
 msgstr "혼합 재생목록을 생성하려면 단일 동영상, 사용자, 채널 또는 재생목록 식별자가 필요합니다. 그러나 여러"
 
-#: pylav/core/context.py:258
+#: pylav/core/context.py:317
 msgid "There is still 1 message remaining. Type `more` to continue."
 msgstr "아직 1개의 메시지가 남아 있습니다. 계속하려면 'more'를 입력합니다."
 
-#: pylav/core/context.py:260
-msgid "There are still {remaining_value} messages remaining. Type `more` to continue."
-msgstr "여전히 있습니다 {remaining_value} 남은 메시지. 계속하려면 'more'를 입력합니다."
+#: pylav/core/context.py:319
+msgid "There are still {remaining_variable_do_not_translate} messages remaining. Type `more` to continue."
+msgstr ""
 
-#: pylav/core/context.py:290
+#: pylav/core/context.py:349
 #, docstring
 msgid "Does nothing"
 msgstr "아무것도하지 않습니다"

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-02 22:15+0000\n"
-"PO-Revision-Date: 2023-02-02 22:33\n"
+"POT-Creation-Date: 2023-02-03 19:54+0000\n"
+"PO-Revision-Date: 2023-02-03 19:55\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "MIME-Version: 1.0\n"
@@ -18,42 +18,42 @@ msgstr ""
 "Language: hi_IN\n"
 
 #: pylav/extension/red/converters/equalizer.py:48
-msgid "Bass boost profile with name `{user_input_value}` not found."
-msgstr "बास नाम के साथ प्रोफ़ाइल को बढ़ावा देता है '{user_input_value}'नहीं मिला।"
+msgid "A bass boost profile with the name `{user_input_variable_do_not_translate}` was not found."
+msgstr ""
 
-#: pylav/extension/red/converters/equalizer.py:63
+#: pylav/extension/red/converters/equalizer.py:65
 msgid "Maximum"
 msgstr "अधिकतम"
 
-#: pylav/extension/red/converters/equalizer.py:64
+#: pylav/extension/red/converters/equalizer.py:66
 msgid "Insane"
 msgstr "विक्षिप्त"
 
-#: pylav/extension/red/converters/equalizer.py:65
+#: pylav/extension/red/converters/equalizer.py:67
 msgid "Extreme"
 msgstr "चरम"
 
-#: pylav/extension/red/converters/equalizer.py:66
+#: pylav/extension/red/converters/equalizer.py:68
 msgid "Very High"
 msgstr "बहुत ऊँचा"
 
-#: pylav/extension/red/converters/equalizer.py:67
+#: pylav/extension/red/converters/equalizer.py:69
 msgid "High"
 msgstr "उच्च"
 
-#: pylav/extension/red/converters/equalizer.py:68
+#: pylav/extension/red/converters/equalizer.py:70
 msgid "Medium"
 msgstr "मध्यम"
 
-#: pylav/extension/red/converters/equalizer.py:69
+#: pylav/extension/red/converters/equalizer.py:71
 msgid "Fine Tuned"
 msgstr "बढ़िया ट्यून"
 
-#: pylav/extension/red/converters/equalizer.py:70
+#: pylav/extension/red/converters/equalizer.py:72
 msgid "Cut-off"
 msgstr "कट जाना"
 
-#: pylav/extension/red/converters/equalizer.py:71
-msgid "Off"
-msgstr "बंद"
+#: pylav/extension/red/converters/equalizer.py:73
+msgid "Turn off"
+msgstr ""
 

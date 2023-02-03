@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-02 22:15+0000\n"
-"PO-Revision-Date: 2023-02-02 22:33\n"
+"POT-Creation-Date: 2023-02-03 19:54+0000\n"
+"PO-Revision-Date: 2023-02-03 19:54\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -17,31 +17,31 @@ msgstr ""
 "X-Crowdin-File-ID: 3471\n"
 "Language: fi_FI\n"
 
-#: pylav/core/client.py:888 pylav/core/client.py:923
+#: pylav/core/client.py:885 pylav/core/client.py:923
 msgid "There are no available nodes!"
 msgstr "Käytettävissä olevia solmuja ei ole!"
 
-#: pylav/core/client.py:892 pylav/core/client.py:927 pylav/core/client.py:1235
-msgid "No node with {feature_name} functionality available!"
-msgstr "Ei solmua, jossa on {feature_name} toiminnallisuus saatavilla!"
+#: pylav/core/client.py:889 pylav/core/client.py:927 pylav/core/client.py:1234
+msgid "No node with {feature_name_variable_do_not_translate} functionality available!"
+msgstr ""
 
-#: pylav/core/client.py:1653
+#: pylav/core/client.py:1652
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist."
 msgstr "Yhdistelmäsoittolistan luomiseen tarvitaan yksittäinen video-, käyttäjä-, kanava- tai soittolistatunniste."
 
-#: pylav/core/client.py:1658
+#: pylav/core/client.py:1657
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist. However, you provided multiple"
 msgstr "Yhdistelmäsoittolistan luomiseen tarvitaan yksittäinen video-, käyttäjä-, kanava- tai soittolistatunniste. Annoit kuitenkin useita"
 
-#: pylav/core/context.py:258
+#: pylav/core/context.py:317
 msgid "There is still 1 message remaining. Type `more` to continue."
 msgstr "Jäljellä on vielä 1 viesti. Kirjoita \"lisää\" jatkaaksesi."
 
-#: pylav/core/context.py:260
-msgid "There are still {remaining_value} messages remaining. Type `more` to continue."
-msgstr "On vielä {remaining_value} viestejä jäljellä. Kirjoita \"lisää\" jatkaaksesi."
+#: pylav/core/context.py:319
+msgid "There are still {remaining_variable_do_not_translate} messages remaining. Type `more` to continue."
+msgstr ""
 
-#: pylav/core/context.py:290
+#: pylav/core/context.py:349
 #, docstring
 msgid "Does nothing"
 msgstr "Ei tee mitään"

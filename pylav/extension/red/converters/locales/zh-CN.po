@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-02 22:15+0000\n"
-"PO-Revision-Date: 2023-02-02 22:33\n"
+"POT-Creation-Date: 2023-02-03 19:54+0000\n"
+"PO-Revision-Date: 2023-02-03 19:55\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -18,42 +18,42 @@ msgstr ""
 "Language: zh_CN\n"
 
 #: pylav/extension/red/converters/equalizer.py:48
-msgid "Bass boost profile with name `{user_input_value}` not found."
-msgstr "低音增强配置文件与名称'{user_input_value}'未找到。"
+msgid "A bass boost profile with the name `{user_input_variable_do_not_translate}` was not found."
+msgstr ""
 
-#: pylav/extension/red/converters/equalizer.py:63
+#: pylav/extension/red/converters/equalizer.py:65
 msgid "Maximum"
 msgstr "最大值"
 
-#: pylav/extension/red/converters/equalizer.py:64
+#: pylav/extension/red/converters/equalizer.py:66
 msgid "Insane"
 msgstr "疯狂的"
 
-#: pylav/extension/red/converters/equalizer.py:65
+#: pylav/extension/red/converters/equalizer.py:67
 msgid "Extreme"
 msgstr "极限"
 
-#: pylav/extension/red/converters/equalizer.py:66
+#: pylav/extension/red/converters/equalizer.py:68
 msgid "Very High"
 msgstr "非常高"
 
-#: pylav/extension/red/converters/equalizer.py:67
+#: pylav/extension/red/converters/equalizer.py:69
 msgid "High"
 msgstr "高"
 
-#: pylav/extension/red/converters/equalizer.py:68
+#: pylav/extension/red/converters/equalizer.py:70
 msgid "Medium"
 msgstr "中"
 
-#: pylav/extension/red/converters/equalizer.py:69
+#: pylav/extension/red/converters/equalizer.py:71
 msgid "Fine Tuned"
 msgstr "精良调整"
 
-#: pylav/extension/red/converters/equalizer.py:70
+#: pylav/extension/red/converters/equalizer.py:72
 msgid "Cut-off"
 msgstr "折衷办法"
 
-#: pylav/extension/red/converters/equalizer.py:71
-msgid "Off"
-msgstr "关闭"
+#: pylav/extension/red/converters/equalizer.py:73
+msgid "Turn off"
+msgstr ""
 

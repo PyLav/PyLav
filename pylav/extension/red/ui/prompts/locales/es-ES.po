@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-02 22:15+0000\n"
-"PO-Revision-Date: 2023-02-02 22:33\n"
+"POT-Creation-Date: 2023-02-03 19:54+0000\n"
+"PO-Revision-Date: 2023-02-03 19:54\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -18,16 +18,16 @@ msgstr ""
 "Language: es_ES\n"
 
 #: pylav/extension/red/ui/prompts/nodes.py:29
-msgid "Multiple nodes matched, pick the one which you meant."
-msgstr "Múltiples nodos coinciden, elija el que quiso decir."
+msgid "Multiple nodes matched. Pick the one which you meant."
+msgstr ""
 
 #: pylav/extension/red/ui/prompts/nodes.py:36
 msgid "Pick a node."
 msgstr "Elija un nodo."
 
 #: pylav/extension/red/ui/prompts/playlists.py:31
-msgid "Multiple playlist matched, pick the one which you meant."
-msgstr "Múltiples listas de reproducción coincidentes, elija la que quiso decir."
+msgid "Multiple playlists matched. Pick the one which you meant."
+msgstr ""
 
 #: pylav/extension/red/ui/prompts/playlists.py:38
 msgid "Pick a playlist."
