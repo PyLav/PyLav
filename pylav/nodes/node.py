@@ -94,9 +94,9 @@ class Node:
         "_ws",
         "_version",
         "_api_version",
-        "trace",
         "_logger",
         "_filters",
+        "__cli_flags",
     )
 
     def __init__(
@@ -155,8 +155,7 @@ class Node:
         self._filters: set[str] = set()
         self._coordinates = (0, 0)
         self._down_votes = ExpiringDict(max_len=float("inf"), max_age_seconds=600)  # type: ignore
-        cli_flags = getattr("manager._client.bot", "_cli_flags", None)
-        self.trace = cli_flags.logging_level < logging.INFO if cli_flags else False
+        self.__cli_flags = getattr("manager._client.bot", "_cli_flags", None)
 
         self._stats = None
 
@@ -180,6 +179,12 @@ class Node:
             coalesce=True,
             next_run_time=get_now_utc() + datetime.timedelta(seconds=15),
         )
+
+    @property
+    def trace(self) -> bool:
+        if getLogger("PyLav").getEffectiveLevel() < logging.INFO:
+            return True
+        return self.__cli_flags.logging_level < logging.INFO if self.__cli_flags else False
 
     async def _unhealthy(self) -> None:
         del self.down_votes
@@ -968,9 +973,13 @@ class Node:
     def base_api_url(self) -> URL:
         return self.base_url / f"v{self.api_version}"
 
+    @property
+    def base_ws_url(self) -> URL:
+        return self.base_api_url.with_scheme(self.socket_protocol)
+
     # ENDPOINTS
     def get_endpoint_websocket(self) -> URL:
-        return self.base_api_url / "websocket"
+        return self.base_ws_url / "websocket"
 
     def get_endpoint_info(self) -> URL:
         return self.base_api_url / "info"
@@ -1175,7 +1184,7 @@ class Node:
             self._logger.trace("Failed to delete session player: %d %s", failure.status, failure.message)
             return HTTPException(failure)
 
-    async def fetch_loadtracks(self, query: Query) -> rest_api.LoadTrackResponses | HTTPException:
+    async def fetch_loadtracks(self, query: Query) -> rest_api.LoadTrackResponses:
         if not self.available or not self.has_source(query.requires_capability):
             return dataclasses.replace(NO_MATCHES)
 

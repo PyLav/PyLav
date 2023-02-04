@@ -3,6 +3,7 @@ from __future__ import annotations
 import dataclasses
 from typing import TYPE_CHECKING, Literal, TypeAlias, Union  # noqa
 
+from pylav.exceptions.request import HTTPException
 from pylav.nodes.api.responses.exceptions import LoadException
 from pylav.nodes.api.responses.filters import Filters
 from pylav.nodes.api.responses.misc import Git, Plugin, Version
@@ -50,13 +51,7 @@ class LoadFailed(BaseTrackResponse):  # noqa
     loadType: Literal["LOAD_FAILED"]
 
 
-LoadTrackResponses: TypeAlias = Union[
-    TrackLoaded,
-    PlaylistLoaded,
-    NoMatches,
-    LoadFailed,
-    SearchResult,
-]
+LoadTrackResponses: TypeAlias = Union[TrackLoaded, PlaylistLoaded, NoMatches, LoadFailed, SearchResult, HTTPException]
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
