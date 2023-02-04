@@ -12,9 +12,14 @@ __all__ = ("getLogger",)
 maybe_update_logger_class()
 
 LOGGER_PREFIX = os.getenv("PYLAV__LOGGER_PREFIX", "")
-
-logging.getLogger("deepdiff.diff").disabled = True
-logging.getLogger("watchfiles").disabled = True
+__deepdiff = logging.getLogger("deepdiff.diff")
+__deepdiff.setLevel(logging.CRITICAL)
+__deepdiff.propagate = False
+__deepdiff.disabled = True
+__watchfiles = logging.getLogger("watchfiles")
+__watchfiles.setLevel(logging.CRITICAL)
+__watchfiles.propagate = False
+__watchfiles.disabled = True
 logging.getLogger("apscheduler").setLevel(logging.ERROR)
 logging.getLogger("aiohttp_client_cache").setLevel(logging.ERROR)
 
