@@ -133,7 +133,9 @@ class PyLavContext(OriginalContextClass):
         """
         return self.pylav.get_player(self.guild)
 
-    async def connect_player(self, channel: discord.channel.VocalGuildChannel = None, self_deaf: bool = True) -> Player:
+    async def connect_player(
+        self, channel: discord.channel.VocalGuildChannel = None, self_deaf: bool | None = None
+    ) -> Player:
         """
         Connect player
         """

@@ -2426,16 +2426,20 @@ class Player(VoiceProtocol):
         return msg
 
     async def get_currently_playing_message(
-        self, embed: bool = True, messageable: Messageable | DISCORD_INTERACTION_TYPE = None
+        self, embed: bool = True, messageable: Messageable | DISCORD_INTERACTION_TYPE = None, progress: bool = True
     ) -> discord.Embed | str:  # sourcery skip: use-fstring-for-formatting
         if not embed:
             return ""
         queue_list = ""
-        arrow = await self.draw_time()
-        position = await self.fetch_position()
-        if self.timescale.changed:
-            position *= self.timescale.speed
-        pos = format_time_dd_hh_mm_ss(position)
+        if not progress:
+            arrow = ""
+            pos = ""
+        else:
+            arrow = await self.draw_time()
+            position = await self.fetch_position()
+            if self.timescale.changed:
+                position *= self.timescale.speed
+            pos = format_time_dd_hh_mm_ss(position)
         current = self.current
         dur = _("LIVE") if await current.stream() else format_time_dd_hh_mm_ss(await current.duration())
         current_track_description = await current.get_track_display_name(with_url=True)
@@ -2446,7 +2450,7 @@ class Player(VoiceProtocol):
             await self.last_track.get_track_display_name(with_url=True) if self.last_track else None
         )
         queue_list = await self._process_np_embed_initial_description(
-            arrow, current, current_track_description, dur, pos, queue_list
+            arrow, current, current_track_description, dur, pos, queue_list, progress
         )
         page = await self.node.node_manager.client.construct_embed(
             title=discord.utils.escape_markdown(
@@ -2467,7 +2471,9 @@ class Player(VoiceProtocol):
         return page
 
     @staticmethod
-    async def _process_np_embed_initial_description(arrow, current, current_track_description, dur, pos, queue_list):
+    async def _process_np_embed_initial_description(
+        arrow, current, current_track_description, dur, pos, queue_list, progress
+    ):
         # sourcery skip: use-fstring-for-formatting
         if await current.stream():
             queue_list += "**{}:**\n".format(discord.utils.escape_markdown(_("Currently livestreaming")))
@@ -2477,7 +2483,14 @@ class Player(VoiceProtocol):
         queue_list += "{translation}: **{current}**".format(
             current=current.requester.mention, translation=discord.utils.escape_markdown(_("Requester"))
         )
-        queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
+        if progress:
+            queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
+        else:
+            queue_list += "\n{dur}\n\n\n".format(
+                dur=_("Duration: {track_duration_variable_do_not_translate}").format(
+                    track_duration_variable_do_not_translate=f"`{dur}`"
+                )
+            )
         return queue_list
 
     async def _process_np_embed_prev_track(self, page, previous_track_description):
@@ -2632,7 +2645,6 @@ class Player(VoiceProtocol):
         return queue_list
 
     async def _process_queue_embed_footer(self, page, page_index, queue, queue_total_duration, total_pages):
-
         track_number = queue.qsize()
 
         match track_number:

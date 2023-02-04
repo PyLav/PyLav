@@ -1086,7 +1086,7 @@ class Client(metaclass=SingletonClass):
         requester: discord.Member,
         channel: discord.channel.VocalGuildChannel,
         node: Node = None,
-        self_deaf: bool = True,
+        self_deaf: bool | None = None,
     ) -> Player:
         """|coro|
         Connects the player for the target guild.
