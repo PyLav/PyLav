@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-04 06:03\n"
+"PO-Revision-Date: 2023-02-04 07:03\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
 "MIME-Version: 1.0\n"
@@ -203,5 +203,5 @@ msgstr "Odaberite zapis koji želite ukloniti."
 
 #: pylav/extension/red/ui/menus/queue.py:460
 msgid "Select a track to play now."
-msgstr "Odaberite pjesmu za reprodukciju sada."
+msgstr "Odaberite pjesmu za reprodukciju."
 

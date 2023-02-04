@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-04 06:03\n"
+"PO-Revision-Date: 2023-02-04 07:03\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
 "MIME-Version: 1.0\n"
@@ -27,7 +27,7 @@ msgstr "Glazba u {number_of_servers_variable_do_not_translate} Poslužitelja"
 
 #: pylav/players/player.py:1175
 msgid "There are no tracks currently in the player history."
-msgstr "Trenutno u povijesti igrača nema tragova."
+msgstr "Trenutno u povijesti igrača nema pjesama."
 
 #: pylav/players/player.py:1868
 msgid "Current node has the volume filter feature disabled."
@@ -82,7 +82,7 @@ msgstr "ŽIVJETI"
 
 #: pylav/players/player.py:2453
 msgid "Now Playing in {server_name_variable_do_not_translate}"
-msgstr "Sada se reproducira u {server_name_variable_do_not_translate}"
+msgstr "Reproduciranje u {server_name_variable_do_not_translate}"
 
 #: pylav/players/player.py:2473 pylav/players/player.py:2610
 msgid "Currently livestreaming"
@@ -90,12 +90,12 @@ msgstr "Trenutno prijenos uživo"
 
 #: pylav/players/player.py:2475
 msgid "Playing: "
-msgstr "Igranje: "
+msgstr "Svira: "
 
 #: pylav/players/player.py:2478 pylav/players/player.py:2494
 #: pylav/players/player.py:2509 pylav/players/player.py:2616
 msgid "Requester"
-msgstr "Tražitelj"
+msgstr "Zatražio"
 
 #: pylav/players/player.py:2490 pylav/players/player.py:2505
 msgid "Duration"
@@ -103,7 +103,7 @@ msgstr "Trajanje"
 
 #: pylav/players/player.py:2496
 msgid "Previous Track"
-msgstr "Prethodni zapis"
+msgstr "Prethodna pjesma"
 
 #: pylav/players/player.py:2511
 msgid "Next Track"
@@ -111,19 +111,19 @@ msgstr "Sljedeća pjesma"
 
 #: pylav/players/player.py:2520
 msgid "1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
-msgstr "1 staza, {queue_total_duration_variable_do_not_translate} preostali\n"
+msgstr "1 pjesma, {queue_total_duration_variable_do_not_translate} preostalo\n"
 
 #: pylav/players/player.py:2524
 msgid "0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
-msgstr "0 pjesama, {queue_total_duration_variable_do_not_translate} preostali\n"
+msgstr "0 pjesama, {queue_total_duration_variable_do_not_translate} preostalo\n"
 
 #: pylav/players/player.py:2528
 msgid "{track_count_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
-msgstr "{track_count_variable_do_not_translate} Pjesme {queue_total_duration_variable_do_not_translate} preostali\n"
+msgstr "{track_count_variable_do_not_translate} pjesama, {queue_total_duration_variable_do_not_translate} preostalo\n"
 
 #: pylav/players/player.py:2535 pylav/players/player.py:2658
 msgid "Repeating"
-msgstr "Ponavljajuće"
+msgstr "Ponavljanje"
 
 #: pylav/players/player.py:2537 pylav/players/player.py:2660
 msgid "Auto Play"
@@ -135,11 +135,11 @@ msgstr "{volume_variable_do_not_translate}%"
 
 #: pylav/players/player.py:2542 pylav/players/player.py:2665
 msgid "Volume"
-msgstr "Obim"
+msgstr "Glasnoća"
 
 #: pylav/players/player.py:2582
 msgid "Recently Played for {server_name_variable_do_not_translate}"
-msgstr "Nedavno je reproducirano za {server_name_variable_do_not_translate}"
+msgstr "Nedavno reproducirano u {server_name_variable_do_not_translate}"
 
 #: pylav/players/player.py:2588
 msgid "Queue for {server_name_variable_do_not_translate}"
@@ -147,7 +147,7 @@ msgstr "Red čekanja za {server_name_variable_do_not_translate}"
 
 #: pylav/players/player.py:2613
 msgid "Playing"
-msgstr "Igranje"
+msgstr "Svira"
 
 #: pylav/players/player.py:2629
 msgid "Queue order will change every time a track is added due to auto shuffle being enabled."
@@ -155,13 +155,13 @@ msgstr "Redoslijed reda čekanja promijenit će se svaki put kada se zapis doda 
 
 #: pylav/players/player.py:2640
 msgid "Page 1 / 1 | 1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
-msgstr "Stranica 1 / 1 | 1 staza, {queue_total_duration_variable_do_not_translate} preostali\n"
+msgstr "Stranica 1 / 1 | 1 pjesma, {queue_total_duration_variable_do_not_translate} preostalo\n"
 
 #: pylav/players/player.py:2644
 msgid "Page 1 / 1 | 0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
-msgstr "Stranica 1 / 1 | 0 pjesama, {queue_total_duration_variable_do_not_translate} preostali\n"
+msgstr "Stranica 1 / 1 | 0 pjesama, {queue_total_duration_variable_do_not_translate} preostalo\n"
 
 #: pylav/players/player.py:2648
 msgid "Page {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
-msgstr "Stranica {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} Pjesme {queue_total_duration_variable_do_not_translate} preostali\n"
+msgstr "Stranica {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} pjesama, {queue_total_duration_variable_do_not_translate} preostalo\n"
 
