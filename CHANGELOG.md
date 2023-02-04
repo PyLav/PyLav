@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.4.4 (04/02/2023)
+- [Some fixes and dynamic trace for better node logging](https://github.com/Drapersniper/PyLav/commit/0106ccb0f8117a16a3b6cc67136d1c60e1d85f20) - @Drapersniper
+
+---
+
 ## v1.4.3 (04/02/2023)
 - [Fix and improved bundled playlist update logging](https://github.com/Drapersniper/PyLav/commit/e84e47261c5a9daa4ea62757b812d6bc5a070802) - @Drapersniper
 
@@ -239,14 +244,3 @@
 
 ## v1.1.4 (09/01/2023)
 - [Further start up enhancements](https://github.com/Drapersniper/PyLav/commit/1b89d276b8e3bceb9430cb0c36ad2f842391226f) - @Drapersniper
-
----
-
-## v1.1.3 (09/01/2023)
-- [Better track caching and references (Better performance)](https://github.com/Drapersniper/PyLav/commit/9eedaa9d17431e275431ea414a92a04c9ce58323) - @Drapersniper
-- [Fix the base64 decoder](https://github.com/Drapersniper/PyLav/commit/b550a3d20b3f5cd01956da62e31c6143b0c5b5b4) - @Drapersniper
-- [Used cached session for decode endpoints](https://github.com/Drapersniper/PyLav/commit/4197ad78cfa0210c6fc20f352b32ff91d642609a) - @Drapersniper
-- [Fix incorrect cog name reference](https://github.com/Drapersniper/PyLav/commit/6b364195f70e664d4976813901aa5e462068b0d8) - @Drapersniper
-- [fix AttributeError: 'NoneType' object has no attribute 'source'](https://github.com/Drapersniper/PyLav/commit/9fec736961094fcfd54afde511b6dcfe7a747df3) - @Drapersniper
-- [precommit update](https://github.com/Drapersniper/PyLav/commit/839b097a2d8bd4817006e86ba0a3c94cb38038e4) - @Drapersniper
-- [Update setup.md](https://github.com/Drapersniper/PyLav/commit/a6a576f57b598817c00d8ed4b5774db13e011bee) - @Drapersniper
