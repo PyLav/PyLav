@@ -17,6 +17,7 @@ import discord
 from discord import VoiceProtocol
 from discord.abc import Messageable
 
+from pylav.constants.config import DEFAULT_SEARCH_SOURCE
 from pylav.constants.coordinates import REGION_TO_COUNTRY_COORDINATE_MAPPING
 from pylav.constants.regex import VOICE_CHANNEL_ENDPOINT
 from pylav.enums.plugins.sponsorblock import SegmentCategory
@@ -2426,7 +2427,11 @@ class Player(VoiceProtocol):
         return msg
 
     async def get_currently_playing_message(
-        self, embed: bool = True, messageable: Messageable | DISCORD_INTERACTION_TYPE = None, progress: bool = True
+        self,
+        embed: bool = True,
+        messageable: Messageable | DISCORD_INTERACTION_TYPE = None,
+        progress: bool = True,
+        show_help: bool = False,
     ) -> discord.Embed | str:  # sourcery skip: use-fstring-for-formatting
         if not embed:
             return ""
@@ -2467,7 +2472,7 @@ class Player(VoiceProtocol):
         await self._process_np_embed_prev_track(page, previous_track_description)
         await self._process_np_embed_next_track(next_track_description, page)
 
-        await self._process_now_playing_embed_footer(page)
+        await self._process_now_playing_embed_footer(page, show_help)
         return page
 
     @staticmethod
@@ -2523,7 +2528,7 @@ class Player(VoiceProtocol):
                 )
             page.add_field(name=_("Next Track"), value=val)
 
-    async def _process_now_playing_embed_footer(self, page):
+    async def _process_now_playing_embed_footer(self, page, show_help):
         queue_dur = await self.queue_duration()
         queue_total_duration = format_time_string(queue_dur // 1000)
 
@@ -2554,6 +2559,27 @@ class Player(VoiceProtocol):
             volume=_("{volume_variable_do_not_translate}%").format(volume_variable_do_not_translate=self.volume),
             translation=_("Volume"),
         )
+        if show_help:
+            text += _(
+                "\n\nYou can search specific services by using the following prefixes:\n"
+                "{deezer_service_variable_do_not_translate}  - Deezer\n"
+                "{spotify_service_variable_do_not_translate}  - Spotify\n"
+                "{apple_music_service_variable_do_not_translate}  - Apple Music\n"
+                "{youtube_music_service_variable_do_not_translate} - YouTube Music\n"
+                "{youtube_service_variable_do_not_translate}  - YouTube\n"
+                "{soundcloud_service_variable_do_not_translate}  - SoundCloud\n"
+                "{yandex_music_service_variable_do_not_translate}  - Yandex Music\n"
+                "If no prefix is used I will default to {fallback_service_variable_do_not_translate}."
+            ).format(
+                fallback_service_variable_do_not_translate=f"`{DEFAULT_SEARCH_SOURCE}:`",
+                deezer_service_variable_do_not_translate="`dzsearch:`",
+                spotify_service_variable_do_not_translate="`spsearch:`",
+                apple_music_service_variable_do_not_translate="`amsearch:`",
+                youtube_music_service_variable_do_not_translate="`ytmsearch:`",
+                youtube_service_variable_do_not_translate="`ytsearch:`",
+                soundcloud_service_variable_do_not_translate="`scsearch:`",
+                yandex_music_service_variable_do_not_translate="`ymsearch:`",
+            )
         page.set_footer(text=text)
 
     async def _process_embed_emojis(self):
