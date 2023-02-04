@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-04 17:22\n"
+"POT-Creation-Date: 2023-02-04 18:31+0000\n"
+"PO-Revision-Date: 2023-02-04 18:32\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "MIME-Version: 1.0\n"
@@ -17,11 +17,11 @@ msgstr ""
 "X-Crowdin-File-ID: 3575\n"
 "Language: hi_IN\n"
 
-#: pylav/helpers/discord/converters/nodes.py:40
+#: pylav/helpers/discord/converters/nodes.py:39
 msgid "Node with name or identifier `{user_input_variable_do_not_translate}` not found."
 msgstr "नाम या पहचानकर्ता के साथ नोड '{user_input_variable_do_not_translate}'नहीं मिला।"
 
-#: pylav/helpers/discord/converters/nodes.py:47
+#: pylav/helpers/discord/converters/nodes.py:46
 msgid "Node with name or identifier `{user_input_variable_do_not_translate}` not found"
 msgstr "नाम या पहचानकर्ता के साथ नोड '{user_input_variable_do_not_translate}'नहीं मिला"
 
@@ -29,49 +29,49 @@ msgstr "नाम या पहचानकर्ता के साथ नो�
 msgid "A playlist with the name or identifier `{user_input_variable_do_not_translate}` was not found."
 msgstr "नाम या पहचानकर्ता के साथ एक प्लेलिस्ट '{user_input_variable_do_not_translate}' नहीं मिला।"
 
-#: pylav/helpers/discord/converters/queries.py:52
+#: pylav/helpers/discord/converters/queries.py:50
 msgid "The query must be a playlist or album."
 msgstr "क्वेरी एक प्लेलिस्ट या एल्बम होना चाहिए।"
 
-#: pylav/helpers/discord/converters/radio.py:57
+#: pylav/helpers/discord/converters/radio.py:56
 msgid "A station with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "नाम का एक स्टेशन '{user_input_variable_do_not_translate}' नहीं मिला।"
 
-#: pylav/helpers/discord/converters/radio.py:77
-#: pylav/helpers/discord/converters/radio.py:165
-#: pylav/helpers/discord/converters/radio.py:211
-#: pylav/helpers/discord/converters/radio.py:255
-#: pylav/helpers/discord/converters/radio.py:298
-#: pylav/helpers/discord/converters/radio.py:341
-#: pylav/helpers/discord/converters/radio.py:384
+#: pylav/helpers/discord/converters/radio.py:76
+#: pylav/helpers/discord/converters/radio.py:164
+#: pylav/helpers/discord/converters/radio.py:210
+#: pylav/helpers/discord/converters/radio.py:254
+#: pylav/helpers/discord/converters/radio.py:297
+#: pylav/helpers/discord/converters/radio.py:340
+#: pylav/helpers/discord/converters/radio.py:383
 msgid "The Radio Browser extension is currently disabled."
 msgstr "रेडियो ब्राउज़र एक्सटेंशन वर्तमान में अक्षम है।"
 
-#: pylav/helpers/discord/converters/radio.py:98
+#: pylav/helpers/discord/converters/radio.py:97
 msgid "Unnamed"
 msgstr "अनाम"
 
-#: pylav/helpers/discord/converters/radio.py:145
+#: pylav/helpers/discord/converters/radio.py:144
 msgid "A tag with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "नाम के साथ एक टैग '{user_input_variable_do_not_translate}' नहीं मिला।"
 
-#: pylav/helpers/discord/converters/radio.py:191
+#: pylav/helpers/discord/converters/radio.py:190
 msgid "A language with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "नाम के साथ एक भाषा '{user_input_variable_do_not_translate}' नहीं मिला।"
 
-#: pylav/helpers/discord/converters/radio.py:235
+#: pylav/helpers/discord/converters/radio.py:234
 msgid "A state with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "नाम के साथ एक राज्य '{user_input_variable_do_not_translate}' नहीं मिला।"
 
-#: pylav/helpers/discord/converters/radio.py:278
+#: pylav/helpers/discord/converters/radio.py:277
 msgid "A codec with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "नाम के साथ एक कोडेक '{user_input_variable_do_not_translate}' नहीं मिला।"
 
-#: pylav/helpers/discord/converters/radio.py:321
+#: pylav/helpers/discord/converters/radio.py:320
 msgid "A country code with the value `{user_input_variable_do_not_translate}` was not found."
 msgstr "मान के साथ एक देश कोड '{user_input_variable_do_not_translate}' नहीं मिला।"
 
-#: pylav/helpers/discord/converters/radio.py:364
+#: pylav/helpers/discord/converters/radio.py:363
 msgid "A country with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "नाम के साथ एक देश '{user_input_variable_do_not_translate}' नहीं मिला।"
 

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-02 22:15+0000\n"
-"PO-Revision-Date: 2023-02-04 17:21\n"
+"POT-Creation-Date: 2023-02-04 18:31+0000\n"
+"PO-Revision-Date: 2023-02-04 18:32\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgstr ""
 #: pylav/extension/radio/utils.py:173 pylav/extension/radio/utils.py:182
 #: pylav/extension/radio/utils.py:191 pylav/extension/radio/utils.py:198
 #: pylav/extension/radio/utils.py:204 pylav/extension/radio/utils.py:210
-#: pylav/extension/radio/utils.py:217 pylav/extension/radio/utils.py:512
+#: pylav/extension/radio/utils.py:217 pylav/extension/radio/utils.py:511
 msgid "Unnamed"
 msgstr "Nepojmenovaný"
 

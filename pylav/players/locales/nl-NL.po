@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-04 17:17+0000\n"
-"PO-Revision-Date: 2023-02-04 17:22\n"
+"POT-Creation-Date: 2023-02-04 18:31+0000\n"
+"PO-Revision-Date: 2023-02-04 18:32\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "There are no nodes available currently."
 msgstr "Er zijn momenteel geen knooppunten beschikbaar."
 
-#: pylav/players/manager.py:350
+#: pylav/players/manager.py:349
 msgid "Music in {number_of_servers_variable_do_not_translate} servers"
 msgstr "Muziek in {number_of_servers_variable_do_not_translate} Servers"
 
