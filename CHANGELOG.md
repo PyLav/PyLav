@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.4.2 (04/02/2023)
+- [Fix an issue when failures were raising when they should not](https://github.com/Drapersniper/PyLav/commit/d44a15fc07455d0e35eb79aac097d94af0ea8357) - @Drapersniper
+- [pre-commit run on all files](https://github.com/Drapersniper/PyLav/commit/06779e908bbea5f3982d6bcb568f23cd5cfeee83) - @Drapersniper
+- [ffs](https://github.com/Drapersniper/PyLav/commit/1309217a05f3a293a98176365b5f6f49b4dac5a9) - @Drapersniper
+- [ffs](https://github.com/Drapersniper/PyLav/commit/a4c79e4347aeb569618b24d093d99d5782c793ec) - @Drapersniper
+- [cleanup automerge](https://github.com/Drapersniper/PyLav/commit/cf76a17424b1e119a0ff6bfbfbf7aae4c8bb52ff) - @Drapersniper
+
+---
+
 ## v1.4.1 (04/02/2023)
 - [Make Release](https://github.com/Drapersniper/PyLav/commit/c568bd8cadceb3a37ede91d84c307361b353e46d) - @Drapersniper
 - [Cleanup the now playing embed text](https://github.com/Drapersniper/PyLav/commit/b80a50de90281f3044f09b3ac37073823552f42b) - @Drapersniper
@@ -243,9 +252,3 @@
 - [Update docker-compose.yml](https://github.com/Drapersniper/PyLav/commit/90d0b1e3919b0e1916d91b173607ec38e7d5fdb3) - @Drapersniper
 - [Update .pre-commit-config.yaml](https://github.com/Drapersniper/PyLav/commit/313f111b139cc05166dc8e06fd5f42d8fcaf7729) - @Drapersniper
 - [Fix possible AttributeError in QueueSource (#149)](https://github.com/Drapersniper/PyLav/commit/dd9d5518236eeba2715aaad59b92464a017f42eb) - @Kuro-Rui
-
----
-
-## v1.1.1 (07/01/2023)
-- [Bump actions/checkout from 3.1.0 to 3.3.0 (#145)](https://github.com/Drapersniper/PyLav/commit/5e1df240ffcff4f90cfc211dc297092936e14c68) - @dependabot[bot]
-- [Add a missing positional argument in player.stop() (#148)](https://github.com/Drapersniper/PyLav/commit/21ac9dc7c22fa30efd3e3fe4a421ce9539e1af1d) - @Kuro-Rui
