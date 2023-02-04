@@ -1400,6 +1400,9 @@ class Client(metaclass=SingletonClass):
                 )
                 continue
             response = await self._get_tracks(player=player, query=local_track, first=True, bypass_cache=True)
+            if isinstance(response, HTTPException):
+                queries_failed.append(sub_query)
+                continue
             if __ := response.tracks[0].encoded:
                 track_count += 1
                 successful_tracks.append(
@@ -1431,6 +1434,9 @@ class Client(metaclass=SingletonClass):
         track_count,
     ):
         response = await self._get_tracks(player=player, query=sub_query, bypass_cache=bypass_cache)
+        if isinstance(response, HTTPException):
+            queries_failed.append(sub_query)
+            return track_count
         track_list = response.tracks
         if not track_list:
             queries_failed.append(sub_query)
@@ -1455,6 +1461,9 @@ class Client(metaclass=SingletonClass):
         self, bypass_cache, node, player, queries_failed, requester, sub_query, successful_tracks, track_count, partial
     ):
         response = await self._get_tracks(player=player, query=sub_query, first=True, bypass_cache=bypass_cache)
+        if isinstance(response, HTTPException):
+            queries_failed.append(sub_query)
+            return track_count
         track_b64 = response.tracks[0].encoded
         if not track_b64:
             queries_failed.append(sub_query)

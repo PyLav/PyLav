@@ -10,7 +10,7 @@ from redbot.core.i18n import Translator
 from pylav.core.context import PyLavContext
 from pylav.extension.red import errors
 from pylav.extension.red.errors import NotDJError, UnauthorizedChannelError
-from pylav.type_hints.bot import DISCORD_INTERACTION_TYPE
+from pylav.type_hints.bot import DISCORD_BOT_TYPE, DISCORD_INTERACTION_TYPE
 
 _ = Translator("PyLav", Path(__file__))
 
@@ -71,15 +71,17 @@ def can_run_command_in_channel(slash: bool = False):
     return app_commands.check(pred) if slash else commands.check(pred)
 
 
-async def is_dj_logic(context: PyLavContext | DISCORD_INTERACTION_TYPE) -> bool | None:
+async def is_dj_logic(
+    context: PyLavContext | DISCORD_INTERACTION_TYPE | discord.Message, bot: DISCORD_BOT_TYPE | None = None
+) -> bool | None:
     guild = context.guild
     if isinstance(context, discord.Interaction):
         if not context.response.is_done():
             await context.response.defer(ephemeral=True)
-        bot = context.client
+        bot = bot or context.client
         author = context.user
     else:
-        bot = context.bot
+        bot = bot or context.bot
         author = context.author
     return await bot.pylav.is_dj(user=author, guild=guild, additional_role_ids=None, additional_user_ids={*bot.owner_ids, guild.owner_id}, bot=bot) if (getattr(bot, "pylav", None) and guild) else False  # type: ignore
 
