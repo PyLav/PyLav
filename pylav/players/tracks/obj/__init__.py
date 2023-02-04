@@ -606,7 +606,6 @@ class Track:
         with_url: bool = False,
         escape: bool = True,
     ) -> str:
-
         if self.is_partial:
             track_name = await self.get_partial_track_display_name(
                 max_length=max_length if with_url and max_length is None else (max_length - 8)

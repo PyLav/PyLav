@@ -181,7 +181,6 @@ class QueueHistoryButton(discord.ui.Button):
         self.cog = cog
 
     async def callback(self, interaction: DISCORD_INTERACTION_TYPE):
-
         if not interaction.response.is_done():
             await interaction.response.defer(ephemeral=True, thinking=True)
         context = await self.cog.bot.get_context(interaction)
@@ -317,7 +316,6 @@ class EnqueueButton(discord.ui.Button):
         )
 
     async def callback(self, interaction: DISCORD_INTERACTION_TYPE):
-
         from pylav.extension.red.ui.modals.queue import EnqueueModal
 
         modal = EnqueueModal(self.cog, _("What do you want to enqueue?"))
@@ -343,7 +341,6 @@ class RemoveFromQueueButton(discord.ui.Button):
         )
 
     async def callback(self, interaction: DISCORD_INTERACTION_TYPE):
-
         if not interaction.response.is_done():
             await interaction.response.defer(ephemeral=True, thinking=True)
         context = await self.cog.bot.get_context(interaction)
@@ -381,7 +378,6 @@ class PlayNowFromQueueButton(discord.ui.Button):
         )
 
     async def callback(self, interaction: DISCORD_INTERACTION_TYPE):
-
         if not interaction.response.is_done():
             await interaction.response.defer(ephemeral=True, thinking=True)
         context = await self.cog.bot.get_context(interaction)

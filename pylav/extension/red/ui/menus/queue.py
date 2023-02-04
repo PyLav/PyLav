@@ -452,7 +452,6 @@ class QueuePickerMenu(BaseMenu):
         self.add_item(self.forward_button)
         self.add_item(self.last_button)
         if self.source.select_options:
-
             options = self.source.select_options
             if self.menu_type == "remove":
                 title = _("Select a track to remove.")

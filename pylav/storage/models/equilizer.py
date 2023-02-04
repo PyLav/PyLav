@@ -29,7 +29,6 @@ LOGGER = getLogger("PyLav.Database.Equalizer")
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True)
 class Equalizer(CachedModel):
-
     id: int
     scope: int
     author: int

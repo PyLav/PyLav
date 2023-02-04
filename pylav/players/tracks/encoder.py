@@ -29,7 +29,6 @@ def encode_track(
     version: int = TRACK_VERSION,
     **kwargs: Any,
 ) -> str:
-
     writer = DataWriter()
     writer.write_version(version)
     writer.write_utf(title)
@@ -70,7 +69,6 @@ async def async_encoder(
     probe: str | None = None,
     **kwargs: Any,
 ) -> str:
-
     return await asyncio.to_thread(
         encode_track,
         title=title,

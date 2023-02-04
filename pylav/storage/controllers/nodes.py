@@ -38,7 +38,6 @@ class NodeController:
         return node
 
     async def get_all_unmanaged_nodes(self, dedupe: bool = True) -> list[Node]:
-
         model_list = [
             Node(**node)
             for node in await NodeRow.select(NodeRow.id)
@@ -83,7 +82,6 @@ class NodeController:
         yaml: dict = None,
         disabled_sources: list[str] = None,
     ) -> Node:
-
         """
         Add a new node to the database.
 

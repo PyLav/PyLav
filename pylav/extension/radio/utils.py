@@ -497,7 +497,6 @@ class TransformerCache:
     @classmethod
     @CACHE.cache(ttl=timedelta(hours=24))
     async def get_top_25_stations(cls) -> list[Choice]:
-
         if cls._top_25_stations:
             return cls._top_25_stations
 

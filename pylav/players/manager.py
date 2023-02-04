@@ -291,7 +291,6 @@ class PlayerController:
         LOGGER.info("Restored %s player states", len(self.players))
 
     async def _restore_player(self, player_state: PlayerState) -> None:
-
         player = self.players.get(player_state.id)
         if player is not None:
             # Player was started before restore
@@ -334,7 +333,7 @@ class PlayerController:
         Updates the bot's activity.
         """
         with contextlib.suppress(asyncio.exceptions.CancelledError, asyncpg.exceptions.CannotConnectNowError):
-            if not await (self.client.lib_db_manager.get_config()).fetch_update_bot_activity():
+            if not await self.client.lib_db_manager.get_config().fetch_update_bot_activity():
                 return
             playing_players = len(self.playing_players)
             activities = self.bot.guilds[0].me.activities

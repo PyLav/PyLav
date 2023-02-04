@@ -145,7 +145,6 @@ async def migrate_playlists_v_1_0_0(playlists: list[asyncpg.Record]) -> None:
 
 
 async def migrate_queries_v_1_0_0(queries: list[asyncpg.Record]) -> None:
-
     for query in queries:
         defaults = {QueryRow.name: query["name"]}
         query_row = await QueryRow.objects().get_or_create(QueryRow.identifier == query["identifier"], defaults)

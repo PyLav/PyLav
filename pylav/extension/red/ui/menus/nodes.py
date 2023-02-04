@@ -773,7 +773,6 @@ class NodeManagerMenu(BaseMenu):
                 ephemeral=True,
             )
         else:
-
             match self.resume_timeout:
                 case 1:
                     message = _("The node timeout has been set to `1` second.").format(

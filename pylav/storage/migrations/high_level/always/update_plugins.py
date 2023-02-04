@@ -14,7 +14,6 @@ if TYPE_CHECKING:
 
 
 async def update_plugins(client: Client) -> None:
-
     try:
         LOGGER.info("Attempting to update plugins")
         # noinspection PyProtectedMember

@@ -13,7 +13,6 @@ if TYPE_CHECKING:
 
 
 async def set_correct_ram_cap(client: Client) -> None:
-
     LOGGER.debug("Running Managed node RAM cap limiter")
     config = client.node_db_manager.bundled_node_config()
     extras = await config.fetch_extras()

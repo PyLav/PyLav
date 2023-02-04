@@ -80,7 +80,6 @@ class EntryPickerSource(menus.ListPageSource):
         return start, page_num
 
     async def format_page(self, menu: EntryPickerMenu, entry: list[ANY_GENERIC_TYPE]) -> discord.Embed | str:
-
         idx_start, page_num = self.get_starting_index_and_page_number(menu)
         page = await self.cog.pylav.construct_embed(messageable=menu.ctx, title=self.message_str)
 

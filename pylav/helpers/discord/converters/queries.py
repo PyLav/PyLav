@@ -28,7 +28,6 @@ else:
     class QueryConverter(Transformer):
         @classmethod
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> Query:  # noqa
-
             arg = arg.strip("<>")
             return await Query.from_string(arg)
 
@@ -45,7 +44,6 @@ else:
     class QueryPlaylistConverter(Transformer):
         @classmethod
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> Query:  # noqa
-
             arg = arg.strip("<>")
             query = await Query.from_string(arg)
             if not (query.is_playlist or query.is_album):

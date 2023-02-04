@@ -43,7 +43,6 @@ class PlaylistPickerSource(menus.ListPageSource):
         return start, page_num
 
     async def format_page(self, menu: PlaylistPickerMenu, playlists: list[Playlist]) -> discord.Embed | str:
-
         idx_start, page_num = self.get_starting_index_and_page_number(menu)
         page = await self.cog.pylav.construct_embed(messageable=menu.ctx, title=self.message_str)
 
@@ -169,7 +168,6 @@ class PlaylistListSource(menus.ListPageSource):
         return start, page_num
 
     async def format_page(self, menu: PaginatingMenu, playlists: list[Playlist]) -> discord.Embed | str:
-
         idx_start, page_num = self.get_starting_index_and_page_number(menu)
         plist = ""
         space = "\N{EN SPACE}"

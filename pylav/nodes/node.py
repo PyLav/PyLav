@@ -116,7 +116,6 @@ class Node:
         extras: dict = None,
         temporary: bool = False,
     ) -> None:
-
         self._query_cls: Query = Query  # type: ignore
         self._version: Version | None = None
         self._api_version: int | None = None

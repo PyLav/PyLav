@@ -149,7 +149,6 @@ class PlaylistController:
     async def create_or_update_playlist(
         self, identifier: int, scope: int, author: int, name: str, url: str | None = None, tracks: list[str] = None
     ) -> Playlist:
-
         playlist = self.get_playlist(identifier=identifier)
         await playlist.bulk_update(
             scope=scope,
@@ -377,7 +376,6 @@ class PlaylistController:
             LOGGER.info("Finished updating bundled external playlists")
 
     async def update_external_playlists(self, *playlist_ids: int) -> None:
-
         with contextlib.suppress(asyncio.exceptions.CancelledError, asyncpg.exceptions.CannotConnectNowError):
             await self.client.node_manager.wait_until_ready()
             # noinspection PyProtectedMember

@@ -256,7 +256,6 @@ async def initialize(self: DISCORD_COG_TYPE, *args, **kwargs) -> None:
 
 
 async def cog_check(self: DISCORD_COG_TYPE, context: PyLavContext) -> bool:
-
     # This cog mock discord objects and sends them on the listener
     #   Due to the potential risk for unexpected behaviour - disabled all commands if this cog is loaded.
     if any(context.bot.get_cog(name) is not None for name in INCOMPATIBLE_COGS):

@@ -31,7 +31,6 @@ if TYPE_CHECKING:
 LOGGER = getLogger("PyLav.extension.Shared.converters.radio")
 
 if TYPE_CHECKING:
-
     StationConverter = TypeVar("StationConverter", bound=list[Station])
     TagConverter = TypeVar("TagConverter", bound=list[Tag])
     LanguageConverter = TypeVar("LanguageConverter", bound=list[Language])

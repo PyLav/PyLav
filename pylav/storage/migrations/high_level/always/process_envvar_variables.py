@@ -20,7 +20,6 @@ if TYPE_CHECKING:
 
 
 async def process_envvar_variables(client: Client) -> None:
-
     LOGGER.info("Running migration - Envvar variables")
 
     config = client.node_db_manager.bundled_node_config()

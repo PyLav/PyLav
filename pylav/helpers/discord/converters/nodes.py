@@ -25,7 +25,6 @@ except ImportError:
 
 
 if TYPE_CHECKING:
-
     NodeConverter = TypeVar("NodeConverter", bound=list[Node])
 else:
 

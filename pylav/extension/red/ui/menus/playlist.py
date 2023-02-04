@@ -162,7 +162,6 @@ class PlaylistPickerMenu(BaseMenu):
             await interaction.response.edit_message(view=self)
 
     async def wait_for_response(self):
-
         if isinstance(self.select_view, PlaylistSelectSelector):
             await asyncio.wait_for(self.select_view.responded.wait(), timeout=self.timeout)
             self.result = self.select_view.playlist

@@ -24,7 +24,6 @@ class NavigateButton(discord.ui.Button):
         row: int = None,
         label: str = None,
     ):
-
         super().__init__(style=style, emoji=emoji, row=row, label=label)
         self.cog = cog
         self._direction = direction
