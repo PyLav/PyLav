@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-04 17:22\n"
+"POT-Creation-Date: 2023-02-04 18:31+0000\n"
+"PO-Revision-Date: 2023-02-04 18:32\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "MIME-Version: 1.0\n"
@@ -17,10 +17,10 @@ msgstr ""
 "X-Crowdin-File-ID: 3641\n"
 "Language: hi_IN\n"
 
-#: pylav/extension/red/ui/buttons/generic.py:70
-#: pylav/extension/red/ui/buttons/generic.py:94
-#: pylav/extension/red/ui/buttons/generic.py:118
-#: pylav/extension/red/ui/buttons/generic.py:142
+#: pylav/extension/red/ui/buttons/generic.py:69
+#: pylav/extension/red/ui/buttons/generic.py:93
+#: pylav/extension/red/ui/buttons/generic.py:117
+#: pylav/extension/red/ui/buttons/generic.py:141
 #: pylav/extension/red/ui/buttons/nodes.py:48
 #: pylav/extension/red/ui/buttons/nodes.py:96
 #: pylav/extension/red/ui/buttons/nodes.py:135
@@ -38,19 +38,19 @@ msgstr ""
 msgid "You are not authorized to interact with this option."
 msgstr "आप इस विकल्प के साथ सहभागिता करने के लिए अधिकृत नहीं हैं."
 
-#: pylav/extension/red/ui/buttons/generic.py:85
+#: pylav/extension/red/ui/buttons/generic.py:84
 msgid "Yes"
 msgstr "हाँ"
 
-#: pylav/extension/red/ui/buttons/generic.py:109
+#: pylav/extension/red/ui/buttons/generic.py:108
 msgid "No"
 msgstr "नहीं"
 
-#: pylav/extension/red/ui/buttons/generic.py:165
+#: pylav/extension/red/ui/buttons/generic.py:164
 msgid "Disconnect {player_type_variable_do_not_translate} players"
 msgstr "अलग करना {player_type_variable_do_not_translate} खिलाड़ियों"
 
-#: pylav/extension/red/ui/buttons/generic.py:169
+#: pylav/extension/red/ui/buttons/generic.py:168
 msgid "Disconnect {player_type_variable_do_not_translate} player"
 msgstr "अलग करना {player_type_variable_do_not_translate} खिलाड़ी"
 
@@ -181,20 +181,20 @@ msgid "What should the playlist name be?"
 msgstr "प्लेलिस्ट का नाम क्या होना चाहिए?"
 
 #: pylav/extension/red/ui/buttons/queue.py:164
-#: pylav/extension/red/ui/buttons/queue.py:191
-#: pylav/extension/red/ui/buttons/queue.py:224
+#: pylav/extension/red/ui/buttons/queue.py:190
+#: pylav/extension/red/ui/buttons/queue.py:223
 msgid "I am not connected to any voice channel at the moment."
 msgstr "मैं इस समय किसी वॉयस चैनल से जुड़ा नहीं हूं।"
 
-#: pylav/extension/red/ui/buttons/queue.py:289
+#: pylav/extension/red/ui/buttons/queue.py:288
 msgid "There is nothing in the queue."
 msgstr "कतार में कुछ भी नहीं है।"
 
-#: pylav/extension/red/ui/buttons/queue.py:296
+#: pylav/extension/red/ui/buttons/queue.py:295
 msgid "Removed tracks from the queue."
 msgstr "लाइन से पटरियों को हटा दिया गया।"
 
-#: pylav/extension/red/ui/buttons/queue.py:323
+#: pylav/extension/red/ui/buttons/queue.py:321
 msgid "What do you want to enqueue?"
 msgstr "आप क्या कतारबद्ध करना चाहते हैं?"
 

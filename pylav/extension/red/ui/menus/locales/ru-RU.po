@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-04 17:22\n"
+"POT-Creation-Date: 2023-02-04 18:31+0000\n"
+"PO-Revision-Date: 2023-02-04 18:32\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -19,8 +19,8 @@ msgstr ""
 
 #: pylav/extension/red/ui/menus/generic.py:116
 #: pylav/extension/red/ui/menus/nodes.py:199
-#: pylav/extension/red/ui/menus/playlist.py:261
-#: pylav/extension/red/ui/menus/playlist.py:480
+#: pylav/extension/red/ui/menus/playlist.py:260
+#: pylav/extension/red/ui/menus/playlist.py:479
 msgid "You are not authorized to interact with this."
 msgstr "Вы не имеете права взаимодействовать с этим."
 
@@ -104,17 +104,17 @@ msgid "The timeout you specified is invalid; it must be a number in seconds."
 msgstr "Указанное время ожидания неверно; это должно быть число в секундах."
 
 #: pylav/extension/red/ui/menus/nodes.py:311
-#: pylav/extension/red/ui/menus/nodes.py:783
+#: pylav/extension/red/ui/menus/nodes.py:782
 msgid "The node timeout has been set to `0` seconds."
 msgstr "Время ожидания узла установлено равным '0' секунд."
 
 #: pylav/extension/red/ui/menus/nodes.py:313
-#: pylav/extension/red/ui/menus/nodes.py:779
+#: pylav/extension/red/ui/menus/nodes.py:778
 msgid "The node timeout has been set to `1` second."
 msgstr "Время ожидания узла установлено равным 1 секунде."
 
 #: pylav/extension/red/ui/menus/nodes.py:315
-#: pylav/extension/red/ui/menus/nodes.py:785
+#: pylav/extension/red/ui/menus/nodes.py:784
 msgid "The node timeout has been set to `{node_timeout_variable_do_not_translate}` seconds."
 msgstr "Время ожидания узла установлено равным '{node_timeout_variable_do_not_translate}' секунд."
 
@@ -158,50 +158,50 @@ msgstr "все"
 msgid "I am not in any voice channel currently."
 msgstr "В настоящее время я не участвую ни в одном голосовом канале."
 
-#: pylav/extension/red/ui/menus/playlist.py:187
+#: pylav/extension/red/ui/menus/playlist.py:186
 msgid "Please enter the playlist URL."
 msgstr "Пожалуйста, введите URL-адрес плейлиста."
 
-#: pylav/extension/red/ui/menus/playlist.py:188
-#: pylav/extension/red/ui/menus/playlist.py:323
+#: pylav/extension/red/ui/menus/playlist.py:187
+#: pylav/extension/red/ui/menus/playlist.py:322
 msgid "Playlist URL"
 msgstr "URL плейлиста"
 
-#: pylav/extension/red/ui/menus/playlist.py:194
+#: pylav/extension/red/ui/menus/playlist.py:193
 msgid "Please enter the playlist name."
 msgstr "Пожалуйста, введите название плейлиста."
 
-#: pylav/extension/red/ui/menus/playlist.py:195
-#: pylav/extension/red/ui/menus/playlist.py:330
+#: pylav/extension/red/ui/menus/playlist.py:194
+#: pylav/extension/red/ui/menus/playlist.py:329
 msgid "Playlist Name"
 msgstr "Имя плейлиста"
 
-#: pylav/extension/red/ui/menus/playlist.py:322
+#: pylav/extension/red/ui/menus/playlist.py:321
 msgid "Please enter the new URL for this playlist."
 msgstr "Пожалуйста, введите новый URL для этого плейлиста."
 
-#: pylav/extension/red/ui/menus/playlist.py:329
+#: pylav/extension/red/ui/menus/playlist.py:328
 msgid "Please enter the new name for this playlist."
 msgstr "Пожалуйста, введите новое название для этого плейлиста."
 
-#: pylav/extension/red/ui/menus/playlist.py:336
+#: pylav/extension/red/ui/menus/playlist.py:335
 msgid "What is the query to add to this playlist?"
 msgstr "Какой запрос добавить в этот плейлист?"
 
-#: pylav/extension/red/ui/menus/playlist.py:337
-#: pylav/extension/red/ui/menus/playlist.py:345
+#: pylav/extension/red/ui/menus/playlist.py:336
+#: pylav/extension/red/ui/menus/playlist.py:344
 msgid "Query"
 msgstr "Запрос"
 
-#: pylav/extension/red/ui/menus/playlist.py:344
+#: pylav/extension/red/ui/menus/playlist.py:343
 msgid "What is the query to remove from this playlist?"
 msgstr "Какой запрос необходимо удалить из этого плейлиста?"
 
-#: pylav/extension/red/ui/menus/queue.py:458
+#: pylav/extension/red/ui/menus/queue.py:457
 msgid "Select a track to remove."
 msgstr "Выберите дорожку для удаления."
 
-#: pylav/extension/red/ui/menus/queue.py:460
+#: pylav/extension/red/ui/menus/queue.py:459
 msgid "Select a track to play now."
 msgstr "Выберите трек для воспроизведения сейчас."
 

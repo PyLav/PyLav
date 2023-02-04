@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-04 17:21\n"
+"POT-Creation-Date: 2023-02-04 18:31+0000\n"
+"PO-Revision-Date: 2023-02-04 18:32\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -29,118 +29,118 @@ msgstr "作成者"
 msgid "Bundled with PyLav"
 msgstr "パイラヴにバンドル"
 
-#: pylav/extension/red/ui/sources/generic.py:93
-#: pylav/extension/red/ui/sources/nodes.py:55
+#: pylav/extension/red/ui/sources/generic.py:92
+#: pylav/extension/red/ui/sources/nodes.py:54
 msgid "Page 1 / 1 | 1 entry"
 msgstr "ページ 1 / 1 |1 エントリ"
 
-#: pylav/extension/red/ui/sources/generic.py:95
-#: pylav/extension/red/ui/sources/nodes.py:57
+#: pylav/extension/red/ui/sources/generic.py:94
+#: pylav/extension/red/ui/sources/nodes.py:56
 msgid "Page 1 / 1 | 0 entries"
 msgstr "ページ 1 / 1 |0 エントリ"
 
-#: pylav/extension/red/ui/sources/generic.py:97
-#: pylav/extension/red/ui/sources/nodes.py:59
+#: pylav/extension/red/ui/sources/generic.py:96
+#: pylav/extension/red/ui/sources/nodes.py:58
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} entries"
 msgstr "ページ {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} エントリ"
 
-#: pylav/extension/red/ui/sources/nodes.py:105
-#: pylav/extension/red/ui/sources/nodes.py:269
+#: pylav/extension/red/ui/sources/nodes.py:104
+#: pylav/extension/red/ui/sources/nodes.py:268
 msgid "No"
 msgstr "いいえ"
 
-#: pylav/extension/red/ui/sources/nodes.py:106
-#: pylav/extension/red/ui/sources/nodes.py:270
+#: pylav/extension/red/ui/sources/nodes.py:105
+#: pylav/extension/red/ui/sources/nodes.py:269
 msgid "Yes"
 msgstr "はい"
 
-#: pylav/extension/red/ui/sources/nodes.py:152
-#: pylav/extension/red/ui/sources/nodes.py:316
+#: pylav/extension/red/ui/sources/nodes.py:151
+#: pylav/extension/red/ui/sources/nodes.py:315
 msgid "None / Unknown"
 msgstr "なし / 不明"
 
-#: pylav/extension/red/ui/sources/nodes.py:154
-#: pylav/extension/red/ui/sources/nodes.py:318
+#: pylav/extension/red/ui/sources/nodes.py:153
+#: pylav/extension/red/ui/sources/nodes.py:317
 msgid "Property"
 msgstr "属性"
 
-#: pylav/extension/red/ui/sources/nodes.py:155
-#: pylav/extension/red/ui/sources/nodes.py:319
+#: pylav/extension/red/ui/sources/nodes.py:154
+#: pylav/extension/red/ui/sources/nodes.py:318
 msgid "Value"
 msgstr "価値"
 
-#: pylav/extension/red/ui/sources/nodes.py:157
-#: pylav/extension/red/ui/sources/nodes.py:321
+#: pylav/extension/red/ui/sources/nodes.py:156
+#: pylav/extension/red/ui/sources/nodes.py:320
 msgid "Latitude: {latitude_variable_do_not_translate}\n"
 "Longitude: {longitude_variable_do_not_translate}"
 msgstr "緯度： {latitude_variable_do_not_translate}\n"
 "経度： {longitude_variable_do_not_translate}"
 
-#: pylav/extension/red/ui/sources/nodes.py:164
-#: pylav/extension/red/ui/sources/nodes.py:328
+#: pylav/extension/red/ui/sources/nodes.py:163
+#: pylav/extension/red/ui/sources/nodes.py:327
 msgid "Region"
 msgstr "地域"
 
-#: pylav/extension/red/ui/sources/nodes.py:164
-#: pylav/extension/red/ui/sources/nodes.py:328
+#: pylav/extension/red/ui/sources/nodes.py:163
+#: pylav/extension/red/ui/sources/nodes.py:327
 msgid "N/A"
 msgstr "該当なし"
 
-#: pylav/extension/red/ui/sources/nodes.py:165
-#: pylav/extension/red/ui/sources/nodes.py:329
+#: pylav/extension/red/ui/sources/nodes.py:164
+#: pylav/extension/red/ui/sources/nodes.py:328
 msgid "Coordinates"
 msgstr "座標"
 
-#: pylav/extension/red/ui/sources/nodes.py:166
-#: pylav/extension/red/ui/sources/nodes.py:330
+#: pylav/extension/red/ui/sources/nodes.py:165
+#: pylav/extension/red/ui/sources/nodes.py:329
 msgid "Host"
 msgstr "ホスト"
 
-#: pylav/extension/red/ui/sources/nodes.py:167
-#: pylav/extension/red/ui/sources/nodes.py:331
+#: pylav/extension/red/ui/sources/nodes.py:166
+#: pylav/extension/red/ui/sources/nodes.py:330
 msgid "Port"
 msgstr "ポート"
 
-#: pylav/extension/red/ui/sources/nodes.py:168
-#: pylav/extension/red/ui/sources/nodes.py:332
+#: pylav/extension/red/ui/sources/nodes.py:167
+#: pylav/extension/red/ui/sources/nodes.py:331
 msgid "Password"
 msgstr "パスワード"
 
-#: pylav/extension/red/ui/sources/nodes.py:169
-#: pylav/extension/red/ui/sources/nodes.py:333
+#: pylav/extension/red/ui/sources/nodes.py:168
+#: pylav/extension/red/ui/sources/nodes.py:332
 msgid "SSL"
 msgstr "ティッカー"
 
-#: pylav/extension/red/ui/sources/nodes.py:170
-#: pylav/extension/red/ui/sources/nodes.py:334
+#: pylav/extension/red/ui/sources/nodes.py:169
+#: pylav/extension/red/ui/sources/nodes.py:333
 msgid "Available"
 msgstr "利用可能です"
 
-#: pylav/extension/red/ui/sources/nodes.py:171
-#: pylav/extension/red/ui/sources/nodes.py:335
+#: pylav/extension/red/ui/sources/nodes.py:170
+#: pylav/extension/red/ui/sources/nodes.py:334
 msgid "Search Only"
 msgstr "検索のみ"
 
-#: pylav/extension/red/ui/sources/nodes.py:172
-#: pylav/extension/red/ui/sources/nodes.py:336
+#: pylav/extension/red/ui/sources/nodes.py:171
+#: pylav/extension/red/ui/sources/nodes.py:335
 msgid "Players\n"
 "Connected\n"
 "Active"
 msgstr "接続済みのプレイヤー\n\n"
 "が有効"
 
-#: pylav/extension/red/ui/sources/nodes.py:176
-#: pylav/extension/red/ui/sources/nodes.py:340
+#: pylav/extension/red/ui/sources/nodes.py:175
+#: pylav/extension/red/ui/sources/nodes.py:339
 msgid "Frames Lost"
 msgstr "失われたフレーム"
 
-#: pylav/extension/red/ui/sources/nodes.py:181
-#: pylav/extension/red/ui/sources/nodes.py:345
+#: pylav/extension/red/ui/sources/nodes.py:180
+#: pylav/extension/red/ui/sources/nodes.py:344
 msgid "Uptime"
 msgstr "稼働時間"
 
-#: pylav/extension/red/ui/sources/nodes.py:182
-#: pylav/extension/red/ui/sources/nodes.py:346
+#: pylav/extension/red/ui/sources/nodes.py:181
+#: pylav/extension/red/ui/sources/nodes.py:345
 msgid "CPU Load\n"
 "Lavalink\n"
 "System"
@@ -148,13 +148,13 @@ msgstr "CPU負荷\n"
 "Lavalink\n"
 "システム"
 
-#: pylav/extension/red/ui/sources/nodes.py:185
-#: pylav/extension/red/ui/sources/nodes.py:349
+#: pylav/extension/red/ui/sources/nodes.py:184
+#: pylav/extension/red/ui/sources/nodes.py:348
 msgid "Penalty"
 msgstr "ペナルティ"
 
-#: pylav/extension/red/ui/sources/nodes.py:186
-#: pylav/extension/red/ui/sources/nodes.py:350
+#: pylav/extension/red/ui/sources/nodes.py:185
+#: pylav/extension/red/ui/sources/nodes.py:349
 msgid "Memory\n"
 "Used\n"
 "Free\n"
@@ -165,23 +165,23 @@ msgstr "メモリ\n\n"
 "割り当て可能\n"
 "予約"
 
-#: pylav/extension/red/ui/sources/nodes.py:189
-#: pylav/extension/red/ui/sources/nodes.py:353
+#: pylav/extension/red/ui/sources/nodes.py:188
+#: pylav/extension/red/ui/sources/nodes.py:352
 msgid "Features"
 msgstr "特徴"
 
-#: pylav/extension/red/ui/sources/nodes.py:206
-#: pylav/extension/red/ui/sources/nodes.py:371
+#: pylav/extension/red/ui/sources/nodes.py:205
+#: pylav/extension/red/ui/sources/nodes.py:370
 msgid "Page 1 / 1 | 1 node"
 msgstr "ページ 1 / 1 |1 ノード"
 
-#: pylav/extension/red/ui/sources/nodes.py:208
-#: pylav/extension/red/ui/sources/nodes.py:373
+#: pylav/extension/red/ui/sources/nodes.py:207
+#: pylav/extension/red/ui/sources/nodes.py:372
 msgid "Page 1 / 1 | 0 nodes"
 msgstr "ページ 1 / 1 |0 ノード"
 
-#: pylav/extension/red/ui/sources/nodes.py:210
-#: pylav/extension/red/ui/sources/nodes.py:375
+#: pylav/extension/red/ui/sources/nodes.py:209
+#: pylav/extension/red/ui/sources/nodes.py:374
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} nodes"
 msgstr "ページ {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} ノード"
 
@@ -242,58 +242,58 @@ msgstr "ページ 1 / 1 |0 サーバー"
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} servers"
 msgstr "ページ {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} サーバー"
 
-#: pylav/extension/red/ui/sources/playlist.py:56
-#: pylav/extension/red/ui/sources/playlist.py:210
+#: pylav/extension/red/ui/sources/playlist.py:55
+#: pylav/extension/red/ui/sources/playlist.py:208
 msgid "Page 1 / 1 | 1 playlist"
 msgstr "ページ 1 / 1 |1 プレイリスト"
 
-#: pylav/extension/red/ui/sources/playlist.py:58
-#: pylav/extension/red/ui/sources/playlist.py:212
+#: pylav/extension/red/ui/sources/playlist.py:57
+#: pylav/extension/red/ui/sources/playlist.py:210
 msgid "Page 1 / 1 | 0 playlists"
 msgstr "ページ 1 / 1 |0 プレイリスト"
 
-#: pylav/extension/red/ui/sources/playlist.py:60
-#: pylav/extension/red/ui/sources/playlist.py:214
+#: pylav/extension/red/ui/sources/playlist.py:59
+#: pylav/extension/red/ui/sources/playlist.py:212
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} playlists"
 msgstr "ページ {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} プレイリスト"
 
-#: pylav/extension/red/ui/sources/playlist.py:128
+#: pylav/extension/red/ui/sources/playlist.py:127
 msgid "Tracks in"
 msgstr "トラック"
 
-#: pylav/extension/red/ui/sources/playlist.py:140
+#: pylav/extension/red/ui/sources/playlist.py:139
 msgid "Page 1 / 1 | 1 track"
 msgstr "ページ 1 / 1 |1トラック"
 
-#: pylav/extension/red/ui/sources/playlist.py:142
+#: pylav/extension/red/ui/sources/playlist.py:141
 msgid "Page 1 / 1 | 0 tracks"
 msgstr "ページ 1 / 1 |0曲のトラック"
 
-#: pylav/extension/red/ui/sources/playlist.py:144
+#: pylav/extension/red/ui/sources/playlist.py:143
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} tracks"
 msgstr "ページ {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} 跡"
 
-#: pylav/extension/red/ui/sources/playlist.py:178
+#: pylav/extension/red/ui/sources/playlist.py:176
 msgid "Unknown"
 msgstr "不明"
 
-#: pylav/extension/red/ui/sources/playlist.py:183
+#: pylav/extension/red/ui/sources/playlist.py:181
 msgid "Identifier: {id_variable_do_not_translate}"
 msgstr "識別子： {id_variable_do_not_translate}"
 
-#: pylav/extension/red/ui/sources/playlist.py:184
+#: pylav/extension/red/ui/sources/playlist.py:182
 msgid "Tracks: {num_variable_do_not_translate}"
 msgstr "跡： {num_variable_do_not_translate}"
 
-#: pylav/extension/red/ui/sources/playlist.py:187
+#: pylav/extension/red/ui/sources/playlist.py:185
 msgid "Author: {name_variable_do_not_translate}"
 msgstr "著者： {name_variable_do_not_translate}"
 
-#: pylav/extension/red/ui/sources/playlist.py:190
+#: pylav/extension/red/ui/sources/playlist.py:188
 msgid "Scope: {scope_variable_do_not_translate}\n"
 msgstr "スコープ： {scope_variable_do_not_translate}\n"
 
-#: pylav/extension/red/ui/sources/playlist.py:200
+#: pylav/extension/red/ui/sources/playlist.py:198
 msgid "Playlists you can access in this server:"
 msgstr "このサーバーでアクセスできるプレイリスト:"
 

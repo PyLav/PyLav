@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-04 17:22\n"
+"POT-Creation-Date: 2023-02-04 18:31+0000\n"
+"PO-Revision-Date: 2023-02-04 18:32\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -17,11 +17,11 @@ msgstr ""
 "X-Crowdin-File-ID: 3575\n"
 "Language: ko_KR\n"
 
-#: pylav/helpers/discord/converters/nodes.py:40
+#: pylav/helpers/discord/converters/nodes.py:39
 msgid "Node with name or identifier `{user_input_variable_do_not_translate}` not found."
 msgstr "이름 또는 식별자가 '인 노드{user_input_variable_do_not_translate}' 찾을 수 없습니다."
 
-#: pylav/helpers/discord/converters/nodes.py:47
+#: pylav/helpers/discord/converters/nodes.py:46
 msgid "Node with name or identifier `{user_input_variable_do_not_translate}` not found"
 msgstr "이름 또는 식별자가 '인 노드{user_input_variable_do_not_translate}' 찾을 수 없음"
 
@@ -29,49 +29,49 @@ msgstr "이름 또는 식별자가 '인 노드{user_input_variable_do_not_transl
 msgid "A playlist with the name or identifier `{user_input_variable_do_not_translate}` was not found."
 msgstr "이름 또는 식별자가 '{user_input_variable_do_not_translate}'을(를) 찾을 수 없습니다."
 
-#: pylav/helpers/discord/converters/queries.py:52
+#: pylav/helpers/discord/converters/queries.py:50
 msgid "The query must be a playlist or album."
 msgstr "쿼리는 재생 목록 또는 앨범이어야 합니다."
 
-#: pylav/helpers/discord/converters/radio.py:57
+#: pylav/helpers/discord/converters/radio.py:56
 msgid "A station with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "이름이 ' 인 역{user_input_variable_do_not_translate}'을(를) 찾을 수 없습니다."
 
-#: pylav/helpers/discord/converters/radio.py:77
-#: pylav/helpers/discord/converters/radio.py:165
-#: pylav/helpers/discord/converters/radio.py:211
-#: pylav/helpers/discord/converters/radio.py:255
-#: pylav/helpers/discord/converters/radio.py:298
-#: pylav/helpers/discord/converters/radio.py:341
-#: pylav/helpers/discord/converters/radio.py:384
+#: pylav/helpers/discord/converters/radio.py:76
+#: pylav/helpers/discord/converters/radio.py:164
+#: pylav/helpers/discord/converters/radio.py:210
+#: pylav/helpers/discord/converters/radio.py:254
+#: pylav/helpers/discord/converters/radio.py:297
+#: pylav/helpers/discord/converters/radio.py:340
+#: pylav/helpers/discord/converters/radio.py:383
 msgid "The Radio Browser extension is currently disabled."
 msgstr "라디오 브라우저 확장은 현재 비활성화되어 있습니다."
 
-#: pylav/helpers/discord/converters/radio.py:98
+#: pylav/helpers/discord/converters/radio.py:97
 msgid "Unnamed"
 msgstr "명명 되지 않은"
 
-#: pylav/helpers/discord/converters/radio.py:145
+#: pylav/helpers/discord/converters/radio.py:144
 msgid "A tag with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "이름이 '인 태그{user_input_variable_do_not_translate}'을(를) 찾을 수 없습니다."
 
-#: pylav/helpers/discord/converters/radio.py:191
+#: pylav/helpers/discord/converters/radio.py:190
 msgid "A language with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "이름이 '{user_input_variable_do_not_translate}'을(를) 찾을 수 없습니다."
 
-#: pylav/helpers/discord/converters/radio.py:235
+#: pylav/helpers/discord/converters/radio.py:234
 msgid "A state with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "이름이 '인 상태{user_input_variable_do_not_translate}'을(를) 찾을 수 없습니다."
 
-#: pylav/helpers/discord/converters/radio.py:278
+#: pylav/helpers/discord/converters/radio.py:277
 msgid "A codec with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "이름이 '인 코덱{user_input_variable_do_not_translate}'을(를) 찾을 수 없습니다."
 
-#: pylav/helpers/discord/converters/radio.py:321
+#: pylav/helpers/discord/converters/radio.py:320
 msgid "A country code with the value `{user_input_variable_do_not_translate}` was not found."
 msgstr "값이 '인 국가 코드{user_input_variable_do_not_translate}'을(를) 찾을 수 없습니다."
 
-#: pylav/helpers/discord/converters/radio.py:364
+#: pylav/helpers/discord/converters/radio.py:363
 msgid "A country with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "'라는 이름의 나라{user_input_variable_do_not_translate}'을(를) 찾을 수 없습니다."
 

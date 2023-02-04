@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-04 17:21\n"
+"POT-Creation-Date: 2023-02-04 18:31+0000\n"
+"PO-Revision-Date: 2023-02-04 18:32\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -19,8 +19,8 @@ msgstr ""
 
 #: pylav/extension/red/ui/menus/generic.py:116
 #: pylav/extension/red/ui/menus/nodes.py:199
-#: pylav/extension/red/ui/menus/playlist.py:261
-#: pylav/extension/red/ui/menus/playlist.py:480
+#: pylav/extension/red/ui/menus/playlist.py:260
+#: pylav/extension/red/ui/menus/playlist.py:479
 msgid "You are not authorized to interact with this."
 msgstr "これと対話する権限がありません。"
 
@@ -104,17 +104,17 @@ msgid "The timeout you specified is invalid; it must be a number in seconds."
 msgstr "指定したタイムアウトが無効です。秒単位の数値である必要があります。"
 
 #: pylav/extension/red/ui/menus/nodes.py:311
-#: pylav/extension/red/ui/menus/nodes.py:783
+#: pylav/extension/red/ui/menus/nodes.py:782
 msgid "The node timeout has been set to `0` seconds."
 msgstr "ノードのタイムアウトは「0」秒に設定されています。"
 
 #: pylav/extension/red/ui/menus/nodes.py:313
-#: pylav/extension/red/ui/menus/nodes.py:779
+#: pylav/extension/red/ui/menus/nodes.py:778
 msgid "The node timeout has been set to `1` second."
 msgstr "ノードのタイムアウトが「1」秒に設定されています。"
 
 #: pylav/extension/red/ui/menus/nodes.py:315
-#: pylav/extension/red/ui/menus/nodes.py:785
+#: pylav/extension/red/ui/menus/nodes.py:784
 msgid "The node timeout has been set to `{node_timeout_variable_do_not_translate}` seconds."
 msgstr "ノードのタイムアウトが '{node_timeout_variable_do_not_translate}' 秒。"
 
@@ -158,50 +158,50 @@ msgstr "すべて"
 msgid "I am not in any voice channel currently."
 msgstr "私は現在、どの音声チャネルにも参加していません。"
 
-#: pylav/extension/red/ui/menus/playlist.py:187
+#: pylav/extension/red/ui/menus/playlist.py:186
 msgid "Please enter the playlist URL."
 msgstr "プレイリストのURLを入力してください。"
 
-#: pylav/extension/red/ui/menus/playlist.py:188
-#: pylav/extension/red/ui/menus/playlist.py:323
+#: pylav/extension/red/ui/menus/playlist.py:187
+#: pylav/extension/red/ui/menus/playlist.py:322
 msgid "Playlist URL"
 msgstr "プレイリストURL"
 
-#: pylav/extension/red/ui/menus/playlist.py:194
+#: pylav/extension/red/ui/menus/playlist.py:193
 msgid "Please enter the playlist name."
 msgstr "プレイリスト名を入力してください。"
 
-#: pylav/extension/red/ui/menus/playlist.py:195
-#: pylav/extension/red/ui/menus/playlist.py:330
+#: pylav/extension/red/ui/menus/playlist.py:194
+#: pylav/extension/red/ui/menus/playlist.py:329
 msgid "Playlist Name"
 msgstr "プレイリスト名"
 
-#: pylav/extension/red/ui/menus/playlist.py:322
+#: pylav/extension/red/ui/menus/playlist.py:321
 msgid "Please enter the new URL for this playlist."
 msgstr "このプレイリストの新しいURLを入力してください。"
 
-#: pylav/extension/red/ui/menus/playlist.py:329
+#: pylav/extension/red/ui/menus/playlist.py:328
 msgid "Please enter the new name for this playlist."
 msgstr "このプレイリストの新しい名前を入力してください。"
 
-#: pylav/extension/red/ui/menus/playlist.py:336
+#: pylav/extension/red/ui/menus/playlist.py:335
 msgid "What is the query to add to this playlist?"
 msgstr "このプレイリストに追加するクエリは何ですか?"
 
-#: pylav/extension/red/ui/menus/playlist.py:337
-#: pylav/extension/red/ui/menus/playlist.py:345
+#: pylav/extension/red/ui/menus/playlist.py:336
+#: pylav/extension/red/ui/menus/playlist.py:344
 msgid "Query"
 msgstr "クエリ"
 
-#: pylav/extension/red/ui/menus/playlist.py:344
+#: pylav/extension/red/ui/menus/playlist.py:343
 msgid "What is the query to remove from this playlist?"
 msgstr "このプレイリストから削除するクエリは何ですか?"
 
-#: pylav/extension/red/ui/menus/queue.py:458
+#: pylav/extension/red/ui/menus/queue.py:457
 msgid "Select a track to remove."
 msgstr "削除するトラックを選択します。"
 
-#: pylav/extension/red/ui/menus/queue.py:460
+#: pylav/extension/red/ui/menus/queue.py:459
 msgid "Select a track to play now."
 msgstr "今すぐ再生するトラックを選択します。"
 

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-04 17:21\n"
+"POT-Creation-Date: 2023-02-04 18:31+0000\n"
+"PO-Revision-Date: 2023-02-04 18:32\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
@@ -17,11 +17,11 @@ msgstr ""
 "X-Crowdin-File-ID: 3575\n"
 "Language: el_GR\n"
 
-#: pylav/helpers/discord/converters/nodes.py:40
+#: pylav/helpers/discord/converters/nodes.py:39
 msgid "Node with name or identifier `{user_input_variable_do_not_translate}` not found."
 msgstr "Κόμβος με όνομα ή αναγνωριστικό '{user_input_variable_do_not_translate}» δεν βρέθηκε."
 
-#: pylav/helpers/discord/converters/nodes.py:47
+#: pylav/helpers/discord/converters/nodes.py:46
 msgid "Node with name or identifier `{user_input_variable_do_not_translate}` not found"
 msgstr "Κόμβος με όνομα ή αναγνωριστικό '{user_input_variable_do_not_translate}' δεν βρέθηκε"
 
@@ -29,49 +29,49 @@ msgstr "Κόμβος με όνομα ή αναγνωριστικό '{user_input_
 msgid "A playlist with the name or identifier `{user_input_variable_do_not_translate}` was not found."
 msgstr "Μια λίστα αναπαραγωγής με το όνομα ή το αναγνωριστικό '{user_input_variable_do_not_translate}» δεν βρέθηκε."
 
-#: pylav/helpers/discord/converters/queries.py:52
+#: pylav/helpers/discord/converters/queries.py:50
 msgid "The query must be a playlist or album."
 msgstr "Το ερώτημα πρέπει να είναι λίστα αναπαραγωγής ή άλμπουμ."
 
-#: pylav/helpers/discord/converters/radio.py:57
+#: pylav/helpers/discord/converters/radio.py:56
 msgid "A station with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "Ένας σταθμός με το όνομα «{user_input_variable_do_not_translate}» δεν βρέθηκε."
 
-#: pylav/helpers/discord/converters/radio.py:77
-#: pylav/helpers/discord/converters/radio.py:165
-#: pylav/helpers/discord/converters/radio.py:211
-#: pylav/helpers/discord/converters/radio.py:255
-#: pylav/helpers/discord/converters/radio.py:298
-#: pylav/helpers/discord/converters/radio.py:341
-#: pylav/helpers/discord/converters/radio.py:384
+#: pylav/helpers/discord/converters/radio.py:76
+#: pylav/helpers/discord/converters/radio.py:164
+#: pylav/helpers/discord/converters/radio.py:210
+#: pylav/helpers/discord/converters/radio.py:254
+#: pylav/helpers/discord/converters/radio.py:297
+#: pylav/helpers/discord/converters/radio.py:340
+#: pylav/helpers/discord/converters/radio.py:383
 msgid "The Radio Browser extension is currently disabled."
 msgstr "Η επέκταση του προγράμματος περιήγησης ραδιοφώνου είναι προς το παρόν απενεργοποιημένη."
 
-#: pylav/helpers/discord/converters/radio.py:98
+#: pylav/helpers/discord/converters/radio.py:97
 msgid "Unnamed"
 msgstr "Ανώνυμο"
 
-#: pylav/helpers/discord/converters/radio.py:145
+#: pylav/helpers/discord/converters/radio.py:144
 msgid "A tag with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "Μια ετικέτα με το όνομα '{user_input_variable_do_not_translate}» δεν βρέθηκε."
 
-#: pylav/helpers/discord/converters/radio.py:191
+#: pylav/helpers/discord/converters/radio.py:190
 msgid "A language with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "Μια γλώσσα με το όνομα '{user_input_variable_do_not_translate}» δεν βρέθηκε."
 
-#: pylav/helpers/discord/converters/radio.py:235
+#: pylav/helpers/discord/converters/radio.py:234
 msgid "A state with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "Ένα κράτος με το όνομα «{user_input_variable_do_not_translate}» δεν βρέθηκε."
 
-#: pylav/helpers/discord/converters/radio.py:278
+#: pylav/helpers/discord/converters/radio.py:277
 msgid "A codec with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "Ένας κωδικοποιητής με το όνομα '{user_input_variable_do_not_translate}» δεν βρέθηκε."
 
-#: pylav/helpers/discord/converters/radio.py:321
+#: pylav/helpers/discord/converters/radio.py:320
 msgid "A country code with the value `{user_input_variable_do_not_translate}` was not found."
 msgstr "Ένας κωδικός χώρας με την τιμή '{user_input_variable_do_not_translate}» δεν βρέθηκε."
 
-#: pylav/helpers/discord/converters/radio.py:364
+#: pylav/helpers/discord/converters/radio.py:363
 msgid "A country with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "Μια χώρα με το όνομα «{user_input_variable_do_not_translate}» δεν βρέθηκε."
 

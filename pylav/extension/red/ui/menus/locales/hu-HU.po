@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-04 17:21\n"
+"POT-Creation-Date: 2023-02-04 18:31+0000\n"
+"PO-Revision-Date: 2023-02-04 18:32\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "MIME-Version: 1.0\n"
@@ -19,8 +19,8 @@ msgstr ""
 
 #: pylav/extension/red/ui/menus/generic.py:116
 #: pylav/extension/red/ui/menus/nodes.py:199
-#: pylav/extension/red/ui/menus/playlist.py:261
-#: pylav/extension/red/ui/menus/playlist.py:480
+#: pylav/extension/red/ui/menus/playlist.py:260
+#: pylav/extension/red/ui/menus/playlist.py:479
 msgid "You are not authorized to interact with this."
 msgstr "Ön nem jogosult arra, hogy ezzel interakcióba lépjen."
 
@@ -104,17 +104,17 @@ msgid "The timeout you specified is invalid; it must be a number in seconds."
 msgstr "A megadott időtúllépés érvénytelen; másodpercben megadott számnak kell lennie."
 
 #: pylav/extension/red/ui/menus/nodes.py:311
-#: pylav/extension/red/ui/menus/nodes.py:783
+#: pylav/extension/red/ui/menus/nodes.py:782
 msgid "The node timeout has been set to `0` seconds."
 msgstr "A csomópont időtúllépése \"0\" másodpercre van állítva."
 
 #: pylav/extension/red/ui/menus/nodes.py:313
-#: pylav/extension/red/ui/menus/nodes.py:779
+#: pylav/extension/red/ui/menus/nodes.py:778
 msgid "The node timeout has been set to `1` second."
 msgstr "A csomópont időtúllépése \"1\" másodpercre van állítva."
 
 #: pylav/extension/red/ui/menus/nodes.py:315
-#: pylav/extension/red/ui/menus/nodes.py:785
+#: pylav/extension/red/ui/menus/nodes.py:784
 msgid "The node timeout has been set to `{node_timeout_variable_do_not_translate}` seconds."
 msgstr "A csomópont időtúllépése a következőre van állítva: '{node_timeout_variable_do_not_translate}' másodperc."
 
@@ -158,50 +158,50 @@ msgstr "összes"
 msgid "I am not in any voice channel currently."
 msgstr "Jelenleg nem vagyok egyetlen hangcsatornában sem."
 
-#: pylav/extension/red/ui/menus/playlist.py:187
+#: pylav/extension/red/ui/menus/playlist.py:186
 msgid "Please enter the playlist URL."
 msgstr "Kérjük, adja meg a lejátszási lista URL-jét."
 
-#: pylav/extension/red/ui/menus/playlist.py:188
-#: pylav/extension/red/ui/menus/playlist.py:323
+#: pylav/extension/red/ui/menus/playlist.py:187
+#: pylav/extension/red/ui/menus/playlist.py:322
 msgid "Playlist URL"
 msgstr "Lejátszási lista URL-je"
 
-#: pylav/extension/red/ui/menus/playlist.py:194
+#: pylav/extension/red/ui/menus/playlist.py:193
 msgid "Please enter the playlist name."
 msgstr "Kérjük, adja meg a lejátszási lista nevét."
 
-#: pylav/extension/red/ui/menus/playlist.py:195
-#: pylav/extension/red/ui/menus/playlist.py:330
+#: pylav/extension/red/ui/menus/playlist.py:194
+#: pylav/extension/red/ui/menus/playlist.py:329
 msgid "Playlist Name"
 msgstr "Lejátszási lista neve"
 
-#: pylav/extension/red/ui/menus/playlist.py:322
+#: pylav/extension/red/ui/menus/playlist.py:321
 msgid "Please enter the new URL for this playlist."
 msgstr "Kérjük, adja meg a lejátszási lista új URL-jét."
 
-#: pylav/extension/red/ui/menus/playlist.py:329
+#: pylav/extension/red/ui/menus/playlist.py:328
 msgid "Please enter the new name for this playlist."
 msgstr "Kérjük, adja meg a lejátszási lista új nevét."
 
-#: pylav/extension/red/ui/menus/playlist.py:336
+#: pylav/extension/red/ui/menus/playlist.py:335
 msgid "What is the query to add to this playlist?"
 msgstr "Mi az a lekérdezés, amelyet hozzá kell adni ehhez a lejátszási listához?"
 
-#: pylav/extension/red/ui/menus/playlist.py:337
-#: pylav/extension/red/ui/menus/playlist.py:345
+#: pylav/extension/red/ui/menus/playlist.py:336
+#: pylav/extension/red/ui/menus/playlist.py:344
 msgid "Query"
 msgstr "Lekérdezés"
 
-#: pylav/extension/red/ui/menus/playlist.py:344
+#: pylav/extension/red/ui/menus/playlist.py:343
 msgid "What is the query to remove from this playlist?"
 msgstr "Mi az a lekérdezés, amelyet el kell távolítani erről a listáról?"
 
-#: pylav/extension/red/ui/menus/queue.py:458
+#: pylav/extension/red/ui/menus/queue.py:457
 msgid "Select a track to remove."
 msgstr "Válassza ki az eltávolítani kívánt sávot."
 
-#: pylav/extension/red/ui/menus/queue.py:460
+#: pylav/extension/red/ui/menus/queue.py:459
 msgid "Select a track to play now."
 msgstr "Válaszd ki a most lejátszani kívánt zeneszámot."
 
