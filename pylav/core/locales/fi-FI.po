@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-04 17:17+0000\n"
-"PO-Revision-Date: 2023-02-04 17:18\n"
+"POT-Creation-Date: 2023-02-04 19:12+0000\n"
+"PO-Revision-Date: 2023-02-04 19:13\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -25,11 +25,11 @@ msgstr "Käytettävissä olevia solmuja ei ole!"
 msgid "No node with {feature_name_variable_do_not_translate} functionality available!"
 msgstr "Ei solmua, jossa on {feature_name_variable_do_not_translate} toiminnallisuus saatavilla!"
 
-#: pylav/core/client.py:1652
+#: pylav/core/client.py:1661
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist."
 msgstr "Yhdistelmäsoittolistan luomiseen tarvitaan yksittäinen video-, käyttäjä-, kanava- tai soittolistatunniste."
 
-#: pylav/core/client.py:1657
+#: pylav/core/client.py:1666
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist. However, you provided multiple"
 msgstr "Yhdistelmäsoittolistan luomiseen tarvitaan yksittäinen video-, käyttäjä-, kanava- tai soittolistatunniste. Annoit kuitenkin useita"
 
