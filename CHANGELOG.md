@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.4.3 (04/02/2023)
+- [Fix and improved bundled playlist update logging](https://github.com/Drapersniper/PyLav/commit/e84e47261c5a9daa4ea62757b812d6bc5a070802) - @Drapersniper
+
+---
+
 ## v1.4.2 (04/02/2023)
 - [Fix an issue when failures were raising when they should not](https://github.com/Drapersniper/PyLav/commit/d44a15fc07455d0e35eb79aac097d94af0ea8357) - @Drapersniper
 - [pre-commit run on all files](https://github.com/Drapersniper/PyLav/commit/06779e908bbea5f3982d6bcb568f23cd5cfeee83) - @Drapersniper
@@ -245,10 +250,3 @@
 - [fix AttributeError: 'NoneType' object has no attribute 'source'](https://github.com/Drapersniper/PyLav/commit/9fec736961094fcfd54afde511b6dcfe7a747df3) - @Drapersniper
 - [precommit update](https://github.com/Drapersniper/PyLav/commit/839b097a2d8bd4817006e86ba0a3c94cb38038e4) - @Drapersniper
 - [Update setup.md](https://github.com/Drapersniper/PyLav/commit/a6a576f57b598817c00d8ed4b5774db13e011bee) - @Drapersniper
-
----
-
-## v1.1.2 (08/01/2023)
-- [Update docker-compose.yml](https://github.com/Drapersniper/PyLav/commit/90d0b1e3919b0e1916d91b173607ec38e7d5fdb3) - @Drapersniper
-- [Update .pre-commit-config.yaml](https://github.com/Drapersniper/PyLav/commit/313f111b139cc05166dc8e06fd5f42d8fcaf7729) - @Drapersniper
-- [Fix possible AttributeError in QueueSource (#149)](https://github.com/Drapersniper/PyLav/commit/dd9d5518236eeba2715aaad59b92464a017f42eb) - @Kuro-Rui
