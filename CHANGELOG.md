@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.4.1 (04/02/2023)
+- [Make Release](https://github.com/Drapersniper/PyLav/commit/c568bd8cadceb3a37ede91d84c307361b353e46d) - @Drapersniper
+- [Cleanup the now playing embed text](https://github.com/Drapersniper/PyLav/commit/b80a50de90281f3044f09b3ac37073823552f42b) - @Drapersniper
+- [Disable logging for deepdiff and watchfiles modules](https://github.com/Drapersniper/PyLav/commit/9093a9f4468a0fc1a1720f83b1fdf2f93f697b9c) - @Drapersniper
+- [Show help on the embed foot to assist users using the controller](https://github.com/Drapersniper/PyLav/commit/cbe06754838e63f17d904c31f082f5661815f760) - @Drapersniper
+- [Disable the watchfile logger and deepdiff logger](https://github.com/Drapersniper/PyLav/commit/33adbf6986d103a30bbbf802932371f8ae88e990) - @Drapersniper
+- [Add watchfiles dependency to more efficiently process PyLav Local files](https://github.com/Drapersniper/PyLav/commit/4b6bcd354ac3ccea3fc599a78e8f6ccfa4704e6b) - @Drapersniper
+- [Add a way to hide the progress bar in the now playing embed](https://github.com/Drapersniper/PyLav/commit/dd1e1b455b386e0a202824762dce9604c0e74083) - @Drapersniper
+
+---
+
 ## v1.4.0 (03/02/2023)
 - [Release](https://github.com/Drapersniper/PyLav/commit/3752e113e931b0e2da1c7ce619d13ca17455419f) - @Drapersniper
 - [fix TypeError: 'async_generator' object cannot be interpreted as an integer](https://github.com/Drapersniper/PyLav/commit/c902ede507aca495cadf4c731828029c4720f5f7) - @Drapersniper
@@ -238,13 +249,3 @@
 ## v1.1.1 (07/01/2023)
 - [Bump actions/checkout from 3.1.0 to 3.3.0 (#145)](https://github.com/Drapersniper/PyLav/commit/5e1df240ffcff4f90cfc211dc297092936e14c68) - @dependabot[bot]
 - [Add a missing positional argument in player.stop() (#148)](https://github.com/Drapersniper/PyLav/commit/21ac9dc7c22fa30efd3e3fe4a421ce9539e1af1d) - @Kuro-Rui
-
----
-
-## v1.1.0 (06/01/2023)
-- [Cleanup docker-compose.yml](https://github.com/Drapersniper/PyLav/commit/6a74b5b850ea5fd880da50a6578f254b0acde969) - @Drapersniper
-- [Add every possible configuration option as an env var](https://github.com/Drapersniper/PyLav/commit/ca0b71a12e1c6f8b9e24460fd103b4ac80bb143d) - @Drapersniper
-- [ignore unknown events rather than restarting the websocket connection](https://github.com/Drapersniper/PyLav/commit/59546915bc9ff1de2ffa2da1ff1c0423a6427ea3) - @Drapersniper
-- [Fixes incorrect references to SegmentLoaded/SegmentSkipped events from the sponsorblock plugin](https://github.com/Drapersniper/PyLav/commit/d67c2eb47eb09c150db5e8166422f99823c80892) - @Drapersniper
-- [Cleanup Sponsorblock changes](https://github.com/Drapersniper/PyLav/commit/c5fc1e0fba962401ae0ff286e99d6df76116440a) - @Drapersniper
-- [Update Sponsorblock plugin to pre-release version with RESTAPI support](https://github.com/Drapersniper/PyLav/commit/4d32b74f4437f00cf7c0b5397da32561da36b9be) - @Drapersniper
