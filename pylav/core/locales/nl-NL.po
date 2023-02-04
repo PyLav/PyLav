@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-04 14:03\n"
+"POT-Creation-Date: 2023-02-04 17:17+0000\n"
+"PO-Revision-Date: 2023-02-04 17:18\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -33,15 +33,15 @@ msgstr "Een enkele video-, gebruikers-, kanaal- of afspeellijst-ID is nodig om e
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist. However, you provided multiple"
 msgstr "Een enkele video-, gebruikers-, kanaal- of afspeellijst-ID is nodig om een gemengde afspeellijst te genereren. U hebt echter meerdere"
 
-#: pylav/core/context.py:317
+#: pylav/core/context.py:319
 msgid "There is still 1 message remaining. Type `more` to continue."
 msgstr "Er is nog 1 bericht over. Typ 'meer' om door te gaan."
 
-#: pylav/core/context.py:319
+#: pylav/core/context.py:321
 msgid "There are still {remaining_variable_do_not_translate} messages remaining. Type `more` to continue."
 msgstr "Er zijn nog steeds {remaining_variable_do_not_translate} berichten blijven. Typ 'meer' om door te gaan."
 
-#: pylav/core/context.py:349
+#: pylav/core/context.py:351
 #, docstring
 msgid "Does nothing"
 msgstr "Doet niets"

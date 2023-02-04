@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-04 14:03\n"
+"POT-Creation-Date: 2023-02-04 17:17+0000\n"
+"PO-Revision-Date: 2023-02-04 17:18\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -25,143 +25,161 @@ msgstr "Derzeit sind keine Knoten verfügbar."
 msgid "Music in {number_of_servers_variable_do_not_translate} servers"
 msgstr "Musik in {number_of_servers_variable_do_not_translate} Diener"
 
-#: pylav/players/player.py:1175
+#: pylav/players/player.py:1176
 msgid "There are no tracks currently in the player history."
 msgstr "Es gibt derzeit keine Titel in der Spielerhistorie."
 
-#: pylav/players/player.py:1868
+#: pylav/players/player.py:1869
 msgid "Current node has the volume filter feature disabled."
 msgstr "Beim aktuellen Knoten ist die Volumefilterfunktion deaktiviert."
 
-#: pylav/players/player.py:1890 pylav/players/player.py:2066
-#: pylav/players/player.py:2121
+#: pylav/players/player.py:1891 pylav/players/player.py:2067
+#: pylav/players/player.py:2122
 msgid "Current node has the equalizer feature disabled."
 msgstr "Beim aktuellen Knoten ist die Equalizer-Funktion deaktiviert."
 
-#: pylav/players/player.py:1910
+#: pylav/players/player.py:1911
 msgid "Current node has the karaoke feature disabled"
 msgstr "Beim aktuellen Knoten ist die Karaoke-Funktion deaktiviert"
 
-#: pylav/players/player.py:1930 pylav/players/player.py:2068
-#: pylav/players/player.py:2123
+#: pylav/players/player.py:1931 pylav/players/player.py:2069
+#: pylav/players/player.py:2124
 msgid "Current node has the timescale feature disabled."
 msgstr "Beim aktuellen Knoten ist die Zeitskalafunktion deaktiviert."
 
-#: pylav/players/player.py:1950
+#: pylav/players/player.py:1951
 msgid "Current node has the tremolo feature disabled."
 msgstr "Beim aktuellen Knoten ist die Tremolofunktion deaktiviert."
 
-#: pylav/players/player.py:1970
+#: pylav/players/player.py:1971
 msgid "Current node has the vibrato feature disabled."
 msgstr "Für den aktuellen Knoten ist die Vibratofunktion deaktiviert."
 
-#: pylav/players/player.py:1990
+#: pylav/players/player.py:1991
 msgid "Current node has the rotation feature disabled."
 msgstr "Beim aktuellen Knoten ist die Drehfunktion deaktiviert."
 
-#: pylav/players/player.py:2010
+#: pylav/players/player.py:2011
 msgid "Current node has the distortion feature disabled."
 msgstr "Beim aktuellen Knoten ist die Verzerrungsfunktion deaktiviert."
 
-#: pylav/players/player.py:2030
+#: pylav/players/player.py:2031
 msgid "Current node has the low-pass feature disabled."
 msgstr "Beim aktuellen Knoten ist die Tiefpassfunktion deaktiviert."
 
-#: pylav/players/player.py:2050
+#: pylav/players/player.py:2051
 msgid "Current node has the echo feature disabled."
 msgstr "Beim aktuellen Knoten ist die Echofunktion deaktiviert."
 
-#: pylav/players/player.py:2180
+#: pylav/players/player.py:2181
 msgid "Current node has the channel-mix feature disabled."
 msgstr "Beim aktuellen Knoten ist die Kanalmischungsfunktion deaktiviert."
 
-#: pylav/players/player.py:2440 pylav/players/player.py:2487
-#: pylav/players/player.py:2502
+#: pylav/players/player.py:2449 pylav/players/player.py:2505
+#: pylav/players/player.py:2520
 msgid "LIVE"
 msgstr "LEBEN"
 
-#: pylav/players/player.py:2453
+#: pylav/players/player.py:2462
 msgid "Now Playing in {server_name_variable_do_not_translate}"
 msgstr "Jetzt spielen in {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2473 pylav/players/player.py:2610
+#: pylav/players/player.py:2484 pylav/players/player.py:2651
 msgid "Currently livestreaming"
 msgstr "Livestreaming"
 
-#: pylav/players/player.py:2475
+#: pylav/players/player.py:2486
 msgid "Playing: "
 msgstr "Spielen: "
 
-#: pylav/players/player.py:2478 pylav/players/player.py:2494
-#: pylav/players/player.py:2509 pylav/players/player.py:2616
+#: pylav/players/player.py:2489 pylav/players/player.py:2512
+#: pylav/players/player.py:2527 pylav/players/player.py:2657
 msgid "Requester"
 msgstr "Anfrage"
 
-#: pylav/players/player.py:2490 pylav/players/player.py:2505
+#: pylav/players/player.py:2495
+msgid "Duration: {track_duration_variable_do_not_translate}"
+msgstr ""
+
+#: pylav/players/player.py:2508 pylav/players/player.py:2523
 msgid "Duration"
 msgstr "Dauer"
 
-#: pylav/players/player.py:2496
+#: pylav/players/player.py:2514
 msgid "Previous Track"
 msgstr "Vorheriger Track"
 
-#: pylav/players/player.py:2511
+#: pylav/players/player.py:2529
 msgid "Next Track"
 msgstr "Nächste Spur"
 
-#: pylav/players/player.py:2520
+#: pylav/players/player.py:2538
 msgid "1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "1 Spur, {queue_total_duration_variable_do_not_translate} verbleibend\n"
 
-#: pylav/players/player.py:2524
+#: pylav/players/player.py:2542
 msgid "0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "0 Spuren, {queue_total_duration_variable_do_not_translate} verbleibend\n"
 
-#: pylav/players/player.py:2528
+#: pylav/players/player.py:2546
 msgid "{track_count_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "{track_count_variable_do_not_translate} Fährten {queue_total_duration_variable_do_not_translate} verbleibend\n"
 
-#: pylav/players/player.py:2535 pylav/players/player.py:2658
+#: pylav/players/player.py:2553 pylav/players/player.py:2698
 msgid "Repeating"
 msgstr "Wiederholung"
 
-#: pylav/players/player.py:2537 pylav/players/player.py:2660
+#: pylav/players/player.py:2555 pylav/players/player.py:2700
 msgid "Auto Play"
 msgstr "Automatisch spielen"
 
-#: pylav/players/player.py:2541 pylav/players/player.py:2664
+#: pylav/players/player.py:2559 pylav/players/player.py:2704
 msgid "{volume_variable_do_not_translate}%"
 msgstr "{volume_variable_do_not_translate}%"
 
-#: pylav/players/player.py:2542 pylav/players/player.py:2665
+#: pylav/players/player.py:2560 pylav/players/player.py:2705
 msgid "Volume"
 msgstr "Volumen"
 
-#: pylav/players/player.py:2582
+#: pylav/players/player.py:2563
+msgid "\n\n"
+"You can search specific services by using the following prefixes:\n"
+"{deezer_service_variable_do_not_translate}  - Deezer\n"
+"{spotify_service_variable_do_not_translate}  - Spotify\n"
+"{apple_music_service_variable_do_not_translate}  - Apple Music\n"
+"{youtube_music_service_variable_do_not_translate} - YouTube Music\n"
+"{youtube_service_variable_do_not_translate}  - YouTube\n"
+"{soundcloud_service_variable_do_not_translate}  - SoundCloud\n"
+"{yandex_music_service_variable_do_not_translate}  - Yandex Music\n"
+"Example: {example_variable_do_not_translate}.\n\n"
+"If no prefix is used I will default to {fallback_service_variable_do_not_translate}\n"
+msgstr ""
+
+#: pylav/players/player.py:2623
 msgid "Recently Played for {server_name_variable_do_not_translate}"
 msgstr "Zuletzt gespielt für {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2588
+#: pylav/players/player.py:2629
 msgid "Queue for {server_name_variable_do_not_translate}"
 msgstr "Warteschlange für {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2613
+#: pylav/players/player.py:2654
 msgid "Playing"
 msgstr "Abspielen"
 
-#: pylav/players/player.py:2629
+#: pylav/players/player.py:2670
 msgid "Queue order will change every time a track is added due to auto shuffle being enabled."
 msgstr "Die Reihenfolge der Warteschlangen ändert sich jedes Mal, wenn ein Track hinzugefügt wird, da die automatische Zufallswiedergabe aktiviert ist."
 
-#: pylav/players/player.py:2640
+#: pylav/players/player.py:2680
 msgid "Page 1 / 1 | 1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "Seite 1 / 1 | 1 Spur, {queue_total_duration_variable_do_not_translate} verbleibend\n"
 
-#: pylav/players/player.py:2644
+#: pylav/players/player.py:2684
 msgid "Page 1 / 1 | 0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "Seite 1 / 1 | 0 Spuren, {queue_total_duration_variable_do_not_translate} verbleibend\n"
 
-#: pylav/players/player.py:2648
+#: pylav/players/player.py:2688
 msgid "Page {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "Seite {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} Fährten {queue_total_duration_variable_do_not_translate} verbleibend\n"
 

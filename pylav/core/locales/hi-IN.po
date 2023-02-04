@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-04 14:04\n"
+"POT-Creation-Date: 2023-02-04 17:17+0000\n"
+"PO-Revision-Date: 2023-02-04 17:18\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "MIME-Version: 1.0\n"
@@ -33,15 +33,15 @@ msgstr "मिश्रित प्लेलिस्ट उत्पन्न 
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist. However, you provided multiple"
 msgstr "मिश्रित प्लेलिस्ट उत्पन्न करने के लिए एक एकल वीडियो, उपयोगकर्ता, चैनल या प्लेलिस्ट पहचानकर्ता आवश्यक है। हालाँकि, आपने एकाधिक प्रदान किए हैं"
 
-#: pylav/core/context.py:317
+#: pylav/core/context.py:319
 msgid "There is still 1 message remaining. Type `more` to continue."
 msgstr "अभी भी 1 संदेश शेष है। जारी रखने के लिए 'अधिक' टाइप करें."
 
-#: pylav/core/context.py:319
+#: pylav/core/context.py:321
 msgid "There are still {remaining_variable_do_not_translate} messages remaining. Type `more` to continue."
 msgstr "अभी भी हैं {remaining_variable_do_not_translate} संदेश शेष हैं। जारी रखने के लिए 'अधिक' टाइप करें."
 
-#: pylav/core/context.py:349
+#: pylav/core/context.py:351
 #, docstring
 msgid "Does nothing"
 msgstr "करते कुछ नहीं हैं"
