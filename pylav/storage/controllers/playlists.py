@@ -286,7 +286,7 @@ class PlaylistController:
             id_filtered = {
                 playlist_id: BUNDLED_PYLAV_PLAYLISTS[playlist_id]
                 for playlist_id in playlist_ids
-                if id in BUNDLED_PYLAV_PLAYLISTS
+                if playlist_id in BUNDLED_PYLAV_PLAYLISTS
             }
             if not id_filtered:
                 id_filtered = BUNDLED_PYLAV_PLAYLISTS
@@ -299,6 +299,7 @@ class PlaylistController:
                         ),
                     )
                     playlist = await Playlist.from_yaml(context=ctx, url=url, scope=self._client.bot.user.id)
+                    LOGGER.info("Updating bundled playlist - %s - %s", playlist_id, f"[{source}] {name}")
                 except Exception as exc:
                     LOGGER.error(
                         "Built-in playlist couldn't be parsed - %s, report this error",
@@ -327,7 +328,11 @@ class PlaylistController:
             # noinspection PyProtectedMember
             old_time_stamp = await self.client._config.fetch_next_execution_update_bundled_external_playlists()
             # NOTICE: Update the BUNDLED_PLAYLIST_IDS constant in the constants.py file
-            id_filtered = {playlist_id: BUNDLED_EXTERNAL_PLAYLISTS[playlist_id] for playlist_id in playlist_ids}
+            id_filtered = {
+                playlist_id: BUNDLED_EXTERNAL_PLAYLISTS[playlist_id]
+                for playlist_id in playlist_ids
+                if playlist_id in BUNDLED_EXTERNAL_PLAYLISTS
+            }
             if not id_filtered:
                 id_filtered = BUNDLED_EXTERNAL_PLAYLISTS
             for playlist_id, (identifier, name, album_playlist) in id_filtered.items():
@@ -344,7 +349,7 @@ class PlaylistController:
                     LOGGER.debug("Unknown playlist id: %s", playlist_id)
                 track_list = []
                 try:
-                    LOGGER.info("Updating bundled external playlist - %s", playlist_id)
+                    LOGGER.info("Updating bundled external playlist - %s - %s", playlist_id, name)
                     query = await Query.from_string(url)
                     data = await self.client.get_tracks(query, bypass_cache=True)
                     name = (
