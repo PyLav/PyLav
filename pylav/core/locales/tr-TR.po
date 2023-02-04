@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-04 06:21\n"
+"POT-Creation-Date: 2023-02-04 17:17+0000\n"
+"PO-Revision-Date: 2023-02-04 17:18\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -33,15 +33,15 @@ msgstr "Karışık bir oynatma listesi oluşturmak için tek bir video, kullanı
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist. However, you provided multiple"
 msgstr "Karışık bir oynatma listesi oluşturmak için tek bir video, kullanıcı, kanal veya oynatma listesi tanımlayıcısı gereklidir. Ancak, birden fazla"
 
-#: pylav/core/context.py:317
+#: pylav/core/context.py:319
 msgid "There is still 1 message remaining. Type `more` to continue."
 msgstr "Hala 1 mesaj kaldı. Devam etmek için 'more' yazın."
 
-#: pylav/core/context.py:319
+#: pylav/core/context.py:321
 msgid "There are still {remaining_variable_do_not_translate} messages remaining. Type `more` to continue."
 msgstr "Hala var {remaining_variable_do_not_translate} kalan mesajlar. Devam etmek için 'more' yazın."
 
-#: pylav/core/context.py:349
+#: pylav/core/context.py:351
 #, docstring
 msgid "Does nothing"
 msgstr "Hiçbir şey yapmaz"

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-04 14:03\n"
+"POT-Creation-Date: 2023-02-04 17:17+0000\n"
+"PO-Revision-Date: 2023-02-04 17:18\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -33,15 +33,15 @@ msgstr "Yhdistelmäsoittolistan luomiseen tarvitaan yksittäinen video-, käytt�
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist. However, you provided multiple"
 msgstr "Yhdistelmäsoittolistan luomiseen tarvitaan yksittäinen video-, käyttäjä-, kanava- tai soittolistatunniste. Annoit kuitenkin useita"
 
-#: pylav/core/context.py:317
+#: pylav/core/context.py:319
 msgid "There is still 1 message remaining. Type `more` to continue."
 msgstr "Jäljellä on vielä 1 viesti. Kirjoita \"lisää\" jatkaaksesi."
 
-#: pylav/core/context.py:319
+#: pylav/core/context.py:321
 msgid "There are still {remaining_variable_do_not_translate} messages remaining. Type `more` to continue."
 msgstr "On vielä {remaining_variable_do_not_translate} viestejä jäljellä. Kirjoita \"lisää\" jatkaaksesi."
 
-#: pylav/core/context.py:349
+#: pylav/core/context.py:351
 #, docstring
 msgid "Does nothing"
 msgstr "Ei tee mitään"

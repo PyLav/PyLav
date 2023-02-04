@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-04 14:04\n"
+"POT-Creation-Date: 2023-02-04 17:17+0000\n"
+"PO-Revision-Date: 2023-02-04 17:18\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "MIME-Version: 1.0\n"
@@ -25,143 +25,161 @@ msgstr "वर्तमान में कोई नोड्स उपलब�
 msgid "Music in {number_of_servers_variable_do_not_translate} servers"
 msgstr "संगीत में {number_of_servers_variable_do_not_translate} सर्वर"
 
-#: pylav/players/player.py:1175
+#: pylav/players/player.py:1176
 msgid "There are no tracks currently in the player history."
 msgstr "वर्तमान में खिलाड़ी इतिहास में कोई ट्रैक नहीं हैं।"
 
-#: pylav/players/player.py:1868
+#: pylav/players/player.py:1869
 msgid "Current node has the volume filter feature disabled."
 msgstr "वर्तमान नोड में वॉल्यूम फ़िल्टर सुविधा अक्षम है।"
 
-#: pylav/players/player.py:1890 pylav/players/player.py:2066
-#: pylav/players/player.py:2121
+#: pylav/players/player.py:1891 pylav/players/player.py:2067
+#: pylav/players/player.py:2122
 msgid "Current node has the equalizer feature disabled."
 msgstr "वर्तमान नोड में इक्वलाइज़र सुविधा अक्षम है।"
 
-#: pylav/players/player.py:1910
+#: pylav/players/player.py:1911
 msgid "Current node has the karaoke feature disabled"
 msgstr "वर्तमान नोड में कराओके सुविधा अक्षम है"
 
-#: pylav/players/player.py:1930 pylav/players/player.py:2068
-#: pylav/players/player.py:2123
+#: pylav/players/player.py:1931 pylav/players/player.py:2069
+#: pylav/players/player.py:2124
 msgid "Current node has the timescale feature disabled."
 msgstr "वर्तमान नोड में टाइमस्केल सुविधा अक्षम है।"
 
-#: pylav/players/player.py:1950
+#: pylav/players/player.py:1951
 msgid "Current node has the tremolo feature disabled."
 msgstr "वर्तमान नोड में ट्रेमोलो सुविधा अक्षम है।"
 
-#: pylav/players/player.py:1970
+#: pylav/players/player.py:1971
 msgid "Current node has the vibrato feature disabled."
 msgstr "वर्तमान नोड में वाइब्रेटो सुविधा अक्षम है।"
 
-#: pylav/players/player.py:1990
+#: pylav/players/player.py:1991
 msgid "Current node has the rotation feature disabled."
 msgstr "वर्तमान नोड में रोटेशन सुविधा अक्षम है।"
 
-#: pylav/players/player.py:2010
+#: pylav/players/player.py:2011
 msgid "Current node has the distortion feature disabled."
 msgstr "वर्तमान नोड में विरूपण सुविधा अक्षम है।"
 
-#: pylav/players/player.py:2030
+#: pylav/players/player.py:2031
 msgid "Current node has the low-pass feature disabled."
 msgstr "वर्तमान नोड में लो-पास सुविधा अक्षम है।"
 
-#: pylav/players/player.py:2050
+#: pylav/players/player.py:2051
 msgid "Current node has the echo feature disabled."
 msgstr "वर्तमान नोड में इको सुविधा अक्षम है।"
 
-#: pylav/players/player.py:2180
+#: pylav/players/player.py:2181
 msgid "Current node has the channel-mix feature disabled."
 msgstr "वर्तमान नोड में चैनल-मिक्स सुविधा अक्षम है।"
 
-#: pylav/players/player.py:2440 pylav/players/player.py:2487
-#: pylav/players/player.py:2502
+#: pylav/players/player.py:2449 pylav/players/player.py:2505
+#: pylav/players/player.py:2520
 msgid "LIVE"
 msgstr "रहना"
 
-#: pylav/players/player.py:2453
+#: pylav/players/player.py:2462
 msgid "Now Playing in {server_name_variable_do_not_translate}"
 msgstr "अब खेल रहे हैं {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2473 pylav/players/player.py:2610
+#: pylav/players/player.py:2484 pylav/players/player.py:2651
 msgid "Currently livestreaming"
 msgstr "वर्तमान में लाइवस्ट्रीमिंग"
 
-#: pylav/players/player.py:2475
+#: pylav/players/player.py:2486
 msgid "Playing: "
 msgstr "खेल रहे हैं: "
 
-#: pylav/players/player.py:2478 pylav/players/player.py:2494
-#: pylav/players/player.py:2509 pylav/players/player.py:2616
+#: pylav/players/player.py:2489 pylav/players/player.py:2512
+#: pylav/players/player.py:2527 pylav/players/player.py:2657
 msgid "Requester"
 msgstr "निवेदक"
 
-#: pylav/players/player.py:2490 pylav/players/player.py:2505
+#: pylav/players/player.py:2495
+msgid "Duration: {track_duration_variable_do_not_translate}"
+msgstr ""
+
+#: pylav/players/player.py:2508 pylav/players/player.py:2523
 msgid "Duration"
 msgstr "अवधि"
 
-#: pylav/players/player.py:2496
+#: pylav/players/player.py:2514
 msgid "Previous Track"
 msgstr "पिछला ट्रैक"
 
-#: pylav/players/player.py:2511
+#: pylav/players/player.py:2529
 msgid "Next Track"
 msgstr "अगला ट्रैक"
 
-#: pylav/players/player.py:2520
+#: pylav/players/player.py:2538
 msgid "1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "1 ट्रैक, {queue_total_duration_variable_do_not_translate} शेष\n"
 
-#: pylav/players/player.py:2524
+#: pylav/players/player.py:2542
 msgid "0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "0 ट्रैक, {queue_total_duration_variable_do_not_translate} शेष\n"
 
-#: pylav/players/player.py:2528
+#: pylav/players/player.py:2546
 msgid "{track_count_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "{track_count_variable_do_not_translate} पटरियों {queue_total_duration_variable_do_not_translate} शेष\n"
 
-#: pylav/players/player.py:2535 pylav/players/player.py:2658
+#: pylav/players/player.py:2553 pylav/players/player.py:2698
 msgid "Repeating"
 msgstr "दोहराए जाने वाले"
 
-#: pylav/players/player.py:2537 pylav/players/player.py:2660
+#: pylav/players/player.py:2555 pylav/players/player.py:2700
 msgid "Auto Play"
 msgstr "ऑटो प्ले"
 
-#: pylav/players/player.py:2541 pylav/players/player.py:2664
+#: pylav/players/player.py:2559 pylav/players/player.py:2704
 msgid "{volume_variable_do_not_translate}%"
 msgstr "{volume_variable_do_not_translate}%"
 
-#: pylav/players/player.py:2542 pylav/players/player.py:2665
+#: pylav/players/player.py:2560 pylav/players/player.py:2705
 msgid "Volume"
 msgstr "आयतन"
 
-#: pylav/players/player.py:2582
+#: pylav/players/player.py:2563
+msgid "\n\n"
+"You can search specific services by using the following prefixes:\n"
+"{deezer_service_variable_do_not_translate}  - Deezer\n"
+"{spotify_service_variable_do_not_translate}  - Spotify\n"
+"{apple_music_service_variable_do_not_translate}  - Apple Music\n"
+"{youtube_music_service_variable_do_not_translate} - YouTube Music\n"
+"{youtube_service_variable_do_not_translate}  - YouTube\n"
+"{soundcloud_service_variable_do_not_translate}  - SoundCloud\n"
+"{yandex_music_service_variable_do_not_translate}  - Yandex Music\n"
+"Example: {example_variable_do_not_translate}.\n\n"
+"If no prefix is used I will default to {fallback_service_variable_do_not_translate}\n"
+msgstr ""
+
+#: pylav/players/player.py:2623
 msgid "Recently Played for {server_name_variable_do_not_translate}"
 msgstr "हाल ही में किसके लिए खेला {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2588
+#: pylav/players/player.py:2629
 msgid "Queue for {server_name_variable_do_not_translate}"
 msgstr "के लिए कतार {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2613
+#: pylav/players/player.py:2654
 msgid "Playing"
 msgstr "खेल रहे हैं"
 
-#: pylav/players/player.py:2629
+#: pylav/players/player.py:2670
 msgid "Queue order will change every time a track is added due to auto shuffle being enabled."
 msgstr "ऑटो फेरबदल सक्षम होने के कारण हर बार ट्रैक जोड़े जाने पर कतार क्रम बदल जाएगा।"
 
-#: pylav/players/player.py:2640
+#: pylav/players/player.py:2680
 msgid "Page 1 / 1 | 1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "पृष्ठ 1/1 | 1 ट्रैक, {queue_total_duration_variable_do_not_translate} शेष\n"
 
-#: pylav/players/player.py:2644
+#: pylav/players/player.py:2684
 msgid "Page 1 / 1 | 0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "पृष्ठ 1/1 | 0 ट्रैक, {queue_total_duration_variable_do_not_translate} शेष\n"
 
-#: pylav/players/player.py:2648
+#: pylav/players/player.py:2688
 msgid "Page {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "पृष्ठ {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} पटरियों {queue_total_duration_variable_do_not_translate} शेष\n"
 
