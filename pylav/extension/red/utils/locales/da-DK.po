@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-04 20:03\n"
+"POT-Creation-Date: 2023-02-06 20:35+0000\n"
+"PO-Revision-Date: 2023-02-06 20:35\n"
 "Last-Translator: \n"
 "Language-Team: Danish\n"
 "MIME-Version: 1.0\n"
@@ -17,12 +17,12 @@ msgstr ""
 "X-Crowdin-File-ID: 3405\n"
 "Language: da_DK\n"
 
-#: pylav/extension/red/utils/required_methods.py:45
+#: pylav/extension/red/utils/required_methods.py:44
 #, docstring
 msgid "Shows the credits and translation details for the PyLav cogs and shared code"
 msgstr "Viser kreditter og oversættelsesdetaljer for PyLav og delt kode"
 
-#: pylav/extension/red/utils/required_methods.py:49
+#: pylav/extension/red/utils/required_methods.py:48
 msgid "PyLav was created by {library_author_name_variable_do_not_translate}.\n\n"
 "PyLav source code can be located in {library_url_variable_do_not_translate}\n"
 "PyLav-Cogs source code can be located in {second_library_url_variable_do_not_translate}\n\n"
@@ -46,57 +46,57 @@ msgstr "PyLav blev oprettet af {library_author_name_variable_do_not_translate}.\
 "Hvis du ønsker at købe mig en kop kaffe til mit arbejde, kan du gøre det på:\n"
 "{buymeacoffee_url_variable_do_not_translate} eller {github_sponsors_url_variable_do_not_translate}"
 
-#: pylav/extension/red/utils/required_methods.py:85
+#: pylav/extension/red/utils/required_methods.py:84
 #, docstring
 msgid "Show the version of PyLav library"
 msgstr "Vis versionen af PyLav bibliotek"
 
-#: pylav/extension/red/utils/required_methods.py:100
+#: pylav/extension/red/utils/required_methods.py:99
 msgid "Library"
 msgstr "Bibliotek"
 
-#: pylav/extension/red/utils/required_methods.py:101
+#: pylav/extension/red/utils/required_methods.py:100
 msgid "Version"
 msgstr "Version"
 
-#: pylav/extension/red/utils/required_methods.py:120
+#: pylav/extension/red/utils/required_methods.py:119
 #, docstring
 msgid "Sync the Bots slash commands"
 msgstr "Synkroniser Bots skråstregkommandoer"
 
-#: pylav/extension/red/utils/required_methods.py:129
+#: pylav/extension/red/utils/required_methods.py:128
 msgid "I have synced all my slash commands."
 msgstr "Jeg har synkroniseret alle mine skråstregskommandoer."
 
-#: pylav/extension/red/utils/required_methods.py:151
+#: pylav/extension/red/utils/required_methods.py:150
 msgid "This command requires that I be in a voice channel before it can be executed."
 msgstr "Denne kommando kræver, at jeg er i en stemmekanal, før den kan udføres."
 
-#: pylav/extension/red/utils/required_methods.py:160
+#: pylav/extension/red/utils/required_methods.py:159
 msgid "PyLavPlayer cog is temporarily unavailable due to an outage with the backend services; please try again later."
 msgstr "PyLavPlayer cog er midlertidigt utilgængelig på grund af et nedbrud med backend-tjenesterne; Prøv igen senere."
 
-#: pylav/extension/red/utils/required_methods.py:163
+#: pylav/extension/red/utils/required_methods.py:162
 msgid "There are no nodes available currently."
 msgstr "Der er ingen noder tilgængelige i øjeblikket."
 
-#: pylav/extension/red/utils/required_methods.py:174
+#: pylav/extension/red/utils/required_methods.py:173
 msgid "PyLavPlayer is currently unable to process tracks belonging to {feature_name_variable_do_not_translate}."
 msgstr "PyLavPlayer er i øjeblikket ikke i stand til at behandle spor, der tilhører {feature_name_variable_do_not_translate}."
 
-#: pylav/extension/red/utils/required_methods.py:177
+#: pylav/extension/red/utils/required_methods.py:176
 msgid "There is currently no available Lavalink node with the feature {feature_name_variable_do_not_translate}."
 msgstr "Der er i øjeblikket ingen tilgængelig Lavalink-node med funktionen {feature_name_variable_do_not_translate}."
 
-#: pylav/extension/red/utils/required_methods.py:190
+#: pylav/extension/red/utils/required_methods.py:189
 msgid "This command is unavailable in this channel; please use {channel_name_variable_do_not_translate} instead."
 msgstr "Denne kommando er ikke tilgængelig i denne kanal; brug venligst {channel_name_variable_do_not_translate} i stedet."
 
-#: pylav/extension/red/utils/required_methods.py:206
+#: pylav/extension/red/utils/required_methods.py:205
 msgid "This command requires you to be a disc jockey."
 msgstr "Denne kommando kræver, at du er en disc jockey."
 
-#: pylav/extension/red/utils/required_methods.py:244
+#: pylav/extension/red/utils/required_methods.py:243
 msgid "PyLav is starting up; please try again in a few minutes."
 msgstr "PyLav starter op; Prøv igen om et par minutter."
 

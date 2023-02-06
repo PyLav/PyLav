@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-04 20:03\n"
+"POT-Creation-Date: 2023-02-06 20:35+0000\n"
+"PO-Revision-Date: 2023-02-06 20:35\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "MIME-Version: 1.0\n"
@@ -17,12 +17,12 @@ msgstr ""
 "X-Crowdin-File-ID: 3405\n"
 "Language: vi_VN\n"
 
-#: pylav/extension/red/utils/required_methods.py:45
+#: pylav/extension/red/utils/required_methods.py:44
 #, docstring
 msgid "Shows the credits and translation details for the PyLav cogs and shared code"
 msgstr "Hiển thị các khoản tín dụng và chi tiết dịch thuật cho bánh răng PyLav và mã được chia sẻ"
 
-#: pylav/extension/red/utils/required_methods.py:49
+#: pylav/extension/red/utils/required_methods.py:48
 msgid "PyLav was created by {library_author_name_variable_do_not_translate}.\n\n"
 "PyLav source code can be located in {library_url_variable_do_not_translate}\n"
 "PyLav-Cogs source code can be located in {second_library_url_variable_do_not_translate}\n\n"
@@ -46,57 +46,57 @@ msgstr "PyLav được tạo ra bởi {library_author_name_variable_do_not_trans
 "Nếu bạn muốn mua cho tôi một ly cà phê cho công việc của tôi, bạn có thể làm như vậy tại:\n"
 "{buymeacoffee_url_variable_do_not_translate} hoặc {github_sponsors_url_variable_do_not_translate}"
 
-#: pylav/extension/red/utils/required_methods.py:85
+#: pylav/extension/red/utils/required_methods.py:84
 #, docstring
 msgid "Show the version of PyLav library"
 msgstr "Hiển thị phiên bản của thư viện PyLav"
 
-#: pylav/extension/red/utils/required_methods.py:100
+#: pylav/extension/red/utils/required_methods.py:99
 msgid "Library"
 msgstr "Thư viện"
 
-#: pylav/extension/red/utils/required_methods.py:101
+#: pylav/extension/red/utils/required_methods.py:100
 msgid "Version"
 msgstr "Phiên bản"
 
-#: pylav/extension/red/utils/required_methods.py:120
+#: pylav/extension/red/utils/required_methods.py:119
 #, docstring
 msgid "Sync the Bots slash commands"
 msgstr "Đồng bộ hóa các lệnh dấu gạch chéo Bots"
 
-#: pylav/extension/red/utils/required_methods.py:129
+#: pylav/extension/red/utils/required_methods.py:128
 msgid "I have synced all my slash commands."
 msgstr "Tôi đã đồng bộ hóa tất cả các lệnh gạch chéo của mình."
 
-#: pylav/extension/red/utils/required_methods.py:151
+#: pylav/extension/red/utils/required_methods.py:150
 msgid "This command requires that I be in a voice channel before it can be executed."
 msgstr "Lệnh này yêu cầu tôi phải ở trong một kênh thoại trước khi nó có thể được thực thi."
 
-#: pylav/extension/red/utils/required_methods.py:160
+#: pylav/extension/red/utils/required_methods.py:159
 msgid "PyLavPlayer cog is temporarily unavailable due to an outage with the backend services; please try again later."
 msgstr "Bánh răng PyLavPlayer tạm thời không khả dụng do ngừng hoạt động với các dịch vụ phụ trợ; Vui lòng thử lại sau."
 
-#: pylav/extension/red/utils/required_methods.py:163
+#: pylav/extension/red/utils/required_methods.py:162
 msgid "There are no nodes available currently."
 msgstr "Hiện tại không có nút nào."
 
-#: pylav/extension/red/utils/required_methods.py:174
+#: pylav/extension/red/utils/required_methods.py:173
 msgid "PyLavPlayer is currently unable to process tracks belonging to {feature_name_variable_do_not_translate}."
 msgstr "PyLavPlayer hiện không thể xử lý các bản nhạc thuộc về {feature_name_variable_do_not_translate}."
 
-#: pylav/extension/red/utils/required_methods.py:177
+#: pylav/extension/red/utils/required_methods.py:176
 msgid "There is currently no available Lavalink node with the feature {feature_name_variable_do_not_translate}."
 msgstr "Hiện tại không có nút Lavalink nào có sẵn với tính năng này {feature_name_variable_do_not_translate}."
 
-#: pylav/extension/red/utils/required_methods.py:190
+#: pylav/extension/red/utils/required_methods.py:189
 msgid "This command is unavailable in this channel; please use {channel_name_variable_do_not_translate} instead."
 msgstr "Lệnh này không khả dụng trong kênh này; vui lòng sử dụng {channel_name_variable_do_not_translate} thay vì."
 
-#: pylav/extension/red/utils/required_methods.py:206
+#: pylav/extension/red/utils/required_methods.py:205
 msgid "This command requires you to be a disc jockey."
 msgstr "Lệnh này yêu cầu bạn phải là một tay đua đĩa."
 
-#: pylav/extension/red/utils/required_methods.py:244
+#: pylav/extension/red/utils/required_methods.py:243
 msgid "PyLav is starting up; please try again in a few minutes."
 msgstr "PyLav đang bắt đầu; Vui lòng thử lại sau vài phút."
 
