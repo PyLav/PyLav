@@ -10,51 +10,7 @@ from pylav.type_hints.generics import ANY_GENERIC_TYPE, PARAM_SPEC_TYPE
 
 _LOCK_SINGLETON_CLASS = threading.Lock()
 _LOCK_SINGLETON_CALLABLE = threading.Lock()
-_LOCK_SINGLETON_CACHE_CALLABLE = threading.Lock()
-
-
-def synchronized_method_call(
-    lock: threading.Lock, discard: bool = False
-) -> Callable[PARAM_SPEC_TYPE, ANY_GENERIC_TYPE]:  # type: ignore
-    """Synchronization decorator"""
-
-    def wrapper(
-        f: Callable[PARAM_SPEC_TYPE, ANY_GENERIC_TYPE]  # type: ignore
-    ) -> Callable[PARAM_SPEC_TYPE, ANY_GENERIC_TYPE]:  # type: ignore
-        @functools.wraps(f)
-        def inner_wrapper(
-            *args: PARAM_SPEC_TYPE.args, **kwargs: PARAM_SPEC_TYPE.kwargs
-        ) -> ANY_GENERIC_TYPE | Awaitable[ANY_GENERIC_TYPE] | None:
-            if lock.locked() and discard:
-                return
-            with lock:
-                return f(*args, **kwargs)
-
-        return inner_wrapper
-
-    return wrapper
-
-
-def synchronized_method_call_with_self_threading_lock(
-    discard: bool = False,
-) -> Callable[PARAM_SPEC_TYPE, ANY_GENERIC_TYPE]:  # type: ignore
-    """Synchronization decorator"""
-
-    def wrapper(
-        f: Callable[PARAM_SPEC_TYPE, ANY_GENERIC_TYPE]  # type: ignore
-    ) -> Callable[PARAM_SPEC_TYPE, ANY_GENERIC_TYPE]:  # type: ignore
-        @functools.wraps(f)
-        def inner_wrapper(
-            self, *args: PARAM_SPEC_TYPE.args, **kwargs: PARAM_SPEC_TYPE.kwargs
-        ) -> ANY_GENERIC_TYPE | Awaitable[ANY_GENERIC_TYPE] | None:
-            if self._threading_lock.locked() and discard:
-                return
-            with self._threading_lock:
-                return f(self, *args, **kwargs)
-
-        return inner_wrapper
-
-    return wrapper
+_LOCKS_SINGLETON_CACHE: dict[str, threading.Lock] = {}
 
 
 class SingletonClass(type):
@@ -66,10 +22,10 @@ class SingletonClass(type):
             cls._locked_call(*args, **kwargs)
         return cls._instances[cls]
 
-    @synchronized_method_call(_LOCK_SINGLETON_CLASS)
     def _locked_call(cls, *args: Any, **kwargs: Any) -> None:
-        if cls not in cls._instances:
-            cls._instances[cls] = super().__call__(*args, **kwargs)
+        with _LOCK_SINGLETON_CLASS:
+            if cls not in cls._instances:
+                cls._instances[cls] = super().__call__(*args, **kwargs)
 
 
 class SingletonCallable:
@@ -77,41 +33,41 @@ class SingletonCallable:
     _responses = {}
 
     @classmethod
-    @synchronized_method_call(_LOCK_SINGLETON_CALLABLE)
     def reset(cls) -> None:
-        cls._has_run = {}
-        cls._responses = {}
+        with _LOCK_SINGLETON_CALLABLE:
+            cls._has_run = {}
+            cls._responses = {}
 
     @classmethod
-    @synchronized_method_call(_LOCK_SINGLETON_CALLABLE)
     def run_once(
         cls, f: Callable[PARAM_SPEC_TYPE, ANY_GENERIC_TYPE]  # type: ignore
     ) -> Callable[PARAM_SPEC_TYPE, ANY_GENERIC_TYPE]:  # type: ignore
         @functools.wraps(f)
         def wrapper(*args: PARAM_SPEC_TYPE.args, **kwargs: PARAM_SPEC_TYPE.kwargs) -> ANY_GENERIC_TYPE:
-            if not cls._has_run.get(f, False):
-                cls._has_run[f] = True
-                output = f(*args, **kwargs)
-                cls._responses[f] = output
-                return output
-            else:
-                return cls._responses.get(f, None)
+            with _LOCK_SINGLETON_CALLABLE:
+                if not cls._has_run.get(f, False):
+                    cls._has_run[f] = True
+                    output = f(*args, **kwargs)
+                    cls._responses[f] = output
+                    return output
+                else:
+                    return cls._responses.get(f, None)
 
         cls._has_run[f] = False
         return wrapper
 
     @classmethod
-    @synchronized_method_call(_LOCK_SINGLETON_CALLABLE)
     def run_once_async(
         cls, f: Callable[PARAM_SPEC_TYPE, Awaitable[ANY_GENERIC_TYPE]]  # type: ignore
     ) -> Callable[PARAM_SPEC_TYPE, Awaitable[ANY_GENERIC_TYPE]]:  # type: ignore
         @functools.wraps(f)
         def wrapper(*args: PARAM_SPEC_TYPE.args, **kwargs: PARAM_SPEC_TYPE.kwargs) -> Awaitable[ANY_GENERIC_TYPE]:
-            if not cls._has_run.get(f, False):
-                cls._has_run[f.__name__] = True
-                return f(*args, **kwargs)
-            else:
-                return asyncio.sleep(0)
+            with _LOCK_SINGLETON_CALLABLE:
+                if not cls._has_run.get(f, False):
+                    cls._has_run[f.__name__] = True
+                    return f(*args, **kwargs)
+                else:
+                    return asyncio.sleep(0)
 
         cls._has_run[f] = False
         return wrapper
@@ -141,12 +97,14 @@ class SingletonCachedByKey(type):
                 return rps
         return cls._instances[key]
 
-    @synchronized_method_call(_LOCK_SINGLETON_CACHE_CALLABLE)
     def _locked_call(cls, *args: Any, **kwargs: Any) -> None:
-        key = cls._get_key(cls.mro(), **kwargs)
-        if key not in cls._instances:
-            singleton = super().__call__(*args, **kwargs)
-            if key is not None:
-                cls._instances[key] = singleton
-            else:
-                return singleton
+        if super().__class__.__name__ not in _LOCKS_SINGLETON_CACHE:
+            _LOCKS_SINGLETON_CACHE[super().__class__.__name__] = threading.Lock()
+        with _LOCKS_SINGLETON_CACHE[super().__class__.__name__]:
+            key = cls._get_key(cls.mro(), **kwargs)
+            if key not in cls._instances:
+                singleton = super().__call__(*args, **kwargs)
+                if key is not None:
+                    cls._instances[key] = singleton
+                else:
+                    return singleton

@@ -3,7 +3,6 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import inspect
-import threading
 from pathlib import Path
 from types import MethodType
 
@@ -29,7 +28,7 @@ from pylav.logging import getLogger
 from pylav.type_hints.bot import DISCORD_BOT_TYPE, DISCORD_COG_TYPE
 
 _ = Translator("PyLav", Path(__file__))
-_LOCK = threading.Lock()
+_LOCK = asyncio.Lock()
 LOGGER = getLogger("PyLav.ext.red.utils.overrides")
 
 INCOMPATIBLE_COGS = {}
@@ -396,7 +395,7 @@ async def pylav_auto_setup(
         initargs = ()
     if initkwargs is None:
         initkwargs = {}
-    with _LOCK:
+    async with _LOCK:
         cog_instance = class_factory(bot, cog_cls, cogargs, cogkwargs)
         await bot.add_cog(cog_instance)
     cog_instance._init_task = asyncio.create_task(cog_instance.initialize(*initargs, **initkwargs))

@@ -6,7 +6,6 @@ import contextlib
 import datetime
 import pathlib
 import random
-import threading
 import time
 from collections.abc import Coroutine
 from itertools import islice
@@ -66,7 +65,6 @@ from pylav.exceptions.request import HTTPException
 from pylav.exceptions.track import TrackNotFoundException
 from pylav.extension.radio import RadioBrowser
 from pylav.helpers.format.strings import format_time_dd_hh_mm_ss, format_time_string, shorten_string
-from pylav.helpers.singleton import synchronized_method_call_with_self_threading_lock
 from pylav.helpers.time import get_now_utc
 from pylav.logging import getLogger
 from pylav.nodes.api.responses.exceptions import LavalinkException
@@ -180,7 +178,10 @@ class Player(VoiceProtocol):
         node: Node = None,
     ):
         super().__init__(client, channel)
-        self._threading_lock = threading.Lock()
+        self.__adding_lock = asyncio.Lock()
+        self.__reconnect_lock = asyncio.Lock()
+        self.__playing_lock = asyncio.Lock()
+
         self.ready = asyncio.Event()
         self.bot = self.client = client
         self._channel = None
@@ -1105,7 +1106,6 @@ class Player(VoiceProtocol):
             track._requester = requester
         return track
 
-    @synchronized_method_call_with_self_threading_lock()
     async def add(
         self,
         requester: int,
@@ -1133,15 +1133,14 @@ class Player(VoiceProtocol):
         -------
         :class:`None`
         """
+        async with self.__adding_lock:
+            at = await self._query_to_track(requester, track, query)
+            await self.queue.put([at], index=index)
+            if index is None:
+                await self.maybe_shuffle_queue(requester=requester)
+            self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
+            self.node.dispatch_event(TracksRequestedEvent(self, self.guild.get_member(requester), [at]))
 
-        at = await self._query_to_track(requester, track, query)
-        await self.queue.put([at], index=index)
-        if index is None:
-            await self.maybe_shuffle_queue(requester=requester)
-        self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
-        self.node.dispatch_event(TracksRequestedEvent(self, self.guild.get_member(requester), [at]))
-
-    @synchronized_method_call_with_self_threading_lock()
     async def bulk_add(
         self,
         tracks_and_queries: list[Track | APITrack | dict | str | list[tuple[Track | APITrack | dict | str, Query]]],
@@ -1159,42 +1158,44 @@ class Player(VoiceProtocol):
         index: Optional[:class:`int`]
             The index at which to add the tracks.
         """
-        output = []
-        is_list = isinstance(tracks_and_queries[0], (list, tuple))
-        for entry in tracks_and_queries:
-            track, query = entry if is_list else (entry, None)
-            track = await self._query_to_track(requester, track, query)
-            output.append(track)
-        await self.queue.put(output, index=index)
-        if index is None:
-            await self.maybe_shuffle_queue(requester=requester)
-        self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
-        self.node.dispatch_event(TracksRequestedEvent(self, self.guild.get_member(requester), output))
+        async with self.__adding_lock:
+            output = []
+            is_list = isinstance(tracks_and_queries[0], (list, tuple))
+            for entry in tracks_and_queries:
+                track, query = entry if is_list else (entry, None)
+                track = await self._query_to_track(requester, track, query)
+                output.append(track)
+            await self.queue.put(output, index=index)
+            if index is None:
+                await self.maybe_shuffle_queue(requester=requester)
+            self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
+            self.node.dispatch_event(TracksRequestedEvent(self, self.guild.get_member(requester), output))
 
     async def previous(self, requester: discord.Member, bypass_cache: bool = False) -> None:
-        if self.history.empty():
-            raise TrackNotFoundException(_("There are no tracks currently in the player history."))
-        self.stopped = False
-        track = await self.history.get()
-        if track.is_partial:
-            track, tracks = await self._process_partial_query(
-                track, requester=track.requester, bypass_cache=bypass_cache, add_to_queue=False
-            )
-            if tracks:
-                await self.history.put(tracks, 0, discard=True)
-            track = self.history.get()
-        if self.current:
-            self.last_track = self.current
+        async with self.__playing_lock:
+            if self.history.empty():
+                raise TrackNotFoundException(_("There are no tracks currently in the player history."))
+            self.stopped = False
+            track = await self.history.get()
+            if track.is_partial:
+                track, tracks = await self._process_partial_query(
+                    track, requester=track.requester, bypass_cache=bypass_cache, add_to_queue=False
+                )
+                if tracks:
+                    await self.history.put(tracks, 0, discard=True)
+                track = self.history.get()
+            if self.current:
+                self.last_track = self.current
 
-        if await track.query() and not self.node.has_source(await track.requires_capability()):
-            self.current = None
-            await self.change_to_best_node(feature=await track.requires_capability(), skip_position_fetch=True)
+            if await track.query() and not self.node.has_source(await track.requires_capability()):
+                self.current = None
+                await self.change_to_best_node(feature=await track.requires_capability(), skip_position_fetch=True)
 
-        self.current = track
-        payload = {"encodedTrack": track.encoded}
-        await self.node.patch_session_player(guild_id=self.guild.id, payload=payload, no_replace=False)
+            self.current = track
+            payload = {"encodedTrack": track.encoded}
+            await self.node.patch_session_player(guild_id=self.guild.id, payload=payload, no_replace=False)
 
-        self.node.dispatch_event(TrackPreviousRequestedEvent(self, requester, track))
+            self.node.dispatch_event(TrackPreviousRequestedEvent(self, requester, track))
 
     async def quick_play(
         self,
@@ -1204,33 +1205,33 @@ class Player(VoiceProtocol):
         no_replace: bool = False,
         bypass_cache: bool = False,
     ) -> None:
-        track = await Track.build_track(node=self.node, data=track, query=query, requester=requester.id)
-        self.next_track = None
-        self.last_track = None
-        self.stopped = False
-        if self.current:
-            self.current.timestamp = self.fetch_position()
-            await self.queue.put([self.current], 0)
-            self.next_track = self.current
-            self.last_track = self.current
+        async with self.__playing_lock:
+            track = await Track.build_track(node=self.node, data=track, query=query, requester=requester.id)
+            self.next_track = None
+            self.last_track = None
+            self.stopped = False
+            if self.current:
+                self.current.timestamp = self.fetch_position()
+                await self.queue.put([self.current], 0)
+                self.next_track = self.current
+                self.last_track = self.current
 
-        if await track.query() and not self.node.has_source(await track.requires_capability()):
-            self.current = None
-            await self.change_to_best_node(feature=await track.requires_capability(), skip_position_fetch=True)
-        track, returning = await self._process_partial_track(track, bypass_cache)
-        if returning:
-            return
-        self.current = track
-        if self.next_track is None and not self.queue.empty():
-            self.next_track = self.queue.raw_queue.popleft()
-        payload = {"encodedTrack": track.encoded}
-        await self.node.patch_session_player(guild_id=self.guild.id, payload=payload, no_replace=no_replace)
-        self.node.dispatch_event(QuickPlayEvent(self, requester, track))
+            if await track.query() and not self.node.has_source(await track.requires_capability()):
+                self.current = None
+                await self.change_to_best_node(feature=await track.requires_capability(), skip_position_fetch=True)
+            track, returning = await self._process_partial_track(track, bypass_cache)
+            if returning:
+                return
+            self.current = track
+            if self.next_track is None and not self.queue.empty():
+                self.next_track = self.queue.raw_queue.popleft()
+            payload = {"encodedTrack": track.encoded}
+            await self.node.patch_session_player(guild_id=self.guild.id, payload=payload, no_replace=no_replace)
+            self.node.dispatch_event(QuickPlayEvent(self, requester, track))
 
     def next(self, requester: discord.Member = None, node: Node = None) -> Coroutine[Any, Any, None]:
         return self.play(None, None, requester or self.bot.user, node=node)  # type: ignore
 
-    @synchronized_method_call_with_self_threading_lock()
     async def play(
         self,
         track: Track | APITrack | dict | str | None,
@@ -1272,50 +1273,51 @@ class Player(VoiceProtocol):
             The node to use. Defaults the best available node with the needed feature.
         """
         # sourcery no-metrics
-        auto_play, payload = await self._on_play_reset()
-        if track is not None and isinstance(track, (Track, APITrack, dict, str, type(None))):
-            track = await Track.build_track(node=self.node, data=track, query=query, requester=requester.id)
-        if self.current:
-            await self._process_repeat_on_play()
-        if self.current:
-            await self.history.put([self.current], discard=True)
-            self.last_track = self.current
-        self.current = None
-        if not track:
-            auto_play, track, returned = await self._process_play_no_track(auto_play, track)
-            if returned:
-                return
-        if await track.query() is None:
-            track._query = await Query.from_base64(track.encoded, lazy=True)
-        if node:
-            if self.node != node:
-                await self.change_node(node)
-        else:
-            try:
-                await self.change_to_best_node(feature=await track.requires_capability(), skip_position_fetch=True)
-            except NoNodeWithRequestFunctionalityAvailableException as exc:
-                await self._process_error_on_play(exc, track)
-                return
-        track._node = self.node
-        if track.is_partial:
-            await self._process_partial_query(
-                track, requester=track.requester, bypass_cache=bypass_cache, add_to_queue=True
-            )
-            return await self.play(None, None, requester or self.bot.user, node=node)
-        await self._process_partial_payload(end_time, payload, start_time, track)
+        async with self.__playing_lock:
+            auto_play, payload = await self._on_play_reset()
+            if track is not None and isinstance(track, (Track, APITrack, dict, str, type(None))):
+                track = await Track.build_track(node=self.node, data=track, query=query, requester=requester.id)
+            if self.current:
+                await self._process_repeat_on_play()
+            if self.current:
+                await self.history.put([self.current], discard=True)
+                self.last_track = self.current
+            self.current = None
+            if not track:
+                auto_play, track, returned = await self._process_play_no_track(auto_play, track)
+                if returned:
+                    return
+            if await track.query() is None:
+                track._query = await Query.from_base64(track.encoded, lazy=True)
+            if node:
+                if self.node != node:
+                    await self.change_node(node)
+            else:
+                try:
+                    await self.change_to_best_node(feature=await track.requires_capability(), skip_position_fetch=True)
+                except NoNodeWithRequestFunctionalityAvailableException as exc:
+                    await self._process_error_on_play(exc, track)
+                    return
+            track._node = self.node
+            if track.is_partial:
+                await self._process_partial_query(
+                    track, requester=track.requester, bypass_cache=bypass_cache, add_to_queue=True
+                )
+                return await self.play(None, None, requester or self.bot.user, node=node)
+            await self._process_partial_payload(end_time, payload, start_time, track)
 
-        if no_replace is None:
-            no_replace = False
-        if not isinstance(no_replace, bool):
-            raise TypeError("no_replace must be a bool")
-        if not track.encoded:
-            return await self.play(None, None, requester or self.bot.user, node=node)
-        self.current = track
-        self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
-        payload["encodedTrack"] = track.encoded
-        await self.node.patch_session_player(guild_id=self.guild.id, payload=payload, no_replace=no_replace)
-        if auto_play:
-            self.node.dispatch_event(TrackAutoPlayEvent(player=self, track=track))
+            if no_replace is None:
+                no_replace = False
+            if not isinstance(no_replace, bool):
+                raise TypeError("no_replace must be a bool")
+            if not track.encoded:
+                return await self.play(None, None, requester or self.bot.user, node=node)
+            self.current = track
+            self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
+            payload["encodedTrack"] = track.encoded
+            await self.node.patch_session_player(guild_id=self.guild.id, payload=payload, no_replace=no_replace)
+            if auto_play:
+                self.node.dispatch_event(TrackAutoPlayEvent(player=self, track=track))
 
     async def _process_partial_payload(self, end_time, payload, start_time, track: Track):
         if start_time or track.timestamp:
@@ -1726,37 +1728,40 @@ class Player(VoiceProtocol):
         requester: :class:`discord.Member`
             The member requesting the connection.
         """
-        await self.guild.change_voice_state(
-            channel=self.channel,
-            self_mute=self_mute,
-            self_deaf=deaf if (deaf := await self.self_deaf()) is True else self_deaf,
-        )
-        self._connected = True
-        self.connected_at = get_now_utc()
-        self._logger.debug("Connected to voice channel")
+        async with self.__reconnect_lock:
+            await self.guild.change_voice_state(
+                channel=self.channel,
+                self_mute=self_mute,
+                self_deaf=deaf if (deaf := await self.self_deaf()) is True else self_deaf,
+            )
+            self._connected = True
+            self.connected_at = get_now_utc()
+            self._logger.debug("Connected to voice channel")
 
-    @synchronized_method_call_with_self_threading_lock(discard=True)
     async def reconnect(self):
-        self._waiting_for_node.clear()
-        shard = self.bot.get_shard(self.guild.shard_id)
-        while shard.is_closed():
-            await asyncio.sleep(1)
+        if self.__reconnect_lock.locked():
+            return
+        async with self.__reconnect_lock:
+            self._waiting_for_node.clear()
+            shard = self.bot.get_shard(self.guild.shard_id)
+            while shard.is_closed():
+                await asyncio.sleep(1)
 
-        await self.guild.change_voice_state(
-            channel=None,
-            self_mute=False,
-            self_deaf=False,
-        )
-        await self.guild.change_voice_state(
-            channel=self.channel,
-            self_mute=False,
-            self_deaf=await self.self_deaf(),
-        )
-        self._connected = True
-        self.connected_at = get_now_utc()
-        await asyncio.wait_for(self._waiting_for_node.wait(), timeout=None)
-        await self.change_to_best_node(forced=True, skip_position_fetch=True)
-        self._logger.debug("Reconnected to voice channel")
+            await self.guild.change_voice_state(
+                channel=None,
+                self_mute=False,
+                self_deaf=False,
+            )
+            await self.guild.change_voice_state(
+                channel=self.channel,
+                self_mute=False,
+                self_deaf=await self.self_deaf(),
+            )
+            self._connected = True
+            self.connected_at = get_now_utc()
+            await asyncio.wait_for(self._waiting_for_node.wait(), timeout=None)
+            await self.change_to_best_node(forced=True, skip_position_fetch=True)
+            self._logger.debug("Reconnected to voice channel")
 
     async def disconnect(self, *, force: bool = False, requester: discord.Member | None) -> None:
         try:

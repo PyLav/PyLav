@@ -11,7 +11,6 @@ from collections.abc import Iterator
 from types import GenericAlias
 from typing import NoReturn
 
-from pylav.helpers.singleton import synchronized_method_call_with_self_threading_lock
 from pylav.type_hints.generics import ANY_GENERIC_TYPE
 
 
@@ -33,6 +32,7 @@ class PlayerQueue(asyncio.Queue[ANY_GENERIC_TYPE]):
     raw_b64s: list[str]
 
     def __init__(self, maxsize: int = 0) -> None:
+        self._lock = asyncio.Lock()
         self._threading_lock = threading.Lock()
         super().__init__(maxsize=maxsize)
         self._maxsize = maxsize
@@ -64,54 +64,53 @@ class PlayerQueue(asyncio.Queue[ANY_GENERIC_TYPE]):
     def raw_queue(self) -> None:
         self.clear()
 
-    @synchronized_method_call_with_self_threading_lock()
     def popindex(self, index: int) -> ANY_GENERIC_TYPE:
-        value = self._queue[index]
-        del self._queue[index]
-        return value
+        with self._threading_lock:
+            value = self._queue[index]
+            del self._queue[index]
+            return value
 
-    @synchronized_method_call_with_self_threading_lock()
     async def remove(self, value: ANY_GENERIC_TYPE, duplicates: bool = False) -> tuple[list[ANY_GENERIC_TYPE], int]:
         """Removes the first occurrence of a value from the queue.
 
         If duplicates is True, all occurrences of the value are removed.
         Returns the removed entries and number of occurrences removed.
         """
-        count = 0
-        removed = []
-        try:
-            i = self._queue.index(value)
-            removed.append(self.popindex(i))
-            count += 1
-            if duplicates:
-                with contextlib.suppress(ValueError):
-                    while value in self:
-                        i = self._queue.index(value)
-                        removed.append(self.popindex(i))
-                        count += 1
-            return removed, count
-        except ValueError as e:
-            raise IndexError("Value not in queue") from e
+        async with self._lock:
+            count = 0
+            removed = []
+            try:
+                i = self._queue.index(value)
+                removed.append(self.popindex(i))
+                count += 1
+                if duplicates:
+                    with contextlib.suppress(ValueError):
+                        while value in self:
+                            i = self._queue.index(value)
+                            removed.append(self.popindex(i))
+                            count += 1
+                return removed, count
+            except ValueError as e:
+                raise IndexError("Value not in queue") from e
 
-    @synchronized_method_call_with_self_threading_lock()
     def clear(self) -> None:
         """Remove all items from the queue"""
-        self._queue.clear()
-        for i in self._getters:
-            i.cancel()
-        self._getters.clear()
-        for i in self._putters:
-            i.cancel()
-        self._putters.clear()
+        with self._threading_lock:
+            self._queue.clear()
+            for i in self._getters:
+                i.cancel()
+            self._getters.clear()
+            for i in self._putters:
+                i.cancel()
+            self._putters.clear()
 
-    @synchronized_method_call_with_self_threading_lock()
     async def shuffle(self) -> None:
         """Shuffle the queue"""
-        if self.empty():
-            return
-        await asyncio.to_thread(random.shuffle, self._queue)
+        async with self._lock:
+            if self.empty():
+                return
+            await asyncio.to_thread(random.shuffle, self._queue)
 
-    @synchronized_method_call_with_self_threading_lock()
     async def get_oldest(self) -> ANY_GENERIC_TYPE:
         """Remove and return an item from the queue.
 
@@ -165,29 +164,32 @@ class PlayerQueue(asyncio.Queue[ANY_GENERIC_TYPE]):
         self._queue = collections.deque(maxlen=maxsize or None)
         self.raw_b64s = []
 
-    @synchronized_method_call_with_self_threading_lock()
     def _get(self, index: int = None) -> ANY_GENERIC_TYPE:
-        r = self.popindex(index) if index is not None else self._queue.popleft()
+        if index is not None:
+            r = self.popindex(index)
+        else:
+            with self._threading_lock:
+                r = self._queue.popleft()
         if r.encoded:
             self.raw_b64s.remove(r.encoded)
         return r
 
-    @synchronized_method_call_with_self_threading_lock()
     def _put(self, items: list[ANY_GENERIC_TYPE], index: int = None) -> None:
-        if index is not None:
-            for i in items:
-                if index < 0:
-                    self._queue.append(i)
-                    if i.encoded:
-                        self.raw_b64s.append(i.encoded)
-                else:
-                    self._queue.insert(index, i)
-                    if i.encoded:
-                        self.raw_b64s.append(i.encoded)
-                    index += 1
-        else:
-            self._queue.extend(items)
-            self.raw_b64s.extend([i.encoded for i in items if i.encoded])
+        with self._threading_lock:
+            if index is not None:
+                for i in items:
+                    if index < 0:
+                        self._queue.append(i)
+                        if i.encoded:
+                            self.raw_b64s.append(i.encoded)
+                    else:
+                        self._queue.insert(index, i)
+                        if i.encoded:
+                            self.raw_b64s.append(i.encoded)
+                        index += 1
+            else:
+                self._queue.extend(items)
+                self.raw_b64s.extend([i.encoded for i in items if i.encoded])
 
     # End of the overridable methods.
 
@@ -353,30 +355,36 @@ class TrackHistoryQueue(PlayerQueue[ANY_GENERIC_TYPE], ABC):
         super()._init(maxsize)
 
     def _put(self, items: list[ANY_GENERIC_TYPE], index: int = None) -> None:
-        if len(items) + self.qsize() > self.maxsize:
-            diff = len(items) + self.qsize() - self.maxsize
-            for _ in range(diff):
-                self._queue.pop()
-                self.raw_b64s.pop()
-        if index is not None:
-            for i in items:
-                i.timestamp = 0
-                if index < 0:
-                    self._queue.append(i)
-                    self.raw_b64s.append(i.encoded)
-                else:
-                    self._queue.insert(index, i)
-                    self.raw_b64s.insert(index, i.encoded)
-                    index += 1
-        else:
-            self._queue.extendleft(items)
-            for i, t in enumerate(items):
-                t.timestamp = 0
-                self.raw_b64s.insert(i, t.encoded)
+        with self._threading_lock:
+            if len(items) + self.qsize() > self.maxsize:
+                diff = len(items) + self.qsize() - self.maxsize
+                for _ in range(diff):
+                    self._queue.pop()
+                    self.raw_b64s.pop()
+            if index is not None:
+                for i in items:
+                    i.timestamp = 0
+                    if index < 0:
+                        self._queue.append(i)
+                        self.raw_b64s.append(i.encoded)
+                    else:
+                        self._queue.insert(index, i)
+                        self.raw_b64s.insert(index, i.encoded)
+                        index += 1
+            else:
+                self._queue.extendleft(items)
+                for i, t in enumerate(items):
+                    t.timestamp = 0
+                    self.raw_b64s.insert(i, t.encoded)
 
     def _get(self, index: int = None) -> ANY_GENERIC_TYPE:
-        r = self.popindex(index) if index is not None else self._queue.popleft()
-        self.raw_b64s.pop(index if index is not None else -1)
+        if index is not None:
+            r = self.popindex(index)
+            self.raw_b64s.pop(index)
+        else:
+            with self._threading_lock:
+                r = self._queue.popleft()
+                self.raw_b64s.pop()
         return r
 
     def put_nowait(self, items: list[ANY_GENERIC_TYPE], index: int = None) -> None:
