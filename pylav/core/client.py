@@ -70,7 +70,7 @@ from pylav.extension.radio import RadioBrowser
 from pylav.helpers.singleton import SingletonCallable, SingletonClass
 from pylav.helpers.time import get_now_utc, get_tz_utc
 from pylav.logging import getLogger
-from pylav.nodes.api.responses.rest_api import LoadTrackResponses
+from pylav.nodes.api.responses.rest_api import LoadFailed, LoadTrackResponses, NoMatches
 from pylav.nodes.api.responses.route_planner import Status as RoutePlannerStatus
 from pylav.nodes.api.responses.track import Track as TrackObject
 from pylav.nodes.manager import NodeManager
@@ -1400,8 +1400,8 @@ class Client(metaclass=SingletonClass):
                 )
                 continue
             response = await self._get_tracks(player=player, query=local_track, first=True, bypass_cache=True)
-            if isinstance(response, HTTPException):
-                queries_failed.append(sub_query)
+            if isinstance(response, (HTTPException, NoMatches, LoadFailed)):
+                queries_failed.append(local_track)
                 continue
             if __ := response.tracks[0].encoded:
                 track_count += 1
@@ -1434,7 +1434,7 @@ class Client(metaclass=SingletonClass):
         track_count,
     ):
         response = await self._get_tracks(player=player, query=sub_query, bypass_cache=bypass_cache)
-        if isinstance(response, HTTPException):
+        if isinstance(response, (HTTPException, NoMatches, LoadFailed)):
             queries_failed.append(sub_query)
             return track_count
         track_list = response.tracks
@@ -1461,7 +1461,7 @@ class Client(metaclass=SingletonClass):
         self, bypass_cache, node, player, queries_failed, requester, sub_query, successful_tracks, track_count, partial
     ):
         response = await self._get_tracks(player=player, query=sub_query, first=True, bypass_cache=bypass_cache)
-        if isinstance(response, HTTPException):
+        if isinstance(response, (HTTPException, NoMatches, LoadFailed)):
             queries_failed.append(sub_query)
             return track_count
         track_b64 = response.tracks[0].encoded
