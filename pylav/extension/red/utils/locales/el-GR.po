@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-04 20:03\n"
+"POT-Creation-Date: 2023-02-06 20:35+0000\n"
+"PO-Revision-Date: 2023-02-06 20:35\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
@@ -17,12 +17,12 @@ msgstr ""
 "X-Crowdin-File-ID: 3405\n"
 "Language: el_GR\n"
 
-#: pylav/extension/red/utils/required_methods.py:45
+#: pylav/extension/red/utils/required_methods.py:44
 #, docstring
 msgid "Shows the credits and translation details for the PyLav cogs and shared code"
 msgstr "Εμφανίζει τις πιστώσεις και τα στοιχεία μετάφρασης για τα PyLav cogs και κοινόχρηστο κώδικα"
 
-#: pylav/extension/red/utils/required_methods.py:49
+#: pylav/extension/red/utils/required_methods.py:48
 msgid "PyLav was created by {library_author_name_variable_do_not_translate}.\n\n"
 "PyLav source code can be located in {library_url_variable_do_not_translate}\n"
 "PyLav-Cogs source code can be located in {second_library_url_variable_do_not_translate}\n\n"
@@ -46,57 +46,57 @@ msgstr "Το PyLav δημιουργήθηκε από τον {library_author_name
 "Αν επιθυμείτε να μου αγοράσετε έναν καφέ για τη δουλειά μου, μπορείτε να το κάνετε στο:\n"
 "{buymeacoffee_url_variable_do_not_translate} ή {github_sponsors_url_variable_do_not_translate}"
 
-#: pylav/extension/red/utils/required_methods.py:85
+#: pylav/extension/red/utils/required_methods.py:84
 #, docstring
 msgid "Show the version of PyLav library"
 msgstr "Εμφάνιση της έκδοσης της βιβλιοθήκης PyLav"
 
-#: pylav/extension/red/utils/required_methods.py:100
+#: pylav/extension/red/utils/required_methods.py:99
 msgid "Library"
 msgstr "Βιβλιοθήκη"
 
-#: pylav/extension/red/utils/required_methods.py:101
+#: pylav/extension/red/utils/required_methods.py:100
 msgid "Version"
 msgstr "Εκδοχή"
 
-#: pylav/extension/red/utils/required_methods.py:120
+#: pylav/extension/red/utils/required_methods.py:119
 #, docstring
 msgid "Sync the Bots slash commands"
 msgstr "Συγχρονισμός των εντολών κάθετος Bots"
 
-#: pylav/extension/red/utils/required_methods.py:129
+#: pylav/extension/red/utils/required_methods.py:128
 msgid "I have synced all my slash commands."
 msgstr "Έχω συγχρονίσει όλες τις εντολές καθέτου μου."
 
-#: pylav/extension/red/utils/required_methods.py:151
+#: pylav/extension/red/utils/required_methods.py:150
 msgid "This command requires that I be in a voice channel before it can be executed."
 msgstr "Αυτή η εντολή απαιτεί να βρίσκομαι σε ένα κανάλι φωνής για να μπορέσει να εκτελεστεί."
 
-#: pylav/extension/red/utils/required_methods.py:160
+#: pylav/extension/red/utils/required_methods.py:159
 msgid "PyLavPlayer cog is temporarily unavailable due to an outage with the backend services; please try again later."
 msgstr "Το γρανάζι PyLavPlayer δεν είναι προσωρινά διαθέσιμο λόγω διακοπής λειτουργίας με τις υπηρεσίες backend. Προσπαθήστε ξανά αργότερα."
 
-#: pylav/extension/red/utils/required_methods.py:163
+#: pylav/extension/red/utils/required_methods.py:162
 msgid "There are no nodes available currently."
 msgstr "Δεν υπάρχουν διαθέσιμοι κόμβοι αυτήν τη στιγμή."
 
-#: pylav/extension/red/utils/required_methods.py:174
+#: pylav/extension/red/utils/required_methods.py:173
 msgid "PyLavPlayer is currently unable to process tracks belonging to {feature_name_variable_do_not_translate}."
 msgstr "Προς το παρόν, το PyLavPlayer δεν είναι σε θέση να επεξεργαστεί κομμάτια που ανήκουν σε {feature_name_variable_do_not_translate}."
 
-#: pylav/extension/red/utils/required_methods.py:177
+#: pylav/extension/red/utils/required_methods.py:176
 msgid "There is currently no available Lavalink node with the feature {feature_name_variable_do_not_translate}."
 msgstr "Προς το παρόν δεν υπάρχει διαθέσιμος κόμβος Lavalink με τη λειτουργία {feature_name_variable_do_not_translate}."
 
-#: pylav/extension/red/utils/required_methods.py:190
+#: pylav/extension/red/utils/required_methods.py:189
 msgid "This command is unavailable in this channel; please use {channel_name_variable_do_not_translate} instead."
 msgstr "Αυτή η εντολή δεν είναι διαθέσιμη σε αυτό το κανάλι. παρακαλώ χρησιμοποιήστε {channel_name_variable_do_not_translate} αντί."
 
-#: pylav/extension/red/utils/required_methods.py:206
+#: pylav/extension/red/utils/required_methods.py:205
 msgid "This command requires you to be a disc jockey."
 msgstr "Αυτή η εντολή απαιτεί να είστε αναβάτης δίσκου."
 
-#: pylav/extension/red/utils/required_methods.py:244
+#: pylav/extension/red/utils/required_methods.py:243
 msgid "PyLav is starting up; please try again in a few minutes."
 msgstr "Ο PyLav ξεκινά. παρακαλώ προσπαθήστε ξανά σε λίγα λεπτά."
 

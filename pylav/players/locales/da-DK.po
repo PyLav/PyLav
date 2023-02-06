@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-04 18:31+0000\n"
-"PO-Revision-Date: 2023-02-04 18:32\n"
+"POT-Creation-Date: 2023-02-06 20:35+0000\n"
+"PO-Revision-Date: 2023-02-06 20:35\n"
 "Last-Translator: \n"
 "Language-Team: Danish\n"
 "MIME-Version: 1.0\n"
@@ -25,123 +25,123 @@ msgstr "Der er ingen noder tilgængelige i øjeblikket."
 msgid "Music in {number_of_servers_variable_do_not_translate} servers"
 msgstr "Musik i {number_of_servers_variable_do_not_translate} Servere"
 
-#: pylav/players/player.py:1176
+#: pylav/players/player.py:1177
 msgid "There are no tracks currently in the player history."
 msgstr "Der er ingen spor i øjeblikket i spillerhistorikken."
 
-#: pylav/players/player.py:1869
+#: pylav/players/player.py:1874
 msgid "Current node has the volume filter feature disabled."
 msgstr "Aktuel node har volumenfilterfunktionen deaktiveret."
 
-#: pylav/players/player.py:1891 pylav/players/player.py:2067
-#: pylav/players/player.py:2122
+#: pylav/players/player.py:1896 pylav/players/player.py:2072
+#: pylav/players/player.py:2127
 msgid "Current node has the equalizer feature disabled."
 msgstr "Aktuel node har equalizer-funktionen deaktiveret."
 
-#: pylav/players/player.py:1911
+#: pylav/players/player.py:1916
 msgid "Current node has the karaoke feature disabled"
 msgstr "Nuværende knude har karaoke-funktionen deaktiveret"
 
-#: pylav/players/player.py:1931 pylav/players/player.py:2069
-#: pylav/players/player.py:2124
+#: pylav/players/player.py:1936 pylav/players/player.py:2074
+#: pylav/players/player.py:2129
 msgid "Current node has the timescale feature disabled."
 msgstr "Aktuel node har tidsskalafunktionen deaktiveret."
 
-#: pylav/players/player.py:1951
+#: pylav/players/player.py:1956
 msgid "Current node has the tremolo feature disabled."
 msgstr "Nuværende node har tremolo-funktionen deaktiveret."
 
-#: pylav/players/player.py:1971
+#: pylav/players/player.py:1976
 msgid "Current node has the vibrato feature disabled."
 msgstr "Nuværende node har vibratofunktionen deaktiveret."
 
-#: pylav/players/player.py:1991
+#: pylav/players/player.py:1996
 msgid "Current node has the rotation feature disabled."
 msgstr "Aktuel node har rotationsfunktionen deaktiveret."
 
-#: pylav/players/player.py:2011
+#: pylav/players/player.py:2016
 msgid "Current node has the distortion feature disabled."
 msgstr "Aktuel node har forvrængningsfunktionen deaktiveret."
 
-#: pylav/players/player.py:2031
+#: pylav/players/player.py:2036
 msgid "Current node has the low-pass feature disabled."
 msgstr "Nuværende node har low-pass-funktionen deaktiveret."
 
-#: pylav/players/player.py:2051
+#: pylav/players/player.py:2056
 msgid "Current node has the echo feature disabled."
 msgstr "Nuværende knude har ekkofunktionen deaktiveret."
 
-#: pylav/players/player.py:2181
+#: pylav/players/player.py:2186
 msgid "Current node has the channel-mix feature disabled."
 msgstr "Aktuel node har kanalmixfunktionen deaktiveret."
 
-#: pylav/players/player.py:2449 pylav/players/player.py:2505
-#: pylav/players/player.py:2520
+#: pylav/players/player.py:2454 pylav/players/player.py:2510
+#: pylav/players/player.py:2525
 msgid "LIVE"
 msgstr "LEVE"
 
-#: pylav/players/player.py:2462
+#: pylav/players/player.py:2467
 msgid "Now Playing in {server_name_variable_do_not_translate}"
 msgstr "Spiller nu ind {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2484 pylav/players/player.py:2651
+#: pylav/players/player.py:2489 pylav/players/player.py:2656
 msgid "Currently livestreaming"
 msgstr "I øjeblikket livestreaming"
 
-#: pylav/players/player.py:2486
+#: pylav/players/player.py:2491
 msgid "Playing: "
 msgstr "Afspilning: "
 
-#: pylav/players/player.py:2489 pylav/players/player.py:2512
-#: pylav/players/player.py:2527 pylav/players/player.py:2657
+#: pylav/players/player.py:2494 pylav/players/player.py:2517
+#: pylav/players/player.py:2532 pylav/players/player.py:2662
 msgid "Requester"
 msgstr "Anmoder"
 
-#: pylav/players/player.py:2495
+#: pylav/players/player.py:2500
 msgid "Duration: {track_duration_variable_do_not_translate}"
 msgstr "Varighed: {track_duration_variable_do_not_translate}"
 
-#: pylav/players/player.py:2508 pylav/players/player.py:2523
+#: pylav/players/player.py:2513 pylav/players/player.py:2528
 msgid "Duration"
 msgstr "Varighed"
 
-#: pylav/players/player.py:2514
+#: pylav/players/player.py:2519
 msgid "Previous Track"
 msgstr "Forrige Spor"
 
-#: pylav/players/player.py:2529
+#: pylav/players/player.py:2534
 msgid "Next Track"
 msgstr "Næste Spor"
 
-#: pylav/players/player.py:2538
+#: pylav/players/player.py:2543
 msgid "1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "1 spor, {queue_total_duration_variable_do_not_translate} resterende\n"
 
-#: pylav/players/player.py:2542
+#: pylav/players/player.py:2547
 msgid "0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "0 spor, {queue_total_duration_variable_do_not_translate} resterende\n"
 
-#: pylav/players/player.py:2546
+#: pylav/players/player.py:2551
 msgid "{track_count_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "{track_count_variable_do_not_translate} spor {queue_total_duration_variable_do_not_translate} resterende\n"
 
-#: pylav/players/player.py:2553 pylav/players/player.py:2698
+#: pylav/players/player.py:2558 pylav/players/player.py:2703
 msgid "Repeating"
 msgstr "Gentagelse"
 
-#: pylav/players/player.py:2555 pylav/players/player.py:2700
+#: pylav/players/player.py:2560 pylav/players/player.py:2705
 msgid "Auto Play"
 msgstr "Automatisk Afspil"
 
-#: pylav/players/player.py:2559 pylav/players/player.py:2704
+#: pylav/players/player.py:2564 pylav/players/player.py:2709
 msgid "{volume_variable_do_not_translate}%"
 msgstr "{volume_variable_do_not_translate}%"
 
-#: pylav/players/player.py:2560 pylav/players/player.py:2705
+#: pylav/players/player.py:2565 pylav/players/player.py:2710
 msgid "Volume"
 msgstr "Lydstyrke"
 
-#: pylav/players/player.py:2563
+#: pylav/players/player.py:2568
 msgid "\n\n"
 "You can search specific services by using the following prefixes:\n"
 "{deezer_service_variable_do_not_translate}  - Deezer\n"
@@ -165,31 +165,31 @@ msgstr "\n\n"
 "Eksempel: {example_variable_do_not_translate}.\n\n"
 "Hvis der ikke bruges noget præfiks, vil jeg som standard {fallback_service_variable_do_not_translate}\n"
 
-#: pylav/players/player.py:2623
+#: pylav/players/player.py:2628
 msgid "Recently Played for {server_name_variable_do_not_translate}"
 msgstr "Senest spillet for {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2629
+#: pylav/players/player.py:2634
 msgid "Queue for {server_name_variable_do_not_translate}"
 msgstr "Kø til {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2654
+#: pylav/players/player.py:2659
 msgid "Playing"
 msgstr "Afspiller"
 
-#: pylav/players/player.py:2670
+#: pylav/players/player.py:2675
 msgid "Queue order will change every time a track is added due to auto shuffle being enabled."
 msgstr "Kørækkefølgen ændres, hver gang et spor tilføjes, fordi automatisk blanding er aktiveret."
 
-#: pylav/players/player.py:2680
+#: pylav/players/player.py:2685
 msgid "Page 1 / 1 | 1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "Side 1 / 1 | 1 spor, {queue_total_duration_variable_do_not_translate} resterende\n"
 
-#: pylav/players/player.py:2684
+#: pylav/players/player.py:2689
 msgid "Page 1 / 1 | 0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "Side 1 / 1 | 0 spor, {queue_total_duration_variable_do_not_translate} resterende\n"
 
-#: pylav/players/player.py:2688
+#: pylav/players/player.py:2693
 msgid "Page {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "Side {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} spor {queue_total_duration_variable_do_not_translate} resterende\n"
 
