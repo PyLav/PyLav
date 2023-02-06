@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.5.0 (01/01/1970)
+## What's Changed
+* New Crowdin translations by Github Action by @Drapersniper in https://github.com/Drapersniper/PyLav/pull/200
+* New Crowdin translations by Github Action by @Drapersniper in https://github.com/Drapersniper/PyLav/pull/202
+* New Crowdin translations by Github Action by @Drapersniper in https://github.com/Drapersniper/PyLav/pull/203
+* Fix: IndexError list index out of range by @Drapersniper in https://github.com/Drapersniper/PyLav/pull/201
+* New Crowdin translations by Github Action by @Drapersniper in https://github.com/Drapersniper/PyLav/pull/204
+* [skip ci] pre-commit autoupdate by @pre-commit-ci in https://github.com/Drapersniper/PyLav/pull/205
+* New Crowdin translations by Github Action by @Drapersniper in https://github.com/Drapersniper/PyLav/pull/206
+
+
+**Full Changelog**: https://github.com/Drapersniper/PyLav/compare/v1.4.4...1.5.0
+---
+
+## v1.5.0 (06/02/2023)
+- [Make Release](https://github.com/Drapersniper/PyLav/commit/851dad9e5e9aa06c3d26e01b73186c3b9e34f97b) - @Drapersniper
+- [Fix `threading.Lock` and `asyncio.Lock` usages (earlier usage didn't work as a decorator for coroutine decorators).](https://github.com/Drapersniper/PyLav/commit/42ddaa33ac25f2c2ce3966724bf4122b5c4030cd) - @Drapersniper
+- [Fix: IndexError list index out of range (#201)](https://github.com/Drapersniper/PyLav/commit/facf83bcad9ae13de85bbee7fc049a76624ca884) - @Drapersniper
+
+---
+
 ## v1.4.4 (04/02/2023)
 - [Some fixes and dynamic trace for better node logging](https://github.com/Drapersniper/PyLav/commit/0106ccb0f8117a16a3b6cc67136d1c60e1d85f20) - @Drapersniper
 
@@ -229,18 +250,3 @@
 - [Update docker-compose.yml with the new lavasrc commit](https://github.com/Drapersniper/PyLav/commit/f6fda52bb1817a890e23266f160b2c2f74a253d3) - @Drapersniper
 - [Disable the london node - as that has been sunset-ed for the time being](https://github.com/Drapersniper/PyLav/commit/867fc28cb15e0f3e8ce813663344bc86723c4d0b) - @Drapersniper
 - [Add new Lavasrc configuration values for playlist and album limits (Applemusic built-in limit = 9K songs and Spotify = 11K songs)](https://github.com/Drapersniper/PyLav/commit/0de5c235336b61002b4af14bd455d32304ea9d2c) - @Drapersniper
-
----
-
-## v1.1.5 (12/01/2023)
-- [More optimizations](https://github.com/Drapersniper/PyLav/commit/240686c7c45c4fcd6d384ca8e334689f0504bd28) - @Drapersniper
-- [optmization fixes](https://github.com/Drapersniper/PyLav/commit/df6aaf99105817218b3898c53efe621678f1aa75) - @Drapersniper
-- [bulk process track where possible](https://github.com/Drapersniper/PyLav/commit/31e8df416507f29e8b1995191570566da4c62eb3) - @Drapersniper
-- [Increase the node session timeouts](https://github.com/Drapersniper/PyLav/commit/cf0b3c9f0e762aadc2374060625f4f49e4bf9f8c) - @Drapersniper
-- [pre-commit hook version update](https://github.com/Drapersniper/PyLav/commit/445817f0ff0a1e6db035dd29a2a3e5bad70d89d1) - @Drapersniper
-- [increase session timeout for node](https://github.com/Drapersniper/PyLav/commit/3c9cbfe39278ec71ba4b655b2a86ea713810dbf2) - @Drapersniper
-
----
-
-## v1.1.4 (09/01/2023)
-- [Further start up enhancements](https://github.com/Drapersniper/PyLav/commit/1b89d276b8e3bceb9430cb0c36ad2f842391226f) - @Drapersniper
