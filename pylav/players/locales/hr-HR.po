@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-04 18:31+0000\n"
-"PO-Revision-Date: 2023-02-05 04:03\n"
+"PO-Revision-Date: 2023-02-06 16:03\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
 "MIME-Version: 1.0\n"
@@ -23,7 +23,7 @@ msgstr "Trenutno nema dostupnih čvorova."
 
 #: pylav/players/manager.py:349
 msgid "Music in {number_of_servers_variable_do_not_translate} servers"
-msgstr "Glazba u {number_of_servers_variable_do_not_translate} Poslužitelja"
+msgstr "Glazbu u {number_of_servers_variable_do_not_translate} servera"
 
 #: pylav/players/player.py:1176
 msgid "There are no tracks currently in the player history."
