@@ -14,6 +14,14 @@
 **Full Changelog**: https://github.com/Drapersniper/PyLav/compare/v1.4.4...1.5.0
 ---
 
+## v1.5.1 (07/02/2023)
+- [Auto Merge](https://github.com/Drapersniper/PyLav/commit/aed460efe649837151f262cf3159eb0c609b3daa) - @Drapersniper
+- [New Crowdin translations by Github Action](https://github.com/Drapersniper/PyLav/commit/0e6c6fc7fe36ccf1b7b11beb7b873114b89f05b2) - @crowdin-bot
+- [Update commit messages for crowdin and automerge](https://github.com/Drapersniper/PyLav/commit/5db98a75007257e929d1fa3f42d88e6a11d249e7) - @Drapersniper
+- [don't expose exception in these 2 cases](https://github.com/Drapersniper/PyLav/commit/16e6e94d994039113db5204eb7a7c0c1dd8734a5) - @Drapersniper
+
+---
+
 ## v1.5.0 (06/02/2023)
 - [Make Release](https://github.com/Drapersniper/PyLav/commit/851dad9e5e9aa06c3d26e01b73186c3b9e34f97b) - @Drapersniper
 - [Fix `threading.Lock` and `asyncio.Lock` usages (earlier usage didn't work as a decorator for coroutine decorators).](https://github.com/Drapersniper/PyLav/commit/42ddaa33ac25f2c2ce3966724bf4122b5c4030cd) - @Drapersniper
@@ -242,11 +250,3 @@
 ## v1.1.7 (15/01/2023)
 - [Tweaks to special handling logic for node penalty](https://github.com/Drapersniper/PyLav/commit/1c27a95e7899a6102edfd3b0b64dc6e0176f1d25) - @Drapersniper
 - [fix incorrect reference to pylav.docker.yaml](https://github.com/Drapersniper/PyLav/commit/fdbe1ec61e4005360ae2152738ec96bf238f422e) - @Drapersniper
-
----
-
-## v1.1.6 (14/01/2023)
-- [Add a special penalty handling for nodes to change the weighting](https://github.com/Drapersniper/PyLav/commit/44153b74658aca19d5c3d829977e00482dae8b52) - @Drapersniper
-- [Update docker-compose.yml with the new lavasrc commit](https://github.com/Drapersniper/PyLav/commit/f6fda52bb1817a890e23266f160b2c2f74a253d3) - @Drapersniper
-- [Disable the london node - as that has been sunset-ed for the time being](https://github.com/Drapersniper/PyLav/commit/867fc28cb15e0f3e8ce813663344bc86723c4d0b) - @Drapersniper
-- [Add new Lavasrc configuration values for playlist and album limits (Applemusic built-in limit = 9K songs and Spotify = 11K songs)](https://github.com/Drapersniper/PyLav/commit/0de5c235336b61002b4af14bd455d32304ea9d2c) - @Drapersniper
