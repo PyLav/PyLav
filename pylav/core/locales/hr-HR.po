@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-04 19:12+0000\n"
-"PO-Revision-Date: 2023-02-06 20:46\n"
+"PO-Revision-Date: 2023-02-07 05:04\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
 "MIME-Version: 1.0\n"
@@ -35,11 +35,11 @@ msgstr "Za generiranje mješovitog popisa za reproduciranje potreban je jedan id
 
 #: pylav/core/context.py:319
 msgid "There is still 1 message remaining. Type `more` to continue."
-msgstr "Ostala je još jedna poruka. Za nastavak upišite 'više'."
+msgstr "Ostala je još jedna poruka. Za nastavak upišite 'more'."
 
 #: pylav/core/context.py:321
 msgid "There are still {remaining_variable_do_not_translate} messages remaining. Type `more` to continue."
-msgstr "Još uvijek ih ima. {remaining_variable_do_not_translate} preostale poruke. Za nastavak upišite 'više'."
+msgstr "Ostalo je još {remaining_variable_do_not_translate} poruka. Za nastavak upišite 'more'."
 
 #: pylav/core/context.py:351
 #, docstring
