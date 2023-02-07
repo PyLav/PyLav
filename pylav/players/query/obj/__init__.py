@@ -649,34 +649,37 @@ class Query:
     async def _yield_m3u_tracks(self) -> AsyncIterator[Query]:
         if not self.is_m3u or not self.is_album:
             return
-        m3u8 = await m3u_loads(None, uri=f"{self._query}")
-        if self._special_local:
-            assert isinstance(self._query, LocalFile)
-            file = self._query.path
-        else:
-            file = aiopath.AsyncPath(self._query)
-        for track in iter(m3u8.files):
-            if is_url(track):
-                yield await Query.from_string(track, dont_search=True)
+        try:
+            m3u8 = await m3u_loads(None, uri=f"{self._query}")
+            if self._special_local:
+                assert isinstance(self._query, LocalFile)
+                file = self._query.path
             else:
-                file_path: aiopath.AsyncPath = aiopath.AsyncPath(track)
-                if await file_path.exists():
-                    yield await Query.from_string(file_path, dont_search=True)
+                file = aiopath.AsyncPath(self._query)
+            for track in iter(m3u8.files):
+                if is_url(track):
+                    yield await Query.from_string(track, dont_search=True)
                 else:
-                    file_path_alt = file.parent / file_path.relative_to(file_path.anchor)
-                    if await file_path_alt.exists():
-                        yield await Query.from_string(file_path_alt, dont_search=True)
-        for playlist in iter(m3u8.playlists):
-            if is_url(playlist.uri):
-                yield await Query.from_string(playlist.uri, dont_search=True)
-            else:
-                playlist_path: aiopath.AsyncPath = aiopath.AsyncPath(playlist.uri)
-                if await playlist_path.exists():
-                    yield await Query.from_string(playlist_path, dont_search=True)
+                    file_path: aiopath.AsyncPath = aiopath.AsyncPath(track)
+                    if await file_path.exists():
+                        yield await Query.from_string(file_path, dont_search=True)
+                    else:
+                        file_path_alt = file.parent / file_path.relative_to(file_path.anchor)
+                        if await file_path_alt.exists():
+                            yield await Query.from_string(file_path_alt, dont_search=True)
+            for playlist in iter(m3u8.playlists):
+                if is_url(playlist.uri):
+                    yield await Query.from_string(playlist.uri, dont_search=True)
                 else:
-                    playlist_path_alt = file.parent / playlist_path.relative_to(playlist_path.anchor)
-                    if await playlist_path_alt.exists():
-                        yield await Query.from_string(playlist_path_alt, dont_search=True)
+                    playlist_path: aiopath.AsyncPath = aiopath.AsyncPath(playlist.uri)
+                    if await playlist_path.exists():
+                        yield await Query.from_string(playlist_path, dont_search=True)
+                    else:
+                        playlist_path_alt = file.parent / playlist_path.relative_to(playlist_path.anchor)
+                        if await playlist_path_alt.exists():
+                            yield await Query.from_string(playlist_path_alt, dont_search=True)
+        except Exception:
+            return
 
     async def _yield_pls_tracks(self) -> AsyncIterator[Query]:
         if not self.is_pls or not self.is_album:

@@ -1282,17 +1282,20 @@ class Client(metaclass=SingletonClass):
         queries_failed = []
         track_count = 0
         for query in queries:
-            track_count = await self._get_tracks_single_query(
-                bypass_cache,
-                enqueue,
-                player,
-                queries_failed,
-                query,
-                requester,
-                successful_tracks,
-                track_count,
-                query.is_partial if partial is None else partial,
-            )
+            try:
+                track_count = await self._get_tracks_single_query(
+                    bypass_cache,
+                    enqueue,
+                    player,
+                    queries_failed,
+                    query,
+                    requester,
+                    successful_tracks,
+                    track_count,
+                    query.is_partial if partial is None else partial,
+                )
+            except Exception:
+                queries_failed.append(query)
         return successful_tracks, track_count, queries_failed
 
     async def _get_tracks_single_query(
