@@ -603,6 +603,10 @@ class Client(metaclass=SingletonClass):
 
     async def _add_scheduler_job_external_playlists(self):
         next_execution_update_external_playlists = await self._config.fetch_next_execution_update_external_playlists()
+        if next_execution_update_external_playlists >= (
+            alt_next := (get_now_utc() + datetime.timedelta(days=TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS))
+        ):
+            next_execution_update_external_playlists = alt_next
         self._scheduler.add_job(
             self.playlist_db_manager.update_external_playlists,
             trigger="interval",
@@ -624,6 +628,10 @@ class Client(metaclass=SingletonClass):
         next_execution_update_bundled_external_playlists = (
             await self._config.fetch_next_execution_update_bundled_external_playlists()
         )
+        if next_execution_update_bundled_external_playlists >= (
+            alt_next := (get_now_utc() + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS))
+        ):
+            next_execution_update_bundled_external_playlists = alt_next
         self._scheduler.add_job(
             self.playlist_db_manager.update_bundled_external_playlists,
             trigger="interval",
@@ -643,6 +651,10 @@ class Client(metaclass=SingletonClass):
 
     async def _add_scheduler_job_bundled_playlist(self):
         next_execution_update_bundled_playlists = await self._config.fetch_next_execution_update_bundled_playlists()
+        if next_execution_update_bundled_playlists >= (
+            alt_next := (get_now_utc() + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS))
+        ):
+            next_execution_update_bundled_playlists = alt_next
         self._scheduler.add_job(
             self.playlist_db_manager.update_bundled_playlists,
             trigger="interval",
