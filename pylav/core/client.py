@@ -95,6 +95,7 @@ from pylav.storage.models.node.real import Node as RealNode
 from pylav.storage.models.player.state import PlayerState
 from pylav.type_hints.bot import DISCORD_BOT_TYPE, DISCORD_COG_TYPE, DISCORD_CONTEXT_TYPE, DISCORD_INTERACTION_TYPE
 from pylav.utils.aiohttp_postgres_cache import PostgresCacheBackend
+from pylav.utils.localtracks import LocalTrackCache
 
 try:
     from redbot.core.i18n import Translator
@@ -147,6 +148,7 @@ class Client(metaclass=SingletonClass):
     __old_process_command_method: Callable = None
     __old_get_context: Callable = None
     _initiated = False
+    __local_tracks_cache: LocalTrackCache
 
     def __init__(
         self,
@@ -226,6 +228,7 @@ class Client(metaclass=SingletonClass):
             self._player_state_db_manager = PlayerStateController(self)
             self._player_config_manager = PlayerConfigController(self)
             self._equalizer_config_manager = EqualizerController(self)
+
             self._flowery_api = FloweryAPI(self)
             self._radio_manager = RadioBrowser(self)
             self._m3u8parser = M3UParser(self)
@@ -411,6 +414,10 @@ class Client(metaclass=SingletonClass):
     def bot_id(self) -> str:
         return self._user_id
 
+    @property
+    def local_tracks_cache(self) -> LocalTrackCache:
+        return self.__local_tracks_cache
+
     @SingletonCallable.run_once_async
     async def initialize(self) -> None:
         try:
@@ -453,6 +460,7 @@ class Client(metaclass=SingletonClass):
                 LOGGER.info("Settings folder: %s", config_folder)
                 LOGGER.info("Localtracks folder: %s", localtrack_folder)
                 self._config_folder = aiopath.AsyncPath(config_folder)
+                self.__local_tracks_cache = LocalTrackCache(self, localtrack_folder)
                 bundled_node_config = self._node_config_manager.bundled_node_config()
                 spotify_client_id, spotify_client_secret = await self._initialize_yaml_config(
                     bundled_node_config,
@@ -483,6 +491,7 @@ class Client(metaclass=SingletonClass):
                 await self._run_post_init_jobs(java_path)
                 self.ready.set()
                 LOGGER.info("PyLav is ready")
+                await self.__local_tracks_cache.initialize()
 
     async def _initialise_modules(self):
         await self._lib_config_manager.initialize()
@@ -1048,11 +1057,13 @@ class Client(metaclass=SingletonClass):
                     self.bot.remove_listener(self.on_pylav_ready, name="on_ready")
                     self.bot.remove_listener(self.on_pylav_resumed, name="on_resumed")
                     self._shutting_down = True
+
                     self.ready.clear()
                     try:
                         Client._instances.clear()
                         SingletonCallable.reset()
                         self._initiated = False
+                        await self.__local_tracks_cache.shutdown()
                         await self.player_manager.save_all_players()
                         await self.player_manager.shutdown()
                         await self._node_manager.close()
@@ -1235,6 +1246,7 @@ class Client(metaclass=SingletonClass):
         """
         if not self.node_manager.available_nodes:
             raise NoNodeAvailableException("There are no available nodes!")
+
         node = await self.node_manager.find_best_node(
             feature=query.requires_capability,
             region=player.region if player else None,

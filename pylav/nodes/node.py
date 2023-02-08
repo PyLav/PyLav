@@ -1433,6 +1433,23 @@ class Node:
         if not bypass_cache:
             if cached_entry := await self.get_track_from_cache(query=query, first=first):
                 return cached_entry
+        if (
+            (not self.node_manager.client.local_tracks_cache)
+            and query.is_local
+            and f"{query._query}" in self.node_manager.client.local_tracks_cache.path_to_track
+        ):
+            response = self.parse_loadtrack_response(
+                {
+                    "loadType": "TRACK_LOADED",
+                    "tracks": [],
+                    "playlistInfo": {"selectedTrack": -1, "name": ""},
+                    "exception": None,
+                    "pluginInfo": None,
+                }
+            )
+            return dataclasses.replace(
+                response, tracks=[self.node_manager.client.local_tracks_cache.path_to_track[f"{query._query}"]]
+            )
         response = await self.fetch_loadtracks(query=query)
         if isinstance(response, HTTPException):
             return response
