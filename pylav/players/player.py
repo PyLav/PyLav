@@ -2659,20 +2659,21 @@ class Player(VoiceProtocol):
 
     async def move_track(
         self,
-        track: Track,
+        queue_number: int,
         requester: discord.Member,
         new_index: int = None,
-    ) -> bool:
+    ) -> Track | None:
         if self.queue.empty():
-            return False
-        index = self.queue.index(track)
-        track = await self.queue.get(index)
+            return None
+        track = await self.queue.get(queue_number)
         await self.queue.put([track], new_index)
         self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
         self.node.dispatch_event(
-            QueueTrackPositionChangedEvent(before=index, after=new_index, track=track, player=self, requester=requester)
+            QueueTrackPositionChangedEvent(
+                before=queue_number, after=new_index, track=track, player=self, requester=requester
+            )
         )
-        return True
+        return track
 
     async def maybe_shuffle_queue(self, requester: int) -> None:
         if (await self.player_manager.client.player_config_manager.get_auto_shuffle(self.guild.id)) is False:
@@ -2851,19 +2852,24 @@ class Player(VoiceProtocol):
                     data = track_objects_mapping[track.pop("data")]
                 else:
                     data = track.pop("data")
-                queue.append(await Track.build_track(node=self.node, query=query, lazy=lazy, data=data, **track))
+                new_track = await Track.build_track(node=self.node, query=query, lazy=lazy, data=data, **track)
+                if new_track:
+                    queue.append(new_track)
         else:
             queue = (
                 [
-                    await Track.build_track(
-                        node=self.node,
-                        data=t.pop("encoded", None),
-                        query=await Query.from_string(t.pop("query")),
-                        lazy=True,
-                        **t.pop("extra"),
-                        **t,
+                    (
+                        track := await Track.build_track(
+                            node=self.node,
+                            data=t.pop("encoded", None),
+                            query=await Query.from_string(t.pop("query"), None),
+                            lazy=True,
+                            **t.pop("extra"),
+                            **t,
+                        )
                     )
                     for t in raw_queue
+                    if track
                 ]
                 if raw_queue
                 else []
