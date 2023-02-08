@@ -14,6 +14,20 @@
 **Full Changelog**: https://github.com/Drapersniper/PyLav/compare/v1.4.4...1.5.0
 ---
 
+## v1.6.0 (08/02/2023)
+- [Auto Merge](https://github.com/Drapersniper/PyLav/commit/b3ac5aa51ba4a10792b2644b2c8714c473bb0f0d) - @Drapersniper
+- [New Crowdin translations by Github Action](https://github.com/Drapersniper/PyLav/commit/225f07e642033778f4ac198752a9bee9044f680f) - @crowdin-bot
+- [Auto Merge](https://github.com/Drapersniper/PyLav/commit/0795fbd0e5f3c08b3a91157a3bdf0e43469cd294) - @Drapersniper
+- [New Crowdin translations by Github Action](https://github.com/Drapersniper/PyLav/commit/09f5e1bde69564a57cf4ebb5fb55103cbd6d34d3) - @crowdin-bot
+- [In theory closes #284](https://github.com/Drapersniper/PyLav/commit/3c059405e93bdb70160386b9d14d699d73f69ba4) - @Drapersniper
+- [Closes #285](https://github.com/Drapersniper/PyLav/commit/05ce5b67e1f21e5d056b35e1f9478cfd4f8b1018) - @Drapersniper
+- [Add __bool__ to Node Response classes](https://github.com/Drapersniper/PyLav/commit/d8f60a8433f25c9873310e59ab71ba333cbc5d41) - @Drapersniper
+- [Move the localtrack cache to PyLav](https://github.com/Drapersniper/PyLav/commit/c577dffd1f33f21fbae89d7dcbc97361e421958a) - @Drapersniper
+- [Get rid of Partial track logic (maybe to be readded in the future? probs not)](https://github.com/Drapersniper/PyLav/commit/02b54696b01ace5fefd2a08e2b8749e16283b0a7) - @Drapersniper
+- [Reset the playlist update timer if the next timer is greater than the current time + the envar number of days until the next (i.e if the envvar value changes)](https://github.com/Drapersniper/PyLav/commit/3691131f9f09672861034ee4169bc9dcd687a740) - @Drapersniper
+
+---
+
 ## v1.5.1 (07/02/2023)
 - [Auto Merge](https://github.com/Drapersniper/PyLav/commit/aed460efe649837151f262cf3159eb0c609b3daa) - @Drapersniper
 - [New Crowdin translations by Github Action](https://github.com/Drapersniper/PyLav/commit/0e6c6fc7fe36ccf1b7b11beb7b873114b89f05b2) - @crowdin-bot
@@ -244,9 +258,3 @@
 ## v1.1.17 (18/01/2023)
 - [pre-commit update](https://github.com/Drapersniper/PyLav/commit/e8b5120f3fbedb51aab021ef7037e59b6478bb16) - @Drapersniper
 - [Tweak LavaScr Providers to align with Topi's suggestion](https://github.com/Drapersniper/PyLav/commit/23247baad9b55badb12c5b68fe8d63d913f8d74e) - @Drapersniper
-
----
-
-## v1.1.7 (15/01/2023)
-- [Tweaks to special handling logic for node penalty](https://github.com/Drapersniper/PyLav/commit/1c27a95e7899a6102edfd3b0b64dc6e0176f1d25) - @Drapersniper
-- [fix incorrect reference to pylav.docker.yaml](https://github.com/Drapersniper/PyLav/commit/fdbe1ec61e4005360ae2152738ec96bf238f422e) - @Drapersniper
