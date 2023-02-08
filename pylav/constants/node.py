@@ -1,15 +1,24 @@
 from __future__ import annotations
 
+import multiprocessing
 import secrets
 
 from pylav import __version__
 
 MAX_SUPPORTED_API_MAJOR_VERSION = 4
 TRACK_VERSION = 3
+__CPU_COUNT = multiprocessing.cpu_count()
 
 # noinspection SpellCheckingInspection
 NODE_DEFAULT_SETTINGS = {
-    "server": {"port": 2154, "address": "localhost"},
+    "server": {
+        "port": 2154,
+        "address": "localhost",
+        "undertow": {
+            "threads": {"io": __CPU_COUNT * 2, "worker": __CPU_COUNT * 64},
+        },
+        "compression": {"enabled": True},
+    },
     "lavalink": {
         "plugins": [
             {

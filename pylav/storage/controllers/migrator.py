@@ -7,6 +7,7 @@ from pylav.logging import getLogger
 from pylav.storage.migrations.high_level.always.process_envvar_variables import process_envvar_variables
 from pylav.storage.migrations.high_level.always.set_pylav_version import set_current_version
 from pylav.storage.migrations.high_level.always.set_ram_value import set_correct_ram_cap
+from pylav.storage.migrations.high_level.always.update_managed_node_settings import update_managed_node_settings
 from pylav.storage.migrations.high_level.one_offs.v0_0_0_2 import migration_v_0_0_0_2
 from pylav.storage.migrations.high_level.one_offs.v0_3_2_0 import migration_v_0_3_2_0
 from pylav.storage.migrations.high_level.one_offs.v0_3_3_0 import migration_v_0_3_3_0
@@ -57,6 +58,7 @@ class MigrationController:
         await set_current_version(self._client)
         await set_correct_ram_cap(self._client)
         await process_envvar_variables(self._client)
+        await update_managed_node_settings(self._client)
 
     async def run_deferred_tasks_which_depend_on_node(self) -> None:
         for coro in self._tasks_depend_on_node:
