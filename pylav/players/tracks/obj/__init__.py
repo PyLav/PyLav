@@ -34,7 +34,6 @@ __CLIENT: Client | None = None
 class Track:
     __slots__ = (
         "_node",
-        "_is_partial",
         "_query",
         "_extra",
         "_unique_id",
@@ -61,7 +60,6 @@ class Track:
     ) -> None:
         """This class should not be instantiated directly. Use :meth:`Track.build_track` instead."""
         self._encoded: str | None = None
-        self._is_partial = False
         self._requester = requester
         self._node = node
         self._query = query
@@ -126,9 +124,6 @@ class Track:
             self._requester_id = self._requester
         else:
             self._requester_id = self._requester.id
-
-        if "partial" in self._extra:
-            self._is_partial = self._extra["partial"]
 
         if self._query is not None:
             self.timestamp = self.timestamp or self._query.start_time
@@ -207,7 +202,6 @@ class Track:
         instance._raw_data = extra.get("raw_data", {})
         instance._unique_id = hashlib.md5()
         instance._unique_id.update(instance._encoded.encode())
-        instance._is_partial = False
         instance._processed = data
         return instance
 
@@ -223,7 +217,6 @@ class Track:
     ) -> Track:
         instance = cls(node, query, skip_segments, requester, **extra)
         instance._encoded = data["encoded"]
-        instance._is_partial = not bool(data["encoded"])
         instance._raw_data = data.get("raw_data", {}) or extra.get("raw_data", {})
         if instance._encoded is None:
             raise InvalidTrackException("Cannot build a track from partial data! (Missing key: encoded)")
@@ -259,7 +252,6 @@ class Track:
         instance = cls(node, query, skip_segments, requester, **extra)
         instance._extra = extra
         instance._raw_data = extra.get("raw_data", {})
-        instance._is_partial = True
         return instance
 
     def _copy_with_extras(self, node: Node, **extra: Any) -> Track:
@@ -268,7 +260,6 @@ class Track:
         instance._encoded = self._encoded
         instance._raw_data = self._raw_data
         instance._unique_id = self._unique_id
-        instance._is_partial = self._is_partial
         instance._processed = self._processed
         return instance
 
@@ -313,47 +304,43 @@ class Track:
     def unique_identifier(self) -> str:
         return self._unique_id.hexdigest()
 
-    @property
-    def is_partial(self) -> bool:
-        return bool(self._is_partial and not self.encoded)
-
     async def identifier(self) -> str | None:
-        return MISSING if self.is_partial else (await self.fetch_full_track_data()).info.identifier
+        return (await self.fetch_full_track_data()).info.identifier
 
     async def is_seekable(self) -> bool:
-        return False if self.is_partial else (await self.fetch_full_track_data()).info.isSeekable
+        return (await self.fetch_full_track_data()).info.isSeekable
 
     async def duration(self) -> int:
-        return 0 if self.is_partial else (await self.fetch_full_track_data()).info.length
+        return (await self.fetch_full_track_data()).info.length
 
     length = duration
 
     async def stream(self) -> bool:
-        return False if self.is_partial else (await self.fetch_full_track_data()).info.isStream
+        return (await self.fetch_full_track_data()).info.isStream
 
     async def title(self) -> str:
-        return MISSING if self.is_partial else (await self.fetch_full_track_data()).info.title
+        return (await self.fetch_full_track_data()).info.title
 
     async def uri(self) -> str:
-        return MISSING if self.is_partial else (await self.fetch_full_track_data()).info.uri
+        return (await self.fetch_full_track_data()).info.uri
 
     async def author(self) -> str:
-        return MISSING if self.is_partial else (await self.fetch_full_track_data()).info.author
+        return (await self.fetch_full_track_data()).info.author
 
     async def source(self) -> str:
-        return MISSING if self.is_partial else (await self.fetch_full_track_data()).info.sourceName
+        return (await self.fetch_full_track_data()).info.sourceName
 
     async def artworkUrl(self) -> str | None:  # noqa:
-        return MISSING if self.is_partial else (await self.fetch_full_track_data()).info.artworkUrl
+        return (await self.fetch_full_track_data()).info.artworkUrl
 
     async def isrc(self) -> str | None:
-        return MISSING if self.is_partial else (await self.fetch_full_track_data()).info.isrc
+        return (await self.fetch_full_track_data()).info.isrc
 
     async def info(self) -> Info | None:
-        return MISSING if self.is_partial else (await self.fetch_full_track_data()).info
+        return (await self.fetch_full_track_data()).info
 
     async def probe_info(self) -> str | None:
-        return MISSING if self.is_partial else (await self.fetch_full_track_data()).pluginInfo.probeInfo
+        return (await self.fetch_full_track_data()).pluginInfo.probeInfo
 
     async def query(self) -> Query:
         if self._processed and self._updated_query is None:
@@ -506,7 +493,6 @@ class Track:
             "extra": {
                 "timestamp": self.timestamp,
                 "last_known_position": self.last_known_position,
-                "partial": self._is_partial,
             },
             "raw_data": self._raw_data,
         }
@@ -531,7 +517,6 @@ class Track:
         assert isinstance(self._encoded, str)
         self._unique_id = hashlib.md5()
         self._unique_id.update(self.encoded.encode())
-        self._is_partial = False
         self._processed = track
 
     async def search_all(self, player: Player, requester: int, bypass_cache: bool = False) -> list[Track]:
@@ -593,10 +578,7 @@ class Track:
         author: bool = True,
         escape: bool = True,
     ) -> str:
-        if self.is_partial:
-            track_name = await self.get_partial_track_display_name(max_length=max_length)
-        else:
-            track_name = await self.get_full_track_display_name(max_length=max_length, author=author)
+        track_name = await self.get_full_track_display_name(max_length=max_length, author=author)
         return self._maybe_escape_markdown(text=track_name, escape=escape)
 
     async def get_track_display_name_formatted(
@@ -606,31 +588,12 @@ class Track:
         with_url: bool = False,
         escape: bool = True,
     ) -> str:
-        if self.is_partial:
-            track_name = await self.get_partial_track_display_name(
-                max_length=max_length if with_url and max_length is None else (max_length - 8)
-            )
-            track_name = self._maybe_escape_markdown(text=track_name, escape=escape)
-            if with_url and (query := await self.query()):
-                if not query.is_single and not query.is_custom_playlist and not query.is_local:
-                    track_name = f"**[{track_name}]({query.query_identifier})**"
-        else:
-            track_name = await self.get_full_track_display_name(
-                max_length=max_length if with_url and max_length is None else (max_length - 8), author=author
-            )
-            track_name = self._maybe_escape_markdown(text=track_name, escape=escape)
-            if with_url and (query := await self.query()) and not query.is_local:
-                track_name = f"**[{track_name}]({await self.uri()})**"
-
-        return track_name
-
-    async def get_partial_track_display_name(self, max_length: int | None = None) -> str:
-        query = await self.query()
-        track_name = await query.query_to_queue(max_length if max_length is None else (max_length - 1), partial=True)
-        track_name = SQUARE_BRACKETS.sub("", track_name).strip()
-        if max_length is not None and len(track_name) > (max_length - 1):
-            max_length -= 1
-            return f"{track_name[:max_length]}\N{HORIZONTAL ELLIPSIS}"
+        track_name = await self.get_full_track_display_name(
+            max_length=max_length if with_url and max_length is None else (max_length - 8), author=author
+        )
+        track_name = self._maybe_escape_markdown(text=track_name, escape=escape)
+        if with_url and (query := await self.query()) and not query.is_local:
+            track_name = f"**[{track_name}]({await self.uri()})**"
         return track_name
 
     async def get_full_track_display_name(self, max_length: int | None = None, author: bool = True) -> str:
@@ -690,13 +653,11 @@ class Track:
     async def fetch_lyrics(self) -> tuple[bool, Lyrics | Error | None]:
         if isrc := await self.isrc():
             return True, await self.client.flowery_api.lyrics.get_lyrics(isrc=isrc)
-        elif not self.is_partial:
-            if await self.is_spotify():
-                return True, await self.client.flowery_api.lyrics.get_lyrics(spotify_id=await self.identifier())
-            elif await self.source() in {"deezer", "applemusic"}:
-                return True, await self.client.flowery_api.lyrics.get_lyrics(
-                    query=f"{await self.title()} artist:{await self.author()}"
-                )
-            else:
-                return False, await self.client.flowery_api.lyrics.get_lyrics(query=await self.title())
-        return False, None
+        if await self.is_spotify():
+            return True, await self.client.flowery_api.lyrics.get_lyrics(spotify_id=await self.identifier())
+        elif await self.source() in {"deezer", "applemusic"}:
+            return True, await self.client.flowery_api.lyrics.get_lyrics(
+                query=f"{await self.title()} artist:{await self.author()}"
+            )
+        else:
+            return False, await self.client.flowery_api.lyrics.get_lyrics(query=await self.title())

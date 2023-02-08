@@ -306,16 +306,6 @@ class Player(VoiceProtocol):
             next_run_time=now_time + datetime.timedelta(seconds=3),
         )
         self.player_manager.client.scheduler.add_job(
-            self.queue_resolver_task,
-            trigger="interval",
-            seconds=10,
-            max_instances=1,
-            id=f"{self.bot.user.id}-{self.guild.id}-queue_resolver_task",
-            replace_existing=False,
-            coalesce=True,
-            next_run_time=now_time + datetime.timedelta(seconds=3),
-        )
-        self.player_manager.client.scheduler.add_job(
             self.auto_empty_queue_task,
             trigger="interval",
             seconds=5,
@@ -770,44 +760,6 @@ class Player(VoiceProtocol):
                 self._was_alone_paused = False
                 self.player_manager.client.dispatch_event(PlayerAutoResumedEvent(self))
 
-    async def queue_resolver_task(self):
-        with contextlib.suppress(
-            asyncio.exceptions.CancelledError, NoNodeAvailableException, asyncpg.exceptions.CannotConnectNowError
-        ):
-            if not self.ready.is_set():
-                return
-            if not self.is_connected:
-                self._logger.trace(
-                    "Queue Resolver task fired while player is not connected to a voice channel - discarding",
-                )
-                return
-            if self.queue.empty():
-                self._logger.trace(
-                    "Queue Resolver task fired while player queue is empty - discarding",
-                )
-                return
-            if not self.queue.raw_queue[0].is_partial:
-                self._logger.trace(
-                    "Queue Resolver task fired while next track is not partial - discarding",
-                )
-                return
-            track = await self.queue.get()
-            requester = track.requester
-            if await track.is_single():
-                track, returned = await self._process_partial_track(track, False)
-                if returned:
-                    return
-                tracks = [track]
-            else:
-                tracks = await track.search_all(self, requester.id if requester else self.client.user.id)
-            if tracks:
-                await self.queue.put(tracks, index=0)
-            self._logger.trace(
-                "Queue Resolver task - Resolved partial track %s - Added %s tracks to queue",
-                track.identifier,
-                len(tracks),
-            )
-
     async def auto_dc_task(self):
         with contextlib.suppress(
             asyncio.exceptions.CancelledError, NoNodeAvailableException, asyncpg.exceptions.CannotConnectNowError
@@ -1177,13 +1129,6 @@ class Player(VoiceProtocol):
                 raise TrackNotFoundException(_("There are no tracks currently in the player history."))
             self.stopped = False
             track = await self.history.get()
-            if track.is_partial:
-                track, tracks = await self._process_partial_query(
-                    track, requester=track.requester, bypass_cache=bypass_cache, add_to_queue=False
-                )
-                if tracks:
-                    await self.history.put(tracks, 0, discard=True)
-                track = self.history.get()
             if self.current:
                 self.last_track = self.current
 
@@ -1219,9 +1164,6 @@ class Player(VoiceProtocol):
             if await track.query() and not self.node.has_source(await track.requires_capability()):
                 self.current = None
                 await self.change_to_best_node(feature=await track.requires_capability(), skip_position_fetch=True)
-            track, returning = await self._process_partial_track(track, bypass_cache)
-            if returning:
-                return
             self.current = track
             if self.next_track is None and not self.queue.empty():
                 self.next_track = self.queue.raw_queue.popleft()
@@ -1299,11 +1241,7 @@ class Player(VoiceProtocol):
                     await self._process_error_on_play(exc, track)
                     return
             track._node = self.node
-            if track.is_partial:
-                await self._process_partial_query(
-                    track, requester=track.requester, bypass_cache=bypass_cache, add_to_queue=True
-                )
-                return await self.play(None, None, requester or self.bot.user, node=node)
+
             await self._process_partial_payload(end_time, payload, start_time, track)
 
             if no_replace is None:
@@ -1356,38 +1294,6 @@ class Player(VoiceProtocol):
             await self._process_error_on_play(exc, track)
             return False
         return tracks
-
-    @staticmethod
-    async def _process_partial_track(track: Track, bypass_cache: bool) -> tuple[Track, bool]:
-        try:
-            await track.search(bypass_cache=bypass_cache)
-        except TrackNotFoundException as exc:
-            if not track:
-                raise TrackNotFoundException from exc
-            return track, True
-        return track, False
-
-    async def _process_partial_query(
-        self,
-        track: Track,
-        requester: discord.Member | None,
-        bypass_cache: bool,
-        add_to_queue: bool,
-    ) -> tuple[Track, list[Track]] | tuple[None, None]:
-        requester = track.requester or requester
-        if await track.is_single():
-            track, returned = await self._process_partial_track(track, bypass_cache)
-            if returned:
-                return None, None
-            tracks = [track]
-        else:
-            tracks = await track.search_all(
-                self, requester.id if requester else self.client.user.id, bypass_cache=bypass_cache
-            )
-        if add_to_queue and tracks:
-            await self.queue.put(tracks)
-            await self.maybe_shuffle_queue(requester=requester.id if requester else self.client.user.id)
-        return track, tracks
 
     async def _on_play_reset(self):
         payload = {}
@@ -1792,10 +1698,6 @@ class Player(VoiceProtocol):
             self.player_manager.client.scheduler.remove_job(
                 job_id=f"{self.bot.user.id}-{self.guild.id}-auto_track_stuck_fixer_track"
             )
-            self.player_manager.client.scheduler.remove_job(
-                job_id=f"{self.bot.user.id}-{self.guild.id}-queue_resolver_task"
-            )
-
             self.cleanup()
 
     async def stop(self, requester: discord.Member) -> None:
@@ -2730,11 +2632,7 @@ class Player(VoiceProtocol):
 
     async def queue_duration(self, history: bool = False) -> int:
         queue = self.history if history else self.queue
-        dur = [
-            await track.duration()
-            for track in filter(lambda x: not x.is_partial, queue.raw_queue)
-            if not await track.stream()
-        ]
+        dur = [await track.duration() for track in queue.raw_queue if not await track.stream()]
         queue_dur = sum(dur)
         if queue.empty():
             queue_dur = 0

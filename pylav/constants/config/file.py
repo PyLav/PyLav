@@ -158,10 +158,6 @@ if (MANAGED_NODE_DEEZER_KEY := data.get("PYLAV__MANAGED_NODE_DEEZER_KEY")) is No
     )
     data_new["PYLAV__MANAGED_NODE_DEEZER_KEY"] = MANAGED_NODE_DEEZER_KEY
 
-if (PREFER_PARTIAL_TRACKS := data.get("PYLAV__PREFER_PARTIAL_TRACKS")) is None:
-    PREFER_PARTIAL_TRACKS = bool(int(os.getenv("PYLAV__PREFER_PARTIAL_TRACKS", "0")))
-    data_new["PYLAV__PREFER_PARTIAL_TRACKS"] = PREFER_PARTIAL_TRACKS
-
 if (LOCAL_TRACKS_FOLDER := data.get("PYLAV__LOCAL_TRACKS_FOLDER")) is None:
     LOCAL_TRACKS_FOLDER = os.getenv("PYLAV__LOCAL_TRACKS_FOLDER")
     data_new["PYLAV__LOCAL_TRACKS_FOLDER"] = LOCAL_TRACKS_FOLDER
@@ -170,7 +166,7 @@ if (DATA_FOLDER := data.get("PYLAV__DATA_FOLDER")) is None:
     DATA_FOLDER = os.getenv("PYLAV__DATA_FOLDER")
     data_new["PYLAV__DATA_FOLDER"] = DATA_FOLDER
 
-data_new = remove_keys("PYLAV__CACHING_ENABLED", data=data_new)
+data_new = remove_keys("PYLAV__CACHING_ENABLED", "PYLAV__PREFER_PARTIAL_TRACKS", data=data_new)
 
 if DeepDiff(data, data_new, ignore_order=True, max_passes=2, cache_size=1000):
     with ENV_FILE.open(mode="w") as file:

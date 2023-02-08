@@ -3,7 +3,7 @@ from __future__ import annotations
 from pylav.constants.regex import SOURCE_INPUT_MATCH_DEEZER, TIMESTAMP_YOUTUBE, YOUTUBE_TRACK_INDEX
 
 
-def process_youtube(cls: type[Query], query: str, music: bool, partial: bool = False) -> Query:
+def process_youtube(cls: type[Query], query: str, music: bool) -> Query:
     index = 0
     if match := TIMESTAMP_YOUTUBE.search(query):
         start_time = int(match.group(1))
@@ -28,11 +28,10 @@ def process_youtube(cls: type[Query], query: str, music: bool, partial: bool = F
         start_time=start_time,
         query_type=query_type,
         index=index,
-        partial=partial,
     )
 
 
-def process_deezer(cls: type[Query], query: str, partial: bool = False) -> Query:
+def process_deezer(cls: type[Query], query: str) -> Query:
     """Process a Deezer query."
 
     Parameters
@@ -41,9 +40,6 @@ def process_deezer(cls: type[Query], query: str, partial: bool = False) -> Query
         The class to instantiate.
     query : str
         The query to process.
-    partial : bool, optional
-        Whether the query is partial, by default False
-
     Returns
     -------
     Query
@@ -59,39 +55,38 @@ def process_deezer(cls: type[Query], query: str, partial: bool = False) -> Query
         query,
         "Deezer",
         query_type="single" if query_type == "track" else "album" if query_type == "album" else "playlist",
-        partial=partial,
     )
 
 
-def process_spotify(cls: type[Query], query: str, partial: bool = False) -> Query:
+def process_spotify(cls: type[Query], query: str) -> Query:
     query_type = "single"
     if "/playlist/" in query:
         query_type = "playlist"
     elif "/album/" in query:
         query_type = "album"
-    return cls(query, "Spotify", query_type=query_type, partial=partial)
+    return cls(query, "Spotify", query_type=query_type)
 
 
-def process_soundcloud(cls: type[Query], query: str, partial: bool = False) -> Query:
+def process_soundcloud(cls: type[Query], query: str) -> Query:
     if "/sets/" in query and "?in=" in query or "/sets/" not in query:
         query_type = "single"
     else:
         query_type = "playlist"
-    return cls(query, "SoundCloud", query_type=query_type, partial=partial)
+    return cls(query, "SoundCloud", query_type=query_type)
 
 
-def process_bandcamp(cls: type[Query], query: str, partial: bool = False) -> Query:
+def process_bandcamp(cls: type[Query], query: str) -> Query:
     query_type = "album" if "/album/" in query else "single"
-    return cls(query, "Bandcamp", query_type=query_type, partial=partial)
+    return cls(query, "Bandcamp", query_type=query_type)
 
 
-def process_yandex_music(cls: type[Query], query: str, partial: bool = False) -> Query:
+def process_yandex_music(cls: type[Query], query: str) -> Query:
     query_type = "single"
     if "/album/" in query and "/track/" not in query:
         query_type = "album"
     elif "/playlist/" in query:
         query_type = "playlist"
-    return cls(query, "Yandex Music", query_type=query_type, partial=partial)
+    return cls(query, "Yandex Music", query_type=query_type)
 
 
 from pylav.players.query.obj import Query  # noqa: E305

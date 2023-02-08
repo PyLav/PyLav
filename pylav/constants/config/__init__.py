@@ -59,7 +59,6 @@ if not ENV_FILE.exists():
     from pylav.constants.config.env_var import POSTGRES_PORT as POSTGRES_PORT
     from pylav.constants.config.env_var import POSTGRES_SOCKET as POSTGRES_SOCKET
     from pylav.constants.config.env_var import POSTGRES_USER as POSTGRES_USER
-    from pylav.constants.config.env_var import PREFER_PARTIAL_TRACKS as PREFER_PARTIAL_TRACKS
     from pylav.constants.config.env_var import READ_CACHING_ENABLED as READ_CACHING_ENABLED
     from pylav.constants.config.env_var import REDIS_FULL_ADDRESS_RESPONSE_CACHE as REDIS_FULL_ADDRESS_RESPONSE_CACHE
     from pylav.constants.config.env_var import (
@@ -104,7 +103,6 @@ else:
     from pylav.constants.config.file import POSTGRES_PORT as POSTGRES_PORT
     from pylav.constants.config.file import POSTGRES_SOCKET as POSTGRES_SOCKET
     from pylav.constants.config.file import POSTGRES_USER as POSTGRES_USER
-    from pylav.constants.config.file import PREFER_PARTIAL_TRACKS as PREFER_PARTIAL_TRACKS
     from pylav.constants.config.file import READ_CACHING_ENABLED as READ_CACHING_ENABLED
     from pylav.constants.config.file import REDIS_FULL_ADDRESS_RESPONSE_CACHE as REDIS_FULL_ADDRESS_RESPONSE_CACHE
     from pylav.constants.config.file import (

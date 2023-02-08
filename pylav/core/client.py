@@ -47,7 +47,6 @@ from pylav.constants.config import (
     MANAGED_NODE_SPOTIFY_CLIENT_SECRET,
     MANAGED_NODE_SPOTIFY_COUNTRY_CODE,
     MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN,
-    PREFER_PARTIAL_TRACKS,
     REDIS_FULL_ADDRESS_RESPONSE_CACHE,
     TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS,
     TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS,
@@ -1257,7 +1256,6 @@ class Client(metaclass=SingletonClass):
         player: Player | None = None,
         bypass_cache: bool = False,
         enqueue: bool = True,
-        partial: bool = PREFER_PARTIAL_TRACKS,
     ) -> tuple[list[Track], int, list[Query]]:  # sourcery no-metrics
         """High level interface to get and return all tracks for a list of queries.
 
@@ -1277,8 +1275,6 @@ class Client(metaclass=SingletonClass):
         enqueue : `bool`, optional
             Whether to enqueue the tracks as needed
             while try are processed so users dont sit waiting for the bot to finish.
-        partial : `bool`, optional
-            Whether to return partial results
 
         Returns
         -------
@@ -1304,14 +1300,13 @@ class Client(metaclass=SingletonClass):
                     requester,
                     successful_tracks,
                     track_count,
-                    query.is_partial if partial is None else partial,
                 )
             except Exception:
                 queries_failed.append(query)
         return successful_tracks, track_count, queries_failed
 
     async def _get_tracks_single_query(
-        self, bypass_cache, enqueue, player, queries_failed, query, requester, successful_tracks, track_count, partial
+        self, bypass_cache, enqueue, player, queries_failed, query, requester, successful_tracks, track_count
     ):
         async for sub_query in self._yield_recursive_queries(query):
             node = await self.node_manager.find_best_node(
@@ -1323,11 +1318,7 @@ class Client(metaclass=SingletonClass):
                 queries_failed.append(sub_query)
                 continue
             await self._get_tracks_play_or_enqueue(enqueue, player, requester, successful_tracks)
-            if partial and sub_query.is_single:
-                track_count = await self._get_tracks_partial_single(
-                    enqueue, node, player, requester, sub_query, successful_tracks, track_count
-                )
-            elif sub_query.is_search or sub_query.is_single:
+            if sub_query.is_search or sub_query.is_single:
                 track_count = await self._get_tracks_search_or_single(
                     bypass_cache,
                     node,
@@ -1337,7 +1328,6 @@ class Client(metaclass=SingletonClass):
                     sub_query,
                     successful_tracks,
                     track_count,
-                    partial,
                 )
             elif (
                 (sub_query.is_playlist or sub_query.is_album)
@@ -1357,32 +1347,11 @@ class Client(metaclass=SingletonClass):
                 )
             elif (sub_query.is_local or sub_query.is_custom_playlist) and sub_query.is_album:
                 track_count = await self._get_tracks_local_album(
-                    enqueue, node, player, queries_failed, requester, sub_query, successful_tracks, track_count, partial
+                    enqueue, node, player, queries_failed, requester, sub_query, successful_tracks, track_count
                 )
             else:
                 queries_failed.append(sub_query)
                 LOGGER.warning("Unhandled query: %s, %s", sub_query.to_dict(), sub_query.query_identifier)
-        return track_count
-
-    async def _get_tracks_partial_single(
-        self, enqueue, node, player, requester, sub_query, successful_tracks, track_count
-    ):
-        track_count += 1
-        if cached_query := await self.node_manager.client.query_cache_manager.fetch_query(sub_query):
-            data = (await cached_query.fetch_tracks())[0]
-        else:
-            data = None
-        successful_tracks.append(
-            await Track.build_track(
-                data=data,
-                node=node,
-                query=sub_query,
-                requester=requester.id,
-            )
-        )
-        if enqueue and successful_tracks and not player.is_playing and not player.paused:
-            track = successful_tracks.pop()
-            await player.play(track, await track.query(), requester)
         return track_count
 
     @staticmethod
@@ -1398,22 +1367,19 @@ class Client(metaclass=SingletonClass):
             await player.add(requester.id, track, query=await track.query())
 
     async def _get_tracks_local_album(
-        self, enqueue, node, player, queries_failed, requester, sub_query, successful_tracks, track_count, partial
+        self,
+        enqueue,
+        node,
+        player,
+        queries_failed,
+        requester,
+        sub_query,
+        successful_tracks,
+        track_count,
     ):
         yielded = False
         async for local_track in sub_query.get_all_tracks_in_folder():
             yielded = True
-            if partial:
-                track_count += 1
-                successful_tracks.append(
-                    await Track.build_track(
-                        data=None,
-                        node=node,
-                        query=local_track,
-                        requester=requester.id,
-                    )
-                )
-                continue
             response = await self._get_tracks(player=player, query=local_track, first=True, bypass_cache=True)
             if isinstance(response, (HTTPException, NoMatches, LoadFailed)):
                 queries_failed.append(local_track)
@@ -1473,7 +1439,7 @@ class Client(metaclass=SingletonClass):
         return track_count
 
     async def _get_tracks_search_or_single(
-        self, bypass_cache, node, player, queries_failed, requester, sub_query, successful_tracks, track_count, partial
+        self, bypass_cache, node, player, queries_failed, requester, sub_query, successful_tracks, track_count
     ):
         response = await self._get_tracks(player=player, query=sub_query, first=True, bypass_cache=bypass_cache)
         if isinstance(response, (HTTPException, NoMatches, LoadFailed)):
@@ -1628,8 +1594,6 @@ class Client(metaclass=SingletonClass):
             if a Search query is passed wether to returrn a list of tracks instead of the first.
         region : `str`, optional
             The region to search in.
-        player : `Player`, optional
-            The player to use for enqueuing tracks.
         """
         node = await self.node_manager.find_best_node(region=region, feature=query.requires_capability)
         if node is None:

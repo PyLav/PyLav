@@ -16,7 +16,7 @@ import yaml
 
 from pylav.compat import json
 from pylav.constants import MAX_RECURSION_DEPTH
-from pylav.constants.config import DEFAULT_SEARCH_SOURCE, PREFER_PARTIAL_TRACKS
+from pylav.constants.config import DEFAULT_SEARCH_SOURCE
 from pylav.constants.node_features import SUPPORTED_SEARCHES
 from pylav.constants.regex import (
     LOCAL_TRACK_NESTED,
@@ -72,7 +72,6 @@ class Query:
         "_recursive",
         "_special_local",
         "_local_file_cls",
-        "_partial",
     )
     __local_file_cls: type[LocalFile] = LocalFile
     __CLIENT: Client | None = None
@@ -87,7 +86,6 @@ class Query:
         query_type: Literal["single", "playlist", "album"] | None = None,
         recursive: bool = False,
         special_local: bool = False,
-        partial: bool = False,
     ) -> None:
         self._query = query
         self._source = source
@@ -97,7 +95,6 @@ class Query:
         self._type = query_type or "single"
         self._recursive = recursive
         self._special_local = special_local
-        self._partial = partial if PREFER_PARTIAL_TRACKS else False
 
         self._local_file_cls = LocalFile
         self.update_local_file_cls(LocalFile)
@@ -137,7 +134,6 @@ class Query:
         start_time: bool = False,
         index: bool = False,
         recursive: bool = False,
-        partial: bool = False,
     ) -> None:
         if source and query:
             self._source = query.source
@@ -149,15 +145,9 @@ class Query:
             self.index = query.index
         if recursive and query:
             self._recursive = query._recursive
-        if partial and query:
-            self._partial = query._partial
 
     def __str__(self) -> str:
         return self.query_identifier
-
-    @property
-    def is_partial(self) -> bool:
-        return self._partial
 
     @property
     def is_clypit(self) -> bool:
@@ -321,75 +311,75 @@ class Query:
         return self._query
 
     @classmethod
-    def __process_urls(cls, query: str, partial: bool = False) -> Query | None:  # sourcery skip: low-code-quality
+    def __process_urls(cls, query: str) -> Query | None:  # sourcery skip: low-code-quality
         if match := SOURCE_INPUT_MATCH_YOUTUBE.match(query):
             music = match.group("youtube_music")
-            return process_youtube(cls, query, music=bool(music), partial=partial)
+            return process_youtube(cls, query, music=bool(music))
         elif SOURCE_INPUT_MATCH_SPOTIFY.match(query):
-            return process_spotify(cls, query, partial=partial)
+            return process_spotify(cls, query)
         elif match := SOURCE_INPUT_MATCH_APPLE_MUSIC.match(query):
-            return cls.process_applemusic(match, partial, query)
+            return cls.process_applemusic(match, query)
         elif SOURCE_INPUT_MATCH_DEEZER.match(query):
-            return process_deezer(cls, query, partial=partial)
+            return process_deezer(cls, query)
         elif SOURCE_INPUT_MATCH_SOUND_CLOUD.match(query):
-            return process_soundcloud(cls, query, partial=partial)
+            return process_soundcloud(cls, query)
         elif SOURCE_INPUT_MATCH_TWITCH.match(query):
-            return cls(query, "Twitch", partial=partial)
+            return cls(query, "Twitch")
         elif match := SOURCE_INPUT_MATCH_GCTSS.match(query):
             query = match.group("gctts_query").strip()
-            return cls(query, "Google TTS", search=True, partial=partial)
+            return cls(query, "Google TTS", search=True)
         elif match := SOURCE_INPUT_MATCH_SPEAK.match(query):
             query = match.group("speak_query").strip()
-            return cls(query, "speak", search=True, partial=partial)
+            return cls(query, "speak", search=True)
         elif SOURCE_INPUT_MATCH_CLYPIT.match(query):
-            return cls(query, "Clyp.it", partial=partial)
+            return cls(query, "Clyp.it")
         elif SOURCE_INPUT_MATCH_GETYARN.match(query):
-            return cls(query, "GetYarn", partial=partial)
+            return cls(query, "GetYarn")
         elif match := SOURCE_INPUT_MATCH_MIXCLOUD.match(query):
-            return cls.process_mixcloud(match, partial, query)
+            return cls.process_mixcloud(match, query)
         elif SOURCE_INPUT_MATCH_OCRREMIX.match(query):
-            return cls(query, "OverClocked ReMix", partial=partial)
+            return cls(query, "OverClocked ReMix")
         elif SOURCE_INPUT_MATCH_PORNHUB.match(query):
-            return cls(query, "Pornhub", partial=partial)
+            return cls(query, "Pornhub")
         elif SOURCE_INPUT_MATCH_REDDIT.match(query):
-            return cls(query, "Reddit", partial=partial)
+            return cls(query, "Reddit")
         elif SOURCE_INPUT_MATCH_SOUNDGASM.match(query):
-            return cls(query, "SoundGasm", partial=partial)
+            return cls(query, "SoundGasm")
         elif SOURCE_INPUT_MATCH_TIKTOK.match(query):
-            return cls(query, "TikTok", partial=partial)
+            return cls(query, "TikTok")
         elif SOURCE_INPUT_MATCH_BANDCAMP.match(query):
-            return process_bandcamp(cls, query, partial=partial)
+            return process_bandcamp(cls, query)
         elif SOURCE_INPUT_MATCH_NICONICO.match(query):
-            return cls(query, "Niconico", partial=partial)
+            return cls(query, "Niconico")
         elif SOURCE_INPUT_MATCH_VIMEO.match(query):
-            return cls(query, "Vimeo", partial=partial)
+            return cls(query, "Vimeo")
         elif SOURCE_INPUT_MATCH_YANDEX.match(query):
-            return process_yandex_music(cls, query, partial=partial)
+            return process_yandex_music(cls, query)
         elif SOURCE_INPUT_MATCH_HTTP.match(query):
-            return cls(query, "HTTP", partial=partial)
+            return cls(query, "HTTP")
         return None
 
     @classmethod
-    def process_applemusic(cls, match: typing.Match[str], partial: bool, query: str) -> Query:
+    def process_applemusic(cls, match: typing.Match[str], query: str) -> Query:
         query_type = match.group("type")
         match query_type:
             case "album":
-                return cls(query, "Apple Music", partial=partial, query_type="album")
+                return cls(query, "Apple Music", query_type="album")
             case "song":
-                return cls(query, "Apple Music", partial=partial, query_type="single")
+                return cls(query, "Apple Music", query_type="single")
             case _:
-                return cls(query, "Apple Music", partial=partial, query_type="playlist")
+                return cls(query, "Apple Music", query_type="playlist")
 
     @classmethod
-    def process_mixcloud(cls, match: typing.Match[str], partial: bool, query: str) -> Query:
+    def process_mixcloud(cls, match: typing.Match[str], query: str) -> Query:
         query_type = match.group("type")
         match query_type:
             case "uploads" | "favorites" | "listens":
-                return cls(query, "Mixcloud", partial=partial, query_type="album")
+                return cls(query, "Mixcloud", query_type="album")
             case "playlist":
-                return cls(query, "Mixcloud", partial=partial, query_type="playlist")
+                return cls(query, "Mixcloud", query_type="playlist")
             case _:
-                return cls(query, "Mixcloud", partial=partial, query_type="single")
+                return cls(query, "Mixcloud", query_type="single")
 
     @classmethod
     def __process_search(cls, query: str) -> Query | None:
@@ -440,14 +430,14 @@ class Query:
         return local_path
 
     @classmethod
-    async def __process_local(cls, query: str | pathlib.Path | aiopath.AsyncPath, partial: bool = False) -> Query:
+    async def __process_local(cls, query: str | pathlib.Path | aiopath.AsyncPath) -> Query:
         if cls.__local_file_cls is None:
             cls.__local_file_cls = LocalFile
         # noinspection PyProtectedMember
         assert cls.__local_file_cls._ROOT_FOLDER is not None
         recursively = False
         query = f"{query}"
-        if playlist_cls := await cls.__process_playlist(query, partial):
+        if playlist_cls := await cls.__process_playlist(query):
             return playlist_cls
         if match := SOURCE_INPUT_MATCH_LOCAL_TRACK_URI.match(query):
             query = match.group("local_file").strip()
@@ -473,16 +463,16 @@ class Query:
         return cls(local_path, "Local", query_type=query_type, recursive=recursively)  # type: ignore
 
     @classmethod
-    async def __process_playlist(cls, query: str, partial: bool = False) -> Query | None:
+    async def __process_playlist(cls, query: str) -> Query | None:
         with contextlib.suppress(ValueError):
             url = is_url(query)
             query_final = query if url else await cls.__process_local_playlist(query)
             if __ := SOURCE_INPUT_MATCH_M3U.match(query):
-                return cls(query_final, "M3U", query_type="album", special_local=not url, partial=partial)
+                return cls(query_final, "M3U", query_type="album", special_local=not url)
             elif __ := SOURCE_INPUT_MATCH_PLS.match(query):
-                return cls(query_final, "PLS", query_type="album", special_local=not url, partial=partial)
+                return cls(query_final, "PLS", query_type="album", special_local=not url)
             elif __ := SOURCE_INPUT_MATCH_PYLAV.match(query):
-                return cls(query_final, "PyLav", query_type="album", special_local=not url, partial=partial)
+                return cls(query_final, "PyLav", query_type="album", special_local=not url)
         return None
 
     @classmethod
@@ -490,14 +480,13 @@ class Query:
         cls,
         query: Query | str | pathlib.Path | aiopath.AsyncPath,
         dont_search: bool = False,
-        partial: bool = False,
         lazy: bool = False,
     ) -> Query:  # sourcery skip: low-code-quality
         if isinstance(query, Query):
             return query
         if isinstance(query, (aiopath.AsyncPath, pathlib.Path)):
             try:
-                return await cls.__process_local(query, partial)
+                return await cls.__process_local(query)
             except Exception:  # noqa
                 if dont_search:
                     return cls("invalid", "invalid")
@@ -511,11 +500,11 @@ class Query:
                 source = data.info.sourceName
                 query = data.info.uri
         try:
-            if not dont_search and (output := await cls.__process_playlist(query, partial)):
+            if not dont_search and (output := await cls.__process_playlist(query)):
                 if source:
                     output._source = cls.__get_source_from_str(source)
                 return output
-            if (output := cls.__process_urls(query, partial)) or (output := cls.__process_search(query)):
+            if (output := cls.__process_urls(query)) or (output := cls.__process_search(query)):
                 if source:
                     output._source = cls.__get_source_from_str(source)
                 return output
@@ -543,7 +532,7 @@ class Query:
             return output  # Fallback to Configured search source
 
     @classmethod
-    def from_string_noawait(cls, query: Query | str, partial: bool = False) -> Query:
+    def from_string_noawait(cls, query: Query | str) -> Query:
         """
         Same as from_string but synchronous
         - which makes it unable to process localtracks, base64 queries or playlists (M3U, PLS, PyLav).
@@ -552,7 +541,7 @@ class Query:
             return query
         elif query is None:
             raise ValueError("Query cannot be None")
-        if output := cls.__process_urls(query, partial):
+        if output := cls.__process_urls(query):
             return output
         elif output := cls.__process_search(query):
             return output
@@ -768,16 +757,8 @@ class Query:
                 return self._query
         return None
 
-    async def query_to_queue(
-        self, max_length: int | None = None, partial: bool = False, name_only: bool = False
-    ) -> str:
-        if not partial:
-            return await self.query_to_string(max_length, name_only=name_only)
-        source = len(self.source) + 3
-        if max_length:
-            max_length -= source
-        query_to_string = await self.query_to_string(max_length, name_only=name_only, no_extension=True)
-        return f"\N{HOURGLASS}\N{VARIATION SELECTOR-16}({self.source}) {query_to_string}"
+    async def query_to_queue(self, max_length: int | None = None, name_only: bool = False) -> str:
+        return await self.query_to_string(max_length, name_only=name_only)
 
     @property
     def source(self) -> str:
