@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-07 20:32+0000\n"
-"PO-Revision-Date: 2023-02-07 20:33\n"
+"POT-Creation-Date: 2023-02-08 21:00+0000\n"
+"PO-Revision-Date: 2023-02-08 21:01\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "MIME-Version: 1.0\n"
@@ -17,19 +17,19 @@ msgstr ""
 "X-Crowdin-File-ID: 3471\n"
 "Language: hi_IN\n"
 
-#: pylav/core/client.py:885 pylav/core/client.py:923
+#: pylav/core/client.py:905 pylav/core/client.py:943
 msgid "There are no available nodes!"
 msgstr "कोई उपलब्ध नोड्स नहीं हैं!"
 
-#: pylav/core/client.py:889 pylav/core/client.py:927 pylav/core/client.py:1234
+#: pylav/core/client.py:909 pylav/core/client.py:947 pylav/core/client.py:1257
 msgid "No node with {feature_name_variable_do_not_translate} functionality available!"
 msgstr "कोई नोड नहीं {feature_name_variable_do_not_translate} कार्यक्षमता उपलब्ध है!"
 
-#: pylav/core/client.py:1664
+#: pylav/core/client.py:1652
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist."
 msgstr "मिश्रित प्लेलिस्ट उत्पन्न करने के लिए एक एकल वीडियो, उपयोगकर्ता, चैनल या प्लेलिस्ट पहचानकर्ता आवश्यक है।"
 
-#: pylav/core/client.py:1669
+#: pylav/core/client.py:1657
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist. However, you provided multiple"
 msgstr "मिश्रित प्लेलिस्ट उत्पन्न करने के लिए एक एकल वीडियो, उपयोगकर्ता, चैनल या प्लेलिस्ट पहचानकर्ता आवश्यक है। हालाँकि, आपने एकाधिक प्रदान किए हैं"
 

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-04 18:31+0000\n"
-"PO-Revision-Date: 2023-02-06 20:45\n"
+"POT-Creation-Date: 2023-02-08 21:00+0000\n"
+"PO-Revision-Date: 2023-02-08 21:01\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -44,13 +44,13 @@ msgstr "ページ 1 / 1 |0 エントリ"
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} entries"
 msgstr "ページ {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} エントリ"
 
-#: pylav/extension/red/ui/sources/nodes.py:104
-#: pylav/extension/red/ui/sources/nodes.py:268
+#: pylav/extension/red/ui/sources/nodes.py:106
+#: pylav/extension/red/ui/sources/nodes.py:270
 msgid "No"
 msgstr "いいえ"
 
-#: pylav/extension/red/ui/sources/nodes.py:105
-#: pylav/extension/red/ui/sources/nodes.py:269
+#: pylav/extension/red/ui/sources/nodes.py:107
+#: pylav/extension/red/ui/sources/nodes.py:271
 msgid "Yes"
 msgstr "はい"
 
