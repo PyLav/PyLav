@@ -25,6 +25,9 @@ class BaseTrackResponse:
         if self.pluginInfo is None:
             object.__setattr__(self, "pluginInfo", PlaylistPluginInfo(kwargs=None))
 
+    def __bool__(self):
+        return True
+
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class TrackLoaded(BaseTrackResponse):  # noqa
@@ -45,10 +48,16 @@ class SearchResult(BaseTrackResponse):  # noqa
 class NoMatches(BaseTrackResponse):  # noqa
     loadType: Literal["NO_MATCHES"]
 
+    def __bool__(self):
+        return False
+
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LoadFailed(BaseTrackResponse):  # noqa
     loadType: Literal["LOAD_FAILED"]
+
+    def __bool__(self):
+        return False
 
 
 LoadTrackResponses: TypeAlias = Union[TrackLoaded, PlaylistLoaded, NoMatches, LoadFailed, SearchResult, HTTPException]

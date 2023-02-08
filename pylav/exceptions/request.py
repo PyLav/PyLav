@@ -10,6 +10,12 @@ class HTTPException(PyLavException):
     def __init__(self, response: LavalinkError):
         self.response = response
 
+    def __bool__(self):
+        return False
+
 
 class UnauthorizedException(HTTPException):
     """Raised when a REST request fails due to an incorrect password"""
+
+    def __bool__(self):
+        return False
