@@ -808,4 +808,4 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         if await self._userid_in_dj_users(user.id):
             return True
         dj_roles = await self.fetch_dj_roles()
-        return bool(any(r.id in dj_roles for r in user.roles)) if dj_roles else True
+        return any(r.id in dj_roles for r in user.roles) if dj_roles else True

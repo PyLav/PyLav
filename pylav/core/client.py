@@ -1457,10 +1457,8 @@ class Client(metaclass=SingletonClass):
         if isinstance(response, (HTTPException, NoMatches, LoadFailed)):
             queries_failed.append(sub_query)
             return track_count
-        track_b64 = response.tracks[0].encoded
-        if not track_b64:
-            queries_failed.append(sub_query)
-        if track_b64:
+
+        if response.tracks:
             track_count += 1
             new_query = await Query.from_string(response.tracks[0].info.uri)
             new_query.merge(sub_query, start_time=True)
@@ -1472,6 +1470,8 @@ class Client(metaclass=SingletonClass):
                     requester=requester.id,
                 )
             )
+        else:
+            queries_failed.append(sub_query)
         return track_count
 
     @staticmethod
@@ -1555,7 +1555,7 @@ class Client(metaclass=SingletonClass):
                 response = await self.search_query(
                     subquery, bypass_cache=bypass_cache, fullsearch=fullsearch, region=region
                 )
-                if response is None or not response.tracks:
+                if (not response) or (not response.tracks):
                     continue
                 if subquery.is_playlist or subquery.is_album:
                     playlist_name = response.playlistInfo.name if response.playlistInfo else ""

@@ -231,7 +231,7 @@ else:
                 return await cls.filter_cache(cache_type="state", limit=25, state=arg)
             except EntryNotFoundException as e:
                 raise commands.BadArgument(
-                    _("A state with the name `{user_input_variable_do_not_translate}` was not found.").formar(
+                    _("A state with the name `{user_input_variable_do_not_translate}` was not found.").format(
                         user_input_variable_do_not_translate=arg
                     )
                 ) from e

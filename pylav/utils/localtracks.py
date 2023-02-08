@@ -131,7 +131,7 @@ class LocalTrackCache:
                 await self._process_added(path, path_obj)
                 LOGGER.verbose(f"Added {path}")
             elif change == Change.modified:
-                await self._process_added(path, path_obj, modified=True)
+                await self._process_modified(path, path_obj, modified=True)
                 LOGGER.verbose(f"Modified {path}")
             elif change == Change.deleted:
                 await self._process_deleted(path, path_obj)
@@ -144,7 +144,23 @@ class LocalTrackCache:
         if path_obj.is_dir():
             await self._add_to_query_cache(query, path)
             return
+        await asyncio.sleep(0.1)
         track = await self.__pylav.get_tracks(query, bypass_cache=modified)
+        if isinstance(track, (TrackLoaded, SearchResult)):
+            await self._add_to_query_cache(query, path)
+            await self._add_to_track_cache(track.tracks[0], path)
+
+    async def _process_modified(self, path: str, path_obj: pathlib.Path, modified: bool = True) -> None:
+        if self.__shutdown:
+            return
+        query = await Query.from_string(path_obj)
+        await self._remove_from_query_cache(query, path)
+        await self._remove_from_track_cache(path)
+        if path_obj.is_dir():
+            await self._add_to_query_cache(query, path)
+            return
+        await asyncio.sleep(0.1)
+        track = await self.__pylav.search_query(query, bypass_cache=modified)
         if isinstance(track, (TrackLoaded, SearchResult)):
             await self._add_to_query_cache(query, path)
             await self._add_to_track_cache(track.tracks[0], path)

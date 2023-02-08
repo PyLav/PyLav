@@ -97,7 +97,7 @@ class SingletonCachedByKey(type):
                 return rps
         return cls._instances[key]
 
-    def _locked_call(cls, *args: Any, **kwargs: Any) -> None:
+    def _locked_call(cls, *args: Any, **kwargs: Any) -> Any:
         if super().__class__.__name__ not in _LOCKS_SINGLETON_CACHE:
             _LOCKS_SINGLETON_CACHE[super().__class__.__name__] = threading.Lock()
         with _LOCKS_SINGLETON_CACHE[super().__class__.__name__]:

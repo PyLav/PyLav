@@ -14,7 +14,6 @@ from cashews import Cache  # type: ignore
 from pylav.constants.regex import SQUARE_BRACKETS, STREAM_TITLE
 from pylav.exceptions.track import InvalidTrackException, TrackNotFoundException
 from pylav.extension.flowery.lyrics import Error, Lyrics
-from pylav.helpers.misc import MISSING
 from pylav.nodes.api.responses.playlists import Info
 from pylav.nodes.api.responses.track import Track as APITrack
 from pylav.players.query.obj import Query
@@ -140,7 +139,7 @@ class Track:
         requester: discord.abc.User | int | None = None,
         lazy: bool = False,
         **extra: Any,
-    ) -> Track:
+    ) -> Track | None:
         """Builds a track object from the given data.
 
         Parameters
@@ -164,6 +163,9 @@ class Track:
         # Check if data is a Track object and return it if it is
         if isinstance(data, cls):
             return data
+
+        if not query and not data:
+            return None
 
         # Check if data is a LavalinkTrackObject and process it.
         if isinstance(data, APITrack):

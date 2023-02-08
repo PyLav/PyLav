@@ -91,7 +91,9 @@ class NodeListSource(menus.ListPageSource):
         start = page_num * self.per_page
         return start, page_num
 
-    async def format_page(self, menu: NodeManagerMenu, node: Node) -> discord.Embed | str:
+    async def format_page(
+        self, menu: NodeManagerMenu, node: Node
+    ) -> discord.Embed | str:  # sourcery skip: low-code-quality
         locale = f"{i18n.get_babel_locale()}"
         with contextlib.suppress(Exception):
             humanize.i18n.activate(locale)
@@ -145,9 +147,7 @@ class NodeListSource(menus.ListPageSource):
             allocated = "?"
             reservable = "?"
             penalty = "?"
-        feature_str = ""
-        for feature in sorted(node.capabilities):
-            feature_str += f"{EightBitANSI.paint_blue(feature)}\n"
+        feature_str = "".join(f"{EightBitANSI.paint_blue(feature)}\n" for feature in sorted(node.capabilities))
         feature_str = feature_str.strip() or EightBitANSI.paint_red(_("None / Unknown"))
         humanize.i18n.deactivate()
         t_property = EightBitANSI.paint_yellow(_("Property"), bold=True, underline=True)
@@ -254,7 +254,9 @@ class NodeManageSource(menus.ListPageSource):
         start = page_num * self.per_page
         return start, page_num
 
-    async def format_page(self, menu: NodeManagerMenu, node: Node) -> discord.Embed | str:
+    async def format_page(
+        self, menu: NodeManagerMenu, node: Node
+    ) -> discord.Embed | str:  # sourcery skip: low-code-quality
         locale = f"{i18n.get_babel_locale()}"
         with contextlib.suppress(Exception):
             humanize.i18n.activate(locale)
@@ -309,9 +311,7 @@ class NodeManageSource(menus.ListPageSource):
             allocated = "?"
             reservable = "?"
             penalty = "?"
-        feature_str = ""
-        for feature in sorted(node.capabilities):
-            feature_str += f"{EightBitANSI.paint_blue(feature)}\n"
+        feature_str = "".join(f"{EightBitANSI.paint_blue(feature)}\n" for feature in sorted(node.capabilities))
         feature_str = feature_str.strip() or EightBitANSI.paint_red(_("None / Unknown"))
         humanize.i18n.deactivate()
         t_property = EightBitANSI.paint_yellow(_("Property"), bold=True, underline=True)

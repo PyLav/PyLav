@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import pathlib
 
 
 def remove_keys(*keys, data: dict) -> dict:
@@ -13,12 +14,7 @@ def in_container() -> bool:
     try:
         proc_1 = r"/proc/1/sched"
 
-        if os.path.exists(proc_1):
-            with open(proc_1) as fp:
-                out = fp.read()
-        else:
-            out = ""
-
+        out = pathlib.Path(proc_1).read_text() if os.path.exists(proc_1) else ""
         checks = [
             "docker" in out,
             "/lxc/" in out,
