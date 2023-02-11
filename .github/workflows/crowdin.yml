@@ -11,9 +11,9 @@ on:
 
 
 jobs:
-    crowdin-upload:
+    crowdin:
         if: github.repository == 'PyLav/PyLav'
-        runs-on: [self-hosted, linux, x64]
+        runs-on: [ubuntu-latest]
         name: Upload the latest strings to Crowdin
         steps:
         -   uses: actions/checkout@v3.3.0
