@@ -17,6 +17,15 @@ async def run_tracks_migration_v_1_3_8(con: Connection) -> None:
     """
     Add the Artwork column to the tracks table.
     """
+    has_column = """
+        SELECT EXISTS (SELECT 1
+        FROM information_schema.columns
+        WHERE table_name='version' AND column_name='version')
+        """
+    has_version_column = await con.fetchval(has_column)
+    if not has_version_column:
+        return
+
     version = await con.fetchval("SELECT version from version;")
     if version is None:
         return
