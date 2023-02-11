@@ -14,6 +14,12 @@
 **Full Changelog**: https://github.com/Drapersniper/PyLav/compare/v1.4.4...1.5.0
 ---
 
+## v1.6.1 (11/02/2023)
+- [fix `asyncpg.exceptions.UndefinedTableError: relation "version" does not exist` in the low level migrations](https://github.com/Drapersniper/PyLav/commit/78919d88592811a85aaac59c177fb3490f5f3e64) - @Drapersniper
+- [Change undertow settings](https://github.com/Drapersniper/PyLav/commit/aa62006f814b12cc0268ae934e479288f4dae0ec) - @Drapersniper
+
+---
+
 ## v1.6.0 (08/02/2023)
 - [Auto Merge](https://github.com/Drapersniper/PyLav/commit/b3ac5aa51ba4a10792b2644b2c8714c473bb0f0d) - @Drapersniper
 - [New Crowdin translations by Github Action](https://github.com/Drapersniper/PyLav/commit/225f07e642033778f4ac198752a9bee9044f680f) - @crowdin-bot
@@ -252,9 +258,3 @@
 
 ## v1.1.18 (18/01/2023)
 - [hotfix migration](https://github.com/Drapersniper/PyLav/commit/f80281b26fd21eefb9faccae984c49e137e46f4d) - @Drapersniper
-
----
-
-## v1.1.17 (18/01/2023)
-- [pre-commit update](https://github.com/Drapersniper/PyLav/commit/e8b5120f3fbedb51aab021ef7037e59b6478bb16) - @Drapersniper
-- [Tweak LavaScr Providers to align with Topi's suggestion](https://github.com/Drapersniper/PyLav/commit/23247baad9b55badb12c5b68fe8d63d913f8d74e) - @Drapersniper
