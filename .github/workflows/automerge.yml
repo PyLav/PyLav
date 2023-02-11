@@ -16,7 +16,7 @@ on:
         -   edited
 jobs:
     automerge:
-        runs-on: [self-hosted]
+        runs-on: [self-hosted, linux, x64]
         steps:
         -   id: automerge
             name: automerge

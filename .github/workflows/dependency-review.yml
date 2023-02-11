@@ -12,7 +12,7 @@ permissions:
 
 jobs:
     dependency-review:
-        runs-on: [self-hosted]
+        runs-on: [self-hosted, linux, x64]
         steps:
         -   name: Checkout Repository
             uses: actions/checkout@v3.3.0
