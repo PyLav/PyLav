@@ -12,7 +12,7 @@ on:
 
 jobs:
     crowdin-upload:
-        if: github.repository == 'Drapersniper/PyLav'
+        if: github.repository == 'PyLav/PyLav'
         runs-on: [self-hosted, linux, x64]
         name: Upload the latest strings to Crowdin
         steps:
