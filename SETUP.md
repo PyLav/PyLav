@@ -146,17 +146,17 @@ An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml
   - `PYLAV__DATA_FOLDER` - Default of a OS appropriate config folder
 
 ## Red Users (PyLav Cogs) Setup
-### Install [PyLav Cogs](https://github.com/Drapersniper/PyLav-Cogs)
+### Install [PyLav Cogs](https://github.com/PyLav/PyLav-Cogs)
 - Now that you have your env fully setup you can process to installing the desired cogs.
   - `[p]load downloader`
-  - `[p]repo add PyLav https://github.com/Drapersniper/PyLav-Cogs`
- - For a list of all available cogs visit the [PyLav Cogs](https://github.com/Drapersniper/PyLav-Cogs) repo
+  - `[p]repo add PyLav https://github.com/PyLav/PyLav-Cogs`
+ - For a list of all available cogs visit the [PyLav Cogs](https://github.com/PyLav/PyLav-Cogs) repo
 -------------
 # Note for 1.0.0 release until Lavalink 4.0.0 is released
 - This major release requires Lavalink 4.0.0 which has not yet been released.
 ## With Docker
   - A custom docker-compose file can be found [here](./docker-compose.yml)
-    - This uses a custom fork of Phasecore's redbot image to add support for python3.11 with PyLav bundled in i.e [docker-red-discordbot](https://github.com/Drapersniper/docker-red-discordbot/pkgs/container/red-discordbot)
+    - This uses a custom fork of Phasecore's redbot image to add support for python3.11 with PyLav bundled in i.e [docker-red-discordbot](https://github.com/PyLav/docker-red-discordbot/pkgs/container/red-discordbot)
     - This uses a custom lavalink image to allow you use Lavalink v4.0.0 early
   - If using this setup make sure to use this [pylav.yaml](./pylav.docker.yaml) file for the PyLav config.
 ## Without Docker

@@ -60,12 +60,12 @@ async def pylav_credits(context: PyLavContext) -> None:
                 "{buymeacoffee_url_variable_do_not_translate} or {github_sponsors_url_variable_do_not_translate}"
             ).format(
                 library_author_name_variable_do_not_translate="[Draper#6666](https://github.com/Drapersniper)",
-                library_url_variable_do_not_translate="https://github.com/Drapersniper/PyLav",
-                second_library_url_variable_do_not_translate="https://github.com/Drapersniper/PyLav-Cogs",
+                library_url_variable_do_not_translate="https://github.com/PyLav/PyLav",
+                second_library_url_variable_do_not_translate="https://github.com/PyLav/PyLav-Cogs",
                 support_server_url_variable_do_not_translate="https://discord.com/invite/Sjh2TSCYQB",
                 crowdin_project_url_variable_do_not_translate="https://crowdin.com/project/pylav",
-                project_contributors_url_variable_do_not_translate="https://github.com/Drapersniper/PyLav/graphs/contributors",
-                second_project_contributors_url_variable_do_not_translate="https://github.com/Drapersniper/PyLav-Cogs/graphs/contributors",
+                project_contributors_url_variable_do_not_translate="https://github.com/PyLav/PyLav/graphs/contributors",
+                second_project_contributors_url_variable_do_not_translate="https://github.com/PyLav/PyLav-Cogs/graphs/contributors",
                 buymeacoffee_url_variable_do_not_translate="https://www.buymeacoffee.com/draper",
                 github_sponsors_url_variable_do_not_translate="https://github.com/sponsors/Drapersniper",
             ),

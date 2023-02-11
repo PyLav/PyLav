@@ -13,7 +13,7 @@ services:
         -   ./localtracks:/localtracks  # Localtracks folder
         -   ./redbot:/data # Red data folder
         -   ./pylav:/data/pylav # Pylav folder
-            # Use the pylav.docker.yaml file from https://github.com/Drapersniper/PyLav/blob/master/pylav.docker.yaml editing it as necessary.
+            # Use the pylav.docker.yaml file from https://github.com/PyLav/PyLav/blob/master/pylav.docker.yaml editing it as necessary.
         -   ./pylav.docker.yaml:/data/pylav/pylav.yaml # Pylav config file
         environment:
             TOKEN: your_bot_token_goes_here

@@ -40,7 +40,7 @@ class FloweryAPI:
             timeout=aiohttp.ClientTimeout(total=30),
             json_serialize=json.dumps,
             cache=self._aiohttp_client_cache,
-            headers={"User-Agent": f"PyLav/{client.lib_version} (https://github.com/Drapersniper/PyLav)"},
+            headers={"User-Agent": f"PyLav/{client.lib_version} (https://github.com/PyLav/PyLav)"},
         )
 
         self._lyrics = LyricsAPI(client, self)

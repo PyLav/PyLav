@@ -93,7 +93,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: Implementation :: CPython",
 ]
-repository = "https://github.com/Drapersniper/PyLav"
+repository = "https://github.com/PyLav/PyLav"
 documentation = "https://pylav.readthedocs.io/en/latest/"
 include = [
     "CHANGELOG.md",
@@ -157,7 +157,7 @@ nored = ["Red-Commons","aiohttp","apsw","importlib-metadata","orjson","packaging
 all-nored = ["Red-Commons","aiohttp","apsw","importlib-metadata","orjson","orjson","packaging","platformdirs","psutil","python-dateutil","pytz","redis","rich","typing-extensions", "uvloop"]
 
 [tool.poetry.urls]
-"Bug Tracker" = "https://github.com/Drapersniper/PyLav/issues"
+"Bug Tracker" = "https://github.com/PyLav/PyLav/issues"
 
 [tool.poetry-dynamic-versioning]
 enable = true
