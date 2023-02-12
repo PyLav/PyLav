@@ -43,9 +43,14 @@ services:
     ll-node:
         hostname: ll-node
         container_name: ll-node
-        image: ghcr.io/drapersniper/pylav-node:master
+        image: ghcr.io/pylav/node:latest
         restart: always
         volumes:
+        # Mount the Lavalink logs folder
+        -   ./lavalink/logs:/opt/Lavalink/logs:rw
+        # Mount the Plugin folder to avoid downloading the plugins every time the image starts up
+        -   ./lavalink/plugins:/opt/Lavalink/plugins:rw
+        #  Mount this localtracks folder to the image to allow playback of media inside of '/localtracks'
         -   ./localtracks:/localtracks
         environment:
             _JAVA_OPTIONS: -Xmx4G # The highest amount of RAM which Lavalink is allowed to use

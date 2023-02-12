@@ -164,5 +164,5 @@ enable = true
 vcs = "git"
 
 [tool.poetry-dynamic-versioning.substitution]
-files = ["*.py", "*/__init__.py", "*/__version__.py", "*/_version.py"]
-patterns = ["(^__version__\\s*(?::.*?)?=\\s*['\"])[^'\"]*(['\"])"]
+files = ["*.py", "*/__init__.py", "*/__version__.py", "*/_version.py", "docker-compose.yml"]
+patterns = ["(^__version__\\s*(?::.*?)?=\\s*['\"])[^'\"]*(['\"])", "(^\\s+SENTRY_TAGS_PYLAVVERSION:\\s*(?::.*?)?\\s*).*"]
