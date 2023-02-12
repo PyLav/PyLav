@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-08 21:06\n"
+"POT-Creation-Date: 2023-02-12 23:00+0000\n"
+"PO-Revision-Date: 2023-02-12 23:00\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 "X-Crowdin-File-ID: 3715\n"
 "Language: es_ES\n"
 
-#: pylav/storage/controllers/playlists.py:84
+#: pylav/storage/controllers/playlists.py:85
 msgid "laylist with the name {playlist_name_variable_do_not_translate} was not found."
 msgstr "Lista de laicos con el nombre {playlist_name_variable_do_not_translate} no se encontró."
 

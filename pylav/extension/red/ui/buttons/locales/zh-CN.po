@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-04 18:31+0000\n"
-"PO-Revision-Date: 2023-02-08 21:06\n"
+"POT-Creation-Date: 2023-02-12 23:00+0000\n"
+"PO-Revision-Date: 2023-02-12 23:01\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -32,9 +32,9 @@ msgstr ""
 #: pylav/extension/red/ui/buttons/playlist.py:117
 #: pylav/extension/red/ui/buttons/playlist.py:179
 #: pylav/extension/red/ui/buttons/playlist.py:222
-#: pylav/extension/red/ui/buttons/playlist.py:270
-#: pylav/extension/red/ui/buttons/playlist.py:316
-#: pylav/extension/red/ui/buttons/playlist.py:362
+#: pylav/extension/red/ui/buttons/playlist.py:271
+#: pylav/extension/red/ui/buttons/playlist.py:317
+#: pylav/extension/red/ui/buttons/playlist.py:363
 msgid "You are not authorized to interact with this option."
 msgstr "您无权与此选项进行交互。"
 
@@ -152,31 +152,31 @@ msgstr "我将使用最新曲目更新此播放列表，按完成继续。"
 msgid "I will no longer update this playlist with the latest tracks."
 msgstr "我将不再使用最新曲目更新此播放列表。"
 
-#: pylav/extension/red/ui/buttons/playlist.py:278
+#: pylav/extension/red/ui/buttons/playlist.py:279
 msgid "I will add the current queue this playlist."
 msgstr "我将在此播放列表中添加当前队列。"
 
-#: pylav/extension/red/ui/buttons/playlist.py:285
+#: pylav/extension/red/ui/buttons/playlist.py:286
 msgid "I will no longer add the current queue to this playlist."
 msgstr "我将不再将当前队列添加到此播放列表中。"
 
-#: pylav/extension/red/ui/buttons/playlist.py:324
+#: pylav/extension/red/ui/buttons/playlist.py:325
 msgid "I will remove all duplicate tracks from the queue."
 msgstr "我将从队列中删除所有重复的曲目。"
 
-#: pylav/extension/red/ui/buttons/playlist.py:331
+#: pylav/extension/red/ui/buttons/playlist.py:332
 msgid "I will no longer remove duplicate tracks from the queue."
 msgstr "我将不再从队列中删除重复的曲目。"
 
-#: pylav/extension/red/ui/buttons/playlist.py:421
+#: pylav/extension/red/ui/buttons/playlist.py:422
 msgid "Playlists you can currently play."
 msgstr "您当前可以播放的播放列表。"
 
-#: pylav/extension/red/ui/buttons/playlist.py:427
+#: pylav/extension/red/ui/buttons/playlist.py:428
 msgid "Pick a playlist."
 msgstr "选择一个播放列表。"
 
-#: pylav/extension/red/ui/buttons/playlist.py:449
+#: pylav/extension/red/ui/buttons/playlist.py:450
 msgid "What should the playlist name be?"
 msgstr "播放列表名称应该是什么？"
 

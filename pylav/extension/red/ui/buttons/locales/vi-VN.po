@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-04 18:31+0000\n"
-"PO-Revision-Date: 2023-02-08 21:06\n"
+"POT-Creation-Date: 2023-02-12 23:00+0000\n"
+"PO-Revision-Date: 2023-02-12 23:01\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "MIME-Version: 1.0\n"
@@ -32,9 +32,9 @@ msgstr ""
 #: pylav/extension/red/ui/buttons/playlist.py:117
 #: pylav/extension/red/ui/buttons/playlist.py:179
 #: pylav/extension/red/ui/buttons/playlist.py:222
-#: pylav/extension/red/ui/buttons/playlist.py:270
-#: pylav/extension/red/ui/buttons/playlist.py:316
-#: pylav/extension/red/ui/buttons/playlist.py:362
+#: pylav/extension/red/ui/buttons/playlist.py:271
+#: pylav/extension/red/ui/buttons/playlist.py:317
+#: pylav/extension/red/ui/buttons/playlist.py:363
 msgid "You are not authorized to interact with this option."
 msgstr "Bạn không được phép tương tác với tùy chọn này."
 
@@ -152,31 +152,31 @@ msgstr "Tôi sẽ cập nhật danh sách phát này với các bản nhạc m�
 msgid "I will no longer update this playlist with the latest tracks."
 msgstr "Tôi sẽ không cập nhật danh sách phát này với các bản nhạc mới nhất nữa."
 
-#: pylav/extension/red/ui/buttons/playlist.py:278
+#: pylav/extension/red/ui/buttons/playlist.py:279
 msgid "I will add the current queue this playlist."
 msgstr "Tôi sẽ thêm hàng đợi hiện tại danh sách phát này."
 
-#: pylav/extension/red/ui/buttons/playlist.py:285
+#: pylav/extension/red/ui/buttons/playlist.py:286
 msgid "I will no longer add the current queue to this playlist."
 msgstr "Tôi sẽ không còn thêm hàng đợi hiện tại vào danh sách phát này nữa."
 
-#: pylav/extension/red/ui/buttons/playlist.py:324
+#: pylav/extension/red/ui/buttons/playlist.py:325
 msgid "I will remove all duplicate tracks from the queue."
 msgstr "Tôi sẽ xóa tất cả các bản nhạc trùng lặp khỏi hàng đợi."
 
-#: pylav/extension/red/ui/buttons/playlist.py:331
+#: pylav/extension/red/ui/buttons/playlist.py:332
 msgid "I will no longer remove duplicate tracks from the queue."
 msgstr "Tôi sẽ không còn xóa các bản nhạc trùng lặp khỏi hàng đợi."
 
-#: pylav/extension/red/ui/buttons/playlist.py:421
+#: pylav/extension/red/ui/buttons/playlist.py:422
 msgid "Playlists you can currently play."
 msgstr "Danh sách phát bạn hiện có thể phát."
 
-#: pylav/extension/red/ui/buttons/playlist.py:427
+#: pylav/extension/red/ui/buttons/playlist.py:428
 msgid "Pick a playlist."
 msgstr "Chọn một playlist."
 
-#: pylav/extension/red/ui/buttons/playlist.py:449
+#: pylav/extension/red/ui/buttons/playlist.py:450
 msgid "What should the playlist name be?"
 msgstr "Tên danh sách phát nên là gì?"
 

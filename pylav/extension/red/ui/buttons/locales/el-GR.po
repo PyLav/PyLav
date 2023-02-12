@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-04 18:31+0000\n"
-"PO-Revision-Date: 2023-02-08 21:06\n"
+"POT-Creation-Date: 2023-02-12 23:00+0000\n"
+"PO-Revision-Date: 2023-02-12 23:00\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
@@ -32,9 +32,9 @@ msgstr ""
 #: pylav/extension/red/ui/buttons/playlist.py:117
 #: pylav/extension/red/ui/buttons/playlist.py:179
 #: pylav/extension/red/ui/buttons/playlist.py:222
-#: pylav/extension/red/ui/buttons/playlist.py:270
-#: pylav/extension/red/ui/buttons/playlist.py:316
-#: pylav/extension/red/ui/buttons/playlist.py:362
+#: pylav/extension/red/ui/buttons/playlist.py:271
+#: pylav/extension/red/ui/buttons/playlist.py:317
+#: pylav/extension/red/ui/buttons/playlist.py:363
 msgid "You are not authorized to interact with this option."
 msgstr "Δεν είστε εξουσιοδοτημένοι να αλληλεπιδράσετε με αυτήν την επιλογή."
 
@@ -152,31 +152,31 @@ msgstr "Θα ενημερώσω αυτήν τη λίστα αναπαραγωγ�
 msgid "I will no longer update this playlist with the latest tracks."
 msgstr "Δεν θα ενημερώνω πλέον αυτήν τη λίστα αναπαραγωγής με τα πιο πρόσφατα κομμάτια."
 
-#: pylav/extension/red/ui/buttons/playlist.py:278
+#: pylav/extension/red/ui/buttons/playlist.py:279
 msgid "I will add the current queue this playlist."
 msgstr "Θα προσθέσω την τρέχουσα ουρά αυτής της λίστας αναπαραγωγής."
 
-#: pylav/extension/red/ui/buttons/playlist.py:285
+#: pylav/extension/red/ui/buttons/playlist.py:286
 msgid "I will no longer add the current queue to this playlist."
 msgstr "Δεν θα προσθέσω πλέον την τρέχουσα ουρά σε αυτήν τη λίστα αναπαραγωγής."
 
-#: pylav/extension/red/ui/buttons/playlist.py:324
+#: pylav/extension/red/ui/buttons/playlist.py:325
 msgid "I will remove all duplicate tracks from the queue."
 msgstr "Θα αφαιρέσω όλα τα διπλά κομμάτια από την ουρά."
 
-#: pylav/extension/red/ui/buttons/playlist.py:331
+#: pylav/extension/red/ui/buttons/playlist.py:332
 msgid "I will no longer remove duplicate tracks from the queue."
 msgstr "Δεν θα αφαιρώ πλέον διπλότυπα κομμάτια από την ουρά."
 
-#: pylav/extension/red/ui/buttons/playlist.py:421
+#: pylav/extension/red/ui/buttons/playlist.py:422
 msgid "Playlists you can currently play."
 msgstr "Λίστες αναπαραγωγής που μπορείτε να παίξετε αυτήν τη στιγμή."
 
-#: pylav/extension/red/ui/buttons/playlist.py:427
+#: pylav/extension/red/ui/buttons/playlist.py:428
 msgid "Pick a playlist."
 msgstr "Επιλέξτε μια λίστα αναπαραγωγής."
 
-#: pylav/extension/red/ui/buttons/playlist.py:449
+#: pylav/extension/red/ui/buttons/playlist.py:450
 msgid "What should the playlist name be?"
 msgstr "Τι πρέπει να είναι το όνομα της λίστας αναπαραγωγής?"
 

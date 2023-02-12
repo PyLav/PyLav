@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-08 21:00+0000\n"
-"PO-Revision-Date: 2023-02-08 21:01\n"
+"POT-Creation-Date: 2023-02-12 23:00+0000\n"
+"PO-Revision-Date: 2023-02-12 23:01\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
 "MIME-Version: 1.0\n"
@@ -244,58 +244,58 @@ msgstr "Stranica 1 / 1 | 0 poslužitelja"
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} servers"
 msgstr "Stranica {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} Poslužitelja"
 
-#: pylav/extension/red/ui/sources/playlist.py:55
-#: pylav/extension/red/ui/sources/playlist.py:208
+#: pylav/extension/red/ui/sources/playlist.py:58
+#: pylav/extension/red/ui/sources/playlist.py:219
 msgid "Page 1 / 1 | 1 playlist"
 msgstr "Stranica 1 / 1 | 1 popis za reprodukciju"
 
-#: pylav/extension/red/ui/sources/playlist.py:57
-#: pylav/extension/red/ui/sources/playlist.py:210
+#: pylav/extension/red/ui/sources/playlist.py:60
+#: pylav/extension/red/ui/sources/playlist.py:221
 msgid "Page 1 / 1 | 0 playlists"
 msgstr "Stranica 1 / 1 | 0 popisa za reproduciranje"
 
-#: pylav/extension/red/ui/sources/playlist.py:59
-#: pylav/extension/red/ui/sources/playlist.py:212
+#: pylav/extension/red/ui/sources/playlist.py:62
+#: pylav/extension/red/ui/sources/playlist.py:223
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} playlists"
 msgstr "Stranica {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} popisi za reproduciranje"
 
-#: pylav/extension/red/ui/sources/playlist.py:127
+#: pylav/extension/red/ui/sources/playlist.py:138
 msgid "Tracks in"
 msgstr "Zapisi u"
 
-#: pylav/extension/red/ui/sources/playlist.py:139
+#: pylav/extension/red/ui/sources/playlist.py:150
 msgid "Page 1 / 1 | 1 track"
 msgstr "Stranica 1 / 1 | 1 pjesma"
 
-#: pylav/extension/red/ui/sources/playlist.py:141
+#: pylav/extension/red/ui/sources/playlist.py:152
 msgid "Page 1 / 1 | 0 tracks"
 msgstr "Stranica 1 / 1 | 0 pjesama"
 
-#: pylav/extension/red/ui/sources/playlist.py:143
+#: pylav/extension/red/ui/sources/playlist.py:154
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} tracks"
 msgstr "Stranica {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} Pjesme"
 
-#: pylav/extension/red/ui/sources/playlist.py:176
+#: pylav/extension/red/ui/sources/playlist.py:187
 msgid "Unknown"
 msgstr "Nepoznato"
 
-#: pylav/extension/red/ui/sources/playlist.py:181
+#: pylav/extension/red/ui/sources/playlist.py:192
 msgid "Identifier: {id_variable_do_not_translate}"
 msgstr "Identifikator: {id_variable_do_not_translate}"
 
-#: pylav/extension/red/ui/sources/playlist.py:182
+#: pylav/extension/red/ui/sources/playlist.py:193
 msgid "Tracks: {num_variable_do_not_translate}"
 msgstr "Pjesme: {num_variable_do_not_translate}"
 
-#: pylav/extension/red/ui/sources/playlist.py:185
+#: pylav/extension/red/ui/sources/playlist.py:196
 msgid "Author: {name_variable_do_not_translate}"
 msgstr "Autor: {name_variable_do_not_translate}"
 
-#: pylav/extension/red/ui/sources/playlist.py:188
+#: pylav/extension/red/ui/sources/playlist.py:199
 msgid "Scope: {scope_variable_do_not_translate}\n"
 msgstr "Opseg: {scope_variable_do_not_translate}\n"
 
-#: pylav/extension/red/ui/sources/playlist.py:198
+#: pylav/extension/red/ui/sources/playlist.py:209
 msgid "Playlists you can access in this server:"
 msgstr "Popisi za reprodukciju kojima možete pristupiti na ovom serveru:"
 
