@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-08 21:00+0000\n"
-"PO-Revision-Date: 2023-02-08 21:01\n"
+"POT-Creation-Date: 2023-02-12 23:00+0000\n"
+"PO-Revision-Date: 2023-02-12 23:01\n"
 "Last-Translator: \n"
 "Language-Team: Thai\n"
 "MIME-Version: 1.0\n"
@@ -25,123 +25,123 @@ msgstr "ไม่มีโหนดที่พร้อมใช้งานใ
 msgid "Music in {number_of_servers_variable_do_not_translate} servers"
 msgstr "เพลงใน {number_of_servers_variable_do_not_translate} เซิร์ฟเวอร์"
 
-#: pylav/players/player.py:1129
+#: pylav/players/player.py:1130
 msgid "There are no tracks currently in the player history."
 msgstr "ขณะนี้ไม่มีแทร็กในประวัติผู้เล่น"
 
-#: pylav/players/player.py:1776
+#: pylav/players/player.py:1778
 msgid "Current node has the volume filter feature disabled."
 msgstr "โหนดปัจจุบันมีคุณลักษณะตัวกรองไดรฟ์ข้อมูลถูกปิดใช้งาน"
 
-#: pylav/players/player.py:1798 pylav/players/player.py:1974
-#: pylav/players/player.py:2029
+#: pylav/players/player.py:1800 pylav/players/player.py:1976
+#: pylav/players/player.py:2031
 msgid "Current node has the equalizer feature disabled."
 msgstr "โหนดปัจจุบันมีคุณลักษณะอีควอไลเซอร์ถูกปิดใช้งาน"
 
-#: pylav/players/player.py:1818
+#: pylav/players/player.py:1820
 msgid "Current node has the karaoke feature disabled"
 msgstr "โหนดปัจจุบันมีคุณลักษณะคาราโอเกะถูกปิดใช้งาน"
 
-#: pylav/players/player.py:1838 pylav/players/player.py:1976
-#: pylav/players/player.py:2031
+#: pylav/players/player.py:1840 pylav/players/player.py:1978
+#: pylav/players/player.py:2033
 msgid "Current node has the timescale feature disabled."
 msgstr "โหนดปัจจุบันมีคุณลักษณะมาตราส่วนเวลาถูกปิดใช้งาน"
 
-#: pylav/players/player.py:1858
+#: pylav/players/player.py:1860
 msgid "Current node has the tremolo feature disabled."
 msgstr "โหนดปัจจุบันมีคุณลักษณะ tremolo ถูกปิดใช้งาน"
 
-#: pylav/players/player.py:1878
+#: pylav/players/player.py:1880
 msgid "Current node has the vibrato feature disabled."
 msgstr "โหนดปัจจุบันปิดใช้งานคุณสมบัติ vibrato"
 
-#: pylav/players/player.py:1898
+#: pylav/players/player.py:1900
 msgid "Current node has the rotation feature disabled."
 msgstr "โหนดปัจจุบันปิดใช้งานคุณลักษณะการหมุน"
 
-#: pylav/players/player.py:1918
+#: pylav/players/player.py:1920
 msgid "Current node has the distortion feature disabled."
 msgstr "โหนดปัจจุบันมีคุณลักษณะความผิดเพี้ยนถูกปิดใช้งาน"
 
-#: pylav/players/player.py:1938
+#: pylav/players/player.py:1940
 msgid "Current node has the low-pass feature disabled."
 msgstr "โหนดปัจจุบันมีคุณลักษณะ low-pass ถูกปิดใช้งาน"
 
-#: pylav/players/player.py:1958
+#: pylav/players/player.py:1960
 msgid "Current node has the echo feature disabled."
 msgstr "โหนดปัจจุบันปิดใช้งานคุณลักษณะ echo"
 
-#: pylav/players/player.py:2088
+#: pylav/players/player.py:2090
 msgid "Current node has the channel-mix feature disabled."
 msgstr "โหนดปัจจุบันปิดใช้งานคุณลักษณะการผสมแชนเนล"
 
-#: pylav/players/player.py:2356 pylav/players/player.py:2412
-#: pylav/players/player.py:2427
+#: pylav/players/player.py:2358 pylav/players/player.py:2414
+#: pylav/players/player.py:2429
 msgid "LIVE"
 msgstr "อยู่"
 
-#: pylav/players/player.py:2369
+#: pylav/players/player.py:2371
 msgid "Now Playing in {server_name_variable_do_not_translate}"
 msgstr "ตอนนี้กําลังเล่นอยู่ {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2391 pylav/players/player.py:2558
+#: pylav/players/player.py:2393 pylav/players/player.py:2560
 msgid "Currently livestreaming"
 msgstr "กําลังสตรีมสด"
 
-#: pylav/players/player.py:2393
+#: pylav/players/player.py:2395
 msgid "Playing: "
 msgstr "เล่น: "
 
-#: pylav/players/player.py:2396 pylav/players/player.py:2419
-#: pylav/players/player.py:2434 pylav/players/player.py:2564
+#: pylav/players/player.py:2398 pylav/players/player.py:2421
+#: pylav/players/player.py:2436 pylav/players/player.py:2566
 msgid "Requester"
 msgstr "ผู้ร้องขอ"
 
-#: pylav/players/player.py:2402
+#: pylav/players/player.py:2404
 msgid "Duration: {track_duration_variable_do_not_translate}"
 msgstr "ระยะเวลา: {track_duration_variable_do_not_translate}"
 
-#: pylav/players/player.py:2415 pylav/players/player.py:2430
+#: pylav/players/player.py:2417 pylav/players/player.py:2432
 msgid "Duration"
 msgstr "ระยะเวลา"
 
-#: pylav/players/player.py:2421
+#: pylav/players/player.py:2423
 msgid "Previous Track"
 msgstr "แทร็กก่อนหน้า"
 
-#: pylav/players/player.py:2436
+#: pylav/players/player.py:2438
 msgid "Next Track"
 msgstr "ติดตามต่อไป"
 
-#: pylav/players/player.py:2445
+#: pylav/players/player.py:2447
 msgid "1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "1 แทร็ก, {queue_total_duration_variable_do_not_translate} เหลือ\n"
 
-#: pylav/players/player.py:2449
+#: pylav/players/player.py:2451
 msgid "0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "0 เพลง, {queue_total_duration_variable_do_not_translate} เหลือ\n"
 
-#: pylav/players/player.py:2453
+#: pylav/players/player.py:2455
 msgid "{track_count_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "{track_count_variable_do_not_translate} แทร็ค {queue_total_duration_variable_do_not_translate} เหลือ\n"
 
-#: pylav/players/player.py:2460 pylav/players/player.py:2605
+#: pylav/players/player.py:2462 pylav/players/player.py:2607
 msgid "Repeating"
 msgstr "ทำ ซ้ำ"
 
-#: pylav/players/player.py:2462 pylav/players/player.py:2607
+#: pylav/players/player.py:2464 pylav/players/player.py:2609
 msgid "Auto Play"
 msgstr "เล่นอัตโนมัติ"
 
-#: pylav/players/player.py:2466 pylav/players/player.py:2611
+#: pylav/players/player.py:2468 pylav/players/player.py:2613
 msgid "{volume_variable_do_not_translate}%"
 msgstr "{volume_variable_do_not_translate}%"
 
-#: pylav/players/player.py:2467 pylav/players/player.py:2612
+#: pylav/players/player.py:2469 pylav/players/player.py:2614
 msgid "Volume"
 msgstr "ปริมาตร"
 
-#: pylav/players/player.py:2470
+#: pylav/players/player.py:2472
 msgid "\n\n"
 "You can search specific services by using the following prefixes:\n"
 "{deezer_service_variable_do_not_translate}  - Deezer\n"
@@ -165,31 +165,31 @@ msgstr "\n\n"
 "ตัวอย่าง: {example_variable_do_not_translate}.\n\n"
 "ถ้าไม่มีคํานําหน้าจะใช้ฉันจะเริ่มต้นเป็น {fallback_service_variable_do_not_translate}\n"
 
-#: pylav/players/player.py:2530
+#: pylav/players/player.py:2532
 msgid "Recently Played for {server_name_variable_do_not_translate}"
 msgstr "เพิ่งลงเล่นให้ {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2536
+#: pylav/players/player.py:2538
 msgid "Queue for {server_name_variable_do_not_translate}"
 msgstr "คิวสําหรับ {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2561
+#: pylav/players/player.py:2563
 msgid "Playing"
 msgstr "เล่น"
 
-#: pylav/players/player.py:2577
+#: pylav/players/player.py:2579
 msgid "Queue order will change every time a track is added due to auto shuffle being enabled."
 msgstr "ลําดับคิวจะเปลี่ยนไปทุกครั้งที่มีการเพิ่มแทร็กเนื่องจากเปิดใช้งานการสุ่มอัตโนมัติ"
 
-#: pylav/players/player.py:2587
+#: pylav/players/player.py:2589
 msgid "Page 1 / 1 | 1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "หน้า 1 / 1 | 1 แทร็ก, {queue_total_duration_variable_do_not_translate} เหลือ\n"
 
-#: pylav/players/player.py:2591
+#: pylav/players/player.py:2593
 msgid "Page 1 / 1 | 0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "หน้า 1 / 1 | 0 เพลง, {queue_total_duration_variable_do_not_translate} เหลือ\n"
 
-#: pylav/players/player.py:2595
+#: pylav/players/player.py:2597
 msgid "Page {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "หน้า {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} แทร็ค {queue_total_duration_variable_do_not_translate} เหลือ\n"
 

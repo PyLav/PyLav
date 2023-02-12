@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-08 21:00+0000\n"
-"PO-Revision-Date: 2023-02-08 21:01\n"
+"POT-Creation-Date: 2023-02-12 23:00+0000\n"
+"PO-Revision-Date: 2023-02-12 23:00\n"
 "Last-Translator: \n"
 "Language-Team: Bulgarian\n"
 "MIME-Version: 1.0\n"
@@ -244,58 +244,58 @@ msgstr "Страница 1 / 1 | 0 сървъра"
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} servers"
 msgstr "Страница {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} Сървъри"
 
-#: pylav/extension/red/ui/sources/playlist.py:55
-#: pylav/extension/red/ui/sources/playlist.py:208
+#: pylav/extension/red/ui/sources/playlist.py:58
+#: pylav/extension/red/ui/sources/playlist.py:219
 msgid "Page 1 / 1 | 1 playlist"
 msgstr "Страница 1 / 1 | 1 плейлист"
 
-#: pylav/extension/red/ui/sources/playlist.py:57
-#: pylav/extension/red/ui/sources/playlist.py:210
+#: pylav/extension/red/ui/sources/playlist.py:60
+#: pylav/extension/red/ui/sources/playlist.py:221
 msgid "Page 1 / 1 | 0 playlists"
 msgstr "Страница 1 / 1 | 0 плейлисти"
 
-#: pylav/extension/red/ui/sources/playlist.py:59
-#: pylav/extension/red/ui/sources/playlist.py:212
+#: pylav/extension/red/ui/sources/playlist.py:62
+#: pylav/extension/red/ui/sources/playlist.py:223
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} playlists"
 msgstr "Страница {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} Списъци за изпълнение"
 
-#: pylav/extension/red/ui/sources/playlist.py:127
+#: pylav/extension/red/ui/sources/playlist.py:138
 msgid "Tracks in"
 msgstr "Песни в"
 
-#: pylav/extension/red/ui/sources/playlist.py:139
+#: pylav/extension/red/ui/sources/playlist.py:150
 msgid "Page 1 / 1 | 1 track"
 msgstr "Страница 1 / 1 | 1 писта"
 
-#: pylav/extension/red/ui/sources/playlist.py:141
+#: pylav/extension/red/ui/sources/playlist.py:152
 msgid "Page 1 / 1 | 0 tracks"
 msgstr "Страница 1 / 1 | 0 песни"
 
-#: pylav/extension/red/ui/sources/playlist.py:143
+#: pylav/extension/red/ui/sources/playlist.py:154
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} tracks"
 msgstr "Страница {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} Песни"
 
-#: pylav/extension/red/ui/sources/playlist.py:176
+#: pylav/extension/red/ui/sources/playlist.py:187
 msgid "Unknown"
 msgstr "Неизвестен"
 
-#: pylav/extension/red/ui/sources/playlist.py:181
+#: pylav/extension/red/ui/sources/playlist.py:192
 msgid "Identifier: {id_variable_do_not_translate}"
 msgstr "Идентификатор: {id_variable_do_not_translate}"
 
-#: pylav/extension/red/ui/sources/playlist.py:182
+#: pylav/extension/red/ui/sources/playlist.py:193
 msgid "Tracks: {num_variable_do_not_translate}"
 msgstr "Песни: {num_variable_do_not_translate}"
 
-#: pylav/extension/red/ui/sources/playlist.py:185
+#: pylav/extension/red/ui/sources/playlist.py:196
 msgid "Author: {name_variable_do_not_translate}"
 msgstr "Автор: {name_variable_do_not_translate}"
 
-#: pylav/extension/red/ui/sources/playlist.py:188
+#: pylav/extension/red/ui/sources/playlist.py:199
 msgid "Scope: {scope_variable_do_not_translate}\n"
 msgstr "Обхват: {scope_variable_do_not_translate}\n"
 
-#: pylav/extension/red/ui/sources/playlist.py:198
+#: pylav/extension/red/ui/sources/playlist.py:209
 msgid "Playlists you can access in this server:"
 msgstr "Плейлисти, до които имате достъп в този сървър:"
 

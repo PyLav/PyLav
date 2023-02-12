@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-08 21:00+0000\n"
-"PO-Revision-Date: 2023-02-08 21:01\n"
+"POT-Creation-Date: 2023-02-12 23:00+0000\n"
+"PO-Revision-Date: 2023-02-12 23:00\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -242,58 +242,58 @@ msgstr "ページ 1 / 1 |0 サーバー"
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} servers"
 msgstr "ページ {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} サーバー"
 
-#: pylav/extension/red/ui/sources/playlist.py:55
-#: pylav/extension/red/ui/sources/playlist.py:208
+#: pylav/extension/red/ui/sources/playlist.py:58
+#: pylav/extension/red/ui/sources/playlist.py:219
 msgid "Page 1 / 1 | 1 playlist"
 msgstr "ページ 1 / 1 |1 プレイリスト"
 
-#: pylav/extension/red/ui/sources/playlist.py:57
-#: pylav/extension/red/ui/sources/playlist.py:210
+#: pylav/extension/red/ui/sources/playlist.py:60
+#: pylav/extension/red/ui/sources/playlist.py:221
 msgid "Page 1 / 1 | 0 playlists"
 msgstr "ページ 1 / 1 |0 プレイリスト"
 
-#: pylav/extension/red/ui/sources/playlist.py:59
-#: pylav/extension/red/ui/sources/playlist.py:212
+#: pylav/extension/red/ui/sources/playlist.py:62
+#: pylav/extension/red/ui/sources/playlist.py:223
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} playlists"
 msgstr "ページ {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} プレイリスト"
 
-#: pylav/extension/red/ui/sources/playlist.py:127
+#: pylav/extension/red/ui/sources/playlist.py:138
 msgid "Tracks in"
 msgstr "トラック"
 
-#: pylav/extension/red/ui/sources/playlist.py:139
+#: pylav/extension/red/ui/sources/playlist.py:150
 msgid "Page 1 / 1 | 1 track"
 msgstr "ページ 1 / 1 |1トラック"
 
-#: pylav/extension/red/ui/sources/playlist.py:141
+#: pylav/extension/red/ui/sources/playlist.py:152
 msgid "Page 1 / 1 | 0 tracks"
 msgstr "ページ 1 / 1 |0曲のトラック"
 
-#: pylav/extension/red/ui/sources/playlist.py:143
+#: pylav/extension/red/ui/sources/playlist.py:154
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} tracks"
 msgstr "ページ {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} 跡"
 
-#: pylav/extension/red/ui/sources/playlist.py:176
+#: pylav/extension/red/ui/sources/playlist.py:187
 msgid "Unknown"
 msgstr "不明"
 
-#: pylav/extension/red/ui/sources/playlist.py:181
+#: pylav/extension/red/ui/sources/playlist.py:192
 msgid "Identifier: {id_variable_do_not_translate}"
 msgstr "識別子： {id_variable_do_not_translate}"
 
-#: pylav/extension/red/ui/sources/playlist.py:182
+#: pylav/extension/red/ui/sources/playlist.py:193
 msgid "Tracks: {num_variable_do_not_translate}"
 msgstr "跡： {num_variable_do_not_translate}"
 
-#: pylav/extension/red/ui/sources/playlist.py:185
+#: pylav/extension/red/ui/sources/playlist.py:196
 msgid "Author: {name_variable_do_not_translate}"
 msgstr "著者： {name_variable_do_not_translate}"
 
-#: pylav/extension/red/ui/sources/playlist.py:188
+#: pylav/extension/red/ui/sources/playlist.py:199
 msgid "Scope: {scope_variable_do_not_translate}\n"
 msgstr "スコープ： {scope_variable_do_not_translate}\n"
 
-#: pylav/extension/red/ui/sources/playlist.py:198
+#: pylav/extension/red/ui/sources/playlist.py:209
 msgid "Playlists you can access in this server:"
 msgstr "このサーバーでアクセスできるプレイリスト:"
 

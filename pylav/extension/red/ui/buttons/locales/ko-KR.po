@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-04 18:31+0000\n"
-"PO-Revision-Date: 2023-02-08 21:06\n"
+"POT-Creation-Date: 2023-02-12 23:00+0000\n"
+"PO-Revision-Date: 2023-02-12 23:00\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -32,9 +32,9 @@ msgstr ""
 #: pylav/extension/red/ui/buttons/playlist.py:117
 #: pylav/extension/red/ui/buttons/playlist.py:179
 #: pylav/extension/red/ui/buttons/playlist.py:222
-#: pylav/extension/red/ui/buttons/playlist.py:270
-#: pylav/extension/red/ui/buttons/playlist.py:316
-#: pylav/extension/red/ui/buttons/playlist.py:362
+#: pylav/extension/red/ui/buttons/playlist.py:271
+#: pylav/extension/red/ui/buttons/playlist.py:317
+#: pylav/extension/red/ui/buttons/playlist.py:363
 msgid "You are not authorized to interact with this option."
 msgstr "이 옵션과 상호 작용할 권한이 없습니다."
 
@@ -152,31 +152,31 @@ msgstr "이 재생 목록을 최신 트랙으로 업데이트하고 완료를 �
 msgid "I will no longer update this playlist with the latest tracks."
 msgstr "더 이상이 재생 목록을 최신 트랙으로 업데이트하지 않습니다."
 
-#: pylav/extension/red/ui/buttons/playlist.py:278
+#: pylav/extension/red/ui/buttons/playlist.py:279
 msgid "I will add the current queue this playlist."
 msgstr "이 재생 목록의 현재 대기열을 추가하겠습니다."
 
-#: pylav/extension/red/ui/buttons/playlist.py:285
+#: pylav/extension/red/ui/buttons/playlist.py:286
 msgid "I will no longer add the current queue to this playlist."
 msgstr "더 이상 이 재생 목록에 현재 대기열을 추가하지 않습니다."
 
-#: pylav/extension/red/ui/buttons/playlist.py:324
+#: pylav/extension/red/ui/buttons/playlist.py:325
 msgid "I will remove all duplicate tracks from the queue."
 msgstr "대기열에서 모든 중복 트랙을 제거하겠습니다."
 
-#: pylav/extension/red/ui/buttons/playlist.py:331
+#: pylav/extension/red/ui/buttons/playlist.py:332
 msgid "I will no longer remove duplicate tracks from the queue."
 msgstr "더 이상 대기열에서 중복 트랙을 제거하지 않습니다."
 
-#: pylav/extension/red/ui/buttons/playlist.py:421
+#: pylav/extension/red/ui/buttons/playlist.py:422
 msgid "Playlists you can currently play."
 msgstr "현재 재생할 수 있는 재생 목록."
 
-#: pylav/extension/red/ui/buttons/playlist.py:427
+#: pylav/extension/red/ui/buttons/playlist.py:428
 msgid "Pick a playlist."
 msgstr "재생 목록을 선택합니다."
 
-#: pylav/extension/red/ui/buttons/playlist.py:449
+#: pylav/extension/red/ui/buttons/playlist.py:450
 msgid "What should the playlist name be?"
 msgstr "재생 목록 이름은 무엇이어야 합니까?"
 
