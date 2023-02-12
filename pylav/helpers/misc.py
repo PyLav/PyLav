@@ -126,10 +126,10 @@ class MissingSentinel(str):
         return False
 
     def __eq__(self, other: Any) -> bool:
-        return False
+        return isinstance(other, MissingSentinel)
 
     def __ne__(self, other: Any) -> bool:
-        return True
+        return not self.__eq__(other)
 
     def __hash__(self) -> int:
         return 0

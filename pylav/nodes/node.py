@@ -930,7 +930,6 @@ class Node:
         response = await self.node_manager.client.query_cache_manager.fetch_query(query)
         if not response:
             return
-        need_update = False
         if tracks := await response.fetch_tracks():
             load_type = (
                 "PLAYLIST_LOADED"
@@ -940,11 +939,6 @@ class Node:
                 else "TRACK_LOADED"
             )
             try:
-                if any(not t["info"] for t in tracks):
-                    tracks = await self.node_manager.client.decode_tracks(
-                        [t["encoded"] for t in tracks], raise_on_failure=True
-                    )
-                    need_update = True
                 exception = None
                 if tracks and first:
                     tracks = [tracks[0]]
@@ -960,8 +954,6 @@ class Node:
                 "pluginInfo": await response.fetch_plugin_info(),
             }
             response = self.parse_loadtrack_response(data)
-            if need_update:
-                await self.node_manager.client.query_cache_manager.add_query(query, response)
             return response
 
     @property

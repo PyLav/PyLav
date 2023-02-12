@@ -227,6 +227,7 @@ class PlaylistInfoButton(discord.ui.Button):
         from pylav.extension.red.ui.menus.generic import PaginatingMenu
         from pylav.extension.red.ui.sources.playlist import TrackMappingSource
 
+        tracks = await self.view.playlist.fetch_tracks()
         await PaginatingMenu(
             bot=self.cog.bot,
             cog=self.cog,
@@ -234,7 +235,7 @@ class PlaylistInfoButton(discord.ui.Button):
                 guild_id=interaction.guild.id,
                 cog=self.cog,
                 author=interaction.user,
-                entries=await self.view.playlist.fetch_tracks(),
+                entries=tracks,
                 playlist=self.playlist,
             ),
             delete_after_timeout=True,

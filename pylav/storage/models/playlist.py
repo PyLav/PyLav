@@ -87,6 +87,11 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
             .first()
             .output(load_json=True, nested=True)
         )
+        # TODO: Remove me release 1.9
+        if data["tracks"] and any(t["info"] is None for t in data["tracks"]):
+            tracks = await self.client.decode_tracks([t["encoded"] for t in data["tracks"]], raise_on_failure=True)
+            await self.update_tracks(tracks)
+            data["tracks"] = [t.to_dict() for t in tracks]
         return data or {
             "id": self.id,
             "name": PlaylistRow.name.default,
@@ -256,7 +261,13 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
             .first()
             .output(load_json=True, nested=True)
         )
-        return response["tracks"] if response else []
+        data = response["tracks"] if response else []
+        # TODO: Remove me release 1.9
+        if data and any(t["info"] is None for t in data):
+            tracks = await self.client.decode_tracks([t["encoded"] for t in data], raise_on_failure=True)
+            await self.update_tracks(tracks)
+            data = [t.to_dict() for t in tracks]
+        return data
 
     async def update_tracks(self, tracks: list[str | JSON_DICT_TYPE | Track]) -> None:
         """Update the tracks of the playlist.

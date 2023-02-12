@@ -1343,11 +1343,7 @@ class Player(VoiceProtocol):
         await self._handle_event(event)
 
     async def _process_autoplay_on_play(self, available_tracks):
-        if available_tracks and isinstance(available_tracks[0], dict):
-            available_tracks = {track["decoded"]: track for track in available_tracks}
-        else:
-            available_tracks = {track: track for track in available_tracks}
-
+        available_tracks = {track["decoded"]: track for track in available_tracks}
         if tracks_not_in_history := list(set(available_tracks) - set(self.history.raw_b64s)):
             track = await Track.build_track(
                 node=self.node,
@@ -2871,7 +2867,7 @@ class Player(VoiceProtocol):
             queue = (
                 [
                     (
-                        track := await Track.build_track(
+                        await Track.build_track(
                             node=self.node,
                             data=t_full or t_data,
                             query=await Query.from_string(t.pop("query"), None),
@@ -2881,9 +2877,10 @@ class Player(VoiceProtocol):
                         )
                     )
                     for t in raw_queue
-                    if track
-                    and [t_full := t.pop("full_track_list", None), t_data := t.pop("data", None), False]
+                    if [t_full := t.pop("full_track_list", None), t_data := t.pop("data", None), False]
                     and t_data not in track_objects_mapping
+                    and t_full
+                    or t_data
                 ]
                 if raw_queue
                 else []
