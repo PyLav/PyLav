@@ -20,32 +20,41 @@ jobs:
                 os: [self-hosted]
         runs-on: ${{ matrix.os }}
         steps:
+
         -   name: Checkout code
             uses: actions/checkout@v3.3.0
+
         -   name: Set up Python
             uses: actions/setup-python@v4
             with:
                 python-version: ${{ matrix.python-version }}
+                cache: poetry
+
         -   if: ${{ runner.os == 'Windows' }}
             name: Use GNU tar
             shell: cmd
             run: |
                 echo "Adding GNU tar to PATH"
                 echo C:\Program Files\Git\usr\bin>>"%GITHUB_PATH%"
+
         -   name: Load cached Poetry installation
             id: cached-poetry
             uses: actions/cache@v3
             with:
-                path: ~/.local # the path depends on the OS
+                path: /tmp/dependecy-cache # the path depends on the OS
                 key: ${{ runner.os }}-poetry
+
         -   name: Install Poetry
             if: steps.cached-poetry.outputs.cache-hit != 'true'
             uses: snok/install-poetry@v1
+
         -   run: poetry self add "poetry-dynamic-versioning[plugin]"
+
         -   name: Check Version
             id: check-version
             run: |
                 [[ "$(poetry version --short)" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || echo prerelease=true >> $GITHUB_OUTPUT
+
         -   name: Create Release
             uses: ncipollo/release-action@v1
             with:
@@ -58,6 +67,7 @@ jobs:
                 omitBodyDuringUpdate: true
                 generateReleaseNotes: true
                 replacesArtifacts: false
+
         -   name: Publish to PyPI
             env:
                 POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
@@ -73,33 +83,43 @@ jobs:
             with:
                 fetch-depth: 0
                 ref: master
+
         -   name: Set up Python 3.11
             uses: actions/setup-python@v4
             with:
                 python-version: '3.11'
+                cache: poetry
+
         -   name: Load cached Poetry installation
             id: cached-poetry
             uses: actions/cache@v3
             with:
-                path: ~/.local # the path depends on the OS
+                path: /tmp/dependecy-cache # the path depends on the OS
                 key: ${{ runner.os }}-poetry
+
         -   name: Install Poetry
             if: steps.cached-poetry.outputs.cache-hit != 'true'
             uses: snok/install-poetry@v1
+
         -   name: Install Poetry-Dynamic-Versioning
             run: poetry self add "poetry-dynamic-versioning[plugin]"
+
         -   name: Install Node.js 14
             uses: actions/setup-node@v3
             with:
                 node-version: '14'
+                cache: npm
+
         -   name: Install GitHub Release Notes
             run: npm install github-release-notes -g
+
         -   name: Release Notes and Change logs
             env:
                 GREN_GITHUB_TOKEN: ${{ secrets.GREN_GITHUB_TOKEN }}
             run: |
                 gren release --token $GREN_GITHUB_TOKEN
                 gren changelog --token $GREN_GITHUB_TOKEN
+
         -   name: Import GPG key
             uses: crazy-max/ghaction-import-gpg@v5
             with:
@@ -108,12 +128,15 @@ jobs:
                 git_commit_gpgsign: true
                 git_tag_gpgsign: true
             id: import_gpg
+
         -   name: Bump Version in Files
             run: poetry dynamic-versioning
+
         -   name: Get Version
             id: get-version
             run: |
                 echo version="$(poetry version --short)" >> $GITHUB_OUTPUT
+
         -   name: Git Auto Commit
             uses: stefanzweifel/git-auto-commit-action@v4.15.4
             with:
@@ -122,6 +145,7 @@ jobs:
                 commit_user_name: ${{ steps.import_gpg.outputs.name }}
                 commit_user_email: ${{ steps.import_gpg.outputs.email }}
                 commit_author: ${{ steps.import_gpg.outputs.name }} <${{ steps.import_gpg.outputs.email }}>
+
         -   name: Trigger PyLav Cogs workflow
             run: |
                 curl -XPOST -u "PyLav:${{secrets.PAT}}" -H "Accept: application/vnd.github.everest-preview+json" -H "Content-Type:  application/json" https://api.github.com/repos/PyLav/PyLav-Cogs/dispatches --data '{"event_type": "on-release", "client_payload": {"version": "${{steps.get-version.outputs.version}}"}}'
