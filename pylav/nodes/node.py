@@ -930,7 +930,7 @@ class Node:
         response = await self.node_manager.client.query_cache_manager.fetch_query(query)
         if not response:
             return
-
+        need_update = False
         if tracks := await response.fetch_tracks():
             load_type = (
                 "PLAYLIST_LOADED"
@@ -940,18 +940,14 @@ class Node:
                 else "TRACK_LOADED"
             )
             try:
-                tracks = (
-                    [
-                        t.to_dict()
-                        for t in await self.node_manager.client.decode_tracks(tracks, raise_on_failure=False)
-                        if isinstance(t, Track)
-                    ]
-                    if tracks
-                    else []
-                )
+                if any(not t["info"] for t in tracks):
+                    tracks = await self.node_manager.client.decode_tracks(
+                        [t["encoded"] for t in tracks], raise_on_failure=True
+                    )
+                    need_update = True
+                exception = None
                 if tracks and first:
                     tracks = [tracks[0]]
-                exception = None
             except Exception:  # noqa
                 tracks = []
                 load_type = "LOAD_FAILED"
@@ -961,9 +957,12 @@ class Node:
                 "tracks": tracks,
                 "playlistInfo": {"selectedTrack": -1, "name": await response.fetch_name() or ""},
                 "exception": exception,
-                "pluginInfo": None,
+                "pluginInfo": await response.fetch_plugin_info(),
             }
-            return self.parse_loadtrack_response(data)
+            response = self.parse_loadtrack_response(data)
+            if need_update:
+                await self.node_manager.client.query_cache_manager.add_query(query, response)
+            return response
 
     @property
     def base_url(self) -> URL:
@@ -1199,8 +1198,9 @@ class Node:
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
                 result = await res.json(loads=json.loads)
-                asyncio.create_task(self.node_manager.client.query_cache_manager.add_query(query, result))
-                return self.parse_loadtrack_response(result)
+                response = self.parse_loadtrack_response(result)
+                asyncio.create_task(self.node_manager.client.query_cache_manager.add_query(query, response))
+                return response
             failure = from_dict(data_class=LavalinkError, data=await res.json(loads=json.loads))
             if res.status in [401, 403]:
                 raise UnauthorizedException(failure)

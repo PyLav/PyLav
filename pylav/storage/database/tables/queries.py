@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from piccolo.columns import M2M, LazyTableReference, Text, Timestamptz
+from piccolo.columns import JSONB, M2M, LazyTableReference, Text, Timestamptz
 from piccolo.columns.defaults.timestamptz import TimestamptzNow
 from piccolo.table import Table
 
@@ -12,4 +12,5 @@ class QueryRow(Table, db=DATABASE_ENGINE, tablename="query"):
     identifier = Text(null=False, index=True, primary_key=True)
     name = Text(null=True, default=None)
     last_updated = Timestamptz(null=False, index=True, default=TimestamptzNow(), auto_update=get_now_utc)
+    pluginInfo = JSONB(null=True, default=None)
     tracks = M2M(LazyTableReference("TrackToQueries", module_path="pylav.storage.database.tables.m2m"))

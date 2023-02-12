@@ -15,6 +15,7 @@ from pylav.storage.migrations.low_level.v_1_0_0 import (
     migrate_queries_v_1_0_0,
 )
 from pylav.storage.migrations.low_level.v_1_3_8 import low_level_v_1_3_8_migration
+from pylav.storage.migrations.low_level.v_1_7_0 import low_level_v_1_7_0_migration
 
 if TYPE_CHECKING:
     from pylav.storage.controllers.config import ConfigController
@@ -28,6 +29,7 @@ async def run_low_level_migrations(migrator: ConfigController) -> dict[str, dict
     con = await DATABASE_ENGINE.get_new_connection()
     await low_level_v_1_0_0_migration(con, migration_data, migrator)
     await low_level_v_1_3_8_migration(con)
+    await low_level_v_1_7_0_migration(con)
     return migration_data
 
 

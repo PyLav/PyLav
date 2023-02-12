@@ -10,6 +10,7 @@ from typing import Any
 import discord
 from cached_property import cached_property  # type: ignore
 from cashews import Cache  # type: ignore
+from dacite import from_dict
 
 from pylav.constants.regex import SQUARE_BRACKETS, STREAM_TITLE
 from pylav.exceptions.track import InvalidTrackException, TrackNotFoundException
@@ -173,12 +174,11 @@ class Track:
 
         if isinstance(data, dict):
             try:
-                return cls._from_mapping(node, data, query, skip_segments, requester, **extra)
-            except KeyError as ke:
-                (missing_key,) = ke.args
-                raise InvalidTrackException(
-                    f"Cannot build a track from partial data! (Missing key: {missing_key})"
-                ) from ke
+                return cls._from_lavalink_track_object(
+                    node, from_dict(data_class=APITrack, data=data), query, skip_segments, requester, **extra
+                )
+            except Exception as exc:
+                raise KeyError("Invalid track data") from exc
 
         if data is None:
             return cls._from_query(node, query, skip_segments, requester, **extra)
@@ -497,6 +497,7 @@ class Track:
                 "last_known_position": self.last_known_position,
             },
             "raw_data": self._raw_data,
+            "full_track_data": (await self.fetch_full_track_data()).to_database(),
         }
 
     async def search(self, bypass_cache: bool = False):

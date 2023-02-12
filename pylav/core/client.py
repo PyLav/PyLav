@@ -77,7 +77,7 @@ from pylav.nodes.node import Node
 from pylav.players.manager import PlayerController
 from pylav.players.player import Player
 from pylav.players.query.obj import Query
-from pylav.players.tracks.decoder import async_decoder
+from pylav.players.tracks.decoder import decode_track
 from pylav.players.tracks.obj import Track
 from pylav.storage.controllers.config import ConfigController
 from pylav.storage.controllers.equalizers import EqualizerController
@@ -900,7 +900,7 @@ class Client(metaclass=SingletonClass):
         """
         if lazy:
             with contextlib.suppress(Exception):
-                return await async_decoder(track)
+                return decode_track(track)
         if not self.node_manager.available_nodes:
             raise NoNodeAvailableException(_("There are no available nodes!"))
         node = await self.node_manager.find_best_node(feature=feature)
@@ -917,7 +917,7 @@ class Client(metaclass=SingletonClass):
                 return response
             raise TypeError
         except Exception as exc:  # noqa
-            return await async_decoder(track)
+            return decode_track(track)
 
     async def decode_tracks(
         self, tracks: list, feature: str = None, raise_on_failure: bool = False
@@ -958,7 +958,7 @@ class Client(metaclass=SingletonClass):
             response_tracks = []
             for track in tracks:
                 with contextlib.suppress(Exception):
-                    response_tracks.append(await async_decoder(track))
+                    response_tracks.append(decode_track(track))
             return response_tracks
 
     @staticmethod

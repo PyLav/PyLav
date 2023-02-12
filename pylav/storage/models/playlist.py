@@ -6,6 +6,7 @@ import io
 import pathlib
 import random
 import sys
+from collections import defaultdict
 from collections.abc import Iterator
 from dataclasses import dataclass
 
@@ -13,6 +14,7 @@ import aiohttp
 import brotli  # type: ignore
 import discord
 import yaml
+from dacite import from_dict
 
 from pylav.compat import json
 from pylav.constants.config import BROTLI_ENABLED, READ_CACHING_ENABLED
@@ -22,6 +24,7 @@ from pylav.core.context import PyLavContext
 from pylav.exceptions.playlist import InvalidPlaylistException
 from pylav.helpers.singleton import SingletonCachedByKey
 from pylav.logging import getLogger
+from pylav.nodes.api.responses.track import Track
 from pylav.storage.database.cache.decodators import maybe_cached
 from pylav.storage.database.cache.model import CachedModel
 from pylav.storage.database.tables.playlists import PlaylistRow
@@ -75,7 +78,7 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
             await PlaylistRow.select(
                 PlaylistRow.id,
                 PlaylistRow.name,
-                PlaylistRow.tracks(TrackRow.encoded, as_list=True, load_json=True),
+                PlaylistRow.tracks(TrackRow.encoded, TrackRow.info, TrackRow.pluginInfo, load_json=True),
                 PlaylistRow.scope,
                 PlaylistRow.author,
                 PlaylistRow.url,
@@ -237,7 +240,7 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
         await self.invalidate_cache(self.fetch_all)
 
     @maybe_cached
-    async def fetch_tracks(self) -> list[str]:
+    async def fetch_tracks(self) -> list[str | JSON_DICT_TYPE]:
         """Fetch the tracks of the playlist.
 
         Returns
@@ -246,14 +249,16 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
             The tracks of the playlist.
         """
         response = (
-            await PlaylistRow.select(PlaylistRow.tracks(TrackRow.encoded, as_list=True, load_json=True))
+            await PlaylistRow.select(
+                PlaylistRow.tracks(TrackRow.encoded, TrackRow.info, TrackRow.pluginInfo, load_json=True)
+            )
             .where(PlaylistRow.id == self.id)
             .first()
             .output(load_json=True, nested=True)
         )
         return response["tracks"] if response else []
 
-    async def update_tracks(self, tracks: list[str]) -> None:
+    async def update_tracks(self, tracks: list[str | JSON_DICT_TYPE | Track]) -> None:
         """Update the tracks of the playlist.
 
         Parameters
@@ -268,20 +273,29 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
             old_tracks = []
         new_tracks = []
         # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
-        for track_object in await self.client.decode_tracks(tracks, raise_on_failure=False):
-            with contextlib.suppress(Exception):
-                new_tracks.append(await TrackRow.get_or_create(track_object.encoded, track_object.info.to_database()))
+        _temp = defaultdict(list)
+        for x in tracks:
+            _temp[type(x)].append(x)
+        for entry_type, entry_list in _temp.items():
+            if entry_type == str:
+                for track_object in await self.client.decode_tracks(entry_list, raise_on_failure=False):
+                    new_tracks.append(await TrackRow.get_or_create(track_object))
+            elif entry_type == dict:
+                for track_object in entry_list:
+                    new_tracks.append(await TrackRow.get_or_create(from_dict(data_class=Track, data=track_object)))
+            else:
+                for track_object in entry_list:
+                    new_tracks.append(await TrackRow.get_or_create(track_object))
 
         if old_tracks:
             await playlist_row.remove_m2m(*old_tracks, m2m=PlaylistRow.tracks)
         if new_tracks:
             await playlist_row.add_m2m(*new_tracks, m2m=PlaylistRow.tracks)
 
+        await self.invalidate_cache(self.fetch_tracks, self.fetch_first)
         await self.update_cache(
-            (self.fetch_tracks, tracks),
             (self.exists, True),
             (self.size, len(tracks)),
-            (self.fetch_first, tracks[0] if tracks else None),
         )
         await self.invalidate_cache(self.fetch_all)
 
@@ -297,23 +311,30 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
         tracks = await self.fetch_tracks()
         return len(tracks) if tracks else 0
 
-    async def add_track(self, tracks: list[str]) -> None:
+    async def add_track(self, tracks: list[str | Track | JSON_DICT_TYPE]) -> None:
         """Add a track to the playlist.
 
         Parameters
         ----------
-        tracks : list[str]
+        tracks : list[str | Track]
             The tracks to add.
         """
         playlist_row = await PlaylistRow.objects().get_or_create(PlaylistRow.id == self.id)
         new_tracks = []
         # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
-        with contextlib.suppress(Exception):
-            for track_object in await self.client.decode_tracks(tracks, raise_on_failure=False):
-                with contextlib.suppress(Exception):
-                    new_tracks.append(
-                        await TrackRow.get_or_create(track_object.encoded, track_object.info.to_database())
-                    )
+        _temp = defaultdict(list)
+        for x in tracks:
+            _temp[type(x)].append(x)
+        for entry_type, entry_list in _temp.items():
+            if entry_type == str:
+                for track_object in await self.client.decode_tracks(entry_list, raise_on_failure=False):
+                    new_tracks.append(await TrackRow.get_or_create(track_object))
+            elif entry_type == dict:
+                for track_object in entry_list:
+                    new_tracks.append(await TrackRow.get_or_create(from_dict(data_class=Track, data=track_object)))
+            else:
+                for track_object in entry_list:
+                    new_tracks.append(await TrackRow.get_or_create(track_object))
         if new_tracks:
             await playlist_row.add_m2m(*new_tracks, m2m=PlaylistRow.tracks)
         await self.invalidate_cache(self.fetch_tracks, self.fetch_all, self.size, self.fetch_first, self.exists)
@@ -508,7 +529,9 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
                     return
             yield bio, compression
 
-    async def bulk_update(self, scope: int, name: str, author: int, url: str | None, tracks: list[str]) -> None:
+    async def bulk_update(
+        self, scope: int, name: str, author: int, url: str | None, tracks: list[str | JSON_DICT_TYPE]
+    ) -> None:
         """Bulk update the playlist."""
         defaults = {
             PlaylistRow.name: name,
@@ -527,12 +550,19 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
             old_tracks = []
         new_tracks = []
         # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
-        with contextlib.suppress(Exception):
-            for track_object in await self.client.decode_tracks(tracks, raise_on_failure=False):
-                with contextlib.suppress(Exception):
-                    new_tracks.append(
-                        await TrackRow.get_or_create(track_object.encoded, track_object.info.to_database())
-                    )
+        _temp = defaultdict(list)
+        for x in tracks:
+            _temp[type(x)].append(x)
+        for entry_type, entry_list in _temp.items():
+            if entry_type == str:
+                for track_object in await self.client.decode_tracks(entry_list, raise_on_failure=False):
+                    new_tracks.append(await TrackRow.get_or_create(track_object))
+            elif entry_type == dict:
+                for track_object in entry_list:
+                    new_tracks.append(await TrackRow.get_or_create(from_dict(data_class=Track, data=track_object)))
+            else:
+                for track_object in entry_list:
+                    new_tracks.append(await TrackRow.get_or_create(track_object))
         if old_tracks:
             await playlist_row.remove_m2m(*old_tracks, m2m=PlaylistRow.tracks)
         if new_tracks:
@@ -576,7 +606,7 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
         )
         return playlist
 
-    async def fetch_index(self, index: int) -> str | None:
+    async def fetch_index(self, index: int) -> JSON_DICT_TYPE | None:
         """Get the track at the index.
 
         Parameters
@@ -598,7 +628,7 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
                 return tracks[index]
 
     @maybe_cached
-    async def fetch_first(self) -> str | None:
+    async def fetch_first(self) -> JSON_DICT_TYPE | None:
         """Get the first track.
 
         Returns
@@ -608,7 +638,7 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
         """
         return await self.fetch_index(0)
 
-    async def fetch_random(self) -> str | None:
+    async def fetch_random(self) -> JSON_DICT_TYPE | None:
         """Get a random track.
 
         Returns

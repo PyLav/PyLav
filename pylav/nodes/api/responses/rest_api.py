@@ -37,6 +37,7 @@ class TrackLoaded(BaseTrackResponse):  # noqa
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class PlaylistLoaded(BaseTrackResponse):  # noqa
     loadType: Literal["PLAYLIST_LOADED"]
+    playlistInfo: Info
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)

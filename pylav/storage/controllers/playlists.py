@@ -31,6 +31,7 @@ from pylav.players.query.obj import Query
 from pylav.storage.database.tables.playlists import PlaylistRow
 from pylav.storage.models.playlist import Playlist
 from pylav.type_hints.bot import DISCORD_BOT_TYPE
+from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 if TYPE_CHECKING:
     from pylav.core.client import Client
@@ -147,7 +148,13 @@ class PlaylistController:
             yield self.get_playlist(**entry)
 
     async def create_or_update_playlist(
-        self, identifier: int, scope: int, author: int, name: str, url: str | None = None, tracks: list[str] = None
+        self,
+        identifier: int,
+        scope: int,
+        author: int,
+        name: str,
+        url: str | None = None,
+        tracks: list[str | JSON_DICT_TYPE] = None,
     ) -> Playlist:
         playlist = self.get_playlist(identifier=identifier)
         await playlist.bulk_update(
@@ -397,7 +404,7 @@ class PlaylistController:
                         bypass_cache=True,
                     )
                     tracks_raw = response.tracks
-                    track_list = [t_ for t in tracks_raw if (t_ := t.encoded)]
+                    track_list = [t for t in tracks_raw if t.encoded]
                     new_name = response.playlistInfo.name
                     new_name = f"[{query.source_abbreviation}] {new_name}" if new_name else None
                     if track_list:

@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING, Any, Literal
 
 import asyncpg
 import discord
+from dacite import from_dict
 from discord import VoiceProtocol
 from discord.abc import Messageable
 
@@ -1342,17 +1343,22 @@ class Player(VoiceProtocol):
         await self._handle_event(event)
 
     async def _process_autoplay_on_play(self, available_tracks):
+        if available_tracks and isinstance(available_tracks[0], dict):
+            available_tracks = {track["decoded"]: track for track in available_tracks}
+        else:
+            available_tracks = {track: track for track in available_tracks}
+
         if tracks_not_in_history := list(set(available_tracks) - set(self.history.raw_b64s)):
             track = await Track.build_track(
                 node=self.node,
-                data=random.choice(tracks_not_in_history),
+                data=available_tracks[random.choice(list(tracks_not_in_history))],
                 query=None,
                 requester=self.client.user.id,
             )
         else:
             track = await Track.build_track(
                 node=self.node,
-                data=random.choice(available_tracks),
+                data=available_tracks[random.choice(list(available_tracks))],
                 query=None,
                 requester=self.client.user.id,
             )
@@ -2825,25 +2831,31 @@ class Player(VoiceProtocol):
     async def _generate_queue(self, raw_queue):
         queue_raw = (
             [
-                {"data": t.pop("encoded", None), "query": t.pop("query"), "lazy": True, **t.pop("extra"), **t}
+                {
+                    "data": t.pop("encoded", None),
+                    "query": t.pop("query"),
+                    "full_track_data": t.pop("full_track_data", None),
+                    "lazy": True,
+                    **t.pop("extra"),
+                    **t,
+                }
                 for t in raw_queue
             ]
             if raw_queue
             else []
         )
-        encoded_list = [track["data"] for track in queue_raw if track["data"] is not None]
+        encoded_list = [track["data"] for track in queue_raw if track["full_track_data"] is None]
+        full_track_data = [track["full_track_data"] for track in queue_raw if track["full_track_data"] is not None]
+
         if encoded_list:
             track_objects = await self.node.post_decodetracks(encoded_list)
-            if not isinstance(track_objects, list):
-                track_objects_mapping = {}
-                fallback = True
-            else:
-                track_objects_mapping = {track.encoded: track for track in track_objects}
-                fallback = False
+            track_objects_mapping = (
+                {track.encoded: track for track in track_objects} if isinstance(track_objects, list) else {}
+            )
         else:
             track_objects_mapping = {}
-            fallback = True
-        if not fallback:
+
+        if track_objects_mapping:
             queue = []
             for i, track in enumerate(queue_raw, start=0):
                 query = await Query.from_string(track.pop("query"))
@@ -2855,13 +2867,13 @@ class Player(VoiceProtocol):
                 new_track = await Track.build_track(node=self.node, query=query, lazy=lazy, data=data, **track)
                 if new_track:
                     queue.append(new_track)
-        else:
+        if (not track_objects_mapping) or full_track_data:
             queue = (
                 [
                     (
                         track := await Track.build_track(
                             node=self.node,
-                            data=t.pop("encoded", None),
+                            data=t_full or t_data,
                             query=await Query.from_string(t.pop("query"), None),
                             lazy=True,
                             **t.pop("extra"),
@@ -2870,6 +2882,8 @@ class Player(VoiceProtocol):
                     )
                     for t in raw_queue
                     if track
+                    and [t_full := t.pop("full_track_list", None), t_data := t.pop("data", None), False]
+                    and t_data not in track_objects_mapping
                 ]
                 if raw_queue
                 else []
@@ -2877,42 +2891,71 @@ class Player(VoiceProtocol):
         return queue
 
     async def _process_restore_current_tracks(self, player):
-        current = (
-            await Track.build_track(
-                node=self.node,
-                data=player.current.pop("encoded", None),
-                lazy=True,
-                query=await Query.from_string(player.current.pop("query")),
-                **player.current.pop("extra"),
-                **player.current,
-            )
-            if player.current
-            else None
-        )
-        next_track = (
-            await Track.build_track(
-                node=self.node,
-                data=n_track.pop("encoded", None),
-                lazy=True,
-                query=await Query.from_string(n_track.pop("query")),
-                **n_track.pop("extra"),
-                **n_track,
-            )
-            if (n_track := player.extras.get("next_track", {}))
-            else None
-        )
-        last_track = (
-            await Track.build_track(
-                node=self.node,
-                data=l_track.pop("encoded", None),
-                lazy=True,
-                query=await Query.from_string(l_track.pop("query")),
-                **l_track.pop("extra"),
-                **l_track,
-            )
-            if (l_track := player.extras.get("last_track", {}))
-            else None
-        )
+        if player.current:
+            if full_track := player.current.pop("full_track_data", None):
+                current = await Track.build_track(
+                    node=self.node,
+                    data=from_dict(data_class=APITrack, data=full_track),
+                    lazy=True,
+                    query=await Query.from_string(player.current.pop("query")),
+                    **player.current.pop("extra"),
+                    **player.current,
+                )
+            else:
+                current = await Track.build_track(
+                    node=self.node,
+                    data=player.current.pop("encoded", None),
+                    lazy=True,
+                    query=await Query.from_string(player.current.pop("query")),
+                    **player.current.pop("extra"),
+                    **player.current,
+                )
+        else:
+            current = None
+
+        if n_track := player.extras.get("next_track", {}):
+            if full_track := n_track.pop("full_track_data", None):
+                next_track = await Track.build_track(
+                    node=self.node,
+                    data=from_dict(data_class=APITrack, data=full_track),
+                    lazy=True,
+                    query=await Query.from_string(n_track.pop("query")),
+                    **n_track.pop("extra"),
+                    **n_track,
+                )
+            else:
+                next_track = await Track.build_track(
+                    node=self.node,
+                    data=n_track.pop("encoded", None),
+                    lazy=True,
+                    query=await Query.from_string(n_track.pop("query")),
+                    **n_track.pop("extra"),
+                    **n_track,
+                )
+        else:
+            next_track = None
+
+        if l_track := player.extras.get("last_track", {}):
+            if full_track := l_track.pop("full_track_data", None):
+                last_track = await Track.build_track(
+                    node=self.node,
+                    data=from_dict(data_class=APITrack, data=full_track),
+                    lazy=True,
+                    query=await Query.from_string(l_track.pop("query")),
+                    **l_track.pop("extra"),
+                    **l_track,
+                )
+            else:
+                last_track = await Track.build_track(
+                    node=self.node,
+                    data=l_track.pop("encoded", None),
+                    lazy=True,
+                    query=await Query.from_string(l_track.pop("query")),
+                    **l_track.pop("extra"),
+                    **l_track,
+                )
+        else:
+            last_track = None
         return current, last_track, next_track
 
     async def _process_restore_filters(self, player):

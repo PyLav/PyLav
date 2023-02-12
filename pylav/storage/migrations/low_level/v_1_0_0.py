@@ -1,16 +1,19 @@
 from __future__ import annotations
 
 import contextlib
+from collections import defaultdict
 from typing import TYPE_CHECKING
 
 import asyncpg
 from asyncpg import Connection
+from dacite import from_dict
 from packaging.version import parse
 
 from pylav.compat import json
 from pylav.constants.playlists import BUNDLED_PLAYLIST_IDS
 from pylav.constants.versions import VERSION_1_0_0
-from pylav.players.tracks.decoder import async_decoder
+from pylav.nodes.api.responses.track import Track
+from pylav.players.tracks.decoder import decode_track
 from pylav.storage.database.tables.config import LibConfigRow
 from pylav.storage.database.tables.nodes import NodeRow
 from pylav.storage.database.tables.players import PlayerRow
@@ -136,10 +139,21 @@ async def migrate_playlists_v_1_0_0(playlists: list[asyncpg.Record]) -> None:
         new_tracks = []
         # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
         tracks = json.loads(playlist["tracks"]) if playlist["tracks"] else []
-        for track in tracks:
-            with contextlib.suppress(Exception):
-                data = await async_decoder(track)  # TODO: Make an API call to the public node?
-                new_tracks.append(await TrackRow.get_or_create(data.encoded, data.info.to_database()))
+        _temp = defaultdict(list)
+        for x in tracks:
+            _temp[type(x)].append(x)
+        for entry_type, entry_list in _temp.items():
+            if entry_type == str:
+                for track in entry_list:
+                    with contextlib.suppress(Exception):
+                        # TODO: Make an API call to the public node?
+                        new_tracks.append(await TrackRow.get_or_create(decode_track(track)))
+            elif entry_type == dict:
+                for track_object in entry_list:
+                    new_tracks.append(await TrackRow.get_or_create(from_dict(data_class=Track, data=track_object)))
+            else:
+                for track_object in entry_list:
+                    new_tracks.append(await TrackRow.get_or_create(track_object))
         if new_tracks:
             await playlist_row.add_m2m(*new_tracks, m2m=PlaylistRow.tracks)
 
@@ -155,10 +169,21 @@ async def migrate_queries_v_1_0_0(queries: list[asyncpg.Record]) -> None:
         new_tracks = []
         # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
         tracks = json.loads(query["tracks"]) if query["tracks"] else []
-        for track in tracks:
-            with contextlib.suppress(Exception):
-                data = await async_decoder(track)  # TODO: Make an API call to the public node?
-                new_tracks.append(await TrackRow.get_or_create(data.encoded, data.info.to_database()))
+        _temp = defaultdict(list)
+        for x in tracks:
+            _temp[type(x)].append(x)
+        for entry_type, entry_list in _temp.items():
+            if entry_type == str:
+                for track in entry_list:
+                    with contextlib.suppress(Exception):
+                        # TODO: Make an API call to the public node?
+                        new_tracks.append(await TrackRow.get_or_create(decode_track(track)))
+            elif entry_type == dict:
+                for track_object in entry_list:
+                    new_tracks.append(await TrackRow.get_or_create(from_dict(data_class=Track, data=track_object)))
+            else:
+                for track_object in entry_list:
+                    new_tracks.append(await TrackRow.get_or_create(track_object))
         if new_tracks:
             await query_row.add_m2m(*new_tracks, m2m=QueryRow.tracks)
 

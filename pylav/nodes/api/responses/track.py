@@ -3,8 +3,6 @@ from __future__ import annotations
 import dataclasses
 from typing import NotRequired  # noqa
 
-from piccolo.columns import Column
-
 from pylav.constants.node import TRACK_VERSION
 from pylav.nodes.api.responses.shared import TrackPluginInfo
 from pylav.storage.database.tables.tracks import TrackRow
@@ -29,17 +27,6 @@ class Info:
     def to_dict(self) -> JSON_DICT_TYPE:
         return dataclasses.asdict(self)
 
-    def to_database(self) -> dict[Column, str | None]:
-        # noinspection SpellCheckingInspection
-        return {
-            TrackRow.identifier: self.identifier,
-            TrackRow.title: self.title,
-            TrackRow.uri: self.uri,
-            TrackRow.sourceName: self.sourceName,
-            TrackRow.isrc: self.isrc,
-            TrackRow.artworkUrl: self.artworkUrl,
-        }
-
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class Track:
@@ -56,7 +43,14 @@ class Track:
 
     def to_dict(self) -> JSON_DICT_TYPE:
         return {
-            "info": dataclasses.asdict(self.info),
+            "info": self.info.to_dict(),
             "encoded": self.encoded,
-            "pluginInfo": dataclasses.asdict(self.pluginInfo) if self.pluginInfo else None,
+            "pluginInfo": self.pluginInfo.to_dict() if self.pluginInfo else None,
+        }
+
+    def to_database(self) -> dict[str, JSON_DICT_TYPE]:
+        return {
+            TrackRow.encoded._meta.db_column_name: self.encoded,
+            TrackRow.pluginInfo._meta.db_column_name: self.pluginInfo.to_dict() if self.pluginInfo else None,
+            TrackRow.info._meta.db_column_name: self.info.to_dict(),
         }

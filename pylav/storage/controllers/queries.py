@@ -13,10 +13,11 @@ from pylav.players.query.obj import Query as QueryObj
 from pylav.storage.database.tables.queries import QueryRow
 from pylav.storage.database.tables.tracks import TrackRow
 from pylav.storage.models.query import Query
-from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 if TYPE_CHECKING:
     from pylav.core.client import Client
+    from pylav.nodes.api.responses import rest_api
+
 LOGGER = getLogger("PyLav.Database.Controller.Query")
 
 
@@ -53,18 +54,21 @@ class QueryController:
                 return cached
 
     @staticmethod
-    async def add_query(query: QueryObj, result: JSON_DICT_TYPE) -> bool:
+    async def add_query(query: QueryObj, result: rest_api.LoadTrackResponses) -> bool:
         if query.is_custom_playlist or query.is_http:
             # Do not cache local queries and single track urls or http source entries
             return False
-        if result.get("loadType") in ["NO_MATCHES", "LOAD_FAILED", None]:
+        if result.loadType in ["NO_MATCHES", "LOAD_FAILED", None]:
             return False
-        tracks = result.get("tracks", [])
+        tracks = result.tracks
         if not tracks:
             return False
-        playlist_info = result.get("playlistInfo", {})
-        name = playlist_info.get("name", None) if playlist_info else None
-        defaults = {QueryRow.name: name}
+        playlist_info = result.playlistInfo
+        name = playlist_info.name if playlist_info else None
+        defaults = {
+            QueryRow.name: name,
+            QueryRow.pluginInfo: result.pluginInfo.to_dict() if result.pluginInfo else None,
+        }
         query_row = await QueryRow.objects().get_or_create(QueryRow.identifier == query.query_identifier, defaults)
 
         # noinspection PyProtectedMember
@@ -73,13 +77,7 @@ class QueryController:
         new_tracks = []
         # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
         for track in tracks:
-            with contextlib.suppress(Exception):
-                new_info = {
-                    key: track["info"][key]
-                    for key in track["info"].keys()
-                    if key in {"identifier", "sourceName", "title", "uri", "isrc", "artworkUrl"}
-                }
-                new_tracks.append(await TrackRow.get_or_create(track["encoded"], new_info))
+            new_tracks.append(await TrackRow.get_or_create(track))
         if new_tracks:
             await query_row.add_m2m(*new_tracks, m2m=QueryRow.tracks)
             return True

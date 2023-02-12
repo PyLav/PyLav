@@ -1,16 +1,21 @@
 from __future__ import annotations
 
-import contextlib
 import random
+from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
 
+from dacite import from_dict
+
+from pylav.compat import json
 from pylav.constants.config import READ_CACHING_ENABLED
 from pylav.helpers.singleton import SingletonCachedByKey
+from pylav.nodes.api.responses.track import Track
 from pylav.storage.database.cache.decodators import maybe_cached
 from pylav.storage.database.cache.model import CachedModel
 from pylav.storage.database.tables.queries import QueryRow
 from pylav.storage.database.tables.tracks import TrackRow
+from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
@@ -49,7 +54,7 @@ class Query(CachedModel, metaclass=SingletonCachedByKey):
         return len(tracks) if tracks else 0
 
     @maybe_cached
-    async def fetch_tracks(self) -> list[str]:
+    async def fetch_tracks(self) -> list[str | JSON_DICT_TYPE]:
         """Get the tracks of the playlist.
 
         Returns
@@ -58,19 +63,19 @@ class Query(CachedModel, metaclass=SingletonCachedByKey):
             The tracks of the playlist.
         """
         response = (
-            await QueryRow.select(QueryRow.tracks(TrackRow.encoded, as_list=True, load_json=True))
+            await QueryRow.select(QueryRow.tracks(TrackRow.encoded, TrackRow.info, TrackRow.pluginInfo, load_json=True))
             .where(QueryRow.identifier == self.id)
             .first()
             .output(load_json=True, nested=True)
         )
         return response["tracks"] if response else []
 
-    async def update_tracks(self, tracks: list[str]):
+    async def update_tracks(self, tracks: list[str | Track]):
         """Update the tracks of the playlist.
 
         Parameters
         ----------
-        tracks: list[str]
+        tracks: list[str | Track]
             The tracks of the playlist.
         """
         query_row = await QueryRow.objects().get_or_create(QueryRow.identifier == self.id)
@@ -80,22 +85,67 @@ class Query(CachedModel, metaclass=SingletonCachedByKey):
             old_tracks = []
         new_tracks = []
         # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
-        with contextlib.suppress(Exception):
-            for track_object in await self.client.decode_tracks(tracks, raise_on_failure=False):
-                with contextlib.suppress(Exception):
-                    new_tracks.append(
-                        await TrackRow.get_or_create(track_object.encoded, track_object.info.to_database())
-                    )
+        _temp = defaultdict(list)
+        for x in tracks:
+            _temp[type(x)].append(x)
+        for entry_type, entry_list in _temp.items():
+            if entry_type == str:
+                for track_object in await self.client.decode_tracks(entry_list, raise_on_failure=False):
+                    new_tracks.append(await TrackRow.get_or_create(track_object))
+            elif entry_type == dict:
+                for track_object in entry_list:
+                    new_tracks.append(await TrackRow.get_or_create(from_dict(data_class=Track, data=track_object)))
+            else:
+                for track_object in entry_list:
+                    new_tracks.append(await TrackRow.get_or_create(track_object))
+
         if old_tracks:
             await query_row.remove_m2m(*old_tracks, m2m=QueryRow.tracks)
         if new_tracks:
             await query_row.add_m2m(*new_tracks, m2m=QueryRow.tracks)
+        await self.invalidate_cache(self.fetch_tracks, self.fetch_first)
         await self.update_cache(
-            (self.fetch_tracks, tracks),
             (self.size, len(tracks)),
-            (self.fetch_first, tracks[0] if tracks else None),
             (self.exists, True),
         )
+
+    @maybe_cached
+    async def fetch_plugin_info(self) -> JSON_DICT_TYPE:
+        """Get the plugin info of the playlist.
+
+        Returns
+        -------
+        JSON_DICT_TYPE
+            The plugin info of the playlist.
+        """
+        response = (
+            await QueryRow.select(QueryRow.pluginInfo)
+            .where(QueryRow.identifier == self.id)
+            .first()
+            .output(load_json=True, nested=True)
+        )
+        return response["pluginInfo"] if response else {}
+
+    async def update_plugin_info(self, plugin_info: JSON_DICT_TYPE) -> None:
+        """Update the plugin info of the playlist.
+
+        Parameters
+        ----------
+        plugin_info: JSON_DICT_TYPE
+            The plugin info of the playlist.
+        """
+
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
+        await QueryRow.raw(
+            """
+            INSERT INTO node (id, extras) VALUES ({}, {})
+            ON CONFLICT (id) DO UPDATE SET "pluginInfo" = excluded."pluginInfo";
+            """,
+            self.id,
+            json.dumps(plugin_info),
+        )
+        await self.update_cache((self.fetch_plugin_info, plugin_info), (self.exists, True))
 
     @maybe_cached
     async def fetch_name(self) -> str:
@@ -165,12 +215,12 @@ class Query(CachedModel, metaclass=SingletonCachedByKey):
             (self.exists, True),
         )
 
-    async def bulk_update(self, tracks: list[str], name: str) -> None:
+    async def bulk_update(self, tracks: list[str | Track], name: str) -> None:
         """Bulk update the query.
 
         Parameters
         ----------
-        tracks: list[str]
+        tracks: list[str | Track]
             The tracks of the playlist.
         name: str
             The name of the playlist
@@ -186,26 +236,32 @@ class Query(CachedModel, metaclass=SingletonCachedByKey):
             old_tracks = []
         new_tracks = []
         # TODO: Optimize this, after https://github.com/piccolo-orm/piccolo/discussions/683 is answered or fixed
-        with contextlib.suppress(Exception):
-            for track_object in await self.client.decode_tracks(tracks, raise_on_failure=False):
-                with contextlib.suppress(Exception):
-                    new_tracks.append(
-                        await TrackRow.get_or_create(track_object.encoded, track_object.info.to_database())
-                    )
+        _temp = defaultdict(list)
+        for x in tracks:
+            _temp[type(x)].append(x)
+        for entry_type, entry_list in _temp.items():
+            if entry_type == str:
+                for track_object in await self.client.decode_tracks(entry_list, raise_on_failure=False):
+                    new_tracks.append(await TrackRow.get_or_create(track_object))
+            elif entry_type == dict:
+                for track_object in entry_list:
+                    new_tracks.append(await TrackRow.get_or_create(from_dict(data_class=Track, data=track_object)))
+            else:
+                for track_object in entry_list:
+                    new_tracks.append(await TrackRow.get_or_create(track_object))
         if old_tracks:
             await query_row.remove_m2m(*old_tracks, m2m=QueryRow.tracks)
         if new_tracks:
             await query_row.add_m2m(*new_tracks, m2m=QueryRow.tracks)
+        await self.invalidate_cache(self.fetch_tracks, self.fetch_first)
         await self.update_cache(
-            (self.fetch_tracks, tracks),
             (self.size, len(tracks)),
-            (self.fetch_first, tracks[0] if tracks else None),
             (self.fetch_name, name),
             (self.fetch_last_updated, QueryRow.last_updated.default.python()),
             (self.exists, True),
         )
 
-    async def fetch_index(self, index: int) -> str | None:
+    async def fetch_index(self, index: int) -> JSON_DICT_TYPE | None:
         """Get the track at the index.
 
         Parameters
@@ -227,7 +283,7 @@ class Query(CachedModel, metaclass=SingletonCachedByKey):
                 return tracks[index]
 
     @maybe_cached
-    async def fetch_first(self) -> str | None:
+    async def fetch_first(self) -> JSON_DICT_TYPE | None:
         """Get the first track.
 
         Returns
@@ -237,7 +293,7 @@ class Query(CachedModel, metaclass=SingletonCachedByKey):
         """
         return await self.fetch_index(0)
 
-    async def fetch_random(self) -> str | None:
+    async def fetch_random(self) -> JSON_DICT_TYPE | None:
         """Get a random track.
 
         Returns

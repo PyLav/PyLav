@@ -225,12 +225,12 @@ class PlaylistInfoButton(discord.ui.Button):
             )
 
         from pylav.extension.red.ui.menus.generic import PaginatingMenu
-        from pylav.extension.red.ui.sources.playlist import Base64Source
+        from pylav.extension.red.ui.sources.playlist import TrackMappingSource
 
         await PaginatingMenu(
             bot=self.cog.bot,
             cog=self.cog,
-            source=Base64Source(
+            source=TrackMappingSource(
                 guild_id=interaction.guild.id,
                 cog=self.cog,
                 author=interaction.user,

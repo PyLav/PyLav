@@ -5,15 +5,18 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import discord
+from dacite import from_dict
 from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import humanize_number
 from redbot.vendored.discord.ext import menus
 
 from pylav.extension.red.ui.selectors.options.playlist import PlaylistOption
 from pylav.logging import getLogger
+from pylav.nodes.api.responses.track import Track as LavalinkTrack
 from pylav.players.tracks.obj import Track
 from pylav.storage.models.playlist import Playlist
 from pylav.type_hints.bot import DISCORD_COG_TYPE
+from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 if TYPE_CHECKING:
     from pylav.extension.red.ui.menus.generic import PaginatingMenu
@@ -83,7 +86,7 @@ class PlaylistPickerSource(menus.ListPageSource):
         return self._max_pages or 1
 
 
-class Base64Source(menus.ListPageSource):
+class TrackMappingSource(menus.ListPageSource):
     def __init__(
         self,
         guild_id: int,
@@ -107,17 +110,25 @@ class Base64Source(menus.ListPageSource):
         start = page_num * self.per_page
         return start, page_num
 
-    async def format_page(self, menu: PaginatingMenu, tracks: list[str]) -> discord.Embed:
+    async def format_page(self, menu: PaginatingMenu, tracks: list[str | JSON_DICT_TYPE]) -> discord.Embed:
         start_index, page_num = self.get_starting_index_and_page_number(menu)
         padding = len(str(start_index + len(tracks)))
         queue_list = ""
         for track_idx, track in enumerate(tracks, start=start_index + 1):
-            track = await Track.build_track(
-                node=random.choice(self.cog.pylav.node_manager.nodes),
-                requester=self.author.id,
-                data=track,
-                query=None,
-            )
+            if isinstance(track, str):
+                track = await Track.build_track(
+                    node=random.choice(self.cog.pylav.node_manager.nodes),
+                    requester=self.author.id,
+                    data=track,
+                    query=None,
+                )
+            else:
+                track = await Track.build_track(
+                    node=random.choice(self.cog.pylav.node_manager.nodes),
+                    requester=self.author.id,
+                    data=from_dict(data_class=LavalinkTrack, data=track),
+                    query=None,
+                )
             track_description = await track.get_track_display_name(max_length=50, with_url=True)
             diff = padding - len(str(track_idx))
             queue_list += f"`{track_idx}.{' ' * diff}` {track_description}\n"
