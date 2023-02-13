@@ -111,4 +111,4 @@ jobs:
                 commit_author: ${{ steps.import_gpg.outputs.name }} <${{ steps.import_gpg.outputs.email }}>
         -   name: Trigger PyLav Cogs workflow
             run: |
-                curl -XPOST -u "Drapersniper:${{secrets.PAT}}" -H "Accept: application/vnd.github.everest-preview+json" -H "Content-Type:  application/json" https://api.github.com/repos/PyLav/Red-Cogs/dispatches --data '{"event_type": "on-release", "client_payload": {"version": "${{steps.get-version.outputs.version}}"}}'
+                curl -XPOST -u "Drapersniper:${{secrets.PERSONAL_ACCESS_TOKEN}}" -H "Accept: application/vnd.github.everest-preview+json" -H "Content-Type:  application/json" https://api.github.com/repos/PyLav/Red-Cogs/dispatches --data '{"event_type": "on-release", "client_payload": {"version": "${{steps.get-version.outputs.version}}"}}'
