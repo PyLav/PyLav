@@ -32,17 +32,9 @@ jobs:
             run: |
                 echo "Adding GNU tar to PATH"
                 echo C:\Program Files\Git\usr\bin>>"%GITHUB_PATH%"
-        -   name: Load cached Poetry installation
-            id: cached-poetry
-            uses: actions/cache@v3
-            with:
-                path: /tmp/dependecy-cache # the path depends on the OS
-                key: ${{ runner.os }}-poetry
         -   name: Install Poetry
-            if: steps.cached-poetry.outputs.cache-hit != 'true'
             uses: snok/install-poetry@v1
         -   name: Install Poetry Dynamic-Versioning
-            if: steps.cached-poetry.outputs.cache-hit != 'true'
             run: poetry self add "poetry-dynamic-versioning[plugin]"
         -   name: Check Version
             id: check-version
@@ -79,22 +71,14 @@ jobs:
             uses: actions/setup-python@v4
             with:
                 python-version: '3.11'
-        -   name: Load cached Poetry installation
-            id: cached-poetry
-            uses: actions/cache@v3
-            with:
-                path: /tmp/dependecy-cache # the path depends on the OS
-                key: ${{ runner.os }}-poetry
         -   name: Install Poetry
-            if: steps.cached-poetry.outputs.cache-hit != 'true'
             uses: snok/install-poetry@v1
-        -   name: Install Poetry-Dynamic-Versioning
+        -   name: Install Poetry Dynamic-Versioning
             run: poetry self add "poetry-dynamic-versioning[plugin]"
         -   name: Install Node.js 14
             uses: actions/setup-node@v3
             with:
                 node-version: '14'
-                cache: npm
         -   name: Install GitHub Release Notes
             run: npm install github-release-notes -g
         -   name: Release Notes and Change logs
