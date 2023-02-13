@@ -146,11 +146,11 @@ An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml
   - `PYLAV__DATA_FOLDER` - Default of a OS appropriate config folder
 
 ## Red Users (PyLav Cogs) Setup
-### Install [PyLav Cogs](https://github.com/PyLav/PyLav-Cogs)
+### Install [PyLav Cogs](https://github.com/PyLav/Red-Cogs)
 - Now that you have your env fully setup you can process to installing the desired cogs.
   - `[p]load downloader`
-  - `[p]repo add PyLav https://github.com/PyLav/PyLav-Cogs`
- - For a list of all available cogs visit the [PyLav Cogs](https://github.com/PyLav/PyLav-Cogs) repo
+  - `[p]repo add PyLav https://github.com/PyLav/Red-Cogs`
+ - For a list of all available cogs visit the [PyLav Cogs](https://github.com/PyLav/Red-Cogs) repo
 -------------
 # Note for 1.0.0 release until Lavalink 4.0.0 is released
 - This major release requires Lavalink 4.0.0 which has not yet been released.
