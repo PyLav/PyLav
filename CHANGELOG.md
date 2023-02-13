@@ -14,6 +14,21 @@
 **Full Changelog**: https://github.com/Drapersniper/PyLav/compare/v1.4.4...1.5.0
 ---
 
+## v1.7.1 (13/02/2023)
+- [fix workflow](https://github.com/PyLav/PyLav/commit/b387651f92a497b08ec7c609160309337dc71d18) - @Drapersniper
+
+---
+
+## v1.7.0 (13/02/2023)
+## What's Changed
+* Bump stefanzweifel/git-auto-commit-action from 4.15.4 to 4.16.0 by @dependabot in https://github.com/PyLav/PyLav/pull/212
+* New Crowdin translations by Github Action by @Drapersniper in https://github.com/PyLav/PyLav/pull/213
+* New Crowdin translations by Github Action by @Drapersniper in https://github.com/PyLav/PyLav/pull/214
+
+
+**Full Changelog**: https://github.com/PyLav/PyLav/compare/v1.6.1...v1.7.0
+---
+
 ## v1.6.1 (11/02/2023)
 - [fix `asyncpg.exceptions.UndefinedTableError: relation "version" does not exist` in the low level migrations](https://github.com/Drapersniper/PyLav/commit/78919d88592811a85aaac59c177fb3490f5f3e64) - @Drapersniper
 - [Change undertow settings](https://github.com/Drapersniper/PyLav/commit/aa62006f814b12cc0268ae934e479288f4dae0ec) - @Drapersniper
@@ -248,13 +263,3 @@
 - [Enforce Env Var on config stored values (Run a migration on every start up)](https://github.com/Drapersniper/PyLav/commit/0295ddeacc89f8449e7d84cd0b208bedb85c51da) - @Drapersniper
 - [Add PYLAV__EXTERNAL_UNMANAGED_NAME to allow setting a name to the EnvVar node and set ENV Vars to take precedence over the file values](https://github.com/Drapersniper/PyLav/commit/66643bb714fc67f6a0e4bc7cad4ecb34e02d624a) - @Drapersniper
 - [update docker-compose.yml](https://github.com/Drapersniper/PyLav/commit/650e7308758858c8139eb8ef0ffbb96a41e881d8) - @Drapersniper
-
----
-
-## v1.1.19 (18/01/2023)
-- [Make Release](https://github.com/Drapersniper/PyLav/commit/9b2a1a1286636201ec5a3716d51768459afb3f4f) - @Drapersniper
-
----
-
-## v1.1.18 (18/01/2023)
-- [hotfix migration](https://github.com/Drapersniper/PyLav/commit/f80281b26fd21eefb9faccae984c49e137e46f4d) - @Drapersniper
