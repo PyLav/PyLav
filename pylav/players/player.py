@@ -2355,8 +2355,14 @@ class Player(VoiceProtocol):
                 position *= self.timescale.speed
             pos = format_time_dd_hh_mm_ss(position)
         current = self.current
-        dur = _("LIVE") if await current.stream() else format_time_dd_hh_mm_ss(await current.duration())
-        current_track_description = await current.get_track_display_name(with_url=True)
+        dur = (
+            None
+            if current is None
+            else _("LIVE")
+            if await current.stream()
+            else format_time_dd_hh_mm_ss(await current.duration())
+        )
+        current_track_description = await current.get_track_display_name(with_url=True) if current else None
         next_track_description = (
             await self.next_track.get_track_display_name(with_url=True) if self.next_track else None
         )
@@ -2375,7 +2381,7 @@ class Player(VoiceProtocol):
             description=queue_list,
             messageable=messageable,
         )
-        if url := await current.artworkUrl():
+        if current and (url := await current.artworkUrl()):
             page.set_thumbnail(url=url)
 
         await self._process_np_embed_prev_track(page, previous_track_description)
@@ -2388,6 +2394,8 @@ class Player(VoiceProtocol):
     async def _process_np_embed_initial_description(
         arrow, current, current_track_description, dur, pos, queue_list, progress
     ):
+        if current is None:
+            return queue_list
         # sourcery skip: use-fstring-for-formatting
         if await current.stream():
             queue_list += "**{}:**\n".format(discord.utils.escape_markdown(_("Currently livestreaming")))
@@ -2522,7 +2530,13 @@ class Player(VoiceProtocol):
         arrow = await self.draw_time()
         pos = format_time_dd_hh_mm_ss(await self.fetch_position())
         current = self.current
-        dur = "LIVE" if await current.stream() else format_time_dd_hh_mm_ss(await current.duration())
+        dur = (
+            None
+            if current is None
+            else _("LIVE")
+            if await current.stream()
+            else format_time_dd_hh_mm_ss(await current.duration())
+        )
         queue_list = await self._process_queue_embed_initial_description(arrow, current, dur, pos, queue_list)
         queue_list = await self._process_queue_embed_maybe_shuffle(history, queue_list, tracks)
         queue_list = await self._process_queue_tracks(history, queue_list, start_index, tracks)
@@ -2545,7 +2559,7 @@ class Player(VoiceProtocol):
             description=queue_list,
             messageable=messageable,
         )
-        if url := await current.artworkUrl():
+        if current and (url := await current.artworkUrl()):
             page.set_thumbnail(url=url)
         queue_dur = await self.queue_duration(history=history)
         queue_total_duration = format_time_string(queue_dur // 1000)
@@ -2554,6 +2568,8 @@ class Player(VoiceProtocol):
 
     @staticmethod
     async def _process_queue_embed_initial_description(arrow, current, dur, pos, queue_list):
+        if current is None:
+            return queue_list
         current_track_description = await current.get_track_display_name(with_url=True)
         if await current.stream():
             queue_list += "**{translation}:**\n".format(
