@@ -57,7 +57,7 @@ class ConfigController:
         )
         await PlayerRow.create_table(if_not_exists=True)
         await PlayerRow.raw(
-            f"CREATE UNIQUE INDEX IF NOT EXISTS unique_player_bot_id " f"ON {PlayerRow._meta.tablename} (bot, id)"
+            f"CREATE UNIQUE INDEX IF NOT EXISTS unique_player_bot_id ON {PlayerRow._meta.tablename} (bot, id)"
         )
         await NodeRow.create_table(if_not_exists=True)
         await QueryRow.create_table(if_not_exists=True)

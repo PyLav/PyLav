@@ -168,15 +168,21 @@ class Track:
         if not query and not data:
             return None
 
+        if query is not None:
+            query = await Query.from_string(query)
+
         # Check if data is a LavalinkTrackObject and process it.
         if isinstance(data, APITrack):
+            if query is None:
+                query = await Query.from_string(data.info.uri)
             return cls._from_lavalink_track_object(node, data, query, skip_segments, requester, **extra)
 
         if isinstance(data, dict):
             try:
-                return cls._from_lavalink_track_object(
-                    node, from_dict(data_class=APITrack, data=data), query, skip_segments, requester, **extra
-                )
+                t = from_dict(data_class=APITrack, data=data)
+                if query is None:
+                    query = await Query.from_string(t.info.uri)
+                return cls._from_lavalink_track_object(node, t, query, skip_segments, requester, **extra)
             except Exception as exc:
                 raise KeyError("Invalid track data") from exc
 
