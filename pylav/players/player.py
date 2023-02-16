@@ -2848,7 +2848,7 @@ class Player(VoiceProtocol):
                     "query": t.pop("query"),
                     "full_track_data": t.pop("full_track_data", None),
                     "lazy": True,
-                    **t.pop("extra"),
+                    **t.pop("extra", {}),
                     **t,
                 }
                 for t in raw_queue
@@ -2897,7 +2897,7 @@ class Player(VoiceProtocol):
                     and t_full
                     or t_data
                 ]
-                if raw_queue
+                if queue_raw
                 else []
             )
         return queue
