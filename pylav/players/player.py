@@ -2887,13 +2887,12 @@ class Player(VoiceProtocol):
                             node=self.node,
                             data=t_full or t_data,
                             query=await Query.from_string(t.pop("query"), None),
-                            lazy=True,
-                            **t.pop("extra"),
+                            lazy=t.pop("lazy") and not t_full,
                             **t,
                         )
                     )
-                    for t in raw_queue
-                    if [t_full := t.pop("full_track_list", None), t_data := t.pop("data", None), False]
+                    for t in queue_raw
+                    if [(t_full := t.pop("full_track_list", None)), (t_data := t.pop("data", None)), False]
                     and t_data not in track_objects_mapping
                     and t_full
                     or t_data
