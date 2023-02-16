@@ -1343,7 +1343,7 @@ class Player(VoiceProtocol):
         await self._handle_event(event)
 
     async def _process_autoplay_on_play(self, available_tracks):
-        available_tracks = {track["decoded"]: track for track in available_tracks}
+        available_tracks = {track["encoded"]: track for track in available_tracks}
         if tracks_not_in_history := list(set(available_tracks) - set(self.history.raw_b64s)):
             track = await Track.build_track(
                 node=self.node,
@@ -2774,7 +2774,7 @@ class Player(VoiceProtocol):
         if self._restored is True:
             return
         self._was_alone_paused = player.extras.get("was_alone_paused", False)
-        current, last_track, next_track = await self._process_restore_current_tracks(player)
+        current, last_track, next_track, restoring_session = await self._process_restore_current_tracks(player)
         self.last_track = last_track
         self.next_track = next_track
         self.current = None
