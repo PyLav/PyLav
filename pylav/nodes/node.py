@@ -359,7 +359,7 @@ class Node:
     @property
     def playing_players(self) -> list[Player]:
         """Returns a list of all players on this node that are playing"""
-        return [p for p in self.players if p.is_playing]
+        return [p for p in self.players if p.is_active]
 
     @property
     def connected_players(self) -> list[Player]:
@@ -405,14 +405,14 @@ class Node:
 
     def down_vote(self, player: Player) -> int:
         """Adds a down vote for this node"""
-        if not player.is_playing:
+        if not player.is_active:
             return -1
         self._down_votes[player.guild.id] = 1
         return self.down_votes
 
     def down_unvote(self, player: Player) -> int:
         """Removes a down vote for this node"""
-        if not player.is_playing:
+        if not player.is_active:
             return -1
         self._down_votes.pop(player.guild.id, None)
         return self.down_votes

@@ -252,7 +252,7 @@ class Player(VoiceProtocol):
         return (
             f"<Player id={self.guild.id} "
             f"channel={self.channel.id} "
-            f"playing={self.is_playing} "
+            f"playing={self.is_active} "
             f"queue={self.queue.size()} "
             f"node={self.node}>"
         )
@@ -498,13 +498,13 @@ class Player(VoiceProtocol):
         return self.pylav.radio_browser
 
     def vote_node_down(self) -> int:
-        return -1 if (self.node is None or not self.is_playing) else self.node.down_vote(self)
+        return -1 if (self.node is None or not self.is_active) else self.node.down_vote(self)
 
     def voted(self) -> bool:
         return self.node.voted(self)
 
     def unvote_node_down(self) -> int:
-        return -1 if (self.node is None or not self.is_playing) else not self.node.down_unvote(self)
+        return -1 if (self.node is None or not self.is_active) else not self.node.down_unvote(self)
 
     async def text_channel(self) -> discord.abc.MessageableChannel:
         return self.guild.get_channel_or_thread(await self.config.fetch_text_channel_id())
@@ -617,6 +617,11 @@ class Player(VoiceProtocol):
     @property
     def is_playing(self) -> bool:
         """Returns the player's track state"""
+        return self.is_active and not self.paused
+
+    @property
+    def is_active(self) -> bool:
+        """Returns the player's track state"""
         return self.is_connected and self.current is not None
 
     @property
@@ -631,7 +636,7 @@ class Player(VoiceProtocol):
 
     async def position(self) -> float:
         """Returns the position in the track, adjusted for delta since last update and the Timescale filter"""
-        if not self.is_playing:
+        if not self.is_active:
             return 0
 
         if self.paused:
@@ -651,7 +656,7 @@ class Player(VoiceProtocol):
     @property
     def estimated_position(self) -> float:
         """Returns the position in the track, adjusted for delta since last update"""
-        if not self.is_playing:
+        if not self.is_active:
             return 0
 
         if self.paused:
@@ -860,7 +865,7 @@ class Player(VoiceProtocol):
         with contextlib.suppress(asyncio.exceptions.CancelledError, NoNodeAvailableException):
             if not self.ready.is_set():
                 return
-            if not self.is_playing:
+            if not self.is_active:
                 self._logger.trace("Auto track stuck fixer task - Not Playing - discarding")
                 return
             if self.stopped:
@@ -2750,7 +2755,7 @@ class Player(VoiceProtocol):
             "auto_play_playlist_id": data["auto_play_playlist_id"],
             "volume": self.volume,
             "position": await self.position(),
-            "playing": self.is_playing,
+            "playing": self.is_active,
             "queue": [] if self.queue.empty() else [await t.to_dict() for t in self.queue.raw_queue],
             "history": [] if self.history.empty() else [await t.to_dict() for t in self.history.raw_queue],
             "effect_enabled": self._effect_enabled,

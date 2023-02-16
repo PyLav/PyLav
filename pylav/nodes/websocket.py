@@ -451,7 +451,7 @@ class WebSocket:
         if player := self.client.player_manager.get(int(data.guildId)):
             if (
                 (not data.state.connected)
-                and player.is_playing
+                and player.is_active
                 and self.ready.is_set()
                 and player.connected_at < get_now_utc() - datetime.timedelta(minutes=5)
             ):
@@ -479,7 +479,7 @@ class WebSocket:
 
         if (
             (not session.voice.connected)
-            and player.is_playing
+            and player.is_active
             and self.ready.is_set()
             and player.connected_at < get_now_utc() - datetime.timedelta(minutes=5)
         ):

@@ -1407,7 +1407,7 @@ class Client(metaclass=SingletonClass):
                     )
                 )
                 # Query tracks as the queue builds as this may be a slow operation
-                if enqueue and successful_tracks and not player.is_playing and not player.paused:
+                if enqueue and successful_tracks and not player.is_playing:
                     track = successful_tracks.pop()
                     await player.play(track, await track.query(), requester)
         if not yielded:
@@ -1445,7 +1445,7 @@ class Client(metaclass=SingletonClass):
                     )
                 )
                 # Query tracks as the queue builds as this may be a slow operation
-                if enqueue and successful_tracks and not player.is_playing and not player.paused:
+                if enqueue and successful_tracks and not player.is_playing:
                     track = successful_tracks.pop()
                     await player.play(track, await track.query(), requester)
         return track_count

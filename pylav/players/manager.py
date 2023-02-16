@@ -92,12 +92,12 @@ class PlayerController:
     @property
     def playing_players(self) -> list[Player]:
         """Returns a list of all the playing players"""
-        return [p for p in self.players.values() if p.is_playing]
+        return [p for p in self.players.values() if p.is_active]
 
     @property
     def not_playing_players(self) -> list[Player]:
         """Returns a list of all the not playing players"""
-        return [p for p in self.players.values() if not p.is_playing]
+        return [p for p in self.players.values() if not p.is_active]
 
     @property
     def paused_players(self) -> list[Player]:
