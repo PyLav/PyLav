@@ -431,6 +431,11 @@ class Node:
         """Clears the down votes for this node"""
         self._down_votes.clear()
 
+    @property
+    def can_resume(self) -> bool:
+        """Returns whether the node can be resumed"""
+        return self._ws.can_resume
+
     async def penalty_with_region(self, region: str | None) -> float:
         """The penalty for the node, with the region added in"""
         if not region:

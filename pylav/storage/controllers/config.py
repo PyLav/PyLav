@@ -9,7 +9,7 @@ from pylav.storage.database.tables.aiohttp_cache import AioHttpCacheRow
 from pylav.storage.database.tables.config import LibConfigRow
 from pylav.storage.database.tables.equalizer import EqualizerRow
 from pylav.storage.database.tables.m2m import TrackToPlaylists, TrackToQueries
-from pylav.storage.database.tables.nodes import NodeRow
+from pylav.storage.database.tables.nodes import NodeRow, Sessions
 from pylav.storage.database.tables.player_state import PlayerStateRow
 from pylav.storage.database.tables.players import PlayerRow
 from pylav.storage.database.tables.playlists import PlaylistRow
@@ -66,6 +66,10 @@ class ConfigController:
         await TrackRow.create_table(if_not_exists=True)
         await TrackToPlaylists.create_table(if_not_exists=True)
         await TrackToQueries.create_table(if_not_exists=True)
+        await Sessions.create_table(if_not_exists=True)
+        await Sessions.raw(
+            f"CREATE UNIQUE INDEX IF NOT EXISTS unique_node_bot_id ON {Sessions._meta.tablename} (bot, node)"
+        )
 
     # noinspection PyProtectedMember
     async def reset_database(self) -> None:

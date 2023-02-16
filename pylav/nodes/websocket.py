@@ -186,6 +186,16 @@ class WebSocket:
         """Returns the session ID"""
         return self._session_id
 
+    @property
+    def resumed(self) -> bool:
+        """Returns whether the websocket has resumed"""
+        return self._resumed
+
+    @property
+    def can_resume(self) -> bool:
+        """Returns whether the websocket can resume"""
+        return self._resuming_configured
+
     async def ping(self) -> None:
         """Pings the websocket"""
         if self.connected:
@@ -222,6 +232,7 @@ class WebSocket:
             else:
                 self._node._region, self._node._coordinates = await get_closest_discord_region(self._host)
 
+            self._session_id = await self.node.config.fetch_session()
             is_finite_retry = self._max_reconnect_attempts != -1
             max_attempts_str = self._max_reconnect_attempts if is_finite_retry else "inf"
             attempt = 0
@@ -490,9 +501,11 @@ class WebSocket:
         self.ready.set()
         self.node._ready.set()
         self._logger.info(
-            "Node connected successfully and is now ready to accept commands: Session ID: %s",
+            "Node %s successfully and is now ready to accept commands: Session ID: %s",
+            "resumed" if self._resumed else "connected",
             self._session_id,
         )
+        await self.node.config.update_session(self._session_id)
         await self.configure_resume_and_timeout()
 
     async def handle_event(

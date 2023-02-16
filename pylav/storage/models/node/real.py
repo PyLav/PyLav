@@ -11,7 +11,7 @@ from pylav.extension.bundled_node.utils import get_jar_ram_actual
 from pylav.helpers.singleton import SingletonCachedByKey
 from pylav.storage.database.cache.decodators import maybe_cached
 from pylav.storage.database.cache.model import CachedModel
-from pylav.storage.database.tables.nodes import NodeRow
+from pylav.storage.database.tables.nodes import NodeRow, Sessions
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 
@@ -507,3 +507,33 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
             600,
             json.dumps({"max_ram": java_xmx_default}),
         )
+
+    @maybe_cached
+    async def fetch_session(self) -> str | None:
+        """Fetch the node's session from the database"""
+        data = (
+            await Sessions.select(Sessions.id)
+            .where((Sessions.node == self.id) & (Sessions.bot == self.client.bot.user.id))  # noqa: E712
+            .first()
+            .output(load_json=True, nested=True)
+        )
+        return data["id"] if data else None
+
+    async def update_session(self, session: str | None) -> None:
+        """Update the node's session in the database"""
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
+        await Sessions.raw(
+            """
+            INSERT INTO sessions
+            (id, node, bot)
+            VALUES ({}, {}, {})
+            ON CONFLICT (node, bot)
+            DO UPDATE
+            SET id = excluded.id;
+            """,
+            session,
+            self.id,
+            self.client.bot.user.id,
+        )
+        await self.update_cache((self.fetch_session, session))

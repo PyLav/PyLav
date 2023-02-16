@@ -166,7 +166,12 @@ if (DATA_FOLDER := data.get("PYLAV__DATA_FOLDER")) is None:
     DATA_FOLDER = os.getenv("PYLAV__DATA_FOLDER")
     data_new["PYLAV__DATA_FOLDER"] = DATA_FOLDER
 
-data_new = remove_keys("PYLAV__CACHING_ENABLED", "PYLAV__PREFER_PARTIAL_TRACKS", data=data_new)
+if (ENABLE_NODE_RESUMING := data.get("PYLAV__ENABLE_NODE_RESUMING")) is None:
+    ENABLE_NODE_RESUMING = bool(int(os.getenv("PYLAV__ENABLE_NODE_RESUMING", "1")))
+    data_new["PYLAV__ENABLE_NODE_RESUMING"] = ENABLE_NODE_RESUMING
+
+
+data_new = remove_keys("PYLAV__CACHING_ENABLED", "PYLAV__PREFER_PARTIAL_TRACKS", "PREFER_PARTIAL_TRACKS", data=data_new)
 
 if DeepDiff(data, data_new, ignore_order=True, max_passes=2, cache_size=1000):
     with ENV_FILE.open(mode="w") as file:

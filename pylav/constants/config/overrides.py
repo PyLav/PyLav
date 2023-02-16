@@ -86,3 +86,9 @@ MANAGED_NODE_DEEZER_KEY = os.getenv("PYLAV__MANAGED_NODE_DEEZER_KEY")
 
 LOCAL_TRACKS_FOLDER = os.getenv("PYLAV__LOCAL_TRACKS_FOLDER")
 DATA_FOLDER = os.getenv("PYLAV__DATA_FOLDER")
+ENABLE_NODE_RESUMING = (
+    bool(int(envar_value)) if (envar_value := os.getenv("PYLAV__ENABLE_NODE_RESUMING")) is not None else None
+)
+ENABLE_NODE_RESUMING = False
+# TODO:
+#  - Add support for resuming nodes

@@ -33,6 +33,7 @@ if not ENV_FILE.exists():
     build_from_envvars()
     from pylav.constants.config.env_var import DATA_FOLDER as DATA_FOLDER
     from pylav.constants.config.env_var import DEFAULT_SEARCH_SOURCE as DEFAULT_SEARCH_SOURCE
+    from pylav.constants.config.env_var import ENABLE_NODE_RESUMING as ENABLE_NODE_RESUMING
     from pylav.constants.config.env_var import EXTERNAL_UNMANAGED_HOST as EXTERNAL_UNMANAGED_HOST
     from pylav.constants.config.env_var import EXTERNAL_UNMANAGED_NAME as EXTERNAL_UNMANAGED_NAME
     from pylav.constants.config.env_var import EXTERNAL_UNMANAGED_PASSWORD as EXTERNAL_UNMANAGED_PASSWORD
@@ -77,6 +78,7 @@ else:
     from pylav.constants.config import overrides
     from pylav.constants.config.file import DATA_FOLDER as DATA_FOLDER
     from pylav.constants.config.file import DEFAULT_SEARCH_SOURCE as DEFAULT_SEARCH_SOURCE
+    from pylav.constants.config.file import ENABLE_NODE_RESUMING as ENABLE_NODE_RESUMING
     from pylav.constants.config.file import EXTERNAL_UNMANAGED_HOST as EXTERNAL_UNMANAGED_HOST
     from pylav.constants.config.file import EXTERNAL_UNMANAGED_NAME as EXTERNAL_UNMANAGED_NAME
     from pylav.constants.config.file import EXTERNAL_UNMANAGED_PASSWORD as EXTERNAL_UNMANAGED_PASSWORD

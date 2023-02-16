@@ -17,7 +17,7 @@ from dacite import from_dict
 from discord import VoiceProtocol
 from discord.abc import Messageable
 
-from pylav.constants.config import DEFAULT_SEARCH_SOURCE
+from pylav.constants.config import DEFAULT_SEARCH_SOURCE, ENABLE_NODE_RESUMING
 from pylav.constants.coordinates import REGION_TO_COUNTRY_COORDINATE_MAPPING
 from pylav.constants.regex import VOICE_CHANNEL_ENDPOINT
 from pylav.enums.plugins.sponsorblock import SegmentCategory
@@ -1644,7 +1644,11 @@ class Player(VoiceProtocol):
             )
             self._connected = True
             self.connected_at = get_now_utc()
-            self._logger.debug("Connected to voice channel")
+            self._logger.debug(
+                "Connected to voice channel"
+                if self.guild.me not in self.channel.members
+                else "Reconnected to voice channel"
+            )
 
     async def reconnect(self):
         if self.__reconnect_lock.locked():
@@ -1671,11 +1675,14 @@ class Player(VoiceProtocol):
             await self.change_to_best_node(forced=True, skip_position_fetch=True)
             self._logger.debug("Reconnected to voice channel")
 
-    async def disconnect(self, *, force: bool = False, requester: discord.Member | None) -> None:
+    async def disconnect(
+        self, *, force: bool = False, requester: discord.Member | None, maybe_resuming: bool = False
+    ) -> None:
         try:
             if not self.stopped:
                 await self.save()
-            await self.guild.change_voice_state(channel=None)
+            if (not maybe_resuming) and self.node.can_resume:
+                await self.guild.change_voice_state(channel=None)
             self.node.dispatch_event(PlayerDisconnectedEvent(self, requester))
             self._logger.debug("Disconnected from voice channel")
         finally:
@@ -1688,7 +1695,8 @@ class Player(VoiceProtocol):
             self.current = None
             with contextlib.suppress(ValueError):
                 await self.player_manager.remove(self.channel.guild.id)
-            await self.node.delete_session_player(self.guild.id)
+            if not maybe_resuming:
+                await self.node.delete_session_player(self.guild.id)
             self.player_manager.client.scheduler.remove_job(job_id=f"{self.bot.user.id}-{self.guild.id}-auto_dc_task")
             self.player_manager.client.scheduler.remove_job(
                 job_id=f"{self.bot.user.id}-{self.guild.id}-auto_empty_queue_task"
@@ -1742,7 +1750,8 @@ class Player(VoiceProtocol):
         self._logger.debug("Moving from %s to voice channel: %s", self.channel.id, channel.id)
         self.channel = channel
         self_deaf = deaf if (deaf := await self.self_deaf()) is True else self_deaf
-        await self.guild.change_voice_state(channel=self.channel, self_mute=self_mute, self_deaf=self_deaf)
+        if self.guild.me not in self.channel.members:
+            await self.guild.change_voice_state(channel=self.channel, self_mute=self_mute, self_deaf=self_deaf)
         self._connected = True
         self.node.dispatch_event(PlayerMovedEvent(self, requester, old_channel, self.channel))
         return channel
@@ -2789,9 +2798,12 @@ class Player(VoiceProtocol):
         self._effect_enabled = player.effect_enabled
         await self._process_restore_filters(player)
         self.current = current
-        self.stopped = (not await self.autoplay_enabled()) and not self.queue.qsize() and not self.current
+        if self.current is None and ENABLE_NODE_RESUMING:
+            self.stopped = (not await self.autoplay_enabled()) and not self.queue.qsize()
+        else:
+            self.stopped = (not await self.autoplay_enabled()) and not self.queue.qsize() and not self.current
         await self.change_to_best_node(ops=False, skip_position_fetch=True)
-        await self._process_restore_rest_call()
+        await self._process_restore_rest_call(restoring_session)
         self.last_track = last_track
         self._restored = True
         await self.player_manager.client.player_state_db_manager.delete_player(guild_id=self.guild.id)
@@ -2806,14 +2818,14 @@ class Player(VoiceProtocol):
                 else None
             )
 
-    async def _process_restore_rest_call(self):
+    async def _process_restore_rest_call(self, restoring_session: bool) -> None:
         payload = {}
         if self.paused:
             payload["paused"] = self.paused
-        if self.current:
+        if self.current and not restoring_session:
             payload |= {"encodedTrack": self.current.encoded, "position": self._last_position}
             self._last_update = time.time() * 1000
-        if self.stopped:
+        if self.stopped and not restoring_session:
             payload |= {"encodedTrack": None}
             self._last_update = time.time() * 1000
         if self.has_effects:
@@ -2903,8 +2915,21 @@ class Player(VoiceProtocol):
         return queue
 
     async def _process_restore_current_tracks(self, player):
+        restoring_session = False
         if player.current:
-            if full_track := player.current.pop("full_track_data", None):
+            player_api = await self.node.fetch_session_player(guild_id=self.guild.id)
+            if isinstance(player_api, LavalinkPlayer):
+                if player_api.track:
+                    current = await Track.build_track(
+                        node=self.node,
+                        data=player_api.track,
+                        **player.current.pop("extra"),
+                        **player.current,
+                    )
+                    restoring_session = True
+                else:
+                    current = None
+            elif full_track := player.current.pop("full_track_data", None):
                 current = await Track.build_track(
                     node=self.node,
                     data=from_dict(data_class=APITrack, data=full_track),
@@ -2968,7 +2993,7 @@ class Player(VoiceProtocol):
                 )
         else:
             last_track = None
-        return current, last_track, next_track
+        return current, last_track, next_track, restoring_session
 
     async def _process_restore_filters(self, player):
         effects = player.effects

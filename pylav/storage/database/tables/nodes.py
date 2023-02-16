@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from piccolo.columns import JSONB, Array, BigInt, Boolean, Integer, Text
+from piccolo.columns import JSONB, UUID, Array, BigInt, Boolean, Integer, Text
 from piccolo.table import Table
 
 from pylav.storage.database.tables.misc import DATABASE_ENGINE
@@ -18,3 +18,10 @@ class NodeRow(Table, db=DATABASE_ENGINE, tablename="node"):
     disabled_sources = Array(null=False, default=[], base_column=Text())
     extras = JSONB(null=True, default={})
     yaml = JSONB(null=True, default={})
+
+
+class Sessions(Table, db=DATABASE_ENGINE, tablename="sessions"):
+    primary_key = UUID(primary_key=True)
+    bot = BigInt(index=True)
+    node = BigInt(index=True)
+    id = Text(null=True)

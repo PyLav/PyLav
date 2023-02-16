@@ -1,10 +1,12 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import NotRequired
 
 from pylav.constants.builtin_nodes import BUNDLED_NODES_IDS_HOST_MAPPING
 from pylav.constants.node_features import SUPPORTED_FEATURES, SUPPORTED_SOURCES
 from pylav.storage.database.cache.model import CachedModel
+from pylav.storage.database.tables.nodes import Sessions
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 
@@ -12,6 +14,11 @@ from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 class NodeMock(CachedModel):
     id: int
     data: JSON_DICT_TYPE
+
+    session_id: NotRequired[str | None] = field(repr=False, init=False, hash=None, compare=False, default=...)
+
+    def __post_init__(self):
+        self.session_id = ...
 
     def get_cache_key(self) -> str:
         return f"{self.id}"
@@ -216,3 +223,45 @@ class NodeMock(CachedModel):
     @classmethod
     async def create_managed(cls, identifier: int) -> None:
         """Create the player in the database"""
+
+    async def fetch_session(self) -> str | None:
+        """Fetch the node's session from the database.
+
+        Returns
+        -------
+        str | None
+            The node's session.
+        """
+
+        if self.session_id is ...:
+            session = (
+                await Sessions.select(Sessions.id)
+                .where((Sessions.node == self.id) & (Sessions.bot == self.client.bot.user.id))  # noqa: E712
+                .first()
+                .output(load_json=True)
+            )
+            if session and (sid := session.get("id")):
+                self.session_id = sid
+                return self.session_id
+            self.session_id = None
+        return self.data.get("session", None)
+
+    async def update_session(self, session: str | None) -> None:
+        """Update the node's session in the database"""
+        self.data["session"] = session
+        self.session_id = session
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
+        await Sessions.raw(
+            """
+            INSERT INTO sessions
+            (id, node, bot)
+            VALUES ({}, {}, {})
+            ON CONFLICT (node, bot)
+            DO UPDATE
+            SET id = excluded.id;
+            """,
+            session,
+            self.id,
+            self.client.bot.user.id,
+        )

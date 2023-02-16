@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 import asyncpg
 import discord
 
+from pylav.constants.config import ENABLE_NODE_RESUMING
 from pylav.events.player import PlayerConnectedEvent
 from pylav.exceptions.node import NoNodeAvailableException
 from pylav.helpers.format.strings import shorten_string
@@ -142,9 +143,10 @@ class PlayerController:
 
         player = self.players.pop(guild_id)
 
-        if player.node and player.node.available:
+        if player.node and player.node.available and not ENABLE_NODE_RESUMING:
             await player.node.delete_session_player(player.guild.id)
-        await player.disconnect(requester=requester)
+
+        await player.disconnect(requester=requester, maybe_resuming=ENABLE_NODE_RESUMING)
         # noinspection PyProtectedMember
         player.node._logger.debug("Successfully destroyed player %s", guild_id)
 
