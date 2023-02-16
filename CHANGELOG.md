@@ -14,6 +14,28 @@
 **Full Changelog**: https://github.com/Drapersniper/PyLav/compare/v1.4.4...1.5.0
 ---
 
+## v1.8.0 (16/02/2023)
+- [Bump crowdin/github-action from 1.6.0 to 1.7.0 (#216)](https://github.com/PyLav/PyLav/commit/15b3a797b67436e4e2a277985ecd611198893ced) - @dependabot[bot]
+- [remove sourcery](https://github.com/PyLav/PyLav/commit/18a79d6e8b55d7d34e626c430b47415b611d8cda) - @Drapersniper
+- [Auto Merge](https://github.com/PyLav/PyLav/commit/59710b49084b04fe237ff6e4cc88ad764f78bd9d) - @Drapersniper
+- [New Crowdin translations by Github Action](https://github.com/PyLav/PyLav/commit/f9e04fe8e13e0e9f726b598ca5bc4648d01a2af5) - @crowdin-bot
+- [Auto Merge](https://github.com/PyLav/PyLav/commit/c8aaae58eb6efd5bc81cf2de3374b701121fd288) - @Drapersniper
+- [New Crowdin translations by Github Action](https://github.com/PyLav/PyLav/commit/d19fdd6f60b781344a08acdaec4c7a8380a63ced) - @crowdin-bot
+- [tweaks and handling for none Query on Trakc object creation](https://github.com/PyLav/PyLav/commit/1db8d832d7aab70722e6c3af130f15aa2b007ac5) - @Drapersniper
+- [Rename `is_playing` to `is_active` add `is_playing` which is `is_active and not self.pause`](https://github.com/PyLav/PyLav/commit/edd403f65a920f5fc8d172da3a5c99955dc9cf9e) - @Drapersniper
+- [Add initial support for nose resuming](https://github.com/PyLav/PyLav/commit/98544e8f18398a7d49902d6ca00359752ed725f8) - @Drapersniper
+- [Fix an issue where queues and history were not restored - Part 2](https://github.com/PyLav/PyLav/commit/84bc6a9d430db035733a424610ca3d487f6e4522) - @Drapersniper
+- [Fix an issue where queues and history were not restored](https://github.com/PyLav/PyLav/commit/83d2658d3f3d6603ea226e5f8fbd3992a661d56b) - @Drapersniper
+- [fix `KeyError: 'decoded'` on autoplay](https://github.com/PyLav/PyLav/commit/a21d4d5df995dbe476c9fbfe06c7704dd4dacabc) - @Drapersniper
+- [Fix `AttributeError: 'NoneType' object has no attribute 'stream'` in queue and now playing generation.](https://github.com/PyLav/PyLav/commit/48e5a38006b4fb3d056e7e2608ded98977db3569) - @Drapersniper
+- [automerge](https://github.com/PyLav/PyLav/commit/7ddbaeacc661357682491c90f084d6f25efdd977) - @Drapersniper
+- [Auto Merge](https://github.com/PyLav/PyLav/commit/df5a8cdb6fb0944addf088271fa97ca952cb094e) - @Drapersniper
+- [New Crowdin translations by Github Action](https://github.com/PyLav/PyLav/commit/3a58d805e142550265c86ea355f73569584a028e) - @crowdin-bot
+- [Update secrets](https://github.com/PyLav/PyLav/commit/955f9c1bfab6bdc25aadce5df6a11ecd22f2e392) - @Drapersniper
+- [Update secrets](https://github.com/PyLav/PyLav/commit/5a892ff7ad7d4abb218aa57da66f3c9931a66418) - @Drapersniper
+
+---
+
 ## v1.7.2 (13/02/2023)
 - [Update references](https://github.com/PyLav/PyLav/commit/c17e6aa9698a4611f8bab2aeb44b4b54d8c4208e) - @Drapersniper
 
@@ -256,8 +278,3 @@
 
 ## v1.2.2 (18/01/2023)
 - [properly use PYLAV__EXTERNAL_UNMANAGED_NAME](https://github.com/Drapersniper/PyLav/commit/273b5046238d5ef1e178975967f5b433fe3a2cdf) - @Drapersniper
-
----
-
-## v1.2.1 (18/01/2023)
-- [Remove caching from radio browser api init](https://github.com/Drapersniper/PyLav/commit/a4e870d8236204ef8387ff5bc44f6390346d84ca) - @Drapersniper
