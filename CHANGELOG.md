@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.8.3 (21/02/2023)
+- [Make release](https://github.com/PyLav/PyLav/commit/bdd04c13e962c7dc6f754bcd96eba2ce02910f9d) - @Drapersniper
+
+---
+
 ## v1.8.2 (21/02/2023)
 
 
@@ -269,10 +274,3 @@
 - [Bump dependencies](https://github.com/Drapersniper/PyLav/commit/18c6c7bd4568f20d5059a8b2178c9af0e29f674b) - @Drapersniper
 - [fix incorrect doc strings](https://github.com/Drapersniper/PyLav/commit/95245e1e6191ea8ce5e7fe71b1fe6f14668f35f8) - @Drapersniper
 - [Implement a compatibility module for the json module which uses fastest json module available for any given op](https://github.com/Drapersniper/PyLav/commit/9bf08eac497bc3c2a152c1e37ac5e49512400529) - @Drapersniper
-
----
-
-## v1.2.3 (21/01/2023)
-- [add `PlayerAutoDisconnectedEmptyQueueEvent`  `PlayerAutoDisconnectedAloneEvent` `PlayerAutoPausedEvent` and `PlayerAutoResumedEvent` events to the player](https://github.com/Drapersniper/PyLav/commit/26e48b07448cabf25584a55810d8b75b304d2afc) - @Drapersniper
-- [add `PYLAV__YAML_CONFIG` and `PYLAV__LOCAL_TRACKS_FOLDER` env vars](https://github.com/Drapersniper/PyLav/commit/2458cc2461150835b197d73625ad894771a5789c) - @Drapersniper
-- [explicitly set the hostname and container_name](https://github.com/Drapersniper/PyLav/commit/ecbbfb6db28e7b8e88a9a969b958904b6f1ece36) - @Drapersniper
