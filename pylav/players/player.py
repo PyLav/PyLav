@@ -622,7 +622,7 @@ class Player(VoiceProtocol):
     @property
     def is_active(self) -> bool:
         """Returns the player's track state"""
-        return self.is_connected and self.current is not None
+        return self.is_connected and self.current is not None and not self.stopped
 
     @property
     def is_connected(self) -> bool:
@@ -846,15 +846,9 @@ class Player(VoiceProtocol):
         with contextlib.suppress(
             asyncio.exceptions.CancelledError, NoNodeAvailableException, asyncpg.exceptions.CannotConnectNowError
         ):
-            if not self.is_connected:
+            if not self.is_active:
                 self._logger.trace(
-                    "Auto save task for %s fired while player is not connected to a voice channel - discarding",
-                    self,
-                )
-                return
-            if self.stopped:
-                self._logger.trace(
-                    "Auto save task for %s fired while player that has been stopped - discarding",
+                    "Auto save task for %s fired while player is not active - discarding",
                     self,
                 )
                 return
@@ -1684,7 +1678,7 @@ class Player(VoiceProtocol):
         self, *, force: bool = False, requester: discord.Member | None, maybe_resuming: bool = False
     ) -> None:
         try:
-            if not self.stopped:
+            if self.is_active:
                 await self.save()
             if (not maybe_resuming) and self.node.can_resume:
                 await self.guild.change_voice_state(channel=None)
@@ -2781,7 +2775,8 @@ class Player(VoiceProtocol):
         }
 
     async def save(self) -> None:
-        await self.node.node_manager.client.player_state_db_manager.save_player(await self.to_dict())
+        if self.is_active:
+            await self.node.node_manager.client.player_state_db_manager.save_player(await self.to_dict())
 
     async def restore(self, player: PlayerState, requester: discord.User | discord.Member) -> None:
         # sourcery no-metrics

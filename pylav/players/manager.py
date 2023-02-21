@@ -277,7 +277,9 @@ class PlayerController:
 
     async def save_all_players(self) -> None:
         LOGGER.debug("Saving player states")
-        await self.client.player_state_db_manager.save_players([await p.to_dict() for p in self.connected_players])
+        await self.client.player_state_db_manager.save_players(
+            [await p.to_dict() for p in self.connected_players if p.is_active]
+        )
 
     async def restore_player_states(self) -> None:
         # noinspection PyProtectedMember
@@ -305,14 +307,17 @@ class PlayerController:
             LOGGER.debug("Channel for %s could not be found, skipping player restore", player_state.id)
             await self.client.player_state_db_manager.delete_player(guild_id=player_state.id)
             return
+        if not player_state.current:
+            # Player was empty
+            LOGGER.debug("Player %s does not have a current track, skipping restore", player_state.id)
+            await self.client.player_state_db_manager.delete_player(guild_id=player_state.id)
+            return
         requester = self.client.bot.user
         try:
             discord_player = await self.create(
                 channel=channel,
                 requester=requester,
-                feature=(await Query.from_base64(player_state.current["encoded"], lazy=True)).requires_capability
-                if player_state.current
-                else None,
+                feature=(await Query.from_base64(player_state.current["encoded"], lazy=True)).requires_capability,
                 self_deaf=player_state.self_deaf,
             )
         except Exception:
