@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-16 20:42+0000\n"
-"PO-Revision-Date: 2023-02-16 20:42\n"
+"POT-Creation-Date: 2023-02-21 20:13+0000\n"
+"PO-Revision-Date: 2023-02-21 20:13\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -21,127 +21,127 @@ msgstr ""
 msgid "There are no nodes available currently."
 msgstr "Şu anda kullanılabilir düğüm yok."
 
-#: pylav/players/manager.py:351
+#: pylav/players/manager.py:356
 msgid "Music in {number_of_servers_variable_do_not_translate} servers"
 msgstr "Müzik {number_of_servers_variable_do_not_translate} Sunucu"
 
-#: pylav/players/player.py:1135
+#: pylav/players/player.py:1140
 msgid "There are no tracks currently in the player history."
 msgstr "Şu anda oyuncu geçmişinde parça yok."
 
-#: pylav/players/player.py:1792
+#: pylav/players/player.py:1797
 msgid "Current node has the volume filter feature disabled."
 msgstr "Geçerli düğümde birim filtresi özelliği devre dışı bırakılmıştır."
 
-#: pylav/players/player.py:1814 pylav/players/player.py:1990
-#: pylav/players/player.py:2045
+#: pylav/players/player.py:1819 pylav/players/player.py:1995
+#: pylav/players/player.py:2050
 msgid "Current node has the equalizer feature disabled."
 msgstr "Geçerli düğümde ekolayzır özelliği devre dışı bırakılmıştır."
 
-#: pylav/players/player.py:1834
+#: pylav/players/player.py:1839
 msgid "Current node has the karaoke feature disabled"
 msgstr "Geçerli düğümde karaoke özelliği devre dışı bırakılmış"
 
-#: pylav/players/player.py:1854 pylav/players/player.py:1992
-#: pylav/players/player.py:2047
+#: pylav/players/player.py:1859 pylav/players/player.py:1997
+#: pylav/players/player.py:2052
 msgid "Current node has the timescale feature disabled."
 msgstr "Geçerli düğümde zaman ölçeği özelliği devre dışı bırakılmıştır."
 
-#: pylav/players/player.py:1874
+#: pylav/players/player.py:1879
 msgid "Current node has the tremolo feature disabled."
 msgstr "Geçerli düğümde tremolo özelliği devre dışı bırakılmıştır."
 
-#: pylav/players/player.py:1894
+#: pylav/players/player.py:1899
 msgid "Current node has the vibrato feature disabled."
 msgstr "Mevcut düğümde vibrato özelliği devre dışı bırakılmıştır."
 
-#: pylav/players/player.py:1914
+#: pylav/players/player.py:1919
 msgid "Current node has the rotation feature disabled."
 msgstr "Geçerli düğümde döndürme özelliği devre dışı bırakılmıştır."
 
-#: pylav/players/player.py:1934
+#: pylav/players/player.py:1939
 msgid "Current node has the distortion feature disabled."
 msgstr "Geçerli düğümde bozulma özelliği devre dışı bırakılmıştır."
 
-#: pylav/players/player.py:1954
+#: pylav/players/player.py:1959
 msgid "Current node has the low-pass feature disabled."
 msgstr "Geçerli düğümde düşük geçiş özelliği devre dışı bırakılmıştır."
 
-#: pylav/players/player.py:1974
+#: pylav/players/player.py:1979
 msgid "Current node has the echo feature disabled."
 msgstr "Geçerli düğümde yankı özelliği devre dışı bırakılmıştır."
 
-#: pylav/players/player.py:2104
+#: pylav/players/player.py:2109
 msgid "Current node has the channel-mix feature disabled."
 msgstr "Geçerli düğümde kanal karışımı özelliği devre dışı bırakılmıştır."
 
-#: pylav/players/player.py:2375 pylav/players/player.py:2436
-#: pylav/players/player.py:2451 pylav/players/player.py:2550
+#: pylav/players/player.py:2380 pylav/players/player.py:2441
+#: pylav/players/player.py:2456 pylav/players/player.py:2555
 msgid "LIVE"
 msgstr "CANLI"
 
-#: pylav/players/player.py:2391
+#: pylav/players/player.py:2396
 msgid "Now Playing in {server_name_variable_do_not_translate}"
 msgstr "Şimdi Oynanıyor {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2415 pylav/players/player.py:2590
+#: pylav/players/player.py:2420 pylav/players/player.py:2595
 msgid "Currently livestreaming"
 msgstr "Şu anda canlı yayında"
 
-#: pylav/players/player.py:2417
+#: pylav/players/player.py:2422
 msgid "Playing: "
 msgstr "Oynuyor: "
 
-#: pylav/players/player.py:2420 pylav/players/player.py:2443
-#: pylav/players/player.py:2458 pylav/players/player.py:2596
+#: pylav/players/player.py:2425 pylav/players/player.py:2448
+#: pylav/players/player.py:2463 pylav/players/player.py:2601
 msgid "Requester"
 msgstr "İstekte Bulunan"
 
-#: pylav/players/player.py:2426
+#: pylav/players/player.py:2431
 msgid "Duration: {track_duration_variable_do_not_translate}"
 msgstr "Süre: {track_duration_variable_do_not_translate}"
 
-#: pylav/players/player.py:2439 pylav/players/player.py:2454
+#: pylav/players/player.py:2444 pylav/players/player.py:2459
 msgid "Duration"
 msgstr "Süre"
 
-#: pylav/players/player.py:2445
+#: pylav/players/player.py:2450
 msgid "Previous Track"
 msgstr "Önceki Parça"
 
-#: pylav/players/player.py:2460
+#: pylav/players/player.py:2465
 msgid "Next Track"
 msgstr "Sıradaki Parça"
 
-#: pylav/players/player.py:2469
+#: pylav/players/player.py:2474
 msgid "1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "1 parça, {queue_total_duration_variable_do_not_translate} Kalan\n"
 
-#: pylav/players/player.py:2473
+#: pylav/players/player.py:2478
 msgid "0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "0 parça, {queue_total_duration_variable_do_not_translate} Kalan\n"
 
-#: pylav/players/player.py:2477
+#: pylav/players/player.py:2482
 msgid "{track_count_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "{track_count_variable_do_not_translate} Parça {queue_total_duration_variable_do_not_translate} Kalan\n"
 
-#: pylav/players/player.py:2484 pylav/players/player.py:2637
+#: pylav/players/player.py:2489 pylav/players/player.py:2642
 msgid "Repeating"
 msgstr "Tekrar ediyor"
 
-#: pylav/players/player.py:2486 pylav/players/player.py:2639
+#: pylav/players/player.py:2491 pylav/players/player.py:2644
 msgid "Auto Play"
 msgstr "Otomatik Oynat"
 
-#: pylav/players/player.py:2490 pylav/players/player.py:2643
+#: pylav/players/player.py:2495 pylav/players/player.py:2648
 msgid "{volume_variable_do_not_translate}%"
 msgstr "{volume_variable_do_not_translate}%"
 
-#: pylav/players/player.py:2491 pylav/players/player.py:2644
+#: pylav/players/player.py:2496 pylav/players/player.py:2649
 msgid "Volume"
 msgstr "Hacim"
 
-#: pylav/players/player.py:2494
+#: pylav/players/player.py:2499
 msgid "\n\n"
 "You can search specific services by using the following prefixes:\n"
 "{deezer_service_variable_do_not_translate}  - Deezer\n"
@@ -165,31 +165,31 @@ msgstr "\n\n"
 "Örnek: {example_variable_do_not_translate}.\n\n"
 "Hiçbir önek kullanılmazsa, varsayılan olarak {fallback_service_variable_do_not_translate}\n"
 
-#: pylav/players/player.py:2560
+#: pylav/players/player.py:2565
 msgid "Recently Played for {server_name_variable_do_not_translate}"
 msgstr "Son zamanlarda oynadığı {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2566
+#: pylav/players/player.py:2571
 msgid "Queue for {server_name_variable_do_not_translate}"
 msgstr "Kuyruk için {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2593
+#: pylav/players/player.py:2598
 msgid "Playing"
 msgstr "Oynuyor"
 
-#: pylav/players/player.py:2609
+#: pylav/players/player.py:2614
 msgid "Queue order will change every time a track is added due to auto shuffle being enabled."
 msgstr "Kuyruk sırası, otomatik karıştırmanın etkinleştirilmesi nedeniyle bir parça her eklendiğinde değişecektir."
 
-#: pylav/players/player.py:2619
+#: pylav/players/player.py:2624
 msgid "Page 1 / 1 | 1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "Sayfa 1 / 1 | 1 parça, {queue_total_duration_variable_do_not_translate} Kalan\n"
 
-#: pylav/players/player.py:2623
+#: pylav/players/player.py:2628
 msgid "Page 1 / 1 | 0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "Sayfa 1 / 1 | 0 parça, {queue_total_duration_variable_do_not_translate} Kalan\n"
 
-#: pylav/players/player.py:2627
+#: pylav/players/player.py:2632
 msgid "Page {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "Sayfa {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} Parça {queue_total_duration_variable_do_not_translate} Kalan\n"
 
