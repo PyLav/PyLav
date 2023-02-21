@@ -14,3 +14,4 @@ ignoreCommitsWith:
 -   \[post\] Update translations
 changelogFilename: CHANGELOG.md
 override: true
+limit: 99
