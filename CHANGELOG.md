@@ -1,19 +1,5 @@
 # Changelog
 
-## 1.5.0 (01/01/1970)
-## What's Changed
-* New Crowdin translations by Github Action by @Drapersniper in https://github.com/Drapersniper/PyLav/pull/200
-* New Crowdin translations by Github Action by @Drapersniper in https://github.com/Drapersniper/PyLav/pull/202
-* New Crowdin translations by Github Action by @Drapersniper in https://github.com/Drapersniper/PyLav/pull/203
-* Fix: IndexError list index out of range by @Drapersniper in https://github.com/Drapersniper/PyLav/pull/201
-* New Crowdin translations by Github Action by @Drapersniper in https://github.com/Drapersniper/PyLav/pull/204
-* [skip ci] pre-commit autoupdate by @pre-commit-ci in https://github.com/Drapersniper/PyLav/pull/205
-* New Crowdin translations by Github Action by @Drapersniper in https://github.com/Drapersniper/PyLav/pull/206
-
-
-**Full Changelog**: https://github.com/Drapersniper/PyLav/compare/v1.4.4...1.5.0
----
-
 ## v1.8.1 (21/02/2023)
 - [Auto Merge](https://github.com/PyLav/PyLav/commit/8236702ab47e574d8ff34fcbfdcd4c18a5994676) - @Drapersniper
 - [New Crowdin translations by GitHub Action](https://github.com/PyLav/PyLav/commit/d7770e9973cbbccdffc19dd867ae27e066ac7cef) - @crowdin-bot
@@ -285,3 +271,8 @@
 - [add `PlayerAutoDisconnectedEmptyQueueEvent`  `PlayerAutoDisconnectedAloneEvent` `PlayerAutoPausedEvent` and `PlayerAutoResumedEvent` events to the player](https://github.com/Drapersniper/PyLav/commit/26e48b07448cabf25584a55810d8b75b304d2afc) - @Drapersniper
 - [add `PYLAV__YAML_CONFIG` and `PYLAV__LOCAL_TRACKS_FOLDER` env vars](https://github.com/Drapersniper/PyLav/commit/2458cc2461150835b197d73625ad894771a5789c) - @Drapersniper
 - [explicitly set the hostname and container_name](https://github.com/Drapersniper/PyLav/commit/ecbbfb6db28e7b8e88a9a969b958904b6f1ece36) - @Drapersniper
+
+---
+
+## v1.2.2 (18/01/2023)
+- [properly use PYLAV__EXTERNAL_UNMANAGED_NAME](https://github.com/Drapersniper/PyLav/commit/273b5046238d5ef1e178975967f5b433fe3a2cdf) - @Drapersniper
