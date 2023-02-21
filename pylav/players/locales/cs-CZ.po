@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-16 20:42+0000\n"
-"PO-Revision-Date: 2023-02-16 20:42\n"
+"POT-Creation-Date: 2023-02-21 20:13+0000\n"
+"PO-Revision-Date: 2023-02-21 20:13\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -21,127 +21,127 @@ msgstr ""
 msgid "There are no nodes available currently."
 msgstr "V současné době nejsou k dispozici žádné uzly."
 
-#: pylav/players/manager.py:351
+#: pylav/players/manager.py:356
 msgid "Music in {number_of_servers_variable_do_not_translate} servers"
 msgstr "Hudba v {number_of_servers_variable_do_not_translate} servery"
 
-#: pylav/players/player.py:1135
+#: pylav/players/player.py:1140
 msgid "There are no tracks currently in the player history."
 msgstr "V historii hráče momentálně nejsou žádné skladby."
 
-#: pylav/players/player.py:1792
+#: pylav/players/player.py:1797
 msgid "Current node has the volume filter feature disabled."
 msgstr "Aktuální uzel má funkci filtru svazku zakázanou."
 
-#: pylav/players/player.py:1814 pylav/players/player.py:1990
-#: pylav/players/player.py:2045
+#: pylav/players/player.py:1819 pylav/players/player.py:1995
+#: pylav/players/player.py:2050
 msgid "Current node has the equalizer feature disabled."
 msgstr "Aktuální uzel má zakázanou funkci ekvalizéru."
 
-#: pylav/players/player.py:1834
+#: pylav/players/player.py:1839
 msgid "Current node has the karaoke feature disabled"
 msgstr "Aktuální uzel má funkci karaoke zakázanou"
 
-#: pylav/players/player.py:1854 pylav/players/player.py:1992
-#: pylav/players/player.py:2047
+#: pylav/players/player.py:1859 pylav/players/player.py:1997
+#: pylav/players/player.py:2052
 msgid "Current node has the timescale feature disabled."
 msgstr "Aktuální uzel má zakázanou funkci časového měřítka."
 
-#: pylav/players/player.py:1874
+#: pylav/players/player.py:1879
 msgid "Current node has the tremolo feature disabled."
 msgstr "Aktuální uzel má funkci tremolo zakázanou."
 
-#: pylav/players/player.py:1894
+#: pylav/players/player.py:1899
 msgid "Current node has the vibrato feature disabled."
 msgstr "Aktuální uzel má funkci vibrato vypnutou."
 
-#: pylav/players/player.py:1914
+#: pylav/players/player.py:1919
 msgid "Current node has the rotation feature disabled."
 msgstr "Aktuální uzel má funkci rotace zakázanou."
 
-#: pylav/players/player.py:1934
+#: pylav/players/player.py:1939
 msgid "Current node has the distortion feature disabled."
 msgstr "Aktuální uzel má funkci zkreslení vypnutou."
 
-#: pylav/players/player.py:1954
+#: pylav/players/player.py:1959
 msgid "Current node has the low-pass feature disabled."
 msgstr "Aktuální uzel má funkci dolní propusti zakázanou."
 
-#: pylav/players/player.py:1974
+#: pylav/players/player.py:1979
 msgid "Current node has the echo feature disabled."
 msgstr "Aktuální uzel má zakázanou funkci echo."
 
-#: pylav/players/player.py:2104
+#: pylav/players/player.py:2109
 msgid "Current node has the channel-mix feature disabled."
 msgstr "Aktuální uzel má zakázanou funkci mixu kanálů."
 
-#: pylav/players/player.py:2375 pylav/players/player.py:2436
-#: pylav/players/player.py:2451 pylav/players/player.py:2550
+#: pylav/players/player.py:2380 pylav/players/player.py:2441
+#: pylav/players/player.py:2456 pylav/players/player.py:2555
 msgid "LIVE"
 msgstr "ŽIVÁ"
 
-#: pylav/players/player.py:2391
+#: pylav/players/player.py:2396
 msgid "Now Playing in {server_name_variable_do_not_translate}"
 msgstr "Právě hraje v {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2415 pylav/players/player.py:2590
+#: pylav/players/player.py:2420 pylav/players/player.py:2595
 msgid "Currently livestreaming"
 msgstr "Momentálně dobytek"
 
-#: pylav/players/player.py:2417
+#: pylav/players/player.py:2422
 msgid "Playing: "
 msgstr "Přehrávání: "
 
-#: pylav/players/player.py:2420 pylav/players/player.py:2443
-#: pylav/players/player.py:2458 pylav/players/player.py:2596
+#: pylav/players/player.py:2425 pylav/players/player.py:2448
+#: pylav/players/player.py:2463 pylav/players/player.py:2601
 msgid "Requester"
 msgstr "Objednávka"
 
-#: pylav/players/player.py:2426
+#: pylav/players/player.py:2431
 msgid "Duration: {track_duration_variable_do_not_translate}"
 msgstr "Trvání: {track_duration_variable_do_not_translate}"
 
-#: pylav/players/player.py:2439 pylav/players/player.py:2454
+#: pylav/players/player.py:2444 pylav/players/player.py:2459
 msgid "Duration"
 msgstr "Doba trvání"
 
-#: pylav/players/player.py:2445
+#: pylav/players/player.py:2450
 msgid "Previous Track"
 msgstr "Předchozí stopa"
 
-#: pylav/players/player.py:2460
+#: pylav/players/player.py:2465
 msgid "Next Track"
 msgstr "Další skladba"
 
-#: pylav/players/player.py:2469
+#: pylav/players/player.py:2474
 msgid "1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "1 stopa, {queue_total_duration_variable_do_not_translate} zbývající\n"
 
-#: pylav/players/player.py:2473
+#: pylav/players/player.py:2478
 msgid "0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "0 skladeb, {queue_total_duration_variable_do_not_translate} zbývající\n"
 
-#: pylav/players/player.py:2477
+#: pylav/players/player.py:2482
 msgid "{track_count_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "{track_count_variable_do_not_translate} Skladby {queue_total_duration_variable_do_not_translate} zbývající\n"
 
-#: pylav/players/player.py:2484 pylav/players/player.py:2637
+#: pylav/players/player.py:2489 pylav/players/player.py:2642
 msgid "Repeating"
 msgstr "Opakování"
 
-#: pylav/players/player.py:2486 pylav/players/player.py:2639
+#: pylav/players/player.py:2491 pylav/players/player.py:2644
 msgid "Auto Play"
 msgstr "Automatické přehrávání"
 
-#: pylav/players/player.py:2490 pylav/players/player.py:2643
+#: pylav/players/player.py:2495 pylav/players/player.py:2648
 msgid "{volume_variable_do_not_translate}%"
 msgstr "{volume_variable_do_not_translate}%"
 
-#: pylav/players/player.py:2491 pylav/players/player.py:2644
+#: pylav/players/player.py:2496 pylav/players/player.py:2649
 msgid "Volume"
 msgstr "Hlasitost"
 
-#: pylav/players/player.py:2494
+#: pylav/players/player.py:2499
 msgid "\n\n"
 "You can search specific services by using the following prefixes:\n"
 "{deezer_service_variable_do_not_translate}  - Deezer\n"
@@ -165,31 +165,31 @@ msgstr "\n\n"
 "Příklad: {example_variable_do_not_translate}.\n\n"
 "Pokud není použita žádná předpona, budu implicitně {fallback_service_variable_do_not_translate}\n"
 
-#: pylav/players/player.py:2560
+#: pylav/players/player.py:2565
 msgid "Recently Played for {server_name_variable_do_not_translate}"
 msgstr "Nedávno hrál pro {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2566
+#: pylav/players/player.py:2571
 msgid "Queue for {server_name_variable_do_not_translate}"
 msgstr "Fronta pro {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2593
+#: pylav/players/player.py:2598
 msgid "Playing"
 msgstr "Přehrává se"
 
-#: pylav/players/player.py:2609
+#: pylav/players/player.py:2614
 msgid "Queue order will change every time a track is added due to auto shuffle being enabled."
 msgstr "Pořadí fronty se změní při každém přidání prošlé trasy z důvodu povolení automatického náhodného přehrávání."
 
-#: pylav/players/player.py:2619
+#: pylav/players/player.py:2624
 msgid "Page 1 / 1 | 1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "Stránka 1 / 1 | 1 stopa, {queue_total_duration_variable_do_not_translate} zbývající\n"
 
-#: pylav/players/player.py:2623
+#: pylav/players/player.py:2628
 msgid "Page 1 / 1 | 0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "Stránka 1 / 1 | 0 skladeb, {queue_total_duration_variable_do_not_translate} zbývající\n"
 
-#: pylav/players/player.py:2627
+#: pylav/players/player.py:2632
 msgid "Page {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "Stránka {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} Skladby {queue_total_duration_variable_do_not_translate} zbývající\n"
 
