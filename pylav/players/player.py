@@ -1028,7 +1028,7 @@ class Player(VoiceProtocol):
         self._discord_session_id = data["session_id"]
         self.channel_id = data["channel_id"]
         if not self.channel_id:  # We're disconnecting
-            self._voice_state.clear()
+            await self.disconnect(force=True, requester=self.guild.me)
             return
         self.channel = self.guild.get_channel(int(self.channel_id))
         await self._dispatch_voice_update()
@@ -1680,7 +1680,7 @@ class Player(VoiceProtocol):
         try:
             if self.is_active:
                 await self.save()
-            if (not maybe_resuming) and self.node.can_resume:
+            if (not maybe_resuming) and self.node.can_resume and self.channel_id is not None:
                 await self.guild.change_voice_state(channel=None)
             self.node.dispatch_event(PlayerDisconnectedEvent(self, requester))
             self._logger.debug("Disconnected from voice channel")
