@@ -14,6 +14,18 @@
 **Full Changelog**: https://github.com/Drapersniper/PyLav/compare/v1.4.4...1.5.0
 ---
 
+## v1.8.1 (21/02/2023)
+- [Auto Merge](https://github.com/PyLav/PyLav/commit/8236702ab47e574d8ff34fcbfdcd4c18a5994676) - @Drapersniper
+- [New Crowdin translations by GitHub Action](https://github.com/PyLav/PyLav/commit/d7770e9973cbbccdffc19dd867ae27e066ac7cef) - @crowdin-bot
+- [Dependency updates](https://github.com/PyLav/PyLav/commit/1482e5e7cea85c6794325cec1df06665f4f663ae) - @Drapersniper
+- [Enforce forced vc even in the case of a manual move](https://github.com/PyLav/PyLav/commit/831969923963f41d1ccecff9e19b625026cad6ed) - @Drapersniper
+- [pre-commit hook updates](https://github.com/PyLav/PyLav/commit/cafce4edffa5bf4c2c689a416e143d06ce7270c4) - @Drapersniper
+- [Clean up player on forced dc](https://github.com/PyLav/PyLav/commit/c6f0587c41e63d5c4343ca731b50ad444bac0284) - @Drapersniper
+- [Stop restoring inactive players](https://github.com/PyLav/PyLav/commit/ab3e0c87e85a9b41a6455e998ef66a6920312c40) - @Drapersniper
+- [Bump pascalgn/automerge-action from 0.15.5 to 0.15.6 (#219)](https://github.com/PyLav/PyLav/commit/621282d5ec09ae8763150130ade4c2b63b3c1e1e) - @dependabot[bot]
+
+---
+
 ## v1.8.0 (16/02/2023)
 - [Bump crowdin/github-action from 1.6.0 to 1.7.0 (#216)](https://github.com/PyLav/PyLav/commit/15b3a797b67436e4e2a277985ecd611198893ced) - @dependabot[bot]
 - [remove sourcery](https://github.com/PyLav/PyLav/commit/18a79d6e8b55d7d34e626c430b47415b611d8cda) - @Drapersniper
@@ -273,8 +285,3 @@
 - [add `PlayerAutoDisconnectedEmptyQueueEvent`  `PlayerAutoDisconnectedAloneEvent` `PlayerAutoPausedEvent` and `PlayerAutoResumedEvent` events to the player](https://github.com/Drapersniper/PyLav/commit/26e48b07448cabf25584a55810d8b75b304d2afc) - @Drapersniper
 - [add `PYLAV__YAML_CONFIG` and `PYLAV__LOCAL_TRACKS_FOLDER` env vars](https://github.com/Drapersniper/PyLav/commit/2458cc2461150835b197d73625ad894771a5789c) - @Drapersniper
 - [explicitly set the hostname and container_name](https://github.com/Drapersniper/PyLav/commit/ecbbfb6db28e7b8e88a9a969b958904b6f1ece36) - @Drapersniper
-
----
-
-## v1.2.2 (18/01/2023)
-- [properly use PYLAV__EXTERNAL_UNMANAGED_NAME](https://github.com/Drapersniper/PyLav/commit/273b5046238d5ef1e178975967f5b433fe3a2cdf) - @Drapersniper
