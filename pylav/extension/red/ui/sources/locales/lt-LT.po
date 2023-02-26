@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-12 23:00+0000\n"
-"PO-Revision-Date: 2023-02-16 20:52\n"
+"POT-Creation-Date: 2023-02-26 21:16+0000\n"
+"PO-Revision-Date: 2023-02-26 21:17\n"
 "Last-Translator: \n"
 "Language-Team: Lithuanian\n"
 "MIME-Version: 1.0\n"
@@ -245,57 +245,57 @@ msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_va
 msgstr "Puslapis {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} Serveriai"
 
 #: pylav/extension/red/ui/sources/playlist.py:58
-#: pylav/extension/red/ui/sources/playlist.py:219
+#: pylav/extension/red/ui/sources/playlist.py:221
 msgid "Page 1 / 1 | 1 playlist"
 msgstr "Puslapis 1 / 1 | 1 grojaraštis"
 
 #: pylav/extension/red/ui/sources/playlist.py:60
-#: pylav/extension/red/ui/sources/playlist.py:221
+#: pylav/extension/red/ui/sources/playlist.py:223
 msgid "Page 1 / 1 | 0 playlists"
 msgstr "Puslapis 1 / 1 | 0 grojaraščių"
 
 #: pylav/extension/red/ui/sources/playlist.py:62
-#: pylav/extension/red/ui/sources/playlist.py:223
+#: pylav/extension/red/ui/sources/playlist.py:225
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} playlists"
 msgstr "Puslapis {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} grojaraščiai"
 
-#: pylav/extension/red/ui/sources/playlist.py:138
+#: pylav/extension/red/ui/sources/playlist.py:140
 msgid "Tracks in"
 msgstr "Takeliai"
 
-#: pylav/extension/red/ui/sources/playlist.py:150
+#: pylav/extension/red/ui/sources/playlist.py:152
 msgid "Page 1 / 1 | 1 track"
 msgstr "Puslapis 1 / 1 | 1 takelis"
 
-#: pylav/extension/red/ui/sources/playlist.py:152
+#: pylav/extension/red/ui/sources/playlist.py:154
 msgid "Page 1 / 1 | 0 tracks"
 msgstr "Puslapis 1 / 1 | 0 takelių"
 
-#: pylav/extension/red/ui/sources/playlist.py:154
+#: pylav/extension/red/ui/sources/playlist.py:156
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} tracks"
 msgstr "Puslapis {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} Takelius"
 
-#: pylav/extension/red/ui/sources/playlist.py:187
+#: pylav/extension/red/ui/sources/playlist.py:189
 msgid "Unknown"
 msgstr "Nežinomas"
 
-#: pylav/extension/red/ui/sources/playlist.py:192
+#: pylav/extension/red/ui/sources/playlist.py:194
 msgid "Identifier: {id_variable_do_not_translate}"
 msgstr "Identifikatorius: {id_variable_do_not_translate}"
 
-#: pylav/extension/red/ui/sources/playlist.py:193
+#: pylav/extension/red/ui/sources/playlist.py:195
 msgid "Tracks: {num_variable_do_not_translate}"
 msgstr "Takelius: {num_variable_do_not_translate}"
 
-#: pylav/extension/red/ui/sources/playlist.py:196
+#: pylav/extension/red/ui/sources/playlist.py:198
 msgid "Author: {name_variable_do_not_translate}"
 msgstr "Autorius: {name_variable_do_not_translate}"
 
-#: pylav/extension/red/ui/sources/playlist.py:199
+#: pylav/extension/red/ui/sources/playlist.py:201
 msgid "Scope: {scope_variable_do_not_translate}\n"
 msgstr "Mastas: {scope_variable_do_not_translate}\n"
 
-#: pylav/extension/red/ui/sources/playlist.py:209
+#: pylav/extension/red/ui/sources/playlist.py:211
 msgid "Playlists you can access in this server:"
 msgstr "Grojaraščiai, kuriuos galite pasiekti šiame serveryje:"
 
