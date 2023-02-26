@@ -1064,9 +1064,12 @@ class Player(VoiceProtocol):
         query: Query = None,
     ) -> Track:
         if not isinstance(track, Track):
-            track = await Track.build_track(node=self.node, data=track, query=query, requester=requester)
+            track = await Track.build_track(
+                node=self.node, data=track, query=query, requester=requester, player_instance=self
+            )
         else:
             track._requester = requester
+            track._player = self
         return track
 
     async def add(
@@ -1162,7 +1165,9 @@ class Player(VoiceProtocol):
         bypass_cache: bool = False,
     ) -> None:
         async with self.__playing_lock:
-            track = await Track.build_track(node=self.node, data=track, query=query, requester=requester.id)
+            track = await Track.build_track(
+                node=self.node, data=track, query=query, requester=requester.id, player_instance=self
+            )
             self.next_track = None
             self.last_track = None
             self.stopped = False
@@ -1229,7 +1234,9 @@ class Player(VoiceProtocol):
         async with self.__playing_lock:
             auto_play, payload = await self._on_play_reset()
             if track is not None and isinstance(track, (Track, APITrack, dict, str, type(None))):
-                track = await Track.build_track(node=self.node, data=track, query=query, requester=requester.id)
+                track = await Track.build_track(
+                    node=self.node, data=track, query=query, requester=requester.id, player_instance=self
+                )
             if self.current:
                 await self._process_repeat_on_play()
             if self.current:
@@ -1360,6 +1367,7 @@ class Player(VoiceProtocol):
                 data=available_tracks[random.choice(list(tracks_not_in_history))],
                 query=None,
                 requester=self.client.user.id,
+                player_instance=self,
             )
         else:
             track = await Track.build_track(
@@ -1367,6 +1375,7 @@ class Player(VoiceProtocol):
                 data=available_tracks[random.choice(list(available_tracks))],
                 query=None,
                 requester=self.client.user.id,
+                player_instance=self,
             )
         auto_play = True
         self.next_track = None
@@ -2899,7 +2908,9 @@ class Player(VoiceProtocol):
                     data = track_objects_mapping[track.pop("data")]
                 else:
                     data = track.pop("data")
-                new_track = await Track.build_track(node=self.node, query=query, lazy=lazy, data=data, **track)
+                new_track = await Track.build_track(
+                    node=self.node, query=query, lazy=lazy, data=data, **track, player_instance=self
+                )
                 if new_track:
                     queue.append(new_track)
         if (not track_objects_mapping) or full_track_data:
@@ -2912,6 +2923,7 @@ class Player(VoiceProtocol):
                             query=await Query.from_string(t.pop("query"), None),
                             lazy=t.pop("lazy") and not t_full,
                             **t,
+                            player_instance=self,
                         )
                     )
                     for t in queue_raw
@@ -2936,6 +2948,7 @@ class Player(VoiceProtocol):
                         data=player_api.track,
                         **player.current.pop("extra"),
                         **player.current,
+                        player_instance=self,
                     )
                     restoring_session = True
                 else:
@@ -2948,6 +2961,7 @@ class Player(VoiceProtocol):
                     query=await Query.from_string(player.current.pop("query")),
                     **player.current.pop("extra"),
                     **player.current,
+                    player_instance=self,
                 )
             else:
                 current = await Track.build_track(
@@ -2957,6 +2971,7 @@ class Player(VoiceProtocol):
                     query=await Query.from_string(player.current.pop("query")),
                     **player.current.pop("extra"),
                     **player.current,
+                    player_instance=self,
                 )
         else:
             current = None
@@ -2970,6 +2985,7 @@ class Player(VoiceProtocol):
                     query=await Query.from_string(n_track.pop("query")),
                     **n_track.pop("extra"),
                     **n_track,
+                    player_instance=self,
                 )
             else:
                 next_track = await Track.build_track(
@@ -2979,6 +2995,7 @@ class Player(VoiceProtocol):
                     query=await Query.from_string(n_track.pop("query")),
                     **n_track.pop("extra"),
                     **n_track,
+                    player_instance=self,
                 )
         else:
             next_track = None
@@ -2992,6 +3009,7 @@ class Player(VoiceProtocol):
                     query=await Query.from_string(l_track.pop("query")),
                     **l_track.pop("extra"),
                     **l_track,
+                    player_instance=self,
                 )
             else:
                 last_track = await Track.build_track(
@@ -3001,6 +3019,7 @@ class Player(VoiceProtocol):
                     query=await Query.from_string(l_track.pop("query")),
                     **l_track.pop("extra"),
                     **l_track,
+                    player_instance=self,
                 )
         else:
             last_track = None

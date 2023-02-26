@@ -11,7 +11,6 @@ from pylav.helpers.singleton import SingletonCachedByKey
 from pylav.storage.database.cache.decodators import maybe_cached
 from pylav.storage.database.cache.model import CachedModel
 from pylav.storage.database.tables.players import PlayerRow
-from pylav.type_hints.bot import DISCORD_BOT_TYPE
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 
@@ -774,7 +773,6 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         *,
         additional_role_ids: list | None = None,
         additional_user_ids: list | None = None,
-        bot: DISCORD_BOT_TYPE = None,
     ) -> bool:
         """Check if a user is a disc jockey.
 
@@ -786,8 +784,6 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
             The additional disc jockey role ids to check.
         additional_user_ids : list
             The additional disc jockey user ids to check.
-        bot : DISCORD_BOT_TYPE
-            The bot instance to check for owners, admins or mods.
 
         Returns
         -------
@@ -799,6 +795,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         if additional_role_ids and any(r.id in additional_role_ids for r in user.roles):
             return True
         if __ := user.guild:
+            bot = self.client.bot
             if hasattr(bot, "is_owner") and await bot.is_owner(typing.cast(discord.User, user)):
                 return True
             if hasattr(bot, "is_admin") and await bot.is_admin(user):

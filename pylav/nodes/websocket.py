@@ -586,6 +586,7 @@ class WebSocket:
             requester=requester.id if requester else self._client.bot.user.id,
             query=None,
             node=self.node,
+            player_instance=player,
         )
 
     async def send(self, **data: Any):

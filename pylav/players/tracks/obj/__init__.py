@@ -8,12 +8,10 @@ from functools import total_ordering
 from typing import Any
 
 import discord
-from cached_property import cached_property  # type: ignore
-from cashews import Cache  # type: ignore
 from dacite import from_dict
 
 from pylav.constants.regex import SQUARE_BRACKETS, STREAM_TITLE
-from pylav.exceptions.track import InvalidTrackException, TrackNotFoundException
+from pylav.exceptions.track import TrackNotFoundException
 from pylav.extension.flowery.lyrics import Error, Lyrics
 from pylav.nodes.api.responses.playlists import Info
 from pylav.nodes.api.responses.track import Track as APITrack
@@ -47,6 +45,7 @@ class Track:
         "_encoded",
         "_raw_data",
         "_processed",
+        "_player",
     )
     __CLIENT: Client | None = None
 
@@ -70,8 +69,13 @@ class Track:
         self._id = str(uuid.uuid4())
         self._raw_data: JSON_DICT_TYPE = {}
         self._processed: APITrack | None = None
+        self._player: Player | None = None
 
         self._process_init()
+
+    @property
+    def player(self) -> Player | None:
+        return self._player
 
     @property
     def client(self) -> Client:
@@ -139,6 +143,7 @@ class Track:
         skip_segments: list[str] | None = None,
         requester: discord.abc.User | int | None = None,
         lazy: bool = False,
+        player_instance: Player | None = None,
         **extra: Any,
     ) -> Track | None:
         """Builds a track object from the given data.
@@ -157,12 +162,14 @@ class Track:
             The user that requested the track.
         lazy: :class:`bool`
             Whether to build decode via the bot or Lavalink
+        player_instance:  :class:`Player` | None
         **extra: Any
             Extra data to add to the track.
         """
 
         # Check if data is a Track object and return it if it is
         if isinstance(data, cls):
+            data._player = player_instance
             return data
 
         if not query and not data:
@@ -175,22 +182,28 @@ class Track:
         if isinstance(data, APITrack):
             if query is None:
                 query = await Query.from_string(data.info.uri)
-            return cls._from_lavalink_track_object(node, data, query, skip_segments, requester, **extra)
+            return cls._from_lavalink_track_object(
+                node, data, query, skip_segments, requester, player_instance=player_instance, **extra
+            )
 
         if isinstance(data, dict):
             try:
                 t = from_dict(data_class=APITrack, data=data)
                 if query is None:
                     query = await Query.from_string(t.info.uri)
-                return cls._from_lavalink_track_object(node, t, query, skip_segments, requester, **extra)
+                return cls._from_lavalink_track_object(
+                    node, t, query, skip_segments, requester, player_instance=player_instance, **extra
+                )
             except Exception as exc:
                 raise KeyError("Invalid track data") from exc
 
         if data is None:
-            return cls._from_query(node, query, skip_segments, requester, **extra)
+            return cls._from_query(node, query, skip_segments, requester, player_instance=player_instance, **extra)
 
         if isinstance(data, str):
-            return await cls._from_base64_string(node, data, skip_segments, requester, lazy=lazy, **extra)
+            return await cls._from_base64_string(
+                node, data, skip_segments, requester, player_instance=player_instance, lazy=lazy, **extra
+            )
 
         raise TypeError(f"Expected Track, LavalinkTrackObject, dict, or str, got {type(data).__name__}")
 
@@ -202,6 +215,7 @@ class Track:
         query: Query,
         skip_segments: list[str] | None = None,
         requester: discord.abc.User | int | None = None,
+        player_instance: Player | None = None,
         **extra: Any,
     ) -> Track:
         instance = cls(node, query, skip_segments, requester, **extra)
@@ -211,25 +225,7 @@ class Track:
         instance._unique_id = hashlib.md5()
         instance._unique_id.update(instance._encoded.encode())
         instance._processed = data
-        return instance
-
-    @classmethod
-    def _from_mapping(
-        cls,
-        node: Node,
-        data: dict[str, Any],
-        query: Query,
-        skip_segments: list[str] | None = None,
-        requester: discord.abc.User | int | None = None,
-        **extra: Any,
-    ) -> Track:
-        instance = cls(node, query, skip_segments, requester, **extra)
-        instance._encoded = data["encoded"]
-        instance._raw_data = data.get("raw_data", {}) or extra.get("raw_data", {})
-        if instance._encoded is None:
-            raise InvalidTrackException("Cannot build a track from partial data! (Missing key: encoded)")
-        instance._unique_id = hashlib.md5()
-        instance._unique_id.update(instance._encoded.encode())
+        instance._player = player_instance
         return instance
 
     @classmethod
@@ -239,13 +235,20 @@ class Track:
         data: str,
         skip_segments: list[str] | None = None,
         requester: discord.abc.User | int | None = None,
+        player_instance: Player | None = None,
         lazy: bool = False,
         **extra: Any,
     ) -> Track:
         track_obj = await cls.__CLIENT.decode_track(data, raise_on_failure=True, lazy=lazy)
         query_obj = await Query.from_string(track_obj.info.uri)
         return cls._from_lavalink_track_object(
-            node=node, data=track_obj, query=query_obj, skip_segments=skip_segments, requester=requester, **extra
+            node=node,
+            data=track_obj,
+            query=query_obj,
+            skip_segments=skip_segments,
+            requester=requester,
+            player_instance=player_instance,
+            **extra,
         )
 
     @classmethod
@@ -255,11 +258,13 @@ class Track:
         query: Query,
         skip_segments: list[str] | None = None,
         requester: discord.abc.User | int | None = None,
+        player_instance: Player | None = None,
         **extra: Any,
     ) -> Track:
         instance = cls(node, query, skip_segments, requester, **extra)
         instance._extra = extra
         instance._raw_data = extra.get("raw_data", {})
+        instance._player = player_instance
         return instance
 
     def _copy_with_extras(self, node: Node, **extra: Any) -> Track:
@@ -293,8 +298,12 @@ class Track:
         return self._requester_id
 
     @property
-    def requester(self) -> discord.User | None:
-        return self.client.bot.get_user(self.requester_id)
+    def requester(self) -> discord.Member | discord.User | None:
+        return (
+            self.player.guild.get_member(self.requester_id)
+            if self.player
+            else self.client.bot.get_user(self.requester_id)
+        )
 
     @property
     def last_known_position(self) -> int:
@@ -545,7 +554,9 @@ class Track:
         if not response or not response.tracks:
             raise TrackNotFoundException(f"No tracks found for query {await self.query_identifier()}")
         return [
-            await Track.build_track(data=track, node=player.node, query=self._query, requester=requester)
+            await Track.build_track(
+                data=track, node=player.node, query=self._query, requester=requester, player_instance=self._player
+            )
             for track in response.tracks
         ]
 

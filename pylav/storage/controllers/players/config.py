@@ -7,7 +7,6 @@ import discord
 from pylav.helpers.misc import TimedFeature
 from pylav.logging import getLogger
 from pylav.storage.models.player.config import PlayerConfig
-from pylav.type_hints.bot import DISCORD_BOT_TYPE
 
 if TYPE_CHECKING:
     from pylav.core.client import Client
@@ -88,12 +87,11 @@ class PlayerConfigController:
         *,
         additional_role_ids: list = None,
         additional_user_ids: list = None,
-        bot: DISCORD_BOT_TYPE = None,
     ) -> bool:
         if additional_user_ids and user.id in additional_user_ids:
             return True
         if additional_role_ids and any(r.id in additional_role_ids for r in user.roles):
             return True
         return await self.get_config(guild_id=guild.id).is_dj(
-            user=user, additional_role_ids=None, additional_user_ids=None, bot=bot
+            user=user, additional_role_ids=None, additional_user_ids=None
         )

@@ -1400,10 +1400,7 @@ class Client(metaclass=SingletonClass):
                 track_count += 1
                 successful_tracks.append(
                     await Track.build_track(
-                        data=response.tracks[0],
-                        node=node,
-                        query=None,
-                        requester=requester.id,
+                        data=response.tracks[0], node=node, query=None, requester=requester.id, player_instance=player
                     )
                 )
                 # Query tracks as the queue builds as this may be a slow operation
@@ -1438,10 +1435,7 @@ class Client(metaclass=SingletonClass):
                 track_count += 1
                 successful_tracks.append(
                     await Track.build_track(
-                        data=track,
-                        node=node,
-                        query=None,
-                        requester=requester.id,
+                        data=track, node=node, query=None, requester=requester.id, player_instance=player
                     )
                 )
                 # Query tracks as the queue builds as this may be a slow operation
@@ -1464,10 +1458,7 @@ class Client(metaclass=SingletonClass):
             new_query.merge(sub_query, start_time=True)
             successful_tracks.append(
                 await Track.build_track(
-                    data=response.tracks[0],
-                    node=node,
-                    query=sub_query,
-                    requester=requester.id,
+                    data=response.tracks[0], node=node, query=sub_query, requester=requester.id, player_instance=player
                 )
             )
         else:
@@ -1629,14 +1620,13 @@ class Client(metaclass=SingletonClass):
         *,
         additional_role_ids: list = None,
         additional_user_ids: list = None,
-        bot: DISCORD_BOT_TYPE = None,
     ) -> bool:
         if additional_user_ids and user.id in additional_user_ids:
             return True
         if additional_role_ids and any(r.id in additional_role_ids for r in user.roles):
             return True
         return await self.player_config_manager.is_dj(
-            user=user, guild=guild, additional_role_ids=None, additional_user_ids=None, bot=bot
+            user=user, guild=guild, additional_role_ids=None, additional_user_ids=None
         )
 
     @staticmethod

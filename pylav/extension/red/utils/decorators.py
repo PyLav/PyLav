@@ -83,7 +83,7 @@ async def is_dj_logic(
     else:
         bot = bot or context.bot
         author = context.author
-    return await bot.pylav.is_dj(user=author, guild=guild, additional_role_ids=None, additional_user_ids={*bot.owner_ids, guild.owner_id}, bot=bot) if (getattr(bot, "pylav", None) and guild) else False  # type: ignore
+    return await bot.pylav.is_dj(user=author, guild=guild, additional_role_ids=None, additional_user_ids={*bot.owner_ids, guild.owner_id}) if guild else False  # type: ignore
 
 
 def invoker_is_dj(slash: bool = False):
