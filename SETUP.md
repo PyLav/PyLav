@@ -13,7 +13,7 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
     - ##### Create a new Postgres user
       - `sudo -u postgres createuser -s -i -d -r -l -w <username>`
       - `sudo -u postgres psql -c "ALTER ROLE <username> WITH PASSWORD '<password>';"`
-        - Make sure to replace <username> and <password> with the new values
+        - Make sure to replace `<username>` and `<password>` with the new values
     - ##### Create a new Database for the new user
       - Run `sudo -u postgres psql -c "CREATE DATABASE pylav_db;"`
         - This will crete a new database called `pylav_db`.
@@ -29,7 +29,7 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
     - Open the `psql` command-line tool and login when prompted
     - Run `psql -u postgres` to login as the user `postgres`
     - When logged in run `CREATE ROLE <username> LOGIN PASSWORD '<password>';`
-      - Make sure to replace <username> and <password> with the new values
+      - Make sure to replace `<username>` and `<password>` with the new values
   - ##### Create a new Database for the new user
     - Run `CREATE DATABASE pylav_db;`
       - This will crete a new database called `pylav_db`.
@@ -44,7 +44,7 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
     - Open the `psql` command-line tool and login when prompted
     - Run `psql -u postgres` to login as the user `postgres`
     - When logged in run `CREATE ROLE <username> LOGIN PASSWORD '<password>';`
-      - Make sure to replace <username> and <password> with the new values
+      - Make sure to replace `<username>` and `<password>` with the new values
   - ##### Create a new Database for the new user
     - Run `CREATE DATABASE pylav_db;`
       - This will crete a new database called `pylav_db`.
