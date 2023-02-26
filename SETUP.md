@@ -12,12 +12,23 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
     - Note: When prompted to run `sudo apt-get -y install postgresql` make sure to run `sudo apt-get -y install postgresql-14` instead.
     - ##### Create a new Postgres user
       - `sudo -u postgres createuser -s -i -d -r -l -w <username>`
+        - `-s` User will be a superuser
+        - `-i` User will inherit permissions from roles granted to it
+        - `-d` User can create databases
+        - `-r` User can create roles
+        - `-l` User can login
+        - `-w` User will never be prompted for a password. If the server requires password authentication and a password is not available by other means, the connection attempt will fail.
       - `sudo -u postgres psql -c "ALTER ROLE <username> WITH PASSWORD '<password>';"`
         - Make sure to replace `<username>` and `<password>` with the new values
     - ##### Create a new Database for the new user
       - Run `sudo -u postgres psql -c "CREATE DATABASE pylav_db;"`
         - This will crete a new database called `pylav_db`.
       - Run `sudo -u postgres psql -c "ALTER DATABASE pylav_db OWNER TO <username>;"`
+        - This will set the owner of the database to the newly created user.
+    - ##### Enable PostgresSQL extensions (**NOTICE** - PyLav will do this for you if they are not enabled, however depending on your setup you may need to enable them manually)
+      - Run `sudo -u postgres psql -c "CREATE EXTENSION IF NOT EXISTS citext;"`
+      - Run `sudo -u postgres psql -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"`
+      - Run `sudo -u postgres psql -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'`
 - #### [Install Java Azul Zulu 19](https://docs.azul.com/core/)
   - Follow the instructions [here](https://docs.azul.com/core/zulu-openjdk/install/debian)
     - When prompted to run `sudo apt-get install zulu11-jdk` make sure to run `sudo apt-get install zulu19-ca-jdk-headless` instead.
@@ -34,6 +45,11 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
     - Run `CREATE DATABASE pylav_db;`
       - This will crete a new database called `pylav_db`.
     - Run `ALTER DATABASE pylav_db OWNER TO <username>;`
+      - This will set the owner of the database to the newly created user.
+  - ##### Enable PostgresSQL extensions (**NOTICE** - PyLav will do this for you if they are not enabled, however depending on your setup you may need to enable them manually)
+    - Run `CREATE EXTENSION IF NOT EXISTS citext;`
+    - Run `CREATE EXTENSION IF NOT EXISTS pg_trgm;`
+    - Run `CREATE EXTENSION IF NOT EXISTS "uuid-ossp";`
 - #### [Install Java Azul Zulu 19](https://docs.azul.com/core/)
   - Download and run the dmg executable [here](https://cdn.azul.com/zulu/bin/zulu19.30.11-ca-jdk19.0.1-macosx_x64.dmg)
 -------------
@@ -49,6 +65,11 @@ If you are not on Ubuntu 20.04 you just have to follow the instructions below to
     - Run `CREATE DATABASE pylav_db;`
       - This will crete a new database called `pylav_db`.
     - Run `ALTER DATABASE pylav_db OWNER TO <username>;`
+      - This will set the owner of the database to the newly created user.
+  - ##### Enable PostgresSQL extensions (**NOTICE** - PyLav will do this for you if they are not enabled, however depending on your setup you may need to enable them manually)
+      - Run `CREATE EXTENSION IF NOT EXISTS citext;`
+      - Run `CREATE EXTENSION IF NOT EXISTS pg_trgm;`
+      - Run `CREATE EXTENSION IF NOT EXISTS "uuid-ossp";`
 - #### [Install Java Azul Zulu 19](https://docs.azul.com/core/)
   - Download and run the msi executable [here](https://cdn.azul.com/zulu/bin/zulu19.30.11-ca-jdk19.0.1-win_x64.msi)
     - Make sure to select the following when prompted `Add to PATH`, `set JAVA_HOME variable` and `JavaSoft (Oracle) registry keys`
