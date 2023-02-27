@@ -1665,7 +1665,7 @@ class Node:
     def _get_filter_payload_echo(echo: Echo, payload: JSON_DICT_TYPE, player: Player, reset_no_set: bool) -> None:
         if echo:
             payload["echo"] = echo.get()
-        elif not reset_no_set and player.echo.changed:
+        elif not reset_no_set and player.echo:
             payload["echo"] = player.echo.get()
 
     @staticmethod
@@ -1674,7 +1674,7 @@ class Node:
     ) -> None:
         if channel_mix:
             payload["channelMix"] = channel_mix.get()
-        elif not reset_no_set and player.channel_mix.changed:
+        elif not reset_no_set and player.channel_mix:
             payload["channelMix"] = player.channel_mix.get()
 
     @staticmethod
@@ -1683,7 +1683,7 @@ class Node:
     ) -> None:
         if low_pass:
             payload["lowPass"] = low_pass.get()
-        elif not reset_no_set and player.low_pass.changed:
+        elif not reset_no_set and player.low_pass:
             payload["lowPass"] = player.low_pass.get()
 
     @staticmethod
@@ -1692,7 +1692,7 @@ class Node:
     ) -> None:
         if distortion:
             payload["distortion"] = distortion.get()
-        elif not reset_no_set and player.distortion.changed:
+        elif not reset_no_set and player.distortion:
             payload["distortion"] = player.distortion.get()
 
     @staticmethod
@@ -1701,7 +1701,7 @@ class Node:
     ) -> None:
         if rotation:
             payload["rotation"] = rotation.get()
-        elif not reset_no_set and player.rotation.changed:
+        elif not reset_no_set and player.rotation:
             payload["rotation"] = player.rotation.get()
 
     @staticmethod
@@ -1710,7 +1710,7 @@ class Node:
     ) -> None:
         if vibrato:
             payload["vibrato"] = vibrato.get()
-        elif not reset_no_set and player.vibrato.changed:
+        elif not reset_no_set and player.vibrato:
             payload["vibrato"] = player.vibrato.get()
 
     @staticmethod
@@ -1719,7 +1719,7 @@ class Node:
     ) -> None:
         if tremolo:
             payload["tremolo"] = tremolo.get()
-        elif not reset_no_set and player.timescale.changed:
+        elif not reset_no_set and player.timescale:
             payload["timescale"] = player.timescale.get()
 
     @staticmethod
@@ -1728,7 +1728,7 @@ class Node:
     ) -> None:
         if timescale:
             payload["timescale"] = timescale.get()
-        elif not reset_no_set and player.timescale.changed:
+        elif not reset_no_set and player.timescale:
             payload["timescale"] = player.timescale.get()
 
     @staticmethod
@@ -1737,7 +1737,7 @@ class Node:
     ) -> None:
         if karaoke:
             payload["karaoke"] = karaoke.get()
-        elif not reset_no_set and player.karaoke.changed:
+        elif not reset_no_set and player.karaoke:
             payload["karaoke"] = player.karaoke.get()
 
     @staticmethod
@@ -1746,7 +1746,7 @@ class Node:
     ) -> None:
         if equalizer:
             payload["equalizer"] = equalizer.get()
-        elif not reset_no_set and player.equalizer.changed:
+        elif not reset_no_set and player.equalizer:
             payload["equalizer"] = player.equalizer.get()
 
     async def filters(

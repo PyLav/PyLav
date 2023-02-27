@@ -412,8 +412,7 @@ class Player(VoiceProtocol):
             self._echo = f
         payload = {}
         if any(
-            f.changed
-            for f in [
+            [
                 self.equalizer,
                 self.karaoke,
                 self.timescale,
@@ -639,16 +638,14 @@ class Player(VoiceProtocol):
 
         if self.paused:
             return min(
-                self.timescale.adjust_position(self._paused_position)
-                if self.timescale.changed
-                else self._paused_position,
+                self.timescale.adjust_position(self._paused_position) if self.timescale else self._paused_position,
                 await self.current.duration(),
             )
 
         difference = time.time() * 1000 - self._last_update
         position = self._last_position + difference
         return min(
-            self.timescale.adjust_position(position) if self.timescale.changed else position,
+            self.timescale.adjust_position(position) if self.timescale else position,
             await self.current.duration(),
         )
 
@@ -663,7 +660,7 @@ class Player(VoiceProtocol):
 
         difference = time.time() * 1000 - self._last_update
         position = self._last_position + difference
-        return self.timescale.adjust_position(position) if self.timescale.changed else position
+        return self.timescale.adjust_position(position) if self.timescale else position
 
     async def fetch_player_stats(self, return_position: bool = False):
         try:
@@ -1362,7 +1359,7 @@ class Player(VoiceProtocol):
             "encodedTrack": self.current.encoded,
             "position": self.current.last_known_position if self.current else await self.fetch_position(),
         }
-        if self.volume_filter.changed:
+        if self.volume_filter:
             payload["volume"] = self.volume
         await self.node.patch_session_player(guild_id=self.guild.id, payload=payload, no_replace=False)
         self.node.dispatch_event(PlayerResumedEvent(player=self, requester=requester or self.client.user.id))
@@ -2345,7 +2342,7 @@ class Player(VoiceProtocol):
         else:
             arrow = await self.draw_time()
             position = await self.fetch_position()
-            if self.timescale.changed:
+            if self.timescale:
                 position *= self.timescale.speed
             pos = format_time_dd_hh_mm_ss(position)
         current = self.current
