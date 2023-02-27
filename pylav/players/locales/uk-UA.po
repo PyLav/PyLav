@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-26 21:16+0000\n"
-"PO-Revision-Date: 2023-02-26 21:17\n"
+"POT-Creation-Date: 2023-02-27 22:37+0000\n"
+"PO-Revision-Date: 2023-02-27 22:37\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "MIME-Version: 1.0\n"
@@ -17,131 +17,131 @@ msgstr ""
 "X-Crowdin-File-ID: 3701\n"
 "Language: uk_UA\n"
 
-#: pylav/players/manager.py:261
+#: pylav/players/manager.py:258
 msgid "There are no nodes available currently."
 msgstr "Наразі вузлів немає."
 
-#: pylav/players/manager.py:356
+#: pylav/players/manager.py:353
 msgid "Music in {number_of_servers_variable_do_not_translate} servers"
 msgstr "Музика в {number_of_servers_variable_do_not_translate} Серверів"
 
-#: pylav/players/player.py:1143
+#: pylav/players/player.py:1100
 msgid "There are no tracks currently in the player history."
 msgstr "Наразі в історії гравця немає треків."
 
-#: pylav/players/player.py:1806
+#: pylav/players/player.py:1769
 msgid "Current node has the volume filter feature disabled."
 msgstr "Поточний вузол має відключену функцію фільтра об'єму."
 
-#: pylav/players/player.py:1828 pylav/players/player.py:2004
-#: pylav/players/player.py:2059
+#: pylav/players/player.py:1791 pylav/players/player.py:1967
+#: pylav/players/player.py:2022
 msgid "Current node has the equalizer feature disabled."
 msgstr "Поточний вузол має відключену функцію еквалайзера."
 
-#: pylav/players/player.py:1848
+#: pylav/players/player.py:1811
 msgid "Current node has the karaoke feature disabled"
 msgstr "У поточному вузлі відключена функція караоке"
 
-#: pylav/players/player.py:1868 pylav/players/player.py:2006
-#: pylav/players/player.py:2061
+#: pylav/players/player.py:1831 pylav/players/player.py:1969
+#: pylav/players/player.py:2024
 msgid "Current node has the timescale feature disabled."
 msgstr "Поточний вузол має вимкнену функцію часової смуги."
 
-#: pylav/players/player.py:1888
+#: pylav/players/player.py:1851
 msgid "Current node has the tremolo feature disabled."
 msgstr "Поточний вузол має відключену функцію тремоло."
 
-#: pylav/players/player.py:1908
+#: pylav/players/player.py:1871
 msgid "Current node has the vibrato feature disabled."
 msgstr "Поточний вузол має відключену функцію вібрато."
 
-#: pylav/players/player.py:1928
+#: pylav/players/player.py:1891
 msgid "Current node has the rotation feature disabled."
 msgstr "Поточний вузол має функцію обертання відключеним."
 
-#: pylav/players/player.py:1948
+#: pylav/players/player.py:1911
 msgid "Current node has the distortion feature disabled."
 msgstr "Поточний вузол має функцію спотворення відключеним."
 
-#: pylav/players/player.py:1968
+#: pylav/players/player.py:1931
 msgid "Current node has the low-pass feature disabled."
 msgstr "Поточний вузол має відключену функцію низького проходу."
 
-#: pylav/players/player.py:1988
+#: pylav/players/player.py:1951
 msgid "Current node has the echo feature disabled."
 msgstr "Поточний вузол має відключену функцію echo."
 
-#: pylav/players/player.py:2118
+#: pylav/players/player.py:2081
 msgid "Current node has the channel-mix feature disabled."
 msgstr "Поточний вузол має відключену функцію змішування каналів."
 
-#: pylav/players/player.py:2389 pylav/players/player.py:2450
-#: pylav/players/player.py:2465 pylav/players/player.py:2564
+#: pylav/players/player.py:2352 pylav/players/player.py:2413
+#: pylav/players/player.py:2428 pylav/players/player.py:2527
 msgid "LIVE"
 msgstr "ОПЕРАТИВНА"
 
-#: pylav/players/player.py:2405
+#: pylav/players/player.py:2368
 msgid "Now Playing in {server_name_variable_do_not_translate}"
 msgstr "Зараз граємо в {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2429 pylav/players/player.py:2604
+#: pylav/players/player.py:2392 pylav/players/player.py:2567
 msgid "Currently livestreaming"
 msgstr "Триває трансляція"
 
-#: pylav/players/player.py:2431
+#: pylav/players/player.py:2394
 msgid "Playing: "
 msgstr "Грає: "
 
-#: pylav/players/player.py:2434 pylav/players/player.py:2457
-#: pylav/players/player.py:2472 pylav/players/player.py:2610
+#: pylav/players/player.py:2397 pylav/players/player.py:2420
+#: pylav/players/player.py:2435 pylav/players/player.py:2573
 msgid "Requester"
 msgstr "Замовник"
 
-#: pylav/players/player.py:2440
+#: pylav/players/player.py:2403
 msgid "Duration: {track_duration_variable_do_not_translate}"
 msgstr "Тривалість: {track_duration_variable_do_not_translate}"
 
-#: pylav/players/player.py:2453 pylav/players/player.py:2468
+#: pylav/players/player.py:2416 pylav/players/player.py:2431
 msgid "Duration"
 msgstr "Тривалість"
 
-#: pylav/players/player.py:2459
+#: pylav/players/player.py:2422
 msgid "Previous Track"
 msgstr "Попередня композиція"
 
-#: pylav/players/player.py:2474
+#: pylav/players/player.py:2437
 msgid "Next Track"
 msgstr "Наступна композиція"
 
-#: pylav/players/player.py:2483
+#: pylav/players/player.py:2446
 msgid "1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "1 доріжка, {queue_total_duration_variable_do_not_translate} Залишилися\n"
 
-#: pylav/players/player.py:2487
+#: pylav/players/player.py:2450
 msgid "0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "0 доріжок, {queue_total_duration_variable_do_not_translate} Залишилися\n"
 
-#: pylav/players/player.py:2491
+#: pylav/players/player.py:2454
 msgid "{track_count_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "{track_count_variable_do_not_translate} Треків {queue_total_duration_variable_do_not_translate} Залишилися\n"
 
-#: pylav/players/player.py:2498 pylav/players/player.py:2651
+#: pylav/players/player.py:2461 pylav/players/player.py:2614
 msgid "Repeating"
 msgstr "Повторення"
 
-#: pylav/players/player.py:2500 pylav/players/player.py:2653
+#: pylav/players/player.py:2463 pylav/players/player.py:2616
 msgid "Auto Play"
 msgstr "Автовідтворення"
 
-#: pylav/players/player.py:2504 pylav/players/player.py:2657
+#: pylav/players/player.py:2467 pylav/players/player.py:2620
 msgid "{volume_variable_do_not_translate}%"
 msgstr "{volume_variable_do_not_translate}%"
 
-#: pylav/players/player.py:2505 pylav/players/player.py:2658
+#: pylav/players/player.py:2468 pylav/players/player.py:2621
 msgid "Volume"
 msgstr "Обсяг"
 
-#: pylav/players/player.py:2508
+#: pylav/players/player.py:2471
 msgid "\n\n"
 "You can search specific services by using the following prefixes:\n"
 "{deezer_service_variable_do_not_translate}  - Deezer\n"
@@ -165,31 +165,31 @@ msgstr "\n\n"
 "Приклад: {example_variable_do_not_translate}.\n\n"
 "Якщо префікс не використовується, я буду за замовчуванням {fallback_service_variable_do_not_translate}\n"
 
-#: pylav/players/player.py:2574
+#: pylav/players/player.py:2537
 msgid "Recently Played for {server_name_variable_do_not_translate}"
 msgstr "Нещодавно грав за {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2580
+#: pylav/players/player.py:2543
 msgid "Queue for {server_name_variable_do_not_translate}"
 msgstr "Черга на {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2607
+#: pylav/players/player.py:2570
 msgid "Playing"
 msgstr "Відтворюється"
 
-#: pylav/players/player.py:2623
+#: pylav/players/player.py:2586
 msgid "Queue order will change every time a track is added due to auto shuffle being enabled."
 msgstr "Порядок черги буде змінюватися щоразу, коли додається трек через увімкнення автоматичного перетасування."
 
-#: pylav/players/player.py:2633
+#: pylav/players/player.py:2596
 msgid "Page 1 / 1 | 1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "Сторінка 1 / 1 | 1 доріжка, {queue_total_duration_variable_do_not_translate} Залишилися\n"
 
-#: pylav/players/player.py:2637
+#: pylav/players/player.py:2600
 msgid "Page 1 / 1 | 0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "Сторінка 1 / 1 | 0 доріжок, {queue_total_duration_variable_do_not_translate} Залишилися\n"
 
-#: pylav/players/player.py:2641
+#: pylav/players/player.py:2604
 msgid "Page {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "Сторінка {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} Треків {queue_total_duration_variable_do_not_translate} Залишилися\n"
 
