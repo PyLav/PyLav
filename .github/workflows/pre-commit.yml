@@ -12,9 +12,7 @@ jobs:
         name: Pre-commit fixes
         runs-on: [self-hosted, linux, x64]
         steps:
-        -   uses: actions/checkout@v3
-            with:
-                ref: ${{ github.ref }}
+        -   uses: actions/checkout@v3.3.0
         -   uses: actions/setup-python@v4
             with:
                 python-version: '3.11'
