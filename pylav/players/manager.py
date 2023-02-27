@@ -143,9 +143,6 @@ class PlayerController:
 
         player = self.players.pop(guild_id)
 
-        if player.node and player.node.available and not ENABLE_NODE_RESUMING:
-            await player.node.delete_session_player(player.guild.id)
-
         await player.disconnect(requester=requester, maybe_resuming=ENABLE_NODE_RESUMING)
         # noinspection PyProtectedMember
         player.node._logger.debug("Successfully destroyed player %s", guild_id)
