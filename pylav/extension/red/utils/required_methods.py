@@ -62,7 +62,7 @@ async def pylav_credits(context: PyLavContext) -> None:
                 library_author_name_variable_do_not_translate="[Draper#6666](https://github.com/Drapersniper)",
                 library_url_variable_do_not_translate="https://github.com/PyLav/PyLav",
                 second_library_url_variable_do_not_translate="https://github.com/PyLav/Red-Cogs",
-                support_server_url_variable_do_not_translate="https://discord.com/invite/Sjh2TSCYQB",
+                support_server_url_variable_do_not_translate="https://discord.com/invite/vnmcXqtgeY",
                 crowdin_project_url_variable_do_not_translate="https://crowdin.com/project/pylav",
                 project_contributors_url_variable_do_not_translate="https://github.com/PyLav/PyLav/graphs/contributors",
                 second_project_contributors_url_variable_do_not_translate="https://github.com/PyLav/Red-Cogs/graphs/contributors",

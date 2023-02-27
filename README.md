@@ -1,5 +1,5 @@
 [![GitHub license](https://img.shields.io/github/license/PyLav/PyLav.svg)](https://github.com/PyLav/PyLav/blob/master/LICENSE)
-[![Support Server](https://img.shields.io/discord/970987707834720266)](https://discord.com/invite/Sjh2TSCYQB)
+[![Support Server](https://img.shields.io/discord/970987707834720266)](https://discord.com/invite/vnmcXqtgeY)
 [![PyPi](https://img.shields.io/pypi/v/Py-Lav?style=plastic)](https://pypi.org/project/Py-Lav/)
 [![Crowdin](https://badges.crowdin.net/pylav/localized.svg)](https://crowdin.com/project/pylav)
 
