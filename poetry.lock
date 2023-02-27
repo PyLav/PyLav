@@ -1669,14 +1669,14 @@ ptyprocess = ">=0.5"
 
 [[package]]
 name = "piccolo"
-version = "0.106.0"
+version = "0.107.0"
 description = "A fast, user friendly ORM and query builder which supports asyncio."
 category = "main"
 optional = false
 python-versions = ">=3.7.0"
 files = [
-    {file = "piccolo-0.106.0-py3-none-any.whl", hash = "sha256:a28f714da8a485f1b4b864f28b2cf66060ae7d0b5531e29ed3b46d00b2cba85e"},
-    {file = "piccolo-0.106.0.tar.gz", hash = "sha256:2e4fba515a8c7bc95b3df06935a23970e86ce3cb4eb5a8e8683419a32580f49b"},
+    {file = "piccolo-0.107.0-py3-none-any.whl", hash = "sha256:3735a26d12480f7dcf9ffb35e4cf12cdcfc26ae1732863e25c78491697f68fbc"},
+    {file = "piccolo-0.107.0.tar.gz", hash = "sha256:63b7d14543760922cc1f2abb74f884239db8e5a6b3b3666cda3ee06fcfbb7fa0"},
 ]
 
 [package.dependencies]
@@ -2581,4 +2581,4 @@ redis = ["redis"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "0e2429591c13ea818329ffaaf815eb8174df18e0ced35b58d820198108d01d8b"
+content-hash = "af6f854bf44e3b5148a688b7e4175f4521f177c92839c65c2cb6a73d845a4aaa"
