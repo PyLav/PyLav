@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.8.7 (27/02/2023)
+- [Auto Merge](https://github.com/PyLav/PyLav/commit/7e4a64d32360bad65709aeee92ec8e79d82781b3) - @Drapersniper
+- [New Crowdin translations by GitHub Action](https://github.com/PyLav/PyLav/commit/c8f362ac0134d74c927db2df6105abf42d979350) - @crowdin-bot
+- [Stop using `.changed` property and use `__bool__` dunder](https://github.com/PyLav/PyLav/commit/db9442d27f1bea9efd0366882ac92c468baea87e) - @Drapersniper
+- [Merge API ops for volume, and make player.paused into a property](https://github.com/PyLav/PyLav/commit/ceccc6937f4ac50b14546c9d71a15b83c1befdfb) - @Drapersniper
+- [Fix a bug where the player was being moved to the same channel it was already in](https://github.com/PyLav/PyLav/commit/1598f5f290440daf1f14200326aeccf6c21bbc75) - @Drapersniper
+- [Stop making duplicate del calls to the node api on player destruction](https://github.com/PyLav/PyLav/commit/76e3d6291dda5df1bb49978f681d3a7c52390884) - @Drapersniper
+- [Dependency update](https://github.com/PyLav/PyLav/commit/1a849394858ca477bc6a906b8948432990a185a8) - @Drapersniper
+- [Update pre-commit sourcery hook](https://github.com/PyLav/PyLav/commit/faa459c4d37e68af13afe21fdc337e6258858798) - @Drapersniper
+
+---
+
 ## v1.8.6 (27/02/2023)
 - [Fix discord invite breaking](https://github.com/PyLav/PyLav/commit/47eef410323050b6fc4f9d4e7a2ae2e7a183a530) - @Drapersniper
 - [Fix Lavalink action reference](https://github.com/PyLav/PyLav/commit/cd0fac6a55a607865b2a540cdaa5a9d2bb6110f0) - @Drapersniper
@@ -714,7 +726,3 @@
 - [Change raw requies to ORM where it makes sense to (#66)](https://github.com/Drapersniper/PyLav/commit/c2d92accd6f531fbf418603b41970440fa474450) - @Drapersniper
 - [Update release.yml](https://github.com/Drapersniper/PyLav/commit/85eeb3b28fbd57a6d13ce51703c4372078d4569b) - @Drapersniper
 - [Update release.yml](https://github.com/Drapersniper/PyLav/commit/13f502e2ed196a40e1d248cf5d698feea29eced7) - @Drapersniper
-
----
-
-## v0.10.4.4 (14/10/2022)
