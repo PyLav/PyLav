@@ -1,4 +1,4 @@
-name: Pre-commit & Sourcery
+name: Pre-commit
 on:
     pull_request:
     push:
@@ -7,17 +7,14 @@ on:
 permissions:
     pull-requests: write
 
-env:
-    ref: ${{ github.event.client_payload.ref || '' }}
-
 jobs:
     run:
-        name: Pre-commit fixes & Sourcery
+        name: Pre-commit fixes
         runs-on: [self-hosted, linux, x64]
         steps:
         -   uses: actions/checkout@v3
             with:
-                ref: ${{ env.ref }}
+                ref: ${{ github.ref }}
         -   uses: actions/setup-python@v4
             with:
                 python-version: '3.11'
