@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.8.6 (27/02/2023)
+- [Fix discord invite breaking](https://github.com/PyLav/PyLav/commit/47eef410323050b6fc4f9d4e7a2ae2e7a183a530) - @Drapersniper
+- [Fix Lavalink action reference](https://github.com/PyLav/PyLav/commit/cd0fac6a55a607865b2a540cdaa5a9d2bb6110f0) - @Drapersniper
+- [Additional documentation around PostgresSQL setup](https://github.com/PyLav/PyLav/commit/19ee64eb72adb1545e2f68338efe5bc6ac73bcf9) - @Drapersniper
+
+---
+
 ## v1.8.5 (26/02/2023)
 - [Bump dependencies](https://github.com/PyLav/PyLav/commit/9a6b3bf59b1a2e6d304821dc2de1ee30c92c8f62) - @Drapersniper
 - [Auto Merge](https://github.com/PyLav/PyLav/commit/0397a30e9be69ea0686cb5a9f2a1970d9e40751e) - @Drapersniper
@@ -711,7 +718,3 @@
 ---
 
 ## v0.10.4.4 (14/10/2022)
-
----
-
-## v0.10.4.3 (04/10/2022)
