@@ -127,7 +127,7 @@ class Player(VoiceProtocol):
         "_coordinates",
         "_connected",
         "connected_at",
-        "paused",
+        "_paused",
         "_config",
         "stopped",
         "_last_update",
@@ -166,6 +166,7 @@ class Player(VoiceProtocol):
         "_logger",
         "_last_track_stuck_check",
         "_last_track_stuck_position",
+        "_paused_position",
     )
     _config: PlayerConfig
     _global_config: PlayerConfig
@@ -204,10 +205,11 @@ class Player(VoiceProtocol):
 
         self._user_data = {}
 
-        self.paused = False
+        self._paused = False
         self.stopped = False
         self._last_update = 0
         self._last_position = 0
+        self._paused_position = 0
         self.position_timestamp = 0
         self._ping = 0
         self.queue: PlayerQueue[Track] = PlayerQueue()
@@ -346,17 +348,6 @@ class Player(VoiceProtocol):
             coalesce=True,
             next_run_time=now_time + datetime.timedelta(seconds=10),
         )
-        self.player_manager.client.scheduler.add_job(
-            self.auto_track_stuck_fixer_track,
-            trigger="interval",
-            seconds=10,
-            max_instances=1,
-            id=f"{self.bot.user.id}-{self.guild.id}-auto_track_stuck_fixer_track",
-            coalesce=True,
-            next_run_time=now_time + datetime.timedelta(seconds=10),
-            misfire_grace_time=1,
-            replace_existing=False,
-        )
 
     async def _apply_filters_to_new_player(self, config: PlayerConfig, player_manager: PlayerController) -> None:
         self._volume = Volume(await player_manager.client.player_config_manager.get_volume(self.guild.id))
@@ -372,8 +363,7 @@ class Player(VoiceProtocol):
         if (
             self.node.has_filter("karaoke")
             and (k := effects.get("karaoke", None))
-            and (f := Karaoke.from_dict(k))
-            # noqa
+            and (f := Karaoke.from_dict(k))  # noqa
         ):
             self._karaoke = f
         if (
@@ -385,22 +375,19 @@ class Player(VoiceProtocol):
         if (
             self.node.has_filter("tremolo")
             and (tr := effects.get("tremolo", None))
-            and (f := Tremolo.from_dict(tr))
-            # noqa
+            and (f := Tremolo.from_dict(tr))  # noqa
         ):
             self._tremolo = f
         if (
             self.node.has_filter("vibrato")
             and (vb := effects.get("vibrato", None))
-            and (f := Vibrato.from_dict(vb))
-            # noqa
+            and (f := Vibrato.from_dict(vb))  # noqa
         ):
             self._vibrato = f
         if (
             self.node.has_filter("rotation")
             and (ro := effects.get("rotation", None))
-            and (f := Rotation.from_dict(ro))
-            # noqa
+            and (f := Rotation.from_dict(ro))  # noqa
         ):
             self._rotation = f
         if (
@@ -412,8 +399,7 @@ class Player(VoiceProtocol):
         if (
             self.node.has_filter("lowPass")
             and (lo := effects.get("lowpass", None))
-            and (f := LowPass.from_dict(lo))
-            # noqa
+            and (f := LowPass.from_dict(lo))  # noqa
         ):
             self._low_pass = f
         if (
@@ -457,6 +443,18 @@ class Player(VoiceProtocol):
             payload["volume"] = self.volume
         if payload:
             await self.node.patch_session_player(guild_id=self.guild.id, payload=payload)
+
+    @property
+    def paused(self) -> bool:
+        return self._paused
+
+    @paused.setter
+    def paused(self, value: bool) -> None:
+        self._paused = value
+        if value:
+            self._paused_position = self._last_position + ((time.time() * 1000) - self._last_update)
+        else:
+            self._paused_position = 0
 
     @property
     def channel(self) -> discord.channel.VocalGuildChannel:
@@ -641,15 +639,16 @@ class Player(VoiceProtocol):
 
         if self.paused:
             return min(
-                self.timescale.adjust_position(self._last_position) if self.timescale.changed else self._last_position,
+                self.timescale.adjust_position(self._paused_position)
+                if self.timescale.changed
+                else self._paused_position,
                 await self.current.duration(),
             )
 
         difference = time.time() * 1000 - self._last_update
+        position = self._last_position + difference
         return min(
-            self.timescale.adjust_position(self._last_position + difference)
-            if self.timescale.changed
-            else self._last_position,
+            self.timescale.adjust_position(position) if self.timescale.changed else position,
             await self.current.duration(),
         )
 
@@ -691,7 +690,7 @@ class Player(VoiceProtocol):
         try:
             if not self.current:
                 return await self.position()
-            await self.fetch_player_stats()
+            # await self.fetch_player_stats()
         except Exception:  # noqa
             return await self.position()
         return await self.position()
@@ -854,45 +853,6 @@ class Player(VoiceProtocol):
                 return
             self._logger.trace("Auto save task for %s - Saving the player at %s", self, get_now_utc())
             await self.save()
-
-    async def auto_track_stuck_fixer_track(self):
-        with contextlib.suppress(asyncio.exceptions.CancelledError, NoNodeAvailableException):
-            if not self.ready.is_set():
-                return
-            if not self.is_active:
-                self._logger.trace("Auto track stuck fixer task - Not Playing - discarding")
-                return
-            if self.stopped:
-                self._logger.trace(
-                    "Auto track stuck fixer for %s fired while player that has been stopped - discarding",
-                    self,
-                )
-                return
-            if self.paused:
-                self._logger.trace(
-                    "Auto track stuck fixer for %s fired while player that has been paused - discarding",
-                    self,
-                )
-                return
-            position = await self.fetch_player_stats(return_position=True)
-            if position == self._last_track_stuck_position:
-                self._last_track_stuck_position = position
-                self._last_track_stuck_check = time.time()
-                self._logger.trace(
-                    "Auto track stuck fixer - Player appears to be stuck - starting countdown",
-                )
-                return
-            else:
-                self._last_track_stuck_check = 0
-                self._last_track_stuck_position = position
-            if self._last_track_stuck_check and (self._last_track_stuck_check + 15) <= time.time():
-                self._logger.debug(
-                    "Auto track stuck fixer for %s - Player appears to be stuck - attempting to fix",
-                    self,
-                )
-                await self.reconnect()
-                self._last_track_stuck_check = 0
-                self._last_track_stuck_position = await self.fetch_player_stats(return_position=True)
 
     async def change_to_best_node(
         self, feature: str = None, ops: bool = True, forced: bool = True, skip_position_fetch: bool = False
@@ -1152,6 +1112,8 @@ class Player(VoiceProtocol):
 
             self.current = track
             payload = {"encodedTrack": track.encoded}
+            if self.volume_filter:
+                payload["volume"] = self.volume
             await self.node.patch_session_player(guild_id=self.guild.id, payload=payload, no_replace=False)
 
             self.node.dispatch_event(TrackPreviousRequestedEvent(self, requester, track))
@@ -1184,6 +1146,8 @@ class Player(VoiceProtocol):
             if self.next_track is None and not self.queue.empty():
                 self.next_track = self.queue.raw_queue.popleft()
             payload = {"encodedTrack": track.encoded}
+            if self.volume_filter:
+                payload["volume"] = self.volume
             await self.node.patch_session_player(guild_id=self.guild.id, payload=payload, no_replace=no_replace)
             self.node.dispatch_event(QuickPlayEvent(self, requester, track))
 
@@ -1271,6 +1235,9 @@ class Player(VoiceProtocol):
             self.current = track
             self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
             payload["encodedTrack"] = track.encoded
+            if self.volume_filter:
+                payload["volume"] = self.volume
+
             await self.node.patch_session_player(guild_id=self.guild.id, payload=payload, no_replace=no_replace)
             if auto_play:
                 self.node.dispatch_event(TrackAutoPlayEvent(player=self, track=track))
@@ -1395,6 +1362,8 @@ class Player(VoiceProtocol):
             "encodedTrack": self.current.encoded,
             "position": self.current.last_known_position if self.current else await self.fetch_position(),
         }
+        if self.volume_filter.changed:
+            payload["volume"] = self.volume
         await self.node.patch_session_player(guild_id=self.guild.id, payload=payload, no_replace=False)
         self.node.dispatch_event(PlayerResumedEvent(player=self, requester=requester or self.client.user.id))
 
@@ -1626,10 +1595,10 @@ class Player(VoiceProtocol):
                 )
             if self.volume_filter:
                 payload["volume"] = self.volume
-        if payload:
-            await node.patch_session_player(guild_id=self.guild.id, payload=payload)
         if old_node.identifier != node.identifier:
             node.dispatch_event(NodeChangedEvent(self, old_node, node))
+            if payload:
+                await node.patch_session_player(guild_id=self.guild.id, payload=payload)
 
     async def connect(
         self,
@@ -1724,9 +1693,6 @@ class Player(VoiceProtocol):
                 job_id=f"{self.bot.user.id}-{self.guild.id}-auto_pause_task"
             )
             self.player_manager.client.scheduler.remove_job(job_id=f"{self.bot.user.id}-{self.guild.id}-auto_save_task")
-            self.player_manager.client.scheduler.remove_job(
-                job_id=f"{self.bot.user.id}-{self.guild.id}-auto_track_stuck_fixer_track"
-            )
             self.cleanup()
 
     async def stop(self, requester: discord.Member) -> None:
@@ -2898,9 +2864,8 @@ class Player(VoiceProtocol):
             )
         else:
             track_objects_mapping = {}
-
+        queue = []
         if track_objects_mapping:
-            queue = []
             for i, track in enumerate(queue_raw, start=0):
                 query = await Query.from_string(track.pop("query"))
                 lazy = track.pop("lazy")
@@ -2920,7 +2885,7 @@ class Player(VoiceProtocol):
                         await Track.build_track(
                             node=self.node,
                             data=t_full or t_data,
-                            query=await Query.from_string(t.pop("query"), None),
+                            query=await Query.from_string(t.pop("query"), lazy=True),
                             lazy=t.pop("lazy") and not t_full,
                             **t,
                             player_instance=self,
