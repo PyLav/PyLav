@@ -1034,7 +1034,7 @@ class Player(VoiceProtocol):
             self.channel = self.guild.get_channel(int(self.channel_id))
 
         # Ensure we're in the correct voice channel
-        if (vc := await self.forced_vc()) and vc.id != self.channel_id:
+        if (vc := await self.forced_vc()) and vc.id != int(self.channel_id):
             self._logger.debug(
                 "Player was moved to %s, which is different than the forced voice channel; Moving to %s",
                 self.channel_id,
