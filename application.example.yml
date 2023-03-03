@@ -2,7 +2,7 @@ lavalink:
     plugins:
     -   dependency: com.github.TopiSenpai.LavaSrc:lavasrc-plugin:538cf8f
         repository: https://jitpack.io
-    -   dependency: com.github.topisenpai:sponsorblock-plugin:71b12d1
+    -   dependency: com.github.topisenpai:sponsorblock-plugin:2.0.0
         repository: https://jitpack.io
     -   dependency: com.dunctebot:skybot-lavalink-plugin:1.4.1
         repository: https://m2.duncte123.dev/releases
