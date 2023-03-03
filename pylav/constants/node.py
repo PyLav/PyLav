@@ -29,7 +29,7 @@ NODE_DEFAULT_SETTINGS = {
                 "dependency": "com.dunctebot:skybot-lavalink-plugin:1.4.1",
                 "repository": "https://m2.duncte123.dev/releases",
             },
-            {"dependency": "com.github.topisenpai:sponsorblock-plugin:71b12d1", "repository": "https://jitpack.io"},
+            {"dependency": "com.github.topisenpai:sponsorblock-plugin:2.0.0", "repository": "https://jitpack.io"},
             {"dependency": "me.rohank05:lavalink-filter-plugin:0.0.1", "repository": "https://jitpack.io"},
             {"dependency": "com.github.esmBot:lava-xm-plugin:v0.2.1", "repository": "https://jitpack.io"},
         ],
