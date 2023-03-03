@@ -63,7 +63,7 @@ services:
             # Plugins to load
             LAVALINK_PLUGINS_0_DEPENDENCY: com.github.TopiSenpai.LavaSrc:lavasrc-plugin:538cf8f
             LAVALINK_PLUGINS_0_REPOSITORY: https://jitpack.io
-            LAVALINK_PLUGINS_1_DEPENDENCY: com.github.topisenpai:sponsorblock-plugin:71b12d1
+            LAVALINK_PLUGINS_1_DEPENDENCY: com.github.topisenpai:sponsorblock-plugin:2.0.0
             LAVALINK_PLUGINS_1_REPOSITORY: https://jitpack.io
             LAVALINK_PLUGINS_2_DEPENDENCY: com.dunctebot:skybot-lavalink-plugin:1.4.1
             LAVALINK_PLUGINS_2_REPOSITORY: https://m2.duncte123.dev/releases
