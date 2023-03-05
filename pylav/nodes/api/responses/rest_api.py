@@ -7,6 +7,7 @@ from pylav.exceptions.request import HTTPException
 from pylav.nodes.api.responses.exceptions import LoadException
 from pylav.nodes.api.responses.filters import Filters
 from pylav.nodes.api.responses.misc import Git, Plugin, Version
+from pylav.nodes.api.responses.player import State
 from pylav.nodes.api.responses.playlists import Info
 from pylav.nodes.api.responses.shared import PlaylistPluginInfo
 from pylav.nodes.api.responses.track import Track
@@ -88,25 +89,19 @@ class VoiceState:
     token: str
     endpoint: str
     sessionId: str
-    connected: bool | None = None
-    ping: int | None = -1
 
     def to_dict(self) -> JSON_DICT_TYPE:
         return {
             "token": self.token,
             "endpoint": self.endpoint,
             "sessionId": self.sessionId,
-            "connected": self.connected,
-            "ping": self.ping,
         }
 
     def __repr__(self) -> str:
         return (
             f"<VoiceStateObject(token={'OBFUSCATED' if self.token else None} "
             f"endpoint={self.endpoint} "
-            f"sessionId={self.sessionId} "
-            f"connected={self.connected} "
-            f"ping={self.ping})"
+            f"sessionId={self.sessionId})"
         )
 
 
@@ -115,6 +110,7 @@ class LavalinkPlayer:
     guildId: str
     volume: int
     paused: bool
+    state: State | dict
     voice: VoiceState | dict
     filters: Filters | dict
     track: Track | dict | None = None
@@ -126,6 +122,8 @@ class LavalinkPlayer:
             object.__setattr__(self, "filters", Filters(**self.filters))
         if isinstance(self.track, dict):
             object.__setattr__(self, "track", Track(**self.track))
+        if isinstance(self.state, dict):
+            object.__setattr__(self, "state", State(**self.state))
 
     def to_dict(
         self,
@@ -139,6 +137,7 @@ class LavalinkPlayer:
             "guildId": self.guildId,
             "volume": self.volume,
             "paused": self.paused,
+            "state": self.state.to_dict(),
             "voice": self.voice.to_dict(),
             "filters": self.filters.to_dict(),
             "track": self.track.to_dict() if self.track else None,
