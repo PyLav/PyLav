@@ -21,6 +21,4 @@ class State:
         }
 
     def __repr__(self) -> str:
-        return (
-            f"<State(time={self.time} " f"position={self.position} " f"connected={self.connected} " f"ping={self.ping})"
-        )
+        return f"<State(time={self.time} position={self.position} connected={self.connected} ping={self.ping})"

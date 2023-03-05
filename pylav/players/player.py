@@ -673,8 +673,8 @@ class Player(VoiceProtocol):
         self._last_update = time.time() * 1000
         self.paused = player.paused
         self._volume = Volume(player.volume)
-        self._connected = player.voice.connected
-        self._ping = player.voice.ping
+        self._connected = player.state.connected
+        self._ping = player.state.ping
         if self.current:
             self.current.last_known_position = self._last_position
         if return_position:

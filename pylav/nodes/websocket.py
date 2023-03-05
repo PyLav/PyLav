@@ -478,7 +478,7 @@ class WebSocket:
             return
 
         if (
-            (not session.voice.connected)
+            (not session.state.connected)
             and player.is_active
             and self.ready.is_set()
             and player.connected_at < get_now_utc() - datetime.timedelta(minutes=5)
