@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.9.0 (05/03/2023)
+- [Update to reflect new Lavalink responses](https://github.com/PyLav/PyLav/commit/12dcfef8dfb72c13cfd4f2d10ac1901a4961bc08) - @Drapersniper
+- [fix typos noticed by HellFire#7769](https://github.com/PyLav/PyLav/commit/44d58571122d9e6d8692bdcc69c8876f5c5e9dfb) - @Drapersniper
+- [remove used files](https://github.com/PyLav/PyLav/commit/17d8339ad7158581fb0bcb334284353af9273912) - @Drapersniper
+- [Update reference to Azul Zulu version (#224)](https://github.com/PyLav/PyLav/commit/dcb386a630107312361710d889f3eef026c64331) - @Artemis6969
+- [Update node.py](https://github.com/PyLav/PyLav/commit/16feefcc27aaa563d53edc887bc9c26f29dff09d) - @Drapersniper
+- [Update application.example.yml](https://github.com/PyLav/PyLav/commit/c032feaa4ca09a660b89dcf884a54fe73f910579) - @Drapersniper
+- [Update docker-compose.yml](https://github.com/PyLav/PyLav/commit/d6c1f9b089dcb193e9db9a05e968c74b5c6c26e2) - @Drapersniper
+
+---
+
 ## v1.8.10 (27/02/2023)
 - [Workflows](https://github.com/PyLav/PyLav/commit/5876297cc343cb027dfa6470d541a135beeeee63) - @Drapersniper
 
@@ -713,8 +724,3 @@
 ## v0.11.1.1 (16/10/2022)
 - [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/fa5f06494722fa5e64e1407cf8a8eb4b40a98b4a) - @Drapersniper
 - [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/04d86c0b39bd81516a5e76553492b9b2815e7554) - @crowdin-bot
-
----
-
-## v0.11.1.0 (16/10/2022)
-- [[patch] several fixes to the resuming logic](https://github.com/Drapersniper/PyLav/commit/6a09ca8852e46d3158765d8f89bdc19bf7863ea2) - @Drapersniper
