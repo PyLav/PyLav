@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.9.1 (05/03/2023)
+- [hotfix: Update attribute access for 1.9.0 changes](https://github.com/PyLav/PyLav/commit/07d8ccbdbba0e707f8bc73964e344d73c458b434) - @Drapersniper
+
+---
+
 ## v1.9.0 (05/03/2023)
 - [Update to reflect new Lavalink responses](https://github.com/PyLav/PyLav/commit/12dcfef8dfb72c13cfd4f2d10ac1901a4961bc08) - @Drapersniper
 - [fix typos noticed by HellFire#7769](https://github.com/PyLav/PyLav/commit/44d58571122d9e6d8692bdcc69c8876f5c5e9dfb) - @Drapersniper
@@ -718,9 +723,3 @@
 
 ## v0.11.2.0 (16/10/2022)
 - [[patch] several fixes:](https://github.com/Drapersniper/PyLav/commit/85e906e7c33cefcec7a6021cbd47894eff2dad81) - @Drapersniper
-
----
-
-## v0.11.1.1 (16/10/2022)
-- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/fa5f06494722fa5e64e1407cf8a8eb4b40a98b4a) - @Drapersniper
-- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/04d86c0b39bd81516a5e76553492b9b2815e7554) - @crowdin-bot
