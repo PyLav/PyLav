@@ -14,6 +14,7 @@ from pylav.constants.builtin_nodes import BUNDLED_NODES_IDS_HOST_MAPPING, PYLAV_
 from pylav.constants.config import EXTERNAL_UNMANAGED_NAME, JAVA_EXECUTABLE
 from pylav.constants.coordinates import DEFAULT_REGIONS, REGION_TO_COUNTRY_COORDINATE_MAPPING
 from pylav.events.node import NodeConnectedEvent, NodeDisconnectedEvent
+from pylav.exceptions.client import PyLavNotInitializedException
 from pylav.helpers.misc import ExponentialBackoffWithReset
 from pylav.logging import getLogger
 from pylav.nodes.node import Node
@@ -502,9 +503,9 @@ class NodeManager:
         if not tasks:
             if await self.client.managed_node_is_enabled():
                 self._adding_nodes.set()
-                return
+                return True
             LOGGER.warning("No nodes found, please add some nodes")
-            return
+            raise PyLavNotInitializedException("Failed to connect to any nodes")
         done, pending = await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
         for task in pending:
             task.cancel()
@@ -515,6 +516,7 @@ class NodeManager:
             raise OSError("No nodes are available")
         if not self._adding_nodes.is_set():
             self._adding_nodes.set()
+        return True
 
     async def _process_bundled_node_lava_link(self, nodes_list):
         if all(True for n in iter(nodes_list) if n.host != "lava.link"):
