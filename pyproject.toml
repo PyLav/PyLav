@@ -94,7 +94,7 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: CPython",
 ]
 repository = "https://github.com/PyLav/PyLav"
-documentation = "https://pylav.readthedocs.io/en/latest/"
+documentation = "https://pylav.readthedocs.io"
 include = [
     "CHANGELOG.md",
     "LICENSE",
@@ -156,13 +156,19 @@ Red-DiscordBot = [
     { optional = true, git = "https://github.com/Cog-Creators/Red-DiscordBot.git", markers= "python_version>='3.11,<3.12'"}
 ]
 discord-py = { version = "^2.2.2", optional = true}
+furo = { optional = true}
+olefile = { optional = true}
+sphinx-copybutton = { optional = true}
+sphinx-inline-tabs = { optional = true}
+sphinx-issues = { optional = true}
+sphinx-removed-in = { optional = true}
 
 
 
 [tool.poetry.extras]
 redis = ["redis"]
 all = ["redis"]
-docs = ["sphinx", "sphinx_rtd_theme","importlib-metadata", "packaging", "discord-py", "Red-DiscordBot"]
+docs = ["sphinx", "sphinx_rtd_theme","importlib-metadata", "packaging", "discord-py", "Red-DiscordBot", "furo", "olefile", "sphinx-copybutton", "sphinx-inline-tabs", "sphinx-issues", "sphinx-removed-in"]
 nored = ["Red-Commons","aiohttp","apsw","importlib-metadata","orjson","packaging","platformdirs","psutil","python-dateutil","pytz","rich","typing-extensions", "uvloop"]
 all-nored = ["Red-Commons","aiohttp","apsw","importlib-metadata","orjson","orjson","packaging","platformdirs","psutil","python-dateutil","pytz","redis","rich","typing-extensions", "uvloop"]
 
