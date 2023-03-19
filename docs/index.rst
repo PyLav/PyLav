@@ -62,11 +62,6 @@ Welcome to PyLav's documentation!
    pylav.storage.database.cache
    pylav.storage.database
    pylav.storage.database.tables
-   pylav.storage.migrations.high_level.always
-   pylav.storage.migrations.high_level.one_offs
-   pylav.storage.migrations.high_level
-   pylav.storage.migrations.low_level
-   pylav.storage.migrations
    pylav.storage.models.node
    pylav.storage.models.player
    pylav.storage.models

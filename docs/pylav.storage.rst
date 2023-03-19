@@ -9,7 +9,6 @@ Subpackages
 
    pylav.storage.controllers
    pylav.storage.database
-   pylav.storage.migrations
    pylav.storage.models
 
 Module contents
