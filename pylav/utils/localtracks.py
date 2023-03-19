@@ -9,7 +9,7 @@ import aiopath
 from watchfiles import Change, awatch
 
 from pylav.logging import getLogger
-from pylav.nodes.api.responses.rest_api import SearchResult, TrackLoaded
+from pylav.nodes.api.responses import rest_api
 from pylav.nodes.api.responses.track import Track
 from pylav.players.query.local_files import ALL_EXTENSIONS
 from pylav.players.query.obj import Query
@@ -146,9 +146,14 @@ class LocalTrackCache:
             return
         await asyncio.sleep(0.1)
         track = await self.__pylav.get_tracks(query, bypass_cache=modified)
-        if isinstance(track, (TrackLoaded, SearchResult)):
+        if isinstance(track, (rest_api.TrackResponse, rest_api.SearchResponse, rest_api.PlaylistResponse)):
             await self._add_to_query_cache(query, path)
-            await self._add_to_track_cache(track.tracks[0], path)
+            if isinstance(track, rest_api.TrackResponse):
+                await self._add_to_track_cache(track.data, path)
+            elif isinstance(track, rest_api.PlaylistResponse):
+                await self._add_to_track_cache(track.data.tracks, path)
+            else:
+                await self._add_to_track_cache(track.data[0], path)
 
     async def _process_modified(self, path: str, path_obj: pathlib.Path, modified: bool = True) -> None:
         if self.__shutdown:
@@ -161,9 +166,14 @@ class LocalTrackCache:
             return
         await asyncio.sleep(0.1)
         track = await self.__pylav.search_query(query, bypass_cache=modified)
-        if isinstance(track, (TrackLoaded, SearchResult)):
+        if isinstance(track, (rest_api.TrackResponse, rest_api.SearchResponse, rest_api.PlaylistResponse)):
             await self._add_to_query_cache(query, path)
-            await self._add_to_track_cache(track.tracks[0], path)
+            if isinstance(track, rest_api.TrackResponse):
+                await self._add_to_track_cache(track.data, path)
+            elif isinstance(track, rest_api.PlaylistResponse):
+                await self._add_to_track_cache(track.data.tracks, path)
+            else:
+                await self._add_to_track_cache(track.data[0], path)
 
     async def _process_deleted(self, path: str, path_obj: pathlib.Path) -> None:
         if self.__shutdown:

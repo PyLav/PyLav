@@ -33,7 +33,7 @@ from pylav.nodes.api.responses import websocket as websocket_responses
 from pylav.nodes.api.responses.errors import LavalinkError
 from pylav.nodes.api.responses.route_planner import Status as RoutePlannerStart
 from pylav.nodes.api.responses.track import Track
-from pylav.nodes.utils import NO_MATCHES, Stats
+from pylav.nodes.utils import EMPTY_RESPONSE, Stats
 from pylav.nodes.websocket import WebSocket
 from pylav.players.filters import (
     ChannelMix,
@@ -490,11 +490,11 @@ class Node:
     def parse_loadtrack_response(
         data: JSON_DICT_TYPE,
     ) -> (
-        rest_api.LoadFailed
-        | rest_api.NoMatches
-        | rest_api.PlaylistLoaded
-        | rest_api.SearchResult
-        | rest_api.TrackLoaded
+        rest_api.ErrorResponse
+        | rest_api.EmptyResponse
+        | rest_api.PlaylistResponse
+        | rest_api.SearchResponse
+        | rest_api.TrackResponse
     ):
         """Parses the loadtrack response.
          Parameters
@@ -508,16 +508,16 @@ class Node:
         """
 
         match data["loadType"]:
-            case "LOAD_FAILED":
-                return from_dict(data_class=rest_api.LoadFailed, data=data)
-            case "NO_MATCHES":
-                return from_dict(data_class=rest_api.NoMatches, data=data)
-            case "PLAYLIST_LOADED":
-                return from_dict(data_class=rest_api.PlaylistLoaded, data=data)
-            case "TRACK_LOADED":
-                return from_dict(data_class=rest_api.TrackLoaded, data=data)
-            case "SEARCH_RESULT":
-                return from_dict(data_class=rest_api.SearchResult, data=data)
+            case "error":
+                return from_dict(data_class=rest_api.ErrorResponse, data=data)
+            case "empty":
+                return from_dict(data_class=rest_api.EmptyResponse, data=data)
+            case "playlist":
+                return from_dict(data_class=rest_api.PlaylistResponse, data=data)
+            case "track":
+                return from_dict(data_class=rest_api.TrackResponse, data=data)
+            case "search":
+                return from_dict(data_class=rest_api.SearchResponse, data=data)
 
     async def get_unsupported_features(self) -> set[str]:
         await self.update_features()
@@ -931,33 +931,35 @@ class Node:
 
     async def get_track_from_cache(
         self, query: Query, first: bool = False
-    ) -> rest_api.PlaylistLoaded | rest_api.SearchResult | rest_api.TrackLoaded | None:
+    ) -> rest_api.PlaylistResponse | rest_api.SearchResponse | rest_api.TrackResponse | None:
         response = await self.node_manager.client.query_cache_manager.fetch_query(query)
         if not response:
             return
         if tracks := await response.fetch_tracks():
-            load_type = (
-                "PLAYLIST_LOADED"
-                if query.is_playlist or query.is_album
-                else "SEARCH_RESULT"
-                if query.is_search
-                else "TRACK_LOADED"
-            )
+            load_type = "playlist" if query.is_playlist or query.is_album else "search" if query.is_search else "track"
             try:
-                exception = None
                 if tracks and first:
                     tracks = [tracks[0]]
             except Exception:  # noqa
                 tracks = []
-                load_type = "LOAD_FAILED"
-                exception = {"cause": "No tracks returned", "severity": "COMMON", "message": "No tracks found"}
-            data = {
-                "loadType": load_type,
-                "tracks": tracks,
-                "playlistInfo": {"selectedTrack": -1, "name": await response.fetch_name() or ""},
-                "exception": exception,
-                "pluginInfo": await response.fetch_plugin_info(),
-            }
+                load_type = "error"
+
+            data = {"loadType": load_type, "data": None}
+            match data["loadType"]:
+                case "playlist":
+                    data["data"] = {
+                        "info": {"name": await response.fetch_name() or "", "selectedTrack": 0},
+                        "pluginInfo": await response.fetch_plugin_info(),
+                        "tracks": tracks,
+                    }
+                case "search":
+                    data["data"] = tracks
+                case "track":
+                    data["data"] = tracks[0]
+                case "empty":
+                    data["data"] = None
+                case "error":
+                    data["data"] = {"cause": "No tracks returned", "severity": "common", "message": "No tracks found"}
             response = self.parse_loadtrack_response(data)
             return response
 
@@ -1182,7 +1184,7 @@ class Node:
 
     async def fetch_loadtracks(self, query: Query) -> rest_api.LoadTrackResponses:
         if not self.available or not self.has_source(query.requires_capability):
-            return dataclasses.replace(NO_MATCHES)
+            return dataclasses.replace(EMPTY_RESPONSE)
 
         async with self._session.get(
             self.get_endpoint_loadtracks(),
@@ -1435,23 +1437,22 @@ class Node:
             and query.is_local
             and f"{query._query}" in self.node_manager.client.local_tracks_cache.path_to_track
         ):
-            response = self.parse_loadtrack_response(
+            return self.parse_loadtrack_response(
                 {
-                    "loadType": "TRACK_LOADED",
-                    "tracks": [],
-                    "playlistInfo": {"selectedTrack": -1, "name": ""},
-                    "exception": None,
-                    "pluginInfo": None,
+                    "loadType": "track",
+                    "data": self.node_manager.client.local_tracks_cache.path_to_track[f"{query._query}"],
                 }
-            )
-            return dataclasses.replace(
-                response, tracks=[self.node_manager.client.local_tracks_cache.path_to_track[f"{query._query}"]]
             )
         response = await self.fetch_loadtracks(query=query)
         if isinstance(response, HTTPException):
             return response
         if first:
-            return dataclasses.replace(response, tracks=response.tracks[:1])
+            if isinstance(response, rest_api.TrackResponse):
+                return response
+            elif isinstance(response, rest_api.SearchResponse):
+                return rest_api.TrackResponse(loadType="track", data=response.data[0])
+            elif isinstance(response, rest_api.PlaylistResponse):
+                return rest_api.TrackResponse(loadType="track", data=response.data.tracks[0])
         return response
 
     async def search_youtube_music(self, query: str, bypass_cache: bool = False) -> rest_api.LoadTrackResponses:

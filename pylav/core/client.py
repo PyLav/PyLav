@@ -69,9 +69,9 @@ from pylav.extension.radio import RadioBrowser
 from pylav.helpers.singleton import SingletonCallable, SingletonClass
 from pylav.helpers.time import get_now_utc, get_tz_utc
 from pylav.logging import getLogger
-from pylav.nodes.api.responses.rest_api import LoadFailed, LoadTrackResponses, NoMatches
+from pylav.nodes.api.responses import rest_api
 from pylav.nodes.api.responses.route_planner import Status as RoutePlannerStatus
-from pylav.nodes.api.responses.track import Track as TrackObject
+from pylav.nodes.api.responses.track import Track as Track_namespace_conflict
 from pylav.nodes.manager import NodeManager
 from pylav.nodes.node import Node
 from pylav.players.manager import PlayerController
@@ -91,7 +91,7 @@ from pylav.storage.database.cache.model import CachedModel
 from pylav.storage.database.tables.misc import DATABASE_ENGINE, IS_POSTGRES
 from pylav.storage.models.config import Config
 from pylav.storage.models.equilizer import Equalizer
-from pylav.storage.models.node.real import Node as RealNode
+from pylav.storage.models.node.real import Node as Node_namespace_conflict
 from pylav.storage.models.player.state import PlayerState
 from pylav.type_hints.bot import DISCORD_BOT_TYPE, DISCORD_COG_TYPE, DISCORD_CONTEXT_TYPE, DISCORD_INTERACTION_TYPE
 from pylav.utils.aiohttp_postgres_cache import PostgresCacheBackend
@@ -496,7 +496,7 @@ class Client(metaclass=SingletonClass):
     async def _initialise_modules(self):
         await self._lib_config_manager.initialize()
         self._config = self._lib_config_manager.get_config()
-        await RealNode.create_managed(identifier=self.bot.user.id)
+        await Node_namespace_conflict.create_managed(identifier=self.bot.user.id)
         await self._update_schema_manager.run_updates()
         await self._radio_manager.initialize()
         await self._player_manager.initialize()
@@ -878,7 +878,7 @@ class Client(metaclass=SingletonClass):
 
     async def decode_track(
         self, track: str, feature: str = None, raise_on_failure: bool = False, lazy: bool = False
-    ) -> TrackObject | HTTPException:
+    ) -> Track_namespace_conflict | HTTPException:
         """|coro|
         Decodes a base64-encoded track string into a dict.
 
@@ -913,7 +913,7 @@ class Client(metaclass=SingletonClass):
             )
         try:
             response = await node.fetch_decodetrack(track, raise_on_failure=raise_on_failure)
-            if isinstance(response, TrackObject):
+            if isinstance(response, Track_namespace_conflict):
                 return response
             raise TypeError
         except Exception as exc:  # noqa
@@ -921,7 +921,7 @@ class Client(metaclass=SingletonClass):
 
     async def decode_tracks(
         self, tracks: list, feature: str = None, raise_on_failure: bool = False
-    ) -> list[TrackObject]:
+    ) -> list[Track_namespace_conflict]:
         """|coro|
         Decodes a list of base64-encoded track strings into a dict.
 
@@ -1226,7 +1226,7 @@ class Client(metaclass=SingletonClass):
         first: bool = False,
         bypass_cache: bool = False,
         player: Player | None = None,
-    ) -> LoadTrackResponses:
+    ) -> rest_api.LoadTrackResponses:
         """|coro|
         Gets all tracks associated with the given query.
 
@@ -1393,14 +1393,20 @@ class Client(metaclass=SingletonClass):
         async for local_track in sub_query.get_all_tracks_in_folder():
             yielded = True
             response = await self._get_tracks(player=player, query=local_track, first=True, bypass_cache=True)
-            if isinstance(response, (HTTPException, NoMatches, LoadFailed)):
+            if isinstance(response, (HTTPException, rest_api.EmptyResponse, rest_api.ErrorResponse)):
                 queries_failed.append(local_track)
                 continue
-            if __ := response.tracks[0].encoded:
+            elif isinstance(response, rest_api.TrackResponse):
+                tracks = [response.data]
+            elif isinstance(response, rest_api.SearchResponse):
+                tracks = response.data
+            else:
+                tracks = response.data.tracks
+            if __ := tracks[0].encoded:
                 track_count += 1
                 successful_tracks.append(
                     await Track.build_track(
-                        data=response.tracks[0], node=node, query=None, requester=requester.id, player_instance=player
+                        data=tracks[0], node=node, query=None, requester=requester.id, player_instance=player
                     )
                 )
                 # Query tracks as the queue builds as this may be a slow operation
@@ -1424,10 +1430,15 @@ class Client(metaclass=SingletonClass):
         track_count,
     ):
         response = await self._get_tracks(player=player, query=sub_query, bypass_cache=bypass_cache)
-        if isinstance(response, (HTTPException, NoMatches, LoadFailed)):
+        if isinstance(response, (HTTPException, rest_api.EmptyResponse, rest_api.ErrorResponse)):
             queries_failed.append(sub_query)
             return track_count
-        track_list = response.tracks
+        elif isinstance(response, rest_api.TrackResponse):
+            track_list = [response.data]
+        elif isinstance(response, rest_api.SearchResponse):
+            track_list = response.data
+        else:
+            track_list = response.data.tracks
         if not track_list:
             queries_failed.append(sub_query)
         for track in track_list:
@@ -1448,17 +1459,23 @@ class Client(metaclass=SingletonClass):
         self, bypass_cache, node, player, queries_failed, requester, sub_query, successful_tracks, track_count
     ):
         response = await self._get_tracks(player=player, query=sub_query, first=True, bypass_cache=bypass_cache)
-        if isinstance(response, (HTTPException, NoMatches, LoadFailed)):
+        if isinstance(response, (HTTPException, rest_api.EmptyResponse, rest_api.ErrorResponse)):
             queries_failed.append(sub_query)
             return track_count
+        elif isinstance(response, rest_api.TrackResponse):
+            tracks = [response.data]
+        elif isinstance(response, rest_api.SearchResponse):
+            tracks = response.data
+        else:
+            tracks = response.data.tracks
 
-        if response.tracks:
+        if tracks:
             track_count += 1
-            new_query = await Query.from_string(response.tracks[0].info.uri)
+            new_query = await Query.from_string(tracks[0].info.uri)
             new_query.merge(sub_query, start_time=True)
             successful_tracks.append(
                 await Track.build_track(
-                    data=response.tracks[0], node=node, query=sub_query, requester=requester.id, player_instance=player
+                    data=tracks[0], node=node, query=sub_query, requester=requester.id, player_instance=player
                 )
             )
         else:
@@ -1512,7 +1529,7 @@ class Client(metaclass=SingletonClass):
         fullsearch: bool = False,
         region: str | None = None,
         player: Player | None = None,
-    ) -> LoadTrackResponses:
+    ) -> rest_api.LoadTrackResponses:  # sourcery skip: low-code-quality
         """This method can be rather slow as it recursively queries all queries and their associated entries.
 
         Thus, if you are processing user input you may be interested in using
@@ -1546,33 +1563,52 @@ class Client(metaclass=SingletonClass):
                 response = await self.search_query(
                     subquery, bypass_cache=bypass_cache, fullsearch=fullsearch, region=region
                 )
-                if (not response) or (not response.tracks):
+                if not response or not isinstance(
+                    response, (rest_api.TrackResponse, rest_api.SearchResponse, rest_api.PlaylistResponse)
+                ):
                     continue
+                elif isinstance(response, rest_api.TrackResponse):
+                    tracks = [response.data]
+                    playlist_name = ""
+                elif isinstance(response, rest_api.SearchResponse):
+                    tracks = response.data
+                    playlist_name = ""
+                else:
+                    tracks = response.data.tracks
+                    plugin_info |= response.data.pluginInfo.to_dict()
+                    playlist_name = response.data.info.name if response.data.info else ""
                 if subquery.is_playlist or subquery.is_album:
-                    playlist_name = response.playlistInfo.name if response.playlistInfo else ""
-                    output_tracks.extend(response.tracks)
-                    plugin_info |= response.pluginInfo.to_dict()
+                    output_tracks.extend(tracks)
                 elif fullsearch and subquery.is_search or subquery.is_single:
-                    output_tracks.extend(response.tracks)
+                    output_tracks.extend(tracks)
                 else:
                     LOGGER.error("Unknown query type: %s", subquery)
         data = {
-            "playlistInfo": {
-                "name": playlist_name if len(queries) == 1 else "",
-                "selectedTrack": -1,
-            },
-            "pluginInfo": plugin_info,
-            "loadType": "PLAYLIST_LOADED"
+            "loadType": "playlist"
             if playlist_name and len(queries) == 1
-            else "SEARCH_RESULT"
+            else "search"
+            if len(output_tracks) > 1
+            else "track"
             if output_tracks
-            else "LOAD_FAILED",
-            "tracks": output_tracks,
+            else "empty",
+            "data": None,
         }
-        if data["loadType"] == "LOAD_FAILED":
-            data["exception"] = {"cause": "No tracks returned", "severity": "COMMON", "message": "No tracks found"}
-        else:
-            data["exception"] = None
+        match data["loadType"]:
+            case "playlist":
+                data["data"] = {
+                    "info": {"name": playlist_name, "selectedTrack": 0},
+                    "pluginInfo": plugin_info,
+                    "tracks": output_tracks,
+                }
+            case "search":
+                data["data"] = output_tracks
+            case "track":
+                data["data"] = output_tracks[0]
+            case "empty":
+                data["data"] = None
+            case "error":
+                data["data"] = {"cause": "No tracks returned", "severity": "COMMON", "message": "No tracks found"}
+
         node = await self.node_manager.find_best_node()
         while not node:
             await asyncio.sleep(0.1)
@@ -1581,7 +1617,7 @@ class Client(metaclass=SingletonClass):
 
     async def search_query(
         self, query: Query, bypass_cache: bool = False, fullsearch: bool = False, region: str | None = None
-    ) -> LoadTrackResponses | None:
+    ) -> rest_api.LoadTrackResponses | None:
         """
         Search for the specified query returns a LoadTrackResponse object
 

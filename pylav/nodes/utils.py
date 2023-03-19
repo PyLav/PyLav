@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from pylav.nodes.api.responses.rest_api import NoMatches
+from pylav.nodes.api.responses.rest_api import EmptyResponse
 from pylav.nodes.api.responses.websocket import Stats as StatsMessage
 
 if TYPE_CHECKING:
@@ -230,4 +230,4 @@ class Stats:
         )
 
 
-NO_MATCHES = NoMatches(loadType="NO_MATCHES", tracks=[], playlistInfo=None, pluginInfo=None, exception=None)
+EMPTY_RESPONSE = EmptyResponse(loadType="empty", data=None)

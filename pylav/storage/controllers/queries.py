@@ -58,16 +58,30 @@ class QueryController:
         if query.is_custom_playlist or query.is_http:
             # Do not cache local queries and single track urls or http source entries
             return False
-        if result.loadType in ["NO_MATCHES", "LOAD_FAILED", None]:
+        if result.loadType in ["empty", "error", None]:
             return False
-        tracks = result.tracks
+
+        if isinstance(result, rest_api.TrackResponse):
+            tracks = [result.data]
+            plugin_info = result.data.pluginInfo.to_dict() if result.data.pluginInfo else None
+            name = None
+
+        elif isinstance(result, rest_api.SearchResponse):
+            tracks = result.data
+            name = None
+            plugin_info = None
+        else:
+            tracks = result.data.tracks
+            playlist_info = result.data.info
+            name = playlist_info.name if playlist_info else None
+            plugin_info = result.data.pluginInfo.to_dict() if result.data.pluginInfo else None
+
         if not tracks:
             return False
-        playlist_info = result.playlistInfo
-        name = playlist_info.name if playlist_info else None
+
         defaults = {
             QueryRow.name: name,
-            QueryRow.pluginInfo: result.pluginInfo.to_dict() if result.pluginInfo else None,
+            QueryRow.pluginInfo: plugin_info,
         }
         query_row = await QueryRow.objects().get_or_create(QueryRow.identifier == query.query_identifier, defaults)
 
