@@ -22,7 +22,9 @@ def in_container() -> bool:
             not in (
                 "systemd",
                 "init",
-            ),
+            )
+            if out
+            else False,
             os.path.exists("./dockerenv"),
             os.path.exists("/.dockerinit"),
             os.getenv("container") is not None,
