@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.abspath(".."))
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-from ..pylav import __version__
+from pylav import __version__
 
 project = "PyLav"
 copyright = "2023, Drapersniper"
