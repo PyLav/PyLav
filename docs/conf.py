@@ -38,8 +38,20 @@ extensions = [
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
-intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
+    "py": ("https://docs.python.org/3", None),
+    "aio": ("https://docs.aiohttp.org/en/stable/", None),
+    "req": ("https://requests.readthedocs.io/en/latest/", None),
+    "dpy": ("https://discordpy.readthedocs.io/en/latest/", None),
+    "red": ("https://docs.discord.red/en/latest/", None),
+}
 language = "en"
+
+extlinks = {
+    "issue": ("https://github.com/PyLav/PyLav/issues/%s", "GH-"),
+    "ddocs": ("https://discord.com/developers/docs/%s", None),
+}
 
 
 # -- Options for HTML output -------------------------------------------------
