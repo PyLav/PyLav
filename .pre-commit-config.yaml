@@ -41,6 +41,7 @@ repos:
     rev: v0.3.1
     hooks:
     -   id: absolufy-imports
+        exclude: ^docs/
 -   repo: https://github.com/pycqa/flake8
     rev: 6.0.0
     hooks:

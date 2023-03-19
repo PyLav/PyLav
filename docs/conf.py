@@ -5,16 +5,17 @@
 
 import os
 import sys
-sys.path.insert(0, os.path.abspath('..'))
+
+sys.path.insert(0, os.path.abspath(".."))
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 from ..pylav import __version__
 
-project = 'PyLav'
-copyright = '2023, Drapersniper'
-author = 'Draper'
+project = "PyLav"
+copyright = "2023, Drapersniper"
+author = "Draper"
 release = __version__
 version = __version__
 
@@ -30,16 +31,15 @@ extensions = [
     "sphinx.ext.doctest",
 ]
 
-templates_path = ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
-
+templates_path = ["_templates"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'sphinx_rtd_theme'
-html_static_path = ['_static']
+html_theme = "sphinx_rtd_theme"
+html_static_path = ["_static"]
 html_context = {
     "display_github": True,
     "github_user": "PyLav",
