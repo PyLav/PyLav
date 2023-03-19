@@ -1607,7 +1607,7 @@ class Client(metaclass=SingletonClass):
             case "empty":
                 data["data"] = None
             case "error":
-                data["data"] = {"cause": "No tracks returned", "severity": "COMMON", "message": "No tracks found"}
+                data["data"] = {"cause": "No tracks returned", "severity": "common", "message": "No tracks found"}
 
         node = await self.node_manager.find_best_node()
         while not node:
