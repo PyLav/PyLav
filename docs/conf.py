@@ -29,17 +29,21 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
     "sphinx.ext.doctest",
+    "sphinx_issues",
+    "sphinx_copybutton" "sphinx_inline_tabs",
 ]
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
+language = "en"
 
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = "sphinx_rtd_theme"
-html_static_path = ["_static"]
+html_theme = "furo"
+html_static_path = ["_static", "resources"]
 html_context = {
     "display_github": True,
     "github_user": "PyLav",
@@ -49,6 +53,7 @@ html_context = {
 
 source_suffix = ".rst"
 master_doc = "index"
+pygments_style = "sphinx"
 
 
 # Autodoc options
@@ -74,3 +79,7 @@ class IgnoreCoroSubstitution(SphinxTransform):
 
 def setup(app):
     app.add_transform(IgnoreCoroSubstitution)
+    app.add_css_file("css/dark.css")
+
+
+issues_github_path = "PyLav/PyLav"
