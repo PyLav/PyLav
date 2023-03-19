@@ -151,7 +151,7 @@ uvloop = { version = "^0.17.0", markers = "sys_platform != 'win32' and platform_
 
 # Dependency for the docs
 Red-DiscordBot = [
-    { optional = true, git = "https://github.com/Cog-Creators/Red-DiscordBot.git", markers= "python_version>='3.11,<3.12'"}
+    { optional = true, git = "https://github.com/Cog-Creators/Red-DiscordBot.git"}
 ]
 discord-py = { version = "^2.2.2", optional = true}
 furo = { version = "*", optional = true}
