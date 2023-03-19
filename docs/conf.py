@@ -30,7 +30,8 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.doctest",
     "sphinx_issues",
-    "sphinx_copybutton" "sphinx_inline_tabs",
+    "sphinx_copybutton",
+    "sphinx_inline_tabs",
 ]
 
 templates_path = ["_templates"]
