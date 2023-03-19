@@ -513,7 +513,7 @@ class NodeManager:
             result.result()
         len_nodes = sum(1 for node in nodes_list if node.available)
         if len_nodes == 0:
-            raise OSError("No nodes are available")
+            raise PyLavNotInitializedException("No nodes are available")
         if not self._adding_nodes.is_set():
             self._adding_nodes.set()
         return True
