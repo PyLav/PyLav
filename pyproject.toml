@@ -167,7 +167,7 @@ sphinx-removed-in = { version = "*", optional = true}
 [tool.poetry.extras]
 redis = ["redis"]
 all = ["redis"]
-docs = ["sphinx", "sphinx_rtd_theme","importlib-metadata", "packaging",  "Red-DiscordBot", "furo", "olefile", "sphinx-copybutton", "sphinx-inline-tabs", "sphinx-issues", "sphinx-removed-in"]
+docs = ["Red-DiscordBot", "sphinx", "sphinx_rtd_theme", "furo", "olefile", "sphinx-copybutton", "sphinx-inline-tabs", "sphinx-issues", "sphinx-removed-in"]
 nored = ["Red-Commons","aiohttp","apsw","importlib-metadata","orjson","packaging","platformdirs","psutil","python-dateutil","pytz","rich","typing-extensions", "uvloop"]
 all-nored = ["Red-Commons","aiohttp","apsw","importlib-metadata","orjson","orjson","packaging","platformdirs","psutil","python-dateutil","pytz","redis","rich","typing-extensions", "uvloop"]
 
