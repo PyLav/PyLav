@@ -153,7 +153,6 @@ uvloop = { version = "^0.17.0", markers = "sys_platform != 'win32' and platform_
 Red-DiscordBot = [
     { optional = true, git = "https://github.com/Cog-Creators/Red-DiscordBot.git"}
 ]
-discord-py = { version = "^2.2.2", optional = true}
 furo = { version = "*", optional = true}
 olefile = { version = "*", optional = true}
 sphinx = { version = ">=2.4", optional = true}
@@ -168,7 +167,7 @@ sphinx-removed-in = { version = "*", optional = true}
 [tool.poetry.extras]
 redis = ["redis"]
 all = ["redis"]
-docs = ["sphinx", "sphinx_rtd_theme","importlib-metadata", "packaging", "discord-py", "Red-DiscordBot", "furo", "olefile", "sphinx-copybutton", "sphinx-inline-tabs", "sphinx-issues", "sphinx-removed-in"]
+docs = ["sphinx", "sphinx_rtd_theme","importlib-metadata", "packaging",  "Red-DiscordBot", "furo", "olefile", "sphinx-copybutton", "sphinx-inline-tabs", "sphinx-issues", "sphinx-removed-in"]
 nored = ["Red-Commons","aiohttp","apsw","importlib-metadata","orjson","packaging","platformdirs","psutil","python-dateutil","pytz","rich","typing-extensions", "uvloop"]
 all-nored = ["Red-Commons","aiohttp","apsw","importlib-metadata","orjson","orjson","packaging","platformdirs","psutil","python-dateutil","pytz","redis","rich","typing-extensions", "uvloop"]
 
