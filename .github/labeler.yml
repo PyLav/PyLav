@@ -50,3 +50,7 @@
 -   pylav.example.yml
 -   application.example.yml
 -   .vale.ini
+-   .readthedocs.yaml
+'Category: Docs':
+-   docs/**/*
+-   .readthedocs.yaml
