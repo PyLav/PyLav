@@ -4,13 +4,21 @@ import os
 import pathlib
 
 
-def remove_keys(*keys, data: dict) -> dict:
+def _remove_keys(*keys, data: dict) -> dict:
     for key in keys:
         data.pop(key, None)
     return data
 
 
 def in_container() -> bool:
+    """Check if the current process is running in a container.
+
+    Returns
+    -------
+    bool
+        Whether or not the current process is running in a container.
+
+    """
     try:
         proc_1 = r"/proc/1/sched"
 

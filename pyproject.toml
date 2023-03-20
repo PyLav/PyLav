@@ -4,70 +4,6 @@ build-backend = "poetry_dynamic_versioning.backend"
 
 [tool]
 
-[tool.autopep8]
-max_line_length = 120
-ignore = "E203,E501,W503,E402"
-in-place = true
-recursive = true
-aggressive = 3
-exclude = "pylav/_city_dump.py"
-
-[tool.black]
-line-length = 120
-target-version = ['py311']
-force-exclude = '''
-    /(
-        pylav\/vendor
-    )/
-    '''
-
-[tool.isort]
-profile = "black"
-line_length = 120
-py_version = 311
-known_third_party = [
-    "aiofile",
-    "aiohttp",
-    "aiohttp_client_cache",
-    "aiopath",
-    "apscheduler",
-    "apsw",
-    "asyncpg",
-    "asyncspotify",
-    "asyncstdlib",
-    "brotli",
-    "cached_property",
-    "cashews",
-    "dacite",
-    "dateutil",
-    "deepdiff",
-    "discord",
-    "expiringdict",
-    "humanize",
-    "importlib_metadata",
-    "iso8601",
-    "netaddr",
-    "numpy",
-    "orjson",
-    "packaging",
-    "piccolo",
-    "platformdirs",
-    "psutil",
-    "pytz",
-    "red_commons",
-    "redis",
-    "rich",
-    "tabulate",
-    "typing_extensions",
-    "ujson",
-    "uvloop",
-    "watchfiles",
-    "yaml"
-]
-known_local_folder = [
-    "pylav"
-]
-
 [tool.poetry]
 name = "Py-Lav"
 version = "1.9.1"
@@ -162,8 +98,6 @@ sphinx-inline-tabs = { version = "*", optional = true}
 sphinx-issues = { version = ">=3.0.1", optional = true}
 sphinx-removed-in = { version = "*", optional = true}
 
-
-
 [tool.poetry.extras]
 redis = ["redis"]
 all = ["redis"]
@@ -181,3 +115,88 @@ vcs = "git"
 [tool.poetry-dynamic-versioning.substitution]
 files = ["*.py", "*/__init__.py", "*/__version__.py", "*/_version.py"]
 patterns = ["(^__version__\\s*(?::.*?)?=\\s*['\"])[^'\"]*(['\"])"]
+
+[tool.autopep8]
+max_line_length = 120
+ignore = "E203,E501,W503,E402"
+in-place = true
+recursive = true
+aggressive = 3
+exclude = "pylav/_city_dump.py"
+
+[tool.black]
+line-length = 120
+target-version = ['py311']
+force-exclude = '''
+    /(
+        pylav\/vendor
+    )/
+    '''
+
+[tool.isort]
+profile = "black"
+line_length = 120
+py_version = 311
+known_third_party = [
+    "aiofile",
+    "aiohttp",
+    "aiohttp_client_cache",
+    "aiopath",
+    "apscheduler",
+    "apsw",
+    "asyncpg",
+    "asyncspotify",
+    "asyncstdlib",
+    "brotli",
+    "cached_property",
+    "cashews",
+    "dacite",
+    "dateutil",
+    "deepdiff",
+    "discord",
+    "expiringdict",
+    "humanize",
+    "importlib_metadata",
+    "iso8601",
+    "netaddr",
+    "numpy",
+    "orjson",
+    "packaging",
+    "piccolo",
+    "platformdirs",
+    "psutil",
+    "pytz",
+    "red_commons",
+    "redis",
+    "rich",
+    "tabulate",
+    "typing_extensions",
+    "ujson",
+    "uvloop",
+    "watchfiles",
+    "yaml"
+]
+known_local_folder = [
+    "pylav"
+]
+
+[tool.interrogate]
+ignore-init-method = true
+ignore-init-module = false
+ignore-magic = false
+ignore-semiprivate = false
+ignore-private = false
+ignore-property-decorators = false
+ignore-module = false
+ignore-nested-functions = false
+ignore-nested-classes = true
+ignore-setters = false
+fail-under = 95
+exclude = ["docs", "build", "pylav/vendor", "pylav/utils/vendor"]
+ignore-regex = ["^get$", "^mock_.*", ".*BaseClass.*"]
+# possible values: 0 (minimal output), 1 (-v), 2 (-vv)
+verbose = 0
+quiet = false
+whitelist-regex = []
+color = true
+omit-covered-files = false
