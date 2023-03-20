@@ -104,7 +104,11 @@ repos:
     rev: v1.1.3
     hooks:
     -   id: black-disable-checker
-
+-   repo: https://github.com/econchick/interrogate
+    rev: 1.5.0
+    hooks:
+    -   id: interrogate
+        args: [--config=pyproject.toml]
 ci:
     autofix_commit_msg: |
         [skip ci] auto fixes from pre-commit.com hooks
@@ -113,4 +117,4 @@ ci:
     autoupdate_commit_msg: '[skip ci] pre-commit autoupdate'
     autoupdate_schedule: weekly
     submodules: false
-    skip: [sourcery]
+    skip: [sourcery, interrogate]
