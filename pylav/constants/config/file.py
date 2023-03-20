@@ -11,7 +11,7 @@ from deepdiff import DeepDiff  # type: ignore
 # noinspection PyProtectedMember
 from pylav._internals.functions import _get_path
 from pylav.constants.config import ENV_FILE
-from pylav.constants.config.utils import remove_keys
+from pylav.constants.config.utils import _remove_keys
 from pylav.constants.node_features import SUPPORTED_SEARCHES
 from pylav.constants.specials import ANIME
 from pylav.logging import getLogger
@@ -171,7 +171,9 @@ if (ENABLE_NODE_RESUMING := data.get("PYLAV__ENABLE_NODE_RESUMING")) is None:
     data_new["PYLAV__ENABLE_NODE_RESUMING"] = ENABLE_NODE_RESUMING
 
 
-data_new = remove_keys("PYLAV__CACHING_ENABLED", "PYLAV__PREFER_PARTIAL_TRACKS", "PREFER_PARTIAL_TRACKS", data=data_new)
+data_new = _remove_keys(
+    "PYLAV__CACHING_ENABLED", "PYLAV__PREFER_PARTIAL_TRACKS", "PREFER_PARTIAL_TRACKS", data=data_new
+)
 
 if DeepDiff(data, data_new, ignore_order=True, max_passes=2, cache_size=1000):
     with ENV_FILE.open(mode="w") as file:

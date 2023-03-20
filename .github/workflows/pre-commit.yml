@@ -18,6 +18,6 @@ jobs:
                 python-version: '3.11'
         -   uses: pre-commit/action@v3.0.0
             env:
-                SKIP: sourcery
+                SKIP: sourcery,interrogate
         -   uses: pre-commit-ci/lite-action@v1.0.1
             if: always()

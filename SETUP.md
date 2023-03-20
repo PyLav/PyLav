@@ -185,7 +185,6 @@ An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml
   - Download the latest Lavalink.jar from this [GitHub action](https://github.com/freyacodes/Lavalink/actions/workflows/build.yml?query=branch%3Afeature%2Fplugin-track-modifications)(Check the Discord support server for the latest link)
   - Place these a directory of your choice.
   - Edit the custom  [`application.yml`](./application.example.yml) (Deezer is disabled by default) to your liking changing the `CHANGE_ME` values, if you need help with this please join the [Discord support server](https://discord.com/invite/vnmcXqtgeY)
-    - You will need a specify version of the application.yml ping draper#6666 in the support server for it (not needed if you use docker to run Lavalink)
   - Start an unmanaged Lavalink node using the `application.yml` you just edited and the `Lavalink.jar` you just downloaded.
 - Make the following changes to your `pylav.yaml` config file
   - Set `PYLAV__EXTERNAL_UNMANAGED_HOST` to `localhost`

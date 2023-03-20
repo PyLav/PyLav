@@ -7,6 +7,9 @@ import sys
 import aiopath  # type: ignore
 import platformdirs
 
+if os.environ.get("READTHEDOCS"):
+    CONFIG_DIR = aiopath.AsyncPath(platformdirs.user_config_dir("PyLav"))
+
 # noinspection PyProtectedMember
 from pylav._internals.pylav_yaml_builder import build_from_envvars
 from pylav.constants.config.utils import in_container

@@ -343,20 +343,11 @@ async def pylav_auto_setup(
 
     Adds `.bot` attribute to the cog instance.
     Adds `.pylav` attribute to the cog instance and starts up PyLav
-    Overwrites cog_unload method to unregister the cog from Lavalink,
-        calling the original cog_unload method once the PyLav unregister code is run.
-    Overwrites cog_before_invoke
-        To force commands to wait for PyLav to be ready
-    Overwrites cog_check method to check if the cog is allowed to run in the current context,
-        If called within a Guild then we check if we can run as per the PyLav Command channel lock,
-        if this check passes then the original cog_check method is called.
-    Overwrites cog_command_error method to handle PyLav errors raised by the cog,
-        if the cog defines their own cog_command_error method,
-        this will still be called after the built-in PyLav error handling if the error raised was unhandled.
-    Overwrites initialize method to handle PyLav startup,
-        calling the original initialize method once the PyLav initialization code is run, if such method exists. code
-        is run.
-
+    Overwrites cog_unload method to unregister the cog from Lavalink, calling the original cog_unload method once the PyLav unregister code is run.
+    Overwrites cog_before_invoke To force commands to wait for PyLav to be ready
+    Overwrites cog_check method to check if the cog is allowed to run in the current context. If called within a Guild then we check if we can run as per the PyLav Command channel lock, if this check passes then the original cog_check method is called.
+    Overwrites cog_command_error method to handle PyLav errors raised by the cog, if the cog defines their own cog_command_error method, this will still be called after the built-in PyLav error handling if the error raised was unhandled.
+    Overwrites initialize method to handle PyLav startup, calling the original initialize method once the PyLav initialization code is run, if such method exists. code is run.
 
     Args:
         bot (DISCORD_BOT_TYPE): The bot instance to load the cog instance to.

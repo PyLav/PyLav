@@ -229,6 +229,47 @@ def dumps(
     ujson_escape_forward_slashes=True,
     **kwargs,
 ) -> str:
+    """
+
+    Parameters
+    ----------
+    obj : Any
+        The object to serialize.
+    skipkeys : bool, optional
+        If ``True`` (default: ``False``), keys that are not basic types (``str``, ``int``, ``float``, ``bool``, ``None``) will be skipped instead of raising a ``TypeError``.
+    ensure_ascii: bool, optional
+        If ``True`` (default: ``True``), the output is guaranteed to have all incoming non-ASCII characters escaped. If ``False``, these characters will be output as-is.
+    check_circular: bool, optional
+        If check_circular is ``False`` (default: ``True``), then the circular reference check for container types will be skipped and a circular reference will result in an ``RecursionError`` (or worse).
+    allow_nan: bool, optional
+        If ``False`` (default: ``True``), then it will be a ValueError to serialize out of range float values (`nan`, `inf`, `-inf`) in strict compliance of the JSON specification. If ``True``, their JavaScript equivalents (`NaN`, `Infinity`, `-Infinity`) will be used.
+    cls : type, optional
+        If specified, must be a subclass of ``json.JSONEncoder``. An instance is used to encode the object.
+    indent : int or str, optional
+        If specified, then JSON array elements and object members will be pretty-printed with a newline followed by that many spaces. An indent level of 0, negative, or ``None`` will only insert newlines. ``None`` is the most compact representation. Using a negative indent indents that many spaces after the ``newline`` character. If it is a string (such as ``'\t'``), that string is used to indent each level. Default: ``None``.
+    separators : tuple, optional
+        If specified, then it should be an (item_separator, key_separator) tuple. The default is ``(', ', ': ')`` if *indent* is ``None`` and ``(',', ': ')`` otherwise. To get the most compact JSON representation, you should specify ``(',', ':')`` to eliminate whitespace.
+    default: Callable, optional
+        If specified, then it should be a function that gets called for objects that can't otherwise be serialized. It should return a JSON encodable version of the object or raise a ``TypeError``. If not specified, ``TypeError`` is raised.
+    sort_keys: bool, optional
+        If ``True`` (default: ``False``), then the output of dictionaries will be sorted by key.
+    orjson_default: Callable, optional
+        If specified, then it should be a function that gets called for objects that can't otherwise be serialized. It should return a JSON encodable version of the object or raise a ``TypeError``. If not specified, ``TypeError`` is raised.
+    orjson_option: int, optional
+        If specified, then it should be an integer that is passed to ``orjson.dumps`` as the ``option`` parameter. If not specified, ``None`` is used.
+    ujson_encode_html_chars: bool, optional
+        If ``True`` (default: ``False``), then the output will have the characters ``<``, ``>``, ``&`` encoded as ``\u003c``, ``\u003e``, ``\u0026``.
+    ujson_escape_forward_slashes:
+        If ``True`` (default: ``True``), then the output will have the forward slash character ``/`` encoded as ``\\/``.
+    kwargs: Any, optional
+        Additional keyword arguments are passed to ``json.dumps``.
+
+    Returns
+    -------
+    str
+        The JSON string representation of ``obj``.
+
+    """
     if _orjson:
         with contextlib.suppress(_orjson.JSONEncodeError):
             return _orjson.dumps(obj, default=orjson_default, option=orjson_option).decode()
@@ -268,6 +309,44 @@ def loads(
     ujson_precise_float=None,
     **kwargs,
 ) -> Any:
+    """Deserialize ``obj`` (a ``str``, ``bytes`` or ``bytearray`` instance containing a JSON document) to a Python object.
+
+    Parameters
+    ----------
+    obj: AnyStr | bytes | bytearray | memoryview | str
+        The JSON string to deserialize.
+    cls: type, optional
+        If specified, must be a subclass of ``json.JSONDecoder``. An instance is used to decode the object.
+    object_hook: Callable, optional
+        If specified, then it should be a function that will be called with the result of any object literal decoded (a ``dict``). The return value of ``object_hook`` will be used instead of the ``dict``. This feature can be used to implement custom decoders (e.g. JSON-RPC class hinting).
+    parse_float: Callable, optional
+        If specified, then it should be a function to be called with the string of every JSON float to be decoded. By default this is equivalent to ``float(num_str)``. This can be used to use another datatype or parser for JSON floats (e.g. ``decimal.Decimal``).
+    parse_int: Callable, optional
+        If specified, then it should be a function to be called with the string of every JSON int to be decoded. By default this is equivalent to ``int(num_str)``. This can be used to use another datatype or parser for JSON integers (e.g. ``float``).
+    parse_constant: Callable, optional
+        If specified, then it should be a function to be called with one of the following strings: ``'-Infinity'``, ``'Infinity'``, ``'NaN'``. This can be used to raise an exception if invalid JSON numbers are encountered.
+    object_pairs_hook: Callable, optional
+        If specified, then it should be a function that will be called with the result of any object literal decoded with an ordered list of pairs. The return value of ``object_pairs_hook`` will be used instead of the ``dict``. This feature can be used to implement custom decoders. If ``object_hook`` is also defined, the ``object_pairs_hook`` takes priority.
+    ujson_precise_float: bool, optional
+        If ``True`` (default: ``False``), then
+    kwargs: Any, optional
+        Additional keyword arguments are passed to ``json.loads``.
+
+    Returns
+    -------
+    Any
+        The deserialized object.
+
+    Raises
+    ------
+    json.JSONDecodeError
+        If the input is not valid JSON.
+    orjson.JSONDecodeError(json.JSONDecodeError, ValueError)
+        If the input is not valid JSON and orjson is used.
+    ValueError
+        If the string is not correctly formed and ujson is used.
+
+    """
     if _orjson:
         with contextlib.suppress(_orjson.JSONDecodeError):
             return _orjson.loads(obj)
@@ -364,6 +443,7 @@ def load(
 
 
 def get_origin() -> dict[str, ModuleType]:
+    """Return a dict of json modules being used."""
     return {
         "dumps": __dumps_origin,
         "loads": __loads_origin,
