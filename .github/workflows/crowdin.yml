@@ -16,7 +16,7 @@ jobs:
         runs-on: [ubuntu-latest]
         name: Upload the latest strings to Crowdin
         steps:
-        -   uses: actions/checkout@v3.3.0
+        -   uses: actions/checkout@v3.4.0
             with:
                 ref: master
                 token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
@@ -31,7 +31,7 @@ jobs:
             run: |
                 python3.11 -m redgettext --command-docstrings --verbose --recursive .
         -   name: crowdin action
-            uses: crowdin/github-action@v1.7.0
+            uses: crowdin/github-action@v1.7.1
             with:
                 upload_sources: true
                 upload_translations: false
