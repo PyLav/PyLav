@@ -43,7 +43,7 @@ services:
     ll-node:
         hostname: ll-node
         container_name: ll-node
-        image: ghcr.io/pylav/node:latest
+        image: ghcr.io/pylav/node:v4-latest
         restart: always
         volumes:
         # Mount the Lavalink logs folder
