@@ -181,8 +181,8 @@ An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml
     - This uses a custom lavalink image to allow you to use Lavalink v4.0.0 early
   - If using this setup make sure to use this [pylav.yaml](./pylav.docker.yaml) file for the PyLav config.
 ## Without Docker
-- You will need to complete the following steps before you can successfully use this version, these will only be necessary until Lavalink 4.0.0 is released.
-  - Download the latest Lavalink.jar from this [GitHub action](https://github.com/freyacodes/Lavalink/actions/workflows/build.yml?query=branch%3Afeature%2Fplugin-track-modifications)(Check the Discord support server for the latest link)
+- You will need will need to complete the following steps before you can successfully use this version, these will only be necessary until Lavalink 4.0.0 is released.
+  - Download the latest Lavalink.jar from this [GitHub action](https://github.com/freyacodes/Lavalink/actions/workflows/build.yml?query=branch%3Av4)(Check the Discord support server for the latest link)
   - Place these a directory of your choice.
   - Edit the custom [`application.yml`](./application.example.yml) (Deezer is disabled by default) to your liking changing the `CHANGE_ME` values, if you need help with this please join the [Discord support server](https://discord.com/invite/vnmcXqtgeY)
   - Start an unmanaged Lavalink node using the `application.yml` you just edited and the `Lavalink.jar` you just downloaded.
