@@ -275,7 +275,7 @@ class Client(metaclass=SingletonClass):
         if self._shutting_down or not self.initialized:
             return
         LOGGER.debug("Shard %s resumed, checking for affected players", shard_id)
-        players = filter(lambda p: p.guild.shard_id == shard_id, self.player_manager.players.values())
+        players = filter(lambda p: p.guild.shard_id == shard_id, self.player_manager.players.copy().values())
         for player in players:
             await self.set_context_locale(player.guild)
             await player.reconnect()
@@ -284,7 +284,7 @@ class Client(metaclass=SingletonClass):
         if self._shutting_down or not self.initialized:
             return
         LOGGER.debug("Shard %s ready, checking for affected players", shard_id)
-        players = filter(lambda p: p.guild.shard_id == shard_id, self.player_manager.players.values())
+        players = filter(lambda p: p.guild.shard_id == shard_id, self.player_manager.players.copy().values())
         for player in players:
             await self.set_context_locale(player.guild)
             await player.reconnect()
