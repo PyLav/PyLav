@@ -1251,7 +1251,7 @@ class Player(VoiceProtocol):
             raise ValueError(
                 "end_time must be an int with a value equal to, or greater than 0, and less than the track duration"
             )
-        payload["endTime"] = end_time
+        payload["endTime"] = int(end_time)
 
     @staticmethod
     async def _process_payload_position(payload, start_time, track: Track):
@@ -1261,7 +1261,7 @@ class Player(VoiceProtocol):
                 "start_time must be an int with a value equal to, "
                 "or greater than 0, and less than the track duration"
             )
-        payload["position"] = start_time or track.timestamp
+        payload["position"] = int(start_time or track.timestamp)
 
     async def _process_partial_playlist(
         self, track: Track, requester: int | discord.Member | None
@@ -1357,7 +1357,7 @@ class Player(VoiceProtocol):
         self._last_position = 0
         payload = {
             "encodedTrack": self.current.encoded,
-            "position": self.current.last_known_position if self.current else await self.fetch_position(),
+            "position": int(self.current.last_known_position if self.current else await self.fetch_position()),
         }
         if self.volume_filter:
             payload["volume"] = self.volume
@@ -1496,7 +1496,7 @@ class Player(VoiceProtocol):
             self.node.dispatch_event(
                 TrackSeekEvent(self, requester, self.current, before=await self.fetch_position(), after=position)
             )
-            payload = {"position": position}
+            payload = {"position": int(position)}
             await self.node.patch_session_player(guild_id=self.guild.id, payload=payload)
             self._last_update = time.time() * 1000
             self._last_position = position
@@ -1570,7 +1570,7 @@ class Player(VoiceProtocol):
             await self.add_sponsorblock_categories()
         if ops:
             if self.current:
-                payload = {"encodedTrack": self.current.encoded, "position": position}
+                payload = {"encodedTrack": self.current.encoded, "position": int(position)}
                 if self.paused:
                     payload["paused"] = self.paused
 
@@ -2209,7 +2209,7 @@ class Player(VoiceProtocol):
                 reset_no_set=reset_not_set,
                 **kwargs,
             ),
-            "position": await self.fetch_position(),
+            "position": int(await self.fetch_position()),
         }
         await self.node.patch_session_player(self.guild.id, payload=payload)
         kwargs.pop("reset_not_set", None)
@@ -2806,7 +2806,7 @@ class Player(VoiceProtocol):
         if self.paused:
             payload["paused"] = self.paused
         if self.current and not restoring_session:
-            payload |= {"encodedTrack": self.current.encoded, "position": self._last_position}
+            payload |= {"encodedTrack": self.current.encoded, "position": int(self._last_position)}
             self._last_update = time.time() * 1000
         if self.stopped and not restoring_session:
             payload |= {"encodedTrack": None}
