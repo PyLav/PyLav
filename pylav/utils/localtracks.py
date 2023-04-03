@@ -21,6 +21,8 @@ LOGGER = getLogger("PyLav.LocalTrackCache")
 
 
 class LocalTrackCache:
+    """A cache for local tracks."""
+
     __slots__ = (
         "__pylav",
         "__ready",
@@ -51,30 +53,37 @@ class LocalTrackCache:
 
     @property
     def hexdigest_to_query(self) -> dict[str, Query]:
+        """The hexdigest to query cache."""
         return self.__query_cache
 
     @property
     def path_to_query(self) -> dict[str, Query]:
+        """The path to query cache."""
         return self.__path_to_query_cache
 
     @property
     def path_to_track(self) -> dict[str, Track]:
+        """The path to track cache."""
         return self.__track_cache
 
     @property
     def root_folder(self) -> pathlib.Path:
+        """The root folder of the local track cache."""
         return self.__root_folder
 
     @property
     def is_ready(self) -> bool:
+        """Whether the local track cache is ready."""
         return self.__ready.is_set()
 
     async def initialize(self):
+        """Initialize the local track cache."""
         await self.__pylav.wait_until_ready()
         await self.update()
         self.__ready.set()
 
     async def shutdown(self):
+        """Shutdown the local track cache."""
         self.__shutdown = True
         self.__monitor.cancel()
         self.__ready.clear()
@@ -107,6 +116,7 @@ class LocalTrackCache:
             self.__track_cache.pop(f"{path}", None)
 
     async def wipe_cache(self) -> None:
+        """Wipe the local track cache."""
         await self.__track_lock.acquire()
         await self.__query_lock.acquire()
         self.__track_cache.clear()
@@ -116,6 +126,7 @@ class LocalTrackCache:
         self.__query_lock.release()
 
     async def file_watcher(self):
+        """A file watcher for the local track cache."""
         await self.__ready.wait()
         async for changes in awatch(self.root_folder, recursive=True):
             if self.__shutdown:
@@ -183,6 +194,7 @@ class LocalTrackCache:
         await self._remove_from_track_cache(path)
 
     async def update(self) -> None:
+        """Update the local track cache."""
         if self.__shutdown:
             return
         await self.__pylav.wait_until_ready()

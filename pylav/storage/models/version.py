@@ -13,9 +13,12 @@ from pylav.storage.database.tables.version import BotVersionRow
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
 class BotVersion(CachedModel, metaclass=SingletonCachedByKey):
+    """A class to represent the version of the bot in the database"""
+
     id: int
 
     def get_cache_key(self) -> str:
+        """Get the cache key for the bot version."""
         return f"{self.id}"
 
     @maybe_cached

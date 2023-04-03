@@ -9,6 +9,8 @@ if TYPE_CHECKING:
 
 
 class M3UParser:
+    """A wrapper for the M3U parser."""
+
     __slots__ = ("_client",)
 
     def __init__(self, client: Client) -> None:
@@ -16,6 +18,7 @@ class M3UParser:
 
     @property
     def client(self) -> Client:
+        """The PyLav client."""
         return self._client
 
     load = load

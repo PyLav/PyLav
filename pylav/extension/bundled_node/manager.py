@@ -155,34 +155,42 @@ class LocalNodeManager:
 
     @property
     def disabled(self) -> bool:
+        """Whether the node is disabled or not."""
         return self._disabled
 
     @property
     def node(self) -> Node | None:
+        """The node object."""
         return self._node
 
     @property
     def path(self) -> str | None:
+        """The path to the Lavalink jar file."""
         return self._java_exc
 
     @property
     def jvm(self) -> str | None:
+        """The JVM version used by Lavalink."""
         return self._jvm
 
     @property
     def lavaplayer(self) -> str | None:
+        """The Lavaplayer version used by Lavalink."""
         return self._lavaplayer
 
     @property
     def ll_build(self) -> int | None:
+        """The Lavalink build number used by Lavalink."""
         return self._lavalink_build
 
     @property
     def ll_branch(self) -> str | None:
+        """The Lavalink branch used by Lavalink."""
         return self._lavalink_branch
 
     @property
     def build_time(self) -> str | None:
+        """The Lavalink build time used by Lavalink."""
         return self._buildtime
 
     @staticmethod
@@ -194,6 +202,7 @@ class LocalNodeManager:
         )
 
     async def get_ci_latest_info(self) -> dict[str, int | str | None]:
+        """Get the latest CI info from GitHub."""
         async with self._client.cached_session.get(
             f"{JAR_SERVER_RELEASES}", headers={"Accept": "application/json"}
         ) as response:
@@ -258,6 +267,7 @@ class LocalNodeManager:
             raise
 
     async def process_existing_lavalink_processes(self, possible_lavalink_processes: list[dict[str, Any]]) -> None:
+        """Process existing Lavalink processes."""
         LOGGER.info(
             "Found %s processes that match potential unmanaged Lavalink nodes", len(possible_lavalink_processes)
         )
@@ -290,6 +300,7 @@ class LocalNodeManager:
                     continue
 
     async def process_settings(self) -> None:
+        """Process settings."""
         data = await self._client.node_db_manager.bundled_node_config().fetch_yaml()
         data = change_dict_naming_convention(data)
         # The reason this is here is to completely remove these keys from the application.yml
@@ -312,12 +323,14 @@ class LocalNodeManager:
 
     @staticmethod
     async def maybe_update_tts_country_code(data: JSON_DICT_TYPE) -> None:
+        """Update TTS country code if it's invalid."""
         if len(data["plugins"]["dunctebot"]["ttsLanguage"]) != 5:
             data["plugins"]["dunctebot"]["ttsLanguage"] = "en-US"
             LOGGER.warning("Invalid TTS language code provided for dunctebot plugin, defaulting to en-US")
 
     @staticmethod
     async def maybe_update_spotify_country_code(data: JSON_DICT_TYPE) -> None:
+        """Update Spotify country code if it's invalid."""
         if len(data["plugins"]["lavasrc"]["spotify"]["countryCode"]) != 2:
             data["plugins"]["lavasrc"]["spotify"]["countryCode"] = "US"
             LOGGER.warning(
@@ -326,6 +339,7 @@ class LocalNodeManager:
 
     @staticmethod
     async def maybe_update_apple_music_country_code(data: JSON_DICT_TYPE) -> None:
+        """Update Apple Music country code if it's invalid."""
         if len(data["plugins"]["lavasrc"]["applemusic"]["countryCode"]) != 2:
             data["plugins"]["lavasrc"]["applemusic"]["countryCode"] = "US"
             LOGGER.warning(
@@ -334,6 +348,7 @@ class LocalNodeManager:
 
     @staticmethod
     async def maybe_remove_yandex_config(data: JSON_DICT_TYPE) -> None:
+        """Remove Yandex Music config if it's not set."""
         if (
             "accessToken" not in data["plugins"]["lavasrc"]["yandexmusic"]
             or not data["plugins"]["lavasrc"]["yandexmusic"]["accessToken"]
@@ -342,6 +357,7 @@ class LocalNodeManager:
 
     @staticmethod
     async def maybe_remove_apple_music_config(data: JSON_DICT_TYPE) -> None:
+        """Remove Apple Music config if it's not set."""
         if (
             "mediaAPIToken" not in data["plugins"]["lavasrc"]["applemusic"]
             or not data["plugins"]["lavasrc"]["applemusic"]["mediaAPIToken"]
@@ -350,16 +366,19 @@ class LocalNodeManager:
 
     @staticmethod
     async def maybe_remove_proxy_config(data: JSON_DICT_TYPE) -> None:
+        """Remove proxy config if it's not set."""
         if not data["lavalink"]["server"]["httpConfig"].get("proxyHost"):
             del data["lavalink"]["server"]["httpConfig"]
 
     async def update_dns_config(self, data: JSON_DICT_TYPE) -> None:
+        """Update DNS config if it's not set."""
         if data["sentry"]["dsn"]:
             data["sentry"]["tags"]["ID"] = self._client.bot.user.id
             data["sentry"]["tags"]["pylav_version"] = self._client.lib_version
 
     @staticmethod
     async def maybe_remove_ratelimit_config(data: JSON_DICT_TYPE) -> None:
+        """Remove ratelimit config if it's not set."""
         if not (
             data["lavalink"]["server"]["ratelimit"].get("ipBlocks")
             and data["lavalink"]["server"]["ratelimit"].get("strategy")
@@ -368,6 +387,7 @@ class LocalNodeManager:
 
     @staticmethod
     async def maybe_remove_youtube_config(data: JSON_DICT_TYPE) -> None:
+        """Remove YouTube config if it's not set."""
         if not all(
             (
                 data["lavalink"]["server"]["youtubeConfig"].get("email"),
@@ -484,6 +504,7 @@ class LocalNodeManager:
                 raise EarlyExitException("Managed Lavalink node server exited early")
 
     async def shutdown(self) -> None:
+        """Shuts down the managed Lavalink node server and removes it from the node manager."""
         self._disabled = True
         if self.start_monitor_task is not None:
             self.start_monitor_task.cancel()
@@ -515,12 +536,14 @@ class LocalNodeManager:
             self._node = None
 
     async def maybe_kill_alive_process(self) -> None:
+        """Kills the process if it is still alive"""
         if self._proc is not None and self._proc.returncode is None:
             self._proc.terminate()
             self._proc.kill()
             await self._proc.wait()
 
     async def maybe_kill_existing_process(self) -> None:
+        """Kills the process if it is still alive"""
         if self._node_pid:
             with contextlib.suppress(psutil.Error):
                 p = psutil.Process(self._node_pid)
@@ -528,6 +551,7 @@ class LocalNodeManager:
                 p.kill()
 
     async def should_auto_update(self) -> bool:
+        """Returns whether or not the managed node should auto update"""
         # noinspection PyProtectedMember
         return (
             False
@@ -632,6 +656,7 @@ class LocalNodeManager:
         return self._up_to_date
 
     async def maybe_download_jar(self) -> None:
+        """Download the Lavalink.jar if it doesn't exist or is out of date."""
         if USING_FORCED is False:
             self._ci_info = await self.get_ci_latest_info()
         LOGGER.info("CI info: %s", self._ci_info)
@@ -639,6 +664,7 @@ class LocalNodeManager:
             await self._download_jar()
 
     async def wait_until_ready(self, timeout: float | None = None) -> None:
+        """Wait until Lavalink is ready to accept connections."""
         tasks = [asyncio.create_task(c) for c in [self.ready.wait(), self.abort_for_unmanaged.wait()]]
         done, pending = await asyncio.wait(tasks, timeout=timeout or self.timeout, return_when=asyncio.FIRST_COMPLETED)
         for task in pending:
@@ -651,12 +677,14 @@ class LocalNodeManager:
             raise asyncio.TimeoutError
 
     async def wait_until_connected(self, timeout: float | None = None) -> None:
+        """Wait until Lavalink is connected."""
         tasks = [asyncio.create_task(c) for c in [self._wait_for.wait(), self.wait_until_ready()]]
         done, pending = await asyncio.wait(tasks, timeout=timeout or self.timeout, return_when=asyncio.ALL_COMPLETED)
         for task in pending:
             task.cancel()
 
     async def start_monitor(self, java_path: str) -> None:
+        """Start the monitor task for this node."""
         retry_count = 0
         backoff = ExponentialBackoffWithReset(base=3)
         while True:
@@ -805,6 +833,7 @@ class LocalNodeManager:
             raise AttributeError
 
     async def start(self, java_path: str) -> None:
+        """Start the managed node."""
         self._disabled = False
         self._java_path = java_path
         if self.start_monitor_task is not None:
@@ -820,6 +849,7 @@ class LocalNodeManager:
         self.start_monitor_task.set_name("LavalinkManagedNode.health_monitor")
 
     async def connect_node(self, reconnect: bool, wait_for: float = 0.0, external_fallback: bool = False) -> None:
+        """Connect to the managed node."""
         # sourcery no-metrics
         await asyncio.sleep(wait_for)
         self._wait_for.clear()
@@ -859,6 +889,7 @@ class LocalNodeManager:
         self._wait_for.set()
 
     async def connect_to_node(self, external_fallback: bool) -> Node:
+        """Connect to the managed node."""
         data = await self._client.node_db_manager.bundled_node_config().fetch_all()
         name = (
             f"PyLavPortConflictRecovery: {self._node_pid}"
@@ -885,6 +916,7 @@ class LocalNodeManager:
     async def get_lavalink_process(
         *matches: str, cwd: str | None = None, lazy_match: bool = False
     ) -> list[dict[str, Any]]:
+        """Get a list of Lavalink processes."""
         process_list = []
         filter_ = [cwd] if cwd else []
         for proc in psutil.process_iter():
@@ -906,6 +938,7 @@ class LocalNodeManager:
         return process_list
 
     async def restart(self, java_path: str = None) -> None:
+        """Restart the managed node."""
         LOGGER.info("Restarting managed Lavalink node")
         if node := self._client.get_my_node():
             if self.start_monitor_task is not None:

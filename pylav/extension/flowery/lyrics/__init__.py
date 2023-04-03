@@ -14,6 +14,8 @@ if TYPE_CHECKING:
 
 
 class LyricsAPI:
+    """A wrapper for the Flowery Lyrics API."""
+
     def __init__(self, client: Client, wrapper: FloweryAPI) -> None:
         self._wrapper = wrapper
         self._base_url = URL("https://api.flowery.pw/v1/lyrics")
@@ -21,6 +23,7 @@ class LyricsAPI:
         self.client = client
 
     async def get_lyrics(self, query: str = None, isrc: str = None, spotify_id: str = None) -> Lyrics | Error:
+        """Get lyrics for a track."""
         params = {}
         if query:
             params["query"] = query
@@ -44,6 +47,7 @@ class LyricsAPI:
                     raise ValueError(f"Unexpected status code: {response.status}")
 
     async def search_lyrics(self, query: str) -> TrackList | Error:
+        """Search for lyrics."""
         async with self._session.get(
             self._base_url / "search",
             params={"query": query},

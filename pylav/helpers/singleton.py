@@ -14,6 +14,8 @@ _LOCKS_SINGLETON_CACHE: dict[str, threading.Lock] = {}
 
 
 class SingletonClass(type):
+    """Singleton metaclass."""
+
     _instances = {}
 
     def __call__(cls, *args: Any, **kwargs: Any) -> SingletonClass:
@@ -29,11 +31,14 @@ class SingletonClass(type):
 
 
 class SingletonCallable:
+    """Singleton callable class."""
+
     _has_run = {}
     _responses = {}
 
     @classmethod
     def reset(cls) -> None:
+        """Reset the singleton callable class."""
         with _LOCK_SINGLETON_CALLABLE:
             cls._has_run = {}
             cls._responses = {}
@@ -42,6 +47,8 @@ class SingletonCallable:
     def run_once(
         cls, f: Callable[PARAM_SPEC_TYPE, ANY_GENERIC_TYPE]  # type: ignore
     ) -> Callable[PARAM_SPEC_TYPE, ANY_GENERIC_TYPE]:  # type: ignore
+        """A decorator to make a function run only once."""
+
         @functools.wraps(f)
         def wrapper(*args: PARAM_SPEC_TYPE.args, **kwargs: PARAM_SPEC_TYPE.kwargs) -> ANY_GENERIC_TYPE:
             with _LOCK_SINGLETON_CALLABLE:
@@ -60,6 +67,8 @@ class SingletonCallable:
     def run_once_async(
         cls, f: Callable[PARAM_SPEC_TYPE, Awaitable[ANY_GENERIC_TYPE]]  # type: ignore
     ) -> Callable[PARAM_SPEC_TYPE, Awaitable[ANY_GENERIC_TYPE]]:  # type: ignore
+        """A decorator to make a function run only once asynchronously."""
+
         @functools.wraps(f)
         def wrapper(*args: PARAM_SPEC_TYPE.args, **kwargs: PARAM_SPEC_TYPE.kwargs) -> Awaitable[ANY_GENERIC_TYPE]:
             with _LOCK_SINGLETON_CALLABLE:
@@ -74,6 +83,8 @@ class SingletonCallable:
 
 
 class SingletonCachedByKey(type):
+    """Singleton metaclass with key caching."""
+
     _instances: Any = {}
 
     @classmethod

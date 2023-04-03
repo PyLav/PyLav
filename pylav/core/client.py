@@ -247,6 +247,7 @@ class Client(metaclass=SingletonClass):
             raise
 
     async def set_context_locale(self, guild: discord.Guild | None) -> None:
+        """Set the locale for the current context."""
         if self._disable_translations:
             return
         try:
@@ -259,6 +260,7 @@ class Client(metaclass=SingletonClass):
             self._disable_translations = True
 
     async def on_pylav_red_api_tokens_update(self, service_name: str, api_tokens: dict[str, str]) -> None:
+        """Update API tokens for services when they are updated in Red."""
         match service_name:
             case "spotify" if "client_id" in api_tokens and "client_secret" in api_tokens:
                 await self.update_spotify_tokens(**api_tokens)
@@ -272,6 +274,7 @@ class Client(metaclass=SingletonClass):
                 await self.update_google_account(**api_tokens)
 
     async def on_pylav_shard_resumed(self, shard_id: int) -> None:
+        """Handle shard resume events."""
         if self._shutting_down or not self.initialized:
             return
         LOGGER.debug("Shard %s resumed, checking for affected players", shard_id)
@@ -281,6 +284,7 @@ class Client(metaclass=SingletonClass):
             await player.reconnect()
 
     async def on_pylav_shard_ready(self, shard_id: int) -> None:
+        """Handle shard ready events."""
         if self._shutting_down or not self.initialized:
             return
         LOGGER.debug("Shard %s ready, checking for affected players", shard_id)
@@ -290,6 +294,7 @@ class Client(metaclass=SingletonClass):
             await player.reconnect()
 
     async def on_pylav_resumed(self) -> None:
+        """Handle resume events."""
         if self._shutting_down or not self.initialized:
             return
         LOGGER.debug("Resumed, checking for affected players")
@@ -299,6 +304,7 @@ class Client(metaclass=SingletonClass):
             await player.reconnect()
 
     async def on_pylav_ready(self) -> None:
+        """Handle ready events."""
         if self._shutting_down or not self.initialized:
             return
         LOGGER.debug("Ready, checking for affected players")
@@ -307,6 +313,7 @@ class Client(metaclass=SingletonClass):
             await player.reconnect()
 
     async def wait_until_ready(self, timeout: float | None = None) -> None:
+        """Wait until the client is ready to use."""
         await asyncio.wait_for(self.ready.wait(), timeout=timeout)
 
     @property
@@ -351,6 +358,7 @@ class Client(metaclass=SingletonClass):
 
     @property
     def player_state_db_manager(self) -> PlayerStateController:
+        """Returns the sql player state config manager"""
         return self._player_state_db_manager
 
     @property
@@ -380,46 +388,57 @@ class Client(metaclass=SingletonClass):
 
     @property
     def managed_node_controller(self) -> LocalNodeManager:
+        """Returns the local node manager"""
         return self._local_node_manager
 
     @property
     def node_manager(self) -> NodeManager:
+        """Returns the node manager"""
         return self._node_manager
 
     @property
     def player_manager(self) -> PlayerController:
+        """Returns the player manager"""
         return self._player_manager
 
     @property
     def config_folder(self) -> aiopath.AsyncPath:
+        """Returns the config folder"""
         return self._config_folder
 
     @property
     def bot(self) -> DISCORD_BOT_TYPE:
+        """Returns the bot client"""
         return self._bot
 
     @property
     def session(self) -> aiohttp.ClientSession:
+        """Returns the aiohttp session used by the PyLav client"""
         return self._session
 
     @property
     def cached_session(self) -> aiohttp_client_cache.CachedSession:
+        """Returns the cached aiohttp session used by the PyLav client"""
         return self._cached_session
 
     @property
     def lib_version(self) -> Version:
+        """Returns the version of the PyLav library"""
         return VERSION
 
     @property
     def bot_id(self) -> str:
+        """Returns the bot id"""
         return self._user_id
 
     @property
     def local_tracks_cache(self) -> LocalTrackCache:
+        """Returns the local tracks cache"""
         return self.__local_tracks_cache
 
     @SingletonCallable.run_once_async
     async def initialize(self) -> None:
+        """Initialize the client"""
         try:
             if not self._initiated:
                 await self._maybe_start_pylav()
@@ -503,6 +522,7 @@ class Client(metaclass=SingletonClass):
         await self.player_config_manager.initialize_global_config()
 
     async def managed_node_is_enabled(self) -> bool:
+        """Returns whether the managed node is enabled or not"""
         if IN_CONTAINER:
             return False
         return (
@@ -745,6 +765,7 @@ class Client(metaclass=SingletonClass):
         return spotify_client_id, spotify_client_secret
 
     async def register(self, cog: DISCORD_COG_TYPE) -> None:
+        """Register a cog to the PyLav Client."""
         LOGGER.debug("Registering cog %s", cog.__cog_name__)
         if (instance := getattr(self.bot, "pylav", None)) and not isinstance(instance, Client):
             raise AnotherClientAlreadyRegisteredException(
@@ -753,6 +774,7 @@ class Client(metaclass=SingletonClass):
         self.__cogs_registered.add(cog.__cog_name__)
 
     async def update_spotify_tokens(self, client_id: str, client_secret: str, **kwargs) -> None:
+        """Update Spotify tokens for the managed node and the client instance."""
         LOGGER.info("Updating Spotify Tokens")
         LOGGER.debug("New Spotify token: ClientId: %s || ClientSecret: %s", client_id, client_secret)
         self._spotify_auth = ClientCredentialsFlow(client_id=client_id, client_secret=client_secret)
@@ -767,6 +789,7 @@ class Client(metaclass=SingletonClass):
         await bundled_node_config.update_yaml(bundled_node_config_yaml)
 
     async def update_deezer_tokens(self, master_token: str, **kwargs: Any) -> None:
+        """Update Deezer tokens for the managed node."""
         LOGGER.info("Updating Deezer Tokens")
         LOGGER.debug("New Deezer token: %s", master_token)
         bundled_node_config = self._node_config_manager.bundled_node_config()
@@ -776,6 +799,7 @@ class Client(metaclass=SingletonClass):
         await bundled_node_config.update_yaml(bundled_node_config_yaml)
 
     async def update_yandex_tokens(self, token: str, **kwargs: Any) -> None:
+        """Update Yandex tokens for the managed node."""
         LOGGER.info("Updating Yandex Tokens")
         LOGGER.debug("New Yandex token: %s", token)
         bundled_node_config = self._node_config_manager.bundled_node_config()
@@ -785,6 +809,7 @@ class Client(metaclass=SingletonClass):
         await bundled_node_config.update_yaml(bundled_node_config_yaml)
 
     async def update_applemusic_tokens(self, token: str, country_code: str, **kwargs: Any) -> None:
+        """Update Apple Music tokens for the managed node."""
         LOGGER.info("Updating Apple Music Tokens")
         LOGGER.debug("New Apple Music tokens: mediaAPIToken %s || countryCode %s", token, country_code)
         bundled_node_config = self._node_config_manager.bundled_node_config()
@@ -797,6 +822,7 @@ class Client(metaclass=SingletonClass):
         await bundled_node_config.update_yaml(bundled_node_config_yaml)
 
     async def update_google_account(self, email: str, password: str, **kwargs: Any) -> None:
+        """Update Google Account for the managed node."""
         LOGGER.info("Updating Google Account")
         LOGGER.debug("New Google Account: %s", email)
         bundled_node_config = self._node_config_manager.bundled_node_config()
@@ -1005,6 +1031,7 @@ class Client(metaclass=SingletonClass):
         return await node.post_routeplanner_free_all()
 
     def dispatch_event(self, event: PyLavEvent) -> None:
+        """Dispatches the given event to all registered hooks."""
         asyncio.create_task(self._dispatch_event(event))
 
     async def _dispatch_event(self, event: PyLavEvent) -> None:
@@ -1148,6 +1175,9 @@ class Client(metaclass=SingletonClass):
         footer_url: str = None,
         messageable: Messageable | DISCORD_INTERACTION_TYPE = None,
     ) -> discord.Embed:
+        """|coro|
+        Constructs an embed.
+        """
         if messageable and not colour and not color and hasattr(self._bot, "get_embed_color"):
             colour = await self._bot.get_embed_color(messageable)
         elif colour or color:
@@ -1179,6 +1209,9 @@ class Client(metaclass=SingletonClass):
     async def get_context(
         self, what: discord.Message | DISCORD_CONTEXT_TYPE | DISCORD_INTERACTION_TYPE
     ) -> PyLavContext:
+        """|coro|
+        Gets the context for the target message or interaction.
+        """
         if isinstance(what, PyLavContext):
             return what
         elif isinstance(what, Context):
@@ -1190,6 +1223,9 @@ class Client(metaclass=SingletonClass):
         return ctx
 
     async def update_localtracks_folder(self, folder: str | None) -> aiopath.AsyncPath:
+        """|coro|
+        Updates the localtracks folder.
+        """
         if overrides.LOCAL_TRACKS_FOLDER:
             localtrack_folder = aiopath.AsyncPath(overrides.LOCAL_TRACKS_FOLDER)
         elif not folder:
@@ -1207,14 +1243,17 @@ class Client(metaclass=SingletonClass):
         return localtrack_folder
 
     def get_all_players(self) -> Iterator[Player]:
+        """Gets all players."""
         return iter(self.player_manager)
 
     def get_managed_node(self) -> Node | None:
+        """Gets a managed node."""
         available_nodes = list(filter(operator.attrgetter("available"), self.node_manager.managed_nodes))
 
         return random.choice(available_nodes) if available_nodes else None
 
     def get_my_node(self) -> Node | None:
+        """Gets the local node that is managed by PyLav."""
         return next(
             filter(lambda n: n.identifier == self.bot.user.id, self.node_manager.managed_nodes),
             None,
@@ -1657,6 +1696,7 @@ class Client(metaclass=SingletonClass):
         additional_role_ids: list = None,
         additional_user_ids: list = None,
     ) -> bool:
+        """Checks if a user is a DJ in a guild."""
         if additional_user_ids and user.id in additional_user_ids:
             return True
         if additional_role_ids and any(r.id in additional_role_ids for r in user.roles):
@@ -1673,6 +1713,7 @@ class Client(metaclass=SingletonClass):
         playlist_id: str | None = None,
         channel_id: str | None = None,
     ) -> str:
+        """Generates an YouTube mixed playlist url from a single video, user, channel or playlist."""
         if not any([video_id, playlist_id, channel_id, user_id]):
             raise PyLavInvalidArgumentsException(
                 _("A single video, user, channel or playlist identifier is necessary to generate a mixed playlist.")

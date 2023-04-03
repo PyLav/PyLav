@@ -37,4 +37,5 @@ async def process_commands(self, message: discord.Message, /):
 async def get_context(
     self: DISCORD_BOT_TYPE, message: discord.Message | DISCORD_INTERACTION_TYPE, /, *, cls=PyLavContext
 ) -> PyLavContext:
+    """Get the context for a command invocation."""
     return await super(self.__class__, self).get_context(message, cls=cls)  # noqa

@@ -6,10 +6,12 @@ from pylav.storage.migrations.logging import LOGGER
 
 
 async def low_level_v_1_3_8_migration(con: Connection) -> None:
+    """Run the low level migration for PyLav 1.3.8."""
     await low_level_v_1_3_8_tracks(con)
 
 
 async def low_level_v_1_3_8_tracks(con: Connection) -> None:
+    """Run the tracks migration for PyLav 1.3.8."""
     await run_tracks_migration_v_1_3_8(con)
 
 

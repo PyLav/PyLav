@@ -16,6 +16,8 @@ if TYPE_CHECKING:
 
 
 class FloweryAPI:
+    """A wrapper for the Flowery API."""
+
     def __init__(self, client: Client) -> None:
         if REDIS_FULL_ADDRESS_RESPONSE_CACHE:
             self._aiohttp_client_cache = aiohttp_client_cache.RedisBackend(
@@ -47,4 +49,5 @@ class FloweryAPI:
 
     @property
     def lyrics(self) -> LyricsAPI:
+        """The lyrics API client."""
         return self._lyrics

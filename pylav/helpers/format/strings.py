@@ -14,6 +14,7 @@ except ImportError:
 
 
 def shorten_string(string: str, max_length: int, right: bool = True) -> str:
+    """Shortens the given string to the given max length and adds an ellipsis."""
     if not string:
         return string
     if len(string) > max_length:

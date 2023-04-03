@@ -15,6 +15,7 @@ from pylav.type_hints.generics import ANY_GENERIC_TYPE
 
 
 def get_max_allocation_size(executable: str) -> tuple[int, bool]:
+    """Returns the maximum heap size allowed for the given executable."""
     if platform.architecture(executable)[0] == "64bit":
         max_heap_allowed = psutil.virtual_memory().total
         thinks_is_64_bit = True
@@ -43,6 +44,7 @@ def _calculate_ram(max_allocation: int, is_64bit: bool) -> tuple[str, str, int, 
 
 
 def get_jar_ram_defaults() -> tuple[str, str, int, int]:
+    """Returns the default ram for the jar"""
     # We don't know the java executable at this stage - not worth the extra work required here
     max_allocation, is_64bit = get_max_allocation_size(sys.executable)
     min_ram, max_ram, min_ram_int, max_ram_int = _calculate_ram(max_allocation, is_64bit)
@@ -50,6 +52,7 @@ def get_jar_ram_defaults() -> tuple[str, str, int, int]:
 
 
 def get_jar_ram_actual(executable: str) -> tuple[str, str, int, int]:
+    """Returns the actual ram for the jar"""
     if not executable:
         from pylav.constants.config import JAVA_EXECUTABLE
 
@@ -61,6 +64,7 @@ def get_jar_ram_actual(executable: str) -> tuple[str, str, int, int]:
 
 
 def get_true_path(executable: str, fallback: ANY_GENERIC_TYPE = None) -> str | ANY_GENERIC_TYPE | None:
+    """Returns the true path of the executable."""
     path = os.environ.get("JAVA_HOME", executable)
     with add_env_path(path if os.path.isdir(path) else os.path.split(path)[0]) as path_string:
         executable = shutil.which(executable, path=path_string)
@@ -69,6 +73,7 @@ def get_true_path(executable: str, fallback: ANY_GENERIC_TYPE = None) -> str | A
 
 @contextlib.contextmanager
 def add_env_path(path: str | os.PathLike) -> Iterator[str]:
+    """Adds a path to the environment path temporarily."""
     path = os.fspath(path)
     existing_path = "PATH" in os.environ
     old_path = os.environ["PATH"] if existing_path else None
@@ -85,10 +90,12 @@ def add_env_path(path: str | os.PathLike) -> Iterator[str]:
 
 
 def convert_function(key: str) -> str:
+    """Converts a key to a valid key."""
     return key.replace("_", "-")
 
 
 def change_dict_naming_convention(data: JSON_DICT_TYPE) -> JSON_DICT_TYPE:
+    """Changes the naming convention of a dict."""
     new = {}
     for k, v in data.items():
         new_v = v

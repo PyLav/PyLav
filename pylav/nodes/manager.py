@@ -30,6 +30,8 @@ LOGGER = getLogger("PyLav.NodeManager")
 
 
 class NodeManager:
+    """Manages nodes and their connections to the client."""
+
     __slots__ = (
         "_client",
         "_session",
@@ -67,6 +69,7 @@ class NodeManager:
 
     @property
     def session(self) -> aiohttp.ClientSession:
+        """Returns the aiohttp session used by the client"""
         return self._session
 
     @property
@@ -477,6 +480,7 @@ class NodeManager:
                 player._original_node = node
 
     async def close(self) -> None:
+        """Disconnects all nodes and closes the session."""
         if self._player_migrate_task is not None:
             self._player_migrate_task.cancel()
         await self.session.close()
@@ -484,6 +488,7 @@ class NodeManager:
             await node.close()
 
     async def connect_to_all_nodes(self) -> None:
+        """Connects to all nodes."""
         nodes_list = []
         for node in iter(await self.client.node_db_manager.get_all_unmanaged_nodes()):
             await self._process_single_unmanaged_node_connection(node, nodes_list)
@@ -609,4 +614,5 @@ class NodeManager:
             LOGGER.warning("Invalid node, skipping ... id: %s - Original error: %s", node.id, exc)
 
     async def wait_until_ready(self, timeout: float | None = None):
+        """Wait until all nodes are ready."""
         await asyncio.wait_for(self._adding_nodes.wait(), timeout=timeout)

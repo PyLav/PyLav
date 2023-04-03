@@ -23,6 +23,8 @@ class Error(PyLavException):
 
 
 class RDNSLookupError(Error):
+    """Raised when there was a problem with performing reverse dns lookup for ip."""
+
     __slots__ = ("ip", "port")
 
     def __init__(self, ip: str) -> None:
@@ -50,6 +52,7 @@ async def fetch_servers() -> set[str]:
 
 @CACHE(ttl=300, prefix="pick_base_url")
 async def pick_base_url(session: aiohttp.ClientSession) -> URL | None:
+    """Pick a base url for the RadioBrowser API."""
     servers = await fetch_servers()
     if not servers:
         LOGGER.warning("RadioBrowser API seems to be down at the moment, disabling Radio functionality.")

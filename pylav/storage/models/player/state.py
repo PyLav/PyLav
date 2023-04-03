@@ -10,6 +10,8 @@ from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 @dataclass(eq=True)
 class PlayerState(CachedModel):
+    """A class to represent the state of a player in the database"""
+
     id: int
     bot: int
     channel_id: int
@@ -38,6 +40,7 @@ class PlayerState(CachedModel):
     pk: None = None
 
     def get_cache_key(self) -> str:
+        """Get the cache key for the player state."""
         return f"{self.id}:{self.bot}:{self.channel_id}"
 
     def __post_init__(self) -> None:

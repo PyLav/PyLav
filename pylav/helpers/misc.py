@@ -11,6 +11,8 @@ from pylav.type_hints.generics import ANY_GENERIC_TYPE
 
 
 class MissingSentinel(str):
+    """A sentinel class for missing values."""
+
     def __str__(self) -> str:
         return "MISSING"
 
@@ -143,14 +145,18 @@ MISSING: Any = MissingSentinel("MISSING")
 
 @dataclasses.dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
 class TimedFeature:
+    """A timed feature data wrapper."""
+
     enabled: bool = False
     time: int = 60
 
     def to_dict(self) -> dict[str, bool | int]:
+        """Convert to dict"""
         return {"enabled": self.enabled, "time": self.time}
 
     @classmethod
     def from_dict(cls, data: dict[str, bool | int]) -> TimedFeature:
+        """Convert from dict"""
         return cls(enabled=data["enabled"], time=data["time"])
 
 
@@ -164,7 +170,7 @@ class ExponentialBackoffWithReset(ExponentialBackoff):
 
     def reset(self) -> None:
         """
-        Reset
+        Reset the backoff to its initial state.
         """
         self._last_invocation: float = time.monotonic()
         self._exp = 0

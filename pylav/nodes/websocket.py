@@ -204,9 +204,11 @@ class WebSocket:
             raise WebsocketNotConnectedException
 
     async def wait_until_ready(self, timeout: float | None = None) -> None:
+        """Waits until the websocket is ready"""
         await asyncio.wait_for(self.ready.wait(), timeout=timeout)
 
     async def configure_resume_and_timeout(self) -> None:
+        """Configures the resume and timeout"""
         payload = {"timeout": self._resume_timeout} if self._resume_timeout > 0 else {}
         payload["resuming"] = self._session_id is not None
         await self.node.patch_session(payload=payload)
@@ -667,12 +669,14 @@ class WebSocket:
         self.client.dispatch_event(event)
 
     async def close(self) -> None:
+        """Closes the websocket connection."""
         self._connect_task.cancel()
         if self._ws and not self._ws.closed and not self._ws._closing:
             await self._ws.close(code=4014, message=b"Shutting down")
         await self._session.close()
 
     async def manual_closure(self, managed_node: bool = False) -> None:
+        """Triggers a manual closure of the websocket connection."""
         self._manual_shutdown = managed_node
         if self._ws and not self._ws.closed and not self._ws._closing:
             with contextlib.suppress(Exception):

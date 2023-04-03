@@ -22,6 +22,8 @@ LOGGER = getLogger("PyLav.extension.RadioBrowser")
 
 
 class Request:
+    """A wrapper for the aiohttp client."""
+
     __slots__ = ("_headers", "_session")
 
     def __init__(
@@ -73,6 +75,7 @@ class RadioBrowser:
 
     @property
     async def base_url(self) -> URL:
+        """The base URL for the Radio Browser API."""
         if url := await pick_base_url(self._lib_client.session):
             return url
         self._disabled = True
@@ -80,6 +83,7 @@ class RadioBrowser:
 
     @property
     def disabled(self) -> bool:
+        """Whether the extension is disabled."""
         return self._disabled
 
     @type_check

@@ -10,6 +10,7 @@ if TYPE_CHECKING:
 
 
 async def sort_key_nodes(node: Node, region: str = None) -> float:
+    """The sort key for nodes."""
     return await node.penalty_with_region(region)
 
 
@@ -53,6 +54,7 @@ class Penalty:
     # noinspection PyProtectedMember
     @property
     def special_handling(self) -> float:
+        """The special handling penalty of the node."""
         # Node connection isn't ready yet
         if not self._stats._node.is_ready:
             return 1000000
