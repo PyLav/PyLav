@@ -2027,9 +2027,9 @@ class Player(VoiceProtocol):
             low_pass=None,
             equalizer=Equalizer(
                 levels=[
-                    {"band": 0, "gain": -0.075},
-                    {"band": 1, "gain": 0.125},
-                    {"band": 2, "gain": 0.125},
+                    {"band": 0, "gain": 0.25},
+                    {"band": 1, "gain": 0.2},
+                    {"band": 2, "gain": 0.2},
                 ],
                 name="Vaporwave",
             ),
@@ -2037,7 +2037,7 @@ class Player(VoiceProtocol):
             tremolo=self.tremolo or None,
             vibrato=self.vibrato or None,
             distortion=self.distortion or None,
-            timescale=Timescale(speed=0.8, pitch=1.0, rate=1.0),
+            timescale=Timescale(speed=1.0, pitch=1.0, rate=0.7),
             channel_mix=self.channel_mix or None,
             echo=self.echo or None,
             reset_not_set=True,
