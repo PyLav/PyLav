@@ -1511,7 +1511,7 @@ class Player(VoiceProtocol):
         """
         if event.node.identifier != self.node.identifier:
             return
-        if isinstance(event, TrackStuckEvent) or isinstance(event, TrackEndEvent) and event.reason == "FINISHED":
+        if isinstance(event, TrackStuckEvent) or isinstance(event, TrackEndEvent) and event.reason == "finished":
             self.last_track = self.current
             await self.next()
             self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()

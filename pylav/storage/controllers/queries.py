@@ -9,6 +9,7 @@ import asyncpg
 
 from pylav.helpers.time import get_now_utc
 from pylav.logging import getLogger
+from pylav.nodes.api.responses import rest_api
 from pylav.players.query.obj import Query as QueryObj
 from pylav.storage.database.tables.queries import QueryRow
 from pylav.storage.database.tables.tracks import TrackRow
@@ -16,7 +17,6 @@ from pylav.storage.models.query import Query
 
 if TYPE_CHECKING:
     from pylav.core.client import Client
-    from pylav.nodes.api.responses import rest_api
 
 LOGGER = getLogger("PyLav.Database.Controller.Query")
 
@@ -58,7 +58,7 @@ class QueryController:
         if query.is_custom_playlist or query.is_http:
             # Do not cache local queries and single track urls or http source entries
             return False
-        if result.loadType in ["empty", "error", None]:
+        if not result or result.loadType in ["empty", "error", None]:
             return False
 
         if isinstance(result, rest_api.TrackResponse):
