@@ -14,6 +14,8 @@ if TYPE_CHECKING:
 class QueueEndEvent(PyLavEvent):
     """This event is dispatched when there are no more songs in the queue.
 
+    Event can be listened to by adding a listener with the name `pylav_queue_end_event`.
+
     Attributes
     ----------
     player: :class:`Player`
@@ -33,6 +35,8 @@ class QueueEndEvent(PyLavEvent):
 
 class QueueTrackPositionChangedEvent(PyLavEvent):
     """This event is dispatched when the position of a track is changed.
+
+    Event can be listened to by adding a listener with the name `pylav_queue_track_position_changed_event`.
 
     Attributes
     ----------
@@ -74,6 +78,8 @@ class QueueTrackPositionChangedEvent(PyLavEvent):
 class QueueShuffledEvent(PyLavEvent):
     """This event is dispatched when the queue is shuffled.
 
+    Event can be listened to by adding a listener with the name `pylav_queue_shuffled_event`.
+
     Attributes
     ----------
     player: :class:`Player`
@@ -99,6 +105,8 @@ class QueueShuffledEvent(PyLavEvent):
 class QueueTracksRemovedEvent(PyLavEvent):
     """This event is dispatched when tracks are removed from the queue.
 
+    Event can be listened to by adding a listener with the name `pylav_queue_tracks_removed_event`.
+
     Attributes
     ----------
     player: :class:`Player`
@@ -116,6 +124,30 @@ class QueueTracksRemovedEvent(PyLavEvent):
         The user who requested the change.
     tracks: :class:`list` of :class:`Track`
         The tracks that were removed from the queue.
+    """
+
+    __slots__ = ("player", "requester", "tracks")
+
+    def __init__(self, player: Player, requester: discord.Member, tracks: list[Track]) -> None:
+        self.player = player
+        self.requester = requester
+        self.tracks = tracks
+
+
+class QueueTracksAddedEvent(PyLavEvent):
+    """This event is dispatched when a track in added to the queue.
+
+    Event can be listened to by adding a listener with the name `pylav_queue_tracks_added_event`.
+
+    Attributes
+    ----------
+    player: :class:`Player`
+        The player whose queue had tracks added to it.
+    requester: :class:`discord.Member`
+        The user who requested the change.
+    tracks: :class:`list` of :class:`Track`
+        The tracks that were added to the queue.
+
     """
 
     __slots__ = ("player", "requester", "tracks")

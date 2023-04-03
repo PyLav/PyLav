@@ -13,9 +13,24 @@ if TYPE_CHECKING:
 
 
 class SegmentSkippedEvent(PyLavEvent):
-    """This event is dispatched when a segment is skipped."""
+    """This event is dispatched when a segment is skipped.
 
-    __slots__ = ()
+    Event can be listened to by adding a listener with the name `pylav_segment_skipped_event`.
+
+    Attributes
+    ----------
+    player: :class:`Player`
+        The player that skipped the segment.
+    segment: :class:`Segment`
+        The segment that was skipped.
+    node: :class:`Node`
+        The node that dispatched the event.
+    event: :class:`SegmentSkipped`
+        The raw event object.
+
+    """
+
+    __slots__ = ("player", "segment", "node", "event")
 
     def __init__(self, player: Player, node: Node, event_object: SegmentSkipped) -> None:
         self.player = player
@@ -25,9 +40,24 @@ class SegmentSkippedEvent(PyLavEvent):
 
 
 class SegmentsLoadedEvent(PyLavEvent):
-    """This event is dispatched when segments are loaded."""
+    """This event is dispatched when segments are loaded.
 
-    __slots__ = ()
+    Event can be listened to by adding a listener with the name `pylav_segments_loaded_event`.
+
+    Attributes
+    ----------
+    player: :class:`Player`
+        The player that loaded the segments.
+    segments: :class:`list[Segment]`
+        The segments that were loaded.
+    node: :class:`Node`
+        The node that dispatched the event.
+    event: :class:`SegmentsLoaded`
+        The raw event object.
+
+    """
+
+    __slots__ = ("player", "segments", "node", "event")
 
     def __init__(self, player: Player, node: Node, event_object: SegmentsLoaded) -> None:
         self.player = player

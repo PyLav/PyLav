@@ -43,6 +43,7 @@ from pylav.events.queue import (
     QueueEndEvent,
     QueueShuffledEvent,
     QueueTrackPositionChangedEvent,
+    QueueTracksAddedEvent,
     QueueTracksRemovedEvent,
 )
 from pylav.events.track import (
@@ -53,7 +54,6 @@ from pylav.events.track import (
     TrackResumedEvent,
     TrackSeekEvent,
     TrackSkippedEvent,
-    TracksRequestedEvent,
     TrackStuckEvent,
 )
 from pylav.exceptions.database import EntryNotFoundException
@@ -1062,7 +1062,7 @@ class Player(VoiceProtocol):
             if index is None:
                 await self.maybe_shuffle_queue(requester=requester)
             self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
-            self.node.dispatch_event(TracksRequestedEvent(self, self.guild.get_member(requester), [at]))
+            self.node.dispatch_event(QueueTracksAddedEvent(self, self.guild.get_member(requester), [at]))
 
     async def bulk_add(
         self,
@@ -1092,7 +1092,7 @@ class Player(VoiceProtocol):
             if index is None:
                 await self.maybe_shuffle_queue(requester=requester)
             self.next_track = None if self.queue.empty() else self.queue.raw_queue.popleft()
-            self.node.dispatch_event(TracksRequestedEvent(self, self.guild.get_member(requester), output))
+            self.node.dispatch_event(QueueTracksAddedEvent(self, self.guild.get_member(requester), output))
 
     async def previous(self, requester: discord.Member, bypass_cache: bool = False) -> None:
         async with self.__playing_lock:
