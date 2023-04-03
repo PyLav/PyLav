@@ -120,7 +120,7 @@ asyncpg = "^0.27.0"
 asyncspotify = "^0.12.1"
 asyncstdlib = "^3.10.6"
 cached-property = "^1.5.2"
-cashews = {extras = ["dill", "redis"], version = "^6.0.0"}
+cashews = {extras = ["dill", "redis"], version = "^6.0.1"}
 dacite = "^1.8.0"
 deepdiff6 = "^6.2.0"
 expiringdict = "^1.2.2"
@@ -129,7 +129,7 @@ iso8601 = "^1.1.0"
 netaddr = "^0.8.0"
 numpy = "^1.24.2"
 piccolo = {extras = ["all"], version = "^0.109.0"}
-redis = "^4.5.3"
+redis = "^4.5.4"
 tabulate = {extras = ["widechars"], version = "^0.9.0"}
 ujson = "^5.7.0"
 watchfiles = "^0.19.0"
@@ -144,7 +144,7 @@ packaging = { version = "^23.0", optional = true}
 platformdirs = { version = "^3.2.0", optional = true}
 psutil =  { version = "^5.9.4", optional = true}
 python-dateutil = { version = "^2.8.2", optional = true}
-pytz = { version = "^2023.2", optional = true}
+pytz = { version = "^2023.3", optional = true}
 rich = { version = "^13.3.3", optional = true}
 typing-extensions = { version = "^4.5.0", optional = true}
 uvloop = { version = "^0.17.0", markers = "sys_platform != 'win32' and platform_python_implementation == 'CPython'", optional = true}
