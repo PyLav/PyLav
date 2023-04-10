@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-02-27 22:37+0000\n"
-"PO-Revision-Date: 2023-02-27 22:37\n"
+"PO-Revision-Date: 2023-04-08 00:47\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -115,15 +115,15 @@ msgstr "Piste suivante"
 
 #: pylav/players/player.py:2446
 msgid "1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
-msgstr "1 piste, {queue_total_duration_variable_do_not_translate} restant\n"
+msgstr "1 piste, {queue_total_duration_variable_do_not_translate} restantes\n"
 
 #: pylav/players/player.py:2450
 msgid "0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
-msgstr "0 pistes, {queue_total_duration_variable_do_not_translate} restant\n"
+msgstr "0 piste, {queue_total_duration_variable_do_not_translate} restantes\n"
 
 #: pylav/players/player.py:2454
 msgid "{track_count_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
-msgstr "{track_count_variable_do_not_translate} traces {queue_total_duration_variable_do_not_translate} restant\n"
+msgstr "{track_count_variable_do_not_translate} pistes {queue_total_duration_variable_do_not_translate} restantes\n"
 
 #: pylav/players/player.py:2461 pylav/players/player.py:2614
 msgid "Repeating"
@@ -183,13 +183,13 @@ msgstr "L’ordre des files d’attente change chaque fois qu’une piste est aj
 
 #: pylav/players/player.py:2596
 msgid "Page 1 / 1 | 1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
-msgstr "Page 1 / 1 | 1 piste, {queue_total_duration_variable_do_not_translate} restant\n"
+msgstr "Page 1 / 1 | 1 piste, {queue_total_duration_variable_do_not_translate} restantes\n"
 
 #: pylav/players/player.py:2600
 msgid "Page 1 / 1 | 0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
-msgstr "Page 1 / 1 | 0 pistes, {queue_total_duration_variable_do_not_translate} restant\n"
+msgstr "Page 1 / 1 | 0 piste, {queue_total_duration_variable_do_not_translate} restantes\n"
 
 #: pylav/players/player.py:2604
 msgid "Page {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
-msgstr "Page {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} traces {queue_total_duration_variable_do_not_translate} restant\n"
+msgstr "Page {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} pistes {queue_total_duration_variable_do_not_translate} restantes\n"
 
