@@ -60,7 +60,7 @@ jobs:
     change_logs:
         name: Generate Change Logs and Release Notes
         needs: [release]
-        runs-on: [self-hosted, linux, x64]
+        runs-on: [ubuntu-latest]
         steps:
         -   name: Checkout
             uses: actions/checkout@v3.5.0
