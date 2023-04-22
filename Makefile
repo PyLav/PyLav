@@ -1,21 +1,21 @@
 .DEFAULT_GOAL := help
 PYTHON ?= python3
-POETRY ?= /opt/poetry/bin/poetry
+POETRY ?= poetry
+PRECOMMIT ?= pre-commit
 
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 
 ifneq ($(wildcard $(ROOT_DIR)/venv/.),)
 	VENV_PYTHON = $(ROOT_DIR)/venv/bin/python
+	VENV_POETRY = $(ROOT_DIR)/venv/bin/poetry
+	VENV_PRECOMMIT = $(ROOT_DIR)/venv/bin/pre-commit
 else
 	VENV_PYTHON = $(PYTHON)
+	VENV_POETRY = $(POETRY)
+	VENV_PRECOMMIT = $(PRECOMMIT)
 endif
 
-ifneq ($(wildcard $(ROOT_DIR)/venv/.),)
-	VENV_POETRY = $(ROOT_DIR)/venv/bin/poetry
-else
-	VENV_POETRY = $(POETRY)
-endif
 
 define HELP_BODY
 Usage:
@@ -36,9 +36,9 @@ export HELP_BODY
 
 # Python Code Style
 reformat:
-	$(VENV_PYTHON) -m pre-commit run
+	$(VENV_PRECOMMIT) run
 full-reformat:
-	$(VENV_PYTHON) -m pre-commit run --all
+	$(VENV_PRECOMMIT) run --all
 
 # Poetry
 bumpdeps:
