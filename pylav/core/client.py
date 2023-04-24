@@ -1655,7 +1655,12 @@ class Client(metaclass=SingletonClass):
         return node.parse_loadtrack_response(data)
 
     async def search_query(
-        self, query: Query, bypass_cache: bool = False, fullsearch: bool = False, region: str | None = None
+        self,
+        query: Query,
+        bypass_cache: bool = False,
+        fullsearch: bool = False,
+        region: str | None = None,
+        sleep: bool = False,
     ) -> rest_api.LoadTrackResponses | None:
         """
         Search for the specified query returns a LoadTrackResponse object
@@ -1672,14 +1677,16 @@ class Client(metaclass=SingletonClass):
             if a Search query is passed wether to returrn a list of tracks instead of the first.
         region : `str`, optional
             The region to search in.
+        sleep : `bool`, optional
+            Whether to sleep for a short duration if a lavalink call is made.
         """
         node = await self.node_manager.find_best_node(region=region, feature=query.requires_capability)
         if node is None:
             return
         if query.is_playlist or query.is_album or (fullsearch and query.is_search):
-            return await node.get_track(query, bypass_cache=bypass_cache)
+            return await node.get_track(query, bypass_cache=bypass_cache, sleep=sleep)
         elif query.is_single:
-            return await node.get_track(query, first=True, bypass_cache=bypass_cache)
+            return await node.get_track(query, first=True, bypass_cache=bypass_cache, sleep=sleep)
         else:
             LOGGER.error("Unknown query type: %s", query)
 

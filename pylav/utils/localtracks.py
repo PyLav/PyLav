@@ -155,8 +155,7 @@ class LocalTrackCache:
         if path_obj.is_dir():
             await self._add_to_query_cache(query, path)
             return
-        await asyncio.sleep(0.1)
-        track = await self.__pylav.get_tracks(query, bypass_cache=modified)
+        track = await self.__pylav.get_tracks(query, bypass_cache=modified, sleep=True)
         if isinstance(track, (rest_api.TrackResponse, rest_api.SearchResponse, rest_api.PlaylistResponse)):
             await self._add_to_query_cache(query, path)
             if isinstance(track, rest_api.TrackResponse):
@@ -175,8 +174,7 @@ class LocalTrackCache:
         if path_obj.is_dir():
             await self._add_to_query_cache(query, path)
             return
-        await asyncio.sleep(0.1)
-        track = await self.__pylav.search_query(query, bypass_cache=modified)
+        track = await self.__pylav.search_query(query, bypass_cache=modified, sleep=True)
         if isinstance(track, (rest_api.TrackResponse, rest_api.SearchResponse, rest_api.PlaylistResponse)):
             await self._add_to_query_cache(query, path)
             if isinstance(track, rest_api.TrackResponse):

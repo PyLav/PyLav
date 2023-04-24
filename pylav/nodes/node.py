@@ -1502,7 +1502,7 @@ class Node:
         raise ValueError(f"Server returned an unexpected return code: {res.status}")
 
     async def get_track(
-        self, query: Query, first: bool = False, bypass_cache: bool = False
+        self, query: Query, first: bool = False, bypass_cache: bool = False, sleep: bool = False
     ) -> rest_api.LoadTrackResponses:
         """|coro|
         Gets all tracks associated with the given query.
@@ -1515,6 +1515,8 @@ class Node:
             Whether to return the first result or all results.
         bypass_cache: :class:`bool`
             Whether to bypass the cache.
+        sleep: :class:`bool`
+            Whether to sleep for 1 second before returning the response.
         Returns
         -------
         LavalinkLoadTrackObjects
@@ -1535,6 +1537,8 @@ class Node:
                 }
             )
         response = await self.fetch_loadtracks(query=query)
+        if sleep:
+            await asyncio.sleep(0.05)
         if isinstance(response, HTTPException):
             return response
         if first:
