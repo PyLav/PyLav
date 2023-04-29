@@ -22,7 +22,7 @@ NODE_DEFAULT_SETTINGS = {
     "lavalink": {
         "plugins": [
             {
-                "dependency": "com.github.TopiSenpai.LavaSrc:lavasrc-plugin:538cf8f",
+                "dependency": "com.github.TopiSenpai.LavaSrc:lavasrc-plugin:538cf8fe9cf7fa0c9dd0241c5a027b4a16588304",
                 "repository": "https://jitpack.io",
             },
             {
