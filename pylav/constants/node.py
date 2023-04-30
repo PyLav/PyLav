@@ -22,8 +22,8 @@ NODE_DEFAULT_SETTINGS = {
     "lavalink": {
         "plugins": [
             {
-                "dependency": "com.github.TopiSenpai.LavaSrc:lavasrc-plugin:538cf8fe9cf7fa0c9dd0241c5a027b4a16588304",
-                "repository": "https://jitpack.io",
+                "dependency": "com.github.TopiSenpai.LavaSrc:lavasrc-plugin:3.2.2",
+                "repository": "https://maven.topi.wtf/releases",
             },
             {
                 "dependency": "com.dunctebot:skybot-lavalink-plugin:1.4.1",

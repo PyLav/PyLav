@@ -33,7 +33,7 @@ async def update_plugins(client: Client) -> None:
                 existing_plugins.add("lavasrc-plugin-")
                 org = "TopiSenpai"
                 repo = "LavaSrc"
-                repository = "https://jitpack.io"
+                repository = "https://maven.topi.wtf/releases"
                 dependency += ":"
             elif plugin["dependency"].startswith("com.dunctebot:skybot-lavalink-plugin:"):
                 existing_plugins.add("skybot-lavalink-plugin-")
