@@ -98,11 +98,15 @@ class QueryController:
         await QueryRow.delete().where(QueryRow.identifier == query.query_identifier)
         return False
 
-    @staticmethod
-    async def delete_old() -> None:
+    async def delete_old(self) -> None:
         with contextlib.suppress(asyncio.exceptions.CancelledError, asyncpg.exceptions.CannotConnectNowError):
             LOGGER.trace("Deleting old queries")
-            await QueryRow.delete().where(QueryRow.last_updated <= (get_now_utc() - datetime.timedelta(days=30)))
+            from pylav.players.query.local_files import LocalFile
+
+            await QueryRow.delete().where(
+                (QueryRow.last_updated <= (get_now_utc() - datetime.timedelta(days=30)))
+                & (QueryRow.identifier.not_like(f"{LocalFile.root_folder}%"))
+            )
             LOGGER.trace("Deleted old queries")
 
     @staticmethod

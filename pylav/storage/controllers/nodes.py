@@ -42,7 +42,7 @@ class NodeController:
             Node(**node)
             for node in await NodeRow.select(NodeRow.id)
             .where(
-                (NodeRow.managed == False)  # noqa: E712
+                (NodeRow.managed.eq(True))  # noqa: E712
                 & (NodeRow.id.not_in(list(BUNDLED_NODES_IDS_HOST_MAPPING.keys())))
             )
             .output(nested=True, load_json=True)
@@ -61,7 +61,7 @@ class NodeController:
     async def get_bundled_node_config(self) -> Node | None:
         response = (
             await NodeRow.select(NodeRow.id)
-            .where((NodeRow.id == self._client.bot.user.id) & (NodeRow.managed is True))
+            .where((NodeRow.id == self._client.bot.user.id) & (NodeRow.managed.eq(True)))
             .first()
         )
         return Node(**response) if response else None
