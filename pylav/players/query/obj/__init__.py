@@ -705,13 +705,12 @@ class Query:
 
     async def _yield_process_url(self) -> AsyncIterator[Query]:
         assert not isinstance(self._query, LocalFile)
-        async with aiohttp.ClientSession(json_serialize=json.dumps) as session:
-            async with session.get(self._query) as resp:
-                contents = await resp.text()
-                for line in iter(contents.splitlines()):
-                    with contextlib.suppress(Exception):
-                        if match := SOURCE_INPUT_MATCH_PLS_TRACK.match(line):
-                            yield await Query.from_string(match.group("pls_query").strip(), dont_search=True)
+        async with self.__CLIENT.session.get(self._query) as resp:
+            contents = await resp.text()
+            for line in iter(contents.splitlines()):
+                with contextlib.suppress(Exception):
+                    if match := SOURCE_INPUT_MATCH_PLS_TRACK.match(line):
+                        yield await Query.from_string(match.group("pls_query").strip(), dont_search=True)
 
     async def _yield_xspf_tracks(self) -> AsyncIterator[Query]:  # type: ignore
         if self.is_xspf:
