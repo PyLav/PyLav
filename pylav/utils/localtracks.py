@@ -6,6 +6,7 @@ import pathlib
 from typing import TYPE_CHECKING
 
 import aiopath
+from expiringdict import ExpiringDict
 from watchfiles import Change, awatch
 
 from pylav.logging import getLogger
@@ -34,6 +35,7 @@ class LocalTrackCache:
         "__query_lock",
         "__track_lock",
         "__path_to_query_cache",
+        "__counter",
     )
 
     def __init__(self, client: Client, root: str | pathlib.Path | aiopath.Path) -> None:
@@ -47,6 +49,7 @@ class LocalTrackCache:
         self.__root_folder = pathlib.Path(root)
         self.__ready = asyncio.Event()
         self.__monitor = asyncio.create_task(self.file_watcher())
+        self.__counter = ExpiringDict(max_len=float("inf"), max_age_seconds=5)
 
     def __bool__(self) -> bool:
         return not self.__shutdown
@@ -155,7 +158,13 @@ class LocalTrackCache:
         if path_obj.is_dir():
             await self._add_to_query_cache(query, path)
             return
-        track = await self.__pylav.get_tracks(query, bypass_cache=modified, sleep=True)
+        self.__counter["added"] = self.__counter.get("added", default=0) + 1
+        if self.__counter["added"] % 3 == 10:
+            self.__counter["added"] = 0
+            should_sleep = True
+        else:
+            should_sleep = False
+        track = await self.__pylav.get_tracks(query, bypass_cache=modified, sleep=should_sleep)
         if isinstance(track, (rest_api.TrackResponse, rest_api.SearchResponse, rest_api.PlaylistResponse)):
             await self._add_to_query_cache(query, path)
             if isinstance(track, rest_api.TrackResponse):
