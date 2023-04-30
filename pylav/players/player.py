@@ -1566,7 +1566,7 @@ class Player(VoiceProtocol):
             await old_node.delete_session_player(self.guild.id)
         if self._voice_state:
             await self._dispatch_voice_update()
-        if self.node.supports_sponsorblock:
+        if node.session_id != old_node.session_id and self.node.supports_sponsorblock:
             await self.add_sponsorblock_categories()
         if ops:
             if self.current:
