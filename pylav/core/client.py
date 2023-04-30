@@ -1568,6 +1568,7 @@ class Client(metaclass=SingletonClass):
         fullsearch: bool = False,
         region: str | None = None,
         player: Player | None = None,
+        sleep: bool = False,
     ) -> rest_api.LoadTrackResponses:  # sourcery skip: low-code-quality
         """This method can be rather slow as it recursively queries all queries and their associated entries.
 
@@ -1588,6 +1589,8 @@ class Client(metaclass=SingletonClass):
             The region to search in.
         player : `Player`, optional
             The player to use for enqueuing tracks.
+        sleep : `bool`, optional
+            Whether to sleep between each query to avoid ratelimits.
         """
         output_tracks = []
         playlist_name = ""
@@ -1600,7 +1603,7 @@ class Client(metaclass=SingletonClass):
         for query in queries:
             async for subquery in self._yield_recursive_queries(query):
                 response = await self.search_query(
-                    subquery, bypass_cache=bypass_cache, fullsearch=fullsearch, region=region
+                    subquery, bypass_cache=bypass_cache, fullsearch=fullsearch, region=region, sleep=sleep
                 )
                 if not response or not isinstance(
                     response, (rest_api.TrackResponse, rest_api.SearchResponse, rest_api.PlaylistResponse)
@@ -1637,12 +1640,12 @@ class Client(metaclass=SingletonClass):
                 data["data"] = {
                     "info": {"name": playlist_name, "selectedTrack": 0},
                     "pluginInfo": plugin_info,
-                    "tracks": output_tracks,
+                    "tracks": [track.to_dict() for track in output_tracks],
                 }
             case "search":
-                data["data"] = output_tracks
+                data["data"] = [track.to_dict() for track in output_tracks]
             case "track":
-                data["data"] = output_tracks[0]
+                data["data"] = output_tracks[0].to_dict()
             case "empty":
                 data["data"] = None
             case "error":

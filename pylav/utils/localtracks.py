@@ -159,18 +159,19 @@ class LocalTrackCache:
         if isinstance(track, (rest_api.TrackResponse, rest_api.SearchResponse, rest_api.PlaylistResponse)):
             await self._add_to_query_cache(query, path)
             if isinstance(track, rest_api.TrackResponse):
-                await self._add_to_track_cache(track.data, path)
+                await self._add_to_track_cache(track.data, path_obj)
             elif isinstance(track, rest_api.PlaylistResponse):
-                await self._add_to_track_cache(track.data.tracks, path)
+                for track in track.data.tracks:
+                    await self._add_to_track_cache(track, path_obj)
             else:
-                await self._add_to_track_cache(track.data[0], path)
+                await self._add_to_track_cache(track.data[0], path_obj)
 
     async def _process_modified(self, path: str, path_obj: pathlib.Path, modified: bool = True) -> None:
         if self.__shutdown:
             return
         query = await Query.from_string(path_obj)
         await self._remove_from_query_cache(query, path)
-        await self._remove_from_track_cache(path)
+        await self._remove_from_track_cache(path_obj)
         if path_obj.is_dir():
             await self._add_to_query_cache(query, path)
             return
@@ -178,18 +179,19 @@ class LocalTrackCache:
         if isinstance(track, (rest_api.TrackResponse, rest_api.SearchResponse, rest_api.PlaylistResponse)):
             await self._add_to_query_cache(query, path)
             if isinstance(track, rest_api.TrackResponse):
-                await self._add_to_track_cache(track.data, path)
+                await self._add_to_track_cache(track.data, path_obj)
             elif isinstance(track, rest_api.PlaylistResponse):
-                await self._add_to_track_cache(track.data.tracks, path)
+                for track in track.data.tracks:
+                    await self._add_to_track_cache(track, path_obj)
             else:
-                await self._add_to_track_cache(track.data[0], path)
+                await self._add_to_track_cache(track.data[0], path_obj)
 
     async def _process_deleted(self, path: str, path_obj: pathlib.Path) -> None:
         if self.__shutdown:
             return
         query = await Query.from_string(path_obj)
         await self._remove_from_query_cache(query, path)
-        await self._remove_from_track_cache(path)
+        await self._remove_from_track_cache(path_obj)
 
     async def update(self) -> None:
         """Update the local track cache."""

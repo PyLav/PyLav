@@ -358,11 +358,11 @@ class PlaylistController:
                     query = await Query.from_string(url)
                     data = await self.client.get_tracks(query, bypass_cache=True)
                     name = (
-                        f"[{query.source_abbreviation}] {data.playlistInfo.name}"
-                        if data.playlistInfo.name
+                        f"[{query.source_abbreviation}] {data.data.info.name}"
+                        if data.data.info.name
                         else f"[{query.source_abbreviation}] {name}"
                     )
-                    tracks_raw = data.tracks
+                    tracks_raw = data.data.tracks
                     track_list = [t_ for t in tracks_raw if (t_ := t.encoded)]
                 except Exception as exc:
                     LOGGER.error(
@@ -401,9 +401,9 @@ class PlaylistController:
                         query,
                         bypass_cache=True,
                     )
-                    tracks_raw = response.tracks
+                    tracks_raw = response.data.tracks
                     track_list = [t for t in tracks_raw if t.encoded]
-                    new_name = response.playlistInfo.name
+                    new_name = response.data.info.name
                     new_name = f"[{query.source_abbreviation}] {new_name}" if new_name else None
                     if track_list:
                         await playlist.update_tracks(tracks=track_list)
