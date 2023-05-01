@@ -131,9 +131,9 @@ An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml
   - `PYLAV__MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN` - Defaults to None - Required if you want to use Yandex with the managed node
   - `PYLAV__MANAGED_NODE_DEEZER_KEY` - Required if you want to use Deezer, leave empty unless you know what you are doing
 ## pylav.yaml Setup (Docker)
-- Make a copy of [`pylav.docker.yaml`](./pylav.docker.yaml) and mount it to any chosen path i.e `./pylav.docker.yaml:/data/pylav.yaml`
+- Make a copy of [`pylav.docker.yaml`](./pylav.docker.yaml) and mount it to any chosen path i.e `./pylav.docker.yaml:/pylav/pylav.yaml`
 - On your container set the following environment variables:
-  - `PYLAV__YAML_CONFIG=/data/pylav.yaml`
+  - `PYLAV__YAML_CONFIG=/pylav/pylav.yaml`
 - Change the values inside the `pylav.yaml` to the desired values
   - `PYLAV__JAVA_EXECUTABLE` Not applicable leave it as `java`, in a docket setup set the following environment variable instead:
   - Set `PYLAV__EXTERNAL_UNMANAGED_HOST` to the Lavalink node connection host
