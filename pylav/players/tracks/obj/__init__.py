@@ -13,6 +13,7 @@ from dacite import from_dict
 from pylav.constants.regex import SQUARE_BRACKETS, STREAM_TITLE
 from pylav.exceptions.track import TrackNotFoundException
 from pylav.extension.flowery.lyrics import Error, Lyrics
+from pylav.nodes.api.responses import rest_api
 from pylav.nodes.api.responses.playlists import Info
 from pylav.nodes.api.responses.track import Track as APITrack
 from pylav.players.query.obj import Query
@@ -528,9 +529,17 @@ class Track:
         self._query = _query
         self.timestamp = self.timestamp or self._query.start_time
         response = await self.client._get_tracks(await self.query(), first=True, bypass_cache=bypass_cache)
-        if not response or not response.tracks:
+        if isinstance(response, rest_api.TrackResponse):
+            tracks = [response.data]
+        elif isinstance(response, rest_api.SearchResponse):
+            tracks = response.data
+        elif isinstance(response, rest_api.PlaylistResponse):
+            tracks = response.data.tracks
+        else:
+            tracks = []
+        if not response or not tracks:
             raise TrackNotFoundException(f"No tracks found for query {await self.query_identifier()}")
-        track = response.tracks[0]
+        track = tracks[0]
         self._encoded = track.encoded
         assert isinstance(self._encoded, str)
         self._unique_id = hashlib.md5()
@@ -551,13 +560,21 @@ class Track:
         response = await player.node.get_track(
             await self.query(), bypass_cache=bypass_cache, first=self._query.is_search
         )
-        if not response or not response.tracks:
+        if isinstance(response, rest_api.TrackResponse):
+            tracks = [response.data]
+        elif isinstance(response, rest_api.SearchResponse):
+            tracks = response.data
+        elif isinstance(response, rest_api.PlaylistResponse):
+            tracks = response.data.tracks
+        else:
+            tracks = []
+        if not response or tracks:
             raise TrackNotFoundException(f"No tracks found for query {await self.query_identifier()}")
         return [
             await Track.build_track(
                 data=track, node=player.node, query=self._query, requester=requester, player_instance=self._player
             )
-            for track in response.tracks
+            for track in tracks
         ]
 
     async def _icyparser(self, url: str) -> str | None:

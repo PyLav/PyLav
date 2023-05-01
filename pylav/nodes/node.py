@@ -1684,7 +1684,9 @@ class Node:
         )
 
     async def get_query_localfiles(
-        self, query: str, bypass_cache: bool = True, first: bool = True
+        self,
+        query: str,
+        bypass_cache: bool = True,
     ) -> rest_api.LoadTrackResponses:
         """|coro|
         Gets the query from Localfiles.
@@ -1694,16 +1696,13 @@ class Node:
             The query to search for.
         bypass_cache: :class:`bool`
             Whether to bypass the cache.
-        first: :class:`bool`
-            Whether to return the first result only.
 
         Returns
         -------
         LavalinkLoadTrackObjects
             Lavalink LoadTrack Response Object
         """
-        response = await self.get_track(await self._query_cls.from_string(query), bypass_cache=bypass_cache)
-        return (response.tracks[0] if response.tracks else None) if first else response
+        return await self.get_track(await self._query_cls.from_string(query), bypass_cache=bypass_cache)
 
     def get_filter_payload(
         self,
