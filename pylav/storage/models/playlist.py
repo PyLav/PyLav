@@ -126,12 +126,8 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
         scope : int
             The new scope of the playlist.
         """
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlaylistRow.raw(
-            "INSERT INTO playlist (id, scope) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET scope = EXCLUDED.scope;",
-            self.id,
-            scope,
+        await PlaylistRow.insert(PlaylistRow(id=self.id, scope=scope)).on_conflict(
+            action="DO UPDATE", where=PlaylistRow.id == self.id, values=[PlaylistRow.scope]
         )
         await self.update_cache((self.fetch_scope, scope), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -161,15 +157,8 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
         author : int
             The new author of the playlist.
         """
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlaylistRow.raw(
-            "INSERT INTO playlist (id, author) "
-            "VALUES ({}, {}) "
-            "ON CONFLICT (id) "
-            "DO UPDATE SET author = EXCLUDED.author;",
-            self.id,
-            author,
+        await PlaylistRow.insert(PlaylistRow(id=self.id, author=author)).on_conflict(
+            action="DO UPDATE", where=PlaylistRow.id == self.id, values=[PlaylistRow.author]
         )
         await self.update_cache((self.fetch_author, author), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -199,12 +188,8 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
         name : str
             The new name of the playlist.
         """
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlaylistRow.raw(
-            "INSERT INTO playlist (id, name) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name;",
-            self.id,
-            name,
+        await PlaylistRow.insert(PlaylistRow(id=self.id, name=name)).on_conflict(
+            action="DO UPDATE", where=PlaylistRow.id == self.id, values=[PlaylistRow.name]
         )
         await self.update_cache((self.fetch_name, name), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -234,12 +219,8 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
         url : str
             The new url of the playlist.
         """
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlaylistRow.raw(
-            "INSERT INTO playlist (id, url) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET url = EXCLUDED.url;",
-            self.id,
-            url,
+        await PlaylistRow.insert(PlaylistRow(id=self.id, url=url)).on_conflict(
+            action="DO UPDATE", where=PlaylistRow.id == self.id, values=[PlaylistRow.url]
         )
         await self.update_cache((self.fetch_url, url), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)

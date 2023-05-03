@@ -25,37 +25,25 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
     @classmethod
     async def create_global(cls, bot: int) -> None:
         """Create the player in the database"""
-        data = json.dumps(
-            {
-                "enabled": False,
-                "time": 60,
-            }
-        )
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlayerRow.raw(
-            """
-            INSERT INTO player
-            (id, bot, volume,
-            max_volume, shuffle, auto_shuffle,
-            auto_play, self_deaf, empty_queue_dc,
-            alone_dc, alone_pause)
-            VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})
-            ON CONFLICT (id, bot) DO NOTHING;
-            ;
-            """,
-            0,
-            bot,
-            1000,
-            1000,
-            True,
-            True,
-            True,
-            True,
-            data,
-            data,
-            data,
-        )
+        data = {
+            "enabled": False,
+            "time": 60,
+        }
+        await PlayerRow.insert(
+            PlayerRow(
+                id=0,
+                bot=bot,
+                volume=1000,
+                max_volume=1000,
+                shuffle=True,
+                auto_shuffle=True,
+                auto_play=True,
+                self_deaf=True,
+                empty_queue_dc=data,
+                alone_dc=data,
+                alone_pause=data,
+            )
+        ).on_conflict(action="DO NOTHING")
 
     async def delete(self) -> None:
         """Delete the player from the database"""
@@ -122,16 +110,8 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_volume(self, volume: int) -> None:
         """Update the volume of the player in the db"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlayerRow.raw(
-            """INSERT INTO player (id, bot, volume)
-        VALUES ({}, {}, {})
-        ON CONFLICT (id, bot)
-         DO UPDATE SET volume = excluded.volume;""",
-            self.id,
-            self.bot,
-            volume,
+        await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, volume=volume)).on_conflict(
+            action="DO UPDATE", where=(PlayerRow.id) & (PlayerRow.bot), values=[PlayerRow.volume]
         )
         await self.update_cache((self.fetch_volume, volume), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -149,16 +129,8 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_max_volume(self, max_volume: int) -> None:
         """Update the max volume of the player in the db"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlayerRow.raw(
-            """INSERT INTO player (id, bot, max_volume)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET max_volume = excluded.max_volume;""",
-            self.id,
-            self.bot,
-            max_volume,
+        await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, max_volume=max_volume)).on_conflict(
+            action="DO UPDATE", where=(PlayerRow.id) & (PlayerRow.bot), values=[PlayerRow.max_volume]
         )
         await self.update_cache((self.fetch_max_volume, max_volume), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -176,16 +148,10 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_auto_play_playlist_id(self, auto_play_playlist_id: int) -> None:
         """Update the auto play playlist ID of the player"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlayerRow.raw(
-            """INSERT INTO player (id, bot, auto_play_playlist_id)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET auto_play_playlist_id = excluded.auto_play_playlist_id;""",
-            self.id,
-            self.bot,
-            auto_play_playlist_id,
+        await PlayerRow.insert(
+            PlayerRow(id=self.id, bot=self.bot, auto_play_playlist_id=auto_play_playlist_id)
+        ).on_conflict(
+            action="DO UPDATE", where=(PlayerRow.id) & (PlayerRow.bot), values=[PlayerRow.auto_play_playlist_id]
         )
         await self.update_cache((self.fetch_auto_play_playlist_id, auto_play_playlist_id), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -203,16 +169,8 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_text_channel_id(self, text_channel_id: int) -> None:
         """Update the text channel ID of the player"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlayerRow.raw(
-            """INSERT INTO player (id, bot, text_channel_id)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET text_channel_id = excluded.text_channel_id;""",
-            self.id,
-            self.bot,
-            text_channel_id,
+        await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, text_channel_id=text_channel_id)).on_conflict(
+            action="DO UPDATE", where=(PlayerRow.id) & (PlayerRow.bot), values=[PlayerRow.text_channel_id]
         )
         await self.update_cache((self.fetch_text_channel_id, text_channel_id), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -230,16 +188,8 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_notify_channel_id(self, notify_channel_id: int) -> None:
         """Update the notify channel ID of the player"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlayerRow.raw(
-            """INSERT INTO player (id, bot, notify_channel_id)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET notify_channel_id = excluded.notify_channel_id;""",
-            self.id,
-            self.bot,
-            notify_channel_id,
+        await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, notify_channel_id=notify_channel_id)).on_conflict(
+            action="DO UPDATE", where=(PlayerRow.id) & (PlayerRow.bot), values=[PlayerRow.notify_channel_id]
         )
         await self.update_cache((self.fetch_notify_channel_id, notify_channel_id), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -257,16 +207,8 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_forced_channel_id(self, forced_channel_id: int) -> None:
         """Update the forced channel ID of the player"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlayerRow.raw(
-            """INSERT INTO player (id, bot, forced_channel_id)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET forced_channel_id = excluded.forced_channel_id;""",
-            self.id,
-            self.bot,
-            forced_channel_id,
+        await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, forced_channel_id=forced_channel_id)).on_conflict(
+            action="DO UPDATE", where=(PlayerRow.id) & (PlayerRow.bot), values=[PlayerRow.forced_channel_id]
         )
         await self.update_cache((self.fetch_forced_channel_id, forced_channel_id), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -284,16 +226,8 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_repeat_current(self, repeat_current: bool) -> None:
         """Update the repeat current of the player"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlayerRow.raw(
-            """INSERT INTO player (id, bot, repeat_current)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET repeat_current = excluded.repeat_current;""",
-            self.id,
-            self.bot,
-            repeat_current,
+        await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, repeat_current=repeat_current)).on_conflict(
+            action="DO UPDATE", where=(PlayerRow.id) & (PlayerRow.bot), values=[PlayerRow.repeat_current]
         )
         await self.update_cache((self.fetch_repeat_current, repeat_current), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -311,16 +245,8 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_repeat_queue(self, repeat_queue: bool) -> None:
         """Update the repeat queue of the player"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlayerRow.raw(
-            """INSERT INTO player (id, bot, repeat_queue)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET repeat_queue = excluded.repeat_queue;""",
-            self.id,
-            self.bot,
-            repeat_queue,
+        await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, repeat_queue=repeat_queue)).on_conflict(
+            action="DO UPDATE", where=(PlayerRow.id) & (PlayerRow.bot), values=[PlayerRow.repeat_queue]
         )
         await self.update_cache((self.fetch_repeat_queue, repeat_queue), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -338,16 +264,8 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_shuffle(self, shuffle: bool) -> None:
         """Update the shuffle of the player"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlayerRow.raw(
-            """INSERT INTO player (id, bot, shuffle)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET shuffle = excluded.shuffle;""",
-            self.id,
-            self.bot,
-            shuffle,
+        await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, shuffle=shuffle)).on_conflict(
+            action="DO UPDATE", where=(PlayerRow.id) & (PlayerRow.bot), values=[PlayerRow.shuffle]
         )
         await self.update_cache((self.fetch_shuffle, shuffle), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -365,16 +283,8 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_auto_shuffle(self, auto_shuffle: bool) -> None:
         """Update the auto shuffle of the player"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlayerRow.raw(
-            """INSERT INTO player (id, bot, auto_shuffle)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET auto_shuffle = excluded.auto_shuffle;""",
-            self.id,
-            self.bot,
-            auto_shuffle,
+        await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, auto_shuffle=auto_shuffle)).on_conflict(
+            action="DO UPDATE", where=(PlayerRow.id) & (PlayerRow.bot), values=[PlayerRow.auto_shuffle]
         )
         await self.update_cache((self.fetch_auto_shuffle, auto_shuffle), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -392,16 +302,8 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_auto_play(self, auto_play: bool) -> None:
         """Update the auto play of the player"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlayerRow.raw(
-            """INSERT INTO player (id, bot, auto_play)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET auto_play = excluded.auto_play;""",
-            self.id,
-            self.bot,
-            auto_play,
+        await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, auto_play=auto_play)).on_conflict(
+            action="DO UPDATE", where=(PlayerRow.id) & (PlayerRow.bot), values=[PlayerRow.auto_play]
         )
         await self.update_cache((self.fetch_auto_play, auto_play), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -419,16 +321,8 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_self_deaf(self, self_deaf: bool) -> None:
         """Update the self deaf of the player"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlayerRow.raw(
-            """INSERT INTO player (id, bot, self_deaf)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET self_deaf = excluded.self_deaf;""",
-            self.id,
-            self.bot,
-            self_deaf,
+        await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, self_deaf=self_deaf)).on_conflict(
+            action="DO UPDATE", where=(PlayerRow.id) & (PlayerRow.bot), values=[PlayerRow.self_deaf]
         )
         await self.update_cache((self.fetch_self_deaf, self_deaf), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -446,16 +340,8 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_extras(self, extras: JSON_DICT_TYPE) -> None:
         """Update the extras of the player"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlayerRow.raw(
-            """INSERT INTO player (id, bot, extras)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET extras = excluded.extras;""",
-            self.id,
-            self.bot,
-            json.dumps(extras),
+        await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, extras=extras)).on_conflict(
+            action="DO UPDATE", where=(PlayerRow.id) & (PlayerRow.bot), values=[PlayerRow.extras]
         )
         await self.update_cache((self.fetch_extras, extras), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -477,16 +363,8 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         self, effects: dict[str, int | None | dict[str, int | float | list[dict[str, float | None]] | None]]
     ) -> None:
         """Update the effects of the player"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlayerRow.raw(
-            """INSERT INTO player (id, bot, effects)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET effects = excluded.effects;""",
-            self.id,
-            self.bot,
-            json.dumps(effects),
+        await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, effects=effects)).on_conflict(
+            action="DO UPDATE", where=(PlayerRow.id) & (PlayerRow.bot), values=[PlayerRow.effects]
         )
         await self.update_cache((self.fetch_effects, effects), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -506,16 +384,8 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_empty_queue_dc(self, empty_queue_dc: dict[str, int | bool]) -> None:
         """Update the empty queue dc of the player"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlayerRow.raw(
-            """INSERT INTO player (id, bot, empty_queue_dc)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET empty_queue_dc = excluded.empty_queue_dc;""",
-            self.id,
-            self.bot,
-            json.dumps(empty_queue_dc),
+        await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, empty_queue_dc=empty_queue_dc)).on_conflict(
+            action="DO UPDATE", where=(PlayerRow.id) & (PlayerRow.bot), values=[PlayerRow.empty_queue_dc]
         )
         await self.update_cache(
             (self.fetch_empty_queue_dc, TimedFeature.from_dict(empty_queue_dc)), (self.exists, True)
@@ -535,16 +405,8 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_alone_dc(self, alone_dc: dict[str, int | bool]) -> None:
         """Update the alone dc of the player"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlayerRow.raw(
-            """INSERT INTO player (id, bot, alone_dc)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET alone_dc = excluded.alone_dc;""",
-            self.id,
-            self.bot,
-            json.dumps(alone_dc),
+        await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, alone_dc=alone_dc)).on_conflict(
+            action="DO UPDATE", where=(PlayerRow.id) & (PlayerRow.bot), values=[PlayerRow.alone_dc]
         )
         await self.update_cache((self.fetch_alone_dc, TimedFeature.from_dict(alone_dc)), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -562,16 +424,8 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_alone_pause(self, alone_pause: dict[str, int | bool]) -> None:
         """Update the alone pause of the player"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlayerRow.raw(
-            """INSERT INTO player (id, bot, alone_pause)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET alone_pause = excluded.alone_pause;""",
-            self.id,
-            self.bot,
-            json.dumps(alone_pause),
+        await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, alone_pause=alone_pause)).on_conflict(
+            action="DO UPDATE", where=(PlayerRow.id) & (PlayerRow.bot), values=[PlayerRow.alone_pause]
         )
         await self.update_cache((self.fetch_alone_pause, TimedFeature.from_dict(alone_pause)), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -590,16 +444,10 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
 
     async def add_to_dj_users(self, user: discord.Member) -> None:
         """Add a user to the disc jockey users of the player"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlayerRow.raw(
-            """INSERT INTO player (id, bot, dj_users)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET dj_users = array_cat(player.dj_users, EXCLUDED.dj_users);""",
-            self.id,
-            self.bot,
-            [user.id],
+        await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, dj_users=[user.id])).on_conflict(
+            action="DO UPDATE",
+            where=(PlayerRow.id) & (PlayerRow.bot),
+            values=[PlayerRow.dj_users.cat([user.id])],
         )
         await self.update_cache((self.exists, True))
         await self.invalidate_cache(self.fetch_all, self.fetch_dj_users)
@@ -620,16 +468,10 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         """Add disc jockey users to the player"""
         if not users:
             return
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlayerRow.raw(
-            """INSERT INTO player (id, bot, dj_users)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET dj_users = array_cat(player.dj_users, EXCLUDED.dj_users);""",
-            self.id,
-            self.bot,
-            [u.id for u in users],
+        await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, dj_users=[u.id for u in users])).on_conflict(
+            action="DO UPDATE",
+            where=(PlayerRow.id) & (PlayerRow.bot),
+            values=[PlayerRow.dj_users.cat([u.id for u in users])],
         )
         await self.update_cache((self.exists, True))
         await self.invalidate_cache(self.fetch_all, self.fetch_dj_users)
@@ -649,16 +491,10 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
 
     async def dj_users_reset(self) -> None:
         """Reset the disc jockey users of the player"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlayerRow.raw(
-            """
-            INSERT INTO player (id, bot, dj_users) VALUES ({}, {}, {})
-            ON CONFLICT (id, bot) DO UPDATE SET dj_users = excluded.dj_users;
-            """,
-            self.id,
-            self.bot,
-            [],
+        await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, dj_users=[])).on_conflict(
+            action="DO UPDATE",
+            where=(PlayerRow.id) & (PlayerRow.bot),
+            values=[PlayerRow.dj_users],
         )
         await self.update_cache((self.fetch_dj_users, set()), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -677,16 +513,10 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
 
     async def add_to_dj_roles(self, role: discord.Role) -> None:
         """Add disc jockey roles to the player"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlayerRow.raw(
-            """INSERT INTO player (id, bot, dj_roles)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET dj_roles = array_cat(player.dj_roles, EXCLUDED.dj_roles)""",
-            self.id,
-            self.bot,
-            [role.id],
+        await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, dj_roles=[role.id])).on_conflict(
+            action="DO UPDATE",
+            where=(PlayerRow.id) & (PlayerRow.bot),
+            values=[PlayerRow.dj_roles.cat([role.id])],
         )
         await self.update_cache((self.exists, True))
         await self.invalidate_cache(self.fetch_all, self.fetch_dj_roles)
@@ -710,20 +540,14 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         Parameters
         ----------
         roles : discord.Role
-            The roles to add"
+            The roles to add
         """
         if not roles:
             return
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlayerRow.raw(
-            """INSERT INTO player (id, bot, dj_roles)
-                    VALUES ({}, {}, {})
-                    ON CONFLICT (id, bot)
-                    DO UPDATE SET dj_roles = array_cat(player.dj_roles, EXCLUDED.dj_roles);""",
-            self.id,
-            self.bot,
-            [r.id for r in roles],
+        await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, dj_roles=[r.id for r in roles])).on_conflict(
+            action="DO UPDATE",
+            where=(PlayerRow.id) & (PlayerRow.bot),
+            values=[PlayerRow.dj_roles.cat([r.id for r in roles])],
         )
         await self.update_cache((self.exists, True))
         await self.invalidate_cache(self.fetch_all, self.fetch_dj_roles)
@@ -743,16 +567,10 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
 
     async def dj_roles_reset(self) -> None:
         """Reset the disc jockey roles of the player"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlayerRow.raw(
-            """
-                    INSERT INTO player (id, bot, dj_roles) VALUES ({}, {}, {})
-                    ON CONFLICT (id, bot) DO UPDATE SET dj_roles = excluded.dj_roles;
-                    """,
-            self.id,
-            self.bot,
-            [],
+        await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, dj_roles=[])).on_conflict(
+            action="DO UPDATE",
+            where=(PlayerRow.id) & (PlayerRow.bot),
+            values=[PlayerRow.dj_roles],
         )
         await self.update_cache((self.fetch_dj_roles, set()), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)

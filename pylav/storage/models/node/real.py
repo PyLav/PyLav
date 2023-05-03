@@ -70,15 +70,8 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_name(self, name: str) -> None:
         """Update the node's name in the database"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await NodeRow.raw(
-            """
-            INSERT INTO node (id, name) VALUES ({}, {})
-            ON CONFLICT (id) DO UPDATE SET name = excluded.name;
-            """,
-            self.id,
-            name,
+        await NodeRow.insert(NodeRow(id=self.id, name=name)).on_conflict(
+            action="DO UPDATE", where=NodeRow.id == self.id, values=[NodeRow.name]
         )
         await self.update_cache((self.fetch_name, name), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -99,15 +92,8 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_ssl(self, ssl: bool) -> None:
         """Update the node's ssl setting in the database"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await NodeRow.raw(
-            """
-            INSERT INTO node (id, ssl) VALUES ({}, {})
-            ON CONFLICT (id) DO UPDATE SET ssl = excluded.ssl;
-            """,
-            self.id,
-            ssl,
+        await NodeRow.insert(NodeRow(id=self.id, ssl=ssl)).on_conflict(
+            action="DO UPDATE", where=NodeRow.id == self.id, values=[NodeRow.ssl]
         )
         await self.update_cache((self.fetch_ssl, ssl), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -131,15 +117,8 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_resume_timeout(self, resume_timeout: int) -> None:
         """Update the node's resume timeout in the database"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await NodeRow.raw(
-            """
-            INSERT INTO node (id, resume_timeout) VALUES ({}, {})
-            ON CONFLICT (id) DO UPDATE SET resume_timeout = excluded.resume_timeout;
-            """,
-            self.id,
-            resume_timeout,
+        await NodeRow.insert(NodeRow(id=self.id, resume_timeout=resume_timeout)).on_conflict(
+            action="DO UPDATE", where=NodeRow.id == self.id, values=[NodeRow.resume_timeout]
         )
         await self.update_cache((self.fetch_resume_timeout, resume_timeout), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -163,15 +142,8 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_reconnect_attempts(self, reconnect_attempts: int) -> None:
         """Update the node's reconnect attempts in the database"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await NodeRow.raw(
-            """
-            INSERT INTO node (id, reconnect_attempts) VALUES ({}, {})
-            ON CONFLICT (id) DO UPDATE SET reconnect_attempts = excluded.reconnect_attempts;
-            """,
-            self.id,
-            reconnect_attempts,
+        await NodeRow.insert(NodeRow(id=self.id, reconnect_attempts=reconnect_attempts)).on_conflict(
+            action="DO UPDATE", where=NodeRow.id == self.id, values=[NodeRow.reconnect_attempts]
         )
         await self.update_cache((self.fetch_reconnect_attempts, reconnect_attempts), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -195,15 +167,8 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_search_only(self, search_only: bool) -> None:
         """Update the node's search only setting in the database"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await NodeRow.raw(
-            """
-            INSERT INTO node (id, search_only) VALUES ({}, {})
-            ON CONFLICT (id) DO UPDATE SET search_only = excluded.search_only;
-            """,
-            self.id,
-            search_only,
+        await NodeRow.insert(NodeRow(id=self.id, search_only=search_only)).on_conflict(
+            action="DO UPDATE", where=NodeRow.id == self.id, values=[NodeRow.search_only]
         )
         await self.update_cache((self.fetch_search_only, search_only), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -227,15 +192,8 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_managed(self, managed: bool) -> None:
         """Update the node's managed setting in the database"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await NodeRow.raw(
-            """
-            INSERT INTO node (id, managed) VALUES ({}, {})
-            ON CONFLICT (id) DO UPDATE SET managed = excluded.managed;
-            """,
-            self.id,
-            managed,
+        await NodeRow.insert(NodeRow(id=self.id, managed=managed)).on_conflict(
+            action="DO UPDATE", where=NodeRow.id == self.id, values=[NodeRow.managed]
         )
         await self.update_cache((self.fetch_managed, managed), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -259,15 +217,8 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_extras(self, extras: JSON_DICT_TYPE) -> None:
         """Update the node's extras in the database"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await NodeRow.raw(
-            """
-            INSERT INTO node (id, extras) VALUES ({}, {})
-            ON CONFLICT (id) DO UPDATE SET extras = excluded.extras;
-            """,
-            self.id,
-            json.dumps(extras),
+        await NodeRow.insert(NodeRow(id=self.id, extras=extras)).on_conflict(
+            action="DO UPDATE", where=NodeRow.id == self.id, values=[NodeRow.extras]
         )
         await self.update_cache((self.fetch_extras, extras), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -288,15 +239,8 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_yaml(self, yaml_data: JSON_DICT_TYPE) -> None:
         """Update the node's yaml in the database"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await NodeRow.raw(
-            """
-            INSERT INTO node (id, yaml) VALUES ({}, {})
-            ON CONFLICT (id) DO UPDATE SET yaml = excluded.yaml;
-            """,
-            self.id,
-            json.dumps(yaml_data),
+        await NodeRow.insert(NodeRow(id=self.id, yaml=yaml_data)).on_conflict(
+            action="DO UPDATE", where=NodeRow.id == self.id, values=[NodeRow.yaml]
         )
         await self.update_cache((self.fetch_yaml, yaml_data), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -322,31 +266,18 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
         """Update the node's disabled sources in the database"""
         source = set(map(str.strip, map(str.lower, disabled_sources)))
         intersection = list(source & SUPPORTED_SOURCES.union(SUPPORTED_FEATURES))
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await NodeRow.raw(
-            """
-            INSERT INTO node (id, disabled_sources) VALUES ({}, {})
-            ON CONFLICT (id) DO UPDATE SET disabled_sources = excluded.disabled_sources;
-            """,
-            self.id,
-            intersection,
+        await NodeRow.insert(NodeRow(id=self.id, disabled_sources=intersection)).on_conflict(
+            action="DO UPDATE", where=NodeRow.id == self.id, values=[NodeRow.disabled_sources]
         )
         await self.update_cache((self.fetch_disabled_sources, intersection), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
 
     async def add_to_disabled_sources(self, source: str) -> None:
         """Add a source to the node's disabled sources in the database"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await NodeRow.raw(
-            """
-            INSERT INTO node (id, disabled_sources) VALUES ({}, {})
-            ON CONFLICT (id)
-            DO UPDATE SET disabled_sources = ARRAY_CAT(node.disabled_sources, EXCLUDED.disabled_sources);
-            """,
-            self.id,
-            [source],
+        await NodeRow.insert(NodeRow(id=self.id, disabled_sources=[source])).on_conflict(
+            action="DO UPDATE",
+            where=NodeRow.id == self.id,
+            values=[NodeRow.disabled_sources.cat([source])],
         )
         await self.update_cache((self.exists, True))
         await self.invalidate_cache(self.fetch_all, self.fetch_disabled_sources)
@@ -366,15 +297,10 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
         """Add sources to the node's disabled sources in the database"""
         source = set(map(str.strip, map(str.lower, [sources])))
         intersection = list(source & SUPPORTED_SOURCES.union(SUPPORTED_FEATURES))
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await NodeRow.raw(
-            """
-            INSERT INTO node (id, disabled_sources) VALUES ({}, {})
-            ON CONFLICT (id) DO UPDATE SET disabled_sources = disabled_sources || EXCLUDED.disabled_sources;
-            """,
-            self.id,
-            intersection,
+        await NodeRow.insert(NodeRow(id=self.id, disabled_sources=[source])).on_conflict(
+            action="DO UPDATE",
+            where=NodeRow.id == self.id,
+            values=[NodeRow.disabled_sources.cat(intersection)],
         )
         await self.update_cache((self.exists, True))
         await self.invalidate_cache(self.fetch_all, self.fetch_disabled_sources)
@@ -410,47 +336,34 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
             disabled_sources = []
         if extras is None:
             extras = {}
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await NodeRow.raw(
-            """
-            INSERT INTO node
-            (id,
-            name,
-            ssl,
-            resume_key,
-            resume_timeout,
-            reconnect_attempts,
-            search_only,
-            managed,
-            disabled_sources,
-            extras,
-            yaml)
-            VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})
-            ON CONFLICT (id)
-            DO UPDATE
-              SET name = excluded.name,
-              ssl = excluded.ssl,
-              resume_key = excluded.resume_key,
-              resume_timeout = excluded.resume_timeout,
-              reconnect_attempts = excluded.reconnect_attempts,
-              search_only = excluded.search_only,
-              managed = excluded.managed,
-              disabled_sources = excluded.disabled_sources,
-              extras = excluded.extras,
-              yaml = excluded.yaml;
-            """,
-            self.id,
-            name,
-            ssl,
-            None,
-            resume_timeout,
-            reconnect_attempts,
-            search_only,
-            managed,
-            disabled_sources,
-            json.dumps(extras),
-            json.dumps(yaml_data),
+        await NodeRow.insert(
+            NodeRow(
+                id=self.id,
+                name=name,
+                ssl=ssl,
+                resume_key=None,
+                resume_timeout=resume_timeout,
+                reconnect_attempts=reconnect_attempts,
+                search_only=search_only,
+                managed=managed,
+                disabled_sources=disabled_sources,
+                extras=extras,
+                yaml=yaml,
+            )
+        ).on_conflict(
+            action="DO UPDATE",
+            where=NodeRow.id == self.id,
+            values=[
+                NodeRow.name,
+                NodeRow.ssl,
+                NodeRow.resume_timeout,
+                NodeRow.reconnect_attempts,
+                NodeRow.search_only,
+                NodeRow.managed,
+                NodeRow.disabled_sources,
+                NodeRow.extras,
+                NodeRow.yaml,
+            ],
         )
         await self.invalidate_cache()
 
@@ -486,27 +399,20 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
         """Create the player in the database"""
 
         __, java_xmx_default, __, __ = get_jar_ram_actual(JAVA_EXECUTABLE)
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await NodeRow.raw(
-            """
-            INSERT INTO node
-            (id, managed, ssl, reconnect_attempts, search_only, yaml, name, resume_key, resume_timeout, extras)
-            VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {})
-            ON CONFLICT (id) DO NOTHING;
-            ;
-            """,
-            identifier,
-            True,
-            False,
-            -1,
-            False,
-            json.dumps(NODE_DEFAULT_SETTINGS),
-            "PyLavManagedNode",
-            None,
-            600,
-            json.dumps({"max_ram": java_xmx_default}),
-        )
+        await NodeRow.insert(
+            NodeRow(
+                id=identifier,
+                managed=True,
+                ssl=False,
+                reconnect_attempts=-1,
+                search_only=False,
+                yaml=NODE_DEFAULT_SETTINGS,
+                name="PyLavManagedNode",
+                resume_key=None,
+                resume_timeout=600,
+                extras={"max_ram": java_xmx_default},
+            )
+        ).on_conflict(action="DO NOTHING")
 
     @maybe_cached
     async def fetch_session(self) -> str | None:
@@ -521,19 +427,9 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_session(self, session: str | None) -> None:
         """Update the node's session in the database"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await Sessions.raw(
-            """
-            INSERT INTO sessions
-            (id, node, bot)
-            VALUES ({}, {}, {})
-            ON CONFLICT (node, bot)
-            DO UPDATE
-            SET id = excluded.id;
-            """,
-            session,
-            self.id,
-            self.client.bot.user.id,
+        await Sessions.insert(Sessions(id=session, node=self.id, bot=self.client.bot.user.id)).on_conflict(
+            action="DO UPDATE",
+            values=[Sessions.id],
+            where=(Sessions.node == self.id) & (Sessions.bot == self.client.bot.user.id),
         )
         await self.update_cache((self.fetch_session, session))

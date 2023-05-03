@@ -34,16 +34,6 @@ class BotVersion(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_version(self, version: Version | str) -> None:
         """Update the version of the bot in the database"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await BotVersionRow.raw(
-            """
-            INSERT INTO version (bot, version)
-            VALUES ({}, {})
-            ON CONFLICT (bot)
-            DO UPDATE SET version = EXCLUDED.version
-            """,
-            self.id,
-            str(version),
+        await BotVersionRow.insert(BotVersionRow(bot=self.id, version=str(version))).on_conflict(
+            action="DO UPDATE", where=BotVersionRow.bot == self.id, values=[BotVersionRow.version]
         )
-        await self.invalidate_cache(self.fetch_version)
