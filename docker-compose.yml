@@ -2,10 +2,10 @@ version: '3.8'
 volumes:
     pgsocket:
 services:
-    redbot:
+    pylav:
     # Read https://github.com/PhasecoreX/docker-red-discordbot#red-discordbot-v3 for more info
-        container_name: redbot
-        hostname: redbot
+        container_name: pylav
+        hostname: pylav
         image: ghcr.io/drapersniper/red-discordbot:pylav
         restart: unless-stopped
         volumes:
@@ -26,7 +26,7 @@ services:
             PYLAV__LOCAL_TRACKS_FOLDER: /localtracks
         depends_on:
         -   postgres # Wait for postgres container to start before starting Red
-        -   ll-node # Wait for node container to start before starting Red
+        -   lavalink # Wait for node container to start before starting Red
     postgres:
         container_name: postgres
         hostname: postgres
@@ -40,16 +40,16 @@ services:
         volumes:
         -   ./pgdata:/var/lib/postgresql/data # Postgres data folder
         -   pgsocket:/var/run/postgresql # Postgres socket using Docker volume to allow access from other containers without mounting the host's filesystem (I.e use Sockets even on Windows)
-    ll-node:
-        hostname: ll-node
-        container_name: ll-node
+    lavalink:
+        hostname: lavalink
+        container_name: lavalink
         image: drapersniper/node:latest
         restart: always
         volumes:
         # Mount the Lavalink logs folder
-        -   ./lavalink/logs:/opt/Lavalink/logs:rw
+        -   ./lavalink/logs:/opt/Lavalink/logs
         # Mount the Plugin folder to avoid downloading the plugins every time the image starts up
-        -   ./lavalink/plugins:/opt/Lavalink/plugins:rw
+        -   ./lavalink/plugins:/opt/Lavalink/plugins
         #  Mount this localtracks folder to the image to allow playback of media inside of '/localtracks'
         -   ./localtracks:/localtracks
         environment:

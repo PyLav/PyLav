@@ -5,18 +5,18 @@ PYLAV__POSTGRES_PASSWORD: postgres          # Whatever you set POSTGRES_PASSWORD
 PYLAV__POSTGRES_USER: postgres              # Whatever you set POSTGRES_USER as in the postgres container
 PYLAV__POSTGRES_DB: postgres                # Whatever you set POSTGRES_DB as in the postgres container
 
-PYLAV__EXTERNAL_UNMANAGED_HOST: ll-node             # The hostname for the lavalink container, must be on same network as the redbot container
+PYLAV__EXTERNAL_UNMANAGED_HOST: lavalink             # The hostname for the lavalink container, must be on same network as the redbot container
 PYLAV__EXTERNAL_UNMANAGED_PORT: 2155                # Will always be this
-PYLAV__EXTERNAL_UNMANAGED_PASSWORD: youshallnotpass # Whatever you set LAVALINK_SERVER_PASSWORD as in the ll-node container
+PYLAV__EXTERNAL_UNMANAGED_PASSWORD: youshallnotpass # Whatever you set LAVALINK_SERVER_PASSWORD as in the lavalink container
 PYLAV__EXTERNAL_UNMANAGED_SSL: false                # Will always be this
 PYLAV__EXTERNAL_UNMANAGED_NAME: Docker (localhost)  # Whatever you want to call the node
 
-PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_ID:              # Whatever you set PLUGINS_LAVASRC_SPOTIFY_CLIENTID as in the ll-node container
-PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_SECRET:          # Whatever you set PLUGINS_LAVASRC_SPOTIFY_CLIENTSECRET as in the ll-node container
-PYLAV__MANAGED_NODE_SPOTIFY_COUNTRY_CODE: US        # Whatever you set PLUGINS_LAVASRC_SPOTIFY_COUNTRYCODE as in the ll-node container
-PYLAV__MANAGED_NODE_APPLE_MUSIC_API_KEY:            # Whatever you set PLUGINS_LAVASRC_APPLEMUSIC_MEDIAAPITOKEN as in the ll-node container
-PYLAV__MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE: US    # Whatever you set PLUGINS_LAVASRC_APPLEMUSIC_COUNTRYCODE as in the ll-node container
-PYLAV__MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN:      # Whatever you set PLUGINS_LAVASRC_YANDEXMUSIC_ACCESSTOKEN as in the ll-node container
+PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_ID:              # Whatever you set PLUGINS_LAVASRC_SPOTIFY_CLIENTID as in the lavalink container
+PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_SECRET:          # Whatever you set PLUGINS_LAVASRC_SPOTIFY_CLIENTSECRET as in the lavalink container
+PYLAV__MANAGED_NODE_SPOTIFY_COUNTRY_CODE: US        # Whatever you set PLUGINS_LAVASRC_SPOTIFY_COUNTRYCODE as in the lavalink container
+PYLAV__MANAGED_NODE_APPLE_MUSIC_API_KEY:            # Whatever you set PLUGINS_LAVASRC_APPLEMUSIC_MEDIAAPITOKEN as in the lavalink container
+PYLAV__MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE: US    # Whatever you set PLUGINS_LAVASRC_APPLEMUSIC_COUNTRYCODE as in the lavalink container
+PYLAV__MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN:      # Whatever you set PLUGINS_LAVASRC_YANDEXMUSIC_ACCESSTOKEN as in the lavalink container
 
 PYLAV__MANAGED_NODE_DEEZER_KEY:           # Deezer Key - Required for Deezer tracks to work with the managed node, leave empty unless you know what you are doing
 PYLAV__DEFAULT_SEARCH_SOURCE: dzsearch    # Defaults to dzsearch - Possible values are dzsearch (Deezer), spsearch (Spotify), amsearch (Apple Music), ytmsearch (YouTube Music), ytsearch (YouTube)
