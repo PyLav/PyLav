@@ -98,7 +98,7 @@ An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml
   -  To use a Unix socket instead of TCP
     - Provide the `PYLAV__POSTGRES_SOCKET` variable. If this is provided `PYLAV__POSTGRES_HOST` and `PYLAV__POSTGRES_PORT` will be ignored.
   - `PYLAV__JAVA_EXECUTABLE` can be changed from java to the full path of the Azul Zulu 19 Java executable installed above.
-    - By defapoetry updateult, it will use `java` to ensure you have the correct version under `java` run `java --version` if it says "OpenJDK Runtime Environment Zulu19..." then this is not needed to be changed.
+    - By default, it will use `java` to ensure you have the correct version under `java` run `java --version` if it says "OpenJDK Runtime Environment Zulu19..." then this is not needed to be changed.
   - PyLav bundled an external unmanaged public lavalink Node - The node used is a public node (ll.draper.wtf) hosted by Draper, this will expose you IP to the server hosting the node for communication purposes.
     - To disable this set `PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE` to `false`
     - To enable this set `PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE` to `true`
