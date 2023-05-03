@@ -129,7 +129,7 @@ exclude = [
     "docs",
 ]
 [tool.poetry.dependencies]
-python = "^3.11"
+python = ">=3.11,<3.12"
 pip = "^23.0.1"
 setuptools = "^67.6.1"
 wheel = "^0.40.0"
@@ -160,15 +160,16 @@ watchfiles = "^0.19.0"
 Red-Commons = { version = "^1.0.0", optional = true}
 aiohttp = {extras = ["speedups"], version = "^3.8.4", optional = true}
 apsw = { version = "^3.41.2.0", optional = true}
-importlib-metadata = { version = "^6.1.0", optional = true}
-orjson = { version = "^3.8.9", optional = true}
-packaging = { version = "^23.0", optional = true}
-platformdirs = { version = "^3.2.0", optional = true}
-psutil =  { version = "^5.9.4", optional = true}
+importlib-metadata = { version = "^6.6.0", optional = true}
+orjson = { version = "^3.8.11", optional = true}
+packaging = { version = "^23.1", optional = true}
+platformdirs = { version = "^3.5.0", optional = true}
+psutil =  { version = "^5.9.5", optional = true}
 python-dateutil = { version = "^2.8.2", optional = true}
 pytz = { version = "^2023.3", optional = true}
-rich = { version = "^13.3.3", optional = true}
+rich = { version = "^13.3.5", optional = true}
 typing-extensions = { version = "^4.5.0", optional = true}
+rapidfuzz = { version = "^3.0.0", optional = true}
 uvloop = { version = "^0.17.0", markers = "sys_platform != 'win32' and platform_python_implementation == 'CPython'", optional = true}
 # Dependency for the docs
 
@@ -188,8 +189,8 @@ sphinx-removed-in = { version = "*", optional = true}
 [tool.poetry.extras]
 redis = ["redis"]
 all = ["redis"]
-nored = ["Red-Commons","aiohttp","apsw","importlib-metadata","orjson","packaging","platformdirs","psutil","python-dateutil","pytz","rich","typing-extensions", "uvloop"]
-all-nored = ["Red-Commons","aiohttp","apsw","importlib-metadata","orjson","orjson","packaging","platformdirs","psutil","python-dateutil","pytz","redis","rich","typing-extensions", "uvloop"]
+nored = ["Red-Commons","aiohttp","apsw","importlib-metadata","orjson","packaging","platformdirs","psutil","python-dateutil","pytz","rich","typing-extensions", "uvloop", "rapidfuzz"]
+all-nored = ["Red-Commons","aiohttp","apsw","importlib-metadata","orjson","orjson","packaging","platformdirs","psutil","python-dateutil","pytz","redis","rich","typing-extensions", "uvloop", "rapidfuzz"]
 docs = ["Red-DiscordBot", "sphinx", "sphinx_rtd_theme", "furo", "olefile", "sphinx-copybutton", "sphinx-inline-tabs", "sphinx-issues", "sphinx-removed-in"]
 
 [tool.poetry.urls]
