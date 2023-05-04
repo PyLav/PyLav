@@ -147,6 +147,7 @@ dacite = "^1.8.0"
 deepdiff6 = "^6.2.0"
 expiringdict = "^1.2.2"
 humanize = "^4.6.0"
+importlib-metadata = "^6.6.0"
 iso8601 = "^1.1.0"
 netaddr = "^0.8.0"
 numpy = "^1.24.3"
@@ -160,7 +161,6 @@ watchfiles = "^0.19.0"
 Red-Commons = { version = "^1.0.0", optional = true}
 aiohttp = {extras = ["speedups"], version = "^3.8.4", optional = true}
 apsw = { version = "^3.41.2.0", optional = true}
-importlib-metadata = { version = "^6.6.0", optional = true}
 orjson = { version = "^3.8.11", optional = true}
 packaging = { version = "^23.1", optional = true}
 platformdirs = { version = "^3.5.0", optional = true}
