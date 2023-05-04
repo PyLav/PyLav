@@ -1,17 +1,13 @@
 from __future__ import annotations
 
-import contextlib
 import math
-import os
 import platform
-import shutil
 import sys
-from collections.abc import Iterator
 
 import psutil
 
+from pylav._internals.functions import get_true_path
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
-from pylav.type_hints.generics import ANY_GENERIC_TYPE
 
 
 def get_max_allocation_size(executable: str) -> tuple[int, bool]:
@@ -61,32 +57,6 @@ def get_jar_ram_actual(executable: str) -> tuple[str, str, int, int]:
     max_allocation, is_64bit = get_max_allocation_size(executable)
     min_ram, max_ram, min_ram_int, max_ram_int = _calculate_ram(max_allocation, is_64bit)
     return min_ram, max_ram, min_ram_int, max_ram_int
-
-
-def get_true_path(executable: str, fallback: ANY_GENERIC_TYPE = None) -> str | ANY_GENERIC_TYPE | None:
-    """Returns the true path of the executable."""
-    path = os.environ.get("JAVA_HOME", executable)
-    with add_env_path(path if os.path.isdir(path) else os.path.split(path)[0]) as path_string:
-        executable = shutil.which(executable, path=path_string)
-    return executable or fallback
-
-
-@contextlib.contextmanager
-def add_env_path(path: str | os.PathLike) -> Iterator[str]:
-    """Adds a path to the environment path temporarily."""
-    path = os.fspath(path)
-    existing_path = "PATH" in os.environ
-    old_path = os.environ["PATH"] if existing_path else None
-    try:
-        if path not in os.environ["PATH"]:
-            yield path + os.pathsep + os.environ["PATH"]
-        else:
-            yield os.environ["PATH"]
-    finally:
-        if existing_path:
-            os.environ["PATH"] = old_path
-        else:
-            del os.environ["PATH"]
 
 
 def convert_function(key: str) -> str:
