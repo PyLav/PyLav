@@ -127,7 +127,7 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
             The new scope of the playlist.
         """
         await PlaylistRow.insert(PlaylistRow(id=self.id, scope=scope)).on_conflict(
-            action="DO UPDATE", where=PlaylistRow.id == self.id, values=[PlaylistRow.scope]
+            action="DO UPDATE", target=PlaylistRow.id, values=[PlaylistRow.scope]
         )
         await self.update_cache((self.fetch_scope, scope), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -158,7 +158,7 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
             The new author of the playlist.
         """
         await PlaylistRow.insert(PlaylistRow(id=self.id, author=author)).on_conflict(
-            action="DO UPDATE", where=PlaylistRow.id == self.id, values=[PlaylistRow.author]
+            action="DO UPDATE", target=PlaylistRow.id, values=[PlaylistRow.author]
         )
         await self.update_cache((self.fetch_author, author), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -189,7 +189,7 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
             The new name of the playlist.
         """
         await PlaylistRow.insert(PlaylistRow(id=self.id, name=name)).on_conflict(
-            action="DO UPDATE", where=PlaylistRow.id == self.id, values=[PlaylistRow.name]
+            action="DO UPDATE", target=PlaylistRow.id, values=[PlaylistRow.name]
         )
         await self.update_cache((self.fetch_name, name), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -220,7 +220,7 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
             The new url of the playlist.
         """
         await PlaylistRow.insert(PlaylistRow(id=self.id, url=url)).on_conflict(
-            action="DO UPDATE", where=PlaylistRow.id == self.id, values=[PlaylistRow.url]
+            action="DO UPDATE", target=PlaylistRow.id, values=[PlaylistRow.url]
         )
         await self.update_cache((self.fetch_url, url), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)

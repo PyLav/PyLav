@@ -35,5 +35,5 @@ class BotVersion(CachedModel, metaclass=SingletonCachedByKey):
     async def update_version(self, version: Version | str) -> None:
         """Update the version of the bot in the database"""
         await BotVersionRow.insert(BotVersionRow(bot=self.id, version=str(version))).on_conflict(
-            action="DO UPDATE", where=BotVersionRow.bot == self.id, values=[BotVersionRow.version]
+            action="DO UPDATE", target=BotVersionRow.bot, values=[BotVersionRow.version]
         )

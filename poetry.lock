@@ -2373,7 +2373,7 @@ dev = ["black (==22.1.0)", "flake8 (==4.0.1)", "isort (==5.10.1)"]
 
 [[package]]
 name = "Red-DiscordBot"
-version = "3.5.0.dev377+g525c3885c"
+version = "3.5.0.dev375+g970f8a7a1"
 description = "A highly customisable Discord bot"
 category = "main"
 optional = true
@@ -2438,7 +2438,7 @@ test = ["astroid (==2.15.4)", "dill (==0.3.6)", "exceptiongroup (==1.1.1)", "ini
 type = "git"
 url = "https://github.com/Cog-Creators/Red-DiscordBot.git"
 reference = "V3/develop"
-resolved_reference = "525c3885cd41e928b46bf54102d7bd470d504219"
+resolved_reference = "41d89c7b54a1f231a01f79655c20d4acf1799633"
 
 [[package]]
 name = "red-lavalink"

@@ -252,6 +252,6 @@ class NodeMock(CachedModel):
         self.session_id = session
         await Sessions.insert(Sessions(id=session, node=self.id, bot=self.client.bot.user.id)).on_conflict(
             action="DO UPDATE",
-            where=(Sessions.node == self.id) & (Sessions.bot == self.client.bot.user.id),
+            target=(Sessions.node, Sessions.bot),
             values=[Sessions.id],
         )

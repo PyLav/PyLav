@@ -89,7 +89,7 @@ class PlayerState(CachedModel):
             )
         ).on_conflict(
             action="DO UPDATE",
-            where=(PlayerStateRow.id == self.id) & (PlayerStateRow.bot == self.bot),
+            target=(PlayerStateRow.id, PlayerStateRow.bot),
             values=[
                 PlayerStateRow.channel_id,
                 PlayerStateRow.volume,

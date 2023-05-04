@@ -63,7 +63,7 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
         """
         await LibConfigRow.insert(LibConfigRow(id=self.id, bot=self.bot, config_folder=str(config_folder))).on_conflict(
             action="DO UPDATE",
-            where=(LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot),
+            target=(LibConfigRow.id, LibConfigRow.bot),
             values=[LibConfigRow.config_folder],
         )
         await self.update_cache((self.fetch_config_folder, str(config_folder)), (self.exists, True))
@@ -98,7 +98,7 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
             LibConfigRow(id=self.id, bot=self.bot, localtrack_folder=str(localtrack_folder))
         ).on_conflict(
             action="DO UPDATE",
-            where=(LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot),
+            target=(LibConfigRow.id, LibConfigRow.bot),
             values=[LibConfigRow.localtrack_folder],
         )
         await self.update_cache((self.fetch_localtrack_folder, str(localtrack_folder)), (self.exists, True))
@@ -135,7 +135,7 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
         java_path = get_true_path(java_path, java_path)
         await LibConfigRow.insert(LibConfigRow(id=self.id, bot=self.bot, java_path=str(java_path))).on_conflict(
             action="DO UPDATE",
-            where=(LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot),
+            target=(LibConfigRow.id, LibConfigRow.bot),
             values=[LibConfigRow.java_path],
         )
         await self.update_cache((self.fetch_java_path, str(java_path)), (self.exists, True))
@@ -170,7 +170,7 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
             LibConfigRow(id=self.id, bot=self.bot, enable_managed_node=enable_managed_node)
         ).on_conflict(
             action="DO UPDATE",
-            where=(LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot),
+            target=(LibConfigRow.id, LibConfigRow.bot),
             values=[LibConfigRow.enable_managed_node],
         )
         await self.update_cache((self.fetch_enable_managed_node, enable_managed_node), (self.exists, True))
@@ -205,7 +205,7 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
             LibConfigRow(id=self.id, bot=self.bot, use_bundled_pylav_external=use_bundled_pylav_external)
         ).on_conflict(
             action="DO UPDATE",
-            where=(LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot),
+            target=(LibConfigRow.id, LibConfigRow.bot),
             values=[LibConfigRow.use_bundled_pylav_external],
         )
         await self.update_cache(
@@ -236,7 +236,7 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
             LibConfigRow(id=self.id, bot=self.bot, use_bundled_lava_link_external=False)
         ).on_conflict(
             action="DO UPDATE",
-            where=(LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot),
+            target=(LibConfigRow.id, LibConfigRow.bot),
             values=[LibConfigRow.use_bundled_lava_link_external],
         )
         await self.update_cache((self.fetch_use_bundled_lava_link_external, False), (self.exists, True))
@@ -269,7 +269,7 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
         """
         await LibConfigRow.insert(LibConfigRow(id=self.id, bot=self.bot, download_id=download_id)).on_conflict(
             action="DO UPDATE",
-            where=(LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot),
+            target=(LibConfigRow.id, LibConfigRow.bot),
             values=[LibConfigRow.download_id],
         )
         await self.update_cache((self.fetch_download_id, download_id), (self.exists, True))
@@ -302,7 +302,7 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
         """
         await LibConfigRow.insert(LibConfigRow(id=self.id, bot=self.bot, extras=json.dumps(extras))).on_conflict(
             action="DO UPDATE",
-            where=(LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot),
+            target=(LibConfigRow.id, LibConfigRow.bot),
             values=[LibConfigRow.extras],
         )
         await self.update_cache((self.fetch_extras, extras), (self.exists, True))
@@ -337,7 +337,7 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
             LibConfigRow(id=self.id, bot=self.bot, next_execution_update_bundled_playlists=next_execution)
         ).on_conflict(
             action="DO UPDATE",
-            where=(LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot),
+            target=(LibConfigRow.id, LibConfigRow.bot),
             values=[LibConfigRow.next_execution_update_bundled_playlists],
         )
         await self.update_cache(
@@ -374,7 +374,7 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
             LibConfigRow(id=self.id, bot=self.bot, next_execution_update_bundled_external_playlists=next_execution)
         ).on_conflict(
             action="DO UPDATE",
-            where=(LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot),
+            target=(LibConfigRow.id, LibConfigRow.bot),
             values=[LibConfigRow.next_execution_update_bundled_external_playlists],
         )
         await self.update_cache(
@@ -411,7 +411,7 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
             LibConfigRow(id=self.id, bot=self.bot, next_execution_update_external_playlists=next_execution)
         ).on_conflict(
             action="DO UPDATE",
-            where=(LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot),
+            target=(LibConfigRow.id, LibConfigRow.bot),
             values=[LibConfigRow.next_execution_update_external_playlists],
         )
         await self.update_cache(
@@ -448,7 +448,7 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
             LibConfigRow(id=self.id, bot=self.bot, update_bot_activity=update_bot_activity)
         ).on_conflict(
             action="DO UPDATE",
-            where=(LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot),
+            target=(LibConfigRow.id, LibConfigRow.bot),
             values=[LibConfigRow.update_bot_activity],
         )
         await self.update_cache((self.fetch_update_bot_activity, update_bot_activity), (self.exists, True))
@@ -483,7 +483,7 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
             LibConfigRow(id=self.id, bot=self.bot, auto_update_managed_nodes=auto_update_managed_nodes)
         ).on_conflict(
             action="DO UPDATE",
-            where=(LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot),
+            target=(LibConfigRow.id, LibConfigRow.bot),
             values=[LibConfigRow.auto_update_managed_nodes],
         )
         await self.update_cache((self.fetch_auto_update_managed_nodes, auto_update_managed_nodes), (self.exists, True))

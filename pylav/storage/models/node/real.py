@@ -71,7 +71,7 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
     async def update_name(self, name: str) -> None:
         """Update the node's name in the database"""
         await NodeRow.insert(NodeRow(id=self.id, name=name)).on_conflict(
-            action="DO UPDATE", where=NodeRow.id == self.id, values=[NodeRow.name]
+            action="DO UPDATE", target=NodeRow.id, values=[NodeRow.name]
         )
         await self.update_cache((self.fetch_name, name), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -93,7 +93,7 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
     async def update_ssl(self, ssl: bool) -> None:
         """Update the node's ssl setting in the database"""
         await NodeRow.insert(NodeRow(id=self.id, ssl=ssl)).on_conflict(
-            action="DO UPDATE", where=NodeRow.id == self.id, values=[NodeRow.ssl]
+            action="DO UPDATE", target=NodeRow.id, values=[NodeRow.ssl]
         )
         await self.update_cache((self.fetch_ssl, ssl), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -118,7 +118,7 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
     async def update_resume_timeout(self, resume_timeout: int) -> None:
         """Update the node's resume timeout in the database"""
         await NodeRow.insert(NodeRow(id=self.id, resume_timeout=resume_timeout)).on_conflict(
-            action="DO UPDATE", where=NodeRow.id == self.id, values=[NodeRow.resume_timeout]
+            action="DO UPDATE", target=NodeRow.id, values=[NodeRow.resume_timeout]
         )
         await self.update_cache((self.fetch_resume_timeout, resume_timeout), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -143,7 +143,7 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
     async def update_reconnect_attempts(self, reconnect_attempts: int) -> None:
         """Update the node's reconnect attempts in the database"""
         await NodeRow.insert(NodeRow(id=self.id, reconnect_attempts=reconnect_attempts)).on_conflict(
-            action="DO UPDATE", where=NodeRow.id == self.id, values=[NodeRow.reconnect_attempts]
+            action="DO UPDATE", target=NodeRow.id, values=[NodeRow.reconnect_attempts]
         )
         await self.update_cache((self.fetch_reconnect_attempts, reconnect_attempts), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -168,7 +168,7 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
     async def update_search_only(self, search_only: bool) -> None:
         """Update the node's search only setting in the database"""
         await NodeRow.insert(NodeRow(id=self.id, search_only=search_only)).on_conflict(
-            action="DO UPDATE", where=NodeRow.id == self.id, values=[NodeRow.search_only]
+            action="DO UPDATE", target=NodeRow.id, values=[NodeRow.search_only]
         )
         await self.update_cache((self.fetch_search_only, search_only), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -193,7 +193,7 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
     async def update_managed(self, managed: bool) -> None:
         """Update the node's managed setting in the database"""
         await NodeRow.insert(NodeRow(id=self.id, managed=managed)).on_conflict(
-            action="DO UPDATE", where=NodeRow.id == self.id, values=[NodeRow.managed]
+            action="DO UPDATE", target=NodeRow.id, values=[NodeRow.managed]
         )
         await self.update_cache((self.fetch_managed, managed), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -218,7 +218,7 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
     async def update_extras(self, extras: JSON_DICT_TYPE) -> None:
         """Update the node's extras in the database"""
         await NodeRow.insert(NodeRow(id=self.id, extras=extras)).on_conflict(
-            action="DO UPDATE", where=NodeRow.id == self.id, values=[NodeRow.extras]
+            action="DO UPDATE", target=NodeRow.id, values=[NodeRow.extras]
         )
         await self.update_cache((self.fetch_extras, extras), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -240,7 +240,7 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
     async def update_yaml(self, yaml_data: JSON_DICT_TYPE) -> None:
         """Update the node's yaml in the database"""
         await NodeRow.insert(NodeRow(id=self.id, yaml=yaml_data)).on_conflict(
-            action="DO UPDATE", where=NodeRow.id == self.id, values=[NodeRow.yaml]
+            action="DO UPDATE", target=NodeRow.id, values=[NodeRow.yaml]
         )
         await self.update_cache((self.fetch_yaml, yaml_data), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -267,7 +267,7 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
         source = set(map(str.strip, map(str.lower, disabled_sources)))
         intersection = list(source & SUPPORTED_SOURCES.union(SUPPORTED_FEATURES))
         await NodeRow.insert(NodeRow(id=self.id, disabled_sources=intersection)).on_conflict(
-            action="DO UPDATE", where=NodeRow.id == self.id, values=[NodeRow.disabled_sources]
+            action="DO UPDATE", target=NodeRow.id, values=[NodeRow.disabled_sources]
         )
         await self.update_cache((self.fetch_disabled_sources, intersection), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -276,7 +276,7 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
         """Add a source to the node's disabled sources in the database"""
         await NodeRow.insert(NodeRow(id=self.id, disabled_sources=[source])).on_conflict(
             action="DO UPDATE",
-            where=NodeRow.id == self.id,
+            target=NodeRow.id,
             values=[NodeRow.disabled_sources.cat([source])],
         )
         await self.update_cache((self.exists, True))
@@ -299,7 +299,7 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
         intersection = list(source & SUPPORTED_SOURCES.union(SUPPORTED_FEATURES))
         await NodeRow.insert(NodeRow(id=self.id, disabled_sources=[source])).on_conflict(
             action="DO UPDATE",
-            where=NodeRow.id == self.id,
+            target=NodeRow.id,
             values=[NodeRow.disabled_sources.cat(intersection)],
         )
         await self.update_cache((self.exists, True))
@@ -352,7 +352,7 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
             )
         ).on_conflict(
             action="DO UPDATE",
-            where=NodeRow.id == self.id,
+            target=NodeRow.id,
             values=[
                 NodeRow.name,
                 NodeRow.ssl,
@@ -430,6 +430,6 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
         await Sessions.insert(Sessions(id=session, node=self.id, bot=self.client.bot.user.id)).on_conflict(
             action="DO UPDATE",
             values=[Sessions.id],
-            where=(Sessions.node == self.id) & (Sessions.bot == self.client.bot.user.id),
+            target=(Sessions.node, Sessions.bot),
         )
         await self.update_cache((self.fetch_session, session))

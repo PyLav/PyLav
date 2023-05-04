@@ -72,7 +72,7 @@ class PostgresStorage(BaseCache):
     async def write(self, key: str, item: ResponseOrKey) -> None:
         """Write an item to the cache"""
         await AioHttpCacheRow.insert(AioHttpCacheRow(key=key, value=self.serialize(item))).on_conflict(
-            action="DO NOTHING"
+            action="DO NOTHING", target=AioHttpCacheRow.key
         )
 
     async def bulk_delete(self, keys: set[str]) -> None:

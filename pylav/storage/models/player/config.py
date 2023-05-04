@@ -43,7 +43,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
                 alone_dc=data,
                 alone_pause=data,
             )
-        ).on_conflict(action="DO NOTHING")
+        ).on_conflict(action="DO NOTHING", target=(PlayerRow.id, PlayerRow.bot))
 
     async def delete(self) -> None:
         """Delete the player from the database"""
@@ -111,7 +111,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
     async def update_volume(self, volume: int) -> None:
         """Update the volume of the player in the db"""
         await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, volume=volume)).on_conflict(
-            action="DO UPDATE", where=(PlayerRow.id == self.id) & (PlayerRow.bot == self.bot), values=[PlayerRow.volume]
+            action="DO UPDATE", target=(PlayerRow.id, PlayerRow.bot), values=[PlayerRow.volume]
         )
         await self.update_cache((self.fetch_volume, volume), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -131,7 +131,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         """Update the max volume of the player in the db"""
         await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, max_volume=max_volume)).on_conflict(
             action="DO UPDATE",
-            where=(PlayerRow.id == self.id) & (PlayerRow.bot == self.bot),
+            target=(PlayerRow.id, PlayerRow.bot),
             values=[PlayerRow.max_volume],
         )
         await self.update_cache((self.fetch_max_volume, max_volume), (self.exists, True))
@@ -154,7 +154,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
             PlayerRow(id=self.id, bot=self.bot, auto_play_playlist_id=auto_play_playlist_id)
         ).on_conflict(
             action="DO UPDATE",
-            where=(PlayerRow.id == self.id) & (PlayerRow.bot == self.bot),
+            target=(PlayerRow.id, PlayerRow.bot),
             values=[PlayerRow.auto_play_playlist_id],
         )
         await self.update_cache((self.fetch_auto_play_playlist_id, auto_play_playlist_id), (self.exists, True))
@@ -175,7 +175,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         """Update the text channel ID of the player"""
         await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, text_channel_id=text_channel_id)).on_conflict(
             action="DO UPDATE",
-            where=(PlayerRow.id == self.id) & (PlayerRow.bot == self.bot),
+            target=(PlayerRow.id, PlayerRow.bot),
             values=[PlayerRow.text_channel_id],
         )
         await self.update_cache((self.fetch_text_channel_id, text_channel_id), (self.exists, True))
@@ -196,7 +196,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         """Update the notify channel ID of the player"""
         await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, notify_channel_id=notify_channel_id)).on_conflict(
             action="DO UPDATE",
-            where=(PlayerRow.id == self.id) & (PlayerRow.bot == self.bot),
+            target=(PlayerRow.id, PlayerRow.bot),
             values=[PlayerRow.notify_channel_id],
         )
         await self.update_cache((self.fetch_notify_channel_id, notify_channel_id), (self.exists, True))
@@ -217,7 +217,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         """Update the forced channel ID of the player"""
         await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, forced_channel_id=forced_channel_id)).on_conflict(
             action="DO UPDATE",
-            where=(PlayerRow.id == self.id) & (PlayerRow.bot == self.bot),
+            target=(PlayerRow.id, PlayerRow.bot),
             values=[PlayerRow.forced_channel_id],
         )
         await self.update_cache((self.fetch_forced_channel_id, forced_channel_id), (self.exists, True))
@@ -238,7 +238,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         """Update the repeat current of the player"""
         await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, repeat_current=repeat_current)).on_conflict(
             action="DO UPDATE",
-            where=(PlayerRow.id == self.id) & (PlayerRow.bot == self.bot),
+            target=(PlayerRow.id, PlayerRow.bot),
             values=[PlayerRow.repeat_current],
         )
         await self.update_cache((self.fetch_repeat_current, repeat_current), (self.exists, True))
@@ -259,7 +259,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         """Update the repeat queue of the player"""
         await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, repeat_queue=repeat_queue)).on_conflict(
             action="DO UPDATE",
-            where=(PlayerRow.id == self.id) & (PlayerRow.bot == self.bot),
+            target=(PlayerRow.id, PlayerRow.bot),
             values=[PlayerRow.repeat_queue],
         )
         await self.update_cache((self.fetch_repeat_queue, repeat_queue), (self.exists, True))
@@ -280,7 +280,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         """Update the shuffle of the player"""
         await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, shuffle=shuffle)).on_conflict(
             action="DO UPDATE",
-            where=(PlayerRow.id == self.id) & (PlayerRow.bot == self.bot),
+            target=(PlayerRow.id, PlayerRow.bot),
             values=[PlayerRow.shuffle],
         )
         await self.update_cache((self.fetch_shuffle, shuffle), (self.exists, True))
@@ -301,7 +301,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         """Update the auto shuffle of the player"""
         await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, auto_shuffle=auto_shuffle)).on_conflict(
             action="DO UPDATE",
-            where=(PlayerRow.id == self.id) & (PlayerRow.bot == self.bot),
+            target=(PlayerRow.id, PlayerRow.bot),
             values=[PlayerRow.auto_shuffle],
         )
         await self.update_cache((self.fetch_auto_shuffle, auto_shuffle), (self.exists, True))
@@ -322,7 +322,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         """Update the auto play of the player"""
         await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, auto_play=auto_play)).on_conflict(
             action="DO UPDATE",
-            where=(PlayerRow.id == self.id) & (PlayerRow.bot == self.bot),
+            target=(PlayerRow.id, PlayerRow.bot),
             values=[PlayerRow.auto_play],
         )
         await self.update_cache((self.fetch_auto_play, auto_play), (self.exists, True))
@@ -343,7 +343,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         """Update the self deaf of the player"""
         await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, self_deaf=self_deaf)).on_conflict(
             action="DO UPDATE",
-            where=(PlayerRow.id == self.id) & (PlayerRow.bot == self.bot),
+            target=(PlayerRow.id, PlayerRow.bot),
             values=[PlayerRow.self_deaf],
         )
         await self.update_cache((self.fetch_self_deaf, self_deaf), (self.exists, True))
@@ -363,7 +363,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
     async def update_extras(self, extras: JSON_DICT_TYPE) -> None:
         """Update the extras of the player"""
         await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, extras=extras)).on_conflict(
-            action="DO UPDATE", where=(PlayerRow.id == self.id) & (PlayerRow.bot == self.bot), values=[PlayerRow.extras]
+            action="DO UPDATE", target=(PlayerRow.id, PlayerRow.bot), values=[PlayerRow.extras]
         )
         await self.update_cache((self.fetch_extras, extras), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -387,7 +387,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         """Update the effects of the player"""
         await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, effects=effects)).on_conflict(
             action="DO UPDATE",
-            where=(PlayerRow.id == self.id) & (PlayerRow.bot == self.bot),
+            target=(PlayerRow.id, PlayerRow.bot),
             values=[PlayerRow.effects],
         )
         await self.update_cache((self.fetch_effects, effects), (self.exists, True))
@@ -410,7 +410,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         """Update the empty queue dc of the player"""
         await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, empty_queue_dc=empty_queue_dc)).on_conflict(
             action="DO UPDATE",
-            where=(PlayerRow.id == self.id) & (PlayerRow.bot == self.bot),
+            target=(PlayerRow.id, PlayerRow.bot),
             values=[PlayerRow.empty_queue_dc],
         )
         await self.update_cache(
@@ -433,7 +433,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         """Update the alone dc of the player"""
         await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, alone_dc=alone_dc)).on_conflict(
             action="DO UPDATE",
-            where=(PlayerRow.id == self.id) & (PlayerRow.bot == self.bot),
+            target=(PlayerRow.id, PlayerRow.bot),
             values=[PlayerRow.alone_dc],
         )
         await self.update_cache((self.fetch_alone_dc, TimedFeature.from_dict(alone_dc)), (self.exists, True))
@@ -454,7 +454,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         """Update the alone pause of the player"""
         await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, alone_pause=alone_pause)).on_conflict(
             action="DO UPDATE",
-            where=(PlayerRow.id == self.id) & (PlayerRow.bot == self.bot),
+            target=(PlayerRow.id, PlayerRow.bot),
             values=[PlayerRow.alone_pause],
         )
         await self.update_cache((self.fetch_alone_pause, TimedFeature.from_dict(alone_pause)), (self.exists, True))
@@ -476,7 +476,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         """Add a user to the disc jockey users of the player"""
         await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, dj_users=[user.id])).on_conflict(
             action="DO UPDATE",
-            where=(PlayerRow.id == self.id) & (PlayerRow.bot == self.bot),
+            target=(PlayerRow.id, PlayerRow.bot),
             values=[PlayerRow.dj_users.cat([user.id])],
         )
         await self.update_cache((self.exists, True))
@@ -500,7 +500,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
             return
         await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, dj_users=[u.id for u in users])).on_conflict(
             action="DO UPDATE",
-            where=(PlayerRow.id == self.id) & (PlayerRow.bot == self.bot),
+            target=(PlayerRow.id, PlayerRow.bot),
             values=[PlayerRow.dj_users.cat([u.id for u in users])],
         )
         await self.update_cache((self.exists, True))
@@ -523,7 +523,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         """Reset the disc jockey users of the player"""
         await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, dj_users=[])).on_conflict(
             action="DO UPDATE",
-            where=(PlayerRow.id == self.id) & (PlayerRow.bot == self.bot),
+            target=(PlayerRow.id, PlayerRow.bot),
             values=[PlayerRow.dj_users],
         )
         await self.update_cache((self.fetch_dj_users, set()), (self.exists, True))
@@ -545,7 +545,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         """Add disc jockey roles to the player"""
         await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, dj_roles=[role.id])).on_conflict(
             action="DO UPDATE",
-            where=(PlayerRow.id == self.id) & (PlayerRow.bot == self.bot),
+            target=(PlayerRow.id, PlayerRow.bot),
             values=[PlayerRow.dj_roles.cat([role.id])],
         )
         await self.update_cache((self.exists, True))
@@ -576,7 +576,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
             return
         await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, dj_roles=[r.id for r in roles])).on_conflict(
             action="DO UPDATE",
-            where=(PlayerRow.id == self.id) & (PlayerRow.bot == self.bot),
+            target=(PlayerRow.id, PlayerRow.bot),
             values=[PlayerRow.dj_roles.cat([r.id for r in roles])],
         )
         await self.update_cache((self.exists, True))
@@ -599,7 +599,7 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         """Reset the disc jockey roles of the player"""
         await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, dj_roles=[])).on_conflict(
             action="DO UPDATE",
-            where=(PlayerRow.id == self.id) & (PlayerRow.bot == self.bot),
+            target=(PlayerRow.id, PlayerRow.bot),
             values=[PlayerRow.dj_roles],
         )
         await self.update_cache((self.fetch_dj_roles, set()), (self.exists, True))

@@ -141,7 +141,7 @@ class Query(CachedModel, metaclass=SingletonCachedByKey):
         """
 
         await QueryRow.insert(QueryRow(identifier=self.id, pluginInfo=plugin_info)).on_conflict(
-            action="DO UPDATE", where=QueryRow.identifier == self.id, values=[QueryRow.pluginInfo]
+            action="DO UPDATE", target=QueryRow.identifier, values=[QueryRow.pluginInfo]
         )
         await self.update_cache((self.fetch_plugin_info, plugin_info), (self.exists, True))
 
@@ -171,7 +171,7 @@ class Query(CachedModel, metaclass=SingletonCachedByKey):
             The name of the playlist.
         """
         await QueryRow.insert(QueryRow(identifier=self.id, name=name)).on_conflict(
-            action="DO UPDATE", where=QueryRow.identifier == self.id, values=[QueryRow.name]
+            action="DO UPDATE", target=QueryRow.identifier, values=[QueryRow.name]
         )
         await self.update_cache((self.fetch_name, name), (self.exists, True))
 
@@ -196,7 +196,7 @@ class Query(CachedModel, metaclass=SingletonCachedByKey):
         """Update the last updated time of the playlist"""
         await QueryRow.insert(
             QueryRow(identifier=self.id, last_updated=QueryRow.last_updated.default.python())
-        ).on_conflict(action="DO UPDATE", where=QueryRow.identifier == self.id, values=[QueryRow.last_updated])
+        ).on_conflict(action="DO UPDATE", target=QueryRow.identifier, values=[QueryRow.last_updated])
         await self.update_cache(
             (self.fetch_last_updated, QueryRow.last_updated.default.python()),
             (self.exists, True),
