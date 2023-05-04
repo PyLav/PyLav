@@ -20,6 +20,7 @@ import rich.progress
 import yaml
 from packaging.version import Version
 
+from pylav._internals.functions import get_true_path
 from pylav.compat import json
 from pylav.constants.config import JAVA_EXECUTABLE
 from pylav.constants.misc import EPOCH_DT_TZ_AWARE
@@ -56,7 +57,7 @@ from pylav.exceptions.node import (
     WebsocketNotConnectedException,
 )
 from pylav.extension.bundled_node import LAVALINK_APP_YML, LAVALINK_DOWNLOAD_DIR, LAVALINK_JAR_FILE, USING_FORCED
-from pylav.extension.bundled_node.utils import change_dict_naming_convention, get_jar_ram_actual, get_true_path
+from pylav.extension.bundled_node.utils import change_dict_naming_convention, get_jar_ram_actual
 from pylav.helpers.misc import ExponentialBackoffWithReset
 from pylav.logging import getLogger
 from pylav.nodes.node import Node

@@ -7,8 +7,8 @@ from dataclasses import dataclass
 
 import aiopath  # type: ignore
 
+from pylav._internals.functions import get_true_path
 from pylav.compat import json
-from pylav.extension.bundled_node.utils import get_true_path
 from pylav.helpers.singleton import SingletonCachedByKey
 from pylav.helpers.time import get_now_utc
 from pylav.storage.database.cache.decodators import maybe_cached
