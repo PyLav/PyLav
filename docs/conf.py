@@ -78,7 +78,7 @@ html_context = {
     "display_github": True,
     "github_user": "PyLav",
     "github_repo": "PyLav",
-    "github_version": "master/docs/",
+    "github_version": "develop/docs/",
 }
 
 source_suffix = ".rst"
