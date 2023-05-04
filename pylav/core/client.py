@@ -238,7 +238,7 @@ class Client(metaclass=SingletonClass):
             self._spotify_client_secret = None
             self._spotify_auth = None
             self._shutting_down = False
-            self._scheduler = AsyncIOScheduler()
+            self._scheduler = AsyncIOScheduler(prefix="pylav_scheduler.")
             self._scheduler.configure(timezone=get_tz_utc())
             self._wait_for_playlists = asyncio.Event()
             self._wait_for_playlists.set()
