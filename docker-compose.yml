@@ -101,7 +101,7 @@ services:
             LAVALINK_SERVER_OPUSENCODINGQUALITY: 10 # Opus encoder quality. Valid values range from 0 to 10, where 10 is best quality but is the most expensive on the CPU.
             LAVALINK_SERVER_PASSWORD: youshallnotpass # Authentication Password
             LAVALINK_SERVER_PLAYERUPDATEINTERVAL: 30 # How frequently to send player updates to clients, in seconds
-            LAVALINK_SERVER_RESAMPLINGQUALITY: HIGH  # Quality of resampling operations. Valid values are LOW, MEDIUM and HIGH, where HIGH uses the most CPU.
+            LAVALINK_SERVER_RESAMPLINGQUALITY: MEDIUM  # Quality of resampling operations. Valid values are LOW, MEDIUM and HIGH, where HIGH uses the most CPU.
             LAVALINK_SERVER_SOUNDCLOUDSEARCHENABLED: true # Enable SoundCloud Search
             LAVALINK_SERVER_TRACKSTUCKTHRESHOLDMS: 10000 # The threshold for how long a track can be stuck. A track is stuck if does not return any audio data.
             LAVALINK_SERVER_USESEEKGHOSTING: true # Seek ghosting is the effect where whilst a seek is in progress, the audio buffer is read from until empty, or until seek is ready.
