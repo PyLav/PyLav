@@ -3,9 +3,10 @@
 >  - PyLav assumes you are using PostgresSQL server running version 14, and it also requires Python3.11 any other version for these will not work/be supported.
 >  - If you have docker; Setting up a postgres container for it would likely be the simplest option to set up the necessary server.
 >  - If you have docker you can use the Lavalink v4 image instead of installing Java for more info [see discord](https://discord.com/channels/970987707834720266/970987936063561738/1054069164148539422)
+
 > **Warning**
-> You should be using docker and using the provided docker-compose file for the easiest setup.
-> Specially until Lavalink 4.0.0 is released, I will not be providing support for setting up Lavalink manually until then.
+>  You should be using docker and using the provided docker-compose file for the easiest setup.
+>  Specially until Lavalink 4.0.0 is released, I will not be providing support for setting up Lavalink manually until then.
 
 # Note for 1.0.0 release until Lavalink 4.0.0 is released
 - This major release requires Lavalink 4.0.0 which has not yet been released.
