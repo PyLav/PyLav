@@ -1853,14 +1853,14 @@ ptyprocess = ">=0.5"
 
 [[package]]
 name = "piccolo"
-version = "0.110.0"
+version = "0.111.0"
 description = "A fast, user friendly ORM and query builder which supports asyncio."
 category = "main"
 optional = false
 python-versions = ">=3.7.0"
 files = [
-    {file = "piccolo-0.110.0-py3-none-any.whl", hash = "sha256:daf20547df5bb04834a4c5db71dd425eeeba65d07b29a78c8ace211419012d7a"},
-    {file = "piccolo-0.110.0.tar.gz", hash = "sha256:422c9f8274072c0be0848fcd008dc785049a59e33da592f400b7d38c21277aeb"},
+    {file = "piccolo-0.111.0-py3-none-any.whl", hash = "sha256:536a2b5f6e0a6a4ac66505524a9fe561c0e85b1345050d31509d7d9378821c60"},
+    {file = "piccolo-0.111.0.tar.gz", hash = "sha256:1e5a0e6b047641797f948a5a4b9eb9bf40d5e4ed132c2ca80a7ad72fe9e823de"},
 ]
 
 [package.dependencies]
@@ -2373,7 +2373,7 @@ dev = ["black (==22.1.0)", "flake8 (==4.0.1)", "isort (==5.10.1)"]
 
 [[package]]
 name = "Red-DiscordBot"
-version = "3.5.0.dev375+g970f8a7a1"
+version = "3.5.0.dev377+g525c3885c"
 description = "A highly customisable Discord bot"
 category = "main"
 optional = true
@@ -2438,7 +2438,7 @@ test = ["astroid (==2.15.4)", "dill (==0.3.6)", "exceptiongroup (==1.1.1)", "ini
 type = "git"
 url = "https://github.com/Cog-Creators/Red-DiscordBot.git"
 reference = "V3/develop"
-resolved_reference = "970f8a7a1eb30f35d29c4e7f12fe74b794657260"
+resolved_reference = "525c3885cd41e928b46bf54102d7bd470d504219"
 
 [[package]]
 name = "red-lavalink"
@@ -3298,4 +3298,4 @@ redis = ["redis"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "c94ab4f2d016ef70fa5e42d155f9b32001378870bf219a931e5283891b543230"
+content-hash = "edf8d9d2e8a5f4425ea7aa5da0a0efe936a5f95909586bb838e437071c523e8e"
