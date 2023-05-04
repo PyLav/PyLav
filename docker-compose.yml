@@ -20,7 +20,6 @@ services:
             PREFIX: '!'
             TZ: Europe/London
             PUID: 1000
-            CUSTOM_REDBOT_PACKAGE: git+https://github.com/Cog-Creators/Red-DiscordBot.git
             PYLAV__DATA_FOLDER: /pylav
             PYLAV__YAML_CONFIG: /pylav/pylav.yaml
             PYLAV__LOCAL_TRACKS_FOLDER: /localtracks
