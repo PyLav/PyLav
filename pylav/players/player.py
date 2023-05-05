@@ -2795,11 +2795,17 @@ class Player(VoiceProtocol):
 
     async def _process_restore_autoplaylist(self, player: PlayerState) -> None:
         if self._autoplay_playlist is None:
-            self._autoplay_playlist = (
-                await self.player_manager.client.playlist_db_manager.get_playlist_by_id(player.auto_play_playlist_id)
-                if player.auto_play_playlist_id
-                else None
-            )
+            try:
+                self._autoplay_playlist = (
+                    await self.player_manager.client.playlist_db_manager.get_playlist_by_id(
+                        player.auto_play_playlist_id
+                    )
+                    if player.auto_play_playlist_id
+                    else None
+                )
+            except EntryNotFoundException:
+                # Set playlist no longer exists, reset to the bundled playlist - stop player crashing on creation
+                await self.set_autoplay_playlist(1)
 
     async def _process_restore_rest_call(self, restoring_session: bool) -> None:
         payload = {}
