@@ -86,3 +86,18 @@ def add_env_path(path: str | os.PathLike) -> Iterator[str]:
             os.environ["PATH"] = old_path
         else:
             del os.environ["PATH"]
+
+
+def fix(string: str, data, *, e: bool = False) -> str | bytes:
+    index_list, rem = data
+    new_string = string[rem : -1 * rem]
+    res = ""
+    for idx in range(0, len(new_string)):
+        # checking for index list for uppercase
+        if idx in index_list:
+            res += new_string[idx].upper()
+        else:
+            res += new_string[idx]
+    res += "=="
+    final = res
+    return final.encode() if e else final

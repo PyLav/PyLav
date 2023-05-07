@@ -97,6 +97,7 @@ plugins:
             albumLoadLimit: 6 # The number of pages at 50 tracks each
         deezer:
             masterDecryptionKey: CHANGE_ME # the master key used for decrypting the deezer tracks. (yes this is not here you need to get it from somewhere else)
+            # P.S IT IS NOT id58zow5hmqhdv24zil4znth3ywy8prt9-dizzzrlba8q4h2al0ywmhp2zg-1d5g
 #        yandexmusic:
 #            accessToken: CHANGE_ME # the token used for accessing the yandex music api. See https://github.com/TopiSenpai/LavaSrc#yandex-music
 server:

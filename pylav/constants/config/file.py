@@ -9,11 +9,11 @@ import yaml
 from deepdiff import DeepDiff  # type: ignore
 
 # noinspection PyProtectedMember
-from pylav._internals.functions import _get_path
+from pylav._internals.functions import _get_path, fix
 from pylav.constants.config import ENV_FILE
 from pylav.constants.config.utils import _remove_keys
 from pylav.constants.node_features import SUPPORTED_SEARCHES
-from pylav.constants.specials import ANIME
+from pylav.constants.specials import _MAPPING, ANIME
 from pylav.logging import getLogger
 
 LOGGER = getLogger("PyLav.Environment")
@@ -153,10 +153,24 @@ if (MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN := data.get("PYLAV__MANAGED_NODE_YAND
     data_new["PYLAV__MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN"] = MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN
 
 if (MANAGED_NODE_DEEZER_KEY := data.get("PYLAV__MANAGED_NODE_DEEZER_KEY")) is None:
-    MANAGED_NODE_DEEZER_KEY = os.getenv("PYLAV__MANAGED_NODE_DEEZER_KEY") or "".join(
-        [base64.b64decode(r).decode() for r in ANIME.split(b"|")]
+    MANAGED_NODE_DEEZER_KEY = os.getenv("PYLAV__MANAGED_NODE_DEEZER_KEY")
+
+if MANAGED_NODE_DEEZER_KEY and MANAGED_NODE_DEEZER_KEY.startswith("id"):
+    _temp = [MANAGED_NODE_DEEZER_KEY[i : i + 16] for i in range(0, len(MANAGED_NODE_DEEZER_KEY), 16)]
+    MANAGED_NODE_DEEZER_KEY = "".join(
+        [
+            base64.b64decode(r).decode()
+            for r in [
+                fix(_temp[2], _MAPPING[2]),
+                fix(_temp[1], _MAPPING[1]),
+                fix(_temp[3], _MAPPING[3]),
+                fix(_temp[0], _MAPPING[0]),
+            ]
+        ]
     )
-    data_new["PYLAV__MANAGED_NODE_DEEZER_KEY"] = MANAGED_NODE_DEEZER_KEY
+elif not MANAGED_NODE_DEEZER_KEY:
+    MANAGED_NODE_DEEZER_KEY = "".join([base64.b64decode(r).decode() for r in ANIME.split(b"|")])
+data_new["PYLAV__MANAGED_NODE_DEEZER_KEY"] = MANAGED_NODE_DEEZER_KEY
 
 if (LOCAL_TRACKS_FOLDER := data.get("PYLAV__LOCAL_TRACKS_FOLDER")) is None:
     LOCAL_TRACKS_FOLDER = os.getenv("PYLAV__LOCAL_TRACKS_FOLDER")

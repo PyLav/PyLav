@@ -31,7 +31,7 @@ PYLAV__MANAGED_NODE_SPOTIFY_COUNTRY_CODE: US         # Spotify Country Code
 PYLAV__MANAGED_NODE_APPLE_MUSIC_API_KEY:             # Apple Music API Key - Optional - Useful if you already have an Apple developer account
 PYLAV__MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE: US     # Apple Music Country Code
 PYLAV__MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN:       # Yandex Music Access Token - Required for Yandex Music tracks to work with the managed node
-PYLAV__MANAGED_NODE_DEEZER_KEY:                      # Deezer Key - Required for Deezer tracks to work with the managed node, leave empty unless you know what you are doing
+PYLAV__MANAGED_NODE_DEEZER_KEY: id58zow5hmqhdv24zil4znth3ywy8prt9-dizzzrlba8q4h2al0ywmhp2zg-1d5g  # Deezer Key - Required for Deezer tracks to work with the managed node, leave empty unless you know what you are doing
 
 PREFER_PARTIAL_TRACKS: false                         # PyLav will search for tracks only when it is necessary for it to be played rather than as soon as possible.
 PYLAV__LOCAL_TRACKS_FOLDER:                          # The folder where local tracks are stored - Leave null if you do not want to use local tracks

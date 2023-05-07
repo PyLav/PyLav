@@ -159,6 +159,8 @@ services:
             # Lavasrc deezer  configuration
             PLUGINS_LAVASRC_SOURCES_DEEZER: true  # Enable Deezer source
             # # PLUGINS_LAVASRC_DEEZER_MASTERDECRYPTIONKEY:  # Leave this as it is, or fill it with the deezer key if you have it
+            # P.S IT IS NOT id58zow5hmqhdv24zil4znth3ywy8prt9-dizzzrlba8q4h2al0ywmhp2zg-1d5g
+
 
             # Lavasrc Apple music configuration
             PLUGINS_LAVASRC_SOURCES_APPLEMUSIC: true          # Enable Apple Music source
