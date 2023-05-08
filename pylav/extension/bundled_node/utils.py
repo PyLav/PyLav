@@ -16,14 +16,15 @@ def get_max_allocation_size(executable: str) -> tuple[int, bool]:
         max_heap_allowed = psutil.virtual_memory().total
         thinks_is_64_bit = True
     else:
-        max_heap_allowed = 4 * 1024**3
+        max_heap_allowed = min(4 * 1024**3, psutil.virtual_memory().total)
         thinks_is_64_bit = False
     return max_heap_allowed, thinks_is_64_bit
 
 
-def _calculate_ram(max_allocation: int, is_64bit: bool) -> tuple[str, str, int, int]:
+def _calculate_ram(max_allocation: int) -> tuple[str, str, int, int]:
     min_ram_int = 64 * 1024**2
-    max_ram_allowed = max_allocation * 0.5 if is_64bit else max_allocation
+    _min_max = 512 * 1024**2
+    max_ram_allowed = max(max_allocation * 0.5, _min_max)
     max_ram_int = max(min_ram_int, max_ram_allowed)
     size_name = ("", "K", "M", "G", "T")
     i = int(math.floor(math.log(min_ram_int, 1024)))
@@ -42,8 +43,8 @@ def _calculate_ram(max_allocation: int, is_64bit: bool) -> tuple[str, str, int, 
 def get_jar_ram_defaults() -> tuple[str, str, int, int]:
     """Returns the default ram for the jar"""
     # We don't know the java executable at this stage - not worth the extra work required here
-    max_allocation, is_64bit = get_max_allocation_size(sys.executable)
-    min_ram, max_ram, min_ram_int, max_ram_int = _calculate_ram(max_allocation, is_64bit)
+    max_allocation, __ = get_max_allocation_size(sys.executable)
+    min_ram, max_ram, min_ram_int, max_ram_int = _calculate_ram(max_allocation)
     return min_ram, max_ram, min_ram_int, max_ram_int
 
 
@@ -54,8 +55,8 @@ def get_jar_ram_actual(executable: str) -> tuple[str, str, int, int]:
 
         executable = JAVA_EXECUTABLE
     executable = get_true_path(executable, sys.executable)
-    max_allocation, is_64bit = get_max_allocation_size(executable)
-    min_ram, max_ram, min_ram_int, max_ram_int = _calculate_ram(max_allocation, is_64bit)
+    max_allocation, __ = get_max_allocation_size(executable)
+    min_ram, max_ram, min_ram_int, max_ram_int = _calculate_ram(max_allocation)
     return min_ram, max_ram, min_ram_int, max_ram_int
 
 
