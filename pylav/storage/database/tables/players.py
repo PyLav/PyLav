@@ -10,7 +10,7 @@ class PlayerRow(Table, db=DATABASE_ENGINE, tablename="player"):
     primary_key = UUID(primary_key=True)
     id = BigInt(index=True)
     bot = BigInt(index=True, null=False)
-    volume = Integer(null=False, default=100)
+    volume = Integer(null=False, default=25)
     max_volume = Integer(null=False, default=1000)
     auto_play_playlist_id = BigInt(null=False, default=1)
 
