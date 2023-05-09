@@ -109,29 +109,6 @@ async def pylav_version(context: PyLavContext) -> None:
     )
 
 
-@commands.command(
-    name="plsyncslash",
-    aliases=["plss"],
-    i18n=_,
-)
-@commands.is_owner()
-async def pylav_sync_slash(context: PyLavContext) -> None:
-    """Sync the Bots slash commands"""
-    if isinstance(context, discord.Interaction):
-        context = await context.client.get_context(context)
-    if context.interaction and not context.interaction.response.is_done():
-        await context.defer(ephemeral=True)
-    await context.bot.wait_until_ready()
-    await context.bot.tree.sync()
-    await context.send(
-        embed=await context.pylav.construct_embed(
-            description=_("I have synced all my slash commands."),
-            messageable=context,
-        ),
-        ephemeral=True,
-    )
-
-
 def _done_callback(task: asyncio.Task) -> None:
     with contextlib.suppress(asyncio.CancelledError):
         exc = task.exception()
@@ -292,8 +269,6 @@ def class_factory(
         bot.add_command(pylav_credits)
     if not bot.get_command(pylav_version.qualified_name):
         bot.add_command(pylav_version)
-    if not bot.get_command(pylav_sync_slash.qualified_name):
-        bot.add_command(pylav_sync_slash)
     argspec = inspect.getfullargspec(cls.__init__)
     if ("bot" in argspec.args or "bot" in argspec.kwonlyargs) and bot not in cogargs:
         cogkwargs["bot"] = bot
