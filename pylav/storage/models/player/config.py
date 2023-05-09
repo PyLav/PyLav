@@ -474,10 +474,16 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
 
     async def add_to_dj_users(self, user: discord.Member) -> None:
         """Add a user to the disc jockey users of the player"""
-        await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, dj_users=[user.id])).on_conflict(
-            action="DO UPDATE",
-            target=(PlayerRow.id, PlayerRow.bot),
-            values=[PlayerRow.dj_users.cat([user.id])],
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
+        await PlayerRow.raw(
+            """INSERT INTO player (id, bot, dj_users)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET dj_users = array_cat(player.dj_users, EXCLUDED.dj_users);""",
+            self.id,
+            self.bot,
+            [user.id],
         )
         await self.update_cache((self.exists, True))
         await self.invalidate_cache(self.fetch_all, self.fetch_dj_users)
@@ -498,10 +504,16 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         """Add disc jockey users to the player"""
         if not users:
             return
-        await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, dj_users=[u.id for u in users])).on_conflict(
-            action="DO UPDATE",
-            target=(PlayerRow.id, PlayerRow.bot),
-            values=[PlayerRow.dj_users.cat([u.id for u in users])],
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
+        await PlayerRow.raw(
+            """INSERT INTO player (id, bot, dj_users)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET dj_users = array_cat(player.dj_users, EXCLUDED.dj_users);""",
+            self.id,
+            self.bot,
+            [u.id for u in users],
         )
         await self.update_cache((self.exists, True))
         await self.invalidate_cache(self.fetch_all, self.fetch_dj_users)
@@ -543,10 +555,16 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
 
     async def add_to_dj_roles(self, role: discord.Role) -> None:
         """Add disc jockey roles to the player"""
-        await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, dj_roles=[role.id])).on_conflict(
-            action="DO UPDATE",
-            target=(PlayerRow.id, PlayerRow.bot),
-            values=[PlayerRow.dj_roles.cat([role.id])],
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
+        await PlayerRow.raw(
+            """INSERT INTO player (id, bot, dj_roles)
+            VALUES ({}, {}, {})
+            ON CONFLICT (id, bot)
+            DO UPDATE SET dj_roles = array_cat(player.dj_roles, EXCLUDED.dj_roles)""",
+            self.id,
+            self.bot,
+            [role.id],
         )
         await self.update_cache((self.exists, True))
         await self.invalidate_cache(self.fetch_all, self.fetch_dj_roles)
@@ -574,10 +592,16 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
         """
         if not roles:
             return
-        await PlayerRow.insert(PlayerRow(id=self.id, bot=self.bot, dj_roles=[r.id for r in roles])).on_conflict(
-            action="DO UPDATE",
-            target=(PlayerRow.id, PlayerRow.bot),
-            values=[PlayerRow.dj_roles.cat([r.id for r in roles])],
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
+        await PlayerRow.raw(
+            """INSERT INTO player (id, bot, dj_roles)
+                    VALUES ({}, {}, {})
+                    ON CONFLICT (id, bot)
+                    DO UPDATE SET dj_roles = array_cat(player.dj_roles, EXCLUDED.dj_roles);""",
+            self.id,
+            self.bot,
+            [r.id for r in roles],
         )
         await self.update_cache((self.exists, True))
         await self.invalidate_cache(self.fetch_all, self.fetch_dj_roles)

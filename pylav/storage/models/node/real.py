@@ -274,10 +274,16 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
 
     async def add_to_disabled_sources(self, source: str) -> None:
         """Add a source to the node's disabled sources in the database"""
-        await NodeRow.insert(NodeRow(id=self.id, disabled_sources=[source])).on_conflict(
-            action="DO UPDATE",
-            target=NodeRow.id,
-            values=[NodeRow.disabled_sources.cat([source])],
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
+        await NodeRow.raw(
+            """
+            INSERT INTO node (id, disabled_sources) VALUES ({}, {})
+            ON CONFLICT (id)
+            DO UPDATE SET disabled_sources = ARRAY_CAT(node.disabled_sources, EXCLUDED.disabled_sources);
+            """,
+            self.id,
+            [source],
         )
         await self.update_cache((self.exists, True))
         await self.invalidate_cache(self.fetch_all, self.fetch_disabled_sources)
@@ -297,10 +303,15 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
         """Add sources to the node's disabled sources in the database"""
         source = set(map(str.strip, map(str.lower, [sources])))
         intersection = list(source & SUPPORTED_SOURCES.union(SUPPORTED_FEATURES))
-        await NodeRow.insert(NodeRow(id=self.id, disabled_sources=[source])).on_conflict(
-            action="DO UPDATE",
-            target=NodeRow.id,
-            values=[NodeRow.disabled_sources.cat(intersection)],
+        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
+        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
+        await NodeRow.raw(
+            """
+            INSERT INTO node (id, disabled_sources) VALUES ({}, {})
+            ON CONFLICT (id) DO UPDATE SET disabled_sources = disabled_sources || EXCLUDED.disabled_sources;
+            """,
+            self.id,
+            intersection,
         )
         await self.update_cache((self.exists, True))
         await self.invalidate_cache(self.fetch_all, self.fetch_disabled_sources)
