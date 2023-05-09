@@ -8,6 +8,7 @@ import operator
 import os
 import pathlib
 import random
+import sys
 from collections.abc import AsyncIterator, Awaitable, Callable, Iterator
 from types import MethodType
 from typing import Any
@@ -1110,6 +1111,16 @@ class Client(metaclass=SingletonClass):
                     del self.bot._pylav_client  # noqa
                     await DATABASE_ENGINE.close_connection_pool()
                     LOGGER.info("All cogs have been unregistered, PyLav client has been shutdown")
+                    self.__reload_pylav()
+
+    @staticmethod
+    def __reload_pylav():
+        import importlib
+
+        temp = sys.modules.copy()
+        for n, m in temp.items():
+            if n.startswith(__name__.split(".")[0]):
+                importlib.reload(m)
 
     def get_player(self, guild: discord.Guild | int | None) -> Player | None:
         """Gets the player for the target guild.
