@@ -1117,9 +1117,10 @@ class Client(metaclass=SingletonClass):
     def __reload_pylav():
         import importlib
 
-        temp = sys.modules.copy()
-        for n, m in temp.items():
-            if n.startswith(__name__.split(".")[0]):
+        name = __name__.split(".")[0]
+        temp = sorted(((k, v) for k, v in sys.modules.copy().items() if k.startswith(name)), reverse=True)
+        for n, m in temp:
+            if n.startswith(name):
                 importlib.reload(m)
 
     def get_player(self, guild: discord.Guild | int | None) -> Player | None:
