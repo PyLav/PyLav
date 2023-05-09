@@ -1112,7 +1112,7 @@ class Client(metaclass=SingletonClass):
                     del self.bot._pylav_client  # noqa
                     await DATABASE_ENGINE.close_connection_pool()
                     LOGGER.info("All cogs have been unregistered, PyLav client has been shutdown")
-                    self.__reload_pylav()
+                    # self.__reload_pylav()
 
     @staticmethod
     def __reload_pylav():
