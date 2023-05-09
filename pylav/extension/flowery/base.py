@@ -47,6 +47,10 @@ class FloweryAPI:
 
         self._lyrics = LyricsAPI(client, self)
 
+    async def shutdown(self) -> None:
+        """Close the cached session."""
+        await self._cached_session.close()
+
     @property
     def lyrics(self) -> LyricsAPI:
         """The lyrics API client."""

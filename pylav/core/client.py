@@ -1098,6 +1098,7 @@ class Client(metaclass=SingletonClass):
                         await self._local_node_manager.shutdown()
                         await self._session.close()
                         await self._cached_session.close()
+                        await self._flowery_api.shutdown()
 
                         if self._scheduler:
                             with contextlib.suppress(Exception):
