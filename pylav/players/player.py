@@ -443,6 +443,17 @@ class Player(VoiceProtocol):
         if payload:
             await self.node.patch_session_player(guild_id=self.guild.id, payload=payload)
 
+    async def update_current_duration(self) -> Track | None:
+        if not self.current:
+            return
+        if await self.current.is_spotify() or await self.current.is_apple_music():
+            await asyncio.sleep(1)
+            api_player = await self.fetch_node_player()
+            track = api_player.track
+            if self.current._processed.info.length != track.info.length:
+                object.__setattr__(self.current._processed.info, "length", track.info.length)
+                return self.current
+
     @property
     def paused(self) -> bool:
         return self._paused
@@ -677,6 +688,7 @@ class Player(VoiceProtocol):
         self._ping = player.state.ping
         if self.current:
             self.current.last_known_position = self._last_position
+            object.__setattr__(self.current._processed.info, "length", player.track.info.length)
         if return_position:
             return player.track.info.position or 0 if player.track else 0
 

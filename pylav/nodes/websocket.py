@@ -554,6 +554,9 @@ class WebSocket:
                 return
             case "TrackStartEvent":
                 data = typing.cast(TrackStart, data)
+                new_track = await player.update_current_duration()
+                if new_track:
+                    track = new_track
                 event = TrackStartEvent(player, track, self.node, event_object=data)
                 await self._process_track_event(player, track, self.node, data)
             case "TrackStuckEvent":
