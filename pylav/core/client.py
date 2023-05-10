@@ -1487,6 +1487,7 @@ class Client(metaclass=SingletonClass):
             return track_count
         elif isinstance(response, rest_api.TrackResponse):
             track_list = [response.data]
+            enqueue = False
         elif isinstance(response, rest_api.SearchResponse):
             track_list = response.data
         else:

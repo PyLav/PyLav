@@ -364,6 +364,8 @@ class Query:
         query_type = match.group("type")
         match query_type:
             case "album":
+                if match.group("identifier2"):
+                    return cls(query, "Apple Music", query_type="single")
                 return cls(query, "Apple Music", query_type="album")
             case "song":
                 return cls(query, "Apple Music", query_type="single")
