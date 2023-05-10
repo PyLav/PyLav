@@ -23,7 +23,6 @@ PYLAV__DEFAULT_SEARCH_SOURCE: dzsearch    # Defaults to dzsearch - Possible valu
 
 PYLAV__REDIS_FULL_ADDRESS_RESPONSE_CACHE: # Optional Leave "null" so that it is not used.
 PYLAV__JAVA_EXECUTABLE: java              # Never used in this environment.
-PYLAV__LINKED_BOT_IDS: []                 # Currently unused, list of bot ids
 
 PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE: false   #  Can now be set to true if you wish
 
@@ -34,6 +33,6 @@ PYLAV__TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS: 7         # How many days to w
 # Please note that if this is enable, multiple bots should not share the same database, as reads/writes will not be synced.
 PYLAV__READ_CACHING_ENABLED: false # Whether to cache the postgres queries - Values are `true` or `false` - case sensitive
 
-PREFER_PARTIAL_TRACKS: false              # PyLav will search for tracks only when it is necessary for it to be played rather than as soon as possible.
+PYLAV__PREFER_PARTIAL_TRACKS: false              # PyLav will search for tracks only when it is necessary for it to be played rather than as soon as possible.
 PYLAV__LOCAL_TRACKS_FOLDER: /localtracks  # The folder where local tracks are stored.
 PYLAV__DATA_FOLDER: /pylav                # The folder where the config files are stored - Leave null to use a OS appropriate default

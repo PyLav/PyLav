@@ -29,11 +29,7 @@ if POSTGRES_SOCKET is not None:
     POSTGRES_PORT = None
     POSTGRES_HOST = POSTGRES_SOCKET
 JAVA_EXECUTABLE = __get_path(envar_value) if (envar_value := os.getenv("PYLAV__JAVA_EXECUTABLE")) is not None else None
-LINKED_BOT_IDS = (
-    list(map(str.strip, envar_value.split("|")))
-    if (envar_value := os.getenv("PYLAV__LINKED_BOT_IDS")) is not None
-    else None
-)
+
 USE_BUNDLED_EXTERNAL_PYLAV_NODE = (
     bool(int(envar_value)) if (envar_value := os.getenv("PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE")) is not None else None
 )

@@ -44,7 +44,6 @@ if not ENV_FILE.exists():
     from pylav.constants.config.env_var import EXTERNAL_UNMANAGED_SSL as EXTERNAL_UNMANAGED_SSL
     from pylav.constants.config.env_var import FALLBACK_POSTGREST_HOST as FALLBACK_POSTGREST_HOST
     from pylav.constants.config.env_var import JAVA_EXECUTABLE as JAVA_EXECUTABLE
-    from pylav.constants.config.env_var import LINKED_BOT_IDS as LINKED_BOT_IDS
     from pylav.constants.config.env_var import LOCAL_TRACKS_FOLDER as LOCAL_TRACKS_FOLDER
     from pylav.constants.config.env_var import MANAGED_NODE_APPLE_MUSIC_API_KEY as MANAGED_NODE_APPLE_MUSIC_API_KEY
     from pylav.constants.config.env_var import (
@@ -89,7 +88,6 @@ else:
     from pylav.constants.config.file import EXTERNAL_UNMANAGED_SSL as EXTERNAL_UNMANAGED_SSL
     from pylav.constants.config.file import FALLBACK_POSTGREST_HOST as FALLBACK_POSTGREST_HOST
     from pylav.constants.config.file import JAVA_EXECUTABLE as JAVA_EXECUTABLE
-    from pylav.constants.config.file import LINKED_BOT_IDS as LINKED_BOT_IDS
     from pylav.constants.config.file import LOCAL_TRACKS_FOLDER as LOCAL_TRACKS_FOLDER
     from pylav.constants.config.file import MANAGED_NODE_APPLE_MUSIC_API_KEY as MANAGED_NODE_APPLE_MUSIC_API_KEY
     from pylav.constants.config.file import (
