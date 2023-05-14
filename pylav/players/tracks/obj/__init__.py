@@ -750,8 +750,8 @@ class Track:
             await self.get_local_query_track_display_name(
                 max_length=max_length,
                 author_string=author_string,
-                unknown_author=await self.author() != "Unknown artist",
-                unknown_title=await self.title() != "Unknown title",
+                unknown_author=await self.author() == "Unknown artist",
+                unknown_title=await self.title() == "Unknown title",
             )
             if await self.query() and await self.is_local()
             else await self.get_external_query_track_display_name(max_length=max_length, author_string=author_string)
