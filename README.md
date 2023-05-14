@@ -68,6 +68,27 @@ Features
 - Lyrics API to retrieve lyrics for tracks provided by [Flowery](https://flowery.pw)
 - M3U, PLS and PYLAV text file parser to convert contents into a playlist (p.s. Lavalink must support the format/coded of files still)
 
+System Requirements
+------------------------------------
+With a locally hosted Postgres server and locally hosted/managed lavalink node (**recommended - Best performance**):
+- CPU: 3 cores or more
+- RAM: 4GB or more
+- Disk Space: 10GB or more (NVME Ideally, SSD OK)
+
+With a locally hosted Postgres server and externally hosted lavalink node (Okay performance):
+- CPU: 2 cores or more
+- RAM: 3GB or more
+- Disk Space: 10GB or more (NVME Ideally, SSD OK)
+
+With an externally hosted Postgres server and locally hosted/managed lavalink node (Poor performance):
+- CPU: 2 cores or more
+- RAM: 2GB or more
+- Disk Space: 10GB or more (SSD)
+
+With an externally hosted Postgres server and externally hosted lavalink node (Worst performance):
+- CPU: 1 cores or more
+- RAM: 1GB or more
+- Disk Space: 10GB or more (SSD)
 
 Credits
 ---------------------------
