@@ -666,14 +666,16 @@ class Player(VoiceProtocol):
 
         if self.paused:
             return min(
-                self.timescale.adjust_position(self._paused_position) if self.timescale else self._paused_position,
+                self.timescale.adjust_position(self._paused_position)
+                if self.timescale.changed
+                else self._paused_position,
                 await self.current.duration(),
             )
 
         difference = time.time() * 1000 - self._last_update
         position = self._last_position + difference
         return min(
-            self.timescale.adjust_position(position) if self.timescale else position,
+            self.timescale.adjust_position(position) if self.timescale.changed else position,
             await self.current.duration(),
         )
 
@@ -684,11 +686,19 @@ class Player(VoiceProtocol):
             return 0
 
         if self.paused:
-            return self._last_position
+            return min(
+                self.timescale.adjust_position(self._paused_position)
+                if self.timescale.changed
+                else self._paused_position,
+                self.current._duration,
+            )
 
         difference = time.time() * 1000 - self._last_update
         position = self._last_position + difference
-        return self.timescale.adjust_position(position) if self.timescale else position
+        return min(
+            self.timescale.adjust_position(position) if self.timescale.changed else position,
+            self.current._duration,
+        )
 
     async def fetch_player_stats(self, return_position: bool = False):
         try:
@@ -711,15 +721,16 @@ class Player(VoiceProtocol):
 
     async def fetch_position(self, skip_fetch: bool = False) -> float:
         """Returns the position in the track"""
+        pos = await self.position()
         if skip_fetch:
-            return await self.position()
+            return pos
         try:
             if not self.current:
-                return await self.position()
+                return pos
             # await self.fetch_player_stats()
         except Exception:  # noqa
-            return await self.position()
-        return await self.position()
+            return pos
+        return pos
 
     async def auto_pause_task(self):
         with contextlib.suppress(
@@ -1274,18 +1285,20 @@ class Player(VoiceProtocol):
         if end_time is not None:
             await self._process_payload_end_time(end_time, payload, track)
 
-    @staticmethod
-    async def _process_payload_end_time(end_time, payload, track: Track):
-        if not isinstance(end_time, int) or not 0 <= end_time <= await track.duration():
+    async def _process_payload_end_time(self, end_time, payload, track: Track):
+        if not isinstance(end_time, int) or not 0 <= end_time <= self.timescale.reverse_position(
+            await track.duration()
+        ):
             raise ValueError(
                 "end_time must be an int with a value equal to, or greater than 0, and less than the track duration"
             )
         payload["endTime"] = int(end_time)
 
-    @staticmethod
-    async def _process_payload_position(payload, start_time, track: Track):
+    async def _process_payload_position(self, payload, start_time, track: Track):
         start_time = start_time or track.timestamp
-        if not isinstance(start_time, int) or not 0 <= start_time <= await track.duration():
+        if not isinstance(start_time, int) or not 0 <= start_time <= self.timescale.reverse_position(
+            await track.duration()
+        ):
             raise ValueError(
                 "start_time must be an int with a value equal to, "
                 "or greater than 0, and less than the track duration"
@@ -1522,6 +1535,8 @@ class Player(VoiceProtocol):
             if with_filter:
                 position = await self.fetch_position()
             position = max([min([position, await self.current.duration()]), 0])
+            if self.timescale.changed:
+                position = self.timescale.reverse_position(position)
             self.node.dispatch_event(
                 TrackSeekEvent(self, requester, self.current, before=await self.fetch_position(), after=position)
             )
@@ -1588,6 +1603,8 @@ class Player(VoiceProtocol):
         payload = {}
         old_node = self.node
         position = await self.fetch_position(skip_fetch=skip_position_fetch)
+        if self.timescale.changed:
+            position = self.timescale.reverse_position(position)
         self.node = node
         await asyncio.wait_for(self._waiting_for_node.wait(), timeout=None)
         await node.websocket.wait_until_ready()
@@ -2232,13 +2249,16 @@ class Player(VoiceProtocol):
             }
         if not volume:
             kwargs.pop("volume", None)
+        position = await self.fetch_position()
+        if self.timescale.changed:
+            position = self.timescale.reverse_position(position)
         payload = {
             "filters": self.node.get_filter_payload(
                 player=self,
                 reset_no_set=reset_not_set,
                 **kwargs,
             ),
-            "position": int(await self.fetch_position()),
+            "position": int(position),
         }
         await self.node.patch_session_player(self.guild.id, payload=payload)
         kwargs.pop("reset_not_set", None)
@@ -2338,11 +2358,11 @@ class Player(VoiceProtocol):
 
     async def draw_time(self) -> str:
         paused = self.paused
-        pos = await self.fetch_position()
-        duration = await self.current.duration() if self.current else None
-        dur = duration or pos
+        position = await self.fetch_position()
+        duration = None if not self.current else await self.current.duration()
+        dur = duration or position
         sections = 12
-        loc_time = round((pos / dur if dur != 0 else pos) * sections)
+        loc_time = round((position / dur if dur != 0 else position) * sections)
         bar = "\N{BOX DRAWINGS HEAVY HORIZONTAL}"
         seek = "\N{RADIO BUTTON}"
         msg = (
@@ -2371,8 +2391,6 @@ class Player(VoiceProtocol):
         else:
             arrow = await self.draw_time()
             position = await self.fetch_position()
-            if self.timescale:
-                position *= self.timescale.speed
             pos = format_time_dd_hh_mm_ss(position)
         current = self.current
         dur = (
@@ -2382,6 +2400,9 @@ class Player(VoiceProtocol):
             if await current.stream()
             else format_time_dd_hh_mm_ss(await current.duration())
         )
+        if self.timescale.changed:
+            dur += "*"
+            pos += "*"
         current_track_description = await current.get_track_display_name(with_url=True) if current else None
         next_track_description = (
             await self.next_track.get_track_display_name(with_url=True) if self.next_track else None
@@ -2441,7 +2462,9 @@ class Player(VoiceProtocol):
             val += "{translation}: `{duration}`\n".format(
                 duration=shorten_string(max_length=100, string=_("LIVE"))
                 if await self.last_track.stream()
-                else format_time_dd_hh_mm_ss(await self.last_track.duration()),
+                else (
+                    format_time_dd_hh_mm_ss(await self.last_track.duration()) + "*" if self.timescale.changed else ""
+                ),
                 translation=discord.utils.escape_markdown(_("Duration")),
             )
             if rq := self.last_track.requester:
@@ -2456,7 +2479,9 @@ class Player(VoiceProtocol):
             val += "{translation}: `{duration}`\n".format(
                 duration=_("LIVE")
                 if await self.next_track.stream()
-                else format_time_dd_hh_mm_ss(await self.next_track.duration()),
+                else format_time_dd_hh_mm_ss(await self.next_track.duration()) + "*"
+                if self.timescale.changed
+                else "",
                 translation=discord.utils.escape_markdown(_("Duration")),
             )
             if rq := self.next_track.requester:
@@ -2468,7 +2493,8 @@ class Player(VoiceProtocol):
     async def _process_now_playing_embed_footer(self, page, show_help):
         queue_dur = await self.queue_duration()
         queue_total_duration = format_time_string(queue_dur // 1000)
-
+        if self.timescale.changed:
+            queue_total_duration += "*"
         track_count = self.queue.qsize()
         match track_count:
             case 1:
@@ -2552,7 +2578,8 @@ class Player(VoiceProtocol):
         end_index = start_index + per_page
         tracks = list(islice(queue.raw_queue, start_index, end_index))
         arrow = await self.draw_time()
-        pos = format_time_dd_hh_mm_ss(await self.fetch_position())
+        position = await self.fetch_position()
+        pos = format_time_dd_hh_mm_ss(position)
         current = self.current
         dur = (
             None
@@ -2561,6 +2588,9 @@ class Player(VoiceProtocol):
             if await current.stream()
             else format_time_dd_hh_mm_ss(await current.duration())
         )
+        if self.timescale.changed:
+            pos += "*"
+            dur += "*"
         queue_list = await self._process_queue_embed_initial_description(arrow, current, dur, pos, queue_list)
         queue_list = await self._process_queue_embed_maybe_shuffle(history, queue_list, tracks)
         queue_list = await self._process_queue_tracks(history, queue_list, start_index, tracks)
@@ -2587,6 +2617,8 @@ class Player(VoiceProtocol):
             page.set_thumbnail(url=url)
         queue_dur = await self.queue_duration(history=history)
         queue_total_duration = format_time_string(queue_dur // 1000)
+        if self.timescale.changed:
+            queue_total_duration += "*"
         await self._process_queue_embed_footer(page, page_index, queue, queue_total_duration, total_pages)
         return page
 
@@ -2752,6 +2784,9 @@ class Player(VoiceProtocol):
         Returns a dict representation of the player.
         """
         data = await self.config.fetch_all()
+        position = await self.position()
+        if self.timescale.changed:
+            position = self.timescale.reverse_position(position)
         return {
             "id": int(self.guild.id),
             "channel_id": self.channel.id,
@@ -2767,7 +2802,7 @@ class Player(VoiceProtocol):
             "auto_play": data["auto_play"],
             "auto_play_playlist_id": data["auto_play_playlist_id"],
             "volume": self.volume,
-            "position": await self.position(),
+            "position": position,
             "playing": self.is_active,
             "queue": [] if self.queue.empty() else [await t.to_dict() for t in self.queue.raw_queue],
             "history": [] if self.history.empty() else [await t.to_dict() for t in self.history.raw_queue],

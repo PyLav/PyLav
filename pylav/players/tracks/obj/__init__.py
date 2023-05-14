@@ -47,6 +47,7 @@ class Track:
         "_raw_data",
         "_processed",
         "_player",
+        "_duration",
     )
     __CLIENT: Client | None = None
 
@@ -71,6 +72,7 @@ class Track:
         self._raw_data: JSON_DICT_TYPE = {}
         self._processed: APITrack | None = None
         self._player: Player | None = None
+        self._duration: int | float = float("inf")
 
         self._process_init()
 
@@ -141,10 +143,10 @@ class Track:
         node: Node,
         data: Track | APITrack | dict[str, Any] | str | None,
         query: Query | None,
+        player_instance: Player | None,
         skip_segments: list[str] | None = None,
         requester: discord.abc.User | int | None = None,
         lazy: bool = False,
-        player_instance: Player | None = None,
         **extra: Any,
     ) -> Track | None:
         """Builds a track object from the given data.
@@ -184,26 +186,51 @@ class Track:
             if query is None:
                 query = await Query.from_string(data.info.uri)
             return cls._from_lavalink_track_object(
-                node, data, query, skip_segments, requester, player_instance=player_instance, **extra
+                node=node,
+                data=data,
+                query=query,
+                skip_segments=skip_segments,
+                requester=requester,
+                player_instance=player_instance,
+                **extra,
             )
 
         if isinstance(data, dict):
             try:
-                t = from_dict(data_class=APITrack, data=data)
+                data = from_dict(data_class=APITrack, data=data)
                 if query is None:
-                    query = await Query.from_string(t.info.uri)
+                    query = await Query.from_string(data.info.uri)
                 return cls._from_lavalink_track_object(
-                    node, t, query, skip_segments, requester, player_instance=player_instance, **extra
+                    node=node,
+                    data=data,
+                    query=query,
+                    skip_segments=skip_segments,
+                    requester=requester,
+                    player_instance=player_instance,
+                    **extra,
                 )
             except Exception as exc:
                 raise KeyError("Invalid track data") from exc
 
         if data is None:
-            return cls._from_query(node, query, skip_segments, requester, player_instance=player_instance, **extra)
+            return cls._from_query(
+                node=node,
+                data=query,
+                skip_segments=skip_segments,
+                requester=requester,
+                player_instance=player_instance,
+                **extra,
+            )
 
         if isinstance(data, str):
             return await cls._from_base64_string(
-                node, data, skip_segments, requester, player_instance=player_instance, lazy=lazy, **extra
+                node=node,
+                data=data,
+                skip_segments=skip_segments,
+                requester=requester,
+                player_instance=player_instance,
+                lazy=lazy,
+                **extra,
             )
 
         raise TypeError(f"Expected Track, LavalinkTrackObject, dict, or str, got {type(data).__name__}")
@@ -214,13 +241,14 @@ class Track:
         node: Node,
         data: APITrack,
         query: Query,
+        player_instance: Player | None,
         skip_segments: list[str] | None = None,
         requester: discord.abc.User | int | None = None,
-        player_instance: Player | None = None,
         **extra: Any,
     ) -> Track:
         instance = cls(node, query, skip_segments, requester, **extra)
         instance._encoded = data.encoded
+        instance._duration = data.info.length
         instance._extra = extra
         instance._raw_data = extra.get("raw_data", {})
         instance._unique_id = hashlib.md5()
@@ -234,9 +262,9 @@ class Track:
         cls,
         node: Node,
         data: str,
+        player_instance: Player | None,
         skip_segments: list[str] | None = None,
         requester: discord.abc.User | int | None = None,
-        player_instance: Player | None = None,
         lazy: bool = False,
         **extra: Any,
     ) -> Track:
@@ -257,9 +285,9 @@ class Track:
         cls,
         node: Node,
         query: Query,
+        player_instance: Player | None,
         skip_segments: list[str] | None = None,
         requester: discord.abc.User | int | None = None,
-        player_instance: Player | None = None,
         **extra: Any,
     ) -> Track:
         instance = cls(node, query, skip_segments, requester, **extra)
@@ -329,7 +357,10 @@ class Track:
         return (await self.fetch_full_track_data()).info.isSeekable
 
     async def duration(self) -> int:
-        return (await self.fetch_full_track_data()).info.length
+        dur = (await self.fetch_full_track_data()).info.length
+        if self.player is None:
+            return dur
+        return self.player.timescale.adjust_position(dur) if self.player.timescale.changed else dur
 
     length = duration
 
@@ -491,6 +522,7 @@ class Track:
             return self._processed
         if self.encoded:
             self._processed = await self.client.decode_track(self.encoded)
+            self._duration = self._processed.info.length
         else:
             await self.search()
         return self._processed
@@ -545,6 +577,7 @@ class Track:
         self._unique_id = hashlib.md5()
         self._unique_id.update(self.encoded.encode())
         self._processed = track
+        self._duration = track.info.length
 
     async def search_all(self, player: Player, requester: int, bypass_cache: bool = False) -> list[Track]:
         _query = await Query.from_string(self._query)
@@ -629,7 +662,7 @@ class Track:
             max_length=max_length if with_url and max_length is None else (max_length - 8), author=author
         )
         track_name = self._maybe_escape_markdown(text=track_name, escape=escape)
-        if with_url and (query := await self.query()) and not query.is_local:
+        if with_url and ((query := await self.query()) and not query.is_local):
             track_name = f"**[{track_name}]({await self.uri()})**"
         return track_name
 

@@ -114,6 +114,7 @@ class TrackMappingSource(menus.ListPageSource):
         start_index, page_num = self.get_starting_index_and_page_number(menu)
         padding = len(str(start_index + len(tracks)))
         queue_list = ""
+        player = self.cog.pylav.get_player(self.guild_id)
         for track_idx, track in enumerate(tracks, start=start_index + 1):
             if isinstance(track, str):
                 track = await Track.build_track(
@@ -121,7 +122,7 @@ class TrackMappingSource(menus.ListPageSource):
                     requester=self.author.id,
                     data=track,
                     query=None,
-                    player_instance=None,
+                    player_instance=player,
                 )
             else:
                 track = await Track.build_track(
@@ -129,7 +130,7 @@ class TrackMappingSource(menus.ListPageSource):
                     requester=self.author.id,
                     data=from_dict(data_class=LavalinkTrack, data=track),
                     query=None,
-                    player_instance=None,
+                    player_instance=player,
                 )
             track_description = await track.get_track_display_name(max_length=50, with_url=True)
             diff = padding - len(str(track_idx))

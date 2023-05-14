@@ -69,11 +69,65 @@ class Timescale(FilterMixin):
     def reset(self) -> None:
         self.speed = self.pitch = self.rate = None
 
+    @staticmethod
+    def _decrease(value: float | int, percentage: float | int) -> float:
+        return value / (1 + percentage)
+
+    @staticmethod
+    def _increase(value: float | int, percentage: float | int) -> float:
+        return value * (1 + percentage)
+
+    def _get_percentages(self) -> tuple[float, float]:
+        if self.speed is None:
+            speed = 0
+        elif self.speed >= 1:
+            speed = self.speed - 1
+        else:
+            speed = 1 - self.speed
+        if self.rate is None:
+            rate = 0
+        elif self.rate >= 1:
+            rate = self.rate - 1
+        else:
+            rate = 1 - self.rate
+        return speed, rate
+
     def adjust_position(self, position: float | int) -> int:
         if self.speed is None and self.rate is None:
             return int(position)
+        speed, rate = self._get_percentages()
         if self.rate is None:
-            return int(position * self.speed)
+            return int(self._decrease(position, speed) if self.speed >= 1 else self._increase(position, speed))
         if self.speed is None:
-            return int(position * self.rate)
-        return int(position + (position * (self.speed - 1)) + (position * (self.rate - 1)))
+            return int(
+                self._decrease(position, self.rate - 1) if self.rate >= 1 else self._increase(position, 1 - self.rate)
+            )
+        if self.speed >= 1 and self.rate >= 1:
+            return int(self._decrease(position, (self.speed - 1) + (self.rate - 1)))
+        elif self.speed >= 1 > self.rate:
+            return int(self._decrease(self._increase(position, 1 - self.rate), self.speed - 1))
+
+        elif self.speed < 1 <= self.rate:
+            return int(self._decrease(self._increase(position, self.speed - 1), 1 - self.rate))
+        else:
+            return int(self._increase(position, (1 - self.speed) + (1 - self.rate)))
+
+    def reverse_position(self, position: float | int) -> int:
+        if self.speed is None and self.rate is None:
+            return int(position)
+        speed, rate = self._get_percentages()
+        if self.rate is None:
+            return int(self._increase(position, speed) if self.speed >= 1 else self._decrease(position, speed))
+        if self.speed is None:
+            return int(
+                self._increase(position, self.rate - 1) if self.rate >= 1 else self._decrease(position, 1 - self.rate)
+            )
+        if self.speed >= 1 and self.rate >= 1:
+            return int(self._increase(position, (self.speed - 1) + (self.rate - 1)))
+        elif self.speed >= 1 > self.rate:
+            return int(self._increase(self._decrease(position, 1 - self.rate), self.speed - 1))
+
+        elif self.speed < 1 <= self.rate:
+            return int(self._increase(self._decrease(position, self.speed - 1), 1 - self.rate))
+        else:
+            return int(self._decrease(position, (1 - self.speed) + (1 - self.rate)))
