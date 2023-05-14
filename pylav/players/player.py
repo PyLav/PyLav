@@ -87,6 +87,7 @@ from pylav.players.filters import (
     Vibrato,
     Volume,
 )
+from pylav.players.filters.misc import FilterMixin
 from pylav.players.query.obj import Query
 from pylav.players.tracks.obj import Track
 from pylav.players.utils import PlayerQueue, TrackHistoryQueue
@@ -615,8 +616,24 @@ class Player(VoiceProtocol):
         return self._channel_mix
 
     @property
+    def filters(self) -> list[FilterMixin]:
+        """A list of all  filters"""
+        return [
+            self.equalizer,
+            self.karaoke,
+            self.timescale,
+            self.tremolo,
+            self.vibrato,
+            self.rotation,
+            self.distortion,
+            self.echo,
+            self.low_pass,
+            self.channel_mix,
+        ]
+
+    @property
     def has_effects(self):
-        return self._effect_enabled
+        return any(f.changed for f in self.filters)
 
     @property
     def guild(self) -> discord.Guild:
@@ -2469,10 +2486,13 @@ class Player(VoiceProtocol):
                     track_count_variable_do_not_translate=track_count,
                     queue_total_duration_variable_do_not_translate=queue_total_duration,
                 )
-        autoplay_emoji, repeat_emoji = await self._process_embed_emojis()
+        autoplay_emoji, repeat_emoji, filter_emoji = await self._process_embed_emojis()
         text += "{translation}: {repeat_emoji}".format(repeat_emoji=repeat_emoji, translation=_("Repeating"))
         text += "{space}{translation}: {autoplay_emoji}".format(
             space=(" | " if text else ""), autoplay_emoji=autoplay_emoji, translation=_("Auto Play")
+        )
+        text += "{space}{translation}: {filter_emoji}".format(
+            space=(" | " if text else ""), filter_emoji=filter_emoji, translation=_("Effects")
         )
         text += "{space}{translation}: {volume}".format(
             space=(" | " if text else ""),
@@ -2512,7 +2532,8 @@ class Player(VoiceProtocol):
         else:
             repeat_emoji = "\N{CLOCKWISE RIGHTWARDS AND LEFTWARDS OPEN CIRCLE ARROWS WITH CIRCLED ONE OVERLAY}"
         autoplay_emoji = "\N{WHITE HEAVY CHECK MARK}" if await self.autoplay_enabled() else "\N{CROSS MARK}"
-        return autoplay_emoji, repeat_emoji
+        filter_emoji = "\N{WHITE HEAVY CHECK MARK}" if self.has_effects else "\N{CROSS MARK}"
+        return autoplay_emoji, repeat_emoji, filter_emoji
 
     async def get_queue_page(
         self,
@@ -2622,10 +2643,13 @@ class Player(VoiceProtocol):
                     queue_total_duration_variable_do_not_translate=queue_total_duration,
                 )
 
-        autoplay_emoji, repeat_emoji = await self._process_embed_emojis()
+        autoplay_emoji, repeat_emoji, filter_emoji = await self._process_embed_emojis()
         text += "{translation}: {repeat_emoji}".format(repeat_emoji=repeat_emoji, translation=_("Repeating"))
         text += "{space}{translation}: {autoplay_emoji}".format(
             space=(" | " if text else ""), autoplay_emoji=autoplay_emoji, translation=_("Auto Play")
+        )
+        text += "{space}{translation}: {filter_emoji}".format(
+            space=(" | " if text else ""), filter_emoji=filter_emoji, translation=_("Effects")
         )
         text += "{space}{translation}: {volume}".format(
             space=(" | " if text else ""),
