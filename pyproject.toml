@@ -149,6 +149,7 @@ expiringdict = "^1.2.2"
 humanize = "^4.6.0"
 importlib-metadata = "^6.6.0"
 iso8601 = "^1.1.0"
+mutagen = "^1.46.0"
 netaddr = "^0.8.0"
 numpy = "^1.24.3"
 piccolo = {extras = ["all"], version = "^0.111.0"}
@@ -171,8 +172,8 @@ rich = { version = "^13.3.5", optional = true}
 typing-extensions = { version = "^4.5.0", optional = true}
 rapidfuzz = { version = "^3.0.0", optional = true}
 uvloop = { version = "^0.17.0", markers = "sys_platform != 'win32' and platform_python_implementation == 'CPython'", optional = true}
-# Dependency for the docs
 
+# Dependency for the docs
 Red-DiscordBot = {version = "^3.5.1", optional = true}
 furo = { version = "^2023.3.27", optional = true}
 olefile = { version = "^0.46", optional = true}

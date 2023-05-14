@@ -2381,7 +2381,7 @@ class Player(VoiceProtocol):
         messageable: Messageable | DISCORD_INTERACTION_TYPE = None,
         progress: bool = True,
         show_help: bool = False,
-    ) -> discord.Embed | str:  # sourcery skip: use-fstring-for-formatting
+    ) -> dict[str, discord.Embed | str | discord.File]:  # sourcery skip: use-fstring-for-formatting
         if not embed:
             return ""
         queue_list = ""
@@ -2429,7 +2429,10 @@ class Player(VoiceProtocol):
         await self._process_np_embed_next_track(next_track_description, page)
 
         await self._process_now_playing_embed_footer(page, show_help)
-        return page
+        kwargs = {"embed": page}
+        if current and (artwork := await current.get_embedded_artwork()):
+            kwargs["file"] = artwork
+        return kwargs
 
     @staticmethod
     async def _process_np_embed_initial_description(
@@ -2569,9 +2572,9 @@ class Player(VoiceProtocol):
         embed: bool = True,
         messageable: Messageable | DISCORD_INTERACTION_TYPE = None,
         history: bool = False,
-    ) -> discord.Embed | str:
+    ) -> dict[str, discord.Embed | str | discord.File]:
         if not embed:
-            return ""
+            return {"content": ""}
         queue = self.history if history else self.queue
         queue_list = ""
         start_index = page_index * per_page
@@ -2620,7 +2623,10 @@ class Player(VoiceProtocol):
         if self.timescale.changed:
             queue_total_duration += "*"
         await self._process_queue_embed_footer(page, page_index, queue, queue_total_duration, total_pages)
-        return page
+        kwargs = {"embed": page}
+        if current and (artwork := await current.get_embedded_artwork()):
+            kwargs["file"] = artwork
+        return kwargs
 
     @staticmethod
     async def _process_queue_embed_initial_description(arrow, current, dur, pos, queue_list):

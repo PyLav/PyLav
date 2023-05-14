@@ -1,6 +1,10 @@
 from __future__ import annotations
 
+import asyncio
+import contextlib
 import hashlib
+import io
+import re
 import struct
 import typing
 import uuid
@@ -8,6 +12,7 @@ from functools import total_ordering
 from typing import Any
 
 import discord
+import mutagen
 from dacite import from_dict
 
 from pylav.constants.regex import SQUARE_BRACKETS, STREAM_TITLE
@@ -48,6 +53,8 @@ class Track:
         "_processed",
         "_player",
         "_duration",
+        "_local_file_metadata",
+        "_has_embedded_artwork",
     )
     __CLIENT: Client | None = None
 
@@ -73,7 +80,8 @@ class Track:
         self._processed: APITrack | None = None
         self._player: Player | None = None
         self._duration: int | float = float("inf")
-
+        self._local_file_metadata: mutagen.FileType | None | bool = False
+        self._has_embedded_artwork: bool = False
         self._process_init()
 
     @property
@@ -358,6 +366,7 @@ class Track:
 
     async def duration(self) -> int:
         dur = (await self.fetch_full_track_data()).info.length
+        dur = dur if not await self.is_local() else await self._mutagen_length(dur)
         if self.player is None:
             return dur
         return self.player.timescale.adjust_position(dur) if self.player.timescale.changed else dur
@@ -368,28 +377,97 @@ class Track:
         return (await self.fetch_full_track_data()).info.isStream
 
     async def title(self) -> str:
-        return (await self.fetch_full_track_data()).info.title
+        title = (await self.fetch_full_track_data()).info.title
+        return title if not await self.is_local() else await self._mutagen_title(title)
 
     async def uri(self) -> str:
         return (await self.fetch_full_track_data()).info.uri
 
     async def author(self) -> str:
-        return (await self.fetch_full_track_data()).info.author
+        author = (await self.fetch_full_track_data()).info.author
+        return author if not await self.is_local() else await self._mutagen_artist(author)
 
     async def source(self) -> str:
         return (await self.fetch_full_track_data()).info.sourceName
 
     async def artworkUrl(self) -> str | None:  # noqa:
-        return (await self.fetch_full_track_data()).info.artworkUrl
+        artwork = (await self.fetch_full_track_data()).info.artworkUrl
+        return artwork if not await self.is_local() else await self._mutagen_artwork_url(artwork)
 
     async def isrc(self) -> str | None:
-        return (await self.fetch_full_track_data()).info.isrc
+        isrc = (await self.fetch_full_track_data()).info.isrc
+        return isrc if not await self.is_local() else await self._mutagen_isrc(isrc)
 
     async def info(self) -> Info | None:
         return (await self.fetch_full_track_data()).info
 
     async def probe_info(self) -> str | None:
         return (await self.fetch_full_track_data()).pluginInfo.probeInfo
+
+    async def _get_mutagen_metadata(self) -> mutagen.File | None:
+        if not await self.is_local():
+            self._local_file_metadata = None
+        if self._local_file_metadata != False:
+            return self._local_file_metadata
+        try:
+            self._local_file_metadata = await asyncio.to_thread(mutagen.File, await self.uri())
+        except Exception:
+            self._local_file_metadata = None
+        return self._local_file_metadata
+
+    async def _mutagen_artwork_url(self, default: str | None) -> str | None:
+        if not await self.is_local():
+            return None
+        with contextlib.suppress(Exception):
+            if metadata := await self._get_mutagen_metadata():
+                self._has_embedded_artwork = bool(metadata.pictures)
+                return "attachment://thumbnail.png"
+        return default
+
+    async def get_embedded_artwork(self) -> discord.File | None:
+        if not await self.is_local():
+            return None
+        if not self._has_embedded_artwork:
+            return None
+        with contextlib.suppress(Exception):
+            if metadata := await self._get_mutagen_metadata():
+                if metadata.pictures:
+                    return discord.File(fp=io.BytesIO(metadata.pictures[0].data), filename="thumbnail.png")
+        return None
+
+    async def _mutagen_title(self, default: str | None) -> str | None:
+        if not await self.is_local():
+            return None
+        with contextlib.suppress(Exception):
+            if metadata := await self._get_mutagen_metadata():
+                return next(metadata["title"], None)
+        return default
+
+    async def _mutagen_artist(self, default: str | None) -> str | None:
+        if not await self.is_local():
+            return None
+        with contextlib.suppress(Exception):
+            if metadata := await self._get_mutagen_metadata():
+                return next(metadata["artist"], None)
+        return default
+
+    async def _mutagen_isrc(self, default: str | None) -> str | None:
+        if not await self.is_local():
+            return None
+        with contextlib.suppress(Exception):
+            if metadata := await self._get_mutagen_metadata():
+                matches = re.findall(r"[A-Z]{2}-?\w{3}-?\d{2}-?\d{5}", "\n".join(metadata.get("isrc", [])))
+                return matches[0] if matches else None
+        return default
+
+    async def _mutagen_length(self, default: int | None) -> int | None:
+        if not await self.is_local():
+            return None
+        with contextlib.suppress(Exception):
+            if metadata := await self._get_mutagen_metadata():
+                length = next(metadata["artist"], None)
+                return int(length) if length else None
+        return default
 
     async def query(self) -> Query:
         if self._processed and self._updated_query is None:

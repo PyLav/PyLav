@@ -64,6 +64,13 @@ class DisconnectButton(discord.ui.Button):
 
         await self.view.prepare()
         kwargs = await self.view.get_page(self.view.current_page)
+        attachments = []
+        if "file" in kwargs:
+            attachments = [kwargs.pop("file")]
+        elif "files" in kwargs:
+            attachments = kwargs.pop("files")
+        if attachments:
+            kwargs["attachments"] = attachments
         await self.view.message.edit(view=self.view, **kwargs)
 
 
@@ -118,6 +125,13 @@ class StopTrackButton(discord.ui.Button):
 
         await self.view.prepare()
         kwargs = await self.view.get_page(self.view.current_page)
+        attachments = []
+        if "file" in kwargs:
+            attachments = [kwargs.pop("file")]
+        elif "files" in kwargs:
+            attachments = kwargs.pop("files")
+        if attachments:
+            kwargs["attachments"] = attachments
         await self.view.message.edit(view=self.view, **kwargs)
 
 
@@ -182,4 +196,11 @@ class DisconnectAllButton(discord.ui.Button):
 
         await self.view.prepare()
         kwargs = await self.view.get_page(self.view.current_page)
+        attachments = []
+        if "file" in kwargs:
+            attachments = [kwargs.pop("file")]
+        elif "files" in kwargs:
+            attachments = kwargs.pop("files")
+        if attachments:
+            kwargs["attachments"] = attachments
         await self.view.message.edit(view=self.view, **kwargs)
