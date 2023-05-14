@@ -465,7 +465,7 @@ class Track:
             return None
         with contextlib.suppress(Exception):
             if metadata := await self._get_mutagen_metadata():
-                length = next(metadata["artist"], None)
+                length = next(metadata["length"], None)
                 return int(length) if length else None
         return default
 
