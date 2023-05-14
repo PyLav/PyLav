@@ -81,7 +81,7 @@ class Track:
         self._player: Player | None = None
         self._duration: int | float = float("inf")
         self._local_file_metadata: mutagen.FileType | None | bool = False
-        self._has_embedded_artwork: bool = False
+        self._has_embedded_artwork: bool | None = None
         self._process_init()
 
     @property
@@ -427,7 +427,7 @@ class Track:
     async def get_embedded_artwork(self) -> discord.File | None:
         if not await self.is_local():
             return None
-        if not self._has_embedded_artwork:
+        if self._has_embedded_artwork is False:
             return None
         with contextlib.suppress(Exception):
             if metadata := await self._get_mutagen_metadata():
@@ -440,7 +440,7 @@ class Track:
             return None
         with contextlib.suppress(Exception):
             if metadata := await self._get_mutagen_metadata():
-                return next(metadata["title"], None)
+                return next(iter(metadata["title"]), default)
         return default
 
     async def _mutagen_artist(self, default: str | None) -> str | None:
@@ -448,7 +448,7 @@ class Track:
             return None
         with contextlib.suppress(Exception):
             if metadata := await self._get_mutagen_metadata():
-                return next(metadata["artist"], None)
+                return next(iter(metadata["artist"]), default)
         return default
 
     async def _mutagen_isrc(self, default: str | None) -> str | None:
@@ -457,7 +457,7 @@ class Track:
         with contextlib.suppress(Exception):
             if metadata := await self._get_mutagen_metadata():
                 matches = re.findall(r"[A-Z]{2}-?\w{3}-?\d{2}-?\d{5}", "\n".join(metadata.get("isrc", [])))
-                return matches[0] if matches else None
+                return matches[0] if matches else default
         return default
 
     async def _mutagen_length(self, default: int | None) -> int | None:
@@ -465,8 +465,8 @@ class Track:
             return None
         with contextlib.suppress(Exception):
             if metadata := await self._get_mutagen_metadata():
-                length = next(metadata["length"], None)
-                return int(length) if length else None
+                length = next(iter(metadata["length"]), None)
+                return int(length) if length else default
         return default
 
     async def query(self) -> Query:
