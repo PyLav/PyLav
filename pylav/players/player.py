@@ -2383,7 +2383,7 @@ class Player(VoiceProtocol):
         show_help: bool = False,
     ) -> dict[str, discord.Embed | str | discord.File]:  # sourcery skip: use-fstring-for-formatting
         if not embed:
-            return ""
+            return {"content": ""}
         queue_list = ""
         if not progress:
             arrow = ""
@@ -2466,7 +2466,7 @@ class Player(VoiceProtocol):
                 duration=shorten_string(max_length=100, string=_("LIVE"))
                 if await self.last_track.stream()
                 else (
-                    format_time_dd_hh_mm_ss(await self.last_track.duration()) + "*" if self.timescale.changed else ""
+                    format_time_dd_hh_mm_ss(await self.last_track.duration()) + ("*" if self.timescale.changed else "")
                 ),
                 translation=discord.utils.escape_markdown(_("Duration")),
             )
@@ -2482,9 +2482,8 @@ class Player(VoiceProtocol):
             val += "{translation}: `{duration}`\n".format(
                 duration=_("LIVE")
                 if await self.next_track.stream()
-                else format_time_dd_hh_mm_ss(await self.next_track.duration()) + "*"
-                if self.timescale.changed
-                else "",
+                else format_time_dd_hh_mm_ss(await self.next_track.duration())
+                + ("*" if self.timescale.changed else ""),
                 translation=discord.utils.escape_markdown(_("Duration")),
             )
             if rq := self.next_track.requester:
