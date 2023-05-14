@@ -420,7 +420,12 @@ class Track:
             return None
         with contextlib.suppress(Exception):
             if metadata := await self._get_mutagen_metadata():
-                self._has_embedded_artwork = bool(metadata.pictures)
+                if any("flac" in m for m in metadata.mime) and metadata.pictures:
+                    self._has_embedded_artwork = bool(metadata.pictures)
+                elif any("mp3" in m for m in metadata.mime) and metadata["APIC:cover"].data:
+                    self._has_embedded_artwork = bool(metadata["APIC:cover"].data)
+                else:
+                    return default
                 return "attachment://thumbnail.png"
         return default
 
@@ -431,8 +436,10 @@ class Track:
             return None
         with contextlib.suppress(Exception):
             if metadata := await self._get_mutagen_metadata():
-                if metadata.pictures:
+                if any("flac" in m for m in metadata.mime) and metadata.pictures:
                     return discord.File(fp=io.BytesIO(metadata.pictures[0].data), filename="thumbnail.png")
+                elif any("mp3" in m for m in metadata.mime) and metadata["APIC:cover"].data:
+                    return discord.File(fp=io.BytesIO(metadata["APIC:cover"].data), filename="thumbnail.png")
         return None
 
     async def _mutagen_title(self, default: str | None) -> str | None:
@@ -440,7 +447,10 @@ class Track:
             return None
         with contextlib.suppress(Exception):
             if metadata := await self._get_mutagen_metadata():
-                return next(iter(metadata["title"]), default)
+                if any("flac" in m for m in metadata.mime):
+                    return next(iter(metadata["title"]), default)
+                elif any("mp3" in m for m in metadata.mime):
+                    return next(iter(metadata["TIT2"].text), default)
         return default
 
     async def _mutagen_artist(self, default: str | None) -> str | None:
@@ -448,7 +458,10 @@ class Track:
             return None
         with contextlib.suppress(Exception):
             if metadata := await self._get_mutagen_metadata():
-                return next(iter(metadata["artist"]), default)
+                if any("flac" in m for m in metadata.mime):
+                    return next(iter(metadata["artist"]), default)
+                elif any("mp3" in m for m in metadata.mime):
+                    return next(iter(metadata["TPE1"].text), default)
         return default
 
     async def _mutagen_isrc(self, default: str | None) -> str | None:
@@ -465,8 +478,9 @@ class Track:
             return None
         with contextlib.suppress(Exception):
             if metadata := await self._get_mutagen_metadata():
-                length = next(iter(metadata["length"]), None)
-                return int(length) if length else default
+                if any("flac" in m for m in metadata.mime):
+                    length = next(iter(metadata["length"]), None)
+                    return int(length) if length else default
         return default
 
     async def query(self) -> Query:
