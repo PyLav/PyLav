@@ -815,3 +815,4 @@ cython_debug/
 
 !/.github/workflows/
 !/pylav/
+/ignore/
