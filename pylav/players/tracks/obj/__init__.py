@@ -823,3 +823,10 @@ class Track:
             )
         else:
             return False, await self.client.flowery_api.lyrics.get_lyrics(query=await self.title())
+
+    async def get_mixplaylist_url(self) -> str | None:
+        if not await self.is_youtube():
+            return None
+        if not (identifier := await self.identifier()):
+            return None
+        return await self.__CLIENT.generate_mix_playlist(video_id=identifier)

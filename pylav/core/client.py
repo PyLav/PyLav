@@ -1733,7 +1733,7 @@ class Client(metaclass=SingletonClass):
     async def generate_mix_playlist(
         *,
         video_id: str | None = None,
-        user_id: str | None,
+        user_id: str | None = None,
         playlist_id: str | None = None,
         channel_id: str | None = None,
     ) -> str:
