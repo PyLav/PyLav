@@ -12,8 +12,6 @@ class EqualizerRow(Table, db=DATABASE_ENGINE, tablename="equalizer"):
     scope = BigInt(null=True, default=None, index=True)
     name = Text(null=True, default=None, index_method=IndexMethod.gin)
     description = Text(null=True, default=None)
-    # FIXME: Drop existing table and recreate it with this column defaults
-    # TODO: Handle new defaults
     author = BigInt(null=True, default=None, index=True)
     band_25 = Float(null=True)
     band_40 = Float(null=True)

@@ -485,12 +485,8 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
 
     async def remove_from_dj_users(self, user: discord.Member) -> None:
         """Remove a user from the disc jockey users of the player"""
-        # TODO: When piccolo add more functions for dealing with arrays update this to become ORM
-        await PlayerRow.raw(
-            "UPDATE player SET dj_users = array_remove(dj_users, {}) WHERE id = {} AND bot = {};",
-            user.id,
-            self.id,
-            self.bot,
+        await PlayerRow.update(dj_users=QueryString("array_remove(dj_users, {})", user.id)).where(
+            PlayerRow.id == self.id & PlayerRow.bot == self.bot
         )
         await self.update_cache((self.exists, True))
         await self.invalidate_cache(self.fetch_all, self.fetch_dj_users)
@@ -554,13 +550,8 @@ class PlayerConfig(CachedModel, metaclass=SingletonCachedByKey):
 
     async def remove_from_dj_roles(self, role: discord.Role) -> None:
         """Remove disc jockey roles from the player"""
-        # TODO: When piccolo add more functions for dealing with arrays update this to become ORM
-
-        await PlayerRow.raw(
-            """UPDATE player SET dj_roles = array_remove(dj_roles, {}) WHERE id = {} AND bot = {}""",
-            role.id,
-            self.id,
-            self.bot,
+        await PlayerRow.update(dj_roles=QueryString("array_remove(dj_roles, {})", role.id)).where(
+            PlayerRow.id == self.id & PlayerRow.bot == self.bot
         )
         await self.update_cache((self.exists, True))
         await self.invalidate_cache(self.fetch_all, self.fetch_dj_roles)

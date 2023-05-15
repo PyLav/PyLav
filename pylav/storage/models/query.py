@@ -68,11 +68,6 @@ class Query(CachedModel, metaclass=SingletonCachedByKey):
             .output(load_json=True, nested=True)
         )
         data = response["tracks"] if response else []
-        # TODO: Remove me release 1.9
-        if data and any(t["info"] is None for t in data):
-            tracks = await self.client.decode_tracks([t["encoded"] for t in data], raise_on_failure=True)
-            await self.update_tracks(tracks)
-            data = [t.to_dict() for t in tracks]
         return data
 
     async def update_tracks(self, tracks: list[str | Track]):

@@ -48,33 +48,30 @@ class QueryController:
             # Do not cache local queries and single track urls or http source entries
             return None
 
-        if await self.exists(query):
-            cached = self.get(query.query_identifier)
-            if await cached.size() > 0:
-                return cached
+        cached = self.get(query.query_identifier)
+        return cached
 
     @staticmethod
     async def add_query(query: QueryObj, result: rest_api.LoadTrackResponses) -> bool:
         if query.is_custom_playlist or query.is_http:
             # Do not cache local queries and single track urls or http source entries
             return False
-        if not result or result.loadType in ["empty", "error", None]:
+        if not result or result.loadType in ["empty", "error", "apiError", None]:
             return False
-
-        if isinstance(result, rest_api.TrackResponse):
-            tracks = [result.data]
-            plugin_info = result.data.pluginInfo.to_dict() if result.data.pluginInfo else None
-            name = None
-
-        elif isinstance(result, rest_api.SearchResponse):
-            tracks = result.data
-            name = None
-            plugin_info = None
-        else:
-            tracks = result.data.tracks
-            playlist_info = result.data.info
-            name = playlist_info.name if playlist_info else None
-            plugin_info = result.data.pluginInfo.to_dict() if result.data.pluginInfo else None
+        match result.loadType:
+            case "track":
+                tracks = [result.data]
+                plugin_info = result.data.pluginInfo.to_dict() if result.data.pluginInfo else None
+                name = None
+            case "search":
+                tracks = result.data
+                name = None
+                plugin_info = None
+            case __:
+                tracks = result.data.tracks
+                playlist_info = result.data.info
+                name = playlist_info.name if playlist_info else None
+                plugin_info = result.data.pluginInfo.to_dict() if result.data.pluginInfo else None
 
         if not tracks:
             return False

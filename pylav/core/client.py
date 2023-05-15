@@ -1445,15 +1445,16 @@ class Client(metaclass=SingletonClass):
         async for local_track in sub_query.get_all_tracks_in_folder():
             yielded = True
             response = await self._get_tracks(player=player, query=local_track, first=True, bypass_cache=True)
-            if isinstance(response, (HTTPException, rest_api.EmptyResponse, rest_api.ErrorResponse)):
-                queries_failed.append(local_track)
-                continue
-            elif isinstance(response, rest_api.TrackResponse):
-                tracks = [response.data]
-            elif isinstance(response, rest_api.SearchResponse):
-                tracks = response.data
-            else:
-                tracks = response.data.tracks
+            match response.loadType:
+                case "track":
+                    tracks = [response.data]
+                case "search":
+                    tracks = response.data
+                case "playlist":
+                    tracks = response.data.tracks
+                case __:
+                    queries_failed.append(local_track)
+                    continue
             if __ := tracks[0].encoded:
                 track_count += 1
                 successful_tracks.append(
@@ -1482,19 +1483,20 @@ class Client(metaclass=SingletonClass):
         track_count,
     ):
         response = await self._get_tracks(player=player, query=sub_query, bypass_cache=bypass_cache)
-        if isinstance(response, (HTTPException, rest_api.EmptyResponse, rest_api.ErrorResponse)):
+        match response.loadType:
+            case "track":
+                tracks = [response.data]
+                enqueue = False
+            case "search":
+                tracks = response.data
+            case "playlist":
+                tracks = response.data.tracks
+            case __:
+                queries_failed.append(sub_query)
+                return track_count
+        if not tracks:
             queries_failed.append(sub_query)
-            return track_count
-        elif isinstance(response, rest_api.TrackResponse):
-            track_list = [response.data]
-            enqueue = False
-        elif isinstance(response, rest_api.SearchResponse):
-            track_list = response.data
-        else:
-            track_list = response.data.tracks
-        if not track_list:
-            queries_failed.append(sub_query)
-        for track in track_list:
+        for track in tracks:
             if __ := track.encoded:
                 track_count += 1
                 successful_tracks.append(
@@ -1512,16 +1514,16 @@ class Client(metaclass=SingletonClass):
         self, bypass_cache, node, player, queries_failed, requester, sub_query, successful_tracks, track_count
     ):
         response = await self._get_tracks(player=player, query=sub_query, first=True, bypass_cache=bypass_cache)
-        if isinstance(response, (HTTPException, rest_api.EmptyResponse, rest_api.ErrorResponse)):
-            queries_failed.append(sub_query)
-            return track_count
-        elif isinstance(response, rest_api.TrackResponse):
-            tracks = [response.data]
-        elif isinstance(response, rest_api.SearchResponse):
-            tracks = response.data
-        else:
-            tracks = response.data.tracks
-
+        match response.loadType:
+            case "track":
+                tracks = [response.data]
+            case "search":
+                tracks = response.data
+            case "playlist":
+                tracks = response.data.tracks
+            case __:
+                queries_failed.append(sub_query)
+                return track_count
         if tracks:
             track_count += 1
             new_query = await Query.from_string(tracks[0].info.uri)
@@ -1619,20 +1621,19 @@ class Client(metaclass=SingletonClass):
                 response = await self.search_query(
                     subquery, bypass_cache=bypass_cache, fullsearch=fullsearch, region=region, sleep=sleep
                 )
-                if not response or not isinstance(
-                    response, (rest_api.TrackResponse, rest_api.SearchResponse, rest_api.PlaylistResponse)
-                ):
-                    continue
-                elif isinstance(response, rest_api.TrackResponse):
-                    tracks = [response.data]
-                    playlist_name = ""
-                elif isinstance(response, rest_api.SearchResponse):
-                    tracks = response.data
-                    playlist_name = ""
-                else:
-                    tracks = response.data.tracks
-                    plugin_info |= response.data.pluginInfo.to_dict()
-                    playlist_name = response.data.info.name if response.data.info else ""
+                match response.loadType:
+                    case "track":
+                        tracks = [response.data]
+                        playlist_name = ""
+                    case "search":
+                        tracks = response.data
+                        playlist_name = ""
+                    case "playlist":
+                        tracks = response.data.tracks
+                        plugin_info |= response.data.pluginInfo.to_dict()
+                        playlist_name = response.data.info.name if response.data.info else ""
+                    case __:
+                        continue
                 if subquery.is_playlist or subquery.is_album:
                     output_tracks.extend(tracks)
                 elif fullsearch and subquery.is_search or subquery.is_single:
@@ -1662,7 +1663,7 @@ class Client(metaclass=SingletonClass):
                 data["data"] = output_tracks[0].to_dict()
             case "empty":
                 data["data"] = None
-            case "error":
+            case "error" | "apiError":
                 data["data"] = {"cause": "No tracks returned", "severity": "common", "message": "No tracks found"}
 
         node = await self.node_manager.find_best_node()

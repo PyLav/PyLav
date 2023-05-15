@@ -288,11 +288,8 @@ class Node(CachedModel, metaclass=SingletonCachedByKey):
 
     async def remove_from_disabled_sources(self, source: str) -> None:
         """Remove a source from the node's disabled sources in the database"""
-        # TODO: When piccolo add support to more Array operations replace with ORM
-        await NodeRow.raw(
-            """UPDATE node SET disabled_sources = array_remove(disabled_sources, {}) WHERE id = {}""",
-            source,
-            self.id,
+        await NodeRow.update(disabled_sources=QueryString("array_remove(disabled_sources, {})", source)).where(
+            NodeRow.id == self.id
         )
         await self.update_cache((self.exists, True))
         await self.invalidate_cache(self.fetch_all, self.fetch_disabled_sources)

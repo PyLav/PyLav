@@ -1526,7 +1526,7 @@ class Node:
             if cached_entry := await self.get_track_from_cache(query=query, first=first):
                 return cached_entry
         if (
-            (not self.node_manager.client.local_tracks_cache)
+            self.node_manager.client.local_tracks_cache.is_ready
             and query.is_local
             and f"{query._query}" in self.node_manager.client.local_tracks_cache.path_to_track
         ):
@@ -1542,12 +1542,13 @@ class Node:
         if isinstance(response, HTTPException):
             return response
         if first:
-            if isinstance(response, rest_api.TrackResponse):
-                return response
-            elif isinstance(response, rest_api.SearchResponse):
-                return rest_api.TrackResponse(loadType="track", data=response.data[0])
-            elif isinstance(response, rest_api.PlaylistResponse):
-                return rest_api.TrackResponse(loadType="track", data=response.data.tracks[0])
+            match response.loadType:
+                case "track":
+                    return response
+                case "search":
+                    return rest_api.TrackResponse(loadType="track", data=response.data[0])
+                case "playlist":
+                    return rest_api.TrackResponse(loadType="track", data=response.data.tracks[0])
         return response
 
     async def search_youtube_music(self, query: str, bypass_cache: bool = False) -> rest_api.LoadTrackResponses:

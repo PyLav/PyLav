@@ -683,14 +683,15 @@ class Track:
         self._query = _query
         self.timestamp = self.timestamp or self._query.start_time
         response = await self.client._get_tracks(await self.query(), first=True, bypass_cache=bypass_cache)
-        if isinstance(response, rest_api.TrackResponse):
-            tracks = [response.data]
-        elif isinstance(response, rest_api.SearchResponse):
-            tracks = response.data
-        elif isinstance(response, rest_api.PlaylistResponse):
-            tracks = response.data.tracks
-        else:
-            tracks = []
+        match response.loadType:
+            case "track":
+                tracks = [response.data]
+            case "search":
+                tracks = response.data
+            case "playlist":
+                tracks = response.data.tracks
+            case __:
+                tracks = []
         if not response or not tracks:
             raise TrackNotFoundException(f"No tracks found for query {await self.query_identifier()}")
         track = tracks[0]
@@ -715,14 +716,15 @@ class Track:
         response = await player.node.get_track(
             await self.query(), bypass_cache=bypass_cache, first=self._query.is_search
         )
-        if isinstance(response, rest_api.TrackResponse):
-            tracks = [response.data]
-        elif isinstance(response, rest_api.SearchResponse):
-            tracks = response.data
-        elif isinstance(response, rest_api.PlaylistResponse):
-            tracks = response.data.tracks
-        else:
-            tracks = []
+        match response.loadType:
+            case "track":
+                tracks = [response.data]
+            case "search":
+                tracks = response.data
+            case "playlist":
+                tracks = response.data.tracks
+            case __:
+                tracks = []
         if not response or tracks:
             raise TrackNotFoundException(f"No tracks found for query {await self.query_identifier()}")
         return [

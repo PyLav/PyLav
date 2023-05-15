@@ -285,7 +285,7 @@ class TransformerCache:
                 return await cls._filter_country_code_cache(limit=limit, **kwargs)
             case "country":
                 return await cls._filter_country_cache(limit=limit, **kwargs)
-            case _:
+            case __:
                 return []
 
     @classmethod

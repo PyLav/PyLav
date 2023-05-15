@@ -369,7 +369,7 @@ class Query:
                 return cls(query, "Apple Music", query_type="album")
             case "song":
                 return cls(query, "Apple Music", query_type="single")
-            case _:
+            case __:
                 return cls(query, "Apple Music", query_type="playlist")
 
     @classmethod
@@ -380,7 +380,7 @@ class Query:
                 return cls(query, "Mixcloud", query_type="album")
             case "playlist":
                 return cls(query, "Mixcloud", query_type="playlist")
-            case _:
+            case __:
                 return cls(query, "Mixcloud", query_type="single")
 
     @classmethod
