@@ -228,11 +228,11 @@ class LocalFile:
             string = os.path.join(*string_list)
         if string.startswith("/") or string.startswith("\\"):
             string = string[1:]
-
         if length is not None and len(string) > length:
-            string = string[length * -1 :]  # noqa: E203
-        if length is not None and add_ellipsis and len(string) > length:
-            string = f"\N{HORIZONTAL ELLIPSIS}{string[length * -1:].strip()}"
+            if not add_ellipsis:
+                string = string[length * -1 :]  # noqa: E203
+            else:
+                string = f"\N{HORIZONTAL ELLIPSIS}{string[length * -1:].strip()}"
         return string
 
     async def files_in_folder(self, show_folders: bool = False) -> AsyncIterator[Query]:
