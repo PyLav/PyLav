@@ -103,6 +103,13 @@ plugins:
 server:
     address: localhost # Address to bind the server to, Client will connect to this address - 0.0.0.0 means all addresses, if you are using the node on same machine as bot then use localhost
     port: 2154 # Port to run the server on, Client will connect to this port
+    compression:
+        enabled: false # Whether to enable compression or not; Set this to 'true' if this is a remote node, and you need to conserve outbound traffic
+    # You will likely want to set this as high as your system can handle without issues if you use localtracks
+    undertow:
+        threads:
+            io: 32       # CPU_COUNT * 2 i.e 32 for 16 core cpu
+            worker: 128  # CPU_COUNT * 8 i.e 128 for 16 core cpu
 metrics:
     prometheus:
         enabled: false

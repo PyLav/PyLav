@@ -53,9 +53,11 @@ services:
         -   ./localtracks:/localtracks
         environment:
             _JAVA_OPTIONS: -Xmx4G # The highest amount of RAM which Lavalink is allowed to use
-            SERVER_COMPRESSION_ENABLED: true
-            # SERVER_UNDERTOW_THREADS_IO: CPU_COUNT * 2
-            # SERVER_UNDERTOW_THREADS_WORKER: CPU_COUNT * 8
+            # Set this to 'true' if this is a remote node, and you need to conserve outbound traffic
+            SERVER_COMPRESSION_ENABLED: false
+            # You will likely want to set this as high as your system can handle without issues if you use localtracks
+            SERVER_UNDERTOW_THREADS_IO: 32 # CPU_COUNT * 2 i.e 32 for 16 core CPU
+            SERVER_UNDERTOW_THREADS_WORKER: 128 # CPU_COUNT * 8 i.e 128 for 16 core CPU
 
             # Configure bind address and port
             SERVER_ADDRESS: 0.0.0.0 # The interface to bind to
