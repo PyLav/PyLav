@@ -17,7 +17,7 @@ NODE_DEFAULT_SETTINGS = {
         "undertow": {
             "threads": {"io": __CPU_COUNT * 2, "worker": __CPU_COUNT * 64},
         },
-        "compression": {"enabled": True},
+        "compression": {"enabled": False},
     },
     "lavalink": {
         "plugins": [

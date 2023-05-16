@@ -23,5 +23,6 @@ async def migration_v_1_10_0(client: Client, current_version: Version) -> None:
     yaml_data["lavalink"]["server"]["resamplingQuality"] = NODE_DEFAULT_SETTINGS["lavalink"]["server"][
         "resamplingQuality"
     ]
+    yaml_data["lavalink"]["server"]["compression"] = NODE_DEFAULT_SETTINGS["lavalink"]["server"]["compression"]
     await config.update_yaml(yaml_data)
     await client.lib_db_manager.update_bot_dv_version(VERSION_1_10_0)
