@@ -6,6 +6,7 @@ import pathlib
 from typing import TYPE_CHECKING
 
 import aiopath
+from discord.utils import utcnow
 from expiringdict import ExpiringDict
 from watchfiles import Change, awatch
 
@@ -212,10 +213,9 @@ class LocalTrackCache:
         if self.__shutdown:
             return
         await self.__pylav.wait_until_ready()
-        chunk_size = (
-            max(POSTGRES_CONNECTIONS // 4, 22) if POSTGRES_CONNECTIONS > 100 else int(POSTGRES_CONNECTIONS * 0.9)
-        )
+        chunk_size = max(min(POSTGRES_CONNECTIONS, 25), 2)
         LOGGER.debug("Updating cache")
+        start = utcnow()
         chunk = []
         for entry in self.__root_folder.rglob("*"):
             if (not entry.is_dir()) and entry.suffix.lower() not in ALL_EXTENSIONS:
@@ -227,4 +227,4 @@ class LocalTrackCache:
         if chunk:
             await asyncio.gather(*[self._process_added(f"{entry}", entry) for entry in chunk])
 
-        LOGGER.debug("Finished updating cache")
+        LOGGER.debug("Finished updating cache in %s", utcnow() - start)
