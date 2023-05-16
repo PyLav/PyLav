@@ -4,6 +4,9 @@ PYLAV__POSTGRES_SOCKET: /var/run/postgresql # Will always be this
 PYLAV__POSTGRES_PASSWORD: postgres          # Whatever you set POSTGRES_PASSWORD as in the postgres container
 PYLAV__POSTGRES_USER: postgres              # Whatever you set POSTGRES_USER as in the postgres container
 PYLAV__POSTGRES_DB: postgres                # Whatever you set POSTGRES_DB as in the postgres container
+# Warning: This will require changes to the Postgres server settings
+# Please read https://stackoverflow.com/questions/30778015/how-to-increase-the-max-connections-in-postgres for more information on the following setting
+PYLAV__POSTGRES_CONNECTIONS: 100            # The number of connections to the Postgres server
 
 PYLAV__EXTERNAL_UNMANAGED_HOST: lavalink             # The hostname for the lavalink container, must be on same network as the redbot container
 PYLAV__EXTERNAL_UNMANAGED_PORT: 2155                # Will always be this

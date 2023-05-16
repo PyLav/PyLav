@@ -23,6 +23,10 @@ POSTGRES_USER = os.getenv("PYLAV__POSTGRES_USER", os.getenv("PGUSER"))
 # noinspection SpellCheckingInspection
 POSTGRES_DATABASE = os.getenv("PYLAV__POSTGRES_DB", os.getenv("PGDATABASE"))
 POSTGRES_SOCKET = os.getenv("PYLAV__POSTGRES_SOCKET")
+POSTGRES_CONNECTIONS = (
+    max(int(envar_value), 4) if (envar_value := os.getenv("PYLAV__POSTGRES_CONNECTIONS", "100")) is not None else None
+)
+
 FALLBACK_POSTGREST_HOST = POSTGRES_HOST
 if POSTGRES_SOCKET is not None:
     POSTGRES_PORT = None

@@ -48,6 +48,7 @@ from pylav.constants.config import (
     MANAGED_NODE_SPOTIFY_CLIENT_SECRET,
     MANAGED_NODE_SPOTIFY_COUNTRY_CODE,
     MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN,
+    POSTGRES_CONNECTIONS,
     REDIS_FULL_ADDRESS_RESPONSE_CACHE,
     TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS,
     TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS,
@@ -454,7 +455,7 @@ class Client(metaclass=SingletonClass):
                 self.ready.clear()
                 await self._wait_until_ready()
                 if IS_POSTGRES:
-                    await DATABASE_ENGINE.start_connection_pool(max_size=100)
+                    await DATABASE_ENGINE.start_connection_pool(max_size=POSTGRES_CONNECTIONS)
                 (
                     spotify_client_id,
                     spotify_client_secret,
