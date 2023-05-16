@@ -9,6 +9,7 @@ import aiopath
 from expiringdict import ExpiringDict
 from watchfiles import Change, awatch
 
+from pylav.constants.config import POSTGRES_CONNECTIONS
 from pylav.logging import getLogger
 from pylav.nodes.api.responses.track import Track
 from pylav.players.query.local_files import ALL_EXTENSIONS
@@ -211,9 +212,19 @@ class LocalTrackCache:
         if self.__shutdown:
             return
         await self.__pylav.wait_until_ready()
+        chunk_size = (
+            max(POSTGRES_CONNECTIONS // 4, 22) if POSTGRES_CONNECTIONS > 100 else int(POSTGRES_CONNECTIONS * 0.9)
+        )
         LOGGER.debug("Updating cache")
+        chunk = []
         for entry in self.__root_folder.rglob("*"):
             if (not entry.is_dir()) and entry.suffix.lower() not in ALL_EXTENSIONS:
                 continue
-            await self._process_added(f"{entry}", entry)
+            chunk.append(entry)
+            if len(chunk) == chunk_size:
+                await asyncio.gather(*[self._process_added(f"{entry}", entry) for entry in chunk])
+                chunk = []
+        if chunk:
+            await asyncio.gather(*[self._process_added(f"{entry}", entry) for entry in chunk])
+
         LOGGER.debug("Finished updating cache")
