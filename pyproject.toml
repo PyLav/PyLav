@@ -198,6 +198,7 @@ enable = true
 vcs = "git"
 bump = true
 style = "semver"
+dirty = true
 
 [tool.poetry-dynamic-versioning.substitution]
 files = []
