@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from pylav.nodes.api.responses.rest_api import NoMatches
+from pylav.nodes.api.responses.rest_api import EmptyResponse
 from pylav.nodes.api.responses.websocket import Stats as StatsMessage
 
 if TYPE_CHECKING:
@@ -10,6 +10,7 @@ if TYPE_CHECKING:
 
 
 async def sort_key_nodes(node: Node, region: str = None) -> float:
+    """The sort key for nodes."""
     return await node.penalty_with_region(region)
 
 
@@ -53,6 +54,7 @@ class Penalty:
     # noinspection PyProtectedMember
     @property
     def special_handling(self) -> float:
+        """The special handling penalty of the node."""
         # Node connection isn't ready yet
         if not self._stats._node.is_ready:
             return 1000000
@@ -230,4 +232,4 @@ class Stats:
         )
 
 
-NO_MATCHES = NoMatches(loadType="NO_MATCHES", tracks=[], playlistInfo=None, pluginInfo=None, exception=None)
+EMPTY_RESPONSE = EmptyResponse(loadType="empty", data=None)

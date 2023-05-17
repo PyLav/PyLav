@@ -14,6 +14,8 @@ if TYPE_CHECKING:
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True)
 class Station:
+    """A station from the RadioBrowser API."""
+
     radio_api_client: RadioBrowser
     changeuuid: str | None = None
     stationuuid: str | None = None
@@ -80,6 +82,8 @@ class Station:
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True)
 class Tag:
+    """A tag from the RadioBrowser API."""
+
     name: str | None = None
     stationcount: int | None = None
 
@@ -90,6 +94,8 @@ class Tag:
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True)
 class Language:
+    """A language from the RadioBrowser API."""
+
     name: str | None = None
     iso_639: str | None = None
     stationcount: int | None = None
@@ -101,6 +107,8 @@ class Language:
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True)
 class State:
+    """A state from the RadioBrowser API."""
+
     name: str | None = None
     country: str | None = None
     stationcount: int | None = None
@@ -112,6 +120,8 @@ class State:
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True)
 class Codec:
+    """A codec from the RadioBrowser API."""
+
     name: str | None = None
     stationcount: int | None = None
 
@@ -122,6 +132,8 @@ class Codec:
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True)
 class CountryCode:
+    """A country code from the RadioBrowser API."""
+
     name: str | None = None
     stationcount: int | None = None
 
@@ -132,6 +144,8 @@ class CountryCode:
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True)
 class Country:
+    """A country from the RadioBrowser API."""
+
     name: str | None = None
     iso_3166_1: str | None = None
     stationcount: int | None = None

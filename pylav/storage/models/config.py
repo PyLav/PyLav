@@ -7,8 +7,8 @@ from dataclasses import dataclass
 
 import aiopath  # type: ignore
 
+from pylav._internals.functions import get_true_path
 from pylav.compat import json
-from pylav.extension.bundled_node.utils import get_true_path
 from pylav.helpers.singleton import SingletonCachedByKey
 from pylav.helpers.time import get_now_utc
 from pylav.storage.database.cache.decodators import maybe_cached
@@ -61,18 +61,10 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
         config_folder
             The new config folder.
         """
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await LibConfigRow.raw(
-            """
-            INSERT INTO lib_config (id, bot, config_folder)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET config_folder = EXCLUDED.config_folder
-            """,
-            self.id,
-            self.bot,
-            str(config_folder),
+        await LibConfigRow.insert(LibConfigRow(id=self.id, bot=self.bot, config_folder=str(config_folder))).on_conflict(
+            action="DO UPDATE",
+            target=(LibConfigRow.id, LibConfigRow.bot),
+            values=[LibConfigRow.config_folder],
         )
         await self.update_cache((self.fetch_config_folder, str(config_folder)), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -102,18 +94,12 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
         localtrack_folder
             The new localtrack folder.
         """
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await LibConfigRow.raw(
-            """
-            INSERT INTO lib_config (id, bot, localtrack_folder)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET localtrack_folder = EXCLUDED.localtrack_folder
-            """,
-            self.id,
-            self.bot,
-            str(localtrack_folder),
+        await LibConfigRow.insert(
+            LibConfigRow(id=self.id, bot=self.bot, localtrack_folder=str(localtrack_folder))
+        ).on_conflict(
+            action="DO UPDATE",
+            target=(LibConfigRow.id, LibConfigRow.bot),
+            values=[LibConfigRow.localtrack_folder],
         )
         await self.update_cache((self.fetch_localtrack_folder, str(localtrack_folder)), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -147,18 +133,10 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
             The new java path.
         """
         java_path = get_true_path(java_path, java_path)
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await LibConfigRow.raw(
-            """
-            INSERT INTO lib_config (id, bot, java_path)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET java_path = EXCLUDED.java_path
-            """,
-            self.id,
-            self.bot,
-            str(java_path),
+        await LibConfigRow.insert(LibConfigRow(id=self.id, bot=self.bot, java_path=str(java_path))).on_conflict(
+            action="DO UPDATE",
+            target=(LibConfigRow.id, LibConfigRow.bot),
+            values=[LibConfigRow.java_path],
         )
         await self.update_cache((self.fetch_java_path, str(java_path)), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -188,18 +166,12 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
         enable_managed_node
             The new enable_managed_node.
         """
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await LibConfigRow.raw(
-            """
-            INSERT INTO lib_config (id, bot, enable_managed_node)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET enable_managed_node = EXCLUDED.enable_managed_node
-            """,
-            self.id,
-            self.bot,
-            enable_managed_node,
+        await LibConfigRow.insert(
+            LibConfigRow(id=self.id, bot=self.bot, enable_managed_node=enable_managed_node)
+        ).on_conflict(
+            action="DO UPDATE",
+            target=(LibConfigRow.id, LibConfigRow.bot),
+            values=[LibConfigRow.enable_managed_node],
         )
         await self.update_cache((self.fetch_enable_managed_node, enable_managed_node), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -229,18 +201,12 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
         use_bundled_pylav_external
             The new use_bundled_pylav_external.
         """
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await LibConfigRow.raw(
-            """
-            INSERT INTO lib_config (id, bot, use_bundled_pylav_external)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET use_bundled_pylav_external = EXCLUDED.use_bundled_pylav_external
-            """,
-            self.id,
-            self.bot,
-            use_bundled_pylav_external,
+        await LibConfigRow.insert(
+            LibConfigRow(id=self.id, bot=self.bot, use_bundled_pylav_external=use_bundled_pylav_external)
+        ).on_conflict(
+            action="DO UPDATE",
+            target=(LibConfigRow.id, LibConfigRow.bot),
+            values=[LibConfigRow.use_bundled_pylav_external],
         )
         await self.update_cache(
             (self.fetch_use_bundled_pylav_external, use_bundled_pylav_external), (self.exists, True)
@@ -266,18 +232,12 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
         use_bundled_lava_link_external
             The new use_bundled_lava_link_external.
         """
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await LibConfigRow.raw(
-            """
-            INSERT INTO lib_config (id, bot, use_bundled_lava_link_external)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET use_bundled_lava_link_external = EXCLUDED.use_bundled_lava_link_external
-            """,
-            self.id,
-            self.bot,
-            False,
+        await LibConfigRow.insert(
+            LibConfigRow(id=self.id, bot=self.bot, use_bundled_lava_link_external=False)
+        ).on_conflict(
+            action="DO UPDATE",
+            target=(LibConfigRow.id, LibConfigRow.bot),
+            values=[LibConfigRow.use_bundled_lava_link_external],
         )
         await self.update_cache((self.fetch_use_bundled_lava_link_external, False), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -307,18 +267,10 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
         download_id
             The new download_id.
         """
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await LibConfigRow.raw(
-            """
-            INSERT INTO lib_config (id, bot, download_id)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET download_id = EXCLUDED.download_id
-            """,
-            self.id,
-            self.bot,
-            download_id,
+        await LibConfigRow.insert(LibConfigRow(id=self.id, bot=self.bot, download_id=download_id)).on_conflict(
+            action="DO UPDATE",
+            target=(LibConfigRow.id, LibConfigRow.bot),
+            values=[LibConfigRow.download_id],
         )
         await self.update_cache((self.fetch_download_id, download_id), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -348,18 +300,10 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
         extras
             The new extras.
         """
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await LibConfigRow.raw(
-            """
-            INSERT INTO lib_config (id, bot, extras)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET extras = EXCLUDED.extras
-            """,
-            self.id,
-            self.bot,
-            json.dumps(extras),
+        await LibConfigRow.insert(LibConfigRow(id=self.id, bot=self.bot, extras=json.dumps(extras))).on_conflict(
+            action="DO UPDATE",
+            target=(LibConfigRow.id, LibConfigRow.bot),
+            values=[LibConfigRow.extras],
         )
         await self.update_cache((self.fetch_extras, extras), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -389,18 +333,12 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
         next_execution
             The new next_execution_update_bundled_playlists.
         """
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await LibConfigRow.raw(
-            """
-            INSERT INTO lib_config (id, bot, next_execution_update_bundled_playlists)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET next_execution_update_bundled_playlists = EXCLUDED.next_execution_update_bundled_playlists
-            """,
-            self.id,
-            self.bot,
-            next_execution,
+        await LibConfigRow.insert(
+            LibConfigRow(id=self.id, bot=self.bot, next_execution_update_bundled_playlists=next_execution)
+        ).on_conflict(
+            action="DO UPDATE",
+            target=(LibConfigRow.id, LibConfigRow.bot),
+            values=[LibConfigRow.next_execution_update_bundled_playlists],
         )
         await self.update_cache(
             (self.fetch_next_execution_update_bundled_playlists, next_execution), (self.exists, True)
@@ -432,21 +370,12 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
         next_execution
             The new next_execution.
         """
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-
-        # noinspection PyPep8
-        await LibConfigRow.raw(
-            """
-            INSERT INTO lib_config (id, bot, next_execution_update_bundled_external_playlists)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE
-            SET next_execution_update_bundled_external_playlists = EXCLUDED.next_execution_update_bundled_external_playlists
-            """,  # noqa
-            self.id,
-            self.bot,
-            next_execution,
+        await LibConfigRow.insert(
+            LibConfigRow(id=self.id, bot=self.bot, next_execution_update_bundled_external_playlists=next_execution)
+        ).on_conflict(
+            action="DO UPDATE",
+            target=(LibConfigRow.id, LibConfigRow.bot),
+            values=[LibConfigRow.next_execution_update_bundled_external_playlists],
         )
         await self.update_cache(
             (self.fetch_next_execution_update_bundled_external_playlists, next_execution), (self.exists, True)
@@ -478,18 +407,12 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
         next_execution
             The new next_execution.
         """
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await LibConfigRow.raw(
-            """
-            INSERT INTO lib_config (id, bot, next_execution_update_external_playlists)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET next_execution_update_external_playlists = EXCLUDED.next_execution_update_external_playlists
-            """,
-            self.id,
-            self.bot,
-            next_execution,
+        await LibConfigRow.insert(
+            LibConfigRow(id=self.id, bot=self.bot, next_execution_update_external_playlists=next_execution)
+        ).on_conflict(
+            action="DO UPDATE",
+            target=(LibConfigRow.id, LibConfigRow.bot),
+            values=[LibConfigRow.next_execution_update_external_playlists],
         )
         await self.update_cache(
             (self.fetch_next_execution_update_external_playlists, next_execution), (self.exists, True)
@@ -521,18 +444,12 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
         update_bot_activity
             The new update_bot_activity.
         """
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await LibConfigRow.raw(
-            """
-            INSERT INTO lib_config (id, bot, update_bot_activity)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET update_bot_activity = EXCLUDED.update_bot_activity
-            """,
-            self.id,
-            self.bot,
-            update_bot_activity,
+        await LibConfigRow.insert(
+            LibConfigRow(id=self.id, bot=self.bot, update_bot_activity=update_bot_activity)
+        ).on_conflict(
+            action="DO UPDATE",
+            target=(LibConfigRow.id, LibConfigRow.bot),
+            values=[LibConfigRow.update_bot_activity],
         )
         await self.update_cache((self.fetch_update_bot_activity, update_bot_activity), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -562,18 +479,12 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
         auto_update_managed_nodes
             The new auto_update_managed_nodes.
         """
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await LibConfigRow.raw(
-            """
-            INSERT INTO lib_config (id, bot, auto_update_managed_nodes)
-            VALUES ({}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE SET auto_update_managed_nodes = EXCLUDED.auto_update_managed_nodes
-            """,
-            self.id,
-            self.bot,
-            auto_update_managed_nodes,
+        await LibConfigRow.insert(
+            LibConfigRow(id=self.id, bot=self.bot, auto_update_managed_nodes=auto_update_managed_nodes)
+        ).on_conflict(
+            action="DO UPDATE",
+            target=(LibConfigRow.id, LibConfigRow.bot),
+            values=[LibConfigRow.auto_update_managed_nodes],
         )
         await self.update_cache((self.fetch_auto_update_managed_nodes, auto_update_managed_nodes), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)

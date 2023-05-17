@@ -29,6 +29,8 @@ if TYPE_CHECKING:
 else:
 
     class PlaylistConverter(Transformer):
+        """Converts a playlist name or ID to a list of matching objects"""
+
         @classmethod
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> list[PlaylistModel]:
             """Converts a playlist name or ID to a list of matching objects"""
@@ -45,6 +47,7 @@ else:
 
         @classmethod
         async def transform(cls, interaction: DISCORD_INTERACTION_TYPE, argument: str) -> list[PlaylistModel]:
+            """Transforms a playlist name or ID to a list of matching objects"""
             if not interaction.response.is_done():
                 await interaction.response.defer(ephemeral=True)
             ctx = await interaction.client.get_context(interaction)
@@ -52,6 +55,7 @@ else:
 
         @classmethod
         async def autocomplete(cls, interaction: DISCORD_INTERACTION_TYPE, current: str) -> list[Choice]:
+            """Autocompletes a playlist name or ID to a list of matching objects"""
             if not current:
                 playlists = await interaction.client.pylav.playlist_db_manager.get_bundled_playlists()
                 return [

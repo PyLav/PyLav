@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-__ZERO__ = b"MHp2Zg=="
-# noinspection SpellCheckingInspection
-__MOMONGA__ = b"NTh3Yw=="
-__LIGHT__ = b"|OW5hMQ=="
-__SEPHIROTH__ = b"ZzRlbA=="
-ANIME = b"|".join([__SEPHIROTH__, __MOMONGA__, __ZERO__, __LIGHT__])
+_MAPPING = {
+    2: ([0, 2, 5], 5),
+    1: ([0, 1, 4], 5),
+    3: ([0, 1, 4], 5),
+    0: ([0, 1, 4, 5], 5),
+}
 
+ANIME = "id58zow5hmqhdv24zil4znth3ywy8prt9-dizzzrlba8q4h2al0ywmhp2zg-1d5g"
 __all__ = ("ANIME",)

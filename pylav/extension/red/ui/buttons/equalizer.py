@@ -25,4 +25,11 @@ class EqualizerButton(discord.ui.Button):
             await interaction.response.defer(ephemeral=True)
         kwargs = await self.view.get_page(self.view.current_page)
         await self.view.prepare()
+        attachments = []
+        if "file" in kwargs:
+            attachments = [kwargs.pop("file")]
+        elif "files" in kwargs:
+            attachments = kwargs.pop("files")
+        if attachments:
+            kwargs["attachments"] = attachments
         await self.view.message.edit(view=self.view, **kwargs)

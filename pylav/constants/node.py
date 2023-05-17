@@ -17,13 +17,13 @@ NODE_DEFAULT_SETTINGS = {
         "undertow": {
             "threads": {"io": __CPU_COUNT * 2, "worker": __CPU_COUNT * 64},
         },
-        "compression": {"enabled": True},
+        "compression": {"enabled": False},
     },
     "lavalink": {
         "plugins": [
             {
-                "dependency": "com.github.TopiSenpai.LavaSrc:lavasrc-plugin:538cf8f",
-                "repository": "https://jitpack.io",
+                "dependency": "com.github.TopiSenpai.LavaSrc:lavasrc-plugin:3.2.2",
+                "repository": "https://maven.topi.wtf/releases",
             },
             {
                 "dependency": "com.dunctebot:skybot-lavalink-plugin:1.4.1",

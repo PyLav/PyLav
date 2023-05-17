@@ -84,7 +84,7 @@ class TrackEnd(Message):
     type: Literal["TrackEndEvent"]
     guildId: str
     track: Track
-    reason: Literal["FINISHED", "LOAD_FAILED", "STOPPED", "REPLACED", "CLEANUP"]
+    reason: Literal["finished", "loadFailed", "stopped", "replaced", "cleanup"]
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)

@@ -40,6 +40,7 @@ if _orjson:
         orjson_default: Callable[[Any], Any] | None = None,
         orjson_option: int | None = None,
     ) -> str:
+        """Serialize ``obj`` to a JSON formatted ``str``."""
         ...
 
     __dumps_origin = _orjson
@@ -56,6 +57,7 @@ elif _ujson:
         sort_keys: bool = False,
         indent: int | None = 0,
     ) -> str:
+        """Serialize ``obj`` to a JSON formatted ``str``."""
         ...
 
     __dumps_origin = _ujson
@@ -77,6 +79,7 @@ else:
         sort_keys: bool = False,
         **kwds: Any,
     ) -> str:
+        """Serialize ``obj`` to a JSON formatted ``str``."""
         ...
 
     __dumps_origin = json
@@ -87,6 +90,7 @@ if _orjson:
 
     @overload
     def loads(obj: bytes | bytearray | memoryview | str) -> Any:
+        """Deserialize ``obj`` (a ``str``, ``bytes`` or ``bytearray`` instance"""
         ...
 
     __loads_origin = _orjson
@@ -95,6 +99,7 @@ elif _ujson:
 
     @overload
     def loads(obj: AnyStr, *, ujson_precise_float: bool | None = None) -> Any:
+        """Deserialize ``obj`` (a ``str``, ``bytes`` or ``bytearray`` instance"""
         ...
 
     __loads_origin = _ujson
@@ -113,6 +118,7 @@ else:
         object_pairs_hook: Callable[[list[tuple[Any, Any]]], Any] | None = None,
         **kwargs: Any,
     ) -> Any:
+        """Deserialize ``obj`` (a ``str``, ``bytes`` or ``bytearray`` instance"""
         ...
 
     __loads_origin = json
@@ -126,6 +132,7 @@ if _orjson:
         obj: Any,
         fp: IO[str],
     ) -> None:
+        """Serialize ``obj`` as a JSON formatted stream to ``fp`` (a ``.write()``-supporting file-like object)."""
         ...
 
     __dump_origin = _orjson
@@ -143,6 +150,7 @@ elif _ujson:
         ujson_encode_html_chars: bool = False,
         ujson_escape_forward_slashes: bool = True,
     ) -> None:
+        """Serialize ``obj`` as a JSON formatted stream to ``fp`` (a ``.write()``-supporting file-like object)."""
         ...
 
     __dump_origin = _ujson
@@ -165,6 +173,7 @@ else:
         sort_keys: bool = False,
         **kwargs: Any,
     ) -> None:
+        """Serialize ``obj`` as a JSON formatted stream to ``fp`` (a ``.write()``-supporting file-like object)."""
         ...
 
     __dump_origin = json
@@ -176,6 +185,7 @@ if _orjson:
 
     @overload
     def load(fp: IO[AnyStr]) -> Any:
+        """Deserialize ``fp`` (a ``.read()``-supporting file-like object containing a JSON document) to a Python object."""
         ...
 
     __load_origin = _orjson
@@ -188,6 +198,7 @@ elif _ujson:
         *,
         precise_float: bool = ...,
     ) -> Any:
+        """Deserialize ``fp`` (a ``.read()``-supporting file-like object containing a JSON document) to a Python object."""
         ...
 
     __load_origin = _ujson
@@ -206,6 +217,7 @@ else:
         object_pairs_hook: Callable[[list[tuple[str, Any]]], Any] | None = ...,
         **kwargs: Any,
     ) -> Any:
+        """Deserialize ``fp`` (a ``.read()``-supporting file-like object containing a JSON document) to a Python object."""
         ...
 
     __load_origin = json
@@ -230,6 +242,7 @@ def dumps(
     **kwargs,
 ) -> str:
     """
+    Serialize ``obj`` to a JSON formatted ``str``.
 
     Parameters
     ----------
@@ -382,6 +395,8 @@ def dump(
     ujson_escape_forward_slashes=True,
     **kwargs,
 ) -> None:
+    """Serialize ``obj`` as a JSON formatted stream to ``fp`` (a ``.write()``-supporting file-like object)."""
+
     if _orjson:
         with contextlib.suppress(_orjson.JSONEncodeError):
             fp.write(_orjson.dumps(obj).decode())
@@ -424,6 +439,7 @@ def load(
     precise_float=None,
     **kwargs,
 ) -> Any:
+    """Deserialize ``fp`` (a ``.read()``-supporting file-like object containing a JSON document) to a Python object."""
     if _orjson:
         with contextlib.suppress(_orjson.JSONDecodeError):
             return _orjson.loads(fp.read())

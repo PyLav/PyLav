@@ -48,6 +48,7 @@ async def pylav_credits(context: PyLavContext) -> None:
             description=_(
                 "PyLav was created by {library_author_name_variable_do_not_translate}.\n\n"
                 "PyLav source code can be located in {library_url_variable_do_not_translate}\n"
+                "PyLav license can be located in {library_license_variable_do_not_translate}\n"
                 "PyLav-Cogs source code can be located in {second_library_url_variable_do_not_translate}\n\n"
                 "You can join the PyLav support server via {support_server_url_variable_do_not_translate}\n"
                 "\n\n"
@@ -61,6 +62,7 @@ async def pylav_credits(context: PyLavContext) -> None:
             ).format(
                 library_author_name_variable_do_not_translate="[Draper#6666](https://github.com/Drapersniper)",
                 library_url_variable_do_not_translate="https://github.com/PyLav/PyLav",
+                library_license_variable_do_not_translate="https://github.com/PyLav/PyLav/blob/develop/LICENSE",
                 second_library_url_variable_do_not_translate="https://github.com/PyLav/Red-Cogs",
                 support_server_url_variable_do_not_translate="https://discord.com/invite/vnmcXqtgeY",
                 crowdin_project_url_variable_do_not_translate="https://crowdin.com/project/pylav",
@@ -103,29 +105,6 @@ async def pylav_version(context: PyLavContext) -> None:
                 ),
                 lang="ansi",
             ),
-            messageable=context,
-        ),
-        ephemeral=True,
-    )
-
-
-@commands.command(
-    name="plsyncslash",
-    aliases=["plss"],
-    i18n=_,
-)
-@commands.is_owner()
-async def pylav_sync_slash(context: PyLavContext) -> None:
-    """Sync the Bots slash commands"""
-    if isinstance(context, discord.Interaction):
-        context = await context.client.get_context(context)
-    if context.interaction and not context.interaction.response.is_done():
-        await context.defer(ephemeral=True)
-    await context.bot.wait_until_ready()
-    await context.bot.tree.sync()
-    await context.send(
-        embed=await context.pylav.construct_embed(
-            description=_("I have synced all my slash commands."),
             messageable=context,
         ),
         ephemeral=True,
@@ -292,8 +271,6 @@ def class_factory(
         bot.add_command(pylav_credits)
     if not bot.get_command(pylav_version.qualified_name):
         bot.add_command(pylav_version)
-    if not bot.get_command(pylav_sync_slash.qualified_name):
-        bot.add_command(pylav_sync_slash)
     argspec = inspect.getfullargspec(cls.__init__)
     if ("bot" in argspec.args or "bot" in argspec.kwonlyargs) and bot not in cogargs:
         cogkwargs["bot"] = bot

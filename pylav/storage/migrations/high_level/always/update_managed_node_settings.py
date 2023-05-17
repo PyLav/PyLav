@@ -10,6 +10,7 @@ if TYPE_CHECKING:
 
 
 async def update_managed_node_settings(client: Client) -> None:
+    """Update the managed node settings."""
     LOGGER.info("Running migration - Updating Managed Node Settings")
     # noinspection PyProtectedMember
     config = client._node_config_manager.bundled_node_config()

@@ -13,9 +13,12 @@ from pylav.storage.database.tables.version import BotVersionRow
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
 class BotVersion(CachedModel, metaclass=SingletonCachedByKey):
+    """A class to represent the version of the bot in the database"""
+
     id: int
 
     def get_cache_key(self) -> str:
+        """Get the cache key for the bot version."""
         return f"{self.id}"
 
     @maybe_cached
@@ -31,16 +34,6 @@ class BotVersion(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_version(self, version: Version | str) -> None:
         """Update the version of the bot in the database"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await BotVersionRow.raw(
-            """
-            INSERT INTO version (bot, version)
-            VALUES ({}, {})
-            ON CONFLICT (bot)
-            DO UPDATE SET version = EXCLUDED.version
-            """,
-            self.id,
-            str(version),
+        await BotVersionRow.insert(BotVersionRow(bot=self.id, version=str(version))).on_conflict(
+            action="DO UPDATE", target=BotVersionRow.bot, values=[BotVersionRow.version]
         )
-        await self.invalidate_cache(self.fetch_version)

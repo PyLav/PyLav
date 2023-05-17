@@ -9,6 +9,7 @@ import asyncpg
 
 from pylav.helpers.time import get_now_utc
 from pylav.logging import getLogger
+from pylav.nodes.api.responses import rest_api
 from pylav.players.query.obj import Query as QueryObj
 from pylav.storage.database.tables.queries import QueryRow
 from pylav.storage.database.tables.tracks import TrackRow
@@ -16,7 +17,6 @@ from pylav.storage.models.query import Query
 
 if TYPE_CHECKING:
     from pylav.core.client import Client
-    from pylav.nodes.api.responses import rest_api
 
 LOGGER = getLogger("PyLav.Database.Controller.Query")
 
@@ -48,26 +48,37 @@ class QueryController:
             # Do not cache local queries and single track urls or http source entries
             return None
 
-        if await self.exists(query):
-            cached = self.get(query.query_identifier)
-            if await cached.size() > 0:
-                return cached
+        cached = self.get(query.query_identifier)
+        return cached
 
     @staticmethod
     async def add_query(query: QueryObj, result: rest_api.LoadTrackResponses) -> bool:
         if query.is_custom_playlist or query.is_http:
             # Do not cache local queries and single track urls or http source entries
             return False
-        if result.loadType in ["NO_MATCHES", "LOAD_FAILED", None]:
+        if not result or result.loadType in ["empty", "error", "apiError", None]:
             return False
-        tracks = result.tracks
+        match result.loadType:
+            case "track":
+                tracks = [result.data]
+                plugin_info = result.data.pluginInfo.to_dict() if result.data.pluginInfo else None
+                name = None
+            case "search":
+                tracks = result.data
+                name = None
+                plugin_info = None
+            case __:
+                tracks = result.data.tracks
+                playlist_info = result.data.info
+                name = playlist_info.name if playlist_info else None
+                plugin_info = result.data.pluginInfo.to_dict() if result.data.pluginInfo else None
+
         if not tracks:
             return False
-        playlist_info = result.playlistInfo
-        name = playlist_info.name if playlist_info else None
+
         defaults = {
             QueryRow.name: name,
-            QueryRow.pluginInfo: result.pluginInfo.to_dict() if result.pluginInfo else None,
+            QueryRow.pluginInfo: plugin_info,
         }
         query_row = await QueryRow.objects().get_or_create(QueryRow.identifier == query.query_identifier, defaults)
 
@@ -84,11 +95,15 @@ class QueryController:
         await QueryRow.delete().where(QueryRow.identifier == query.query_identifier)
         return False
 
-    @staticmethod
-    async def delete_old() -> None:
+    async def delete_old(self) -> None:
         with contextlib.suppress(asyncio.exceptions.CancelledError, asyncpg.exceptions.CannotConnectNowError):
             LOGGER.trace("Deleting old queries")
-            await QueryRow.delete().where(QueryRow.last_updated <= (get_now_utc() - datetime.timedelta(days=30)))
+            from pylav.players.query.local_files import LocalFile
+
+            await QueryRow.delete().where(
+                (QueryRow.last_updated <= (get_now_utc() - datetime.timedelta(days=30)))
+                & (QueryRow.identifier.not_like(f"{LocalFile.root_folder}%"))
+            )
             LOGGER.trace("Deleted old queries")
 
     @staticmethod

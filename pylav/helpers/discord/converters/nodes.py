@@ -29,6 +29,8 @@ if TYPE_CHECKING:
 else:
 
     class NodeConverter(Transformer):
+        """Converts a node name or ID to a list of matching objects"""
+
         @classmethod
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> list[Node]:
             """Converts a node name or ID to a list of matching objects"""
@@ -50,6 +52,7 @@ else:
 
         @classmethod
         async def transform(cls, interaction: DISCORD_INTERACTION_TYPE, argument: str) -> list[Node]:
+            """Transforms a node name or ID to a list of matching objects"""
             if not interaction.response.is_done():
                 await interaction.response.defer(ephemeral=True)
             ctx = await interaction.client.get_context(interaction)
@@ -57,6 +60,7 @@ else:
 
         @classmethod
         async def autocomplete(cls, interaction: DISCORD_INTERACTION_TYPE, current: str) -> list[Choice]:
+            """Autocompletes a node name or ID to a list of matching objects"""
             nodes = interaction.client.pylav.node_manager.nodes
             if not current:
                 return [Choice(name=shorten_string(e.name, max_length=100), value=f"{e.identifier}") for e in nodes][

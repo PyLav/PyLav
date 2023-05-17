@@ -6,18 +6,24 @@ from typing import NotRequired  # noqa
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
 class LyricsExternal:
+    """External IDs for a track."""
+
     isrc: str
     spotify_id: str
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
 class LyricsMedia:
+    """Media for a track."""
+
     preview: str | None
     artwork: str | None
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
 class LyricsTrack:
+    """Track information for a track."""
+
     title: str
     artist: str
     album: str
@@ -35,12 +41,16 @@ class LyricsTrack:
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
 class Task:
+    """Task information for a query."""
+
     id: str
     status: str
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
 class LyricsLine:
+    """The timed lyric detaild for a section."""
+
     text: str
     start: int
     duration: int
@@ -48,6 +58,8 @@ class LyricsLine:
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
 class LyricsMetadata:
+    """Lyrics metadata for a track."""
+
     text: str
     lines: list[LyricsLine]
 
@@ -61,6 +73,8 @@ class LyricsMetadata:
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
 class Lyrics:
+    """Lyrics for a track."""
+
     track: LyricsTrack | dict
     task: Task | None | dict
     lyrics: LyricsMetadata | None | dict = None
@@ -79,11 +93,15 @@ class Lyrics:
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
 class Error:
+    """Error information for a query."""
+
     error: str
 
 
 @dataclass(eq=True, slots=True, unsafe_hash=True, order=True, kw_only=True, frozen=True)
 class TrackList:
+    """Track list information for a query."""
+
     tracks: list[LyricsTrack]
 
     def __post_init__(self):

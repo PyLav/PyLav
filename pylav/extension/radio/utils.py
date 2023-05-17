@@ -64,11 +64,13 @@ def bool_to_string(boolean: bool) -> str:
 
 
 def snake_to_camel(string: str) -> str:
+    """Convert a snake case string to camel case."""
     first, *others = string.split("_")
     return "".join([first.lower(), *map(str.title, others)])
 
 
 def radio_browser_adapter(**kwargs: PARAM_SPEC_TYPE.kwargs) -> PARAM_SPEC_TYPE.kwargs:
+    """Converts the keyword arguments to the format required by the RadioBrowser API."""
     params = {}
 
     for key, value in kwargs.items():
@@ -83,6 +85,7 @@ def validate_input(
     type_value: dict[str, type[str | bool | int]] | dict[str, str | int | bool],
     input_data: PARAM_SPEC_TYPE.kwargs,
 ) -> None:
+    """Validate the input data."""
     for key, value in input_data.items():
         try:
             key_type = type_value[key]
@@ -96,6 +99,8 @@ def validate_input(
 def type_check(
     func: Callable[PARAM_SPEC_TYPE, Awaitable[ANY_GENERIC_TYPE]]  # type: ignore
 ) -> Callable[PARAM_SPEC_TYPE, Awaitable[ANY_GENERIC_TYPE]]:  # type: ignore
+    """Decorator to check the type of the input data."""
+
     @wraps(func)
     def wrapper(self, *args: PARAM_SPEC_TYPE.args, **kwargs: PARAM_SPEC_TYPE.kwargs) -> Awaitable[ANY_GENERIC_TYPE]:
         validate_input(API_TYPES[func.__name__], kwargs)
@@ -106,6 +111,8 @@ def type_check(
 
 
 class TransformerCache:
+    """A class to cache the data from the RadioBrowser API."""
+
     _cache_stations: dict[str, Station] = {}
     _cache_tags: dict[str, Tag] = {}
     _cache_languages: dict[str, Language] = {}
@@ -144,6 +151,7 @@ class TransformerCache:
 
     @classmethod
     async def fill_cache(cls, client: Client):
+        """Fill the cache with data from the RadioBrowser API."""
         cls._client = client
         cls._cache_stations = {
             s.stationuuid: s
@@ -166,6 +174,7 @@ class TransformerCache:
 
     @classmethod
     def fill_choice_cache(cls):
+        """Fill the choice cache with data from the cache."""
         cls._choice_cache_stations = {
             station.stationuuid: Choice(
                 name=shorten_string(station.name, max_length=100)
@@ -222,30 +231,37 @@ class TransformerCache:
 
     @classmethod
     def get_station_cache(cls) -> dict[str, Station]:
+        """Get the station cache."""
         return cls._cache_stations
 
     @classmethod
     def get_tag_cache(cls) -> dict[str, Tag]:
+        """Get the tag cache."""
         return cls._cache_tags
 
     @classmethod
     def get_language_cache(cls) -> dict[str, Language]:
+        """Get the language cache."""
         return cls._cache_languages
 
     @classmethod
     def get_state_cache(cls) -> dict[str, State]:
+        """Get the state cache."""
         return cls._cache_states
 
     @classmethod
     def get_codec_cache(cls) -> dict[str, Codec]:
+        """Get the codec cache."""
         return cls._cache_codecs
 
     @classmethod
     def get_country_code_cache(cls) -> dict[str, CountryCode]:
+        """Get the country code cache."""
         return cls._cache_country_codes
 
     @classmethod
     def get_country_cache(cls) -> dict[str, Country]:
+        """Get the country cache."""
         return cls._cache_countries
 
     @classmethod
@@ -253,6 +269,7 @@ class TransformerCache:
     async def filter_cache(
         cls, cache_type: str, limit: int = 25, **kwargs: Any
     ) -> list[Station] | list[Tag] | list[Language] | list[State] | list[Codec] | list[CountryCode] | list[Country]:
+        """Filter the cache by the given type and kwargs."""
         match cache_type:
             case "station":
                 return await cls._filter_station_cache(limit=limit, **kwargs)
@@ -268,11 +285,12 @@ class TransformerCache:
                 return await cls._filter_country_code_cache(limit=limit, **kwargs)
             case "country":
                 return await cls._filter_country_cache(limit=limit, **kwargs)
-            case _:
+            case __:
                 return []
 
     @classmethod
     def build_filter(cls, **kwargs) -> dict[str, str | bool]:
+        """Build a filter dict from the given kwargs."""
         filters = {}
 
         if "code" in kwargs:
@@ -497,6 +515,7 @@ class TransformerCache:
     @classmethod
     @CACHE.cache(ttl=timedelta(hours=24))
     async def get_top_25_stations(cls) -> list[Choice]:
+        """Get the top 25 stations by vote count."""
         if cls._top_25_stations:
             return cls._top_25_stations
 

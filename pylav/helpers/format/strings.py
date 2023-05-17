@@ -14,6 +14,7 @@ except ImportError:
 
 
 def shorten_string(string: str, max_length: int, right: bool = True) -> str:
+    """Shortens the given string to the given max length and adds an ellipsis."""
     if not string:
         return string
     if len(string) > max_length:
@@ -28,7 +29,7 @@ def format_time_dd_hh_mm_ss(duration: int | float) -> str:
     """Formats to the given time in milliseconds into DD:HH:MM:SS"""
     seconds = int(duration // 1000)
     if seconds == 0:
-        return _("Unknown")
+        return _("Calculating...")
     days, seconds = divmod(seconds, 24 * 60 * 60)
     hours, seconds = divmod(seconds, 60 * 60)
     minutes, seconds = divmod(seconds, 60)

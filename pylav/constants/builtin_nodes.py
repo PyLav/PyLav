@@ -12,11 +12,15 @@ from typing import Any, NotRequired, TypedDict  # noqa
 
 
 class NodeYaml(TypedDict):
+    """The settings for a node."""
+
     server: dict[str, Any]
     lavalink: dict[str, Any]
 
 
 class NodeInfo(TypedDict):
+    """The info for a node."""
+
     unique_identifier: NotRequired[int]
     name: NotRequired[str]
     host: NotRequired[str]

@@ -2,30 +2,30 @@ version: '3.8'
 volumes:
     pgsocket:
 services:
-    redbot:
+    pylav:
     # Read https://github.com/PhasecoreX/docker-red-discordbot#red-discordbot-v3 for more info
-        container_name: redbot
-        hostname: redbot
+        container_name: pylav
+        hostname: pylav
         image: ghcr.io/drapersniper/red-discordbot:pylav
         restart: unless-stopped
         volumes:
         -   pgsocket:/var/run/postgresql # Postgres socket using Docker volume to allow access from other containers without mounting the host's filesystem (I.e use Sockets even on Windows)
         -   ./localtracks:/localtracks  # Localtracks folder
         -   ./redbot:/data # Red data folder
-        -   ./pylav:/data/pylav # Pylav folder
-            # Use the pylav.docker.yaml file from https://github.com/PyLav/PyLav/blob/master/pylav.docker.yaml editing it as necessary.
-        -   ./pylav.docker.yaml:/data/pylav/pylav.yaml # Pylav config file
+        -   ./pylav:/pylav # Pylav folder
+            # Use the pylav.docker.yaml file from https://github.com/PyLav/PyLav/blob/develop/pylav.docker.yaml editing it as necessary.
+        -   ./pylav.docker.yaml:/pylav/pylav.yaml # Pylav config file
         environment:
             TOKEN: your_bot_token_goes_here
             PREFIX: '!'
             TZ: Europe/London
             PUID: 1000
-            PYLAV__DATA_FOLDER: /data/pylav
-            PYLAV__YAML_CONFIG: /data/pylav/pylav.yaml
+            PYLAV__DATA_FOLDER: /pylav
+            PYLAV__YAML_CONFIG: /pylav/pylav.yaml
             PYLAV__LOCAL_TRACKS_FOLDER: /localtracks
         depends_on:
         -   postgres # Wait for postgres container to start before starting Red
-        -   ll-node # Wait for node container to start before starting Red
+        -   lavalink # Wait for node container to start before starting Red
     postgres:
         container_name: postgres
         hostname: postgres
@@ -39,20 +39,25 @@ services:
         volumes:
         -   ./pgdata:/var/lib/postgresql/data # Postgres data folder
         -   pgsocket:/var/run/postgresql # Postgres socket using Docker volume to allow access from other containers without mounting the host's filesystem (I.e use Sockets even on Windows)
-    ll-node:
-        hostname: ll-node
-        container_name: ll-node
-        image: ghcr.io/pylav/node:latest
+    lavalink:
+        hostname: lavalink
+        container_name: lavalink
+        image: drapersniper/node:latest
         restart: always
         volumes:
         # Mount the Lavalink logs folder
-        -   ./lavalink/logs:/opt/Lavalink/logs:rw
+        -   ./lavalink/logs:/opt/Lavalink/logs
         # Mount the Plugin folder to avoid downloading the plugins every time the image starts up
-        -   ./lavalink/plugins:/opt/Lavalink/plugins:rw
+        -   ./lavalink/plugins:/opt/Lavalink/plugins
         #  Mount this localtracks folder to the image to allow playback of media inside of '/localtracks'
         -   ./localtracks:/localtracks
         environment:
             _JAVA_OPTIONS: -Xmx4G # The highest amount of RAM which Lavalink is allowed to use
+            # Set this to 'true' if this is a remote node, and you need to conserve outbound traffic
+            SERVER_COMPRESSION_ENABLED: false
+            # You will likely want to set this as high as your system can handle without issues if you use localtracks
+            SERVER_UNDERTOW_THREADS_IO: 32 # CPU_COUNT * 2 i.e 32 for 16 core CPU
+            SERVER_UNDERTOW_THREADS_WORKER: 128 # CPU_COUNT * 8 i.e 128 for 16 core CPU
 
             # Configure bind address and port
             SERVER_ADDRESS: 0.0.0.0 # The interface to bind to
@@ -101,7 +106,7 @@ services:
             LAVALINK_SERVER_OPUSENCODINGQUALITY: 10 # Opus encoder quality. Valid values range from 0 to 10, where 10 is best quality but is the most expensive on the CPU.
             LAVALINK_SERVER_PASSWORD: youshallnotpass # Authentication Password
             LAVALINK_SERVER_PLAYERUPDATEINTERVAL: 30 # How frequently to send player updates to clients, in seconds
-            LAVALINK_SERVER_RESAMPLINGQUALITY: HIGH  # Quality of resampling operations. Valid values are LOW, MEDIUM and HIGH, where HIGH uses the most CPU.
+            LAVALINK_SERVER_RESAMPLINGQUALITY: MEDIUM  # Quality of resampling operations. Valid values are LOW, MEDIUM and HIGH, where HIGH uses the most CPU.
             LAVALINK_SERVER_SOUNDCLOUDSEARCHENABLED: true # Enable SoundCloud Search
             LAVALINK_SERVER_TRACKSTUCKTHRESHOLDMS: 10000 # The threshold for how long a track can be stuck. A track is stuck if does not return any audio data.
             LAVALINK_SERVER_USESEEKGHOSTING: true # Seek ghosting is the effect where whilst a seek is in progress, the audio buffer is read from until empty, or until seek is ready.
@@ -159,6 +164,8 @@ services:
             # Lavasrc deezer  configuration
             PLUGINS_LAVASRC_SOURCES_DEEZER: true  # Enable Deezer source
             # # PLUGINS_LAVASRC_DEEZER_MASTERDECRYPTIONKEY:  # Leave this as it is, or fill it with the deezer key if you have it
+            # P.S IT IS NOT id58zow5hmqhdv24zil4znth3ywy8prt9-dizzzrlba8q4h2al0ywmhp2zg-1d5g
+
 
             # Lavasrc Apple music configuration
             PLUGINS_LAVASRC_SOURCES_APPLEMUSIC: true          # Enable Apple Music source

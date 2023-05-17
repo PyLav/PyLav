@@ -7,7 +7,6 @@ from datetime import datetime
 
 from dacite import from_dict
 
-from pylav.compat import json
 from pylav.constants.config import READ_CACHING_ENABLED
 from pylav.helpers.singleton import SingletonCachedByKey
 from pylav.nodes.api.responses.track import Track
@@ -69,11 +68,6 @@ class Query(CachedModel, metaclass=SingletonCachedByKey):
             .output(load_json=True, nested=True)
         )
         data = response["tracks"] if response else []
-        # TODO: Remove me release 1.9
-        if data and any(t["info"] is None for t in data):
-            tracks = await self.client.decode_tracks([t["encoded"] for t in data], raise_on_failure=True)
-            await self.update_tracks(tracks)
-            data = [t.to_dict() for t in tracks]
         return data
 
     async def update_tracks(self, tracks: list[str | Track]):
@@ -141,15 +135,8 @@ class Query(CachedModel, metaclass=SingletonCachedByKey):
             The plugin info of the playlist.
         """
 
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await QueryRow.raw(
-            """
-            INSERT INTO node (id, extras) VALUES ({}, {})
-            ON CONFLICT (id) DO UPDATE SET "pluginInfo" = excluded."pluginInfo";
-            """,
-            self.id,
-            json.dumps(plugin_info),
+        await QueryRow.insert(QueryRow(identifier=self.id, pluginInfo=plugin_info)).on_conflict(
+            action="DO UPDATE", target=QueryRow.identifier, values=[QueryRow.pluginInfo]
         )
         await self.update_cache((self.fetch_plugin_info, plugin_info), (self.exists, True))
 
@@ -178,13 +165,8 @@ class Query(CachedModel, metaclass=SingletonCachedByKey):
         name: str
             The name of the playlist.
         """
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await QueryRow.raw(
-            "INSERT INTO query (identifier, name) VALUES ({}, {}) ON CONFLICT (identifier) DO UPDATE SET name = "
-            "EXCLUDED.name;",
-            self.id,
-            name,
+        await QueryRow.insert(QueryRow(identifier=self.id, name=name)).on_conflict(
+            action="DO UPDATE", target=QueryRow.identifier, values=[QueryRow.name]
         )
         await self.update_cache((self.fetch_name, name), (self.exists, True))
 
@@ -207,15 +189,9 @@ class Query(CachedModel, metaclass=SingletonCachedByKey):
 
     async def update_last_updated(self) -> None:
         """Update the last updated time of the playlist"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await QueryRow.raw(
-            "INSERT INTO query (identifier, last_updated) "
-            "VALUES ({}, {}) ON CONFLICT (identifier) "
-            "DO UPDATE SET last_updated = EXCLUDED.last_updated;",
-            self.id,
-            QueryRow.last_updated.default.python(),
-        )
+        await QueryRow.insert(
+            QueryRow(identifier=self.id, last_updated=QueryRow.last_updated.default.python())
+        ).on_conflict(action="DO UPDATE", target=QueryRow.identifier, values=[QueryRow.last_updated])
         await self.update_cache(
             (self.fetch_last_updated, QueryRow.last_updated.default.python()),
             (self.exists, True),

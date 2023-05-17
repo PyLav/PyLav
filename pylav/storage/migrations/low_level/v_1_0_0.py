@@ -123,6 +123,7 @@ async def run_lib_config_v_1_0_0(connection: Connection) -> list[asyncpg.Record]
 
 
 async def migrate_playlists_v_1_0_0(playlists: list[asyncpg.Record]) -> None:
+    """Runs playlist migration for version 1.0.0."""
     for playlist in playlists:
         if playlist["id"] in BUNDLED_PLAYLIST_IDS:
             continue
@@ -159,6 +160,7 @@ async def migrate_playlists_v_1_0_0(playlists: list[asyncpg.Record]) -> None:
 
 
 async def migrate_queries_v_1_0_0(queries: list[asyncpg.Record]) -> None:
+    """Processes queries for migration to version 1.0.0."""
     for query in queries:
         defaults = {QueryRow.name: query["name"]}
         query_row = await QueryRow.objects().get_or_create(QueryRow.identifier == query["identifier"], defaults)
@@ -189,6 +191,7 @@ async def migrate_queries_v_1_0_0(queries: list[asyncpg.Record]) -> None:
 
 
 async def migrate_player_config_v_1_0_0(players: list[asyncpg.Record]) -> None:
+    """Processes player config for migration to version 1.0.0."""
     bulk_insert = []
     for player in players:
         data = {
@@ -251,6 +254,7 @@ async def migrate_player_config_v_1_0_0(players: list[asyncpg.Record]) -> None:
 
 
 async def migrate_node_config_v_1_0_0(nodes: list[asyncpg.Record]) -> None:
+    """Processes node config for migration to version 1.0.0."""
     for node in nodes:
         data = {
             NodeRow.name: node["name"],
@@ -269,6 +273,7 @@ async def migrate_node_config_v_1_0_0(nodes: list[asyncpg.Record]) -> None:
 
 
 async def migrate_lib_config_v_1_0_0(configs: list[asyncpg.Record]) -> None:
+    """Processes lib config for migration to version 1.0.0."""
     for config in configs:
         data = {
             LibConfigRow.config_folder: config["config_folder"],
@@ -299,6 +304,7 @@ async def migrate_lib_config_v_1_0_0(configs: list[asyncpg.Record]) -> None:
 async def low_level_v_1_0_0_migration(
     con: Connection, migration_data: dict[str, dict[str, list[asyncpg.Record]] | None], migrator: ConfigController
 ) -> None:
+    """Runs the low level migration for version 1.0.0."""
     version = "1.0.0"
     migration_data[version] = {}
     await low_level_v_1_0_0_playlists(con, migration_data, version)
@@ -313,6 +319,7 @@ async def low_level_v_1_0_0_migration(
 async def low_level_v_1_0_0_nodes(
     con: Connection, migration_data: dict[str, dict[str, list[asyncpg.Record]] | None], version: str
 ) -> None:
+    """Runs the low level migration of nodes  for version 1.0.0."""
     node_config_data_1000 = await run_node_config_v_1_0_0(con)
     if node_config_data_1000:
         migration_data[version]["node"] = node_config_data_1000
@@ -321,6 +328,7 @@ async def low_level_v_1_0_0_nodes(
 async def low_level_v_1_0_0_lib(
     con: Connection, migration_data: dict[str, dict[str, list[asyncpg.Record]] | None], version: str
 ) -> None:
+    """Runs the low level migration of lib config for version 1.0.0."""
     lib_config_data_1000 = await run_lib_config_v_1_0_0(con)
     if lib_config_data_1000:
         migration_data[version]["lib"] = lib_config_data_1000
@@ -329,6 +337,7 @@ async def low_level_v_1_0_0_lib(
 async def low_level_v_1_0_0_players(
     con: Connection, migration_data: dict[str, dict[str, list[asyncpg.Record]] | None], version: str
 ) -> None:
+    """Runs the low level migration of players for version 1.0.0."""
     player_data_1000 = await run_player_config_v_1_0_0(con)
     if player_data_1000:
         migration_data[version]["player"] = player_data_1000
@@ -337,6 +346,7 @@ async def low_level_v_1_0_0_players(
 async def low_level_v_1_0_0_queries(
     con: Connection, migration_data: dict[str, dict[str, list[asyncpg.Record]] | None], version: str
 ) -> None:
+    """Runs the low level migration of queries for version 1.0.0."""
     query_data_1000 = await run_query_migration_v_1_0_0(con)
     if query_data_1000:
         migration_data[version]["query"] = query_data_1000
@@ -345,6 +355,7 @@ async def low_level_v_1_0_0_queries(
 async def low_level_v_1_0_0_playlists(
     con: Connection, migration_data: dict[str, dict[str, list[asyncpg.Record]] | None], version: str
 ) -> None:
+    """Runs the low level migration of playlists for version 1.0.0."""
     playlist_data_1000 = await run_playlist_migration_v_1_0_0(con)
     if playlist_data_1000:
         migration_data[version]["playlist"] = playlist_data_1000

@@ -16,7 +16,7 @@ lavalink:
         frameBufferDurationMs: 1000 # How many milliseconds of audio to keep buffered
         opusEncodingQuality: 10 # Opus encoder quality. Valid values range from 0 to 10, where 10 is best quality but is the most expensive on the CPU.
         playerUpdateInterval: 5 # How frequently to send player updates to clients, in seconds
-        resamplingQuality: HIGH # Quality of resampling operations. Valid values are LOW, MEDIUM and HIGH, where HIGH uses the most CPU.
+        resamplingQuality: MEDIUM # Quality of resampling operations. Valid values are LOW, MEDIUM and HIGH, where HIGH uses the most CPU.
         trackStuckThresholdMs: 10000 # The threshold for how long a track can be stuck. A track is stuck if does not return any audio data.
         useSeekGhosting: true # Seek ghosting is the effect where whilst a seek is in progress, the audio buffer is read from until empty, or until seek is ready.
         youtubePlaylistLoadLimit: 6 # Number of pages at 100 each
@@ -97,11 +97,19 @@ plugins:
             albumLoadLimit: 6 # The number of pages at 50 tracks each
         deezer:
             masterDecryptionKey: CHANGE_ME # the master key used for decrypting the deezer tracks. (yes this is not here you need to get it from somewhere else)
+            # P.S IT IS NOT id58zow5hmqhdv24zil4znth3ywy8prt9-dizzzrlba8q4h2al0ywmhp2zg-1d5g
 #        yandexmusic:
 #            accessToken: CHANGE_ME # the token used for accessing the yandex music api. See https://github.com/TopiSenpai/LavaSrc#yandex-music
 server:
     address: localhost # Address to bind the server to, Client will connect to this address - 0.0.0.0 means all addresses, if you are using the node on same machine as bot then use localhost
     port: 2154 # Port to run the server on, Client will connect to this port
+    compression:
+        enabled: false # Whether to enable compression or not; Set this to 'true' if this is a remote node, and you need to conserve outbound traffic
+    # You will likely want to set this as high as your system can handle without issues if you use localtracks
+    undertow:
+        threads:
+            io: 32       # CPU_COUNT * 2 i.e 32 for 16 core cpu
+            worker: 128  # CPU_COUNT * 8 i.e 128 for 16 core cpu
 metrics:
     prometheus:
         enabled: false

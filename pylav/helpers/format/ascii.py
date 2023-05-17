@@ -7,6 +7,8 @@ from pylav.type_hints.generics import SupportsStr
 
 
 class _BackgroundColourCodes:
+    """Background colour codes for ANSI escape sequences."""
+
     dark_blue = "40"
     orange = "41"
     blue = "42"
@@ -18,6 +20,8 @@ class _BackgroundColourCodes:
 
 
 class EightBitANSI:
+    """Eight-bit ANSI escape sequences."""
+
     escape = "\u001b["
 
     black = "30"
@@ -46,6 +50,7 @@ class EightBitANSI:
         background: str = None,
         italic: bool = False,
     ) -> str:
+        """Colorize a string with ANSI escape sequences."""
         colour = [getattr(cls, color, "39")]
         if background and (background := getattr(cls.background, background, None)):
             colour.append(background)
@@ -71,6 +76,7 @@ class EightBitANSI:
         background: str = None,
         italic: bool = False,
     ) -> str:
+        """Paint a string black."""
         return cls.colorize(text, "black", bold, underline, background, italic)
 
     @classmethod
@@ -82,6 +88,7 @@ class EightBitANSI:
         background: str = None,
         italic: bool = False,
     ) -> str:
+        """Paint a string red."""
         return cls.colorize(text, "red", bold, underline, background, italic)
 
     @classmethod
@@ -93,6 +100,7 @@ class EightBitANSI:
         background: str = None,
         italic: bool = False,
     ) -> str:
+        """Paint a string green."""
         return cls.colorize(text, "green", bold, underline, background, italic)
 
     @classmethod
@@ -104,6 +112,7 @@ class EightBitANSI:
         background: str = None,
         italic: bool = False,
     ) -> str:
+        """Paint a string yellow."""
         return cls.colorize(text, "yellow", bold, underline, background, italic)
 
     @classmethod
@@ -115,6 +124,7 @@ class EightBitANSI:
         background: str = None,
         italic: bool = False,
     ) -> str:
+        """Paint a string blue."""
         return cls.colorize(text, "blue", bold, underline, background, italic)
 
     @classmethod
@@ -126,6 +136,7 @@ class EightBitANSI:
         background: str = None,
         italic: bool = False,
     ) -> str:
+        """Paint a string magenta."""
         return cls.colorize(text, "magenta", bold, underline, background, italic)
 
     @classmethod
@@ -137,6 +148,7 @@ class EightBitANSI:
         background: str = None,
         italic: bool = False,
     ) -> str:
+        """Paint a string cyan."""
         return cls.colorize(text, "cyan", bold, underline, background, italic)
 
     @classmethod
@@ -148,6 +160,7 @@ class EightBitANSI:
         background: str = None,
         italic: bool = False,
     ) -> str:
+        """Paint a string white."""
         return cls.colorize(text, "white", bold, underline, background, italic)
 
     @classmethod
@@ -164,6 +177,7 @@ class EightBitANSI:
 
     @classmethod
     def closest_color(cls, red: int, green: int, blue: int) -> str:
+        """Get the closest 4-bit ANSI colour from a given RGB value."""
         color_diffs = []
         for name, color in ASCII_COLOURS.items():
             cr, cg, cb = color

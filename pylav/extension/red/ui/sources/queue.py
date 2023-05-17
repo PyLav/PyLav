@@ -88,11 +88,13 @@ class QueueSource(menus.ListPageSource):
         start = page_num * self.per_page
         return start, page_num
 
-    async def format_page(self, menu: QueueMenu, tracks: list[Track]) -> discord.Embed:
+    async def format_page(self, menu: QueueMenu, tracks: list[Track]) -> dict[str, discord.Embed | str | discord.File]:
         if not (player := self.cog.pylav.get_player(menu.ctx.guild.id)):
-            return await self.cog.pylav.construct_embed(
-                description=_("I am not connected to any voice channel at the moment."), messageable=menu.ctx
-            )
+            return {
+                "embed": await self.cog.pylav.construct_embed(
+                    description=_("I am not connected to any voice channel at the moment."), messageable=menu.ctx
+                )
+            }
         self.current_player = player
         return (
             await player.get_queue_page(
@@ -104,12 +106,14 @@ class QueueSource(menus.ListPageSource):
                 history=self.history,
             )
             if player.current and (player.history.size() if self.history else True)
-            else await self.cog.pylav.construct_embed(
-                description=_("I am not currently playing anything on this server.")
-                if self.history
-                else _("I am not currently playing anything on this server."),
-                messageable=menu.ctx,
-            )
+            else {
+                "embed": await self.cog.pylav.construct_embed(
+                    description=_("I am not currently playing anything on this server.")
+                    if self.history
+                    else _("I am not currently playing anything on this server."),
+                    messageable=menu.ctx,
+                )
+            }
         )
 
 
@@ -132,11 +136,15 @@ class QueuePickerSource(QueueSource):
             self.select_mapping[track.id] = track
         return []
 
-    async def format_page(self, menu: QueuePickerMenu, tracks: list[Track]) -> discord.Embed:
+    async def format_page(
+        self, menu: QueuePickerMenu, tracks: list[Track]
+    ) -> dict[str, discord.Embed | str | discord.File]:
         if not (player := self.cog.pylav.get_player(menu.ctx.guild.id)):
-            return await self.cog.pylav.construct_embed(
-                description=_("I am not connected to any voice channel at the moment."), messageable=menu.ctx
-            )
+            return {
+                "embed": await self.cog.pylav.construct_embed(
+                    description=_("I am not connected to any voice channel at the moment."), messageable=menu.ctx
+                )
+            }
         self.current_player = player
         return (
             await player.get_queue_page(
@@ -147,8 +155,10 @@ class QueuePickerSource(QueueSource):
                 messageable=menu.ctx,
             )
             if player.current
-            else await self.cog.pylav.construct_embed(
-                description=_("I am not currently playing anything on this server."),
-                messageable=menu.ctx,
-            )
+            else {
+                "embed": await self.cog.pylav.construct_embed(
+                    description=_("I am not currently playing anything on this server."),
+                    messageable=menu.ctx,
+                )
+            }
         )

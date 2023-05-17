@@ -1,6 +1,11 @@
 from __future__ import annotations
 
+import asyncio
+import base64
+import contextlib
 import hashlib
+import io
+import re
 import struct
 import typing
 import uuid
@@ -8,11 +13,13 @@ from functools import total_ordering
 from typing import Any
 
 import discord
+import mutagen
 from dacite import from_dict
 
 from pylav.constants.regex import SQUARE_BRACKETS, STREAM_TITLE
 from pylav.exceptions.track import TrackNotFoundException
 from pylav.extension.flowery.lyrics import Error, Lyrics
+from pylav.nodes.api.responses import rest_api
 from pylav.nodes.api.responses.playlists import Info
 from pylav.nodes.api.responses.track import Track as APITrack
 from pylav.players.query.obj import Query
@@ -46,6 +53,9 @@ class Track:
         "_raw_data",
         "_processed",
         "_player",
+        "_duration",
+        "_local_file_metadata",
+        "_has_embedded_artwork",
     )
     __CLIENT: Client | None = None
 
@@ -70,7 +80,9 @@ class Track:
         self._raw_data: JSON_DICT_TYPE = {}
         self._processed: APITrack | None = None
         self._player: Player | None = None
-
+        self._duration: int | float = float("inf")
+        self._local_file_metadata: mutagen.FileType | None | bool = False
+        self._has_embedded_artwork: bool | None = None
         self._process_init()
 
     @property
@@ -140,10 +152,10 @@ class Track:
         node: Node,
         data: Track | APITrack | dict[str, Any] | str | None,
         query: Query | None,
+        player_instance: Player | None,
         skip_segments: list[str] | None = None,
         requester: discord.abc.User | int | None = None,
         lazy: bool = False,
-        player_instance: Player | None = None,
         **extra: Any,
     ) -> Track | None:
         """Builds a track object from the given data.
@@ -183,26 +195,51 @@ class Track:
             if query is None:
                 query = await Query.from_string(data.info.uri)
             return cls._from_lavalink_track_object(
-                node, data, query, skip_segments, requester, player_instance=player_instance, **extra
+                node=node,
+                data=data,
+                query=query,
+                skip_segments=skip_segments,
+                requester=requester,
+                player_instance=player_instance,
+                **extra,
             )
 
         if isinstance(data, dict):
             try:
-                t = from_dict(data_class=APITrack, data=data)
+                data = from_dict(data_class=APITrack, data=data)
                 if query is None:
-                    query = await Query.from_string(t.info.uri)
+                    query = await Query.from_string(data.info.uri)
                 return cls._from_lavalink_track_object(
-                    node, t, query, skip_segments, requester, player_instance=player_instance, **extra
+                    node=node,
+                    data=data,
+                    query=query,
+                    skip_segments=skip_segments,
+                    requester=requester,
+                    player_instance=player_instance,
+                    **extra,
                 )
             except Exception as exc:
                 raise KeyError("Invalid track data") from exc
 
         if data is None:
-            return cls._from_query(node, query, skip_segments, requester, player_instance=player_instance, **extra)
+            return cls._from_query(
+                node=node,
+                data=query,
+                skip_segments=skip_segments,
+                requester=requester,
+                player_instance=player_instance,
+                **extra,
+            )
 
         if isinstance(data, str):
             return await cls._from_base64_string(
-                node, data, skip_segments, requester, player_instance=player_instance, lazy=lazy, **extra
+                node=node,
+                data=data,
+                skip_segments=skip_segments,
+                requester=requester,
+                player_instance=player_instance,
+                lazy=lazy,
+                **extra,
             )
 
         raise TypeError(f"Expected Track, LavalinkTrackObject, dict, or str, got {type(data).__name__}")
@@ -213,13 +250,14 @@ class Track:
         node: Node,
         data: APITrack,
         query: Query,
+        player_instance: Player | None,
         skip_segments: list[str] | None = None,
         requester: discord.abc.User | int | None = None,
-        player_instance: Player | None = None,
         **extra: Any,
     ) -> Track:
         instance = cls(node, query, skip_segments, requester, **extra)
         instance._encoded = data.encoded
+        instance._duration = data.info.length
         instance._extra = extra
         instance._raw_data = extra.get("raw_data", {})
         instance._unique_id = hashlib.md5()
@@ -233,9 +271,9 @@ class Track:
         cls,
         node: Node,
         data: str,
+        player_instance: Player | None,
         skip_segments: list[str] | None = None,
         requester: discord.abc.User | int | None = None,
-        player_instance: Player | None = None,
         lazy: bool = False,
         **extra: Any,
     ) -> Track:
@@ -256,9 +294,9 @@ class Track:
         cls,
         node: Node,
         query: Query,
+        player_instance: Player | None,
         skip_segments: list[str] | None = None,
         requester: discord.abc.User | int | None = None,
-        player_instance: Player | None = None,
         **extra: Any,
     ) -> Track:
         instance = cls(node, query, skip_segments, requester, **extra)
@@ -328,7 +366,11 @@ class Track:
         return (await self.fetch_full_track_data()).info.isSeekable
 
     async def duration(self) -> int:
-        return (await self.fetch_full_track_data()).info.length
+        dur = (await self.fetch_full_track_data()).info.length
+        dur = dur if not await self.is_local() else await self._mutagen_length(dur)
+        if self.player is None:
+            return dur
+        return self.player.timescale.adjust_position(dur) if self.player.timescale.changed else dur
 
     length = duration
 
@@ -336,28 +378,140 @@ class Track:
         return (await self.fetch_full_track_data()).info.isStream
 
     async def title(self) -> str:
-        return (await self.fetch_full_track_data()).info.title
+        title = (await self.fetch_full_track_data()).info.title
+        return title if not await self.is_local() else await self._mutagen_title(title)
 
     async def uri(self) -> str:
         return (await self.fetch_full_track_data()).info.uri
 
     async def author(self) -> str:
-        return (await self.fetch_full_track_data()).info.author
+        author = (await self.fetch_full_track_data()).info.author
+        return author if not await self.is_local() else await self._mutagen_artist(author)
 
     async def source(self) -> str:
         return (await self.fetch_full_track_data()).info.sourceName
 
     async def artworkUrl(self) -> str | None:  # noqa:
-        return (await self.fetch_full_track_data()).info.artworkUrl
+        artwork = (await self.fetch_full_track_data()).info.artworkUrl
+        return artwork if not await self.is_local() else await self._mutagen_artwork_url(artwork)
 
     async def isrc(self) -> str | None:
-        return (await self.fetch_full_track_data()).info.isrc
+        isrc = (await self.fetch_full_track_data()).info.isrc
+        return isrc if not await self.is_local() else await self._mutagen_isrc(isrc)
 
     async def info(self) -> Info | None:
         return (await self.fetch_full_track_data()).info
 
     async def probe_info(self) -> str | None:
         return (await self.fetch_full_track_data()).pluginInfo.probeInfo
+
+    async def _get_mutagen_metadata(self) -> mutagen.File | None:
+        if not await self.is_local():
+            self._local_file_metadata = None
+        if self._local_file_metadata != False:
+            return self._local_file_metadata
+        try:
+            self._local_file_metadata = await asyncio.to_thread(mutagen.File, await self.uri())
+        except Exception:
+            self._local_file_metadata = None
+        return self._local_file_metadata
+
+    async def _mutagen_artwork_url(self, default: str | None) -> str | None:
+        if not await self.is_local():
+            return None
+        with contextlib.suppress(Exception):
+            if metadata := await self._get_mutagen_metadata():
+                if any("flac" in m for m in metadata.mime) and metadata.pictures:
+                    self._has_embedded_artwork = bool(metadata.pictures)
+                elif any("mp3" in m for m in metadata.mime) and any(
+                    k in metadata for k in ("APIC:", "APIC:cover", "APIC")
+                ):
+                    for k in ("APIC:", "APIC:cover", "APIC"):
+                        if artwork := metadata.get(k, None):
+                            self._has_embedded_artwork = bool(artwork.data)
+                elif any("ogg" in m for m in metadata.mime) and "metadata_block_picture" in metadata:
+                    for b64_data in metadata.get("metadata_block_picture", []):
+                        try:
+                            data = base64.b64decode(b64_data)
+                            self._has_embedded_artwork = bool(data)
+                            break
+                        except (TypeError, ValueError):
+                            continue
+        return default if not self._has_embedded_artwork else "attachment://thumbnail.png"
+
+    async def get_embedded_artwork(self) -> discord.File | None:
+        if not await self.is_local():
+            return None
+        if self._has_embedded_artwork is False:
+            return None
+        with contextlib.suppress(Exception):
+            if metadata := await self._get_mutagen_metadata():
+                if any("flac" in m for m in metadata.mime) and metadata.pictures:
+                    return discord.File(fp=io.BytesIO(metadata.pictures[0].data), filename="thumbnail.png")
+                elif any("mp3" in m for m in metadata.mime) and any(
+                    k in metadata for k in ("APIC:", "APIC:cover", "APIC")
+                ):
+                    for k in ("APIC:", "APIC:cover", "APIC"):
+                        if artwork := metadata.get(k, None):
+                            return discord.File(fp=io.BytesIO(artwork.data), filename="thumbnail.png")
+                elif any("ogg" in m for m in metadata.mime) and "metadata_block_picture" in metadata:
+                    for b64_data in metadata.get("metadata_block_picture", []):
+                        try:
+                            return discord.File(fp=io.BytesIO(base64.b64decode(b64_data)), filename="thumbnail.png")
+                        except (TypeError, ValueError):
+                            continue
+        return None
+
+    async def _mutagen_title(self, default: str | None) -> str | None:
+        if not await self.is_local():
+            return None
+        with contextlib.suppress(Exception):
+            if metadata := await self._get_mutagen_metadata():
+                if any("flac" in m for m in metadata.mime) and "title" in metadata:
+                    return next(iter(metadata["title"]), default)
+                elif any("mp3" in m for m in metadata.mime) and "TIT2" in metadata:
+                    return next(iter(metadata["TIT2"]), default)
+                elif any("ogg" in m for m in metadata.mime) and "title" in metadata:
+                    return next(iter(metadata["title"]), default)
+        return default
+
+    async def _mutagen_artist(self, default: str | None) -> str | None:
+        if not await self.is_local():
+            return None
+        with contextlib.suppress(Exception):
+            if metadata := await self._get_mutagen_metadata():
+                if any("flac" in m for m in metadata.mime) and "artist" in metadata:
+                    return next(iter(metadata["artist"]), default)
+                elif any("mp3" in m for m in metadata.mime) and "TPE1" in metadata:
+                    return next(iter(metadata["TPE1"]), default)
+                elif any("ogg" in m for m in metadata.mime) and "artist" in metadata:
+                    return next(iter(metadata["artist"]), default)
+        return default
+
+    async def _mutagen_isrc(self, default: str | None) -> str | None:
+        if not await self.is_local():
+            return None
+        with contextlib.suppress(Exception):
+            if metadata := await self._get_mutagen_metadata():
+                if any("flac" in m for m in metadata.mime) and "isrc" in metadata:
+                    matches = re.findall(r"[A-Z]{2}-?\w{3}-?\d{2}-?\d{5}", "\n".join(metadata.get("isrc", [])))
+                    return matches[0] if matches else default
+                elif any("mp3" in m for m in metadata.mime) and "TSRC" in metadata:
+                    return metadata["TSRC"] or default
+                elif any("ogg" in m for m in metadata.mime) and "isrc" in metadata:
+                    matches = re.findall(r"[A-Z]{2}-?\w{3}-?\d{2}-?\d{5}", "\n".join(metadata.get("isrc", [])))
+                    return matches[0] if matches else default
+        return default
+
+    async def _mutagen_length(self, default: int | None) -> int | None:
+        if not await self.is_local():
+            return None
+        with contextlib.suppress(Exception):
+            if metadata := await self._get_mutagen_metadata():
+                if any("flac" in m for m in metadata.mime) and "length" in metadata:
+                    length = next(iter(metadata["length"]), None)
+                    return int(length) if length else default
+        return default
 
     async def query(self) -> Query:
         if self._processed and self._updated_query is None:
@@ -490,6 +644,7 @@ class Track:
             return self._processed
         if self.encoded:
             self._processed = await self.client.decode_track(self.encoded)
+            self._duration = self._processed.info.length
         else:
             await self.search()
         return self._processed
@@ -528,14 +683,24 @@ class Track:
         self._query = _query
         self.timestamp = self.timestamp or self._query.start_time
         response = await self.client._get_tracks(await self.query(), first=True, bypass_cache=bypass_cache)
-        if not response or not response.tracks:
+        match response.loadType:
+            case "track":
+                tracks = [response.data]
+            case "search":
+                tracks = response.data
+            case "playlist":
+                tracks = response.data.tracks
+            case __:
+                tracks = []
+        if not response or not tracks:
             raise TrackNotFoundException(f"No tracks found for query {await self.query_identifier()}")
-        track = response.tracks[0]
+        track = tracks[0]
         self._encoded = track.encoded
         assert isinstance(self._encoded, str)
         self._unique_id = hashlib.md5()
         self._unique_id.update(self.encoded.encode())
         self._processed = track
+        self._duration = track.info.length
 
     async def search_all(self, player: Player, requester: int, bypass_cache: bool = False) -> list[Track]:
         _query = await Query.from_string(self._query)
@@ -551,13 +716,22 @@ class Track:
         response = await player.node.get_track(
             await self.query(), bypass_cache=bypass_cache, first=self._query.is_search
         )
-        if not response or not response.tracks:
+        match response.loadType:
+            case "track":
+                tracks = [response.data]
+            case "search":
+                tracks = response.data
+            case "playlist":
+                tracks = response.data.tracks
+            case __:
+                tracks = []
+        if not response or tracks:
             raise TrackNotFoundException(f"No tracks found for query {await self.query_identifier()}")
         return [
             await Track.build_track(
                 data=track, node=player.node, query=self._query, requester=requester, player_instance=self._player
             )
-            for track in response.tracks
+            for track in tracks
         ]
 
     async def _icyparser(self, url: str) -> str | None:
@@ -612,7 +786,7 @@ class Track:
             max_length=max_length if with_url and max_length is None else (max_length - 8), author=author
         )
         track_name = self._maybe_escape_markdown(text=track_name, escape=escape)
-        if with_url and (query := await self.query()) and not query.is_local:
+        if with_url and ((query := await self.query()) and not query.is_local):
             track_name = f"**[{track_name}]({await self.uri()})**"
         return track_name
 
@@ -622,8 +796,8 @@ class Track:
             await self.get_local_query_track_display_name(
                 max_length=max_length,
                 author_string=author_string,
-                unknown_author=await self.author() != "Unknown artist",
-                unknown_title=await self.title() != "Unknown title",
+                unknown_author=await self.author() == "Unknown artist",
+                unknown_title=await self.title() == "Unknown title",
             )
             if await self.query() and await self.is_local()
             else await self.get_external_query_track_display_name(max_length=max_length, author_string=author_string)
@@ -681,3 +855,10 @@ class Track:
             )
         else:
             return False, await self.client.flowery_api.lyrics.get_lyrics(query=await self.title())
+
+    async def get_mixplaylist_url(self) -> str | None:
+        if not await self.is_youtube():
+            return None
+        if not (identifier := await self.identifier()):
+            return None
+        return await self.__CLIENT.generate_mix_playlist(video_id=identifier)

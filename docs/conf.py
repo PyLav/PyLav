@@ -78,8 +78,11 @@ html_context = {
     "display_github": True,
     "github_user": "PyLav",
     "github_repo": "PyLav",
-    "github_version": "master/docs/",
+    "github_version": "develop/docs/",
 }
+html_css_files = [
+    "css/rtd_dark.css",
+]
 
 source_suffix = ".rst"
 master_doc = "index"

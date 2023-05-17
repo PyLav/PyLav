@@ -8,6 +8,7 @@ import operator
 import os
 import pathlib
 import random
+import sys
 from collections.abc import AsyncIterator, Awaitable, Callable, Iterator
 from types import MethodType
 from typing import Any
@@ -47,6 +48,7 @@ from pylav.constants.config import (
     MANAGED_NODE_SPOTIFY_CLIENT_SECRET,
     MANAGED_NODE_SPOTIFY_COUNTRY_CODE,
     MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN,
+    POSTGRES_CONNECTIONS,
     REDIS_FULL_ADDRESS_RESPONSE_CACHE,
     TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS,
     TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS,
@@ -69,9 +71,9 @@ from pylav.extension.radio import RadioBrowser
 from pylav.helpers.singleton import SingletonCallable, SingletonClass
 from pylav.helpers.time import get_now_utc, get_tz_utc
 from pylav.logging import getLogger
-from pylav.nodes.api.responses.rest_api import LoadFailed, LoadTrackResponses, NoMatches
+from pylav.nodes.api.responses import rest_api
 from pylav.nodes.api.responses.route_planner import Status as RoutePlannerStatus
-from pylav.nodes.api.responses.track import Track as TrackObject
+from pylav.nodes.api.responses.track import Track as Track_namespace_conflict
 from pylav.nodes.manager import NodeManager
 from pylav.nodes.node import Node
 from pylav.players.manager import PlayerController
@@ -91,7 +93,7 @@ from pylav.storage.database.cache.model import CachedModel
 from pylav.storage.database.tables.misc import DATABASE_ENGINE, IS_POSTGRES
 from pylav.storage.models.config import Config
 from pylav.storage.models.equilizer import Equalizer
-from pylav.storage.models.node.real import Node as RealNode
+from pylav.storage.models.node.real import Node as Node_namespace_conflict
 from pylav.storage.models.player.state import PlayerState
 from pylav.type_hints.bot import DISCORD_BOT_TYPE, DISCORD_COG_TYPE, DISCORD_CONTEXT_TYPE, DISCORD_INTERACTION_TYPE
 from pylav.utils.aiohttp_postgres_cache import PostgresCacheBackend
@@ -238,7 +240,7 @@ class Client(metaclass=SingletonClass):
             self._spotify_client_secret = None
             self._spotify_auth = None
             self._shutting_down = False
-            self._scheduler = AsyncIOScheduler()
+            self._scheduler = AsyncIOScheduler(prefix="pylav_scheduler.")
             self._scheduler.configure(timezone=get_tz_utc())
             self._wait_for_playlists = asyncio.Event()
             self._wait_for_playlists.set()
@@ -247,6 +249,7 @@ class Client(metaclass=SingletonClass):
             raise
 
     async def set_context_locale(self, guild: discord.Guild | None) -> None:
+        """Set the locale for the current context."""
         if self._disable_translations:
             return
         try:
@@ -259,6 +262,7 @@ class Client(metaclass=SingletonClass):
             self._disable_translations = True
 
     async def on_pylav_red_api_tokens_update(self, service_name: str, api_tokens: dict[str, str]) -> None:
+        """Update API tokens for services when they are updated in Red."""
         match service_name:
             case "spotify" if "client_id" in api_tokens and "client_secret" in api_tokens:
                 await self.update_spotify_tokens(**api_tokens)
@@ -272,24 +276,27 @@ class Client(metaclass=SingletonClass):
                 await self.update_google_account(**api_tokens)
 
     async def on_pylav_shard_resumed(self, shard_id: int) -> None:
+        """Handle shard resume events."""
         if self._shutting_down or not self.initialized:
             return
         LOGGER.debug("Shard %s resumed, checking for affected players", shard_id)
-        players = filter(lambda p: p.guild.shard_id == shard_id, self.player_manager.players.values())
+        players = filter(lambda p: p.guild.shard_id == shard_id, self.player_manager.players.copy().values())
         for player in players:
             await self.set_context_locale(player.guild)
             await player.reconnect()
 
     async def on_pylav_shard_ready(self, shard_id: int) -> None:
+        """Handle shard ready events."""
         if self._shutting_down or not self.initialized:
             return
         LOGGER.debug("Shard %s ready, checking for affected players", shard_id)
-        players = filter(lambda p: p.guild.shard_id == shard_id, self.player_manager.players.values())
+        players = filter(lambda p: p.guild.shard_id == shard_id, self.player_manager.players.copy().values())
         for player in players:
             await self.set_context_locale(player.guild)
             await player.reconnect()
 
     async def on_pylav_resumed(self) -> None:
+        """Handle resume events."""
         if self._shutting_down or not self.initialized:
             return
         LOGGER.debug("Resumed, checking for affected players")
@@ -299,6 +306,7 @@ class Client(metaclass=SingletonClass):
             await player.reconnect()
 
     async def on_pylav_ready(self) -> None:
+        """Handle ready events."""
         if self._shutting_down or not self.initialized:
             return
         LOGGER.debug("Ready, checking for affected players")
@@ -307,6 +315,7 @@ class Client(metaclass=SingletonClass):
             await player.reconnect()
 
     async def wait_until_ready(self, timeout: float | None = None) -> None:
+        """Wait until the client is ready to use."""
         await asyncio.wait_for(self.ready.wait(), timeout=timeout)
 
     @property
@@ -351,6 +360,7 @@ class Client(metaclass=SingletonClass):
 
     @property
     def player_state_db_manager(self) -> PlayerStateController:
+        """Returns the sql player state config manager"""
         return self._player_state_db_manager
 
     @property
@@ -380,46 +390,57 @@ class Client(metaclass=SingletonClass):
 
     @property
     def managed_node_controller(self) -> LocalNodeManager:
+        """Returns the local node manager"""
         return self._local_node_manager
 
     @property
     def node_manager(self) -> NodeManager:
+        """Returns the node manager"""
         return self._node_manager
 
     @property
     def player_manager(self) -> PlayerController:
+        """Returns the player manager"""
         return self._player_manager
 
     @property
     def config_folder(self) -> aiopath.AsyncPath:
+        """Returns the config folder"""
         return self._config_folder
 
     @property
     def bot(self) -> DISCORD_BOT_TYPE:
+        """Returns the bot client"""
         return self._bot
 
     @property
     def session(self) -> aiohttp.ClientSession:
+        """Returns the aiohttp session used by the PyLav client"""
         return self._session
 
     @property
     def cached_session(self) -> aiohttp_client_cache.CachedSession:
+        """Returns the cached aiohttp session used by the PyLav client"""
         return self._cached_session
 
     @property
     def lib_version(self) -> Version:
+        """Returns the version of the PyLav library"""
         return VERSION
 
     @property
     def bot_id(self) -> str:
+        """Returns the bot id"""
         return self._user_id
 
     @property
     def local_tracks_cache(self) -> LocalTrackCache:
+        """Returns the local tracks cache"""
         return self.__local_tracks_cache
 
     @SingletonCallable.run_once_async
     async def initialize(self) -> None:
+        """Initialize the client"""
         try:
             if not self._initiated:
                 await self._maybe_start_pylav()
@@ -434,7 +455,7 @@ class Client(metaclass=SingletonClass):
                 self.ready.clear()
                 await self._wait_until_ready()
                 if IS_POSTGRES:
-                    await DATABASE_ENGINE.start_connection_pool(max_size=100)
+                    await DATABASE_ENGINE.start_connection_pool(max_size=POSTGRES_CONNECTIONS)
                 (
                     spotify_client_id,
                     spotify_client_secret,
@@ -496,13 +517,14 @@ class Client(metaclass=SingletonClass):
     async def _initialise_modules(self):
         await self._lib_config_manager.initialize()
         self._config = self._lib_config_manager.get_config()
-        await RealNode.create_managed(identifier=self.bot.user.id)
+        await Node_namespace_conflict.create_managed(identifier=self.bot.user.id)
         await self._update_schema_manager.run_updates()
         await self._radio_manager.initialize()
         await self._player_manager.initialize()
         await self.player_config_manager.initialize_global_config()
 
     async def managed_node_is_enabled(self) -> bool:
+        """Returns whether the managed node is enabled or not"""
         if IN_CONTAINER:
             return False
         return (
@@ -745,6 +767,7 @@ class Client(metaclass=SingletonClass):
         return spotify_client_id, spotify_client_secret
 
     async def register(self, cog: DISCORD_COG_TYPE) -> None:
+        """Register a cog to the PyLav Client."""
         LOGGER.debug("Registering cog %s", cog.__cog_name__)
         if (instance := getattr(self.bot, "pylav", None)) and not isinstance(instance, Client):
             raise AnotherClientAlreadyRegisteredException(
@@ -753,6 +776,7 @@ class Client(metaclass=SingletonClass):
         self.__cogs_registered.add(cog.__cog_name__)
 
     async def update_spotify_tokens(self, client_id: str, client_secret: str, **kwargs) -> None:
+        """Update Spotify tokens for the managed node and the client instance."""
         LOGGER.info("Updating Spotify Tokens")
         LOGGER.debug("New Spotify token: ClientId: %s || ClientSecret: %s", client_id, client_secret)
         self._spotify_auth = ClientCredentialsFlow(client_id=client_id, client_secret=client_secret)
@@ -767,6 +791,7 @@ class Client(metaclass=SingletonClass):
         await bundled_node_config.update_yaml(bundled_node_config_yaml)
 
     async def update_deezer_tokens(self, master_token: str, **kwargs: Any) -> None:
+        """Update Deezer tokens for the managed node."""
         LOGGER.info("Updating Deezer Tokens")
         LOGGER.debug("New Deezer token: %s", master_token)
         bundled_node_config = self._node_config_manager.bundled_node_config()
@@ -776,6 +801,7 @@ class Client(metaclass=SingletonClass):
         await bundled_node_config.update_yaml(bundled_node_config_yaml)
 
     async def update_yandex_tokens(self, token: str, **kwargs: Any) -> None:
+        """Update Yandex tokens for the managed node."""
         LOGGER.info("Updating Yandex Tokens")
         LOGGER.debug("New Yandex token: %s", token)
         bundled_node_config = self._node_config_manager.bundled_node_config()
@@ -785,6 +811,7 @@ class Client(metaclass=SingletonClass):
         await bundled_node_config.update_yaml(bundled_node_config_yaml)
 
     async def update_applemusic_tokens(self, token: str, country_code: str, **kwargs: Any) -> None:
+        """Update Apple Music tokens for the managed node."""
         LOGGER.info("Updating Apple Music Tokens")
         LOGGER.debug("New Apple Music tokens: mediaAPIToken %s || countryCode %s", token, country_code)
         bundled_node_config = self._node_config_manager.bundled_node_config()
@@ -797,6 +824,7 @@ class Client(metaclass=SingletonClass):
         await bundled_node_config.update_yaml(bundled_node_config_yaml)
 
     async def update_google_account(self, email: str, password: str, **kwargs: Any) -> None:
+        """Update Google Account for the managed node."""
         LOGGER.info("Updating Google Account")
         LOGGER.debug("New Google Account: %s", email)
         bundled_node_config = self._node_config_manager.bundled_node_config()
@@ -878,7 +906,7 @@ class Client(metaclass=SingletonClass):
 
     async def decode_track(
         self, track: str, feature: str = None, raise_on_failure: bool = False, lazy: bool = False
-    ) -> TrackObject | HTTPException:
+    ) -> Track_namespace_conflict | HTTPException:
         """|coro|
         Decodes a base64-encoded track string into a dict.
 
@@ -913,7 +941,7 @@ class Client(metaclass=SingletonClass):
             )
         try:
             response = await node.fetch_decodetrack(track, raise_on_failure=raise_on_failure)
-            if isinstance(response, TrackObject):
+            if isinstance(response, Track_namespace_conflict):
                 return response
             raise TypeError
         except Exception as exc:  # noqa
@@ -921,7 +949,7 @@ class Client(metaclass=SingletonClass):
 
     async def decode_tracks(
         self, tracks: list, feature: str = None, raise_on_failure: bool = False
-    ) -> list[TrackObject]:
+    ) -> list[Track_namespace_conflict]:
         """|coro|
         Decodes a list of base64-encoded track strings into a dict.
 
@@ -1005,6 +1033,7 @@ class Client(metaclass=SingletonClass):
         return await node.post_routeplanner_free_all()
 
     def dispatch_event(self, event: PyLavEvent) -> None:
+        """Dispatches the given event to all registered hooks."""
         asyncio.create_task(self._dispatch_event(event))
 
     async def _dispatch_event(self, event: PyLavEvent) -> None:
@@ -1070,6 +1099,7 @@ class Client(metaclass=SingletonClass):
                         await self._local_node_manager.shutdown()
                         await self._session.close()
                         await self._cached_session.close()
+                        await self._flowery_api.shutdown()
 
                         if self._scheduler:
                             with contextlib.suppress(Exception):
@@ -1083,6 +1113,17 @@ class Client(metaclass=SingletonClass):
                     del self.bot._pylav_client  # noqa
                     await DATABASE_ENGINE.close_connection_pool()
                     LOGGER.info("All cogs have been unregistered, PyLav client has been shutdown")
+                    # self.__reload_pylav()
+
+    @staticmethod
+    def __reload_pylav():
+        import importlib
+
+        name = __name__.split(".")[0]
+        temp = sorted(((k, v) for k, v in sys.modules.copy().items() if k.startswith(name)), reverse=True)
+        for n, m in temp:
+            if n.startswith(name):
+                importlib.reload(m)
 
     def get_player(self, guild: discord.Guild | int | None) -> Player | None:
         """Gets the player for the target guild.
@@ -1148,6 +1189,9 @@ class Client(metaclass=SingletonClass):
         footer_url: str = None,
         messageable: Messageable | DISCORD_INTERACTION_TYPE = None,
     ) -> discord.Embed:
+        """|coro|
+        Constructs an embed.
+        """
         if messageable and not colour and not color and hasattr(self._bot, "get_embed_color"):
             colour = await self._bot.get_embed_color(messageable)
         elif colour or color:
@@ -1179,6 +1223,9 @@ class Client(metaclass=SingletonClass):
     async def get_context(
         self, what: discord.Message | DISCORD_CONTEXT_TYPE | DISCORD_INTERACTION_TYPE
     ) -> PyLavContext:
+        """|coro|
+        Gets the context for the target message or interaction.
+        """
         if isinstance(what, PyLavContext):
             return what
         elif isinstance(what, Context):
@@ -1190,6 +1237,9 @@ class Client(metaclass=SingletonClass):
         return ctx
 
     async def update_localtracks_folder(self, folder: str | None) -> aiopath.AsyncPath:
+        """|coro|
+        Updates the localtracks folder.
+        """
         if overrides.LOCAL_TRACKS_FOLDER:
             localtrack_folder = aiopath.AsyncPath(overrides.LOCAL_TRACKS_FOLDER)
         elif not folder:
@@ -1207,14 +1257,17 @@ class Client(metaclass=SingletonClass):
         return localtrack_folder
 
     def get_all_players(self) -> Iterator[Player]:
+        """Gets all players."""
         return iter(self.player_manager)
 
     def get_managed_node(self) -> Node | None:
+        """Gets a managed node."""
         available_nodes = list(filter(operator.attrgetter("available"), self.node_manager.managed_nodes))
 
         return random.choice(available_nodes) if available_nodes else None
 
     def get_my_node(self) -> Node | None:
+        """Gets the local node that is managed by PyLav."""
         return next(
             filter(lambda n: n.identifier == self.bot.user.id, self.node_manager.managed_nodes),
             None,
@@ -1226,7 +1279,7 @@ class Client(metaclass=SingletonClass):
         first: bool = False,
         bypass_cache: bool = False,
         player: Player | None = None,
-    ) -> LoadTrackResponses:
+    ) -> rest_api.LoadTrackResponses:
         """|coro|
         Gets all tracks associated with the given query.
 
@@ -1393,14 +1446,21 @@ class Client(metaclass=SingletonClass):
         async for local_track in sub_query.get_all_tracks_in_folder():
             yielded = True
             response = await self._get_tracks(player=player, query=local_track, first=True, bypass_cache=True)
-            if isinstance(response, (HTTPException, NoMatches, LoadFailed)):
-                queries_failed.append(local_track)
-                continue
-            if __ := response.tracks[0].encoded:
+            match response.loadType:
+                case "track":
+                    tracks = [response.data]
+                case "search":
+                    tracks = response.data
+                case "playlist":
+                    tracks = response.data.tracks
+                case __:
+                    queries_failed.append(local_track)
+                    continue
+            if __ := tracks[0].encoded:
                 track_count += 1
                 successful_tracks.append(
                     await Track.build_track(
-                        data=response.tracks[0], node=node, query=None, requester=requester.id, player_instance=player
+                        data=tracks[0], node=node, query=None, requester=requester.id, player_instance=player
                     )
                 )
                 # Query tracks as the queue builds as this may be a slow operation
@@ -1424,13 +1484,20 @@ class Client(metaclass=SingletonClass):
         track_count,
     ):
         response = await self._get_tracks(player=player, query=sub_query, bypass_cache=bypass_cache)
-        if isinstance(response, (HTTPException, NoMatches, LoadFailed)):
+        match response.loadType:
+            case "track":
+                tracks = [response.data]
+                enqueue = False
+            case "search":
+                tracks = response.data
+            case "playlist":
+                tracks = response.data.tracks
+            case __:
+                queries_failed.append(sub_query)
+                return track_count
+        if not tracks:
             queries_failed.append(sub_query)
-            return track_count
-        track_list = response.tracks
-        if not track_list:
-            queries_failed.append(sub_query)
-        for track in track_list:
+        for track in tracks:
             if __ := track.encoded:
                 track_count += 1
                 successful_tracks.append(
@@ -1448,17 +1515,23 @@ class Client(metaclass=SingletonClass):
         self, bypass_cache, node, player, queries_failed, requester, sub_query, successful_tracks, track_count
     ):
         response = await self._get_tracks(player=player, query=sub_query, first=True, bypass_cache=bypass_cache)
-        if isinstance(response, (HTTPException, NoMatches, LoadFailed)):
-            queries_failed.append(sub_query)
-            return track_count
-
-        if response.tracks:
+        match response.loadType:
+            case "track":
+                tracks = [response.data]
+            case "search":
+                tracks = response.data
+            case "playlist":
+                tracks = response.data.tracks
+            case __:
+                queries_failed.append(sub_query)
+                return track_count
+        if tracks:
             track_count += 1
-            new_query = await Query.from_string(response.tracks[0].info.uri)
+            new_query = await Query.from_string(tracks[0].info.uri)
             new_query.merge(sub_query, start_time=True)
             successful_tracks.append(
                 await Track.build_track(
-                    data=response.tracks[0], node=node, query=sub_query, requester=requester.id, player_instance=player
+                    data=tracks[0], node=node, query=sub_query, requester=requester.id, player_instance=player
                 )
             )
         else:
@@ -1512,7 +1585,8 @@ class Client(metaclass=SingletonClass):
         fullsearch: bool = False,
         region: str | None = None,
         player: Player | None = None,
-    ) -> LoadTrackResponses:
+        sleep: bool = False,
+    ) -> rest_api.LoadTrackResponses:  # sourcery skip: low-code-quality
         """This method can be rather slow as it recursively queries all queries and their associated entries.
 
         Thus, if you are processing user input you may be interested in using
@@ -1532,6 +1606,8 @@ class Client(metaclass=SingletonClass):
             The region to search in.
         player : `Player`, optional
             The player to use for enqueuing tracks.
+        sleep : `bool`, optional
+            Whether to sleep between each query to avoid ratelimits.
         """
         output_tracks = []
         playlist_name = ""
@@ -1544,35 +1620,53 @@ class Client(metaclass=SingletonClass):
         for query in queries:
             async for subquery in self._yield_recursive_queries(query):
                 response = await self.search_query(
-                    subquery, bypass_cache=bypass_cache, fullsearch=fullsearch, region=region
+                    subquery, bypass_cache=bypass_cache, fullsearch=fullsearch, region=region, sleep=sleep
                 )
-                if (not response) or (not response.tracks):
-                    continue
+                match response.loadType:
+                    case "track":
+                        tracks = [response.data]
+                        playlist_name = ""
+                    case "search":
+                        tracks = response.data
+                        playlist_name = ""
+                    case "playlist":
+                        tracks = response.data.tracks
+                        plugin_info |= response.data.pluginInfo.to_dict()
+                        playlist_name = response.data.info.name if response.data.info else ""
+                    case __:
+                        continue
                 if subquery.is_playlist or subquery.is_album:
-                    playlist_name = response.playlistInfo.name if response.playlistInfo else ""
-                    output_tracks.extend(response.tracks)
-                    plugin_info |= response.pluginInfo.to_dict()
+                    output_tracks.extend(tracks)
                 elif fullsearch and subquery.is_search or subquery.is_single:
-                    output_tracks.extend(response.tracks)
+                    output_tracks.extend(tracks)
                 else:
                     LOGGER.error("Unknown query type: %s", subquery)
         data = {
-            "playlistInfo": {
-                "name": playlist_name if len(queries) == 1 else "",
-                "selectedTrack": -1,
-            },
-            "pluginInfo": plugin_info,
-            "loadType": "PLAYLIST_LOADED"
+            "loadType": "playlist"
             if playlist_name and len(queries) == 1
-            else "SEARCH_RESULT"
+            else "search"
+            if len(output_tracks) > 1
+            else "track"
             if output_tracks
-            else "LOAD_FAILED",
-            "tracks": output_tracks,
+            else "empty",
+            "data": None,
         }
-        if data["loadType"] == "LOAD_FAILED":
-            data["exception"] = {"cause": "No tracks returned", "severity": "COMMON", "message": "No tracks found"}
-        else:
-            data["exception"] = None
+        match data["loadType"]:
+            case "playlist":
+                data["data"] = {
+                    "info": {"name": playlist_name, "selectedTrack": 0},
+                    "pluginInfo": plugin_info,
+                    "tracks": [track.to_dict() for track in output_tracks],
+                }
+            case "search":
+                data["data"] = [track.to_dict() for track in output_tracks]
+            case "track":
+                data["data"] = output_tracks[0].to_dict()
+            case "empty":
+                data["data"] = None
+            case "error" | "apiError":
+                data["data"] = {"cause": "No tracks returned", "severity": "common", "message": "No tracks found"}
+
         node = await self.node_manager.find_best_node()
         while not node:
             await asyncio.sleep(0.1)
@@ -1580,8 +1674,13 @@ class Client(metaclass=SingletonClass):
         return node.parse_loadtrack_response(data)
 
     async def search_query(
-        self, query: Query, bypass_cache: bool = False, fullsearch: bool = False, region: str | None = None
-    ) -> LoadTrackResponses | None:
+        self,
+        query: Query,
+        bypass_cache: bool = False,
+        fullsearch: bool = False,
+        region: str | None = None,
+        sleep: bool = False,
+    ) -> rest_api.LoadTrackResponses | None:
         """
         Search for the specified query returns a LoadTrackResponse object
 
@@ -1597,14 +1696,16 @@ class Client(metaclass=SingletonClass):
             if a Search query is passed wether to returrn a list of tracks instead of the first.
         region : `str`, optional
             The region to search in.
+        sleep : `bool`, optional
+            Whether to sleep for a short duration if a lavalink call is made.
         """
         node = await self.node_manager.find_best_node(region=region, feature=query.requires_capability)
         if node is None:
             return
         if query.is_playlist or query.is_album or (fullsearch and query.is_search):
-            return await node.get_track(query, bypass_cache=bypass_cache)
+            return await node.get_track(query, bypass_cache=bypass_cache, sleep=sleep)
         elif query.is_single:
-            return await node.get_track(query, first=True, bypass_cache=bypass_cache)
+            return await node.get_track(query, first=True, bypass_cache=bypass_cache, sleep=sleep)
         else:
             LOGGER.error("Unknown query type: %s", query)
 
@@ -1621,6 +1722,7 @@ class Client(metaclass=SingletonClass):
         additional_role_ids: list = None,
         additional_user_ids: list = None,
     ) -> bool:
+        """Checks if a user is a DJ in a guild."""
         if additional_user_ids and user.id in additional_user_ids:
             return True
         if additional_role_ids and any(r.id in additional_role_ids for r in user.roles):
@@ -1633,10 +1735,11 @@ class Client(metaclass=SingletonClass):
     async def generate_mix_playlist(
         *,
         video_id: str | None = None,
-        user_id: str | None,
+        user_id: str | None = None,
         playlist_id: str | None = None,
         channel_id: str | None = None,
     ) -> str:
+        """Generates an YouTube mixed playlist url from a single video, user, channel or playlist."""
         if not any([video_id, playlist_id, channel_id, user_id]):
             raise PyLavInvalidArgumentsException(
                 _("A single video, user, channel or playlist identifier is necessary to generate a mixed playlist.")

@@ -6,7 +6,7 @@ from typing import Literal
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class LoadException:
-    severity: Literal["COMMON", "SUSPICIOUS", "FAULT"]
+    severity: Literal["common", "suspicious", "fault"]
     message: str | None = None
 
 

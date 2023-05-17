@@ -26,4 +26,5 @@ logging.getLogger("aiohttp_client_cache").setLevel(logging.ERROR)
 
 # noinspection PyPep8Naming
 def getLogger(name: str) -> RedTraceLogger:  # noqa: N802
+    """Get a logger with the prefix set in the environment variable PYLAV__LOGGER_PREFIX."""
     return redgetLogger(f"{LOGGER_PREFIX}{name}")

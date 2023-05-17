@@ -4,26 +4,28 @@ PYLAV__POSTGRES_SOCKET: /var/run/postgresql # Will always be this
 PYLAV__POSTGRES_PASSWORD: postgres          # Whatever you set POSTGRES_PASSWORD as in the postgres container
 PYLAV__POSTGRES_USER: postgres              # Whatever you set POSTGRES_USER as in the postgres container
 PYLAV__POSTGRES_DB: postgres                # Whatever you set POSTGRES_DB as in the postgres container
+# Warning: This will require changes to the Postgres server settings
+# Please read https://stackoverflow.com/questions/30778015/how-to-increase-the-max-connections-in-postgres for more information on the following setting
+PYLAV__POSTGRES_CONNECTIONS: 100            # The number of connections to the Postgres server
 
-PYLAV__EXTERNAL_UNMANAGED_HOST: ll-node             # The hostname for the lavalink container, must be on same network as the redbot container
+PYLAV__EXTERNAL_UNMANAGED_HOST: lavalink             # The hostname for the lavalink container, must be on same network as the redbot container
 PYLAV__EXTERNAL_UNMANAGED_PORT: 2155                # Will always be this
-PYLAV__EXTERNAL_UNMANAGED_PASSWORD: youshallnotpass # Whatever you set LAVALINK_SERVER_PASSWORD as in the ll-node container
+PYLAV__EXTERNAL_UNMANAGED_PASSWORD: youshallnotpass # Whatever you set LAVALINK_SERVER_PASSWORD as in the lavalink container
 PYLAV__EXTERNAL_UNMANAGED_SSL: false                # Will always be this
 PYLAV__EXTERNAL_UNMANAGED_NAME: Docker (localhost)  # Whatever you want to call the node
 
-PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_ID:              # Whatever you set PLUGINS_LAVASRC_SPOTIFY_CLIENTID as in the ll-node container
-PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_SECRET:          # Whatever you set PLUGINS_LAVASRC_SPOTIFY_CLIENTSECRET as in the ll-node container
-PYLAV__MANAGED_NODE_SPOTIFY_COUNTRY_CODE: US        # Whatever you set PLUGINS_LAVASRC_SPOTIFY_COUNTRYCODE as in the ll-node container
-PYLAV__MANAGED_NODE_APPLE_MUSIC_API_KEY:            # Whatever you set PLUGINS_LAVASRC_APPLEMUSIC_MEDIAAPITOKEN as in the ll-node container
-PYLAV__MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE: US    # Whatever you set PLUGINS_LAVASRC_APPLEMUSIC_COUNTRYCODE as in the ll-node container
-PYLAV__MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN:      # Whatever you set PLUGINS_LAVASRC_YANDEXMUSIC_ACCESSTOKEN as in the ll-node container
+PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_ID:              # Whatever you set PLUGINS_LAVASRC_SPOTIFY_CLIENTID as in the lavalink container
+PYLAV__MANAGED_NODE_SPOTIFY_CLIENT_SECRET:          # Whatever you set PLUGINS_LAVASRC_SPOTIFY_CLIENTSECRET as in the lavalink container
+PYLAV__MANAGED_NODE_SPOTIFY_COUNTRY_CODE: US        # Whatever you set PLUGINS_LAVASRC_SPOTIFY_COUNTRYCODE as in the lavalink container
+PYLAV__MANAGED_NODE_APPLE_MUSIC_API_KEY:            # Whatever you set PLUGINS_LAVASRC_APPLEMUSIC_MEDIAAPITOKEN as in the lavalink container
+PYLAV__MANAGED_NODE_APPLE_MUSIC_COUNTRY_CODE: US    # Whatever you set PLUGINS_LAVASRC_APPLEMUSIC_COUNTRYCODE as in the lavalink container
+PYLAV__MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN:      # Whatever you set PLUGINS_LAVASRC_YANDEXMUSIC_ACCESSTOKEN as in the lavalink container
 
-PYLAV__MANAGED_NODE_DEEZER_KEY:           # Deezer Key - Required for Deezer tracks to work with the managed node, leave empty unless you know what you are doing
+PYLAV__MANAGED_NODE_DEEZER_KEY: id58zow5hmqhdv24zil4znth3ywy8prt9-dizzzrlba8q4h2al0ywmhp2zg-1d5g  # Deezer Key - Required for Deezer tracks to work with the managed node, leave empty unless you know what you are doing
 PYLAV__DEFAULT_SEARCH_SOURCE: dzsearch    # Defaults to dzsearch - Possible values are dzsearch (Deezer), spsearch (Spotify), amsearch (Apple Music), ytmsearch (YouTube Music), ytsearch (YouTube)
 
 PYLAV__REDIS_FULL_ADDRESS_RESPONSE_CACHE: # Optional Leave "null" so that it is not used.
 PYLAV__JAVA_EXECUTABLE: java              # Never used in this environment.
-PYLAV__LINKED_BOT_IDS: []                 # Currently unused, list of bot ids
 
 PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE: false   #  Can now be set to true if you wish
 
@@ -34,6 +36,6 @@ PYLAV__TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS: 7         # How many days to w
 # Please note that if this is enable, multiple bots should not share the same database, as reads/writes will not be synced.
 PYLAV__READ_CACHING_ENABLED: false # Whether to cache the postgres queries - Values are `true` or `false` - case sensitive
 
-PREFER_PARTIAL_TRACKS: false              # PyLav will search for tracks only when it is necessary for it to be played rather than as soon as possible.
+PYLAV__PREFER_PARTIAL_TRACKS: false              # PyLav will search for tracks only when it is necessary for it to be played rather than as soon as possible.
 PYLAV__LOCAL_TRACKS_FOLDER: /localtracks  # The folder where local tracks are stored.
 PYLAV__DATA_FOLDER: /pylav                # The folder where the config files are stored - Leave null to use a OS appropriate default

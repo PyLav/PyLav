@@ -250,18 +250,8 @@ class NodeMock(CachedModel):
         """Update the node's session in the database"""
         self.data["session"] = session
         self.session_id = session
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await Sessions.raw(
-            """
-            INSERT INTO sessions
-            (id, node, bot)
-            VALUES ({}, {}, {})
-            ON CONFLICT (node, bot)
-            DO UPDATE
-            SET id = excluded.id;
-            """,
-            session,
-            self.id,
-            self.client.bot.user.id,
+        await Sessions.insert(Sessions(id=session, node=self.id, bot=self.client.bot.user.id)).on_conflict(
+            action="DO UPDATE",
+            target=(Sessions.node, Sessions.bot),
+            values=[Sessions.id],
         )

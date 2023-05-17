@@ -44,7 +44,6 @@ if not ENV_FILE.exists():
     from pylav.constants.config.env_var import EXTERNAL_UNMANAGED_SSL as EXTERNAL_UNMANAGED_SSL
     from pylav.constants.config.env_var import FALLBACK_POSTGREST_HOST as FALLBACK_POSTGREST_HOST
     from pylav.constants.config.env_var import JAVA_EXECUTABLE as JAVA_EXECUTABLE
-    from pylav.constants.config.env_var import LINKED_BOT_IDS as LINKED_BOT_IDS
     from pylav.constants.config.env_var import LOCAL_TRACKS_FOLDER as LOCAL_TRACKS_FOLDER
     from pylav.constants.config.env_var import MANAGED_NODE_APPLE_MUSIC_API_KEY as MANAGED_NODE_APPLE_MUSIC_API_KEY
     from pylav.constants.config.env_var import (
@@ -57,6 +56,7 @@ if not ENV_FILE.exists():
     from pylav.constants.config.env_var import (
         MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN as MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN,
     )
+    from pylav.constants.config.env_var import POSTGRES_CONNECTIONS as POSTGRES_CONNECTIONS
     from pylav.constants.config.env_var import POSTGRES_DATABASE as POSTGRES_DATABASE
     from pylav.constants.config.env_var import POSTGRES_HOST as POSTGRES_HOST
     from pylav.constants.config.env_var import POSTGRES_PASSWORD as POSTGRES_PASSWORD
@@ -89,7 +89,6 @@ else:
     from pylav.constants.config.file import EXTERNAL_UNMANAGED_SSL as EXTERNAL_UNMANAGED_SSL
     from pylav.constants.config.file import FALLBACK_POSTGREST_HOST as FALLBACK_POSTGREST_HOST
     from pylav.constants.config.file import JAVA_EXECUTABLE as JAVA_EXECUTABLE
-    from pylav.constants.config.file import LINKED_BOT_IDS as LINKED_BOT_IDS
     from pylav.constants.config.file import LOCAL_TRACKS_FOLDER as LOCAL_TRACKS_FOLDER
     from pylav.constants.config.file import MANAGED_NODE_APPLE_MUSIC_API_KEY as MANAGED_NODE_APPLE_MUSIC_API_KEY
     from pylav.constants.config.file import (
@@ -102,6 +101,7 @@ else:
     from pylav.constants.config.file import (
         MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN as MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN,
     )
+    from pylav.constants.config.file import POSTGRES_CONNECTIONS as POSTGRES_CONNECTIONS
     from pylav.constants.config.file import POSTGRES_DATABASE as POSTGRES_DATABASE
     from pylav.constants.config.file import POSTGRES_HOST as POSTGRES_HOST
     from pylav.constants.config.file import POSTGRES_PASSWORD as POSTGRES_PASSWORD
@@ -122,7 +122,7 @@ else:
     from pylav.constants.config.file import USE_BUNDLED_EXTERNAL_PYLAV_NODE as USE_BUNDLED_EXTERNAL_PYLAV_NODE
 
     for item in dir(overrides):
-        if item.startswith("__") or not item.isupper():
+        if item.startswith("_") or not item.isupper():
             continue
         if (val := getattr(overrides, item, None)) is None:
             continue

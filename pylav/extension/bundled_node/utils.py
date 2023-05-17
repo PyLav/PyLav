@@ -1,32 +1,30 @@
 from __future__ import annotations
 
-import contextlib
 import math
-import os
 import platform
-import shutil
 import sys
-from collections.abc import Iterator
 
 import psutil
 
+from pylav._internals.functions import get_true_path
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
-from pylav.type_hints.generics import ANY_GENERIC_TYPE
 
 
 def get_max_allocation_size(executable: str) -> tuple[int, bool]:
+    """Returns the maximum heap size allowed for the given executable."""
     if platform.architecture(executable)[0] == "64bit":
         max_heap_allowed = psutil.virtual_memory().total
         thinks_is_64_bit = True
     else:
-        max_heap_allowed = 4 * 1024**3
+        max_heap_allowed = min(4 * 1024**3, psutil.virtual_memory().total)
         thinks_is_64_bit = False
     return max_heap_allowed, thinks_is_64_bit
 
 
-def _calculate_ram(max_allocation: int, is_64bit: bool) -> tuple[str, str, int, int]:
+def _calculate_ram(max_allocation: int) -> tuple[str, str, int, int]:
     min_ram_int = 64 * 1024**2
-    max_ram_allowed = max_allocation * 0.5 if is_64bit else max_allocation
+    _min_max = 512 * 1024**2
+    max_ram_allowed = max(max_allocation * 0.5, _min_max)
     max_ram_int = max(min_ram_int, max_ram_allowed)
     size_name = ("", "K", "M", "G", "T")
     i = int(math.floor(math.log(min_ram_int, 1024)))
@@ -43,52 +41,32 @@ def _calculate_ram(max_allocation: int, is_64bit: bool) -> tuple[str, str, int, 
 
 
 def get_jar_ram_defaults() -> tuple[str, str, int, int]:
+    """Returns the default ram for the jar"""
     # We don't know the java executable at this stage - not worth the extra work required here
-    max_allocation, is_64bit = get_max_allocation_size(sys.executable)
-    min_ram, max_ram, min_ram_int, max_ram_int = _calculate_ram(max_allocation, is_64bit)
+    max_allocation, __ = get_max_allocation_size(sys.executable)
+    min_ram, max_ram, min_ram_int, max_ram_int = _calculate_ram(max_allocation)
     return min_ram, max_ram, min_ram_int, max_ram_int
 
 
 def get_jar_ram_actual(executable: str) -> tuple[str, str, int, int]:
+    """Returns the actual ram for the jar"""
     if not executable:
         from pylav.constants.config import JAVA_EXECUTABLE
 
         executable = JAVA_EXECUTABLE
     executable = get_true_path(executable, sys.executable)
-    max_allocation, is_64bit = get_max_allocation_size(executable)
-    min_ram, max_ram, min_ram_int, max_ram_int = _calculate_ram(max_allocation, is_64bit)
+    max_allocation, __ = get_max_allocation_size(executable)
+    min_ram, max_ram, min_ram_int, max_ram_int = _calculate_ram(max_allocation)
     return min_ram, max_ram, min_ram_int, max_ram_int
 
 
-def get_true_path(executable: str, fallback: ANY_GENERIC_TYPE = None) -> str | ANY_GENERIC_TYPE | None:
-    path = os.environ.get("JAVA_HOME", executable)
-    with add_env_path(path if os.path.isdir(path) else os.path.split(path)[0]) as path_string:
-        executable = shutil.which(executable, path=path_string)
-    return executable or fallback
-
-
-@contextlib.contextmanager
-def add_env_path(path: str | os.PathLike) -> Iterator[str]:
-    path = os.fspath(path)
-    existing_path = "PATH" in os.environ
-    old_path = os.environ["PATH"] if existing_path else None
-    try:
-        if path not in os.environ["PATH"]:
-            yield path + os.pathsep + os.environ["PATH"]
-        else:
-            yield os.environ["PATH"]
-    finally:
-        if existing_path:
-            os.environ["PATH"] = old_path
-        else:
-            del os.environ["PATH"]
-
-
 def convert_function(key: str) -> str:
+    """Converts a key to a valid key."""
     return key.replace("_", "-")
 
 
 def change_dict_naming_convention(data: JSON_DICT_TYPE) -> JSON_DICT_TYPE:
+    """Changes the naming convention of a dict."""
     new = {}
     for k, v in data.items():
         new_v = v

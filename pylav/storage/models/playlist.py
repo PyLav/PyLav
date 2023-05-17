@@ -87,11 +87,6 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
             .first()
             .output(load_json=True, nested=True)
         )
-        # TODO: Remove me release 1.9
-        if data["tracks"] and any(t["info"] is None for t in data["tracks"]):
-            tracks = await self.client.decode_tracks([t["encoded"] for t in data["tracks"]], raise_on_failure=True)
-            await self.update_tracks(tracks)
-            data["tracks"] = [t.to_dict() for t in tracks]
         return data or {
             "id": self.id,
             "name": PlaylistRow.name.default,
@@ -126,12 +121,8 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
         scope : int
             The new scope of the playlist.
         """
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlaylistRow.raw(
-            "INSERT INTO playlist (id, scope) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET scope = EXCLUDED.scope;",
-            self.id,
-            scope,
+        await PlaylistRow.insert(PlaylistRow(id=self.id, scope=scope)).on_conflict(
+            action="DO UPDATE", target=PlaylistRow.id, values=[PlaylistRow.scope]
         )
         await self.update_cache((self.fetch_scope, scope), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -161,15 +152,8 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
         author : int
             The new author of the playlist.
         """
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlaylistRow.raw(
-            "INSERT INTO playlist (id, author) "
-            "VALUES ({}, {}) "
-            "ON CONFLICT (id) "
-            "DO UPDATE SET author = EXCLUDED.author;",
-            self.id,
-            author,
+        await PlaylistRow.insert(PlaylistRow(id=self.id, author=author)).on_conflict(
+            action="DO UPDATE", target=PlaylistRow.id, values=[PlaylistRow.author]
         )
         await self.update_cache((self.fetch_author, author), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -199,12 +183,8 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
         name : str
             The new name of the playlist.
         """
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlaylistRow.raw(
-            "INSERT INTO playlist (id, name) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name;",
-            self.id,
-            name,
+        await PlaylistRow.insert(PlaylistRow(id=self.id, name=name)).on_conflict(
+            action="DO UPDATE", target=PlaylistRow.id, values=[PlaylistRow.name]
         )
         await self.update_cache((self.fetch_name, name), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -234,12 +214,8 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
         url : str
             The new url of the playlist.
         """
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlaylistRow.raw(
-            "INSERT INTO playlist (id, url) VALUES ({}, {}) ON CONFLICT (id) DO UPDATE SET url = EXCLUDED.url;",
-            self.id,
-            url,
+        await PlaylistRow.insert(PlaylistRow(id=self.id, url=url)).on_conflict(
+            action="DO UPDATE", target=PlaylistRow.id, values=[PlaylistRow.url]
         )
         await self.update_cache((self.fetch_url, url), (self.exists, True))
         await self.invalidate_cache(self.fetch_all)
@@ -262,11 +238,6 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
             .output(load_json=True, nested=True)
         )
         data = response["tracks"] if response else []
-        # TODO: Remove me release 1.9
-        if data and any(t["info"] is None for t in data):
-            tracks = await self.client.decode_tracks([t["encoded"] for t in data], raise_on_failure=True)
-            await self.update_tracks(tracks)
-            data = [t.to_dict() for t in tracks]
         return data
 
     async def update_tracks(self, tracks: list[str | JSON_DICT_TYPE | Track]) -> None:

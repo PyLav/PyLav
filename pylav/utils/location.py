@@ -12,6 +12,7 @@ from pylav.constants.coordinates import REGION_TO_COUNTRY_COORDINATE_MAPPING
 
 
 def distance(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    """Calculate the distance between two coordinates on the earth"""
     dlat = radians(lat2) - radians(lat1)
     dlon = radians(lon2) - radians(lon1)
     a = sin(dlat / 2) * sin(dlat / 2) + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon / 2) * sin(dlon / 2)
@@ -21,6 +22,7 @@ def distance(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
 async def closest(
     data: dict[str, tuple[float, float]], compare_to: tuple[float, float], *, region_pool: set[str] | None = None
 ) -> tuple[str, tuple[float, float]]:
+    """Get the closest region to the given coordinates"""
     if region_pool is None:
         region_pool = set()
     entries = [(k, v) for k, v in data.items() if not region_pool or k in region_pool]
@@ -33,6 +35,7 @@ async def closest(
 async def get_closest_region_name_and_coordinate(
     lat: float, lon: float, region_pool: set[str] | None = None
 ) -> tuple[str, tuple[float, float]]:
+    """Get the closest region name and coordinate to the given coordinates"""
     closest_region, closest_coordinates = await closest(
         REGION_TO_COUNTRY_COORDINATE_MAPPING, compare_to=(lat, lon), region_pool=region_pool
     )
@@ -43,6 +46,7 @@ async def get_closest_region_name_and_coordinate(
 
 
 async def get_coordinates(ip: str | None = None) -> tuple[float, ...]:
+    """Get the coordinates of the given ip address"""
     url = URL("https://ipinfo.io")
     if ip:
         url /= ip
@@ -54,6 +58,7 @@ async def get_coordinates(ip: str | None = None) -> tuple[float, ...]:
 
 
 async def get_closest_discord_region(host: str | None = None) -> tuple[str, tuple[float, float]]:
+    """Get the closest discord region to the given host"""
     try:
         if host is None or host in ["localhost", "127.0.0.1", "::1", "0.0.0.0", "::"]:
             host_ip = None

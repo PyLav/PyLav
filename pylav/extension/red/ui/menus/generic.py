@@ -82,13 +82,20 @@ class BaseMenu(discord.ui.View):
         self.ctx = ctx
         kwargs = await self.get_page(self.current_page)
         await self.prepare()
-        self.message = await ctx.send(**kwargs, view=self, ephemeral=True)
+        self.message = await ctx.send(view=self, ephemeral=True, **kwargs)
         return self.message
 
     async def show_page(self, page_number, interaction: DISCORD_INTERACTION_TYPE):
         self.current_page = page_number
         kwargs = await self.get_page(self.current_page)
         await self.prepare()
+        attachments = []
+        if "file" in kwargs:
+            attachments = [kwargs.pop("file")]
+        elif "files" in kwargs:
+            attachments = kwargs.pop("files")
+        if attachments:
+            kwargs["attachments"] = attachments
         if self.message is not None:
             if not interaction.response.is_done():
                 await interaction.response.pong()

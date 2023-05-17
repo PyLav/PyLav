@@ -9,11 +9,11 @@ import yaml
 from deepdiff import DeepDiff  # type: ignore
 
 # noinspection PyProtectedMember
-from pylav._internals.functions import _get_path
+from pylav._internals.functions import _get_path, fix
 from pylav.constants.config import ENV_FILE
 from pylav.constants.config.utils import _remove_keys
 from pylav.constants.node_features import SUPPORTED_SEARCHES
-from pylav.constants.specials import ANIME
+from pylav.constants.specials import _MAPPING, ANIME
 from pylav.logging import getLogger
 
 LOGGER = getLogger("PyLav.Environment")
@@ -49,6 +49,10 @@ if (POSTGRES_SOCKET := data.get("PYLAV__POSTGRES_SOCKET")) is None:
     POSTGRES_SOCKET = os.getenv("PYLAV__POSTGRES_SOCKET")
     data_new["PYLAV__POSTGRES_SOCKET"] = POSTGRES_SOCKET
 
+if (POSTGRES_CONNECTIONS := data.get("PYLAV__POSTGRES_CONNECTIONS")) is None:
+    POSTGRES_CONNECTIONS = os.getenv("PYLAV__POSTGRES_CONNECTIONS", "100")
+    data_new["PYLAV__POSTGRES_CONNECTIONS"] = int(POSTGRES_CONNECTIONS)
+
 FALLBACK_POSTGREST_HOST = POSTGRES_HOST
 if POSTGRES_SOCKET is not None:
     POSTGRES_PORT = None
@@ -57,10 +61,6 @@ if POSTGRES_SOCKET is not None:
 if (REDIS_FULL_ADDRESS_RESPONSE_CACHE := data.get("PYLAV__REDIS_FULL_ADDRESS_RESPONSE_CACHE")) is None:
     REDIS_FULL_ADDRESS_RESPONSE_CACHE = os.getenv("PYLAV__REDIS_FULL_ADDRESS_RESPONSE_CACHE")
     data_new["PYLAV__REDIS_FULL_ADDRESS_RESPONSE_CACHE"] = REDIS_FULL_ADDRESS_RESPONSE_CACHE
-
-if (LINKED_BOT_IDS := data.get("PYLAV__LINKED_BOT_IDS")) is None:
-    LINKED_BOT_IDS = list(map(str.strip, os.getenv("PYLAV__LINKED_BOT_IDS", "").split("|")))
-    data_new["PYLAV__LINKED_BOT_IDS"] = LINKED_BOT_IDS
 
 if (USE_BUNDLED_EXTERNAL_PYLAV_NODE := data.get("PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE")) is None:
     USE_BUNDLED_EXTERNAL_PYLAV_NODE = bool(int(os.getenv("PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE", "0")))
@@ -153,10 +153,22 @@ if (MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN := data.get("PYLAV__MANAGED_NODE_YAND
     data_new["PYLAV__MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN"] = MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN
 
 if (MANAGED_NODE_DEEZER_KEY := data.get("PYLAV__MANAGED_NODE_DEEZER_KEY")) is None:
-    MANAGED_NODE_DEEZER_KEY = os.getenv("PYLAV__MANAGED_NODE_DEEZER_KEY") or "".join(
-        [base64.b64decode(r).decode() for r in ANIME.split(b"|")]
+    MANAGED_NODE_DEEZER_KEY = os.getenv("PYLAV__MANAGED_NODE_DEEZER_KEY")
+MANAGED_NODE_DEEZER_KEY = MANAGED_NODE_DEEZER_KEY or ANIME
+if MANAGED_NODE_DEEZER_KEY and MANAGED_NODE_DEEZER_KEY.startswith("id"):
+    _temp = [MANAGED_NODE_DEEZER_KEY[i : i + 16] for i in range(0, len(MANAGED_NODE_DEEZER_KEY), 16)]
+    MANAGED_NODE_DEEZER_KEY = "".join(
+        [
+            base64.b64decode(r).decode()
+            for r in [
+                fix(_temp[2], _MAPPING[2]),
+                fix(_temp[1], _MAPPING[1]),
+                fix(_temp[3], _MAPPING[3]),
+                fix(_temp[0], _MAPPING[0]),
+            ]
+        ]
     )
-    data_new["PYLAV__MANAGED_NODE_DEEZER_KEY"] = MANAGED_NODE_DEEZER_KEY
+data_new["PYLAV__MANAGED_NODE_DEEZER_KEY"] = MANAGED_NODE_DEEZER_KEY
 
 if (LOCAL_TRACKS_FOLDER := data.get("PYLAV__LOCAL_TRACKS_FOLDER")) is None:
     LOCAL_TRACKS_FOLDER = os.getenv("PYLAV__LOCAL_TRACKS_FOLDER")
@@ -172,7 +184,11 @@ if (ENABLE_NODE_RESUMING := data.get("PYLAV__ENABLE_NODE_RESUMING")) is None:
 
 
 data_new = _remove_keys(
-    "PYLAV__CACHING_ENABLED", "PYLAV__PREFER_PARTIAL_TRACKS", "PREFER_PARTIAL_TRACKS", data=data_new
+    "PYLAV__CACHING_ENABLED",
+    "PYLAV__PREFER_PARTIAL_TRACKS",
+    "PREFER_PARTIAL_TRACKS",
+    "PYLAV__LINKED_BOT_IDS",
+    data=data_new,
 )
 
 if DeepDiff(data, data_new, ignore_order=True, max_passes=2, cache_size=1000):

@@ -22,24 +22,27 @@ LOGGER = getLogger("PyLav.extension.RadioBrowser")
 
 
 class Request:
-    __slots__ = ("_headers", "_session")
+    """A wrapper for the aiohttp client."""
+
+    __slots__ = ("_headers", "_cached_session", "_session")
 
     def __init__(
-        self, headers: dict[str, str] | None = None, session: aiohttp_client_cache.CachedSession | None = None
+        self,
+        headers: dict[str, str] | None = None,
+        cached_session: aiohttp_client_cache.CachedSession | None = None,
+        session: aiohttp.ClientSession | None = None,
     ) -> None:
         self._headers = headers
+        self._cached_session = cached_session
         self._session = session
 
     async def get(self, url: str | URL, skip_cache: bool = False, **kwargs: Any) -> list[JSON_DICT_TYPE] | None:
         if skip_cache:
-            async with aiohttp.ClientSession(
-                headers=self._headers, timeout=aiohttp.ClientTimeout(total=30), json_serialize=json.dumps
-            ) as session:
-                async with session.get(url, params=kwargs) as resp:
-                    if resp.status == 200:
-                        return await resp.json(loads=json.loads)
+            async with self._session.get(url, params=kwargs) as resp:
+                if resp.status == 200:
+                    return await resp.json(loads=json.loads)
         else:
-            async with self._session.get(url, headers=self._headers, params=kwargs) as resp:
+            async with self._cached_session.get(url, headers=self._headers, params=kwargs) as resp:
                 if resp.status == 200:
                     return await resp.json(loads=json.loads)
         resp.raise_for_status()
@@ -50,8 +53,10 @@ class RadioBrowser:
 
     def __init__(self, client: Client) -> None:
         headers = {"User-Agent": f"PyLav/{client.lib_version}"}
-        self._lib_client = client
-        self.client = Request(headers=headers, session=self._lib_client.cached_session)
+        self._client = client
+        self.request = Request(
+            headers=headers, cached_session=self._client.cached_session, session=self._client.session
+        )
         self._disabled = False
 
     async def initialize(self) -> None:
@@ -61,7 +66,7 @@ class RadioBrowser:
                 LOGGER.error("Error while initializing the Radio Browser extension - disabling it")
                 return
             LOGGER.debug("Priming radio cache")
-            await TransformerCache.fill_cache(self._lib_client)
+            await TransformerCache.fill_cache(self._client)
             await self.stations_by_clicks(limit=25)
             await self.stations_by_votes(limit=25)
             TransformerCache.fill_choice_cache()
@@ -73,13 +78,15 @@ class RadioBrowser:
 
     @property
     async def base_url(self) -> URL:
-        if url := await pick_base_url(self._lib_client.session):
+        """The base URL for the Radio Browser API."""
+        if url := await pick_base_url(self._client.session):
             return url
         self._disabled = True
         return URL()
 
     @property
     def disabled(self) -> bool:
+        """Whether the extension is disabled."""
         return self._disabled
 
     @type_check
@@ -100,7 +107,7 @@ class RadioBrowser:
             url /= code
         if self._disabled:
             return []
-        return [Country(**country) for country in await self.client.get(url, hidebroken="true")]
+        return [Country(**country) for country in await self.request.get(url, hidebroken="true")]
 
     @type_check
     async def countrycodes(self, code: str | None = None) -> list[CountryCode]:
@@ -120,7 +127,7 @@ class RadioBrowser:
             url /= code
         if self._disabled:
             return []
-        return [CountryCode(**country) for country in await self.client.get(url, hidebroken="true")]
+        return [CountryCode(**country) for country in await self.request.get(url, hidebroken="true")]
 
     @type_check
     async def codecs(self, codec: str | None = None) -> list[Codec]:
@@ -138,7 +145,7 @@ class RadioBrowser:
         url = await self.base_url / "json" / "codecs"
         if self._disabled:
             return []
-        response = await self.client.get(url, hidebroken="true")
+        response = await self.request.get(url, hidebroken="true")
         if codec:
             return [Codec(**tag) for tag in filter(lambda s: s["name"].lower() == codec.lower(), response)]
         return [Codec(**tag) for tag in response]
@@ -160,7 +167,7 @@ class RadioBrowser:
         url = await self.base_url / "json" / "states"
         if self._disabled:
             return []
-        response = await self.client.get(url, hidebroken="true")
+        response = await self.request.get(url, hidebroken="true")
 
         if country:
             if state:
@@ -194,7 +201,7 @@ class RadioBrowser:
             url /= language
         if self._disabled:
             return []
-        response = await self.client.get(url, hidebroken="true")
+        response = await self.request.get(url, hidebroken="true")
         return [Language(**language) for language in response]
 
     @type_check
@@ -215,7 +222,7 @@ class RadioBrowser:
             url /= tag.lower()
         if self._disabled:
             return []
-        response = await self.client.get(url, hidebroken="true")
+        response = await self.request.get(url, hidebroken="true")
         return [Tag(**tag) for tag in response]
 
     async def station_by_uuid(self, stationuuid: str) -> list[Station]:
@@ -233,7 +240,7 @@ class RadioBrowser:
         url = await self.base_url / "json" / "stations" / "byuuid" / stationuuid
         if self._disabled:
             return []
-        response = await self.client.get(url, hidebroken="true")
+        response = await self.request.get(url, hidebroken="true")
         return [Station(radio_api_client=self, **station) async for station in AsyncIter(response, steps=250)]
 
     async def stations_by_name(
@@ -401,7 +408,7 @@ class RadioBrowser:
             https://de1.api.radio-browser.info/#Count_station_click
         """
         url = await self.base_url / "json" / "url" / f"{stationuuid}"
-        return [] if self._disabled else await self.client.get(url, hidebroken="true")
+        return [] if self._disabled else await self.request.get(url, hidebroken="true")
 
     async def stations(self, **kwargs: str | int | bool | None) -> list[Station]:
         """Lists all radio stations.
@@ -418,7 +425,7 @@ class RadioBrowser:
         kwargs["hidebroken"] = kwargs.pop("hidebroken", "true")
         return [
             Station(radio_api_client=self, **station)
-            async for station in AsyncIter(await self.client.get(url, **kwargs), steps=250)
+            async for station in AsyncIter(await self.request.get(url, **kwargs), steps=250)
         ]
 
     async def stations_by_votes(self, limit: int, **kwargs: str | int | bool | None) -> list[Station]:
@@ -437,7 +444,7 @@ class RadioBrowser:
         if self._disabled:
             return []
         kwargs["hidebroken"] = kwargs.pop("hidebroken", "true")
-        response = await self.client.get(url, **kwargs)
+        response = await self.request.get(url, **kwargs)
         return [Station(radio_api_client=self, **station) async for station in AsyncIter(response, steps=250)]
 
     async def stations_by_clicks(self, limit: int, **kwargs: str | int | bool | None) -> list[Station]:
@@ -456,7 +463,7 @@ class RadioBrowser:
         if self._disabled:
             return []
         kwargs["hidebroken"] = kwargs.pop("hidebroken", "true")
-        response = await self.client.get(url, **kwargs)
+        response = await self.request.get(url, **kwargs)
         return [Station(radio_api_client=self, **station) async for station in AsyncIter(response, steps=250)]
 
     @type_check
@@ -522,7 +529,7 @@ class RadioBrowser:
             kwargs["hidebroken"] = "false"
         return [
             Station(radio_api_client=self, **station)
-            async for station in AsyncIter(await self.client.get(url, **kwargs), steps=250)
+            async for station in AsyncIter(await self.request.get(url, **kwargs), steps=250)
         ]
 
     async def click(self, station: Station | None = None, station_id: str | None = None) -> None:
@@ -543,4 +550,4 @@ class RadioBrowser:
         if self._disabled:
             return
         with contextlib.suppress(Exception):
-            await self.client.get(url)
+            await self.request.get(url)

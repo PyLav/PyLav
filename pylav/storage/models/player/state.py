@@ -10,6 +10,8 @@ from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 @dataclass(eq=True)
 class PlayerState(CachedModel):
+    """A class to represent the state of a player in the database"""
+
     id: int
     bot: int
     channel_id: int
@@ -38,6 +40,7 @@ class PlayerState(CachedModel):
     pk: None = None
 
     def get_cache_key(self) -> str:
+        """Get the cache key for the player state."""
         return f"{self.id}:{self.bot}:{self.channel_id}"
 
     def __post_init__(self) -> None:
@@ -58,83 +61,58 @@ class PlayerState(CachedModel):
 
     async def save(self) -> None:
         """Save the player state to the database"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await PlayerStateRow.raw(
-            """
-            INSERT INTO player_state (
-                id,
-                bot,
-                channel_id,
-                volume,
-                position,
-                auto_play_playlist_id,
-                forced_channel_id,
-                text_channel_id,
-                notify_channel_id,
-                paused,
-                repeat_current,
-                repeat_queue,
-                shuffle,
-                auto_shuffle,
-                auto_play,
-                playing,
-                effect_enabled,
-                self_deaf,
-                current,
-                queue,
-                history,
-                effects,
-                extras
+        await PlayerStateRow.insert(
+            PlayerStateRow(
+                id=self.id,
+                bot=self.bot,
+                channel_id=self.channel_id,
+                volume=self.volume,
+                position=self.position,
+                auto_play_playlist_id=self.auto_play_playlist_id,
+                forced_channel_id=self.forced_channel_id,
+                text_channel_id=self.text_channel_id,
+                notify_channel_id=self.notify_channel_id,
+                paused=self.paused,
+                repeat_current=self.repeat_current,
+                repeat_queue=self.repeat_queue,
+                shuffle=self.shuffle,
+                auto_shuffle=self.auto_shuffle,
+                auto_play=self.auto_play,
+                playing=self.playing,
+                effect_enabled=self.effect_enabled,
+                self_deaf=self.self_deaf,
+                current=self.current,
+                queue=self.queue,
+                history=self.history,
+                effects=self.effects,
+                extras=self.extras,
             )
-            VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})
-            ON CONFLICT (id, bot)
-            DO UPDATE
-                SET channel_id = excluded.channel_id,
-                    volume = excluded.volume,
-                    position = excluded.position,
-                    auto_play_playlist_id = excluded.auto_play_playlist_id,
-                    forced_channel_id = excluded.forced_channel_id,
-                    text_channel_id = excluded.text_channel_id,
-                    notify_channel_id = excluded.notify_channel_id,
-                    paused = excluded.paused,
-                    repeat_current = excluded.repeat_current,
-                    repeat_queue = excluded.repeat_queue,
-                    shuffle = excluded.shuffle,
-                    auto_shuffle = excluded.auto_shuffle,
-                    auto_play = excluded.auto_play,
-                    playing = excluded.playing,
-                    effect_enabled = excluded.effect_enabled,
-                    self_deaf = excluded.self_deaf,
-                    current = excluded.current,
-                    queue = excluded.queue,
-                    history = excluded.history,
-                    effects = excluded.effects,
-                    extras = excluded.extras;
-            """,
-            self.id,
-            self.bot,
-            self.channel_id,
-            self.volume,
-            self.position,
-            self.auto_play_playlist_id,
-            self.forced_channel_id,
-            self.text_channel_id,
-            self.notify_channel_id,
-            self.paused,
-            self.repeat_current,
-            self.repeat_queue,
-            self.shuffle,
-            self.auto_shuffle,
-            self.auto_play,
-            self.playing,
-            self.effect_enabled,
-            self.self_deaf,
-            json.dumps(self.current),
-            json.dumps(self.queue),
-            json.dumps(self.history),
-            json.dumps(self.effects),
-            json.dumps(self.extras),
+        ).on_conflict(
+            action="DO UPDATE",
+            target=(PlayerStateRow.id, PlayerStateRow.bot),
+            values=[
+                PlayerStateRow.channel_id,
+                PlayerStateRow.volume,
+                PlayerStateRow.position,
+                PlayerStateRow.auto_play_playlist_id,
+                PlayerStateRow.forced_channel_id,
+                PlayerStateRow.text_channel_id,
+                PlayerStateRow.notify_channel_id,
+                PlayerStateRow.paused,
+                PlayerStateRow.repeat_current,
+                PlayerStateRow.repeat_queue,
+                PlayerStateRow.shuffle,
+                PlayerStateRow.auto_shuffle,
+                PlayerStateRow.auto_play,
+                PlayerStateRow.playing,
+                PlayerStateRow.effect_enabled,
+                PlayerStateRow.self_deaf,
+                PlayerStateRow.current,
+                PlayerStateRow.queue,
+                PlayerStateRow.history,
+                PlayerStateRow.effects,
+                PlayerStateRow.extras,
+            ],
         )
 
     @classmethod

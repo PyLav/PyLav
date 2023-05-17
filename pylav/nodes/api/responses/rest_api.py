@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import dataclasses
-from typing import TYPE_CHECKING, Literal, TypeAlias, Union  # noqa
+from typing import Literal, TypeAlias, Union
 
 from pylav.exceptions.request import HTTPException
 from pylav.nodes.api.responses.exceptions import LoadException
@@ -16,53 +16,74 @@ from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
-class BaseTrackResponse:
-    playlistInfo: Info | None
-    pluginInfo: PlaylistPluginInfo | None
-    exception: LoadException | None
+class PlaylistData:
+    info: Info
+    pluginInfo: PlaylistPluginInfo
     tracks: list[Track]
 
     def __post_init__(self):
-        if self.pluginInfo is None:
-            object.__setattr__(self, "pluginInfo", PlaylistPluginInfo(kwargs=None))
+        temp = []
+        for s in self.tracks:
+            if isinstance(s, Track) or (isinstance(s, dict) and (s := Track(**s))):
+                temp.append(s)
+        object.__setattr__(self, "tracks", temp)
+
+
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
+class BaseTrackResponse:
+    loadType: Literal["track", "playlist", "search", "empty", "error"]
+    data: Track | PlaylistData | list[Track] | LoadException | None
 
     def __bool__(self):
         return True
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
-class TrackLoaded(BaseTrackResponse):  # noqa
-    loadType: Literal["TRACK_LOADED"]
+class TrackResponse(BaseTrackResponse):
+    loadType: Literal["track"]
+    data: Track
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
-class PlaylistLoaded(BaseTrackResponse):  # noqa
-    loadType: Literal["PLAYLIST_LOADED"]
-    playlistInfo: Info
+class PlaylistResponse(BaseTrackResponse):
+    loadType: Literal["playlist"]
+    data: PlaylistData
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
-class SearchResult(BaseTrackResponse):  # noqa
-    loadType: Literal["SEARCH_RESULT"]
+class SearchResponse(BaseTrackResponse):
+    loadType: Literal["search"]
+    data: list[Track]
+
+    def __post_init__(self):
+        temp = []
+        for s in self.data:
+            if isinstance(s, Track) or (isinstance(s, dict) and (s := Track(**s))):
+                temp.append(s)
+        object.__setattr__(self, "data", temp)
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
-class NoMatches(BaseTrackResponse):  # noqa
-    loadType: Literal["NO_MATCHES"]
+class EmptyResponse(BaseTrackResponse):
+    loadType: Literal["empty"]
+    data: None = None
 
     def __bool__(self):
         return False
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
-class LoadFailed(BaseTrackResponse):  # noqa
-    loadType: Literal["LOAD_FAILED"]
+class ErrorResponse(BaseTrackResponse):  # noqa
+    loadType: Literal["error"]
+    data: LoadException
 
     def __bool__(self):
         return False
 
 
-LoadTrackResponses: TypeAlias = Union[TrackLoaded, PlaylistLoaded, NoMatches, LoadFailed, SearchResult, HTTPException]
+LoadTrackResponses: TypeAlias = Union[
+    TrackResponse, PlaylistResponse, EmptyResponse, ErrorResponse, SearchResponse, HTTPException
+]
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)

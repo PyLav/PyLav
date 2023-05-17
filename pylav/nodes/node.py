@@ -24,6 +24,7 @@ from pylav.constants.coordinates import REGION_TO_COUNTRY_COORDINATE_MAPPING
 from pylav.constants.node import GOOD_RESPONSE_RANGE, MAX_SUPPORTED_API_MAJOR_VERSION
 from pylav.constants.node_features import SUPPORTED_FEATURES, SUPPORTED_SOURCES
 from pylav.constants.regex import SEMANTIC_VERSIONING
+from pylav.events.api import LavalinkLoadtracksEvent
 from pylav.events.base import PyLavEvent
 from pylav.exceptions.request import HTTPException, UnauthorizedException
 from pylav.helpers.time import get_now_utc
@@ -33,7 +34,7 @@ from pylav.nodes.api.responses import websocket as websocket_responses
 from pylav.nodes.api.responses.errors import LavalinkError
 from pylav.nodes.api.responses.route_planner import Status as RoutePlannerStart
 from pylav.nodes.api.responses.track import Track
-from pylav.nodes.utils import NO_MATCHES, Stats
+from pylav.nodes.utils import EMPTY_RESPONSE, Stats
 from pylav.nodes.websocket import WebSocket
 from pylav.players.filters import (
     ChannelMix,
@@ -182,6 +183,7 @@ class Node:
 
     @property
     def trace(self) -> bool:
+        """Returns whether the node is being traced or not."""
         if getLogger("PyLav").getEffectiveLevel() < logging.INFO:
             return True
         return self.__cli_flags.logging_level < logging.INFO if self.__cli_flags else False
@@ -198,6 +200,7 @@ class Node:
                 await self.close()
 
     async def node_monitor_task(self) -> None:
+        """Monitors the node for health and stability."""
         with contextlib.suppress(
             asyncio.exceptions.CancelledError,
         ):
@@ -225,10 +228,12 @@ class Node:
 
     @property
     def version(self) -> Version | None:
+        """The version of the node."""
         return self._version
 
     @property
     def api_version(self) -> int | None:
+        """The API version of the node."""
         return self._api_version
 
     @property
@@ -238,6 +243,7 @@ class Node:
 
     @property
     def is_ready(self) -> bool:
+        """Whether the node is ready or not."""
         return self._ready.is_set() and self.websocket.connected
 
     @property
@@ -253,10 +259,12 @@ class Node:
 
     @property
     def managed(self) -> bool:
+        """Whether the node is managed or not."""
         return self._managed
 
     @property
     def config(self) -> node_mocked.NodeMock | node_real.Node:
+        """The config of the node."""
         return self._config
 
     @property
@@ -268,10 +276,12 @@ class Node:
 
     @property
     def search_only(self) -> bool:
+        """Whether the node is search only or not."""
         return self._search_only
 
     @property
     def session(self) -> aiohttp.ClientSession:
+        """The aiohttp session of the node"""
         return self._session
 
     @property
@@ -336,6 +346,7 @@ class Node:
 
     @stats.setter
     def stats(self, value: Stats) -> None:
+        """Sets the stats of the node"""
         if not isinstance(value, Stats):
             raise TypeError("stats must be of type Stats")
         self._stats = value
@@ -490,11 +501,11 @@ class Node:
     def parse_loadtrack_response(
         data: JSON_DICT_TYPE,
     ) -> (
-        rest_api.LoadFailed
-        | rest_api.NoMatches
-        | rest_api.PlaylistLoaded
-        | rest_api.SearchResult
-        | rest_api.TrackLoaded
+        rest_api.ErrorResponse
+        | rest_api.EmptyResponse
+        | rest_api.PlaylistResponse
+        | rest_api.SearchResponse
+        | rest_api.TrackResponse
     ):
         """Parses the loadtrack response.
          Parameters
@@ -508,18 +519,21 @@ class Node:
         """
 
         match data["loadType"]:
-            case "LOAD_FAILED":
-                return from_dict(data_class=rest_api.LoadFailed, data=data)
-            case "NO_MATCHES":
-                return from_dict(data_class=rest_api.NoMatches, data=data)
-            case "PLAYLIST_LOADED":
-                return from_dict(data_class=rest_api.PlaylistLoaded, data=data)
-            case "TRACK_LOADED":
-                return from_dict(data_class=rest_api.TrackLoaded, data=data)
-            case "SEARCH_RESULT":
-                return from_dict(data_class=rest_api.SearchResult, data=data)
+            case "error":
+                return from_dict(data_class=rest_api.ErrorResponse, data=data)
+            case "empty":
+                return from_dict(data_class=rest_api.EmptyResponse, data=data)
+            case "playlist":
+                return from_dict(data_class=rest_api.PlaylistResponse, data=data)
+            case "track":
+                return from_dict(data_class=rest_api.TrackResponse, data=data)
+            case "search":
+                return from_dict(data_class=rest_api.SearchResponse, data=data)
 
     async def get_unsupported_features(self) -> set[str]:
+        """|coro|
+        Returns the unsupported features of the target node.
+        """
         await self.update_features()
         return SUPPORTED_SOURCES.union(SUPPORTED_FEATURES) - self._capabilities
 
@@ -909,6 +923,7 @@ class Node:
             )
 
     async def wait_until_ready(self, timeout: float | None = None):
+        """Waits until the target node is ready."""
         await asyncio.wait_for(self._ready.wait(), timeout=timeout)
 
     async def region_distance(self, region: str) -> float:
@@ -931,89 +946,109 @@ class Node:
 
     async def get_track_from_cache(
         self, query: Query, first: bool = False
-    ) -> rest_api.PlaylistLoaded | rest_api.SearchResult | rest_api.TrackLoaded | None:
+    ) -> rest_api.PlaylistResponse | rest_api.SearchResponse | rest_api.TrackResponse | None:
+        """Gets a query from the query cache."""
         response = await self.node_manager.client.query_cache_manager.fetch_query(query)
         if not response:
             return
         if tracks := await response.fetch_tracks():
-            load_type = (
-                "PLAYLIST_LOADED"
-                if query.is_playlist or query.is_album
-                else "SEARCH_RESULT"
-                if query.is_search
-                else "TRACK_LOADED"
-            )
+            load_type = "playlist" if query.is_playlist or query.is_album else "search" if query.is_search else "track"
             try:
-                exception = None
                 if tracks and first:
                     tracks = [tracks[0]]
             except Exception:  # noqa
                 tracks = []
-                load_type = "LOAD_FAILED"
-                exception = {"cause": "No tracks returned", "severity": "COMMON", "message": "No tracks found"}
-            data = {
-                "loadType": load_type,
-                "tracks": tracks,
-                "playlistInfo": {"selectedTrack": -1, "name": await response.fetch_name() or ""},
-                "exception": exception,
-                "pluginInfo": await response.fetch_plugin_info(),
-            }
+                load_type = "error"
+
+            data = {"loadType": load_type, "data": None}
+            match data["loadType"]:
+                case "playlist":
+                    data["data"] = {
+                        "info": {"name": await response.fetch_name() or "", "selectedTrack": 0},
+                        "pluginInfo": await response.fetch_plugin_info(),
+                        "tracks": tracks,
+                    }
+                case "search":
+                    data["data"] = tracks
+                case "track":
+                    data["data"] = tracks[0]
+                case "empty":
+                    data["data"] = None
+                case "error":
+                    data["data"] = {"cause": "No tracks returned", "severity": "common", "message": "No tracks found"}
             response = self.parse_loadtrack_response(data)
             return response
 
     @property
     def base_url(self) -> URL:
+        """Returns the base URL of the target node."""
         return URL(f"{self.connection_protocol}://{self.host}:{self.port}")
 
     @property
     def base_api_url(self) -> URL:
+        """Returns the base API URL of the target node."""
         return self.base_url / f"v{self.api_version}"
 
     @property
     def base_ws_url(self) -> URL:
+        """Returns the base WebSocket URL of the target node."""
         return self.base_api_url.with_scheme(self.socket_protocol)
 
     # ENDPOINTS
     def get_endpoint_websocket(self) -> URL:
+        """Returns the WebSocket endpoint of the target node."""
         return self.base_ws_url / "websocket"
 
     def get_endpoint_info(self) -> URL:
+        """Returns the info endpoint of the target node."""
         return self.base_api_url / "info"
 
     def get_endpoint_session_players(self) -> URL:
+        """Returns the session players endpoint of the target node."""
         return self.get_endpoint_session() / "players"
 
     def get_endpoint_session_player_by_guild_id(self, guild_id: int) -> URL:
+        """Returns the session player endpoint of the target node for the given guild ID."""
         return self.get_endpoint_session_players() / f"{guild_id}"
 
     def get_endpoint_session(self) -> URL:
+        """Returns the session endpoint of the target node."""
         return self.base_api_url / "sessions" / self.session_id
 
     def get_endpoint_loadtracks(self) -> URL:
+        """Returns the loadtracks endpoint of the target node."""
         return self.base_api_url / "loadtracks"
 
     def get_endpoint_decodetrack(self) -> URL:
+        """Returns the decodetrack endpoint of the target node."""
         return self.base_api_url / "decodetrack"
 
     def get_endpoint_decodetracks(self) -> URL:
+        """Returns the decodetracks endpoint of the target node."""
         return self.base_api_url / "decodetracks"
 
     def get_endpoint_stats(self) -> URL:
+        """Returns the stats endpoint of the target node."""
         return self.base_api_url / "stats"
 
     def get_endpoint_routeplanner_status(self) -> URL:
+        """Returns the routeplanner status endpoint of the target node."""
         return self.base_api_url / "routeplanner" / "status"
 
     def get_endpoint_routeplanner_free_address(self) -> URL:
+        """Returns the routeplanner free address endpoint of the target node."""
         return self.base_api_url / "routeplanner" / "free" / "address"
 
     def get_endpoint_routeplanner_free_all(self) -> URL:
+        """Returns the routeplanner free all endpoint of the target node."""
         return self.base_api_url / "routeplanner" / "free" / "all"
 
     def get_endpoint_session_player_sponsorblock_categories(self, guild_id: int) -> URL:
+        """Returns the session player sponsorblock categories endpoint of the target node for the given guild ID."""
         return self.get_endpoint_session_player_by_guild_id(guild_id) / "sponsorblock" / "categories"
 
     def get_endpoint_version(self) -> URL:
+        """Returns the version endpoint of the target node."""
         return self.base_url / "version"
 
     # REST API - Direct calls
@@ -1044,6 +1079,9 @@ class Node:
             return HTTPException(failure)
 
     async def fetch_session_player(self, guild_id: int) -> rest_api.LavalinkPlayer | HTTPException:
+        """|coro|
+        Gets the player associated with the target node and the given guild ID.
+        """
         async with self._session.get(
             self.get_endpoint_session_player_by_guild_id(guild_id=guild_id),
             headers={
@@ -1064,6 +1102,9 @@ class Node:
     async def patch_session_player(
         self, guild_id: int, no_replace: bool = False, payload: JSON_DICT_TYPE = None
     ) -> rest_api.LavalinkPlayer | HTTPException:
+        """|coro|
+        Updates the player associated with the target node and the given guild ID.
+        """
         async with self._session.patch(
             self.get_endpoint_session_player_by_guild_id(guild_id=guild_id),
             headers={
@@ -1083,6 +1124,9 @@ class Node:
             return HTTPException(failure)
 
     async def delete_session_player(self, guild_id: int) -> None | HTTPException:
+        """|coro|
+        Deletes the player associated with the target node and the given guild ID.
+        """
         async with self._session.delete(
             self.get_endpoint_session_player_by_guild_id(guild_id=guild_id),
             headers={
@@ -1102,6 +1146,9 @@ class Node:
             return HTTPException(failure)
 
     async def get_session_player_sponsorblock_categories(self, guild_id: int) -> list[str] | HTTPException:
+        """|coro|
+        Gets the sponsorblock categories for the player associated with the target node and the given guild ID.
+        """
         async with self._session.get(
             self.get_endpoint_session_player_sponsorblock_categories(guild_id=guild_id),
             headers={
@@ -1123,6 +1170,9 @@ class Node:
     async def put_session_player_sponsorblock_categories(
         self, guild_id: int, categories: list[str]
     ) -> None | HTTPException:
+        """|coro|
+        Sets the sponsorblock categories for the player associated with the target node and the given guild ID.
+        """
         async with self._session.put(
             self.get_endpoint_session_player_sponsorblock_categories(guild_id=guild_id),
             headers={
@@ -1143,6 +1193,9 @@ class Node:
             return HTTPException(failure)
 
     async def delete_session_player_sponsorblock_categories(self, guild_id: int) -> None | HTTPException:
+        """|coro|
+        Deletes the sponsorblock categories for the player associated with the target node and the given guild ID.
+        """
         async with self._session.delete(
             self.get_endpoint_session_player_sponsorblock_categories(guild_id=guild_id),
             headers={
@@ -1162,6 +1215,9 @@ class Node:
             return HTTPException(failure)
 
     async def patch_session(self, payload: JSON_DICT_TYPE) -> None | HTTPException:
+        """|coro|
+        Patches the session associated with the target node.
+        """
         async with self._session.patch(
             self.get_endpoint_session(),
             headers={
@@ -1181,8 +1237,11 @@ class Node:
             return HTTPException(failure)
 
     async def fetch_loadtracks(self, query: Query) -> rest_api.LoadTrackResponses:
+        """|coro|
+        Fetches the loadtracks response from the target node.
+        """
         if not self.available or not self.has_source(query.requires_capability):
-            return dataclasses.replace(NO_MATCHES)
+            return dataclasses.replace(EMPTY_RESPONSE)
 
         async with self._session.get(
             self.get_endpoint_loadtracks(),
@@ -1197,6 +1256,7 @@ class Node:
                 result = await res.json(loads=json.loads)
                 response = self.parse_loadtrack_response(result)
                 asyncio.create_task(self.node_manager.client.query_cache_manager.add_query(query, response))
+                self._manager.client.dispatch_event(LavalinkLoadtracksEvent(node=self, response=response))
                 return response
             failure = from_dict(data_class=LavalinkError, data=await res.json(loads=json.loads))
             if res.status in [401, 403]:
@@ -1207,6 +1267,9 @@ class Node:
     async def fetch_decodetrack(
         self, encoded_track: str, timeout: aiohttp.ClientTimeout | object = sentinel, raise_on_failure: bool = True
     ) -> Track | HTTPException:
+        """|coro|
+        Fetches the decodetrack response from the target node.
+        """
         async with self._manager._client.cached_session.get(
             self.get_endpoint_decodetrack(),
             headers={
@@ -1230,6 +1293,9 @@ class Node:
     async def post_decodetracks(
         self, encoded_tracks: list[str], raise_on_failure: bool = False
     ) -> list[Track] | HTTPException:
+        """|coro|
+        Posts the decodetracks response from the target node.
+        """
         async with self._manager._client.cached_session.post(
             self.get_endpoint_decodetracks(),
             headers={
@@ -1251,6 +1317,9 @@ class Node:
             return HTTPException(failure)
 
     async def fetch_info(self, raise_on_error: bool = False) -> rest_api.LavalinkInfo | HTTPException:
+        """|coro|
+        Fetches the info response from the target node.
+        """
         async with self._session.get(
             self.get_endpoint_info(),
             headers={
@@ -1278,6 +1347,9 @@ class Node:
         return Version(version_str)
 
     async def fetch_stats(self, raise_on_error: bool = False) -> websocket_responses.Stats | HTTPException:
+        """|coro|
+        Fetches the stats response from the target node.
+        """
         async with self._session.get(
             self.get_endpoint_stats(),
             headers={
@@ -1300,6 +1372,9 @@ class Node:
             return HTTPException(failure)
 
     async def fetch_version(self, raise_on_error: bool = False) -> Version | HTTPException:
+        """|coro|
+        Fetches the version response from the target node.
+        """
         async with self._session.get(
             self.get_endpoint_version(),
             headers={
@@ -1325,6 +1400,9 @@ class Node:
             return HTTPException(failure)
 
     async def fetch_routeplanner_status(self) -> RoutePlannerStart | HTTPException:
+        """|coro|
+        Fetches the routeplanner status response from the target node.
+        """
         async with self._session.get(
             self.get_endpoint_routeplanner_status(),
             headers={
@@ -1346,6 +1424,9 @@ class Node:
             return HTTPException(failure)
 
     async def post_routeplanner_free_address(self, address: str) -> None | HTTPException:
+        """|coro|
+        Frees the given address from the routeplanner.
+        """
         async with self._session.post(
             self.get_endpoint_routeplanner_free_address(),
             headers={
@@ -1365,6 +1446,9 @@ class Node:
             return HTTPException(failure)
 
     async def post_routeplanner_free_all(self) -> None | HTTPException:
+        """|coro|
+        Frees all addresses from the routeplanner.
+        """
         async with self._session.post(
             self.get_endpoint_routeplanner_free_all(),
             headers={
@@ -1385,14 +1469,23 @@ class Node:
     # REST API - Wrappers
 
     async def fetch_node_version(self) -> Version:
+        """|coro|
+        Fetches the version response from the target node.
+        """
         self._version = await self.fetch_version(raise_on_error=True)
         return self._version
 
     async def fetch_api_version(self) -> None:
+        """|coro|
+        Fetches the API version response from the target node.
+        """
         if self.version is None:
             await self.fetch_node_version()
 
     async def get_guild_player(self, guild_id: int) -> rest_api.LavalinkPlayer:
+        """|coro|
+        Fetches the player for the given guild ID.
+        """
         async with self._session.get(
             self.get_endpoint_session_player_by_guild_id(guild_id=guild_id),
             headers={
@@ -1409,7 +1502,7 @@ class Node:
         raise ValueError(f"Server returned an unexpected return code: {res.status}")
 
     async def get_track(
-        self, query: Query, first: bool = False, bypass_cache: bool = False
+        self, query: Query, first: bool = False, bypass_cache: bool = False, sleep: bool = False
     ) -> rest_api.LoadTrackResponses:
         """|coro|
         Gets all tracks associated with the given query.
@@ -1422,6 +1515,8 @@ class Node:
             Whether to return the first result or all results.
         bypass_cache: :class:`bool`
             Whether to bypass the cache.
+        sleep: :class:`bool`
+            Whether to sleep for 1 second before returning the response.
         Returns
         -------
         LavalinkLoadTrackObjects
@@ -1431,27 +1526,29 @@ class Node:
             if cached_entry := await self.get_track_from_cache(query=query, first=first):
                 return cached_entry
         if (
-            (not self.node_manager.client.local_tracks_cache)
+            self.node_manager.client.local_tracks_cache.is_ready
             and query.is_local
             and f"{query._query}" in self.node_manager.client.local_tracks_cache.path_to_track
         ):
-            response = self.parse_loadtrack_response(
+            return self.parse_loadtrack_response(
                 {
-                    "loadType": "TRACK_LOADED",
-                    "tracks": [],
-                    "playlistInfo": {"selectedTrack": -1, "name": ""},
-                    "exception": None,
-                    "pluginInfo": None,
+                    "loadType": "track",
+                    "data": self.node_manager.client.local_tracks_cache.path_to_track[f"{query._query}"],
                 }
             )
-            return dataclasses.replace(
-                response, tracks=[self.node_manager.client.local_tracks_cache.path_to_track[f"{query._query}"]]
-            )
         response = await self.fetch_loadtracks(query=query)
+        if sleep:
+            await asyncio.sleep(0.05)
         if isinstance(response, HTTPException):
             return response
         if first:
-            return dataclasses.replace(response, tracks=response.tracks[:1])
+            match response.loadType:
+                case "track":
+                    return response
+                case "search":
+                    return rest_api.TrackResponse(loadType="track", data=response.data[0])
+                case "playlist":
+                    return rest_api.TrackResponse(loadType="track", data=response.data.tracks[0])
         return response
 
     async def search_youtube_music(self, query: str, bypass_cache: bool = False) -> rest_api.LoadTrackResponses:
@@ -1588,7 +1685,9 @@ class Node:
         )
 
     async def get_query_localfiles(
-        self, query: str, bypass_cache: bool = True, first: bool = True
+        self,
+        query: str,
+        bypass_cache: bool = True,
     ) -> rest_api.LoadTrackResponses:
         """|coro|
         Gets the query from Localfiles.
@@ -1598,16 +1697,13 @@ class Node:
             The query to search for.
         bypass_cache: :class:`bool`
             Whether to bypass the cache.
-        first: :class:`bool`
-            Whether to return the first result only.
 
         Returns
         -------
         LavalinkLoadTrackObjects
             Lavalink LoadTrack Response Object
         """
-        response = await self.get_track(await self._query_cls.from_string(query), bypass_cache=bypass_cache)
-        return (response.tracks[0] if response.tracks else None) if first else response
+        return await self.get_track(await self._query_cls.from_string(query), bypass_cache=bypass_cache)
 
     def get_filter_payload(
         self,
@@ -1627,6 +1723,7 @@ class Node:
         reset_no_set: bool = False,
         reset: bool = False,
     ) -> JSON_DICT_TYPE:
+        """Gets the filter payload."""
         if reset:
             return {}
 
@@ -1765,6 +1862,9 @@ class Node:
         channel_mix: ChannelMix = None,
         echo: Echo = None,
     ) -> None:
+        """|coro|
+        Set the filters for a player.
+        """
         payload = self.get_filter_payload(
             player=self.node_manager.client.player_manager.get(player.guild.id),
             volume=volume,

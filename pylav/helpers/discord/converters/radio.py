@@ -41,6 +41,8 @@ if TYPE_CHECKING:
 else:
 
     class StationConverter(Transformer, TransformerCache):
+        """Converts a station name to a matching object"""
+
         @classmethod
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> list[Station]:
             """Converts a station name to a matching object"""
@@ -60,6 +62,7 @@ else:
 
         @classmethod
         async def transform(cls, interaction: DISCORD_INTERACTION_TYPE, argument: str) -> list[Station]:
+            """Transforms a station name to a matching object"""
             if not interaction.response.is_done():
                 await interaction.response.defer(ephemeral=True)
             ctx = await interaction.client.get_context(interaction)
@@ -69,6 +72,7 @@ else:
 
         @classmethod
         async def autocomplete(cls, interaction: DISCORD_INTERACTION_TYPE, current: str) -> list[Choice]:
+            """Autocompletes a station name to a matching object"""
             if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(
@@ -90,6 +94,7 @@ else:
 
         @classmethod
         def maybe_add_station_to_cache(cls, station: Station) -> None:
+            """Adds a station to the cache if it's not already in it"""
             if station.stationuuid not in cls._choice_cache_stations:
                 cls._choice_cache_stations[station.stationuuid] = Choice(
                     name=shorten_string(station.name, max_length=100)
@@ -104,6 +109,7 @@ else:
             current: str,
             data: ChatInputApplicationCommandInteractionData | None,
         ) -> dict[str, Any]:
+            """Processes the kwargs for the autocomplete method"""
             kwargs = {}
             if options := data.get("options", []):
                 country_code = [v for v in options if v.get("name") == "countrycode"]
@@ -129,6 +135,8 @@ else:
             return kwargs
 
     class TagConverter(Transformer, TransformerCache):
+        """Converts a Tag name to to a matching object"""
+
         @classmethod
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> list[Tag]:
             """Converts a Tag name to to a matching object"""
@@ -148,6 +156,7 @@ else:
 
         @classmethod
         async def transform(cls, interaction: DISCORD_INTERACTION_TYPE, argument: str) -> list[Tag]:
+            """Transforms a Tag name to to a matching object"""
             if not interaction.response.is_done():
                 await interaction.response.defer(ephemeral=True)
             ctx = await interaction.client.get_context(interaction)
@@ -157,6 +166,7 @@ else:
 
         @classmethod
         async def autocomplete(cls, interaction: DISCORD_INTERACTION_TYPE, current: str) -> list[Choice]:
+            """Autocompletes a Tag name to to a matching object"""
             if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(
@@ -175,6 +185,8 @@ else:
             return [cls._choice_cache_tags[tag.name] for tag in tags]
 
     class LanguageConverter(Transformer, TransformerCache):
+        """Converts a Language name to to a matching object"""
+
         @classmethod
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> list[Language]:
             """Converts a Language name to to a matching object"""
@@ -194,6 +206,7 @@ else:
 
         @classmethod
         async def transform(cls, interaction: DISCORD_INTERACTION_TYPE, argument: str) -> list[Language]:
+            """Transforms a Language name to to a matching object"""
             if not interaction.response.is_done():
                 await interaction.response.defer(ephemeral=True)
             ctx = await interaction.client.get_context(interaction)
@@ -203,6 +216,7 @@ else:
 
         @classmethod
         async def autocomplete(cls, interaction: DISCORD_INTERACTION_TYPE, current: str) -> list[Choice]:
+            """Autocompletes a Language name to to a matching object"""
             if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(
@@ -220,6 +234,8 @@ else:
             return [cls._choice_cache_languages[language.name] for language in languages]
 
     class StateConverter(Transformer, TransformerCache):
+        """Converts a State name to to a matching object"""
+
         @classmethod
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> list[State]:
             """Converts a State name to to a matching object"""
@@ -238,6 +254,7 @@ else:
 
         @classmethod
         async def transform(cls, interaction: DISCORD_INTERACTION_TYPE, argument: str) -> list[State]:
+            """Transforms a State name to to a matching object"""
             if not interaction.response.is_done():
                 await interaction.response.defer(ephemeral=True)
             ctx = await interaction.client.get_context(interaction)
@@ -247,6 +264,7 @@ else:
 
         @classmethod
         async def autocomplete(cls, interaction: DISCORD_INTERACTION_TYPE, current: str) -> list[Choice]:
+            """Autocompletes a State name to to a matching object"""
             if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(
@@ -262,6 +280,8 @@ else:
             return [cls._choice_cache_states[state.name] for state in states]
 
     class CodecConverter(Transformer, TransformerCache):
+        """Converts a Codec name to to a matching object"""
+
         @classmethod
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> list[Codec]:
             """Converts a Codec name to to a matching object"""
@@ -281,6 +301,7 @@ else:
 
         @classmethod
         async def transform(cls, interaction: DISCORD_INTERACTION_TYPE, argument: str) -> list[Codec]:
+            """Transforms a Codec name to to a matching object"""
             if not interaction.response.is_done():
                 await interaction.response.defer(ephemeral=True)
             ctx = await interaction.client.get_context(interaction)
@@ -290,6 +311,7 @@ else:
 
         @classmethod
         async def autocomplete(cls, interaction: DISCORD_INTERACTION_TYPE, current: str) -> list[Choice]:
+            """Autocompletes a Codec name to to a matching object"""
             if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(
@@ -305,6 +327,8 @@ else:
             return [cls._choice_cache_codecs[codec.name] for codec in codecs]
 
     class CountryCodeConverter(Transformer, TransformerCache):
+        """Converts a Country Code name to to a matching object"""
+
         @classmethod
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> list[CountryCode]:
             """Converts a CountryCode name to to a matching object"""
@@ -324,6 +348,7 @@ else:
 
         @classmethod
         async def transform(cls, interaction: DISCORD_INTERACTION_TYPE, argument: str) -> list[CountryCode]:
+            """Transforms a Country Code name to to a matching object"""
             if not interaction.response.is_done():
                 await interaction.response.defer(ephemeral=True)
             ctx = await interaction.client.get_context(interaction)
@@ -333,6 +358,7 @@ else:
 
         @classmethod
         async def autocomplete(cls, interaction: DISCORD_INTERACTION_TYPE, current: str) -> list[Choice]:
+            """Autocompletes a Country Code name to to a matching object"""
             if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(
@@ -348,6 +374,8 @@ else:
             return [cls._choice_cache_country_codes[country_code.name] for country_code in country_codes]
 
     class CountryConverter(Transformer, TransformerCache):
+        """Converts a Country name to to a matching object"""
+
         @classmethod
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> list[Country]:
             """Converts a Country name to to a matching object"""
@@ -367,6 +395,7 @@ else:
 
         @classmethod
         async def transform(cls, interaction: DISCORD_INTERACTION_TYPE, argument: str) -> list[Country]:
+            """Transforms a Country name to to a matching object"""
             if not interaction.response.is_done():
                 await interaction.response.defer(ephemeral=True)
             ctx = await interaction.client.get_context(interaction)
@@ -376,6 +405,7 @@ else:
 
         @classmethod
         async def autocomplete(cls, interaction: DISCORD_INTERACTION_TYPE, current: str) -> list[Choice]:
+            """Autocompletes a Country name to to a matching object"""
             if interaction.client.pylav.radio_browser.disabled:
                 return [
                     Choice(

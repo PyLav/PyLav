@@ -26,24 +26,32 @@ if TYPE_CHECKING:
 else:
 
     class QueryConverter(Transformer):
+        """Converts a query to a Query object"""
+
         @classmethod
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> Query:  # noqa
+            """Converts a query to a Query object"""
             arg = arg.strip("<>")
             return await Query.from_string(arg)
 
         @classmethod
         async def transform(cls, interaction: DISCORD_INTERACTION_TYPE, argument: str) -> Query:
+            """Transforms a query to a Query object"""
             if not interaction.response.is_done():
                 await interaction.response.defer(ephemeral=True)
             ctx = await interaction.client.get_context(interaction)
             return await cls.convert(ctx, argument)
 
         async def autocomplete(self, interaction: DISCORD_INTERACTION_TYPE, current: str) -> list[Choice]:
+            """Autocompletes a query to a Query object"""
             return []
 
     class QueryPlaylistConverter(Transformer):
+        """Converts a query to a Query object"""
+
         @classmethod
         async def convert(cls, ctx: DISCORD_CONTEXT_TYPE, arg: str) -> Query:  # noqa
+            """Converts a query to a Query object"""
             arg = arg.strip("<>")
             query = await Query.from_string(arg)
             if not (query.is_playlist or query.is_album):
@@ -52,10 +60,12 @@ else:
 
         @classmethod
         async def transform(cls, interaction: DISCORD_INTERACTION_TYPE, argument: str) -> Query:
+            """Transforms a query to a Query object"""
             if not interaction.response.is_done():
                 await interaction.response.defer(ephemeral=True)
             ctx = await interaction.client.get_context(interaction)
             return await cls.convert(ctx, argument)
 
         async def autocomplete(self, interaction: DISCORD_INTERACTION_TYPE, current: str) -> list[Choice]:
+            """Autocompletes a query to a Query object"""
             return []

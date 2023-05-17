@@ -364,10 +364,12 @@ class Query:
         query_type = match.group("type")
         match query_type:
             case "album":
+                if match.group("identifier2"):
+                    return cls(query, "Apple Music", query_type="single")
                 return cls(query, "Apple Music", query_type="album")
             case "song":
                 return cls(query, "Apple Music", query_type="single")
-            case _:
+            case __:
                 return cls(query, "Apple Music", query_type="playlist")
 
     @classmethod
@@ -378,7 +380,7 @@ class Query:
                 return cls(query, "Mixcloud", query_type="album")
             case "playlist":
                 return cls(query, "Mixcloud", query_type="playlist")
-            case _:
+            case __:
                 return cls(query, "Mixcloud", query_type="single")
 
     @classmethod
@@ -705,13 +707,12 @@ class Query:
 
     async def _yield_process_url(self) -> AsyncIterator[Query]:
         assert not isinstance(self._query, LocalFile)
-        async with aiohttp.ClientSession(json_serialize=json.dumps) as session:
-            async with session.get(self._query) as resp:
-                contents = await resp.text()
-                for line in iter(contents.splitlines()):
-                    with contextlib.suppress(Exception):
-                        if match := SOURCE_INPUT_MATCH_PLS_TRACK.match(line):
-                            yield await Query.from_string(match.group("pls_query").strip(), dont_search=True)
+        async with self.__CLIENT.session.get(self._query) as resp:
+            contents = await resp.text()
+            for line in iter(contents.splitlines()):
+                with contextlib.suppress(Exception):
+                    if match := SOURCE_INPUT_MATCH_PLS_TRACK.match(line):
+                        yield await Query.from_string(match.group("pls_query").strip(), dont_search=True)
 
     async def _yield_xspf_tracks(self) -> AsyncIterator[Query]:  # type: ignore
         if self.is_xspf:

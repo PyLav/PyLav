@@ -11,8 +11,8 @@ class PlayerStateRow(Table, db=DATABASE_ENGINE, tablename="player_state"):
     id = BigInt(index=True, null=False)
     bot = BigInt(index=True, null=False)
     channel_id = BigInt(null=True, default=None)
-    volume = Integer(null=False, default=100)
-    position = Float(null=False, default=0.0)  # TODO: Should i make this a Numerical column?
+    volume = Integer(null=False, default=25)
+    position = Float(null=False, default=0.0)
     auto_play_playlist_id = BigInt(null=True, default=1)
     forced_channel_id = BigInt(null=True, default=0)
     text_channel_id = BigInt(null=True, default=0)

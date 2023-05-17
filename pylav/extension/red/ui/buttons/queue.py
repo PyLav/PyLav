@@ -27,6 +27,13 @@ class PreviousTrackButton(discord.ui.Button):
         await self.cog.command_previous.callback(self.cog, context)
         await self.view.prepare()
         kwargs = await self.view.get_page(self.view.current_page)
+        attachments = []
+        if "file" in kwargs:
+            attachments = [kwargs.pop("file")]
+        elif "files" in kwargs:
+            attachments = kwargs.pop("files")
+        if attachments:
+            kwargs["attachments"] = attachments
         await self.view.message.edit(view=self.view, **kwargs)
 
 
@@ -46,6 +53,13 @@ class StopTrackButton(discord.ui.Button):
         await self.cog.command_stop.callback(self.cog, context)
         await self.view.prepare()
         kwargs = await self.view.get_page(self.view.current_page)
+        attachments = []
+        if "file" in kwargs:
+            attachments = [kwargs.pop("file")]
+        elif "files" in kwargs:
+            attachments = kwargs.pop("files")
+        if attachments:
+            kwargs["attachments"] = attachments
         await self.view.message.edit(view=self.view, **kwargs)
 
 
@@ -65,6 +79,13 @@ class PauseTrackButton(discord.ui.Button):
         await self.cog.command_pause.callback(self.cog, context)
         await self.view.prepare()
         kwargs = await self.view.get_page(self.view.current_page)
+        attachments = []
+        if "file" in kwargs:
+            attachments = [kwargs.pop("file")]
+        elif "files" in kwargs:
+            attachments = kwargs.pop("files")
+        if attachments:
+            kwargs["attachments"] = attachments
         await self.view.message.edit(view=self.view, **kwargs)
 
 
@@ -84,6 +105,13 @@ class ResumeTrackButton(discord.ui.Button):
         await self.cog.command_resume.callback(self.cog, context)
         await self.view.prepare()
         kwargs = await self.view.get_page(self.view.current_page)
+        attachments = []
+        if "file" in kwargs:
+            attachments = [kwargs.pop("file")]
+        elif "files" in kwargs:
+            attachments = kwargs.pop("files")
+        if attachments:
+            kwargs["attachments"] = attachments
         await self.view.message.edit(view=self.view, **kwargs)
 
 
@@ -103,6 +131,13 @@ class SkipTrackButton(discord.ui.Button):
         await self.cog.command_skip.callback(self.cog, context)
         await self.view.prepare()
         kwargs = await self.view.get_page(self.view.current_page)
+        attachments = []
+        if "file" in kwargs:
+            attachments = [kwargs.pop("file")]
+        elif "files" in kwargs:
+            attachments = kwargs.pop("files")
+        if attachments:
+            kwargs["attachments"] = attachments
         await self.view.message.edit(view=self.view, **kwargs)
 
 
@@ -122,6 +157,13 @@ class IncreaseVolumeButton(discord.ui.Button):
         await self.cog.command_volume_change_by.callback(self.cog, context, change_by=5)
         await self.view.prepare()
         kwargs = await self.view.get_page(self.view.current_page)
+        attachments = []
+        if "file" in kwargs:
+            attachments = [kwargs.pop("file")]
+        elif "files" in kwargs:
+            attachments = kwargs.pop("files")
+        if attachments:
+            kwargs["attachments"] = attachments
         await self.view.message.edit(view=self.view, **kwargs)
 
 
@@ -141,6 +183,13 @@ class DecreaseVolumeButton(discord.ui.Button):
         await self.cog.command_volume_change_by.callback(self.cog, context, change_by=-5)
         await self.view.prepare()
         kwargs = await self.view.get_page(self.view.current_page)
+        attachments = []
+        if "file" in kwargs:
+            attachments = [kwargs.pop("file")]
+        elif "files" in kwargs:
+            attachments = kwargs.pop("files")
+        if attachments:
+            kwargs["attachments"] = attachments
         await self.view.message.edit(view=self.view, **kwargs)
 
 
@@ -168,6 +217,13 @@ class ToggleRepeatButton(discord.ui.Button):
         await self.cog.command_repeat.callback(self.cog, context, queue=await player.config.fetch_repeat_current())
         await self.view.prepare()
         kwargs = await self.view.get_page(self.view.current_page)
+        attachments = []
+        if "file" in kwargs:
+            attachments = [kwargs.pop("file")]
+        elif "files" in kwargs:
+            attachments = kwargs.pop("files")
+        if attachments:
+            kwargs["attachments"] = attachments
         await self.view.message.edit(view=self.view, **kwargs)
 
 
@@ -228,6 +284,13 @@ class ToggleRepeatQueueButton(discord.ui.Button):
         await self.cog.command_repeat.callback(self.cog, context, queue=repeat_queue)
         await self.view.prepare()
         kwargs = await self.view.get_page(self.view.current_page)
+        attachments = []
+        if "file" in kwargs:
+            attachments = [kwargs.pop("file")]
+        elif "files" in kwargs:
+            attachments = kwargs.pop("files")
+        if attachments:
+            kwargs["attachments"] = attachments
         await self.view.message.edit(view=self.view, **kwargs)
 
 
@@ -247,6 +310,13 @@ class ShuffleButton(discord.ui.Button):
         await self.cog.command_shuffle.callback(self.cog, context)
         await self.view.prepare()
         kwargs = await self.view.get_page(self.view.current_page)
+        attachments = []
+        if "file" in kwargs:
+            attachments = [kwargs.pop("file")]
+        elif "files" in kwargs:
+            attachments = kwargs.pop("files")
+        if attachments:
+            kwargs["attachments"] = attachments
         await self.view.message.edit(view=self.view, **kwargs)
 
 
@@ -298,6 +368,13 @@ class EmptyQueueButton(discord.ui.Button):
         )
         await self.view.prepare()
         kwargs = await self.view.get_page(self.view.current_page)
+        attachments = []
+        if "file" in kwargs:
+            attachments = [kwargs.pop("file")]
+        elif "files" in kwargs:
+            attachments = kwargs.pop("files")
+        if attachments:
+            kwargs["attachments"] = attachments
         await self.view.message.edit(view=self.view, **kwargs)
 
 
@@ -323,6 +400,13 @@ class EnqueueButton(discord.ui.Button):
         await self.cog.bot.get_context(interaction)
         await self.view.prepare()
         kwargs = await self.view.get_page(self.view.current_page)
+        attachments = []
+        if "file" in kwargs:
+            attachments = [kwargs.pop("file")]
+        elif "files" in kwargs:
+            attachments = kwargs.pop("files")
+        if attachments:
+            kwargs["attachments"] = attachments
         await self.view.message.edit(view=self.view, **kwargs)
 
 
@@ -360,6 +444,13 @@ class RemoveFromQueueButton(discord.ui.Button):
         await picker.start(context)
         await self.view.prepare()
         kwargs = await self.view.get_page(self.view.current_page)
+        attachments = []
+        if "file" in kwargs:
+            attachments = [kwargs.pop("file")]
+        elif "files" in kwargs:
+            attachments = kwargs.pop("files")
+        if attachments:
+            kwargs["attachments"] = attachments
         await self.view.message.edit(view=self.view, **kwargs)
 
 
@@ -398,4 +489,11 @@ class PlayNowFromQueueButton(discord.ui.Button):
         await picker.wait()
         await self.view.prepare()
         kwargs = await self.view.get_page(self.view.current_page)
+        attachments = []
+        if "file" in kwargs:
+            attachments = [kwargs.pop("file")]
+        elif "files" in kwargs:
+            attachments = kwargs.pop("files")
+        if attachments:
+            kwargs["attachments"] = attachments
         await self.view.message.edit(view=self.view, **kwargs)

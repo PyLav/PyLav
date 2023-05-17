@@ -71,16 +71,8 @@ class PostgresStorage(BaseCache):
 
     async def write(self, key: str, item: ResponseOrKey) -> None:
         """Write an item to the cache"""
-        # TODO: When piccolo add support to on conflict clauses using RAW here is more efficient
-        #  Tracking issue: https://github.com/piccolo-orm/piccolo/issues/252
-        await AioHttpCacheRow.raw(
-            """
-            INSERT INTO aiohttp_client_cache (key, value)
-            VALUES ({}, {})
-            ON CONFLICT (key) DO NOTHING
-            """,
-            key,
-            self.serialize(item),
+        await AioHttpCacheRow.insert(AioHttpCacheRow(key=key, value=self.serialize(item))).on_conflict(
+            action="DO NOTHING", target=AioHttpCacheRow.key
         )
 
     async def bulk_delete(self, keys: set[str]) -> None:
