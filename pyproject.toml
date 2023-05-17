@@ -196,6 +196,8 @@ docs = ["Red-DiscordBot", "sphinx_rtd_theme", "furo", "olefile", "sphinx-copybut
 [tool.poetry-dynamic-versioning]
 enable = true
 vcs = "git"
+bump = true
+style = "semver"
 
 [tool.poetry-dynamic-versioning.substitution]
 files = []
