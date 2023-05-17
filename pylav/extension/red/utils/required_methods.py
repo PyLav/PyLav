@@ -48,6 +48,7 @@ async def pylav_credits(context: PyLavContext) -> None:
             description=_(
                 "PyLav was created by {library_author_name_variable_do_not_translate}.\n\n"
                 "PyLav source code can be located in {library_url_variable_do_not_translate}\n"
+                "PyLav license can be located in {library_license_variable_do_not_translate}\n"
                 "PyLav-Cogs source code can be located in {second_library_url_variable_do_not_translate}\n\n"
                 "You can join the PyLav support server via {support_server_url_variable_do_not_translate}\n"
                 "\n\n"
@@ -61,6 +62,7 @@ async def pylav_credits(context: PyLavContext) -> None:
             ).format(
                 library_author_name_variable_do_not_translate="[Draper#6666](https://github.com/Drapersniper)",
                 library_url_variable_do_not_translate="https://github.com/PyLav/PyLav",
+                library_license_variable_do_not_translate="https://github.com/PyLav/PyLav/blob/develop/LICENSE",
                 second_library_url_variable_do_not_translate="https://github.com/PyLav/Red-Cogs",
                 support_server_url_variable_do_not_translate="https://discord.com/invite/vnmcXqtgeY",
                 crowdin_project_url_variable_do_not_translate="https://crowdin.com/project/pylav",
