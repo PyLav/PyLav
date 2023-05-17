@@ -198,5 +198,5 @@ enable = true
 vcs = "git"
 
 [tool.poetry-dynamic-versioning.substitution]
-files = ["*.py", "*/__init__.py", "*/__version__.py", "*/_version.py"]
-patterns = ["(^__version__\\s*(?::.*?)?=\\s*['\"])[^'\"]*(['\"])"]
+files = []
+patterns = []
