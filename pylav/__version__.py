@@ -1,5 +1,5 @@
 from __future__ import annotations
 
-import importlib.metadata
+import importlib_metadata
 
-__version__ = importlib.metadata.version("Py-Lav")
+__version__ = importlib_metadata.version("Py-Lav")
