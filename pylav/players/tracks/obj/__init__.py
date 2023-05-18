@@ -367,7 +367,6 @@ class Track:
 
     async def duration(self) -> int:
         dur = (await self.fetch_full_track_data()).info.length
-        dur = dur if not await self.is_local() else await self._mutagen_length(dur)
         if self.player is None:
             return dur
         return self.player.timescale.adjust_position(dur) if self.player.timescale.changed else dur
@@ -437,6 +436,9 @@ class Track:
                             break
                         except (TypeError, ValueError):
                             continue
+                elif any("mp4" in m for m in metadata.mime) and "covr" in metadata:
+                    if artwork := metadata.get("covr", None):
+                        self._has_embedded_artwork = bool(artwork.data)
         return default if not self._has_embedded_artwork else "attachment://thumbnail.png"
 
     async def get_embedded_artwork(self) -> discord.File | None:
@@ -460,6 +462,9 @@ class Track:
                             return discord.File(fp=io.BytesIO(base64.b64decode(b64_data)), filename="thumbnail.png")
                         except (TypeError, ValueError):
                             continue
+                elif any("mp4" in m for m in metadata.mime) and "covr" in metadata:
+                    if artwork := metadata.get("covr", None):
+                        return discord.File(fp=io.BytesIO(artwork.data), filename="thumbnail.png")
         return None
 
     async def _mutagen_title(self, default: str | None) -> str | None:
@@ -467,12 +472,22 @@ class Track:
             return None
         with contextlib.suppress(Exception):
             if metadata := await self._get_mutagen_metadata():
-                if any("flac" in m for m in metadata.mime) and "title" in metadata:
-                    return next(iter(metadata["title"]), default)
-                elif any("mp3" in m for m in metadata.mime) and "TIT2" in metadata:
-                    return next(iter(metadata["TIT2"]), default)
-                elif any("ogg" in m for m in metadata.mime) and "title" in metadata:
-                    return next(iter(metadata["title"]), default)
+                if any("flac" in m for m in metadata.mime) and any(k in metadata for k in ("title",)):
+                    for k in ("title",):
+                        if title := metadata.get(k, None):
+                            return title[0]
+                elif any("mp3" in m for m in metadata.mime) and any(k in metadata for k in ("TIT2",)):
+                    for k in ("TIT2",):
+                        if title := metadata.get(k, None):
+                            return title[0]
+                elif any("ogg" in m for m in metadata.mime) and any(k in metadata for k in ("title",)):
+                    for k in ("title",):
+                        if title := metadata.get(k, None):
+                            return title[0]
+                elif any("mp4" in m for m in metadata.mime) and any(k in metadata for k in ("©nam",)):
+                    for k in ("©nam",):
+                        if title := metadata.get(k, None):
+                            return title[0]
         return default
 
     async def _mutagen_artist(self, default: str | None) -> str | None:
@@ -480,12 +495,22 @@ class Track:
             return None
         with contextlib.suppress(Exception):
             if metadata := await self._get_mutagen_metadata():
-                if any("flac" in m for m in metadata.mime) and "artist" in metadata:
-                    return next(iter(metadata["artist"]), default)
-                elif any("mp3" in m for m in metadata.mime) and "TPE1" in metadata:
-                    return next(iter(metadata["TPE1"]), default)
-                elif any("ogg" in m for m in metadata.mime) and "artist" in metadata:
-                    return next(iter(metadata["artist"]), default)
+                if any("flac" in m for m in metadata.mime) and any(k in metadata for k in ("artist", "albumartist")):
+                    for k in ("artist", "albumartist"):
+                        if artist := metadata.get(k, None):
+                            return artist[0]
+                elif any("mp3" in m for m in metadata.mime) and any(k in metadata for k in ("TPE1", "TPE2")):
+                    for k in ("TPE1", "TPE2"):
+                        if artist := metadata.get(k, None):
+                            return artist[0]
+                elif any("ogg" in m for m in metadata.mime) and any(k in metadata for k in ("artist", "albumartist")):
+                    for k in ("artist", "albumartist"):
+                        if artist := metadata.get(k, None):
+                            return artist[0]
+                elif any("mp4" in m for m in metadata.mime) and any(k in metadata for k in ("©art", "aart")):
+                    for k in ("©art", "aart"):
+                        if artist := metadata.get(k, None):
+                            return artist[0]
         return default
 
     async def _mutagen_isrc(self, default: str | None) -> str | None:
@@ -493,24 +518,28 @@ class Track:
             return None
         with contextlib.suppress(Exception):
             if metadata := await self._get_mutagen_metadata():
-                if any("flac" in m for m in metadata.mime) and "isrc" in metadata:
-                    matches = re.findall(r"[A-Z]{2}-?\w{3}-?\d{2}-?\d{5}", "\n".join(metadata.get("isrc", [])))
-                    return matches[0] if matches else default
-                elif any("mp3" in m for m in metadata.mime) and "TSRC" in metadata:
-                    return metadata["TSRC"] or default
-                elif any("ogg" in m for m in metadata.mime) and "isrc" in metadata:
-                    matches = re.findall(r"[A-Z]{2}-?\w{3}-?\d{2}-?\d{5}", "\n".join(metadata.get("isrc", [])))
-                    return matches[0] if matches else default
-        return default
-
-    async def _mutagen_length(self, default: int | None) -> int | None:
-        if not await self.is_local():
-            return None
-        with contextlib.suppress(Exception):
-            if metadata := await self._get_mutagen_metadata():
-                if any("flac" in m for m in metadata.mime) and "length" in metadata:
-                    length = next(iter(metadata["length"]), None)
-                    return int(length) if length else default
+                if any("flac" in m for m in metadata.mime) and any(k in metadata for k in ("isrc",)):
+                    for k in ("isrc",):
+                        if (isrc := metadata.get(k, None)) and (
+                            matches := re.findall(r"[A-Z]{2}-?\w{3}-?\d{2}-?\d{5}", "\n".join(isrc))
+                        ):
+                            return matches[0]
+                elif any("mp3" in m for m in metadata.mime) and any(k in metadata for k in ("TSRC",)):
+                    for k in ("TSRC",):
+                        if isrc := metadata.get(k, None):
+                            return isrc
+                elif any("ogg" in m for m in metadata.mime) and any(k in metadata for k in ("isrc",)):
+                    for k in ("isrc",):
+                        if (isrc := metadata.get(k, None)) and (
+                            matches := re.findall(r"[A-Z]{2}-?\w{3}-?\d{2}-?\d{5}", "\n".join(isrc))
+                        ):
+                            return matches[0]
+                elif any("mp4" in m for m in metadata.mime) and any(
+                    k in metadata for k in ("©isr / ----:com.apple.iTunes:ISRC",)
+                ):
+                    for k in ("©isr / ----:com.apple.iTunes:ISRC",):
+                        if isrc := metadata.get(k, None):
+                            return isrc
         return default
 
     async def query(self) -> Query:
