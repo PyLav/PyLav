@@ -213,7 +213,7 @@ class LocalTrackCache:
         if self.__shutdown:
             return
         await self.__pylav.wait_until_ready()
-        chunk_size = max(min(POSTGRES_CONNECTIONS, 25), 2)
+        chunk_size = min(POSTGRES_CONNECTIONS, 50)
         LOGGER.debug("Updating cache")
         start = utcnow()
         chunk = []
