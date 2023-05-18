@@ -415,9 +415,9 @@ class QueuePickerMenu(BaseMenu):
     async def send_initial_message(self, ctx: PyLavContext | DISCORD_INTERACTION_TYPE):
         await self._source.get_page(0)
         self.ctx = ctx
-        embed = await self.source.format_page(self, [])
+        kwargs = await self.source.format_page(self, [])
         await self.prepare()
-        self.message = await ctx.send(embed=embed, view=self, ephemeral=True)
+        self.message = await ctx.send(view=self, ephemeral=True, **kwargs)
         return self.message
 
     async def show_page(self, page_number: int, interaction: DISCORD_INTERACTION_TYPE):
