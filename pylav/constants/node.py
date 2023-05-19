@@ -19,6 +19,13 @@ NODE_DEFAULT_SETTINGS = {
         },
         "compression": {"enabled": False},
     },
+    "spring": {
+        "mvc": {
+            "async": {
+                "request-timeout": -1,
+            }
+        }
+    },
     "lavalink": {
         "plugins": [
             {

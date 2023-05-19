@@ -110,6 +110,10 @@ server:
         threads:
             io: 32       # CPU_COUNT * 2 i.e 32 for 16 core cpu
             worker: 128  # CPU_COUNT * 8 i.e 128 for 16 core cpu
+spring:
+    mvc:
+        async:
+            request-timeout: -1  #  Disable timeout
 metrics:
     prometheus:
         enabled: false

@@ -59,6 +59,8 @@ services:
             SERVER_UNDERTOW_THREADS_IO: 32 # CPU_COUNT * 2 i.e 32 for 16 core CPU
             SERVER_UNDERTOW_THREADS_WORKER: 128 # CPU_COUNT * 8 i.e 128 for 16 core CPU
 
+            SPRING_MVC_ASYNC_REQUESTTIMEOUT: -1  #  Disable timeout
+
             # Configure bind address and port
             SERVER_ADDRESS: 0.0.0.0 # The interface to bind to
             SERVER_PORT: 2155 # The port to bind to

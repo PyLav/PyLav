@@ -24,6 +24,7 @@ from pylav.storage.migrations.high_level.one_offs.v0_11_8_0 import migration_v_0
 from pylav.storage.migrations.high_level.one_offs.v1_0_0 import migration_v_1_0_0
 from pylav.storage.migrations.high_level.one_offs.v1_0_17 import migration_v_1_1_17
 from pylav.storage.migrations.high_level.one_offs.v1_10_0 import migration_v_1_10_0
+from pylav.storage.migrations.high_level.one_offs.v1_10_1 import migration_v_1_10_1
 
 if TYPE_CHECKING:
     from pylav.core.client import Client
@@ -57,6 +58,7 @@ class MigrationController:
         await migration_v_1_0_0(self._client, current_version)
         await migration_v_1_1_17(self._client, current_version)
         await migration_v_1_10_0(self._client, current_version)
+        await migration_v_1_10_1(self._client, current_version)
         await set_current_version(self._client)
         await set_correct_ram_cap(self._client)
         await process_envvar_variables(self._client)
