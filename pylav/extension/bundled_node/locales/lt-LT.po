@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-05-17 19:31+0000\n"
-"PO-Revision-Date: 2023-05-19 11:08\n"
+"POT-Creation-Date: 2023-05-19 17:40+0000\n"
+"PO-Revision-Date: 2023-05-19 17:41\n"
 "Last-Translator: \n"
 "Language-Team: Lithuanian\n"
 "MIME-Version: 1.0\n"
@@ -21,17 +21,17 @@ msgstr ""
 msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture."
 msgstr "Jūs bandote paleisti valdomą Lavalink mazgą nepalaikomoje mašinos architektūroje."
 
-#: pylav/extension/bundled_node/manager.py:471
+#: pylav/extension/bundled_node/manager.py:474
 msgid "The output of `{command_name_variable_do_not_translate}` was unexpected\n"
 "{command_output_variable_do_not_translate}"
 msgstr "\" produkcija{command_name_variable_do_not_translate}\" buvo netikėta\n"
 "{command_output_variable_do_not_translate}"
 
-#: pylav/extension/bundled_node/manager.py:494
+#: pylav/extension/bundled_node/manager.py:497
 msgid "The port {port_variable_do_not_translate} is already in use. Managed Lavalink startup has been aborted."
 msgstr "Uostas {port_variable_do_not_translate} jau naudojamas. Valdomas \"Lavalink\" startuolis buvo nutrauktas."
 
-#: pylav/extension/bundled_node/manager.py:499
+#: pylav/extension/bundled_node/manager.py:502
 msgid "Lavalink failed to start: {error_variable_do_not_translate}"
 msgstr "\"Lavalink\" nepavyko paleisti: {error_variable_do_not_translate}"
 
