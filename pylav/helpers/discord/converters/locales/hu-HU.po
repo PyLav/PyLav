@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-04 18:31+0000\n"
-"PO-Revision-Date: 2023-02-16 20:52\n"
+"POT-Creation-Date: 2023-05-17 19:31+0000\n"
+"PO-Revision-Date: 2023-05-19 11:08\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "MIME-Version: 1.0\n"
@@ -17,61 +17,61 @@ msgstr ""
 "X-Crowdin-File-ID: 3575\n"
 "Language: hu_HU\n"
 
-#: pylav/helpers/discord/converters/nodes.py:39
+#: pylav/helpers/discord/converters/nodes.py:41
 msgid "Node with name or identifier `{user_input_variable_do_not_translate}` not found."
 msgstr "Csomópont névvel vagy azonosítóval \"{user_input_variable_do_not_translate}' nem található."
 
-#: pylav/helpers/discord/converters/nodes.py:46
+#: pylav/helpers/discord/converters/nodes.py:48
 msgid "Node with name or identifier `{user_input_variable_do_not_translate}` not found"
 msgstr "Csomópont névvel vagy azonosítóval \"{user_input_variable_do_not_translate}' nem található"
 
-#: pylav/helpers/discord/converters/playlists.py:40
+#: pylav/helpers/discord/converters/playlists.py:42
 msgid "A playlist with the name or identifier `{user_input_variable_do_not_translate}` was not found."
 msgstr "Lejátszási lista a következő névvel vagy azonosítóval: '{user_input_variable_do_not_translate}' nem található."
 
-#: pylav/helpers/discord/converters/queries.py:50
+#: pylav/helpers/discord/converters/queries.py:58
 msgid "The query must be a playlist or album."
 msgstr "A lekérdezésnek lejátszási listának vagy albumnak kell lennie."
 
-#: pylav/helpers/discord/converters/radio.py:56
+#: pylav/helpers/discord/converters/radio.py:58
 msgid "A station with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "Egy állomás ' névvel{user_input_variable_do_not_translate}' nem található."
 
-#: pylav/helpers/discord/converters/radio.py:76
-#: pylav/helpers/discord/converters/radio.py:164
-#: pylav/helpers/discord/converters/radio.py:210
-#: pylav/helpers/discord/converters/radio.py:254
-#: pylav/helpers/discord/converters/radio.py:297
-#: pylav/helpers/discord/converters/radio.py:340
-#: pylav/helpers/discord/converters/radio.py:383
+#: pylav/helpers/discord/converters/radio.py:80
+#: pylav/helpers/discord/converters/radio.py:174
+#: pylav/helpers/discord/converters/radio.py:224
+#: pylav/helpers/discord/converters/radio.py:272
+#: pylav/helpers/discord/converters/radio.py:319
+#: pylav/helpers/discord/converters/radio.py:366
+#: pylav/helpers/discord/converters/radio.py:413
 msgid "The Radio Browser extension is currently disabled."
 msgstr "A Rádióböngésző bővítmény jelenleg le van tiltva."
 
-#: pylav/helpers/discord/converters/radio.py:97
+#: pylav/helpers/discord/converters/radio.py:102
 msgid "Unnamed"
 msgstr "Névtelen"
 
-#: pylav/helpers/discord/converters/radio.py:144
+#: pylav/helpers/discord/converters/radio.py:152
 msgid "A tag with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "Egy címke a ' névvel{user_input_variable_do_not_translate}' nem található."
 
-#: pylav/helpers/discord/converters/radio.py:190
+#: pylav/helpers/discord/converters/radio.py:202
 msgid "A language with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "Egy nyelv, amelynek neve '{user_input_variable_do_not_translate}' nem található."
 
-#: pylav/helpers/discord/converters/radio.py:234
+#: pylav/helpers/discord/converters/radio.py:250
 msgid "A state with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "Egy állam, amelynek neve '{user_input_variable_do_not_translate}' nem található."
 
-#: pylav/helpers/discord/converters/radio.py:277
+#: pylav/helpers/discord/converters/radio.py:297
 msgid "A codec with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "Egy kodek a ' névvel{user_input_variable_do_not_translate}' nem található."
 
-#: pylav/helpers/discord/converters/radio.py:320
+#: pylav/helpers/discord/converters/radio.py:344
 msgid "A country code with the value `{user_input_variable_do_not_translate}` was not found."
 msgstr "Országkód a \" értékkel{user_input_variable_do_not_translate}' nem található."
 
-#: pylav/helpers/discord/converters/radio.py:363
+#: pylav/helpers/discord/converters/radio.py:391
 msgid "A country with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "Egy ország, amelynek neve '{user_input_variable_do_not_translate}' nem található."
 

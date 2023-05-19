@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-06 20:35+0000\n"
-"PO-Revision-Date: 2023-02-16 20:52\n"
+"POT-Creation-Date: 2023-05-17 19:31+0000\n"
+"PO-Revision-Date: 2023-05-19 10:26\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -25,6 +25,7 @@ msgstr "显示 PyLav 代码和共享代码的信用和翻译详细信息"
 #: pylav/extension/red/utils/required_methods.py:48
 msgid "PyLav was created by {library_author_name_variable_do_not_translate}.\n\n"
 "PyLav source code can be located in {library_url_variable_do_not_translate}\n"
+"PyLav license can be located in {library_license_variable_do_not_translate}\n"
 "PyLav-Cogs source code can be located in {second_library_url_variable_do_not_translate}\n\n"
 "You can join the PyLav support server via {support_server_url_variable_do_not_translate}\n\n\n"
 "You can help translate PyLav by contributing to our Crowdin project at:\n"
@@ -34,69 +35,50 @@ msgid "PyLav was created by {library_author_name_variable_do_not_translate}.\n\n
 "- {second_project_contributors_url_variable_do_not_translate}\n"
 "If you wish to buy me a coffee for my work, you can do so at:\n"
 "{buymeacoffee_url_variable_do_not_translate} or {github_sponsors_url_variable_do_not_translate}"
-msgstr "PyLav 由 {library_author_name_variable_do_not_translate}.\n\n"
-"PyLav 源代码可以位于 {library_url_variable_do_not_translate}\n"
-"PyLav-Cogs 源代码可以位于 {second_library_url_variable_do_not_translate}\n\n"
-"您可以通过以下方式加入 PyLav 支持服务器 {support_server_url_variable_do_not_translate}\n\n\n"
-"您可以通过为我们的 Crowdin 项目做出贡献来帮助翻译 PyLav：\n"
-"{crowdin_project_url_variable_do_not_translate}\n\n\n"
-"贡献：\n"
-"- {project_contributors_url_variable_do_not_translate}\n"
-"- {second_project_contributors_url_variable_do_not_translate}\n"
-"如果你想为我的工作买一杯咖啡，你可以这样做：\n"
-"{buymeacoffee_url_variable_do_not_translate} 或 {github_sponsors_url_variable_do_not_translate}"
+msgstr ""
 
-#: pylav/extension/red/utils/required_methods.py:84
+#: pylav/extension/red/utils/required_methods.py:86
 #, docstring
 msgid "Show the version of PyLav library"
 msgstr "显示 PyLav 库版本"
 
-#: pylav/extension/red/utils/required_methods.py:99
+#: pylav/extension/red/utils/required_methods.py:101
 msgid "Library"
 msgstr "书库"
 
-#: pylav/extension/red/utils/required_methods.py:100
+#: pylav/extension/red/utils/required_methods.py:102
 msgid "Version"
 msgstr "版本"
 
-#: pylav/extension/red/utils/required_methods.py:119
-#, docstring
-msgid "Sync the Bots slash commands"
-msgstr "同步Bots斜杠命令"
-
-#: pylav/extension/red/utils/required_methods.py:128
-msgid "I have synced all my slash commands."
-msgstr "我已经同步了我所有的斜杠命令。"
-
-#: pylav/extension/red/utils/required_methods.py:150
+#: pylav/extension/red/utils/required_methods.py:129
 msgid "This command requires that I be in a voice channel before it can be executed."
 msgstr "此命令要求我先处于语音通道中，然后才能执行。"
 
-#: pylav/extension/red/utils/required_methods.py:159
+#: pylav/extension/red/utils/required_methods.py:138
 msgid "PyLavPlayer cog is temporarily unavailable due to an outage with the backend services; please try again later."
 msgstr "由于后端服务中断，PyLavPlayer 齿轮暂时不可用;请稍后重试。"
 
-#: pylav/extension/red/utils/required_methods.py:162
+#: pylav/extension/red/utils/required_methods.py:141
 msgid "There are no nodes available currently."
 msgstr "当前没有可用的节点。"
 
-#: pylav/extension/red/utils/required_methods.py:173
+#: pylav/extension/red/utils/required_methods.py:152
 msgid "PyLavPlayer is currently unable to process tracks belonging to {feature_name_variable_do_not_translate}."
 msgstr "PyLavPlayer 目前无法处理属于 {feature_name_variable_do_not_translate}."
 
-#: pylav/extension/red/utils/required_methods.py:176
+#: pylav/extension/red/utils/required_methods.py:155
 msgid "There is currently no available Lavalink node with the feature {feature_name_variable_do_not_translate}."
 msgstr "目前没有可用的 Lavalink 节点具有该功能 {feature_name_variable_do_not_translate}."
 
-#: pylav/extension/red/utils/required_methods.py:189
+#: pylav/extension/red/utils/required_methods.py:168
 msgid "This command is unavailable in this channel; please use {channel_name_variable_do_not_translate} instead."
 msgstr "此命令在此通道中不可用;请使用 {channel_name_variable_do_not_translate} 相反。"
 
-#: pylav/extension/red/utils/required_methods.py:205
+#: pylav/extension/red/utils/required_methods.py:184
 msgid "This command requires you to be a disc jockey."
 msgstr "此命令要求您是唱片骑师。"
 
-#: pylav/extension/red/utils/required_methods.py:243
+#: pylav/extension/red/utils/required_methods.py:222
 msgid "PyLav is starting up; please try again in a few minutes."
 msgstr "PyLav 正在启动;请在几分钟后重试。"
 

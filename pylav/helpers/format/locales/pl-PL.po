@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-02 22:15+0000\n"
-"PO-Revision-Date: 2023-02-16 20:52\n"
+"POT-Creation-Date: 2023-05-17 19:31+0000\n"
+"PO-Revision-Date: 2023-05-19 11:08\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
@@ -17,39 +17,39 @@ msgstr ""
 "X-Crowdin-File-ID: 3749\n"
 "Language: pl_PL\n"
 
-#: pylav/helpers/format/strings.py:31
-msgid "Unknown"
-msgstr "Nieznany"
+#: pylav/helpers/format/strings.py:32
+msgid "Calculating..."
+msgstr ""
 
-#: pylav/helpers/format/strings.py:57
+#: pylav/helpers/format/strings.py:58
 msgid "hour"
 msgstr "godzina"
 
-#: pylav/helpers/format/strings.py:58
+#: pylav/helpers/format/strings.py:59
 msgid "hours"
 msgstr "godziny"
 
-#: pylav/helpers/format/strings.py:60
+#: pylav/helpers/format/strings.py:61
 msgid "minute"
 msgstr "minuta"
 
-#: pylav/helpers/format/strings.py:61
+#: pylav/helpers/format/strings.py:62
 msgid "minutes"
 msgstr "minuty"
 
-#: pylav/helpers/format/strings.py:63
+#: pylav/helpers/format/strings.py:64
 msgid "second"
 msgstr "sekunda"
 
-#: pylav/helpers/format/strings.py:64
+#: pylav/helpers/format/strings.py:65
 msgid "seconds"
 msgstr "sekundy"
 
-#: pylav/helpers/format/strings.py:66
+#: pylav/helpers/format/strings.py:67
 msgid "day"
 msgstr "dzień"
 
-#: pylav/helpers/format/strings.py:67
+#: pylav/helpers/format/strings.py:68
 msgid "days"
 msgstr "dni"
 

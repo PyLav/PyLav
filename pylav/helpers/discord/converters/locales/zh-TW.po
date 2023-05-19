@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-04 18:31+0000\n"
-"PO-Revision-Date: 2023-02-14 17:11\n"
+"POT-Creation-Date: 2023-05-17 19:31+0000\n"
+"PO-Revision-Date: 2023-05-19 10:26\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -17,61 +17,61 @@ msgstr ""
 "X-Crowdin-File-ID: 3575\n"
 "Language: zh_TW\n"
 
-#: pylav/helpers/discord/converters/nodes.py:39
+#: pylav/helpers/discord/converters/nodes.py:41
 msgid "Node with name or identifier `{user_input_variable_do_not_translate}` not found."
 msgstr "具有名稱或識別碼的節點 '{user_input_variable_do_not_translate}'未找到。"
 
-#: pylav/helpers/discord/converters/nodes.py:46
+#: pylav/helpers/discord/converters/nodes.py:48
 msgid "Node with name or identifier `{user_input_variable_do_not_translate}` not found"
 msgstr "具有名稱或識別碼的節點 '{user_input_variable_do_not_translate}' 找不到"
 
-#: pylav/helpers/discord/converters/playlists.py:40
+#: pylav/helpers/discord/converters/playlists.py:42
 msgid "A playlist with the name or identifier `{user_input_variable_do_not_translate}` was not found."
 msgstr "具有名稱或標識碼的播放清單”{user_input_variable_do_not_translate}'未找到。"
 
-#: pylav/helpers/discord/converters/queries.py:50
+#: pylav/helpers/discord/converters/queries.py:58
 msgid "The query must be a playlist or album."
 msgstr "查詢必須是播放清單或唱片集。"
 
-#: pylav/helpers/discord/converters/radio.py:56
+#: pylav/helpers/discord/converters/radio.py:58
 msgid "A station with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "名為”{user_input_variable_do_not_translate}'未找到。"
 
-#: pylav/helpers/discord/converters/radio.py:76
-#: pylav/helpers/discord/converters/radio.py:164
-#: pylav/helpers/discord/converters/radio.py:210
-#: pylav/helpers/discord/converters/radio.py:254
-#: pylav/helpers/discord/converters/radio.py:297
-#: pylav/helpers/discord/converters/radio.py:340
-#: pylav/helpers/discord/converters/radio.py:383
+#: pylav/helpers/discord/converters/radio.py:80
+#: pylav/helpers/discord/converters/radio.py:174
+#: pylav/helpers/discord/converters/radio.py:224
+#: pylav/helpers/discord/converters/radio.py:272
+#: pylav/helpers/discord/converters/radio.py:319
+#: pylav/helpers/discord/converters/radio.py:366
+#: pylav/helpers/discord/converters/radio.py:413
 msgid "The Radio Browser extension is currently disabled."
 msgstr "無線電瀏覽器擴展當前已禁用。"
 
-#: pylav/helpers/discord/converters/radio.py:97
+#: pylav/helpers/discord/converters/radio.py:102
 msgid "Unnamed"
 msgstr "未命名"
 
-#: pylav/helpers/discord/converters/radio.py:144
+#: pylav/helpers/discord/converters/radio.py:152
 msgid "A tag with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "名稱為 「 的標記」。{user_input_variable_do_not_translate}'未找到。"
 
-#: pylav/helpers/discord/converters/radio.py:190
+#: pylav/helpers/discord/converters/radio.py:202
 msgid "A language with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "名稱為 ”{user_input_variable_do_not_translate}'未找到。"
 
-#: pylav/helpers/discord/converters/radio.py:234
+#: pylav/helpers/discord/converters/radio.py:250
 msgid "A state with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "名稱為 「 的州」。{user_input_variable_do_not_translate}'未找到。"
 
-#: pylav/helpers/discord/converters/radio.py:277
+#: pylav/helpers/discord/converters/radio.py:297
 msgid "A codec with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "名稱為 「 的編解碼器」。{user_input_variable_do_not_translate}'未找到。"
 
-#: pylav/helpers/discord/converters/radio.py:320
+#: pylav/helpers/discord/converters/radio.py:344
 msgid "A country code with the value `{user_input_variable_do_not_translate}` was not found."
 msgstr "值為 『 的國家/地區代碼{user_input_variable_do_not_translate}'未找到。"
 
-#: pylav/helpers/discord/converters/radio.py:363
+#: pylav/helpers/discord/converters/radio.py:391
 msgid "A country with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "一個名字為”{user_input_variable_do_not_translate}'未找到。"
 

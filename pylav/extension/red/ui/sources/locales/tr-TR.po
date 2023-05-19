@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-26 21:16+0000\n"
-"PO-Revision-Date: 2023-02-26 21:17\n"
+"POT-Creation-Date: 2023-05-17 19:31+0000\n"
+"PO-Revision-Date: 2023-05-19 11:08\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -188,9 +188,9 @@ msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_va
 msgstr "Sayfa {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} Düğüm"
 
 #: pylav/extension/red/ui/sources/player.py:63
-#: pylav/extension/red/ui/sources/queue.py:108
-#: pylav/extension/red/ui/sources/queue.py:110
-#: pylav/extension/red/ui/sources/queue.py:151
+#: pylav/extension/red/ui/sources/queue.py:111
+#: pylav/extension/red/ui/sources/queue.py:113
+#: pylav/extension/red/ui/sources/queue.py:160
 msgid "I am not currently playing anything on this server."
 msgstr "Şu anda bu sunucuda hiçbir şey oynatmıyorum."
 
@@ -245,62 +245,62 @@ msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_va
 msgstr "Sayfa {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} Sunucu"
 
 #: pylav/extension/red/ui/sources/playlist.py:58
-#: pylav/extension/red/ui/sources/playlist.py:221
+#: pylav/extension/red/ui/sources/playlist.py:222
 msgid "Page 1 / 1 | 1 playlist"
 msgstr "Sayfa 1 / 1 | 1 çalma listesi"
 
 #: pylav/extension/red/ui/sources/playlist.py:60
-#: pylav/extension/red/ui/sources/playlist.py:223
+#: pylav/extension/red/ui/sources/playlist.py:224
 msgid "Page 1 / 1 | 0 playlists"
 msgstr "Sayfa 1 / 1 | 0 çalma listesi"
 
 #: pylav/extension/red/ui/sources/playlist.py:62
-#: pylav/extension/red/ui/sources/playlist.py:225
+#: pylav/extension/red/ui/sources/playlist.py:226
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} playlists"
 msgstr "Sayfa {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} çalma listeleri"
 
-#: pylav/extension/red/ui/sources/playlist.py:140
+#: pylav/extension/red/ui/sources/playlist.py:141
 msgid "Tracks in"
 msgstr "içindeki parçalar"
 
-#: pylav/extension/red/ui/sources/playlist.py:152
+#: pylav/extension/red/ui/sources/playlist.py:153
 msgid "Page 1 / 1 | 1 track"
 msgstr "Sayfa 1 / 1 | 1 parça"
 
-#: pylav/extension/red/ui/sources/playlist.py:154
+#: pylav/extension/red/ui/sources/playlist.py:155
 msgid "Page 1 / 1 | 0 tracks"
 msgstr "Sayfa 1 / 1 | 0 parça"
 
-#: pylav/extension/red/ui/sources/playlist.py:156
+#: pylav/extension/red/ui/sources/playlist.py:157
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} tracks"
 msgstr "Sayfa {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} Parça"
 
-#: pylav/extension/red/ui/sources/playlist.py:189
+#: pylav/extension/red/ui/sources/playlist.py:190
 msgid "Unknown"
 msgstr "Bilinmeyen"
 
-#: pylav/extension/red/ui/sources/playlist.py:194
+#: pylav/extension/red/ui/sources/playlist.py:195
 msgid "Identifier: {id_variable_do_not_translate}"
 msgstr "Tanımlayıcı: {id_variable_do_not_translate}"
 
-#: pylav/extension/red/ui/sources/playlist.py:195
+#: pylav/extension/red/ui/sources/playlist.py:196
 msgid "Tracks: {num_variable_do_not_translate}"
 msgstr "Parça: {num_variable_do_not_translate}"
 
-#: pylav/extension/red/ui/sources/playlist.py:198
+#: pylav/extension/red/ui/sources/playlist.py:199
 msgid "Author: {name_variable_do_not_translate}"
 msgstr "Yaratıcı: {name_variable_do_not_translate}"
 
-#: pylav/extension/red/ui/sources/playlist.py:201
+#: pylav/extension/red/ui/sources/playlist.py:202
 msgid "Scope: {scope_variable_do_not_translate}\n"
 msgstr "Kapsam: {scope_variable_do_not_translate}\n"
 
-#: pylav/extension/red/ui/sources/playlist.py:211
+#: pylav/extension/red/ui/sources/playlist.py:212
 msgid "Playlists you can access in this server:"
 msgstr "Bu sunucuda erişebileceğin çalma listeleri:"
 
-#: pylav/extension/red/ui/sources/queue.py:94
-#: pylav/extension/red/ui/sources/queue.py:138
+#: pylav/extension/red/ui/sources/queue.py:95
+#: pylav/extension/red/ui/sources/queue.py:145
 msgid "I am not connected to any voice channel at the moment."
 msgstr "Şu anda herhangi bir ses kanalına bağlı değilim."
 

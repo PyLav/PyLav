@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-26 21:16+0000\n"
-"PO-Revision-Date: 2023-02-26 21:17\n"
+"POT-Creation-Date: 2023-05-17 19:31+0000\n"
+"PO-Revision-Date: 2023-05-19 10:26\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
 "MIME-Version: 1.0\n"
@@ -17,19 +17,19 @@ msgstr ""
 "X-Crowdin-File-ID: 3471\n"
 "Language: hr_HR\n"
 
-#: pylav/core/client.py:905 pylav/core/client.py:943
+#: pylav/core/client.py:933 pylav/core/client.py:971
 msgid "There are no available nodes!"
 msgstr "Nema dostupnih čvorova!"
 
-#: pylav/core/client.py:909 pylav/core/client.py:947 pylav/core/client.py:1257
+#: pylav/core/client.py:937 pylav/core/client.py:975 pylav/core/client.py:1310
 msgid "No node with {feature_name_variable_do_not_translate} functionality available!"
 msgstr "Nema čvora s {feature_name_variable_do_not_translate} funkcionalnost dostupna!"
 
-#: pylav/core/client.py:1642
+#: pylav/core/client.py:1745
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist."
 msgstr "Za generiranje mješovitog popisa za reproduciranje potreban je jedan identifikator videozapisa, korisnika, kanala ili popisa za reprodukciju."
 
-#: pylav/core/client.py:1647
+#: pylav/core/client.py:1750
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist. However, you provided multiple"
 msgstr "Za generiranje mješovitog popisa za reproduciranje potreban je jedan identifikator videozapisa, korisnika, kanala ili popisa za reprodukciju. Međutim, naveli ste više njih"
 
