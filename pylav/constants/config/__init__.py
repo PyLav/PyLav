@@ -122,7 +122,7 @@ else:
     from pylav.constants.config.file import USE_BUNDLED_EXTERNAL_PYLAV_NODE as USE_BUNDLED_EXTERNAL_PYLAV_NODE
 
     for item in dir(overrides):
-        if item.startswith("_") or not item.isupper():
+        if item.startswith("_") or not item.isupper() or item in {"LOGGER", "ANIME"}:
             continue
         if (val := getattr(overrides, item, None)) is None:
             continue

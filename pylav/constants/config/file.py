@@ -13,7 +13,8 @@ from pylav._internals.functions import _get_path, fix
 from pylav.constants.config import ENV_FILE
 from pylav.constants.config.utils import _remove_keys
 from pylav.constants.node_features import SUPPORTED_SEARCHES
-from pylav.constants.specials import _MAPPING, ANIME
+from pylav.constants.specials import _MAPPING
+from pylav.constants.specials import ANIME as _ANIME
 from pylav.logging import getLogger
 
 LOGGER = getLogger("PyLav.Environment")
@@ -154,7 +155,7 @@ if (MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN := data.get("PYLAV__MANAGED_NODE_YAND
 
 if (MANAGED_NODE_DEEZER_KEY := data.get("PYLAV__MANAGED_NODE_DEEZER_KEY")) is None:
     MANAGED_NODE_DEEZER_KEY = os.getenv("PYLAV__MANAGED_NODE_DEEZER_KEY")
-MANAGED_NODE_DEEZER_KEY = MANAGED_NODE_DEEZER_KEY or ANIME
+MANAGED_NODE_DEEZER_KEY = MANAGED_NODE_DEEZER_KEY or _ANIME
 if MANAGED_NODE_DEEZER_KEY and MANAGED_NODE_DEEZER_KEY.startswith("id"):
     _temp = [MANAGED_NODE_DEEZER_KEY[i : i + 16] for i in range(0, len(MANAGED_NODE_DEEZER_KEY), 16)]
     MANAGED_NODE_DEEZER_KEY = "".join(
