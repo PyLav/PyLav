@@ -19,7 +19,7 @@ SUPPORTED_SEARCHES = {
 
 # noinspection SpellCheckingInspection
 SUPPORTED_SOURCES = {
-    # https://github.com/freyacodes/Lavalink
+    # https://github.com/lavalink-devs/Lavalink
     "youtube",
     "soundcloud",
     "bandcamp",

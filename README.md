@@ -16,10 +16,10 @@
   - Linux: [PostgresSQL](https://www.postgresql.org/download/linux/)
 - Python 3.11
 - [Discord.py](https://github.com/Rapptz/discord.py) 2.1.0+ bot
-- [Lavalink](https://github.com/freyacodes/Lavalink) v4.0.0+ server
+- [Lavalink](https://github.com/lavalink-devs/Lavalink) v4.0.0+ server
 ---------------------------
 ## Supported sources
-### [Built-in](https://github.com/freyacodes/Lavalink):
+### [Built-in](https://github.com/lavalink-devs/Lavalink):
   - youtube
   - soundcloud
   - bandcamp
@@ -47,7 +47,7 @@
   - sponsorblock
 
 ## Supported Lavalink features
-  - Supports all features of [Lavalink](https://github.com/freyacodes/Lavalink)
+  - Supports all features of [Lavalink](https://github.com/lavalink-devs/Lavalink)
     - Filters
     - IP Rotation
     - Plug-ins

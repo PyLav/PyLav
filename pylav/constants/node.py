@@ -139,4 +139,4 @@ NODE_DEFAULT_SETTINGS = {
     },
 }
 GOOD_RESPONSE_RANGE = range(200, 299)
-JAR_SERVER_RELEASES = "https://api.github.com/repos/freyacodes/Lavalink/releases"
+JAR_SERVER_RELEASES = "https://api.github.com/repos/lavalink-devs/Lavalink/releases"

@@ -434,7 +434,10 @@ class LocalNodeManager:
             self._java_version = None
         else:
             self._java_version = await self._get_java_version()
-            self._java_available = self._java_version >= (11, 0)  # https://github.com/freyacodes/Lavalink#requirements
+            self._java_available = self._java_version >= (
+                11,
+                0,
+            )  # https://github.com/lavalink-devs/Lavalink#requirements
             self._java_exc = java_exec
         return self._java_available, self._java_version
 
@@ -565,7 +568,7 @@ class LocalNodeManager:
             return
         LOGGER.info("Downloading Lavalink.jar")
         jar_url = (
-            self._ci_info["jar_url"] or "https://github.com/freyacodes/Lavalink/releases/download/4.0.0/Lavalink.jar"
+            self._ci_info["jar_url"] or "https://github.com/lavalink-devs/Lavalink/releases/download/4.0.0/Lavalink.jar"
         )
 
         async with self._session.get(jar_url, timeout=3600) as response:
