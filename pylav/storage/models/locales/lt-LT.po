@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-12 23:00+0000\n"
-"PO-Revision-Date: 2023-02-16 20:52\n"
+"POT-Creation-Date: 2023-05-17 19:31+0000\n"
+"PO-Revision-Date: 2023-05-19 11:08\n"
 "Last-Translator: \n"
 "Language-Team: Lithuanian\n"
 "MIME-Version: 1.0\n"
@@ -17,23 +17,23 @@ msgstr ""
 "X-Crowdin-File-ID: 3495\n"
 "Language: lt_LT\n"
 
-#: pylav/storage/models/playlist.py:438
+#: pylav/storage/models/playlist.py:409
 msgid "(Global) {user_name_variable_do_not_translate}"
 msgstr "(Pasaulinis) {user_name_variable_do_not_translate}"
 
-#: pylav/storage/models/playlist.py:444
+#: pylav/storage/models/playlist.py:415
 msgid "(Server) {guild_name_variable_do_not_translate}"
 msgstr "(Serveris) {guild_name_variable_do_not_translate}"
 
-#: pylav/storage/models/playlist.py:448
+#: pylav/storage/models/playlist.py:419
 msgid "(Channel) {channel_name_variable_do_not_translate}"
 msgstr "(Kanalas) {channel_name_variable_do_not_translate}"
 
-#: pylav/storage/models/playlist.py:456
+#: pylav/storage/models/playlist.py:427
 msgid "(User) {user_name_variable_do_not_translate}"
 msgstr "(Vartotojas) {user_name_variable_do_not_translate}"
 
-#: pylav/storage/models/playlist.py:460
+#: pylav/storage/models/playlist.py:431
 msgid "(Invalid) {scope_name_variable_do_not_translate}"
 msgstr "(Neteisinga) {scope_name_variable_do_not_translate}"
 

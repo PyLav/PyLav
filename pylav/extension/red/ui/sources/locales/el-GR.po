@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-26 21:16+0000\n"
-"PO-Revision-Date: 2023-02-26 21:17\n"
+"POT-Creation-Date: 2023-05-17 19:31+0000\n"
+"PO-Revision-Date: 2023-05-19 10:26\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
@@ -187,9 +187,9 @@ msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_va
 msgstr "Σελίδα {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} κόμβοι"
 
 #: pylav/extension/red/ui/sources/player.py:63
-#: pylav/extension/red/ui/sources/queue.py:108
-#: pylav/extension/red/ui/sources/queue.py:110
-#: pylav/extension/red/ui/sources/queue.py:151
+#: pylav/extension/red/ui/sources/queue.py:111
+#: pylav/extension/red/ui/sources/queue.py:113
+#: pylav/extension/red/ui/sources/queue.py:160
 msgid "I am not currently playing anything on this server."
 msgstr "Αυτή τη στιγμή δεν παίζω τίποτα σε αυτόν τον διακομιστή."
 
@@ -244,62 +244,62 @@ msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_va
 msgstr "Σελίδα {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} Διακομιστές"
 
 #: pylav/extension/red/ui/sources/playlist.py:58
-#: pylav/extension/red/ui/sources/playlist.py:221
+#: pylav/extension/red/ui/sources/playlist.py:222
 msgid "Page 1 / 1 | 1 playlist"
 msgstr "Σελίδα 1 / 1 | 1 λίστα αναπαραγωγής"
 
 #: pylav/extension/red/ui/sources/playlist.py:60
-#: pylav/extension/red/ui/sources/playlist.py:223
+#: pylav/extension/red/ui/sources/playlist.py:224
 msgid "Page 1 / 1 | 0 playlists"
 msgstr "Σελίδα 1 / 1 | 0 λίστες αναπαραγωγής"
 
 #: pylav/extension/red/ui/sources/playlist.py:62
-#: pylav/extension/red/ui/sources/playlist.py:225
+#: pylav/extension/red/ui/sources/playlist.py:226
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} playlists"
 msgstr "Σελίδα {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} λίστες αναπαραγωγής"
 
-#: pylav/extension/red/ui/sources/playlist.py:140
+#: pylav/extension/red/ui/sources/playlist.py:141
 msgid "Tracks in"
 msgstr "Κομμάτια μέσα"
 
-#: pylav/extension/red/ui/sources/playlist.py:152
+#: pylav/extension/red/ui/sources/playlist.py:153
 msgid "Page 1 / 1 | 1 track"
 msgstr "Σελίδα 1 / 1 | 1 πίστα"
 
-#: pylav/extension/red/ui/sources/playlist.py:154
+#: pylav/extension/red/ui/sources/playlist.py:155
 msgid "Page 1 / 1 | 0 tracks"
 msgstr "Σελίδα 1 / 1 | 0 κομμάτια"
 
-#: pylav/extension/red/ui/sources/playlist.py:156
+#: pylav/extension/red/ui/sources/playlist.py:157
 msgid "Page {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} tracks"
 msgstr "Σελίδα {current_page_variable_do_not_translate} / {total_number_of_pages_variable_do_not_translate} | {total_number_of_entries_variable_do_not_translate} Κομμάτια"
 
-#: pylav/extension/red/ui/sources/playlist.py:189
+#: pylav/extension/red/ui/sources/playlist.py:190
 msgid "Unknown"
 msgstr "Άγνωστο"
 
-#: pylav/extension/red/ui/sources/playlist.py:194
+#: pylav/extension/red/ui/sources/playlist.py:195
 msgid "Identifier: {id_variable_do_not_translate}"
 msgstr "Αναγνωριστικό: {id_variable_do_not_translate}"
 
-#: pylav/extension/red/ui/sources/playlist.py:195
+#: pylav/extension/red/ui/sources/playlist.py:196
 msgid "Tracks: {num_variable_do_not_translate}"
 msgstr "Κομμάτια: {num_variable_do_not_translate}"
 
-#: pylav/extension/red/ui/sources/playlist.py:198
+#: pylav/extension/red/ui/sources/playlist.py:199
 msgid "Author: {name_variable_do_not_translate}"
 msgstr "Συγγραφέας: {name_variable_do_not_translate}"
 
-#: pylav/extension/red/ui/sources/playlist.py:201
+#: pylav/extension/red/ui/sources/playlist.py:202
 msgid "Scope: {scope_variable_do_not_translate}\n"
 msgstr "Εμβέλεια: {scope_variable_do_not_translate}\n"
 
-#: pylav/extension/red/ui/sources/playlist.py:211
+#: pylav/extension/red/ui/sources/playlist.py:212
 msgid "Playlists you can access in this server:"
 msgstr "Λίστες αναπαραγωγής που μπορείτε να αποκτήσετε πρόσβαση σε αυτόν τον διακομιστή:"
 
-#: pylav/extension/red/ui/sources/queue.py:94
-#: pylav/extension/red/ui/sources/queue.py:138
+#: pylav/extension/red/ui/sources/queue.py:95
+#: pylav/extension/red/ui/sources/queue.py:145
 msgid "I am not connected to any voice channel at the moment."
 msgstr "Δεν είμαι συνδεδεμένος με κανένα κανάλι φωνής αυτή τη στιγμή."
 

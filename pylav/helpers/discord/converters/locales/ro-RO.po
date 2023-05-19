@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-04 18:31+0000\n"
-"PO-Revision-Date: 2023-02-16 20:52\n"
+"POT-Creation-Date: 2023-05-17 19:31+0000\n"
+"PO-Revision-Date: 2023-05-19 11:08\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "MIME-Version: 1.0\n"
@@ -17,61 +17,61 @@ msgstr ""
 "X-Crowdin-File-ID: 3575\n"
 "Language: ro_RO\n"
 
-#: pylav/helpers/discord/converters/nodes.py:39
+#: pylav/helpers/discord/converters/nodes.py:41
 msgid "Node with name or identifier `{user_input_variable_do_not_translate}` not found."
 msgstr "Nod cu nume sau identificator '{user_input_variable_do_not_translate}\" nu a fost găsit."
 
-#: pylav/helpers/discord/converters/nodes.py:46
+#: pylav/helpers/discord/converters/nodes.py:48
 msgid "Node with name or identifier `{user_input_variable_do_not_translate}` not found"
 msgstr "Nod cu nume sau identificator '{user_input_variable_do_not_translate}\" nu a fost găsit"
 
-#: pylav/helpers/discord/converters/playlists.py:40
+#: pylav/helpers/discord/converters/playlists.py:42
 msgid "A playlist with the name or identifier `{user_input_variable_do_not_translate}` was not found."
 msgstr "O listă de redare cu numele sau identificatorul \"{user_input_variable_do_not_translate}\" nu a fost găsit."
 
-#: pylav/helpers/discord/converters/queries.py:50
+#: pylav/helpers/discord/converters/queries.py:58
 msgid "The query must be a playlist or album."
 msgstr "Interogarea trebuie să fie o listă de redare sau un album."
 
-#: pylav/helpers/discord/converters/radio.py:56
+#: pylav/helpers/discord/converters/radio.py:58
 msgid "A station with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "O stație cu numele \"{user_input_variable_do_not_translate}\" nu a fost găsit."
 
-#: pylav/helpers/discord/converters/radio.py:76
-#: pylav/helpers/discord/converters/radio.py:164
-#: pylav/helpers/discord/converters/radio.py:210
-#: pylav/helpers/discord/converters/radio.py:254
-#: pylav/helpers/discord/converters/radio.py:297
-#: pylav/helpers/discord/converters/radio.py:340
-#: pylav/helpers/discord/converters/radio.py:383
+#: pylav/helpers/discord/converters/radio.py:80
+#: pylav/helpers/discord/converters/radio.py:174
+#: pylav/helpers/discord/converters/radio.py:224
+#: pylav/helpers/discord/converters/radio.py:272
+#: pylav/helpers/discord/converters/radio.py:319
+#: pylav/helpers/discord/converters/radio.py:366
+#: pylav/helpers/discord/converters/radio.py:413
 msgid "The Radio Browser extension is currently disabled."
 msgstr "Extensia Radio Browser este dezactivată în prezent."
 
-#: pylav/helpers/discord/converters/radio.py:97
+#: pylav/helpers/discord/converters/radio.py:102
 msgid "Unnamed"
 msgstr "Nenumit"
 
-#: pylav/helpers/discord/converters/radio.py:144
+#: pylav/helpers/discord/converters/radio.py:152
 msgid "A tag with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "O etichetă cu numele \"{user_input_variable_do_not_translate}\" nu a fost găsit."
 
-#: pylav/helpers/discord/converters/radio.py:190
+#: pylav/helpers/discord/converters/radio.py:202
 msgid "A language with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "O limbă cu numele \"{user_input_variable_do_not_translate}\" nu a fost găsit."
 
-#: pylav/helpers/discord/converters/radio.py:234
+#: pylav/helpers/discord/converters/radio.py:250
 msgid "A state with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "Un stat cu numele \"{user_input_variable_do_not_translate}\" nu a fost găsit."
 
-#: pylav/helpers/discord/converters/radio.py:277
+#: pylav/helpers/discord/converters/radio.py:297
 msgid "A codec with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "Un codec cu numele '{user_input_variable_do_not_translate}\" nu a fost găsit."
 
-#: pylav/helpers/discord/converters/radio.py:320
+#: pylav/helpers/discord/converters/radio.py:344
 msgid "A country code with the value `{user_input_variable_do_not_translate}` was not found."
 msgstr "Un cod de țară cu valoarea \"{user_input_variable_do_not_translate}\" nu a fost găsit."
 
-#: pylav/helpers/discord/converters/radio.py:363
+#: pylav/helpers/discord/converters/radio.py:391
 msgid "A country with the name `{user_input_variable_do_not_translate}` was not found."
 msgstr "O țară cu numele \"{user_input_variable_do_not_translate}\" nu a fost găsit."
 

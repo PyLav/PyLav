@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-12 23:00+0000\n"
-"PO-Revision-Date: 2023-02-16 20:52\n"
+"POT-Creation-Date: 2023-05-17 19:31+0000\n"
+"PO-Revision-Date: 2023-05-19 10:26\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -17,10 +17,10 @@ msgstr ""
 "X-Crowdin-File-ID: 3641\n"
 "Language: nl_NL\n"
 
-#: pylav/extension/red/ui/buttons/generic.py:69
-#: pylav/extension/red/ui/buttons/generic.py:93
-#: pylav/extension/red/ui/buttons/generic.py:117
-#: pylav/extension/red/ui/buttons/generic.py:141
+#: pylav/extension/red/ui/buttons/generic.py:76
+#: pylav/extension/red/ui/buttons/generic.py:100
+#: pylav/extension/red/ui/buttons/generic.py:124
+#: pylav/extension/red/ui/buttons/generic.py:148
 #: pylav/extension/red/ui/buttons/nodes.py:48
 #: pylav/extension/red/ui/buttons/nodes.py:96
 #: pylav/extension/red/ui/buttons/nodes.py:135
@@ -38,19 +38,19 @@ msgstr ""
 msgid "You are not authorized to interact with this option."
 msgstr "U bent niet gemachtigd om met deze optie te communiceren."
 
-#: pylav/extension/red/ui/buttons/generic.py:84
+#: pylav/extension/red/ui/buttons/generic.py:91
 msgid "Yes"
 msgstr "Ja"
 
-#: pylav/extension/red/ui/buttons/generic.py:108
+#: pylav/extension/red/ui/buttons/generic.py:115
 msgid "No"
 msgstr "Nee"
 
-#: pylav/extension/red/ui/buttons/generic.py:164
+#: pylav/extension/red/ui/buttons/generic.py:171
 msgid "Disconnect {player_type_variable_do_not_translate} players"
 msgstr "Scheiden {player_type_variable_do_not_translate} Spelers"
 
-#: pylav/extension/red/ui/buttons/generic.py:168
+#: pylav/extension/red/ui/buttons/generic.py:175
 msgid "Disconnect {player_type_variable_do_not_translate} player"
 msgstr "Scheiden {player_type_variable_do_not_translate} speler"
 
@@ -87,20 +87,20 @@ msgid "Enabled sources"
 msgstr "Ingeschakelde bronnen"
 
 #: pylav/extension/red/ui/buttons/player.py:37
-#: pylav/extension/red/ui/buttons/player.py:91
-#: pylav/extension/red/ui/buttons/player.py:148
+#: pylav/extension/red/ui/buttons/player.py:98
+#: pylav/extension/red/ui/buttons/player.py:162
 msgid "You are not authorized to perform this action."
 msgstr "U bent niet bevoegd om deze actie uit te voeren."
 
 #: pylav/extension/red/ui/buttons/player.py:46
-#: pylav/extension/red/ui/buttons/player.py:101
-#: pylav/extension/red/ui/buttons/player.py:163
+#: pylav/extension/red/ui/buttons/player.py:108
+#: pylav/extension/red/ui/buttons/player.py:177
 msgid "There are no players available for this action. Try refreshing."
 msgstr "Er zijn geen spelers beschikbaar voor deze actie. Probeer te vernieuwen."
 
 #: pylav/extension/red/ui/buttons/player.py:55
-#: pylav/extension/red/ui/buttons/player.py:112
-#: pylav/extension/red/ui/buttons/player.py:173
+#: pylav/extension/red/ui/buttons/player.py:119
+#: pylav/extension/red/ui/buttons/player.py:187
 msgid "My bot owner requested an action"
 msgstr "Mijn boteigenaar heeft een actie aangevraagd"
 
@@ -108,11 +108,11 @@ msgstr "Mijn boteigenaar heeft een actie aangevraagd"
 msgid "My bot owner has requested that I disconnect from this server. I have saved my current position, so connect me to a voice channel to resume playback. Sorry for any inconvenience caused."
 msgstr "Mijn boteigenaar heeft gevraagd dat ik de verbinding met deze server verbreek. Ik heb mijn huidige positie opgeslagen, dus verbind me met een spraakkanaal om het afspelen te hervatten. Onze excuses voor het eventuele ongemak."
 
-#: pylav/extension/red/ui/buttons/player.py:113
+#: pylav/extension/red/ui/buttons/player.py:120
 msgid "My owner has requested that I wipe the queue for this server and stop playback. Sorry for any inconvenience caused."
 msgstr "Mijn eigenaar heeft me gevraagd om de wachtrij voor deze server te wissen en het afspelen te stoppen. Onze excuses voor het eventuele ongemak."
 
-#: pylav/extension/red/ui/buttons/player.py:174
+#: pylav/extension/red/ui/buttons/player.py:188
 msgid "My bot owner has requested that I disconnect from all servers. I have saved my current position, so connect me to a voice channel to resume playback. Sorry for any inconvenience caused."
 msgstr "Mijn boteigenaar heeft gevraagd dat ik de verbinding met alle servers verbreek. Ik heb mijn huidige positie opgeslagen, dus verbind me met een spraakkanaal om het afspelen te hervatten. Onze excuses voor het eventuele ongemak."
 
@@ -176,25 +176,25 @@ msgstr "Afspeellijsten die u momenteel kunt afspelen."
 msgid "Pick a playlist."
 msgstr "Kies een afspeellijst."
 
-#: pylav/extension/red/ui/buttons/playlist.py:450
+#: pylav/extension/red/ui/buttons/playlist.py:457
 msgid "What should the playlist name be?"
 msgstr "Wat moet de naam van de afspeellijst zijn?"
 
-#: pylav/extension/red/ui/buttons/queue.py:164
-#: pylav/extension/red/ui/buttons/queue.py:190
-#: pylav/extension/red/ui/buttons/queue.py:223
+#: pylav/extension/red/ui/buttons/queue.py:213
+#: pylav/extension/red/ui/buttons/queue.py:246
+#: pylav/extension/red/ui/buttons/queue.py:279
 msgid "I am not connected to any voice channel at the moment."
 msgstr "Ik ben op dit moment niet verbonden met een spraakkanaal."
 
-#: pylav/extension/red/ui/buttons/queue.py:288
+#: pylav/extension/red/ui/buttons/queue.py:358
 msgid "There is nothing in the queue."
 msgstr "Er staat niets in de wachtrij."
 
-#: pylav/extension/red/ui/buttons/queue.py:295
+#: pylav/extension/red/ui/buttons/queue.py:365
 msgid "Removed tracks from the queue."
 msgstr "Sporen uit de wachtrij verwijderd."
 
-#: pylav/extension/red/ui/buttons/queue.py:321
+#: pylav/extension/red/ui/buttons/queue.py:398
 msgid "What do you want to enqueue?"
 msgstr "Wat wilt u navraag doen?"
 

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-02-16 20:52\n"
+"POT-Creation-Date: 2023-05-17 19:31+0000\n"
+"PO-Revision-Date: 2023-05-19 10:26\n"
 "Last-Translator: \n"
 "Language-Team: Croatian\n"
 "MIME-Version: 1.0\n"
@@ -17,21 +17,21 @@ msgstr ""
 "X-Crowdin-File-ID: 3385\n"
 "Language: hr_HR\n"
 
-#: pylav/extension/bundled_node/manager.py:225
+#: pylav/extension/bundled_node/manager.py:235
 msgid "You are attempting to run the managed Lavalink node on an unsupported machine architecture."
 msgstr "Pokušavate pokrenuti upravljani čvor Lavalink na nepodržanoj arhitekturi stroja."
 
-#: pylav/extension/bundled_node/manager.py:450
+#: pylav/extension/bundled_node/manager.py:471
 msgid "The output of `{command_name_variable_do_not_translate}` was unexpected\n"
 "{command_output_variable_do_not_translate}"
 msgstr "Izlaz od '{command_name_variable_do_not_translate}' bilo je neočekivano\n"
 "{command_output_variable_do_not_translate}"
 
-#: pylav/extension/bundled_node/manager.py:473
+#: pylav/extension/bundled_node/manager.py:494
 msgid "The port {port_variable_do_not_translate} is already in use. Managed Lavalink startup has been aborted."
 msgstr "Luka {port_variable_do_not_translate} već se koristi. Upravljani lavalink startup je prekinut."
 
-#: pylav/extension/bundled_node/manager.py:478
+#: pylav/extension/bundled_node/manager.py:499
 msgid "Lavalink failed to start: {error_variable_do_not_translate}"
 msgstr "Lavalink se nije uspio pokrenuti: {error_variable_do_not_translate}"
 

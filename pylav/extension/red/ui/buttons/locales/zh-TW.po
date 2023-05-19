@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-12 23:00+0000\n"
-"PO-Revision-Date: 2023-02-14 17:11\n"
+"POT-Creation-Date: 2023-05-17 19:31+0000\n"
+"PO-Revision-Date: 2023-05-19 10:26\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -17,10 +17,10 @@ msgstr ""
 "X-Crowdin-File-ID: 3641\n"
 "Language: zh_TW\n"
 
-#: pylav/extension/red/ui/buttons/generic.py:69
-#: pylav/extension/red/ui/buttons/generic.py:93
-#: pylav/extension/red/ui/buttons/generic.py:117
-#: pylav/extension/red/ui/buttons/generic.py:141
+#: pylav/extension/red/ui/buttons/generic.py:76
+#: pylav/extension/red/ui/buttons/generic.py:100
+#: pylav/extension/red/ui/buttons/generic.py:124
+#: pylav/extension/red/ui/buttons/generic.py:148
 #: pylav/extension/red/ui/buttons/nodes.py:48
 #: pylav/extension/red/ui/buttons/nodes.py:96
 #: pylav/extension/red/ui/buttons/nodes.py:135
@@ -38,19 +38,19 @@ msgstr ""
 msgid "You are not authorized to interact with this option."
 msgstr "您無權與此選項進行交互。"
 
-#: pylav/extension/red/ui/buttons/generic.py:84
+#: pylav/extension/red/ui/buttons/generic.py:91
 msgid "Yes"
 msgstr "是的"
 
-#: pylav/extension/red/ui/buttons/generic.py:108
+#: pylav/extension/red/ui/buttons/generic.py:115
 msgid "No"
 msgstr "不"
 
-#: pylav/extension/red/ui/buttons/generic.py:164
+#: pylav/extension/red/ui/buttons/generic.py:171
 msgid "Disconnect {player_type_variable_do_not_translate} players"
 msgstr "斷開 {player_type_variable_do_not_translate} 球員"
 
-#: pylav/extension/red/ui/buttons/generic.py:168
+#: pylav/extension/red/ui/buttons/generic.py:175
 msgid "Disconnect {player_type_variable_do_not_translate} player"
 msgstr "斷開 {player_type_variable_do_not_translate} 選手"
 
@@ -87,20 +87,20 @@ msgid "Enabled sources"
 msgstr "啟用的源"
 
 #: pylav/extension/red/ui/buttons/player.py:37
-#: pylav/extension/red/ui/buttons/player.py:91
-#: pylav/extension/red/ui/buttons/player.py:148
+#: pylav/extension/red/ui/buttons/player.py:98
+#: pylav/extension/red/ui/buttons/player.py:162
 msgid "You are not authorized to perform this action."
 msgstr "您無權執行此操作。"
 
 #: pylav/extension/red/ui/buttons/player.py:46
-#: pylav/extension/red/ui/buttons/player.py:101
-#: pylav/extension/red/ui/buttons/player.py:163
+#: pylav/extension/red/ui/buttons/player.py:108
+#: pylav/extension/red/ui/buttons/player.py:177
 msgid "There are no players available for this action. Try refreshing."
 msgstr "沒有可用於此操作的玩家。請嘗試刷新。"
 
 #: pylav/extension/red/ui/buttons/player.py:55
-#: pylav/extension/red/ui/buttons/player.py:112
-#: pylav/extension/red/ui/buttons/player.py:173
+#: pylav/extension/red/ui/buttons/player.py:119
+#: pylav/extension/red/ui/buttons/player.py:187
 msgid "My bot owner requested an action"
 msgstr "我的機器人擁有者請求了操作"
 
@@ -108,11 +108,11 @@ msgstr "我的機器人擁有者請求了操作"
 msgid "My bot owner has requested that I disconnect from this server. I have saved my current position, so connect me to a voice channel to resume playback. Sorry for any inconvenience caused."
 msgstr "我的機器人擁有者已請求我斷開與此伺服器的連接。我已保存當前位置，因此請將我連接到語音通道以恢復播放。對於給您帶來的不便，我們深表歉意。"
 
-#: pylav/extension/red/ui/buttons/player.py:113
+#: pylav/extension/red/ui/buttons/player.py:120
 msgid "My owner has requested that I wipe the queue for this server and stop playback. Sorry for any inconvenience caused."
 msgstr "我的所有者已請求我擦除此伺服器的佇列並停止播放。對於給您帶來的不便，我們深表歉意。"
 
-#: pylav/extension/red/ui/buttons/player.py:174
+#: pylav/extension/red/ui/buttons/player.py:188
 msgid "My bot owner has requested that I disconnect from all servers. I have saved my current position, so connect me to a voice channel to resume playback. Sorry for any inconvenience caused."
 msgstr "我的機器人擁有者已請求我斷開與所有伺服器的連接。我已保存當前位置，因此請將我連接到語音通道以恢復播放。對於給您帶來的不便，我們深表歉意。"
 
@@ -176,25 +176,25 @@ msgstr "您目前可以播放的播放清單。"
 msgid "Pick a playlist."
 msgstr "選擇一個播放清單。"
 
-#: pylav/extension/red/ui/buttons/playlist.py:450
+#: pylav/extension/red/ui/buttons/playlist.py:457
 msgid "What should the playlist name be?"
 msgstr "播放列表名稱要叫什麼？"
 
-#: pylav/extension/red/ui/buttons/queue.py:164
-#: pylav/extension/red/ui/buttons/queue.py:190
-#: pylav/extension/red/ui/buttons/queue.py:223
+#: pylav/extension/red/ui/buttons/queue.py:213
+#: pylav/extension/red/ui/buttons/queue.py:246
+#: pylav/extension/red/ui/buttons/queue.py:279
 msgid "I am not connected to any voice channel at the moment."
 msgstr "我目前沒有連接到任何語音頻道。"
 
-#: pylav/extension/red/ui/buttons/queue.py:288
+#: pylav/extension/red/ui/buttons/queue.py:358
 msgid "There is nothing in the queue."
 msgstr "佇列中沒有任何內容。"
 
-#: pylav/extension/red/ui/buttons/queue.py:295
+#: pylav/extension/red/ui/buttons/queue.py:365
 msgid "Removed tracks from the queue."
 msgstr "已從佇列中刪除曲目。"
 
-#: pylav/extension/red/ui/buttons/queue.py:321
+#: pylav/extension/red/ui/buttons/queue.py:398
 msgid "What do you want to enqueue?"
 msgstr "你想為清單新增什麼？"
 

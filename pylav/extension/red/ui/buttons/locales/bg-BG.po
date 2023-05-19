@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-12 23:00+0000\n"
-"PO-Revision-Date: 2023-02-16 20:52\n"
+"POT-Creation-Date: 2023-05-17 19:31+0000\n"
+"PO-Revision-Date: 2023-05-19 10:26\n"
 "Last-Translator: \n"
 "Language-Team: Bulgarian\n"
 "MIME-Version: 1.0\n"
@@ -17,10 +17,10 @@ msgstr ""
 "X-Crowdin-File-ID: 3641\n"
 "Language: bg_BG\n"
 
-#: pylav/extension/red/ui/buttons/generic.py:69
-#: pylav/extension/red/ui/buttons/generic.py:93
-#: pylav/extension/red/ui/buttons/generic.py:117
-#: pylav/extension/red/ui/buttons/generic.py:141
+#: pylav/extension/red/ui/buttons/generic.py:76
+#: pylav/extension/red/ui/buttons/generic.py:100
+#: pylav/extension/red/ui/buttons/generic.py:124
+#: pylav/extension/red/ui/buttons/generic.py:148
 #: pylav/extension/red/ui/buttons/nodes.py:48
 #: pylav/extension/red/ui/buttons/nodes.py:96
 #: pylav/extension/red/ui/buttons/nodes.py:135
@@ -38,19 +38,19 @@ msgstr ""
 msgid "You are not authorized to interact with this option."
 msgstr "Не сте упълномощени да взаимодействате с тази опция."
 
-#: pylav/extension/red/ui/buttons/generic.py:84
+#: pylav/extension/red/ui/buttons/generic.py:91
 msgid "Yes"
 msgstr "Да"
 
-#: pylav/extension/red/ui/buttons/generic.py:108
+#: pylav/extension/red/ui/buttons/generic.py:115
 msgid "No"
 msgstr "Не"
 
-#: pylav/extension/red/ui/buttons/generic.py:164
+#: pylav/extension/red/ui/buttons/generic.py:171
 msgid "Disconnect {player_type_variable_do_not_translate} players"
 msgstr "Разединявам {player_type_variable_do_not_translate} Играчи"
 
-#: pylav/extension/red/ui/buttons/generic.py:168
+#: pylav/extension/red/ui/buttons/generic.py:175
 msgid "Disconnect {player_type_variable_do_not_translate} player"
 msgstr "Разединявам {player_type_variable_do_not_translate} играч"
 
@@ -87,20 +87,20 @@ msgid "Enabled sources"
 msgstr "Разрешени източници"
 
 #: pylav/extension/red/ui/buttons/player.py:37
-#: pylav/extension/red/ui/buttons/player.py:91
-#: pylav/extension/red/ui/buttons/player.py:148
+#: pylav/extension/red/ui/buttons/player.py:98
+#: pylav/extension/red/ui/buttons/player.py:162
 msgid "You are not authorized to perform this action."
 msgstr "Вие не сте упълномощени да извършвате това действие."
 
 #: pylav/extension/red/ui/buttons/player.py:46
-#: pylav/extension/red/ui/buttons/player.py:101
-#: pylav/extension/red/ui/buttons/player.py:163
+#: pylav/extension/red/ui/buttons/player.py:108
+#: pylav/extension/red/ui/buttons/player.py:177
 msgid "There are no players available for this action. Try refreshing."
 msgstr "Няма налични играчи за това действие. Опитайте освежаване."
 
 #: pylav/extension/red/ui/buttons/player.py:55
-#: pylav/extension/red/ui/buttons/player.py:112
-#: pylav/extension/red/ui/buttons/player.py:173
+#: pylav/extension/red/ui/buttons/player.py:119
+#: pylav/extension/red/ui/buttons/player.py:187
 msgid "My bot owner requested an action"
 msgstr "Собственикът на моя бот поиска действие"
 
@@ -108,11 +108,11 @@ msgstr "Собственикът на моя бот поиска действи�
 msgid "My bot owner has requested that I disconnect from this server. I have saved my current position, so connect me to a voice channel to resume playback. Sorry for any inconvenience caused."
 msgstr "Собственикът на моя бот поиска да прекъсна връзката с този сървър. Запазих текущата си позиция, така че ме свържете с гласов канал, за да възобновите възпроизвеждането. Извинявам се за причиненото неудобство."
 
-#: pylav/extension/red/ui/buttons/player.py:113
+#: pylav/extension/red/ui/buttons/player.py:120
 msgid "My owner has requested that I wipe the queue for this server and stop playback. Sorry for any inconvenience caused."
 msgstr "Моят собственик поиска да изтрия опашката за този сървър и да спра възпроизвеждането. Извинявам се за причиненото неудобство."
 
-#: pylav/extension/red/ui/buttons/player.py:174
+#: pylav/extension/red/ui/buttons/player.py:188
 msgid "My bot owner has requested that I disconnect from all servers. I have saved my current position, so connect me to a voice channel to resume playback. Sorry for any inconvenience caused."
 msgstr "Собственикът на моя бот поиска да прекъсна връзката с всички сървъри. Запазих текущата си позиция, така че ме свържете с гласов канал, за да възобновите възпроизвеждането. Извинявам се за причиненото неудобство."
 
@@ -176,25 +176,25 @@ msgstr "Плейлисти, които в момента можете да иг�
 msgid "Pick a playlist."
 msgstr "Изберете плейлист."
 
-#: pylav/extension/red/ui/buttons/playlist.py:450
+#: pylav/extension/red/ui/buttons/playlist.py:457
 msgid "What should the playlist name be?"
 msgstr "Какво трябва да бъде името на плейлиста?"
 
-#: pylav/extension/red/ui/buttons/queue.py:164
-#: pylav/extension/red/ui/buttons/queue.py:190
-#: pylav/extension/red/ui/buttons/queue.py:223
+#: pylav/extension/red/ui/buttons/queue.py:213
+#: pylav/extension/red/ui/buttons/queue.py:246
+#: pylav/extension/red/ui/buttons/queue.py:279
 msgid "I am not connected to any voice channel at the moment."
 msgstr "В момента не съм свързан с нито един гласов канал."
 
-#: pylav/extension/red/ui/buttons/queue.py:288
+#: pylav/extension/red/ui/buttons/queue.py:358
 msgid "There is nothing in the queue."
 msgstr "На опашката няма нищо."
 
-#: pylav/extension/red/ui/buttons/queue.py:295
+#: pylav/extension/red/ui/buttons/queue.py:365
 msgid "Removed tracks from the queue."
 msgstr "Премахнати песни от опашката."
 
-#: pylav/extension/red/ui/buttons/queue.py:321
+#: pylav/extension/red/ui/buttons/queue.py:398
 msgid "What do you want to enqueue?"
 msgstr "Какво искате да се наредите на опашка?"
 

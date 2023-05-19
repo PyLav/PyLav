@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-04 18:31+0000\n"
-"PO-Revision-Date: 2023-04-08 00:47\n"
+"POT-Creation-Date: 2023-05-17 19:31+0000\n"
+"PO-Revision-Date: 2023-05-19 11:08\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -17,10 +17,10 @@ msgstr ""
 "X-Crowdin-File-ID: 3753\n"
 "Language: fr_FR\n"
 
-#: pylav/extension/radio/utils.py:173 pylav/extension/radio/utils.py:182
-#: pylav/extension/radio/utils.py:191 pylav/extension/radio/utils.py:198
-#: pylav/extension/radio/utils.py:204 pylav/extension/radio/utils.py:210
-#: pylav/extension/radio/utils.py:217 pylav/extension/radio/utils.py:511
+#: pylav/extension/radio/utils.py:182 pylav/extension/radio/utils.py:191
+#: pylav/extension/radio/utils.py:200 pylav/extension/radio/utils.py:207
+#: pylav/extension/radio/utils.py:213 pylav/extension/radio/utils.py:219
+#: pylav/extension/radio/utils.py:226 pylav/extension/radio/utils.py:530
 msgid "Unnamed"
 msgstr "Anonyme"
 

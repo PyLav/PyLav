@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-06 20:35+0000\n"
-"PO-Revision-Date: 2023-02-16 20:52\n"
+"POT-Creation-Date: 2023-05-17 19:31+0000\n"
+"PO-Revision-Date: 2023-05-19 11:08\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "MIME-Version: 1.0\n"
@@ -25,6 +25,7 @@ msgstr "Показує інформацію про кредити та пере�
 #: pylav/extension/red/utils/required_methods.py:48
 msgid "PyLav was created by {library_author_name_variable_do_not_translate}.\n\n"
 "PyLav source code can be located in {library_url_variable_do_not_translate}\n"
+"PyLav license can be located in {library_license_variable_do_not_translate}\n"
 "PyLav-Cogs source code can be located in {second_library_url_variable_do_not_translate}\n\n"
 "You can join the PyLav support server via {support_server_url_variable_do_not_translate}\n\n\n"
 "You can help translate PyLav by contributing to our Crowdin project at:\n"
@@ -34,69 +35,50 @@ msgid "PyLav was created by {library_author_name_variable_do_not_translate}.\n\n
 "- {second_project_contributors_url_variable_do_not_translate}\n"
 "If you wish to buy me a coffee for my work, you can do so at:\n"
 "{buymeacoffee_url_variable_do_not_translate} or {github_sponsors_url_variable_do_not_translate}"
-msgstr "ПиЛав був створений {library_author_name_variable_do_not_translate}.\n\n"
-"Вихідний код PyLav може бути розташований в {library_url_variable_do_not_translate}\n"
-"Вихідний код PyLav-Cogs може бути розташований в {second_library_url_variable_do_not_translate}\n\n"
-"Ви можете приєднатися до сервера підтримки PyLav через {support_server_url_variable_do_not_translate}\n\n\n"
-"Ви можете допомогти перекласти PyLav, зробивши свій внесок у наш проект Crowdin за адресою:\n"
-"{crowdin_project_url_variable_do_not_translate}\n\n\n"
-"Вкладників:\n"
-"- {project_contributors_url_variable_do_not_translate}\n"
-"- {second_project_contributors_url_variable_do_not_translate}\n"
-"Якщо ви хочете купити мені каву для моєї роботи, ви можете зробити це за адресою:\n"
-"{buymeacoffee_url_variable_do_not_translate} або {github_sponsors_url_variable_do_not_translate}"
+msgstr ""
 
-#: pylav/extension/red/utils/required_methods.py:84
+#: pylav/extension/red/utils/required_methods.py:86
 #, docstring
 msgid "Show the version of PyLav library"
 msgstr "Показати версію бібліотеки PyLav"
 
-#: pylav/extension/red/utils/required_methods.py:99
+#: pylav/extension/red/utils/required_methods.py:101
 msgid "Library"
 msgstr "Бібліотека"
 
-#: pylav/extension/red/utils/required_methods.py:100
+#: pylav/extension/red/utils/required_methods.py:102
 msgid "Version"
 msgstr "Версія"
 
-#: pylav/extension/red/utils/required_methods.py:119
-#, docstring
-msgid "Sync the Bots slash commands"
-msgstr "Синхронізація команд із косою рискою (/)"
-
-#: pylav/extension/red/utils/required_methods.py:128
-msgid "I have synced all my slash commands."
-msgstr "Я синхронізував усі свої скісні команди."
-
-#: pylav/extension/red/utils/required_methods.py:150
+#: pylav/extension/red/utils/required_methods.py:129
 msgid "This command requires that I be in a voice channel before it can be executed."
 msgstr "Ця команда вимагає, щоб я був у голосовому каналі, перш ніж її можна буде виконати."
 
-#: pylav/extension/red/utils/required_methods.py:159
+#: pylav/extension/red/utils/required_methods.py:138
 msgid "PyLavPlayer cog is temporarily unavailable due to an outage with the backend services; please try again later."
 msgstr "гвинтик PyLavPlayer тимчасово недоступний через відключення серверних сервісів; Будь ласка, спробуйте ще раз пізніше."
 
-#: pylav/extension/red/utils/required_methods.py:162
+#: pylav/extension/red/utils/required_methods.py:141
 msgid "There are no nodes available currently."
 msgstr "Наразі вузлів немає."
 
-#: pylav/extension/red/utils/required_methods.py:173
+#: pylav/extension/red/utils/required_methods.py:152
 msgid "PyLavPlayer is currently unable to process tracks belonging to {feature_name_variable_do_not_translate}."
 msgstr "В даний час PyLavPlayer не може обробляти треки, що належать {feature_name_variable_do_not_translate}."
 
-#: pylav/extension/red/utils/required_methods.py:176
+#: pylav/extension/red/utils/required_methods.py:155
 msgid "There is currently no available Lavalink node with the feature {feature_name_variable_do_not_translate}."
 msgstr "В даний час немає доступного вузла Lavalink з функцією {feature_name_variable_do_not_translate}."
 
-#: pylav/extension/red/utils/required_methods.py:189
+#: pylav/extension/red/utils/required_methods.py:168
 msgid "This command is unavailable in this channel; please use {channel_name_variable_do_not_translate} instead."
 msgstr "Ця команда недоступна в цьому каналі; будь ласка, використовуйте {channel_name_variable_do_not_translate} Замість цього."
 
-#: pylav/extension/red/utils/required_methods.py:205
+#: pylav/extension/red/utils/required_methods.py:184
 msgid "This command requires you to be a disc jockey."
 msgstr "Ця команда вимагає, щоб ви були диск-жокеєм."
 
-#: pylav/extension/red/utils/required_methods.py:243
+#: pylav/extension/red/utils/required_methods.py:222
 msgid "PyLav is starting up; please try again in a few minutes."
 msgstr "Пилав запускається; Будь ласка, спробуйте ще раз через кілька хвилин."
 

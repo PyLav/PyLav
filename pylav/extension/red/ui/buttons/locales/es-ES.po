@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-12 23:00+0000\n"
-"PO-Revision-Date: 2023-02-16 20:52\n"
+"POT-Creation-Date: 2023-05-17 19:31+0000\n"
+"PO-Revision-Date: 2023-05-19 11:08\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -17,10 +17,10 @@ msgstr ""
 "X-Crowdin-File-ID: 3641\n"
 "Language: es_ES\n"
 
-#: pylav/extension/red/ui/buttons/generic.py:69
-#: pylav/extension/red/ui/buttons/generic.py:93
-#: pylav/extension/red/ui/buttons/generic.py:117
-#: pylav/extension/red/ui/buttons/generic.py:141
+#: pylav/extension/red/ui/buttons/generic.py:76
+#: pylav/extension/red/ui/buttons/generic.py:100
+#: pylav/extension/red/ui/buttons/generic.py:124
+#: pylav/extension/red/ui/buttons/generic.py:148
 #: pylav/extension/red/ui/buttons/nodes.py:48
 #: pylav/extension/red/ui/buttons/nodes.py:96
 #: pylav/extension/red/ui/buttons/nodes.py:135
@@ -38,19 +38,19 @@ msgstr ""
 msgid "You are not authorized to interact with this option."
 msgstr "No está autorizado a interactuar con esta opción."
 
-#: pylav/extension/red/ui/buttons/generic.py:84
+#: pylav/extension/red/ui/buttons/generic.py:91
 msgid "Yes"
 msgstr "Sí"
 
-#: pylav/extension/red/ui/buttons/generic.py:108
+#: pylav/extension/red/ui/buttons/generic.py:115
 msgid "No"
 msgstr "Nu"
 
-#: pylav/extension/red/ui/buttons/generic.py:164
+#: pylav/extension/red/ui/buttons/generic.py:171
 msgid "Disconnect {player_type_variable_do_not_translate} players"
 msgstr "Desconectar {player_type_variable_do_not_translate} Jugadores"
 
-#: pylav/extension/red/ui/buttons/generic.py:168
+#: pylav/extension/red/ui/buttons/generic.py:175
 msgid "Disconnect {player_type_variable_do_not_translate} player"
 msgstr "Desconectar {player_type_variable_do_not_translate} jugador"
 
@@ -87,20 +87,20 @@ msgid "Enabled sources"
 msgstr "Fuentes habilitadas"
 
 #: pylav/extension/red/ui/buttons/player.py:37
-#: pylav/extension/red/ui/buttons/player.py:91
-#: pylav/extension/red/ui/buttons/player.py:148
+#: pylav/extension/red/ui/buttons/player.py:98
+#: pylav/extension/red/ui/buttons/player.py:162
 msgid "You are not authorized to perform this action."
 msgstr "No está autorizado a realizar esta acción."
 
 #: pylav/extension/red/ui/buttons/player.py:46
-#: pylav/extension/red/ui/buttons/player.py:101
-#: pylav/extension/red/ui/buttons/player.py:163
+#: pylav/extension/red/ui/buttons/player.py:108
+#: pylav/extension/red/ui/buttons/player.py:177
 msgid "There are no players available for this action. Try refreshing."
 msgstr "No hay jugadores disponibles para esta acción. Prueba a actualizar."
 
 #: pylav/extension/red/ui/buttons/player.py:55
-#: pylav/extension/red/ui/buttons/player.py:112
-#: pylav/extension/red/ui/buttons/player.py:173
+#: pylav/extension/red/ui/buttons/player.py:119
+#: pylav/extension/red/ui/buttons/player.py:187
 msgid "My bot owner requested an action"
 msgstr "El propietario de mi bot solicitó una acción"
 
@@ -108,11 +108,11 @@ msgstr "El propietario de mi bot solicitó una acción"
 msgid "My bot owner has requested that I disconnect from this server. I have saved my current position, so connect me to a voice channel to resume playback. Sorry for any inconvenience caused."
 msgstr "El propietario de mi bot me ha solicitado que me desconecte de este servidor. He guardado mi posición actual, así que conécteme a un canal de voz para reanudar la reproducción. Disculpe las molestias causadas."
 
-#: pylav/extension/red/ui/buttons/player.py:113
+#: pylav/extension/red/ui/buttons/player.py:120
 msgid "My owner has requested that I wipe the queue for this server and stop playback. Sorry for any inconvenience caused."
 msgstr "Mi propietario me ha pedido que borre la cola de este servidor y detenga la reproducción. Disculpe las molestias causadas."
 
-#: pylav/extension/red/ui/buttons/player.py:174
+#: pylav/extension/red/ui/buttons/player.py:188
 msgid "My bot owner has requested that I disconnect from all servers. I have saved my current position, so connect me to a voice channel to resume playback. Sorry for any inconvenience caused."
 msgstr "El propietario de mi bot me ha solicitado que me desconecte de todos los servidores. He guardado mi posición actual, así que conécteme a un canal de voz para reanudar la reproducción. Disculpe las molestias causadas."
 
@@ -176,25 +176,25 @@ msgstr "Listas de reproducción que puedes reproducir actualmente."
 msgid "Pick a playlist."
 msgstr "Elige una lista de reproducción."
 
-#: pylav/extension/red/ui/buttons/playlist.py:450
+#: pylav/extension/red/ui/buttons/playlist.py:457
 msgid "What should the playlist name be?"
 msgstr "¿Cuál debería ser el nombre de la lista de reproducción?"
 
-#: pylav/extension/red/ui/buttons/queue.py:164
-#: pylav/extension/red/ui/buttons/queue.py:190
-#: pylav/extension/red/ui/buttons/queue.py:223
+#: pylav/extension/red/ui/buttons/queue.py:213
+#: pylav/extension/red/ui/buttons/queue.py:246
+#: pylav/extension/red/ui/buttons/queue.py:279
 msgid "I am not connected to any voice channel at the moment."
 msgstr "No estoy conectado a ningún canal de voz en este momento."
 
-#: pylav/extension/red/ui/buttons/queue.py:288
+#: pylav/extension/red/ui/buttons/queue.py:358
 msgid "There is nothing in the queue."
 msgstr "No hay nada en la cola."
 
-#: pylav/extension/red/ui/buttons/queue.py:295
+#: pylav/extension/red/ui/buttons/queue.py:365
 msgid "Removed tracks from the queue."
 msgstr "Se han eliminado las pistas de la cola."
 
-#: pylav/extension/red/ui/buttons/queue.py:321
+#: pylav/extension/red/ui/buttons/queue.py:398
 msgid "What do you want to enqueue?"
 msgstr "¿Qué quieres encolar?"
 

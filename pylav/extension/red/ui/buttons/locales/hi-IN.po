@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-12 23:00+0000\n"
-"PO-Revision-Date: 2023-02-16 20:52\n"
+"POT-Creation-Date: 2023-05-17 19:31+0000\n"
+"PO-Revision-Date: 2023-05-19 11:08\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "MIME-Version: 1.0\n"
@@ -17,10 +17,10 @@ msgstr ""
 "X-Crowdin-File-ID: 3641\n"
 "Language: hi_IN\n"
 
-#: pylav/extension/red/ui/buttons/generic.py:69
-#: pylav/extension/red/ui/buttons/generic.py:93
-#: pylav/extension/red/ui/buttons/generic.py:117
-#: pylav/extension/red/ui/buttons/generic.py:141
+#: pylav/extension/red/ui/buttons/generic.py:76
+#: pylav/extension/red/ui/buttons/generic.py:100
+#: pylav/extension/red/ui/buttons/generic.py:124
+#: pylav/extension/red/ui/buttons/generic.py:148
 #: pylav/extension/red/ui/buttons/nodes.py:48
 #: pylav/extension/red/ui/buttons/nodes.py:96
 #: pylav/extension/red/ui/buttons/nodes.py:135
@@ -38,19 +38,19 @@ msgstr ""
 msgid "You are not authorized to interact with this option."
 msgstr "आप इस विकल्प के साथ सहभागिता करने के लिए अधिकृत नहीं हैं."
 
-#: pylav/extension/red/ui/buttons/generic.py:84
+#: pylav/extension/red/ui/buttons/generic.py:91
 msgid "Yes"
 msgstr "हाँ"
 
-#: pylav/extension/red/ui/buttons/generic.py:108
+#: pylav/extension/red/ui/buttons/generic.py:115
 msgid "No"
 msgstr "नहीं"
 
-#: pylav/extension/red/ui/buttons/generic.py:164
+#: pylav/extension/red/ui/buttons/generic.py:171
 msgid "Disconnect {player_type_variable_do_not_translate} players"
 msgstr "अलग करना {player_type_variable_do_not_translate} खिलाड़ियों"
 
-#: pylav/extension/red/ui/buttons/generic.py:168
+#: pylav/extension/red/ui/buttons/generic.py:175
 msgid "Disconnect {player_type_variable_do_not_translate} player"
 msgstr "अलग करना {player_type_variable_do_not_translate} खिलाड़ी"
 
@@ -87,20 +87,20 @@ msgid "Enabled sources"
 msgstr "सक्षम स्रोत"
 
 #: pylav/extension/red/ui/buttons/player.py:37
-#: pylav/extension/red/ui/buttons/player.py:91
-#: pylav/extension/red/ui/buttons/player.py:148
+#: pylav/extension/red/ui/buttons/player.py:98
+#: pylav/extension/red/ui/buttons/player.py:162
 msgid "You are not authorized to perform this action."
 msgstr "आप इस क्रिया को करने के लिए अधिकृत नहीं हैं."
 
 #: pylav/extension/red/ui/buttons/player.py:46
-#: pylav/extension/red/ui/buttons/player.py:101
-#: pylav/extension/red/ui/buttons/player.py:163
+#: pylav/extension/red/ui/buttons/player.py:108
+#: pylav/extension/red/ui/buttons/player.py:177
 msgid "There are no players available for this action. Try refreshing."
 msgstr "इस क्रिया के लिए कोई खिलाड़ी उपलब्ध नहीं है। ताज़ा करने का प्रयास करें."
 
 #: pylav/extension/red/ui/buttons/player.py:55
-#: pylav/extension/red/ui/buttons/player.py:112
-#: pylav/extension/red/ui/buttons/player.py:173
+#: pylav/extension/red/ui/buttons/player.py:119
+#: pylav/extension/red/ui/buttons/player.py:187
 msgid "My bot owner requested an action"
 msgstr "मेरे बॉट स्वामी ने कार्रवाई का अनुरोध किया"
 
@@ -108,11 +108,11 @@ msgstr "मेरे बॉट स्वामी ने कार्रवा�
 msgid "My bot owner has requested that I disconnect from this server. I have saved my current position, so connect me to a voice channel to resume playback. Sorry for any inconvenience caused."
 msgstr "मेरे बॉट स्वामी ने अनुरोध किया है कि मैं इस सर्वर से डिस्कनेक्ट करूँ. मैंने अपनी वर्तमान स्थिति को सहेज लिया है, इसलिए प्लेबैक को फिर से शुरू करने के लिए मुझे वॉयस चैनल से कनेक्ट करें। किसी भी असुविधा के लिए खेद है।"
 
-#: pylav/extension/red/ui/buttons/player.py:113
+#: pylav/extension/red/ui/buttons/player.py:120
 msgid "My owner has requested that I wipe the queue for this server and stop playback. Sorry for any inconvenience caused."
 msgstr "मेरे मालिक ने अनुरोध किया है कि मैं इस सर्वर के लिए कतार को मिटा दूं और प्लेबैक बंद कर दूं। किसी भी असुविधा के लिए खेद है।"
 
-#: pylav/extension/red/ui/buttons/player.py:174
+#: pylav/extension/red/ui/buttons/player.py:188
 msgid "My bot owner has requested that I disconnect from all servers. I have saved my current position, so connect me to a voice channel to resume playback. Sorry for any inconvenience caused."
 msgstr "मेरे बॉट स्वामी ने अनुरोध किया है कि मैं सभी सर्वरों से डिस्कनेक्ट कर दूं। मैंने अपनी वर्तमान स्थिति को सहेज लिया है, इसलिए प्लेबैक को फिर से शुरू करने के लिए मुझे वॉयस चैनल से कनेक्ट करें। किसी भी असुविधा के लिए खेद है।"
 
@@ -176,25 +176,25 @@ msgstr "प्लेलिस्ट जिन्हें आप वर्तम
 msgid "Pick a playlist."
 msgstr "एक प्लेलिस्ट चुनें।"
 
-#: pylav/extension/red/ui/buttons/playlist.py:450
+#: pylav/extension/red/ui/buttons/playlist.py:457
 msgid "What should the playlist name be?"
 msgstr "प्लेलिस्ट का नाम क्या होना चाहिए?"
 
-#: pylav/extension/red/ui/buttons/queue.py:164
-#: pylav/extension/red/ui/buttons/queue.py:190
-#: pylav/extension/red/ui/buttons/queue.py:223
+#: pylav/extension/red/ui/buttons/queue.py:213
+#: pylav/extension/red/ui/buttons/queue.py:246
+#: pylav/extension/red/ui/buttons/queue.py:279
 msgid "I am not connected to any voice channel at the moment."
 msgstr "मैं इस समय किसी वॉयस चैनल से जुड़ा नहीं हूं।"
 
-#: pylav/extension/red/ui/buttons/queue.py:288
+#: pylav/extension/red/ui/buttons/queue.py:358
 msgid "There is nothing in the queue."
 msgstr "कतार में कुछ भी नहीं है।"
 
-#: pylav/extension/red/ui/buttons/queue.py:295
+#: pylav/extension/red/ui/buttons/queue.py:365
 msgid "Removed tracks from the queue."
 msgstr "लाइन से पटरियों को हटा दिया गया।"
 
-#: pylav/extension/red/ui/buttons/queue.py:321
+#: pylav/extension/red/ui/buttons/queue.py:398
 msgid "What do you want to enqueue?"
 msgstr "आप क्या कतारबद्ध करना चाहते हैं?"
 

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-04 18:31+0000\n"
-"PO-Revision-Date: 2023-02-16 20:52\n"
+"POT-Creation-Date: 2023-05-17 19:31+0000\n"
+"PO-Revision-Date: 2023-05-19 10:26\n"
 "Last-Translator: \n"
 "Language-Team: Bulgarian\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 "X-Crowdin-File-ID: 3689\n"
 "Language: bg_BG\n"
 
-#: pylav/extension/red/ui/menus/generic.py:116
+#: pylav/extension/red/ui/menus/generic.py:123
 #: pylav/extension/red/ui/menus/nodes.py:199
 #: pylav/extension/red/ui/menus/playlist.py:260
 #: pylav/extension/red/ui/menus/playlist.py:479
