@@ -512,7 +512,7 @@ class Playlist(CachedModel, metaclass=SingletonCachedByKey):
             yield bio, compression
 
     async def bulk_update(
-        self, scope: int, name: str, author: int, url: str | None, tracks: list[str | JSON_DICT_TYPE]
+        self, scope: int, name: str, author: int, url: str | None, tracks: list[str | JSON_DICT_TYPE | Track]
     ) -> None:
         """Bulk update the playlist."""
         defaults = {

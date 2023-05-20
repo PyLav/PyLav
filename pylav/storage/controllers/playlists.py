@@ -27,7 +27,9 @@ from pylav.core.context import PyLavContext
 from pylav.exceptions.database import EntryNotFoundException
 from pylav.helpers.time import get_now_utc
 from pylav.logging import getLogger
+from pylav.nodes.api.responses.rest_api import PlaylistResponse
 from pylav.players.query.obj import Query
+from pylav.players.tracks.obj import Track
 from pylav.storage.database.tables.playlists import PlaylistRow
 from pylav.storage.models.playlist import Playlist
 from pylav.type_hints.bot import DISCORD_BOT_TYPE
@@ -154,7 +156,7 @@ class PlaylistController:
         author: int,
         name: str,
         url: str | None = None,
-        tracks: list[str | JSON_DICT_TYPE] = None,
+        tracks: list[str | JSON_DICT_TYPE | Track] = None,
     ) -> Playlist:
         playlist = self.get_playlist(identifier=identifier)
         await playlist.bulk_update(
@@ -170,14 +172,14 @@ class PlaylistController:
         await self.get_playlist(identifier=playlist_id).delete()
 
     async def create_or_update_global_playlist(
-        self, identifier: int, author: int, name: str, url: str | None = None, tracks: list[str] = None
+        self, identifier: int, author: int, name: str, url: str | None = None, tracks: list[str | Track] = None
     ) -> Playlist:
         return await self.create_or_update_playlist(
             identifier=identifier, scope=self._client.bot.user.id, author=author, name=name, url=url, tracks=tracks
         )
 
     async def create_or_update_user_playlist(
-        self, identifier: int, author: int, name: str, url: str | None = None, tracks: list[str] = None
+        self, identifier: int, author: int, name: str, url: str | None = None, tracks: list[str | Track] = None
     ) -> Playlist:
         return await self.create_or_update_playlist(
             identifier=identifier, scope=author, author=author, name=name, url=url, tracks=tracks
@@ -356,14 +358,13 @@ class PlaylistController:
                 try:
                     LOGGER.info("Updating bundled external playlist - %s - %s", playlist_id, name)
                     query = await Query.from_string(url)
-                    data = await self.client.get_tracks(query, bypass_cache=True)
+                    data: PlaylistResponse = await self.client.get_tracks(query, bypass_cache=True)
                     name = (
                         f"[{query.source_abbreviation}] {data.data.info.name}"
                         if data.data.info.name
                         else f"[{query.source_abbreviation}] {name}"
                     )
                     tracks_raw = data.data.tracks
-                    track_list = [t_ for t in tracks_raw if (t_ := t.encoded)]
                 except Exception as exc:
                     LOGGER.error(
                         "Built-in external playlist couldn't be parsed - %s, report this error", name, exc_info=exc
@@ -375,7 +376,7 @@ class PlaylistController:
                     continue
                 if track_list:
                     await self.create_or_update_global_playlist(
-                        identifier=playlist_id, name=name, tracks=track_list, author=self._client.bot.user.id, url=url
+                        identifier=playlist_id, name=name, tracks=tracks_raw, author=self._client.bot.user.id, url=url
                     )
                 else:
                     await self.delete_playlist(playlist_id=playlist_id)
@@ -397,16 +398,15 @@ class PlaylistController:
                 query = await Query.from_string(url)
                 try:
                     LOGGER.info("Updating external playlist - %s (%s)", name, playlist.id)
-                    response = await self.client.get_tracks(
+                    response: PlaylistResponse = await self.client.get_tracks(
                         query,
                         bypass_cache=True,
                     )
                     tracks_raw = response.data.tracks
-                    track_list = [t for t in tracks_raw if t.encoded]
                     new_name = response.data.info.name
                     new_name = f"[{query.source_abbreviation}] {new_name}" if new_name else None
-                    if track_list:
-                        await playlist.update_tracks(tracks=track_list)
+                    if tracks_raw:
+                        await playlist.update_tracks(tracks=tracks_raw)
                     if new_name and new_name != name:
                         await playlist.update_name(new_name)
                 except Exception as exc:
