@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.10.2 (20/05/2023)
+- [Hotfix to fix playlist creation](https://github.com/PyLav/PyLav/commit/85f4a3c5ade745c63a2f2603291978994e6eb090) - @Drapersniper
+
+---
+
 ## v1.10.1 (20/05/2023)
 - [Ensure EnvVar gets set as a int](https://github.com/PyLav/PyLav/commit/2a853dba145562a191d21afde1a7a0986c55ca97) - @Drapersniper
 - [Add a way to stop showing module level variables as envvars](https://github.com/PyLav/PyLav/commit/f53894c924db5d1c89af1d8bbdd446c73ab1a8eb) - @Drapersniper
@@ -759,8 +764,3 @@
 ## v0.11.4.1 (17/10/2022)
 - [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/168d051f040cb45ac4af7ee47f2b224946000e84) - @Drapersniper
 - [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/77a31c25d3f450937b939adf41fc9f235de48ce0) - @crowdin-bot
-
----
-
-## v0.11.4.0 (17/10/2022)
-- [[patch]Refactor migration code, fix plugin migration, auto update plugin](https://github.com/Drapersniper/PyLav/commit/5a252bc7afed388b030c1da073bf27f69dd58216) - @Drapersniper
