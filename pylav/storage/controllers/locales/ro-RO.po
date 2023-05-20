@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-12 23:00+0000\n"
-"PO-Revision-Date: 2023-05-19 11:08\n"
+"POT-Creation-Date: 2023-05-20 20:30+0000\n"
+"PO-Revision-Date: 2023-05-20 20:31\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 "X-Crowdin-File-ID: 3715\n"
 "Language: ro_RO\n"
 
-#: pylav/storage/controllers/playlists.py:85
+#: pylav/storage/controllers/playlists.py:87
 msgid "laylist with the name {playlist_name_variable_do_not_translate} was not found."
 msgstr "laylist cu numele {playlist_name_variable_do_not_translate} nu a fost găsit."
 
