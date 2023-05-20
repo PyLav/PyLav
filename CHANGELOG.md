@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.10.1 (20/05/2023)
+- [Ensure EnvVar gets set as a int](https://github.com/PyLav/PyLav/commit/2a853dba145562a191d21afde1a7a0986c55ca97) - @Drapersniper
+- [Add a way to stop showing module level variables as envvars](https://github.com/PyLav/PyLav/commit/f53894c924db5d1c89af1d8bbdd446c73ab1a8eb) - @Drapersniper
+- [Remove the async timeout by setting it to -1](https://github.com/PyLav/PyLav/commit/a8f73c83d0c018b3707ac3b9a60987cd36ec3528) - @Drapersniper
+- [Thanks Jack](https://github.com/PyLav/PyLav/commit/ad32a356a4343575282995ea4143c499603c16b4) - @Drapersniper
+- [Auto Merge](https://github.com/PyLav/PyLav/commit/65172c2527b460822ccf5f6c3f5a5f1a500c6c8f) - @Drapersniper
+- [New Crowdin translations by GitHub Action](https://github.com/PyLav/PyLav/commit/997f3feeaa7e7d2563b8065266b69988a46a41af) - @crowdin-bot
+- [Update Freyacode references](https://github.com/PyLav/PyLav/commit/c965ef89a927aeb74f583a9ddedcfc65d1fad626) - @Drapersniper
+- [Stop adding Dirty](https://github.com/PyLav/PyLav/commit/1881059f2e633aec3f4fdfb7148b6cddb7b19545) - @Drapersniper
+
+---
+
 ## v1.10.0 (19/05/2023)
 - [Create Release](https://github.com/PyLav/PyLav/commit/f73fe666175ea1d28024661b0e78e1997a4b19a9) - @Drapersniper
 - [Update crowdin.yml](https://github.com/PyLav/PyLav/commit/a9f3c1cd64a3ed97db564ac15e9e7fc4b924117e) - @Drapersniper
@@ -752,9 +764,3 @@
 
 ## v0.11.4.0 (17/10/2022)
 - [[patch]Refactor migration code, fix plugin migration, auto update plugin](https://github.com/Drapersniper/PyLav/commit/5a252bc7afed388b030c1da073bf27f69dd58216) - @Drapersniper
-
----
-
-## v0.11.2.1 (16/10/2022)
-- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/804e2266b5c88a56584c7d3f82715a01e179f5c7) - @Drapersniper
-- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/befa8e004487297371ef0dcb114b02d42f28faa9) - @crowdin-bot
