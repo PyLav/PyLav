@@ -354,7 +354,6 @@ class PlaylistController:
                     url = f"https://www.deezer.com/en/{album_playlist}/{identifier}"
                 else:
                     LOGGER.debug("Unknown playlist id: %s", playlist_id)
-                track_list = []
                 try:
                     LOGGER.info("Updating bundled external playlist - %s - %s", playlist_id, name)
                     query = await Query.from_string(url)
@@ -374,7 +373,7 @@ class PlaylistController:
                     # noinspection PyProtectedMember
                     await self.client._config.update_next_execution_update_bundled_external_playlists(old_time_stamp)
                     continue
-                if track_list:
+                if tracks_raw:
                     await self.create_or_update_global_playlist(
                         identifier=playlist_id, name=name, tracks=tracks_raw, author=self._client.bot.user.id, url=url
                     )
