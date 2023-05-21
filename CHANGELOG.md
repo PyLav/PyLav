@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.10.3 (21/05/2023)
+- [Stop bundled playlists being deleted on update](https://github.com/PyLav/PyLav/commit/ba8b62f61e640ba32f23fa793accf5bdf9f2e30e) - @Drapersniper
+- [Auto Merge](https://github.com/PyLav/PyLav/commit/7dd5f56679671d22d9a0addc0de123e176611ba5) - @Drapersniper
+
+---
+
 ## v1.10.2 (20/05/2023)
 - [Hotfix to fix playlist creation](https://github.com/PyLav/PyLav/commit/85f4a3c5ade745c63a2f2603291978994e6eb090) - @Drapersniper
 
@@ -758,9 +764,3 @@
 
 ## v0.11.5.0 (21/10/2022)
 - [[patch] TypeError: 'JSONB' object is not subscriptable (#80)](https://github.com/Drapersniper/PyLav/commit/d0235c946079d48f82ea4aec8048efc8fff5ca62) - @Drapersniper
-
----
-
-## v0.11.4.1 (17/10/2022)
-- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/168d051f040cb45ac4af7ee47f2b224946000e84) - @Drapersniper
-- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/77a31c25d3f450937b939adf41fc9f235de48ce0) - @crowdin-bot
