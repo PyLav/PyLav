@@ -282,6 +282,28 @@ class PlaylistController:
                     returning_list.append(playlist)
         return returning_list
 
+    async def _update_bundled_playlists(self, playlist_id, url, source, name, old_time_stamp):
+        try:
+            ctx = typing.cast(
+                PyLavContext,
+                namedtuple("PyLavContext", "message author")(
+                    message=discord.Object(id=playlist_id), author=discord.Object(id=self._client.bot.user.id)
+                ),
+            )
+            playlist = await Playlist.from_yaml(context=ctx, url=url, scope=self._client.bot.user.id)
+            LOGGER.info("Updating bundled playlist - %s - %s", playlist_id, f"[{source}] {name}")
+        except Exception as exc:
+            LOGGER.error(
+                "Built-in playlist couldn't be parsed - %s, report this error",
+                f"[{source}] {name}",
+                exc_info=exc,
+            )
+            playlist = None
+        if not playlist:
+            # noinspection PyProtectedMember
+            await self.client._config.update_next_execution_update_bundled_playlists(old_time_stamp)
+            return
+
     async def update_bundled_playlists(self, *playlist_ids: int) -> None:
         # NOTICE: Update the BUNDLED_PLAYLIST_IDS constant in the constants.py file
         with contextlib.suppress(asyncio.exceptions.CancelledError, asyncpg.exceptions.CannotConnectNowError):
@@ -297,27 +319,16 @@ class PlaylistController:
             }
             if not id_filtered:
                 id_filtered = BUNDLED_PYLAV_PLAYLISTS
+            count = 0
+            tasks = []
             for playlist_id, (name, url, source) in id_filtered.items():
-                try:
-                    ctx = typing.cast(
-                        PyLavContext,
-                        namedtuple("PyLavContext", "message author")(
-                            message=discord.Object(id=playlist_id), author=discord.Object(id=self._client.bot.user.id)
-                        ),
-                    )
-                    playlist = await Playlist.from_yaml(context=ctx, url=url, scope=self._client.bot.user.id)
-                    LOGGER.info("Updating bundled playlist - %s - %s", playlist_id, f"[{source}] {name}")
-                except Exception as exc:
-                    LOGGER.error(
-                        "Built-in playlist couldn't be parsed - %s, report this error",
-                        f"[{source}] {name}",
-                        exc_info=exc,
-                    )
-                    playlist = None
-                if not playlist:
-                    # noinspection PyProtectedMember
-                    await self.client._config.update_next_execution_update_bundled_playlists(old_time_stamp)
-                    continue
+                tasks.append(self._update_bundled_playlists(playlist_id, url, source, name, old_time_stamp))
+                if count % 10 == 0:
+                    await asyncio.gather(*tasks)
+                    tasks = []
+                count += 1
+            if tasks:
+                await asyncio.gather(*tasks)
             # noinspection PyProtectedMember
             await self.client._config.update_next_execution_update_bundled_playlists(
                 get_now_utc() + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS)
@@ -326,6 +337,42 @@ class PlaylistController:
             self.client._wait_for_playlists.set()
 
             LOGGER.info("Finished updating bundled playlists")
+
+    async def _update_bundled_external_playlist(self, playlist_id, album_playlist, identifier, name, old_time_stamp):
+        if (playlist_id in BUNDLED_SPOTIFY_PLAYLIST_IDS and not self.client._spotify_auth) or (
+            playlist_id in BUNDLED_DEEZER_PLAYLIST_IDS and not self.client._has_deezer_support
+        ):
+            return
+        elif playlist_id in BUNDLED_SPOTIFY_PLAYLIST_IDS:
+            url = f"https://open.spotify.com/{album_playlist}/{identifier}"
+        elif playlist_id in BUNDLED_DEEZER_PLAYLIST_IDS:
+            url = f"https://www.deezer.com/en/{album_playlist}/{identifier}"
+        else:
+            LOGGER.debug("Unknown playlist id: %s", playlist_id)
+        tracks_raw = []
+        try:
+            LOGGER.info("Updating bundled external playlist - %s - %s", playlist_id, name)
+            query = await Query.from_string(url)
+            data: PlaylistResponse = await self.client.get_tracks(query, bypass_cache=True)
+            name = (
+                f"[{query.source_abbreviation}] {data.data.info.name}"
+                if data.data.info.name
+                else f"[{query.source_abbreviation}] {name}"
+            )
+            tracks_raw = data.data.tracks
+        except Exception as exc:
+            LOGGER.error("Built-in external playlist couldn't be parsed - %s, report this error", name, exc_info=exc)
+            data = None
+        if not data:
+            # noinspection PyProtectedMember
+            await self.client._config.update_next_execution_update_bundled_external_playlists(old_time_stamp)
+            return
+        if tracks_raw:
+            await self.create_or_update_global_playlist(
+                identifier=playlist_id, name=name, tracks=tracks_raw, author=self._client.bot.user.id, url=url
+            )
+        else:
+            await self.delete_playlist(playlist_id=playlist_id)
 
     async def update_bundled_external_playlists(self, *playlist_ids: int) -> None:
         with contextlib.suppress(asyncio.exceptions.CancelledError, asyncpg.exceptions.CannotConnectNowError):
@@ -342,43 +389,21 @@ class PlaylistController:
             }
             if not id_filtered:
                 id_filtered = BUNDLED_EXTERNAL_PLAYLISTS
+            tasks = []
+            count = 0
             for playlist_id, (identifier, name, album_playlist) in id_filtered.items():
-                # noinspection PyProtectedMember
-                if (playlist_id in BUNDLED_SPOTIFY_PLAYLIST_IDS and not self.client._spotify_auth) or (
-                    playlist_id in BUNDLED_DEEZER_PLAYLIST_IDS and not self.client._has_deezer_support
-                ):
-                    continue
-                elif playlist_id in BUNDLED_SPOTIFY_PLAYLIST_IDS:
-                    url = f"https://open.spotify.com/{album_playlist}/{identifier}"
-                elif playlist_id in BUNDLED_DEEZER_PLAYLIST_IDS:
-                    url = f"https://www.deezer.com/en/{album_playlist}/{identifier}"
-                else:
-                    LOGGER.debug("Unknown playlist id: %s", playlist_id)
-                try:
-                    LOGGER.info("Updating bundled external playlist - %s - %s", playlist_id, name)
-                    query = await Query.from_string(url)
-                    data: PlaylistResponse = await self.client.get_tracks(query, bypass_cache=True)
-                    name = (
-                        f"[{query.source_abbreviation}] {data.data.info.name}"
-                        if data.data.info.name
-                        else f"[{query.source_abbreviation}] {name}"
+                tasks.append(
+                    self._update_bundled_external_playlist(
+                        playlist_id, album_playlist, identifier, name, old_time_stamp
                     )
-                    tracks_raw = data.data.tracks
-                except Exception as exc:
-                    LOGGER.error(
-                        "Built-in external playlist couldn't be parsed - %s, report this error", name, exc_info=exc
-                    )
-                    data = None
-                if not data:
-                    # noinspection PyProtectedMember
-                    await self.client._config.update_next_execution_update_bundled_external_playlists(old_time_stamp)
-                    continue
-                if tracks_raw:
-                    await self.create_or_update_global_playlist(
-                        identifier=playlist_id, name=name, tracks=tracks_raw, author=self._client.bot.user.id, url=url
-                    )
-                else:
-                    await self.delete_playlist(playlist_id=playlist_id)
+                )
+                if count % 10 == 0:
+                    await asyncio.gather(*tasks)
+                    tasks = []
+                count += 1
+            if tasks:
+                await asyncio.gather(*tasks)
+
             # noinspection PyProtectedMember
             await self.client._config.update_next_execution_update_bundled_external_playlists(
                 get_now_utc() + datetime.timedelta(days=TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS)
@@ -390,36 +415,46 @@ class PlaylistController:
             await self.client.node_manager.wait_until_ready()
             # noinspection PyProtectedMember
             await self.client._maybe_wait_until_bundled_node(await self.client.managed_node_is_enabled())
-
+            count = 0
+            tasks = []
             async for playlist in self.get_external_playlists(*playlist_ids, ignore_ids=BUNDLED_PLAYLIST_IDS):
-                name = await playlist.fetch_name()
-                url = await playlist.fetch_url()
-                query = await Query.from_string(url)
-                try:
-                    LOGGER.info("Updating external playlist - %s (%s)", name, playlist.id)
-                    response: PlaylistResponse = await self.client.get_tracks(
-                        query,
-                        bypass_cache=True,
-                    )
-                    tracks_raw = response.data.tracks
-                    new_name = response.data.info.name
-                    new_name = f"[{query.source_abbreviation}] {new_name}" if new_name else None
-                    if tracks_raw:
-                        await playlist.update_tracks(tracks=tracks_raw)
-                    if new_name and new_name != name:
-                        await playlist.update_name(new_name)
-                except Exception as exc:
-                    LOGGER.error(
-                        "External playlist couldn't be updated - %s (%s), report this error",
-                        name,
-                        playlist.id,
-                        exc_info=exc,
-                    )
+                tasks.append(self._update_external_playlist(playlist))
+                if count % 10 == 0:
+                    await asyncio.gather(*tasks)
+                    tasks = []
+                count += 1
+            if tasks:
+                await asyncio.gather(*tasks)
             # noinspection PyProtectedMember
             await self.client._config.update_next_execution_update_external_playlists(
                 get_now_utc() + datetime.timedelta(days=TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS)
             )
             LOGGER.info("Finished updating external playlists")
+
+    async def _update_external_playlist(self, playlist):
+        name = await playlist.fetch_name()
+        url = await playlist.fetch_url()
+        query = await Query.from_string(url)
+        try:
+            LOGGER.info("Updating external playlist - %s (%s)", name, playlist.id)
+            response: PlaylistResponse = await self.client.get_tracks(
+                query,
+                bypass_cache=True,
+            )
+            tracks_raw = response.data.tracks
+            new_name = response.data.info.name
+            new_name = f"[{query.source_abbreviation}] {new_name}" if new_name else None
+            if tracks_raw:
+                await playlist.update_tracks(tracks=tracks_raw)
+            if new_name and new_name != name:
+                await playlist.update_name(new_name)
+        except Exception as exc:
+            LOGGER.error(
+                "External playlist couldn't be updated - %s (%s), report this error",
+                name,
+                playlist.id,
+                exc_info=exc,
+            )
 
     @staticmethod
     async def count() -> int:
