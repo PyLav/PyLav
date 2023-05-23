@@ -198,9 +198,13 @@ class LocalNodeManager:
     def _get_release_publish_dt_or_epoch(release: dict) -> datetime.datetime:
         return (
             dateutil.parser.parse(release["published_at"])
-            if Version(release["tag_name"]) < VERSION_4_0_0
+            if Version(release["tag_name"]) >= VERSION_4_0_0
             else EPOCH_DT_TZ_AWARE
         )
+
+    @staticmethod
+    def _get_release_filter(release: dict) -> bool:
+        return Version(release["tag_name"]) >= VERSION_4_0_0
 
     async def get_ci_latest_info(self) -> dict[str, int | str | None]:
         """Get the latest CI info from GitHub."""
@@ -212,7 +216,7 @@ class LocalNodeManager:
                 self._ci_info["number"] = -1
                 return self._ci_info
             data = await response.json(loads=json.loads)
-            release = max(data, key=self._get_release_publish_dt_or_epoch)
+            release = max(filter(self._get_release_filter, data), key=self._get_release_publish_dt_or_epoch)
             assets = release.get("assets", [])
             url = None
             for asset in iter(assets):
