@@ -35,6 +35,7 @@ if not ENV_FILE.exists():
     )
     build_from_envvars()
     from pylav.constants.config.env_var import DATA_FOLDER as DATA_FOLDER
+    from pylav.constants.config.env_var import DEFAULT_PLAYER_VOLUME as DEFAULT_PLAYER_VOLUME
     from pylav.constants.config.env_var import DEFAULT_SEARCH_SOURCE as DEFAULT_SEARCH_SOURCE
     from pylav.constants.config.env_var import ENABLE_NODE_RESUMING as ENABLE_NODE_RESUMING
     from pylav.constants.config.env_var import EXTERNAL_UNMANAGED_HOST as EXTERNAL_UNMANAGED_HOST
@@ -75,11 +76,13 @@ if not ENV_FILE.exists():
         TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS as TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS,
     )
     from pylav.constants.config.env_var import USE_BUNDLED_EXTERNAL_PYLAV_NODE as USE_BUNDLED_EXTERNAL_PYLAV_NODE
+
 else:
     LOGGER.info("%s exist - Environment variables will be read from it", ENV_FILE)
     # Apply environment variables overrides if they exist
     from pylav.constants.config import overrides
     from pylav.constants.config.file import DATA_FOLDER as DATA_FOLDER
+    from pylav.constants.config.file import DEFAULT_PLAYER_VOLUME as DEFAULT_PLAYER_VOLUME
     from pylav.constants.config.file import DEFAULT_SEARCH_SOURCE as DEFAULT_SEARCH_SOURCE
     from pylav.constants.config.file import ENABLE_NODE_RESUMING as ENABLE_NODE_RESUMING
     from pylav.constants.config.file import EXTERNAL_UNMANAGED_HOST as EXTERNAL_UNMANAGED_HOST

@@ -3,6 +3,7 @@ from __future__ import annotations
 from piccolo.columns import JSONB, UUID, Array, BigInt, Boolean, Integer
 from piccolo.table import Table
 
+from pylav.constants.config import DEFAULT_PLAYER_VOLUME
 from pylav.storage.database.tables.misc import DATABASE_ENGINE
 
 
@@ -10,7 +11,7 @@ class PlayerRow(Table, db=DATABASE_ENGINE, tablename="player"):
     primary_key = UUID(primary_key=True)
     id = BigInt(index=True)
     bot = BigInt(index=True, null=False)
-    volume = Integer(null=False, default=25)
+    volume = Integer(null=False, default=DEFAULT_PLAYER_VOLUME)
     max_volume = Integer(null=False, default=1000)
     auto_play_playlist_id = BigInt(null=False, default=1)
 

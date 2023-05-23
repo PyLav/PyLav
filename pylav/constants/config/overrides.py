@@ -107,3 +107,7 @@ ENABLE_NODE_RESUMING = (
 ENABLE_NODE_RESUMING = False
 # TODO:
 #  - Add support for resuming nodes
+
+DEFAULT_PLAYER_VOLUME = (
+    max(int(envar_value), 1) if (envar_value := os.getenv("PYLAV__DEFAULT_PLAYER_VOLUME")) is not None else None
+)
