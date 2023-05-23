@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.10.5 (23/05/2023)
+- [Add the `PYLAV__DEFAULT_PLAYER_VOLUME` env var to control the default player volume for new players](https://github.com/PyLav/PyLav/commit/00535337ee83948a6111c183e23577ba87116da8) - @Drapersniper
+- [Auto Merge](https://github.com/PyLav/PyLav/commit/23a006783fd4733d709451b23c2f8f0f0bb53200) - @Drapersniper
+- [New Crowdin translations by GitHub Action](https://github.com/PyLav/PyLav/commit/a61a0950989048a721905c8b9c3340ba4be0ef88) - @crowdin-bot
+- [Filter V3 and older release tags from managed node downloader](https://github.com/PyLav/PyLav/commit/c925f542f2c2da539b3c804b08695b873a87b52e) - @Drapersniper
+- [Update LavaSrc version](https://github.com/PyLav/PyLav/commit/7664aeb9b7bf9854bcf9562b36faa37f8d9652bc) - @Drapersniper
+
+---
+
 ## v1.10.4 (21/05/2023)
 - [Speed up playlist generation/updates](https://github.com/PyLav/PyLav/commit/72106f926c74cf85988780d36597fbec8cb2676c) - @Drapersniper
 
@@ -759,8 +768,3 @@
 ## v0.11.6.1 (21/10/2022)
 - [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/1f865ff795211895ddf861cf55d31503312d9c71) - @Drapersniper
 - [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/3823b4f6642502372f4ea1ee197117ed97fa848e) - @crowdin-bot
-
----
-
-## v0.11.6.0 (21/10/2022)
-- [[patch] certified typo moment (#82)](https://github.com/Drapersniper/PyLav/commit/857affacf4521be1e58d2b08f93be7790d0ea30b) - @Pogogo007
