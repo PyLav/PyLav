@@ -45,7 +45,7 @@ class QueryController:
 
     async def fetch_query(self, query: QueryObj) -> Query | None:
         if query.is_custom_playlist or query.is_http:
-            # Do not cache local queries and single track urls or http source entries
+            # Do not cache local playlists or http source entries
             return None
 
         cached = self.get(query.query_identifier)
@@ -63,13 +63,15 @@ class QueryController:
                 tracks = [result.data]
                 plugin_info = result.data.pluginInfo.to_dict() if result.data.pluginInfo else None
                 name = None
+                playlist_info = None
             case "search":
                 tracks = result.data
                 name = None
                 plugin_info = None
+                playlist_info = None
             case __:
                 tracks = result.data.tracks
-                playlist_info = result.data.info
+                playlist_info = result.data.info if result.data.info else None
                 name = playlist_info.name if playlist_info else None
                 plugin_info = result.data.pluginInfo.to_dict() if result.data.pluginInfo else None
 
@@ -79,6 +81,7 @@ class QueryController:
         defaults = {
             QueryRow.name: name,
             QueryRow.pluginInfo: plugin_info,
+            QueryRow.info: playlist_info,
         }
         query_row = await QueryRow.objects().get_or_create(QueryRow.identifier == query.query_identifier, defaults)
 
