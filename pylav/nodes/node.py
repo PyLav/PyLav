@@ -951,8 +951,17 @@ class Node:
         response = await self.node_manager.client.query_cache_manager.fetch_query(query)
         if not response:
             return
-        if tracks := await response.fetch_tracks():
-            load_type = "playlist" if query.is_playlist or query.is_album else "search" if query.is_search else "track"
+        load_type = "playlist" if query.is_playlist or query.is_album else "search" if query.is_search else "track"
+        kwargs = {"tracks": True}
+        match load_type:
+            case "playlist":
+                kwargs["info"] = True
+                kwargs["pluginInfo"] = True
+                kwargs["name"] = True
+
+        cached_query = await response.fetch_bulk(**kwargs)
+
+        if tracks := cached_query["tracks"]:
             try:
                 if tracks and first:
                     tracks = [tracks[0]]
@@ -964,8 +973,8 @@ class Node:
             match data["loadType"]:
                 case "playlist":
                     data["data"] = {
-                        "info": {"name": await response.fetch_name() or "", "selectedTrack": 0},
-                        "pluginInfo": await response.fetch_plugin_info(),
+                        "info": cached_query["info"] or {"name": cached_query["name"] or "", "selectedTrack": 0},
+                        "pluginInfo": cached_query["pluginInfo"],
                         "tracks": tracks,
                     }
                 case "search":

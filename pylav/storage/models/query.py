@@ -326,7 +326,9 @@ class Query(CachedModel, metaclass=SingletonCachedByKey):
         """
         return await self.fetch_index(random.randint(0, await self.size()))
 
-    async def fetch_full(self) -> JSON_DICT_TYPE | None:
+    async def fetch_bulk(
+        self, info: bool = False, name: bool = False, pluginInfo: bool = False, tracks: bool = False
+    ) -> JSON_DICT_TYPE | None:
         """Get all tracks.
 
         Returns
@@ -334,10 +336,17 @@ class Query(CachedModel, metaclass=SingletonCachedByKey):
         list[str]
             All tracks
         """
+        columns = [QueryRow.identifier]
+        if name:
+            columns.append(QueryRow.name)
+        if info:
+            columns.append(QueryRow.info)
+        if pluginInfo:
+            columns.append(QueryRow.pluginInfo)
+        if tracks:
+            columns.append(QueryRow.tracks)
         response = (
-            await QueryRow.select(
-                QueryRow.identifier, QueryRow.name, QueryRow.pluginInfo, QueryRow.info, QueryRow.tracks
-            )
+            await QueryRow.select(*columns)
             .where(QueryRow.identifier == self.id)
             .first()
             .output(load_json=True, nested=True)
