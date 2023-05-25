@@ -1617,6 +1617,7 @@ class Client(metaclass=SingletonClass):
             region = player.region
         if region is None:
             region = "us_east"
+        playlist_count = 0
         for query in queries:
             async for subquery in self._yield_recursive_queries(query):
                 response = await self.search_query(
@@ -1626,13 +1627,21 @@ class Client(metaclass=SingletonClass):
                     case "track":
                         tracks = [response.data]
                         playlist_name = ""
+                        playlist_info = {}
                     case "search":
                         tracks = response.data
                         playlist_name = ""
+                        playlist_info = {}
                     case "playlist":
+                        playlist_count += 1
                         tracks = response.data.tracks
                         plugin_info |= response.data.pluginInfo.to_dict()
                         playlist_name = response.data.info.name if response.data.info else ""
+                        playlist_info = (
+                            response.data.info.to_dict()
+                            if response.data.info
+                            else {"name": playlist_name, "selectedTrack": 0}
+                        )
                     case __:
                         continue
                 if subquery.is_playlist or subquery.is_album:
@@ -1643,7 +1652,7 @@ class Client(metaclass=SingletonClass):
                     LOGGER.error("Unknown query type: %s", subquery)
         data = {
             "loadType": "playlist"
-            if playlist_name and len(queries) == 1
+            if playlist_name and playlist_count == 1
             else "search"
             if len(output_tracks) > 1
             else "track"
@@ -1654,7 +1663,7 @@ class Client(metaclass=SingletonClass):
         match data["loadType"]:
             case "playlist":
                 data["data"] = {
-                    "info": {"name": playlist_name, "selectedTrack": 0},
+                    "info": playlist_info,
                     "pluginInfo": plugin_info,
                     "tracks": [track.to_dict() for track in output_tracks],
                 }
