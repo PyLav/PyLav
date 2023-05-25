@@ -141,6 +141,37 @@ class Query(CachedModel, metaclass=SingletonCachedByKey):
         await self.update_cache((self.fetch_plugin_info, plugin_info), (self.exists, True))
 
     @maybe_cached
+    async def fetch_info(self) -> JSON_DICT_TYPE:
+        """Get the info of the playlist.
+
+        Returns
+        -------
+        JSON_DICT_TYPE
+            The plugin info of the playlist.
+        """
+        response = (
+            await QueryRow.select(QueryRow.info)
+            .where(QueryRow.identifier == self.id)
+            .first()
+            .output(load_json=True, nested=True)
+        )
+        return response["info"] if response else {}
+
+    async def update_info(self, info: JSON_DICT_TYPE) -> None:
+        """Update the info of the playlist.
+
+        Parameters
+        ----------
+        info: JSON_DICT_TYPE
+            The plugin info of the playlist.
+        """
+
+        await QueryRow.insert(QueryRow(identifier=self.id, info=info)).on_conflict(
+            action="DO UPDATE", target=QueryRow.identifier, values=[QueryRow.info]
+        )
+        await self.update_cache((self.fetch_plugin_info, info), (self.exists, True))
+
+    @maybe_cached
     async def fetch_name(self) -> str:
         """Get the name of the playlist.
 
@@ -197,7 +228,13 @@ class Query(CachedModel, metaclass=SingletonCachedByKey):
             (self.exists, True),
         )
 
-    async def bulk_update(self, tracks: list[str | Track], name: str) -> None:
+    async def bulk_update(
+        self,
+        tracks: list[str | Track],
+        name: str,
+        info: JSON_DICT_TYPE | None = None,
+        plugin_info: JSON_DICT_TYPE | None = None,
+    ) -> None:
         """Bulk update the query.
 
         Parameters
@@ -208,6 +245,10 @@ class Query(CachedModel, metaclass=SingletonCachedByKey):
             The name of the playlist
         """
         defaults = {QueryRow.name: name}
+        if info is not None:
+            defaults[QueryRow.info] = info
+        if plugin_info is not None:
+            defaults[QueryRow.pluginInfo] = plugin_info
         query_row = await QueryRow.objects().get_or_create(QueryRow.identifier == self.id, defaults)
         # noinspection PyProtectedMember
         if not query_row._was_created:
@@ -284,3 +325,21 @@ class Query(CachedModel, metaclass=SingletonCachedByKey):
             A random track
         """
         return await self.fetch_index(random.randint(0, await self.size()))
+
+    async def fetch_full(self) -> JSON_DICT_TYPE | None:
+        """Get all tracks.
+
+        Returns
+        -------
+        list[str]
+            All tracks
+        """
+        response = (
+            await QueryRow.select(
+                QueryRow.identifier, QueryRow.name, QueryRow.pluginInfo, QueryRow.info, QueryRow.tracks
+            )
+            .where(QueryRow.identifier == self.id)
+            .first()
+            .output(load_json=True, nested=True)
+        )
+        return response if response else None
