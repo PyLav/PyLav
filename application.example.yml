@@ -1,6 +1,6 @@
 lavalink:
     plugins:
-    -   dependency: com.github.TopiSenpai.LavaSrc:lavasrc-plugin:218199b
+    -   dependency: com.github.TopiSenpai.LavaSrc:lavasrc-plugin:d81d18f
         repository: https://maven.topi.wtf/snapshots
     -   dependency: com.github.topisenpai:sponsorblock-plugin:2.0.0
         repository: https://jitpack.io
