@@ -1760,10 +1760,12 @@ class Node:
 
     @staticmethod
     def _get_filter_payload_echo(echo: Echo, payload: JSON_DICT_TYPE, player: Player, reset_no_set: bool) -> None:
+        if "pluginFilters" not in payload:
+            payload["pluginFilters"] = {}
         if echo:
-            payload["echo"] = echo.get()
+            payload["pluginFilters"]["echo"] = echo.get()
         elif not reset_no_set and player.echo:
-            payload["echo"] = player.echo.get()
+            payload["pluginFilters"]["echo"] = player.echo.get()
 
     @staticmethod
     def _get_filter_payload_channel_mix(

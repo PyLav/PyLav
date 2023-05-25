@@ -1,4 +1,5 @@
 import dataclasses
+from typing import NotRequired
 
 from pylav.nodes.api.responses.filters import plugins
 from pylav.nodes.api.responses.filters.channel_mix import ChannelMix as ChannelMix
@@ -29,8 +30,14 @@ __all__ = (
     *plugins.__all__,
 )
 
+from pylav.nodes.api.responses.shared import PluginInfo
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
 from pylav.type_hints.generics import ANY_GENERIC_TYPE
+
+
+@dataclasses.dataclass(kw_only=True)
+class PluginFilters(PluginInfo):
+    echo: NotRequired[Echo] | None = dataclasses.field(init=False)
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
@@ -45,7 +52,7 @@ class Filters:
     distortion: Distortion | None = dataclasses.field(default_factory=dict)
     channelMix: ChannelMix | None = dataclasses.field(default_factory=dict)
     lowPass: LowPass | None = dataclasses.field(default_factory=dict)
-    echo: Echo | None = dataclasses.field(default_factory=dict)
+    pluginFilters: PluginFilters | None = dataclasses.field(default_factory=dict)
 
     def to_dict(self) -> JSON_DICT_TYPE:
         response: JSON_DICT_TYPE = {"volume": self.volume}
@@ -59,7 +66,7 @@ class Filters:
             "distortion",
             "channelMix",
             "lowPass",
-            "echo",
+            "pluginFilters",
         ]:
             response = self._process_filter(filter_name, response)
         return response
@@ -84,8 +91,8 @@ class Filters:
                 return self._process_filter_object(name, self.channelMix, ChannelMix, response)
             case "lowPass":
                 return self._process_filter_object(name, self.lowPass, LowPass, response)
-            case "echo":
-                return self._process_filter_object(name, self.echo, Echo, response)
+            case "pluginFilters":
+                return self._process_plugin_filters(response)
             case __:
                 return response
 
@@ -96,6 +103,13 @@ class Filters:
             ]
         else:
             response["equalizer"] = None
+        return response
+
+    def _process_plugin_filters(self, response: ANY_GENERIC_TYPE) -> ANY_GENERIC_TYPE:
+        if isinstance(self.pluginFilters, PluginFilters):
+            response["pluginFilters"] = self.pluginFilters.to_dict()
+        else:
+            response["pluginFilters"] = None
         return response
 
     @staticmethod
