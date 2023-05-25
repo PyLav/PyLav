@@ -14,3 +14,4 @@ class QueryRow(Table, db=DATABASE_ENGINE, tablename="query"):
     last_updated = Timestamptz(null=False, index=True, default=TimestamptzNow(), auto_update=get_now_utc)
     pluginInfo = JSONB(null=True, default=None)
     tracks = M2M(LazyTableReference("TrackToQueries", module_path="pylav.storage.database.tables.m2m"))
+    info = JSONB(null=True, default=None)
