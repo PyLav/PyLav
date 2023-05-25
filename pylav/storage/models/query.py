@@ -344,7 +344,7 @@ class Query(CachedModel, metaclass=SingletonCachedByKey):
         if pluginInfo:
             columns.append(QueryRow.pluginInfo)
         if tracks:
-            columns.append(QueryRow.tracks)
+            columns.append(QueryRow.tracks(TrackRow.encoded, TrackRow.info, TrackRow.pluginInfo, load_json=True))
         response = (
             await QueryRow.select(*columns)
             .where(QueryRow.identifier == self.id)

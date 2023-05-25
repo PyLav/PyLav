@@ -42,6 +42,6 @@ async def run_queries_migration_v_1_10_6(con: Connection) -> None:
         LOGGER.info("----------- Migrating queries to PyLav 1.10.6 ---------")
         alter_table = """
         ALTER TABLE IF EXISTS query
-        ADD COLUMN IF NOT EXISTS "info" jsonb DEFAULT NULL,
+        ADD COLUMN IF NOT EXISTS "info" jsonb DEFAULT NULL
         """
         await con.execute(alter_table)
