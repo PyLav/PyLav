@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-05-17 19:31+0000\n"
-"PO-Revision-Date: 2023-05-19 10:26\n"
+"POT-Creation-Date: 2023-05-26 19:26+0000\n"
+"PO-Revision-Date: 2023-05-26 19:27\n"
 "Last-Translator: \n"
 "Language-Team: Bulgarian\n"
 "MIME-Version: 1.0\n"
@@ -75,77 +75,77 @@ msgstr "Текущият възел има забранена функция з�
 msgid "Current node has the channel-mix feature disabled."
 msgstr "Текущият възел е с изключена функция канал-микс."
 
-#: pylav/players/player.py:2399 pylav/players/player.py:2466
-#: pylav/players/player.py:2483 pylav/players/player.py:2589
+#: pylav/players/player.py:2403 pylav/players/player.py:2470
+#: pylav/players/player.py:2487 pylav/players/player.py:2593
 msgid "LIVE"
 msgstr "ЖИВЕЯ"
 
-#: pylav/players/player.py:2418
+#: pylav/players/player.py:2422
 msgid "Now Playing in {server_name_variable_do_not_translate}"
 msgstr "Сега играе в {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2445 pylav/players/player.py:2637
+#: pylav/players/player.py:2449 pylav/players/player.py:2641
 msgid "Currently livestreaming"
 msgstr "В момента на живо"
 
-#: pylav/players/player.py:2447
+#: pylav/players/player.py:2451
 msgid "Playing: "
 msgstr "Играе: "
 
-#: pylav/players/player.py:2450 pylav/players/player.py:2475
-#: pylav/players/player.py:2491 pylav/players/player.py:2643
+#: pylav/players/player.py:2454 pylav/players/player.py:2479
+#: pylav/players/player.py:2495 pylav/players/player.py:2647
 msgid "Requester"
 msgstr "Заявител"
 
-#: pylav/players/player.py:2456
+#: pylav/players/player.py:2460
 msgid "Duration: {track_duration_variable_do_not_translate}"
 msgstr "Времетраене: {track_duration_variable_do_not_translate}"
 
-#: pylav/players/player.py:2471 pylav/players/player.py:2487
+#: pylav/players/player.py:2475 pylav/players/player.py:2491
 msgid "Duration"
 msgstr "Времетраене"
 
-#: pylav/players/player.py:2477
+#: pylav/players/player.py:2481
 msgid "Previous Track"
 msgstr "Предишна писта"
 
-#: pylav/players/player.py:2493
+#: pylav/players/player.py:2497
 msgid "Next Track"
 msgstr "Следваща писта"
 
-#: pylav/players/player.py:2503
+#: pylav/players/player.py:2507
 msgid "1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "1 писта, {queue_total_duration_variable_do_not_translate} останал\n"
 
-#: pylav/players/player.py:2507
+#: pylav/players/player.py:2511
 msgid "0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "0 писти, {queue_total_duration_variable_do_not_translate} останал\n"
 
-#: pylav/players/player.py:2511
+#: pylav/players/player.py:2515
 msgid "{track_count_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "{track_count_variable_do_not_translate} Песни {queue_total_duration_variable_do_not_translate} останал\n"
 
-#: pylav/players/player.py:2518 pylav/players/player.py:2684
+#: pylav/players/player.py:2522 pylav/players/player.py:2688
 msgid "Repeating"
 msgstr "Повтаряне"
 
-#: pylav/players/player.py:2520 pylav/players/player.py:2686
+#: pylav/players/player.py:2524 pylav/players/player.py:2690
 msgid "Auto Play"
 msgstr "Автоматично изпълнение"
 
-#: pylav/players/player.py:2523 pylav/players/player.py:2689
+#: pylav/players/player.py:2527 pylav/players/player.py:2693
 msgid "Effects"
 msgstr ""
 
-#: pylav/players/player.py:2527 pylav/players/player.py:2693
+#: pylav/players/player.py:2531 pylav/players/player.py:2697
 msgid "{volume_variable_do_not_translate}%"
 msgstr "{volume_variable_do_not_translate}%"
 
-#: pylav/players/player.py:2528 pylav/players/player.py:2694
+#: pylav/players/player.py:2532 pylav/players/player.py:2698
 msgid "Volume"
 msgstr "Том"
 
-#: pylav/players/player.py:2531
+#: pylav/players/player.py:2535
 msgid "\n\n"
 "You can search specific services by using the following prefixes:\n"
 "{deezer_service_variable_do_not_translate}  - Deezer\n"
@@ -169,31 +169,31 @@ msgstr "\n\n"
 "Пример: {example_variable_do_not_translate}.\n\n"
 "Ако не се използва префикс, по подразбиране ще {fallback_service_variable_do_not_translate}\n"
 
-#: pylav/players/player.py:2602
+#: pylav/players/player.py:2606
 msgid "Recently Played for {server_name_variable_do_not_translate}"
 msgstr "Наскоро игран за {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2608
+#: pylav/players/player.py:2612
 msgid "Queue for {server_name_variable_do_not_translate}"
 msgstr "Опашка за {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2640
+#: pylav/players/player.py:2644
 msgid "Playing"
 msgstr "Играе"
 
-#: pylav/players/player.py:2656
+#: pylav/players/player.py:2660
 msgid "Queue order will change every time a track is added due to auto shuffle being enabled."
 msgstr "Редът на опашката ще се променя всеки път, когато се добавя песен, поради активиране на автоматичното разбъркване."
 
-#: pylav/players/player.py:2666
+#: pylav/players/player.py:2670
 msgid "Page 1 / 1 | 1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "Страница 1 / 1 | 1 писта, {queue_total_duration_variable_do_not_translate} останал\n"
 
-#: pylav/players/player.py:2670
+#: pylav/players/player.py:2674
 msgid "Page 1 / 1 | 0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "Страница 1 / 1 | 0 писти, {queue_total_duration_variable_do_not_translate} останал\n"
 
-#: pylav/players/player.py:2674
+#: pylav/players/player.py:2678
 msgid "Page {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "Страница {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} Песни {queue_total_duration_variable_do_not_translate} останал\n"
 
