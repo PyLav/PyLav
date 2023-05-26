@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-05-17 19:31+0000\n"
-"PO-Revision-Date: 2023-05-19 11:08\n"
+"POT-Creation-Date: 2023-05-26 19:26+0000\n"
+"PO-Revision-Date: 2023-05-26 19:27\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "MIME-Version: 1.0\n"
@@ -25,11 +25,11 @@ msgstr "Không có nút có sẵn!"
 msgid "No node with {feature_name_variable_do_not_translate} functionality available!"
 msgstr "Không có nút nào có {feature_name_variable_do_not_translate} chức năng có sẵn!"
 
-#: pylav/core/client.py:1745
+#: pylav/core/client.py:1754
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist."
 msgstr "Cần có một số nhận dạng video, người dùng, kênh hoặc danh sách phát để tạo danh sách phát hỗn hợp."
 
-#: pylav/core/client.py:1750
+#: pylav/core/client.py:1759
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist. However, you provided multiple"
 msgstr "Cần có một số nhận dạng video, người dùng, kênh hoặc danh sách phát để tạo danh sách phát hỗn hợp. Tuy nhiên, bạn đã cung cấp nhiều"
 

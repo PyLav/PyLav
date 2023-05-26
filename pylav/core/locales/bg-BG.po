@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-05-17 19:31+0000\n"
-"PO-Revision-Date: 2023-05-19 10:26\n"
+"POT-Creation-Date: 2023-05-26 19:26+0000\n"
+"PO-Revision-Date: 2023-05-26 19:27\n"
 "Last-Translator: \n"
 "Language-Team: Bulgarian\n"
 "MIME-Version: 1.0\n"
@@ -25,11 +25,11 @@ msgstr "Няма налични възли!"
 msgid "No node with {feature_name_variable_do_not_translate} functionality available!"
 msgstr "Няма възел с {feature_name_variable_do_not_translate} Налична функционалност!"
 
-#: pylav/core/client.py:1745
+#: pylav/core/client.py:1754
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist."
 msgstr "Необходим е един идентификатор на видео, потребител, канал или плейлист, за да се генерира смесен плейлист."
 
-#: pylav/core/client.py:1750
+#: pylav/core/client.py:1759
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist. However, you provided multiple"
 msgstr "Необходим е един идентификатор на видео, потребител, канал или плейлист, за да се генерира смесен плейлист. Въпреки това, вие предоставихте няколко"
 
