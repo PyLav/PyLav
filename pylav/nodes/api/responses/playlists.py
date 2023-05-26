@@ -9,6 +9,6 @@ class Info:
     name: str
     selectedTrack: int
     type: NotRequired[str] = "playlist"
-    identifier: NotRequired[str | None] = None
+    url: NotRequired[str | None] = None
     artworkUrl: NotRequired[str | None] = None
     author: NotRequired[str | None] = None

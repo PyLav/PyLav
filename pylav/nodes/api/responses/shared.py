@@ -36,6 +36,7 @@ class PluginInfo:
 class PlaylistPluginInfo(PluginInfo):
     type: NotRequired[str] | None = field(init=False)
     identifier: NotRequired[str] | None = field(init=False)
+    url: NotRequired[str] | None = field(init=False)
     artworkUrl: NotRequired[str] | None = field(init=False)
     author: NotRequired[str] | None = field(init=False)
 
