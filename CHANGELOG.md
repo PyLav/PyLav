@@ -1,5 +1,24 @@
 # Changelog
 
+## v1.10.6 (03/06/2023)
+- [Bump requests from 2.30.0 to 2.31.0 (#242)](https://github.com/PyLav/PyLav/commit/fc9cf8a94247d26c96700f190c197a06b60fde68) - @dependabot[bot]
+- [Bump crowdin/github-action from 1.8.1 to 1.9.0 (#245)](https://github.com/PyLav/PyLav/commit/36ff8f226cddcb941042e83a72e1def770161973) - @dependabot[bot]
+- [Auto Merge](https://github.com/PyLav/PyLav/commit/3e252d369dfe0b5c0a87b381b1c888eb0516cae8) - @Drapersniper
+- [New Crowdin translations by GitHub Action](https://github.com/PyLav/PyLav/commit/887ef55a743e8b1614cef8b6fee61ef538824ac0) - @crowdin-bot
+- [Update to reflect new lavascr changes](https://github.com/PyLav/PyLav/commit/a4c93eaf5ece1a610d4b1c06be4b82ba6a159e26) - @Drapersniper
+- [Fixes for the migration code and for the `query.fetch_bulk()` api](https://github.com/PyLav/PyLav/commit/2a6ec55bee503c8f0ba7f4ec374bae4efcb7dab3) - @Drapersniper
+- [properly process the playlist info key and optimize logic to call db less often](https://github.com/PyLav/PyLav/commit/5d155a391ed15571a19b5ff5398008a03d068fe6) - @Drapersniper
+- [properly process the playlist info key](https://github.com/PyLav/PyLav/commit/21300931c98617bb5f70f8981e84d385f05bb476) - @Drapersniper
+- [Add more APIs to Query db Model](https://github.com/PyLav/PyLav/commit/0bde178889a466a0ee3e88c6509ac5ad452d892e) - @Drapersniper
+- [Correctly store the info field for queries](https://github.com/PyLav/PyLav/commit/44fadbcccffb076e8c00699c68e8bfd85efc2525) - @Drapersniper
+- [Add `info` column to stored Tracks and set migration for existing databases](https://github.com/PyLav/PyLav/commit/6a13feff2fe3b93ea30df8254a0d7e7b67e1815d) - @Drapersniper
+- [Implement https://github.com/Walkyst/lavaplayer-fork/compare/custom...TopiSenpai:lavaplayer-fork:extend-audioplaylist-interface with backwards compat](https://github.com/PyLav/PyLav/commit/0d880ab2c1f887562bb241c4c55404e632c87ca2) - @Drapersniper
+- [Update LavaScr](https://github.com/PyLav/PyLav/commit/77a800e4b1c31a33d2dd1ebebb53031a6b5dcc21) - @Drapersniper
+- [Breaking change: https://github.com/lavalink-devs/Lavalink/commit/d19f2a565a29a3cd11d0a5343654c2153953a8da](https://github.com/PyLav/PyLav/commit/4d5e0f398fbdeaf8a85f5f0cd4c0d9d9860f9d90) - @Drapersniper
+- [Update jar download location](https://github.com/PyLav/PyLav/commit/d1ae47a391572537d1d3236252cb2603c3ff56c2) - @Drapersniper
+
+---
+
 ## v1.10.5 (23/05/2023)
 - [Add the `PYLAV__DEFAULT_PLAYER_VOLUME` env var to control the default player volume for new players](https://github.com/PyLav/PyLav/commit/00535337ee83948a6111c183e23577ba87116da8) - @Drapersniper
 - [Auto Merge](https://github.com/PyLav/PyLav/commit/23a006783fd4733d709451b23c2f8f0f0bb53200) - @Drapersniper
@@ -762,9 +781,3 @@
 
 ## v0.11.7.0 (21/10/2022)
 - [[patch] KeyError: 'track'](https://github.com/Drapersniper/PyLav/commit/4f1a0edf2f07439a9813b66bc089b2d3b829799e) - @Drapersniper
-
----
-
-## v0.11.6.1 (21/10/2022)
-- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/1f865ff795211895ddf861cf55d31503312d9c71) - @Drapersniper
-- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/3823b4f6642502372f4ea1ee197117ed97fa848e) - @crowdin-bot
