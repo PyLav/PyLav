@@ -78,7 +78,9 @@ SOURCE_INPUT_MATCH_TIKTOK = re.compile(
 
 # https://github.com/TopiSenpai/LavaSrc/blob/master/main/src/main/java/com/github/topisenpai/lavasrc/spotify/SpotifySourceManager.java#L39
 SOURCE_INPUT_MATCH_SPOTIFY = re.compile(
-    r"(https?://)?(www\.)?open\.spotify\.com/(user/[a-zA-Z\d\-_]+/)?"
+    r"(https?://)(www\.)?open\.spotify\.com/("
+    r"(?P<spotify_region>[a-zA-Z-]+)/)?(user/"
+    r"(?P<spotify_user>[a-zA-Z\d\-_]+)/)?"
     r"(?P<spotify_type>track|album|playlist|artist)/"
     r"(?P<spotify_identifier>[a-zA-Z\d\-_]+)",
     re.IGNORECASE,
