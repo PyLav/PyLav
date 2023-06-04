@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.10.7 (04/06/2023)
+- [rm sourcery config](https://github.com/PyLav/PyLav/commit/6e699fcb5c492da2502ddd70d432c7d8488039f5) - @Drapersniper
+- [Update Spotify Regex](https://github.com/PyLav/PyLav/commit/c72ab3db1517cd8d83d3c4227dc419fa9ba55445) - @Drapersniper
+- [Update LavsScr](https://github.com/PyLav/PyLav/commit/4e6ce8d302659a27909167905c440f40b3c3b8b5) - @Drapersniper
+
+---
+
 ## v1.10.6 (03/06/2023)
 - [Bump requests from 2.30.0 to 2.31.0 (#242)](https://github.com/PyLav/PyLav/commit/fc9cf8a94247d26c96700f190c197a06b60fde68) - @dependabot[bot]
 - [Bump crowdin/github-action from 1.8.1 to 1.9.0 (#245)](https://github.com/PyLav/PyLav/commit/36ff8f226cddcb941042e83a72e1def770161973) - @dependabot[bot]
@@ -776,8 +783,3 @@
 
 ## v0.11.8.0 (23/10/2022)
 - [[patch] disable yandee source which is enabled by default](https://github.com/Drapersniper/PyLav/commit/1e9f8767de00ef614878621901fcb85d4c263858) - @Drapersniper
-
----
-
-## v0.11.7.0 (21/10/2022)
-- [[patch] KeyError: 'track'](https://github.com/Drapersniper/PyLav/commit/4f1a0edf2f07439a9813b66bc089b2d3b829799e) - @Drapersniper
