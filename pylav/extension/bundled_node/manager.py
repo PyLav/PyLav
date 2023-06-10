@@ -439,7 +439,7 @@ class LocalNodeManager:
         else:
             self._java_version = await self._get_java_version()
             self._java_available = self._java_version >= (
-                11,
+                17,
                 0,
             )  # https://github.com/lavalink-devs/Lavalink#requirements
             self._java_exc = java_exec
