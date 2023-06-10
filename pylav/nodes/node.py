@@ -1263,6 +1263,7 @@ class Node:
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
                 result = await res.json(loads=json.loads)
+                self._logger.trace("Loaded track: %s response: %s", query, result)
                 response = self.parse_loadtrack_response(result)
                 asyncio.create_task(self.node_manager.client.query_cache_manager.add_query(query, response))
                 self._manager.client.dispatch_event(LavalinkLoadtracksEvent(node=self, response=response))
