@@ -1689,6 +1689,7 @@ class Client(metaclass=SingletonClass):
         fullsearch: bool = False,
         region: str | None = None,
         sleep: bool = False,
+        player: Player | None = None,
     ) -> rest_api.LoadTrackResponses | None:
         """
         Search for the specified query returns a LoadTrackResponse object
@@ -1707,7 +1708,11 @@ class Client(metaclass=SingletonClass):
             The region to search in.
         sleep : `bool`, optional
             Whether to sleep for a short duration if a lavalink call is made.
+        player : `Player`, optional
+            The player to use for enqueuing tracks.
         """
+        if region is None and player is not None:
+            region = player.region
         node = await self.node_manager.find_best_node(region=region, feature=query.requires_capability)
         if node is None:
             return
