@@ -349,6 +349,7 @@ class PlaylistController:
             url = f"https://www.deezer.com/en/{album_playlist}/{identifier}"
         else:
             LOGGER.debug("Unknown playlist id: %s", playlist_id)
+            return
         tracks_raw = []
         try:
             LOGGER.info("Updating bundled external playlist - %s - %s", playlist_id, name)
