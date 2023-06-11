@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.10.10 (11/06/2023)
+- [Make release](https://github.com/PyLav/PyLav/commit/cb6cb9048719a0a5428851ea7c79d6741d04c72e) - @Drapersniper
+- [Auto Merge](https://github.com/PyLav/PyLav/commit/e06edad370a73f02509f5b0e36c85cd12609413b) - @Drapersniper
+
+---
+
 ## v1.10.9 (11/06/2023)
 - [fix pdv](https://github.com/PyLav/PyLav/commit/550190c049ee77e5f27f5317402f03648abb597e) - @Drapersniper
 
@@ -777,8 +783,3 @@
 
 ## v0.11.11.0 (24/10/2022)
 - [[patch] fix skipSegments being sent to non YouTube tracks causing playback failures](https://github.com/Drapersniper/PyLav/commit/ad0a93e285f0e45301bceaa68f4d22548c457f09) - @Drapersniper
-
----
-
-## v0.11.10.0 (23/10/2022)
-- [[patch] cleanup plugins on init sequence](https://github.com/Drapersniper/PyLav/commit/56427d4f763b59e713da234e524d2e54c3cf8b03) - @Drapersniper
