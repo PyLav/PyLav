@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-05-26 19:26+0000\n"
-"PO-Revision-Date: 2023-05-26 19:27\n"
+"POT-Creation-Date: 2023-06-11 14:04+0000\n"
+"PO-Revision-Date: 2023-06-11 14:04\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -25,11 +25,11 @@ msgstr "沒有可用的節點！"
 msgid "No node with {feature_name_variable_do_not_translate} functionality available!"
 msgstr "沒有節點 {feature_name_variable_do_not_translate} 功能可用！"
 
-#: pylav/core/client.py:1754
+#: pylav/core/client.py:1759
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist."
 msgstr "生成混合播放清單需要單個視頻、使用者、頻道或播放清單標識碼。"
 
-#: pylav/core/client.py:1759
+#: pylav/core/client.py:1764
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist. However, you provided multiple"
 msgstr "生成混合播放清單需要單個視頻、使用者、頻道或播放清單標識碼。但是，您提供了多個"
 
