@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.10.9 (11/06/2023)
+- [fix pdv](https://github.com/PyLav/PyLav/commit/550190c049ee77e5f27f5317402f03648abb597e) - @Drapersniper
+
+---
+
+## v1.10.8 (11/06/2023)
+**Full Changelog**: https://github.com/PyLav/PyLav/compare/v1.10.7...v1.10.8
+---
+
 ## v1.10.7 (04/06/2023)
 - [rm sourcery config](https://github.com/PyLav/PyLav/commit/6e699fcb5c492da2502ddd70d432c7d8488039f5) - @Drapersniper
 - [Update Spotify Regex](https://github.com/PyLav/PyLav/commit/c72ab3db1517cd8d83d3c4227dc419fa9ba55445) - @Drapersniper
@@ -773,13 +782,3 @@
 
 ## v0.11.10.0 (23/10/2022)
 - [[patch] cleanup plugins on init sequence](https://github.com/Drapersniper/PyLav/commit/56427d4f763b59e713da234e524d2e54c3cf8b03) - @Drapersniper
-
----
-
-## v0.11.9.0 (23/10/2022)
-- [[patch] Don't specify track endTime if 0](https://github.com/Drapersniper/PyLav/commit/76726906d242d1a92a70428f27843026905e7066) - @Drapersniper
-
----
-
-## v0.11.8.0 (23/10/2022)
-- [[patch] disable yandee source which is enabled by default](https://github.com/Drapersniper/PyLav/commit/1e9f8767de00ef614878621901fcb85d4c263858) - @Drapersniper
