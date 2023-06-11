@@ -28,6 +28,9 @@ class PlaylistData:
                 temp.append(s)
         object.__setattr__(self, "tracks", temp)
 
+    def to_dict(self) -> JSON_DICT_TYPE:
+        return dataclasses.asdict(self)
+
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class BaseTrackResponse:
@@ -36,6 +39,9 @@ class BaseTrackResponse:
 
     def __bool__(self):
         return True
+
+    def to_dict(self) -> JSON_DICT_TYPE:
+        return dataclasses.asdict(self)
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
