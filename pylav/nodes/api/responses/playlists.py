@@ -3,6 +3,8 @@ from __future__ import annotations
 import dataclasses
 from typing import NotRequired
 
+from pylav.type_hints.dict_typing import JSON_DICT_TYPE
+
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
 class Info:
