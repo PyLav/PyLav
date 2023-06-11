@@ -12,3 +12,6 @@ class Info:
     url: NotRequired[str | None] = None
     artworkUrl: NotRequired[str | None] = None
     author: NotRequired[str | None] = None
+
+    def to_dict(self) -> JSON_DICT_TYPE:
+        return dataclasses.asdict(self)
