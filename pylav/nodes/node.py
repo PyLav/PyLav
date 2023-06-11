@@ -960,7 +960,8 @@ class Node:
                 kwargs["name"] = True
 
         cached_query = await response.fetch_bulk(**kwargs)
-
+        if cached_query is None:
+            return
         if tracks := cached_query["tracks"]:
             try:
                 if tracks and first:
