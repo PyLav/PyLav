@@ -2245,9 +2245,7 @@ class Player(VoiceProtocol):
                 "distortion": distortion or self.distortion or None,
                 "low_pass": low_pass or self.low_pass or None,
                 "channel_mix": channel_mix or self.channel_mix or None,
-                "pluginFilters": {
-                    "echo": echo or self.echo or None,
-                },
+                "echo": echo or self.echo or None,
             }
         if not volume:
             kwargs.pop("volume", None)
@@ -2281,9 +2279,7 @@ class Player(VoiceProtocol):
             "distortion": distortion,
             "low_pass": low_pass,
             "channel_mix": channel_mix,
-            "pluginFilters": {
-                "echo": echo,
-            },
+            "echo": echo,
         }
         if not equalizer:
             self._equalizer = self._equalizer.default()
