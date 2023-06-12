@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import dataclasses
 import re
 from typing import TYPE_CHECKING
+
+from pylav.players.filters import Echo
 
 if TYPE_CHECKING:
     from pylav.events.base import PyLavEvent
@@ -23,3 +26,8 @@ def get_event_name(class_type: type[PyLavEvent]) -> str:
 def get_simple_event_name(class_type: type[PyLavEvent]) -> str:
     """Returns the event name for a given event class."""
     return to_snake_case(class_type.__name__)
+
+
+@dataclasses.dataclass(eq=True, slots=True, unsafe_hash=True, kw_only=True, frozen=True)
+class PluginInfoTypeHint:
+    echo: Echo | None = None

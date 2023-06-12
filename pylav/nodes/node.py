@@ -1730,14 +1730,15 @@ class Node:
         distortion: Distortion = None,
         low_pass: LowPass = None,
         channel_mix: ChannelMix = None,
-        echo: Echo = None,
         reset_no_set: bool = False,
         reset: bool = False,
+        pluginFilters: dict[str, Echo | None] = None,
     ) -> JSON_DICT_TYPE:
         """Gets the filter payload."""
         if reset:
             return {}
-
+        if pluginFilters is None:
+            pluginFilters = {}
         payload = {}
         if self.has_filter("volume"):
             self._get_filter_payload_volume(payload, volume)
@@ -1760,6 +1761,7 @@ class Node:
         if self.has_filter("channelMix"):
             self._get_filter_payload_channel_mix(channel_mix, payload, player, reset_no_set)
         if self.has_filter("echo"):
+            echo = pluginFilters.get("echo")
             self._get_filter_payload_echo(echo, payload, player, reset_no_set)
 
         return payload
@@ -1890,7 +1892,7 @@ class Node:
             distortion=distortion,
             low_pass=low_pass,
             channel_mix=channel_mix,
-            echo=echo,
+            pluginFilters=dict(echo=echo),
         )
         player.add_voice_to_payload(payload)
         await self.patch_session_player(guild_id=player.guild.id, payload={"filters": payload})

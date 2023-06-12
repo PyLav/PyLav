@@ -4,8 +4,10 @@ import collections
 from typing import TYPE_CHECKING, Literal
 
 import discord
+from dacite import from_dict
 
 from pylav.events.base import PyLavEvent
+from pylav.events.utils import PluginInfoTypeHint
 from pylav.nodes.node import Node
 
 if TYPE_CHECKING:
@@ -331,6 +333,7 @@ class FiltersAppliedEvent(PyLavEvent):
         "low_pass",
         "channel_mix",
         "echo",
+        "pluginFilters",
     )
 
     def __init__(
@@ -349,6 +352,7 @@ class FiltersAppliedEvent(PyLavEvent):
         low_pass: LowPass | None = None,
         channel_mix: ChannelMix | None = None,
         echo: Echo | None = None,
+        pluginFilters: dict[str, Echo | None] = None,
     ) -> None:
         self.player = player
         self.requester = requester
@@ -363,7 +367,9 @@ class FiltersAppliedEvent(PyLavEvent):
         self.low_pass = low_pass
         self.channel_mix = channel_mix
         self.node = node
-        self.echo = echo
+
+        self.pluginFilters = from_dict(data=pluginFilters, data_class=PluginInfoTypeHint) if pluginFilters else None
+        self.echo = echo if echo else self.pluginFilters.echo if self.pluginFilters else None
 
 
 class QuickPlayEvent(PyLavEvent):

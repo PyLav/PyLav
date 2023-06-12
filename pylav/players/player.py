@@ -437,7 +437,7 @@ class Player(VoiceProtocol):
                 distortion=self.distortion,
                 low_pass=self.low_pass,
                 channel_mix=self.channel_mix,
-                echo=self.echo,
+                pluginFilters=dict(echo=self.echo),
             )
         if self.volume_filter:
             payload["volume"] = self.volume
@@ -1634,7 +1634,7 @@ class Player(VoiceProtocol):
                     distortion=self.distortion,
                     low_pass=self.low_pass,
                     channel_mix=self.channel_mix,
-                    echo=self.echo,
+                    pluginFilters=dict(echo=self.echo),
                 )
             if self.volume_filter:
                 payload["volume"] = self.volume
@@ -2909,7 +2909,7 @@ class Player(VoiceProtocol):
                 distortion=self.distortion,
                 low_pass=self.low_pass,
                 channel_mix=self.channel_mix,
-                echo=self.echo,
+                pluginFilters=dict(echo=self.echo),
             )
         if self.volume_filter:
             payload["volume"] = self.volume
