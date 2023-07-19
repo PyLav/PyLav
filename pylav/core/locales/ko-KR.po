@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-06-11 14:04+0000\n"
-"PO-Revision-Date: 2023-06-11 14:05\n"
+"POT-Creation-Date: 2023-07-19 20:44+0000\n"
+"PO-Revision-Date: 2023-07-19 20:44\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -17,19 +17,19 @@ msgstr ""
 "X-Crowdin-File-ID: 3471\n"
 "Language: ko_KR\n"
 
-#: pylav/core/client.py:933 pylav/core/client.py:971
+#: pylav/core/client.py:926 pylav/core/client.py:964
 msgid "There are no available nodes!"
 msgstr "사용 가능한 노드가 없습니다!"
 
-#: pylav/core/client.py:937 pylav/core/client.py:975 pylav/core/client.py:1310
+#: pylav/core/client.py:930 pylav/core/client.py:968 pylav/core/client.py:1302
 msgid "No node with {feature_name_variable_do_not_translate} functionality available!"
 msgstr "노드가 없는 경우 {feature_name_variable_do_not_translate} 기능을 사용할 수 있습니다!"
 
-#: pylav/core/client.py:1759
+#: pylav/core/client.py:1751
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist."
 msgstr "혼합 재생목록을 생성하려면 단일 동영상, 사용자, 채널 또는 재생목록 식별자가 필요합니다."
 
-#: pylav/core/client.py:1764
+#: pylav/core/client.py:1756
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist. However, you provided multiple"
 msgstr "혼합 재생목록을 생성하려면 단일 동영상, 사용자, 채널 또는 재생목록 식별자가 필요합니다. 그러나 여러"
 
