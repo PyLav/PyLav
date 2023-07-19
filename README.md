@@ -65,7 +65,6 @@ Features
     - Upon library state being shutdown all player states are saved and restored on library startup
 - History of played tracks available for players
 - RadioBrowser.org API to retrieve radio stations available for players
-- Lyrics API to retrieve lyrics for tracks provided by [Flowery](https://flowery.pw)
 - M3U, PLS and PYLAV text file parser to convert contents into a playlist (p.s. Lavalink must support the format/coded of files still)
 
 System Requirements

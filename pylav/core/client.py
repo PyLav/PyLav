@@ -65,7 +65,6 @@ from pylav.exceptions.node import NoNodeAvailableException, NoNodeWithRequestFun
 from pylav.exceptions.request import HTTPException
 from pylav.extension.bundled_node import LAVALINK_DOWNLOAD_DIR
 from pylav.extension.bundled_node.manager import LocalNodeManager
-from pylav.extension.flowery.base import FloweryAPI
 from pylav.extension.m3u import M3UParser
 from pylav.extension.radio import RadioBrowser
 from pylav.helpers.singleton import SingletonCallable, SingletonClass
@@ -231,7 +230,6 @@ class Client(metaclass=SingletonClass):
             self._player_config_manager = PlayerConfigController(self)
             self._equalizer_config_manager = EqualizerController(self)
 
-            self._flowery_api = FloweryAPI(self)
             self._radio_manager = RadioBrowser(self)
             self._m3u8parser = M3UParser(self)
             self._connect_back = connect_back
@@ -372,11 +370,6 @@ class Client(metaclass=SingletonClass):
     def equalizer_db_manager(self) -> EqualizerController:
         """Returns the sql equalizer config manager"""
         return self._equalizer_config_manager
-
-    @property
-    def flowery_api(self) -> FloweryAPI:
-        """Returns the flowery api"""
-        return self._flowery_api
 
     @property
     def lib_db_manager(self) -> ConfigController:
@@ -1099,7 +1092,6 @@ class Client(metaclass=SingletonClass):
                         await self._local_node_manager.shutdown()
                         await self._session.close()
                         await self._cached_session.close()
-                        await self._flowery_api.shutdown()
 
                         if self._scheduler:
                             with contextlib.suppress(Exception):

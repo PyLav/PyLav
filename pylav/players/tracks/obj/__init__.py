@@ -18,7 +18,6 @@ from dacite import from_dict
 
 from pylav.constants.regex import SQUARE_BRACKETS, STREAM_TITLE
 from pylav.exceptions.track import TrackNotFoundException
-from pylav.extension.flowery.lyrics import Error, Lyrics
 from pylav.nodes.api.responses import rest_api
 from pylav.nodes.api.responses.playlists import Info
 from pylav.nodes.api.responses.track import Track as APITrack
@@ -864,18 +863,6 @@ class Track:
     @staticmethod
     def _maybe_escape_markdown(text: str, escape: bool = True) -> str:
         return discord.utils.escape_markdown(text) if escape else text
-
-    async def fetch_lyrics(self) -> tuple[bool, Lyrics | Error | None]:
-        if isrc := await self.isrc():
-            return True, await self.client.flowery_api.lyrics.get_lyrics(isrc=isrc)
-        if await self.is_spotify():
-            return True, await self.client.flowery_api.lyrics.get_lyrics(spotify_id=await self.identifier())
-        elif await self.source() in {"deezer", "applemusic"}:
-            return True, await self.client.flowery_api.lyrics.get_lyrics(
-                query=f"{await self.title()} artist:{await self.author()}"
-            )
-        else:
-            return False, await self.client.flowery_api.lyrics.get_lyrics(query=await self.title())
 
     async def get_mixplaylist_url(self) -> str | None:
         if not await self.is_youtube():

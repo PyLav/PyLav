@@ -8,7 +8,6 @@ Subpackages
    :maxdepth: 4
 
    pylav.extension.bundled_node
-   pylav.extension.flowery
    pylav.extension.m3u
    pylav.extension.radio
    pylav.extension.red

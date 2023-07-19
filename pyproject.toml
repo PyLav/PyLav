@@ -130,14 +130,14 @@ exclude = [
 ]
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
-pip = "^23.1.2"
+pip = "^23.2"
 wheel = "^0.40.0"
 APScheduler = "^3.10.1"
 Brotli = "^1.0.9"
-PyYAML = "^6.0"
-aiohttp-client-cache = "^0.8.1"
+PyYAML = "^6.0.1"
+aiohttp-client-cache = "^0.8.2"
 aiopath = "^0.6.11"
-asyncpg = "^0.27.0"
+asyncpg = "^0.28.0"
 asyncspotify = "^0.12.1"
 asyncstdlib = "^3.10.8"
 cached-property = "^1.5.2"
@@ -145,14 +145,14 @@ cashews = {extras = ["dill", "redis"], version = "^6.2.0"}
 dacite = "^1.8.1"
 deepdiff6 = "^6.2.0"
 expiringdict = "^1.2.2"
-humanize = "^4.6.0"
-importlib-metadata = "^6.6.0"
+humanize = "^4.7.0"
+importlib-metadata = "^6.8.0"
 iso8601 = "^2.0.0"
 mutagen = "^1.46.0"
 netaddr = "^0.8.0"
-numpy = "^1.24.3"
-piccolo = {extras = ["all"], version = "^0.114.0"}
-redis = "^4.5.5"
+numpy = "^1.25.1"
+piccolo = {extras = ["all"], version = "^0.118.0"}
+redis = "^4.6.0"
 tabulate = {extras = ["widechars"], version = "^0.9.0"}
 ujson = "^5.8.0"
 watchfiles = "^0.19.0"
@@ -160,16 +160,16 @@ watchfiles = "^0.19.0"
 # Dependencies pre-installed with Red, only required if using PyLav on a Non-Red bot
 Red-Commons = { version = "^1.0.0", optional = true}
 aiohttp = {extras = ["speedups"], version = "^3.8.4", optional = true}
-apsw = { version = "^3.42.0.0", optional = true}
-orjson = { version = "^3.9.1", optional = true}
+apsw = { version = "^3.41.2.0", optional = true}
+orjson = { version = "^3.8.12", optional = true}
 packaging = { version = "^23.1", optional = true}
-platformdirs = { version = "^3.5.3", optional = true}
+platformdirs = { version = "^3.5.1", optional = true}
 psutil =  { version = "^5.9.5", optional = true}
 python-dateutil = { version = "^2.8.2", optional = true}
 pytz = { version = "^2023.3", optional = true}
-rich = { version = "^13.4.1", optional = true}
-typing-extensions = { version = "^4.6.3", optional = true}
-rapidfuzz = { version = "^3.1.1", optional = true}
+rich = { version = "^13.3.5", optional = true}
+typing-extensions = { version = "^4.5.0", optional = true}
+rapidfuzz = { version = "^3.0.0", optional = true}
 uvloop = { version = "^0.17.0", markers = "sys_platform != 'win32' and platform_python_implementation == 'CPython'", optional = true}
 
 # Dependency for the docs
