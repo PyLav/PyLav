@@ -39,7 +39,7 @@
 - [Add more APIs to Query db Model](https://github.com/PyLav/PyLav/commit/0bde178889a466a0ee3e88c6509ac5ad452d892e) - @Drapersniper
 - [Correctly store the info field for queries](https://github.com/PyLav/PyLav/commit/44fadbcccffb076e8c00699c68e8bfd85efc2525) - @Drapersniper
 - [Add `info` column to stored Tracks and set migration for existing databases](https://github.com/PyLav/PyLav/commit/6a13feff2fe3b93ea30df8254a0d7e7b67e1815d) - @Drapersniper
-- [Implement https://github.com/Walkyst/lavaplayer-fork/compare/custom...TopiSenpai:lavaplayer-fork:extend-audioplaylist-interface with backwards compat](https://github.com/PyLav/PyLav/commit/0d880ab2c1f887562bb241c4c55404e632c87ca2) - @Drapersniper
+- [Implement https://github.com/Walkyst/lavaplayer-fork/compare/custom...topi314:lavaplayer-fork:extend-audioplaylist-interface with backwards compat](https://github.com/PyLav/PyLav/commit/0d880ab2c1f887562bb241c4c55404e632c87ca2) - @Drapersniper
 - [Update LavaScr](https://github.com/PyLav/PyLav/commit/77a800e4b1c31a33d2dd1ebebb53031a6b5dcc21) - @Drapersniper
 - [Breaking change: https://github.com/lavalink-devs/Lavalink/commit/d19f2a565a29a3cd11d0a5343654c2153953a8da](https://github.com/PyLav/PyLav/commit/4d5e0f398fbdeaf8a85f5f0cd4c0d9d9860f9d90) - @Drapersniper
 - [Update jar download location](https://github.com/PyLav/PyLav/commit/d1ae47a391572537d1d3236252cb2603c3ff56c2) - @Drapersniper

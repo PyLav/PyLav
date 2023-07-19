@@ -29,15 +29,18 @@ NODE_DEFAULT_SETTINGS = {
     "lavalink": {
         "plugins": [
             {
-                "dependency": "com.github.TopiSenpai.LavaSrc:lavasrc-plugin:3.2.2",
+                "dependency": "com.github.topi314.LavaSrc:lavasrc-plugin:4.0.0-beta.3",
                 "repository": "https://maven.topi.wtf/releases",
             },
             {
-                "dependency": "com.dunctebot:skybot-lavalink-plugin:1.4.1",
+                "dependency": "com.dunctebot:skybot-lavalink-plugin:1.4.2",
                 "repository": "https://m2.duncte123.dev/releases",
             },
-            {"dependency": "com.github.topisenpai:sponsorblock-plugin:2.0.0", "repository": "https://jitpack.io"},
-            {"dependency": "me.rohank05:lavalink-filter-plugin:0.0.1", "repository": "https://jitpack.io"},
+            {
+                "dependency": "com.github.topi314.sponsorblock:sponsorblock-plugin:3.0.0-beta.1",
+                "repository": "https://maven.topi.wtf/releases",
+            },
+            {"dependency": "me.rohank05:lavalink-filter-plugin:0.0.2", "repository": "https://jitpack.io"},
             {"dependency": "com.github.esmBot:lava-xm-plugin:v0.2.1", "repository": "https://jitpack.io"},
         ],
         "server": {

@@ -37,7 +37,7 @@ SUPPORTED_SOURCES = {
     "tiktok",
     "mixcloud",
     "soundgasm",
-    # https://github.com/TopiSenpai/LavaSrc
+    # https://github.com/topi314/LavaSrc
     "spotify",
     "applemusic",
     "deezer",
@@ -47,7 +47,7 @@ SUPPORTED_SOURCES = {
 }
 
 SUPPORTED_FEATURES = {
-    # https://github.com/Topis-Lavalink-Plugins/Sponsorblock-Plugin
+    # https://github.com/topi314/Sponsorblock-Plugin
     "sponsorblock",
 }
 SUPPORTED_FILTERS = {

@@ -1,6 +1,10 @@
 version: '3.8'
 volumes:
     pgsocket:
+    pgdata:
+    redbot:
+    pylav:
+    lavalink:
 services:
     pylav:
     # Read https://github.com/PhasecoreX/docker-red-discordbot#red-discordbot-v3 for more info
@@ -10,9 +14,8 @@ services:
         restart: unless-stopped
         volumes:
         -   pgsocket:/var/run/postgresql # Postgres socket using Docker volume to allow access from other containers without mounting the host's filesystem (I.e use Sockets even on Windows)
-        -   ./localtracks:/localtracks  # Localtracks folder
-        -   ./redbot:/data # Red data folder
-        -   ./pylav:/pylav # Pylav folder
+        -   redbot:/data # Red data folder
+        -   pylav:/pylav # Pylav folder
             # Use the pylav.docker.yaml file from https://github.com/PyLav/PyLav/blob/develop/pylav.docker.yaml editing it as necessary.
         -   ./pylav.docker.yaml:/pylav/pylav.yaml # Pylav config file
         environment:
@@ -37,7 +40,7 @@ services:
             POSTGRES_DB: postgres
             POSTGRES_HOST_AUTH_METHOD: trust
         volumes:
-        -   ./pgdata:/var/lib/postgresql/data # Postgres data folder
+        -   pgdata:/var/lib/postgresql/data # Postgres data folder
         -   pgsocket:/var/run/postgresql # Postgres socket using Docker volume to allow access from other containers without mounting the host's filesystem (I.e use Sockets even on Windows)
     lavalink:
         hostname: lavalink
@@ -46,11 +49,9 @@ services:
         restart: always
         volumes:
         # Mount the Lavalink logs folder
-        -   ./lavalink/logs:/opt/Lavalink/logs
+        -   lavalink/logs:/opt/Lavalink/logs
         # Mount the Plugin folder to avoid downloading the plugins every time the image starts up
-        -   ./lavalink/plugins:/opt/Lavalink/plugins
-        #  Mount this localtracks folder to the image to allow playback of media inside of '/localtracks'
-        -   ./localtracks:/localtracks
+        -   lavalink/plugins:/opt/Lavalink/plugins
         environment:
             _JAVA_OPTIONS: -Xmx4G # The highest amount of RAM which Lavalink is allowed to use
             # Set this to 'true' if this is a remote node, and you need to conserve outbound traffic
@@ -67,13 +68,13 @@ services:
 
 
             # Plugins to load
-            LAVALINK_PLUGINS_0_DEPENDENCY: com.github.TopiSenpai.LavaSrc:lavasrc-plugin:c9aac26
-            LAVALINK_PLUGINS_0_REPOSITORY: https://maven.topi.wtf/snapshots
-            LAVALINK_PLUGINS_1_DEPENDENCY: com.github.topisenpai:sponsorblock-plugin:2.0.0
+            LAVALINK_PLUGINS_0_DEPENDENCY: com.github.topi314.LavaSrc:lavasrc-plugin:4.0.0-beta.3
+            LAVALINK_PLUGINS_0_REPOSITORY: https://maven.topi.wtf/releases
+            LAVALINK_PLUGINS_1_DEPENDENCY: com.github.topi314.sponsorblock:sponsorblock-plugin:3.0.0-beta.1
             LAVALINK_PLUGINS_1_REPOSITORY: https://jitpack.io
-            LAVALINK_PLUGINS_2_DEPENDENCY: com.dunctebot:skybot-lavalink-plugin:1.4.1
+            LAVALINK_PLUGINS_2_DEPENDENCY: com.dunctebot:skybot-lavalink-plugin:1.4.2
             LAVALINK_PLUGINS_2_REPOSITORY: https://m2.duncte123.dev/releases
-            LAVALINK_PLUGINS_3_DEPENDENCY: me.rohank05:lavalink-filter-plugin:0.0.1
+            LAVALINK_PLUGINS_3_DEPENDENCY: me.rohank05:lavalink-filter-plugin:0.0.2
             LAVALINK_PLUGINS_3_REPOSITORY: https://jitpack.io
             LAVALINK_PLUGINS_4_DEPENDENCY: com.github.esmBot:lava-xm-plugin:v0.2.1
             LAVALINK_PLUGINS_4_REPOSITORY: https://jitpack.io
@@ -184,7 +185,7 @@ services:
             PLUGINS_LAVASRC_SPOTIFY_ALBUMLOADLIMIT: 220       # The number of pages at 50 tracks each
             # Lavasrc Yandex configuration
             PLUGINS_LAVASRC_SOURCES_YANDEXMUSIC: false        # Enable Yandex Music source
-            PLUGINS_LAVASRC_YANDEXMUSIC_ACCESSTOKEN:          # the token used for accessing the yandex music api. See https://github.com/TopiSenpai/LavaSrc#yandex-music
+            PLUGINS_LAVASRC_YANDEXMUSIC_ACCESSTOKEN:          # the token used for accessing the yandex music api. See https://github.com/topi314/LavaSrc#yandex-music
 
 
             # Configure Sentry

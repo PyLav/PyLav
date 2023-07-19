@@ -29,9 +29,9 @@ async def update_plugins(client: Client) -> None:
             if dependency in _temp:
                 continue
             _temp.add(dependency)
-            if plugin["dependency"].startswith("com.github.TopiSenpai.LavaSrc:lavasrc-plugin:"):
+            if plugin["dependency"].startswith("com.github.topi314.LavaSrc:lavasrc-plugin:"):
                 existing_plugins.add("lavasrc-plugin-")
-                org = "TopiSenpai"
+                org = "topi314"
                 repo = "LavaSrc"
                 repository = "https://maven.topi.wtf/releases"
                 dependency += ":"
@@ -41,11 +41,11 @@ async def update_plugins(client: Client) -> None:
                 repo = "skybot-lavalink-plugin"
                 repository = "https://m2.duncte123.dev/releases"
                 dependency += ":"
-            elif plugin["dependency"].startswith("com.github.topisenpai:sponsorblock-plugin:"):
+            elif plugin["dependency"].startswith("com.github.topi314.sponsorblock:sponsorblock-plugin:"):
                 existing_plugins.add("sponsorblock-plugin-")
-                org = "Topis-Lavalink-Plugins"
+                org = "topi314"
                 repo = "Sponsorblock-Plugin"
-                repository = "https://jitpack.io"
+                repository = "https://maven.topi.wtf/releases"
                 dependency += ":"
             elif plugin["dependency"].startswith("com.github.esmBot:lava-xm-plugin:"):
                 existing_plugins.add("lava-xm-plugin-")

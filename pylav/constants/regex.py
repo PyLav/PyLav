@@ -76,7 +76,7 @@ SOURCE_INPUT_MATCH_TIKTOK = re.compile(
     r"^https://(?:www\.|m\.)?tiktok\.com/@(?P<tiktok_user>[^/]+)/video/(?P<tiktok_video>\d+).*$", re.IGNORECASE
 )
 
-# https://github.com/TopiSenpai/LavaSrc/blob/master/main/src/main/java/com/github/topisenpai/lavasrc/spotify/SpotifySourceManager.java#L39
+# https://github.com/topi314/LavaSrc/blob/master/main/src/main/java/com/github/topi314/lavasrc/spotify/SpotifySourceManager.java#L39
 SOURCE_INPUT_MATCH_SPOTIFY = re.compile(
     r"(https?://)(www\.)?open\.spotify\.com/("
     r"(?P<spotify_region>[a-zA-Z-]+)/)?(user/"
@@ -85,7 +85,7 @@ SOURCE_INPUT_MATCH_SPOTIFY = re.compile(
     r"(?P<spotify_identifier>[a-zA-Z\d\-_]+)",
     re.IGNORECASE,
 )
-# https://github.com/TopiSenpai/LavaSrc/blob/master/main/src/main/java/com/github/topisenpai/lavasrc/applemusic/AppleMusicSourceManager.java#L33
+# https://github.com/topi314/LavaSrc/blob/master/main/src/main/java/com/github/topi314/lavasrc/applemusic/AppleMusicSourceManager.java#L33
 SOURCE_INPUT_MATCH_APPLE_MUSIC = re.compile(
     r"(https?://)?(www\.)?music\.apple\.com/(?P<amcountrycode>[a-zA-Z]{2}/)?"
     r"(?P<type>album|playlist|artist|song)(/[a-zA-Z\d\-]+)?/"
@@ -138,7 +138,7 @@ SOURCE_INPUT_MATCH_SEARCH = re.compile(
     re.IGNORECASE,
 )
 SOURCE_INPUT_MATCH_HTTP = re.compile(r"^http(s)?://", re.IGNORECASE)
-# https://github.com/TopiSenpai/LavaSrc/blob/master/main/src/main/java/com/github/topisenpai/lavasrc/deezer/DeezerAudioSourceManager.java#L35
+# https://github.com/topi314/LavaSrc/blob/master/main/src/main/java/com/github/topi314/lavasrc/deezer/DeezerAudioSourceManager.java#L35
 SOURCE_INPUT_MATCH_DEEZER = re.compile(
     r"^(https?://)?(www\.)?deezer\.com/"
     r"(?P<dzcountrycode>[a-zA-Z]{2}/)?"
@@ -148,7 +148,7 @@ SOURCE_INPUT_MATCH_DEEZER = re.compile(
     re.IGNORECASE,
 )
 # https://github.com/Walkyst/lavaplayer-fork/blob/custom/main/src/main/java/com/sedmelluq/discord/lavaplayer/source/yamusic/YandexMusicAudioSourceManager.java#L33
-# https://github.com/TopiSenpai/LavaSrc/blob/master/main/src/main/java/com/github/topisenpai/lavasrc/yandexmusic/YandexMusicSourceManager.java#L34
+# https://github.com/topi314/LavaSrc/blob/master/main/src/main/java/com/github/topi314/lavasrc/yandexmusic/YandexMusicSourceManager.java#L34
 SOURCE_INPUT_MATCH_YANDEX_TRACK = re.compile(
     r"^(https?://)?music\.yandex\.ru/(?P<ymtype1>artist|album)/"
     r"(?P<ymidentifier>[0-9]+)/?((?P<ymtype2>track/)(?P<ymidentifier2>[0-9]+)/?)?$"
