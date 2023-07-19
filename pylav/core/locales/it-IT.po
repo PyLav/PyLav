@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-06-11 14:04+0000\n"
-"PO-Revision-Date: 2023-06-11 14:05\n"
+"POT-Creation-Date: 2023-07-19 20:44+0000\n"
+"PO-Revision-Date: 2023-07-19 20:44\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "MIME-Version: 1.0\n"
@@ -17,19 +17,19 @@ msgstr ""
 "X-Crowdin-File-ID: 3471\n"
 "Language: it_IT\n"
 
-#: pylav/core/client.py:933 pylav/core/client.py:971
+#: pylav/core/client.py:926 pylav/core/client.py:964
 msgid "There are no available nodes!"
 msgstr "Non ci sono nodi disponibili!"
 
-#: pylav/core/client.py:937 pylav/core/client.py:975 pylav/core/client.py:1310
+#: pylav/core/client.py:930 pylav/core/client.py:968 pylav/core/client.py:1302
 msgid "No node with {feature_name_variable_do_not_translate} functionality available!"
 msgstr "Nessun nodo con {feature_name_variable_do_not_translate} funzionalità disponibile!"
 
-#: pylav/core/client.py:1759
+#: pylav/core/client.py:1751
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist."
 msgstr "Per generare una playlist mista è necessario un singolo identificatore di video, utente, canale o playlist."
 
-#: pylav/core/client.py:1764
+#: pylav/core/client.py:1756
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist. However, you provided multiple"
 msgstr "Per generare una playlist mista è necessario un singolo identificatore di video, utente, canale o playlist. Tuttavia, hai fornito più"
 
