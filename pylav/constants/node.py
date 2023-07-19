@@ -29,7 +29,7 @@ NODE_DEFAULT_SETTINGS = {
     "lavalink": {
         "plugins": [
             {
-                "dependency": "com.github.topi314.LavaSrc:lavasrc-plugin:4.0.0-beta.3",
+                "dependency": "com.github.topi314.lavasrc:lavasrc-plugin:4.0.0-beta.3",
                 "repository": "https://maven.topi.wtf/releases",
             },
             {

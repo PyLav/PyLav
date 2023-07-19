@@ -25,7 +25,7 @@ async def migration_v_1_12_0(client: Client, current_version: Version) -> None:
         plugin
         for plugin in plugins
         if not (
-            plugin["dependency"].startswith("com.github.topi314.LavaSrc:lavasrc-plugin:")
+            plugin["dependency"].startswith("com.github.topi314.lavasrc:lavasrc-plugin:")
             and plugin["dependency"].startswith("com.github.topisenpai:sponsorblock-plugin:")
         )
     ]
@@ -34,7 +34,7 @@ async def migration_v_1_12_0(client: Client, current_version: Version) -> None:
         [
             plugin
             for plugin in NODE_DEFAULT_SETTINGS["lavalink"]["plugins"]
-            if plugin["dependency"].startswith("com.github.topi314.LavaSrc:lavasrc-plugin")
+            if plugin["dependency"].startswith("com.github.topi314.lavasrc:lavasrc-plugin")
             or plugin["dependency"].startswith("com.github.topi314.sponsorblock:sponsorblock-plugin")
         ]
     )

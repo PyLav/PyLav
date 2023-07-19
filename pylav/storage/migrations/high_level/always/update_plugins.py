@@ -29,7 +29,7 @@ async def update_plugins(client: Client) -> None:
             if dependency in _temp:
                 continue
             _temp.add(dependency)
-            if plugin["dependency"].startswith("com.github.topi314.LavaSrc:lavasrc-plugin:"):
+            if plugin["dependency"].startswith("com.github.topi314.lavasrc:lavasrc-plugin:"):
                 existing_plugins.add("lavasrc-plugin-")
                 org = "topi314"
                 repo = "LavaSrc"
