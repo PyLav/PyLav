@@ -1,5 +1,21 @@
 # Changelog
 
+## v1.12.1 (19/07/2023)
+- [Make release](https://github.com/PyLav/PyLav/commit/152d2a0955ed20ac94d7a256779745595a5e31d4) - @Drapersniper
+- [Auto Merge](https://github.com/PyLav/PyLav/commit/a33cd55214b706cf3c1988bf43622e71e1c4e941) - @Drapersniper
+
+---
+
+## v1.12.0 (19/07/2023)
+- [git attributes](https://github.com/PyLav/PyLav/commit/59d235349ab7fd807f34b892c5bd4a7b1dd81279) - @Drapersniper
+- [Remove flowery](https://github.com/PyLav/PyLav/commit/ddaa1ec3eb395a987c7476e0580d7441f207919f) - @Drapersniper
+- [Update casing](https://github.com/PyLav/PyLav/commit/35903698a02cfea1f11bcbdc69271754fdbd7ca9) - @Drapersniper
+- [Update to PyLav 1.11.0](https://github.com/PyLav/PyLav/commit/059a844acc00ff1b03a0c6a381b34df27db0d3f9) - @Drapersniper
+- [Bump crowdin/github-action from 1.9.0 to 1.11.0 (#251)](https://github.com/PyLav/PyLav/commit/6be0d647ad548d24ab2d2bf89862719e3b301d80) - @dependabot[bot]
+- [Bump actions/checkout from 3.5.2 to 3.5.3 (#249)](https://github.com/PyLav/PyLav/commit/af5d68adbe9d86722832ec1ac5786e4d5bd553d7) - @dependabot[bot]
+
+---
+
 ## v1.11.0 (12/06/2023)
 - [Closes #248](https://github.com/PyLav/PyLav/commit/4a7572c34744fb8c90c03913c8549d0cdd67835f) - @Drapersniper
 
@@ -39,7 +55,7 @@
 - [Add more APIs to Query db Model](https://github.com/PyLav/PyLav/commit/0bde178889a466a0ee3e88c6509ac5ad452d892e) - @Drapersniper
 - [Correctly store the info field for queries](https://github.com/PyLav/PyLav/commit/44fadbcccffb076e8c00699c68e8bfd85efc2525) - @Drapersniper
 - [Add `info` column to stored Tracks and set migration for existing databases](https://github.com/PyLav/PyLav/commit/6a13feff2fe3b93ea30df8254a0d7e7b67e1815d) - @Drapersniper
-- [Implement https://github.com/Walkyst/lavaplayer-fork/compare/custom...topi314:lavaplayer-fork:extend-audioplaylist-interface with backwards compat](https://github.com/PyLav/PyLav/commit/0d880ab2c1f887562bb241c4c55404e632c87ca2) - @Drapersniper
+- [Implement https://github.com/Walkyst/lavaplayer-fork/compare/custom...TopiSenpai:lavaplayer-fork:extend-audioplaylist-interface with backwards compat](https://github.com/PyLav/PyLav/commit/0d880ab2c1f887562bb241c4c55404e632c87ca2) - @Drapersniper
 - [Update LavaScr](https://github.com/PyLav/PyLav/commit/77a800e4b1c31a33d2dd1ebebb53031a6b5dcc21) - @Drapersniper
 - [Breaking change: https://github.com/lavalink-devs/Lavalink/commit/d19f2a565a29a3cd11d0a5343654c2153953a8da](https://github.com/PyLav/PyLav/commit/4d5e0f398fbdeaf8a85f5f0cd4c0d9d9860f9d90) - @Drapersniper
 - [Update jar download location](https://github.com/PyLav/PyLav/commit/d1ae47a391572537d1d3236252cb2603c3ff56c2) - @Drapersniper
@@ -771,15 +787,3 @@
 - [[patch] Allow partial tracks to query the cache](https://github.com/Drapersniper/PyLav/commit/bd939f19b104890c929e7a5d214c51f36903c06b) - @Drapersniper
 - [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/ba02457b9bc793c6615f12557454895797a9b41c) - @Drapersniper
 - [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/39eccb08e7baad74ae133f91c8af596931bd5c22) - @crowdin-bot
-
----
-
-## v0.11.13.0 (24/10/2022)
-- [[patch] Make all single tracks partial by default](https://github.com/Drapersniper/PyLav/commit/f62747a4ec0fd44ed89ec74ae9001ff83aed6525) - @Drapersniper
-- [Fix localtracks not being sorted by default](https://github.com/Drapersniper/PyLav/commit/6c1ee2e0a19aa5fb5ffec184c58f3191d9cba695) - @Drapersniper
-
----
-
-## v0.11.12.0 (24/10/2022)
-- [[patch] fix an instance of where `Player.play()` was being called instead of `Player.add()` causing all songs in the enqueue op to be fast skipped](https://github.com/Drapersniper/PyLav/commit/1f4a09db7777a660b8a3ee1bad69c8d539552f62) - @Drapersniper
-- [fix  RuntimeWarning: coroutine 'AsyncPath.is_file' was never awaited](https://github.com/Drapersniper/PyLav/commit/efd82c1366b8d5ff8fa19c09c1d099ea4f37ed33) - @Drapersniper
