@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-05-26 19:26+0000\n"
-"PO-Revision-Date: 2023-05-26 19:27\n"
+"POT-Creation-Date: 2023-07-21 21:03+0000\n"
+"PO-Revision-Date: 2023-07-21 21:03\n"
 "Last-Translator: \n"
 "Language-Team: Thai\n"
 "MIME-Version: 1.0\n"
@@ -25,127 +25,127 @@ msgstr "ไม่มีโหนดที่พร้อมใช้งานใ
 msgid "Music in {number_of_servers_variable_do_not_translate} servers"
 msgstr "เพลงใน {number_of_servers_variable_do_not_translate} เซิร์ฟเวอร์"
 
-#: pylav/players/player.py:1140
+#: pylav/players/player.py:1141
 msgid "There are no tracks currently in the player history."
 msgstr "ขณะนี้ไม่มีแทร็กในประวัติผู้เล่น"
 
-#: pylav/players/player.py:1815
+#: pylav/players/player.py:1824
 msgid "Current node has the volume filter feature disabled."
 msgstr "โหนดปัจจุบันมีคุณลักษณะตัวกรองไดรฟ์ข้อมูลถูกปิดใช้งาน"
 
-#: pylav/players/player.py:1837 pylav/players/player.py:2013
-#: pylav/players/player.py:2068
+#: pylav/players/player.py:1846 pylav/players/player.py:2022
+#: pylav/players/player.py:2077
 msgid "Current node has the equalizer feature disabled."
 msgstr "โหนดปัจจุบันมีคุณลักษณะอีควอไลเซอร์ถูกปิดใช้งาน"
 
-#: pylav/players/player.py:1857
+#: pylav/players/player.py:1866
 msgid "Current node has the karaoke feature disabled"
 msgstr "โหนดปัจจุบันมีคุณลักษณะคาราโอเกะถูกปิดใช้งาน"
 
-#: pylav/players/player.py:1877 pylav/players/player.py:2015
-#: pylav/players/player.py:2070
+#: pylav/players/player.py:1886 pylav/players/player.py:2024
+#: pylav/players/player.py:2079
 msgid "Current node has the timescale feature disabled."
 msgstr "โหนดปัจจุบันมีคุณลักษณะมาตราส่วนเวลาถูกปิดใช้งาน"
 
-#: pylav/players/player.py:1897
+#: pylav/players/player.py:1906
 msgid "Current node has the tremolo feature disabled."
 msgstr "โหนดปัจจุบันมีคุณลักษณะ tremolo ถูกปิดใช้งาน"
 
-#: pylav/players/player.py:1917
+#: pylav/players/player.py:1926
 msgid "Current node has the vibrato feature disabled."
 msgstr "โหนดปัจจุบันปิดใช้งานคุณสมบัติ vibrato"
 
-#: pylav/players/player.py:1937
+#: pylav/players/player.py:1946
 msgid "Current node has the rotation feature disabled."
 msgstr "โหนดปัจจุบันปิดใช้งานคุณลักษณะการหมุน"
 
-#: pylav/players/player.py:1957
+#: pylav/players/player.py:1966
 msgid "Current node has the distortion feature disabled."
 msgstr "โหนดปัจจุบันมีคุณลักษณะความผิดเพี้ยนถูกปิดใช้งาน"
 
-#: pylav/players/player.py:1977
+#: pylav/players/player.py:1986
 msgid "Current node has the low-pass feature disabled."
 msgstr "โหนดปัจจุบันมีคุณลักษณะ low-pass ถูกปิดใช้งาน"
 
-#: pylav/players/player.py:1997
+#: pylav/players/player.py:2006
 msgid "Current node has the echo feature disabled."
 msgstr "โหนดปัจจุบันปิดใช้งานคุณลักษณะ echo"
 
-#: pylav/players/player.py:2127
+#: pylav/players/player.py:2136
 msgid "Current node has the channel-mix feature disabled."
 msgstr "โหนดปัจจุบันปิดใช้งานคุณลักษณะการผสมแชนเนล"
 
-#: pylav/players/player.py:2403 pylav/players/player.py:2470
-#: pylav/players/player.py:2487 pylav/players/player.py:2593
+#: pylav/players/player.py:2412 pylav/players/player.py:2479
+#: pylav/players/player.py:2496 pylav/players/player.py:2602
 msgid "LIVE"
 msgstr "อยู่"
 
-#: pylav/players/player.py:2422
+#: pylav/players/player.py:2431
 msgid "Now Playing in {server_name_variable_do_not_translate}"
 msgstr "ตอนนี้กําลังเล่นอยู่ {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2449 pylav/players/player.py:2641
+#: pylav/players/player.py:2458 pylav/players/player.py:2650
 msgid "Currently livestreaming"
 msgstr "กําลังสตรีมสด"
 
-#: pylav/players/player.py:2451
+#: pylav/players/player.py:2460
 msgid "Playing: "
 msgstr "เล่น: "
 
-#: pylav/players/player.py:2454 pylav/players/player.py:2479
-#: pylav/players/player.py:2495 pylav/players/player.py:2647
+#: pylav/players/player.py:2463 pylav/players/player.py:2488
+#: pylav/players/player.py:2504 pylav/players/player.py:2656
 msgid "Requester"
 msgstr "ผู้ร้องขอ"
 
-#: pylav/players/player.py:2460
+#: pylav/players/player.py:2469
 msgid "Duration: {track_duration_variable_do_not_translate}"
 msgstr "ระยะเวลา: {track_duration_variable_do_not_translate}"
 
-#: pylav/players/player.py:2475 pylav/players/player.py:2491
+#: pylav/players/player.py:2484 pylav/players/player.py:2500
 msgid "Duration"
 msgstr "ระยะเวลา"
 
-#: pylav/players/player.py:2481
+#: pylav/players/player.py:2490
 msgid "Previous Track"
 msgstr "แทร็กก่อนหน้า"
 
-#: pylav/players/player.py:2497
+#: pylav/players/player.py:2506
 msgid "Next Track"
 msgstr "ติดตามต่อไป"
 
-#: pylav/players/player.py:2507
+#: pylav/players/player.py:2516
 msgid "1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "1 แทร็ก, {queue_total_duration_variable_do_not_translate} เหลือ\n"
 
-#: pylav/players/player.py:2511
+#: pylav/players/player.py:2520
 msgid "0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "0 เพลง, {queue_total_duration_variable_do_not_translate} เหลือ\n"
 
-#: pylav/players/player.py:2515
+#: pylav/players/player.py:2524
 msgid "{track_count_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "{track_count_variable_do_not_translate} แทร็ค {queue_total_duration_variable_do_not_translate} เหลือ\n"
 
-#: pylav/players/player.py:2522 pylav/players/player.py:2688
+#: pylav/players/player.py:2531 pylav/players/player.py:2697
 msgid "Repeating"
 msgstr "ทำ ซ้ำ"
 
-#: pylav/players/player.py:2524 pylav/players/player.py:2690
+#: pylav/players/player.py:2533 pylav/players/player.py:2699
 msgid "Auto Play"
 msgstr "เล่นอัตโนมัติ"
 
-#: pylav/players/player.py:2527 pylav/players/player.py:2693
+#: pylav/players/player.py:2536 pylav/players/player.py:2702
 msgid "Effects"
 msgstr ""
 
-#: pylav/players/player.py:2531 pylav/players/player.py:2697
+#: pylav/players/player.py:2540 pylav/players/player.py:2706
 msgid "{volume_variable_do_not_translate}%"
 msgstr "{volume_variable_do_not_translate}%"
 
-#: pylav/players/player.py:2532 pylav/players/player.py:2698
+#: pylav/players/player.py:2541 pylav/players/player.py:2707
 msgid "Volume"
 msgstr "ปริมาตร"
 
-#: pylav/players/player.py:2535
+#: pylav/players/player.py:2544
 msgid "\n\n"
 "You can search specific services by using the following prefixes:\n"
 "{deezer_service_variable_do_not_translate}  - Deezer\n"
@@ -169,31 +169,31 @@ msgstr "\n\n"
 "ตัวอย่าง: {example_variable_do_not_translate}.\n\n"
 "ถ้าไม่มีคํานําหน้าจะใช้ฉันจะเริ่มต้นเป็น {fallback_service_variable_do_not_translate}\n"
 
-#: pylav/players/player.py:2606
+#: pylav/players/player.py:2615
 msgid "Recently Played for {server_name_variable_do_not_translate}"
 msgstr "เพิ่งลงเล่นให้ {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2612
+#: pylav/players/player.py:2621
 msgid "Queue for {server_name_variable_do_not_translate}"
 msgstr "คิวสําหรับ {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2644
+#: pylav/players/player.py:2653
 msgid "Playing"
 msgstr "เล่น"
 
-#: pylav/players/player.py:2660
+#: pylav/players/player.py:2669
 msgid "Queue order will change every time a track is added due to auto shuffle being enabled."
 msgstr "ลําดับคิวจะเปลี่ยนไปทุกครั้งที่มีการเพิ่มแทร็กเนื่องจากเปิดใช้งานการสุ่มอัตโนมัติ"
 
-#: pylav/players/player.py:2670
+#: pylav/players/player.py:2679
 msgid "Page 1 / 1 | 1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "หน้า 1 / 1 | 1 แทร็ก, {queue_total_duration_variable_do_not_translate} เหลือ\n"
 
-#: pylav/players/player.py:2674
+#: pylav/players/player.py:2683
 msgid "Page 1 / 1 | 0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "หน้า 1 / 1 | 0 เพลง, {queue_total_duration_variable_do_not_translate} เหลือ\n"
 
-#: pylav/players/player.py:2678
+#: pylav/players/player.py:2687
 msgid "Page {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "หน้า {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} แทร็ค {queue_total_duration_variable_do_not_translate} เหลือ\n"
 
