@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING, Any, Literal
 
 import asyncpg
 import discord
+from apscheduler.jobstores.base import JobLookupError
 from dacite import from_dict
 from discord import VoiceProtocol
 from discord.abc import Messageable
@@ -1728,14 +1729,22 @@ class Player(VoiceProtocol):
                 await self.player_manager.remove(self.channel.guild.id)
             if not maybe_resuming:
                 await self.node.delete_session_player(self.guild.id)
-            self.player_manager.client.scheduler.remove_job(job_id=f"{self.bot.user.id}-{self.guild.id}-auto_dc_task")
-            self.player_manager.client.scheduler.remove_job(
-                job_id=f"{self.bot.user.id}-{self.guild.id}-auto_empty_queue_task"
-            )
-            self.player_manager.client.scheduler.remove_job(
-                job_id=f"{self.bot.user.id}-{self.guild.id}-auto_pause_task"
-            )
-            self.player_manager.client.scheduler.remove_job(job_id=f"{self.bot.user.id}-{self.guild.id}-auto_save_task")
+            with contextlib.suppress(JobLookupError):
+                self.player_manager.client.scheduler.remove_job(
+                    job_id=f"{self.bot.user.id}-{self.guild.id}-auto_dc_task"
+                )
+            with contextlib.suppress(JobLookupError):
+                self.player_manager.client.scheduler.remove_job(
+                    job_id=f"{self.bot.user.id}-{self.guild.id}-auto_empty_queue_task"
+                )
+            with contextlib.suppress(JobLookupError):
+                self.player_manager.client.scheduler.remove_job(
+                    job_id=f"{self.bot.user.id}-{self.guild.id}-auto_pause_task"
+                )
+            with contextlib.suppress(JobLookupError):
+                self.player_manager.client.scheduler.remove_job(
+                    job_id=f"{self.bot.user.id}-{self.guild.id}-auto_save_task"
+                )
             self.cleanup()
 
     async def stop(self, requester: discord.Member) -> None:
