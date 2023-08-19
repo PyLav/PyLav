@@ -4,7 +4,9 @@ volumes:
     pgdata:
     redbot:
     pylav:
-    lavalink:
+    lavalink-logs:
+    lavalink-plugins:
+
 services:
     pylav:
     # Read https://github.com/PhasecoreX/docker-red-discordbot#red-discordbot-v3 for more info
@@ -49,13 +51,13 @@ services:
         restart: always
         volumes:
         # Mount the Lavalink logs folder
-        -   lavalink/logs:/opt/Lavalink/logs
+        -   lavalink-logs:/opt/Lavalink/logs
         # Mount the Plugin folder to avoid downloading the plugins every time the image starts up
-        -   lavalink/plugins:/opt/Lavalink/plugins
+        -   lavalink-plugins:/opt/Lavalink/plugins
         environment:
             _JAVA_OPTIONS: -Xmx4G # The highest amount of RAM which Lavalink is allowed to use
             # Set this to 'true' if this is a remote node, and you need to conserve outbound traffic
-            SERVER_COMPRESSION_ENABLED: false
+            SERVER_COMPRESSION_ENABLED: "false"
             # You will likely want to set this as high as your system can handle without issues if you use localtracks
             SERVER_UNDERTOW_THREADS_IO: 32 # CPU_COUNT * 2 i.e 32 for 16 core CPU
             SERVER_UNDERTOW_THREADS_WORKER: 128 # CPU_COUNT * 8 i.e 128 for 16 core CPU
