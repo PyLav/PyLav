@@ -29,7 +29,7 @@ NODE_DEFAULT_SETTINGS = {
     "lavalink": {
         "plugins": [
             {
-                "dependency": "com.github.topi314.lavasrc:lavasrc-plugin:4.0.0-beta.3",
+                "dependency": "com.github.topi314.lavasrc:lavasrc-plugin:4.0.0-beta.7",
                 "repository": "https://maven.topi.wtf/releases",
             },
             {
@@ -37,7 +37,7 @@ NODE_DEFAULT_SETTINGS = {
                 "repository": "https://m2.duncte123.dev/releases",
             },
             {
-                "dependency": "com.github.topi314.sponsorblock:sponsorblock-plugin:3.0.0-beta.1",
+                "dependency": "com.github.topi314.sponsorblock:sponsorblock-plugin:3.0.0-beta.3",
                 "repository": "https://maven.topi.wtf/releases",
             },
             {"dependency": "me.rohank05:lavalink-filter-plugin:0.0.2", "repository": "https://jitpack.io"},
