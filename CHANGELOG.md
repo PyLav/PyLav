@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.13.1 (08/10/2023)
+- [Make Release](https://github.com/PyLav/PyLav/commit/09afc9eb5225ab99020e223f9e5810eab9a79af9) - @Drapersniper
+- [Make Release](https://github.com/PyLav/PyLav/commit/22e3c72044b415cf6b437c1474c168ae91e04b5a) - @Drapersniper
+- [Bump crowdin/github-action from 1.13.0 to 1.13.1 (#263)](https://github.com/PyLav/PyLav/commit/afa467ff71eadddbe20d6bec0e3a58e86d2cc149) - @dependabot[bot]
+- [Bump actions/checkout from 4.0.0 to 4.1.0 (#264)](https://github.com/PyLav/PyLav/commit/11e164f325129dd2a52c2af9da88db6d815cf4ad) - @dependabot[bot]
+- [Bump urllib3 from 2.0.4 to 2.0.6 (#265)](https://github.com/PyLav/PyLav/commit/75d361bca325b3fb11aa6bba54d38ea96622d3dd) - @dependabot[bot]
+- [Auto Merge](https://github.com/PyLav/PyLav/commit/88b84fca0921da2d4c9484ddb6be875393d98a5b) - @Drapersniper
+
+---
+
 ## v1.13.0 (08/10/2023)
 - [fix: Closes #252](https://github.com/PyLav/PyLav/commit/be5d87e2df243f8fccf5ca3877b6056a80589a7b) - @Drapersniper
 - [deps: Update deps](https://github.com/PyLav/PyLav/commit/326e066e5eacbc0b2b93850fbe87b79af53791cd) - @Drapersniper
@@ -17,15 +27,6 @@
 - [Auto Merge](https://github.com/PyLav/PyLav/commit/1a40ac0e12f8aba41c5192799129956993c0c7ca) - @Drapersniper
 - [New Crowdin translations by GitHub Action](https://github.com/PyLav/PyLav/commit/9f1ce342889c3b805d4243ee6890fcfb1f922553) - @crowdin-bot
 - [Ignore errors when removing jobs from the scheduler closes #325 but it won't fix the root issue (not enough info to debug)](https://github.com/PyLav/PyLav/commit/da5fc61fcb50838cb3eb8e92ff568236111fa77b) - @Drapersniper
-
----
-
-## v.1.13.1 (08/10/2023)
-- [Make Release](https://github.com/PyLav/PyLav/commit/22e3c72044b415cf6b437c1474c168ae91e04b5a) - @Drapersniper
-- [Bump crowdin/github-action from 1.13.0 to 1.13.1 (#263)](https://github.com/PyLav/PyLav/commit/afa467ff71eadddbe20d6bec0e3a58e86d2cc149) - @dependabot[bot]
-- [Bump actions/checkout from 4.0.0 to 4.1.0 (#264)](https://github.com/PyLav/PyLav/commit/11e164f325129dd2a52c2af9da88db6d815cf4ad) - @dependabot[bot]
-- [Bump urllib3 from 2.0.4 to 2.0.6 (#265)](https://github.com/PyLav/PyLav/commit/75d361bca325b3fb11aa6bba54d38ea96622d3dd) - @dependabot[bot]
-- [Auto Merge](https://github.com/PyLav/PyLav/commit/88b84fca0921da2d4c9484ddb6be875393d98a5b) - @Drapersniper
 
 ---
 
