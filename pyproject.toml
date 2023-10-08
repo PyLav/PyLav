@@ -135,45 +135,45 @@ wheel = "^0.41.2"
 APScheduler = "^3.10.4"
 Brotli = "^1.1.0"
 PyYAML = "^6.0.1"
-aiohttp-client-cache = "^0.8.2"
+aiohttp-client-cache = "^0.9.1"
 aiopath = "^0.6.11"
 asyncpg = "^0.28.0"
 asyncspotify = "^0.12.1"
-asyncstdlib = "^3.10.8"
+asyncstdlib = "^3.10.9"
 cached-property = "^1.5.2"
-cashews = {extras = ["dill", "redis"], version = "^6.2.0"}
+cashews = {extras = ["dill", "redis"], version = "^6.3.0"}
 dacite = "^1.8.1"
 deepdiff6 = "^6.2.0"
 expiringdict = "^1.2.2"
 humanize = "^4.8.0"
 importlib-metadata = "^6.8.0"
-iso8601 = "^2.0.0"
+iso8601 = "^2.1.0"
 mutagen = "^1.47.0"
-netaddr = "^0.8.0"
+netaddr = "^0.9.0"
 numpy = "^1.26.0"
 piccolo = {extras = ["all"], version = "^0.121.0"}
-redis = "^5.0.0"
+redis = "^5.0.1"
 tabulate = {extras = ["widechars"], version = "^0.9.0"}
 ujson = "^5.8.0"
 watchfiles = "^0.20.0"
 
 # Dependencies pre-installed with Red, only required if using PyLav on a Non-Red bot
-Red-Commons = { version = "^1.0.0", optional = true}
-aiohttp = {extras = ["speedups"], version = "^3.8.5", optional = true}
-apsw = { version = "^3.43.1.0", optional = true}
-orjson = { version = "^3.9.7", optional = true}
-packaging = { version = "^23.1", optional = true}
-platformdirs = { version = "^3.10.0", optional = true}
-psutil =  { version = "^5.9.5", optional = true}
-python-dateutil = { version = "^2.8.2", optional = true}
-pytz = { version = "^2023.3.post1", optional = true}
-rich = { version = "^13.5.2", optional = true}
-typing-extensions = { version = "^4.7.1", optional = true}
-rapidfuzz = { version = "^3.3.0", optional = true}
-uvloop = { version = "^0.17.0", markers = "sys_platform != 'win32' and platform_python_implementation == 'CPython'", optional = true}
+Red-Commons = { version = "*", optional = true}
+aiohttp = {extras = ["speedups"], version = "*", optional = true}
+apsw = { version = "*", optional = true}
+orjson = { version = "*", optional = true}
+packaging = { version = "*", optional = true}
+platformdirs = { version = "*", optional = true}
+psutil =  { version = "*", optional = true}
+python-dateutil = { version = "*", optional = true}
+pytz = { version = "*", optional = true}
+rich = { version = "*", optional = true}
+typing-extensions = { version = "*", optional = true}
+rapidfuzz = { version = "*", optional = true}
+uvloop = { version = "*", markers = "sys_platform != 'win32' and platform_python_implementation == 'CPython'", optional = true}
 
 # Dependency for the docs
-Red-DiscordBot = {version = "^3.5.5", optional = true}
+Red-DiscordBot = {version = ">=3.5", optional = true}
 furo = { version = "^2023.9.10", optional = true}
 olefile = { version = "^0.46", optional = true}
 sphinx_rtd_theme = { version = "^1.3.0", optional = true}
