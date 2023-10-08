@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-07-19 20:44+0000\n"
-"PO-Revision-Date: 2023-07-19 20:44\n"
+"POT-Creation-Date: 2023-10-08 12:35+0000\n"
+"PO-Revision-Date: 2023-10-08 12:35\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "MIME-Version: 1.0\n"
@@ -33,15 +33,15 @@ msgstr "Per generare una playlist mista è necessario un singolo identificatore 
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist. However, you provided multiple"
 msgstr "Per generare una playlist mista è necessario un singolo identificatore di video, utente, canale o playlist. Tuttavia, hai fornito più"
 
-#: pylav/core/context.py:319
+#: pylav/core/context.py:318
 msgid "There is still 1 message remaining. Type `more` to continue."
 msgstr "C'è ancora 1 messaggio rimanente. Digitare 'more' per continuare."
 
-#: pylav/core/context.py:321
+#: pylav/core/context.py:320
 msgid "There are still {remaining_variable_do_not_translate} messages remaining. Type `more` to continue."
 msgstr "Ci sono ancora {remaining_variable_do_not_translate} messaggi rimanenti. Digitare 'more' per continuare."
 
-#: pylav/core/context.py:351
+#: pylav/core/context.py:350
 #, docstring
 msgid "Does nothing"
 msgstr "Non fa nulla"
