@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-07-19 20:44+0000\n"
-"PO-Revision-Date: 2023-10-08 12:09\n"
+"POT-Creation-Date: 2023-10-08 12:35+0000\n"
+"PO-Revision-Date: 2023-10-08 12:35\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -33,15 +33,15 @@ msgstr "生成混合播放清單需要單個視頻、使用者、頻道或播放
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist. However, you provided multiple"
 msgstr "生成混合播放清單需要單個視頻、使用者、頻道或播放清單標識碼。但是，您提供了多個"
 
-#: pylav/core/context.py:319
+#: pylav/core/context.py:318
 msgid "There is still 1 message remaining. Type `more` to continue."
 msgstr "還剩下 1 條消息。鍵入「更多」以繼續。"
 
-#: pylav/core/context.py:321
+#: pylav/core/context.py:320
 msgid "There are still {remaining_variable_do_not_translate} messages remaining. Type `more` to continue."
 msgstr "還有 {remaining_variable_do_not_translate} 剩餘消息。鍵入「更多」以繼續。"
 
-#: pylav/core/context.py:351
+#: pylav/core/context.py:350
 #, docstring
 msgid "Does nothing"
 msgstr "不做任何動作"

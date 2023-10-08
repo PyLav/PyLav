@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-07-19 20:44+0000\n"
-"PO-Revision-Date: 2023-07-19 20:44\n"
+"POT-Creation-Date: 2023-10-08 12:35+0000\n"
+"PO-Revision-Date: 2023-10-08 12:35\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -33,15 +33,15 @@ msgstr "혼합 재생목록을 생성하려면 단일 동영상, 사용자, 채�
 msgid "A single video, user, channel or playlist identifier is necessary to generate a mixed playlist. However, you provided multiple"
 msgstr "혼합 재생목록을 생성하려면 단일 동영상, 사용자, 채널 또는 재생목록 식별자가 필요합니다. 그러나 여러"
 
-#: pylav/core/context.py:319
+#: pylav/core/context.py:318
 msgid "There is still 1 message remaining. Type `more` to continue."
 msgstr "아직 1개의 메시지가 남아 있습니다. 계속하려면 'more'를 입력합니다."
 
-#: pylav/core/context.py:321
+#: pylav/core/context.py:320
 msgid "There are still {remaining_variable_do_not_translate} messages remaining. Type `more` to continue."
 msgstr "여전히 있습니다 {remaining_variable_do_not_translate} 남은 메시지. 계속하려면 'more'를 입력합니다."
 
-#: pylav/core/context.py:351
+#: pylav/core/context.py:350
 #, docstring
 msgid "Does nothing"
 msgstr "아무것도하지 않습니다"

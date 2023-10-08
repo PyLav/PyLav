@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-02-03 19:54+0000\n"
-"PO-Revision-Date: 2023-05-19 10:26\n"
+"POT-Creation-Date: 2023-10-08 12:35+0000\n"
+"PO-Revision-Date: 2023-10-08 12:35\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -17,19 +17,19 @@ msgstr ""
 "X-Crowdin-File-ID: 3435\n"
 "Language: cs_CZ\n"
 
-#: pylav/extension/red/ui/prompts/nodes.py:29
+#: pylav/extension/red/ui/prompts/nodes.py:28
 msgid "Multiple nodes matched. Pick the one which you meant."
 msgstr "Shodovalo se více uzlů. Vyberte ten, který jste měl na mysli."
 
-#: pylav/extension/red/ui/prompts/nodes.py:36
+#: pylav/extension/red/ui/prompts/nodes.py:35
 msgid "Pick a node."
 msgstr "Vyberte uzel."
 
-#: pylav/extension/red/ui/prompts/playlists.py:31
+#: pylav/extension/red/ui/prompts/playlists.py:30
 msgid "Multiple playlists matched. Pick the one which you meant."
 msgstr "Spárovalo se více seznamů skladeb. Vyberte ten, který jste měl na mysli."
 
-#: pylav/extension/red/ui/prompts/playlists.py:38
+#: pylav/extension/red/ui/prompts/playlists.py:37
 msgid "Pick a playlist."
 msgstr "Vyberte playlist."
 
