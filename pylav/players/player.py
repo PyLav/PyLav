@@ -452,7 +452,7 @@ class Player(VoiceProtocol):
             await asyncio.sleep(1)
             api_player = await self.fetch_node_player()
             track = api_player.track
-            if self.current._processed.info.length != track.info.length:
+            if track and self.current._processed.info.length != track.info.length:
                 object.__setattr__(self.current._processed.info, "length", track.info.length)
                 return self.current
 

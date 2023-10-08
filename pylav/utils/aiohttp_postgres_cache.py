@@ -4,7 +4,6 @@ from collections.abc import AsyncIterable
 from typing import Any
 
 from aiohttp_client_cache import BaseCache, CacheBackend, ResponseOrKey
-from aiohttp_client_cache.signatures import extend_init_signature
 
 from pylav.storage.database.tables.aiohttp_cache import AioHttpCacheRow
 
@@ -13,7 +12,6 @@ def postgres_template() -> None:
     pass
 
 
-@extend_init_signature(CacheBackend, postgres_template)
 class PostgresCacheBackend(CacheBackend):
     """Wrapper for higher-level cache operations.
     In most cases, the only thing you need to specify here is which storage class(es) to use"""
