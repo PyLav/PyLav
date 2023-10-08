@@ -262,10 +262,10 @@ class LocalNodeManager:
             LOGGER.info("Managed Lavalink node started. PID: %s", self._node_pid)
             try:
                 await asyncio.wait_for(self._wait_for_launcher(), timeout=self.timeout)
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 LOGGER.warning("Timeout occurred whilst waiting for managed Lavalink node to be ready")
                 raise
-        except asyncio.TimeoutError:
+        except TimeoutError:
             await self._partial_shutdown()
         except Exception:  # noqa
             await self._partial_shutdown()
@@ -680,9 +680,9 @@ class LocalNodeManager:
         if done:
             done.pop().result()
         if self.abort_for_unmanaged.is_set():
-            raise asyncio.TimeoutError
+            raise TimeoutError
         if not self.ready.is_set():
-            raise asyncio.TimeoutError
+            raise TimeoutError
 
     async def wait_until_connected(self, timeout: float | None = None) -> None:
         """Wait until Lavalink is connected."""
@@ -700,7 +700,7 @@ class LocalNodeManager:
                 await self._monitor_primary_healthy_flow(backoff, java_path, retry_count)
             except (TooManyProcessFoundException, IncorrectProcessFoundException, NoProcessFoundException):
                 await self._partial_shutdown()
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 delay = backoff.delay()
                 await self._partial_shutdown()
                 LOGGER.warning(
@@ -818,7 +818,7 @@ class LocalNodeManager:
                 if node and node.websocket.connected:
                     break
                 await asyncio.sleep(1)
-        except asyncio.TimeoutError:
+        except TimeoutError:
             raise
 
     async def _monitor_connect_to_node(self, backoff: ExponentialBackoffWithReset) -> None:

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import asyncio
 import contextlib
 import datetime
 import pathlib
@@ -330,7 +329,7 @@ class PyLavContext(OriginalContextClass):
                         check=MessagePredicate.lower_equal_to("more", self),
                         timeout=timeout,
                     )
-                except asyncio.TimeoutError:
+                except TimeoutError:
                     with contextlib.suppress(discord.HTTPException):
                         await query.delete()
                     break

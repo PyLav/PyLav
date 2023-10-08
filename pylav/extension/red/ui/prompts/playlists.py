@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import asyncio
 from pathlib import Path
 
 from redbot.core.i18n import Translator
@@ -43,7 +42,7 @@ async def maybe_prompt_for_playlist(
         try:
             await playlist_picker.wait_for_response()
             playlist = playlist_picker.result
-        except asyncio.TimeoutError:
+        except TimeoutError:
             playlist = None
     else:
         playlist = playlists[0]

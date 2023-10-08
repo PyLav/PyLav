@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import asyncio
 from pathlib import Path
 
 from redbot.core.i18n import Translator
@@ -51,7 +50,7 @@ async def maybe_prompt_for_entry(
         try:
             await entry_picker.wait_for_response()
             entry = entry_picker.result
-        except asyncio.TimeoutError:
+        except TimeoutError:
             entry = None
     else:
         entry = entries[0]

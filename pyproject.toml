@@ -194,7 +194,7 @@ docs = ["Red-DiscordBot", "sphinx_rtd_theme", "furo", "olefile", "sphinx-copybut
 "Bug Tracker" = "https://github.com/PyLav/PyLav/issues"
 
 [tool.poetry-dynamic-versioning]
-enable = false
+enable = true
 vcs = "git"
 bump = true
 style = "semver"

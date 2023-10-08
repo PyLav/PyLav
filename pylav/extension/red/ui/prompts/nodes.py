@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import asyncio
 from pathlib import Path
 
 from redbot.core.i18n import Translator
@@ -41,7 +40,7 @@ async def maybe_prompt_for_node(cog: DISCORD_COG_TYPE, context: PyLavContext, no
         try:
             await node_picker.wait_for_response()
             node = node_picker.result
-        except asyncio.TimeoutError:
+        except TimeoutError:
             node = None
     else:
         node = nodes[0]
