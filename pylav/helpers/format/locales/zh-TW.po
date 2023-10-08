@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-05-17 19:31+0000\n"
-"PO-Revision-Date: 2023-05-19 10:26\n"
+"PO-Revision-Date: 2023-10-08 12:09\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: pylav/helpers/format/strings.py:32
 msgid "Calculating..."
-msgstr ""
+msgstr "計算中…"
 
 #: pylav/helpers/format/strings.py:58
 msgid "hour"
