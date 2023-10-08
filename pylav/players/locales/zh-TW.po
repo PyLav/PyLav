@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
 "POT-Creation-Date: 2023-07-21 21:03+0000\n"
-"PO-Revision-Date: 2023-07-21 21:03\n"
+"PO-Revision-Date: 2023-10-08 12:09\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -135,7 +135,7 @@ msgstr "自動播放"
 
 #: pylav/players/player.py:2536 pylav/players/player.py:2702
 msgid "Effects"
-msgstr ""
+msgstr "效果"
 
 #: pylav/players/player.py:2540 pylav/players/player.py:2706
 msgid "{volume_variable_do_not_translate}%"
