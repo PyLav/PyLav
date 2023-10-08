@@ -210,7 +210,7 @@ async def cog_unload(self: DISCORD_COG_TYPE) -> None:
 async def cog_before_invoke(self: DISCORD_COG_TYPE, context: PyLavContext):
     try:
         await self.pylav.wait_until_ready(timeout=30)
-    except asyncio.TimeoutError as e:
+    except TimeoutError as e:
         LOGGER.debug("Discarded command due to PyLav not being ready within 30 seconds")
 
         LOGGER.verbose(
