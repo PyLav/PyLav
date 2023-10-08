@@ -862,7 +862,7 @@ class Track:
 
     @staticmethod
     def _maybe_escape_markdown(text: str, escape: bool = True) -> str:
-        return discord.utils.escape_markdown(text) if escape else text
+        return discord.utils.remove_markdown(text) if escape else text
 
     async def get_mixplaylist_url(self) -> str | None:
         if not await self.is_youtube():
