@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.13.3 (08/10/2023)
+- [Make Release](https://github.com/PyLav/PyLav/commit/6e60fa57c709f629b4bc285d6bbe106725faa526) - @Drapersniper
+- [Auto Merge](https://github.com/PyLav/PyLav/commit/836ca9dddc66e5c5f60c299afc2fe5b9bb1cf468) - @Drapersniper
+
+---
+
+## v1.13.2 (08/10/2023)
+- [Pre commit rules](https://github.com/PyLav/PyLav/commit/018ad581c2a1abad83603ab693bb73418c692fd3) - @Drapersniper
+- [Pre commit rules](https://github.com/PyLav/PyLav/commit/c480480575c1c6cc43a40fdd6914624be7dba633) - @Drapersniper
+- [Pre commit rules](https://github.com/PyLav/PyLav/commit/b65a71fae446f2b17703e03113574c007b47a01d) - @Drapersniper
+
+---
+
 ## v1.13.1 (08/10/2023)
 - [Make Release](https://github.com/PyLav/PyLav/commit/09afc9eb5225ab99020e223f9e5810eab9a79af9) - @Drapersniper
 - [Make Release](https://github.com/PyLav/PyLav/commit/22e3c72044b415cf6b437c1474c168ae91e04b5a) - @Drapersniper
@@ -793,15 +806,3 @@
 ## v0.11.15.1 (25/10/2022)
 - [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/197760bc34dc44c28b6f6d993cfdd63c4c599ada) - @Drapersniper
 - [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/1af8f24bc806006706e43b98cfb471ca6d3cc343) - @crowdin-bot
-
----
-
-## v0.11.15.0 (25/10/2022)
-- [[patch] Add a logic to avoid race condition on a player reconnect](https://github.com/Drapersniper/PyLav/commit/07faa0b4d1528b8a17e19aee45877d3f70fe72a7) - @Drapersniper
-- [Add a `/decodetrack` call to node healthyness check as sometimes the node can get in a bad state where the ws is pingable but the endpoints timeout](https://github.com/Drapersniper/PyLav/commit/ddf899a1f77521a90d3b2df54b2306dc70cb9f97) - @Drapersniper
-
----
-
-## v0.11.14.1 (24/10/2022)
-- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/24ae78c02e818abfd72b396d2c32676dc21dc62d) - @Drapersniper
-- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/459958059156e959d67f6e47a0f32429a9baf18e) - @crowdin-bot
