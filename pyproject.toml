@@ -1,5 +1,5 @@
 [build-system]
-requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=0.21.5", "pip>=22.3.1", "wheel>=0.38.4"]
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0", "pip>=22.3.1", "wheel>=0.38.4"]
 build-backend = "poetry_dynamic_versioning.backend"
 
 [tool]
@@ -92,7 +92,7 @@ omit-covered-files = false
 
 [tool.poetry]
 name = "Py-Lav"
-version = "1.13.1-pre.8+09afc9eb"
+version = "1.13.1"
 description = " A Lavalink WebSocket & API wrapper for discord.py"
 authors = ["Draper <27962761+Drapersniper@users.noreply.github.com>"]
 readme = "README.md"
