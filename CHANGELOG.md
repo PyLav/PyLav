@@ -1,5 +1,34 @@
 # Changelog
 
+## v1.13.0 (08/10/2023)
+- [fix: Closes #252](https://github.com/PyLav/PyLav/commit/be5d87e2df243f8fccf5ca3877b6056a80589a7b) - @Drapersniper
+- [deps: Update deps](https://github.com/PyLav/PyLav/commit/326e066e5eacbc0b2b93850fbe87b79af53791cd) - @Drapersniper
+- [deps: Update deps](https://github.com/PyLav/PyLav/commit/e1fb67f126149c64cafc1f7721bd8e6b9bf9c274) - @Drapersniper
+- [Fix: AttributeError: 'NoneType' object has no attribute 'info'](https://github.com/PyLav/PyLav/commit/892449929d71823705fcd833b65729f7b4c1e840) - @Drapersniper
+- [Deps: Bump](https://github.com/PyLav/PyLav/commit/ec7cdd8921d9a125665ced46175c49bacc0cbffb) - @Drapersniper
+- [Bump actions/checkout from 3.5.3 to 4.0.0](https://github.com/PyLav/PyLav/commit/1b6854471ece975c95628bacc3116bb7c328c3f4) - @dependabot[bot]
+- [Bump crazy-max/ghaction-import-gpg from 5 to 6](https://github.com/PyLav/PyLav/commit/420db40fd2eefabcbaafdd0bac19da71e3fb4e11) - @dependabot[bot]
+- [Bump piccolo from 0.119.0 to 0.121.0](https://github.com/PyLav/PyLav/commit/ccfe1a091e159a5db9dce689d3cb83f6e623a0c7) - @dependabot[bot]
+- [Bump crowdin/github-action from 1.11.0 to 1.13.0](https://github.com/PyLav/PyLav/commit/462161528573350fec615a224ebe910529bb868d) - @dependabot[bot]
+- [version bump](https://github.com/PyLav/PyLav/commit/6ff2678d4ab304c208faa78345604cb5f01b7b3d) - @Drapersniper
+- [Undo](https://github.com/PyLav/PyLav/commit/3979faed22be59246d3a99faa9f2a7df47b51e46) - @Drapersniper
+- [Update docker volume def](https://github.com/PyLav/PyLav/commit/9bbb59fe6c5b4ec291783d64d240c66ec83b12bf) - @Drapersniper
+- [Stop directing users to the workflow action](https://github.com/PyLav/PyLav/commit/90f7e0a2740cad92649e079d7fb7b99e714c2f0a) - @Drapersniper
+- [Auto Merge](https://github.com/PyLav/PyLav/commit/1a40ac0e12f8aba41c5192799129956993c0c7ca) - @Drapersniper
+- [New Crowdin translations by GitHub Action](https://github.com/PyLav/PyLav/commit/9f1ce342889c3b805d4243ee6890fcfb1f922553) - @crowdin-bot
+- [Ignore errors when removing jobs from the scheduler closes #325 but it won't fix the root issue (not enough info to debug)](https://github.com/PyLav/PyLav/commit/da5fc61fcb50838cb3eb8e92ff568236111fa77b) - @Drapersniper
+
+---
+
+## v.1.13.1 (08/10/2023)
+- [Make Release](https://github.com/PyLav/PyLav/commit/22e3c72044b415cf6b437c1474c168ae91e04b5a) - @Drapersniper
+- [Bump crowdin/github-action from 1.13.0 to 1.13.1 (#263)](https://github.com/PyLav/PyLav/commit/afa467ff71eadddbe20d6bec0e3a58e86d2cc149) - @dependabot[bot]
+- [Bump actions/checkout from 4.0.0 to 4.1.0 (#264)](https://github.com/PyLav/PyLav/commit/11e164f325129dd2a52c2af9da88db6d815cf4ad) - @dependabot[bot]
+- [Bump urllib3 from 2.0.4 to 2.0.6 (#265)](https://github.com/PyLav/PyLav/commit/75d361bca325b3fb11aa6bba54d38ea96622d3dd) - @dependabot[bot]
+- [Auto Merge](https://github.com/PyLav/PyLav/commit/88b84fca0921da2d4c9484ddb6be875393d98a5b) - @Drapersniper
+
+---
+
 ## v1.12.1 (19/07/2023)
 - [Make release](https://github.com/PyLav/PyLav/commit/152d2a0955ed20ac94d7a256779745595a5e31d4) - @Drapersniper
 - [Auto Merge](https://github.com/PyLav/PyLav/commit/a33cd55214b706cf3c1988bf43622e71e1c4e941) - @Drapersniper
@@ -775,15 +804,3 @@
 ## v0.11.14.1 (24/10/2022)
 - [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/24ae78c02e818abfd72b396d2c32676dc21dc62d) - @Drapersniper
 - [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/459958059156e959d67f6e47a0f32429a9baf18e) - @crowdin-bot
-
----
-
-## v0.11.14.0 (24/10/2022)
-
-
----
-
-## v0.11.13.1 (24/10/2022)
-- [[patch] Allow partial tracks to query the cache](https://github.com/Drapersniper/PyLav/commit/bd939f19b104890c929e7a5d214c51f36903c06b) - @Drapersniper
-- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/ba02457b9bc793c6615f12557454895797a9b41c) - @Drapersniper
-- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/39eccb08e7baad74ae133f91c8af596931bd5c22) - @crowdin-bot
