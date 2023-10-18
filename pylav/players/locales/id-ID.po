@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-07-21 21:03+0000\n"
-"PO-Revision-Date: 2023-07-21 21:03\n"
+"POT-Creation-Date: 2023-10-18 17:30+0000\n"
+"PO-Revision-Date: 2023-10-18 17:31\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -21,131 +21,131 @@ msgstr ""
 msgid "There are no nodes available currently."
 msgstr "Tidak ada node yang tersedia saat ini."
 
-#: pylav/players/manager.py:353
+#: pylav/players/manager.py:354
 msgid "Music in {number_of_servers_variable_do_not_translate} servers"
 msgstr "Musik dalam {number_of_servers_variable_do_not_translate} Server"
 
-#: pylav/players/player.py:1141
+#: pylav/players/player.py:1147
 msgid "There are no tracks currently in the player history."
 msgstr "Tidak ada trek saat ini dalam sejarah pemain."
 
-#: pylav/players/player.py:1824
+#: pylav/players/player.py:1830
 msgid "Current node has the volume filter feature disabled."
 msgstr "Node saat ini memiliki fitur filter volume yang dinonaktifkan."
 
-#: pylav/players/player.py:1846 pylav/players/player.py:2022
-#: pylav/players/player.py:2077
+#: pylav/players/player.py:1852 pylav/players/player.py:2028
+#: pylav/players/player.py:2083
 msgid "Current node has the equalizer feature disabled."
 msgstr "Node saat ini memiliki fitur equalizer yang dinonaktifkan."
 
-#: pylav/players/player.py:1866
+#: pylav/players/player.py:1872
 msgid "Current node has the karaoke feature disabled"
 msgstr "Node saat ini memiliki fitur karaoke dinonaktifkan"
 
-#: pylav/players/player.py:1886 pylav/players/player.py:2024
-#: pylav/players/player.py:2079
+#: pylav/players/player.py:1892 pylav/players/player.py:2030
+#: pylav/players/player.py:2085
 msgid "Current node has the timescale feature disabled."
 msgstr "Node saat ini memiliki fitur skala waktu yang dinonaktifkan."
 
-#: pylav/players/player.py:1906
+#: pylav/players/player.py:1912
 msgid "Current node has the tremolo feature disabled."
 msgstr "Node saat ini memiliki fitur tremolo dinonaktifkan."
 
-#: pylav/players/player.py:1926
+#: pylav/players/player.py:1932
 msgid "Current node has the vibrato feature disabled."
 msgstr "Node saat ini memiliki fitur vibrato yang dinonaktifkan."
 
-#: pylav/players/player.py:1946
+#: pylav/players/player.py:1952
 msgid "Current node has the rotation feature disabled."
 msgstr "Node saat ini memiliki fitur rotasi yang dinonaktifkan."
 
-#: pylav/players/player.py:1966
+#: pylav/players/player.py:1972
 msgid "Current node has the distortion feature disabled."
 msgstr "Node saat ini memiliki fitur distorsi yang dinonaktifkan."
 
-#: pylav/players/player.py:1986
+#: pylav/players/player.py:1992
 msgid "Current node has the low-pass feature disabled."
 msgstr "Node saat ini memiliki fitur low-pass yang dinonaktifkan."
 
-#: pylav/players/player.py:2006
+#: pylav/players/player.py:2012
 msgid "Current node has the echo feature disabled."
 msgstr "Node saat ini memiliki fitur echo dinonaktifkan."
 
-#: pylav/players/player.py:2136
+#: pylav/players/player.py:2142
 msgid "Current node has the channel-mix feature disabled."
 msgstr "Node saat ini memiliki fitur channel-mix yang dinonaktifkan."
 
-#: pylav/players/player.py:2412 pylav/players/player.py:2479
-#: pylav/players/player.py:2496 pylav/players/player.py:2602
+#: pylav/players/player.py:2418 pylav/players/player.py:2485
+#: pylav/players/player.py:2502 pylav/players/player.py:2608
 msgid "LIVE"
 msgstr "HIDUP"
 
-#: pylav/players/player.py:2431
+#: pylav/players/player.py:2437
 msgid "Now Playing in {server_name_variable_do_not_translate}"
 msgstr "Sekarang Bermain di {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2458 pylav/players/player.py:2650
+#: pylav/players/player.py:2464 pylav/players/player.py:2656
 msgid "Currently livestreaming"
 msgstr "Saat ini livestreaming"
 
-#: pylav/players/player.py:2460
+#: pylav/players/player.py:2466
 msgid "Playing: "
 msgstr "Bermain: "
 
-#: pylav/players/player.py:2463 pylav/players/player.py:2488
-#: pylav/players/player.py:2504 pylav/players/player.py:2656
+#: pylav/players/player.py:2469 pylav/players/player.py:2494
+#: pylav/players/player.py:2510 pylav/players/player.py:2662
 msgid "Requester"
 msgstr "Pemohon"
 
-#: pylav/players/player.py:2469
+#: pylav/players/player.py:2475
 msgid "Duration: {track_duration_variable_do_not_translate}"
 msgstr "Durasi: {track_duration_variable_do_not_translate}"
 
-#: pylav/players/player.py:2484 pylav/players/player.py:2500
+#: pylav/players/player.py:2490 pylav/players/player.py:2506
 msgid "Duration"
 msgstr "Durasi"
 
-#: pylav/players/player.py:2490
+#: pylav/players/player.py:2496
 msgid "Previous Track"
 msgstr "Lagu Sebelumnya"
 
-#: pylav/players/player.py:2506
+#: pylav/players/player.py:2512
 msgid "Next Track"
 msgstr "Lagu Berikutnya"
 
-#: pylav/players/player.py:2516
+#: pylav/players/player.py:2522
 msgid "1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "1 lagu, {queue_total_duration_variable_do_not_translate} sisa\n"
 
-#: pylav/players/player.py:2520
+#: pylav/players/player.py:2526
 msgid "0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "0 lagu, {queue_total_duration_variable_do_not_translate} sisa\n"
 
-#: pylav/players/player.py:2524
+#: pylav/players/player.py:2530
 msgid "{track_count_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "{track_count_variable_do_not_translate} Trek {queue_total_duration_variable_do_not_translate} sisa\n"
 
-#: pylav/players/player.py:2531 pylav/players/player.py:2697
+#: pylav/players/player.py:2537 pylav/players/player.py:2703
 msgid "Repeating"
 msgstr "Mengulangi"
 
-#: pylav/players/player.py:2533 pylav/players/player.py:2699
+#: pylav/players/player.py:2539 pylav/players/player.py:2705
 msgid "Auto Play"
 msgstr "Putar Otomatis"
 
-#: pylav/players/player.py:2536 pylav/players/player.py:2702
+#: pylav/players/player.py:2542 pylav/players/player.py:2708
 msgid "Effects"
 msgstr ""
 
-#: pylav/players/player.py:2540 pylav/players/player.py:2706
+#: pylav/players/player.py:2546 pylav/players/player.py:2712
 msgid "{volume_variable_do_not_translate}%"
 msgstr "{volume_variable_do_not_translate}%"
 
-#: pylav/players/player.py:2541 pylav/players/player.py:2707
+#: pylav/players/player.py:2547 pylav/players/player.py:2713
 msgid "Volume"
 msgstr "Jilid"
 
-#: pylav/players/player.py:2544
+#: pylav/players/player.py:2550
 msgid "\n\n"
 "You can search specific services by using the following prefixes:\n"
 "{deezer_service_variable_do_not_translate}  - Deezer\n"
@@ -169,31 +169,31 @@ msgstr "\n\n"
 "Contoh: {example_variable_do_not_translate}.\n\n"
 "Jika tidak ada awalan yang digunakan, saya akan default ke {fallback_service_variable_do_not_translate}\n"
 
-#: pylav/players/player.py:2615
+#: pylav/players/player.py:2621
 msgid "Recently Played for {server_name_variable_do_not_translate}"
 msgstr "Baru-baru ini dimainkan untuk {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2621
+#: pylav/players/player.py:2627
 msgid "Queue for {server_name_variable_do_not_translate}"
 msgstr "Antrian untuk {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2653
+#: pylav/players/player.py:2659
 msgid "Playing"
 msgstr "Bermain"
 
-#: pylav/players/player.py:2669
+#: pylav/players/player.py:2675
 msgid "Queue order will change every time a track is added due to auto shuffle being enabled."
 msgstr "Urutan antrean akan berubah setiap kali trek ditambahkan karena pengocokan otomatis diaktifkan."
 
-#: pylav/players/player.py:2679
+#: pylav/players/player.py:2685
 msgid "Page 1 / 1 | 1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "Halaman 1 / 1 | 1 lagu, {queue_total_duration_variable_do_not_translate} sisa\n"
 
-#: pylav/players/player.py:2683
+#: pylav/players/player.py:2689
 msgid "Page 1 / 1 | 0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "Halaman 1 / 1 | 0 lagu, {queue_total_duration_variable_do_not_translate} sisa\n"
 
-#: pylav/players/player.py:2687
+#: pylav/players/player.py:2693
 msgid "Page {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "Halaman {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} Trek {queue_total_duration_variable_do_not_translate} sisa\n"
 
