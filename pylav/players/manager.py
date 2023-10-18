@@ -311,12 +311,13 @@ class PlayerController:
             return
         requester = self.client.bot.user
         try:
-            discord_player = await self.create(
-                channel=channel,
-                requester=requester,
-                feature=(await Query.from_base64(player_state.current["encoded"], lazy=True)).requires_capability,
-                self_deaf=player_state.self_deaf,
-            )
+            async with asyncio.timeout(10):
+                discord_player = await self.create(
+                    channel=channel,
+                    requester=requester,
+                    feature=(await Query.from_base64(player_state.current["encoded"], lazy=True)).requires_capability,
+                    self_deaf=player_state.self_deaf,
+                )
         except Exception:
             LOGGER.exception("Failed to restore player %s - %s", player_state.id, player_state.channel_id)
             raise
