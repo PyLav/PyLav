@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-07-21 21:03+0000\n"
-"PO-Revision-Date: 2023-07-21 21:03\n"
+"POT-Creation-Date: 2023-10-18 17:30+0000\n"
+"PO-Revision-Date: 2023-10-18 17:31\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -21,131 +21,131 @@ msgstr ""
 msgid "There are no nodes available currently."
 msgstr "현재 사용 가능한 노드가 없습니다."
 
-#: pylav/players/manager.py:353
+#: pylav/players/manager.py:354
 msgid "Music in {number_of_servers_variable_do_not_translate} servers"
 msgstr "음악 입력 {number_of_servers_variable_do_not_translate} 서버"
 
-#: pylav/players/player.py:1141
+#: pylav/players/player.py:1147
 msgid "There are no tracks currently in the player history."
 msgstr "현재 플레이어 기록에 트랙이 없습니다."
 
-#: pylav/players/player.py:1824
+#: pylav/players/player.py:1830
 msgid "Current node has the volume filter feature disabled."
 msgstr "현재 노드에서 볼륨 필터 기능을 사용할 수 없습니다."
 
-#: pylav/players/player.py:1846 pylav/players/player.py:2022
-#: pylav/players/player.py:2077
+#: pylav/players/player.py:1852 pylav/players/player.py:2028
+#: pylav/players/player.py:2083
 msgid "Current node has the equalizer feature disabled."
 msgstr "현재 노드에는 이퀄라이저 기능이 비활성화되어 있습니다."
 
-#: pylav/players/player.py:1866
+#: pylav/players/player.py:1872
 msgid "Current node has the karaoke feature disabled"
 msgstr "현재 노드에 노래방 기능이 비활성화되어 있습니다."
 
-#: pylav/players/player.py:1886 pylav/players/player.py:2024
-#: pylav/players/player.py:2079
+#: pylav/players/player.py:1892 pylav/players/player.py:2030
+#: pylav/players/player.py:2085
 msgid "Current node has the timescale feature disabled."
 msgstr "현재 노드에는 날짜 표시줄 기능이 비활성화되어 있습니다."
 
-#: pylav/players/player.py:1906
+#: pylav/players/player.py:1912
 msgid "Current node has the tremolo feature disabled."
 msgstr "현재 노드에는 트레몰로 기능이 비활성화되어 있습니다."
 
-#: pylav/players/player.py:1926
+#: pylav/players/player.py:1932
 msgid "Current node has the vibrato feature disabled."
 msgstr "현재 노드에는 비브라토 기능이 비활성화되어 있습니다."
 
-#: pylav/players/player.py:1946
+#: pylav/players/player.py:1952
 msgid "Current node has the rotation feature disabled."
 msgstr "현재 노드에는 회전 기능이 비활성화되어 있습니다."
 
-#: pylav/players/player.py:1966
+#: pylav/players/player.py:1972
 msgid "Current node has the distortion feature disabled."
 msgstr "현재 노드에는 왜곡 기능이 비활성화되어 있습니다."
 
-#: pylav/players/player.py:1986
+#: pylav/players/player.py:1992
 msgid "Current node has the low-pass feature disabled."
 msgstr "현재 노드에는 저역 통과 기능이 비활성화되어 있습니다."
 
-#: pylav/players/player.py:2006
+#: pylav/players/player.py:2012
 msgid "Current node has the echo feature disabled."
 msgstr "현재 노드에서 에코 기능이 비활성화되어 있습니다."
 
-#: pylav/players/player.py:2136
+#: pylav/players/player.py:2142
 msgid "Current node has the channel-mix feature disabled."
 msgstr "현재 노드에는 채널 믹스 기능이 비활성화되어 있습니다."
 
-#: pylav/players/player.py:2412 pylav/players/player.py:2479
-#: pylav/players/player.py:2496 pylav/players/player.py:2602
+#: pylav/players/player.py:2418 pylav/players/player.py:2485
+#: pylav/players/player.py:2502 pylav/players/player.py:2608
 msgid "LIVE"
 msgstr "살다"
 
-#: pylav/players/player.py:2431
+#: pylav/players/player.py:2437
 msgid "Now Playing in {server_name_variable_do_not_translate}"
 msgstr "지금 재생 중 {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2458 pylav/players/player.py:2650
+#: pylav/players/player.py:2464 pylav/players/player.py:2656
 msgid "Currently livestreaming"
 msgstr "현재 라이브 스트리밍 중"
 
-#: pylav/players/player.py:2460
+#: pylav/players/player.py:2466
 msgid "Playing: "
 msgstr "재생: "
 
-#: pylav/players/player.py:2463 pylav/players/player.py:2488
-#: pylav/players/player.py:2504 pylav/players/player.py:2656
+#: pylav/players/player.py:2469 pylav/players/player.py:2494
+#: pylav/players/player.py:2510 pylav/players/player.py:2662
 msgid "Requester"
 msgstr "요청자"
 
-#: pylav/players/player.py:2469
+#: pylav/players/player.py:2475
 msgid "Duration: {track_duration_variable_do_not_translate}"
 msgstr "기간: {track_duration_variable_do_not_translate}"
 
-#: pylav/players/player.py:2484 pylav/players/player.py:2500
+#: pylav/players/player.py:2490 pylav/players/player.py:2506
 msgid "Duration"
 msgstr "기간"
 
-#: pylav/players/player.py:2490
+#: pylav/players/player.py:2496
 msgid "Previous Track"
 msgstr "이전 트랙"
 
-#: pylav/players/player.py:2506
+#: pylav/players/player.py:2512
 msgid "Next Track"
 msgstr "다음 트랙"
 
-#: pylav/players/player.py:2516
+#: pylav/players/player.py:2522
 msgid "1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "1 트랙, {queue_total_duration_variable_do_not_translate} 나머지\n"
 
-#: pylav/players/player.py:2520
+#: pylav/players/player.py:2526
 msgid "0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "0 트랙, {queue_total_duration_variable_do_not_translate} 나머지\n"
 
-#: pylav/players/player.py:2524
+#: pylav/players/player.py:2530
 msgid "{track_count_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "{track_count_variable_do_not_translate} 트랙 {queue_total_duration_variable_do_not_translate} 나머지\n"
 
-#: pylav/players/player.py:2531 pylav/players/player.py:2697
+#: pylav/players/player.py:2537 pylav/players/player.py:2703
 msgid "Repeating"
 msgstr "반복"
 
-#: pylav/players/player.py:2533 pylav/players/player.py:2699
+#: pylav/players/player.py:2539 pylav/players/player.py:2705
 msgid "Auto Play"
 msgstr "자동 재생"
 
-#: pylav/players/player.py:2536 pylav/players/player.py:2702
+#: pylav/players/player.py:2542 pylav/players/player.py:2708
 msgid "Effects"
 msgstr ""
 
-#: pylav/players/player.py:2540 pylav/players/player.py:2706
+#: pylav/players/player.py:2546 pylav/players/player.py:2712
 msgid "{volume_variable_do_not_translate}%"
 msgstr "{volume_variable_do_not_translate}%"
 
-#: pylav/players/player.py:2541 pylav/players/player.py:2707
+#: pylav/players/player.py:2547 pylav/players/player.py:2713
 msgid "Volume"
 msgstr "음량"
 
-#: pylav/players/player.py:2544
+#: pylav/players/player.py:2550
 msgid "\n\n"
 "You can search specific services by using the following prefixes:\n"
 "{deezer_service_variable_do_not_translate}  - Deezer\n"
@@ -169,31 +169,31 @@ msgstr "\n\n"
 "본보기: {example_variable_do_not_translate}.\n\n"
 "접두사가 사용되지 않으면 기본적으로 {fallback_service_variable_do_not_translate}\n"
 
-#: pylav/players/player.py:2615
+#: pylav/players/player.py:2621
 msgid "Recently Played for {server_name_variable_do_not_translate}"
 msgstr "최근 출전 {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2621
+#: pylav/players/player.py:2627
 msgid "Queue for {server_name_variable_do_not_translate}"
 msgstr "큐 {server_name_variable_do_not_translate}"
 
-#: pylav/players/player.py:2653
+#: pylav/players/player.py:2659
 msgid "Playing"
 msgstr "재생"
 
-#: pylav/players/player.py:2669
+#: pylav/players/player.py:2675
 msgid "Queue order will change every time a track is added due to auto shuffle being enabled."
 msgstr "대기열 순서는 자동 셔플이 활성화되어 트랙이 추가될 때마다 변경됩니다."
 
-#: pylav/players/player.py:2679
+#: pylav/players/player.py:2685
 msgid "Page 1 / 1 | 1 track, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "페이지 1 / 1 | 1 트랙, {queue_total_duration_variable_do_not_translate} 나머지\n"
 
-#: pylav/players/player.py:2683
+#: pylav/players/player.py:2689
 msgid "Page 1 / 1 | 0 tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "페이지 1 / 1 | 0 트랙, {queue_total_duration_variable_do_not_translate} 나머지\n"
 
-#: pylav/players/player.py:2687
+#: pylav/players/player.py:2693
 msgid "Page {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} tracks, {queue_total_duration_variable_do_not_translate} remaining\n"
 msgstr "페이지 {current_page_variable_do_not_translate} / {total_pages_variable_do_not_translate} | {track_number_variable_do_not_translate} 트랙 {queue_total_duration_variable_do_not_translate} 나머지\n"
 
