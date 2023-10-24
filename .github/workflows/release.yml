@@ -76,7 +76,7 @@ jobs:
         -   name: Install Poetry Dynamic-Versioning
             run: poetry self add "poetry-dynamic-versioning[plugin]"
         -   name: Install Node.js 14
-            uses: actions/setup-node@v3
+            uses: actions/setup-node@v4
             with:
                 node-version: '14'
         -   name: Install GitHub Release Notes
