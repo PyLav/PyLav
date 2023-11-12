@@ -151,7 +151,7 @@ iso8601 = "^2.1.0"
 mutagen = "^1.47.0"
 netaddr = "^0.9.0"
 numpy = "^1.26.0"
-piccolo = {extras = ["all"], version = "^0.121.0"}
+piccolo = {extras = ["all"], version = ">=0.121,<1.2"}
 redis = "^5.0.1"
 tabulate = {extras = ["widechars"], version = "^0.9.0"}
 ujson = "^5.8.0"
