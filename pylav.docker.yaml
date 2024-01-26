@@ -27,8 +27,6 @@ PYLAV__DEFAULT_SEARCH_SOURCE: dzsearch    # Defaults to dzsearch - Possible valu
 PYLAV__REDIS_FULL_ADDRESS_RESPONSE_CACHE: # Optional Leave "null" so that it is not used.
 PYLAV__JAVA_EXECUTABLE: java              # Never used in this environment.
 
-PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE: false   #  Can now be set to true if you wish
-
 PYLAV__TASK_TIMER_UPDATE_BUNDLED_PLAYLISTS_DAYS: 1          # How many days to wait between updates - Minimum 1 Day.
 PYLAV__TASK_TIMER_UPDATE_BUNDLED_EXTERNAL_PLAYLISTS_DAYS: 7 # How many days to wait between updates - Minimum 7 Days.
 PYLAV__TASK_TIMER_UPDATE_EXTERNAL_PLAYLISTS_DAYS: 7         # How many days to wait between updates - Minimum 7 Days.

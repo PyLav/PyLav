@@ -9,7 +9,7 @@ from pylav.nodes.api.responses.filters import Filters
 from pylav.nodes.api.responses.misc import Git, Plugin, Version
 from pylav.nodes.api.responses.player import State
 from pylav.nodes.api.responses.playlists import Info
-from pylav.nodes.api.responses.shared import PlaylistPluginInfo
+from pylav.nodes.api.responses.shared import PlaylistPluginInfo, PluginInfo
 from pylav.nodes.api.responses.track import Track
 from pylav.nodes.api.responses.websocket import CPU, Frame, Memory
 from pylav.type_hints.dict_typing import JSON_DICT_TYPE
@@ -90,6 +90,32 @@ class ErrorResponse(BaseTrackResponse):  # noqa
 LoadTrackResponses: TypeAlias = Union[
     TrackResponse, PlaylistResponse, EmptyResponse, ErrorResponse, SearchResponse, HTTPException
 ]
+
+
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
+class TextInfo:
+    text: str
+    plugin: PluginInfo
+
+
+@dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)
+class LoadSearchResponses:
+    tracks: list[Track]
+    albums: list[PlaylistData]
+    artists: list[PlaylistData]
+    playlists: list[PlaylistData]
+    plugins: PluginInfo
+    texts: list[TextInfo]
+
+    def __post_init__(self):
+        temp = []
+        for s in self.tracks:
+            if isinstance(s, Track) or (isinstance(s, dict) and (s := Track(**s))):
+                temp.append(s)
+        object.__setattr__(self, "tracks", temp)
+
+    def to_dict(self) -> JSON_DICT_TYPE:
+        return dataclasses.asdict(self)
 
 
 @dataclasses.dataclass(repr=True, frozen=True, kw_only=True, slots=True)

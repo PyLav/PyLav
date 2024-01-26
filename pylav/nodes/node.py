@@ -6,7 +6,7 @@ import dataclasses
 import datetime
 import functools
 import logging
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Literal
 from uuid import uuid4
 
 import aiohttp
@@ -24,7 +24,7 @@ from pylav.constants.coordinates import REGION_TO_COUNTRY_COORDINATE_MAPPING
 from pylav.constants.node import GOOD_RESPONSE_RANGE, MAX_SUPPORTED_API_MAJOR_VERSION
 from pylav.constants.node_features import SUPPORTED_FEATURES, SUPPORTED_SOURCES
 from pylav.constants.regex import SEMANTIC_VERSIONING
-from pylav.events.api import LavalinkLoadtracksEvent
+from pylav.events.api import LavalinkLoadSearchEvent, LavalinkLoadtracksEvent
 from pylav.events.base import PyLavEvent
 from pylav.exceptions.request import HTTPException, UnauthorizedException
 from pylav.helpers.time import get_now_utc
@@ -32,6 +32,7 @@ from pylav.logging import getLogger
 from pylav.nodes.api.responses import rest_api
 from pylav.nodes.api.responses import websocket as websocket_responses
 from pylav.nodes.api.responses.errors import LavalinkError
+from pylav.nodes.api.responses.rest_api import PlaylistData
 from pylav.nodes.api.responses.route_planner import Status as RoutePlannerStart
 from pylav.nodes.api.responses.track import Track
 from pylav.nodes.utils import EMPTY_RESPONSE, Stats
@@ -552,6 +553,8 @@ class Node:
             match plugin.name:
                 case "SponsorBlock-Plugin":
                     self._capabilities.add("sponsorblock")
+                case "LavaSearch":
+                    self._capabilities.add("lavasearch")
         if self.identifier in PYLAV_NODES:
             self._capabilities.discard("http")
             self._capabilities.discard("local")
@@ -910,6 +913,18 @@ class Node:
         """
         return self.has_capability("sponsorblock")
 
+    @property
+    def supports_lavasearch(self) -> bool:
+        """
+        Checks if the target node supports LavaSearch.
+
+        Returns
+        -------
+        :class:`bool`
+            True if the target node supports LavaSearch, False otherwise.
+        """
+        return self.has_capability("lavasearch")
+
     async def close(self) -> None:
         """
         Closes the target node.
@@ -1028,6 +1043,10 @@ class Node:
     def get_endpoint_loadtracks(self) -> URL:
         """Returns the loadtracks endpoint of the target node."""
         return self.base_api_url / "loadtracks"
+
+    def get_endpoint_loadseach(self) -> URL:
+        """Returns the loadsearch endpoint of the target node."""
+        return self.base_api_url / "loadsearch"
 
     def get_endpoint_decodetrack(self) -> URL:
         """Returns the decodetrack endpoint of the target node."""
@@ -1260,7 +1279,7 @@ class Node:
                 "Client-Name": f"PyLav/{self.node_manager.client.lib_version}",
                 "App-Id": self.node_manager.client._user_id,
             },
-            params={"identifier": query.query_identifier, "trace": "true" if self.trace else "false"},
+            params={"identifier": query.query_identifier},
         ) as res:
             if res.status in GOOD_RESPONSE_RANGE:
                 result = await res.json(loads=json.loads)
@@ -1268,6 +1287,36 @@ class Node:
                 response = self.parse_loadtrack_response(result)
                 asyncio.create_task(self.node_manager.client.query_cache_manager.add_query(query, response))
                 self._manager.client.dispatch_event(LavalinkLoadtracksEvent(node=self, response=response))
+                return response
+            failure = from_dict(data_class=LavalinkError, data=await res.json(loads=json.loads))
+            if res.status in [401, 403]:
+                raise UnauthorizedException(failure)
+            self._logger.trace("Failed to load track: %d %s", failure.status, failure.message)
+            return HTTPException(failure)
+
+    async def fetch_loadsearch(
+        self, query: Query
+    ) -> rest_api.LoadSearchResponses | LavalinkError | HTTPException | None:
+        if not self.available or not self.has_source(query.requires_capability):
+            return None
+
+        async with self._session.get(
+            self.get_endpoint_loadseach(),
+            headers={
+                "Authorization": self.password,
+                "Client-Name": f"PyLav/{self.node_manager.client.lib_version}",
+                "App-Id": self.node_manager.client._user_id,
+            },
+            params={"query": query.query_identifier, "trace": "true" if self.trace else "false"},
+        ) as res:
+            if res.status in GOOD_RESPONSE_RANGE:
+                if res.status == 204:
+                    return None
+                result = await res.json(loads=json.loads)
+                self._logger.trace("Loaded Search Result: %s response: %s", query, result)
+                response = from_dict(data_class=rest_api.LoadSearchResponses, data=result)
+                asyncio.create_task(self.node_manager.client.query_cache_manager.add_query(query, response))
+                self._manager.client.dispatch_event(LavalinkLoadSearchEvent(node=self, response=response))
                 return response
             failure = from_dict(data_class=LavalinkError, data=await res.json(loads=json.loads))
             if res.status in [401, 403]:
@@ -1562,6 +1611,51 @@ class Node:
                     return rest_api.TrackResponse(loadType="track", data=response.data.tracks[0])
         return response
 
+    async def get_lavasearch_collection(
+        self,
+        query: Query,
+        bypass_cache: bool = False,
+        sleep: bool = False,
+        filter: Literal["tracks", "albums", "artists", "playlists"] | None = None,
+    ) -> rest_api.LoadSearchResponses | list[PlaylistData] | list[Track] | None:
+        """|coro|
+        Gets all tracks associated with the given query.
+
+        Parameters
+        ----------
+        query: :class:`Query`
+            The query to perform a search for.
+        filter: Optional[Literal["tracks" , "albums", "artists", "playlists"]]
+            Whether to filter the response to a specific type.
+        bypass_cache: :class:`bool`
+            Whether to bypass the cache.
+        sleep: :class:`bool`
+            Whether to sleep for 1 second before returning the response.
+        Returns
+        -------
+        Optional[rest_api.LoadSearchResponses | list[PlaylistData] | list[Track]]
+            Lavalink LoadSearch Response object
+        """
+        if not bypass_cache:
+            if cached_entry := await self.get_track_from_cache(query=query):
+                return cached_entry
+        response = await self.fetch_loadsearch(query=query)
+        if sleep:
+            await asyncio.sleep(0.05)
+        if isinstance(response, type(None)):
+            return
+        match filter:
+            case "tracks":
+                return response.tracks
+            case "albums":
+                return response.albums
+            case "artists":
+                return response.artists
+            case "playlists":
+                return response.playlists
+            case _:
+                return response
+
     async def search_youtube_music(self, query: str, bypass_cache: bool = False) -> rest_api.LoadTrackResponses:
         """|coro|
         Gets the query from YouTube music.
@@ -1715,6 +1809,25 @@ class Node:
             Lavalink LoadTrack Response Object
         """
         return await self.get_track(await self._query_cls.from_string(query), bypass_cache=bypass_cache)
+
+    async def get_lavasearch(self, query: str, bypass_cache: bool = False) -> rest_api.LoadSearchResponses:
+        """|coro|
+        Gets the query from LavaSearch.
+        Parameters
+        ----------
+        query: :class:`str`
+            The query to search for.
+        bypass_cache: :class:`bool`
+            Whether to bypass the cache.
+
+        Returns
+        -------
+        LavalinkLoadSearchObjects
+            Lavalink LoadSearch Response Object
+        """
+        return await self.get_lavasearch_collection(
+            await self._query_cls.from_string(f"lavasearch:{query}"), bypass_cache=bypass_cache
+        )
 
     def get_filter_payload(
         self,

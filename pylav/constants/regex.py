@@ -117,7 +117,7 @@ SOURCE_INPUT_MATCH_SOUND_CLOUD = re.compile(
     r"([a-zA-Z0-9-_]+)/likes/?(?:\?.*|)$|"
     r"^(?:http://|https://|)(?:www\.|)(?:m\.|)soundcloud\.com/"
     r"([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)(?:\?.*|)$",
-    # This last line was manually added and does not exist in in lavaplayer...
+    # This last line was manually added and does not exist in lavaplayer...
     # https://github.com/Walkyst/lavaplayer-fork/blob/custom/main/src/main/java/com/sedmelluq/discord/lavaplayer/source/soundcloud/SoundCloudAudioSourceManager.java
     re.IGNORECASE,
 )
@@ -134,7 +134,7 @@ SOURCE_INPUT_MATCH_SPEAK = re.compile(r"^(?P<speak_source>speak):\s*?(?P<speak_q
 # noinspection SpellCheckingInspection
 SOURCE_INPUT_MATCH_GCTSS = re.compile(r"^(?P<gctts_source>tts://)\s*?(?P<gctts_query>.*)$", re.IGNORECASE)
 SOURCE_INPUT_MATCH_SEARCH = re.compile(
-    r"^((?P<search_source>ytm|yt|sp|sc|am|dz)search|(?P<search_deezer_isrc>dzisrc)):\s*?(?P<search_query>.*)$",
+    r"^((?P<search_source>ytm|yt|sp|sc|am|dz|lava)search|(?P<search_deezer_isrc>dzisrc)):\s*?(?P<search_query>.*)$",
     re.IGNORECASE,
 )
 SOURCE_INPUT_MATCH_HTTP = re.compile(r"^http(s)?://", re.IGNORECASE)

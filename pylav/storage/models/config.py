@@ -185,13 +185,7 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
         bool
             The use_bundled_pylav_external.
         """
-        response = (
-            await LibConfigRow.select(LibConfigRow.use_bundled_pylav_external)
-            .where((LibConfigRow.id == self.id) & (LibConfigRow.bot == self.bot))
-            .first()
-            .output(load_json=True, nested=True)
-        )
-        return response["use_bundled_pylav_external"] if response else LibConfigRow.use_bundled_pylav_external.default
+        return False
 
     async def update_use_bundled_pylav_external(self, use_bundled_pylav_external: bool) -> None:
         """Update the use_bundled_pylav_external.
@@ -524,7 +518,7 @@ class Config(CachedModel, metaclass=SingletonCachedByKey):
             "localtrack_folder": LibConfigRow.localtrack_folder.default,
             "download_id": LibConfigRow.download_id.default,
             "update_bot_activity": LibConfigRow.update_bot_activity.default,
-            "use_bundled_pylav_external": LibConfigRow.use_bundled_pylav_external.default,
+            "use_bundled_pylav_external": False,
             "use_bundled_lava_link_external": False,
             "extras": json.loads(LibConfigRow.extras.default),
             "next_execution_update_bundled_playlists": LibConfigRow.next_execution_update_bundled_playlists.default,

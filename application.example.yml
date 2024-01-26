@@ -1,15 +1,21 @@
 lavalink:
     plugins:
-    -   dependency: com.github.topi314.lavasrc:lavasrc-plugin:4.0.0-beta.7
-        repository: https://maven.topi.wtf/releases
-    -   dependency: com.github.topi314.sponsorblock:sponsorblock-plugin:3.0.0-beta.3
-        repository: https://maven.topi.wtf/releases
-    -   dependency: com.dunctebot:skybot-lavalink-plugin:1.4.2
-        repository: https://m2.duncte123.dev/releases
-    -   dependency: me.rohank05:lavalink-filter-plugin:0.0.2
+    -   dependency: com.github.topi314.lavasrc:lavasrc-plugin:4.0.1
+        repository: https://maven.lavalink.dev/releases # this is optional for lavalink v4.0.0-beta.5 or greater
+        snapshot: false # set to true if you want to use snapshot builds (see below)
+    -   dependency: com.github.topi314.sponsorblock:sponsorblock-plugin:3.0.0 # replace x.x.x with the latest release tag!
+        repository: https://maven.lavalink.dev/releases # this is optional for lavalink v4.0.0-beta.5 or greater
+        snapshot: false # set to true if you want to use snapshot builds (see below)
+    -   dependency: com.dunctebot:skybot-lavalink-plugin:1.6.3
+        repository: https://maven.lavalink.dev/releases  # (optional on lavalink 4)
+        snapshot: false # (optional, tells lavalink to use the default snaptshot repository instead)
+    -   dependency: me.rohank05:lavalink-filter-plugin:0.0.4
         repository: https://jitpack.io
-    -   dependency: com.github.esmBot:lava-xm-plugin:v0.2.1
+    -   dependency: com.github.esmBot:lava-xm-plugin:v0.2.2
         repository: https://jitpack.io
+    -   dependency: com.github.topi314.lavasearch:lavasearch-plugin:1.0.0
+        repository: https://maven.lavalink.dev/releases # this is optional for lavalink v4.0.0-beta.5 or greater
+        snapshot: false # set to true if you want to use snapshot builds (see below)
     server:
         password: youshallnotpass
         bufferDurationMs: 400 # The duration of the NAS buffer. Higher values fare better against longer GC pauses. Duration <= 0 to disable JDA-NAS. Minimum of 40ms, lower values may introduce pauses.
@@ -73,9 +79,10 @@ plugins:
     lavasrc:
         sources:
             spotify: true # Enable Spotify source
-            applemusic: true # Enable Apple Music source
+            applemusic: false # Enable Apple Music source
             deezer: true # Enable Deezer source
             yandexmusic: false # Enable Yandex Music source
+            youtube: true
         providers:
         -   dzisrc:%ISRC% # Deezer ISRC Search
         -   ytmsearch:"%ISRC%" # YouTube Music ISRC Search
@@ -86,7 +93,7 @@ plugins:
         -   scsearch:%QUERY% # SoundCloud Search
         applemusic:
             countryCode: US # the country code you want to use for filtering the artists top tracks and language. See https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
-            #mediaAPIToken: CHANGE_ME # Can be used to bypass the auto token fetching which is likely to break again in the future
+            mediaAPIToken: CHANGE_ME # Can be used to bypass the auto token fetching which is likely to break again in the future
             playlistLoadLimit: 6 # The number of pages at 300 tracks each
             albumLoadLimit: 6 # The number of pages at 300 tracks each
         spotify:

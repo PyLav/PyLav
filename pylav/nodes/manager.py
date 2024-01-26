@@ -500,10 +500,6 @@ class NodeManager:
         if all_data["java_path"] != JAVA_EXECUTABLE and os.path.exists(JAVA_EXECUTABLE):
             await config_data.update_java_path(JAVA_EXECUTABLE)
 
-        if all_data["use_bundled_pylav_external"]:
-            # await self._process_bundled_node_london(nodes_list)
-            await self._process_bundled_node_ny(nodes_list)
-
         tasks = [asyncio.create_task(n.wait_until_ready()) for n in nodes_list]
         if not tasks:
             if await self.client.managed_node_is_enabled():

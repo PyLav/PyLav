@@ -34,10 +34,6 @@ if POSTGRES_SOCKET is not None:
     POSTGRES_HOST = POSTGRES_SOCKET
 JAVA_EXECUTABLE = __get_path(envar_value) if (envar_value := os.getenv("PYLAV__JAVA_EXECUTABLE")) is not None else None
 
-USE_BUNDLED_EXTERNAL_PYLAV_NODE = (
-    bool(int(envar_value)) if (envar_value := os.getenv("PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE")) is not None else None
-)
-
 REDIS_FULL_ADDRESS_RESPONSE_CACHE = os.getenv("PYLAV__REDIS_FULL_ADDRESS_RESPONSE_CACHE")
 
 EXTERNAL_UNMANAGED_HOST = os.getenv("PYLAV__EXTERNAL_UNMANAGED_HOST")

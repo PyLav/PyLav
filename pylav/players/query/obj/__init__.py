@@ -234,6 +234,10 @@ class Query:
         return self.source == "Yandex Music"
 
     @property
+    def is_lavasearch(self) -> bool:
+        return self.source == "LavaSearch"
+
+    @property
     def is_search(self) -> bool:
         return self._search
 
@@ -303,6 +307,8 @@ class Query:
                 return f"tts://{self._query}"
             elif self.is_yandex_music:
                 return f"ymsearch:{self._query}"
+            elif self.is_lavasearch:
+                return f"lavasearch:{self._query}"
             else:
                 return f"{DEFAULT_SEARCH_SOURCE}:{self._query}"
         elif self.is_local:
@@ -771,7 +777,7 @@ class Query:
             raise ValueError("Source can only be set for search queries")
 
         source = source.lower()
-        if source not in (allowed := {"ytm", "yt", "sp", "sc", "am", "local", "speak", "tts://", "dz"}):
+        if source not in (allowed := {"ytm", "yt", "sp", "sc", "am", "local", "speak", "tts://", "dz", "lavasearch"}):
             raise ValueError(f"Invalid source: {source} - Allowed: {allowed}")
         match source:
             case "ytm":
@@ -794,6 +800,8 @@ class Query:
                 source = "Deezer"
             case "ym":
                 source = "Yandex Music"
+            case "lavasearch":
+                source = "LavaSearch"
         self._source = source
 
     def with_index(self, index: int) -> Query:
@@ -908,6 +916,8 @@ class Query:
             return "deezer"
         elif self.is_yandex_music:
             return "yandexmusic"
+        elif self.is_lava_search:
+            return "lavasearch"
         else:
             return "youtube"
 

@@ -11,7 +11,6 @@ from pylav.constants.config.overrides import (
     MANAGED_NODE_SPOTIFY_CLIENT_SECRET,
     MANAGED_NODE_SPOTIFY_COUNTRY_CODE,
     MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN,
-    USE_BUNDLED_EXTERNAL_PYLAV_NODE,
 )
 from pylav.storage.migrations.logging import LOGGER
 
@@ -49,9 +48,6 @@ async def process_envvar_variables(client: Client) -> None:
         updated = True
     if updated:
         await config.update_yaml(yaml_data)
-
-    if USE_BUNDLED_EXTERNAL_PYLAV_NODE is not None:
-        await client.lib_db_manager.get_config().update_use_bundled_pylav_external(USE_BUNDLED_EXTERNAL_PYLAV_NODE)
 
     if LOCAL_TRACKS_FOLDER is not None:
         await client.lib_db_manager.get_config().update_localtrack_folder(LOCAL_TRACKS_FOLDER)

@@ -12,7 +12,7 @@ services:
     # Read https://github.com/PhasecoreX/docker-red-discordbot#red-discordbot-v3 for more info
         container_name: pylav
         hostname: pylav
-        image: ghcr.io/drapersniper/red-discordbot:pylav
+        image: ghcr.io/phasecorex/red-discordbot:full-pylav
         restart: unless-stopped
         volumes:
         -   pgsocket:/var/run/postgresql # Postgres socket using Docker volume to allow access from other containers without mounting the host's filesystem (I.e use Sockets even on Windows)
@@ -70,16 +70,14 @@ services:
 
 
             # Plugins to load
-            LAVALINK_PLUGINS_0_DEPENDENCY: com.github.topi314.lavasrc:lavasrc-plugin:4.0.0-beta.7
-            LAVALINK_PLUGINS_0_REPOSITORY: https://maven.topi.wtf/releases
-            LAVALINK_PLUGINS_1_DEPENDENCY: com.github.topi314.sponsorblock:sponsorblock-plugin:3.0.0-beta.3
-            LAVALINK_PLUGINS_1_REPOSITORY: https://maven.topi.wtf/releases
-            LAVALINK_PLUGINS_2_DEPENDENCY: com.dunctebot:skybot-lavalink-plugin:1.4.2
-            LAVALINK_PLUGINS_2_REPOSITORY: https://m2.duncte123.dev/releases
-            LAVALINK_PLUGINS_3_DEPENDENCY: me.rohank05:lavalink-filter-plugin:0.0.2
-            LAVALINK_PLUGINS_3_REPOSITORY: https://jitpack.io
-            LAVALINK_PLUGINS_4_DEPENDENCY: com.github.esmBot:lava-xm-plugin:v0.2.1
+            LAVALINK_PLUGINS_0_DEPENDENCY: com.github.topi314.lavasrc:lavasrc-plugin:4.0.1
+            LAVALINK_PLUGINS_1_DEPENDENCY: com.github.topi314.sponsorblock:sponsorblock-plugin:3.0.0
+            LAVALINK_PLUGINS_2_DEPENDENCY: com.dunctebot:skybot-lavalink-plugin:1.6.3
+            LAVALINK_PLUGINS_3_DEPENDENCY: com.github.topi314.lavasearch:lavasearch-plugin:1.0.0
+            LAVALINK_PLUGINS_4_DEPENDENCY: me.rohank05:lavalink-filter-plugin:0.0.4
             LAVALINK_PLUGINS_4_REPOSITORY: https://jitpack.io
+            LAVALINK_PLUGINS_5_DEPENDENCY: com.github.esmBot:lava-xm-plugin:v0.2.2
+            LAVALINK_PLUGINS_5_REPOSITORY: https://jitpack.io
 
 
             # Configure built-in sources
@@ -173,9 +171,9 @@ services:
 
 
             # Lavasrc Apple music configuration
-            PLUGINS_LAVASRC_SOURCES_APPLEMUSIC: true          # Enable Apple Music source
+            PLUGINS_LAVASRC_SOURCES_APPLEMUSIC: false          # Enable Apple Music source
             PLUGINS_LAVASRC_APPLEMUSIC_COUNTRYCODE: US        # the country code you want to use for filtering the artists top tracks and language. See https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
-            PLUGINS_LAVASRC_APPLEMUSIC_MEDIAAPITOKEN:         # Not necessary, Can be used to bypass the auto token fetching which is likely to break again in the future
+            PLUGINS_LAVASRC_APPLEMUSIC_MEDIAAPITOKEN: CHANGE_ME        # Necessary
             PLUGINS_LAVASRC_APPLEMUSIC_PLAYLISTLOADLIMIT: 30  # The number of pages at 300 tracks each
             PLUGINS_LAVASRC_APPLEMUSIC_ALBUMLOADLIMIT: 30     # The number of pages at 300 tracks each
             # Lavasrc Spotify configuration
@@ -188,7 +186,8 @@ services:
             # Lavasrc Yandex configuration
             PLUGINS_LAVASRC_SOURCES_YANDEXMUSIC: false        # Enable Yandex Music source
             PLUGINS_LAVASRC_YANDEXMUSIC_ACCESSTOKEN:          # the token used for accessing the yandex music api. See https://github.com/topi314/LavaSrc#yandex-music
-
+            # Lavasrc YouTube configuration
+            PLUGINS_LAVASRC_SOURCES_YOUTUBE: true  # Enable YouTube Search source
 
             # Configure Sentry
             SENTRY_DSN:

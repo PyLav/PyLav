@@ -3,7 +3,7 @@ from __future__ import annotations
 from piccolo.columns import JSONB, BigInt, Boolean, Text, Timestamptz
 from piccolo.table import Table
 
-from pylav.constants.config import CONFIG_DIR, LOCAL_TRACKS_FOLDER, USE_BUNDLED_EXTERNAL_PYLAV_NODE
+from pylav.constants.config import CONFIG_DIR, LOCAL_TRACKS_FOLDER
 from pylav.storage.database.tables.misc import DATABASE_ENGINE
 
 
@@ -17,7 +17,7 @@ class LibConfigRow(Table, db=DATABASE_ENGINE, tablename="lib_config"):
     localtrack_folder = Text(null=True, default=str(LOCAL_TRACKS_FOLDER or (CONFIG_DIR / "music")))
     download_id = BigInt(index=True, default=0)
     update_bot_activity = Boolean(null=False, default=False)
-    use_bundled_pylav_external = Boolean(null=False, default=USE_BUNDLED_EXTERNAL_PYLAV_NODE)
+    use_bundled_pylav_external = Boolean(null=False, default=False)
     use_bundled_lava_link_external = Boolean(null=False, default=False)
 
     extras: JSONB = JSONB(null=False, default={})

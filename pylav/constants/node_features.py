@@ -49,6 +49,8 @@ SUPPORTED_SOURCES = {
 SUPPORTED_FEATURES = {
     # https://github.com/topi314/Sponsorblock-Plugin
     "sponsorblock",
+    # https://github.com/topi314/LavaSearch
+    "lavasearch",
 }
 SUPPORTED_FILTERS = {
     "distortion",

@@ -31,6 +31,7 @@
   - spotify
   - applemusic
   - deezer
+  - youtube
 ### With [DuncteBot-plugin](https://github.com/DuncteBot/skybot-lavalink-plugin):
   - getyarn.io
   - clypit
@@ -45,6 +46,7 @@
   - gcloud-tts
 ### With [Sponsorblock-Plugin](https://github.com/topi314/Sponsorblock-Plugin):
   - sponsorblock
+### With [LavaSearch](https://github.com/topi314/LavaSearch):
 
 ## Supported Lavalink features
   - Supports all features of [Lavalink](https://github.com/lavalink-devs/Lavalink)

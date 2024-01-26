@@ -130,8 +130,8 @@ exclude = [
 ]
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
-pip = "^23.2.1"
-wheel = "^0.41.2"
+pip = "^23.3.2"
+wheel = "^0.41.3"
 APScheduler = "^3.10.4"
 Brotli = "^1.1.0"
 PyYAML = "^6.0.1"
@@ -139,22 +139,22 @@ aiohttp-client-cache = "^0.9.1"
 aiopath = "^0.6.11"
 asyncpg = "^0.28.0"
 asyncspotify = "^0.12.1"
-asyncstdlib = "^3.10.9"
+asyncstdlib = "^3.12.0"
 cached-property = "^1.5.2"
 cashews = {extras = ["dill", "redis"], version = "^6.3.0"}
 dacite = "^1.8.1"
 deepdiff6 = "^6.2.0"
 expiringdict = "^1.2.2"
-humanize = "^4.8.0"
+humanize = "^4.9.0"
 importlib-metadata = "^6.8.0"
 iso8601 = "^2.1.0"
 mutagen = "^1.47.0"
 netaddr = "^0.9.0"
-numpy = "^1.26.0"
+numpy = "^1.26.3"
 piccolo = {extras = ["all"], version = "^0.121.0"}
 redis = "^5.0.1"
 tabulate = {extras = ["widechars"], version = "^0.9.0"}
-ujson = "^5.8.0"
+ujson = "^5.9.0"
 watchfiles = "^0.20.0"
 
 # Dependencies pre-installed with Red, only required if using PyLav on a Non-Red bot

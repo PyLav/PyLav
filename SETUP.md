@@ -6,10 +6,7 @@
 
 > **Warning**
 >  You should be using docker and using the provided docker-compose file for the easiest setup.
->  Specially until Lavalink 4.0.0 is released, I will not be providing support for setting up Lavalink manually until then.
 
-# Note for 1.0.0 release until Lavalink 4.0.0 is released
-- This major release requires Lavalink 4.0.0 which has not yet been released.
 ## With Docker
   - A custom docker-compose file can be found [here](./docker-compose.yml)
     - This uses a custom fork of Phasecore's redbot image to add support for python3.11 with PyLav bundled in i.e. [docker-red-discordbot](https://github.com/PyLav/docker-red-discordbot/pkgs/container/red-discordbot)
@@ -131,9 +128,6 @@ An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml
     - Provide the `PYLAV__POSTGRES_SOCKET` variable. If this is provided `PYLAV__POSTGRES_HOST` and `PYLAV__POSTGRES_PORT` will be ignored.
   - `PYLAV__JAVA_EXECUTABLE` can be changed from java to the full path of the Azul Zulu 19 Java executable installed above.
     - By default, it will use `java` to ensure you have the correct version under `java` run `java --version` if it says "OpenJDK Runtime Environment Zulu19..." then this is not needed to be changed.
-  - PyLav bundled an external unmanaged public lavalink Node - The node used is a public node (ll.draper.wtf) hosted by Draper, this will expose you IP to the server hosting the node for communication purposes.
-    - To disable this set `PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE` to `false`
-    - To enable this set `PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE` to `true`
   - If you don't want PyLav to manage a node (not recommended) you can specify the connection args from an external node instead.
     - Note: PyLav supports multiple bots running on the sam
     -
@@ -174,9 +168,6 @@ An example of the file can be found at [pylav.example.yaml](./pylav.example.yaml
   - Set `PYLAV__EXTERNAL_UNMANAGED_PASSWORD` to the Lavalink node connection auth password.
   - Set `PYLAV__EXTERNAL_UNMANAGED_PORT` to the Lavalink node connection port - If this is not specified the node will use port `80` if `PYLAV__EXTERNAL_UNMANAGED_SSL` is set to `false` or `443` if `PYLAV__EXTERNAL_UNMANAGED_SSL` is set to `true`.
   - Set `PYLAV__EXTERNAL_UNMANAGED_SSL` to `false` depending on weather or not the external node is using SSL
-  - PyLav bundled an external unmanaged public lavalink Node - The node used is a public node (ll.draper.wtf) hosted by Draper, this will expose you IP to the server hosting the node for communication purposes.
-    - To disable this set `PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE` to `false`
-    - To enable this set `PYLAV__USE_BUNDLED_EXTERNAL_PYLAV_NODE` to `true`
 - If you already have a Redis server and want to make use of it for the request cache you can set `PYLAV__REDIS_FULL_ADDRESS_RESPONSE_CACHE` to the full connection url of your existing server.
   - e.g. `redis://[[username]:[password]]@localhost:6379/0`
   - e.g. `unix://[[username]:[password]]@/path/to/socket.sock?db=0`

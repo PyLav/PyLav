@@ -26,6 +26,7 @@ async def update_plugins(client: Client) -> None:
         baseurl = URL("https://api.github.com/repos")
         for plugin in data["lavalink"]["plugins"].copy():
             dependency = ":".join(plugin["dependency"].split(":")[:-1])
+            repository = None
             if dependency in _temp:
                 continue
             _temp.add(dependency)
@@ -33,19 +34,21 @@ async def update_plugins(client: Client) -> None:
                 existing_plugins.add("lavasrc-plugin-")
                 org = "topi314"
                 repo = "LavaSrc"
-                repository = "https://maven.topi.wtf/releases"
+                dependency += ":"
+            elif plugin["dependency"].startswith("com.github.topi314.lavasearch:lavasearch-plugin:"):
+                existing_plugins.add("lavasearch-plugin-")
+                org = "topi314"
+                repo = "LavaSearch"
                 dependency += ":"
             elif plugin["dependency"].startswith("com.dunctebot:skybot-lavalink-plugin:"):
                 existing_plugins.add("skybot-lavalink-plugin-")
                 org = "DuncteBot"
                 repo = "skybot-lavalink-plugin"
-                repository = "https://m2.duncte123.dev/releases"
                 dependency += ":"
             elif plugin["dependency"].startswith("com.github.topi314.sponsorblock:sponsorblock-plugin:"):
                 existing_plugins.add("sponsorblock-plugin-")
                 org = "topi314"
                 repo = "Sponsorblock-Plugin"
-                repository = "https://maven.topi.wtf/releases"
                 dependency += ":"
             elif plugin["dependency"].startswith("com.github.esmBot:lava-xm-plugin:"):
                 existing_plugins.add("lava-xm-plugin-")
@@ -65,12 +68,12 @@ async def update_plugins(client: Client) -> None:
                 loads=json.loads
             )
             name = release_data["tag_name"]
-            new_plugin_data.append(
-                {
-                    "dependency": dependency + name,
-                    "repository": repository,
-                }
-            )
+            _temp_data = {
+                "dependency": dependency + name,
+            }
+            if repository:
+                _temp_data["repository"] = repository
+            new_plugin_data.append(_temp_data)
 
         if __ := DeepDiff(
             data["lavalink"]["plugins"], new_plugin_data, ignore_order=True, max_passes=3, cache_size=10000

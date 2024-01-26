@@ -29,16 +29,16 @@ NODE_DEFAULT_SETTINGS = {
     "lavalink": {
         "plugins": [
             {
-                "dependency": "com.github.topi314.lavasrc:lavasrc-plugin:4.0.0-beta.7",
-                "repository": "https://maven.topi.wtf/releases",
+                "dependency": "com.github.topi314.lavasrc:lavasrc-plugin:4.0.1",
             },
             {
-                "dependency": "com.dunctebot:skybot-lavalink-plugin:1.4.2",
-                "repository": "https://m2.duncte123.dev/releases",
+                "dependency": "com.github.topi314.sponsorblock:sponsorblock-plugin:3.0.0",
             },
             {
-                "dependency": "com.github.topi314.sponsorblock:sponsorblock-plugin:3.0.0-beta.3",
-                "repository": "https://maven.topi.wtf/releases",
+                "dependency": "com.dunctebot:skybot-lavalink-plugin:1.6.3",
+            },
+            {
+                "dependency": "com.github.topi314.lavasearch:lavasearch-plugin:1.0.0",
             },
             {"dependency": "me.rohank05:lavalink-filter-plugin:0.0.2", "repository": "https://jitpack.io"},
             {"dependency": "com.github.esmBot:lava-xm-plugin:v0.2.1", "repository": "https://jitpack.io"},
@@ -103,7 +103,7 @@ NODE_DEFAULT_SETTINGS = {
                 "ytsearch:%QUERY%",
                 "scsearch:%QUERY%",
             ],
-            "sources": {"spotify": False, "applemusic": True, "deezer": False, "yandexmusic": False},
+            "sources": {"spotify": False, "applemusic": False, "deezer": False, "yandexmusic": False, "youtube": True},
             "spotify": {
                 "clientId": "",
                 "clientSecret": "",
@@ -111,7 +111,12 @@ NODE_DEFAULT_SETTINGS = {
                 "playlistLoadLimit": 110,
                 "albumLoadLimit": 220,
             },
-            "applemusic": {"countryCode": "US", "mediaAPIToken": None, "playlistLoadLimit": 30, "albumLoadLimit": 30},
+            "applemusic": {
+                "countryCode": "US",
+                "mediaAPIToken": "CHANGEME",
+                "playlistLoadLimit": 30,
+                "albumLoadLimit": 30,
+            },
             "deezer": {"masterDecryptionKey": ""},
             "yandexmusic": {"accessToken": ""},
         },
