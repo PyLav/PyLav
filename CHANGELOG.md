@@ -1,5 +1,19 @@
 # Changelog
 
+## v1.14.1 (26/01/2024)
+- [Make Release](https://github.com/PyLav/PyLav/commit/0339867097ac61d8d757347b225fe8ca9fe50fc3) - @Drapersniper
+- [Auto Merge](https://github.com/PyLav/PyLav/commit/55144776351f1be0a79d3213c8645013b21b2009) - @Drapersniper
+
+---
+
+## v1.14.0 (26/01/2024)
+- [PL 1.14](https://github.com/PyLav/PyLav/commit/d8dc138bf9d38b3d606e61f5ec025dc19417a124) - @Drapersniper
+- [Auto Merge](https://github.com/PyLav/PyLav/commit/1ce1bb26d7283c51f0f80e1f54015452be7427e4) - @Drapersniper
+- [New Crowdin translations by GitHub Action](https://github.com/PyLav/PyLav/commit/3f8a5a756b1089a1a18f0893875bb1c54a39400a) - @crowdin-bot
+- [Add asyncio.timeouts on player restore to avoid the issue reported by life](https://github.com/PyLav/PyLav/commit/f33583edb99f313c04d654d916f5dc38b20e6c2b) - @Drapersniper
+
+---
+
 ## v1.13.3 (08/10/2023)
 - [Make Release](https://github.com/PyLav/PyLav/commit/6e60fa57c709f629b4bc285d6bbe106725faa526) - @Drapersniper
 - [Auto Merge](https://github.com/PyLav/PyLav/commit/836ca9dddc66e5c5f60c299afc2fe5b9bb1cf468) - @Drapersniper
@@ -795,14 +809,3 @@
 ## v0.11.16.1 (26/10/2022)
 - [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/e587e80bda9a5a5fffa10b8b7b1a946346d012d4) - @Drapersniper
 - [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/ea26dd61811392afdb9cce16915db76a3b4fc6b5) - @crowdin-bot
-
----
-
-## v0.11.16.0 (26/10/2022)
-- [[patch] Consume Managed node pipe to avoid deadlocks](https://github.com/Drapersniper/PyLav/commit/64abbed223db2d052d33de09957ef2b12fd942da) - @Drapersniper
-
----
-
-## v0.11.15.1 (25/10/2022)
-- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/197760bc34dc44c28b6f6d993cfdd63c4c599ada) - @Drapersniper
-- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/1af8f24bc806006706e43b98cfb471ca6d3cc343) - @crowdin-bot
