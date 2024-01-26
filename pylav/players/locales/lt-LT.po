@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pylav\n"
-"POT-Creation-Date: 2023-10-18 17:30+0000\n"
-"PO-Revision-Date: 2023-10-18 17:31\n"
+"POT-Creation-Date: 2024-01-26 13:46+0000\n"
+"PO-Revision-Date: 2024-01-26 13:47\n"
 "Last-Translator: \n"
 "Language-Team: Lithuanian\n"
 "MIME-Version: 1.0\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "There are no nodes available currently."
 msgstr "Šiuo metu nėra mazgų."
 
-#: pylav/players/manager.py:354
+#: pylav/players/manager.py:347 pylav/players/manager.py:356
 msgid "Music in {number_of_servers_variable_do_not_translate} servers"
 msgstr "Muzika {number_of_servers_variable_do_not_translate} Serveriai"
 
