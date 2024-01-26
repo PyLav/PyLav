@@ -367,6 +367,7 @@ class PlayerController:
                     max_length=40,
                     author=True,
                     unformatted=True,
+                    escape=False,
                 )
                 if activity and track_name in activity.name:
                     return
