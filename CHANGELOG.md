@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.14.2 (29/01/2024)
+- [Fix Migrations](https://github.com/PyLav/PyLav/commit/f497cd76b319305e4afcec8ea8828c8a05d8de1d) - @Drapersniper
+- [No escaping bot activity strings (#282)](https://github.com/PyLav/PyLav/commit/6dadfdeffb9c4531b9ca4ce5605d6ceb67bf10ae) - @karlsbjorn
+
+---
+
 ## v1.14.1 (26/01/2024)
 - [Make Release](https://github.com/PyLav/PyLav/commit/0339867097ac61d8d757347b225fe8ca9fe50fc3) - @Drapersniper
 - [Auto Merge](https://github.com/PyLav/PyLav/commit/55144776351f1be0a79d3213c8645013b21b2009) - @Drapersniper
@@ -803,9 +809,3 @@
 
 ## v0.11.17.0 (27/10/2022)
 - [[patch] Fix incorrect logic on local track folder names if a dot is used in the name](https://github.com/Drapersniper/PyLav/commit/fd889a5fa0b3e3adbc2f128804ae599e509915cd) - @Drapersniper
-
----
-
-## v0.11.16.1 (26/10/2022)
-- [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/e587e80bda9a5a5fffa10b8b7b1a946346d012d4) - @Drapersniper
-- [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/ea26dd61811392afdb9cce16915db76a3b4fc6b5) - @crowdin-bot
