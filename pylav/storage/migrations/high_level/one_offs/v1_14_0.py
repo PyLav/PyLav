@@ -22,7 +22,6 @@ async def migration_v_1_14_0(client: Client, current_version: Version) -> None:
     yaml_data = await config.fetch_yaml()
     keep = [plugin for plugin in NODE_DEFAULT_SETTINGS["lavalink"]["plugins"]]
     yaml_data["lavalink"]["plugins"] = keep
-    yaml_data["plugins"]["lavasrc"]["sources"]["applemusic"] = False
 
     await config.update_yaml(yaml_data)
     await client._config.update_use_bundled_pylav_external(False)

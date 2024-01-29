@@ -44,7 +44,7 @@ async def process_envvar_variables(client: Client) -> None:
         yaml_data["plugins"]["lavasrc"]["yandexmusic"]["accessToken"] = MANAGED_NODE_YANDEX_MUSIC_ACCESS_TOKEN
         updated = True
     if MANAGED_NODE_DEEZER_KEY is not None:
-        yaml_data["plugins"]["lavasrc"]["deezer"]["key"] = MANAGED_NODE_DEEZER_KEY
+        yaml_data["plugins"]["lavasrc"]["deezer"]["masterDecryptionKey"] = MANAGED_NODE_DEEZER_KEY
         updated = True
     if updated:
         await config.update_yaml(yaml_data)

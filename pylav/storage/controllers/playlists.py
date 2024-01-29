@@ -351,6 +351,7 @@ class PlaylistController:
             LOGGER.debug("Unknown playlist id: %s", playlist_id)
             return
         tracks_raw = []
+        data = None
         try:
             LOGGER.info("Updating bundled external playlist - %s - %s", playlist_id, name)
             query = await Query.from_string(url)
@@ -363,6 +364,7 @@ class PlaylistController:
             tracks_raw = data.data.tracks
         except Exception as exc:
             LOGGER.error("Built-in external playlist couldn't be parsed - %s, report this error", name, exc_info=exc)
+            LOGGER.debug("Built-in external playlist couldn't be parsed - %s (%r)", name, data, exc_info=exc)
             data = None
         if not data:
             # noinspection PyProtectedMember
