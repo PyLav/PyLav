@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.14.3 (06/02/2024)
+- [Fix TypeError: 'NoneType' object is not subscriptable (seasw.)](https://github.com/PyLav/PyLav/commit/07bce4c136114be59678c14027e395e5684df9c7) - @Drapersniper
+
+---
+
 ## v1.14.2 (29/01/2024)
 - [Fix Migrations](https://github.com/PyLav/PyLav/commit/f497cd76b319305e4afcec8ea8828c8a05d8de1d) - @Drapersniper
 - [No escaping bot activity strings (#282)](https://github.com/PyLav/PyLav/commit/6dadfdeffb9c4531b9ca4ce5605d6ceb67bf10ae) - @karlsbjorn
@@ -804,8 +809,3 @@
 ## v0.11.17.1 (23/11/2022)
 - [[post] Add new translations](https://github.com/Drapersniper/PyLav/commit/72e281057e99ba376c3f42bf93e6ad18fac932ea) - @Drapersniper
 - [[post] Update translations](https://github.com/Drapersniper/PyLav/commit/cf3f37148889129747a6216c1ef03bd63b041469) - @crowdin-bot
-
----
-
-## v0.11.17.0 (27/10/2022)
-- [[patch] Fix incorrect logic on local track folder names if a dot is used in the name](https://github.com/Drapersniper/PyLav/commit/fd889a5fa0b3e3adbc2f128804ae599e509915cd) - @Drapersniper
