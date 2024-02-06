@@ -4,6 +4,7 @@ import asyncio
 from typing import TYPE_CHECKING
 
 from pylav.logging import getLogger
+from pylav.storage.migrations.high_level.always.fix_managed_node_settings import fix_managed_node_settings
 from pylav.storage.migrations.high_level.always.process_envvar_variables import process_envvar_variables
 from pylav.storage.migrations.high_level.always.set_pylav_version import set_current_version
 from pylav.storage.migrations.high_level.always.set_ram_value import set_correct_ram_cap
@@ -44,6 +45,7 @@ class MigrationController:
         """Run through schema migrations"""
 
         current_version = await self._client.lib_db_manager.get_bot_db_version().fetch_version()
+        await fix_managed_node_settings(self._client)
         await migration_v_0_0_0_2(self._client, current_version)
         await migration_v_0_3_2_0(self._client, current_version)
         await migration_v_0_3_3_0(self._client, current_version)
