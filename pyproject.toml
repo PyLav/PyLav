@@ -144,7 +144,7 @@ asyncstdlib = "^3.12.3"
 cached-property = "^1.5.2"
 cashews = {extras = ["dill", "redis"], version = "^7.1.0"}
 dacite = "^1.8.1"
-deepdiff = {extras = ["optimize"], version = "^7.0.1"}
+deepdiff = {extras = ["optimize"], version = ">=7.0.1,<9.0.0"}
 expiringdict = "^1.2.2"
 humanize = "^4.9.0"
 importlib-metadata = "^7.2.0"
