@@ -131,7 +131,7 @@ exclude = [
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
-pip = "^24.1"
+pip = ">=24.1,<26.0"
 wheel = "^0.43.0"
 APScheduler = "^3.10.4"
 Brotli = "^1.1.0"
