@@ -21,7 +21,7 @@ jobs:
         runs-on: ${{ matrix.os }}
         steps:
         -   name: Checkout code
-            uses: actions/checkout@v6.0.0
+            uses: actions/checkout@v6.0.1
         -   name: Set up Python
             uses: actions/setup-python@v6
             with:
@@ -63,7 +63,7 @@ jobs:
         runs-on: [ubuntu-latest]
         steps:
         -   name: Checkout
-            uses: actions/checkout@v6.0.0
+            uses: actions/checkout@v6.0.1
             with:
                 fetch-depth: 0
                 ref: develop
