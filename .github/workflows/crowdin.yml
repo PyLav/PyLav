@@ -21,7 +21,7 @@ jobs:
             uses: jakejarvis/wait-action@master
             with:
                 time: 5m
-        -   uses: actions/checkout@v6.0.1
+        -   uses: actions/checkout@v6.0.2
             with:
                 ref: develop
                 token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
